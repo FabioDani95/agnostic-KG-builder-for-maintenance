@@ -40,6 +40,14 @@ def get_reflective_loop_config() -> dict:
     return load_config().get("reflective_loop", {})
 
 
+def get_pipeline_config() -> dict:
+    cfg = dict(load_config().get("pipeline", {}))
+    if "pipeline_mode" in _runtime_overrides:
+        cfg["mode"] = str(_runtime_overrides["pipeline_mode"])
+    cfg.setdefault("mode", "classic")
+    return cfg
+
+
 def reload_config() -> dict:
     """Force-reload from disk (e.g. after user edits the file)."""
     _load_raw.cache_clear()
