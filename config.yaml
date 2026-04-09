@@ -10,6 +10,12 @@ shared_models: &strong_models
   - id: gpt-5.4-pro
     label: GPT-5.4 Pro
 
+pipeline:
+  # Execution mode for the extraction stack.
+  # "classic" keeps the current production flow.
+  # "multi_agent" is reserved for the future supervisor-based pipeline.
+  mode: classic
+
 scoping:
   # Maximum number of pages to read for scoping analysis.
   # The engine will always read first N pages + any ToC/keyword pages found.

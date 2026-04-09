@@ -9,7 +9,7 @@ from backend.routers import upload, extract, generate, cutplan, ontology, graph_
 from backend.app_config import (
     get_scoping_config, get_extraction_config, get_reflective_loop_config,
     get_effective_small_doc_threshold, get_effective_reflective_loop_config,
-    apply_runtime_overrides, get_runtime_overrides,
+    apply_runtime_overrides, get_runtime_overrides, get_pipeline_config,
 )
 
 # Configure logging so scoping/llm progress is visible in terminal
@@ -42,9 +42,13 @@ async def get_frontend_config():
     scoping = get_scoping_config()
     extraction = get_extraction_config()
     rl = get_effective_reflective_loop_config()
+    pipeline = get_pipeline_config()
     return {
         "scoping_models": scoping.get("models", []),
         "extraction_models": extraction.get("models", []),
+        "pipeline": {
+            "mode": pipeline.get("mode", "classic"),
+        },
         "small_doc_threshold": get_effective_small_doc_threshold(),
         "reflective_loop": {
             "max_retries": rl.get("max_retries", 0),
@@ -56,7 +60,7 @@ async def get_frontend_config():
 @app.post("/api/config")
 async def update_runtime_config(body: dict):
     """Apply in-memory overrides to runtime-editable settings."""
-    allowed = {"small_doc_threshold", "max_retries", "retry_on_severity"}
+    allowed = {"small_doc_threshold", "max_retries", "retry_on_severity", "pipeline_mode"}
     overrides = {k: v for k, v in body.items() if k in allowed}
     apply_runtime_overrides(overrides)
     return {"status": "ok", "applied": overrides}
