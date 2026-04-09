@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KG Diagnostic Extraction</title>
+    <link rel="stylesheet" href="/style.css?v=11">
+</head>
+<body>
+
+    <!-- ─── Startup Screen (full page, no scroll) ─── -->
+    <div id="upload-screen">
+        <div class="upload-wrapper">
+            <div class="upload-header">
+                <div class="upload-logo">KG</div>
+                <h1>Diagnostic Knowledge Graph Extraction</h1>
+                <p class="upload-subtitle">Configure extraction settings, then press OK to begin scoping the next manual</p>
+            </div>
+
+            <form id="upload-form" class="upload-card">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="scoping-model">Scoping Model</label>
+                        <select id="scoping-model" required>
+                            <option value="">Loading models...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="llm-model">Extraction Model</label>
+                        <select id="llm-model" required>
+                            <option value="">Loading models...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="graph-language">Output Language</label>
+                        <select id="graph-language" required>
+                            <option value="en" selected>English</option>
+                            <option value="it">Italiano</option>
+                            <option value="de">Deutsch</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group span-2">
+                        <label for="manual-select">Manual</label>
+                        <select id="manual-select" required>
+                            <option value="">Loading manuals...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="operator-name">Operator</label>
+                        <input type="text" id="operator-name" value="Fabio Daniele">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="extraction-date">Date</label>
+                        <input type="date" id="extraction-date">
+                    </div>
+
+                    <div class="form-group span-2">
+                        <label for="startup-page-offset">PDF page where manual page 1 appears</label>
+                        <input type="number" id="startup-page-offset" value="1" min="1" max="500">
+                        <small class="form-help">The absolute PDF page number that corresponds to page 1 printed in the manual (e.g. enter 5 if the first numbered page is the 5th PDF page). The offset is computed automatically.</small>
+                    </div>
+                </div>
+
+                <!-- Advanced Settings -->
+                <details class="advanced-settings">
+                    <summary class="advanced-settings-toggle">Advanced Settings</summary>
+                    <div class="form-grid advanced-settings-grid">
+                        <div class="form-group">
+                            <label for="small-doc-threshold">Small doc threshold (pages)</label>
+                            <input type="number" id="small-doc-threshold" min="0" max="500">
+                            <small class="form-help">Skip cut plan if total pages &le; this value.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="reflective-max-retries">Reflective loop max retries</label>
+                            <input type="number" id="reflective-max-retries" min="0" max="10">
+                            <small class="form-help">Max automatic re-extraction attempts before escalating to operator. Set 0 to disable.</small>
+                        </div>
+                        <div class="form-group span-2">
+                            <label for="reflective-severity">Retry on severity</label>
+                            <select id="reflective-severity">
+                                <option value="warning">warning (retry on warnings and errors)</option>
+                                <option value="error">error (retry on errors only)</option>
+                            </select>
+                            <small class="form-help">Minimum issue severity that triggers a re-extraction retry.</small>
+                        </div>
+                    </div>
+                </details>
+
+                <button type="submit" id="upload-btn" class="btn-primary btn-large">
+                    <span class="btn-text">OK</span>
+                </button>
+
+                <div id="upload-status" class="status-bar" hidden>
+                    <div class="status-head">
+                        <div class="status-main">
+                            <div class="status-indicator"></div>
+                            <span class="status-text"></span>
+                        </div>
+                        <span class="status-meta" hidden></span>
+                    </div>
+                    <div class="status-progress" aria-hidden="true">
+                        <div class="status-progress-bar"></div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="upload-footer"></div>
+        </div>
+    </div>
+
+    <!-- ─── Cut Plan Screen (full-page, two-column) ─── -->
+    <div id="cut-plan-screen" hidden>
+        <!-- Top bar -->
+        <header id="cp-bar">
+            <div class="app-bar-left">
+                <span class="app-bar-logo">KG</span>
+                <span class="app-bar-title" id="cp-doc-title">Document</span>
+            </div>
+            <div class="app-bar-center" id="cp-page-counter"></div>
+            <div class="app-bar-right">
+                <span class="app-bar-meta" title="PDF page where manual page 1 appears">Pag.1 at PDF page:</span>
+                <input type="number" id="offset-input" value="1" min="1" max="600" class="offset-input-inline"
+                    title="Enter the absolute PDF page number that contains page 1 of the manual">
+            </div>
+        </header>
+
+        <!-- Two columns -->
+        <div class="cp-columns">
+            <!-- Left: PDF Viewer -->
+            <section class="cp-pdf-section">
+                <div id="cp-pdf-container" class="cp-pdf-container"></div>
+            </section>
+
+            <!-- Right: Sections + Page grid + Actions -->
+            <section class="cp-controls-section">
+                <div class="cp-controls-scroll">
+                    <!-- Asset and document info (from scoping) -->
+                    <div class="cp-block" id="cp-product-info" hidden>
+                        <h4>Asset &amp; Document Info</h4>
+                        <div class="cp-product-card">
+                            <div class="cp-info-row">
+                                <span class="cp-info-label">Asset:</span>
+                                <span class="cp-info-value" id="cp-product-name">&mdash;</span>
+                            </div>
+                            <div class="cp-info-row">
+                                <span class="cp-info-label">Document Type:</span>
+                                <span class="cp-info-value" id="cp-doc-type">&mdash;</span>
+                            </div>
+                            <div class="cp-info-row">
+                                <span class="cp-info-label">Language:</span>
+                                <span class="cp-info-value" id="cp-language">&mdash;</span>
+                            </div>
+                            <div class="cp-info-row">
+                                <span class="cp-info-label">Pages:</span>
+                                <span class="cp-info-value" id="cp-page-total">&mdash;</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Extracted Table of Contents -->
+                    <div class="cp-block" id="cp-toc-block" hidden>
+                        <h4>Extracted Table of Contents</h4>
+                        <div id="cp-toc-table"></div>
+                    </div>
+
+                    <!-- Selected sections -->
+                    <div class="cp-block">
+                        <h4>Selected Sections</h4>
+                        <div id="section-cards"></div>
+                        <button id="add-range-btn" class="btn-secondary btn-small" style="margin-top:0.4rem">+ Add Section</button>
+                        <div id="add-range-form" class="add-range-form" hidden>
+                            <input type="number" id="range-start" placeholder="Manual start page" min="1" class="range-input">
+                            <span>&ndash;</span>
+                            <input type="number" id="range-end" placeholder="Manual end page" min="1" class="range-input">
+                            <input type="text" id="range-name" placeholder="Section name" class="range-name-input">
+                            <button id="range-confirm-btn" class="btn-small btn-success">Add</button>
+                            <button id="range-cancel-btn" class="btn-small btn-danger">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom action bar -->
+                <div class="cp-action-bar">
+                    <div id="cp-status" class="cp-status-inline" hidden>
+                        <div class="status-head">
+                            <div class="status-main">
+                                <div class="status-indicator"></div>
+                                <span class="status-text"></span>
+                            </div>
+                            <span class="status-meta" hidden></span>
+                        </div>
+                        <div class="status-progress" aria-hidden="true">
+                            <div class="status-progress-bar"></div>
+                        </div>
+                    </div>
+                    <div class="cp-action-buttons">
+                        <button id="cp-skip-btn" class="btn-secondary">Skip (all pages)</button>
+                        <button id="cp-approve-btn" class="btn-primary">Approve &amp; Extract</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- ─── Ontology Pre-Review Screen ─── -->
+    <div id="ontology-screen" hidden>
+        <header id="ontology-bar">
+            <div class="app-bar-left">
+                <span class="app-bar-logo">KG</span>
+                <span class="app-bar-title" id="ontology-doc-title">Document</span>
+            </div>
+            <div class="app-bar-center" id="ontology-step-title">Automatic Ontology Draft</div>
+            <div class="app-bar-right">
+                <span class="app-bar-meta">Before human validation</span>
+            </div>
+        </header>
+
+        <div class="cp-columns">
+            <section class="cp-pdf-section">
+                <div id="ontology-pdf-container" class="cp-pdf-container"></div>
+            </section>
+
+            <section class="cp-controls-section">
+                <div class="cp-controls-scroll">
+                    <div class="cp-block">
+                        <h4>Ontology Draft Status</h4>
+                        <div id="ontology-summary-card" class="ontology-summary-card"></div>
+                        <div id="ontology-guidance" class="ontology-guidance"></div>
+                    </div>
+
+                    <div class="cp-block" id="ontology-issues-block" hidden>
+                        <h4 style="color:var(--text-dim);font-weight:500;">Validation Details</h4>
+                        <div id="ontology-issues"></div>
+                    </div>
+
+                    <div class="cp-block" id="ontology-fields-block" hidden>
+                        <h4>Required Information</h4>
+                        <div id="ontology-fields"></div>
+                    </div>
+
+                    <div class="cp-block" id="graph-issues-block" hidden>
+                        <h4>Graph Structure Issues</h4>
+                        <div id="graph-issues"></div>
+                    </div>
+
+                    <div class="cp-block" id="suggested-relations-block" hidden>
+                        <h4>Suggested Relations
+                            <span id="suggested-relations-count" class="badge-count"></span>
+                        </h4>
+                        <p class="block-hint">The graph reasoning engine found potential missing links. Review and accept or reject each suggestion.</p>
+                        <div id="suggested-relations-list"></div>
+                        <div class="suggestion-bulk-actions" id="suggestion-bulk-actions" hidden>
+                            <button id="apply-suggestions-btn" class="btn-primary btn-sm">Apply Accepted Suggestions</button>
+                            <button id="reject-all-suggestions-btn" class="btn-secondary btn-sm">Reject All</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cp-action-bar">
+                    <div id="ontology-status" class="cp-status-inline" hidden>
+                        <div class="status-head">
+                            <div class="status-main">
+                                <div class="status-indicator"></div>
+                                <span class="status-text"></span>
+                            </div>
+                            <span class="status-meta" hidden></span>
+                        </div>
+                        <div class="status-progress" aria-hidden="true">
+                            <div class="status-progress-bar"></div>
+                        </div>
+                    </div>
+                    <div class="cp-action-buttons">
+                        <button id="ontology-rerun-btn" class="btn-secondary">Re-run Draft</button>
+                        <button id="ontology-continue-btn" class="btn-primary">Continue to Human Validation</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- ─── Main Application Layout ─── -->
+    <main id="main-layout" hidden>
+        <!-- Top bar -->
+        <header id="app-bar">
+            <div class="app-bar-left">
+                <span class="app-bar-logo">KG</span>
+                <span class="app-bar-title" id="pdf-title">Document</span>
+            </div>
+            <div class="app-bar-center" id="triplet-counter"></div>
+            <div class="app-bar-right">
+                <span class="app-bar-meta" id="app-bar-operator"></span>
+                <span class="app-bar-meta" id="app-bar-date"></span>
+            </div>
+        </header>
+
+        <!-- Two columns -->
+        <div class="two-columns">
+            <!-- Left: PDF Viewer -->
+            <section id="pdf-section">
+                <div id="pdf-container"></div>
+            </section>
+
+            <!-- Right: Tables + Buttons -->
+            <section id="tables-section">
+                <div id="tables-scroll">
+                    <h4>Symptom</h4>
+                    <div id="symptom-table-container"></div>
+
+                    <h4>Failure Modes</h4>
+                    <div id="fm-table-container"></div>
+
+                    <h4>Corrective Actions</h4>
+                    <div id="ca-table-container"></div>
+
+                    <!-- Summary -->
+                    <div id="summary" hidden>
+                        <div class="summary-card">
+                            <h3>Extraction Complete</h3>
+                            <p id="summary-text"></p>
+                            <p id="summary-export-status"></p>
+                            <div id="summary-kpis" hidden></div>
+                            <button id="generate-btn" class="btn-secondary">Download JSON Again</button>
+                            <button id="open-graph-editor-btn" class="btn-primary" hidden>Open Graph Editor</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="action-buttons">
+                    <button id="discard-btn" class="btn-danger">Discard</button>
+                    <button id="save-btn" class="btn-success">Save &amp; Next</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
+    <script src="/app.js?v=20260331j" type="module"></script>
+</body>
+</html>

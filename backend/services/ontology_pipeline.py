@@ -1,0 +1,1056 @@
+from __future__ import annotations
+
+import json
+import logging
+import re
+import time
+from copy import deepcopy
+from typing import Any, TypedDict
+
+from httpx import Timeout
+from langgraph.graph import END, StateGraph
+from openai import OpenAI
+
+from backend.app_config import get_ontology_config, get_effective_reflective_loop_config as get_reflective_loop_config
+from backend.config import settings
+from backend.models import (
+    GraphIssue,
+    HumanBindingAnswer,
+    HumanRequiredField,
+    OntologyEvidence,
+    OntologyInstance,
+    OntologyPipelineResponse,
+    OntologyRelationDefinition,
+    OntologyRelationInstance,
+    OntologySchemaDefinition,
+    PipelineIssue,
+    SuggestedRelation,
+)
+from backend.prompts.ontology_prompt import (
+    build_ontology_extraction_prompt,
+    build_ontology_re_extraction_prompt,
+    build_ontology_validation_prompt,
+)
+from backend.services.llm_guardrails import (
+    enforce_llm_limits,
+    llm_timeout_message,
+)
+from backend.services.language_utils import normalize_language_code
+from backend.services.ontology_schema_service import (
+    dump_ontology_schema_json,
+    load_ontology_schema,
+)
+from backend.services.ontology_semantics import infer_asset_type, normalize_asset_node
+from backend.services.ontology_semantics import infer_component_match_for_failure_mode
+from backend.services.run_metrics import aggregate_usage, usage_from_response
+
+logger = logging.getLogger(__name__)
+
+
+class PipelineState(TypedDict, total=False):
+    source_type: str
+    source_title: str
+    target_language: str
+    text_with_pages: str
+    model_name: str
+    schema: OntologySchemaDefinition
+    schema_json: str
+    ontology: OntologyInstance
+    semantic_issues: list[PipelineIssue]
+    schema_issues: list[PipelineIssue]
+    human_required_fields: list[HumanRequiredField]
+    # Reflective loop state
+    retry_count: int
+    last_issues: list[PipelineIssue]
+    needs_human_review: bool
+    # Graph reasoning state
+    graph_issues: list[GraphIssue]
+    suggested_relations: list[SuggestedRelation]
+    llm_usage: list[dict[str, Any]]
+
+
+def _get_client(timeout_seconds: int = 300) -> OpenAI:
+    return OpenAI(
+        api_key=settings.OPENAI_API_KEY,
+        timeout=Timeout(timeout_seconds, connect=10.0),
+    )
+
+
+def _ontology_cfg(max_output_tokens: int) -> dict[str, int]:
+    raw = get_ontology_config()
+    return {
+        "timeout_seconds": int(raw.get("timeout_seconds", 360)),
+        "max_input_chars": int(raw.get("max_input_chars", 220000)),
+        "estimated_max_input_tokens": int(raw.get("estimated_max_input_tokens", 55000)),
+        "max_output_tokens": max_output_tokens,
+    }
+
+
+def _extract_json_object(raw: str) -> dict[str, Any]:
+    raw = raw.strip()
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        match = re.search(r"\{.*\}", raw, re.DOTALL)
+        if not match:
+            raise
+        return json.loads(match.group(0))
+
+
+def _empty_instance(
+    schema: OntologySchemaDefinition,
+    source_type: str,
+    source_title: str,
+) -> OntologyInstance:
+    return OntologyInstance(
+        ontology_name=schema.ontology_name,
+        version=schema.version,
+        language="en",
+        source_type=source_type,
+        source_title=source_title,
+        nodes={node.name: [] for node in schema.nodes},
+        relations=[],
+    )
+
+
+def _extract_first_int(value: Any) -> int:
+    if isinstance(value, int):
+        return value
+    match = re.search(r"\d+", str(value or ""))
+    return int(match.group(0)) if match else 0
+
+
+def _node_id_property(node_def) -> str:
+    for prop in node_def.properties:
+        if prop.unique:
+            return prop.name
+    return f"{node_def.name.lower()}_id"
+
+
+def _default_asset_node(
+    source_title: str,
+    source_type: str,
+) -> dict[str, Any]:
+    return {
+        "asset_id": "ASSET-001",
+        "name": source_title or "Unknown Asset",
+        "description": source_title or "Technical asset extracted from manual context",
+        "brand": "",
+        "model": "",
+        "asset_type": infer_asset_type(source_title, source_type),
+    }
+
+
+def _primary_asset_node_name(schema: OntologySchemaDefinition) -> str | None:
+    node_names = {node.name for node in schema.nodes}
+    if "Asset" in node_names:
+        return "Asset"
+    return None
+
+
+def _relation_exists(relations: list[OntologyRelationInstance], candidate: OntologyRelationInstance) -> bool:
+    for rel in relations:
+        if (
+            rel.name == candidate.name
+            and rel.from_type == candidate.from_type
+            and rel.from_id == candidate.from_id
+            and rel.to_type == candidate.to_type
+            and rel.to_id == candidate.to_id
+        ):
+            return True
+    return False
+
+
+def _normalize_ontology_instance(
+    ontology: OntologyInstance,
+    schema: OntologySchemaDefinition,
+    source_type: str,
+    source_title: str,
+) -> OntologyInstance:
+    normalized = deepcopy(ontology.model_dump())
+    nodes = normalized.setdefault("nodes", {})
+    for node_def in schema.nodes:
+        node_list = nodes.setdefault(node_def.name, [])
+        seen_ids: set[str] = set()
+        id_prop = _node_id_property(node_def)
+        deduped = []
+        for node in node_list:
+            if not isinstance(node, dict):
+                continue
+            if node_def.name == "Asset":
+                node = normalize_asset_node(node, source_title, source_type)
+            node_id = str(node.get(id_prop, "")).strip()
+            if not node_id:
+                continue
+            if node_id in seen_ids:
+                continue
+            seen_ids.add(node_id)
+            if node_def.name == "CorrectiveAction":
+                source_ref = str(node.get("source_reference", "")).strip()
+                if not source_ref:
+                    source_page = node.get("source_page")
+                    if source_page:
+                        node["source_reference"] = f"PAGE {source_page}"
+            deduped.append(node)
+        nodes[node_def.name] = deduped
+
+    primary_asset_type = _primary_asset_node_name(schema)
+    if primary_asset_type and not nodes.get(primary_asset_type):
+        if primary_asset_type == "Asset":
+            nodes[primary_asset_type].append(
+                _default_asset_node(source_title, source_type)
+            )
+
+    relations = []
+    for rel in normalized.get("relations", []):
+        try:
+            relation = OntologyRelationInstance.model_validate(rel)
+        except Exception:
+            continue
+        if not _relation_exists(relations, relation):
+            relations.append(relation)
+
+    assets = nodes.get("Asset", [])
+    components = nodes.get("Component", [])
+    primary_asset_id = str((assets[0] if assets else {}).get("asset_id", "")).strip()
+    if primary_asset_id and components:
+        linked_component_ids = {
+            rel.to_id
+            for rel in relations
+            if rel.name == "HAS_COMPONENT" and rel.from_type == "Asset" and rel.to_type == "Component"
+        }
+        for component in components:
+            component_id = str(component.get("component_id", "")).strip()
+            if not component_id or component_id in linked_component_ids:
+                continue
+            relation = OntologyRelationInstance(
+                name="HAS_COMPONENT",
+                from_type="Asset",
+                from_id=primary_asset_id,
+                to_type="Component",
+                to_id=component_id,
+                evidence=[],
+            )
+            if not _relation_exists(relations, relation):
+                relations.append(relation)
+
+    if components:
+        affected_failure_mode_ids = {
+            rel.from_id
+            for rel in relations
+            if rel.name == "AFFECTS" and rel.from_type == "FailureMode" and rel.to_type == "Component"
+        }
+        for failure_mode in nodes.get("FailureMode", []):
+            failure_mode_id = str(failure_mode.get("failure_mode_id", "")).strip()
+            if not failure_mode_id or failure_mode_id in affected_failure_mode_ids:
+                continue
+            component_id = infer_component_match_for_failure_mode(
+                failure_mode_name=str(failure_mode.get("name", "")),
+                failure_mode_description=str(failure_mode.get("description", "")),
+                failure_mode_material_context=str(failure_mode.get("material_context", "")),
+                components=components,
+            )
+            if not component_id:
+                continue
+            relation = OntologyRelationInstance(
+                name="AFFECTS",
+                from_type="FailureMode",
+                from_id=failure_mode_id,
+                to_type="Component",
+                to_id=component_id,
+                evidence=[],
+            )
+            if not _relation_exists(relations, relation):
+                relations.append(relation)
+
+    normalized["source_type"] = source_type
+    normalized["source_title"] = source_title
+    normalized["relations"] = [rel.model_dump() for rel in relations]
+    return OntologyInstance.model_validate(normalized)
+
+
+def _apply_human_answers(
+    ontology: OntologyInstance,
+    answers: list[HumanBindingAnswer],
+) -> OntologyInstance:
+    updated = deepcopy(ontology.model_dump())
+    answer_map = {a.field_key: a.value for a in answers}
+    for node_type, node_list in updated["nodes"].items():
+        for node in node_list:
+            for key, value in answer_map.items():
+                # Wildcard key: applies to ALL nodes of this type missing the property.
+                # Format: "{node_type}::*::{prop_name}"
+                wildcard_match = re.match(rf"^{re.escape(node_type)}::\*::(.+)$", key)
+                if wildcard_match:
+                    prop_name = wildcard_match.group(1)
+                    if not node.get(prop_name):
+                        node[prop_name] = value
+                    continue
+                # Specific key: applies only to the exact node by id.
+                specific_match = re.match(rf"^{re.escape(node_type)}::(.+?)::(.+)$", key)
+                if not specific_match:
+                    continue
+                node_id, prop_name = specific_match.groups()
+                id_keys = [k for k in node.keys() if k.endswith("_id")]
+                if any(str(node.get(id_key)) == node_id for id_key in id_keys):
+                    node[prop_name] = value
+    return OntologyInstance.model_validate(updated)
+
+
+def _schema_node_map(schema: OntologySchemaDefinition) -> dict[str, Any]:
+    return {node.name: node for node in schema.nodes}
+
+
+def _schema_relation_map(schema: OntologySchemaDefinition) -> dict[str, OntologyRelationDefinition]:
+    return {rel.name: rel for rel in schema.relations}
+
+
+def _collect_node_index(ontology: OntologyInstance, schema: OntologySchemaDefinition) -> dict[str, set[str]]:
+    node_map = _schema_node_map(schema)
+    index: dict[str, set[str]] = {}
+    for node_type, items in ontology.nodes.items():
+        node_def = node_map.get(node_type)
+        if not node_def:
+            continue
+        id_prop = _node_id_property(node_def)
+        index[node_type] = {str(item.get(id_prop, "")).strip() for item in items if item.get(id_prop)}
+    return index
+
+
+def _make_human_field(
+    node_type: str,
+    node_id: str,
+    property_name: str,
+    reason: str,
+    prompt: str,
+    suggested_value: str = "",
+) -> HumanRequiredField:
+    return HumanRequiredField(
+        field_key=f"{node_type}::{node_id}::{property_name}",
+        prompt=prompt,
+        target_type=node_type,
+        target_id=node_id,
+        property_name=property_name,
+        reason=reason,
+        suggested_value=suggested_value,
+    )
+
+
+def _human_prompt_for_property(node_type: str, property_name: str, entity_label: str) -> tuple[str, str]:
+    readable_node = f"{node_type} {entity_label}".strip()
+    prompts = {
+        "brand": f"Provide the brand for {readable_node}.",
+        "model": f"Provide the model for {readable_node}.",
+        "asset_type": f"Provide the asset type for {readable_node}.",
+        "category": f"Provide the category for {readable_node}.",
+        "severity": f"Provide the severity for {readable_node}.",
+        "material_context": f"Provide the material context for {readable_node}.",
+        "source_type": f"Provide the source type for {readable_node}.",
+        "source_title": f"Provide the source title for {readable_node}.",
+        "source_reference": f"Provide the source reference for {readable_node} (for example PAGE 42).",
+        "code": f"Provide the machine error code value for {readable_node}.",
+    }
+    reasons = {
+        "source_reference": "Required by the export contract to preserve provenance.",
+        "severity": "Required to keep the symptom actionable during diagnosis.",
+    }
+    return (
+        prompts.get(property_name, f"Provide {property_name} for {readable_node}."),
+        reasons.get(property_name, "Required by ontology schema but missing from the draft."),
+    )
+
+
+def _coerce_nodes(raw_nodes: Any, schema: OntologySchemaDefinition) -> dict[str, list[dict[str, Any]]]:
+    node_defs = _schema_node_map(schema)
+    nodes = {name: [] for name in node_defs}
+    if not isinstance(raw_nodes, dict):
+        return nodes
+
+    for node_type, node_def in node_defs.items():
+        raw_items = raw_nodes.get(node_type, [])
+        if not isinstance(raw_items, list):
+            continue
+        id_prop = _node_id_property(node_def)
+        for item in raw_items:
+            if not isinstance(item, dict):
+                continue
+            normalized = {prop.name: item.get(prop.name, [] if prop.type == "array" else "") for prop in node_def.properties}
+            if not normalized.get(id_prop):
+                continue
+            nodes[node_type].append(normalized)
+    return nodes
+
+
+def _build_name_index(nodes: dict[str, list[dict[str, Any]]], schema: OntologySchemaDefinition) -> dict[str, dict[str, str]]:
+    index: dict[str, dict[str, str]] = {}
+    for node_type, items in nodes.items():
+        node_def = _schema_node_map(schema).get(node_type)
+        if not node_def:
+            continue
+        id_prop = _node_id_property(node_def)
+        resolved: dict[str, str] = {}
+        for item in items:
+            node_id = str(item.get(id_prop, "")).strip()
+            if not node_id:
+                continue
+            for key in ("name", "model", "brand", "manufacturer", "asset_type", id_prop):
+                value = str(item.get(key, "")).strip()
+                if value:
+                    resolved[value.lower()] = node_id
+        index[node_type] = resolved
+    return index
+
+
+def _resolve_node_id(node_type: str, raw_value: Any, name_index: dict[str, dict[str, str]]) -> str:
+    value = str(raw_value or "").strip()
+    if not value:
+        return ""
+    type_index = name_index.get(node_type, {})
+    return type_index.get(value.lower(), value)
+
+
+def _coerce_evidence(raw_evidence: Any) -> list[OntologyEvidence]:
+    if not isinstance(raw_evidence, list):
+        return []
+    evidence: list[OntologyEvidence] = []
+    for item in raw_evidence:
+        if not isinstance(item, dict):
+            continue
+        page = _extract_first_int(item.get("source_page"))
+        source_reference = str(item.get("source_reference", "")).strip()
+        if not source_reference and page:
+            source_reference = f"PAGE {page}"
+        evidence.append(OntologyEvidence(
+            source_page=page,
+            source_reference=source_reference,
+            quote=str(item.get("quote", "")).strip(),
+        ))
+    return evidence
+
+
+def _coerce_relations(
+    raw_relations: Any,
+    nodes: dict[str, list[dict[str, Any]]],
+    schema: OntologySchemaDefinition,
+) -> list[dict[str, Any]]:
+    if not isinstance(raw_relations, list):
+        return []
+    rel_defs = _schema_relation_map(schema)
+    name_index = _build_name_index(nodes, schema)
+    relations: list[dict[str, Any]] = []
+    for item in raw_relations:
+        if not isinstance(item, dict):
+            continue
+        rel_name = str(item.get("name") or item.get("type") or "").strip()
+        if not rel_name:
+            continue
+        rel_def = rel_defs.get(rel_name)
+        from_type = str(item.get("from_type") or item.get("domain") or (rel_def.domain if rel_def else "")).strip()
+        to_type = str(item.get("to_type") or item.get("range") or (rel_def.range if rel_def else "")).strip()
+        from_id = _resolve_node_id(from_type, item.get("from_id") or item.get("from") or item.get("source"), name_index)
+        to_id = _resolve_node_id(to_type, item.get("to_id") or item.get("to") or item.get("target"), name_index)
+        if not (rel_name and from_type and to_type and from_id and to_id):
+            continue
+        relations.append({
+            "name": rel_name,
+            "from_type": from_type,
+            "from_id": from_id,
+            "to_type": to_type,
+            "to_id": to_id,
+            "evidence": [ev.model_dump() for ev in _coerce_evidence(item.get("evidence", []))],
+        })
+    return relations
+
+
+def _coerce_raw_ontology_data(
+    data: dict[str, Any],
+    schema: OntologySchemaDefinition,
+    source_type: str,
+    source_title: str,
+) -> dict[str, Any]:
+    nodes = _coerce_nodes(data.get("nodes", {}), schema)
+    relations = _coerce_relations(data.get("relations", []), nodes, schema)
+    return {
+        "ontology_name": data.get("ontology_name", schema.ontology_name),
+        "version": data.get("version", schema.version),
+        "language": data.get("language", "en"),
+        "source_type": data.get("source_type", source_type),
+        "source_title": data.get("source_title", source_title),
+        "nodes": nodes,
+        "relations": relations,
+    }
+
+
+def _validate_schema(ontology: OntologyInstance, schema: OntologySchemaDefinition) -> tuple[list[PipelineIssue], list[HumanRequiredField]]:
+    issues: list[PipelineIssue] = []
+    human_required_fields: list[HumanRequiredField] = []
+    node_map = _schema_node_map(schema)
+    node_index = _collect_node_index(ontology, schema)
+    substantive_node_count = sum(
+        len(items)
+        for node_type, items in ontology.nodes.items()
+        if node_type != "Asset"
+    )
+
+    if substantive_node_count == 0:
+        issues.append(PipelineIssue(
+            severity="error",
+            code="empty_draft_content",
+            message="Ontology draft contains only the Asset node and no extracted diagnostic content.",
+            target_type="ontology",
+            fix_hint="Rerun the draft with broader page coverage or review the extraction prompt/output.",
+        ))
+
+    for node_type, items in ontology.nodes.items():
+        node_def = node_map.get(node_type)
+        if not node_def:
+            issues.append(PipelineIssue(
+                severity="error",
+                code="unknown_node_type",
+                message=f"Unknown node type {node_type}.",
+                target_type=node_type,
+            ))
+            continue
+
+        id_prop = _node_id_property(node_def)
+        seen_ids: set[str] = set()
+        for item in items:
+            node_id = str(item.get(id_prop, "")).strip()
+            if not node_id:
+                issues.append(PipelineIssue(
+                    severity="error",
+                    code="missing_id",
+                    message=f"{node_type} is missing unique identifier {id_prop}.",
+                    target_type=node_type,
+                    property_name=id_prop,
+                ))
+                continue
+            if node_id in seen_ids:
+                issues.append(PipelineIssue(
+                    severity="error",
+                    code="duplicate_id",
+                    message=f"Duplicate {node_type} identifier {node_id}.",
+                    target_type=node_type,
+                    target_id=node_id,
+                    property_name=id_prop,
+                ))
+                continue
+            seen_ids.add(node_id)
+
+            for prop in node_def.properties:
+                val = item.get(prop.name)
+                if prop.required and (val is None or (isinstance(val, str) and not val.strip())):
+                    if prop.name == id_prop:
+                        issues.append(PipelineIssue(
+                            severity="error",
+                            code="missing_id",
+                            message=f"{node_type} is missing unique identifier {id_prop}.",
+                            target_type=node_type,
+                            target_id=node_id,
+                            property_name=id_prop,
+                            fix_hint="Regenerate the draft or repair the node identity before exporting.",
+                        ))
+                        continue
+
+                    entity_label = str(item.get("name") or node_id or node_type).strip()
+                    prompt, reason = _human_prompt_for_property(node_type, prop.name, entity_label)
+                    suggested_value = ""
+                    if prop.name == "source_type":
+                        suggested_value = str(ontology.source_type or "").strip()
+                    elif prop.name == "source_title":
+                        suggested_value = str(ontology.source_title or "").strip()
+                    elif prop.name == "source_reference" and item.get("source_page"):
+                        suggested_value = f"PAGE {item['source_page']}"
+
+                    human_required_fields.append(_make_human_field(
+                        node_type=node_type,
+                        node_id=node_id,
+                        property_name=prop.name,
+                        reason=reason,
+                        prompt=prompt,
+                        suggested_value=suggested_value,
+                    ))
+
+    relation_defs = {rel.name: rel for rel in schema.relations}
+    for rel in ontology.relations:
+        rel_def: OntologyRelationDefinition | None = relation_defs.get(rel.name)
+        if rel_def is None:
+            issues.append(PipelineIssue(
+                severity="error",
+                code="unknown_relation",
+                message=f"Unknown relation {rel.name}.",
+                target_type="relation",
+                target_id=rel.name,
+            ))
+            continue
+        if rel.from_type != rel_def.domain or rel.to_type != rel_def.range:
+            issues.append(PipelineIssue(
+                severity="error",
+                code="relation_domain_range_mismatch",
+                message=f"{rel.name} must connect {rel_def.domain} -> {rel_def.range}.",
+                target_type="relation",
+                target_id=rel.name,
+            ))
+        if rel.from_id not in node_index.get(rel.from_type, set()):
+            issues.append(PipelineIssue(
+                severity="error",
+                code="relation_missing_source",
+                message=f"Relation {rel.name} references missing source node {rel.from_id}.",
+                target_type="relation",
+                target_id=rel.name,
+            ))
+        if rel.to_id not in node_index.get(rel.to_type, set()):
+            issues.append(PipelineIssue(
+                severity="error",
+                code="relation_missing_target",
+                message=f"Relation {rel.name} references missing target node {rel.to_id}.",
+                target_type="relation",
+                target_id=rel.name,
+            ))
+
+    # Deduplicate by (node_type, property_name): if multiple nodes of the same type
+    # are missing the same property, show a single field that applies to all of them.
+    deduped_human_fields: dict[str, HumanRequiredField] = {}
+    for field in human_required_fields:
+        group_key = f"{field.target_type}::*::{field.property_name}"
+        if group_key not in deduped_human_fields:
+            # Represent the group with a wildcard key so _apply_human_answers broadcasts the value.
+            grouped = field.model_copy(update={"field_key": group_key, "target_id": "*"})
+            deduped_human_fields[group_key] = grouped
+    return issues, list(deduped_human_fields.values())
+
+
+def _call_extractor_llm(state: PipelineState) -> PipelineState:
+    started = time.perf_counter()
+    system_prompt = build_ontology_extraction_prompt(
+        schema_json=state["schema_json"],
+        source_type=state["source_type"],
+        source_title=state["source_title"],
+    )
+    cfg = _ontology_cfg(get_ontology_config().get("extraction_max_output_tokens", 8000))
+    enforce_llm_limits(
+        phase="Ontology draft",
+        cfg=cfg,
+        system_text=system_prompt,
+        user_text=state["text_with_pages"],
+    )
+    client = _get_client(cfg["timeout_seconds"])
+    try:
+        response = client.chat.completions.create(
+            model=state["model_name"] or settings.MODEL_NAME,
+            temperature=0.0,
+            max_completion_tokens=cfg["max_output_tokens"],
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": state["text_with_pages"]},
+            ],
+        )
+    except Exception as exc:
+        msg = str(exc).lower()
+        if "timeout" in msg:
+            raise RuntimeError(llm_timeout_message("Ontology draft", cfg["timeout_seconds"])) from exc
+        raise RuntimeError(f"Ontology draft failed before completion: {exc}") from exc
+    raw = response.choices[0].message.content or "{}"
+    usage = usage_from_response(response, "ontology_draft")
+    data = _extract_json_object(raw)
+    ontology = OntologyInstance.model_validate(_coerce_raw_ontology_data(
+        data=data,
+        schema=state["schema"],
+        source_type=state["source_type"],
+        source_title=state["source_title"],
+    ))
+    logger.info("[ontology] Extraction draft generated (%.1fs)", time.perf_counter() - started)
+    return {
+        "ontology": ontology,
+        "llm_usage": [*state.get("llm_usage", []), usage],
+    }
+
+
+def _normalize_node(state: PipelineState) -> PipelineState:
+    ontology = _normalize_ontology_instance(
+        ontology=state["ontology"],
+        schema=state["schema"],
+        source_type=state["source_type"],
+        source_title=state["source_title"],
+    )
+    return {"ontology": ontology}
+
+
+def _semantic_validate_node(state: PipelineState) -> PipelineState:
+    loop_cfg = get_reflective_loop_config()
+    max_retries = int(loop_cfg.get("max_retries", 2))
+    if max_retries == 0:
+        logger.info("[ontology] Semantic validation skipped (max_retries=0)")
+        return {"semantic_issues": []}
+
+    started = time.perf_counter()
+    system_prompt = build_ontology_validation_prompt(state["schema_json"])
+    user_payload = (
+        "MANUAL TEXT\n"
+        f"{state['text_with_pages']}\n\n"
+        "ONTOLOGY INSTANCE\n"
+        f"{json.dumps(state['ontology'].model_dump(), ensure_ascii=False, indent=2)}"
+    )
+    cfg = _ontology_cfg(get_ontology_config().get("validation_max_output_tokens", 3000))
+    enforce_llm_limits(
+        phase="Ontology semantic validation",
+        cfg=cfg,
+        system_text=system_prompt,
+        user_text=user_payload,
+    )
+    client = _get_client(cfg["timeout_seconds"])
+    try:
+        response = client.chat.completions.create(
+            model=state["model_name"] or settings.MODEL_NAME,
+            temperature=0.0,
+            max_completion_tokens=cfg["max_output_tokens"],
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_payload},
+            ],
+        )
+    except Exception as exc:
+        msg = str(exc).lower()
+        if "timeout" in msg:
+            raise RuntimeError(llm_timeout_message("Ontology semantic validation", cfg["timeout_seconds"])) from exc
+        raise RuntimeError(f"Ontology semantic validation failed before completion: {exc}") from exc
+    raw = response.choices[0].message.content or '{"issues":[]}'
+    usage = usage_from_response(response, "ontology_validation")
+    try:
+        data = _extract_json_object(raw)
+    except Exception:
+        logger.warning("[ontology] Failed to parse semantic validation response")
+        return {
+            "semantic_issues": [],
+            "llm_usage": [*state.get("llm_usage", []), usage],
+        }
+
+    issues = []
+    for item in data.get("issues", []):
+        if not isinstance(item, dict):
+            continue
+        issues.append(PipelineIssue.model_validate({
+            "severity": str(item.get("severity") or "warning"),
+            "code": str(item.get("code") or "semantic_issue"),
+            "message": str(item.get("message") or ""),
+            "target_type": str(item.get("target_type") or ""),
+            "target_id": str(item.get("target_id") or ""),
+            "property_name": str(item.get("property_name") or ""),
+            "fix_hint": str(item.get("fix_hint") or ""),
+        }))
+    logger.info("[ontology] Semantic validation completed (%.1fs)", time.perf_counter() - started)
+    return {
+        "semantic_issues": issues,
+        "llm_usage": [*state.get("llm_usage", []), usage],
+    }
+
+
+def _schema_validate_node(state: PipelineState) -> PipelineState:
+    issues, human_fields = _validate_schema(state["ontology"], state["schema"])
+    return {
+        "schema_issues": issues,
+        "human_required_fields": human_fields,
+    }
+
+
+def _graph_validate_node(state: PipelineState) -> PipelineState:
+    """Run structural graph analysis using NetworkX (Step 2 of agentic roadmap)."""
+    from backend.services.graph_reasoning import run_graph_analysis
+    graph_issues, suggested_relations = run_graph_analysis(state["ontology"], state["schema"])
+    return {
+        "graph_issues": graph_issues,
+        "suggested_relations": suggested_relations,
+    }
+
+
+def _format_issues_summary(issues: list[PipelineIssue]) -> str:
+    lines = []
+    for i, issue in enumerate(issues, start=1):
+        parts = [f"{i}. [{issue.severity.upper()}] {issue.code}: {issue.message}"]
+        if issue.target_type:
+            parts.append(f"   target_type: {issue.target_type}")
+        if issue.target_id:
+            parts.append(f"   target_id: {issue.target_id}")
+        if issue.property_name:
+            parts.append(f"   property_name: {issue.property_name}")
+        if issue.fix_hint:
+            parts.append(f"   fix_hint: {issue.fix_hint}")
+        lines.append("\n".join(parts))
+    return "\n\n".join(lines)
+
+
+def _re_extract_node(state: PipelineState) -> PipelineState:
+    """Re-run extraction incorporating structured feedback from semantic validation."""
+    started = time.perf_counter()
+    loop_cfg = get_reflective_loop_config()
+    re_extract_max_tokens = int(loop_cfg.get("re_extract_max_output_tokens", 9000))
+
+    issues_to_fix = state.get("last_issues", [])
+    issues_summary = _format_issues_summary(issues_to_fix)
+    previous_ontology_json = json.dumps(
+        state["ontology"].model_dump(), ensure_ascii=False, indent=2
+    )
+    system_prompt = build_ontology_re_extraction_prompt(
+        schema_json=state["schema_json"],
+        source_type=state["source_type"],
+        source_title=state["source_title"],
+        issues_summary=issues_summary,
+        previous_ontology_json=previous_ontology_json,
+    )
+    cfg = _ontology_cfg(re_extract_max_tokens)
+    enforce_llm_limits(
+        phase="Ontology re-extraction",
+        cfg=cfg,
+        system_text=system_prompt,
+        user_text=state["text_with_pages"],
+    )
+    client = _get_client(cfg["timeout_seconds"])
+    retry_count = state.get("retry_count", 0)
+    logger.info("[ontology] Re-extraction attempt %d/%d", retry_count, get_reflective_loop_config().get("max_retries", 2))
+    try:
+        response = client.chat.completions.create(
+            model=state["model_name"] or settings.MODEL_NAME,
+            temperature=0.0,
+            max_completion_tokens=cfg["max_output_tokens"],
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": state["text_with_pages"]},
+            ],
+        )
+    except Exception as exc:
+        msg = str(exc).lower()
+        if "timeout" in msg:
+            raise RuntimeError(llm_timeout_message("Ontology re-extraction", cfg["timeout_seconds"])) from exc
+        raise RuntimeError(f"Ontology re-extraction failed before completion: {exc}") from exc
+    raw = response.choices[0].message.content or "{}"
+    usage = usage_from_response(response, "ontology_re_extraction")
+    data = _extract_json_object(raw)
+    ontology = OntologyInstance.model_validate(_coerce_raw_ontology_data(
+        data=data,
+        schema=state["schema"],
+        source_type=state["source_type"],
+        source_title=state["source_title"],
+    ))
+    logger.info("[ontology] Re-extraction completed (%.1fs)", time.perf_counter() - started)
+    return {
+        "ontology": ontology,
+        "retry_count": retry_count + 1,
+        "llm_usage": [*state.get("llm_usage", []), usage],
+    }
+
+
+def _flag_human_review_node(state: PipelineState) -> PipelineState:
+    """Mark the pipeline state for human review after max retries are exhausted."""
+    issues = state.get("last_issues", [])
+    logger.warning(
+        "[ontology] Max retries exhausted (%d issues unresolved). Flagging for human review.",
+        len(issues),
+    )
+    return {"needs_human_review": True}
+
+
+def _route_after_semantic_validate(state: PipelineState) -> str:
+    """Conditional routing after semantic_validate.
+
+    - No actionable issues  → schema_validate (happy path)
+    - Issues found, retries remaining → re_extract
+    - Issues found, retries exhausted → human_review
+    """
+    loop_cfg = get_reflective_loop_config()
+    max_retries = int(loop_cfg.get("max_retries", 2))
+    if max_retries == 0:
+        # Reflective loop disabled — preserve original linear behaviour.
+        return "schema_validate"
+
+    retry_on_severity = str(loop_cfg.get("retry_on_severity", "error")).lower()
+    issues: list[PipelineIssue] = state.get("semantic_issues", [])
+
+    # Filter issues by configured severity threshold.
+    severity_rank = {"error": 2, "warning": 1}
+    threshold = severity_rank.get(retry_on_severity, 2)
+    actionable = [
+        issue for issue in issues
+        if severity_rank.get(str(issue.severity).lower(), 0) >= threshold
+    ]
+
+    if not actionable:
+        return "schema_validate"
+
+    retry_count = state.get("retry_count", 0)
+    if retry_count < max_retries:
+        return "re_extract"
+
+    return "human_review"
+
+
+def _update_last_issues(state: PipelineState) -> PipelineState:
+    """Carry semantic_issues into last_issues so the re_extract node can read them."""
+    return {"last_issues": state.get("semantic_issues", [])}
+
+
+def _build_graph():
+    graph = StateGraph(PipelineState)
+
+    # Core nodes
+    graph.add_node("extract", _call_extractor_llm)
+    graph.add_node("normalize", _normalize_node)
+    graph.add_node("semantic_validate", _semantic_validate_node)
+    graph.add_node("capture_issues", _update_last_issues)
+    graph.add_node("schema_validate", _schema_validate_node)
+    graph.add_node("graph_validate", _graph_validate_node)
+
+    # Reflective loop nodes
+    graph.add_node("re_extract", _re_extract_node)
+    graph.add_node("human_review", _flag_human_review_node)
+
+    # Entry point and linear spine
+    graph.set_entry_point("extract")
+    graph.add_edge("extract", "normalize")
+    graph.add_edge("normalize", "semantic_validate")
+
+    # Capture issues before routing so re_extract can access them even after state changes
+    graph.add_edge("semantic_validate", "capture_issues")
+
+    # Conditional routing after semantic validation
+    graph.add_conditional_edges(
+        "capture_issues",
+        _route_after_semantic_validate,
+        {
+            "schema_validate": "schema_validate",
+            "re_extract": "re_extract",
+            "human_review": "human_review",
+        },
+    )
+
+    # Re-extraction feeds back into normalize → semantic_validate
+    graph.add_edge("re_extract", "normalize")
+
+    # Human review routes to schema_validate
+    graph.add_edge("human_review", "schema_validate")
+
+    # Schema validation always flows into graph reasoning
+    graph.add_edge("schema_validate", "graph_validate")
+    graph.add_edge("graph_validate", END)
+
+    return graph.compile()
+
+
+_GRAPH = _build_graph()
+
+
+def build_initial_ontology(
+    text_with_pages: str,
+    source_type: str,
+    source_title: str,
+    target_language: str,
+    model_name: str,
+) -> tuple[OntologyPipelineResponse, dict[str, Any]]:
+    schema = load_ontology_schema()
+    normalized_target_language = normalize_language_code(target_language)
+    result = _GRAPH.invoke({
+        "text_with_pages": text_with_pages,
+        "source_type": source_type,
+        "source_title": source_title,
+        "target_language": normalized_target_language,
+        "model_name": model_name,
+        "schema": schema,
+        "schema_json": dump_ontology_schema_json(),
+        "ontology": _empty_instance(schema, source_type, source_title),
+        "semantic_issues": [],
+        "schema_issues": [],
+        "human_required_fields": [],
+        # Reflective loop initial state
+        "retry_count": 0,
+        "last_issues": [],
+        "needs_human_review": False,
+        # Graph reasoning initial state
+        "graph_issues": [],
+        "suggested_relations": [],
+        "llm_usage": [],
+    })
+    ontology = result["ontology"]
+    semantic_issues = result.get("semantic_issues", [])
+    schema_issues = result.get("schema_issues", [])
+    human_fields = result.get("human_required_fields", [])
+    retry_count = result.get("retry_count", 0)
+    needs_human_review = result.get("needs_human_review", False)
+    graph_issues = result.get("graph_issues", [])
+    suggested_relations = result.get("suggested_relations", [])
+    llm_usage = result.get("llm_usage", [])
+    is_schema_compliant = not schema_issues and not human_fields
+
+    if needs_human_review:
+        status = "needs_human_review"
+    elif schema_issues:
+        status = "blocked"
+    elif human_fields:
+        status = "needs_human"
+    else:
+        status = "ready"
+
+    if retry_count:
+        logger.info("[ontology] Reflective loop completed: %d re-extraction attempt(s).", retry_count)
+
+    response = OntologyPipelineResponse(
+        status=status,
+        ontology=ontology,
+        semantic_issues=semantic_issues,
+        schema_issues=schema_issues,
+        human_required_fields=human_fields,
+        is_schema_compliant=is_schema_compliant,
+        is_ready_for_human_review=not schema_issues,
+        retry_count=retry_count,
+        graph_issues=graph_issues,
+        suggested_relations=suggested_relations,
+    )
+    return response, {
+        **aggregate_usage(llm_usage),
+        "retry_count": retry_count,
+    }
+
+
+def apply_human_binding(
+    ontology: OntologyInstance,
+    answers: list[HumanBindingAnswer],
+) -> OntologyPipelineResponse:
+    schema = load_ontology_schema()
+    updated = _apply_human_answers(ontology, answers)
+    updated = _normalize_ontology_instance(
+        ontology=updated,
+        schema=schema,
+        source_type=updated.source_type,
+        source_title=updated.source_title,
+    )
+    schema_issues, human_fields = _validate_schema(updated, schema)
+    return OntologyPipelineResponse(
+        status="blocked" if schema_issues else ("needs_human" if human_fields else "ready"),
+        ontology=updated,
+        semantic_issues=[],
+        schema_issues=schema_issues,
+        human_required_fields=human_fields,
+        is_schema_compliant=not schema_issues and not human_fields,
+        is_ready_for_human_review=not schema_issues,
+    )
+
+
+def validate_ontology_instance(
+    ontology: OntologyInstance,
+) -> tuple[list[PipelineIssue], list[HumanRequiredField]]:
+    schema = load_ontology_schema()
+    normalized = _normalize_ontology_instance(
+        ontology=ontology,
+        schema=schema,
+        source_type=ontology.source_type,
+        source_title=ontology.source_title,
+    )
+    return _validate_schema(normalized, schema)
+
+
+def ontology_export_payload(ontology: OntologyInstance) -> str:
+    from backend.services.ontology_export_store import prepare_exported_ontology
+
+    return json.dumps(
+        prepare_exported_ontology(ontology.model_dump()),
+        indent=2,
+        ensure_ascii=False,
+    )

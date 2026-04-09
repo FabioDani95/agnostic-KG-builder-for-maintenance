@@ -1,0 +1,76 @@
+# ─── KG Diagnostic Extraction - Configuration ───
+
+shared_models: &strong_models
+  - id: gpt-5.4
+    label: GPT-5.4
+  - id: gpt-5.4-mini
+    label: GPT-5.4 Mini
+  - id: gpt-5.4-nano
+    label: GPT-5.4 Nano
+  - id: gpt-5.4-pro
+    label: GPT-5.4 Pro
+
+scoping:
+  # Maximum number of pages to read for scoping analysis.
+  # The engine will always read first N pages + any ToC/keyword pages found.
+  max_pages: 12
+
+  # Small-document threshold: skip cut plan if total pages <= this value.
+  small_doc_threshold: 15
+
+  # Timeout in seconds for the scoping LLM call.
+  timeout_seconds: 120
+
+  # Guardrails to avoid overspending on large prompts.
+  max_input_chars: 90000
+  estimated_max_input_tokens: 22000
+  max_output_tokens: 2200
+
+  # Available models for scoping (shown in UI dropdown).
+  models: *strong_models
+
+extraction:
+  # Timeout in seconds for the extraction LLM call.
+  timeout_seconds: 300
+
+  # Guardrails to avoid overspending on large prompts.
+  max_input_chars: 220000
+  estimated_max_input_tokens: 55000
+  max_output_tokens: 6500
+
+  # Available models for extraction (shown in UI dropdown).
+  models: *strong_models
+
+ontology:
+  # Number of leading pages always included in ontology extraction regardless of cut-plan.
+  # These pages typically contain component diagrams/parts lists that the cut-plan excludes.
+  # Set to 0 to disable.
+  always_include_first_pages: 5
+
+  # Timeout in seconds for each ontology LLM call.
+  timeout_seconds: 600
+
+  # Guardrails for ontology drafting and validation.
+  # GPT-5.x supports large context windows — raised limits accordingly.
+  max_input_chars: 600000
+  estimated_max_input_tokens: 150000
+  extraction_max_output_tokens: 12000
+  validation_max_output_tokens: 4000
+
+  # Maximum pages per ontology extraction chunk.
+  # Keeps each LLM call focused — large sections are sub-divided automatically.
+  # 30 pages ≈ a focused chapter. Raise to 50 if you want fewer, larger chunks.
+  max_pages_per_chunk: 30
+
+reflective_loop:
+  # Maximum number of automatic re-extraction attempts before escalating to human review.
+  # Set to 0 to disable the loop and fall back to the linear pipeline.
+  max_retries: 0
+
+  # Minimum severity level of semantic issues that trigger a retry ("error" or "warning").
+  # Issues below this severity are logged but do not trigger re-extraction.
+  retry_on_severity: "error"
+
+  # Max output tokens for the re-extraction LLM call.
+  # Slightly higher than the initial extraction to accommodate the feedback payload.
+  re_extract_max_output_tokens: 9000

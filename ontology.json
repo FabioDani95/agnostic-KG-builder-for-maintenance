@@ -1,0 +1,136 @@
+{
+  "metadata": {
+    "product_name": "Macchina per caffè espresso Alex Duetto 3.0",
+    "product_short_name": "Alex Duetto 3.0",
+    "product_type": "macchina per caff espresso",
+    "domain_topics": [
+      "macchina per caff espresso"
+    ],
+    "version": "V0",
+    "file_version": "V0",
+    "total_nodes": 10,
+    "total_relationships": 6
+  },
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "asset_alex_duetto_30_espresso_machine",
+        "name": "Macchina per caffè espresso Alex Duetto 3.0",
+        "description": "Macchina per caffè espresso descritta nel manuale d'uso.",
+        "brand": "Nespresso",
+        "model": "Alex Duetto 3.0",
+        "asset_type": "macchina per caff espresso"
+      },
+      {
+        "asset_id": "ASSET-001",
+        "name": "Alex Duetto 3.0 Espresso Machine",
+        "description": "Alex Duetto 3.0 Espresso Machine",
+        "brand": "Nespresso",
+        "model": "V3",
+        "asset_type": "alex duetto 3.0 espresso machine"
+      }
+    ],
+    "Component": [],
+    "Symptom": [
+      {
+        "symptom_id": "SYM-001",
+        "name": "Prestazioni della macchina compromesse",
+        "description": "Le prestazioni della macchina possono risultare influenzate.",
+        "severity": "Medium"
+      },
+      {
+        "symptom_id": "SYM-002",
+        "name": "Macchina non riscalda",
+        "description": "La macchina non riscalda.",
+        "severity": "Critical"
+      }
+    ],
+    "FailureMode": [
+      {
+        "failure_mode_id": "FM-001",
+        "name": "Uso di detergenti non raccomandati",
+        "description": "L'uso di altri detergenti può influire sulle prestazioni della macchina.",
+        "material_context": "Detergente per macchina espresso"
+      },
+      {
+        "failure_mode_id": "FM-002",
+        "name": "Acqua della macchina chiusa",
+        "description": "L’acqua verso la macchina è chiusa.",
+        "material_context": "Alimentazione acqua macchina"
+      },
+      {
+        "failure_mode_id": "FM-003",
+        "name": "Impostazione F.02 del PID errata",
+        "description": "L’impostazione F.02 del controllore PID non è impostata su 7 per modalità 15 amp o 5 per modalità 20 amp.",
+        "material_context": "Controllore PID"
+      },
+      {
+        "failure_mode_id": "FM-004",
+        "name": "Hi-limit della caldaia scattato",
+        "description": "Il limitatore hi-limit di una caldaia richiede il ripristino.",
+        "material_context": "Caldaia caffè / caldaia vapore"
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "CA-001",
+        "name": "Usare detergenti raccomandati",
+        "description": "Usare solo Puro Caff oppure Urnex Full Circle Espresso Machine Wash.",
+        "instruction_text": "1. Usare solo Puro Caff oppure Urnex Full Circle Espresso Machine Wash.",
+        "source_type": "Owner's Manual",
+        "source_title": "Alex Duetto 3.0 Espresso Machine",
+        "source_page": 17,
+        "source_reference": "PAGE 17"
+      },
+      {
+        "action_id": "CA-002",
+        "name": "Impostazione del parametro F.02",
+        "description": "Impostarla su 7 per modalità 15 amp oppure su 5 per modalità 20 amp.",
+        "instruction_text": "1. Impostarla su 7 per modalità 15 amp oppure su 5 per modalità 20 amp.",
+        "source_type": "Owner's Manual",
+        "source_title": "Alex Duetto 3.0 Espresso Machine",
+        "source_page": 23,
+        "source_reference": "PAGE 23"
+      }
+    ],
+    "ErrorCode": []
+  },
+  "relationships": [
+    {
+      "type": "MAY_INDICATE",
+      "from_id": "SYM-001",
+      "to_id": "FM-001",
+      "evidence": []
+    },
+    {
+      "type": "RESOLVED_BY",
+      "from_id": "FM-001",
+      "to_id": "CA-001",
+      "evidence": []
+    },
+    {
+      "type": "MAY_INDICATE",
+      "from_id": "SYM-002",
+      "to_id": "FM-002",
+      "evidence": []
+    },
+    {
+      "type": "MAY_INDICATE",
+      "from_id": "SYM-002",
+      "to_id": "FM-003",
+      "evidence": []
+    },
+    {
+      "type": "MAY_INDICATE",
+      "from_id": "SYM-002",
+      "to_id": "FM-004",
+      "evidence": []
+    },
+    {
+      "type": "RESOLVED_BY",
+      "from_id": "FM-003",
+      "to_id": "CA-002",
+      "evidence": []
+    }
+  ]
+}

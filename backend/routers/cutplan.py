@@ -1,0 +1,368 @@
+"""Endpoints for PDF cut-plan: propose and approve page selection."""
+
+from __future__ import annotations
+
+import json
+import logging
+import time
+
+from fastapi import APIRouter, HTTPException
+
+from backend.models import (
+    CutPlan, CutPlanApproval, CutPlanRequest,
+    PageRange, ProductInfo, SectionInfo,
+    StructuredToc, TocEntry,
+)
+from backend.routers.upload import pdf_store
+from backend.services.cutplan_service import (
+    filter_llm_sections,
+    filter_pages_by_language, find_toc_pages, keyword_scan,
+    merge_sections, normalize_product_info, sections_to_page_list,
+    select_toc_sections,
+)
+from backend.services.llm_service import call_openai_scoping
+from backend.services.pdf_service import format_text_with_pages
+from backend.prompts.scoping_prompt import (
+    build_toc_extraction_prompt, build_section_selection_prompt, build_product_id_prompt,
+)
+from backend.app_config import get_scoping_config, get_effective_small_doc_threshold
+from backend.services.run_metrics import record_stage_metrics, summarize_stage
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter()
+
+
+# ─── Response parsers ───
+
+
+def _clean_json(raw: str) -> str:
+    """Strip markdown fences from LLM output."""
+    cleaned = raw.strip()
+    if cleaned.startswith("```"):
+        cleaned = cleaned.split("\n", 1)[1] if "\n" in cleaned else cleaned[3:]
+    if cleaned.endswith("```"):
+        cleaned = cleaned.rsplit("```", 1)[0]
+    return cleaned.strip()
+
+
+def _parse_toc_response(raw: str) -> tuple[list[TocEntry], dict]:
+    """Parse LLM ToC extraction response into (toc_entries, product_info_raw)."""
+    try:
+        data = json.loads(_clean_json(raw))
+    except json.JSONDecodeError:
+        logger.warning("Failed to parse ToC extraction response: %s", raw[:200])
+        return [], {}
+
+    if not isinstance(data, dict):
+        return [], {}
+
+    product_info = data.get("product_info", {})
+
+    entries: list[TocEntry] = []
+    for item in data.get("toc_entries", []):
+        try:
+            entries.append(TocEntry(
+                title=str(item.get("title", "")),
+                manual_page=int(item["page"]),
+            ))
+        except (KeyError, ValueError, TypeError):
+            continue
+
+    return entries, product_info
+
+
+def _parse_section_response(
+    raw: str, page_offset: int, total_pages: int,
+) -> list[SectionInfo]:
+    """Parse LLM section selection response. Converts manual pages to absolute."""
+    try:
+        data = json.loads(_clean_json(raw))
+    except json.JSONDecodeError:
+        logger.warning("Failed to parse section selection response: %s", raw[:200])
+        return []
+
+    if not isinstance(data, dict):
+        return []
+
+    sections: list[SectionInfo] = []
+    for item in data.get("sections", []):
+        try:
+            manual_start = int(item["manual_page_start"])
+            manual_end = int(item["manual_page_end"])
+            abs_start = max(1, min(manual_start + page_offset, total_pages))
+            abs_end = max(abs_start, min(manual_end + page_offset, total_pages))
+            sections.append(SectionInfo(
+                name=str(item.get("name", "Unnamed section")),
+                page_range=PageRange(start=abs_start, end=abs_end),
+                manual_page_range=PageRange(start=manual_start, end=manual_end),
+                source="llm",
+                reasoning=str(item.get("reasoning", "")),
+            ))
+        except (KeyError, ValueError, TypeError):
+            continue
+
+    return sections
+
+
+# ─── Endpoints ───
+
+
+@router.post("/cut-plan", response_model=CutPlan)
+async def create_cut_plan(req: CutPlanRequest):
+    t0 = time.perf_counter()
+
+    if req.pdf_id not in pdf_store:
+        raise HTTPException(status_code=404, detail="PDF not found. Upload a PDF first.")
+
+    cfg = get_scoping_config()
+    small_doc_threshold = get_effective_small_doc_threshold()
+    timeout_seconds = cfg.get("timeout_seconds", 120)
+
+    store = pdf_store[req.pdf_id]
+    pages = store["pages"]
+    total_pages = len(pages)
+    page_offset = req.page_offset
+    scoping_usage_entries: list[dict] = []
+
+    logger.info("[scoping] Start — %d pages, offset=%d, timeout=%ds",
+                total_pages, page_offset, timeout_seconds)
+
+    # Small document → skip cut plan
+    if total_pages <= small_doc_threshold:
+        logger.info("[scoping] Small doc (%d <= %d), skipping (%.1fs)",
+                     total_pages, small_doc_threshold, time.perf_counter() - t0)
+        record_stage_metrics(
+            store,
+            "scoping",
+            summarize_stage(
+                "scoping",
+                t0,
+                [],
+                details={
+                    "total_pages": total_pages,
+                    "selected_pages": total_pages,
+                    "selected_sections": 0,
+                    "skipped": True,
+                    "page_offset": page_offset,
+                },
+            ),
+        )
+        return CutPlan(
+            pdf_id=req.pdf_id,
+            total_pages=total_pages,
+            sections=[],
+            pages_to_keep=[p["page_number"] for p in pages],
+            page_offset=page_offset,
+            skipped=True,
+        )
+
+    # ── STEP 1: Locate ToC (deterministic) ──
+    toc_found, toc_text, toc_start, toc_end = find_toc_pages(pages)
+    logger.info("[scoping] 1/4 ToC %s (%.1fs)",
+                f"found pp.{toc_start}-{toc_end}" if toc_found else "not found",
+                time.perf_counter() - t0)
+
+    structured_toc = None
+    product_info = None
+    llm_sections: list[SectionInfo] = []
+    rule_sections: list[SectionInfo] = []
+
+    if toc_found and toc_text:
+        # ── STEP 2: Extract structured ToC (LLM call 1) ──
+        first_pages = [p for p in pages if p["page_number"] <= 5]
+        first_pages_text = format_text_with_pages(first_pages)
+
+        toc_prompt = build_toc_extraction_prompt(
+            toc_start_page=toc_start,
+            toc_end_page=toc_end,
+            total_pages=total_pages,
+            toc_text=toc_text,
+            first_pages_text=first_pages_text,
+        )
+
+        try:
+            raw_toc, usage1 = call_openai_scoping(
+                toc_prompt, model_name=req.model_name, timeout=timeout_seconds,
+            )
+            scoping_usage_entries.append(usage1)
+            toc_entries, product_info_raw = _parse_toc_response(raw_toc)
+            logger.info("[scoping] 2/4 ToC extracted — %d entries, tokens=%s (%.1fs)",
+                        len(toc_entries), usage1, time.perf_counter() - t0)
+
+            if toc_entries:
+                structured_toc = StructuredToc(
+                    entries=toc_entries,
+                    toc_start_page=toc_start,
+                    toc_end_page=toc_end,
+                )
+
+                # Build ProductInfo
+                if product_info_raw:
+                    normalized_product_info = normalize_product_info(
+                        product_info_raw,
+                        filename=store.get("filename", ""),
+                    )
+                    product_info = ProductInfo(
+                        product_name=normalized_product_info.get("product_name", ""),
+                        document_type=normalized_product_info.get("document_type", ""),
+                        language=normalized_product_info.get("language", ""),
+                        page_count=total_pages,
+                    )
+                    store["source_type"] = product_info.document_type
+                    store["source_title"] = product_info.product_name
+
+                rule_sections = select_toc_sections(
+                    toc_entries=toc_entries,
+                    page_offset=page_offset,
+                    total_pages=total_pages,
+                )
+
+                # ── STEP 3: Select relevant sections (LLM call 2) ──
+                toc_json = json.dumps(
+                    [e.model_dump() for e in toc_entries], indent=2,
+                )
+                selection_prompt = build_section_selection_prompt(toc_json)
+
+                raw_sel, usage2 = call_openai_scoping(
+                    selection_prompt, model_name=req.model_name, timeout=timeout_seconds,
+                )
+                scoping_usage_entries.append(usage2)
+                llm_sections = filter_llm_sections(_parse_section_response(
+                    raw_sel, page_offset, total_pages,
+                ))
+                logger.info(
+                    "[scoping] 3/4 Sections selected — rule=%d llm=%d, tokens=%s (%.1fs)",
+                    len(rule_sections),
+                    len(llm_sections),
+                    usage2,
+                    time.perf_counter() - t0,
+                )
+                for s in rule_sections:
+                    logger.info("[scoping]   rule: %s pp.%d-%d (score check passed)", s.name, s.page_range.start, s.page_range.end)
+                for s in llm_sections:
+                    logger.info("[scoping]   llm: %s pp.%d-%d", s.name, s.page_range.start, s.page_range.end)
+
+        except Exception:
+            logger.exception("[scoping] LLM scoping call FAILED, falling back to keywords (%.1fs)",
+                             time.perf_counter() - t0)
+
+    # ── Fallback: no ToC found — identify product from first pages ──
+    if not product_info:
+        try:
+            first_pages = [p for p in pages if p["page_number"] <= 5]
+            first_pages_text = format_text_with_pages(first_pages)
+            product_id_prompt = build_product_id_prompt(first_pages_text)
+            raw_pid, usage_pid = call_openai_scoping(
+                product_id_prompt, model_name=req.model_name, timeout=timeout_seconds,
+            )
+            scoping_usage_entries.append(usage_pid)
+            try:
+                pid_data = json.loads(raw_pid.strip())
+            except Exception:
+                import re as _re
+                m = _re.search(r"\{.*\}", raw_pid, _re.DOTALL)
+                pid_data = json.loads(m.group(0)) if m else {}
+            if pid_data:
+                normalized_pid = normalize_product_info(pid_data, filename=store.get("filename", ""))
+                product_info = ProductInfo(
+                    product_name=normalized_pid.get("product_name", ""),
+                    document_type=normalized_pid.get("document_type", ""),
+                    language=normalized_pid.get("language", ""),
+                    page_count=total_pages,
+                )
+                store["source_type"] = product_info.document_type
+                store["source_title"] = product_info.product_name
+                logger.info("[scoping] Product identified from first pages: %s", product_info.product_name)
+        except Exception:
+            logger.warning("[scoping] Product identification from first pages failed — using filename")
+
+    kw_sections = keyword_scan(pages)
+    logger.info("[scoping] Keyword scan — %d sections found across %d pages", len(kw_sections), total_pages)
+    for s in kw_sections:
+        logger.info("[scoping]   keyword: %s pp.%d-%d", s.name, s.page_range.start, s.page_range.end)
+
+    # Fallback: if no ToC or no rule/LLM sections, use keyword scan
+    if not llm_sections and not rule_sections:
+        merged = merge_sections([], [], kw_sections)
+        logger.info("[scoping] Fallback keyword scan — %d sections (%.1fs)",
+                    len(merged), time.perf_counter() - t0)
+        for s in kw_sections:
+            logger.info("[scoping]   keyword: %s pp.%d-%d", s.name, s.page_range.start, s.page_range.end)
+    else:
+        merged = merge_sections(rule_sections, llm_sections, kw_sections)
+
+    # ── STEP 4: Language filter (deterministic) ──
+    all_pages = sections_to_page_list(merged)
+    filtered_pages = filter_pages_by_language(pages, all_pages)
+
+    # If language filter removed >50% of pages, skip it (probably not English-primary)
+    if len(filtered_pages) < len(all_pages) * 0.5:
+        logger.info("[scoping] 4/4 Language filter too aggressive (%d→%d), skipping",
+                    len(all_pages), len(filtered_pages))
+        filtered_pages = all_pages
+    else:
+        logger.info("[scoping] 4/4 Language filter: %d→%d pages (%.1fs)",
+                    len(all_pages), len(filtered_pages), time.perf_counter() - t0)
+
+    # Final fallback: keep everything if nothing selected
+    if not filtered_pages:
+        filtered_pages = [p["page_number"] for p in pages]
+
+    record_stage_metrics(
+        store,
+        "scoping",
+        summarize_stage(
+            "scoping",
+            t0,
+            scoping_usage_entries,
+            details={
+                "total_pages": total_pages,
+                "selected_pages": len(filtered_pages),
+                "selected_sections": len(merged),
+                "skipped": False,
+                "page_offset": page_offset,
+            },
+        ),
+    )
+
+    logger.info("[scoping] Done — %d sections, %d pages to keep out of %d (%.1fs)",
+                len(merged), len(filtered_pages), total_pages, time.perf_counter() - t0)
+
+    # Pre-save sections so they're available even before approve
+    store.setdefault("cut_plan", {})["sections"] = [
+        {"name": s.name, "start": s.page_range.start, "end": s.page_range.end, "source": s.source}
+        for s in merged
+    ]
+
+    return CutPlan(
+        pdf_id=req.pdf_id,
+        total_pages=total_pages,
+        sections=merged,
+        pages_to_keep=filtered_pages,
+        page_offset=page_offset,
+        toc=structured_toc,
+        product_info=product_info,
+    )
+
+
+@router.post("/cut-plan/approve")
+async def approve_cut_plan(req: CutPlanApproval):
+    if req.pdf_id not in pdf_store:
+        raise HTTPException(status_code=404, detail="PDF not found.")
+
+    if not req.pages_to_keep:
+        raise HTTPException(status_code=400, detail="At least one page must be selected.")
+
+    sections_for_store = [
+        {"name": s.name, "start": s.page_range.start, "end": s.page_range.end, "source": s.source}
+        for s in req.sections
+    ] if req.sections else pdf_store[req.pdf_id].get("cut_plan", {}).get("sections", [])
+
+    pdf_store[req.pdf_id]["cut_plan"] = {
+        "pages_to_keep": sorted(req.pages_to_keep),
+        "page_offset": req.page_offset,
+        "sections": sections_for_store,
+    }
+
+    return {"status": "ok"}
