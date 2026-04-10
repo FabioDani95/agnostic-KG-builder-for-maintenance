@@ -32,6 +32,18 @@ MODEL_PRICING = {
     },
 }
 
+AGENT_STAGE_MAP = {
+    "scoping": "scoping_agent",
+    "ontology": "ontology_draft_agent",
+    "extraction": "extraction_agent",
+    "validation": "validation_agent",
+    "coverage": "coverage_agent",
+    "grounding": "grounding_agent",
+    "conflict_resolution": "conflict_resolution_agent",
+    "refinement": "refiner_agent",
+    "export": "export",
+}
+
 
 def now_perf() -> float:
     return perf_counter()
@@ -246,6 +258,7 @@ def build_metrics_payload(store: dict[str, Any]) -> dict[str, Any]:
         "pricing_basis": metrics.get("pricing_basis", {}),
         "pricing_catalog": deepcopy(MODEL_PRICING),
         "stages": stages,
+        "agent_token_ledger": project_agent_token_ledger(store),
         "totals": totals,
         "nodes_by_type": nodes_by_type,
         "derived_kpis": {
@@ -255,3 +268,25 @@ def build_metrics_payload(store: dict[str, Any]) -> dict[str, Any]:
             "cost_per_extracted_triplet_usd": round((totals["estimated_cost_usd"] / extracted_triplets), 6) if extracted_triplets else 0.0,
         },
     }
+
+
+def project_agent_token_ledger(store: dict[str, Any]) -> dict[str, Any]:
+    """Project existing stage metrics into a Phase 1 per-agent token ledger."""
+    metrics = ensure_run_metrics(store)
+    stages = metrics.get("stages", {})
+    ledger: dict[str, dict[str, Any]] = {}
+    for stage_name, stage_data in stages.items():
+        agent_name = AGENT_STAGE_MAP.get(stage_name)
+        if not agent_name:
+            continue
+        ledger[agent_name] = {
+            "calls": int(stage_data.get("llm_calls", 0) or 0),
+            "prompt_tokens": int(stage_data.get("prompt_tokens", 0) or 0),
+            "completion_tokens": int(stage_data.get("completion_tokens", 0) or 0),
+            "cached_tokens": int(stage_data.get("cached_prompt_tokens", 0) or 0),
+            "total_tokens": int(stage_data.get("total_tokens", 0) or 0),
+            "estimated_cost": round(float(stage_data.get("estimated_cost_usd", 0) or 0), 6),
+            "models": list(stage_data.get("models", []) or []),
+            "stage": stage_name,
+        }
+    return ledger

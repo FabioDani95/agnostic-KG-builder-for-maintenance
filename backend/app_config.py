@@ -48,6 +48,31 @@ def get_pipeline_config() -> dict:
     return cfg
 
 
+def get_agents_config() -> dict:
+    return deepcopy(load_config().get("agents", {}))
+
+
+def get_agent_config(agent_name: str) -> dict:
+    return deepcopy((load_config().get("agents", {}) or {}).get(agent_name, {}))
+
+
+def get_supervisor_config() -> dict:
+    return deepcopy(load_config().get("supervisor", {}))
+
+
+def get_checkpointing_config() -> dict:
+    return deepcopy(load_config().get("checkpointing", {}))
+
+
+def get_validation_config() -> dict:
+    cfg = deepcopy(load_config().get("validation", {}))
+    cfg.setdefault("grounding_accept_threshold", 0.8)
+    cfg.setdefault("grounding_refine_threshold", 0.5)
+    cfg.setdefault("check_ontology_chain", True)
+    cfg.setdefault("check_page_attribution", True)
+    return cfg
+
+
 def reload_config() -> dict:
     """Force-reload from disk (e.g. after user edits the file)."""
     _load_raw.cache_clear()

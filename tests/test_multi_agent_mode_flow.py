@@ -1,0 +1,507 @@
+from fastapi.testclient import TestClient
+
+from backend import app_config
+from backend.main import app
+from backend.routers.upload import pdf_store
+from backend.services.run_metrics import ensure_run_metrics
+from backend.graph.store import seed_graph_state
+
+
+client = TestClient(app)
+
+
+def _sample_store(pdf_id: str) -> dict:
+    store = {
+        "pdf_id": pdf_id,
+        "filename": "manual.pdf",
+        "pages": [
+            {"page_number": 1, "text": "Troubleshooting content."},
+            {"page_number": 2, "text": "Corrective action content."},
+        ],
+        "page_count": 2,
+        "source_type": "Service manual",
+        "source_title": "Mock Robot",
+        "selected_models": {
+            "scoping": None,
+            "ontology_draft": None,
+            "extraction": None,
+        },
+    }
+    ensure_run_metrics(store)
+    seed_graph_state(store, pdf_id)
+    return store
+
+
+def _sample_triplet_payload() -> list[dict]:
+    return [
+        {
+            "symptom": {
+                "symptom_id": "SYM-001",
+                "name": "Robot does not start",
+                "description": "Startup failure",
+                "severity": "High",
+            },
+            "failure_modes": [
+                {
+                    "failure_mode_id": "FM-001",
+                    "name": "Power board fault",
+                    "description": "Board failure",
+                    "material_context": "Power board",
+                    "linked_symptom_id": "SYM-001",
+                },
+            ],
+            "corrective_actions": [
+                {
+                    "action_id": "CA-001",
+                    "name": "Replace power board",
+                    "description": "Replace faulty board",
+                    "instruction_text": "Install a new board and reboot.",
+                    "source_type": "Service manual",
+                    "source_title": "Mock Robot",
+                    "source_page": 1,
+                    "linked_failure_mode_id": "FM-001",
+                },
+            ],
+        },
+    ]
+
+
+def setup_function():
+    pdf_store.clear()
+    app_config._runtime_overrides.clear()
+
+
+def teardown_function():
+    pdf_store.clear()
+    app_config._runtime_overrides.clear()
+
+
+def test_cut_plan_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkeypatch):
+    app_config.apply_runtime_overrides({"pipeline_mode": "multi_agent"})
+    pdf_store["pdf-cut"] = _sample_store("pdf-cut")
+    called = {"wrapper": False}
+
+    def fake_agent(store, req):
+        called["wrapper"] = True
+        return {
+            "pdf_id": req.pdf_id,
+            "total_pages": 2,
+            "sections": [],
+            "pages_to_keep": [1, 2],
+            "page_offset": 0,
+            "toc": None,
+            "skipped": False,
+            "product_info": None,
+        }
+
+    monkeypatch.setattr("backend.routers.cutplan.run_scoping_agent", fake_agent)
+
+    response = client.post("/cut-plan", json={"pdf_id": "pdf-cut", "model_name": "gpt-5.4-nano", "page_offset": 0})
+
+    assert response.status_code == 200
+    assert called["wrapper"] is True
+    assert response.json()["pages_to_keep"] == [1, 2]
+    assert set(response.json().keys()) == {
+        "pdf_id",
+        "total_pages",
+        "sections",
+        "pages_to_keep",
+        "page_offset",
+        "toc",
+        "skipped",
+        "product_info",
+    }
+
+
+def test_ontology_draft_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkeypatch):
+    app_config.apply_runtime_overrides({"pipeline_mode": "multi_agent"})
+    pdf_store["pdf-ontology"] = _sample_store("pdf-ontology")
+    called = {"wrapper": False}
+
+    async def fake_agent(store, req):
+        called["wrapper"] = True
+        return {
+            "status": "ready",
+            "ontology": {
+                "ontology_name": "DiagnosticOntology",
+                "version": "1.0",
+                "language": "en",
+                "source_type": req.source_type,
+                "source_title": req.source_title,
+                "nodes": {
+                    "Asset": [],
+                    "Component": [],
+                    "Symptom": [],
+                    "FailureMode": [],
+                    "CorrectiveAction": [],
+                    "ErrorCode": [],
+                },
+                "relations": [],
+            },
+            "semantic_issues": [],
+            "schema_issues": [],
+            "human_required_fields": [],
+            "is_schema_compliant": True,
+            "is_ready_for_human_review": True,
+            "retry_count": 0,
+            "graph_issues": [],
+            "suggested_relations": [],
+        }
+
+    monkeypatch.setattr("backend.routers.ontology.run_ontology_draft_agent", fake_agent)
+
+    response = client.post("/ontology/draft", json={
+        "pdf_id": "pdf-ontology",
+        "source_type": "Service manual",
+        "source_title": "Mock Robot",
+        "model_name": "gpt-5.4",
+        "target_language": "en",
+    })
+
+    assert response.status_code == 200
+    assert called["wrapper"] is True
+    assert response.json()["status"] == "ready"
+    assert set(response.json().keys()) == {
+        "status",
+        "ontology",
+        "semantic_issues",
+        "schema_issues",
+        "human_required_fields",
+        "is_schema_compliant",
+        "is_ready_for_human_review",
+        "retry_count",
+        "graph_issues",
+        "suggested_relations",
+    }
+
+
+def test_extract_tables_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkeypatch):
+    app_config.apply_runtime_overrides({"pipeline_mode": "multi_agent"})
+    pdf_store["pdf-extract"] = _sample_store("pdf-extract")
+    called = {"wrapper": False}
+    validation = {"called": False}
+    advanced = {"coverage": False, "grounding": False, "conflict": False, "refiner": False}
+
+    def fake_agent(store, req):
+        called["wrapper"] = True
+        return {
+            "triplets": _sample_triplet_payload(),
+            "raw_symptom_table": "",
+            "raw_failure_mode_table": "",
+            "raw_corrective_action_table": "",
+        }
+
+    monkeypatch.setattr("backend.routers.extract.run_extraction_agent", fake_agent)
+    monkeypatch.setattr(
+        "backend.routers.extract.run_validation_agent",
+        lambda store: validation.update({"called": True}) or ([], {"total_entities": 0}),
+    )
+    monkeypatch.setattr("backend.routers.extract.run_coverage_agent", lambda store: advanced.update({"coverage": True}) or {})
+    monkeypatch.setattr("backend.routers.extract.run_grounding_agent", lambda store: advanced.update({"grounding": True}) or ([], []))
+    monkeypatch.setattr(
+        "backend.routers.extract.run_conflict_resolution_agent",
+        lambda store: advanced.update({"conflict": True}) or [],
+    )
+    monkeypatch.setattr(
+        "backend.routers.extract.run_refiner_agent",
+        lambda store: advanced.update({"refiner": True}) or ([], []),
+    )
+
+    response = client.post("/extract-tables", json={
+        "pdf_id": "pdf-extract",
+        "source_type": "Service manual",
+        "source_title": "Mock Robot",
+        "model_name": "gpt-5.4",
+        "pages_to_keep": [1, 2],
+        "target_language": "en",
+    })
+
+    assert response.status_code == 200
+    assert called["wrapper"] is True
+    assert validation["called"] is True
+    assert advanced == {"coverage": False, "grounding": False, "conflict": False, "refiner": False}
+    assert len(response.json()["triplets"]) == 1
+    assert set(response.json().keys()) == {
+        "triplets",
+        "raw_symptom_table",
+        "raw_failure_mode_table",
+        "raw_corrective_action_table",
+    }
+
+
+def test_extract_tables_runs_phase3_agents_when_enabled_and_preserves_shape(monkeypatch):
+    app_config.apply_runtime_overrides({"pipeline_mode": "multi_agent"})
+    pdf_store["pdf-phase3"] = _sample_store("pdf-phase3")
+    call_order: list[str] = []
+
+    def fake_extraction(store, req):
+        store["graph_state"]["selected_pages"] = [1, 2]
+        store["graph_state"]["cleaned_triplets"] = _sample_triplet_payload()
+        return {
+            "triplets": _sample_triplet_payload(),
+            "raw_symptom_table": "",
+            "raw_failure_mode_table": "",
+            "raw_corrective_action_table": "",
+        }
+
+    def fake_validation(store):
+        call_order.append("validation")
+        store["graph_state"]["entity_verdicts"] = [
+            {
+                "entity_id": "CA-001",
+                "entity_type": "CorrectiveAction",
+                "verdict": "needs_refinement",
+                "reasons": ["weak support"],
+                "source_page": 1,
+                "source_pages": [1],
+                "grounding_score": 0.6,
+                "agent": "ValidationAgent",
+                "advisory_only": True,
+            },
+        ]
+        store["graph_state"]["validation_summary"] = {
+            "total_entities": 1,
+            "accepted": 0,
+            "needs_refinement": 1,
+            "needs_human": 0,
+            "flagged_entities": 1,
+            "flagged_entity_ids": ["CA-001"],
+            "advisory_only": True,
+        }
+        return store["graph_state"]["entity_verdicts"], store["graph_state"]["validation_summary"]
+
+    def fake_coverage(store):
+        call_order.append("coverage")
+        store["graph_state"]["coverage_map"] = {
+            1: {
+                "has_content": True,
+                "extracted_entities": ["Robot does not start"],
+                "gap_type": "partially_covered",
+                "recommendation": "Review flagged entities.",
+            },
+        }
+        return store["graph_state"]["coverage_map"]
+
+    def fake_grounding(store):
+        call_order.append("grounding")
+        return [], store["graph_state"].get("entity_verdicts", [])
+
+    def fake_conflict(store):
+        call_order.append("conflict")
+        return []
+
+    def fake_refiner(store):
+        call_order.append("refiner")
+        store["graph_state"]["cleaned_triplets"][0]["corrective_actions"][0]["instruction_text"] = "Refined action text."
+        store["graph_state"]["refinement_log"] = [
+            {"entity_id": "CA-001", "attempt": 1, "result": "updated", "reasoning": "Refined deterministically."},
+        ]
+        return {
+            "attempted_entity_ids": ["CA-001"],
+            "changed_entity_ids": ["CA-001"],
+            "exhausted_entity_ids": [],
+            "refinement_log": store["graph_state"]["refinement_log"],
+        }
+
+    monkeypatch.setattr("backend.routers.extract.run_extraction_agent", fake_extraction)
+    monkeypatch.setattr("backend.routers.extract.run_validation_agent", fake_validation)
+    monkeypatch.setattr("backend.routers.extract.run_coverage_agent", fake_coverage)
+    monkeypatch.setattr("backend.routers.extract.run_grounding_agent", fake_grounding)
+    monkeypatch.setattr("backend.routers.extract.run_conflict_resolution_agent", fake_conflict)
+    monkeypatch.setattr("backend.routers.extract.run_refiner_agent", fake_refiner)
+    monkeypatch.setattr(
+        "backend.routers.extract.get_agents_config",
+        lambda: {
+            "validation": {"enabled": True},
+            "coverage": {"enabled": True},
+            "grounding": {"enabled": True},
+            "conflict_resolution": {"enabled": True},
+            "refiner": {"enabled": True},
+        },
+    )
+
+    response = client.post("/extract-tables", json={
+        "pdf_id": "pdf-phase3",
+        "source_type": "Service manual",
+        "source_title": "Mock Robot",
+        "model_name": "gpt-5.4",
+        "pages_to_keep": [1, 2],
+        "target_language": "en",
+    })
+
+    assert response.status_code == 200
+    assert call_order == [
+        "validation",
+        "coverage",
+        "grounding",
+        "refiner",
+        "validation",
+        "grounding",
+        "conflict",
+    ]
+    assert response.json()["triplets"][0]["corrective_actions"][0]["instruction_text"] == "Refined action text."
+    assert set(response.json().keys()) == {
+        "triplets",
+        "raw_symptom_table",
+        "raw_failure_mode_table",
+        "raw_corrective_action_table",
+    }
+
+
+def test_generate_json_reads_ontology_from_graph_state_in_multi_agent(monkeypatch):
+    app_config.apply_runtime_overrides({"pipeline_mode": "multi_agent"})
+    store = _sample_store("pdf-generate")
+    store["graph_state"]["ontology_pipeline"] = {
+        "ontology": {
+            "ontology_name": "DiagnosticOntology",
+            "version": "1.0",
+            "language": "en",
+            "source_type": "Service manual",
+            "source_title": "Graph State Robot",
+            "nodes": {
+                "Asset": [],
+                "Component": [],
+                "Symptom": [],
+                "FailureMode": [],
+                "CorrectiveAction": [],
+                "ErrorCode": [],
+            },
+            "relations": [],
+        },
+        "schema_issues": [],
+        "human_required_fields": [],
+    }
+    pdf_store["pdf-generate"] = store
+
+    captured = {}
+
+    def fake_merge(base_ontology, validated_triplets):
+        captured["base_ontology"] = base_ontology
+        return {
+            "ontology_name": "DiagnosticOntology",
+            "version": "1.0",
+            "language": "en",
+            "source_type": "Service manual",
+            "source_title": "Graph State Robot",
+            "nodes": {
+                "Asset": [],
+                "Component": [],
+                "Symptom": [],
+                "FailureMode": [],
+                "CorrectiveAction": [],
+                "ErrorCode": [],
+            },
+            "relations": [],
+        }
+
+    monkeypatch.setattr("backend.routers.generate.merge_validated_triplets", fake_merge)
+    monkeypatch.setattr("backend.routers.generate.validate_ontology_instance", lambda ontology: ([], []))
+    monkeypatch.setattr(
+        "backend.routers.generate.prepare_exported_ontology",
+        lambda ontology: {"metadata": {"version": "1.0"}, "nodes": {}, "relationships": []},
+    )
+    monkeypatch.setattr(
+        "backend.routers.generate.persist_exported_ontology",
+        lambda payload, pdf_id: {"target_path": "/tmp/mock_export.json", "filename": "mock_export.json"},
+    )
+
+    response = client.post("/generate-json", json={
+        "pdf_id": "pdf-generate",
+        "validated_triplets": _sample_triplet_payload(),
+        "target_language": "en",
+    })
+
+    assert response.status_code == 200
+    assert captured["base_ontology"]["source_title"] == "Graph State Robot"
+    assert store["graph_state"]["export_base"] == "ontology_draft"
+    assert response.headers["content-disposition"].endswith('filename=mock_export.json')
+
+
+def test_multi_agent_status_and_audit_endpoints_are_read_only(monkeypatch):
+    app_config.apply_runtime_overrides({"pipeline_mode": "multi_agent"})
+    store = _sample_store("pdf-status")
+    run_id = store["graph_state"]["run_id"]
+    store["graph_state"]["current_phase"] = "validation"
+    store["graph_state"]["run_status"] = "awaiting_operator"
+    store["graph_state"]["next_step"] = "triplet_review"
+    store["graph_state"]["validation_summary"] = {
+        "total_entities": 3,
+        "accepted": 2,
+        "needs_refinement": 1,
+        "needs_human": 0,
+        "flagged_entities": 1,
+        "flagged_entity_ids": ["CA-001"],
+        "advisory_only": True,
+    }
+    store["graph_state"]["phase_history"] = [
+        {"phase": "scoping", "agent": "ScopingAgent", "timestamp": "2026-04-09T12:00:00Z", "decision": "selected 2 pages", "tokens_used": 10, "llm_calls": 1, "details": {}},
+        {"phase": "validation", "agent": "ValidationAgent", "timestamp": "2026-04-09T12:01:00Z", "decision": "accepted=2 needs_refinement=1 needs_human=0", "tokens_used": 0, "llm_calls": 0, "details": {}},
+    ]
+    store["graph_state"]["coverage_map"] = {
+        1: {
+            "has_content": True,
+            "extracted_entities": ["Robot does not start"],
+            "gap_type": "partially_covered",
+            "recommendation": "Review flagged entities.",
+            "review_required": True,
+        },
+    }
+    store["graph_state"]["grounding_results"] = [
+        {
+            "entity_id": "CA-001",
+            "entity_type": "CorrectiveAction",
+            "source_page": 1,
+            "grounding_score": 0.42,
+            "supporting_text": "",
+            "issues": ["weak support"],
+        },
+    ]
+    store["graph_state"]["conflicts"] = [
+        {
+            "entity_ids": ["CA-001", "CA-002"],
+            "conflict_type": "duplicate_corrective_action",
+            "resolution": "merge",
+            "resolved_entity": {"action_id": "CA-001"},
+        },
+    ]
+    store["graph_state"]["refinement_attempts"] = {"CA-001": 1}
+    store["graph_state"]["refinement_log"] = [
+        {"entity_id": "CA-001", "attempt": 1, "result": "updated", "reasoning": "Refined deterministically."},
+    ]
+    store["graph_state"]["supervisor_log"] = [
+        {
+            "timestamp": "2026-04-09T12:01:05Z",
+            "run_id": run_id,
+            "phase_from": "validation",
+            "phase_to": "triplet_review",
+            "decision_type": "deterministic",
+            "condition_met": "phase2_validation_is_advisory_only",
+            "entities_affected": ["CA-001"],
+            "reasoning": "Validation remains advisory.",
+            "state_snapshot_hash": "abc123",
+            "next_agent": "triplet_review",
+            "token_budget_used_this_phase": 0,
+            "validation_summary": store["graph_state"]["validation_summary"],
+        },
+    ]
+    pdf_store["pdf-status"] = store
+
+    status_response = client.get("/multi-agent/status", params={"run_id": run_id})
+    audit_response = client.get(f"/multi-agent/audit/{run_id}")
+
+    assert status_response.status_code == 200
+    assert status_response.json()["run_id"] == run_id
+    assert status_response.json()["next_step"] == "triplet_review"
+    assert status_response.json()["validation_summary"]["flagged_entities"] == 1
+    assert status_response.json()["coverage_summary"]["gap_counts"]["partially_covered"] == 1
+    assert status_response.json()["grounding_summary"]["weak_grounding_entities"] == 1
+    assert status_response.json()["conflict_summary"]["resolved_conflicts"] == 1
+    assert status_response.json()["refinement_summary"]["updated_entities"] == 1
+
+    assert audit_response.status_code == 200
+    assert audit_response.json()["run_id"] == run_id
+    assert audit_response.json()["supervisor_log"][0]["condition_met"] == "phase2_validation_is_advisory_only"
+    assert audit_response.json()["phase_history"][1]["agent"] == "ValidationAgent"
+    assert audit_response.json()["grounding_results"][0]["entity_id"] == "CA-001"
+    assert audit_response.json()["conflicts"][0]["resolution"] == "merge"
+    assert audit_response.json()["refinement_log"][0]["result"] == "updated"

@@ -107,7 +107,7 @@ class OntologyPipelineValidationTests(unittest.TestCase):
         schema_issues, human_fields = validate_ontology_instance(ontology)
 
         self.assertFalse(any(issue.code == "missing_required_property" for issue in schema_issues))
-        self.assertTrue(any(field.field_key == "Component::CMP-001::category" for field in human_fields))
+        self.assertTrue(any(field.field_key == "Component::*::category" for field in human_fields))
 
     def test_normalize_ontology_instance_infers_affects_relation(self):
         ontology = OntologyInstance(

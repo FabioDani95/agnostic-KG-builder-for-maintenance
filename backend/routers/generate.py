@@ -4,6 +4,9 @@ import time
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
 
+from backend.app_config import get_pipeline_config
+from backend.graph.supervisor import record_export_route
+from backend.graph.store import update_export_state
 from backend.models import GenerateJsonRequest, OntologyInstance
 from backend.routers.upload import pdf_store
 from backend.services.ontology_merge_service import merge_validated_triplets
@@ -33,7 +36,12 @@ def _build_minimal_ontology() -> dict:
 async def generate_json(req: GenerateJsonRequest):
     t0 = time.perf_counter()
     if req.pdf_id and req.pdf_id in pdf_store:
-        pipeline_state = pdf_store[req.pdf_id].get("ontology_pipeline")
+        store = pdf_store[req.pdf_id]
+        graph_state = store.get("graph_state") or {}
+        if get_pipeline_config().get("mode") == "multi_agent":
+            pipeline_state = graph_state.get("ontology_pipeline") or store.get("ontology_pipeline")
+        else:
+            pipeline_state = store.get("ontology_pipeline")
         pipeline_has_ontology = bool(pipeline_state and pipeline_state.get("ontology"))
         pipeline_is_clean = (
             pipeline_has_ontology
@@ -74,7 +82,6 @@ async def generate_json(req: GenerateJsonRequest):
         # Translate human-readable fields if target language differs from source.
         target_lang = normalize_language_code(req.target_language)
         translation_usage = {}
-        store = pdf_store[req.pdf_id]
         if target_lang != "en":
             triplets_as_dicts = [t.model_dump() for t in req.validated_triplets]
             translated_nodes, translated_triplets_dicts, translation_usage = translate_extraction(
@@ -121,6 +128,13 @@ async def generate_json(req: GenerateJsonRequest):
                 },
             },
         )
+        if get_pipeline_config().get("mode") == "multi_agent":
+            update_export_state(
+                store,
+                ontology_payload=ontology_payload,
+                export_base=selected_base_label,
+            )
+            record_export_route(store)
         json_str = json.dumps(ontology_payload, indent=2, ensure_ascii=False)
         return Response(
             content=json_str,
@@ -189,6 +203,13 @@ async def generate_json(req: GenerateJsonRequest):
                 },
             },
         )
+        if get_pipeline_config().get("mode") == "multi_agent":
+            update_export_state(
+                pdf_store[req.pdf_id],
+                ontology_payload=ontology_payload,
+                export_base="minimal_fallback",
+            )
+            record_export_route(pdf_store[req.pdf_id])
     json_str = json.dumps(ontology_payload, indent=2, ensure_ascii=False)
     return Response(
         content=json_str,

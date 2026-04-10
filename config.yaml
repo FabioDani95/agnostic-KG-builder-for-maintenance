@@ -13,8 +13,79 @@ shared_models: &strong_models
 pipeline:
   # Execution mode for the extraction stack.
   # "classic" keeps the current production flow.
-  # "multi_agent" is reserved for the future supervisor-based pipeline.
+  # "multi_agent" enables the Phase 1 wrapper migration while keeping the
+  # existing operator flow and endpoint contracts unchanged.
   mode: classic
+
+agents:
+  scoping:
+    enabled: true
+    model: gpt-5.4-nano
+    timeout: 60
+  ontology_draft:
+    enabled: true
+    model: gpt-5.4
+    timeout: 120
+  extraction:
+    enabled: true
+    model: gpt-5.4
+    timeout: 120
+  validation:
+    enabled: true
+    model: gpt-5.4
+    timeout: 90
+  refiner:
+    enabled: false
+    model: gpt-5.4
+    timeout: 90
+    max_retries_per_entity: 2
+    escalate_after_exhaustion: true
+  coverage:
+    enabled: false
+    model: gpt-5.4-nano
+    timeout: 60
+  grounding:
+    enabled: false
+    model: gpt-5.4
+    timeout: 90
+  conflict_resolution:
+    enabled: false
+    model: gpt-5.4
+    timeout: 60
+  refiner:
+    enabled: false
+    model: gpt-5.4
+    timeout: 90
+    max_retries_per_entity: 2
+    escalate_after_exhaustion: true
+  coverage:
+    enabled: false
+    model: gpt-5.4-nano
+    timeout: 60
+  grounding:
+    enabled: false
+    model: gpt-5.4
+    timeout: 90
+  conflict_resolution:
+    enabled: false
+    model: gpt-5.4
+    timeout: 60
+
+supervisor:
+  mode: deterministic
+  llm_model: gpt-5.4-nano
+  llm_timeout: 15
+
+checkpointing:
+  enabled: false
+  backend: filesystem
+  path: data/checkpoints/
+
+validation:
+  grounding_accept_threshold: 0.8
+  grounding_refine_threshold: 0.5
+  check_ontology_chain: true
+  check_page_attribution: true
 
 scoping:
   # Maximum number of pages to read for scoping analysis.

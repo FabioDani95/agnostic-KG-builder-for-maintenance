@@ -765,10 +765,14 @@ Optional:
 
 Current top-level sections:
 - `shared_models`
+- `pipeline`
 - `scoping`
 - `extraction`
 - `ontology`
 - `reflective_loop`
+
+The `pipeline` section currently exposes:
+- `mode`: execution mode for the extraction stack. `classic` keeps the current production flow. `multi_agent` is reserved for the future supervisor-based pipeline (Step 4 of the agentic roadmap).
 
 Current runtime-significant defaults:
 - ontology chunk size: `max_pages_per_chunk: 30`

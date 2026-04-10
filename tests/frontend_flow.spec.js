@@ -11,7 +11,8 @@ function firstLocalPdf() {
   return path.join(manualsDir, pdf);
 }
 
-test("frontend flow reaches final JSON download without rerun", async ({ page }) => {
+for (const pipelineMode of ["classic", "multi_agent"]) {
+test(`frontend flow reaches final JSON download without rerun (${pipelineMode})`, async ({ page }) => {
   const pdfPath = firstLocalPdf();
 
   await page.route("**/api/config", async (route) => {
@@ -26,6 +27,9 @@ test("frontend flow reaches final JSON download without rerun", async ({ page })
           { id: "gpt-5.4", label: "GPT-5.4", default: true },
           { id: "gpt-5.4-mini", label: "GPT-5.4 Mini", default: false },
         ],
+        pipeline: {
+          mode: pipelineMode,
+        },
         small_doc_threshold: 15,
         reflective_loop: {
           max_retries: 0,
@@ -575,3 +579,4 @@ test("frontend flow reaches final JSON download without rerun", async ({ page })
   await expect(page.locator("#summary-kpis")).toContainText("Estimated Cost");
   await expect(page.locator("#summary-kpis")).toContainText("Model Cost Breakdown");
 });
+}

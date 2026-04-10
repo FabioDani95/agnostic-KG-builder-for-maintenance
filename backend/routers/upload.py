@@ -5,6 +5,7 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 
+from backend.graph.store import seed_graph_state
 from backend.models import LoadManualRequest, UploadResponse
 from backend.services.pdf_service import (
     PdfEncryptedError,
@@ -63,15 +64,23 @@ async def load_manual(req: LoadManualRequest):
         pdf_path.unlink(missing_ok=True)
         raise HTTPException(status_code=400, detail="Could not extract text from PDF.")
 
-    pdf_store[pdf_id] = {
+    store = {
+        "pdf_id": pdf_id,
         "filename": req.filename,
         "pdf_path": str(pdf_path),
         "pages": pages,
         "page_count": len(pages),
         "source_type": "",      # filled by scoping
         "source_title": "",     # filled by scoping
+        "selected_models": {
+            "scoping": None,
+            "ontology_draft": None,
+            "extraction": None,
+        },
     }
-    ensure_run_metrics(pdf_store[pdf_id])
+    pdf_store[pdf_id] = store
+    ensure_run_metrics(store)
+    seed_graph_state(store, pdf_id)
 
     return UploadResponse(
         pdf_id=pdf_id,
