@@ -4,6 +4,7 @@ from backend.models import HumanBindingAnswer, OntologyInstance
 from backend.routers.ontology import _split_pages_by_section
 from backend.services.ontology_pipeline import (
     _normalize_ontology_instance,
+    _retry_regression_reason,
     apply_human_binding,
     validate_ontology_instance,
 )
@@ -207,6 +208,56 @@ class OntologyPipelineValidationTests(unittest.TestCase):
             rel.name == "HAS_COMPONENT" and rel.from_id == "ASSET-001" and rel.to_id == "CMP-PUMP"
             for rel in normalized.relations
         ))
+
+    def test_retry_regression_reason_detects_asset_only_collapse(self):
+        previous = OntologyInstance(
+            ontology_name="diagnostic",
+            version="V1",
+            language="en",
+            source_type="Service manual",
+            source_title="Pump skid",
+            nodes={
+                "Asset": [{
+                    "asset_id": "ASSET-001",
+                    "name": "Pump skid",
+                    "description": "Pump skid",
+                    "brand": "Demo",
+                    "model": "S1",
+                    "asset_type": "pump skid",
+                }],
+                "Component": [{
+                    "component_id": "CMP-PUMP",
+                    "name": "Hydraulic pump",
+                    "description": "Main hydraulic pump assembly",
+                    "category": "Hydraulics",
+                }],
+                "Symptom": [{
+                    "symptom_id": "SYM-001",
+                    "name": "Low pressure",
+                    "description": "Pressure drops.",
+                    "severity": "Medium",
+                }],
+                "FailureMode": [{
+                    "failure_mode_id": "FM-001",
+                    "name": "Hydraulic pump wear",
+                    "description": "Pump internals are worn.",
+                    "material_context": "Hydraulic pump",
+                }],
+                "CorrectiveAction": [],
+                "ErrorCode": [],
+            },
+            relations=[],
+        )
+
+        reason = _retry_regression_reason(previous, _asset_only_ontology())
+
+        self.assertIsNotNone(reason)
+        self.assertIn("removed all substantive nodes", reason)
+
+    def test_retry_regression_reason_ignores_already_empty_baseline(self):
+        reason = _retry_regression_reason(_asset_only_ontology(), _asset_only_ontology())
+
+        self.assertIsNone(reason)
 
 
 if __name__ == "__main__":

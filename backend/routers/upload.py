@@ -86,6 +86,7 @@ async def load_manual(req: LoadManualRequest):
         pdf_id=pdf_id,
         filename=req.filename,
         page_count=len(pages),
+        run_id=store["run_id"],
     )
 
 

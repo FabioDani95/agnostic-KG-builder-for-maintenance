@@ -40,6 +40,30 @@ def get_reflective_loop_config() -> dict:
     return load_config().get("reflective_loop", {})
 
 
+def get_confidence_config() -> dict:
+    """Return the Step 3 confidence-scoring configuration with safe defaults.
+
+    The confidence layer is schema-aware: weights and penalties are documented in
+    config.yaml and the scorer reads them at runtime, so tweaking this section
+    never requires a code change.
+    """
+    raw = deepcopy(load_config().get("confidence", {}) or {})
+    raw.setdefault("enabled", True)
+    raw.setdefault("theta_high", 0.80)
+    raw.setdefault("theta_low", 0.45)
+    raw.setdefault("auto_reject_enabled", False)
+    weights = raw.setdefault("weights", {})
+    weights.setdefault("evidence_present", 0.25)
+    weights.setdefault("corroboration", 0.15)
+    weights.setdefault("required_props_complete", 0.25)
+    weights.setdefault("chain_participation", 0.20)
+    weights.setdefault("clean_extraction", 0.15)
+    penalties = raw.setdefault("penalties", {})
+    penalties.setdefault("human_binding_required", 0.20)
+    penalties.setdefault("per_retry", 0.05)
+    return raw
+
+
 def get_pipeline_config() -> dict:
     cfg = dict(load_config().get("pipeline", {}))
     if "pipeline_mode" in _runtime_overrides:

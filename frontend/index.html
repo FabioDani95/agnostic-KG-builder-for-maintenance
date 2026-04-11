@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KG Diagnostic Extraction</title>
-    <link rel="stylesheet" href="/style.css?v=11">
+    <link rel="stylesheet" href="/style.css?v=15">
 </head>
 <body>
 
@@ -87,6 +87,14 @@
                                 <option value="error">error (retry on errors only)</option>
                             </select>
                             <small class="form-help">Minimum issue severity that triggers a re-extraction retry.</small>
+                        </div>
+                        <div class="form-group span-2">
+                            <label for="pipeline-mode">Pipeline mode</label>
+                            <select id="pipeline-mode">
+                                <option value="classic">Classic (linear workflow)</option>
+                                <option value="multi_agent">Multi-agent (supervisor + audit)</option>
+                            </select>
+                            <small class="form-help">Classic runs the deterministic linear pipeline. Multi-agent routes through agent wrappers and records supervisor traces (observability only in this build).</small>
                         </div>
                     </div>
                 </details>
@@ -217,8 +225,14 @@
             <div class="app-bar-center" id="ontology-step-title">Automatic Ontology Draft</div>
             <div class="app-bar-right">
                 <span class="app-bar-meta">Before human validation</span>
+                <button id="audit-drawer-toggle" class="app-bar-btn" aria-expanded="false" hidden>
+                    Audit <span class="badge-count" id="audit-entries-count">0</span>
+                </button>
             </div>
         </header>
+
+        <!-- Supervisor phase progress strip (multi_agent mode only) -->
+        <div id="phase-strip" class="phase-strip is-hidden" aria-label="Pipeline phase progress"></div>
 
         <div class="cp-columns">
             <section class="cp-pdf-section">
@@ -233,32 +247,74 @@
                         <div id="ontology-guidance" class="ontology-guidance"></div>
                     </div>
 
-                    <div class="cp-block" id="ontology-issues-block" hidden>
-                        <h4 style="color:var(--text-dim);font-weight:500;">Validation Details</h4>
-                        <div id="ontology-issues"></div>
-                    </div>
-
                     <div class="cp-block" id="ontology-fields-block" hidden>
                         <h4>Required Information</h4>
+                        <p class="block-hint">The automatic extraction left these schema-required properties empty. Fill them in to proceed.</p>
                         <div id="ontology-fields"></div>
                     </div>
 
-                    <div class="cp-block" id="graph-issues-block" hidden>
-                        <h4>Graph Structure Issues</h4>
-                        <div id="graph-issues"></div>
-                    </div>
+                    <details id="ontology-advanced-panel" class="ontology-advanced-panel">
+                        <summary class="ontology-advanced-toggle">Advanced / Research view</summary>
+                        <p class="ontology-advanced-hint">Diagnostics from the agentic pipeline: confidence scoring, graph reasoning, supervisor escalations. None of these require an action to proceed — they are surfaced for benchmarking and paper reproducibility.</p>
 
-                    <div class="cp-block" id="suggested-relations-block" hidden>
-                        <h4>Suggested Relations
-                            <span id="suggested-relations-count" class="badge-count"></span>
-                        </h4>
-                        <p class="block-hint">The graph reasoning engine found potential missing links. Review and accept or reject each suggestion.</p>
-                        <div id="suggested-relations-list"></div>
-                        <div class="suggestion-bulk-actions" id="suggestion-bulk-actions" hidden>
-                            <button id="apply-suggestions-btn" class="btn-primary btn-sm">Apply Accepted Suggestions</button>
-                            <button id="reject-all-suggestions-btn" class="btn-secondary btn-sm">Reject All</button>
+                        <div class="cp-block" id="ontology-confidence-block" hidden>
+                            <h4>Confidence Distribution</h4>
+                            <div id="ontology-confidence-strip"></div>
                         </div>
-                    </div>
+
+                        <div class="cp-block" id="ontology-issues-block" hidden>
+                            <h4 style="color:var(--text-dim);font-weight:500;">Validation Details</h4>
+                            <div id="ontology-issues"></div>
+                        </div>
+
+                        <div class="cp-block" id="escalations-block" hidden>
+                            <h4>Supervisor Escalations
+                                <span id="escalations-count" class="badge-count"></span>
+                            </h4>
+                            <p class="block-hint">Cases the automatic pipeline could not resolve autonomously. Each card expects a structured decision.</p>
+                            <div id="escalations-list"></div>
+                        </div>
+
+                        <div class="cp-block" id="ontology-nodes-block" hidden>
+                            <div class="ontology-nodes-head">
+                                <h4>Extracted Nodes
+                                    <span id="ontology-nodes-count" class="badge-count"></span>
+                                </h4>
+                                <div class="ontology-nodes-controls">
+                                    <label>Sort
+                                        <select id="ontology-nodes-sort">
+                                            <option value="score_asc">Confidence ↑</option>
+                                            <option value="type">By type</option>
+                                        </select>
+                                    </label>
+                                    <label class="toggle-inline">
+                                        <input type="checkbox" id="show-auto-approved"> Show auto-approved
+                                    </label>
+                                    <button id="bulk-approve-btn" class="btn-secondary btn-sm" type="button">
+                                        Auto-approve ≥ θ_high
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="ontology-nodes-list"></div>
+                        </div>
+
+                        <div class="cp-block" id="graph-issues-block" hidden>
+                            <h4>Graph Structure Issues</h4>
+                            <div id="graph-issues"></div>
+                        </div>
+
+                        <div class="cp-block" id="suggested-relations-block" hidden>
+                            <h4>Suggested Relations
+                                <span id="suggested-relations-count" class="badge-count"></span>
+                            </h4>
+                            <p class="block-hint">The graph reasoning engine found potential missing links. Review and accept or reject each suggestion.</p>
+                            <div id="suggested-relations-list"></div>
+                            <div class="suggestion-bulk-actions" id="suggestion-bulk-actions" hidden>
+                                <button id="apply-suggestions-btn" class="btn-primary btn-sm">Apply Accepted Suggestions</button>
+                                <button id="reject-all-suggestions-btn" class="btn-secondary btn-sm">Reject All</button>
+                            </div>
+                        </div>
+                    </details>
                 </div>
 
                 <div class="cp-action-bar">
@@ -291,8 +347,18 @@
                 <span class="app-bar-logo">KG</span>
                 <span class="app-bar-title" id="pdf-title">Document</span>
             </div>
-            <div class="app-bar-center" id="triplet-counter"></div>
+            <!-- B: progress bar replaces plain text counter -->
+            <div class="app-bar-center" id="triplet-counter">
+                <div class="review-progress">
+                    <div class="review-progress-bar-wrap">
+                        <div class="review-progress-bar" id="review-progress-bar"></div>
+                    </div>
+                    <span class="review-progress-label" id="review-progress-label"></span>
+                </div>
+            </div>
             <div class="app-bar-right">
+                <span class="review-mini-stat" id="review-stat-saved"></span>
+                <span class="review-mini-stat dimmed" id="review-stat-discarded"></span>
                 <span class="app-bar-meta" id="app-bar-operator"></span>
                 <span class="app-bar-meta" id="app-bar-date"></span>
             </div>
@@ -305,17 +371,16 @@
                 <div id="pdf-container"></div>
             </section>
 
-            <!-- Right: Tables + Buttons -->
+            <!-- Right: Triplet card + Buttons -->
             <section id="tables-section">
                 <div id="tables-scroll">
-                    <h4>Symptom</h4>
-                    <div id="symptom-table-container"></div>
+                    <!-- A: single triplet card replaces three separate tables -->
+                    <div id="triplet-card-container"></div>
 
-                    <h4>Failure Modes</h4>
-                    <div id="fm-table-container"></div>
-
-                    <h4>Corrective Actions</h4>
-                    <div id="ca-table-container"></div>
+                    <!-- legacy containers kept as empty anchors so existing JS refs don't break -->
+                    <div id="symptom-table-container" hidden></div>
+                    <div id="fm-table-container" hidden></div>
+                    <div id="ca-table-container" hidden></div>
 
                     <!-- Summary -->
                     <div id="summary" hidden>
@@ -330,15 +395,53 @@
                     </div>
                 </div>
 
+                <!-- C: redesigned binary decision bar -->
                 <div id="action-buttons">
-                    <button id="discard-btn" class="btn-danger">Discard</button>
-                    <button id="save-btn" class="btn-success">Save &amp; Next</button>
+                    <div class="kbd-hint">
+                        <span><kbd>Tab</kbd> next field</span>
+                        <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> validate</span>
+                        <span><kbd>Ctrl</kbd>+<kbd>Backspace</kbd> skip</span>
+                    </div>
+                    <div class="review-decision-bar">
+                        <button id="discard-btn" class="btn-decision btn-skip">
+                            <span class="btn-decision-icon">&#8594;</span>
+                            <span class="btn-decision-label">Skip</span>
+                            <span class="btn-decision-sub">not relevant</span>
+                        </button>
+                        <button id="save-btn" class="btn-decision btn-validate">
+                            <span class="btn-decision-icon">&#10003;</span>
+                            <span class="btn-decision-label">Validate</span>
+                            <span class="btn-decision-sub">add to graph</span>
+                        </button>
+                    </div>
                 </div>
             </section>
         </div>
     </main>
 
+    <!-- ─── Supervisor Audit Drawer (fixed overlay) ─── -->
+    <aside id="audit-drawer" class="audit-drawer" aria-hidden="true">
+        <div class="audit-drawer-head">
+            <h4>Supervisor Audit Trail</h4>
+            <button class="audit-drawer-close" type="button" aria-label="Close audit drawer">&times;</button>
+        </div>
+        <div class="audit-drawer-body">
+            <section class="audit-section">
+                <h5>Token Ledger</h5>
+                <div id="audit-token-ledger"></div>
+            </section>
+            <section class="audit-section">
+                <h5>Phase History</h5>
+                <ol id="audit-phase-history" style="list-style:none;padding:0;margin:0;"></ol>
+            </section>
+            <section class="audit-section">
+                <h5>Supervisor Decisions</h5>
+                <ol id="audit-supervisor-log" style="list-style:none;padding:0;margin:0;"></ol>
+            </section>
+        </div>
+    </aside>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
-    <script src="/app.js?v=20260331j" type="module"></script>
+    <script src="/app.js?v=20260410e" type="module"></script>
 </body>
 </html>

@@ -15,7 +15,7 @@ pipeline:
   # "classic" keeps the current production flow.
   # "multi_agent" enables the Phase 1 wrapper migration while keeping the
   # existing operator flow and endpoint contracts unchanged.
-  mode: classic
+  mode: multi_agent
 
 agents:
   scoping:
@@ -131,7 +131,12 @@ ontology:
   # GPT-5.x supports large context windows — raised limits accordingly.
   max_input_chars: 600000
   estimated_max_input_tokens: 150000
-  extraction_max_output_tokens: 12000
+  extraction_max_output_tokens: 20000
+  # Safety retry budget used only when GPT-5 spends the visible completion budget
+  # on reasoning and returns "{}" for a large ontology chunk.
+  extraction_retry_max_output_tokens: 24000
+  # Relation-only second pass on a compact node set plus filtered page subset.
+  relation_extraction_max_output_tokens: 6000
   validation_max_output_tokens: 4000
 
   # Maximum pages per ontology extraction chunk.
@@ -142,7 +147,7 @@ ontology:
 reflective_loop:
   # Maximum number of automatic re-extraction attempts before escalating to human review.
   # Set to 0 to disable the loop and fall back to the linear pipeline.
-  max_retries: 0
+  max_retries: 2
 
   # Minimum severity level of semantic issues that trigger a retry ("error" or "warning").
   # Issues below this severity are logged but do not trigger re-extraction.
@@ -150,4 +155,42 @@ reflective_loop:
 
   # Max output tokens for the re-extraction LLM call.
   # Slightly higher than the initial extraction to accommodate the feedback payload.
-  re_extract_max_output_tokens: 9000
+  re_extract_max_output_tokens: 14000
+
+confidence:
+  # Step 3 of the agentic roadmap — schema-aware confidence scoring for adaptive HITL.
+  # Set enabled=false to bypass scoring entirely (zero overhead, compatible with legacy flows).
+  enabled: true
+
+  # Classification thresholds (0.0–1.0).
+  # score >= theta_high           → auto_approve
+  # theta_low <= score < theta_high → human_review
+  # score < theta_low             → human_review (unless auto_reject_enabled=true)
+  theta_high: 0.80
+  theta_low: 0.45
+
+  # Safety flag: when false (default), items below theta_low still go to human_review
+  # instead of being silently dropped. Enable only after validating precision on held-out data.
+  auto_reject_enabled: false
+
+  # Signal weights — must be non-negative. The scorer normalizes them to sum to 1.0.
+  # Schema-aware means: these signals are computed using the live OntologySchemaDefinition,
+  # so adding a new node type or relation in ontology_schema.JSON requires no code change here.
+  weights:
+    # Evidence presence: node has at least one OntologyEvidence with a source_page.
+    evidence_present: 0.25
+    # Corroboration: number of distinct source_pages supporting the node (saturates at 3).
+    corroboration: 0.15
+    # Required-property completeness: fraction of schema-required props present and non-empty.
+    required_props_complete: 0.25
+    # Schema-chain participation: node has the schema-expected outgoing/incoming relations.
+    chain_participation: 0.20
+    # Clean extraction: no retries needed and no semantic/schema issues targeting this node.
+    clean_extraction: 0.15
+
+  # Penalties applied after the weighted score is computed (subtracted from the final score).
+  penalties:
+    # Deducted if the node has any unresolved HumanRequiredField entry.
+    human_binding_required: 0.20
+    # Deducted per retry attempt consumed by the reflective loop (capped at 3× the value).
+    per_retry: 0.02

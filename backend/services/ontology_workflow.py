@@ -12,7 +12,8 @@ from fastapi import HTTPException
 
 from backend.app_config import get_ontology_config
 from backend.models import OntologyDraftRequest, OntologyPipelineResponse, OntologyRelationInstance
-from backend.services.ontology_pipeline import build_initial_ontology
+from backend.services.ontology_pipeline import _normalize_ontology_instance, build_initial_ontology
+from backend.services.ontology_schema_service import load_ontology_schema
 from backend.services.pdf_service import format_text_with_pages
 from backend.services.run_metrics import record_stage_metrics
 
@@ -125,6 +126,13 @@ def _merge_pipeline_results(results: list[OntologyPipelineResponse]) -> Ontology
     merged_ontology = deepcopy(results[0].ontology)
     merged_ontology.nodes = merged_nodes
     merged_ontology.relations = merged_relations
+    merged_schema = load_ontology_schema()
+    merged_ontology = _normalize_ontology_instance(
+        ontology=merged_ontology,
+        schema=merged_schema,
+        source_type=merged_ontology.source_type,
+        source_title=merged_ontology.source_title,
+    )
 
     def _dedup_issues(issues):
         seen = set()
@@ -138,7 +146,13 @@ def _merge_pipeline_results(results: list[OntologyPipelineResponse]) -> Ontology
         return deduped
 
     all_semantic = _dedup_issues([issue for result in results for issue in result.semantic_issues])
-    all_schema = _dedup_issues([issue for result in results for issue in result.schema_issues])
+    # empty_draft_content is a per-chunk diagnostic; when merging multiple chunks it is
+    # expected that some chunks (e.g. a cover-page-only chunk) produce no diagnostic nodes.
+    # Filter it out here so the final merge status reflects the consolidated ontology.
+    all_schema = _dedup_issues([
+        issue for result in results for issue in result.schema_issues
+        if issue.code != "empty_draft_content"
+    ])
     all_graph = [issue for result in results for issue in result.graph_issues]
     all_suggested = [item for result in results for item in result.suggested_relations]
 
@@ -147,20 +161,54 @@ def _merge_pipeline_results(results: list[OntologyPipelineResponse]) -> Ontology
         for field in result.human_required_fields:
             human_required_fields[field.field_key] = field
 
-    worst_status = max(results, key=lambda result: _STATUS_RANK.get(result.status, 0)).status
+    # Derive merged status from the filtered schema/semantic issues, not the per-chunk statuses.
+    # Per-chunk statuses can include "blocked" due to empty_draft_content (now filtered) which
+    # would otherwise propagate to the merged result even though the combined ontology is valid.
+    merged_human_required = list(human_required_fields.values())
+    if all_schema:
+        worst_status = "blocked"
+    elif any(result.status == "needs_human_review" for result in results):
+        worst_status = "needs_human_review"
+    elif merged_human_required:
+        worst_status = "needs_human"
+    else:
+        worst_status = "ready"
     retry_total = sum(result.retry_count for result in results)
+
+    # Re-score confidence on the merged ontology so the report reflects the final
+    # deduped structure and carries chain_participation signals that depend on
+    # relations merged across chunks. Falls back to None when scoring is disabled.
+    merged_confidence_report = None
+    try:
+        from backend.app_config import get_confidence_config
+        from backend.services.confidence import score_ontology
+
+        confidence_cfg = get_confidence_config()
+        if confidence_cfg.get("enabled", True):
+            merged_confidence_report = score_ontology(
+                ontology=merged_ontology,
+                schema=merged_schema,
+                semantic_issues=all_semantic,
+                schema_issues=all_schema,
+                human_required_fields=merged_human_required,
+                retry_count=retry_total,
+                config=confidence_cfg,
+            )
+    except Exception:
+        logger.exception("[ontology] Confidence re-scoring after merge failed; leaving report unset")
 
     return OntologyPipelineResponse(
         status=worst_status,
         ontology=merged_ontology,
         semantic_issues=all_semantic,
         schema_issues=all_schema,
-        human_required_fields=list(human_required_fields.values()),
-        is_schema_compliant=all(result.is_schema_compliant for result in results),
-        is_ready_for_human_review=any(result.is_ready_for_human_review for result in results),
+        human_required_fields=merged_human_required,
+        is_schema_compliant=not all_schema and not merged_human_required,
+        is_ready_for_human_review=not all_schema,
         retry_count=retry_total,
         graph_issues=all_graph,
         suggested_relations=all_suggested,
+        confidence_report=merged_confidence_report,
     )
 
 

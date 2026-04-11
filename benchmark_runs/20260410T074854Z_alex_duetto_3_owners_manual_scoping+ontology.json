@@ -1,0 +1,74 @@
+{
+  "started_at": "2026-04-10T07:48:53+00:00",
+  "pdf": "manuals/alex_duetto_3_owners_manual.pdf",
+  "page_offset": 1,
+  "phase": "scoping+ontology",
+  "model": "gpt-4.1",
+  "reflective_loop": {
+    "max_retries": 0,
+    "retry_on_severity": "error",
+    "re_extract_max_output_tokens": 9000
+  },
+  "confidence_enabled": true,
+  "stages": {
+    "scoping": {
+      "phase": "scoping",
+      "duration_seconds": 1.1,
+      "total_pages": 26,
+      "selected_pages": 18,
+      "pages_to_keep": [
+        4,
+        5,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "sections": [
+        {
+          "name": "Keyword match (pp. 2-5)",
+          "start": 2,
+          "end": 5,
+          "source": "keyword"
+        },
+        {
+          "name": "Keyword match (pp. 11-26)",
+          "start": 11,
+          "end": 26,
+          "source": "keyword"
+        }
+      ],
+      "product_info": {
+        "product_name": "Alex Duetto 3.0 Espresso Machine",
+        "document_type": "Owner's Manual",
+        "language": "English",
+        "page_count": 26
+      },
+      "toc_found": false,
+      "toc_entries": 0,
+      "skipped": false,
+      "llm_calls": 1,
+      "total_tokens": 1970,
+      "prompt_tokens": 1940,
+      "completion_tokens": 30,
+      "estimated_cost_usd": 0.00098,
+      "models": [
+        "gpt-4.1-2025-04-14"
+      ]
+    }
+  },
+  "error": "400: '\"source_page\"'",
+  "finished_at": "2026-04-10T07:48:54+00:00"
+}

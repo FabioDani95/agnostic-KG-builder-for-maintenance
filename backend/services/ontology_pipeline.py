@@ -11,9 +11,14 @@ from httpx import Timeout
 from langgraph.graph import END, StateGraph
 from openai import OpenAI
 
-from backend.app_config import get_ontology_config, get_effective_reflective_loop_config as get_reflective_loop_config
+from backend.app_config import (
+    get_confidence_config,
+    get_ontology_config,
+    get_effective_reflective_loop_config as get_reflective_loop_config,
+)
 from backend.config import settings
 from backend.models import (
+    ConfidenceReport,
     GraphIssue,
     HumanBindingAnswer,
     HumanRequiredField,
@@ -28,6 +33,7 @@ from backend.models import (
 )
 from backend.prompts.ontology_prompt import (
     build_ontology_extraction_prompt,
+    build_ontology_relation_extraction_prompt,
     build_ontology_re_extraction_prompt,
     build_ontology_validation_prompt,
 )
@@ -42,6 +48,7 @@ from backend.services.ontology_schema_service import (
 )
 from backend.services.ontology_semantics import infer_asset_type, normalize_asset_node
 from backend.services.ontology_semantics import infer_component_match_for_failure_mode
+from backend.services.pdf_service import format_text_with_pages
 from backend.services.run_metrics import aggregate_usage, usage_from_response
 
 logger = logging.getLogger(__name__)
@@ -66,6 +73,8 @@ class PipelineState(TypedDict, total=False):
     # Graph reasoning state
     graph_issues: list[GraphIssue]
     suggested_relations: list[SuggestedRelation]
+    # Confidence scoring state (Step 3)
+    confidence_report: ConfidenceReport | None
     llm_usage: list[dict[str, Any]]
 
 
@@ -441,7 +450,7 @@ def _coerce_relations(
     for item in raw_relations:
         if not isinstance(item, dict):
             continue
-        rel_name = str(item.get("name") or item.get("type") or "").strip()
+        rel_name = str(item.get("name") or item.get("type") or item.get("relation") or "").strip()
         if not rel_name:
             continue
         rel_def = rel_defs.get(rel_name)
@@ -481,16 +490,204 @@ def _coerce_raw_ontology_data(
     }
 
 
+def _substantive_node_count(ontology: OntologyInstance) -> int:
+    return sum(
+        len(items or [])
+        for node_type, items in ontology.nodes.items()
+        if node_type != "Asset"
+    )
+
+
+def _retry_regression_reason(
+    previous: OntologyInstance,
+    candidate: OntologyInstance,
+) -> str | None:
+    prev_substantive = _substantive_node_count(previous)
+    cand_substantive = _substantive_node_count(candidate)
+    prev_relations = len(previous.relations or [])
+    cand_relations = len(candidate.relations or [])
+
+    if prev_substantive <= 0:
+        return None
+    if cand_substantive == 0:
+        return (
+            "candidate removed all substantive nodes "
+            f"({prev_substantive} -> 0)"
+        )
+    if prev_substantive >= 12 and cand_substantive <= max(2, prev_substantive // 5):
+        return (
+            "candidate removed most substantive nodes "
+            f"({prev_substantive} -> {cand_substantive})"
+        )
+    if (
+        prev_relations >= 20
+        and cand_relations <= max(1, prev_relations // 10)
+        and cand_substantive < prev_substantive
+    ):
+        return (
+            "candidate removed most relations "
+            f"({prev_relations} -> {cand_relations}) while shrinking node coverage"
+        )
+    return None
+
+
+def _compact_nodes_for_relation_pass(ontology: OntologyInstance) -> dict[str, list[dict[str, Any]]]:
+    field_map = {
+        "Asset": ("asset_id", "name"),
+        "Component": ("component_id", "name", "description", "category"),
+        "Symptom": ("symptom_id", "name", "description", "severity"),
+        "FailureMode": ("failure_mode_id", "name", "description", "material_context"),
+        "CorrectiveAction": ("action_id", "name", "description", "instruction_text"),
+        "ErrorCode": ("error_code_id", "name", "description", "code"),
+    }
+    compact: dict[str, list[dict[str, Any]]] = {}
+    for node_type, items in ontology.nodes.items():
+        fields = field_map.get(node_type, ())
+        if not fields or not items:
+            continue
+        compact[node_type] = [
+            {field: item.get(field, "") for field in fields}
+            for item in items
+            if isinstance(item, dict)
+        ]
+    return compact
+
+
+def _compact_existing_relations_for_relation_pass(
+    relations: list[OntologyRelationInstance],
+) -> list[dict[str, str]]:
+    compact: list[dict[str, str]] = []
+    for relation in relations or []:
+        if relation.name == "HAS_COMPONENT":
+            continue
+        compact.append({
+            "name": relation.name,
+            "from_id": relation.from_id,
+            "to_id": relation.to_id,
+        })
+    return compact
+
+
+def _should_run_relation_pass(ontology: OntologyInstance) -> bool:
+    counts = {node_type: len(items or []) for node_type, items in ontology.nodes.items()}
+    return any((
+        counts.get("Symptom", 0) and counts.get("FailureMode", 0),
+        counts.get("FailureMode", 0) and counts.get("Component", 0),
+        counts.get("FailureMode", 0) and counts.get("CorrectiveAction", 0),
+        counts.get("Asset", 0) and counts.get("ErrorCode", 0),
+        counts.get("ErrorCode", 0) and counts.get("FailureMode", 0),
+    ))
+
+
+def _split_text_with_pages(text_with_pages: str) -> list[dict[str, Any]]:
+    matches = list(re.finditer(r"(?m)^--- PAGE (\d+) ---$", text_with_pages))
+    if not matches:
+        return []
+
+    pages: list[dict[str, Any]] = []
+    for index, match in enumerate(matches):
+        start = match.end()
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text_with_pages)
+        page_text = text_with_pages[start:end].strip()
+        if not page_text:
+            continue
+        pages.append({
+            "page_number": int(match.group(1)),
+            "text": page_text,
+        })
+    return pages
+
+
+def _relation_pass_search_terms(ontology: OntologyInstance) -> list[str]:
+    field_map = {
+        "Asset": ("name",),
+        "Component": ("name",),
+        "Symptom": ("name",),
+        "FailureMode": ("name", "material_context"),
+        "CorrectiveAction": ("name",),
+        "ErrorCode": ("code", "name"),
+    }
+    terms: list[str] = []
+    seen: set[str] = set()
+    for node_type, items in ontology.nodes.items():
+        fields = field_map.get(node_type, ())
+        for item in items or []:
+            if not isinstance(item, dict):
+                continue
+            for field in fields:
+                value = re.sub(r"\s+", " ", str(item.get(field, "")).strip())
+                lowered = value.lower()
+                min_length = 2 if field == "code" else 4
+                if len(lowered) < min_length or lowered in seen:
+                    continue
+                seen.add(lowered)
+                terms.append(lowered)
+    return sorted(terms, key=len, reverse=True)
+
+
+def _build_relation_pass_text(
+    text_with_pages: str,
+    ontology: OntologyInstance,
+    *,
+    max_pages: int = 12,
+    min_pages: int = 3,
+) -> str:
+    parsed_pages = _split_text_with_pages(text_with_pages)
+    if len(parsed_pages) <= max_pages:
+        return text_with_pages
+
+    search_terms = _relation_pass_search_terms(ontology)
+    if not search_terms:
+        return text_with_pages
+
+    page_lookup = {page["page_number"]: page for page in parsed_pages}
+    exact_scores: dict[int, int] = {}
+    for page in parsed_pages:
+        haystack = page["text"].lower()
+        exact_scores[page["page_number"]] = sum(1 for term in search_terms if term in haystack)
+
+    matched_pages = [page_number for page_number, score in exact_scores.items() if score > 0]
+    if not matched_pages:
+        return text_with_pages
+
+    selected_page_numbers: set[int] = set()
+    for page_number in sorted(matched_pages, key=lambda item: (-exact_scores[item], item)):
+        for candidate in (page_number - 1, page_number, page_number + 1):
+            if candidate not in page_lookup or candidate in selected_page_numbers:
+                continue
+            selected_page_numbers.add(candidate)
+            if len(selected_page_numbers) >= max_pages:
+                break
+        if len(selected_page_numbers) >= max_pages:
+            break
+
+    if len(selected_page_numbers) < min_pages:
+        return text_with_pages
+
+    selected_pages = [
+        page_lookup[page_number]
+        for page_number in sorted(selected_page_numbers)
+    ]
+    compact_text = format_text_with_pages(selected_pages)
+    if len(compact_text) >= int(len(text_with_pages) * 0.95):
+        return text_with_pages
+
+    logger.info(
+        "[ontology] Relation pass using %d/%d pages (%d -> %d chars)",
+        len(selected_pages),
+        len(parsed_pages),
+        len(text_with_pages),
+        len(compact_text),
+    )
+    return compact_text
+
+
 def _validate_schema(ontology: OntologyInstance, schema: OntologySchemaDefinition) -> tuple[list[PipelineIssue], list[HumanRequiredField]]:
     issues: list[PipelineIssue] = []
     human_required_fields: list[HumanRequiredField] = []
     node_map = _schema_node_map(schema)
     node_index = _collect_node_index(ontology, schema)
-    substantive_node_count = sum(
-        len(items)
-        for node_type, items in ontology.nodes.items()
-        if node_type != "Asset"
-    )
+    substantive_node_count = _substantive_node_count(ontology)
 
     if substantive_node_count == 0:
         issues.append(PipelineIssue(
@@ -635,23 +832,44 @@ def _call_extractor_llm(state: PipelineState) -> PipelineState:
         user_text=state["text_with_pages"],
     )
     client = _get_client(cfg["timeout_seconds"])
-    try:
-        response = client.chat.completions.create(
-            model=state["model_name"] or settings.MODEL_NAME,
-            temperature=0.0,
-            max_completion_tokens=cfg["max_output_tokens"],
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": state["text_with_pages"]},
-            ],
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": state["text_with_pages"]},
+    ]
+
+    def _run_completion(max_output_tokens: int):
+        try:
+            response = client.chat.completions.create(
+                model=state["model_name"] or settings.MODEL_NAME,
+                temperature=0.0,
+                max_completion_tokens=max_output_tokens,
+                messages=messages,
+            )
+        except Exception as exc:
+            msg = str(exc).lower()
+            if "timeout" in msg:
+                raise RuntimeError(llm_timeout_message("Ontology draft", cfg["timeout_seconds"])) from exc
+            raise RuntimeError(f"Ontology draft failed before completion: {exc}") from exc
+        return response.choices[0].message.content or "{}", usage_from_response(response, "ontology_draft")
+
+    raw, usage = _run_completion(cfg["max_output_tokens"])
+    usages = [usage]
+
+    # GPT-5 can spend the entire completion budget on hidden reasoning and leave only "{}"
+    # as visible output. Retry once with a larger completion budget when that signature appears.
+    if raw.strip() == "{}" and int(usage.get("completion", 0) or 0) >= cfg["max_output_tokens"]:
+        retry_tokens = max(
+            int(get_ontology_config().get("extraction_retry_max_output_tokens", 20000)),
+            cfg["max_output_tokens"] + 4000,
         )
-    except Exception as exc:
-        msg = str(exc).lower()
-        if "timeout" in msg:
-            raise RuntimeError(llm_timeout_message("Ontology draft", cfg["timeout_seconds"])) from exc
-        raise RuntimeError(f"Ontology draft failed before completion: {exc}") from exc
-    raw = response.choices[0].message.content or "{}"
-    usage = usage_from_response(response, "ontology_draft")
+        logger.warning(
+            "[ontology] Draft returned empty JSON at completion limit (%d tokens); retrying once with max_output_tokens=%d",
+            cfg["max_output_tokens"],
+            retry_tokens,
+        )
+        raw, retry_usage = _run_completion(retry_tokens)
+        usages.append(retry_usage)
+
     data = _extract_json_object(raw)
     ontology = OntologyInstance.model_validate(_coerce_raw_ontology_data(
         data=data,
@@ -662,7 +880,7 @@ def _call_extractor_llm(state: PipelineState) -> PipelineState:
     logger.info("[ontology] Extraction draft generated (%.1fs)", time.perf_counter() - started)
     return {
         "ontology": ontology,
-        "llm_usage": [*state.get("llm_usage", []), usage],
+        "llm_usage": [*state.get("llm_usage", []), *usages],
     }
 
 
@@ -674,6 +892,96 @@ def _normalize_node(state: PipelineState) -> PipelineState:
         source_title=state["source_title"],
     )
     return {"ontology": ontology}
+
+
+def _relation_extract_node(state: PipelineState) -> PipelineState:
+    """Second pass: infer only ontology relations from the already-extracted nodes."""
+    ontology = state["ontology"]
+    if not _should_run_relation_pass(ontology):
+        logger.info("[ontology] Relation pass skipped (insufficient candidate node types)")
+        return {}
+
+    started = time.perf_counter()
+    candidate_nodes_json = json.dumps(
+        _compact_nodes_for_relation_pass(ontology),
+        ensure_ascii=False,
+        indent=2,
+    )
+    existing_relations_json = json.dumps(
+        _compact_existing_relations_for_relation_pass(ontology.relations),
+        ensure_ascii=False,
+        indent=2,
+    )
+    system_prompt = build_ontology_relation_extraction_prompt(
+        candidate_nodes_json=candidate_nodes_json,
+        existing_relations_json=existing_relations_json,
+    )
+    cfg = _ontology_cfg(get_ontology_config().get("relation_extraction_max_output_tokens", 6000))
+    relation_pass_text = _build_relation_pass_text(state["text_with_pages"], ontology)
+    enforce_llm_limits(
+        phase="Ontology relation pass",
+        cfg=cfg,
+        system_text=system_prompt,
+        user_text=relation_pass_text,
+    )
+    client = _get_client(cfg["timeout_seconds"])
+    try:
+        response = client.chat.completions.create(
+            model=state["model_name"] or settings.MODEL_NAME,
+            temperature=0.0,
+            max_completion_tokens=cfg["max_output_tokens"],
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": relation_pass_text},
+            ],
+        )
+    except Exception as exc:
+        msg = str(exc).lower()
+        if "timeout" in msg:
+            raise RuntimeError(llm_timeout_message("Ontology relation pass", cfg["timeout_seconds"])) from exc
+        raise RuntimeError(f"Ontology relation pass failed before completion: {exc}") from exc
+
+    raw = response.choices[0].message.content or '{"relations":[]}'
+    usage = usage_from_response(response, "ontology_relation_extraction")
+    try:
+        data = _extract_json_object(raw)
+    except Exception:
+        logger.warning("[ontology] Failed to parse relation pass response; keeping existing relations")
+        return {
+            "llm_usage": [*state.get("llm_usage", []), usage],
+        }
+
+    candidate_relations = _coerce_relations(
+        data.get("relations", []),
+        ontology.model_dump().get("nodes", {}),
+        state["schema"],
+    )
+    if not candidate_relations:
+        logger.info("[ontology] Relation pass returned no additional relations")
+        return {
+            "llm_usage": [*state.get("llm_usage", []), usage],
+        }
+
+    merged = ontology.model_dump()
+    merged["relations"] = [
+        *merged.get("relations", []),
+        *candidate_relations,
+    ]
+    normalized = _normalize_ontology_instance(
+        ontology=OntologyInstance.model_validate(merged),
+        schema=state["schema"],
+        source_type=state["source_type"],
+        source_title=state["source_title"],
+    )
+    logger.info(
+        "[ontology] Relation pass completed (%.1fs) — +%d candidate relations",
+        time.perf_counter() - started,
+        len(candidate_relations),
+    )
+    return {
+        "ontology": normalized,
+        "llm_usage": [*state.get("llm_usage", []), usage],
+    }
 
 
 def _semantic_validate_node(state: PipelineState) -> PipelineState:
@@ -763,6 +1071,38 @@ def _graph_validate_node(state: PipelineState) -> PipelineState:
     }
 
 
+def _confidence_score_node(state: PipelineState) -> PipelineState:
+    """Compute schema-aware confidence scores for adaptive HITL (Step 3 of roadmap).
+
+    Runs after schema_validate and graph_validate so that retry_count, semantic_issues,
+    schema_issues, and human_required_fields are all finalized — the scorer only reads
+    the state and never mutates the ontology.
+    """
+    from backend.services.confidence import score_ontology
+
+    cfg = get_confidence_config()
+    if not cfg.get("enabled", True):
+        logger.info("[ontology] Confidence scoring disabled via config")
+        return {"confidence_report": None}
+
+    started = time.perf_counter()
+    report = score_ontology(
+        ontology=state["ontology"],
+        schema=state["schema"],
+        semantic_issues=state.get("semantic_issues", []),
+        schema_issues=state.get("schema_issues", []),
+        human_required_fields=state.get("human_required_fields", []),
+        retry_count=state.get("retry_count", 0),
+        config=cfg,
+    )
+    logger.info(
+        "[ontology] Confidence scoring completed (%.1fs) — %d entries",
+        time.perf_counter() - started,
+        len(report.entries),
+    )
+    return {"confidence_report": report}
+
+
 def _format_issues_summary(issues: list[PipelineIssue]) -> str:
     lines = []
     for i, issue in enumerate(issues, start=1):
@@ -807,23 +1147,41 @@ def _re_extract_node(state: PipelineState) -> PipelineState:
     client = _get_client(cfg["timeout_seconds"])
     retry_count = state.get("retry_count", 0)
     logger.info("[ontology] Re-extraction attempt %d/%d", retry_count, get_reflective_loop_config().get("max_retries", 2))
-    try:
-        response = client.chat.completions.create(
-            model=state["model_name"] or settings.MODEL_NAME,
-            temperature=0.0,
-            max_completion_tokens=cfg["max_output_tokens"],
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": state["text_with_pages"]},
-            ],
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": state["text_with_pages"]},
+    ]
+
+    def _run_completion(max_output_tokens: int):
+        try:
+            response = client.chat.completions.create(
+                model=state["model_name"] or settings.MODEL_NAME,
+                temperature=0.0,
+                max_completion_tokens=max_output_tokens,
+                messages=messages,
+            )
+        except Exception as exc:
+            msg = str(exc).lower()
+            if "timeout" in msg:
+                raise RuntimeError(llm_timeout_message("Ontology re-extraction", cfg["timeout_seconds"])) from exc
+            raise RuntimeError(f"Ontology re-extraction failed before completion: {exc}") from exc
+        return response.choices[0].message.content or "{}", usage_from_response(response, "ontology_re_extraction")
+
+    raw, usage = _run_completion(cfg["max_output_tokens"])
+    usages = [usage]
+    if raw.strip() == "{}" and int(usage.get("completion", 0) or 0) >= cfg["max_output_tokens"]:
+        retry_tokens = max(
+            int(get_ontology_config().get("extraction_retry_max_output_tokens", 20000)),
+            cfg["max_output_tokens"] + 4000,
         )
-    except Exception as exc:
-        msg = str(exc).lower()
-        if "timeout" in msg:
-            raise RuntimeError(llm_timeout_message("Ontology re-extraction", cfg["timeout_seconds"])) from exc
-        raise RuntimeError(f"Ontology re-extraction failed before completion: {exc}") from exc
-    raw = response.choices[0].message.content or "{}"
-    usage = usage_from_response(response, "ontology_re_extraction")
+        logger.warning(
+            "[ontology] Re-extraction returned empty JSON at completion limit (%d tokens); retrying once with max_output_tokens=%d",
+            cfg["max_output_tokens"],
+            retry_tokens,
+        )
+        raw, retry_usage = _run_completion(retry_tokens)
+        usages.append(retry_usage)
+
     data = _extract_json_object(raw)
     ontology = OntologyInstance.model_validate(_coerce_raw_ontology_data(
         data=data,
@@ -831,11 +1189,31 @@ def _re_extract_node(state: PipelineState) -> PipelineState:
         source_type=state["source_type"],
         source_title=state["source_title"],
     ))
+    ontology = _normalize_ontology_instance(
+        ontology=ontology,
+        schema=state["schema"],
+        source_type=state["source_type"],
+        source_title=state["source_title"],
+    )
+    previous_ontology = state["ontology"]
+    regression_reason = _retry_regression_reason(previous_ontology, ontology)
+    if regression_reason:
+        logger.warning(
+            "[ontology] Discarding catastrophic retry regression: %s. Keeping previous ontology (%d substantive nodes, %d relations).",
+            regression_reason,
+            _substantive_node_count(previous_ontology),
+            len(previous_ontology.relations or []),
+        )
+        return {
+            "ontology": previous_ontology,
+            "retry_count": retry_count + 1,
+            "llm_usage": [*state.get("llm_usage", []), *usages],
+        }
     logger.info("[ontology] Re-extraction completed (%.1fs)", time.perf_counter() - started)
     return {
         "ontology": ontology,
         "retry_count": retry_count + 1,
-        "llm_usage": [*state.get("llm_usage", []), usage],
+        "llm_usage": [*state.get("llm_usage", []), *usages],
     }
 
 
@@ -894,10 +1272,12 @@ def _build_graph():
     # Core nodes
     graph.add_node("extract", _call_extractor_llm)
     graph.add_node("normalize", _normalize_node)
+    graph.add_node("relation_extract", _relation_extract_node)
     graph.add_node("semantic_validate", _semantic_validate_node)
     graph.add_node("capture_issues", _update_last_issues)
     graph.add_node("schema_validate", _schema_validate_node)
     graph.add_node("graph_validate", _graph_validate_node)
+    graph.add_node("confidence_score", _confidence_score_node)
 
     # Reflective loop nodes
     graph.add_node("re_extract", _re_extract_node)
@@ -906,7 +1286,8 @@ def _build_graph():
     # Entry point and linear spine
     graph.set_entry_point("extract")
     graph.add_edge("extract", "normalize")
-    graph.add_edge("normalize", "semantic_validate")
+    graph.add_edge("normalize", "relation_extract")
+    graph.add_edge("relation_extract", "semantic_validate")
 
     # Capture issues before routing so re_extract can access them even after state changes
     graph.add_edge("semantic_validate", "capture_issues")
@@ -928,9 +1309,10 @@ def _build_graph():
     # Human review routes to schema_validate
     graph.add_edge("human_review", "schema_validate")
 
-    # Schema validation always flows into graph reasoning
+    # Schema validation flows into graph reasoning, then confidence scoring
     graph.add_edge("schema_validate", "graph_validate")
-    graph.add_edge("graph_validate", END)
+    graph.add_edge("graph_validate", "confidence_score")
+    graph.add_edge("confidence_score", END)
 
     return graph.compile()
 
@@ -966,6 +1348,8 @@ def build_initial_ontology(
         # Graph reasoning initial state
         "graph_issues": [],
         "suggested_relations": [],
+        # Confidence scoring initial state
+        "confidence_report": None,
         "llm_usage": [],
     })
     ontology = result["ontology"]
@@ -976,6 +1360,7 @@ def build_initial_ontology(
     needs_human_review = result.get("needs_human_review", False)
     graph_issues = result.get("graph_issues", [])
     suggested_relations = result.get("suggested_relations", [])
+    confidence_report = result.get("confidence_report")
     llm_usage = result.get("llm_usage", [])
     is_schema_compliant = not schema_issues and not human_fields
 
@@ -1002,6 +1387,7 @@ def build_initial_ontology(
         retry_count=retry_count,
         graph_issues=graph_issues,
         suggested_relations=suggested_relations,
+        confidence_report=confidence_report,
     )
     return response, {
         **aggregate_usage(llm_usage),
@@ -1013,6 +1399,8 @@ def apply_human_binding(
     ontology: OntologyInstance,
     answers: list[HumanBindingAnswer],
 ) -> OntologyPipelineResponse:
+    from backend.services.confidence import score_ontology
+
     schema = load_ontology_schema()
     updated = _apply_human_answers(ontology, answers)
     updated = _normalize_ontology_instance(
@@ -1022,6 +1410,16 @@ def apply_human_binding(
         source_title=updated.source_title,
     )
     schema_issues, human_fields = _validate_schema(updated, schema)
+    confidence_cfg = get_confidence_config()
+    confidence_report = None
+    if confidence_cfg.get("enabled", True):
+        confidence_report = score_ontology(
+            ontology=updated,
+            schema=schema,
+            schema_issues=schema_issues,
+            human_required_fields=human_fields,
+            config=confidence_cfg,
+        )
     return OntologyPipelineResponse(
         status="blocked" if schema_issues else ("needs_human" if human_fields else "ready"),
         ontology=updated,
@@ -1030,6 +1428,7 @@ def apply_human_binding(
         human_required_fields=human_fields,
         is_schema_compliant=not schema_issues and not human_fields,
         is_ready_for_human_review=not schema_issues,
+        confidence_report=confidence_report,
     )
 
 

@@ -115,6 +115,22 @@ async def apply_suggestions(req: ApplySuggestionsRequest):
     schema_issues, human_fields = validate_ontology_instance(updated_ontology)
     graph_issues, suggested_relations = run_graph_analysis(updated_ontology, schema)
 
+    from backend.app_config import get_confidence_config
+    from backend.services.confidence import score_ontology
+
+    confidence_cfg = get_confidence_config()
+    confidence_report = None
+    if confidence_cfg.get("enabled", True):
+        confidence_report = score_ontology(
+            ontology=updated_ontology,
+            schema=schema,
+            semantic_issues=existing.semantic_issues,
+            schema_issues=schema_issues,
+            human_required_fields=human_fields,
+            retry_count=existing.retry_count,
+            config=confidence_cfg,
+        )
+
     result = OntologyPipelineResponse(
         status="blocked" if schema_issues else ("needs_human" if human_fields else "ready"),
         ontology=updated_ontology,
@@ -126,6 +142,7 @@ async def apply_suggestions(req: ApplySuggestionsRequest):
         retry_count=existing.retry_count,
         graph_issues=graph_issues,
         suggested_relations=suggested_relations,
+        confidence_report=confidence_report,
     )
     pdf_store[req.pdf_id]["ontology_pipeline"] = result.model_dump()
     sync_ontology_pipeline_state(pdf_store[req.pdf_id])

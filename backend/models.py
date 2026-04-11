@@ -56,6 +56,7 @@ class UploadResponse(BaseModel):
     pdf_id: str
     filename: str
     page_count: int
+    run_id: str
 
 
 class ExtractRequest(BaseModel):
@@ -220,6 +221,30 @@ class ApplySuggestionsRequest(BaseModel):
     accepted_suggestions: list[SuggestedRelation] = []
 
 
+class ConfidenceEntry(BaseModel):
+    """Per-node confidence record produced by the Step 3 scoring layer.
+
+    Kept separate from OntologyInstance.nodes (which remain opaque dicts) so that
+    scores can be attached/updated without touching the core ontology payload.
+    """
+
+    node_type: str
+    node_id: str
+    score: float
+    classification: str  # auto_approve | human_review | auto_reject
+    signals: dict[str, float] = Field(default_factory=dict)
+    penalties: dict[str, float] = Field(default_factory=dict)
+    reasons: list[str] = Field(default_factory=list)
+
+
+class ConfidenceReport(BaseModel):
+    entries: list[ConfidenceEntry] = Field(default_factory=list)
+    theta_high: float = 0.0
+    theta_low: float = 0.0
+    auto_reject_enabled: bool = False
+    counts: dict[str, int] = Field(default_factory=dict)  # classification -> count
+
+
 class OntologyPipelineResponse(BaseModel):
     status: str
     ontology: OntologyInstance
@@ -231,6 +256,7 @@ class OntologyPipelineResponse(BaseModel):
     retry_count: int = 0
     graph_issues: list[GraphIssue] = []
     suggested_relations: list[SuggestedRelation] = []
+    confidence_report: ConfidenceReport | None = None
 
 
 class OntologyExportRequest(BaseModel):
