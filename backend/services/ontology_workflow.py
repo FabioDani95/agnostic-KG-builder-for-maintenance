@@ -30,7 +30,7 @@ def _normalize_node_name(name: str) -> str:
 
 
 def _merge_pipeline_results(results: list[OntologyPipelineResponse]) -> OntologyPipelineResponse:
-    """Merge multiple chunk pipeline results into one consolidated ontology."""
+    """Merge chunk-level ontology results into one normalized run-level payload."""
     if len(results) == 1:
         return results[0]
 
@@ -218,7 +218,7 @@ def _split_pages_by_section(
     max_chars: int,
     max_pages: int = 30,
 ) -> list[tuple[list[dict], list[dict]]]:
-    """Split pages into chunks driven by cut-plan sections and size limits."""
+    """Split selected pages into chunk-sized groups while preserving section context."""
     if not sections or not pages:
         sorted_pages = sorted(pages, key=lambda page: page["page_number"])
         return [

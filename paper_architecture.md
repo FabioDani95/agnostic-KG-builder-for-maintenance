@@ -1,5 +1,7 @@
 # Technical Architecture Reference — Agnostic KG Builder for Maintenance
 > Source material for APMS 2026 paper. Architecture & implementation details only — results/benchmarks to be added separately.
+> Document role: primary technical reference for the architecture currently implemented in the repo.
+> For product flow details, use [specification.md](specification.md). For future work and open stability gaps, use [roadmap_agentic.md](roadmap_agentic.md).
 
 ---
 
@@ -25,7 +27,7 @@ PDF Upload
     ↓
 [ScopingAgent]   → CutPlan (selected pages) → Operator Review
     ↓
-[OntologyDraftAgent]  → Ontology draft (nodes + relations + confidence) → Operator Review
+[OntologyDraftAgent]  → Ontology draft (nodes + relations) → Operator Review
     ↓
 [ExtractionAgent]  → Triplets (Symptom → FailureMode → CorrectiveAction)
     ↓
@@ -69,7 +71,7 @@ The schema defines required properties per node type. The confidence scoring and
 
 ### 3.1 Agent Definitions
 
-Each agent is a **stateless wrapper** over a workflow function. All state lives in `GraphState` and is persisted via `persist_graph_state()` on every state-changing operation.
+Core pipeline agents are thin wrappers over workflow functions. Advisory agents contain more local logic, but all run state still lives in `GraphState` and is persisted via `persist_graph_state()` on every state-changing operation.
 
 | Agent | File | Role | Implementation |
 |-------|------|------|----------------|
@@ -267,7 +269,7 @@ The `re_extract` node calls `RE_EXTRACTION_PROMPT_TEMPLATE` which includes:
 
 The re-extraction prompt is looser than the base extraction prompt. In adversarial conditions (many issues + high retry count), re-extraction can catastrophically regress (collapse to a minimal ontology). 
 
-**Current workaround**: `max_retries: 0` in `config.yaml` disables the reflective loop and uses the linear baseline. The fix requires either aligning the re-extraction contract with the base contract, or constraining retries to targeted node-level repairs.
+**Current workaround**: for conservative runs, override `reflective_loop.max_retries` to `0` at runtime and use the linear baseline. The checked-in config currently keeps `max_retries: 2`, so stable benchmarking depends on whether retries are actively used.
 
 ---
 

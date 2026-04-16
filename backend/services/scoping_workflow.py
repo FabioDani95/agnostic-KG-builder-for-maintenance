@@ -114,7 +114,7 @@ def _parse_section_response(
 
 
 def create_cut_plan_workflow(store: dict, req: CutPlanRequest) -> CutPlan:
-    """Run the existing cut-plan flow against a store entry."""
+    """Run the cut-plan flow against one in-memory store entry."""
     t0 = time.perf_counter()
     cfg = get_scoping_config()
     small_doc_threshold = get_effective_small_doc_threshold()

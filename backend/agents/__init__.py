@@ -1,1 +1,1 @@
-"""Agent wrappers and optional advanced agents for the multi-agent compatibility mode."""
+"""Agent wrappers and optional advisory agents for multi-agent mode."""

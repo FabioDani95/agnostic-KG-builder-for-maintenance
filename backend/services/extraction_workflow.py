@@ -36,7 +36,7 @@ def extract_triplets_workflow(
     store: dict,
     req: ExtractRequest,
 ) -> tuple[ExtractionResult, list[dict[str, Any]]]:
-    """Run the existing extraction flow against a store entry."""
+    """Run triplet extraction against one in-memory store entry."""
     t0 = time.perf_counter()
     pages = store["pages"]
 

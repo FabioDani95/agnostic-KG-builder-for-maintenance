@@ -1,5 +1,4 @@
 import json
-import logging
 from copy import deepcopy
 
 from fastapi import APIRouter, HTTPException
@@ -24,9 +23,7 @@ from backend.services.ontology_pipeline import (
     validate_ontology_instance,
 )
 from backend.services.ontology_schema_service import load_ontology_schema
-from backend.services.ontology_workflow import _split_pages_by_section, draft_ontology_workflow
-
-logger = logging.getLogger(__name__)
+from backend.services.ontology_workflow import draft_ontology_workflow
 
 router = APIRouter(prefix="/ontology", tags=["ontology"])
 
@@ -58,7 +55,8 @@ async def get_ontology_state(pdf_id: str):
 async def review_ontology(req: OntologyReviewRequest):
     if req.pdf_id not in pdf_store:
         raise HTTPException(status_code=404, detail="PDF not found.")
-    pipeline_state = pdf_store[req.pdf_id].get("ontology_pipeline")
+    store = pdf_store[req.pdf_id]
+    pipeline_state = store.get("ontology_pipeline")
     if not pipeline_state:
         raise HTTPException(status_code=404, detail="Run /ontology/draft first.")
     existing = OntologyPipelineResponse.model_validate(pipeline_state)
@@ -70,10 +68,10 @@ async def review_ontology(req: OntologyReviewRequest):
         raise HTTPException(status_code=status_code, detail=detail) from exc
     if existing.semantic_issues:
         result.semantic_issues = existing.semantic_issues
-    pdf_store[req.pdf_id]["ontology_pipeline"] = result.model_dump()
-    sync_ontology_pipeline_state(pdf_store[req.pdf_id])
+    store["ontology_pipeline"] = result.model_dump()
+    sync_ontology_pipeline_state(store)
     if get_pipeline_config().get("mode") == "multi_agent":
-        record_ontology_review_route(pdf_store[req.pdf_id])
+        record_ontology_review_route(store)
     return result
 
 
@@ -81,7 +79,8 @@ async def review_ontology(req: OntologyReviewRequest):
 async def apply_suggestions(req: ApplySuggestionsRequest):
     if req.pdf_id not in pdf_store:
         raise HTTPException(status_code=404, detail="PDF not found.")
-    pipeline_state = pdf_store[req.pdf_id].get("ontology_pipeline")
+    store = pdf_store[req.pdf_id]
+    pipeline_state = store.get("ontology_pipeline")
     if not pipeline_state:
         raise HTTPException(status_code=404, detail="Run /ontology/draft first.")
 
@@ -144,10 +143,10 @@ async def apply_suggestions(req: ApplySuggestionsRequest):
         suggested_relations=suggested_relations,
         confidence_report=confidence_report,
     )
-    pdf_store[req.pdf_id]["ontology_pipeline"] = result.model_dump()
-    sync_ontology_pipeline_state(pdf_store[req.pdf_id])
+    store["ontology_pipeline"] = result.model_dump()
+    sync_ontology_pipeline_state(store)
     if get_pipeline_config().get("mode") == "multi_agent":
-        record_ontology_review_route(pdf_store[req.pdf_id])
+        record_ontology_review_route(store)
     return result
 
 

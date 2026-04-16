@@ -1,4 +1,4 @@
-"""Read-only observability endpoints for the Phase 2 multi-agent layer."""
+"""Read-only status and audit endpoints for multi-agent runs."""
 
 from __future__ import annotations
 

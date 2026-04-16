@@ -6,10 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 from backend.services.ontology_export_store import (
-    GENERATED_DIR as EXPORT_GENERATED_DIR,
-    LEGACY_ONTOLOGY_PATH as EXPORT_LEGACY_PATH,
     LATEST_ONTOLOGY_PATH as EXPORT_LATEST_PATH,
-    build_export_filename,
     bump_file_version,
     normalize_file_version,
     prepare_exported_ontology,
@@ -66,11 +63,14 @@ def save_ontology_to_path(ontology: Dict[str, Any], path: Path) -> Dict[str, Any
     ont["metadata"]["total_nodes"] = sum(len(items) for items in ont.get("nodes", {}).values())
     ont["metadata"]["total_relationships"] = len(ont.get("relationships", []))
 
-    EXPORT_GENERATED_DIR.mkdir(parents=True, exist_ok=True)
-    target_path = EXPORT_GENERATED_DIR / build_export_filename(ont)
+    target_path = path
     payload = json.dumps(ont, indent=2, ensure_ascii=False)
 
-    for out_path in (target_path, EXPORT_LATEST_PATH, EXPORT_LEGACY_PATH):
+    output_paths = [target_path]
+    if target_path != EXPORT_LATEST_PATH:
+        output_paths.append(EXPORT_LATEST_PATH)
+
+    for out_path in output_paths:
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(payload, encoding="utf-8")
 

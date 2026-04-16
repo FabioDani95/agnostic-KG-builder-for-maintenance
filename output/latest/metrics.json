@@ -1,0 +1,328 @@
+{
+  "context": {
+    "kg_id": "bfp_a3729e",
+    "version": "V0",
+    "ontology_ref": "Mitsubishi Electric industrial robot RV-5AS",
+    "source_manual": "bfp-a3729e.pdf",
+    "extraction_timestamp": "2026-04-16T23:15:50Z"
+  },
+  "extraction_performance": {
+    "status": "EXTRACTION COMPLETE",
+    "triplets_validated": 5,
+    "total_automation_time": "12m 46s",
+    "estimated_cost_usd": 1.161104,
+    "llm_tokens": 249255
+  },
+  "model_usage": {
+    "primary_model": "GPT-5.4",
+    "secondary_model": null
+  },
+  "file_links": {
+    "metrics": "./bfp_a3729e/metrics.json",
+    "ontology": "./bfp_a3729e/ontology.json"
+  },
+  "pipeline_metrics": {
+    "document": {
+      "filename": "bfp-a3729e.pdf",
+      "total_pages": 58,
+      "selected_pages": 22
+    },
+    "pricing_basis": {
+      "label": "Estimated using configured model pricing",
+      "models": {
+        "gpt-5.4": {
+          "label": "GPT-5.4",
+          "input_per_million": 2.5,
+          "cached_input_per_million": 0.25,
+          "output_per_million": 15.0
+        },
+        "gpt-5.4-mini": {
+          "label": "GPT-5.4 Mini",
+          "input_per_million": 0.75,
+          "cached_input_per_million": 0.075,
+          "output_per_million": 4.5
+        },
+        "gpt-5.4-nano": {
+          "label": "GPT-5.4 Nano",
+          "input_per_million": 0.2,
+          "cached_input_per_million": 0.02,
+          "output_per_million": 1.25
+        },
+        "gpt-5.4-pro": {
+          "label": "GPT-5.4 Pro",
+          "input_per_million": 30.0,
+          "cached_input_per_million": null,
+          "output_per_million": 180.0
+        }
+      }
+    },
+    "pricing_catalog": {
+      "gpt-5.4": {
+        "label": "GPT-5.4",
+        "input_per_million": 2.5,
+        "cached_input_per_million": 0.25,
+        "output_per_million": 15.0
+      },
+      "gpt-5.4-mini": {
+        "label": "GPT-5.4 Mini",
+        "input_per_million": 0.75,
+        "cached_input_per_million": 0.075,
+        "output_per_million": 4.5
+      },
+      "gpt-5.4-nano": {
+        "label": "GPT-5.4 Nano",
+        "input_per_million": 0.2,
+        "cached_input_per_million": 0.02,
+        "output_per_million": 1.25
+      },
+      "gpt-5.4-pro": {
+        "label": "GPT-5.4 Pro",
+        "input_per_million": 30.0,
+        "cached_input_per_million": null,
+        "output_per_million": 180.0
+      }
+    },
+    "stages": {
+      "scoping": {
+        "llm_calls": 2,
+        "prompt_tokens": 2542,
+        "cached_prompt_tokens": 0,
+        "non_cached_prompt_tokens": 2542,
+        "completion_tokens": 723,
+        "total_tokens": 3265,
+        "estimated_cost_usd": 0.0172,
+        "models": [
+          "gpt-5.4-2026-03-05"
+        ],
+        "pricing_models": [
+          "gpt-5.4"
+        ],
+        "operations": [
+          "scoping"
+        ],
+        "by_model": {
+          "gpt-5.4": {
+            "label": "GPT-5.4",
+            "llm_calls": 2,
+            "prompt_tokens": 2542,
+            "cached_prompt_tokens": 0,
+            "non_cached_prompt_tokens": 2542,
+            "completion_tokens": 723,
+            "total_tokens": 3265,
+            "estimated_cost_usd": 0.0172
+          }
+        },
+        "stage": "scoping",
+        "duration_seconds": 14.752,
+        "details": {
+          "total_pages": 58,
+          "selected_pages": 22,
+          "selected_sections": 7,
+          "skipped": false,
+          "page_offset": 6
+        }
+      },
+      "ontology": {
+        "stage": "ontology",
+        "duration_seconds": 632.654,
+        "llm_calls": 13,
+        "prompt_tokens": 173995,
+        "cached_prompt_tokens": 34048,
+        "non_cached_prompt_tokens": 139947,
+        "completion_tokens": 39115,
+        "total_tokens": 213110,
+        "estimated_cost_usd": 0.945103,
+        "models": [
+          "gpt-5.4-2026-03-05"
+        ],
+        "operations": [
+          "ontology_draft",
+          "ontology_re_extraction",
+          "ontology_relation_extraction",
+          "ontology_validation"
+        ],
+        "details": {
+          "selected_pages": 26,
+          "selected_sections": 7,
+          "chunk_count": 3,
+          "retry_count": 2,
+          "status": "needs_human_review",
+          "schema_issue_count": 0,
+          "semantic_issue_count": 11,
+          "graph_issue_count": 0,
+          "suggested_relation_count": 19
+        }
+      },
+      "extraction": {
+        "stage": "extraction",
+        "duration_seconds": 77.277,
+        "chunk_count": 10,
+        "llm_calls": 10,
+        "prompt_tokens": 19241,
+        "cached_prompt_tokens": 0,
+        "non_cached_prompt_tokens": 19241,
+        "completion_tokens": 5625,
+        "total_tokens": 24866,
+        "estimated_cost_usd": 0.132478,
+        "models": [
+          "gpt-5.4-2026-03-05"
+        ],
+        "pricing_models": [
+          "gpt-5.4"
+        ],
+        "operations": [
+          "extraction"
+        ],
+        "by_model": {
+          "gpt-5.4": {
+            "label": "GPT-5.4",
+            "llm_calls": 10,
+            "prompt_tokens": 19241,
+            "cached_prompt_tokens": 0,
+            "non_cached_prompt_tokens": 19241,
+            "completion_tokens": 5625,
+            "total_tokens": 24866,
+            "estimated_cost_usd": 0.132478
+          }
+        },
+        "details": {
+          "selected_pages": 22,
+          "triplet_count": 5,
+          "source_type": "Instruction Manual",
+          "source_title": "Mitsubishi Electric Industrial Robot RV-5AS",
+          "chunk_count": 10
+        }
+      },
+      "export": {
+        "stage": "export",
+        "duration_seconds": 41.642,
+        "llm_calls": 1,
+        "prompt_tokens": 4311,
+        "cached_prompt_tokens": 0,
+        "non_cached_prompt_tokens": 4311,
+        "completion_tokens": 3703,
+        "total_tokens": 8014,
+        "estimated_cost_usd": 0.066323,
+        "models": [
+          "gpt-5.4-2026-03-05"
+        ],
+        "pricing_models": [
+          "gpt-5.4"
+        ],
+        "operations": [
+          "style_cleanup"
+        ],
+        "by_model": {
+          "gpt-5.4": {
+            "label": "GPT-5.4",
+            "llm_calls": 1,
+            "prompt_tokens": 4311,
+            "cached_prompt_tokens": 0,
+            "non_cached_prompt_tokens": 4311,
+            "completion_tokens": 3703,
+            "total_tokens": 8014,
+            "estimated_cost_usd": 0.066323
+          }
+        },
+        "details": {
+          "validated_triplets": 5,
+          "filename": "bfp_a3729e_ontology.json",
+          "export_base": "ontology_draft",
+          "used_clean_ontology_draft": true,
+          "translation_language": null,
+          "style_cleanup_fields_seen": 194,
+          "style_cleanup_fields_changed": 35,
+          "style_cleanup_fields_rejected": 0,
+          "style_cleanup_deterministic_fields_changed": 87,
+          "style_cleanup_model": "gpt-5.4-2026-03-05"
+        }
+      }
+    },
+    "agent_token_ledger": {
+      "scoping_agent": {
+        "calls": 2,
+        "prompt_tokens": 2542,
+        "completion_tokens": 723,
+        "cached_tokens": 0,
+        "total_tokens": 3265,
+        "estimated_cost": 0.0172,
+        "models": [
+          "gpt-5.4-2026-03-05"
+        ],
+        "stage": "scoping"
+      },
+      "ontology_draft_agent": {
+        "calls": 13,
+        "prompt_tokens": 173995,
+        "completion_tokens": 39115,
+        "cached_tokens": 34048,
+        "total_tokens": 213110,
+        "estimated_cost": 0.945103,
+        "models": [
+          "gpt-5.4-2026-03-05"
+        ],
+        "stage": "ontology"
+      },
+      "extraction_agent": {
+        "calls": 10,
+        "prompt_tokens": 19241,
+        "completion_tokens": 5625,
+        "cached_tokens": 0,
+        "total_tokens": 24866,
+        "estimated_cost": 0.132478,
+        "models": [
+          "gpt-5.4-2026-03-05"
+        ],
+        "stage": "extraction"
+      },
+      "export": {
+        "calls": 1,
+        "prompt_tokens": 4311,
+        "completion_tokens": 3703,
+        "cached_tokens": 0,
+        "total_tokens": 8014,
+        "estimated_cost": 0.066323,
+        "models": [
+          "gpt-5.4-2026-03-05"
+        ],
+        "stage": "export"
+      }
+    },
+    "totals": {
+      "duration_seconds": 766.325,
+      "llm_calls": 26,
+      "prompt_tokens": 200089,
+      "cached_prompt_tokens": 34048,
+      "non_cached_prompt_tokens": 166041,
+      "completion_tokens": 49166,
+      "total_tokens": 249255,
+      "estimated_cost_usd": 1.161104,
+      "by_model": {
+        "gpt-5.4": {
+          "label": "GPT-5.4",
+          "llm_calls": 13,
+          "prompt_tokens": 26094,
+          "cached_prompt_tokens": 0,
+          "non_cached_prompt_tokens": 26094,
+          "completion_tokens": 10051,
+          "total_tokens": 36145,
+          "estimated_cost_usd": 0.216001
+        }
+      }
+    },
+    "nodes_by_type": {
+      "Asset": 1,
+      "Component": 22,
+      "Symptom": 10,
+      "FailureMode": 10,
+      "CorrectiveAction": 10,
+      "ErrorCode": 5
+    },
+    "derived_kpis": {
+      "pages_kept_ratio": 0.3793,
+      "seconds_per_selected_page": 34.833,
+      "cost_per_selected_page_usd": 0.052777,
+      "cost_per_extracted_triplet_usd": 0.232221
+    }
+  }
+}

@@ -1,5 +1,8 @@
 # Multi-Agent Architecture Specification
 
+> Historical design/specification note. Some sections below describe planned phases that have since been partially implemented. For the current repo state, treat [paper_architecture.md](paper_architecture.md) as the primary technical reference and [roadmap_agentic.md](roadmap_agentic.md) as the planning/status document.
+> Use this file as design history and rationale, not as the canonical source for implementation claims.
+
 ## Upgrade from Classic Pipeline to GraphChain Multi-Agent System
 
 This document specifies the architectural changes required to transform the current classic extraction pipeline into a neurosymbolic, ontology-grounded, domain-agnostic multi-agent system orchestrated via a state graph (LangGraph).
@@ -1017,16 +1020,14 @@ The MetaReviewAgent (when enabled) can produce these comparisons automatically a
 - **ExtractionAgent mostly exists already**: [backend/services/llm_service.py](/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/backend/services/llm_service.py) already does chunking, prompt execution, parsing, deterministic cleanup, page-support pruning, semantic dedup, and ID regeneration; [backend/routers/extract.py](/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/backend/routers/extract.py) is just a thin wrapper plus metrics.
 - **Validation/Grounding exist only implicitly**: extraction cleanup already rejects incomplete triads and unsupported corrective actions; ontology validation already exists; human triplet review in [frontend/app.js](/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/frontend/app.js) is still the real validation layer.
 - **Conflict resolution exists only as deterministic dedup**: ontology chunk merge in [backend/routers/ontology.py](/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/backend/routers/ontology.py) and extraction merge in [backend/services/llm_service.py](/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/backend/services/llm_service.py) already collapse duplicates, but there is no explicit conflict object, contradiction handling, or escalation logic.
-- **Shared state exists only as `pdf_store`**: [backend/routers/upload.py](/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/backend/routers/upload.py) stores `filename`, `pdf_path`, `pages`, `page_count`, `source_type`, `source_title`, plus later `cut_plan`, `ontology_pipeline`, `run_metrics`, and `ontology_path`.
-- **Token accounting exists only by stage**: [backend/services/run_metrics.py](/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/backend/services/run_metrics.py) already captures per-stage and by-model usage, but not per-agent ledger, phase history, or supervisor decisions.
+- **Shared state now includes `graph_state` layered into `pdf_store`**: [backend/routers/upload.py](/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/backend/routers/upload.py) still owns the in-memory store, but [backend/graph/store.py](/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/backend/graph/store.py) now mirrors run metadata, phase history, and supervisor audit data there.
+- **Token accounting exists by stage and is projected into an agent ledger**: [backend/services/run_metrics.py](/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/backend/services/run_metrics.py) still records stage metrics first, then projects them into the GraphState token ledger.
 - **Final export is already smarter than the architecture spec implies**: [backend/routers/generate.py](/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/backend/routers/generate.py) already tries ontology draft first, then minimal fallback, semantically merges validated triplets, validates candidates, translates only at export, persists the export, and feeds the graph editor.
-- **Major mismatches vs spec**:
-- `pipeline.mode` exists in config/API, but the frontend does not use it and the backend does not branch on it yet.
-- The code already contains `langgraph`, but only inside ontology drafting, not as an app-wide multi-agent supervisor graph.
-- Orchestration for scoping and ontology lives in routers, so wrappering is not plug-and-play yet.
-- Extraction does not currently consume `ontology_draft`.
-- There is no `run_id`, `phase_history`, `supervisor_log`, `hitl_queue`, `coverage_map`, `grounding_results`, or checkpoint store.
-- Reviewed triplet edits stay in browser state until `/generate-json`; they are not server-persisted.
+- **Current gaps vs the original full spec**:
+- `pipeline.mode` now branches the backend flow, but the UI still presents the familiar sequential screens instead of a dedicated agent dashboard.
+- `langgraph` is still localized to ontology drafting rather than an app-wide execution graph.
+- Core orchestration has been extracted into reusable workflows, but reviewed triplet edits still stay in browser state until `/generate-json`.
+- `run_id`, `phase_history`, `supervisor_log`, `coverage_map`, and `grounding_results` now exist; checkpoint/resume and durable HITL queues do not.
 
 ## 2. Gap Analysis
 - **Easy**: add a minimal `GraphState`; wrap current scoping/ontology/extraction as agent functions; backfill `pdf_store`; project existing metrics into a token ledger; keep existing endpoints/UI unchanged.

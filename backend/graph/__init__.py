@@ -1,1 +1,1 @@
-"""Graph-state helpers for the Phase 1 multi-agent compatibility layer."""
+"""Graph-state helpers for the multi-agent execution path."""

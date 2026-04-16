@@ -2,6 +2,10 @@
 
 ## Technical Specification
 
+> Document role: product and workflow specification for the current application.
+> For the current backend architecture, use [paper_architecture.md](paper_architecture.md).
+> For implementation roadmap and open issues, use [roadmap_agentic.md](roadmap_agentic.md).
+
 ## 1. Purpose
 
 The application processes technical manuals and extracts troubleshooting knowledge into a structured, ontology-first knowledge graph.
@@ -245,13 +249,13 @@ The pipeline:
 The reflective re-extraction loop still exists, but its defaults were hardened to prevent uncontrolled token burn.
 
 Current defaults:
-- `reflective_loop.max_retries: 0`
+- `reflective_loop.max_retries: 2`
 - `reflective_loop.retry_on_severity: "error"`
 
 That means:
-- the reflective loop is disabled by default
-- no automatic re-extraction is attempted unless the operator explicitly raises retries at runtime
-- even when re-enabled, the trigger threshold defaults to `error`, not `warning`
+- automatic re-extraction is available in the checked-in configuration
+- runtime overrides can still lower retries to `0` for conservative benchmarking or cost control
+- the trigger threshold still defaults to `error`, not `warning`
 
 This is a deliberate cost-control change.
 
@@ -766,18 +770,24 @@ Optional:
 Current top-level sections:
 - `shared_models`
 - `pipeline`
+- `agents`
+- `supervisor`
+- `checkpointing`
+- `validation`
 - `scoping`
 - `extraction`
 - `ontology`
+- `confidence`
 - `reflective_loop`
 
 The `pipeline` section currently exposes:
-- `mode`: execution mode for the extraction stack. `classic` keeps the current production flow. `multi_agent` is reserved for the future supervisor-based pipeline (Step 4 of the agentic roadmap).
+- `mode`: execution mode for the extraction stack. `classic` keeps the current production flow. `multi_agent` routes the same operator flow through agent wrappers, GraphState persistence, and supervisor audit logging.
 
 Current runtime-significant defaults:
 - ontology chunk size: `max_pages_per_chunk: 30`
-- reflective retries: `max_retries: 0`
+- reflective retries: `max_retries: 2`
 - reflective retry severity: `error`
+- pipeline mode: `multi_agent`
 
 Each functional section can define:
 - timeout
@@ -964,14 +974,14 @@ The current test strategy is specifically designed to protect against the most e
 
 - The app is still MVP-level, but the data flow is now ontology-first rather than triplet-only.
 - The ontology draft stage runs before manual triplet validation.
-- The reflective loop still exists, but default retries are now zero to avoid unintended token burn.
+- The reflective loop still exists and is configurable at runtime; the current checked-in default is `max_retries: 2`, but conservative operation still depends on issue severity and operator overrides.
 - Suggested graph relations are now operator-optional improvements, not hidden blockers.
 - Missing required non-ID ontology properties are increasingly surfaced as editable human input rather than opaque hard failures.
 - Schema issues are still important, but they no longer force the operator to lose the run before triplet review.
 - Final JSON generation now has a safer recovery path through `minimal_fallback` ontology export.
 - End-of-run cost visibility is now part of the operator workflow, not an external calculation.
 - Legacy `Printer` payloads are migrated to `Asset` before current validation rules are applied.
-- The current UI and workflow are still single-pipeline, not supervisor-driven. Confidence scoring and adaptive HITL are not yet implemented.
+- The current UI still follows the familiar sequential operator screens, but the backend already supports multi-agent state tracking, confidence scoring, and read-only supervisor observability.
 
 ---
 
@@ -982,8 +992,8 @@ The companion [roadmap_agentic.md](roadmap_agentic.md) tracks the intended evolu
 Current implementation status:
 - **Step 1 — Reflective Extraction Loop**: implemented
 - **Step 2 — Graph Reasoning with NetworkX**: implemented
-- **Step 3 — Confidence Scoring and Adaptive HITL**: not started
-- **Step 4 — Multi-Agent Architecture with Supervisor**: not started
+- **Step 3 — Confidence Scoring and Adaptive HITL**: backend implemented, frontend integration partial
+- **Step 4 — Multi-Agent Architecture with Supervisor**: backend wrapper/orchestration layer implemented, advanced HITL policy still in progress
 
 What is already operational in the codebase:
 - deterministic + LLM scoping merge
@@ -997,10 +1007,10 @@ What is already operational in the codebase:
 - run metrics and cost summary
 
 What is not yet operational:
-- per-entity or per-triplet confidence scoring
+- frontend review flows driven directly by confidence buckets
 - automatic routing into `auto_approve`, `human_review`, and `auto_reject`
-- supervisor-driven multi-agent orchestration
+- autonomous supervisor policy that bypasses the current review screens
 - explicit page-by-page coverage agents
 - persistent run history across restarts
 
-This matters for evaluation: the system is no longer a simple linear extractor, but it is also not yet a supervisor-style multi-agent platform.
+This matters for evaluation: the system is no longer a simple linear extractor, but it is also not yet a fully autonomous supervisor-driven platform.

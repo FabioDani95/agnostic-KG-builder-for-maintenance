@@ -1,5 +1,9 @@
 # Roadmap: Agentic Neurosymbolic KG Builder
 
+> Document role: roadmap, benchmark notes, and open implementation/research work.
+> For the architecture currently implemented in the repo, use [paper_architecture.md](paper_architecture.md).
+> For the shipped product workflow and API behavior, use [specification.md](specification.md).
+
 This document tracks the planned extensions to the current MVP, organized by implementation step.
 Each step is designed to be independently mergeable and testable.
 

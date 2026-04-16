@@ -13,8 +13,9 @@ shared_models: &strong_models
 pipeline:
   # Execution mode for the extraction stack.
   # "classic" keeps the current production flow.
-  # "multi_agent" enables the Phase 1 wrapper migration while keeping the
-  # existing operator flow and endpoint contracts unchanged.
+  # "multi_agent" routes the existing operator flow through agent wrappers,
+  # GraphState persistence, and supervisor observability without changing
+  # the endpoint contracts.
   mode: multi_agent
 
 agents:
@@ -52,24 +53,6 @@ agents:
     enabled: false
     model: gpt-5.4
     timeout: 60
-  refiner:
-    enabled: false
-    model: gpt-5.4
-    timeout: 90
-    max_retries_per_entity: 2
-    escalate_after_exhaustion: true
-  coverage:
-    enabled: false
-    model: gpt-5.4-nano
-    timeout: 60
-  grounding:
-    enabled: false
-    model: gpt-5.4
-    timeout: 90
-  conflict_resolution:
-    enabled: false
-    model: gpt-5.4
-    timeout: 60
 
 supervisor:
   mode: deterministic
@@ -86,6 +69,27 @@ validation:
   grounding_refine_threshold: 0.5
   check_ontology_chain: true
   check_page_attribution: true
+
+style_cleanup:
+  # Final export-only normalization pass. This never changes ids, relations,
+  # page references, codes, or schema keys; it only standardizes human-readable text.
+  enabled: true
+  deterministic_enabled: true
+  llm_enabled: true
+  timeout_seconds: 120
+  max_output_tokens: 6000
+  preserve_numbers_units_codes: true
+  preserve_page_refs: true
+  reject_on_semantic_drift: true
+  max_name_tokens: 10
+  max_description_sentences: 2
+  editable_fields:
+    Asset: [name, description]
+    Component: [name, description, category]
+    Symptom: [name, description]
+    FailureMode: [name, description, material_context]
+    CorrectiveAction: [name, description, instruction_text]
+    ErrorCode: [name, description]
 
 scoping:
   # Maximum number of pages to read for scoping analysis.

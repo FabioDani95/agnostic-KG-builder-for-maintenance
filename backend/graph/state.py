@@ -1,4 +1,4 @@
-"""Reduced GraphState for the Phase 1 migration layer."""
+"""Shared GraphState used by the multi-agent execution path."""
 
 from __future__ import annotations
 

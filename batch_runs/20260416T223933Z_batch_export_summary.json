@@ -1,0 +1,101 @@
+{
+  "started_at": "2026-04-16T22:39:33+00:00",
+  "finished_at": "2026-04-16T23:20:12+00:00",
+  "batch_directory": "manuals/batch_manuals",
+  "model": "gpt-5.4",
+  "target_language": "en",
+  "interrupted": true,
+  "manuals": [
+    {
+      "filename": "VB SERIES FANUC MAINTENANCE MANUAL Ver 1.0.pdf",
+      "status": "success",
+      "started_at": "2026-04-16T22:39:33+00:00",
+      "model": "gpt-5.4",
+      "target_language": "en",
+      "absolute_page_one": 2,
+      "page_offset": 1,
+      "page_count": 114,
+      "selected_pages": 21,
+      "selected_sections": 30,
+      "scoping_skipped": false,
+      "product_info": {
+        "product_name": "VB SERIES FANUC 0i MF CONTROL",
+        "document_type": "MAINTENANCE MANUAL",
+        "language": "English",
+        "page_count": 114
+      },
+      "ontology_error": "400: Expecting ',' delimiter: line 1628 column 6 (char 55107)",
+      "triplet_count": 17,
+      "total_failure_modes": 20,
+      "total_corrective_actions": 21,
+      "ontology_path": "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/output/vb_series_fanuc_maintenance_manual_ver_1_0/ontology.json",
+      "metrics_path": "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/output/vb_series_fanuc_maintenance_manual_ver_1_0/metrics.json",
+      "estimated_cost_usd": 0.321686,
+      "total_tokens": 48935,
+      "duration_seconds": 660.805,
+      "finished_at": "2026-04-16T22:54:27+00:00"
+    },
+    {
+      "filename": "bfp-a3729e.pdf",
+      "status": "success",
+      "started_at": "2026-04-16T22:54:27+00:00",
+      "model": "gpt-5.4",
+      "target_language": "en",
+      "absolute_page_one": 7,
+      "page_offset": 6,
+      "page_count": 58,
+      "selected_pages": 22,
+      "selected_sections": 7,
+      "scoping_skipped": false,
+      "product_info": {
+        "product_name": "Mitsubishi Electric Industrial Robot RV-5AS",
+        "document_type": "Instruction Manual",
+        "language": "English",
+        "page_count": 58
+      },
+      "ontology": {
+        "status": "needs_human_review",
+        "schema_issues": 0,
+        "human_required_fields": 0,
+        "graph_issues": 0,
+        "suggested_relations": 19,
+        "total_nodes": 58,
+        "total_relations": 70
+      },
+      "triplet_count": 5,
+      "total_failure_modes": 7,
+      "total_corrective_actions": 8,
+      "ontology_path": "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/output/bfp_a3729e/ontology.json",
+      "metrics_path": "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/output/bfp_a3729e/metrics.json",
+      "estimated_cost_usd": 1.161104,
+      "total_tokens": 249255,
+      "duration_seconds": 766.638,
+      "finished_at": "2026-04-16T23:15:50+00:00"
+    },
+    {
+      "filename": "eagle_s3l_laser_cutting_system_service_manual.pdf",
+      "status": "interrupted",
+      "started_at": "2026-04-16T23:20:12+00:00",
+      "finished_at": "2026-04-16T23:20:12+00:00",
+      "duration_seconds": 0.0,
+      "model": "gpt-5.4",
+      "target_language": "en",
+      "absolute_page_one": 1,
+      "page_offset": 0,
+      "page_count": 0,
+      "estimated_cost_usd": 0.0,
+      "total_tokens": 0,
+      "error": "Interrupted by operator."
+    }
+  ],
+  "totals": {
+    "processed": 3,
+    "success": 2,
+    "failed": 0,
+    "interrupted": 1,
+    "total_triplets": 22,
+    "total_tokens": 298190,
+    "estimated_cost_usd": 1.48279,
+    "total_duration_seconds": 1427.443
+  }
+}

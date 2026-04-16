@@ -172,6 +172,7 @@ def test_ontology_draft_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkey
         "retry_count",
         "graph_issues",
         "suggested_relations",
+        "confidence_report",
     }
 
 
@@ -351,6 +352,7 @@ def test_extract_tables_runs_phase3_agents_when_enabled_and_preserves_shape(monk
 def test_generate_json_reads_ontology_from_graph_state_in_multi_agent(monkeypatch):
     app_config.apply_runtime_overrides({"pipeline_mode": "multi_agent"})
     store = _sample_store("pdf-generate")
+    store["graph_state"]["selected_models"]["extraction"] = "gpt-5.4-mini"
     store["graph_state"]["ontology_pipeline"] = {
         "ontology": {
             "ontology_name": "DiagnosticOntology",
@@ -397,12 +399,33 @@ def test_generate_json_reads_ontology_from_graph_state_in_multi_agent(monkeypatc
     monkeypatch.setattr("backend.routers.generate.merge_validated_triplets", fake_merge)
     monkeypatch.setattr("backend.routers.generate.validate_ontology_instance", lambda ontology: ([], []))
     monkeypatch.setattr(
+        "backend.routers.generate.cleanup_export_ontology",
+        lambda ontology, target_language, model_name: (
+            captured.update({"cleanup_model_name": model_name}) or ontology,
+            {},
+            {},
+        ),
+    )
+    monkeypatch.setattr(
         "backend.routers.generate.prepare_exported_ontology",
         lambda ontology: {"metadata": {"version": "1.0"}, "nodes": {}, "relationships": []},
     )
     monkeypatch.setattr(
         "backend.routers.generate.persist_exported_ontology",
-        lambda payload, pdf_id: {"target_path": "/tmp/mock_export.json", "filename": "mock_export.json"},
+        lambda payload, pdf_id, manual_filename=None: {
+            "target_path": "/tmp/mock_export.json",
+            "filename": "ontology.json",
+            "download_filename": "mock_export.json",
+            "metrics_path": "/tmp/metrics.json",
+            "directory_name": "manual",
+        },
+    )
+    monkeypatch.setattr(
+        "backend.routers.generate.persist_export_metrics",
+        lambda metrics_payload, ontology_payload, export_info, manual_filename=None: {
+            "target_path": "/tmp/metrics.json",
+            "filename": "metrics.json",
+        },
     )
 
     response = client.post("/generate-json", json={
@@ -413,8 +436,64 @@ def test_generate_json_reads_ontology_from_graph_state_in_multi_agent(monkeypatc
 
     assert response.status_code == 200
     assert captured["base_ontology"]["source_title"] == "Graph State Robot"
+    assert captured["cleanup_model_name"] == "gpt-5.4-mini"
     assert store["graph_state"]["export_base"] == "ontology_draft"
+    assert store["metrics_path"] == "/tmp/metrics.json"
     assert response.headers["content-disposition"].endswith('filename=mock_export.json')
+
+
+def test_generate_json_minimal_fallback_autofills_asset_identity(monkeypatch):
+    store = _sample_store("pdf-generate-fallback")
+    store["filename"] = "eagle_s3l_laser_cutting_system_service_manual.pdf"
+    store["source_title"] = "Eagle Automatic Laser Cutting System Model: Eagle S3L."
+    pdf_store["pdf-generate-fallback"] = store
+
+    captured = {}
+
+    def fake_merge(base_ontology, validated_triplets):
+        captured["base_ontology"] = base_ontology
+        return base_ontology
+
+    monkeypatch.setattr("backend.routers.generate.merge_validated_triplets", fake_merge)
+    monkeypatch.setattr("backend.routers.generate.validate_ontology_instance", lambda ontology: ([], []))
+    monkeypatch.setattr(
+        "backend.routers.generate.cleanup_export_ontology",
+        lambda ontology, target_language, model_name: (ontology, {}, {}),
+    )
+    monkeypatch.setattr(
+        "backend.routers.generate.prepare_exported_ontology",
+        lambda ontology: {"metadata": {"version": "1.0"}, "nodes": ontology.get("nodes", {}), "relationships": []},
+    )
+    monkeypatch.setattr(
+        "backend.routers.generate.persist_exported_ontology",
+        lambda payload, pdf_id, manual_filename=None: {
+            "target_path": "/tmp/mock_export.json",
+            "filename": "ontology.json",
+            "download_filename": "mock_export.json",
+            "metrics_path": "/tmp/metrics.json",
+            "directory_name": "manual",
+        },
+    )
+    monkeypatch.setattr(
+        "backend.routers.generate.persist_export_metrics",
+        lambda metrics_payload, ontology_payload, export_info, manual_filename=None: {
+            "target_path": "/tmp/metrics.json",
+            "filename": "metrics.json",
+        },
+    )
+
+    response = client.post("/generate-json", json={
+        "pdf_id": "pdf-generate-fallback",
+        "validated_triplets": _sample_triplet_payload(),
+        "target_language": "en",
+    })
+
+    assert response.status_code == 200
+    asset = captured["base_ontology"]["nodes"]["Asset"][0]
+    assert asset["brand"] == "Eagle"
+    assert asset["model"] == "Eagle S3L"
+    assert asset["name"] == "Eagle Automatic Laser Cutting System Model: Eagle S3L"
+    assert store["metrics_path"] == "/tmp/metrics.json"
 
 
 def test_multi_agent_status_and_audit_endpoints_are_read_only(monkeypatch):

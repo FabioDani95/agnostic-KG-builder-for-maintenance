@@ -14,11 +14,20 @@ from backend.app_config import (
     get_pipeline_config,
     get_runtime_overrides,
     get_scoping_config,
+    get_style_cleanup_config,
     get_supervisor_config,
     get_validation_config,
 )
 from backend.graph.state import GraphPhase, GraphState, create_initial_graph_state, utc_now_iso
 from backend.services.run_metrics import project_agent_token_ledger
+
+
+def _default_selected_models() -> dict[str, str | None]:
+    return {
+        "scoping": None,
+        "ontology_draft": None,
+        "extraction": None,
+    }
 
 
 def _build_config_snapshot() -> dict[str, Any]:
@@ -29,6 +38,7 @@ def _build_config_snapshot() -> dict[str, Any]:
         "extraction": deepcopy(get_extraction_config()),
         "ontology": deepcopy(get_ontology_config()),
         "validation": deepcopy(get_validation_config()),
+        "style_cleanup": deepcopy(get_style_cleanup_config()),
         "supervisor": deepcopy(get_supervisor_config()),
         "checkpointing": deepcopy(get_checkpointing_config()),
         "reflective_loop": deepcopy(get_effective_reflective_loop_config()),
@@ -46,7 +56,7 @@ def persist_graph_state(store: dict[str, Any], state: GraphState) -> GraphState:
 
 
 def seed_graph_state(store: dict[str, Any], pdf_id: str) -> GraphState:
-    """Create the reduced Phase 1 graph state for a freshly loaded manual."""
+    """Create the initial GraphState for a freshly loaded manual."""
     existing = store.get("graph_state")
     if existing:
         return existing
@@ -58,11 +68,7 @@ def seed_graph_state(store: dict[str, Any], pdf_id: str) -> GraphState:
         source_type=store.get("source_type", ""),
         source_title=store.get("source_title", ""),
         config_snapshot=_build_config_snapshot(),
-        selected_models=deepcopy(store.get("selected_models") or {
-            "scoping": None,
-            "ontology_draft": None,
-            "extraction": None,
-        }),
+        selected_models=deepcopy(store.get("selected_models") or _default_selected_models()),
     )
     return persist_graph_state(store, state)
 
@@ -194,7 +200,7 @@ def sync_ontology_pipeline_state(store: dict[str, Any]) -> GraphState:
     state = ensure_graph_state(store, pdf_id=store.get("pdf_id"))
     pipeline_state = deepcopy(store.get("ontology_pipeline") or {})
     state["ontology_pipeline"] = pipeline_state
-    state["ontology_draft"] = deepcopy((pipeline_state.get("ontology") or None))
+    state["ontology_draft"] = deepcopy(pipeline_state.get("ontology") or None)
     state["human_required_fields"] = deepcopy(pipeline_state.get("human_required_fields") or [])
     state["suggested_relations"] = deepcopy(pipeline_state.get("suggested_relations") or [])
     state["schema_compliant"] = bool(pipeline_state.get("is_schema_compliant"))

@@ -97,6 +97,28 @@ def get_validation_config() -> dict:
     return cfg
 
 
+def get_style_cleanup_config() -> dict:
+    cfg = deepcopy(load_config().get("style_cleanup", {}))
+    cfg.setdefault("enabled", True)
+    cfg.setdefault("deterministic_enabled", True)
+    cfg.setdefault("llm_enabled", True)
+    cfg.setdefault("timeout_seconds", 120)
+    cfg.setdefault("max_output_tokens", 6000)
+    cfg.setdefault("preserve_numbers_units_codes", True)
+    cfg.setdefault("preserve_page_refs", True)
+    cfg.setdefault("reject_on_semantic_drift", True)
+    cfg.setdefault("max_name_tokens", 10)
+    cfg.setdefault("max_description_sentences", 2)
+    editable_fields = cfg.setdefault("editable_fields", {})
+    editable_fields.setdefault("Asset", ["name", "description"])
+    editable_fields.setdefault("Component", ["name", "description", "category"])
+    editable_fields.setdefault("Symptom", ["name", "description"])
+    editable_fields.setdefault("FailureMode", ["name", "description", "material_context"])
+    editable_fields.setdefault("CorrectiveAction", ["name", "description", "instruction_text"])
+    editable_fields.setdefault("ErrorCode", ["name", "description"])
+    return cfg
+
+
 def reload_config() -> dict:
     """Force-reload from disk (e.g. after user edits the file)."""
     _load_raw.cache_clear()

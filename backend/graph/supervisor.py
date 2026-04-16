@@ -1,4 +1,4 @@
-"""Deterministic, non-intrusive supervisor audit for Phases 2 and 3."""
+"""Deterministic supervisor routing and audit logging for multi-agent mode."""
 
 from __future__ import annotations
 
