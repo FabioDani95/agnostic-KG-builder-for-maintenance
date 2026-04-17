@@ -469,6 +469,11 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest) -> Ont
         for operation in item.get("operations", [])
         if operation
     })
+    parse_repair_events: list[dict] = [
+        event
+        for item in chunk_metrics
+        for event in (item.get("parse_repair_events") or [])
+    ]
 
     record_stage_metrics(
         store,
@@ -495,6 +500,8 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest) -> Ont
                 "semantic_issue_count": len(result.semantic_issues),
                 "graph_issue_count": len(result.graph_issues),
                 "suggested_relation_count": len(result.suggested_relations),
+                "parse_repair_count": len(parse_repair_events),
+                "parse_repair_events": parse_repair_events,
             },
         },
     )

@@ -11,7 +11,7 @@ from backend.models import (
     Symptom, FailureMode, CorrectiveAction, Triplet,
     ExtractionResult, Severity,
 )
-from backend.prompts.extraction_prompt import build_extraction_prompt
+from backend.prompts.extraction_prompt import build_existing_id_catalog_block, build_extraction_prompt
 from backend.app_config import get_scoping_config, get_extraction_config
 from backend.services.llm_guardrails import (
     enforce_llm_limits,
@@ -97,6 +97,7 @@ def call_openai(
     model_name: str | None = None,
     timeout: int | None = None,
     section_context: str = "",
+    ontology_draft: dict | None = None,
 ) -> tuple[str, dict]:
     """Send extraction request to OpenAI and return (raw_response, token_usage)."""
     cfg = resolve_guardrails(
@@ -110,6 +111,7 @@ def call_openai(
     system_prompt = build_extraction_prompt(
         source_type,
         source_title,
+        existing_id_catalog_block=build_existing_id_catalog_block(ontology_draft),
     )
 
     # Build user message: section context header + page text
@@ -192,6 +194,16 @@ def _parse_severity(val: str) -> Severity:
         return Severity.MEDIUM
 
 
+def _parse_page_cell(val: str) -> int:
+    match = re.search(r"\d+", str(val or ""))
+    if not match:
+        return 0
+    try:
+        return int(match.group(0))
+    except ValueError:
+        return 0
+
+
 def parse_extraction(raw: str, source_type: str, source_title: str) -> ExtractionResult:
     """Parse the raw LLM response into structured ExtractionResult."""
     sym_table, fm_table, ca_table = _split_tables(raw)
@@ -201,11 +213,13 @@ def parse_extraction(raw: str, source_type: str, source_title: str) -> Extractio
     symptoms: list[Symptom] = []
     for row in sym_rows[1:]:  # skip header
         if len(row) >= 4:
+            evidence_page = _parse_page_cell(row[4]) if len(row) >= 5 else 0
             symptoms.append(Symptom(
                 symptom_id=row[0],
                 name=row[1],
                 description=row[2],
                 severity=_parse_severity(row[3]),
+                evidence_page=evidence_page,
             ))
 
     # Parse FailureModes
@@ -213,12 +227,14 @@ def parse_extraction(raw: str, source_type: str, source_title: str) -> Extractio
     failure_modes: list[FailureMode] = []
     for row in fm_rows[1:]:
         if len(row) >= 5:
+            evidence_page = _parse_page_cell(row[5]) if len(row) >= 6 else 0
             failure_modes.append(FailureMode(
                 failure_mode_id=row[0],
                 name=row[1],
                 description=row[2],
                 material_context=row[3],
                 linked_symptom_id=row[4],
+                evidence_page=evidence_page,
             ))
 
     # Parse CorrectiveActions
@@ -708,6 +724,7 @@ def extract_triplets_chunked(
     target_language: str,
     model_name: str | None = None,
     sections: list[dict] | None = None,
+    ontology_draft: dict | None = None,
 ) -> ExtractionResult:
     cfg = get_extraction_config()
     chunks = _split_page_chunks(
@@ -746,6 +763,7 @@ def extract_triplets_chunked(
             target_language=target_language,
             model_name=model_name,
             section_context=section_context,
+            ontology_draft=ontology_draft,
         )
         usage_entries.append(usage)
         parsed = parse_extraction(raw_response, source_type, source_title)

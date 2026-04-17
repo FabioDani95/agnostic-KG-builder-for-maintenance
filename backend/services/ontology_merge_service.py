@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import re
 from copy import deepcopy
 
-from backend.models import OntologyRelationInstance, Severity
+from backend.models import OntologyEvidence, OntologyRelationInstance, Severity
 from backend.services.ontology_semantics import (
     corrective_actions_match,
     failure_modes_match,
@@ -10,8 +11,21 @@ from backend.services.ontology_semantics import (
     is_corrective_action_candidate,
     is_failure_mode_candidate,
     prefer_more_informative_text,
+    semantically_equivalent,
     symptoms_match,
 )
+
+
+_SEQUENTIAL_ID_RE = re.compile(r"^(SYM|FM|CA)-\d+$")
+_DESCRIPTIVE_ID_RE = re.compile(r"^(sym|fm|ca)_[a-z0-9_]+$")
+
+
+def _is_sequential_id(value: str) -> bool:
+    return bool(_SEQUENTIAL_ID_RE.match(str(value or "").strip()))
+
+
+def _is_descriptive_id(value: str) -> bool:
+    return bool(_DESCRIPTIVE_ID_RE.match(str(value or "").strip()))
 
 
 def _severity_rank(value: str) -> int:
@@ -30,6 +44,25 @@ def _relation_key(relation: dict) -> tuple[str, str, str]:
         str(relation.get("from_id", "")).strip(),
         str(relation.get("to_id", "")).strip(),
     )
+
+
+def _evidence_entry(pages: list[int]) -> list[dict]:
+    evidence: list[dict] = []
+    seen: set[int] = set()
+    for raw_page in pages:
+        try:
+            page = int(raw_page or 0)
+        except (TypeError, ValueError):
+            page = 0
+        if page <= 0 or page in seen:
+            continue
+        seen.add(page)
+        evidence.append(OntologyEvidence(
+            source_page=page,
+            source_reference=f"PAGE {page}",
+            quote="",
+        ).model_dump())
+    return evidence
 
 
 def _sanitize_base_ontology(base_ontology: dict) -> dict:
@@ -134,6 +167,13 @@ def _sanitize_base_ontology(base_ontology: dict) -> dict:
     return sanitized
 
 
+_ID_FIELD_BY_TYPE: dict[str, str] = {
+    "Symptom": "symptom_id",
+    "FailureMode": "failure_mode_id",
+    "CorrectiveAction": "action_id",
+}
+
+
 def _find_node_by_semantics(items: list[dict], candidate: dict, node_type: str) -> dict | None:
     for existing in items:
         if node_type == "Symptom" and symptoms_match(
@@ -159,6 +199,33 @@ def _find_node_by_semantics(items: list[dict], candidate: dict, node_type: str) 
             str(candidate.get("name", "")),
             str(candidate.get("description", "")),
             str(candidate.get("instruction_text", "")),
+        ):
+            return existing
+
+    id_field = _ID_FIELD_BY_TYPE.get(node_type)
+    candidate_id = str(candidate.get(id_field, "")).strip() if id_field else ""
+    if not _is_sequential_id(candidate_id):
+        return None
+
+    candidate_text = " ".join(
+        str(candidate.get(field, "") or "")
+        for field in ("name", "description", "material_context", "instruction_text")
+    ).strip()
+    for existing in items:
+        existing_id = str(existing.get(id_field, "")).strip() if id_field else ""
+        if not _is_descriptive_id(existing_id):
+            continue
+        existing_text = " ".join(
+            str(existing.get(field, "") or "")
+            for field in ("name", "description", "material_context", "instruction_text")
+        ).strip()
+        if not existing_text or not candidate_text:
+            continue
+        if semantically_equivalent(
+            existing_text,
+            candidate_text,
+            min_ratio=0.68,
+            min_overlap=0.55,
         ):
             return existing
     return None
@@ -226,9 +293,12 @@ def merge_validated_triplets(base_ontology: dict, validated_triplets: list) -> d
     relations = merged.setdefault("relations", [])
     relation_keys = {_relation_key(rel) for rel in relations if isinstance(rel, dict)}
 
+    failure_mode_evidence_pages: dict[str, list[int]] = {}
+
     for triplet in validated_triplets:
         symptom_dict = triplet.symptom.model_dump()
         symptom_dict["severity"] = triplet.symptom.severity.value
+        symptom_evidence_page = int(getattr(triplet.symptom, "evidence_page", 0) or 0)
         symptom_id = _upsert_node(nodes, "Symptom", symptom_dict)
 
         failure_mode_id_map: dict[str, str] = {}
@@ -240,15 +310,18 @@ def merge_validated_triplets(base_ontology: dict, validated_triplets: list) -> d
             ):
                 continue
             failure_mode_dict = failure_mode.model_dump(exclude={"linked_symptom_id"})
+            fm_evidence_page = int(getattr(failure_mode, "evidence_page", 0) or 0)
             resolved_failure_mode_id = _upsert_node(nodes, "FailureMode", failure_mode_dict)
             failure_mode_id_map[failure_mode.failure_mode_id] = resolved_failure_mode_id
+            if fm_evidence_page > 0:
+                failure_mode_evidence_pages.setdefault(resolved_failure_mode_id, []).append(fm_evidence_page)
             relation = OntologyRelationInstance(
                 name="MAY_INDICATE",
                 from_type="Symptom",
                 from_id=symptom_id,
                 to_type="FailureMode",
                 to_id=resolved_failure_mode_id,
-                evidence=[],
+                evidence=_evidence_entry([symptom_evidence_page, fm_evidence_page]),
             ).model_dump()
             key = _relation_key(relation)
             if key not in relation_keys:
@@ -270,13 +343,14 @@ def merge_validated_triplets(base_ontology: dict, validated_triplets: list) -> d
                 source_page = action_dict.get("source_page")
                 action_dict["source_reference"] = f"PAGE {source_page}" if source_page else "PAGE UNKNOWN"
             action_id = _upsert_node(nodes, "CorrectiveAction", action_dict)
+            ca_source_page = int(action_dict.get("source_page") or 0)
             relation = OntologyRelationInstance(
                 name="RESOLVED_BY",
                 from_type="FailureMode",
                 from_id=resolved_failure_mode_id,
                 to_type="CorrectiveAction",
                 to_id=action_id,
-                evidence=[],
+                evidence=_evidence_entry([ca_source_page]),
             ).model_dump()
             key = _relation_key(relation)
             if key not in relation_keys:
@@ -337,7 +411,7 @@ def merge_validated_triplets(base_ontology: dict, validated_triplets: list) -> d
                 from_id=failure_mode_id,
                 to_type="Component",
                 to_id=component_id,
-                evidence=[],
+                evidence=_evidence_entry(failure_mode_evidence_pages.get(failure_mode_id, [])),
             ).model_dump()
             key = _relation_key(relation)
             if key not in relation_keys:

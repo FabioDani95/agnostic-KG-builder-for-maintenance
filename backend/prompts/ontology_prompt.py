@@ -11,6 +11,8 @@ You must follow the ontology definition exactly.
 - source_type: {source_type}
 - source_title: {source_title}
 
+{candidate_candidates_block}
+
 ## Instructions
 1. Extract only facts explicitly supported by the text.
 2. Build an ontology instance with these top-level keys only:
@@ -53,7 +55,11 @@ You must follow the ontology definition exactly.
 10. You MUST also create ALL 6 relation types defined in the schema when supported by the text:
     - HAS_COMPONENT: Asset → Component (for every Component extracted)
     - MAY_INDICATE: Symptom → FailureMode
-    - AFFECTS: FailureMode → Component (link failure modes to the component they affect)
+    - AFFECTS: FailureMode → Component (link failure modes to the MOST SPECIFIC Component
+      named in the failure context — never fall back to the root asset or the highest-level
+      assembly unless the text explicitly names only that level. If the specific component
+      is not yet in the Component list, ADD it as a new Component BEFORE emitting the
+      AFFECTS relation.)
     - RESOLVED_BY: FailureMode → CorrectiveAction
     - GENERATES_ERROR: Asset → ErrorCode (for every ErrorCode extracted)
     - INDICATES: ErrorCode → FailureMode (link error codes to the failure they signal)
@@ -67,7 +73,31 @@ You must follow the ontology definition exactly.
 16. Return JSON only. No markdown. No commentary.
 17. Keep the Asset scope aligned with source_title. Do NOT broaden a "control box" or "controller" manual into a whole "robot system" unless the manual text explicitly requires that broader scope.
 18. A FailureMode must be a technical cause, not a failed test, verification result, inspection result, or procedural step.
+    A valid FailureMode MUST name (a) a component AND (b) a stative condition (worn, loose,
+    misaligned, dead, disconnected, out of adjustment, phased incorrectly, seized,
+    contaminated, cracked, obstructed, ...). Contrast examples:
+    - Symptom "The tool changer gets hung up." → FailureMode "Pneumatic solenoid valve
+      stuck open on ATC circuit." (NOT "Tool changer hung up")
+    - Symptom "An alarm is displayed." → FailureMode "Spindle orient parameter P4031
+      misconfigured after control reload." (NOT "A fault occurs")
+    - Symptom "Window damaged or severely scratched." → FailureMode "Impact from flying chip
+      cracked the polycarbonate window pane." (NOT "Damaged or scratched window panel")
+    If the only FailureMode you can find is a lexical restatement of the Symptom, OMIT it —
+    do not invent one.
 19. A CorrectiveAction must be a restorative action, not an inspection-only or verification-only step unless that step itself resolves the fault according to the text.
+20. FailureMode.material_context MUST reference an EXISTING Component node by its
+    component_id (e.g. "comp_spindle_motor") — not a free-text label like "Robot arm".
+    If no Component node represents the material context, add it to the Component list
+    FIRST, then set material_context to that component_id. If the failure cannot be
+    tied to a specific component mentioned in the text, leave material_context as an
+    empty string.
+21. If the text contains alphanumeric patterns matching alarm/error conventions
+    (e.g. "C0330", "H0216", "Alarm 215", "E504") or phrases of the form
+    "<adjective> alarm is set", "alarm '<text>' is displayed", "error <code>
+    occurs", "timeout in <subsystem>", you MUST produce an ErrorCode node AND a
+    corresponding INDICATES relation (ErrorCode → FailureMode) whenever the text
+    links the code to a specific failure. A GENERATES_ERROR relation (Asset →
+    ErrorCode) MUST also be emitted for each ErrorCode.
 
 ## IMPORTANT: ID Uniqueness
 - All IDs must be globally unique and descriptive, not just sequential numbers.
@@ -123,11 +153,13 @@ def build_ontology_extraction_prompt(
     schema_json: str,
     source_type: str,
     source_title: str,
+    candidate_candidates_block: str = "",
 ) -> str:
     return EXTRACTION_PROMPT_TEMPLATE.format(
         schema_json=schema_json,
         source_type=source_type,
         source_title=source_title,
+        candidate_candidates_block=candidate_candidates_block,
     )
 
 
@@ -206,9 +238,16 @@ identified the following issues that must be resolved:
 ## Previous Ontology Instance (for reference)
 {previous_ontology_json}
 
+{candidate_candidates_block}
+
 ## Instructions
 1. Produce a corrected ontology instance that addresses every issue listed above.
 2. For each issue, apply the fix_hint if provided; do not invent facts not in the text.
+   When an issue has code="symptom_failure_duplicate", you MUST either:
+   (a) rewrite the FailureMode in causal form (name a component AND a stative condition
+       like worn/loose/misaligned/dead/disconnected/out of adjustment/phased incorrectly/...), or
+   (b) DELETE the FailureMode and its MAY_INDICATE edge.
+   Do NOT simply rename the FailureMode while keeping the same observational description.
 3. This is still a FULL ontology extraction pass, not a minimal patch. Rebuild the complete ontology instance.
 4. Keep all nodes and relations that were already correct; only modify what the issues describe.
 5. Preserve existing IDs and wording unless an issue specifically requires a change.
@@ -224,6 +263,13 @@ identified the following issues that must be resolved:
    - FailureMode must be a technical cause, not a test/verification/inspection result.
    - CorrectiveAction must be a restorative action, not inspection-only.
    - Asset scope must remain aligned with source_title.
+   - AFFECTS must point to the MOST SPECIFIC Component in the failure context;
+     add a Component node BEFORE emitting AFFECTS when the specific part is missing.
+   - FailureMode.material_context must reference an existing Component.component_id
+     (or be an empty string when the text does not name a specific part).
+   - ErrorCode nodes MUST be produced whenever the text shows alphanumeric alarm
+     tokens or natural-language alarm phrases, with GENERATES_ERROR and (when
+     linked to a failure) INDICATES relations.
 10. Every relation MUST include an "evidence" array with at least one entry.
    Each evidence entry must use this exact shape (all three fields required):
      {{"source_page": 14, "source_reference": "PAGE 14", "quote": "short verbatim text from that page"}}
@@ -239,6 +285,7 @@ def build_ontology_re_extraction_prompt(
     source_title: str,
     issues_summary: str,
     previous_ontology_json: str,
+    candidate_candidates_block: str = "",
 ) -> str:
     return RE_EXTRACTION_PROMPT_TEMPLATE.format(
         schema_json=schema_json,
@@ -246,6 +293,7 @@ def build_ontology_re_extraction_prompt(
         source_title=source_title,
         issues_summary=issues_summary,
         previous_ontology_json=previous_ontology_json,
+        candidate_candidates_block=candidate_candidates_block,
     )
 
 

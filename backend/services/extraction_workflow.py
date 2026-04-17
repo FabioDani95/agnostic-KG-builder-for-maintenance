@@ -47,6 +47,7 @@ def extract_triplets_workflow(
 
     sections = (store.get("cut_plan") or {}).get("sections", [])
     chunk_metadata = _build_chunk_metadata(pages)
+    ontology_draft = (store.get("ontology_pipeline") or {}).get("ontology")
 
     try:
         result, usage_summary = extract_triplets_chunked(
@@ -56,6 +57,7 @@ def extract_triplets_workflow(
             target_language=req.target_language,
             model_name=req.model_name,
             sections=sections,
+            ontology_draft=ontology_draft,
         )
     except RuntimeError as exc:
         detail = str(exc)

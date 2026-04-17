@@ -41,7 +41,12 @@ from backend.services.llm_guardrails import (
     enforce_llm_limits,
     llm_timeout_message,
 )
+from backend.services.candidate_mining_service import (
+    mine_candidates,
+    render_candidates_prompt_block,
+)
 from backend.services.language_utils import normalize_language_code
+from backend.services.type_consistency_service import evaluate_type_consistency
 from backend.services.ontology_schema_service import (
     dump_ontology_schema_json,
     load_ontology_schema,
@@ -62,6 +67,7 @@ class PipelineState(TypedDict, total=False):
     model_name: str
     schema: OntologySchemaDefinition
     schema_json: str
+    candidates_block: str
     ontology: OntologyInstance
     semantic_issues: list[PipelineIssue]
     schema_issues: list[PipelineIssue]
@@ -95,15 +101,100 @@ def _ontology_cfg(max_output_tokens: int) -> dict[str, int]:
     }
 
 
+_PARSE_REPAIR_EVENTS: list[dict[str, Any]] = []
+
+
+def _reset_parse_repair_events() -> None:
+    _PARSE_REPAIR_EVENTS.clear()
+
+
+def consume_parse_repair_events() -> list[dict[str, Any]]:
+    events = list(_PARSE_REPAIR_EVENTS)
+    _PARSE_REPAIR_EVENTS.clear()
+    return events
+
+
+def _record_parse_repair(strategy: str, original_error: str) -> None:
+    event = {"strategy": strategy, "original_error": original_error}
+    _PARSE_REPAIR_EVENTS.append(event)
+    logger.warning("[ontology] JSON parse repaired via %s (original: %s)", strategy, original_error)
+
+
 def _extract_json_object(raw: str) -> dict[str, Any]:
+    """Parse a JSON object from an LLM response with progressive repair fallbacks.
+
+    Strategy ladder:
+      1. Strict json.loads on the trimmed text.
+      2. Substring between first '{' and last '}' (unchanged legacy behavior).
+      3. json_repair library if available (best-effort semantic repair).
+      4. Lightweight regex repair (strip trailing commas, add commas between
+         adjacent closing/opening tokens).
+
+    Each non-strict path records a parse_repair event consumable via
+    consume_parse_repair_events() so run_metrics / supervisor_log can surface it.
+    """
     raw = raw.strip()
+    if not raw:
+        raise json.JSONDecodeError("Empty LLM response", raw, 0)
+
     try:
         return json.loads(raw)
-    except json.JSONDecodeError:
-        match = re.search(r"\{.*\}", raw, re.DOTALL)
-        if not match:
-            raise
-        return json.loads(match.group(0))
+    except json.JSONDecodeError as strict_err:
+        original_error = str(strict_err)
+
+        candidate = raw
+        first_brace = raw.find("{")
+        last_brace = raw.rfind("}")
+        if first_brace != -1 and last_brace > first_brace:
+            candidate = raw[first_brace : last_brace + 1]
+            try:
+                parsed = json.loads(candidate)
+                _record_parse_repair("substring_extraction", original_error)
+                return parsed
+            except json.JSONDecodeError:
+                pass
+
+        try:
+            from json_repair import repair_json  # type: ignore
+
+            repaired = repair_json(candidate, return_objects=False)
+            parsed = json.loads(repaired)
+            if isinstance(parsed, dict):
+                _record_parse_repair("json_repair_library", original_error)
+                return parsed
+        except ImportError:
+            pass
+        except (json.JSONDecodeError, ValueError):
+            pass
+
+        regex_repaired = _regex_repair_json(candidate)
+        if regex_repaired is not None:
+            try:
+                parsed = json.loads(regex_repaired)
+                if isinstance(parsed, dict):
+                    _record_parse_repair("regex_repair", original_error)
+                    return parsed
+            except json.JSONDecodeError:
+                pass
+
+        raise strict_err
+
+
+def _regex_repair_json(text: str) -> str | None:
+    """Best-effort regex repair for the most common LLM JSON mistakes."""
+    if not text:
+        return None
+    repaired = re.sub(r",\s*([\]\}])", r"\1", text)
+    repaired = re.sub(r"([\]\}\"])\s*\n\s*(?=[\"\{\[])", r"\1,\n", repaired)
+    open_braces = repaired.count("{")
+    close_braces = repaired.count("}")
+    if open_braces > close_braces:
+        repaired = repaired + ("}" * (open_braces - close_braces))
+    open_brackets = repaired.count("[")
+    close_brackets = repaired.count("]")
+    if open_brackets > close_brackets:
+        repaired = repaired + ("]" * (open_brackets - close_brackets))
+    return repaired
 
 
 def _empty_instance(
@@ -768,6 +859,35 @@ def _validate_schema(ontology: OntologyInstance, schema: OntologySchemaDefinitio
                         suggested_value=suggested_value,
                     ))
 
+    component_ids = {
+        str(item.get("component_id", "")).strip()
+        for item in ontology.nodes.get("Component", [])
+        if isinstance(item, dict) and str(item.get("component_id", "")).strip()
+    }
+    for fm in ontology.nodes.get("FailureMode", []):
+        if not isinstance(fm, dict):
+            continue
+        material_context = str(fm.get("material_context", "") or "").strip()
+        if not material_context:
+            continue
+        if material_context not in component_ids:
+            issues.append(PipelineIssue(
+                severity="warning",
+                code="material_context_not_linked",
+                message=(
+                    f"FailureMode '{fm.get('name', fm.get('failure_mode_id', ''))}' has "
+                    f"material_context='{material_context}' which is not a Component.component_id."
+                ),
+                target_type="FailureMode",
+                target_id=str(fm.get("failure_mode_id", "")).strip(),
+                property_name="material_context",
+                fix_hint=(
+                    "Either set material_context to an existing Component.component_id, "
+                    "add the missing Component node and link it here, or leave the field "
+                    "empty and emit an AFFECTS relation to represent the link instead."
+                ),
+            ))
+
     relation_defs = {rel.name: rel for rel in schema.relations}
     for rel in ontology.relations:
         rel_def: OntologyRelationDefinition | None = relation_defs.get(rel.name)
@@ -823,6 +943,7 @@ def _call_extractor_llm(state: PipelineState) -> PipelineState:
         schema_json=state["schema_json"],
         source_type=state["source_type"],
         source_title=state["source_title"],
+        candidate_candidates_block=state.get("candidates_block", ""),
     )
     cfg = _ontology_cfg(get_ontology_config().get("extraction_max_output_tokens", 8000))
     enforce_llm_limits(
@@ -1046,6 +1167,14 @@ def _semantic_validate_node(state: PipelineState) -> PipelineState:
             "property_name": str(item.get("property_name") or ""),
             "fix_hint": str(item.get("fix_hint") or ""),
         }))
+    type_issues, type_reports = evaluate_type_consistency(state["ontology"])
+    if type_issues:
+        logger.info(
+            "[ontology] TypeConsistency flagged %d symptom/failure-mode duplicates (of %d MAY_INDICATE pairs)",
+            len(type_issues),
+            len(type_reports),
+        )
+        issues.extend(type_issues)
     logger.info("[ontology] Semantic validation completed (%.1fs)", time.perf_counter() - started)
     return {
         "semantic_issues": issues,
@@ -1136,6 +1265,7 @@ def _re_extract_node(state: PipelineState) -> PipelineState:
         source_title=state["source_title"],
         issues_summary=issues_summary,
         previous_ontology_json=previous_ontology_json,
+        candidate_candidates_block=state.get("candidates_block", ""),
     )
     cfg = _ontology_cfg(re_extract_max_tokens)
     enforce_llm_limits(
@@ -1329,6 +1459,15 @@ def build_initial_ontology(
 ) -> tuple[OntologyPipelineResponse, dict[str, Any]]:
     schema = load_ontology_schema()
     normalized_target_language = normalize_language_code(target_language)
+    _reset_parse_repair_events()
+    mining_result = mine_candidates(text_with_pages)
+    candidates_block = render_candidates_prompt_block(mining_result)
+    if candidates_block:
+        logger.info(
+            "[ontology] Pre-LLM mining: %d component candidates, %d error-code candidates",
+            len(mining_result.components),
+            len(mining_result.error_codes),
+        )
     result = _GRAPH.invoke({
         "text_with_pages": text_with_pages,
         "source_type": source_type,
@@ -1337,6 +1476,7 @@ def build_initial_ontology(
         "model_name": model_name,
         "schema": schema,
         "schema_json": dump_ontology_schema_json(),
+        "candidates_block": candidates_block,
         "ontology": _empty_instance(schema, source_type, source_title),
         "semantic_issues": [],
         "schema_issues": [],
@@ -1389,9 +1529,12 @@ def build_initial_ontology(
         suggested_relations=suggested_relations,
         confidence_report=confidence_report,
     )
+    parse_repair_events = consume_parse_repair_events()
     return response, {
         **aggregate_usage(llm_usage),
         "retry_count": retry_count,
+        "parse_repair_events": parse_repair_events,
+        "mining_summary": mining_result.to_summary(),
     }
 
 

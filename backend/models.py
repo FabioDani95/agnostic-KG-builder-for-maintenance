@@ -18,6 +18,7 @@ class Symptom(BaseModel):
     name: str
     description: str
     severity: Severity
+    evidence_page: int = 0
 
 
 class FailureMode(BaseModel):
@@ -26,6 +27,7 @@ class FailureMode(BaseModel):
     description: str
     material_context: str
     linked_symptom_id: str
+    evidence_page: int = 0
 
 
 class CorrectiveAction(BaseModel):
