@@ -5,12 +5,12 @@ A FastAPI application with a browser UI for building diagnostic knowledge graphs
 ## What It Does
 
 - Loads PDF manuals placed in `manuals/`
-- Scopes the pages that are relevant for diagnostics and maintenance
+- Scopes the pages that are relevant for diagnostics, maintenance, and component coverage
 - Drafts an ontology aligned with `ontology_schema.JSON`
 - Lets the operator review missing fields, graph issues, and suggested relations
 - Extracts diagnostic triplets from the approved scope
 - Supports human validation before export
-- Exports a schema-compliant ontology JSON bundle to `output/`
+- Exports a best-effort ontology JSON bundle to `output/`, surfacing contract gaps as warnings instead of blocking the final file
 
 ## Current System Specification
 
@@ -28,6 +28,12 @@ The extracted knowledge graph is ontology-first and targets these node families:
 - `ErrorCode`
 
 The allowed schema and required properties are defined in `ontology_schema.JSON`.
+
+Scoping is recall-oriented for component coverage:
+
+- troubleshooting, diagnostics, alarms, maintenance, repair, calibration, and inspection sections remain in scope
+- assembly drawings, exploded views, drawings and parts lists, spare-parts sections, and component reference diagrams are also in scope when they help identify physical components or subsystems
+- pages selected from component-rich sections are preserved even when the language filter would otherwise drop low-text drawing pages
 
 ### Runtime Model
 
@@ -51,19 +57,19 @@ The current shipped workflow is:
 6. Review required ontology fields, graph issues, and suggested relations.
 7. Continue to triplet extraction.
 8. Validate or skip extracted triplets.
-9. Export the final ontology JSON bundle.
+9. Export the final ontology JSON bundle. The export path is best-effort: the file is still produced even when advisory or blocking ontology issues remain, and those issues are carried forward as export warnings.
 
 ### Current Review Surfaces
 
 Before extraction, the ontology review stage can expose:
 
-- blocking schema issues
+- schema issues
 - required human input fields
 - suggested relations
 - graph reasoning diagnostics
 - confidence and supervisor diagnostics when enabled
 
-The operator-facing path is still centered on required input and final triplet validation.
+The operator-facing path is still centered on required input and final triplet validation. Ontology issues remain visible to the operator, but they do not hard-block the final JSON export.
 
 ### Outputs
 
@@ -74,7 +80,12 @@ Each successful export writes:
 - `output/<manual_slug>/ontology.json`
 - `output/<manual_slug>/metrics.json`
 
-The exported ontology is normalized and validated against the current contract before being written.
+The exported ontology is normalized and validated against the current contract before being written. Export is best-effort:
+
+- contract-compliant payloads are written with `metadata.export_status = "ok"`
+- incomplete payloads are still written with `metadata.export_status = "warning"`
+- export warnings are stored in `metadata.export_warnings` and counted in `metadata.export_warning_count`
+- the HTTP export response also returns `X-Export-Warnings-Count`
 
 ### Graph Editor
 

@@ -725,6 +725,7 @@ def extract_triplets_chunked(
     model_name: str | None = None,
     sections: list[dict] | None = None,
     ontology_draft: dict | None = None,
+    on_event=None,
 ) -> ExtractionResult:
     cfg = get_extraction_config()
     chunks = _split_page_chunks(
@@ -747,6 +748,15 @@ def extract_triplets_chunked(
         }
 
     logger.info("[extraction] Split %d pages into %d chunk(s)", len(pages), len(chunks))
+    if on_event:
+        on_event({
+            "type": "progress",
+            "phase": "extraction",
+            "message": f"Starting extraction: {len(pages)} pages split into {len(chunks)} chunk(s).",
+            "total_chunks": len(chunks),
+            "current_chunk": 0,
+        })
+
     chunk_results: list[ExtractionResult] = []
     usage_entries: list[dict] = []
 
@@ -768,18 +778,41 @@ def extract_triplets_chunked(
         usage_entries.append(usage)
         parsed = parse_extraction(raw_response, source_type, source_title)
         parsed = _filter_extraction_result_by_source_support(parsed, page_text_by_page)
+        triplet_count = len(parsed.triplets)
         logger.info(
             "[extraction] Chunk %d/%d pages=%s-%s → %d triplet(s)",
             idx,
             len(chunks),
             chunk[0]["page_number"],
             chunk[-1]["page_number"],
-            len(parsed.triplets),
+            triplet_count,
         )
+        if on_event:
+            on_event({
+                "type": "progress",
+                "phase": "extraction",
+                "message": (
+                    f"Chunk {idx}/{len(chunks)}, "
+                    f"pages {chunk[0]['page_number']}–{chunk[-1]['page_number']} "
+                    f"→ {triplet_count} triplet(s)."
+                ),
+                "total_chunks": len(chunks),
+                "current_chunk": idx,
+                "triplets_in_chunk": triplet_count,
+            })
         chunk_results.append(parsed)
 
     merged = _merge_extraction_results(chunk_results)
     logger.info("[extraction] Merged chunk results → %d triplet(s)", len(merged.triplets))
+    if on_event:
+        on_event({
+            "type": "progress",
+            "phase": "extraction",
+            "message": f"Extraction complete — {len(merged.triplets)} triplet(s) found.",
+            "total_chunks": len(chunks),
+            "current_chunk": len(chunks),
+            "total_triplets": len(merged.triplets),
+        })
     return merged, {
         "chunk_count": len(chunks),
         **aggregate_usage(usage_entries),

@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 
 from backend.models import PageRange, SectionInfo, TocEntry
+from backend.services.ontology_semantics import infer_asset_type
 
 # ─── Keyword scoring for fallback scoping ───
 
@@ -60,6 +61,24 @@ _STRONG_INCLUDE_KEYWORDS: dict[str, int] = {
     "log messages": 4,
     "safety message": 2,
     "safety messages": 2,
+    "parts list": 6,
+    "parts lists": 6,
+    "spare parts": 5,
+    "spare part": 5,
+    "exploded view": 6,
+    "exploded views": 6,
+    "assembly drawing": 6,
+    "assembly drawings": 6,
+    "bill of materials": 5,
+    "wiring diagram": 5,
+    "wiring diagrams": 5,
+    "electrical schematic": 5,
+    "electrical schematics": 5,
+    "hydraulic schematic": 5,
+    "hydraulic schematics": 5,
+    "pneumatic schematic": 5,
+    "pneumatic schematics": 5,
+    "control circuit reference diagram": 5,
 }
 
 _WEAK_INCLUDE_KEYWORDS: dict[str, int] = {
@@ -112,6 +131,15 @@ _LLM_SECTION_INCLUDE_RE = re.compile(
     r")\b"
 )
 
+_COMPONENT_SECTION_INCLUDE_RE = re.compile(
+    r"(?i)\b("
+    r"parts?\s+lists?|spare\s+parts?|exploded(?:\s+views?)?|bill\s+of\s+materials|bom|"
+    r"assembly\s+drawings?|component\s+(?:layout|location|diagram|drawing|list)|"
+    r"(?:control|circuit|wiring|electrical|pneumatic|hydraulic)\s+(?:reference\s+)?diagram(?:s)?|"
+    r"(?:control|wiring|electrical|pneumatic|hydraulic)\s+schematic(?:s)?"
+    r")\b"
+)
+
 _TOC_OPERATION_INCLUDE_RE = re.compile(
     r"(?i)\b("
     r"replace|replacing|replacement|remove|removing|removal|install|installing|installation|"
@@ -128,6 +156,10 @@ _DOC_TYPE_RE = re.compile(
 )
 _FILENAME_CLEAN_RE = re.compile(r"(?i)\.pdf$")
 _FILENAME_SEP_RE = re.compile(r"[_-]+")
+_MODEL_LABEL_RE = re.compile(
+    r"(?i)\bmodel\s*[:#-]?\s*([A-Za-z0-9][A-Za-z0-9./-]*(?:\s+[A-Za-z0-9][A-Za-z0-9./-]*){0,5})"
+)
+_NON_ID_CHARS_RE = re.compile(r"[^a-z0-9]+")
 
 # ─── ToC detection patterns ───
 
@@ -318,17 +350,75 @@ def filter_pages_by_language(
     ]
 
 
+def is_component_inventory_section(title: str) -> bool:
+    """Return True when a section title is likely to enumerate physical components."""
+    return bool(_COMPONENT_SECTION_INCLUDE_RE.search(_normalize_label(title)))
+
+
 def normalize_product_info(raw_product_info: dict, filename: str = "") -> dict[str, str]:
-    product_name = _clean_product_name(str(raw_product_info.get("product_name", "") or ""))
+    product_name = _clean_product_name(
+        str(raw_product_info.get("product_name") or raw_product_info.get("name") or "")
+    )
     if not product_name and filename:
         product_name = _derive_product_name_from_filename(filename)
 
     document_type = _normalize_label(str(raw_product_info.get("document_type", "") or ""))
     language = _normalize_label(str(raw_product_info.get("language", "") or ""))
+    brand = _normalize_label(
+        str(raw_product_info.get("brand") or raw_product_info.get("manufacturer") or "")
+    )
+    model = _normalize_label(str(raw_product_info.get("model", "") or ""))
+    if not model:
+        model = _extract_model_from_product_name(product_name)
+
+    product_short_name = _clean_product_name(str(raw_product_info.get("product_short_name", "") or ""))
+    if not product_short_name:
+        product_short_name = _build_product_short_name(product_name, brand, model)
+
+    asset_id = _normalize_asset_id(str(raw_product_info.get("asset_id", "") or ""))
+    if not asset_id:
+        asset_id = _build_asset_id(product_short_name or model or product_name)
+
+    asset_type = _normalize_label(str(raw_product_info.get("asset_type", "") or ""))
+    if not asset_type:
+        asset_type = infer_asset_type(product_name or product_short_name, document_type)
     return {
         "product_name": product_name,
+        "product_short_name": product_short_name,
+        "brand": brand,
+        "model": model,
+        "asset_id": asset_id,
+        "asset_type": asset_type,
         "document_type": document_type,
         "language": language,
+    }
+
+
+def extract_asset_identity(
+    raw_product_info: dict | None,
+    *,
+    fallback_name: str = "",
+    source_type: str = "",
+    filename: str = "",
+) -> dict[str, str]:
+    normalized = normalize_product_info(raw_product_info or {}, filename=filename)
+    product_name = normalized.get("product_name") or _clean_product_name(fallback_name)
+    product_short_name = normalized.get("product_short_name") or _build_product_short_name(
+        product_name,
+        normalized.get("brand", ""),
+        normalized.get("model", ""),
+    )
+    document_type = normalized.get("document_type") or _normalize_label(source_type)
+    asset_type = normalized.get("asset_type") or infer_asset_type(product_name or product_short_name, document_type)
+    asset_id = normalized.get("asset_id") or _build_asset_id(product_short_name or product_name)
+    return {
+        "asset_id": asset_id,
+        "name": product_name,
+        "product_short_name": product_short_name,
+        "brand": normalized.get("brand", ""),
+        "model": normalized.get("model", ""),
+        "asset_type": asset_type,
+        "document_type": document_type,
     }
 
 
@@ -458,6 +548,37 @@ def _derive_product_name_from_filename(filename: str) -> str:
     return _normalize_label(cleaned).strip()
 
 
+def _extract_model_from_product_name(product_name: str) -> str:
+    cleaned = _clean_product_name(product_name)
+    if not cleaned:
+        return ""
+    match = _MODEL_LABEL_RE.search(cleaned)
+    if match:
+        return _normalize_label(match.group(1))
+    return ""
+
+
+def _build_product_short_name(product_name: str, brand: str, model: str) -> str:
+    if brand and model:
+        return _normalize_label(f"{brand} {model}")
+    if model:
+        return model
+    return product_name
+
+
+def _normalize_asset_id(value: str) -> str:
+    lowered = _NON_ID_CHARS_RE.sub("_", str(value or "").strip().lower()).strip("_")
+    if not lowered:
+        return ""
+    if lowered.startswith("asset_"):
+        return lowered
+    return f"asset_{lowered}"
+
+
+def _build_asset_id(value: str) -> str:
+    return _normalize_asset_id(value) or "asset_unknown"
+
+
 def _toc_section_score(title: str) -> int:
     text_lower = title.lower()
     score = 0
@@ -478,6 +599,8 @@ def _toc_section_score(title: str) -> int:
         score += 3
     if _LLM_SECTION_INCLUDE_RE.search(title):
         score += 2
+    if is_component_inventory_section(title):
+        score += 5
     if _LLM_SECTION_EXCLUDE_RE.search(title) and not _LLM_SECTION_INCLUDE_RE.search(title):
         score -= 6
     return score

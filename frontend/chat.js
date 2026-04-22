@@ -1,0 +1,1736 @@
+/**
+ * Chat UI — SSE client, message rendering, widget dispatch.
+ * All user-facing text is in English.
+ */
+
+import { renderSectionsWidget } from "./widgets/sections.js?v=20260422d";
+import { renderTripletWidget } from "./widgets/triplet.js?v=20260422d";
+import { renderRequiredFieldsWidget } from "./widgets/required_fields.js?v=20260422d";
+import { renderNodeCard } from "./widgets/node_card.js?v=20260422d";
+
+// ── State ──────────────────────────────────────────────────────────────
+
+let _pdfId = null;
+let _eventSource = null;
+let _progressBubble = null;   // collapsible progress bubble currently in stream
+let _currentPhase = "loaded";
+let _pdfDoc = null;
+let _pdfjsLib = null;
+let _currentPage = 1;
+let _totalPages = 0;
+let _thinkingTimer = null;
+let _renderedPdfPages = new Set();
+let _pdfObserver = null;
+let _visiblePageObserver = null;
+let _pdfSearchIndex = [];
+let _pdfIndexPromise = null;
+let _pdfSearchMatches = [];
+let _pdfSearchCursor = -1;
+let _pdfSearchQuery = "";
+let _streamErrorCount = 0;
+let _sessionLost = false;
+let _kgGraphData = null;
+let _kgGraphMode = "all";
+let _pendingPdfPage = null;
+
+// ── Initialise ─────────────────────────────────────────────────────────
+
+export async function initChat(pdfId, pdfPath, opts = {}) {
+    _pdfId = pdfId;
+
+    const chatLayout = _ensureChatLayoutShell();
+    chatLayout.hidden = false;
+
+    _ensureGraphPanel();
+    _setupInput();
+    _setupPdfControls();
+    _setupGraphControls();
+    _setupColumnResize();
+    _setPhaseLabel("loaded");
+    _setSystemBusy("Starting the extraction workflow…", "scoping");
+    _setPdfStatus("Loading PDF preview…", "loading");
+
+    // Open the chat session immediately so a slow PDF render cannot leave the UI
+    // looking blank while the backend is already ready to speak.
+    _openStream();
+
+    const startPromise = fetch("/chat/start/" + pdfId, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            selected_scoping_model: opts.scopingModel || null,
+            selected_extraction_model: opts.extractionModel || null,
+            target_language: opts.targetLanguage || "en",
+            page_offset: opts.pageOffset ?? 0,
+        }),
+    }).catch(() => {
+        _appendErrorMessage("Could not start the chat session.");
+    });
+
+    const pdfPromise = pdfPath ? _loadPdf(pdfPath) : Promise.resolve();
+    await Promise.allSettled([startPromise, pdfPromise]);
+}
+
+// ── SSE stream ─────────────────────────────────────────────────────────
+
+function _openStream() {
+    if (_sessionLost || !_pdfId) return;
+    if (_eventSource) _eventSource.close();
+    _eventSource = new EventSource("/chat/stream/" + _pdfId);
+    _eventSource.onopen = () => {
+        _streamErrorCount = 0;
+    };
+    _eventSource.onmessage = _handleEvent;
+    _eventSource.onerror = () => {
+        if (_sessionLost) return;
+        _streamErrorCount += 1;
+        _eventSource?.close();
+        if (_streamErrorCount >= 3) {
+            void _probeSession();
+            return;
+        }
+        setTimeout(_openStream, 3000);
+    };
+}
+
+function _ensureChatLayoutShell() {
+    let chatLayout = document.getElementById("chat-layout");
+    if (chatLayout) return chatLayout;
+
+    chatLayout = document.createElement("div");
+    chatLayout.id = "chat-layout";
+    chatLayout.hidden = true;
+    chatLayout.innerHTML = `
+        <header id="chat-bar">
+            <div class="app-bar-left">
+                <span class="app-bar-logo">KG</span>
+                <span class="app-bar-title" id="chat-doc-title">Document</span>
+            </div>
+            <div class="app-bar-center" id="chat-phase-label">Scoping</div>
+            <div class="app-bar-right">
+                <span class="app-bar-meta" id="chat-operator"></span>
+                <button id="chat-audit-btn" class="app-bar-btn" hidden>Audit</button>
+            </div>
+        </header>
+        <div class="chat-columns">
+            <section class="chat-pdf-section">
+                <div class="chat-pdf-toolbar">
+                    <div class="chat-pdf-toolbar-row">
+                        <span id="chat-pdf-status" class="chat-pdf-status" data-tone="loading">Loading PDF preview…</span>
+                        <span id="chat-page-indicator" class="chat-pdf-page-indicator">Page — / —</span>
+                        <div class="chat-pdf-page-nav">
+                            <button id="chat-prev-page" type="button" class="btn-secondary btn-sm">&#8592; Page</button>
+                            <button id="chat-next-page" type="button" class="btn-secondary btn-sm">Page &#8594;</button>
+                        </div>
+                    </div>
+                    <div class="chat-pdf-toolbar-row">
+                        <input
+                            type="search"
+                            id="chat-pdf-search"
+                            class="chat-pdf-search-input"
+                            placeholder="Search words in the PDF…"
+                            autocomplete="off"
+                        />
+                        <button id="chat-pdf-search-btn" type="button" class="btn-secondary btn-sm">Find</button>
+                        <button id="chat-pdf-prev-match" type="button" class="btn-secondary btn-sm" aria-label="Previous PDF match">&#8593;</button>
+                        <button id="chat-pdf-next-match" type="button" class="btn-secondary btn-sm" aria-label="Next PDF match">&#8595;</button>
+                        <span id="chat-pdf-search-meta" class="chat-pdf-search-meta">Search is ready once the PDF text is indexed.</span>
+                    </div>
+                </div>
+                <section id="chat-graph-panel" class="chat-graph-panel" hidden>
+                    <div class="chat-graph-head">
+                        <div>
+                            <div class="chat-graph-title">Extraction Graph</div>
+                            <div id="chat-graph-meta" class="chat-graph-meta">Waiting for extracted triplets…</div>
+                        </div>
+                        <div class="chat-graph-actions">
+                            <button id="chat-graph-all" type="button" class="btn-secondary btn-sm" data-mode="all">Full graph</button>
+                            <button id="chat-graph-focus" type="button" class="btn-secondary btn-sm" data-mode="focus">Current triplet</button>
+                        </div>
+                    </div>
+                    <div id="chat-graph-canvas" class="chat-graph-canvas"></div>
+                </section>
+                <div id="chat-pdf-container" class="cp-pdf-container chat-pdf-container"></div>
+            </section>
+            <div id="chat-column-resizer" class="chat-column-resizer" role="separator" aria-orientation="vertical" aria-label="Resize manual and chatbot columns" tabindex="0"></div>
+            <section class="chat-section">
+                <div id="chat-stream" class="chat-stream"></div>
+                <div id="chat-turn-indicator" class="chat-turn-indicator" data-mode="working">
+                    <span class="chat-turn-badge" id="chat-turn-badge">System is working</span>
+                    <span class="chat-turn-text" id="chat-turn-text">Starting the extraction workflow…</span>
+                </div>
+                <div id="chat-quick-actions" class="chat-quick-actions"></div>
+                <form id="chat-input-form" class="chat-input-form">
+                    <input
+                        type="text"
+                        id="chat-input"
+                        class="chat-input"
+                        placeholder="Ask a question or give an instruction…"
+                        autocomplete="off"
+                    />
+                    <button type="submit" class="btn-primary chat-send-btn">Send</button>
+                </form>
+            </section>
+        </div>
+    `;
+    document.body.appendChild(chatLayout);
+    return chatLayout;
+}
+
+function _handleEvent(e) {
+    let data;
+    try { data = JSON.parse(e.data); } catch { return; }
+
+    switch (data.type) {
+        case "chat_delta":
+            if (data.text) {
+                const text = _normaliseAssistantText(data.text);
+                if (text) _appendAssistantMessage(text);
+            }
+            break;
+        case "progress":
+            _updateProgressBubble(data);
+            break;
+        case "widget":
+            _clearThinkingIndicator();
+            _finishProgress();
+            _renderWidget(data.widget, data.payload);
+            _setAwaitingOperator(_widgetPrompt(data.widget));
+            break;
+        case "critique":
+            _appendCritique(data);
+            break;
+        case "needs_input":
+            _clearThinkingIndicator();
+            _appendAssistantMessage(data.message || "I need some input from you.");
+            _setAwaitingOperator(data.message || "I need your input before I can continue.");
+            break;
+        case "error":
+            _clearThinkingIndicator();
+            _appendErrorMessage(data.message || "An error occurred.");
+            _setAwaitingOperator("The workflow stopped because of an error. Review the last message and decide the next step.");
+            break;
+        case "thinking":
+            _showThinkingIndicator(data.message || "Preparing a response…");
+            break;
+        case "done":
+            _finishProgress();
+            _clearThinkingIndicator();
+            if (document.getElementById("chat-turn-indicator")?.dataset.mode !== "operator") {
+                _setAwaitingOperator();
+            }
+            break;
+        case "stream_closed":
+            break;
+    }
+}
+
+// ── Message rendering ──────────────────────────────────────────────────
+
+function _stream() {
+    return document.getElementById("chat-stream");
+}
+
+function _appendAssistantMessage(text) {
+    const stream = _stream();
+    if (!stream) return;
+    _clearThinkingIndicator();
+    _finishProgress();
+
+    const bubble = document.createElement("div");
+    bubble.className = "chat-bubble chat-bubble--assistant";
+
+    // Simple markdown: **bold**, `code`, newlines
+    bubble.innerHTML = _md(text);
+    stream.appendChild(bubble);
+    _scrollToBottom();
+}
+
+function _appendUserMessage(text) {
+    const stream = _stream();
+    if (!stream) return;
+    const bubble = document.createElement("div");
+    bubble.className = "chat-bubble chat-bubble--user";
+    bubble.textContent = text;
+    stream.appendChild(bubble);
+    _scrollToBottom();
+}
+
+function _appendErrorMessage(text) {
+    const stream = _stream();
+    if (!stream) return;
+    _clearThinkingIndicator();
+    _finishProgress();
+    const bubble = document.createElement("div");
+    bubble.className = "chat-bubble chat-bubble--error";
+    bubble.textContent = "⚠ " + text;
+    stream.appendChild(bubble);
+    _scrollToBottom();
+}
+
+function _appendCritique(data) {
+    const stream = _stream();
+    if (!stream) return;
+    _clearThinkingIndicator();
+    _finishProgress();
+    const bubble = document.createElement("div");
+    bubble.className = "chat-bubble chat-bubble--critique";
+    bubble.innerHTML = `<span class="critique-icon">💡</span> ${_md(data.message || "")}`;
+    if (data.suggestion) {
+        const sug = document.createElement("div");
+        sug.className = "critique-suggestion";
+        sug.innerHTML = `<em>Suggestion:</em> ${_md(data.suggestion)}`;
+        bubble.appendChild(sug);
+    }
+
+    if (Array.isArray(data.candidates) && data.candidates.length > 0) {
+        const candidateList = document.createElement("div");
+        candidateList.className = "critique-candidate-list";
+        data.candidates.slice(0, 4).forEach((candidate) => {
+            const row = document.createElement("div");
+            row.className = "critique-candidate-row";
+            const confidencePct = Math.round(Number(candidate.confidence || 0) * 100);
+            row.innerHTML = `
+                <div class="critique-candidate-main">
+                    <span class="critique-candidate-relation">${_md(candidate.relation_name || "Relation")}</span>
+                    <span class="critique-candidate-path">${_md(
+                        `${candidate.from_label || candidate.from_id} → ${candidate.to_label || candidate.to_id}`,
+                    )}</span>
+                    <span class="critique-candidate-confidence">${confidencePct}%</span>
+                </div>
+                ${candidate.rationale ? `<div class="critique-candidate-rationale">${_md(candidate.rationale)}</div>` : ""}
+            `;
+            const applyBtn = document.createElement("button");
+            applyBtn.className = "btn-sm btn-secondary";
+            applyBtn.textContent = "Apply candidate";
+            applyBtn.addEventListener("click", () => {
+                applyBtn.disabled = true;
+                _postAction("apply_suggested_relation", { indices: [candidate.index] });
+            });
+            row.appendChild(applyBtn);
+            candidateList.appendChild(row);
+        });
+        bubble.appendChild(candidateList);
+    }
+
+    if (data.entity_id || data.issue_type || data.suggestion) {
+        const explainBtn = document.createElement("button");
+        explainBtn.className = "btn-sm btn-secondary";
+        explainBtn.textContent = "Ask for details";
+        explainBtn.addEventListener("click", () => {
+            const prompt = data.entity_id
+                ? `Explain this graph issue in the ontology draft for ${data.entity_id}: ${data.message || ""}`
+                : `Explain this ontology issue in more detail: ${data.message || ""}`;
+            _appendUserMessage(prompt);
+            _sendMessage(prompt);
+        });
+        bubble.appendChild(explainBtn);
+    }
+
+    if (data.suggestion && (!Array.isArray(data.candidates) || data.candidates.length === 0)) {
+        const applyBtn = document.createElement("button");
+        applyBtn.className = "btn-sm btn-secondary";
+        applyBtn.textContent = "Apply suggestion";
+        applyBtn.addEventListener("click", () => _sendMessage(`Apply suggestion: ${data.suggestion}`));
+        bubble.appendChild(applyBtn);
+    }
+    stream.appendChild(bubble);
+    _scrollToBottom();
+}
+
+// ── Progress bubble ────────────────────────────────────────────────────
+
+function _updateProgressBubble(data) {
+    const stream = _stream();
+    if (!stream) return;
+    _clearThinkingIndicator();
+    _currentPhase = data.phase || _currentPhase;
+    _setPhaseLabel(_currentPhase);
+    _setSystemBusy(data.message || "Working…", _currentPhase);
+
+    if (!_progressBubble) {
+        _progressBubble = document.createElement("div");
+        _progressBubble.className = "chat-bubble chat-bubble--progress";
+        stream.appendChild(_progressBubble);
+    }
+
+    const phase = _humanPhaseLabel(data.phase || _currentPhase);
+    const msg = data.message || "";
+    const total = data.total_chunks;
+    const current = data.current_chunk;
+
+    let progressBar = "";
+    if (total && current !== undefined) {
+        const pct = Math.round((current / total) * 100);
+        progressBar = `
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" style="width:${pct}%"></div>
+            </div>
+            <span class="progress-pct">${pct}%</span>
+        `;
+    }
+
+    _progressBubble.innerHTML = `
+        <span class="progress-phase">${phase}</span>
+        <span class="progress-msg">${msg}</span>
+        ${progressBar}
+    `;
+    _scrollToBottom();
+}
+
+function _finishProgress() {
+    if (_progressBubble) {
+        _progressBubble.classList.add("progress--done");
+        _progressBubble = null;
+    }
+}
+
+// ── Thinking indicator ─────────────────────────────────────────────────
+function _showThinkingIndicator(message = "Preparing a response…") {
+    if (_progressBubble || _thinkingTimer) return;
+    _thinkingTimer = window.setTimeout(() => {
+        _thinkingTimer = null;
+        if (_progressBubble) return;
+        _setSystemBusy(message, _currentPhase);
+    }, 180);
+}
+
+function _clearThinkingIndicator() {
+    if (_thinkingTimer) {
+        window.clearTimeout(_thinkingTimer);
+        _thinkingTimer = null;
+    }
+}
+
+// ── Widget rendering ───────────────────────────────────────────────────
+
+function _renderWidget(widgetType, payload) {
+    const stream = _stream();
+    if (!stream) return;
+
+    let el = null;
+    const onAction = (action, data) => _postAction(action, data);
+
+    switch (widgetType) {
+        case "extraction_graph":
+            _showExtractionGraph(payload?.graph || payload, { mode: "all" });
+            return;
+        case "sections":
+            el = renderSectionsWidget(payload, onAction);
+            break;
+        case "ontology_review":
+            el = renderOntologyReviewWidget(payload, onAction);
+            break;
+        case "triplet_review_start":
+            // Request the first triplet from the backend via message
+            _sendMessage("[system: begin triplet review]");
+            return;
+        case "triplet":
+            el = renderTripletWidget(payload, onAction);
+            _showTripletGraphFocus(payload);
+            _navigateToTripletSource(payload?.triplet);
+            break;
+        case "required_fields":
+            el = renderRequiredFieldsWidget(payload, onAction);
+            break;
+        case "node_draft":
+            if (payload.node_type) {
+                const draftNode = {
+                    name: payload.normalized_name || payload.raw_text || "",
+                    description: payload.normalized_description || "",
+                };
+                el = renderNodeCard(draftNode, payload.node_type, {
+                    isDraft: true,
+                    onConfirm: (node, type) => _postAction("confirm_node_manual", { node_type: type, node }),
+                });
+            }
+            break;
+        case "export":
+            el = _renderExportWidget(payload);
+            break;
+    }
+
+    if (el) {
+        _decorateWidget(el);
+        stream.appendChild(el);
+        _scrollToBottom();
+    }
+}
+
+function _decorateWidget(el) {
+    if (!el || !el.classList.contains("chat-widget") || el.dataset.decorated === "true") {
+        return;
+    }
+
+    el.dataset.decorated = "true";
+    el.classList.add("chat-widget--interactive");
+    _wrapWidgetBody(el);
+    _applyDefaultWidgetSize(el);
+    _bindWidgetScroll(el.querySelector(".chat-widget-body"));
+
+    const resizeHandle = document.createElement("div");
+    resizeHandle.className = "widget-resize-handle";
+    resizeHandle.title = "Drag to resize";
+    resizeHandle.setAttribute("aria-hidden", "true");
+    resizeHandle.innerHTML = "<span></span>";
+    el.appendChild(resizeHandle);
+
+    _bindWidgetResize(el);
+}
+
+function _wrapWidgetBody(el) {
+    if ([...el.children].some((child) => child.classList.contains("chat-widget-body"))) return;
+
+    const children = [...el.children];
+    const header = children.find((child) => child.classList.contains("widget-header")) || null;
+    const actions = [...children].reverse().find((child) => child.classList.contains("widget-actions")) || null;
+    const bodyChildren = children.filter((child) => child !== header && child !== actions);
+
+    if (!bodyChildren.length) return;
+
+    const body = document.createElement("div");
+    body.className = "chat-widget-body";
+    if (actions) {
+        el.insertBefore(body, actions);
+    } else {
+        el.appendChild(body);
+    }
+    bodyChildren.forEach((child) => body.appendChild(child));
+}
+
+function _applyDefaultWidgetSize(el) {
+    const preset = _widgetSizePreset(el);
+    if (!el.style.width && preset.width) {
+        el.style.width = `min(100%, ${preset.width}px)`;
+    }
+    if (!el.style.height && preset.height) {
+        el.style.height = `${preset.height}px`;
+    }
+}
+
+function _widgetSizePreset(el) {
+    if (el.classList.contains("chat-widget--sections")) {
+        return { width: 980, height: 520 };
+    }
+    if (el.classList.contains("chat-widget--triplet")) {
+        return { width: 860, height: 400 };
+    }
+    if (el.classList.contains("chat-widget--required-fields")) {
+        return { width: 820, height: 340 };
+    }
+    if (el.classList.contains("chat-widget--ontology-review")) {
+        return { width: 820, height: 300 };
+    }
+    if (el.classList.contains("chat-widget--node-card")) {
+        return { width: 780, height: 280 };
+    }
+    if (el.classList.contains("chat-widget--export")) {
+        return { width: 680, height: 220 };
+    }
+    return { width: 820, height: 320 };
+}
+
+function _bindWidgetScroll(body) {
+    if (!body || body.dataset.wheelBound === "true") return;
+    body.dataset.wheelBound = "true";
+    body.addEventListener("wheel", (event) => {
+        if (body.scrollHeight <= body.clientHeight) return;
+
+        const scrollingDown = event.deltaY > 0;
+        const scrollingUp = event.deltaY < 0;
+        const atTop = body.scrollTop <= 0;
+        const atBottom = Math.ceil(body.scrollTop + body.clientHeight) >= body.scrollHeight;
+
+        if ((scrollingDown && atBottom) || (scrollingUp && atTop)) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        body.scrollTop += event.deltaY;
+    }, { passive: false });
+}
+
+function _bindWidgetResize(el) {
+    el.addEventListener("mousedown", (event) => {
+        const rect = el.getBoundingClientRect();
+        const isResizeCorner = (rect.right - event.clientX) <= 28 && (rect.bottom - event.clientY) <= 28;
+        if (!isResizeCorner || event.button !== 0) return;
+        event.preventDefault();
+
+        const startRect = rect;
+        const startX = event.clientX;
+        const startY = event.clientY;
+        const stream = _stream();
+        const maxWidth = Math.max(320, (stream?.clientWidth || window.innerWidth) - 8);
+        const minWidth = Math.min(420, maxWidth);
+        const maxHeight = Math.max(220, Math.floor(window.innerHeight * 0.78));
+        const minHeight = 220;
+
+        el.classList.add("chat-widget--resizing");
+        document.body.style.cursor = "nwse-resize";
+
+        const onMove = (moveEvent) => {
+            const nextWidth = Math.max(
+                minWidth,
+                Math.min(maxWidth, Math.round(startRect.width + (moveEvent.clientX - startX))),
+            );
+            const nextHeight = Math.max(
+                minHeight,
+                Math.min(maxHeight, Math.round(startRect.height + (moveEvent.clientY - startY))),
+            );
+            el.style.width = `${nextWidth}px`;
+            el.style.height = `${nextHeight}px`;
+        };
+
+        const stop = () => {
+            el.classList.remove("chat-widget--resizing");
+            document.body.style.cursor = "";
+            window.removeEventListener("mousemove", onMove);
+            window.removeEventListener("mouseup", stop);
+        };
+
+        window.addEventListener("mousemove", onMove);
+        window.addEventListener("mouseup", stop);
+    });
+}
+
+// ── Column resize ──────────────────────────────────────────────────────
+
+function _setupColumnResize() {
+    const columns = document.querySelector(".chat-columns");
+    const left = document.querySelector(".chat-pdf-section");
+    const right = document.querySelector(".chat-section");
+    const handle = document.getElementById("chat-column-resizer");
+    if (!columns || !left || !right || !handle || handle.dataset.bound === "true") return;
+
+    handle.dataset.bound = "true";
+    _applyStoredColumnWidth(columns, left);
+    let activeDrag = false;
+
+    const setLeftWidth = (nextWidth) => {
+        const rect = columns.getBoundingClientRect();
+        const bounds = _columnWidthBounds(rect.width);
+        const width = Math.max(bounds.minLeft, Math.min(bounds.maxLeft, nextWidth));
+        left.style.flex = `0 0 ${width}px`;
+        left.style.width = `${width}px`;
+        left.style.maxWidth = "none";
+        columns.style.setProperty("--chat-left-width", `${width}px`);
+        return width;
+    };
+
+    const beginDrag = (event) => {
+        if (activeDrag) return;
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+        const rect = columns.getBoundingClientRect();
+        if (rect.width <= 0) return;
+
+        event.preventDefault();
+        activeDrag = true;
+        handle.setPointerCapture?.(event.pointerId);
+        columns.classList.add("chat-columns--resizing");
+        document.body.classList.add("chat-resizing-columns");
+
+        const onMove = (moveEvent) => {
+            const width = setLeftWidth(moveEvent.clientX - rect.left);
+            handle.setAttribute("aria-valuenow", String(Math.round(width)));
+        };
+
+        const stop = () => {
+            columns.classList.remove("chat-columns--resizing");
+            document.body.classList.remove("chat-resizing-columns");
+            activeDrag = false;
+            window.removeEventListener("pointermove", onMove);
+            window.removeEventListener("pointerup", stop);
+            window.removeEventListener("pointercancel", stop);
+            handle.releasePointerCapture?.(event.pointerId);
+            _storeColumnWidth(columns, left);
+        };
+
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", stop);
+        window.addEventListener("pointercancel", stop);
+    };
+
+    handle.addEventListener("pointerdown", beginDrag);
+    handle.addEventListener("mousedown", (event) => {
+        if (activeDrag || event.button !== 0) return;
+        const rect = columns.getBoundingClientRect();
+        if (rect.width <= 0) return;
+
+        event.preventDefault();
+        activeDrag = true;
+        columns.classList.add("chat-columns--resizing");
+        document.body.classList.add("chat-resizing-columns");
+
+        const onMove = (moveEvent) => {
+            const width = setLeftWidth(moveEvent.clientX - rect.left);
+            handle.setAttribute("aria-valuenow", String(Math.round(width)));
+        };
+        const stop = () => {
+            columns.classList.remove("chat-columns--resizing");
+            document.body.classList.remove("chat-resizing-columns");
+            activeDrag = false;
+            window.removeEventListener("mousemove", onMove);
+            window.removeEventListener("mouseup", stop);
+            _storeColumnWidth(columns, left);
+        };
+
+        window.addEventListener("mousemove", onMove);
+        window.addEventListener("mouseup", stop);
+    });
+    handle.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const current = left.getBoundingClientRect().width;
+        const rect = columns.getBoundingClientRect();
+        const bounds = _columnWidthBounds(rect.width);
+        let next = current;
+        if (event.key === "ArrowLeft") next = current - 32;
+        if (event.key === "ArrowRight") next = current + 32;
+        if (event.key === "Home") next = bounds.minLeft;
+        if (event.key === "End") next = bounds.maxLeft;
+        setLeftWidth(next);
+        _storeColumnWidth(columns, left);
+    });
+}
+
+function _columnWidthBounds(totalWidth) {
+    const narrow = totalWidth < 980;
+    const minLeft = narrow ? 280 : 340;
+    const minRight = narrow ? 320 : 420;
+    return {
+        minLeft,
+        maxLeft: Math.max(minLeft, totalWidth - minRight - 12),
+    };
+}
+
+function _applyStoredColumnWidth(columns, left) {
+    const stored = Number(window.localStorage?.getItem("kg_chat_left_column_width") || 0);
+    if (!stored) return;
+    const rect = columns.getBoundingClientRect();
+    if (!rect.width) {
+        window.requestAnimationFrame(() => _applyStoredColumnWidth(columns, left));
+        return;
+    }
+    const bounds = _columnWidthBounds(rect.width);
+    const width = Math.max(bounds.minLeft, Math.min(bounds.maxLeft, stored));
+    left.style.flex = `0 0 ${width}px`;
+    left.style.width = `${width}px`;
+    left.style.maxWidth = "none";
+    columns.style.setProperty("--chat-left-width", `${width}px`);
+}
+
+function _storeColumnWidth(columns, left) {
+    const rect = columns.getBoundingClientRect();
+    const width = left.getBoundingClientRect().width;
+    if (!rect.width || !width) return;
+    try {
+        window.localStorage?.setItem("kg_chat_left_column_width", String(Math.round(width)));
+    } catch {
+        // Ignore private-mode/localStorage errors; resizing still works for the session.
+    }
+}
+
+// ── Extraction graph panel ─────────────────────────────────────────────
+
+function _ensureGraphPanel() {
+    if (document.getElementById("chat-graph-panel")) return document.getElementById("chat-graph-panel");
+
+    const pdfSection = document.querySelector(".chat-pdf-section");
+    const pdfContainer = document.getElementById("chat-pdf-container");
+    if (!pdfSection || !pdfContainer) return null;
+
+    const panel = document.createElement("section");
+    panel.id = "chat-graph-panel";
+    panel.className = "chat-graph-panel";
+    panel.hidden = true;
+    panel.innerHTML = `
+        <div class="chat-graph-head">
+            <div>
+                <div class="chat-graph-title">Extraction Graph</div>
+                <div id="chat-graph-meta" class="chat-graph-meta">Waiting for extracted triplets…</div>
+            </div>
+            <div class="chat-graph-actions">
+                <button id="chat-graph-all" type="button" class="btn-secondary btn-sm" data-mode="all">Full graph</button>
+                <button id="chat-graph-focus" type="button" class="btn-secondary btn-sm" data-mode="focus">Current triplet</button>
+            </div>
+        </div>
+        <div id="chat-graph-canvas" class="chat-graph-canvas"></div>
+    `;
+    pdfSection.insertBefore(panel, pdfContainer);
+    return panel;
+}
+
+function _setupGraphControls() {
+    const panel = _ensureGraphPanel();
+    if (!panel || panel.dataset.bound === "true") return;
+    panel.dataset.bound = "true";
+    panel.querySelectorAll("[data-mode]").forEach((button) => {
+        button.addEventListener("click", () => {
+            _kgGraphMode = button.dataset.mode || "all";
+            _renderExtractionGraph();
+        });
+    });
+}
+
+function _showExtractionGraph(graph, { mode = "all" } = {}) {
+    if (!graph || !Array.isArray(graph.nodes)) return;
+    _kgGraphData = graph;
+    _kgGraphMode = mode;
+    _renderExtractionGraph();
+}
+
+function _showTripletGraphFocus(payload) {
+    if (payload?.graph) {
+        _showExtractionGraph(payload.graph, { mode: payload.graph.focus_node_ids?.length ? "focus" : "all" });
+    }
+}
+
+function _renderExtractionGraph() {
+    const panel = _ensureGraphPanel();
+    const canvas = document.getElementById("chat-graph-canvas");
+    const meta = document.getElementById("chat-graph-meta");
+    if (!panel || !canvas || !_kgGraphData) return;
+
+    panel.hidden = false;
+    const allNodes = Array.isArray(_kgGraphData.nodes) ? _kgGraphData.nodes : [];
+    const allEdges = Array.isArray(_kgGraphData.edges) ? _kgGraphData.edges : [];
+    const focusNodeIds = new Set(_kgGraphData.focus_node_ids || []);
+    const focusEdgeIds = new Set(_kgGraphData.focus_edge_ids || []);
+    const hasFocus = focusNodeIds.size > 0;
+    const renderMode = _kgGraphMode === "focus" && hasFocus ? "focus" : "all";
+    _kgGraphMode = renderMode;
+
+    const visibleNodes = renderMode === "focus"
+        ? allNodes.filter((node) => focusNodeIds.has(node.id))
+        : allNodes;
+    const visibleIds = new Set(visibleNodes.map((node) => node.id));
+    const visibleEdges = allEdges.filter((edge) => {
+        if (!visibleIds.has(edge.from) || !visibleIds.has(edge.to)) return false;
+        return renderMode !== "focus" || focusEdgeIds.has(edge.id) || (focusNodeIds.has(edge.from) && focusNodeIds.has(edge.to));
+    });
+
+    if (meta) {
+        const focusLabel = renderMode === "focus" && _kgGraphData.focus_index != null
+            ? ` · focusing triplet ${Number(_kgGraphData.focus_index) + 1}`
+            : "";
+        meta.textContent = `${allNodes.length} node(s), ${allEdges.length} edge(s)${focusLabel}`;
+    }
+    _syncGraphModeButtons(hasFocus);
+
+    if (!visibleNodes.length) {
+        canvas.innerHTML = `<div class="chat-graph-empty">No graph nodes available yet.</div>`;
+        return;
+    }
+
+    canvas.innerHTML = _buildGraphSvg(visibleNodes, visibleEdges, focusNodeIds, focusEdgeIds, renderMode);
+}
+
+function _syncGraphModeButtons(hasFocus) {
+    const allBtn = document.getElementById("chat-graph-all");
+    const focusBtn = document.getElementById("chat-graph-focus");
+    if (allBtn) allBtn.classList.toggle("is-active", _kgGraphMode === "all");
+    if (focusBtn) {
+        focusBtn.classList.toggle("is-active", _kgGraphMode === "focus");
+        focusBtn.disabled = !hasFocus;
+    }
+}
+
+function _buildGraphSvg(nodes, edges, focusNodeIds, focusEdgeIds, mode) {
+    const groupOrder = ["Symptom", "FailureMode", "CorrectiveAction"];
+    const groups = new Map();
+    nodes.forEach((node) => {
+        const group = node.group || "Node";
+        if (!groups.has(group)) groups.set(group, []);
+        groups.get(group).push(node);
+    });
+    const orderedGroups = [
+        ...groupOrder.filter((group) => groups.has(group)),
+        ...[...groups.keys()].filter((group) => !groupOrder.includes(group)).sort(),
+    ];
+    const width = Math.max(540, orderedGroups.length * 230);
+    const maxGroupSize = Math.max(1, ...orderedGroups.map((group) => groups.get(group).length));
+    const height = Math.max(180, maxGroupSize * 86 + 58);
+    const xStep = orderedGroups.length > 1 ? (width - 160) / (orderedGroups.length - 1) : 1;
+    const positions = new Map();
+
+    orderedGroups.forEach((group, groupIndex) => {
+        const items = groups.get(group);
+        const x = orderedGroups.length === 1 ? width / 2 : 80 + groupIndex * xStep;
+        const groupHeight = (items.length - 1) * 86;
+        const startY = Math.max(52, (height - groupHeight) / 2);
+        items.forEach((node, index) => {
+            positions.set(node.id, { x, y: startY + index * 86 });
+        });
+    });
+
+    const edgeHtml = edges.map((edge) => {
+        const from = positions.get(edge.from);
+        const to = positions.get(edge.to);
+        if (!from || !to) return "";
+        const focusClass = focusEdgeIds.has(edge.id) ? " is-focus" : "";
+        const dx = Math.max(60, Math.abs(to.x - from.x) * 0.45);
+        const path = `M ${from.x + 64} ${from.y} C ${from.x + dx} ${from.y}, ${to.x - dx} ${to.y}, ${to.x - 64} ${to.y}`;
+        const midX = (from.x + to.x) / 2;
+        const midY = (from.y + to.y) / 2 - 8;
+        return `
+            <path class="kg-edge${focusClass}" d="${path}" marker-end="url(#kg-arrow)"></path>
+            <text class="kg-edge-label${focusClass}" x="${midX}" y="${midY}">${_escapeHtml(edge.label || "")}</text>
+        `;
+    }).join("");
+
+    const nodeHtml = nodes.map((node) => {
+        const pos = positions.get(node.id);
+        if (!pos) return "";
+        const isFocus = focusNodeIds.has(node.id);
+        const focusClass = isFocus ? " is-focus" : (mode === "focus" ? "" : "");
+        const label = _truncateGraphLabel(node.label || node.id, 28);
+        const type = node.group || "Node";
+        return `
+            <g class="kg-node kg-node--${_classToken(type)}${focusClass}" transform="translate(${pos.x - 64}, ${pos.y - 24})">
+                <rect width="128" height="48" rx="12"></rect>
+                <text class="kg-node-type" x="64" y="17">${_escapeHtml(type)}</text>
+                <text class="kg-node-label" x="64" y="34">${_escapeHtml(label)}</text>
+            </g>
+        `;
+    }).join("");
+
+    return `
+        <svg class="chat-graph-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Extraction knowledge graph">
+            <defs>
+                <marker id="kg-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+                    <path d="M 0 0 L 8 4 L 0 8 z" class="kg-arrow"></path>
+                </marker>
+            </defs>
+            <rect class="kg-bg" x="0" y="0" width="${width}" height="${height}" rx="18"></rect>
+            ${edgeHtml}
+            ${nodeHtml}
+        </svg>
+    `;
+}
+
+function _classToken(value) {
+    return String(value || "node").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+}
+
+function _truncateGraphLabel(value, maxLength) {
+    const text = String(value || "");
+    return text.length > maxLength ? `${text.slice(0, maxLength - 1)}...` : text;
+}
+
+function _navigateToTripletSource(triplet) {
+    const page = _tripletSourcePage(triplet);
+    if (page > 0) _scrollPdfToPage(page);
+}
+
+function _tripletSourcePage(triplet) {
+    const actions = Array.isArray(triplet?.corrective_actions) ? triplet.corrective_actions : [];
+    const firstActionPage = actions
+        .map((action) => Number(action?.source_page || 0))
+        .find((page) => page > 0);
+    if (firstActionPage) return firstActionPage;
+
+    const failureModes = Array.isArray(triplet?.failure_modes) ? triplet.failure_modes : [];
+    const firstFailurePage = failureModes
+        .map((failureMode) => Number(failureMode?.evidence_page || 0))
+        .find((page) => page > 0);
+    if (firstFailurePage) return firstFailurePage;
+
+    return Number(triplet?.symptom?.evidence_page || 0);
+}
+
+function renderOntologyReviewWidget(payload, onAction) {
+    const wrap = document.createElement("div");
+    wrap.className = "chat-widget chat-widget--ontology-review";
+
+    const confidenceCounts = payload.confidence_counts || {};
+    const previewRelations = payload.preview_relations || [];
+    const topGraphIssues = payload.top_graph_issues || [];
+    const nodeTypeCounts = payload.node_type_counts || {};
+    const requiredFields = payload.human_required_fields || [];
+    const hardBlockerCount = requiredFields.length;
+
+    const header = document.createElement("div");
+    header.className = "widget-header";
+    header.innerHTML = `
+        <span class="widget-icon">🧠</span>
+        <span class="widget-title">Ontology Draft Ready</span>
+        <span class="widget-meta">
+            ${payload.node_count || 0} nodes
+            ${payload.schema_issues_count ? ` · ${payload.schema_issues_count} issue(s)` : ""}
+            ${payload.human_fields_count ? ` · ${payload.human_fields_count} field(s) required` : ""}
+        </span>
+    `;
+    wrap.appendChild(header);
+
+    const summary = document.createElement("div");
+    summary.className = "ontology-review-summary";
+    summary.innerHTML = `
+        <div class="ontology-stat-card">
+            <span class="ontology-stat-label">Scoped Pages</span>
+            <span class="ontology-stat-value">${payload.selected_pages_count || 0}</span>
+        </div>
+        <div class="ontology-stat-card">
+            <span class="ontology-stat-label">Sections</span>
+            <span class="ontology-stat-value">${payload.selected_sections_count || 0}</span>
+        </div>
+        <div class="ontology-stat-card">
+            <span class="ontology-stat-label">Graph Issues</span>
+            <span class="ontology-stat-value">${payload.graph_issues_count || 0}</span>
+        </div>
+        <div class="ontology-stat-card">
+            <span class="ontology-stat-label">Suggestions</span>
+            <span class="ontology-stat-value">${payload.suggested_relations_count || 0}</span>
+        </div>
+        <div class="ontology-stat-card">
+            <span class="ontology-stat-label">Auto-Approve</span>
+            <span class="ontology-stat-value">${confidenceCounts.auto_approve || 0}</span>
+        </div>
+        <div class="ontology-stat-card">
+            <span class="ontology-stat-label">Human Review</span>
+            <span class="ontology-stat-value">${confidenceCounts.human_review || 0}</span>
+        </div>
+    `;
+    wrap.appendChild(summary);
+
+    const typeEntries = Object.entries(nodeTypeCounts);
+    if (typeEntries.length > 0) {
+        const typeStrip = document.createElement("div");
+        typeStrip.className = "ontology-review-type-strip";
+        typeEntries.forEach(([nodeType, count]) => {
+            const pill = document.createElement("span");
+            pill.className = "ontology-review-type-pill";
+            pill.textContent = `${nodeType}: ${count}`;
+            typeStrip.appendChild(pill);
+        });
+        wrap.appendChild(typeStrip);
+    }
+
+    if (requiredFields.length > 0) {
+        const hint = document.createElement("p");
+        hint.className = "widget-hint";
+        hint.textContent = "Fill the required fields below before continuing to extraction. Suggested links are optional.";
+        wrap.appendChild(hint);
+        _appendRequiredFieldsForm(wrap, requiredFields, onAction);
+    } else if (payload.schema_issues_count > 0) {
+        const hint = document.createElement("p");
+        hint.className = "widget-hint";
+        hint.textContent = "Schema issues are still reported on the draft, but they do not block triplet extraction.";
+        wrap.appendChild(hint);
+    } else {
+        const hint = document.createElement("p");
+        hint.className = "widget-hint";
+        hint.textContent = "Review the draft summary and optional suggested links. Extraction can start now.";
+        wrap.appendChild(hint);
+    }
+
+    if (topGraphIssues.length > 0) {
+        const issuesBlock = document.createElement("div");
+        issuesBlock.className = "ontology-review-issues";
+        issuesBlock.innerHTML = `
+            <div class="ontology-review-subtitle">Top graph issues</div>
+            ${topGraphIssues.map((issue) => `
+                <div class="ontology-review-issue-row">
+                    <span class="ontology-review-issue-type">${issue.issue_type}</span>
+                    <span class="ontology-review-issue-text">${_md(issue.description || "")}</span>
+                </div>
+            `).join("")}
+        `;
+        wrap.appendChild(issuesBlock);
+    }
+
+    if (previewRelations.length > 0) {
+        const relationBlock = document.createElement("div");
+        relationBlock.className = "ontology-review-relations";
+        relationBlock.innerHTML = `
+            <div class="ontology-review-subtitle">Suggested links</div>
+            ${previewRelations.map((relation) => `
+                <div class="ontology-review-relation-row">
+                    <span class="ontology-review-relation-name">${relation.relation_name}</span>
+                    <span class="ontology-review-relation-path">${_md(`${relation.from_label} → ${relation.to_label}`)}</span>
+                    <span class="ontology-review-relation-confidence">${Math.round(Number(relation.confidence || 0) * 100)}%</span>
+                </div>
+            `).join("")}
+        `;
+        wrap.appendChild(relationBlock);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "widget-actions";
+    const continueBtn = document.createElement("button");
+    continueBtn.className = "btn-primary btn-sm";
+    continueBtn.textContent = hardBlockerCount > 0 ? "Complete Required Items" : "Continue to Extraction";
+    continueBtn.disabled = hardBlockerCount > 0;
+    if (hardBlockerCount > 0) {
+        continueBtn.title = `${requiredFields.length} required field(s) still need values.`;
+    }
+    continueBtn.addEventListener("click", () => {
+        continueBtn.disabled = true;
+        onAction("run_extraction", {});
+    });
+    actions.appendChild(continueBtn);
+    wrap.appendChild(actions);
+    return wrap;
+}
+
+function _appendRequiredFieldsForm(wrap, humanRequiredFields, onAction) {
+    const form = document.createElement("div");
+    form.className = "widget-fields-form ontology-required-fields";
+
+    humanRequiredFields.slice(0, 6).forEach((field) => {
+        const row = document.createElement("div");
+        row.className = "field-row";
+
+        const label = document.createElement("label");
+        label.textContent = field.prompt || field.property_name || field.field_key;
+        label.className = "field-label";
+
+        let input;
+        if (Array.isArray(field.allowed_values) && field.allowed_values.length) {
+            input = document.createElement("select");
+            field.allowed_values.forEach((value) => {
+                const option = document.createElement("option");
+                option.value = value;
+                option.textContent = value;
+                input.appendChild(option);
+            });
+        } else {
+            input = document.createElement("input");
+            input.type = "text";
+            input.placeholder = field.suggested_value || `Enter ${field.property_name || "value"}...`;
+            input.value = field.suggested_value || "";
+        }
+        input.className = "field-input";
+        input.dataset.fieldKey = field.field_key;
+
+        const submitBtn = document.createElement("button");
+        submitBtn.className = "btn-sm btn-secondary";
+        submitBtn.type = "button";
+        submitBtn.textContent = "Set";
+        submitBtn.addEventListener("click", () => {
+            const value = input.value.trim();
+            if (!value) return;
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Saving...";
+            onAction("fill_required_field", { field_key: field.field_key, value });
+        });
+
+        row.appendChild(label);
+        row.appendChild(input);
+        row.appendChild(submitBtn);
+        form.appendChild(row);
+    });
+
+    if (humanRequiredFields.length > 6) {
+        const more = document.createElement("p");
+        more.className = "widget-empty";
+        more.textContent = `... and ${humanRequiredFields.length - 6} more field(s). Fill these first and I will show the rest.`;
+        form.appendChild(more);
+    }
+
+    wrap.appendChild(form);
+}
+
+function _renderExportWidget(payload) {
+    const wrap = document.createElement("div");
+    wrap.className = "chat-widget chat-widget--export";
+    wrap.innerHTML = `
+        <div class="widget-header">
+            <span class="widget-icon">📦</span>
+            <span class="widget-title">Export Ready</span>
+        </div>
+        <p class="widget-hint">The ontology is complete and ready to export.</p>
+    `;
+    const actions = document.createElement("div");
+    actions.className = "widget-actions";
+    const btn = document.createElement("button");
+    btn.className = "btn-primary btn-sm";
+    btn.textContent = "Export Ontology JSON";
+    btn.addEventListener("click", () => {
+        btn.disabled = true;
+        btn.textContent = "Exporting…";
+        _postAction("export_ontology", {});
+    });
+    actions.appendChild(btn);
+    wrap.appendChild(actions);
+    return wrap;
+}
+
+// ── User input ─────────────────────────────────────────────────────────
+
+function _setupInput() {
+    const form = document.getElementById("chat-input-form");
+    const input = document.getElementById("chat-input");
+    if (!form || !input) return;
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = "";
+        _appendUserMessage(text);
+        _sendMessage(text);
+    });
+}
+
+function _sendMessage(text) {
+    if (!_pdfId) return;
+    _setSystemBusy("Processing your message…", _currentPhase);
+    _showThinkingIndicator("Processing your message…");
+    fetch("/chat/message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pdf_id: _pdfId, message: text }),
+    })
+        .then(async (res) => {
+            if (res.ok) return;
+            if (res.status === 404) {
+                _markSessionLost();
+                return;
+            }
+            const err = await res.json().catch(() => ({}));
+            _appendErrorMessage(err.detail || "Could not send message.");
+        })
+        .catch(() => _appendErrorMessage("Could not send message — server may be unavailable."));
+}
+
+async function _postAction(action, payload = {}) {
+    if (!_pdfId) return;
+    _setSystemBusy(`Running ${_humanPhaseLabel(action)}…`, _currentPhase);
+    _showThinkingIndicator(`Running ${_humanPhaseLabel(action)}…`);
+    try {
+        const res = await fetch("/chat/action", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pdf_id: _pdfId, action, payload }),
+        });
+        if (!res.ok) {
+            if (res.status === 404) {
+                _markSessionLost();
+                return;
+            }
+            const err = await res.json().catch(() => ({}));
+            _appendErrorMessage(err.detail || "Action failed.");
+        }
+    } catch {
+        _appendErrorMessage("Could not reach the server.");
+    }
+}
+
+// ── Quick-action chips ─────────────────────────────────────────────────
+
+export function setQuickActions(actions) {
+    const bar = document.getElementById("chat-quick-actions");
+    if (!bar) return;
+    bar.innerHTML = "";
+    actions.forEach(({ label, message }) => {
+        const chip = document.createElement("button");
+        chip.className = "quick-chip";
+        chip.textContent = label;
+        chip.addEventListener("click", () => {
+            _appendUserMessage(message);
+            _sendMessage(message);
+        });
+        bar.appendChild(chip);
+    });
+}
+
+// ── PDF viewer ─────────────────────────────────────────────────────────
+
+async function _loadPdf(pdfPath) {
+    try {
+        _pdfjsLib = await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs");
+        _pdfjsLib.GlobalWorkerOptions.workerSrc =
+            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
+        _pdfDoc = await _pdfjsLib.getDocument(pdfPath).promise;
+        _totalPages = _pdfDoc.numPages;
+        _renderedPdfPages.clear();
+        _pdfSearchIndex = new Array(_totalPages + 1).fill("");
+        _pdfIndexPromise = null;
+        _pdfSearchMatches = [];
+        _pdfSearchCursor = -1;
+        _pdfSearchQuery = "";
+        await _renderPdfScroller();
+        _syncPdfButtons();
+        _setPdfStatus(`PDF ready · ${_totalPages} page(s)`, "ready");
+        _setPdfSearchMeta("Search is ready once the PDF text is indexed.");
+        if (_pendingPdfPage) {
+            const page = _pendingPdfPage;
+            _pendingPdfPage = null;
+            window.setTimeout(() => _scrollPdfToPage(page), 0);
+        }
+        _pdfIndexPromise = _buildPdfSearchIndex();
+    } catch (e) {
+        console.warn("PDF viewer error:", e);
+        _setPdfStatus("PDF preview unavailable.", "error");
+        _setPdfSearchMeta("Search is unavailable because the PDF preview could not load.");
+    }
+}
+
+async function _renderPdfScroller() {
+    const container = document.getElementById("chat-pdf-container");
+    if (!container) return;
+
+    container.innerHTML = "";
+    if (_pdfObserver) _pdfObserver.disconnect();
+    if (_visiblePageObserver) _visiblePageObserver.disconnect();
+
+    const firstPage = await _pdfDoc.getPage(1);
+    const viewport = firstPage.getViewport({ scale: 1.2 });
+
+    for (let pageNum = 1; pageNum <= _totalPages; pageNum += 1) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "pdf-page-wrapper chat-pdf-page";
+        wrapper.id = `chat-pdf-page-${pageNum}`;
+        wrapper.dataset.pageNum = `${pageNum}`;
+        wrapper.style.minHeight = `${viewport.height}px`;
+        wrapper.style.width = `${viewport.width}px`;
+
+        const label = document.createElement("div");
+        label.className = "pdf-page-label";
+        label.textContent = `${pageNum} / ${_totalPages}`;
+
+        const canvas = document.createElement("canvas");
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+
+        wrapper.appendChild(label);
+        wrapper.appendChild(canvas);
+        container.appendChild(wrapper);
+    }
+
+    await _renderPdfPage(1);
+    _setupPdfObservers(container);
+    _currentPage = 1;
+    _updatePageIndicator();
+}
+
+export function navigateToPage(pageNum) {
+    _scrollPdfToPage(pageNum);
+}
+
+function _setupPdfControls() {
+    const searchInput = document.getElementById("chat-pdf-search");
+    if (!searchInput || searchInput.dataset.bound === "true") return;
+
+    const searchBtn = document.getElementById("chat-pdf-search-btn");
+    const prevMatchBtn = document.getElementById("chat-pdf-prev-match");
+    const nextMatchBtn = document.getElementById("chat-pdf-next-match");
+    const prevPageBtn = document.getElementById("chat-prev-page");
+    const nextPageBtn = document.getElementById("chat-next-page");
+
+    searchInput.dataset.bound = "true";
+    searchBtn?.addEventListener("click", () => { void _runPdfSearch(searchInput.value); });
+    prevMatchBtn?.addEventListener("click", () => _stepPdfMatch(-1));
+    nextMatchBtn?.addEventListener("click", () => _stepPdfMatch(1));
+    prevPageBtn?.addEventListener("click", () => _scrollPdfToPage(_currentPage - 1));
+    nextPageBtn?.addEventListener("click", () => _scrollPdfToPage(_currentPage + 1));
+    searchInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            void _runPdfSearch(searchInput.value);
+        }
+    });
+    searchInput.addEventListener("input", () => {
+        if (!searchInput.value.trim()) _clearPdfSearch();
+    });
+}
+
+function _setupPdfObservers(container) {
+    _pdfObserver = new IntersectionObserver(
+        (entries) => {
+            for (const entry of entries) {
+                if (!entry.isIntersecting) continue;
+                const pageNum = parseInt(entry.target.dataset.pageNum || "0", 10);
+                if (pageNum > 0 && !_renderedPdfPages.has(pageNum)) {
+                    void _renderPdfPage(pageNum);
+                }
+            }
+        },
+        { root: container, rootMargin: "700px 0px" },
+    );
+
+    _visiblePageObserver = new IntersectionObserver(
+        (entries) => {
+            const visible = entries
+                .filter((entry) => entry.isIntersecting)
+                .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+            if (!visible) return;
+            const pageNum = parseInt(visible.target.dataset.pageNum || "0", 10);
+            if (pageNum > 0 && pageNum !== _currentPage) {
+                _currentPage = pageNum;
+                _updatePageIndicator();
+            }
+        },
+        { root: container, threshold: [0.35, 0.6, 0.85] },
+    );
+
+    [...container.children].forEach((child) => {
+        if (!child.dataset?.pageNum) return;
+        _pdfObserver.observe(child);
+        _visiblePageObserver.observe(child);
+    });
+}
+
+async function _renderPdfPage(pageNum) {
+    if (!_pdfDoc || _renderedPdfPages.has(pageNum)) return;
+    _renderedPdfPages.add(pageNum);
+
+    const wrapper = document.getElementById(`chat-pdf-page-${pageNum}`);
+    if (!wrapper) return;
+
+    try {
+        const page = await _pdfDoc.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 1.2 });
+        const canvas = wrapper.querySelector("canvas");
+        if (!canvas) return;
+
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        wrapper.style.minHeight = `${viewport.height}px`;
+        wrapper.style.width = `${viewport.width}px`;
+
+        const ctx = canvas.getContext("2d");
+        await page.render({ canvasContext: ctx, viewport }).promise;
+    } catch (err) {
+        console.warn(`Failed to render page ${pageNum}:`, err);
+    }
+}
+
+async function _buildPdfSearchIndex() {
+    if (!_pdfDoc) return;
+    _setPdfStatus("Indexing PDF text for search…", "loading");
+
+    for (let pageNum = 1; pageNum <= _totalPages; pageNum += 1) {
+        if (_pdfSearchIndex[pageNum]) continue;
+        try {
+            const page = await _pdfDoc.getPage(pageNum);
+            const textContent = await page.getTextContent();
+            _pdfSearchIndex[pageNum] = textContent.items
+                .map((item) => String(item?.str || ""))
+                .join(" ")
+                .toLowerCase();
+        } catch (err) {
+            console.warn(`Failed to index PDF page ${pageNum}:`, err);
+            _pdfSearchIndex[pageNum] = "";
+        }
+
+        if (pageNum === _totalPages || pageNum % 12 === 0) {
+            _setPdfSearchMeta(`Indexing PDF text… ${pageNum}/${_totalPages}`);
+            await new Promise((resolve) => window.setTimeout(resolve, 0));
+        }
+    }
+
+    _setPdfStatus(`PDF ready · ${_totalPages} page(s)`, "ready");
+    _setPdfSearchMeta("Search the PDF by word or phrase.");
+}
+
+async function _runPdfSearch(rawQuery) {
+    const query = String(rawQuery || "").trim().toLowerCase();
+    if (!query) {
+        _clearPdfSearch();
+        return;
+    }
+    if (!_pdfDoc) return;
+
+    _setPdfSearchMeta("Searching the PDF…");
+    if (_pdfIndexPromise) await _pdfIndexPromise;
+
+    _pdfSearchQuery = query;
+    _pdfSearchMatches = [];
+    _pdfSearchCursor = -1;
+
+    document.querySelectorAll(".chat-pdf-page--match, .chat-pdf-page--active-match").forEach((node) => {
+        node.classList.remove("chat-pdf-page--match", "chat-pdf-page--active-match");
+    });
+
+    for (let pageNum = 1; pageNum <= _totalPages; pageNum += 1) {
+        if ((_pdfSearchIndex[pageNum] || "").includes(query)) {
+            _pdfSearchMatches.push(pageNum);
+        }
+    }
+
+    if (_pdfSearchMatches.length === 0) {
+        _setPdfSearchMeta(`No matches for “${rawQuery}”.`);
+        _syncPdfButtons();
+        return;
+    }
+
+    _pdfSearchMatches.forEach((pageNum) => {
+        document.getElementById(`chat-pdf-page-${pageNum}`)?.classList.add("chat-pdf-page--match");
+    });
+
+    const preview = _pdfSearchMatches.slice(0, 6).join(", ");
+    const extra = _pdfSearchMatches.length > 6 ? ` … +${_pdfSearchMatches.length - 6}` : "";
+    _setPdfSearchMeta(`${_pdfSearchMatches.length} match(es) on page(s) ${preview}${extra}.`);
+    _activatePdfMatch(0);
+}
+
+function _stepPdfMatch(direction) {
+    if (!_pdfSearchMatches.length) return;
+    const nextIndex = (_pdfSearchCursor + direction + _pdfSearchMatches.length) % _pdfSearchMatches.length;
+    _activatePdfMatch(nextIndex);
+}
+
+function _activatePdfMatch(index) {
+    if (!_pdfSearchMatches.length) return;
+    _pdfSearchCursor = Math.max(0, Math.min(index, _pdfSearchMatches.length - 1));
+
+    document.querySelectorAll(".chat-pdf-page--active-match").forEach((node) => {
+        node.classList.remove("chat-pdf-page--active-match");
+    });
+
+    const pageNum = _pdfSearchMatches[_pdfSearchCursor];
+    const wrapper = document.getElementById(`chat-pdf-page-${pageNum}`);
+    wrapper?.classList.add("chat-pdf-page--active-match");
+    _scrollPdfToPage(pageNum);
+    _setPdfSearchMeta(
+        `Match ${_pdfSearchCursor + 1} of ${_pdfSearchMatches.length} for “${_pdfSearchQuery}” on page ${pageNum}.`,
+    );
+    _syncPdfButtons();
+}
+
+function _clearPdfSearch() {
+    _pdfSearchQuery = "";
+    _pdfSearchMatches = [];
+    _pdfSearchCursor = -1;
+    document.querySelectorAll(".chat-pdf-page--match, .chat-pdf-page--active-match").forEach((node) => {
+        node.classList.remove("chat-pdf-page--match", "chat-pdf-page--active-match");
+    });
+    _setPdfSearchMeta(_pdfDoc ? "Search the PDF by word or phrase." : "Search is unavailable until the PDF loads.");
+    _syncPdfButtons();
+}
+
+async function _probeSession() {
+    if (_sessionLost || !_pdfId) return;
+    try {
+        const res = await fetch(`/chat/history/${encodeURIComponent(_pdfId)}`);
+        if (res.status === 404) {
+            _markSessionLost();
+            return;
+        }
+        if (!res.ok) {
+            setTimeout(_openStream, 3000);
+            return;
+        }
+        _streamErrorCount = 0;
+        _openStream();
+    } catch {
+        setTimeout(_openStream, 3000);
+    }
+}
+
+function _markSessionLost() {
+    if (_sessionLost) return;
+    _sessionLost = true;
+    _eventSource?.close();
+    const input = document.getElementById("chat-input");
+    const submit = document.querySelector("#chat-input-form button[type='submit']");
+    if (input) input.disabled = true;
+    if (submit) submit.disabled = true;
+    _appendErrorMessage("The chat session was lost after a server reload. Reload the manual to continue.");
+    _setAwaitingOperator("Session lost after server reload. Load the manual again to restore the workflow.");
+}
+
+function _scrollPdfToPage(pageNum) {
+    if (!_totalPages) {
+        _pendingPdfPage = pageNum;
+        return;
+    }
+    if (pageNum < 1 || pageNum > _totalPages) return;
+    const target = document.getElementById(`chat-pdf-page-${pageNum}`);
+    if (!target) return;
+    _currentPage = pageNum;
+    _updatePageIndicator();
+    void _renderPdfPage(pageNum);
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function _updatePageIndicator() {
+    const indicator = document.getElementById("chat-page-indicator");
+    if (indicator) indicator.textContent = _totalPages ? `Page ${_currentPage} / ${_totalPages}` : "Page — / —";
+    _syncPdfButtons();
+}
+
+function _syncPdfButtons() {
+    const prevPageBtn = document.getElementById("chat-prev-page");
+    const nextPageBtn = document.getElementById("chat-next-page");
+    const prevMatchBtn = document.getElementById("chat-pdf-prev-match");
+    const nextMatchBtn = document.getElementById("chat-pdf-next-match");
+
+    if (prevPageBtn) prevPageBtn.disabled = !_totalPages || _currentPage <= 1;
+    if (nextPageBtn) nextPageBtn.disabled = !_totalPages || _currentPage >= _totalPages;
+    if (prevMatchBtn) prevMatchBtn.disabled = _pdfSearchMatches.length === 0;
+    if (nextMatchBtn) nextMatchBtn.disabled = _pdfSearchMatches.length === 0;
+}
+
+function _setPdfStatus(text, tone = "neutral") {
+    const el = document.getElementById("chat-pdf-status");
+    if (!el) return;
+    el.textContent = text;
+    el.dataset.tone = tone;
+}
+
+function _setPdfSearchMeta(text) {
+    const el = document.getElementById("chat-pdf-search-meta");
+    if (!el) return;
+    el.textContent = text;
+}
+
+function _setPhaseLabel(phase) {
+    const label = document.getElementById("chat-phase-label");
+    if (!label) return;
+    label.textContent = _humanPhaseLabel(phase);
+}
+
+function _setTurnIndicator(mode, badge, text) {
+    const root = document.getElementById("chat-turn-indicator");
+    const badgeEl = document.getElementById("chat-turn-badge");
+    const textEl = document.getElementById("chat-turn-text");
+    if (!root || !badgeEl || !textEl) return;
+    root.dataset.mode = mode;
+    badgeEl.textContent = badge;
+    textEl.textContent = text;
+}
+
+function _setSystemBusy(detail, phase = _currentPhase) {
+    _currentPhase = phase || _currentPhase;
+    _setPhaseLabel(_currentPhase);
+    const label = _humanPhaseLabel(_currentPhase);
+    _setTurnIndicator("working", "System is working", detail ? `${label} · ${detail}` : `${label} in progress.`);
+}
+
+function _setAwaitingOperator(detail = "") {
+    const fallback = "Ask about the manual, selected sections or pages, extracted ontology, triplets, or workflow status.";
+    _setTurnIndicator("operator", "Your turn", detail || fallback);
+}
+
+function _widgetPrompt(widgetType) {
+    switch (widgetType) {
+        case "sections":
+            return "Review the section selection, scroll the PDF, or ask about the current cut plan.";
+        case "required_fields":
+            return "Fill the required ontology fields so extraction can continue.";
+        case "triplet":
+            return "Review the current triplet and decide whether to approve, edit, or skip it.";
+        case "node_draft":
+            return "Review the proposed node draft and confirm it if it is correct.";
+        case "export":
+            return "Export is ready when you want to generate the ontology JSON.";
+        case "extraction_graph":
+            return "The extraction graph is ready. Triplet review will focus it on the current symptom chain.";
+        default:
+            return "";
+    }
+}
+
+function _humanPhaseLabel(phase) {
+    const key = String(phase || "loaded").trim().toLowerCase();
+    return {
+        loaded: "Manual Loaded",
+        scoping: "Scoping",
+        propose_cut_plan: "Scoping",
+        edit_cut_plan: "Scoping",
+        approve_cut_plan: "Scoping",
+        ontology_draft: "Ontology Draft",
+        draft_ontology: "Ontology Draft",
+        extraction: "Extraction",
+        run_extraction: "Extraction",
+        validation: "Triplet Review",
+        get_next_triplet: "Triplet Review",
+        approve_triplet: "Triplet Review",
+        skip_triplet: "Triplet Review",
+        edit_triplet: "Triplet Review",
+        export: "Export",
+        export_ontology: "Export",
+    }[key] || key.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+// ── Utilities ──────────────────────────────────────────────────────────
+
+function _scrollToBottom() {
+    const stream = _stream();
+    if (stream) stream.scrollTop = stream.scrollHeight;
+}
+
+function _md(text) {
+    if (!text) return "";
+    return _escapeHtml(text)
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/`(.+?)`/g, "<code>$1</code>")
+        .replace(/\n/g, "<br>");
+}
+
+function _escapeHtml(text) {
+    return String(text || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function _normaliseAssistantText(text) {
+    let remaining = String(text || "");
+    while (true) {
+        const leadingJson = _extractLeadingJsonObject(remaining);
+        if (!leadingJson) return remaining.trim();
+
+        let parsed;
+        try {
+            parsed = JSON.parse(leadingJson.json);
+        } catch {
+            return remaining.trim();
+        }
+
+        if (!_isWidgetEnvelope(parsed)) return remaining.trim();
+        remaining = leadingJson.rest;
+    }
+}
+
+function _isWidgetEnvelope(value) {
+    return Boolean(
+        value
+        && typeof value === "object"
+        && value.widget
+        && (value.payload || value.event === "update" || value.event === "render"),
+    );
+}
+
+function _extractLeadingJsonObject(text) {
+    const source = String(text || "").trimStart();
+    if (!source.startsWith("{")) return null;
+
+    let depth = 0;
+    let inString = false;
+    let escaped = false;
+
+    for (let index = 0; index < source.length; index += 1) {
+        const char = source[index];
+        if (inString) {
+            if (escaped) {
+                escaped = false;
+            } else if (char === "\\") {
+                escaped = true;
+            } else if (char === '"') {
+                inString = false;
+            }
+            continue;
+        }
+
+        if (char === '"') {
+            inString = true;
+        } else if (char === "{") {
+            depth += 1;
+        } else if (char === "}") {
+            depth -= 1;
+            if (depth === 0) {
+                return {
+                    json: source.slice(0, index + 1),
+                    rest: source.slice(index + 1),
+                };
+            }
+        }
+    }
+
+    return null;
+}

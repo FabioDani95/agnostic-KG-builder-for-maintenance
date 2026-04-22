@@ -295,6 +295,11 @@ class SectionInfo(BaseModel):
 
 class ProductInfo(BaseModel):
     product_name: str = ""
+    product_short_name: str = ""
+    brand: str = ""
+    model: str = ""
+    asset_id: str = ""
+    asset_type: str = ""
     document_type: str = ""
     language: str = ""
     page_count: int = 0

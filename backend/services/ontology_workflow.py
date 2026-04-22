@@ -14,8 +14,10 @@ from backend.app_config import get_ontology_config
 from backend.models import OntologyDraftRequest, OntologyPipelineResponse, OntologyRelationInstance
 from backend.services.ontology_pipeline import _normalize_ontology_instance, build_initial_ontology
 from backend.services.ontology_schema_service import load_ontology_schema
+from backend.services.cutplan_service import extract_asset_identity
 from backend.services.pdf_service import format_text_with_pages
 from backend.services.run_metrics import record_stage_metrics
+from backend.services.ontology_semantics import normalize_asset_node
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +31,42 @@ def _normalize_node_name(name: str) -> str:
     return _re.sub(r"\s+", " ", value).strip()
 
 
-def _merge_pipeline_results(results: list[OntologyPipelineResponse]) -> OntologyPipelineResponse:
+def _canonical_asset_identity(store: dict) -> dict[str, str]:
+    graph_state = store.get("graph_state") or {}
+    source_type = str(store.get("source_type") or graph_state.get("source_type") or "").strip()
+    source_title = str(store.get("source_title") or graph_state.get("source_title") or "").strip()
+    filename = str(store.get("filename") or graph_state.get("filename") or "").strip()
+
+    for candidate in (
+        store.get("asset_identity"),
+        (store.get("cut_plan") or {}).get("product_info"),
+        ((graph_state.get("scoping_metadata") or {}).get("product_info")),
+    ):
+        if isinstance(candidate, dict) and candidate:
+            identity = extract_asset_identity(
+                candidate,
+                fallback_name=source_title,
+                source_type=source_type,
+                filename=filename,
+            )
+            if identity.get("name"):
+                return identity
+
+    if source_title or filename:
+        return extract_asset_identity(
+            {},
+            fallback_name=source_title,
+            source_type=source_type,
+            filename=filename,
+        )
+    return {}
+
+
+def _merge_pipeline_results(
+    results: list[OntologyPipelineResponse],
+    *,
+    asset_identity: dict[str, str] | None = None,
+) -> OntologyPipelineResponse:
     """Merge chunk-level ontology results into one normalized run-level payload."""
     if len(results) == 1:
         return results[0]
@@ -62,10 +99,20 @@ def _merge_pipeline_results(results: list[OntologyPipelineResponse]) -> Ontology
                 name_to_id[node_type] = {}
 
             for node in node_list:
+                original_node_id = _node_id(node, node_type)
+                if node_type == "Asset":
+                    node = normalize_asset_node(
+                        node,
+                        source_title=result.ontology.source_title,
+                        source_type=result.ontology.source_type,
+                        asset_identity=asset_identity,
+                    )
                 node_id = _node_id(node, node_type)
                 node_name = _normalize_node_name(_node_name(node))
                 if not node_id:
                     continue
+                if original_node_id and original_node_id != node_id:
+                    id_remap[original_node_id] = node_id
 
                 existing_by_id = next(
                     (
@@ -132,6 +179,7 @@ def _merge_pipeline_results(results: list[OntologyPipelineResponse]) -> Ontology
         schema=merged_schema,
         source_type=merged_ontology.source_type,
         source_title=merged_ontology.source_title,
+        asset_identity=asset_identity,
     )
 
     def _dedup_issues(issues):
@@ -360,24 +408,48 @@ def _build_section_header(sections: list[dict]) -> str:
     return "\n".join(lines)
 
 
-async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest) -> OntologyPipelineResponse:
+def _resolve_draft_pages(
+    all_pages: list[dict],
+    pages_to_keep: list[int] | None,
+    *,
+    always_include_first_pages: int,
+    asset_identity: dict[str, str] | None,
+) -> list[dict]:
+    """Return the pages to use for ontology drafting.
+
+    Keep the approved scoping selection stable. Front-matter pages are only
+    force-added when we still lack a reliable asset identity.
+    """
+    if not pages_to_keep:
+        return all_pages
+
+    keep_set = set(int(page) for page in pages_to_keep)
+    include_front_matter = (
+        always_include_first_pages > 0
+        and not str((asset_identity or {}).get("name") or "").strip()
+    )
+    if include_front_matter:
+        keep_set |= {
+            page["page_number"]
+            for page in all_pages
+            if page["page_number"] <= always_include_first_pages
+        }
+    return [page for page in all_pages if page["page_number"] in keep_set]
+
+
+async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_event=None) -> OntologyPipelineResponse:
     """Run the existing ontology drafting flow against a store entry."""
     t0 = time.perf_counter()
     all_pages = store["pages"]
     ontology_cfg = get_ontology_config()
+    asset_identity = _canonical_asset_identity(store)
     pages_to_keep = req.pages_to_keep or (store.get("cut_plan") or {}).get("pages_to_keep")
-    if pages_to_keep:
-        keep_set = set(pages_to_keep)
-        always_include_first_pages = int(ontology_cfg.get("always_include_first_pages", 0))
-        first_page_nums = {
-            page["page_number"]
-            for page in all_pages
-            if always_include_first_pages and page["page_number"] <= always_include_first_pages
-        }
-        keep_set = keep_set | first_page_nums
-        filtered_pages = [page for page in all_pages if page["page_number"] in keep_set]
-    else:
-        filtered_pages = all_pages
+    filtered_pages = _resolve_draft_pages(
+        all_pages,
+        pages_to_keep,
+        always_include_first_pages=int(ontology_cfg.get("always_include_first_pages", 0)),
+        asset_identity=asset_identity,
+    )
 
     sections = (store.get("cut_plan") or {}).get("sections", [])
     max_chars = int(ontology_cfg.get("max_input_chars", 600000))
@@ -422,6 +494,8 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest) -> Ont
                 source_title=req.source_title,
                 target_language=req.target_language,
                 model_name=req.model_name,
+                asset_identity=asset_identity,
+                on_event=on_event,
             )
         metrics["chunk_index"] = index
         metrics["chunk_pages"] = len(chunk_pages)
@@ -445,7 +519,7 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest) -> Ont
         chunk_results.append(result)
         chunk_metrics.append(metrics)
 
-    result = _merge_pipeline_results(chunk_results)
+    result = _merge_pipeline_results(chunk_results, asset_identity=asset_identity)
     total_prompt_tokens = sum(int(item.get("prompt_tokens", 0) or 0) for item in chunk_metrics)
     total_cached_prompt_tokens = sum(int(item.get("cached_prompt_tokens", 0) or 0) for item in chunk_metrics)
     total_non_cached_prompt_tokens = sum(int(item.get("non_cached_prompt_tokens", 0) or 0) for item in chunk_metrics)

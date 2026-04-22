@@ -24,6 +24,7 @@ from backend.services.ontology_pipeline import (
 )
 from backend.services.ontology_schema_service import load_ontology_schema
 from backend.services.ontology_workflow import draft_ontology_workflow
+from backend.services.pipeline_actions import apply_ontology_suggestions
 
 router = APIRouter(prefix="/ontology", tags=["ontology"])
 
@@ -80,74 +81,9 @@ async def apply_suggestions(req: ApplySuggestionsRequest):
     if req.pdf_id not in pdf_store:
         raise HTTPException(status_code=404, detail="PDF not found.")
     store = pdf_store[req.pdf_id]
-    pipeline_state = store.get("ontology_pipeline")
-    if not pipeline_state:
+    if not store.get("ontology_pipeline"):
         raise HTTPException(status_code=404, detail="Run /ontology/draft first.")
-
-    existing = OntologyPipelineResponse.model_validate(pipeline_state)
-    ontology_data = deepcopy(existing.ontology.model_dump())
-
-    existing_edges: set[tuple[str, str, str]] = {
-        (relation["name"], relation["from_id"], relation["to_id"])
-        for relation in ontology_data.get("relations", [])
-    }
-
-    for suggestion in req.accepted_suggestions:
-        edge_key = (suggestion.relation_name, suggestion.from_id, suggestion.to_id)
-        if edge_key in existing_edges:
-            continue
-        ontology_data["relations"].append({
-            "name": suggestion.relation_name,
-            "from_type": suggestion.from_type,
-            "from_id": suggestion.from_id,
-            "to_type": suggestion.to_type,
-            "to_id": suggestion.to_id,
-            "evidence": [],
-        })
-        existing_edges.add(edge_key)
-
-    from backend.models import OntologyInstance
-
-    updated_ontology = OntologyInstance.model_validate(ontology_data)
-
-    schema = load_ontology_schema()
-    schema_issues, human_fields = validate_ontology_instance(updated_ontology)
-    graph_issues, suggested_relations = run_graph_analysis(updated_ontology, schema)
-
-    from backend.app_config import get_confidence_config
-    from backend.services.confidence import score_ontology
-
-    confidence_cfg = get_confidence_config()
-    confidence_report = None
-    if confidence_cfg.get("enabled", True):
-        confidence_report = score_ontology(
-            ontology=updated_ontology,
-            schema=schema,
-            semantic_issues=existing.semantic_issues,
-            schema_issues=schema_issues,
-            human_required_fields=human_fields,
-            retry_count=existing.retry_count,
-            config=confidence_cfg,
-        )
-
-    result = OntologyPipelineResponse(
-        status="blocked" if schema_issues else ("needs_human" if human_fields else "ready"),
-        ontology=updated_ontology,
-        semantic_issues=existing.semantic_issues,
-        schema_issues=schema_issues,
-        human_required_fields=human_fields,
-        is_schema_compliant=not schema_issues and not human_fields,
-        is_ready_for_human_review=not schema_issues,
-        retry_count=existing.retry_count,
-        graph_issues=graph_issues,
-        suggested_relations=suggested_relations,
-        confidence_report=confidence_report,
-    )
-    store["ontology_pipeline"] = result.model_dump()
-    sync_ontology_pipeline_state(store)
-    if get_pipeline_config().get("mode") == "multi_agent":
-        record_ontology_review_route(store)
-    return result
+    return apply_ontology_suggestions(store, req.accepted_suggestions)
 
 
 @router.post("/export")

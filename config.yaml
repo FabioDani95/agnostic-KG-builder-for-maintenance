@@ -1,4 +1,12 @@
 
+chat:
+  model: gpt-5.4-nano
+  timeout: 30
+  max_output_tokens: 1500
+  critic_model: gpt-5.4-nano
+  critic_enabled: true
+  idle_reminder_seconds: 60
+
 shared_models: &strong_models
   - id: gpt-5.4
     label: GPT-5.4
@@ -112,8 +120,8 @@ ontology:
 
   max_input_chars: 600000
   estimated_max_input_tokens: 150000
-  extraction_max_output_tokens: 20000
-  extraction_retry_max_output_tokens: 24000
+  extraction_max_output_tokens: 16000
+  extraction_retry_max_output_tokens: 16000
   relation_extraction_max_output_tokens: 6000
   validation_max_output_tokens: 4000
 

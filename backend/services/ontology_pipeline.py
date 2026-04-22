@@ -62,6 +62,7 @@ logger = logging.getLogger(__name__)
 class PipelineState(TypedDict, total=False):
     source_type: str
     source_title: str
+    asset_identity: dict[str, Any]
     target_language: str
     text_with_pages: str
     model_name: str
@@ -99,6 +100,32 @@ def _ontology_cfg(max_output_tokens: int) -> dict[str, int]:
         "estimated_max_input_tokens": int(raw.get("estimated_max_input_tokens", 55000)),
         "max_output_tokens": max_output_tokens,
     }
+
+
+def _asset_identity_prompt_block(asset_identity: dict[str, Any] | None) -> str:
+    identity = asset_identity or {}
+    asset_id = str(identity.get("asset_id", "") or "").strip()
+    asset_name = str(identity.get("name", "") or "").strip()
+    if not (asset_id and asset_name):
+        return ""
+
+    lines = [
+        "## Canonical Asset Identity",
+        "Use this exact asset identity across the whole ontology draft.",
+        f"- asset_id: {asset_id}",
+        f"- name: {asset_name}",
+    ]
+    for key in ("brand", "model", "asset_type"):
+        value = str(identity.get(key, "") or "").strip()
+        if value:
+            lines.append(f"- {key}: {value}")
+    lines.extend([
+        "Rules:",
+        "- Emit exactly one Asset node for the document.",
+        "- Reuse the exact asset_id above for every Asset relation anchor.",
+        "- Do not invent alternative Asset IDs or alternative root-asset names for the same manual.",
+    ])
+    return "\n".join(lines)
 
 
 _PARSE_REPAIR_EVENTS: list[dict[str, Any]] = []
@@ -180,6 +207,142 @@ def _extract_json_object(raw: str) -> dict[str, Any]:
         raise strict_err
 
 
+def _completion_hit_output_limit(
+    *,
+    usage: dict[str, Any],
+    finish_reason: str | None,
+    max_output_tokens: int,
+) -> bool:
+    completion_tokens = int((usage or {}).get("completion", 0) or 0)
+    return str(finish_reason or "").lower() == "length" or completion_tokens >= int(max_output_tokens or 0)
+
+
+class _JsonCompletionRetryExhausted(json.JSONDecodeError):
+    def __init__(self, msg: str, doc: str, pos: int, *, usages: list[dict[str, Any]]):
+        super().__init__(msg, doc, pos)
+        self.usages = list(usages)
+
+
+def _parse_json_completion_with_retry(
+    *,
+    phase_label: str,
+    run_completion,
+    initial_max_output_tokens: int,
+    retry_max_output_tokens: int,
+    empty_visible_output: set[str] | None = None,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Run a JSON-producing completion, retrying once when the visible output was truncated.
+
+    Two failure signatures are retried with a larger completion budget:
+    1. visible output is just an empty JSON object at the completion limit
+    2. JSON parsing fails and the completion appears to have hit the output limit
+    """
+    empty_visible_output = empty_visible_output or {"{}"}
+
+    def _parse_with_repair_tracking(payload: str) -> tuple[dict[str, Any], bool]:
+        before = len(_PARSE_REPAIR_EVENTS)
+        parsed = _extract_json_object(payload)
+        return parsed, len(_PARSE_REPAIR_EVENTS) > before
+
+    def _parse_retry_result(
+        payload: str,
+        retry_usage: dict[str, Any],
+        retry_finish_reason: str | None,
+        *,
+        retried_max_output_tokens: int,
+    ) -> tuple[dict[str, Any], bool]:
+        parsed, repaired = _parse_with_repair_tracking(payload)
+        retry_hit_limit = _completion_hit_output_limit(
+            usage=retry_usage,
+            finish_reason=retry_finish_reason,
+            max_output_tokens=retried_max_output_tokens,
+        )
+        if retry_hit_limit and (payload.strip() in empty_visible_output or repaired):
+            raise json.JSONDecodeError(
+                "Retry output still appears truncated at the completion limit",
+                payload,
+                0,
+            )
+        return parsed, repaired
+
+    raw, usage, finish_reason = run_completion(initial_max_output_tokens)
+    usages = [usage]
+    hit_limit = _completion_hit_output_limit(
+        usage=usage,
+        finish_reason=finish_reason,
+        max_output_tokens=initial_max_output_tokens,
+    )
+
+    if raw.strip() in empty_visible_output and hit_limit and retry_max_output_tokens > initial_max_output_tokens:
+        logger.warning(
+            "[ontology] %s returned empty visible JSON at completion limit (%d tokens, finish_reason=%s); retrying once with max_output_tokens=%d",
+            phase_label,
+            initial_max_output_tokens,
+            finish_reason or "unknown",
+            retry_max_output_tokens,
+        )
+        raw, retry_usage, retry_finish_reason = run_completion(retry_max_output_tokens)
+        usages.append(retry_usage)
+        try:
+            parsed, _ = _parse_retry_result(
+                raw,
+                retry_usage,
+                retry_finish_reason,
+                retried_max_output_tokens=retry_max_output_tokens,
+            )
+        except json.JSONDecodeError as exc:
+            raise _JsonCompletionRetryExhausted(exc.msg, exc.doc, exc.pos, usages=usages) from exc
+        return parsed, usages
+
+    try:
+        parsed, repaired = _parse_with_repair_tracking(raw)
+    except json.JSONDecodeError:
+        if not hit_limit or retry_max_output_tokens <= initial_max_output_tokens:
+            raise
+        logger.warning(
+            "[ontology] %s JSON parse failed at completion limit (%d tokens, finish_reason=%s); retrying once with max_output_tokens=%d",
+            phase_label,
+            initial_max_output_tokens,
+            finish_reason or "unknown",
+            retry_max_output_tokens,
+        )
+        raw, retry_usage, retry_finish_reason = run_completion(retry_max_output_tokens)
+        usages.append(retry_usage)
+        try:
+            parsed, _ = _parse_retry_result(
+                raw,
+                retry_usage,
+                retry_finish_reason,
+                retried_max_output_tokens=retry_max_output_tokens,
+            )
+        except json.JSONDecodeError as exc:
+            raise _JsonCompletionRetryExhausted(exc.msg, exc.doc, exc.pos, usages=usages) from exc
+        return parsed, usages
+
+    if repaired and hit_limit and retry_max_output_tokens > initial_max_output_tokens:
+        logger.warning(
+            "[ontology] %s JSON required repair at completion limit (%d tokens, finish_reason=%s); retrying once with max_output_tokens=%d",
+            phase_label,
+            initial_max_output_tokens,
+            finish_reason or "unknown",
+            retry_max_output_tokens,
+        )
+        raw, retry_usage, retry_finish_reason = run_completion(retry_max_output_tokens)
+        usages.append(retry_usage)
+        try:
+            parsed, _ = _parse_retry_result(
+                raw,
+                retry_usage,
+                retry_finish_reason,
+                retried_max_output_tokens=retry_max_output_tokens,
+            )
+        except json.JSONDecodeError as exc:
+            raise _JsonCompletionRetryExhausted(exc.msg, exc.doc, exc.pos, usages=usages) from exc
+        return parsed, usages
+
+    return parsed, usages
+
+
 def _regex_repair_json(text: str) -> str | None:
     """Best-effort regex repair for the most common LLM JSON mistakes."""
     if not text:
@@ -227,17 +390,25 @@ def _node_id_property(node_def) -> str:
     return f"{node_def.name.lower()}_id"
 
 
+def _node_richness(node: dict[str, Any]) -> int:
+    return sum(1 for value in node.values() if value not in ("", [], {}, None))
+
+
 def _default_asset_node(
     source_title: str,
     source_type: str,
+    asset_identity: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    identity = asset_identity or {}
     return {
-        "asset_id": "ASSET-001",
-        "name": source_title or "Unknown Asset",
-        "description": source_title or "Technical asset extracted from manual context",
-        "brand": "",
-        "model": "",
-        "asset_type": infer_asset_type(source_title, source_type),
+        "asset_id": str(identity.get("asset_id") or "ASSET-001"),
+        "name": str(identity.get("name") or source_title or "Unknown Asset"),
+        "description": str(
+            identity.get("name") or source_title or "Technical asset extracted from manual context"
+        ),
+        "brand": str(identity.get("brand") or ""),
+        "model": str(identity.get("model") or ""),
+        "asset_type": str(identity.get("asset_type") or infer_asset_type(source_title, source_type)),
     }
 
 
@@ -266,25 +437,38 @@ def _normalize_ontology_instance(
     schema: OntologySchemaDefinition,
     source_type: str,
     source_title: str,
+    asset_identity: dict[str, Any] | None = None,
 ) -> OntologyInstance:
     normalized = deepcopy(ontology.model_dump())
     nodes = normalized.setdefault("nodes", {})
+    id_remap: dict[str, str] = {}
     for node_def in schema.nodes:
         node_list = nodes.setdefault(node_def.name, [])
-        seen_ids: set[str] = set()
+        seen_ids: dict[str, int] = {}
         id_prop = _node_id_property(node_def)
-        deduped = []
+        deduped: list[dict[str, Any]] = []
         for node in node_list:
             if not isinstance(node, dict):
                 continue
+            original_node_id = str(node.get(id_prop, "")).strip()
             if node_def.name == "Asset":
-                node = normalize_asset_node(node, source_title, source_type)
+                node = normalize_asset_node(
+                    node,
+                    source_title,
+                    source_type,
+                    asset_identity=asset_identity,
+                )
             node_id = str(node.get(id_prop, "")).strip()
             if not node_id:
                 continue
-            if node_id in seen_ids:
+            if original_node_id and original_node_id != node_id:
+                id_remap[original_node_id] = node_id
+            existing_index = seen_ids.get(node_id)
+            if existing_index is not None:
+                if _node_richness(node) > _node_richness(deduped[existing_index]):
+                    deduped[existing_index] = node
                 continue
-            seen_ids.add(node_id)
+            seen_ids[node_id] = len(deduped)
             if node_def.name == "CorrectiveAction":
                 source_ref = str(node.get("source_reference", "")).strip()
                 if not source_ref:
@@ -298,11 +482,15 @@ def _normalize_ontology_instance(
     if primary_asset_type and not nodes.get(primary_asset_type):
         if primary_asset_type == "Asset":
             nodes[primary_asset_type].append(
-                _default_asset_node(source_title, source_type)
+                _default_asset_node(source_title, source_type, asset_identity=asset_identity)
             )
 
     relations = []
     for rel in normalized.get("relations", []):
+        if isinstance(rel, dict):
+            rel = dict(rel)
+            rel["from_id"] = id_remap.get(str(rel.get("from_id", "")).strip(), rel.get("from_id", ""))
+            rel["to_id"] = id_remap.get(str(rel.get("to_id", "")).strip(), rel.get("to_id", ""))
         try:
             relation = OntologyRelationInstance.model_validate(rel)
         except Exception:
@@ -789,6 +977,16 @@ def _validate_schema(ontology: OntologyInstance, schema: OntologySchemaDefinitio
             fix_hint="Rerun the draft with broader page coverage or review the extraction prompt/output.",
         ))
 
+    asset_count = len(ontology.nodes.get("Asset", []) or [])
+    if asset_count > 1:
+        issues.append(PipelineIssue(
+            severity="error",
+            code="multiple_assets_detected",
+            message=f"Ontology draft contains {asset_count} Asset nodes; exactly one canonical Asset is allowed.",
+            target_type="Asset",
+            fix_hint="Collapse duplicate Asset variants to the single scoping-selected asset identity and remap relations.",
+        ))
+
     for node_type, items in ontology.nodes.items():
         node_def = node_map.get(node_type)
         if not node_def:
@@ -939,11 +1137,12 @@ def _validate_schema(ontology: OntologyInstance, schema: OntologySchemaDefinitio
 
 def _call_extractor_llm(state: PipelineState) -> PipelineState:
     started = time.perf_counter()
+    prompt_blocks = [state.get("candidates_block", ""), _asset_identity_prompt_block(state.get("asset_identity"))]
     system_prompt = build_ontology_extraction_prompt(
         schema_json=state["schema_json"],
         source_type=state["source_type"],
         source_title=state["source_title"],
-        candidate_candidates_block=state.get("candidates_block", ""),
+        candidate_candidates_block="\n\n".join(block for block in prompt_blocks if block),
     )
     cfg = _ontology_cfg(get_ontology_config().get("extraction_max_output_tokens", 8000))
     enforce_llm_limits(
@@ -958,6 +1157,11 @@ def _call_extractor_llm(state: PipelineState) -> PipelineState:
         {"role": "user", "content": state["text_with_pages"]},
     ]
 
+    retry_tokens = max(
+        int(get_ontology_config().get("extraction_retry_max_output_tokens", 20000)),
+        cfg["max_output_tokens"] + 4000,
+    )
+
     def _run_completion(max_output_tokens: int):
         try:
             response = client.chat.completions.create(
@@ -971,33 +1175,45 @@ def _call_extractor_llm(state: PipelineState) -> PipelineState:
             if "timeout" in msg:
                 raise RuntimeError(llm_timeout_message("Ontology draft", cfg["timeout_seconds"])) from exc
             raise RuntimeError(f"Ontology draft failed before completion: {exc}") from exc
-        return response.choices[0].message.content or "{}", usage_from_response(response, "ontology_draft")
-
-    raw, usage = _run_completion(cfg["max_output_tokens"])
-    usages = [usage]
-
-    # GPT-5 can spend the entire completion budget on hidden reasoning and leave only "{}"
-    # as visible output. Retry once with a larger completion budget when that signature appears.
-    if raw.strip() == "{}" and int(usage.get("completion", 0) or 0) >= cfg["max_output_tokens"]:
-        retry_tokens = max(
-            int(get_ontology_config().get("extraction_retry_max_output_tokens", 20000)),
-            cfg["max_output_tokens"] + 4000,
+        return (
+            response.choices[0].message.content or "{}",
+            usage_from_response(response, "ontology_draft"),
+            getattr(response.choices[0], "finish_reason", None),
         )
+
+    usages: list[dict[str, Any]] = []
+    try:
+        data, usages = _parse_json_completion_with_retry(
+            phase_label="Draft",
+            run_completion=_run_completion,
+            initial_max_output_tokens=cfg["max_output_tokens"],
+            retry_max_output_tokens=retry_tokens,
+        )
+    except json.JSONDecodeError as exc:
+        usages = list(getattr(exc, "usages", usages))
         logger.warning(
-            "[ontology] Draft returned empty JSON at completion limit (%d tokens); retrying once with max_output_tokens=%d",
-            cfg["max_output_tokens"],
-            retry_tokens,
+            "[ontology] Draft JSON parse failed after retry; returning an empty chunk result instead of aborting the whole run: %s",
+            exc,
         )
-        raw, retry_usage = _run_completion(retry_tokens)
-        usages.append(retry_usage)
+        _record_parse_repair("fallback_empty_draft_chunk", str(exc))
+        return {
+            "ontology": _empty_instance(state["schema"], state["source_type"], state["source_title"]),
+            "llm_usage": [*state.get("llm_usage", []), *usages],
+        }
 
-    data = _extract_json_object(raw)
     ontology = OntologyInstance.model_validate(_coerce_raw_ontology_data(
         data=data,
         schema=state["schema"],
         source_type=state["source_type"],
         source_title=state["source_title"],
     ))
+    ontology = _normalize_ontology_instance(
+        ontology=ontology,
+        schema=state["schema"],
+        source_type=state["source_type"],
+        source_title=state["source_title"],
+        asset_identity=state.get("asset_identity"),
+    )
     logger.info("[ontology] Extraction draft generated (%.1fs)", time.perf_counter() - started)
     return {
         "ontology": ontology,
@@ -1011,6 +1227,7 @@ def _normalize_node(state: PipelineState) -> PipelineState:
         schema=state["schema"],
         source_type=state["source_type"],
         source_title=state["source_title"],
+        asset_identity=state.get("asset_identity"),
     )
     return {"ontology": ontology}
 
@@ -1259,13 +1476,14 @@ def _re_extract_node(state: PipelineState) -> PipelineState:
     previous_ontology_json = json.dumps(
         state["ontology"].model_dump(), ensure_ascii=False, indent=2
     )
+    prompt_blocks = [state.get("candidates_block", ""), _asset_identity_prompt_block(state.get("asset_identity"))]
     system_prompt = build_ontology_re_extraction_prompt(
         schema_json=state["schema_json"],
         source_type=state["source_type"],
         source_title=state["source_title"],
         issues_summary=issues_summary,
         previous_ontology_json=previous_ontology_json,
-        candidate_candidates_block=state.get("candidates_block", ""),
+        candidate_candidates_block="\n\n".join(block for block in prompt_blocks if block),
     )
     cfg = _ontology_cfg(re_extract_max_tokens)
     enforce_llm_limits(
@@ -1276,11 +1494,17 @@ def _re_extract_node(state: PipelineState) -> PipelineState:
     )
     client = _get_client(cfg["timeout_seconds"])
     retry_count = state.get("retry_count", 0)
+    previous_ontology = state["ontology"]
     logger.info("[ontology] Re-extraction attempt %d/%d", retry_count, get_reflective_loop_config().get("max_retries", 2))
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": state["text_with_pages"]},
     ]
+
+    retry_tokens = max(
+        int(get_ontology_config().get("extraction_retry_max_output_tokens", 20000)),
+        cfg["max_output_tokens"] + 4000,
+    )
 
     def _run_completion(max_output_tokens: int):
         try:
@@ -1295,24 +1519,33 @@ def _re_extract_node(state: PipelineState) -> PipelineState:
             if "timeout" in msg:
                 raise RuntimeError(llm_timeout_message("Ontology re-extraction", cfg["timeout_seconds"])) from exc
             raise RuntimeError(f"Ontology re-extraction failed before completion: {exc}") from exc
-        return response.choices[0].message.content or "{}", usage_from_response(response, "ontology_re_extraction")
-
-    raw, usage = _run_completion(cfg["max_output_tokens"])
-    usages = [usage]
-    if raw.strip() == "{}" and int(usage.get("completion", 0) or 0) >= cfg["max_output_tokens"]:
-        retry_tokens = max(
-            int(get_ontology_config().get("extraction_retry_max_output_tokens", 20000)),
-            cfg["max_output_tokens"] + 4000,
+        return (
+            response.choices[0].message.content or "{}",
+            usage_from_response(response, "ontology_re_extraction"),
+            getattr(response.choices[0], "finish_reason", None),
         )
+
+    usages: list[dict[str, Any]] = []
+    try:
+        data, usages = _parse_json_completion_with_retry(
+            phase_label="Re-extraction",
+            run_completion=_run_completion,
+            initial_max_output_tokens=cfg["max_output_tokens"],
+            retry_max_output_tokens=retry_tokens,
+        )
+    except json.JSONDecodeError as exc:
+        usages = list(getattr(exc, "usages", usages))
         logger.warning(
-            "[ontology] Re-extraction returned empty JSON at completion limit (%d tokens); retrying once with max_output_tokens=%d",
-            cfg["max_output_tokens"],
-            retry_tokens,
+            "[ontology] Re-extraction JSON parse failed after retry; keeping previous ontology: %s",
+            exc,
         )
-        raw, retry_usage = _run_completion(retry_tokens)
-        usages.append(retry_usage)
+        _record_parse_repair("fallback_keep_previous_on_reextract_parse_failure", str(exc))
+        return {
+            "ontology": previous_ontology,
+            "retry_count": retry_count + 1,
+            "llm_usage": [*state.get("llm_usage", []), *usages],
+        }
 
-    data = _extract_json_object(raw)
     ontology = OntologyInstance.model_validate(_coerce_raw_ontology_data(
         data=data,
         schema=state["schema"],
@@ -1324,8 +1557,8 @@ def _re_extract_node(state: PipelineState) -> PipelineState:
         schema=state["schema"],
         source_type=state["source_type"],
         source_title=state["source_title"],
+        asset_identity=state.get("asset_identity"),
     )
-    previous_ontology = state["ontology"]
     regression_reason = _retry_regression_reason(previous_ontology, ontology)
     if regression_reason:
         logger.warning(
@@ -1456,6 +1689,8 @@ def build_initial_ontology(
     source_title: str,
     target_language: str,
     model_name: str,
+    asset_identity: dict[str, Any] | None = None,
+    on_event=None,
 ) -> tuple[OntologyPipelineResponse, dict[str, Any]]:
     schema = load_ontology_schema()
     normalized_target_language = normalize_language_code(target_language)
@@ -1468,10 +1703,19 @@ def build_initial_ontology(
             len(mining_result.components),
             len(mining_result.error_codes),
         )
+    if on_event:
+        comp_count = len(mining_result.components)
+        ec_count = len(mining_result.error_codes)
+        on_event({"type": "progress", "phase": "ontology_draft",
+                  "message": (
+                      f"Pre-mining complete — {comp_count} component candidate(s), "
+                      f"{ec_count} error-code candidate(s). Running ontology extraction…"
+                  )})
     result = _GRAPH.invoke({
         "text_with_pages": text_with_pages,
         "source_type": source_type,
         "source_title": source_title,
+        "asset_identity": asset_identity or {},
         "target_language": normalized_target_language,
         "model_name": model_name,
         "schema": schema,
@@ -1515,6 +1759,25 @@ def build_initial_ontology(
 
     if retry_count:
         logger.info("[ontology] Reflective loop completed: %d re-extraction attempt(s).", retry_count)
+
+    if on_event:
+        total_nodes = sum(
+            len(v) for v in (ontology.nodes or {}).values() if isinstance(v, list)
+        )
+        on_event({
+            "type": "progress",
+            "phase": "ontology_draft",
+            "message": (
+                f"Ontology draft complete — {total_nodes} node(s), "
+                f"{len(result.get('suggested_relations', []))} suggested relation(s), "
+                f"status: {status}."
+                + (f" {len(human_fields)} required field(s) need your input." if human_fields else "")
+            ),
+            "status": status,
+            "node_count": total_nodes,
+            "human_fields_count": len(human_fields),
+            "schema_issues_count": len(schema_issues),
+        })
 
     response = OntologyPipelineResponse(
         status=status,

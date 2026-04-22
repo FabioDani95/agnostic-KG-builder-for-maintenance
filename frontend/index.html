@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KG Diagnostic Extraction</title>
-    <link rel="stylesheet" href="/style.css?v=15">
+    <link rel="stylesheet" href="/style.css?v=20">
 </head>
 <body>
 
@@ -121,327 +121,96 @@
         </div>
     </div>
 
-    <!-- ─── Cut Plan Screen (full-page, two-column) ─── -->
-    <div id="cut-plan-screen" hidden>
+
+        <!-- ─── Chat Layout (replaces cut-plan / ontology / triplet screens) ─── -->
+    <div id="chat-layout" hidden>
         <!-- Top bar -->
-        <header id="cp-bar">
+        <header id="chat-bar">
             <div class="app-bar-left">
                 <span class="app-bar-logo">KG</span>
-                <span class="app-bar-title" id="cp-doc-title">Document</span>
+                <span class="app-bar-title" id="chat-doc-title">Document</span>
             </div>
-            <div class="app-bar-center" id="cp-page-counter"></div>
+            <div class="app-bar-center" id="chat-phase-label">Scoping</div>
             <div class="app-bar-right">
-                <span class="app-bar-meta" title="PDF page where manual page 1 appears">Pag.1 at PDF page:</span>
-                <input type="number" id="offset-input" value="1" min="1" max="600" class="offset-input-inline"
-                    title="Enter the absolute PDF page number that contains page 1 of the manual">
+                <span class="app-bar-meta" id="chat-operator"></span>
+                <button id="chat-audit-btn" class="app-bar-btn" hidden>Audit</button>
             </div>
         </header>
 
         <!-- Two columns -->
-        <div class="cp-columns">
-            <!-- Left: PDF Viewer -->
-            <section class="cp-pdf-section">
-                <div id="cp-pdf-container" class="cp-pdf-container"></div>
+        <div class="chat-columns">
+            <!-- Left: PDF viewer -->
+            <section class="chat-pdf-section">
+                <div class="chat-pdf-toolbar">
+                    <div class="chat-pdf-toolbar-row">
+                        <span id="chat-pdf-status" class="chat-pdf-status" data-tone="loading">Loading PDF preview…</span>
+                        <span id="chat-page-indicator" class="chat-pdf-page-indicator">Page — / —</span>
+                        <div class="chat-pdf-page-nav">
+                            <button id="chat-prev-page" type="button" class="btn-secondary btn-sm">&#8592; Page</button>
+                            <button id="chat-next-page" type="button" class="btn-secondary btn-sm">Page &#8594;</button>
+                        </div>
+                    </div>
+                    <div class="chat-pdf-toolbar-row">
+                        <input
+                            type="search"
+                            id="chat-pdf-search"
+                            class="chat-pdf-search-input"
+                            placeholder="Search words in the PDF…"
+                            autocomplete="off"
+                        />
+                        <button id="chat-pdf-search-btn" type="button" class="btn-secondary btn-sm">Find</button>
+                        <button id="chat-pdf-prev-match" type="button" class="btn-secondary btn-sm" aria-label="Previous PDF match">&#8593;</button>
+                        <button id="chat-pdf-next-match" type="button" class="btn-secondary btn-sm" aria-label="Next PDF match">&#8595;</button>
+                        <span id="chat-pdf-search-meta" class="chat-pdf-search-meta">Search is ready once the PDF text is indexed.</span>
+                    </div>
+                </div>
+                <section id="chat-graph-panel" class="chat-graph-panel" hidden>
+                    <div class="chat-graph-head">
+                        <div>
+                            <div class="chat-graph-title">Extraction Graph</div>
+                            <div id="chat-graph-meta" class="chat-graph-meta">Waiting for extracted triplets…</div>
+                        </div>
+                        <div class="chat-graph-actions">
+                            <button id="chat-graph-all" type="button" class="btn-secondary btn-sm" data-mode="all">Full graph</button>
+                            <button id="chat-graph-focus" type="button" class="btn-secondary btn-sm" data-mode="focus">Current triplet</button>
+                        </div>
+                    </div>
+                    <div id="chat-graph-canvas" class="chat-graph-canvas"></div>
+                </section>
+                <div id="chat-pdf-container" class="cp-pdf-container chat-pdf-container"></div>
             </section>
 
-            <!-- Right: Sections + Page grid + Actions -->
-            <section class="cp-controls-section">
-                <div class="cp-controls-scroll">
-                    <!-- Asset and document info (from scoping) -->
-                    <div class="cp-block" id="cp-product-info" hidden>
-                        <h4>Asset &amp; Document Info</h4>
-                        <div class="cp-product-card">
-                            <div class="cp-info-row">
-                                <span class="cp-info-label">Asset:</span>
-                                <span class="cp-info-value" id="cp-product-name">&mdash;</span>
-                            </div>
-                            <div class="cp-info-row">
-                                <span class="cp-info-label">Document Type:</span>
-                                <span class="cp-info-value" id="cp-doc-type">&mdash;</span>
-                            </div>
-                            <div class="cp-info-row">
-                                <span class="cp-info-label">Language:</span>
-                                <span class="cp-info-value" id="cp-language">&mdash;</span>
-                            </div>
-                            <div class="cp-info-row">
-                                <span class="cp-info-label">Pages:</span>
-                                <span class="cp-info-value" id="cp-page-total">&mdash;</span>
-                            </div>
-                        </div>
-                    </div>
+            <div id="chat-column-resizer" class="chat-column-resizer" role="separator" aria-orientation="vertical" aria-label="Resize manual and chatbot columns" tabindex="0"></div>
 
-                    <!-- Extracted Table of Contents -->
-                    <div class="cp-block" id="cp-toc-block" hidden>
-                        <h4>Extracted Table of Contents</h4>
-                        <div id="cp-toc-table"></div>
-                    </div>
+            <!-- Right: Chat stream + input -->
+            <section class="chat-section">
+                <!-- Message stream -->
+                <div id="chat-stream" class="chat-stream"></div>
 
-                    <!-- Selected sections -->
-                    <div class="cp-block">
-                        <h4>Selected Sections</h4>
-                        <div id="section-cards"></div>
-                        <button id="add-range-btn" class="btn-secondary btn-small" style="margin-top:0.4rem">+ Add Section</button>
-                        <div id="add-range-form" class="add-range-form" hidden>
-                            <input type="number" id="range-start" placeholder="Manual start page" min="1" class="range-input">
-                            <span>&ndash;</span>
-                            <input type="number" id="range-end" placeholder="Manual end page" min="1" class="range-input">
-                            <input type="text" id="range-name" placeholder="Section name" class="range-name-input">
-                            <button id="range-confirm-btn" class="btn-small btn-success">Add</button>
-                            <button id="range-cancel-btn" class="btn-small btn-danger">Cancel</button>
-                        </div>
-                    </div>
+                <div id="chat-turn-indicator" class="chat-turn-indicator" data-mode="working">
+                    <span class="chat-turn-badge" id="chat-turn-badge">System is working</span>
+                    <span class="chat-turn-text" id="chat-turn-text">Starting the extraction workflow…</span>
                 </div>
 
-                <!-- Bottom action bar -->
-                <div class="cp-action-bar">
-                    <div id="cp-status" class="cp-status-inline" hidden>
-                        <div class="status-head">
-                            <div class="status-main">
-                                <div class="status-indicator"></div>
-                                <span class="status-text"></span>
-                            </div>
-                            <span class="status-meta" hidden></span>
-                        </div>
-                        <div class="status-progress" aria-hidden="true">
-                            <div class="status-progress-bar"></div>
-                        </div>
-                    </div>
-                    <div class="cp-action-buttons">
-                        <button id="cp-skip-btn" class="btn-secondary">Skip (all pages)</button>
-                        <button id="cp-approve-btn" class="btn-primary">Approve &amp; Extract</button>
-                    </div>
-                </div>
+                <!-- Quick-action chips -->
+                <div id="chat-quick-actions" class="chat-quick-actions"></div>
+
+                <!-- Input bar -->
+                <form id="chat-input-form" class="chat-input-form">
+                    <input
+                        type="text"
+                        id="chat-input"
+                        class="chat-input"
+                        placeholder="Ask a question or give an instruction…"
+                        autocomplete="off"
+                    />
+                    <button type="submit" class="btn-primary chat-send-btn">Send</button>
+                </form>
             </section>
         </div>
     </div>
-
-    <!-- ─── Ontology Pre-Review Screen ─── -->
-    <div id="ontology-screen" hidden>
-        <header id="ontology-bar">
-            <div class="app-bar-left">
-                <span class="app-bar-logo">KG</span>
-                <span class="app-bar-title" id="ontology-doc-title">Document</span>
-            </div>
-            <div class="app-bar-center" id="ontology-step-title">Automatic Ontology Draft</div>
-            <div class="app-bar-right">
-                <span class="app-bar-meta">Before human validation</span>
-                <button id="audit-drawer-toggle" class="app-bar-btn" aria-expanded="false" hidden>
-                    Audit <span class="badge-count" id="audit-entries-count">0</span>
-                </button>
-            </div>
-        </header>
-
-        <!-- Supervisor phase progress strip (multi_agent mode only) -->
-        <div id="phase-strip" class="phase-strip is-hidden" aria-label="Pipeline phase progress"></div>
-
-        <div class="cp-columns">
-            <section class="cp-pdf-section">
-                <div id="ontology-pdf-container" class="cp-pdf-container"></div>
-            </section>
-
-            <section class="cp-controls-section">
-                <div class="cp-controls-scroll">
-                    <div class="cp-block">
-                        <h4>Ontology Draft Status</h4>
-                        <div id="ontology-summary-card" class="ontology-summary-card"></div>
-                        <div id="ontology-guidance" class="ontology-guidance"></div>
-                    </div>
-
-                    <div class="cp-block" id="ontology-fields-block" hidden>
-                        <h4>Required Information</h4>
-                        <p class="block-hint">The automatic extraction left these schema-required properties empty. Fill them in to proceed.</p>
-                        <div id="ontology-fields"></div>
-                    </div>
-
-                    <details id="ontology-advanced-panel" class="ontology-advanced-panel">
-                        <summary class="ontology-advanced-toggle">Advanced / Research view</summary>
-                        <p class="ontology-advanced-hint">Diagnostics from the agentic pipeline: confidence scoring, graph reasoning, supervisor escalations. None of these require an action to proceed — they are surfaced for benchmarking and paper reproducibility.</p>
-
-                        <div class="cp-block" id="ontology-confidence-block" hidden>
-                            <h4>Confidence Distribution</h4>
-                            <div id="ontology-confidence-strip"></div>
-                        </div>
-
-                        <div class="cp-block" id="ontology-issues-block" hidden>
-                            <h4 style="color:var(--text-dim);font-weight:500;">Validation Details</h4>
-                            <div id="ontology-issues"></div>
-                        </div>
-
-                        <div class="cp-block" id="escalations-block" hidden>
-                            <h4>Supervisor Escalations
-                                <span id="escalations-count" class="badge-count"></span>
-                            </h4>
-                            <p class="block-hint">Cases the automatic pipeline could not resolve autonomously. Each card expects a structured decision.</p>
-                            <div id="escalations-list"></div>
-                        </div>
-
-                        <div class="cp-block" id="ontology-nodes-block" hidden>
-                            <div class="ontology-nodes-head">
-                                <h4>Extracted Nodes
-                                    <span id="ontology-nodes-count" class="badge-count"></span>
-                                </h4>
-                                <div class="ontology-nodes-controls">
-                                    <label>Sort
-                                        <select id="ontology-nodes-sort">
-                                            <option value="score_asc">Confidence ↑</option>
-                                            <option value="type">By type</option>
-                                        </select>
-                                    </label>
-                                    <label class="toggle-inline">
-                                        <input type="checkbox" id="show-auto-approved"> Show auto-approved
-                                    </label>
-                                    <button id="bulk-approve-btn" class="btn-secondary btn-sm" type="button">
-                                        Auto-approve ≥ θ_high
-                                    </button>
-                                </div>
-                            </div>
-                            <div id="ontology-nodes-list"></div>
-                        </div>
-
-                        <div class="cp-block" id="graph-issues-block" hidden>
-                            <h4>Graph Structure Issues</h4>
-                            <div id="graph-issues"></div>
-                        </div>
-
-                        <div class="cp-block" id="suggested-relations-block" hidden>
-                            <h4>Suggested Relations
-                                <span id="suggested-relations-count" class="badge-count"></span>
-                            </h4>
-                            <p class="block-hint">The graph reasoning engine found potential missing links. Review and accept or reject each suggestion.</p>
-                            <div id="suggested-relations-list"></div>
-                            <div class="suggestion-bulk-actions" id="suggestion-bulk-actions" hidden>
-                                <button id="apply-suggestions-btn" class="btn-primary btn-sm">Apply Accepted Suggestions</button>
-                                <button id="reject-all-suggestions-btn" class="btn-secondary btn-sm">Reject All</button>
-                            </div>
-                        </div>
-                    </details>
-                </div>
-
-                <div class="cp-action-bar">
-                    <div id="ontology-status" class="cp-status-inline" hidden>
-                        <div class="status-head">
-                            <div class="status-main">
-                                <div class="status-indicator"></div>
-                                <span class="status-text"></span>
-                            </div>
-                            <span class="status-meta" hidden></span>
-                        </div>
-                        <div class="status-progress" aria-hidden="true">
-                            <div class="status-progress-bar"></div>
-                        </div>
-                    </div>
-                    <div class="cp-action-buttons">
-                        <button id="ontology-rerun-btn" class="btn-secondary">Re-run Draft</button>
-                        <button id="ontology-continue-btn" class="btn-primary">Continue to Human Validation</button>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </div>
-
-    <!-- ─── Main Application Layout ─── -->
-    <main id="main-layout" hidden>
-        <!-- Top bar -->
-        <header id="app-bar">
-            <div class="app-bar-left">
-                <span class="app-bar-logo">KG</span>
-                <span class="app-bar-title" id="pdf-title">Document</span>
-            </div>
-            <!-- B: progress bar replaces plain text counter -->
-            <div class="app-bar-center" id="triplet-counter">
-                <div class="review-progress">
-                    <div class="review-progress-bar-wrap">
-                        <div class="review-progress-bar" id="review-progress-bar"></div>
-                    </div>
-                    <span class="review-progress-label" id="review-progress-label"></span>
-                </div>
-            </div>
-            <div class="app-bar-right">
-                <span class="review-mini-stat" id="review-stat-saved"></span>
-                <span class="review-mini-stat dimmed" id="review-stat-discarded"></span>
-                <span class="app-bar-meta" id="app-bar-operator"></span>
-                <span class="app-bar-meta" id="app-bar-date"></span>
-            </div>
-        </header>
-
-        <!-- Two columns -->
-        <div class="two-columns">
-            <!-- Left: PDF Viewer -->
-            <section id="pdf-section">
-                <div id="pdf-container"></div>
-            </section>
-
-            <!-- Right: Triplet card + Buttons -->
-            <section id="tables-section">
-                <div id="tables-scroll">
-                    <!-- A: single triplet card replaces three separate tables -->
-                    <div id="triplet-card-container"></div>
-
-                    <!-- legacy containers kept as empty anchors so existing JS refs don't break -->
-                    <div id="symptom-table-container" hidden></div>
-                    <div id="fm-table-container" hidden></div>
-                    <div id="ca-table-container" hidden></div>
-
-                    <!-- Summary -->
-                    <div id="summary" hidden>
-                        <div class="summary-card">
-                            <h3>Extraction Complete</h3>
-                            <p id="summary-text"></p>
-                            <p id="summary-export-status"></p>
-                            <div id="summary-kpis" hidden></div>
-                            <button id="generate-btn" class="btn-secondary">Download JSON Again</button>
-                            <button id="open-graph-editor-btn" class="btn-primary" hidden>Open Graph Editor</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- C: redesigned binary decision bar -->
-                <div id="action-buttons">
-                    <div class="kbd-hint">
-                        <span><kbd>Tab</kbd> next field</span>
-                        <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> validate</span>
-                        <span><kbd>Ctrl</kbd>+<kbd>Backspace</kbd> skip</span>
-                    </div>
-                    <div class="review-decision-bar">
-                        <button id="discard-btn" class="btn-decision btn-skip">
-                            <span class="btn-decision-icon">&#8594;</span>
-                            <span class="btn-decision-label">Skip</span>
-                            <span class="btn-decision-sub">not relevant</span>
-                        </button>
-                        <button id="save-btn" class="btn-decision btn-validate">
-                            <span class="btn-decision-icon">&#10003;</span>
-                            <span class="btn-decision-label">Validate</span>
-                            <span class="btn-decision-sub">add to graph</span>
-                        </button>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <!-- ─── Supervisor Audit Drawer (fixed overlay) ─── -->
-    <aside id="audit-drawer" class="audit-drawer" aria-hidden="true">
-        <div class="audit-drawer-head">
-            <h4>Supervisor Audit Trail</h4>
-            <button class="audit-drawer-close" type="button" aria-label="Close audit drawer">&times;</button>
-        </div>
-        <div class="audit-drawer-body">
-            <section class="audit-section">
-                <h5>Token Ledger</h5>
-                <div id="audit-token-ledger"></div>
-            </section>
-            <section class="audit-section">
-                <h5>Phase History</h5>
-                <ol id="audit-phase-history" style="list-style:none;padding:0;margin:0;"></ol>
-            </section>
-            <section class="audit-section">
-                <h5>Supervisor Decisions</h5>
-                <ol id="audit-supervisor-log" style="list-style:none;padding:0;margin:0;"></ol>
-            </section>
-        </div>
-    </aside>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
-    <script src="/app.js?v=20260410e" type="module"></script>
+    <script src="/app.js?v=20260422f" type="module"></script>
 </body>
 </html>

@@ -97,6 +97,17 @@ def get_validation_config() -> dict:
     return cfg
 
 
+def get_chat_config() -> dict:
+    cfg = deepcopy(load_config().get("chat", {}) or {})
+    cfg.setdefault("model", "gpt-4o-mini")
+    cfg.setdefault("timeout", 30)
+    cfg.setdefault("max_output_tokens", 1500)
+    cfg.setdefault("critic_model", cfg["model"])
+    cfg.setdefault("critic_enabled", True)
+    cfg.setdefault("idle_reminder_seconds", 60)
+    return cfg
+
+
 def get_style_cleanup_config() -> dict:
     cfg = deepcopy(load_config().get("style_cleanup", {}))
     cfg.setdefault("enabled", True)

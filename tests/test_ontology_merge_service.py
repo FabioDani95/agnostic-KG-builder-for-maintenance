@@ -274,6 +274,10 @@ class OntologyMergeServiceTests(unittest.TestCase):
             rel["name"] == "AFFECTS" and rel["to_id"] == "CMP-PUMP"
             for rel in merged["relations"]
         ))
+        self.assertEqual(
+            merged["nodes"]["FailureMode"][0]["material_context"],
+            "CMP-PUMP",
+        )
 
 
 if __name__ == "__main__":

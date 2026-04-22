@@ -103,6 +103,62 @@ def test_normalize_ontology_instance_adds_missing_has_component():
     assert relation.to_id == "comp_pump"
 
 
+def test_normalize_ontology_instance_applies_canonical_asset_identity_and_remaps_relations():
+    schema = load_ontology_schema()
+    ontology = OntologyInstance(
+        ontology_name=schema.ontology_name,
+        version=schema.version,
+        language="en",
+        source_type="Service Manual",
+        source_title="Eagle Automatic Laser Cutting System Model: Eagle S3L",
+        nodes={
+            "Asset": [{
+                "asset_id": "asset_eastman_eagle_s3l",
+                "name": "Eastman Eagle S3L",
+                "description": "Short form asset label",
+                "brand": "",
+                "model": "",
+                "asset_type": "technical asset",
+            }],
+            "Component": [{
+                "component_id": "comp_tool_head",
+                "name": "Tool head",
+                "description": "Tool head assembly",
+                "category": "tooling",
+            }],
+        },
+        relations=[{
+            "name": "HAS_COMPONENT",
+            "from_type": "Asset",
+            "from_id": "asset_eastman_eagle_s3l",
+            "to_type": "Component",
+            "to_id": "comp_tool_head",
+            "evidence": [],
+        }],
+    )
+
+    normalized = _normalize_ontology_instance(
+        ontology=ontology,
+        schema=schema,
+        source_type=ontology.source_type,
+        source_title=ontology.source_title,
+        asset_identity={
+            "asset_id": "asset_eastman_eagle_s3l_canonical",
+            "name": "Eagle Automatic Laser Cutting System Model: Eagle S3L",
+            "brand": "Eastman",
+            "model": "Eagle S3L",
+            "asset_type": "technical asset",
+        },
+    )
+
+    asset = normalized.nodes["Asset"][0]
+    assert asset["asset_id"] == "asset_eastman_eagle_s3l_canonical"
+    assert asset["name"] == "Eagle Automatic Laser Cutting System Model: Eagle S3L"
+    assert asset["brand"] == "Eastman"
+    assert asset["model"] == "Eagle S3L"
+    assert normalized.relations[0].from_id == "asset_eastman_eagle_s3l_canonical"
+
+
 def test_merge_pipeline_results_rebuilds_missing_has_component():
     schema = load_ontology_schema()
     asset_only = OntologyPipelineResponse(
@@ -167,3 +223,102 @@ def test_merge_pipeline_results_rebuilds_missing_has_component():
     assert relation.name == "HAS_COMPONENT"
     assert relation.from_id == "asset_duetto"
     assert relation.to_id == "comp_pump"
+
+
+def test_merge_pipeline_results_collapses_asset_variants_to_scoping_identity():
+    schema = load_ontology_schema()
+    asset_primary = OntologyPipelineResponse(
+        status="ready",
+        ontology=OntologyInstance(
+            ontology_name=schema.ontology_name,
+            version=schema.version,
+            language="en",
+            source_type="Service Manual",
+            source_title="Eagle Automatic Laser Cutting System Model: Eagle S3L",
+            nodes={
+                "Asset": [{
+                    "asset_id": "asset_eagle_s3l",
+                    "name": "Eagle Automatic Laser Cutting System Model: Eagle S3L",
+                    "description": "Primary title-page label",
+                    "brand": "",
+                    "model": "",
+                    "asset_type": "technical asset",
+                }],
+                "Component": [{
+                    "component_id": "comp_power_supply",
+                    "name": "Power supply",
+                    "description": "Power supply",
+                    "category": "electrical",
+                }],
+            },
+            relations=[{
+                "name": "HAS_COMPONENT",
+                "from_type": "Asset",
+                "from_id": "asset_eagle_s3l",
+                "to_type": "Component",
+                "to_id": "comp_power_supply",
+                "evidence": [],
+            }],
+        ),
+        semantic_issues=[],
+        schema_issues=[],
+        human_required_fields=[],
+    )
+    asset_variant = OntologyPipelineResponse(
+        status="ready",
+        ontology=OntologyInstance(
+            ontology_name=schema.ontology_name,
+            version=schema.version,
+            language="en",
+            source_type="Service Manual",
+            source_title="Eagle Automatic Laser Cutting System Model: Eagle S3L",
+            nodes={
+                "Asset": [{
+                    "asset_id": "asset_eastman_eagle_s3l",
+                    "name": "Eastman Eagle S3L",
+                    "description": "Brand-prefixed variant",
+                    "brand": "Eastman",
+                    "model": "Eagle S3L",
+                    "asset_type": "technical asset",
+                }],
+                "Component": [{
+                    "component_id": "comp_tool_head",
+                    "name": "Tool head",
+                    "description": "Tool head",
+                    "category": "tooling",
+                }],
+            },
+            relations=[{
+                "name": "HAS_COMPONENT",
+                "from_type": "Asset",
+                "from_id": "asset_eastman_eagle_s3l",
+                "to_type": "Component",
+                "to_id": "comp_tool_head",
+                "evidence": [],
+            }],
+        ),
+        semantic_issues=[],
+        schema_issues=[],
+        human_required_fields=[],
+    )
+
+    merged = _merge_pipeline_results(
+        [asset_primary, asset_variant],
+        asset_identity={
+            "asset_id": "asset_eastman_eagle_s3l",
+            "name": "Eagle Automatic Laser Cutting System Model: Eagle S3L",
+            "brand": "Eastman",
+            "model": "Eagle S3L",
+            "asset_type": "technical asset",
+        },
+    )
+
+    assert len(merged.ontology.nodes["Asset"]) == 1
+    asset = merged.ontology.nodes["Asset"][0]
+    assert asset["asset_id"] == "asset_eastman_eagle_s3l"
+    assert asset["name"] == "Eagle Automatic Laser Cutting System Model: Eagle S3L"
+    assert sorted(rel.to_id for rel in merged.ontology.relations) == [
+        "comp_power_supply",
+        "comp_tool_head",
+    ]
+    assert {rel.from_id for rel in merged.ontology.relations} == {"asset_eastman_eagle_s3l"}

@@ -138,3 +138,50 @@ def test_persist_export_metrics_writes_summary_json_next_to_ontology(tmp_path, m
     assert payload["model_usage"]["primary_model"] == "GPT-5.4"
     assert payload["model_usage"]["secondary_model"] == "GPT-5.4 Mini"
     assert payload["file_links"]["ontology"] == "./bambu_lab_p1p_manual/ontology.json"
+
+
+def test_prepare_exported_ontology_best_effort_includes_warnings_for_incomplete_payload():
+    raw = {
+        "ontology_name": "DiagnosticOntology",
+        "version": "V0",
+        "language": "en",
+        "source_type": "Service manual",
+        "source_title": "Laser Printer Manual",
+        "nodes": {
+            "Asset": [
+                {
+                    "asset_id": "ASSET-001",
+                    "name": "Laser Printer",
+                    "description": "Desktop printer",
+                    "brand": "BambuLab",
+                    "model": "P1P",
+                }
+            ],
+            "Component": [],
+            "Symptom": [
+                {
+                    "symptom_id": "SYM-001",
+                    "name": "No extrusion",
+                    "description": "No material comes out of the nozzle",
+                    "severity": "High",
+                }
+            ],
+            "FailureMode": [
+                {
+                    "failure_mode_id": "FM-001",
+                    "name": "Clogged nozzle",
+                    "description": "The nozzle is blocked",
+                    "material_context": "",
+                }
+            ],
+            "CorrectiveAction": [],
+            "ErrorCode": [],
+        },
+        "relations": [],
+    }
+
+    payload = ontology_export_store.prepare_exported_ontology(raw)
+
+    assert payload["metadata"]["export_status"] == "warning"
+    assert payload["metadata"]["export_warning_count"] > 0
+    assert any("MAY_INDICATE" in issue for issue in payload["metadata"]["export_warnings"])

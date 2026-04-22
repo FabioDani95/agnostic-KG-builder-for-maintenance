@@ -35,6 +35,7 @@ def _build_chunk_metadata(pages: list[dict]) -> list[dict[str, Any]]:
 def extract_triplets_workflow(
     store: dict,
     req: ExtractRequest,
+    on_event=None,
 ) -> tuple[ExtractionResult, list[dict[str, Any]]]:
     """Run triplet extraction against one in-memory store entry."""
     t0 = time.perf_counter()
@@ -58,6 +59,7 @@ def extract_triplets_workflow(
             model_name=req.model_name,
             sections=sections,
             ontology_draft=ontology_draft,
+            on_event=on_event,
         )
     except RuntimeError as exc:
         detail = str(exc)

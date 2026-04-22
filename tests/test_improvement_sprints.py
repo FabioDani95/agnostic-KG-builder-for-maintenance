@@ -13,6 +13,7 @@ Covers:
 from __future__ import annotations
 
 import unittest
+from unittest.mock import patch
 
 from backend.models import (
     CorrectiveAction,
@@ -33,11 +34,14 @@ from backend.services.candidate_mining_service import (
 from backend.services.llm_service import parse_extraction
 from backend.services.ontology_merge_service import merge_validated_triplets
 from backend.services.ontology_pipeline import (
+    _call_extractor_llm,
     _extract_json_object,
+    _parse_json_completion_with_retry,
     _reset_parse_repair_events,
     consume_parse_repair_events,
     validate_ontology_instance,
 )
+from backend.services.ontology_schema_service import dump_ontology_schema_json, load_ontology_schema
 from backend.services.type_consistency_service import evaluate_type_consistency
 
 
@@ -61,6 +65,96 @@ class JsonRepairLadderTests(unittest.TestCase):
         self.assertEqual(parsed, {"nodes": {"Symptom": [{"id": "SYM-001"}]}})
         strategies = [e["strategy"] for e in consume_parse_repair_events()]
         self.assertIn("json_repair_library", strategies)
+
+    def test_completion_helper_retries_when_json_is_truncated_at_output_limit(self) -> None:
+        completions = [
+            ('{"nodes": {"Symptom": [{"symptom_id": "SYM-001"', {"completion": 16000}, "length"),
+            ('{"nodes": {"Symptom": [{"symptom_id": "SYM-001"}]}}', {"completion": 20000}, "stop"),
+        ]
+        calls: list[int] = []
+
+        def _run_completion(max_output_tokens: int):
+            calls.append(max_output_tokens)
+            return completions.pop(0)
+
+        parsed, usages = _parse_json_completion_with_retry(
+            phase_label="Draft",
+            run_completion=_run_completion,
+            initial_max_output_tokens=16000,
+            retry_max_output_tokens=20000,
+        )
+
+        self.assertEqual(parsed, {"nodes": {"Symptom": [{"symptom_id": "SYM-001"}]}})
+        self.assertEqual(calls, [16000, 20000])
+        self.assertEqual(len(usages), 2)
+
+
+class OntologyDraftResilienceTests(unittest.TestCase):
+    def setUp(self) -> None:
+        _reset_parse_repair_events()
+
+    def test_call_extractor_llm_falls_back_to_empty_chunk_when_retry_still_returns_broken_json(self) -> None:
+        schema = load_ontology_schema()
+
+        class _FakeResponse:
+            def __init__(self, content: str, *, completion_tokens: int, finish_reason: str):
+                self.model = "gpt-5.4-2026-03-05"
+                self.choices = [type("Choice", (), {
+                    "message": type("Message", (), {"content": content})(),
+                    "finish_reason": finish_reason,
+                })()]
+                self.usage = type("Usage", (), {
+                    "prompt_tokens": 1234,
+                    "completion_tokens": completion_tokens,
+                    "total_tokens": 1234 + completion_tokens,
+                    "prompt_tokens_details": type("PromptDetails", (), {"cached_tokens": 0})(),
+                })()
+
+        class _FakeCompletions:
+            def __init__(self, responses):
+                self._responses = list(responses)
+
+            def create(self, **kwargs):
+                return self._responses.pop(0)
+
+        class _FakeClient:
+            def __init__(self, responses):
+                self.chat = type("Chat", (), {"completions": _FakeCompletions(responses)})()
+
+        client = _FakeClient([
+            _FakeResponse(
+                '{"nodes": {"Asset": [{"asset_id": "ASSET-001", "name": "Demo"',
+                completion_tokens=16000,
+                finish_reason="length",
+            ),
+            _FakeResponse(
+                '{"nodes": {"Asset": [{"asset_id": "ASSET-001", "name": "Demo"',
+                completion_tokens=20000,
+                finish_reason="length",
+            ),
+        ])
+
+        state = {
+            "schema": schema,
+            "schema_json": dump_ontology_schema_json(),
+            "source_type": "Service manual",
+            "source_title": "Demo asset",
+            "text_with_pages": "--- PAGE 1 ---\nDiagnostic content",
+            "model_name": "gpt-5.4",
+            "candidates_block": "",
+            "asset_identity": {},
+            "llm_usage": [],
+        }
+
+        with patch("backend.services.ontology_pipeline._get_client", return_value=client):
+            result = _call_extractor_llm(state)
+
+        self.assertEqual(sum(len(items) for items in result["ontology"].nodes.values()), 0)
+        self.assertEqual(len(result["llm_usage"]), 2)
+        self.assertIn(
+            "fallback_empty_draft_chunk",
+            [event["strategy"] for event in consume_parse_repair_events()],
+        )
 
 
 class CandidateMiningTests(unittest.TestCase):

@@ -164,6 +164,42 @@ const api = {
     multiAgentAudit(runId)      { return this._json("GET",  `/multi-agent/audit/${encodeURIComponent(runId)}`); },
 };
 
+// ── Chat layout bootstrap ──────────────────────────────────────────────
+async function _enterChatLayout(pdfId, filename, operator) {
+    // Read model selections from the startup form
+    const uploadScreen = document.getElementById("upload-screen");
+    const scopingModel = document.getElementById("scoping-model")?.value || null;
+    const extractionModel = document.getElementById("llm-model")?.value || null;
+    const targetLang = document.getElementById("graph-language")?.value || "en";
+    const manualPage1PdfPage = parseInt(document.getElementById("startup-page-offset")?.value) || 1;
+    const pageOffset = Math.max(0, manualPage1PdfPage - 1);
+
+    // Dynamically import chat.js and boot, passing model selections directly to the
+    // /chat/start endpoint so the store is correctly initialised before scoping runs.
+    const { initChat, setQuickActions } = await import("/chat.js?v=20260422f");
+    await initChat(pdfId, `/pdf/${pdfId}`, {
+        scopingModel,
+        extractionModel,
+        targetLanguage: targetLang,
+        pageOffset,
+    });
+
+    // Set header info after initChat so the chat shell can be injected on the fly
+    // if an older cached HTML document is still mounted in the browser.
+    const titleEl = document.getElementById("chat-doc-title");
+    if (titleEl) titleEl.textContent = filename || "Document";
+    const opEl = document.getElementById("chat-operator");
+    if (opEl && operator) opEl.textContent = operator;
+
+    setQuickActions([
+        { label: "Where are we?", message: "Where are we in the process?" },
+        { label: "Show progress", message: "Show me the current progress." },
+        { label: "Re-scope", message: "Re-analyze the document sections." },
+    ]);
+
+    if (uploadScreen) uploadScreen.hidden = true;
+}
+
 const uploadScreen = document.getElementById("upload-screen");
 const uploadForm = document.getElementById("upload-form");
 const uploadBtn = document.getElementById("upload-btn");
@@ -327,31 +363,25 @@ uploadForm.addEventListener("submit", async (e) => {
         state.uploadFilename = loadData.filename;
         state.runId = loadData.run_id || null;
 
-        showStatus("Analyzing document structure...", "loading");
-        const cpRes = await fetch("/cut-plan", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ pdf_id: state.pdfId, model_name: state.scopingModel, page_offset: state.pageOffset }),
-        });
-        if (!cpRes.ok) {
-            const err = await cpRes.json();
-            throw new Error(err.detail || "Cut plan failed");
-        }
-        const cutPlan = await cpRes.json();
-        state.cutPlan = cutPlan;
+        // ── Chat-first HITL transition ──────────────────────────────────
+        // Store operator settings so the chat backend can use them
+        try {
+            await fetch("/api/config", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    selected_scoping_model: state.scopingModel,
+                    selected_extraction_model: state.modelName,
+                    target_language: state.targetLanguage,
+                    operator: state.operator,
+                    page_offset: state.pageOffset,
+                }),
+            });
+        } catch (_) {}
 
-        if (cutPlan.product_info) {
-            state.productInfo = cutPlan.product_info;
-            state.sourceType = cutPlan.product_info.document_type || "";
-            state.sourceTitle = cutPlan.product_info.product_name || "";
-        }
-
-        if (cutPlan.skipped) {
-            showStatus("Preparing ontology draft before human review...", "loading");
-            await startOntologyStage(null);
-        } else {
-            enterCutPlanScreen(cutPlan);
-        }
+        // Persist operator info to the store via the chat start endpoint
+        await _enterChatLayout(state.pdfId, loadData.filename, state.operator);
+        return; // no further legacy logic needed
 
     } catch (err) {
         showStatus(err.message, "error");
@@ -429,6 +459,10 @@ function startStatusActivity(key, el, messages) {
     return activity;
 }
 
+
+// ─── Legacy screen code ────────────────────────────────────────────────────
+// Only wired up when legacy HTML is present (Phase 7+: screens removed).
+if (document.getElementById("cut-plan-screen")) { // eslint-disable-line
 
 function enterCutPlanScreen(cutPlan) {
     console.log("[cutplan] enterCutPlanScreen called");
@@ -2641,3 +2675,5 @@ openGraphEditorBtn.addEventListener("click", () => {
     const target = state.pdfId ? `/graph-editor/${encodeURIComponent(state.pdfId)}` : "/graph-editor";
     window.open(target, "_blank", "noopener");
 });
+
+} // end legacy screen guard

@@ -405,6 +405,7 @@ def merge_validated_triplets(base_ontology: dict, validated_triplets: list) -> d
             )
             if not component_id:
                 continue
+            failure_mode["material_context"] = component_id
             relation = OntologyRelationInstance(
                 name="AFFECTS",
                 from_type="FailureMode",

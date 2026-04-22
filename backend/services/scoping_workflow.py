@@ -26,9 +26,11 @@ from backend.prompts.scoping_prompt import (
     build_toc_extraction_prompt,
 )
 from backend.services.cutplan_service import (
+    extract_asset_identity,
     filter_llm_sections,
     filter_pages_by_language,
     find_toc_pages,
+    is_component_inventory_section,
     keyword_scan,
     merge_sections,
     normalize_product_info,
@@ -113,7 +115,7 @@ def _parse_section_response(
     return sections
 
 
-def create_cut_plan_workflow(store: dict, req: CutPlanRequest) -> CutPlan:
+def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) -> CutPlan:
     """Run the cut-plan flow against one in-memory store entry."""
     t0 = time.perf_counter()
     cfg = get_scoping_config()
@@ -131,6 +133,9 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest) -> CutPlan:
         page_offset,
         timeout_seconds,
     )
+    if on_event:
+        on_event({"type": "progress", "phase": "scoping",
+                  "message": f"Scoping started — {total_pages} pages to analyze."})
 
     if total_pages <= small_doc_threshold:
         logger.info(
@@ -170,6 +175,10 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest) -> CutPlan:
         f"found pp.{toc_start}-{toc_end}" if toc_found else "not found",
         time.perf_counter() - t0,
     )
+    if on_event:
+        toc_msg = (f"Table of contents found on pages {toc_start}–{toc_end}."
+                   if toc_found else "No table of contents detected — using keyword scan.")
+        on_event({"type": "progress", "phase": "scoping", "message": toc_msg})
 
     structured_toc = None
     product_info = None
@@ -217,12 +226,23 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest) -> CutPlan:
                     )
                     product_info = ProductInfo(
                         product_name=normalized_product_info.get("product_name", ""),
+                        product_short_name=normalized_product_info.get("product_short_name", ""),
+                        brand=normalized_product_info.get("brand", ""),
+                        model=normalized_product_info.get("model", ""),
+                        asset_id=normalized_product_info.get("asset_id", ""),
+                        asset_type=normalized_product_info.get("asset_type", ""),
                         document_type=normalized_product_info.get("document_type", ""),
                         language=normalized_product_info.get("language", ""),
                         page_count=total_pages,
                     )
                     store["source_type"] = product_info.document_type
                     store["source_title"] = product_info.product_name
+                    store["asset_identity"] = extract_asset_identity(
+                        normalized_product_info,
+                        fallback_name=product_info.product_name,
+                        source_type=product_info.document_type,
+                        filename=store.get("filename", ""),
+                    )
 
                 rule_sections = select_toc_sections(
                     toc_entries=toc_entries,
@@ -295,12 +315,23 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest) -> CutPlan:
                 )
                 product_info = ProductInfo(
                     product_name=normalized_pid.get("product_name", ""),
+                    product_short_name=normalized_pid.get("product_short_name", ""),
+                    brand=normalized_pid.get("brand", ""),
+                    model=normalized_pid.get("model", ""),
+                    asset_id=normalized_pid.get("asset_id", ""),
+                    asset_type=normalized_pid.get("asset_type", ""),
                     document_type=normalized_pid.get("document_type", ""),
                     language=normalized_pid.get("language", ""),
                     page_count=total_pages,
                 )
                 store["source_type"] = product_info.document_type
                 store["source_title"] = product_info.product_name
+                store["asset_identity"] = extract_asset_identity(
+                    normalized_pid,
+                    fallback_name=product_info.product_name,
+                    source_type=product_info.document_type,
+                    filename=store.get("filename", ""),
+                )
                 logger.info(
                     "[scoping] Product identified from first pages: %s",
                     product_info.product_name,
@@ -316,6 +347,9 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest) -> CutPlan:
         len(kw_sections),
         total_pages,
     )
+    if on_event:
+        on_event({"type": "progress", "phase": "scoping",
+                  "message": f"Keyword scan complete — {len(kw_sections)} section(s) identified."})
     for section in kw_sections:
         logger.info(
             "[scoping]   keyword: %s pp.%d-%d",
@@ -343,6 +377,17 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest) -> CutPlan:
 
     all_pages = sections_to_page_list(merged)
     filtered_pages = filter_pages_by_language(pages, all_pages)
+    component_pages = sections_to_page_list([
+        section for section in merged
+        if is_component_inventory_section(section.name)
+    ])
+    restored_component_pages = sorted(set(component_pages) - set(filtered_pages))
+    if restored_component_pages:
+        logger.info(
+            "[scoping] 4/4 Restoring %d component pages removed by language filter",
+            len(restored_component_pages),
+        )
+        filtered_pages = sorted(set(filtered_pages) | set(restored_component_pages))
 
     if len(filtered_pages) < len(all_pages) * 0.5:
         logger.info(
@@ -386,16 +431,35 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest) -> CutPlan:
         total_pages,
         time.perf_counter() - t0,
     )
+    if on_event:
+        on_event({"type": "progress", "phase": "scoping",
+                  "message": f"Scoping done — {len(merged)} section(s), {len(filtered_pages)}/{total_pages} pages selected."})
 
-    store.setdefault("cut_plan", {})["sections"] = [
-        {
-            "name": section.name,
-            "start": section.page_range.start,
-            "end": section.page_range.end,
-            "source": section.source,
-        }
-        for section in merged
-    ]
+    store["cut_plan"] = {
+        "pdf_id": req.pdf_id,
+        "total_pages": total_pages,
+        "sections": [
+            {
+                "name": section.name,
+                "start": section.page_range.start,
+                "end": section.page_range.end,
+                "source": section.source,
+            }
+            for section in merged
+        ],
+        "pages_to_keep": filtered_pages,
+        "page_offset": page_offset,
+        "toc": structured_toc.model_dump() if structured_toc else None,
+        "skipped": False,
+        "product_info": product_info.model_dump() if product_info else None,
+    }
+    if product_info:
+        store["asset_identity"] = extract_asset_identity(
+            product_info.model_dump(),
+            fallback_name=product_info.product_name,
+            source_type=product_info.document_type,
+            filename=store.get("filename", ""),
+        )
 
     return CutPlan(
         pdf_id=req.pdf_id,

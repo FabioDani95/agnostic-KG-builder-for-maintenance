@@ -99,12 +99,22 @@ def build_export_filename(ontology: dict[str, Any]) -> str:
 def prepare_exported_ontology(
     ontology: dict[str, Any],
     version: str | None = None,
+    *,
+    strict: bool = False,
 ) -> dict[str, Any]:
     prepared, issues = build_and_validate_contract_ontology(copy.deepcopy(ontology))
-    if issues:
+    if issues and strict:
         raise ValueError("Exported ontology is not compliant: " + " | ".join(issues))
 
     metadata = prepared.setdefault("metadata", {})
+    if issues:
+        metadata["export_status"] = "warning"
+        metadata["export_warning_count"] = len(issues)
+        metadata["export_warnings"] = issues
+    else:
+        metadata["export_status"] = "ok"
+        metadata["export_warning_count"] = 0
+        metadata.pop("export_warnings", None)
     file_version = normalize_file_version(version or metadata.get("file_version"))
     metadata["version"] = file_version
     metadata["file_version"] = file_version

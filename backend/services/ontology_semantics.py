@@ -202,11 +202,28 @@ def _looks_generic_asset_name(value: str) -> bool:
     return len(semantic_tokens(normalized)) <= 1 and _GENERIC_ASSET_NAME_RE.search(normalized) is not None
 
 
-def normalize_asset_node(asset_node: dict[str, object], source_title: str, source_type: str) -> dict[str, object]:
+def normalize_asset_node(
+    asset_node: dict[str, object],
+    source_title: str,
+    source_type: str,
+    asset_identity: dict[str, object] | None = None,
+) -> dict[str, object]:
     normalized = dict(asset_node)
-    preferred_name = str(source_title or "").strip()
+    identity = asset_identity or {}
+    canonical_id = str(identity.get("asset_id", "") or "").strip()
+    canonical_name = str(identity.get("name") or identity.get("product_name") or source_title or "").strip()
+    canonical_brand = str(identity.get("brand", "") or "").strip()
+    canonical_model = str(identity.get("model") or identity.get("product_short_name") or "").strip()
+    canonical_asset_type = str(identity.get("asset_type", "") or "").strip()
+
+    if canonical_id:
+        normalized["asset_id"] = canonical_id
+
+    preferred_name = canonical_name or str(source_title or "").strip()
     current_name = str(normalized.get("name", "") or "").strip()
-    if preferred_name:
+    if preferred_name and asset_identity:
+        normalized["name"] = preferred_name
+    elif preferred_name:
         preferred_tokens = set(semantic_tokens(preferred_name))
         current_tokens = set(semantic_tokens(current_name))
         is_more_specific = (
@@ -217,12 +234,17 @@ def normalize_asset_node(asset_node: dict[str, object], source_title: str, sourc
         )
         if _looks_generic_asset_name(current_name) or is_more_specific:
             normalized["name"] = preferred_name
+
+    if canonical_brand:
+        normalized["brand"] = canonical_brand
+    if canonical_model:
+        normalized["model"] = canonical_model
     if not str(normalized.get("description", "") or "").strip():
         normalized["description"] = str(normalized.get("name", "") or preferred_name or "").strip()
     normalized["asset_type"] = infer_asset_type(
         source_title=str(source_title or ""),
         source_type=str(source_type or ""),
-        current_value=str(normalized.get("asset_type", "") or ""),
+        current_value=canonical_asset_type or str(normalized.get("asset_type", "") or ""),
     )
     return normalized
 

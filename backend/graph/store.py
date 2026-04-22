@@ -55,6 +55,17 @@ def persist_graph_state(store: dict[str, Any], state: GraphState) -> GraphState:
     return state
 
 
+def seed_conversation_state(store: dict[str, Any]) -> dict[str, Any]:
+    """Initialise store['conversation'] if not already present."""
+    if "conversation" not in store:
+        store["conversation"] = {
+            "messages": [],
+            "tool_calls": [],
+            "critiques": [],
+        }
+    return store["conversation"]
+
+
 def seed_graph_state(store: dict[str, Any], pdf_id: str) -> GraphState:
     """Create the initial GraphState for a freshly loaded manual."""
     existing = store.get("graph_state")

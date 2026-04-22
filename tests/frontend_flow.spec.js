@@ -387,10 +387,13 @@ test(`frontend flow reaches final JSON download without rerun (${pipelineMode})`
       contentType: "application/json",
       headers: {
         "Content-Disposition": 'attachment; filename="mock_export.json"',
+        "X-Export-Warnings-Count": "0",
       },
       body: JSON.stringify({
         metadata: {
           version: "V0",
+          export_status: "ok",
+          export_warning_count: 0,
         },
         nodes: {},
         relationships: [],
@@ -502,7 +505,16 @@ test(`frontend flow reaches final JSON download without rerun (${pipelineMode})`
             models: [],
             operations: [],
             by_model: {},
-            details: { validated_triplets: 1, filename: "mock_export.json", export_base: "minimal_fallback" },
+            details: {
+              validated_triplets: 1,
+              filename: "mock_export.json",
+              export_base: "minimal_fallback",
+              best_effort_export: false,
+              blocking_schema_issue_count: 0,
+              advisory_schema_issue_count: 0,
+              human_required_field_count: 0,
+              contract_export_warning_count: 0,
+            },
           },
         },
         totals: {

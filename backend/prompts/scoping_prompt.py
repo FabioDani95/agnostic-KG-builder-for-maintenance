@@ -16,6 +16,9 @@ You are a technical document analyst. Extract the Table of Contents from the fol
 ### Part 1: Product & Document Info
 From the text, identify:
 - product_name: the product or machine the manual is about
+- product_short_name: a concise canonical asset label if the document clearly implies one
+- brand: the manufacturer or brand, if explicitly visible
+- model: the model designation, if explicitly visible
 - document_type: the type of document (e.g. "Operation Manual", "Service Manual")
 - language: the primary language of the document (e.g. "English", "Italian", "Multilingual")
 
@@ -29,7 +32,7 @@ Include all entries you can find, preserving the order as they appear in the ToC
 ## OUTPUT FORMAT
 Return a JSON object:
 
-{{"product_info": {{"product_name": "...", "document_type": "...", "language": "..."}}, \
+{{"product_info": {{"product_name": "...", "product_short_name": "...", "brand": "...", "model": "...", "document_type": "...", "language": "..."}}, \
 "toc_entries": [{{"title": "Chapter 1 - Introduction", "page": 1}}, \
 {{"title": "Chapter 2 - Safety", "page": 5}}, ...]}}
 
@@ -38,8 +41,9 @@ Return ONLY the JSON object. No markdown fences, no commentary.\
 
 SECTION_SELECTION_PROMPT_TEMPLATE = """\
 You are a technical document analyst. From the structured Table of Contents below, \
-select which sections are relevant for extracting a Diagnostic Knowledge Graph \
-(Symptom / FailureMode / CorrectiveAction triads).
+select which sections are relevant for extracting the maintenance ontology, \
+including diagnostic knowledge (Symptom / FailureMode / CorrectiveAction) and \
+component coverage (Asset / Component / ErrorCode).
 
 ## STRUCTURED TABLE OF CONTENTS
 {toc_json}
@@ -55,6 +59,8 @@ STRONGLY INCLUDE sections about:
 6. Repair and service procedures
 7. Safety warnings linked to failure conditions
 8. Failure analysis or failure handling
+9. Assembly drawings, exploded views, parts lists, and spare-parts sections that identify physical components or subsystems
+10. Wiring, circuit, hydraulic, pneumatic, or control-reference diagrams when they help identify components or assemblies
 
 EXCLUDE sections about:
 - General product description or marketing
@@ -63,10 +69,11 @@ EXCLUDE sections about:
 - Table of Contents itself, index pages
 - Copyright, legal notices, document metadata, revision history, prefaces, overview pages
 - Generic safety chapters, safety signal legends, label symbol catalogs, note/tip legend pages
-- Parts lists or spare parts catalogs (unless linked to failure modes)
+- Pure ordering/commercial pages with no identifiable components, assemblies, or technical references
 - Specifications or dimensions (unless related to tolerances/calibration)
 
-When in doubt, prefer precision over recall:
+When in doubt:
+- Prefer recall for component-rich sections. Assembly drawings, exploded diagrams, drawings & parts lists, and component reference diagrams are IN SCOPE even if they are not failure-oriented by themselves.
 - Do NOT select generic safety or introductory sections unless the title clearly indicates failure handling, troubleshooting, alarm handling, diagnostics, repair, calibration, inspection, or service procedures.
 - Do NOT select revision-history or overview sections even if they mention the word "trouble shooting" incidentally.
 
@@ -98,11 +105,14 @@ You are a technical document analyst. From the following manual pages, identify 
 ## TASK
 Identify:
 - product_name: the name of the product or machine this manual is about (e.g. "Alex Duetto 3", "UR5 Robot", "Citiz Espresso Machine")
+- product_short_name: a concise canonical asset label if the document clearly implies one
+- brand: the manufacturer or brand, if explicitly visible
+- model: the model designation, if explicitly visible
 - document_type: the type of document (e.g. "Owner's Manual", "Service Manual", "User Guide")
 - language: the primary language (e.g. "English", "Italian")
 
 Return ONLY a JSON object, no markdown fences, no commentary:
-{{"product_name": "...", "document_type": "...", "language": "..."}}\
+{{"product_name": "...", "product_short_name": "...", "brand": "...", "model": "...", "document_type": "...", "language": "..."}}\
 """
 
 
