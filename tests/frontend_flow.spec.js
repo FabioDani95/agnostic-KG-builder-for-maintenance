@@ -1,20 +1,12 @@
-const fs = require("fs");
-const path = require("path");
 const { test, expect } = require("playwright/test");
 
-function firstLocalPdf() {
-  const manualsDir = path.join(__dirname, "..", "manuals");
-  const pdf = fs.readdirSync(manualsDir).find((name) => name.toLowerCase().endsWith(".pdf"));
-  if (!pdf) {
-    throw new Error("No PDF found in manuals/ for frontend test");
-  }
-  return path.join(manualsDir, pdf);
-}
+const MOCK_PDF = Buffer.from(
+  "JVBERi0xLjcKJcK1wrYKJSBXcml0dGVuIGJ5IE11UERGIDEuMjcuMQoKMSAwIG9iago8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFIvSW5mbzw8L1Byb2R1Y2VyKE11UERGIDEuMjcuMSk+Pj4+CmVuZG9iagoKMiAwIG9iago8PC9UeXBlL1BhZ2VzL0NvdW50IDEvS2lkc1s0IDAgUl0+PgplbmRvYmoKCjMgMCBvYmoKPDwvRm9udDw8L2hlbHYgNSAwIFI+Pj4+CmVuZG9iagoKNCAwIG9iago8PC9UeXBlL1BhZ2UvTWVkaWFCb3hbMCAwIDU5NSA4NDJdL1JvdGF0ZSAwL1Jlc291cmNlcyAzIDAgUi9QYXJlbnQgMiAwIFIvQ29udGVudHNbNiAwIFJdPj4KZW5kb2JqCgo1IDAgb2JqCjw8L1R5cGUvRm9udC9TdWJ0eXBlL1R5cGUxL0Jhc2VGb250L0hlbHZldGljYS9FbmNvZGluZy9XaW5BbnNpRW5jb2Rpbmc+PgplbmRvYmoKCjYgMCBvYmoKPDwvTGVuZ3RoIDY0Pj4Kc3RyZWFtCgpxCkJUCjEgMCAwIDEgNzIgNzcwIFRtCi9oZWx2IDExIFRmIFs8NGQ2ZjYzNmIyMDUwNDQ0Nj5dVEoKRVQKUQoKZW5kc3RyZWFtCmVuZG9iagoKeHJlZgowIDcKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDQyIDAwMDAwIG4gCjAwMDAwMDAxMjAgMDAwMDAgbiAKMDAwMDAwMDE3MiAwMDAwMCBuIAowMDAwMDAwMjEzIDAwMDAwIG4gCjAwMDAwMDAzMjAgMDAwMDAgbiAKMDAwMDAwMDQwOSAwMDAwMCBuIAoKdHJhaWxlcgo8PC9TaXplIDcvUm9vdCAxIDAgUi9JRFs8QzI4Q0MyQkRDMjhEMjE1NzM3QzI5NEMzODcyOUMzODA+PDQyOURFQkM1NzgxRUY0QjY0OUFBNEQxNUQ5OUUyNUU3Pl0+PgpzdGFydHhyZWYKNTIyCiUlRU9GCg==",
+  "base64"
+);
 
 for (const pipelineMode of ["classic", "multi_agent"]) {
 test(`frontend flow reaches final JSON download without rerun (${pipelineMode})`, async ({ page }) => {
-  const pdfPath = firstLocalPdf();
-
   await page.route("**/api/config", async (route) => {
     await route.fulfill({
       contentType: "application/json",
@@ -91,8 +83,8 @@ test(`frontend flow reaches final JSON download without rerun (${pipelineMode})`
 
   await page.route("**/pdf/mock-pdf", async (route) => {
     await route.fulfill({
-      path: pdfPath,
       contentType: "application/pdf",
+      body: MOCK_PDF,
     });
   });
 
@@ -558,18 +550,19 @@ test(`frontend flow reaches final JSON download without rerun (${pipelineMode})`
   await expect(page.locator("#ontology-guidance")).toContainText("Fill in the 1 required field");
   await expect(page.locator("#ontology-fields")).toContainText("brand");
 
+  await page.locator("#ontology-advanced-panel summary").click();
   await page.getByRole("button", { name: "Accept" }).first().click();
   await page.getByRole("button", { name: "Reject" }).nth(1).click();
   await page.getByRole("button", { name: /Apply Accepted Suggestions/i }).click();
   await expect(page.locator("#ontology-status")).toContainText("relation(s) applied");
 
   await page.locator('[data-ontology-field="Asset::ASSET-001::brand"]').fill("ABB");
-  const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: /Apply & Continue/i }).click();
 
   await expect(page.locator("#main-layout")).toBeVisible();
   await expect(page.locator("#save-btn")).toBeVisible();
-  await page.getByRole("button", { name: /Save & Next/i }).click();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: /Validate/i }).click();
 
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("mock_export.json");

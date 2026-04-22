@@ -1,8 +1,6 @@
-/* ═══════════════════════════════════════════════════════════
-   KG Diagnostic Extraction — Industrial Dark Theme
-   ═══════════════════════════════════════════════════════════ */
 
-/* ─── Reset & Variables ─── */
+
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 [hidden] { display: none !important; }
 
@@ -29,7 +27,7 @@
     --font-mono:   'SF Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
     --font-sans:   -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-    /* Confidence bucket semantics (derived from existing palette) */
+    
     --conf-high:      #1f7a1f;
     --conf-high-bg:   rgba(31, 122, 31, 0.10);
     --conf-high-bdr:  rgba(31, 122, 31, 0.45);
@@ -40,7 +38,7 @@
     --conf-low-bg:    rgba(178, 34, 34, 0.10);
     --conf-low-bdr:   rgba(178, 34, 34, 0.45);
 
-    /* Phase strip */
+    
     --phase-done:     var(--success);
     --phase-active:   var(--accent);
     --phase-pending:  var(--border-light);
@@ -56,9 +54,7 @@ html, body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   UPLOAD SCREEN
-   ═══════════════════════════════════════════════════════════ */
+
 #upload-screen {
     height: 100vh;
     display: flex;
@@ -113,7 +109,7 @@ html, body {
     margin: 0 auto;
 }
 
-/* ─── Upload Card ─── */
+
 .upload-card {
     background: var(--bg-surface);
     border: 1px solid var(--border);
@@ -162,7 +158,7 @@ html, body {
     color: var(--text-dim);
 }
 
-/* File drop zone */
+
 .file-drop {
     position: relative;
     border: 1px dashed var(--border-light);
@@ -205,7 +201,7 @@ html, body {
     margin-top: 0.3rem;
 }
 
-/* ─── Buttons ─── */
+
 button {
     font-family: var(--font-sans);
     cursor: pointer;
@@ -258,7 +254,7 @@ button:disabled {
 
 .btn-success:hover:not(:disabled) { background: var(--success-hover); }
 
-/* ─── Status bar ─── */
+
 .status-bar {
     display: flex;
     flex-direction: column;
@@ -381,7 +377,7 @@ button:disabled {
     background: linear-gradient(90deg, rgba(31,122,31,0.88) 0%, rgba(31,122,31,0.42) 100%);
 }
 
-/* ─── Footer ─── */
+
 .upload-footer {
     text-align: center;
     margin-top: 1.5rem;
@@ -391,9 +387,7 @@ button:disabled {
     letter-spacing: 0.1em;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   CUT PLAN SCREEN (full-page, two-column with PDF)
-   ═══════════════════════════════════════════════════════════ */
+
 
 #cut-plan-screen {
     height: 100vh;
@@ -409,7 +403,7 @@ button:disabled {
     overflow: hidden;
 }
 
-/* Top bar — reuses app-bar styles */
+
 #cp-bar {
     display: flex;
     align-items: center;
@@ -444,7 +438,7 @@ button:disabled {
     text-align: center;
 }
 
-/* Two-column layout */
+
 .cp-columns {
     flex: 1;
     display: grid;
@@ -452,7 +446,7 @@ button:disabled {
     overflow: hidden;
 }
 
-/* Left: PDF viewer */
+
 .cp-pdf-section {
     display: flex;
     flex-direction: column;
@@ -471,7 +465,7 @@ button:disabled {
     gap: 2px;
 }
 
-/* Right: controls */
+
 .cp-controls-section {
     display: flex;
     flex-direction: column;
@@ -505,10 +499,7 @@ button:disabled {
     margin-top: 0;
 }
 
-/* Advanced / Research view panel on the ontology screen.
-   Wraps confidence, graph reasoning, escalations and node-level diagnostics so
-   the operator-facing core view stays clean. Hidden by default; preference is
-   persisted in localStorage. */
+
 .ontology-advanced-panel {
     margin: 1rem 0 0.6rem;
     padding: 0.6rem 0.8rem 0.4rem;
@@ -563,7 +554,7 @@ button:disabled {
     margin-top: 0.6rem;
 }
 
-/* Form help text */
+
 .form-help {
     display: block;
     margin-top: 0.25rem;
@@ -572,7 +563,7 @@ button:disabled {
     line-height: 1.4;
 }
 
-/* Advanced settings collapsible */
+
 .advanced-settings {
     margin-top: 1rem;
     border: 1px solid var(--border);
@@ -612,7 +603,7 @@ details[open] .advanced-settings-toggle::before {
     background: var(--bg-surface);
 }
 
-/* ToC table */
+
 .toc-table {
     width: 100%;
     font-size: 0.72rem;
@@ -659,14 +650,14 @@ details[open] .advanced-settings-toggle::before {
     color: var(--text-secondary);
 }
 
-/* Section card absolute page display */
+
 .section-card-abs {
     color: var(--text-dim);
     font-size: 0.62rem;
     margin-left: 0.3rem;
 }
 
-/* Section cards */
+
 #section-cards {
     display: flex;
     flex-direction: column;
@@ -785,7 +776,7 @@ details[open] .advanced-settings-toggle::before {
     background: rgba(178,34,34,0.1);
 }
 
-/* Add range form */
+
 .add-range-form {
     display: flex;
     align-items: center;
@@ -822,7 +813,7 @@ details[open] .advanced-settings-toggle::before {
     border-radius: var(--radius);
 }
 
-/* Bottom action bar */
+
 .cp-action-bar {
     display: flex;
     align-items: center;
@@ -847,7 +838,7 @@ details[open] .advanced-settings-toggle::before {
     margin-left: auto;
 }
 
-/* Buttons */
+
 .btn-secondary {
     background: var(--bg-elevated);
     color: var(--text-secondary);
@@ -866,7 +857,7 @@ details[open] .advanced-settings-toggle::before {
     padding: 0.3rem 0.7rem;
 }
 
-/* Cut plan scrollbar */
+
 .cp-controls-scroll::-webkit-scrollbar,
 .cp-pdf-container::-webkit-scrollbar {
     width: 5px;
@@ -888,9 +879,7 @@ details[open] .advanced-settings-toggle::before {
     background: #444;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   MAIN APPLICATION
-   ═══════════════════════════════════════════════════════════ */
+
 
 #main-layout {
     height: 100vh;
@@ -899,7 +888,7 @@ details[open] .advanced-settings-toggle::before {
     overflow: hidden;
 }
 
-/* ─── App Bar ─── */
+
 #app-bar {
     display: flex;
     align-items: center;
@@ -956,7 +945,7 @@ details[open] .advanced-settings-toggle::before {
     color: var(--text-dim);
 }
 
-/* ─── Two-Column Layout ─── */
+
 .two-columns {
     flex: 1;
     display: grid;
@@ -964,7 +953,7 @@ details[open] .advanced-settings-toggle::before {
     overflow: hidden;
 }
 
-/* ─── PDF Section ─── */
+
 #pdf-section {
     display: flex;
     flex-direction: column;
@@ -1004,7 +993,7 @@ details[open] .advanced-settings-toggle::before {
     letter-spacing: 0.05em;
 }
 
-/* ─── Tables Section ─── */
+
 #tables-section {
     display: flex;
     flex-direction: column;
@@ -1018,7 +1007,7 @@ details[open] .advanced-settings-toggle::before {
     padding: 0.6rem 0.8rem;
 }
 
-/* Section titles */
+
 #tables-scroll h4 {
     margin-top: 0.7rem;
     margin-bottom: 0.25rem;
@@ -1035,7 +1024,7 @@ details[open] .advanced-settings-toggle::before {
     margin-top: 0;
 }
 
-/* Tables */
+
 #tables-scroll table {
     width: 100%;
     font-size: 0.73rem;
@@ -1071,13 +1060,12 @@ details[open] .advanced-settings-toggle::before {
     border-bottom: none;
 }
 
-/* Editable cells */
+
 td[contenteditable="true"] {
     cursor: text;
     outline: none;
     transition: background 0.12s, box-shadow 0.12s;
-    /* Permanent affordance: a faint dashed underline so the operator knows
-       the cell is editable without having to hover. */
+    
     background: rgba(59, 142, 234, 0.04);
     box-shadow: inset 0 -1px 0 rgba(59, 142, 234, 0.35);
 }
@@ -1097,7 +1085,7 @@ td.cell-readonly {
     font-size: 0.68rem;
 }
 
-/* Page link */
+
 .page-link {
     color: var(--blue);
     cursor: pointer;
@@ -1114,7 +1102,7 @@ td.cell-readonly {
     color: #5ca4f0;
 }
 
-/* ─── Action Buttons ─── */
+
 #action-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -1154,7 +1142,7 @@ td.cell-readonly {
     margin: 0 0.1rem;
 }
 
-/* ─── Summary ─── */
+
 .summary-card {
     text-align: center;
     padding: 2rem 1.5rem;
@@ -1262,7 +1250,7 @@ td.cell-readonly {
     padding: 0.55rem 2rem;
 }
 
-/* ─── Scrollbar ─── */
+
 #pdf-container::-webkit-scrollbar,
 #tables-scroll::-webkit-scrollbar {
     width: 5px;
@@ -1284,7 +1272,7 @@ td.cell-readonly {
     background: #444;
 }
 
-/* ─── Upload wrapper scrollbar ─── */
+
 .upload-wrapper::-webkit-scrollbar {
     width: 4px;
 }
@@ -1298,7 +1286,7 @@ td.cell-readonly {
     border-radius: 3px;
 }
 
-/* ─── Product Info Card (Cut Plan) ─── */
+
 .cp-product-card {
     background: var(--bg-surface);
     border: 1px solid var(--border);
@@ -1496,7 +1484,7 @@ td.cell-readonly {
     color: var(--text-primary);
 }
 
-/* ─── Graph Reasoning / Suggested Relations ─── */
+
 
 .block-hint {
     font-size: 0.72rem;
@@ -1658,9 +1646,7 @@ td.cell-readonly {
     font-weight: 500;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   CONFIDENCE — summary strip, nodes panel, node cards
-   ═══════════════════════════════════════════════════════════ */
+
 
 .confidence-strip {
     display: flex;
@@ -1930,9 +1916,7 @@ details[open] > .ontology-nodes-group-head::before {
     padding: 0.22rem 0.55rem;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PHASE STRIP — supervisor pipeline progress
-   ═══════════════════════════════════════════════════════════ */
+
 
 .phase-strip {
     display: flex;
@@ -2025,9 +2009,7 @@ details[open] > .ontology-nodes-group-head::before {
     font-weight: 600;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   AUDIT DRAWER
-   ═══════════════════════════════════════════════════════════ */
+
 
 .app-bar-btn {
     background: var(--bg-panel);
@@ -2199,9 +2181,7 @@ details[open] > .ontology-nodes-group-head::before {
     color: var(--text-dim);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   ESCALATION CARDS
-   ═══════════════════════════════════════════════════════════ */
+
 
 .escalation-card {
     position: relative;
@@ -2313,15 +2293,13 @@ details[open] > .ontology-nodes-group-head::before {
     opacity: 0.45;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   A — HIERARCHICAL TRIPLET CARD
-   ═══════════════════════════════════════════════════════════ */
+
 
 #triplet-card-container {
     padding: 0.6rem 0.8rem;
 }
 
-/* Enter animation: card fades+slides in from the right */
+
 .triplet-card {
     opacity: 0;
     transform: translateX(8px);
@@ -2333,7 +2311,7 @@ details[open] > .ontology-nodes-group-head::before {
     transform: translateX(0);
 }
 
-/* ── Block shared styles ── */
+
 .tc-block {
     background: var(--bg-surface);
     border: 1px solid var(--border);
@@ -2392,7 +2370,7 @@ details[open] > .ontology-nodes-group-head::before {
     line-height: 1.6;
 }
 
-/* Severity badge */
+
 .tc-severity {
     font-size: 0.62rem;
     font-weight: 700;
@@ -2408,7 +2386,7 @@ details[open] > .ontology-nodes-group-head::before {
 .sev-low     { background: rgba(59,142,234,0.18); color: var(--blue); }
 .sev-unknown { background: var(--bg-elevated); color: var(--text-dim); }
 
-/* ── Fields layout — single column, stacked ── */
+
 .tc-fields {
     display: flex;
     flex-direction: column;
@@ -2421,7 +2399,7 @@ details[open] > .ontology-nodes-group-head::before {
     gap: 0.15rem;
 }
 
-/* .tc-field-wide kept for potential future use, no visual difference now */
+
 .tc-field-wide {
     width: 100%;
 }
@@ -2434,7 +2412,7 @@ details[open] > .ontology-nodes-group-head::before {
     color: var(--text-dim);
 }
 
-/* Editable value spans — same affordance as td[contenteditable] */
+
 .tc-field-value {
     font-size: 0.75rem;
     line-height: 1.45;
@@ -2460,14 +2438,14 @@ details[open] > .ontology-nodes-group-head::before {
     box-shadow: inset 0 0 0 2px var(--blue);
 }
 
-/* ── Sub-items (multiple FM or CA) ── */
+
 .tc-sub-item {
     margin-top: 0.4rem;
     padding-top: 0.4rem;
     border-top: 1px solid var(--border);
 }
 
-/* :first-child works reliably on div elements; :first-of-type would not */
+
 .tc-sub-item:first-child {
     margin-top: 0;
     padding-top: 0;
@@ -2491,7 +2469,7 @@ details[open] > .ontology-nodes-group-head::before {
     font-style: italic;
 }
 
-/* ── Accent border per block type ── */
+
 .tc-symptom {
     border-left: 3px solid rgba(212, 160, 32, 0.55);
 }
@@ -2504,7 +2482,7 @@ details[open] > .ontology-nodes-group-head::before {
     border-left: 3px solid rgba(31, 122, 31, 0.50);
 }
 
-/* ── Connectors between blocks — vertical line + dot ── */
+
 .tc-connector {
     display: flex;
     flex-direction: column;
@@ -2529,9 +2507,7 @@ details[open] > .ontology-nodes-group-head::before {
     line-height: 1;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   B — PROGRESS BAR
-   ═══════════════════════════════════════════════════════════ */
+
 
 .review-progress {
     display: flex;
@@ -2565,7 +2541,7 @@ details[open] > .ontology-nodes-group-head::before {
     font-family: var(--font-mono);
 }
 
-/* Mini saved/discarded counters in the app bar right */
+
 .review-mini-stat {
     font-size: 0.67rem;
     font-weight: 700;
@@ -2579,13 +2555,9 @@ details[open] > .ontology-nodes-group-head::before {
     opacity: 0.7;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   C — BINARY DECISION BAR
-   ═══════════════════════════════════════════════════════════ */
 
-/* Override the old #action-buttons layout for the new decision bar.
-   Re-declare every property that the base rule sets, so there is no
-   inherited gap/wrap from the earlier rule in the cascade. */
+
+
 #action-buttons {
     flex-direction: column;
     flex-wrap: nowrap;
@@ -2650,7 +2622,7 @@ details[open] > .ontology-nodes-group-head::before {
     text-transform: lowercase;
 }
 
-/* Skip — neutral, secondary */
+
 .btn-skip {
     background: var(--bg-surface);
     color: var(--text-secondary);
@@ -2662,7 +2634,7 @@ details[open] > .ontology-nodes-group-head::before {
     color: var(--text-primary);
 }
 
-/* Validate — primary, green, heavier weight */
+
 .btn-validate {
     background: var(--success);
     color: #fff;
@@ -2672,7 +2644,7 @@ details[open] > .ontology-nodes-group-head::before {
     background: var(--success-hover);
 }
 
-/* Click ripple animation on the validate button */
+
 .btn-validate:active:not(:disabled) {
     transform: scale(0.97);
     transition: transform 0.08s ease, background 0.08s;

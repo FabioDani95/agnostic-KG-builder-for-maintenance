@@ -1,10 +1,16 @@
-#!/bin/bash
-# Kill any existing process on port 8000
-lsof -ti :8000 | xargs kill -9 2>/dev/null
-echo "Port 8000 cleared."
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Start the server
 cd "$(dirname "$0")"
+
+if [ ! -d ".venv" ]; then
+  python3 -m venv .venv
+fi
+
 source .venv/bin/activate
-python -c "import langgraph, jsonschema, networkx" >/dev/null 2>&1 || python -m pip install -r requirements.txt
-uvicorn backend.main:app --reload --port 8000
+
+if ! python -c "import fastapi, fitz, langgraph, jsonschema, networkx" >/dev/null 2>&1; then
+  python -m pip install -r requirements.txt
+fi
+
+exec uvicorn backend.main:app --reload --host 127.0.0.1 --port "${PORT:-8000}"

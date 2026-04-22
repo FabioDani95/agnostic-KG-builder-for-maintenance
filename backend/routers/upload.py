@@ -19,7 +19,6 @@ router = APIRouter()
 DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 MANUALS_DIR = Path(__file__).resolve().parent.parent.parent / "manuals"
 
-# Shared in-memory store — imported by other routers
 pdf_store: dict[str, dict] = {}
 
 

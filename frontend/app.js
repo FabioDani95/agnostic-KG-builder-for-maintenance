@@ -1,12 +1,9 @@
-// PDF.js setup
 const pdfjsLib = await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs");
 pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
 
-// ─── Auto-fill date ───
 const dateInput = document.getElementById("extraction-date");
 dateInput.value = new Date().toISOString().split("T")[0];
 
-// ─── Load model lists from config.yaml via API ───
 (async function loadModelConfig() {
     try {
         const res = await fetch("/api/config");
@@ -29,7 +26,6 @@ dateInput.value = new Date().toISOString().split("T")[0];
         populateSelect("scoping-model", cfg.scoping_models);
         populateSelect("llm-model", cfg.extraction_models);
 
-        // Populate advanced settings fields from config
         const thresholdInput = document.getElementById("small-doc-threshold");
         const retriesInput = document.getElementById("reflective-max-retries");
         const severitySelect = document.getElementById("reflective-severity");
@@ -48,7 +44,6 @@ dateInput.value = new Date().toISOString().split("T")[0];
     }
 })();
 
-// ─── Load manual list from backend ───
 (async function loadAvailableManuals() {
     const manualSelect = document.getElementById("manual-select");
     if (!manualSelect) return;
@@ -84,7 +79,6 @@ dateInput.value = new Date().toISOString().split("T")[0];
     }
 })();
 
-// ─── State ───
 const state = {
     pdfId: null,
     sourceType: "",
@@ -96,7 +90,6 @@ const state = {
     validatedTriplets: [],
     pdfDoc: null,
     totalPages: 0,
-    // Cut plan state
     cutPlan: null,
     selectedPages: new Set(),
     cutPlanSections: [],
@@ -115,21 +108,18 @@ const state = {
     autoExportTriggered: false,
     runMetrics: null,
 
-    // ─── Multi-agent / run tracking ───
-    runId: null,                    // from UploadResponse.run_id
-    pipelineMode: "classic",        // "classic" | "multi_agent"
-    supervisorStatus: null,         // last /multi-agent/status payload
-    supervisorAudit: null,          // last /multi-agent/audit payload
-    statusPollTimer: null,          // interval handle for active polling
+    runId: null,
+    pipelineMode: "classic",
+    supervisorStatus: null,
+    supervisorAudit: null,
+    statusPollTimer: null,
 
-    // ─── Confidence UI state ───
-    confidenceSort: "score_asc",    // "score_asc" | "type"
-    showAutoApproved: false,        // collapsed by default
-    nodeDecisions: {},              // "type::id" -> "approved" | "rejected" | "skipped"
+    confidenceSort: "score_asc",
+    showAutoApproved: false,
+    nodeDecisions: {},
 
-    // ─── Escalations (client-synthesized until backend EscalationMessage lands) ───
-    escalations: [],                // list of EscalationMessage objects
-    escalationDecisions: {},        // escalation_id -> chosen option
+    escalations: [],
+    escalationDecisions: {},
 };
 
 const statusActivity = {
@@ -153,8 +143,6 @@ const statusActivity = {
  * @property {Object} context         { node_type, node_id, score, suggested_relation?, issue_code? }
  */
 
-// ─── API client wrapper ───
-// Thin layer: existing direct fetch() callsites are left alone; new code uses api.*
 const api = {
     async _json(method, path, body) {
         const opts = { method, headers: {} };
@@ -176,7 +164,6 @@ const api = {
     multiAgentAudit(runId)      { return this._json("GET",  `/multi-agent/audit/${encodeURIComponent(runId)}`); },
 };
 
-// ─── DOM Elements ───
 const uploadScreen = document.getElementById("upload-screen");
 const uploadForm = document.getElementById("upload-form");
 const uploadBtn = document.getElementById("upload-btn");
@@ -208,7 +195,6 @@ const openGraphEditorBtn = document.getElementById("open-graph-editor-btn");
 const appBarOperator = document.getElementById("app-bar-operator");
 const appBarDate = document.getElementById("app-bar-date");
 
-// Cut plan DOM
 const cpPdfContainer = document.getElementById("cp-pdf-container");
 const cpDocTitle = document.getElementById("cp-doc-title");
 const sectionCards = document.getElementById("section-cards");
@@ -234,7 +220,6 @@ const ontologyFields = document.getElementById("ontology-fields");
 const ontologyStatus = document.getElementById("ontology-status");
 const ontologyContinueBtn = document.getElementById("ontology-continue-btn");
 const ontologyRerunBtn = document.getElementById("ontology-rerun-btn");
-// Graph reasoning DOM
 const graphIssuesBlock = document.getElementById("graph-issues-block");
 const graphIssuesList = document.getElementById("graph-issues");
 const suggestedRelationsBlock = document.getElementById("suggested-relations-block");
@@ -244,7 +229,6 @@ const suggestedRelationsBulk = document.getElementById("suggestion-bulk-actions"
 const applySuggestionsBtn = document.getElementById("apply-suggestions-btn");
 const rejectAllSuggestionsBtn = document.getElementById("reject-all-suggestions-btn");
 
-// ─── Confidence / multi-agent / escalation DOM ───
 const phaseStrip = document.getElementById("phase-strip");
 const auditDrawer = document.getElementById("audit-drawer");
 const auditDrawerToggle = document.getElementById("audit-drawer-toggle");
@@ -264,11 +248,6 @@ const escalationsList = document.getElementById("escalations-list");
 const escalationsCount = document.getElementById("escalations-count");
 const pipelineModeSelect = document.getElementById("pipeline-mode");
 
-// ─── Advanced / Research view toggle (ontology screen) ───
-// All confidence/graph-reasoning/escalation blocks live inside a <details>
-// element. The operator-facing core view shows only Status + Required
-// Information. Power users / researchers can expand the panel to access the
-// full diagnostic surface; their preference is persisted across sessions.
 const ontologyAdvancedPanel = document.getElementById("ontology-advanced-panel");
 if (ontologyAdvancedPanel) {
     const ADVANCED_PANEL_KEY = "ontology.advancedPanel.open";
@@ -287,7 +266,6 @@ if (ontologyAdvancedPanel) {
     });
 }
 
-// ─── Upload Flow ───
 
 uploadForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -297,12 +275,9 @@ uploadForm.addEventListener("submit", async (e) => {
     state.targetLanguage = document.getElementById("graph-language").value;
     state.operator = document.getElementById("operator-name").value.trim();
     state.extractionDate = dateInput.value;
-    // The user enters the absolute PDF page where manual page 1 appears.
-    // offset = (PDF page of manual p.1) - 1
     const manualPage1PdfPage = parseInt(document.getElementById("startup-page-offset").value) || 1;
     state.pageOffset = Math.max(0, manualPage1PdfPage - 1);
 
-    // Send advanced settings to backend before starting the pipeline
     const advancedOverrides = {};
     const threshVal = parseInt(document.getElementById("small-doc-threshold")?.value);
     const retriesVal = parseInt(document.getElementById("reflective-max-retries")?.value);
@@ -338,7 +313,6 @@ uploadForm.addEventListener("submit", async (e) => {
     showStatus(`Loading "${selectedManual}" from library...`, "loading");
 
     try {
-        // Step 1: Load selected manual
         const loadRes = await fetch("/api/load-manual", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -353,7 +327,6 @@ uploadForm.addEventListener("submit", async (e) => {
         state.uploadFilename = loadData.filename;
         state.runId = loadData.run_id || null;
 
-        // Step 2: Request cut plan (scoping)
         showStatus("Analyzing document structure...", "loading");
         const cpRes = await fetch("/cut-plan", {
             method: "POST",
@@ -367,7 +340,6 @@ uploadForm.addEventListener("submit", async (e) => {
         const cutPlan = await cpRes.json();
         state.cutPlan = cutPlan;
 
-        // Store asset/document info from scoping
         if (cutPlan.product_info) {
             state.productInfo = cutPlan.product_info;
             state.sourceType = cutPlan.product_info.document_type || "";
@@ -457,23 +429,18 @@ function startStatusActivity(key, el, messages) {
     return activity;
 }
 
-// ─── Cut Plan Screen ───
 
 function enterCutPlanScreen(cutPlan) {
     console.log("[cutplan] enterCutPlanScreen called");
 
-    // 1. Hide upload screen, show cut plan screen
     uploadScreen.hidden = true;
     cutPlanScreen.hidden = false;
 
-    // 2. Populate UI (all synchronous, instant)
     cpDocTitle.textContent = state.uploadFilename;
     state.selectedPages = new Set(cutPlan.pages_to_keep);
     state.cutPlanSections = cutPlan.sections.map(s => ({ ...s }));
-    // Show the PDF page where manual page 1 appears (= offset + 1)
     offsetInput.value = cutPlan.page_offset + 1;
 
-    // Display asset/document info if available
     const productInfoBlock = document.getElementById("cp-product-info");
     if (cutPlan.product_info) {
         document.getElementById("cp-product-name").textContent = cutPlan.product_info.product_name || "\u2014";
@@ -491,7 +458,6 @@ function enterCutPlanScreen(cutPlan) {
 
     console.log("[cutplan] UI populated, scheduling PDF load");
 
-    // 3. Defer PDF loading to a separate macrotask so the browser paints first.
     state.pdfLoaded = false;
     setTimeout(() => {
         console.log("[cutplan] Starting PDF load");
@@ -532,7 +498,6 @@ function renderTocTable(toc) {
     html += '</tbody></table>';
     container.innerHTML = html;
 
-    // Click row to scroll PDF
     container.querySelectorAll(".toc-row").forEach(row => {
         row.addEventListener("click", () => {
             const pg = parseInt(row.dataset.absPage, 10);
@@ -574,7 +539,6 @@ function renderSectionCards() {
             scrollToCpPage(section.page_range.start);
         });
 
-        // Header: name + badge + remove
         const header = document.createElement("div");
         header.className = "section-card-header";
 
@@ -599,7 +563,6 @@ function renderSectionCards() {
         header.appendChild(removeBtn);
         card.appendChild(header);
 
-        // Page range — edit manual pages, derive absolute
         const range = document.createElement("div");
         range.className = "section-card-range";
 
@@ -685,13 +648,10 @@ function removeSection(idx) {
     updatePageCounter();
 }
 
-// offsetInput shows "PDF page where manual page 1 appears" = offset + 1.
-// This helper converts it back to the internal offset (0-based).
 function getOffsetFromInput() {
     return Math.max(0, (parseInt(offsetInput.value) || 1) - 1);
 }
 
-// Offset live update — recalculate absolute pages from manual pages
 offsetInput.addEventListener("input", () => {
     const newOffset = getOffsetFromInput();
     const total = state.cutPlan ? state.cutPlan.total_pages : Infinity;
@@ -709,7 +669,6 @@ offsetInput.addEventListener("input", () => {
     updatePageCounter();
 });
 
-// Add range
 addRangeBtn.addEventListener("click", () => {
     addRangeForm.hidden = false;
     addRangeBtn.hidden = true;
@@ -751,7 +710,6 @@ rangeConfirmBtn.addEventListener("click", () => {
     addRangeBtn.hidden = false;
 });
 
-// Skip cut plan
 cpSkipBtn.addEventListener("click", async () => {
     cpSkipBtn.disabled = true;
     cpApproveBtn.disabled = true;
@@ -761,15 +719,11 @@ cpSkipBtn.addEventListener("click", async () => {
     } catch (err) {
         showCpStatus(err.message, "error");
     } finally {
-        // Always re-enable: if startOntologyStage advanced the screen, the
-        // buttons are no longer visible anyway. If it failed, the operator
-        // must be able to retry without a stale disabled state.
         cpSkipBtn.disabled = false;
         cpApproveBtn.disabled = false;
     }
 });
 
-// Approve cut plan
 cpApproveBtn.addEventListener("click", async () => {
     if (state.selectedPages.size === 0) {
         showCpStatus("Select at least one page.", "error");
@@ -813,7 +767,6 @@ cpApproveBtn.addEventListener("click", async () => {
     }
 });
 
-// ─── Ontology pre-review ───
 
 function movePdfPages(fromContainer, toContainer, fromPrefix, toPrefix) {
     if (!fromContainer || !toContainer || fromContainer.children.length === 0) return;
@@ -853,7 +806,6 @@ function enterOntologyScreen() {
     suggestedRelationsList.innerHTML = "";
     suggestedRelationsBulk.hidden = true;
 
-    // Multi-agent observability: start polling + reveal audit button in multi_agent mode
     if (state.pipelineMode === "multi_agent" && state.runId) {
         if (auditDrawerToggle) auditDrawerToggle.hidden = false;
         startStatusPolling();
@@ -890,7 +842,6 @@ function renderOntologyDraft(result) {
     const hasSuggestions = (result.suggested_relations || []).length > 0;
     const extractionRunning = state.extractionInProgress;
 
-    // Node count summary — clarify these are ontology nodes, NOT diagnostic triplets
     const totalNodes = Object.values(result.ontology.nodes || {}).reduce((s, arr) => s + arr.length, 0);
     const nodeCounts = Object.entries(result.ontology.nodes || {})
         .filter(([, items]) => items.length > 0)
@@ -901,7 +852,6 @@ function renderOntologyDraft(result) {
         ? ` <span class="badge-count" title="Reflective loop retries">${result.retry_count} retr${result.retry_count === 1 ? "y" : "ies"}</span>`
         : "";
 
-    // Status label — map internal codes to human-readable
     const statusLabels = {
         "ready": "Ready",
         "needs_human": "Needs input",
@@ -937,8 +887,6 @@ function renderOntologyDraft(result) {
         </div>
     `;
 
-    // Confidence strip lives in the Advanced / Research panel — hidden from the
-    // operator-facing core view, surfaced only when the strip has content.
     const confidenceStripHtml = renderConfidenceStrip(result.confidence_report);
     const confidenceBlock = document.getElementById("ontology-confidence-block");
     const confidenceStripContainer = document.getElementById("ontology-confidence-strip");
@@ -952,7 +900,6 @@ function renderOntologyDraft(result) {
         }
     }
 
-    // ─── Guidance: single, clear next-action message ───
     let guidanceHtml = "";
     if (extractionRunning) {
         guidanceHtml = `
@@ -984,7 +931,6 @@ function renderOntologyDraft(result) {
     }
     ontologyGuidance.innerHTML = guidanceHtml;
 
-    // ─── Required human input fields — always visible if present, no collapsing ───
     ontologyFieldsBlock.hidden = !hasHumanInputs;
     if (hasHumanInputs) {
         ontologyFields.innerHTML = `<div class="ontology-list">${result.human_required_fields.map(field => `
@@ -1005,7 +951,6 @@ function renderOntologyDraft(result) {
     }
     syncOntologyActionButtons();
 
-    // ─── Automatic checks — collapsed by default, expandable ───
     const allIssues = [...result.semantic_issues, ...result.schema_issues];
     ontologyIssuesBlock.hidden = allIssues.length === 0;
     if (allIssues.length > 0) {
@@ -1028,7 +973,6 @@ function renderOntologyDraft(result) {
                 </div>
             `).join("")}</div>
         `;
-        // Toggle handler
         const toggleBtn = ontologyIssues.querySelector(".ontology-issues-toggle");
         const detailDiv = ontologyIssues.querySelector(`#${issueListId}`);
         toggleBtn.addEventListener("click", () => {
@@ -1041,7 +985,6 @@ function renderOntologyDraft(result) {
         ontologyIssues.innerHTML = "";
     }
 
-    // ─── Graph issues — collapsed, secondary info ───
     const graphIssues = result.graph_issues || [];
     graphIssuesBlock.hidden = graphIssues.length === 0;
     if (graphIssues.length > 0) {
@@ -1056,10 +999,8 @@ function renderOntologyDraft(result) {
         graphIssuesList.innerHTML = "";
     }
 
-    // ─── Suggested relations ───
     renderSuggestedRelations(result.suggested_relations || []);
 
-    // ─── New agentic panels: confidence-aware node list + escalations ───
     state.escalations = synthesizeEscalations(result);
     renderOntologyNodes(result);
     renderEscalations(state.escalations, graphIssues);
@@ -1093,7 +1034,7 @@ function renderSuggestedRelations(suggestions) {
         const card = document.createElement("div");
         card.className = "suggestion-card";
         card.dataset.idx = idx;
-        card.dataset.decision = "pending"; // pending | accepted | rejected
+        card.dataset.decision = "pending";
 
         const pct = Math.round((s.confidence || 0) * 100);
         card.innerHTML = `
@@ -1126,9 +1067,6 @@ function renderSuggestedRelations(suggestions) {
     }, { once: false });
 }
 
-// ═══════════════════════════════════════════════════════════
-// CONFIDENCE-AWARE ONTOLOGY REVIEW (Block 2)
-// ═══════════════════════════════════════════════════════════
 
 function bucketForScore(score, thetaHigh, thetaLow, autoRejectEnabled) {
     if (score == null || Number.isNaN(score)) return "mid";
@@ -1140,7 +1078,7 @@ function bucketForScore(score, thetaHigh, thetaLow, autoRejectEnabled) {
 function classificationToBucket(classification) {
     if (classification === "auto_approve") return "high";
     if (classification === "auto_reject") return "low";
-    return "mid"; // human_review
+    return "mid";
 }
 
 function renderConfidenceStrip(report) {
@@ -1165,8 +1103,6 @@ function renderConfidenceStrip(report) {
     `;
 }
 
-// Flatten ontology.nodes (keyed by type, each value is a list of dicts) into a
-// flat list of entries indexable by `${type}::${id}`.
 function flattenOntologyNodes(ontology) {
     const out = [];
     const nodesByType = ontology?.nodes || {};
@@ -1174,7 +1110,6 @@ function flattenOntologyNodes(ontology) {
         for (const item of (items || [])) {
             const id = item.id || item.node_id || "";
             if (!id) continue;
-            // Try a few common label fields the backend emits
             const label =
                 item.name ||
                 item.label ||
@@ -1213,11 +1148,9 @@ function renderOntologyNodes(result) {
 
     ontologyNodesBlock.hidden = false;
 
-    // Join ontology nodes with confidence entries
     const flat = flattenOntologyNodes(result.ontology);
     const confByKey = indexConfidenceByKey(report);
 
-    // Any confidence entries that aren't already in flat (rare) get added as label-less rows
     const seen = new Set(flat.map(n => `${n.node_type}::${n.node_id}`));
     for (const entry of report.entries) {
         const key = `${entry.node_type}::${entry.node_id}`;
@@ -1230,15 +1163,13 @@ function renderOntologyNodes(result) {
         const key = `${n.node_type}::${n.node_id}`;
         const conf = confByKey[key] || null;
         return { ...n, key, conf };
-    }).filter(n => n.conf); // only show nodes that the backend scored
+    }).filter(n => n.conf);
 
-    // Bucket by classification
     const buckets = { high: [], mid: [], low: [] };
     for (const n of enriched) {
         buckets[classificationToBucket(n.conf.classification)].push(n);
     }
 
-    // Sort within each bucket
     const sortMode = state.confidenceSort;
     const sorter = (a, b) => {
         if (sortMode === "type") {
@@ -1253,7 +1184,6 @@ function renderOntologyNodes(result) {
 
     ontologyNodesCount.textContent = enriched.length;
 
-    // Render in order: human_review (most urgent) → auto_reject (if enabled) → auto_approve (collapsed)
     const groups = [
         { bucket: "mid", title: "Human review",  items: buckets.mid, collapsed: false },
     ];
@@ -1327,7 +1257,6 @@ function renderNodeCard(node, bucket) {
     `;
 }
 
-// Wire ontology-nodes controls ONCE at module load; delegated click handler.
 if (ontologyNodesList) {
     ontologyNodesList.addEventListener("click", (e) => {
         const btn = e.target.closest("button[data-node-action]");
@@ -1335,7 +1264,6 @@ if (ontologyNodesList) {
         const action = btn.dataset.nodeAction;
         const key = btn.dataset.nodeKey;
         if (!key) return;
-        // Toggle: clicking the same action clears it
         if (state.nodeDecisions[key] === action) {
             delete state.nodeDecisions[key];
         } else {
@@ -1369,11 +1297,7 @@ if (bulkApproveBtn) {
     });
 }
 
-// ═══════════════════════════════════════════════════════════
-// MULTI-AGENT OBSERVABILITY (Block 3)
-// ═══════════════════════════════════════════════════════════
 
-// Operator-facing display steps fold the 11 backend GraphPhase values into 6.
 const DISPLAY_PHASES = [
     { key: "scoping",        label: "Scoping",        backend: ["scoping"] },
     { key: "ontology_draft", label: "Ontology Draft", backend: ["ontology_draft"] },
@@ -1406,10 +1330,6 @@ function renderPhaseStrip(statusPayload) {
 
     const currentDisplayKey = displayKeyForBackendPhase(currentBackend);
 
-    // Determine done / active / pending per display phase.
-    // "done" = all backend phases visited AND the display step is earlier than current.
-    // "active" = current step.
-    // "pending" = everything after.
     const currentIdx = DISPLAY_PHASES.findIndex(d => d.key === currentDisplayKey);
 
     const stepsHtml = DISPLAY_PHASES.map((dp, idx) => {
@@ -1420,7 +1340,6 @@ function renderPhaseStrip(statusPayload) {
             if (statusPayload.run_status === "completed" && dp.key === "done") { cls = "done"; stateLabel = "done"; }
             else { cls = "active"; stateLabel = "active"; }
         }
-        // If current backend is COMPLETED, mark all as done.
         if (currentBackend === "completed") { cls = "done"; stateLabel = "done"; }
 
         return `
@@ -1434,7 +1353,6 @@ function renderPhaseStrip(statusPayload) {
         `;
     }).join("");
 
-    // Progress percent + token count in the meta slot
     const progress = typeof statusPayload.progress_percent === "number" ? `${statusPayload.progress_percent}%` : "—";
     const totalTokens = sumTokenLedger(statusPayload.token_ledger);
     const metaHtml = `
@@ -1470,7 +1388,6 @@ function formatTokenCount(n) {
     return `${(n / 1e6).toFixed(2)}M`;
 }
 
-// ─── Status polling ───
 function stopStatusPolling() {
     if (state.statusPollTimer) {
         clearInterval(state.statusPollTimer);
@@ -1484,7 +1401,6 @@ async function pollSupervisorStatusOnce() {
         const payload = await api.multiAgentStatus(state.runId);
         state.supervisorStatus = payload;
         renderPhaseStrip(payload);
-        // Show audit button now that we have a run
         if (auditDrawerToggle) auditDrawerToggle.hidden = false;
         if (payload.run_status === "completed" || payload.run_status === "awaiting_operator") {
             stopStatusPolling();
@@ -1497,12 +1413,10 @@ async function pollSupervisorStatusOnce() {
 function startStatusPolling() {
     if (!state.runId || state.pipelineMode !== "multi_agent") return;
     stopStatusPolling();
-    // Fetch once immediately so the phase strip appears without a 2s delay
     pollSupervisorStatusOnce();
     state.statusPollTimer = setInterval(pollSupervisorStatusOnce, 2000);
 }
 
-// ─── Audit drawer ───
 async function openAuditDrawer() {
     if (!auditDrawer || !state.runId || state.pipelineMode !== "multi_agent") return;
     auditDrawer.classList.add("open");
@@ -1528,7 +1442,6 @@ function closeAuditDrawer() {
 function renderAuditDrawer(audit) {
     if (!audit) return;
 
-    // Token ledger
     const ledger = audit.token_ledger || {};
     const ledgerRows = [];
     if (Array.isArray(ledger)) {
@@ -1547,7 +1460,6 @@ function renderAuditDrawer(audit) {
         ).join("")
         : `<div class="node-label-line">No token usage recorded yet.</div>`;
 
-    // Phase history
     const history = Array.isArray(audit.phase_history) ? audit.phase_history : [];
     auditPhaseHistory.innerHTML = history.length
         ? history.map(h => `
@@ -1567,7 +1479,6 @@ function renderAuditDrawer(audit) {
         `).join("")
         : `<li class="audit-phase-item"><div class="phase-detail">No phase history recorded yet.</div></li>`;
 
-    // Supervisor decisions
     const supLog = Array.isArray(audit.supervisor_log) ? audit.supervisor_log : [];
     auditSupervisorLog.innerHTML = supLog.length
         ? supLog.map(s => `
@@ -1608,9 +1519,6 @@ if (auditDrawerToggle) {
 }
 if (auditDrawerClose) auditDrawerClose.addEventListener("click", closeAuditDrawer);
 
-// ═══════════════════════════════════════════════════════════
-// ESCALATION CARDS (Block 4) — contract-first synthesizer
-// ═══════════════════════════════════════════════════════════
 
 function synthesizeEscalations(result) {
     if (!result) return [];
@@ -1619,8 +1527,6 @@ function synthesizeEscalations(result) {
     const thetaHigh = report?.theta_high ?? 0.8;
     const thetaLow  = report?.theta_low ?? 0.45;
 
-    // 1) Low-confidence nodes → node-level escalations
-    //    Trigger on any human_review node comfortably below θ_high.
     const suggestedByNode = {};
     for (const sr of (result.suggested_relations || [])) {
         const fkey = `${sr.from_type}::${sr.from_id}`;
@@ -1631,7 +1537,7 @@ function synthesizeEscalations(result) {
 
     for (const entry of (report?.entries || [])) {
         if (entry.classification !== "human_review") continue;
-        if (entry.score >= thetaHigh - 0.10) continue; // leave borderline scores out of escalation UI
+        if (entry.score >= thetaHigh - 0.10) continue;
         const severity = entry.score < thetaLow ? "blocking" : "warning";
         const topReason = (entry.reasons && entry.reasons[0]) || "Low confidence score";
         const key = `${entry.node_type}::${entry.node_id}`;
@@ -1652,7 +1558,6 @@ function synthesizeEscalations(result) {
         });
     }
 
-    // 2) Critical graph structure issues → graph-level escalations
     for (const gi of (result.graph_issues || [])) {
         if (!["broken_chain", "cycle"].includes(gi.issue_type)) continue;
         escalations.push({
@@ -1685,8 +1590,6 @@ function renderEscalations(escalations, graphIssues) {
     escalationsBlock.hidden = false;
     escalationsCount.textContent = escalations.length;
 
-    // Dedup graph-issue escalations against existing graph-issues cards
-    // (dim the raw list entry when a matching escalation exists).
     const supersededIssues = new Set(
         escalations
             .filter(e => e.context?.issue_code)
@@ -1765,7 +1668,6 @@ if (escalationsList) {
         const option = btn.dataset.escalationOption;
         if (!id || !option) return;
         state.escalationDecisions[id] = option;
-        // Also mirror the decision into node-level state when the escalation is node-scoped
         const esc_item = state.escalations.find(x => x.escalation_id === id);
         if (esc_item?.context?.node_type && esc_item?.context?.node_id) {
             const key = `${esc_item.context.node_type}::${esc_item.context.node_id}`;
@@ -1857,7 +1759,6 @@ ontologyContinueBtn.addEventListener("click", async () => {
         if (state.ontologyDraft && state.ontologyDraft.human_required_fields.length > 0) {
             const answers = collectOntologyAnswers();
 
-            // Highlight empty required fields and block with visual feedback
             const missing = answers.filter(a => !a.value);
             if (missing.length > 0) {
                 missing.forEach(a => {
@@ -1869,7 +1770,6 @@ ontologyContinueBtn.addEventListener("click", async () => {
                 });
                 showOntologyStatus(`Fill in all ${missing.length} required field${missing.length > 1 ? "s" : ""} before continuing (highlighted above).`, "error");
                 syncOntologyActionButtons();
-                // Scroll to first empty field
                 const firstEmpty = document.querySelector(`[data-ontology-field="${missing[0].field_key}"]`);
                 if (firstEmpty) firstEmpty.scrollIntoView({ behavior: "smooth", block: "center" });
                 return;
@@ -1902,8 +1802,6 @@ ontologyContinueBtn.addEventListener("click", async () => {
             }
         }
 
-        // If triplets were already extracted (e.g. user fixed ontology fields after extraction),
-        // go straight to validation without re-running the LLM.
         if (state.tripletsExtracted && state.triplets.length > 0) {
             transitionToMainLayout();
             return;
@@ -1922,7 +1820,6 @@ ontologyContinueBtn.addEventListener("click", async () => {
     }
 });
 
-// ─── Graph Reasoning — Apply / Reject suggestions ───
 
 rejectAllSuggestionsBtn.addEventListener("click", () => {
     suggestedRelationsList.querySelectorAll(".suggestion-card").forEach(card => {
@@ -1977,7 +1874,6 @@ applySuggestionsBtn.addEventListener("click", async () => {
     }
 });
 
-// ─── Extraction helpers ───
 
 async function runExtraction(pagesToKeep, { alreadyLocked = false } = {}) {
     if (state.extractionInProgress && !alreadyLocked) {
@@ -2032,7 +1928,6 @@ async function runExtraction(pagesToKeep, { alreadyLocked = false } = {}) {
 }
 
 function transitionToMainLayout() {
-    // Move PDF canvases from ontology viewer to main viewer if already loaded.
     if (ontologyPdfContainer.children.length > 0 && pdfContainer.children.length === 0) {
         movePdfPages(ontologyPdfContainer, pdfContainer, "ontology-pdf-page-", "pdf-page-");
     }
@@ -2045,7 +1940,6 @@ function transitionToMainLayout() {
     appBarOperator.textContent = state.operator || "";
     appBarDate.textContent = state.extractionDate || "";
 
-    // Leaving the Ontology screen: stop polling and close any open drawer
     stopStatusPolling();
     closeAuditDrawer();
 
@@ -2054,20 +1948,17 @@ function transitionToMainLayout() {
     state.exportCompleted = false;
     state.autoExportTriggered = false;
 
-    // If PDF wasn't loaded yet (small doc path), load it now
     if (!state.pdfLoaded) {
         loadPdfLazy(state.pdfId, pdfContainer).then(() => {
             state.pdfLoaded = true;
             displayCurrentTriplet();
         });
     } else {
-        // Re-attach observer to the new container since pages were moved
         setupPdfObserver(pdfContainer);
         displayCurrentTriplet();
     }
 }
 
-// ─── PDF Viewer (lazy rendering via IntersectionObserver) ───
 
 const renderedPages = new Set();
 
@@ -2084,12 +1975,10 @@ async function loadPdfLazy(pdfId, container) {
             ? "ontology-pdf-page-"
             : "pdf-page-";
 
-    // Get dimensions from first page for placeholder sizing
     const firstPage = await state.pdfDoc.getPage(1);
     const scale = 1.5;
     const vp = firstPage.getViewport({ scale });
 
-    // Create lightweight placeholders for all pages (no rendering yet)
     for (let i = 1; i <= state.totalPages; i++) {
         const wrapper = document.createElement("div");
         wrapper.className = "pdf-page-wrapper";
@@ -2111,15 +2000,12 @@ async function loadPdfLazy(pdfId, container) {
         container.appendChild(wrapper);
     }
 
-    // Render only the first page immediately
     await renderPage(1, container);
 
-    // Set up lazy observer for the rest
     setupPdfObserver(container);
 }
 
 function setupPdfObserver(container) {
-    // Disconnect any previous observer
     if (container._pdfObserver) {
         container._pdfObserver.disconnect();
     }
@@ -2179,7 +2065,6 @@ function scrollToPage(pageNum) {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-// ─── Triplet Display ───
 
 function updateReviewProgress() {
     const total = state.triplets.length;
@@ -2215,17 +2100,14 @@ function displayCurrentTriplet() {
 
     const triplet = state.triplets[idx];
 
-    // A: render the hierarchical triplet card
     if (tripletCardContainer) {
         tripletCardContainer.innerHTML = buildTripletCard(triplet, idx);
-        // Trigger enter animation on next frame
         requestAnimationFrame(() => {
             const card = tripletCardContainer.querySelector(".triplet-card");
             if (card) card.classList.add("triplet-card--visible");
         });
     }
 
-    // Scroll PDF to the first corrective action source page
     if (triplet.corrective_actions.length > 0) {
         const page = triplet.corrective_actions[0].source_page;
         if (page > 0 && page <= state.totalPages) scrollToPage(page);
@@ -2237,23 +2119,18 @@ function displayCurrentTriplet() {
     summary.hidden = true;
 }
 
-// ─── A: Hierarchical triplet card ───
-// Renders a single triplet as a chain card: Symptom → FailureModes → CorrectiveActions.
-// Uses data-field attributes compatible with collectEditsFromDom.
 
 function buildTripletCard(triplet, idx) {
     const sym = triplet.symptom;
     const fms = triplet.failure_modes || [];
     const cas = triplet.corrective_actions || [];
 
-    // severity badge colour
     const sevClass = { high: "sev-high", medium: "sev-medium", low: "sev-low" }[
         (sym.severity || "").toLowerCase()
     ] || "sev-unknown";
 
     let html = `<div class="triplet-card">`;
 
-    // ── Symptom block ──
     html += `
         <div class="tc-block tc-symptom">
             <div class="tc-block-label">
@@ -2273,10 +2150,8 @@ function buildTripletCard(triplet, idx) {
             </div>
         </div>`;
 
-    // ── Connector ──
     html += `<div class="tc-connector"><span class="tc-connector-arrow">&#8595;</span></div>`;
 
-    // ── Failure Modes ──
     html += `<div class="tc-block tc-failures">`;
     html += `<div class="tc-block-label"><span class="tc-label-badge tc-label-fm">Failure Modes</span><span class="tc-count">${fms.length}</span></div>`;
     if (fms.length === 0) {
@@ -2308,10 +2183,8 @@ function buildTripletCard(triplet, idx) {
     }
     html += `</div>`;
 
-    // ── Connector ──
     html += `<div class="tc-connector"><span class="tc-connector-arrow">&#8595;</span></div>`;
 
-    // ── Corrective Actions ──
     html += `<div class="tc-block tc-actions">`;
     html += `<div class="tc-block-label"><span class="tc-label-badge tc-label-ca">Corrective Actions</span><span class="tc-count">${cas.length}</span></div>`;
     if (cas.length === 0) {
@@ -2343,11 +2216,10 @@ function buildTripletCard(triplet, idx) {
     }
     html += `</div>`;
 
-    html += `</div>`; // .triplet-card
+    html += `</div>`;
     return html;
 }
 
-// Legacy table builders kept for any future reuse
 function buildEditableTable(headers, rows, editableFlags, prefix) {
     if (rows.length === 0) return '<p style="color:var(--text-dim);font-size:0.75rem;">No data</p>';
     let html = "<table><thead><tr>";
@@ -2394,7 +2266,6 @@ caContainer.addEventListener("click", (e) => {
     }
 });
 
-// Page-link clicks inside the new triplet card
 if (tripletCardContainer) {
     tripletCardContainer.addEventListener("click", (e) => {
         const link = e.target.closest(".tc-page-link");
@@ -2405,18 +2276,8 @@ if (tripletCardContainer) {
     });
 }
 
-// ─── Triplet review keyboard navigation ───
-//
-// Rationale: contenteditable cells are editable by default, but TAB inside one
-// inserts a tab character instead of moving focus. Operators reviewing dozens
-// of triplets need to fly through fields with the keyboard alone — so we
-// intercept TAB / Shift+TAB to walk the editable cells in DOM order across
-// Symptom → FailureModes → CorrectiveActions, and bind Ctrl/Cmd+Enter to
-// Save & Next, Ctrl/Cmd+Backspace to Discard.
 
 function getEditableCellsInOrder() {
-    // The new triplet card uses span[contenteditable] inside .triplet-card.
-    // Fall back to the legacy td[contenteditable] containers if the card is absent.
     if (tripletCardContainer && tripletCardContainer.querySelector('[contenteditable="true"]')) {
         return [...tripletCardContainer.querySelectorAll('[contenteditable="true"]')];
     }
@@ -2435,7 +2296,6 @@ function moveFocusBetweenCells(currentCell, direction) {
     if (nextIdx < 0 || nextIdx >= cells.length) return false;
     const next = cells[nextIdx];
     next.focus();
-    // Place caret at end of the new cell so the operator can keep typing.
     const range = document.createRange();
     range.selectNodeContents(next);
     range.collapse(false);
@@ -2448,17 +2308,15 @@ function moveFocusBetweenCells(currentCell, direction) {
 function handleTripletKeydown(e) {
     const cell = e.target.closest('[contenteditable="true"]');
 
-    // Save & Next: Ctrl/Cmd+Enter (works inside a cell or anywhere on the screen)
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
         if (saveBtn && !saveBtn.disabled && !mainLayout.hidden) {
             e.preventDefault();
-            if (cell) cell.blur(); // commit any pending IME composition
+            if (cell) cell.blur();
             advanceTriplet({ keep: true });
         }
         return;
     }
 
-    // Discard: Ctrl/Cmd+Backspace
     if ((e.ctrlKey || e.metaKey) && (e.key === "Backspace" || e.key === "Delete")) {
         if (discardBtn && !discardBtn.disabled && !mainLayout.hidden) {
             e.preventDefault();
@@ -2468,7 +2326,6 @@ function handleTripletKeydown(e) {
         return;
     }
 
-    // TAB navigation only meaningful when focus is on an editable cell
     if (!cell) return;
 
     if (e.key === "Tab") {
@@ -2479,18 +2336,12 @@ function handleTripletKeydown(e) {
         return;
     }
 
-    // Enter (without modifiers) inside a cell: keep the new line behaviour off
-    // for single-line fields like Name and Severity to avoid messy multi-line
-    // values. Plain Enter commits and moves to the next cell.
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
         e.preventDefault();
         moveFocusBetweenCells(cell, 1);
     }
 }
 
-// Bind the keydown handler at the document level so it survives table
-// re-renders (the tables are rebuilt on every triplet, but the handler
-// listens on a stable parent).
 document.addEventListener("keydown", (e) => {
     if (mainLayout.hidden) return;
     handleTripletKeydown(e);
@@ -2644,7 +2495,6 @@ async function refreshRunMetrics() {
     renderRunMetrics(metrics);
 }
 
-// ─── Collect inline edits ───
 
 function collectEditsFromDom() {
     const triplet = state.triplets[state.currentIndex];
@@ -2680,10 +2530,7 @@ function getEditedValue(field) {
     return el ? el.textContent.trim() : null;
 }
 
-// ─── Validation Buttons ───
 
-// Re-entrance guard: even if displayCurrentTriplet re-enables the buttons
-// synchronously, we never want a single click to advance the index twice.
 let tripletAdvanceInFlight = false;
 
 function advanceTriplet({ keep }) {
@@ -2707,7 +2554,6 @@ function advanceTriplet({ keep }) {
 discardBtn.addEventListener("click", () => advanceTriplet({ keep: false }));
 saveBtn.addEventListener("click", () => advanceTriplet({ keep: true }));
 
-// ─── Summary & Export ───
 
 function showSummary() {
     actionButtons.hidden = true;
@@ -2716,7 +2562,6 @@ function showSummary() {
     fmContainer.innerHTML = "";
     caContainer.innerHTML = "";
 
-    // Progress bar: fill to 100% on completion
     if (reviewProgressBar) reviewProgressBar.style.width = "100%";
     if (reviewProgressBar) reviewProgressBar.style.background = "var(--success)";
     if (reviewProgressLabel) reviewProgressLabel.textContent = "Done";

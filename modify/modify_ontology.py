@@ -23,7 +23,7 @@ def main() -> None:
     except ValueError:
         port = 5000
 
-    _ = load_ontology()  # fail fast if file missing
+    _ = load_ontology()
 
     print(f"Ontology: {ONTOLOGY_PATH}")
     print(f"Server:   http://127.0.0.1:{port}/")

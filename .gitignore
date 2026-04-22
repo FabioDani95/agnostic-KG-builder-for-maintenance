@@ -1,30 +1,36 @@
-# Esclude: .env, data/, __pycache__, .venv/
-
-# Variabili d'ambiente segrete
 .env
 .env.*
+!.env.example
 
-# Dati locali (PDF, cropped, output)
 data/
+manuals/*
+!manuals/.gitkeep
+!manuals/batch_manuals/
+manuals/batch_manuals/*
+!manuals/batch_manuals/.gitkeep
+benchmark_runs/*
+!benchmark_runs/.gitkeep
+batch_runs/*
+!batch_runs/.gitkeep
+output/*
+!output/.gitkeep
+node_modules/
+test-results/
+ontology.json
 
-# Cache Python
 __pycache__/
 *.py[cod]
 *.pyo
 
-# Ambiente virtuale
 .venv/
 venv/
 env/
 
-# IDE
 .vscode/
 .idea/
 
-# macOS
 .DS_Store
 
-# Pytest
 .pytest_cache/
 htmlcov/
 .coverage

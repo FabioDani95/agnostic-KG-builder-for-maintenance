@@ -1,4 +1,4 @@
-"""Focused tests for the improvements added in the `improvement.md` sprints.
+"""Focused tests for the current improvement set.
 
 Covers:
   * JSON repair ladder in `ontology_pipeline._extract_json_object`

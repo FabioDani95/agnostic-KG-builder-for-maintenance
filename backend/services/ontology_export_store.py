@@ -16,7 +16,6 @@ GENERATED_DIR = ROOT_DIR / "data" / "generated"
 LATEST_OUTPUT_DIR = OUTPUT_DIR / "latest"
 LATEST_ONTOLOGY_PATH = LATEST_OUTPUT_DIR / "ontology.json"
 LATEST_METRICS_PATH = LATEST_OUTPUT_DIR / "metrics.json"
-LEGACY_ONTOLOGY_PATH = ROOT_DIR / "ontology.json"
 
 
 def _slugify(value: str) -> str:

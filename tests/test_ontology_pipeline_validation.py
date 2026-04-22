@@ -1,7 +1,6 @@
 import unittest
 
 from backend.models import HumanBindingAnswer, OntologyInstance
-from backend.routers.ontology import _split_pages_by_section
 from backend.services.ontology_pipeline import (
     _normalize_ontology_instance,
     _retry_regression_reason,
@@ -9,6 +8,7 @@ from backend.services.ontology_pipeline import (
     validate_ontology_instance,
 )
 from backend.services.ontology_schema_service import load_ontology_schema
+from backend.services.ontology_workflow import _split_pages_by_section
 
 
 def _asset_only_ontology() -> OntologyInstance:

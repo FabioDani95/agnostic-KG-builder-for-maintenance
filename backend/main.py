@@ -7,12 +7,11 @@ from fastapi.staticfiles import StaticFiles
 
 from backend.routers import upload, extract, generate, cutplan, ontology, graph_editor, multi_agent
 from backend.app_config import (
-    get_scoping_config, get_extraction_config, get_reflective_loop_config,
+    get_scoping_config, get_extraction_config,
     get_effective_small_doc_threshold, get_effective_reflective_loop_config,
-    apply_runtime_overrides, get_runtime_overrides, get_pipeline_config,
+    apply_runtime_overrides, get_pipeline_config,
 )
 
-# Configure logging so scoping/llm progress is visible in terminal
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s — %(message)s",
@@ -67,7 +66,6 @@ async def update_runtime_config(body: dict):
     return {"status": "ok", "applied": overrides}
 
 
-# In-memory storage for extracted text per PDF
 pdf_store: dict[str, dict] = {}
 
 frontend_dir = Path(__file__).resolve().parent.parent / "frontend"

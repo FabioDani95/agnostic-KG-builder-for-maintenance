@@ -1,68 +1,132 @@
 # Agnostic KG Builder for Maintenance
 
-Neurosymbolic pipeline for extracting diagnostic knowledge graphs from technical maintenance manuals.
+A FastAPI application with a browser UI for building diagnostic knowledge graphs from maintenance manuals, one manual at a time.
 
-The system ingests PDF manuals, scopes the relevant pages, drafts an ontology, extracts diagnostic triplets, applies symbolic validation and graph reasoning, and supports operator review before final JSON export.
+## What It Does
 
-## Current Status
+- Loads PDF manuals placed in `manuals/`
+- Scopes the pages that are relevant for diagnostics and maintenance
+- Drafts an ontology aligned with `ontology_schema.JSON`
+- Lets the operator review missing fields, graph issues, and suggested relations
+- Extracts diagnostic triplets from the approved scope
+- Supports human validation before export
+- Exports a schema-compliant ontology JSON bundle to `output/`
 
-- Backend execution mode defaults to `multi_agent`.
-- The current UI still follows the existing sequential operator flow.
-- `GraphState`, supervisor audit logs, and confidence scoring are implemented on the backend.
-- The main unstable area is the reflective re-extraction loop when retries are enabled aggressively.
+## Current System Specification
 
-## Core Pipeline
+### Product Scope
 
-1. Load a manual from `manuals/`.
-2. Run scoping and approve the cut plan.
-3. Draft an ontology from the selected pages.
-4. Review ontology issues, missing bindings, and suggested relations.
-5. Extract diagnostic triplets.
-6. Optionally run advisory validation/coverage/grounding/refinement agents.
-7. Review triplets and export the final ontology JSON.
+The current system is designed for manual, operator-assisted processing of one technical maintenance manual at a time. It is not documented here as a batch-processing tool.
 
-## Documentation Guide
+The extracted knowledge graph is ontology-first and targets these node families:
 
-- [paper_architecture.md](paper_architecture.md): primary technical reference for the current implemented architecture.
-- [specification.md](specification.md): product and workflow specification, including UI flow and API behavior.
-- [roadmap_agentic.md](roadmap_agentic.md): implementation roadmap, benchmark notes, and open research/engineering work.
-- [multi_agent_architecture.md](multi_agent_architecture.md): historical design/specification notes from the original multi-agent architecture planning.
+- `Asset`
+- `Component`
+- `Symptom`
+- `FailureMode`
+- `CorrectiveAction`
+- `ErrorCode`
 
-## Repository Layout
+The allowed schema and required properties are defined in `ontology_schema.JSON`.
 
-- `backend/`: FastAPI app, agents, workflows, graph-state management, ontology pipeline, services.
-- `frontend/`: current browser UI.
-- `tests/`: backend and frontend regression coverage.
-- `manuals/`: local input manuals used during development and benchmarking.
-- `benchmark_runs/`: saved benchmark outputs and inspection artifacts.
+### Runtime Model
 
-## Quick Start
+- Backend: FastAPI
+- Frontend: static browser UI served by the backend
+- Input source: PDFs placed locally in `manuals/`
+- Runtime workspace: `data/`
+- Export destination: `output/latest/` and `output/<manual_slug>/`
 
-Requirements:
-- Python environment with project dependencies installed
-- `OPENAI_API_KEY` in `.env`
+The current default execution mode is `multi_agent`, configured in `config.yaml`. In practice, the operator still follows the same staged UI flow while backend execution is routed through the current agent wrappers and state tracking.
 
-Run the app:
+### Operator Workflow
 
-```bash
-./run.sh
+The current shipped workflow is:
+
+1. Select a manual from the local `manuals/` directory.
+2. Provide the page offset when printed manual numbering does not start at PDF page 1.
+3. Run document scoping to produce a cut plan.
+4. Review and approve or edit the selected sections.
+5. Generate an ontology draft from the approved pages.
+6. Review required ontology fields, graph issues, and suggested relations.
+7. Continue to triplet extraction.
+8. Validate or skip extracted triplets.
+9. Export the final ontology JSON bundle.
+
+### Current Review Surfaces
+
+Before extraction, the ontology review stage can expose:
+
+- blocking schema issues
+- required human input fields
+- suggested relations
+- graph reasoning diagnostics
+- confidence and supervisor diagnostics when enabled
+
+The operator-facing path is still centered on required input and final triplet validation.
+
+### Outputs
+
+Each successful export writes:
+
+- `output/latest/ontology.json`
+- `output/latest/metrics.json`
+- `output/<manual_slug>/ontology.json`
+- `output/<manual_slug>/metrics.json`
+
+The exported ontology is normalized and validated against the current contract before being written.
+
+### Graph Editor
+
+After an export is available, the latest ontology can be inspected in the browser at:
+
+```text
+http://127.0.0.1:8000/graph-editor/latest
 ```
 
-The frontend is served on `http://127.0.0.1:8000`.
+### Current Repository Policy
 
-## Test Commands
+- Sample manuals are not included in the repository.
+- Runtime outputs, local manuals, benchmarks, and installed dependencies are intentionally excluded from version control.
+- The root `README.md` is the canonical high-level description of the current repository state.
 
-Focused multi-agent regression tests:
+## Requirements
+
+- Python 3.11+
+- An OpenAI API key
+- Local PDF manuals to process
+
+## Setup
+
+1. Create the environment file:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit `.env` and set `OPENAI_API_KEY`.
+
+3. Place one or more PDF manuals in `manuals/`.
+
+4. Start the application:
+
+   ```bash
+   ./run.sh
+   ```
+
+The script creates `.venv` if needed, installs Python dependencies when missing, and starts the server on `http://127.0.0.1:8000`.
+
+## Tests
+
+Run the backend test suite with:
 
 ```bash
-python3 -m pytest tests/test_multi_agent_state.py tests/test_multi_agent_mode_flow.py
+python3 -m pytest
 ```
 
-Broader backend checks can be run from the repo root with `pytest`.
+Frontend end-to-end tests use Playwright:
 
-## Publication Notes
-
-For paper writing and public repo framing:
-- use `paper_architecture.md` for implementation claims,
-- use `roadmap_agentic.md` for future work and current limitations,
-- avoid citing `multi_agent_architecture.md` as the source of truth for what is already implemented.
+```bash
+npm install
+npx playwright test
+```

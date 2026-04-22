@@ -125,7 +125,6 @@ def reload_config() -> dict:
     return load_config()
 
 
-# In-memory overrides applied by the frontend without touching config.yaml.
 _runtime_overrides: dict = {}
 
 

@@ -12,11 +12,8 @@ from backend.services.ontology_export_store import (
     prepare_exported_ontology,
 )
 from backend.services.legacy_ontology_migration import migrate_legacy_ontology
-from .config import LEGACY_ONTOLOGY_PATH, ONTOLOGY_PATH
+from .config import ONTOLOGY_PATH
 
-# ---------------------------------------------------------------------------
-# In-memory working state
-# ---------------------------------------------------------------------------
 _working_ontology: Optional[Dict[str, Any]] = None
 _has_unsaved_changes: bool = False
 
@@ -33,8 +30,6 @@ def _resolve_read_path(path: Path | None = None) -> Path:
     candidate = path or ONTOLOGY_PATH
     if candidate.exists():
         return candidate
-    if path is None and LEGACY_ONTOLOGY_PATH.exists():
-        return LEGACY_ONTOLOGY_PATH
     raise FileNotFoundError(f"Ontology JSON non trovato in {candidate}")
 
 
