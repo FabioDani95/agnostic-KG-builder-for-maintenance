@@ -11,7 +11,11 @@ from backend.models import (
     Symptom, FailureMode, CorrectiveAction, Triplet,
     ExtractionResult, Severity,
 )
-from backend.prompts.extraction_prompt import build_existing_id_catalog_block, build_extraction_prompt
+from backend.prompts.extraction_prompt import (
+    build_existing_id_catalog_block,
+    build_extraction_prompt,
+    build_seed_rows_block,
+)
 from backend.app_config import get_scoping_config, get_extraction_config
 from backend.services.llm_guardrails import (
     enforce_llm_limits,
@@ -112,6 +116,7 @@ def call_openai(
         source_type,
         source_title,
         existing_id_catalog_block=build_existing_id_catalog_block(ontology_draft),
+        seed_rows_block=build_seed_rows_block(ontology_draft),
     )
 
     # Build user message: section context header + page text
@@ -356,7 +361,15 @@ def _normalize_action_against_source(
 def _filter_extraction_result_by_source_support(
     result: ExtractionResult,
     page_text_by_page: dict[int, str],
+    *,
+    drop_incomplete: bool = True,
 ) -> tuple[ExtractionResult, dict]:
+    """Drop CorrectiveActions not supported by their cited source page.
+
+    `drop_incomplete` controls whether a triplet left without a valid
+    CorrectiveAction after pruning is discarded (legacy behaviour, default) or
+    kept for downstream cross-chunk reconciliation.
+    """
     filtered_triplets: list[Triplet] = []
     total_actions = 0
     dropped_actions = 0
@@ -371,11 +384,14 @@ def _filter_extraction_result_by_source_support(
                 continue
             normalized_actions.append(normalized)
 
-        cleaned = _clean_triplet(Triplet(
-            symptom=triplet.symptom,
-            failure_modes=triplet.failure_modes,
-            corrective_actions=normalized_actions,
-        ))
+        cleaned = _clean_triplet(
+            Triplet(
+                symptom=triplet.symptom,
+                failure_modes=triplet.failure_modes,
+                corrective_actions=normalized_actions,
+            ),
+            require_complete=drop_incomplete,
+        )
         if cleaned is not None:
             filtered_triplets.append(cleaned)
 
@@ -503,7 +519,16 @@ def _find_matching_action(
     return None
 
 
-def _clean_triplet(triplet: Triplet) -> Triplet | None:
+def _clean_triplet(triplet: Triplet, *, require_complete: bool = True) -> Triplet | None:
+    """Prune invalid FailureModes and CorrectiveActions from a triplet.
+
+    When `require_complete=True` (default, preserves legacy per-chunk and merge
+    semantics), a triplet that ends up without BOTH a valid FailureMode AND a
+    valid CorrectiveAction is dropped. When `require_complete=False`, a triplet
+    survives as long as it retains at least one valid FailureMode OR one valid
+    CorrectiveAction — useful across chunk boundaries where a Symptom may be
+    introduced in one chunk and its corrective procedure may live in another.
+    """
     valid_failure_modes: list[FailureMode] = []
     valid_actions: list[CorrectiveAction] = []
     kept_failure_mode_ids: set[str] = set()
@@ -519,7 +544,10 @@ def _clean_triplet(triplet: Triplet) -> Triplet | None:
         kept_failure_mode_ids.add(failure_mode.failure_mode_id)
 
     for action in triplet.corrective_actions:
-        if action.linked_failure_mode_id not in kept_failure_mode_ids:
+        linked_id = action.linked_failure_mode_id
+        link_unresolved = bool(linked_id) and linked_id not in kept_failure_mode_ids
+        if require_complete and link_unresolved:
+            # Strict mode: drop any CA whose linked FailureMode did not survive.
             continue
         if not is_corrective_action_candidate(
             action.name,
@@ -529,8 +557,12 @@ def _clean_triplet(triplet: Triplet) -> Triplet | None:
             continue
         valid_actions.append(action)
 
-    if not valid_failure_modes or not valid_actions:
-        return None
+    if require_complete:
+        if not valid_failure_modes or not valid_actions:
+            return None
+    else:
+        if not valid_failure_modes and not valid_actions:
+            return None
 
     cleaned_symptom = triplet.symptom.model_copy(deep=True)
     cleaned_symptom.name = cleaned_symptom.name.strip()
@@ -539,6 +571,85 @@ def _clean_triplet(triplet: Triplet) -> Triplet | None:
         symptom=cleaned_symptom,
         failure_modes=valid_failure_modes,
         corrective_actions=valid_actions,
+    )
+
+
+def _promote_misclassified_failure_modes(result: ExtractionResult) -> ExtractionResult:
+    """Rescue FailureModes that are actually observations.
+
+    If a FailureMode fails `is_failure_mode_candidate` but reads like an
+    observation (matches the Symptom heuristic), promote it into the Symptom
+    list attached to the same parent Symptom — so coverage is preserved instead
+    of being silently dropped downstream by `_clean_triplet`.
+
+    Corrective actions whose only linked FailureMode was promoted are re-linked
+    to the synthesised Symptom via an empty `linked_failure_mode_id` so that
+    cross-chunk reconciliation can still pair them with a real FailureMode
+    when one exists.
+    """
+    from backend.services.ontology_semantics import _OBSERVATION_RE  # local import keeps module boundary clean
+
+    new_triplets: list[Triplet] = []
+    for triplet in result.triplets:
+        kept_fms: list[FailureMode] = []
+        promoted_fm_ids: set[str] = set()
+        promoted_symptoms: list[Symptom] = []
+        parent_symptom = triplet.symptom
+        parent_severity = parent_symptom.severity if parent_symptom else Severity.MEDIUM
+
+        for fm in triplet.failure_modes:
+            is_valid = is_failure_mode_candidate(fm.name, fm.description, fm.material_context)
+            if is_valid:
+                kept_fms.append(fm)
+                continue
+            combined = f"{fm.name} {fm.description} {fm.material_context}".strip()
+            if combined and _OBSERVATION_RE.search(combined):
+                promoted_fm_ids.add(fm.failure_mode_id)
+                promoted_symptoms.append(Symptom(
+                    symptom_id=fm.failure_mode_id or "",
+                    name=(fm.name or "").strip(),
+                    description=(fm.description or fm.name or "").strip(),
+                    severity=parent_severity,
+                    evidence_page=fm.evidence_page,
+                ))
+
+        if not promoted_fm_ids and not promoted_symptoms:
+            new_triplets.append(triplet)
+            continue
+
+        fixed_actions: list[CorrectiveAction] = []
+        for action in triplet.corrective_actions:
+            if action.linked_failure_mode_id in promoted_fm_ids:
+                updated = action.model_copy(deep=True)
+                updated.linked_failure_mode_id = ""
+                fixed_actions.append(updated)
+            else:
+                fixed_actions.append(action)
+
+        new_triplets.append(Triplet(
+            symptom=parent_symptom,
+            failure_modes=kept_fms,
+            corrective_actions=fixed_actions,
+        ))
+
+        for promoted in promoted_symptoms:
+            new_triplets.append(Triplet(
+                symptom=promoted,
+                failure_modes=[],
+                corrective_actions=[],
+            ))
+
+    if len(new_triplets) == len(result.triplets):
+        return result
+    logger.info(
+        "[extraction] Promoted %d observation-like FailureMode(s) to Symptoms",
+        len(new_triplets) - len(result.triplets),
+    )
+    return ExtractionResult(
+        triplets=new_triplets,
+        raw_symptom_table=result.raw_symptom_table,
+        raw_failure_mode_table=result.raw_failure_mode_table,
+        raw_corrective_action_table=result.raw_corrective_action_table,
     )
 
 
@@ -585,12 +696,70 @@ def _split_page_chunks(pages: list[dict], max_pages: int, overlap: int, max_char
     return chunks
 
 
+def _find_global_failure_mode_for_action(
+    buckets: OrderedDict[tuple[str, str], dict],
+    action: CorrectiveAction,
+) -> tuple[tuple[str, str], tuple[str, str, str]] | None:
+    """Best-effort cross-chunk lookup: find a FailureMode bucket whose text is
+    semantically close to the CorrectiveAction's own name/description/steps.
+
+    Returns (sym_key, fm_key) when a confident match exists; otherwise None.
+    Used when a CA references a `linked_failure_mode_id` that was emitted in a
+    different chunk and cannot be resolved locally.
+    """
+    action_text = " ".join([
+        str(action.name or ""),
+        str(action.description or ""),
+        " ".join(informative_instruction_steps(action.instruction_text or "")),
+    ]).strip()
+    if not action_text:
+        return None
+    action_tokens = set(semantic_tokens(action_text))
+    if len(action_tokens) < 2:
+        return None
+
+    best_match: tuple[float, tuple[str, str], tuple[str, str, str]] | None = None
+    for sym_key, bucket in buckets.items():
+        for fm_key, fm_bucket in bucket["failure_modes"].items():
+            fm = fm_bucket["failure_mode"]
+            fm_text = f"{fm.name} {fm.description} {fm.material_context}".strip()
+            fm_tokens = set(semantic_tokens(fm_text))
+            if not fm_tokens:
+                continue
+            shared = action_tokens & fm_tokens
+            if not shared:
+                continue
+            overlap = len(shared) / max(1, min(len(action_tokens), len(fm_tokens)))
+            if overlap < 0.5:
+                continue
+            if best_match is None or overlap > best_match[0]:
+                best_match = (overlap, sym_key, fm_key)
+
+    if best_match is None:
+        return None
+    return best_match[1], best_match[2]
+
+
 def _merge_extraction_results(results: list[ExtractionResult]) -> ExtractionResult:
+    """Reconcile per-chunk extraction results into a single consolidated result.
+
+    Policy:
+    - Orphan Symptoms (no FM, no CA) are preserved when they survive cleanup
+      via the relaxed `_clean_triplet` path. They are still dropped here because
+      a standalone Symptom carries no diagnostic value on its own.
+    - Symptoms with at least one valid FailureMode OR at least one valid
+      CorrectiveAction survive, enabling cross-chunk coverage when the Symptom
+      lives in chunk A and its repair procedure lives in chunk B.
+    - CorrectiveActions whose `linked_failure_mode_id` cannot be resolved
+      inside their originating chunk are attempted against the global FM pool
+      via semantic similarity before being discarded.
+    """
     merged: OrderedDict[tuple[str, str], dict] = OrderedDict()
+    deferred_actions: list[tuple[CorrectiveAction, tuple[str, str] | None]] = []
 
     for result in results:
         for triplet in result.triplets:
-            cleaned_triplet = _clean_triplet(triplet)
+            cleaned_triplet = _clean_triplet(triplet, require_complete=False)
             if cleaned_triplet is None:
                 continue
 
@@ -635,8 +804,9 @@ def _merge_extraction_results(results: list[ExtractionResult]) -> ExtractionResu
                 fm_key_by_id[failure_mode.failure_mode_id] = fm_key
 
             for action in cleaned_triplet.corrective_actions:
-                fm_key = fm_key_by_id.get(action.linked_failure_mode_id)
+                fm_key = fm_key_by_id.get(action.linked_failure_mode_id) if action.linked_failure_mode_id else None
                 if fm_key is None:
+                    deferred_actions.append((action.model_copy(deep=True), sym_key))
                     continue
                 ca_key = _corrective_action_key(action)
                 action_bucket = bucket["failure_modes"][fm_key]["corrective_actions"]
@@ -646,12 +816,42 @@ def _merge_extraction_results(results: list[ExtractionResult]) -> ExtractionResu
                     continue
                 action_bucket[ca_key] = action.model_copy(deep=True)
 
+    # Second pass: try to re-attach CAs whose link was not resolvable within a
+    # single chunk (cross-chunk reconciliation).
+    unresolved_action_count = 0
+    for action, origin_sym_key in deferred_actions:
+        target = _find_global_failure_mode_for_action(merged, action)
+        if target is None:
+            unresolved_action_count += 1
+            continue
+        target_sym_key, target_fm_key = target
+        action_bucket = merged[target_sym_key]["failure_modes"][target_fm_key]["corrective_actions"]
+        match_key = _find_matching_action(action_bucket, action)
+        if match_key is not None:
+            _merge_corrective_action_fields(action_bucket[match_key], action)
+            continue
+        action_bucket[_corrective_action_key(action)] = action
+    if deferred_actions:
+        logger.info(
+            "[extraction] Cross-chunk CA reconciliation: %d/%d deferred action(s) reattached",
+            len(deferred_actions) - unresolved_action_count,
+            len(deferred_actions),
+        )
+
     triplets: list[Triplet] = []
     symptom_index = 1
     failure_mode_index = 1
     action_index = 1
 
     for bucket in merged.values():
+        has_fm = bool(bucket["failure_modes"])
+        has_any_action = any(
+            fm_bucket["corrective_actions"]
+            for fm_bucket in bucket["failure_modes"].values()
+        )
+        if not has_fm and not has_any_action:
+            continue
+
         symptom = bucket["symptom"].model_copy(deep=True)
         symptom.symptom_id = _format_id("SYM", symptom_index)
         symptom_index += 1
@@ -777,7 +977,12 @@ def extract_triplets_chunked(
         )
         usage_entries.append(usage)
         parsed = parse_extraction(raw_response, source_type, source_title)
-        parsed = _filter_extraction_result_by_source_support(parsed, page_text_by_page)
+        parsed = _promote_misclassified_failure_modes(parsed)
+        parsed = _filter_extraction_result_by_source_support(
+            parsed,
+            page_text_by_page,
+            drop_incomplete=False,
+        )
         triplet_count = len(parsed.triplets)
         logger.info(
             "[extraction] Chunk %d/%d pages=%s-%s → %d triplet(s)",

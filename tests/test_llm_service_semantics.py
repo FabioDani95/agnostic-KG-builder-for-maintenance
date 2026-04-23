@@ -125,7 +125,9 @@ class LlmServiceSemanticMergeTests(unittest.TestCase):
         merged = _merge_extraction_results([noisy])
         self.assertEqual(merged.triplets, [])
 
-    def test_merge_extraction_results_drops_incomplete_triads(self):
+    def test_merge_extraction_results_keeps_symptom_plus_failure_mode_without_action(self):
+        """Symptom + FailureMode without CorrectiveAction is kept for cross-chunk
+        reconciliation — the CA may live in another chunk and be matched later."""
         incomplete = _result_from_triplets(Triplet(
             symptom=Symptom(
                 symptom_id="SYM-001",
@@ -146,7 +148,81 @@ class LlmServiceSemanticMergeTests(unittest.TestCase):
         ))
 
         merged = _merge_extraction_results([incomplete])
+        self.assertEqual(len(merged.triplets), 1)
+        self.assertEqual(len(merged.triplets[0].failure_modes), 1)
+        self.assertEqual(merged.triplets[0].corrective_actions, [])
+
+    def test_merge_extraction_results_drops_symptom_without_failure_mode_and_action(self):
+        """A bare Symptom with neither FailureMode nor CorrectiveAction is
+        dropped — it carries no diagnostic value on its own."""
+        lonely = _result_from_triplets(Triplet(
+            symptom=Symptom(
+                symptom_id="SYM-001",
+                name="System does not start",
+                description="The control box has no power.",
+                severity=Severity.HIGH,
+            ),
+            failure_modes=[],
+            corrective_actions=[],
+        ))
+
+        merged = _merge_extraction_results([lonely])
         self.assertEqual(merged.triplets, [])
+
+    def test_merge_extraction_results_cross_chunk_action_reconciliation(self):
+        """CorrectiveActions emitted in a different chunk (where the FailureMode
+        ID is unknown) can still be re-attached to the matching FailureMode via
+        semantic matching across the global pool."""
+        chunk_a = _result_from_triplets(Triplet(
+            symptom=Symptom(
+                symptom_id="SYM-001",
+                name="USB communication error",
+                description="USB communication error has occurred.",
+                severity=Severity.MEDIUM,
+            ),
+            failure_modes=[
+                FailureMode(
+                    failure_mode_id="FM-001",
+                    name="USB cable connection fault",
+                    description="USB cable connection is not properly connected.",
+                    material_context="DSQC 662 USB connection",
+                    linked_symptom_id="SYM-001",
+                ),
+            ],
+            corrective_actions=[],
+        ))
+        # The second chunk's CA references a FailureMode ID that doesn't exist
+        # in its own triplet scope; the merge should still rescue it.
+        chunk_b = _result_from_triplets(Triplet(
+            symptom=Symptom(
+                symptom_id="SYM-009",
+                name="USB communication error",
+                description="USB communication error during operation.",
+                severity=Severity.MEDIUM,
+            ),
+            failure_modes=[],
+            corrective_actions=[
+                CorrectiveAction(
+                    action_id="CA-014",
+                    name="Reconnect USB cable to DSQC 662",
+                    description="Reconnect the USB cable to DSQC 662.",
+                    instruction_text="1. Reconnect the USB cable to DSQC 662.",
+                    source_type="Operating manual",
+                    source_title="IRC5",
+                    source_page=80,
+                    linked_failure_mode_id="FM-UNKNOWN",
+                ),
+            ],
+        ))
+
+        merged = _merge_extraction_results([chunk_a, chunk_b])
+        self.assertEqual(len(merged.triplets), 1)
+        self.assertEqual(len(merged.triplets[0].failure_modes), 1)
+        self.assertEqual(len(merged.triplets[0].corrective_actions), 1)
+        self.assertEqual(
+            merged.triplets[0].corrective_actions[0].linked_failure_mode_id,
+            merged.triplets[0].failure_modes[0].failure_mode_id,
+        )
 
     def test_filter_extraction_result_by_source_support_trims_unsupported_steps(self):
         result = _result_from_triplets(Triplet(

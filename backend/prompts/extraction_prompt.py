@@ -33,6 +33,21 @@ Analyze the provided technical text and extract all diagnostic information into 
   - "Check the cable connection"
   - "Alarm C4A0 is displayed"
 
+### SELF-CLASSIFICATION (why_failure_mode column)
+- For EVERY FailureMode row you emit, the `why_failure_mode` column MUST explicitly name:
+  (component_or_subsystem) + (stative_condition).
+- Template: "<component_or_subsystem>: <stative condition>".
+- If you cannot fill both halves from the source, the row is NOT a FailureMode — OMIT it
+  or keep it as a Symptom instead.
+- Examples of correct `why_failure_mode` values:
+  - "ATC pneumatic solenoid valve: stuck open"
+  - "Spindle orient parameter P4031: misconfigured"
+  - "Polycarbonate window pane: cracked by impact"
+- Examples of INVALID `why_failure_mode` values (these reveal a miscategorised row):
+  - "tool changer: hung up"  ← this is an observation, not a stative cause
+  - "alarm: displayed"       ← this is an observation
+  - "verification: failed"   ← this is a procedural outcome
+
 ### CONTRAST EXAMPLES (how a FailureMode differs from a Symptom)
 - Symptom (observable event):  "The tool changer gets hung up."
   FailureMode (stative cause): "Pneumatic solenoid valve stuck open on ATC circuit."
@@ -76,6 +91,8 @@ Analyze the provided technical text and extract all diagnostic information into 
 
 {existing_id_catalog_block}
 
+{seed_rows_block}
+
 ### Severity Values (for Symptoms)
 - Low
 - Medium
@@ -85,21 +102,45 @@ Analyze the provided technical text and extract all diagnostic information into 
 ### Relationships
 - One Symptom may correspond to multiple FailureModes.
 - One FailureMode may require multiple CorrectiveActions.
+- A Symptom MAY appear without an accompanying FailureMode or CorrectiveAction when the text
+  describes the symptom only (e.g. diagnostic index chapters). Emit it anyway — downstream
+  passes will reconcile cross-chunk linkages.
 
 ### Scope Consistency Rules
 - Keep the extraction at the same asset scope indicated by the provided source_title.
 - Do NOT broaden a controller/control-box procedure into a whole robot-system failure unless the text explicitly states the broader scope.
 
+## FEW-SHOT EXAMPLES (illustrative — do NOT copy verbatim into your output)
+
+### Example Symptoms
+| symptom_id | name | description | severity | evidence_page |
+|---|---|---|---|---|
+| SYM-EX1 | Tool changer gets hung up | ATC fails to complete the tool change cycle. | High | 12 |
+| SYM-EX2 | Alarm C0330 displayed | Control panel shows alarm code C0330 during startup. | Medium | 42 |
+
+### Example FailureModes
+| failure_mode_id | name | description | material_context | linked_symptom_id | evidence_page | why_failure_mode |
+|---|---|---|---|---|---|---|
+| FM-EX1 | Solenoid valve stuck open | ATC pneumatic solenoid valve fails in the open position, preventing the cycle from sequencing correctly. | ATC pneumatic circuit | SYM-EX1 | 13 | ATC pneumatic solenoid valve: stuck open |
+| FM-EX2 | Spindle orient parameter misconfigured | Parameter P4031 has reverted to default after a control reload, causing an orientation fault at startup. | Spindle control parameter P4031 | SYM-EX2 | 43 | Spindle orient parameter P4031: misconfigured |
+
+### Example CorrectiveActions
+| action_id | name | description | instruction_text | source_type | source_title | source_page | linked_failure_mode_id |
+|---|---|---|---|---|---|---|---|
+| CA-EX1 | Replace solenoid valve | Replace the ATC pneumatic solenoid valve and verify cycle. | 1. Power off the ATC circuit. 2. Disconnect the pneumatic line. 3. Replace the solenoid valve. 4. Reconnect and cycle the tool changer once to verify. | {source_type} | {source_title} | 14 | FM-EX1 |
+
 ## OUTPUT FORMAT
 Return EXACTLY three Markdown tables, in this order, with NO additional text or commentary.
+Do NOT include the rows with IDs prefixed by "EX" from the examples above — those are
+illustrative only.
 
 ### Table 1: Symptoms
 | symptom_id | name | description | severity | evidence_page |
 |---|---|---|---|---|
 
 ### Table 2: FailureModes
-| failure_mode_id | name | description | material_context | linked_symptom_id | evidence_page |
-|---|---|---|---|---|---|
+| failure_mode_id | name | description | material_context | linked_symptom_id | evidence_page | why_failure_mode |
+|---|---|---|---|---|---|---|
 
 ### Table 3: CorrectiveActions
 | action_id | name | description | instruction_text | source_type | source_title | source_page | linked_failure_mode_id |
@@ -115,11 +156,13 @@ def build_extraction_prompt(
     source_type: str,
     source_title: str,
     existing_id_catalog_block: str = "",
+    seed_rows_block: str = "",
 ) -> str:
     return SYSTEM_PROMPT_TEMPLATE.format(
         source_type=source_type,
         source_title=source_title,
         existing_id_catalog_block=existing_id_catalog_block,
+        seed_rows_block=seed_rows_block,
     )
 
 
@@ -165,3 +208,134 @@ def build_existing_id_catalog_block(
         "sequential ID (SYM-NNN, FM-NNN, CA-NNN) when no existing entity matches.\n"
         + "\n".join(sections)
     )
+
+
+def _escape_cell(value: object) -> str:
+    """Make a value safe to render inside a Markdown table cell."""
+    text = str(value or "").replace("\r", " ").replace("\n", " ").replace("|", "/")
+    text = " ".join(text.split())
+    return text.strip()
+
+
+def _render_markdown_row(cells: list[str]) -> str:
+    return "| " + " | ".join(cells) + " |"
+
+
+def build_seed_rows_block(
+    ontology_draft: dict | None,
+    *,
+    max_entries_per_type: int = 40,
+) -> str:
+    """Render the ontology draft's Symptoms/FailureModes/CorrectiveActions as
+    pre-filled Markdown table rows ("seed rows").
+
+    These rows are injected into the extraction prompt as a validated baseline.
+    The LLM is instructed to EXTEND this baseline with any new findings from the
+    chunk text and to REUSE IDs/classifications rather than re-classify existing
+    entities. This keeps the triplet-extraction pass aligned with the
+    type-decisions already made during the ontology-draft pass.
+    """
+    if not ontology_draft or not isinstance(ontology_draft, dict):
+        return ""
+    nodes = ontology_draft.get("nodes") or {}
+
+    symptom_rows: list[str] = []
+    for item in (nodes.get("Symptom") or [])[:max_entries_per_type]:
+        if not isinstance(item, dict):
+            continue
+        entity_id = _escape_cell(item.get("symptom_id"))
+        name = _escape_cell(item.get("name"))
+        if not entity_id or not name:
+            continue
+        description = _escape_cell(item.get("description"))
+        severity = _escape_cell(item.get("severity") or "Medium")
+        evidence_page = _escape_cell(
+            item.get("evidence_page") or item.get("source_page") or ""
+        )
+        symptom_rows.append(_render_markdown_row([
+            entity_id, name, description, severity, evidence_page,
+        ]))
+
+    failure_rows: list[str] = []
+    for item in (nodes.get("FailureMode") or [])[:max_entries_per_type]:
+        if not isinstance(item, dict):
+            continue
+        entity_id = _escape_cell(item.get("failure_mode_id"))
+        name = _escape_cell(item.get("name"))
+        if not entity_id or not name:
+            continue
+        description = _escape_cell(item.get("description"))
+        material_context = _escape_cell(item.get("material_context"))
+        linked_symptom_id = _escape_cell(item.get("linked_symptom_id"))
+        evidence_page = _escape_cell(item.get("evidence_page") or "")
+        why = _escape_cell(
+            item.get("why_failure_mode")
+            or (f"{material_context}: {description}" if material_context else description)
+        )
+        failure_rows.append(_render_markdown_row([
+            entity_id, name, description, material_context,
+            linked_symptom_id, evidence_page, why,
+        ]))
+
+    action_rows: list[str] = []
+    for item in (nodes.get("CorrectiveAction") or [])[:max_entries_per_type]:
+        if not isinstance(item, dict):
+            continue
+        entity_id = _escape_cell(item.get("action_id"))
+        name = _escape_cell(item.get("name"))
+        if not entity_id or not name:
+            continue
+        description = _escape_cell(item.get("description"))
+        instruction_text = _escape_cell(item.get("instruction_text"))
+        source_type = _escape_cell(item.get("source_type"))
+        source_title = _escape_cell(item.get("source_title"))
+        source_page = _escape_cell(item.get("source_page") or "")
+        linked_failure_mode_id = _escape_cell(item.get("linked_failure_mode_id"))
+        action_rows.append(_render_markdown_row([
+            entity_id, name, description, instruction_text,
+            source_type, source_title, source_page, linked_failure_mode_id,
+        ]))
+
+    if not (symptom_rows or failure_rows or action_rows):
+        return ""
+
+    lines: list[str] = [
+        "## PRE-VALIDATED ROWS FROM ONTOLOGY DRAFT (extend — do NOT reclassify)",
+        "The rows below were already produced by the ontology-draft pass and passed its "
+        "type/semantic checks. Treat them as a RECALL FLOOR and the GROUND TRUTH for "
+        "type assignment:",
+        "- Do NOT demote a pre-validated FailureMode to a Symptom or vice versa.",
+        "- Reuse their IDs verbatim when the same concept reappears in this chunk.",
+        "- Emit each pre-validated row in your output tables UNMODIFIED, then ADD new "
+        "rows you discover in the chunk text (using fresh sequential IDs that do not "
+        "collide with the IDs above).",
+        "- When writing a new FailureMode, you MAY use a pre-validated Component as "
+        "material_context even if that Component is not mentioned in this chunk.",
+        "",
+    ]
+    if symptom_rows:
+        lines.append("### Seed Symptoms")
+        lines.append("| symptom_id | name | description | severity | evidence_page |")
+        lines.append("|---|---|---|---|---|")
+        lines.extend(symptom_rows)
+        lines.append("")
+    if failure_rows:
+        lines.append("### Seed FailureModes")
+        lines.append(
+            "| failure_mode_id | name | description | material_context | "
+            "linked_symptom_id | evidence_page | why_failure_mode |"
+        )
+        lines.append("|---|---|---|---|---|---|---|")
+        lines.extend(failure_rows)
+        lines.append("")
+    if action_rows:
+        lines.append("### Seed CorrectiveActions")
+        lines.append(
+            "| action_id | name | description | instruction_text | "
+            "source_type | source_title | source_page | linked_failure_mode_id |"
+        )
+        lines.append("|---|---|---|---|---|---|---|---|")
+        lines.extend(action_rows)
+        lines.append("")
+
+    return "\n".join(lines).rstrip()
