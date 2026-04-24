@@ -29,19 +29,23 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
         "type": "function",
         "function": {
             "name": "edit_cut_plan",
-            "description": "Modify the proposed section selection before approval. Use when the user adds, removes, or renames a section.",
+            "description": (
+                "Modify the proposed section selection before approval. Use when the user adds, removes, or renames a section. "
+                "IMPORTANT: to add a section you MUST know both start_page and end_page (absolute PDF page numbers, 1-indexed, >=1 and <= total_pages). "
+                "If the user gives only a section name without a page range, DO NOT call this tool — ask the user for the page range first."
+            ),
             "parameters": {
                 "type": "object",
                 "properties": {
                     "add_sections": {
                         "type": "array",
-                        "description": "Sections to add.",
+                        "description": "Sections to add. Each entry requires a real page range; do not use 0 or placeholder values.",
                         "items": {
                             "type": "object",
                             "properties": {
                                 "name": {"type": "string"},
-                                "start_page": {"type": "integer"},
-                                "end_page": {"type": "integer"},
+                                "start_page": {"type": "integer", "minimum": 1},
+                                "end_page": {"type": "integer", "minimum": 1},
                             },
                             "required": ["name", "start_page", "end_page"],
                         },
@@ -1101,41 +1105,91 @@ async def _edit_cut_plan(args, store, on_event):
     cut_plan = store.get("cut_plan") or {}
     sections = list(cut_plan.get("sections") or [])
 
+    total_pages = int(
+        cut_plan.get("total_pages")
+        or (store.get("graph_state") or {}).get("total_pages")
+        or len(store.get("pages") or [])
+        or 0
+    )
+
     remove_names = {n.lower() for n in (args.get("remove_section_names") or [])}
     if remove_names:
         sections = [s for s in sections if s.get("name", "").lower() not in remove_names]
 
+    rejected_adds: list[dict[str, Any]] = []
+    accepted_adds: list[dict[str, Any]] = []
     for new_sec in (args.get("add_sections") or []):
-        sections.append({
-            "name": new_sec["name"],
-            "start": new_sec["start_page"],
-            "end": new_sec["end_page"],
+        name = str(new_sec.get("name") or "").strip()
+        try:
+            start = int(new_sec.get("start_page"))
+            end = int(new_sec.get("end_page"))
+        except (TypeError, ValueError):
+            start = end = 0
+        reason = None
+        if not name:
+            reason = "missing section name"
+        elif start <= 0 or end <= 0:
+            reason = "missing or invalid page range (start_page and end_page must be >= 1)"
+        elif end < start:
+            reason = f"end_page ({end}) is smaller than start_page ({start})"
+        elif total_pages and (start > total_pages or end > total_pages):
+            reason = f"page range {start}-{end} exceeds total_pages ({total_pages})"
+
+        if reason:
+            rejected_adds.append({"name": name or "(unnamed)", "start": start, "end": end, "reason": reason})
+            continue
+
+        accepted_adds.append({
+            "name": name,
+            "start": start,
+            "end": end,
             "source": "human",
         })
 
+    sections.extend(accepted_adds)
+
+    if rejected_adds and not accepted_adds and not remove_names:
+        details = "; ".join(f"{r['name']} ({r['reason']})" for r in rejected_adds)
+        return {
+            "status": "refused",
+            "widget": "sections",
+            "sections": _visible_sections_for_widget(sections),
+            "pages_to_keep": cut_plan.get("pages_to_keep") or [],
+            "total_pages": total_pages,
+            "keyword_fallback_sections": len(sections) - len(_visible_sections_for_widget(sections)),
+            "product_info": cut_plan.get("product_info"),
+            "rejected_adds": rejected_adds,
+            "message": (
+                f"I couldn't add the section(s) because: {details}. "
+                "Please tell me the absolute PDF page range (e.g. \"Errors, pages 42 to 58\") and I'll retry."
+            ),
+        }
+
     cut_plan["sections"] = sections
-    # Recompute pages_to_keep from sections
     pages_to_keep = set()
     for sec in sections:
-        pages_to_keep.update(range(sec["start"], sec["end"] + 1))
+        pages_to_keep.update(range(int(sec["start"]), int(sec["end"]) + 1))
     cut_plan["pages_to_keep"] = sorted(pages_to_keep)
     store["cut_plan"] = cut_plan
 
-    total_pages = (
-        cut_plan.get("total_pages")
-        or (store.get("graph_state") or {}).get("total_pages")
-        or len(store.get("pages") or [])
-    )
     visible_sections = _visible_sections_for_widget(sections)
-    return {
+    payload: dict[str, Any] = {
         "status": "ok",
         "sections": visible_sections,
         "pages_to_keep": cut_plan["pages_to_keep"],
-        "total_pages": int(total_pages or 0),
+        "total_pages": total_pages,
         "keyword_fallback_sections": len(sections) - len(visible_sections),
         "product_info": cut_plan.get("product_info"),
         "widget": "sections",
     }
+    if rejected_adds:
+        details = "; ".join(f"{r['name']} ({r['reason']})" for r in rejected_adds)
+        payload["rejected_adds"] = rejected_adds
+        payload["message"] = (
+            f"Applied {len(accepted_adds)} addition(s). Skipped: {details}. "
+            "Give me the page range for the skipped section(s) to retry."
+        )
+    return payload
 
 
 async def _approve_cut_plan(args, store, on_event):
