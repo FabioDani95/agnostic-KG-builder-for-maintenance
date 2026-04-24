@@ -1179,16 +1179,22 @@ td.cell-readonly {
 
 .kpi-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 0.6rem;
-    margin-bottom: 0.8rem;
+    margin: 0.7rem 0 0.8rem;
+    padding: 0 16px;
+    box-sizing: border-box;
 }
 
 .kpi-card {
     background: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.65rem 0.75rem;
+    border-radius: 8px;
+    padding: 0.7rem 0.85rem;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
 .kpi-label {
@@ -1213,17 +1219,22 @@ td.cell-readonly {
 }
 
 .kpi-section {
-    margin-top: 0.8rem;
-    padding-top: 0.65rem;
+    margin: 0.8rem 0 0;
+    padding: 0.75rem 16px 0;
     border-top: 1px solid var(--border);
+    box-sizing: border-box;
 }
 
 .kpi-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
     font-size: 0.66rem;
     color: var(--accent);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-bottom: 0.45rem;
+    margin: 0 0 0.5rem;
     font-weight: 700;
 }
 
@@ -1235,10 +1246,14 @@ td.cell-readonly {
 
 .kpi-stage-row {
     display: grid;
-    grid-template-columns: 110px 1fr;
+    grid-template-columns: minmax(150px, 1fr) auto;
     gap: 0.75rem;
-    font-size: 0.72rem;
+    align-items: center;
+    font-size: 0.75rem;
     color: var(--text-secondary);
+    padding: 0.3rem 0.55rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .kpi-stage-name {
@@ -1246,6 +1261,81 @@ td.cell-readonly {
     font-weight: 600;
     text-transform: capitalize;
 }
+
+.kpi-section--coverage {
+    margin-top: 1rem;
+}
+
+.kpi-section-title--sub {
+    margin-top: 0.9rem;
+    color: var(--text-dim);
+}
+
+.kpi-grid--coverage {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.55rem;
+    padding: 0;
+}
+
+.kpi-card--coverage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.75rem 0.85rem;
+}
+
+.kpi-coverage-bar {
+    height: 4px;
+    width: 100%;
+    background: var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 0.2rem;
+}
+
+.kpi-coverage-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+}
+
+.kpi-card--good .kpi-coverage-bar-fill {
+    background: #22c55e;
+}
+.kpi-card--warn .kpi-coverage-bar-fill {
+    background: #f59e0b;
+}
+.kpi-card--bad .kpi-coverage-bar-fill {
+    background: #ef4444;
+}
+.kpi-card--good .kpi-value { color: #22c55e; }
+.kpi-card--warn .kpi-value { color: #f59e0b; }
+.kpi-card--bad  .kpi-value { color: #ef4444; }
+
+.kpi-health-badge {
+    margin-left: 0.5rem;
+    padding: 0.08rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: none;
+    vertical-align: middle;
+}
+.kpi-health-badge--good { background: rgba(34, 197, 94, 0.18); color: #22c55e; }
+.kpi-health-badge--warn { background: rgba(245, 158, 11, 0.18); color: #f59e0b; }
+.kpi-health-badge--bad  { background: rgba(239, 68, 68, 0.18); color: #ef4444; }
+.kpi-health-badge--neutral { background: var(--border); color: var(--text-dim); }
+
+.kpi-section-note {
+    margin-top: 0.65rem;
+    font-size: 0.7rem;
+    line-height: 1.4;
+}
+.kpi-section-note--ok { color: #22c55e; }
+.kpi-section-note--warn { color: #f59e0b; }
 
 .summary-card .btn-primary {
     width: auto;
@@ -3344,8 +3434,9 @@ details[open] > .ontology-nodes-group-head::before {
 
 .chat-widget {
     align-self: flex-start;
-    width: min(100%, 820px);
+    width: 100%;
     max-width: 100%;
+    box-sizing: border-box;
     background: rgba(22, 32, 51, 0.96);
     border: 1px solid var(--border);
     border-radius: 16px;
@@ -3508,9 +3599,13 @@ details[open] > .ontology-nodes-group-head::before {
     position: relative;
     display: flex;
     flex-direction: column;
-    min-width: min(100%, 380px);
+    width: 100%;
+    min-width: 320px;
     min-height: 220px;
+    max-width: 100%;
     max-height: 92vh;
+    resize: both;
+    overflow: hidden;
 }
 
 .chat-widget--interactive.chat-widget--resizing {
@@ -3518,10 +3613,11 @@ details[open] > .ontology-nodes-group-head::before {
 }
 
 .chat-widget-body {
-    flex: 1;
+    flex: 1 1 auto;
     min-height: 0;
+    min-width: 0;
     overflow: auto;
-    padding-bottom: 12px;
+    padding: 2px 0 12px;
     overscroll-behavior: contain;
 }
 
@@ -3542,42 +3638,7 @@ details[open] > .ontology-nodes-group-head::before {
 }
 
 .widget-resize-handle {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    width: 18px;
-    height: 18px;
-    border-radius: 6px;
-    background: linear-gradient(135deg, rgba(121, 133, 196, 0.92) 0%, rgba(242, 100, 48, 0.92) 100%);
-    box-shadow: 0 6px 12px rgba(15, 23, 42, 0.26);
-    cursor: nwse-resize;
-    touch-action: none;
-    pointer-events: none;
-    z-index: 2;
-}
-
-.widget-resize-handle span {
-    position: absolute;
-    inset: 0;
-}
-
-.widget-resize-handle span::before,
-.widget-resize-handle span::after {
-    content: "";
-    position: absolute;
-    right: 4px;
-    bottom: 4px;
-    width: 8px;
-    height: 1px;
-    background: rgba(255, 255, 255, 0.9);
-    transform: rotate(-45deg);
-    transform-origin: right center;
-}
-
-.widget-resize-handle span::after {
-    right: 6px;
-    bottom: 8px;
-    width: 6px;
+    display: none;
 }
 
 .widget-info-row {
@@ -4140,5 +4201,12 @@ details[open] > .ontology-nodes-group-head::before {
     .chat-section {
         width: 100%;
         min-width: 0;
+    }
+    .chat-widget--interactive {
+        min-width: 0;
+    }
+    .kpi-grid,
+    .kpi-grid--coverage {
+        grid-template-columns: 1fr;
     }
 }

@@ -491,15 +491,6 @@ function _decorateWidget(el) {
     _wrapWidgetBody(el);
     _applyDefaultWidgetSize(el);
     _bindWidgetScroll(el.querySelector(".chat-widget-body"));
-
-    const resizeHandle = document.createElement("div");
-    resizeHandle.className = "widget-resize-handle";
-    resizeHandle.title = "Drag to resize";
-    resizeHandle.setAttribute("aria-hidden", "true");
-    resizeHandle.innerHTML = "<span></span>";
-    el.appendChild(resizeHandle);
-
-    _bindWidgetResize(el);
 }
 
 function _wrapWidgetBody(el) {
@@ -524,9 +515,6 @@ function _wrapWidgetBody(el) {
 
 function _applyDefaultWidgetSize(el) {
     const preset = _widgetSizePreset(el);
-    if (!el.style.width && preset.width) {
-        el.style.width = `min(100%, ${preset.width}px)`;
-    }
     if (!el.style.height && preset.height) {
         el.style.height = `${preset.height}px`;
     }
@@ -579,49 +567,6 @@ function _bindWidgetScroll(body) {
     }, { passive: false });
 }
 
-function _bindWidgetResize(el) {
-    el.addEventListener("mousedown", (event) => {
-        const rect = el.getBoundingClientRect();
-        const isResizeCorner = (rect.right - event.clientX) <= 28 && (rect.bottom - event.clientY) <= 28;
-        if (!isResizeCorner || event.button !== 0) return;
-        event.preventDefault();
-
-        const startRect = rect;
-        const startX = event.clientX;
-        const startY = event.clientY;
-        const stream = _stream();
-        const maxWidth = Math.max(320, (stream?.clientWidth || window.innerWidth) - 8);
-        const minWidth = Math.min(420, maxWidth);
-        const maxHeight = Math.max(220, Math.floor(window.innerHeight * 0.92));
-        const minHeight = 220;
-
-        el.classList.add("chat-widget--resizing");
-        document.body.style.cursor = "nwse-resize";
-
-        const onMove = (moveEvent) => {
-            const nextWidth = Math.max(
-                minWidth,
-                Math.min(maxWidth, Math.round(startRect.width + (moveEvent.clientX - startX))),
-            );
-            const nextHeight = Math.max(
-                minHeight,
-                Math.min(maxHeight, Math.round(startRect.height + (moveEvent.clientY - startY))),
-            );
-            el.style.width = `${nextWidth}px`;
-            el.style.height = `${nextHeight}px`;
-        };
-
-        const stop = () => {
-            el.classList.remove("chat-widget--resizing");
-            document.body.style.cursor = "";
-            window.removeEventListener("mousemove", onMove);
-            window.removeEventListener("mouseup", stop);
-        };
-
-        window.addEventListener("mousemove", onMove);
-        window.addEventListener("mouseup", stop);
-    });
-}
 
 // ── Column resize ──────────────────────────────────────────────────────
 
@@ -1408,6 +1353,137 @@ function _runMetricsMarkup(metrics) {
         </div>
         ` : ""}
         ${_buildNodeCountTable(metrics.nodes_by_type)}
+        ${_buildGraphCoverageSection(metrics.graph_coverage)}
+    `;
+}
+
+function _formatPct(ratio) {
+    const value = Number(ratio);
+    if (!Number.isFinite(value)) return "—";
+    return `${(value * 100).toFixed(1)}%`;
+}
+
+function _coverageTone(ratio) {
+    const value = Number(ratio);
+    if (!Number.isFinite(value)) return "neutral";
+    if (value >= 0.85) return "good";
+    if (value >= 0.6) return "warn";
+    return "bad";
+}
+
+function _coverageCard(label, ratio, note) {
+    const tone = _coverageTone(ratio);
+    const pct = _formatPct(ratio);
+    const clamped = Math.max(0, Math.min(100, (Number(ratio) || 0) * 100));
+    return `
+        <div class="kpi-card kpi-card--coverage kpi-card--${tone}">
+            <div class="kpi-label">${_escapeHtml(label)}</div>
+            <div class="kpi-value">${_escapeHtml(pct)}</div>
+            <div class="kpi-coverage-bar"><div class="kpi-coverage-bar-fill" style="width:${clamped}%"></div></div>
+            <div class="kpi-note">${_escapeHtml(note || "")}</div>
+        </div>
+    `;
+}
+
+function _buildGraphCoverageSection(coverage) {
+    if (!coverage || typeof coverage !== "object") return "";
+
+    const chain = coverage.diagnostic_chain || {};
+    const fm = coverage.failure_mode_coverage || {};
+    const ca = coverage.corrective_action_coverage || {};
+    const comp = coverage.component_coverage || {};
+    const ec = coverage.error_code_coverage || {};
+    const integrity = coverage.schema_integrity || {};
+
+    const healthScore = Number(coverage.health_score) || 0;
+    const healthTone = _coverageTone(healthScore);
+
+    const cards = [
+        _coverageCard(
+            "End-to-End Diagnosis",
+            chain.symptoms_end_to_end_ratio,
+            `${_formatMetricsNumber(chain.symptoms_end_to_end_resolved || 0)} / ${_formatMetricsNumber(chain.symptoms_total || 0)} symptoms reach a corrective action`,
+        ),
+        _coverageCard(
+            "Symptom → FailureMode",
+            chain.symptoms_with_failure_mode_ratio,
+            `${_formatMetricsNumber(chain.orphan_symptoms || 0)} orphan symptom(s)`,
+        ),
+        _coverageCard(
+            "FailureMode → Action",
+            fm.with_corrective_action_ratio,
+            `${_formatMetricsNumber(fm.without_corrective_action || 0)} failure mode(s) without remediation`,
+        ),
+        _coverageCard(
+            "FailureMode → Component",
+            fm.with_component_anchor_ratio,
+            `${_formatMetricsNumber(fm.without_component_anchor || 0)} not anchored to a component`,
+        ),
+        _coverageCard(
+            "FailureMode Reachability",
+            fm.reachable_from_symptom_ratio,
+            `${_formatMetricsNumber(fm.orphan_upstream || 0)} failure mode(s) unreachable from any symptom`,
+        ),
+        _coverageCard(
+            "CorrectiveAction Usage",
+            ca.used_by_failure_mode_ratio,
+            `${_formatMetricsNumber(ca.orphan_corrective_actions || 0)} orphan action(s)`,
+        ),
+        _coverageCard(
+            "Component Utilization",
+            comp.components_in_failure_chain_ratio,
+            `${_formatMetricsNumber(comp.components_only_structural || 0)} component(s) never referenced by a failure mode`,
+        ),
+    ];
+
+    if ((ec.error_codes_total || 0) > 0) {
+        cards.push(_coverageCard(
+            "ErrorCode Wiring",
+            ec.fully_wired_ratio,
+            `${_formatMetricsNumber(ec.fully_wired || 0)} / ${_formatMetricsNumber(ec.error_codes_total || 0)} wired to Asset and FailureMode`,
+        ));
+    }
+
+    const breadthRows = `
+        <div class="kpi-stage-row">
+            <div class="kpi-stage-name">Avg CorrectiveActions per FailureMode</div>
+            <div>${_escapeHtml(String(fm.avg_corrective_actions_per_failure_mode ?? 0))}</div>
+        </div>
+        <div class="kpi-stage-row">
+            <div class="kpi-stage-name">Avg Symptoms per FailureMode</div>
+            <div>${_escapeHtml(String(fm.avg_symptoms_per_failure_mode ?? 0))}</div>
+        </div>
+        <div class="kpi-stage-row">
+            <div class="kpi-stage-name">Relationship Density (rels / non-asset node)</div>
+            <div>${_escapeHtml(String(integrity.relationship_density ?? 0))}</div>
+        </div>
+    `;
+
+    const integrityIssues = [];
+    if ((integrity.dangling_references || 0) > 0) {
+        integrityIssues.push(`${_formatMetricsNumber(integrity.dangling_references)} dangling reference(s)`);
+    }
+    if ((integrity.domain_range_violations || 0) > 0) {
+        integrityIssues.push(`${_formatMetricsNumber(integrity.domain_range_violations)} domain/range violation(s)`);
+    }
+    if (Array.isArray(integrity.missing_relationship_types) && integrity.missing_relationship_types.length) {
+        integrityIssues.push(`Missing relation types: ${integrity.missing_relationship_types.join(", ")}`);
+    }
+    const integrityLine = integrityIssues.length
+        ? `<div class="kpi-section-note kpi-section-note--warn">⚠ ${_escapeHtml(integrityIssues.join(" · "))}</div>`
+        : `<div class="kpi-section-note kpi-section-note--ok">✓ Schema integrity: no dangling refs, no domain/range violations.</div>`;
+
+    return `
+        <div class="kpi-section kpi-section--coverage">
+            <div class="kpi-section-title">
+                Graph Coverage &amp; Clarity
+                <span class="kpi-health-badge kpi-health-badge--${healthTone}">Health ${_formatPct(healthScore)}</span>
+            </div>
+            <div class="kpi-grid kpi-grid--coverage">${cards.join("")}</div>
+            <div class="kpi-section-title kpi-section-title--sub">Breadth &amp; Density</div>
+            <div class="kpi-stage-list">${breadthRows}</div>
+            ${integrityLine}
+        </div>
     `;
 }
 

@@ -244,12 +244,17 @@ def build_metrics_payload(store: dict[str, Any]) -> dict[str, Any]:
 
     # Node count by type from the stored ontology pipeline state
     ontology_pipeline = store.get("ontology_pipeline") or {}
-    ontology_nodes = (ontology_pipeline.get("ontology") or {}).get("nodes") or {}
+    ontology_snapshot = ontology_pipeline.get("ontology") or {}
+    ontology_nodes = ontology_snapshot.get("nodes") or {}
     nodes_by_type = {
         node_type: len(node_list)
         for node_type, node_list in ontology_nodes.items()
         if isinstance(node_list, list) and node_list
     }
+
+    from backend.services.ontology_coverage import compute_graph_coverage
+
+    graph_coverage = compute_graph_coverage(ontology_snapshot)
 
     return {
         "document": {
@@ -263,6 +268,7 @@ def build_metrics_payload(store: dict[str, Any]) -> dict[str, Any]:
         "agent_token_ledger": project_agent_token_ledger(store),
         "totals": totals,
         "nodes_by_type": nodes_by_type,
+        "graph_coverage": graph_coverage,
         "review": {
             "validated_triplets": validated_triplets,
             "discarded_triplets": discarded_triplets,

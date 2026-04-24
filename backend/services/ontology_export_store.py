@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from backend.services.ontology_contract import build_and_validate_contract_ontology
+from backend.services.ontology_coverage import compute_graph_coverage
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 OUTPUT_DIR = ROOT_DIR / "output"
@@ -120,6 +121,7 @@ def prepare_exported_ontology(
     metadata["file_version"] = file_version
     metadata["total_nodes"] = sum(len(items) for items in prepared.get("nodes", {}).values())
     metadata["total_relationships"] = len(prepared.get("relationships", []))
+    metadata["graph_coverage"] = compute_graph_coverage(prepared)
     return prepared
 
 
@@ -205,6 +207,7 @@ def build_metrics_export_document(
             "metrics": f"./{bundle_name}/metrics.json",
             "ontology": f"./{bundle_name}/ontology.json",
         },
+        "graph_coverage": metadata.get("graph_coverage") or compute_graph_coverage(ontology),
         "pipeline_metrics": metrics_payload,
     }
 
