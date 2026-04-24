@@ -8,6 +8,8 @@ from backend.services.conversation.tools import _build_ontology_review_payload
 from backend.services.conversation.tools import _build_triplet_graph_payload
 from backend.services.conversation.tools import _explain_decision
 from backend.services.conversation.tools import _propose_cut_plan
+from backend.services.conversation.tools import build_extraction_memory_snapshot
+from backend.services.conversation.tools import dispatch
 
 
 class ChatToolStateTests(unittest.IsolatedAsyncioTestCase):
@@ -71,6 +73,122 @@ class ChatToolStateTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(captured_offsets, [0])
         self.assertEqual(result["status"], "ok")
         self.assertEqual(store["graph_state"]["scoping_metadata"]["page_offset"], 0)
+
+    async def test_list_extracted_nodes_returns_names_and_types_from_current_state(self):
+        store = {
+            "ontology_pipeline": {
+                "ontology": {
+                    "nodes": {
+                        "Asset": [
+                            {
+                                "asset_id": "ASSET-001",
+                                "name": "VB Series Machine",
+                                "description": "Machine covered by the manual.",
+                            }
+                        ],
+                        "Symptom": [
+                            {
+                                "symptom_id": "SYM-001",
+                                "name": "Axis Backlash",
+                                "description": "Axis backlash is detected.",
+                            }
+                        ],
+                    }
+                }
+            },
+            "graph_state": {
+                "cleaned_triplets": [
+                    {
+                        "symptom": {"symptom_id": "SYM-001", "name": "Axis Backlash"},
+                        "failure_modes": [
+                            {
+                                "failure_mode_id": "FM-001",
+                                "name": "Compensation Mismatch",
+                            }
+                        ],
+                        "corrective_actions": [
+                            {
+                                "action_id": "CA-001",
+                                "name": "Adjust Backlash Compensation",
+                            }
+                        ],
+                    }
+                ]
+            },
+        }
+
+        result = await dispatch(
+            "list_extracted_nodes",
+            {"limit": 20, "include_descriptions": True},
+            store,
+            None,
+        )
+
+        self.assertEqual(result["status"], "ok")
+        self.assertEqual(result["total_nodes"], 4)
+        self.assertEqual(result["node_type_counts"]["Asset"], 1)
+        self.assertEqual(result["node_type_counts"]["Symptom"], 1)
+        self.assertEqual(result["node_type_counts"]["FailureMode"], 1)
+        self.assertEqual(result["node_type_counts"]["CorrectiveAction"], 1)
+        self.assertIn("VB Series Machine", result["message"])
+        self.assertIn("Axis Backlash", result["message"])
+
+    async def test_list_extracted_triplets_reports_review_chain(self):
+        store = {
+            "review_index": 1,
+            "validated_triplets": [],
+            "graph_state": {
+                "cleaned_triplets": [
+                    {
+                        "symptom": {"symptom_id": "SYM-001", "name": "Axis Backlash"},
+                        "failure_modes": [
+                            {
+                                "failure_mode_id": "FM-001",
+                                "name": "Compensation Mismatch",
+                            }
+                        ],
+                        "corrective_actions": [
+                            {
+                                "action_id": "CA-001",
+                                "name": "Adjust Backlash Compensation",
+                                "linked_failure_mode_id": "FM-001",
+                            }
+                        ],
+                    }
+                ]
+            },
+        }
+
+        result = await dispatch("list_extracted_triplets", {"status": "all"}, store, None)
+
+        self.assertEqual(result["status"], "ok")
+        self.assertEqual(result["total_triplets"], 1)
+        self.assertEqual(result["triplets"][0]["status"], "skipped")
+        self.assertEqual(result["triplets"][0]["symptom"]["name"], "Axis Backlash")
+        self.assertEqual(result["triplets"][0]["failure_modes"][0]["name"], "Compensation Mismatch")
+
+    def test_extraction_memory_snapshot_keeps_compact_node_preview(self):
+        store = {
+            "ontology_pipeline": {
+                "ontology": {
+                    "nodes": {
+                        "Asset": [{"asset_id": "ASSET-001", "name": "VB Series Machine"}],
+                        "Symptom": [{"symptom_id": "SYM-001", "name": "Axis Backlash"}],
+                    }
+                }
+            },
+            "validated_triplets": [{"id": "t1"}],
+            "review_index": 1,
+            "graph_state": {"cleaned_triplets": [{"id": "t1"}, {"id": "t2"}]},
+        }
+
+        memory = build_extraction_memory_snapshot(store)
+
+        self.assertEqual(memory["node_count"], 2)
+        self.assertEqual(memory["node_type_counts"], {"Asset": 1, "Symptom": 1})
+        self.assertEqual(memory["node_preview_by_type"]["Asset"], ["VB Series Machine (ASSET-001)"])
+        self.assertEqual(memory["triplet_count"], 2)
+        self.assertEqual(memory["validated_triplet_count"], 1)
 
 
 class ChatToolPayloadTests(unittest.TestCase):

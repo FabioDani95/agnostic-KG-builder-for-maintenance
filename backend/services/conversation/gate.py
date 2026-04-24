@@ -93,6 +93,8 @@ _ALWAYS_ALLOWED: set[str] = {
     "get_run_metrics",
     "explain_phase",
     "explain_decision",
+    "list_extracted_nodes",
+    "list_extracted_triplets",
 }
 
 # Map of tool name → valid GraphPhase values (phases where the tool makes sense)
@@ -119,6 +121,8 @@ _TOOL_EARLIEST_PHASE: dict[str, str] = {
     "add_exported_relationship": GraphPhase.COMPLETED.value,
     "delete_exported_relationship": GraphPhase.COMPLETED.value,
     "save_exported_graph": GraphPhase.COMPLETED.value,
+    "list_extracted_nodes": GraphPhase.ONTOLOGY_DRAFT.value,
+    "list_extracted_triplets": GraphPhase.EXTRACTION.value,
 }
 
 _PHASE_LABELS: dict[str, str] = {
@@ -225,6 +229,19 @@ def validate_args(tool_name: str, args: dict[str, Any], store: dict) -> tuple[bo
         limit = args.get("limit")
         if limit is not None and (not isinstance(limit, int) or limit < 1 or limit > 20):
             return False, "inspect_exported_graph limit must be an integer between 1 and 20."
+
+    if tool_name == "list_extracted_nodes":
+        limit = args.get("limit")
+        if limit is not None and (not isinstance(limit, int) or limit < 1 or limit > 100):
+            return False, "list_extracted_nodes limit must be an integer between 1 and 100."
+
+    if tool_name == "list_extracted_triplets":
+        limit = args.get("limit")
+        if limit is not None and (not isinstance(limit, int) or limit < 1 or limit > 50):
+            return False, "list_extracted_triplets limit must be an integer between 1 and 50."
+        status = args.get("status")
+        if status is not None and status not in {"all", "pending", "validated", "skipped"}:
+            return False, "list_extracted_triplets status must be all, pending, validated, or skipped."
 
     if tool_name == "update_exported_node":
         if not args.get("node_id"):

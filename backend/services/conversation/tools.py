@@ -336,6 +336,61 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
     {
         "type": "function",
         "function": {
+            "name": "list_extracted_nodes",
+            "description": "List ontology nodes already extracted in the current workflow, grouped by type. Use when the user asks which nodes, node types, assets, symptoms, failure modes, actions, or entities have been found.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "node_type": {
+                        "type": "string",
+                        "description": "Optional node type filter, e.g. Asset, Component, Symptom, FailureMode, CorrectiveAction, ErrorCode.",
+                    },
+                    "query": {
+                        "type": "string",
+                        "description": "Optional text filter across node id, name, description, and type.",
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Maximum nodes to return overall.",
+                    },
+                    "include_descriptions": {
+                        "type": "boolean",
+                        "description": "Whether to include short node descriptions.",
+                    },
+                },
+                "required": [],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "list_extracted_triplets",
+            "description": "List triplets already extracted in the current workflow, including review status and the Symptom → FailureMode → CorrectiveAction chain.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "enum": ["all", "pending", "validated", "skipped"],
+                        "description": "Optional review-status filter.",
+                    },
+                    "query": {
+                        "type": "string",
+                        "description": "Optional text filter across symptom, failure modes, corrective actions, ids, and descriptions.",
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Maximum triplets to return.",
+                    },
+                },
+                "required": [],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "get_progress",
             "description": "Return the current pipeline phase, counts, and a human-readable status summary.",
             "parameters": {"type": "object", "properties": {}, "required": []},
@@ -459,6 +514,193 @@ def _as_plain_dict(value: Any) -> dict[str, Any]:
     if isinstance(value, dict):
         return value
     return {}
+
+
+_NODE_ID_FIELDS = {
+    "Asset": "asset_id",
+    "Component": "component_id",
+    "Symptom": "symptom_id",
+    "FailureMode": "failure_mode_id",
+    "CorrectiveAction": "action_id",
+    "ErrorCode": "error_code_id",
+}
+
+
+def _node_identity(node_type: str, node: dict[str, Any]) -> tuple[str, str, str]:
+    id_field = _NODE_ID_FIELDS.get(str(node_type), "id")
+    node_id = str(node.get(id_field) or node.get("id") or "").strip()
+    name = str(node.get("name") or node.get("label") or node_id).strip()
+    description = str(node.get("description") or node.get("instruction_text") or "").strip()
+    return node_id, name, description
+
+
+def _collect_extracted_nodes(store: dict[str, Any]) -> list[dict[str, Any]]:
+    pipeline_state = store.get("ontology_pipeline") or (store.get("graph_state") or {}).get("ontology_pipeline") or {}
+    ontology = pipeline_state.get("ontology") if isinstance(pipeline_state, dict) else {}
+    nodes_by_type = ontology.get("nodes") if isinstance(ontology, dict) else {}
+
+    collected: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
+
+    if isinstance(nodes_by_type, dict):
+        for node_type, items in nodes_by_type.items():
+            for raw_node in items or []:
+                node = _as_plain_dict(raw_node)
+                node_id, name, description = _node_identity(str(node_type), node)
+                if not node_id and not name:
+                    continue
+                key = (str(node_type), node_id or name.lower())
+                if key in seen:
+                    continue
+                seen.add(key)
+                collected.append({
+                    "id": node_id,
+                    "name": name or node_id,
+                    "type": str(node_type),
+                    "description": description,
+                    "source": "ontology",
+                })
+
+    gs = store.get("graph_state") or {}
+    triplets = gs.get("cleaned_triplets") or []
+    for raw_triplet in triplets:
+        triplet = _as_plain_dict(raw_triplet)
+        symptom = _as_plain_dict(triplet.get("symptom"))
+        triplet_nodes = [("Symptom", symptom)]
+        triplet_nodes.extend(("FailureMode", _as_plain_dict(item)) for item in (triplet.get("failure_modes") or []))
+        triplet_nodes.extend(("CorrectiveAction", _as_plain_dict(item)) for item in (triplet.get("corrective_actions") or []))
+        for node_type, node in triplet_nodes:
+            node_id, name, description = _node_identity(node_type, node)
+            if not node_id and not name:
+                continue
+            key = (node_type, node_id or name.lower())
+            if key in seen:
+                continue
+            seen.add(key)
+            collected.append({
+                "id": node_id,
+                "name": name or node_id,
+                "type": node_type,
+                "description": description,
+                "source": "triplet_extraction",
+            })
+
+    return collected
+
+
+def _node_type_counts(nodes: list[dict[str, Any]]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for node in nodes:
+        node_type = str(node.get("type") or "Unknown")
+        counts[node_type] = counts.get(node_type, 0) + 1
+    return counts
+
+
+def _filter_inventory_items(
+    items: list[dict[str, Any]],
+    *,
+    query: str = "",
+) -> list[dict[str, Any]]:
+    terms = [term for term in str(query or "").lower().split() if term]
+    if not terms:
+        return items
+    matches = []
+    for item in items:
+        haystack = " ".join(str(value) for value in item.values() if value is not None).lower()
+        if all(term in haystack for term in terms):
+            matches.append(item)
+    return matches
+
+
+def build_extraction_memory_snapshot(store: dict[str, Any], *, limit_per_type: int = 5) -> dict[str, Any]:
+    """Compact facts the chatbot may safely remember across turns."""
+    nodes = _collect_extracted_nodes(store)
+    counts = _node_type_counts(nodes)
+    preview_by_type: dict[str, list[str]] = {}
+    for node in nodes:
+        node_type = str(node.get("type") or "Unknown")
+        bucket = preview_by_type.setdefault(node_type, [])
+        if len(bucket) < limit_per_type:
+            label = str(node.get("name") or node.get("id") or "").strip()
+            if node.get("id") and node.get("id") != label:
+                label = f"{label} ({node['id']})"
+            if label:
+                bucket.append(label)
+
+    gs = store.get("graph_state") or {}
+    triplets = list(gs.get("cleaned_triplets") or [])
+    validated = list(store.get("validated_triplets") or [])
+    return {
+        "node_count": len(nodes),
+        "node_type_counts": counts,
+        "node_preview_by_type": preview_by_type,
+        "triplet_count": len(triplets),
+        "validated_triplet_count": len(validated),
+        "review_index": int(store.get("review_index") or 0),
+    }
+
+
+def _format_node_inventory_message(result: dict[str, Any]) -> str:
+    total = int(result.get("total_nodes") or 0)
+    counts = result.get("node_type_counts") or {}
+    nodes_by_type = result.get("nodes_by_type") or {}
+    if not total:
+        return "I do not have extracted nodes yet in the current workflow."
+
+    count_text = ", ".join(f"{node_type}: {count}" for node_type, count in sorted(counts.items()))
+    lines = [f"I found {total} extracted node(s). Types: {count_text}."]
+    for node_type in sorted(nodes_by_type):
+        labels = []
+        for node in nodes_by_type[node_type]:
+            label = str(node.get("name") or node.get("id") or "").strip()
+            if node.get("id") and node.get("id") != label:
+                label = f"{label} ({node['id']})"
+            if node.get("description"):
+                label = f"{label}: {node['description']}"
+            if label:
+                labels.append(label)
+        if labels:
+            lines.append(f"{node_type}: " + "; ".join(labels))
+    if result.get("truncated"):
+        lines.append("This is a compact list; ask for a specific type or search term to narrow it.")
+    return "\n".join(lines)
+
+
+def _triplet_summary(raw_triplet: Any, index: int, status: str) -> dict[str, Any]:
+    triplet = _as_plain_dict(raw_triplet)
+    symptom = _as_plain_dict(triplet.get("symptom"))
+    failure_modes = [_as_plain_dict(item) for item in (triplet.get("failure_modes") or [])]
+    corrective_actions = [_as_plain_dict(item) for item in (triplet.get("corrective_actions") or [])]
+    return {
+        "index": index,
+        "status": status,
+        "symptom": {
+            "id": str(symptom.get("symptom_id") or ""),
+            "name": str(symptom.get("name") or symptom.get("symptom_id") or ""),
+            "description": str(symptom.get("description") or ""),
+            "page": symptom.get("evidence_page"),
+        },
+        "failure_modes": [
+            {
+                "id": str(item.get("failure_mode_id") or ""),
+                "name": str(item.get("name") or item.get("failure_mode_id") or ""),
+                "description": str(item.get("description") or ""),
+                "page": item.get("evidence_page"),
+            }
+            for item in failure_modes
+        ],
+        "corrective_actions": [
+            {
+                "id": str(item.get("action_id") or ""),
+                "name": str(item.get("name") or item.get("action_id") or ""),
+                "description": str(item.get("description") or ""),
+                "instruction_text": str(item.get("instruction_text") or ""),
+                "page": item.get("source_page"),
+                "linked_failure_mode_id": str(item.get("linked_failure_mode_id") or ""),
+            }
+            for item in corrective_actions
+        ],
+    }
 
 
 def _triplet_entity_id(entity: dict[str, Any], id_key: str) -> str:
@@ -1668,6 +1910,96 @@ async def _get_progress(args, store, on_event):
     }
 
 
+async def _list_extracted_nodes(args, store, on_event):
+    node_type_filter = str(args.get("node_type") or "").strip().lower()
+    query = str(args.get("query") or "").strip()
+    limit = max(1, min(int(args.get("limit") or 40), 100))
+    include_descriptions = bool(args.get("include_descriptions"))
+
+    nodes = _collect_extracted_nodes(store)
+    if node_type_filter:
+        nodes = [
+            node for node in nodes
+            if str(node.get("type") or "").lower() == node_type_filter
+        ]
+    nodes = _filter_inventory_items(nodes, query=query)
+
+    counts = _node_type_counts(nodes)
+    selected = nodes[:limit]
+    nodes_by_type: dict[str, list[dict[str, Any]]] = {}
+    for node in selected:
+        payload = {
+            "id": node.get("id"),
+            "name": node.get("name"),
+            "type": node.get("type"),
+            "source": node.get("source"),
+        }
+        if include_descriptions and node.get("description"):
+            payload["description"] = str(node.get("description"))[:240]
+        nodes_by_type.setdefault(str(node.get("type") or "Unknown"), []).append(payload)
+
+    result = {
+        "status": "ok",
+        "query": query or None,
+        "node_type": args.get("node_type") or None,
+        "total_nodes": len(nodes),
+        "returned_nodes": len(selected),
+        "node_type_counts": counts,
+        "nodes_by_type": nodes_by_type,
+        "truncated": len(nodes) > len(selected),
+    }
+    result["message"] = _format_node_inventory_message(result)
+    return result
+
+
+async def _list_extracted_triplets(args, store, on_event):
+    gs = store.get("graph_state") or {}
+    triplets = list(gs.get("cleaned_triplets") or [])
+    validated = list(store.get("validated_triplets") or [])
+    review_index = int(store.get("review_index") or 0)
+    status_filter = str(args.get("status") or "all").strip().lower()
+    query = str(args.get("query") or "").strip()
+    limit = max(1, min(int(args.get("limit") or 10), 50))
+
+    rows: list[dict[str, Any]] = []
+    for idx, triplet in enumerate(triplets):
+        if _contains_triplet(validated, triplet):
+            status = "validated"
+        elif idx < review_index:
+            status = "skipped"
+        else:
+            status = "pending"
+        if status_filter != "all" and status != status_filter:
+            continue
+        rows.append(_triplet_summary(triplet, idx, status))
+
+    if query:
+        rows = _filter_inventory_items(rows, query=query)
+
+    selected = rows[:limit]
+    if not triplets:
+        message = "I do not have extracted triplets yet in the current workflow."
+    else:
+        message = (
+            f"I found {len(rows)} matching triplet(s) out of {len(triplets)} extracted. "
+            f"Review progress: {review_index}/{len(triplets)}."
+        )
+
+    return {
+        "status": "ok",
+        "query": query or None,
+        "filter": status_filter,
+        "total_triplets": len(triplets),
+        "matching_triplets": len(rows),
+        "returned_triplets": len(selected),
+        "review_index": review_index,
+        "validated_triplets": len(validated),
+        "triplets": selected,
+        "truncated": len(rows) > len(selected),
+        "message": message,
+    }
+
+
 async def _get_run_metrics(args, store, on_event):
     from backend.services.run_metrics import build_metrics_payload
 
@@ -1826,6 +2158,8 @@ _DISPATCH_MAP = {
     "add_exported_relationship": _add_exported_relationship,
     "delete_exported_relationship": _delete_exported_relationship,
     "save_exported_graph": _save_exported_graph,
+    "list_extracted_nodes": _list_extracted_nodes,
+    "list_extracted_triplets": _list_extracted_triplets,
     "get_progress": _get_progress,
     "get_run_metrics": _get_run_metrics,
     "explain_phase": _explain_phase,

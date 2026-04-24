@@ -24,7 +24,12 @@ from backend.graph.state import GraphPhase
 from backend.graph.store import seed_conversation_state
 from backend.services.conversation import events as evt_bus
 from backend.services.conversation.gate import check as gate_check
-from backend.services.conversation.tools import TOOL_SCHEMAS, dispatch, tools_for_phase
+from backend.services.conversation.tools import (
+    TOOL_SCHEMAS,
+    build_extraction_memory_snapshot,
+    dispatch,
+    tools_for_phase,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +57,7 @@ Rules you must follow:
 - You are limited to the loaded manual and this extraction workflow. Refuse off-topic requests and redirect the user to document, scoping, ontology, triplet review, export, or workflow-status questions.
 - After export completes, you can also help inspect and modify the exported graph through the shared modify workspace.
 - When the operator asks for KPIs, metrics, cost, duration, or tokens, call get_run_metrics so the full KPI widget is shown in chat.
+- When the operator asks which nodes, node types, entities, triplets, or extracted chains exist, call list_extracted_nodes or list_extracted_triplets before answering. Do not answer these questions from counts alone.
 - When a pipeline action is needed, use the provided tools rather than describing the action in text.
 - When a user request is not currently possible (wrong phase, invalid arguments), explain why clearly and suggest what they can do instead.
 - Never hallucinate pipeline state — always rely on the LIVE STATE SNAPSHOT or tool results.
@@ -375,6 +381,7 @@ def _status_snapshot(store: dict[str, Any]) -> dict[str, Any]:
         "triplet_count": len(gs.get("cleaned_triplets") or []),
         "validated_triplet_count": len(store.get("validated_triplets") or []),
         "review_index": int(store.get("review_index") or 0),
+        "extraction_memory": build_extraction_memory_snapshot(store, limit_per_type=5),
     }
 
 
@@ -472,6 +479,7 @@ def _workflow_status_reply(store: dict[str, Any]) -> str:
 
 def _build_live_state_message(store: dict[str, Any]) -> dict[str, str]:
     status = _status_snapshot(store)
+    memory = status["extraction_memory"]
     return {
         "role": "system",
         "content": (
@@ -486,11 +494,15 @@ def _build_live_state_message(store: dict[str, Any]) -> dict[str, str]:
             f"selected_sections_count: {status['section_count']}\n"
             f"selected_sections: {status['rendered_sections']}\n"
             f"selected_sections_full: {status['rendered_sections_full']}\n"
+            f"extracted_node_count: {memory['node_count']}\n"
+            f"extracted_node_type_counts: {json.dumps(memory['node_type_counts'], ensure_ascii=False, sort_keys=True)}\n"
+            f"extracted_node_preview_by_type: {json.dumps(memory['node_preview_by_type'], ensure_ascii=False, sort_keys=True)}\n"
             f"triplet_count: {status['triplet_count']}\n"
             f"validated_triplet_count: {status['validated_triplet_count']}\n"
+            f"triplet_review_index: {status['review_index']}\n"
             "When the user asks about current state, counts, sections, selected pages, document identity, "
-            "or workflow step, answer strictly from this snapshot. If a fact is not present here, say you "
-            "do not have it yet rather than guessing."
+            "workflow step, or a compact preview of extracted nodes, answer strictly from this snapshot. "
+            "For full node or triplet lists, call the inventory tools instead of guessing."
         ),
     }
 
@@ -914,6 +926,132 @@ def _maybe_build_direct_status_reply(store: dict[str, Any], user_message: str | 
     return f"The current phase is {_phase_label(phase)}."
 
 
+def _detect_inventory_request(text: str) -> tuple[str, dict[str, Any]] | None:
+    normalised = _normalise_query(text)
+    if not normalised:
+        return None
+
+    asks_nodes = _contains_any(normalised, (
+        "which nodes",
+        "what nodes",
+        "list nodes",
+        "show nodes",
+        "node types",
+        "types of nodes",
+        "extracted nodes",
+        "extracted entities",
+        "ontology nodes",
+        "quali nodi",
+        "che nodi",
+        "nodi estratti",
+        "tipi di nodi",
+        "tipo di nodi",
+        "tipi estratti",
+        "entita estratte",
+        "entità estratte",
+    ))
+    if asks_nodes:
+        args: dict[str, Any] = {"limit": 60, "include_descriptions": False}
+        type_map = {
+            "asset": "Asset",
+            "assets": "Asset",
+            "component": "Component",
+            "components": "Component",
+            "symptom": "Symptom",
+            "symptoms": "Symptom",
+            "sintom": "Symptom",
+            "failure mode": "FailureMode",
+            "failure modes": "FailureMode",
+            "guast": "FailureMode",
+            "corrective action": "CorrectiveAction",
+            "corrective actions": "CorrectiveAction",
+            "azione correttiva": "CorrectiveAction",
+            "azioni correttive": "CorrectiveAction",
+            "error code": "ErrorCode",
+            "codice errore": "ErrorCode",
+        }
+        for marker, node_type in type_map.items():
+            if marker in normalised:
+                args["node_type"] = node_type
+                break
+        if _contains_any(normalised, ("description", "descrizione", "details", "dettagli")):
+            args["include_descriptions"] = True
+        return "list_extracted_nodes", args
+
+    asks_triplets = _contains_any(normalised, (
+        "which triplets",
+        "what triplets",
+        "list triplets",
+        "show triplets",
+        "extracted triplets",
+        "triplet chains",
+        "quali triplette",
+        "che triplette",
+        "triplette estratte",
+        "catene estratte",
+    ))
+    if asks_triplets:
+        return "list_extracted_triplets", {"status": "all", "limit": 12}
+
+    return None
+
+
+def _format_triplet_inventory_message(result: dict[str, Any]) -> str:
+    if int(result.get("total_triplets") or 0) == 0:
+        return "I do not have extracted triplets yet in the current workflow."
+    lines = [str(result.get("message") or "Extracted triplets:")]
+    for item in result.get("triplets") or []:
+        symptom = item.get("symptom") or {}
+        failure_modes = item.get("failure_modes") or []
+        corrective_actions = item.get("corrective_actions") or []
+        fm_names = ", ".join(str(fm.get("name") or fm.get("id") or "") for fm in failure_modes if fm)
+        action_names = ", ".join(str(ca.get("name") or ca.get("id") or "") for ca in corrective_actions if ca)
+        lines.append(
+            f"{int(item.get('index', 0)) + 1}. "
+            f"{symptom.get('name') or symptom.get('id') or 'Symptom'} -> "
+            f"{fm_names or 'no failure mode'} -> "
+            f"{action_names or 'no corrective action'} "
+            f"({item.get('status')})."
+        )
+    if result.get("truncated"):
+        lines.append("This is a compact list; ask for a smaller status or search term to narrow it.")
+    return "\n".join(lines)
+
+
+async def _maybe_handle_inventory_request(
+    store: dict[str, Any],
+    conversation: dict[str, Any],
+    user_message: str | None,
+    on_event,
+) -> bool:
+    detected = _detect_inventory_request(user_message or "")
+    if not detected:
+        return False
+
+    tool_name, args = detected
+    ok, gate_reason = gate_check(tool_name, args, store)
+    if not ok:
+        reply = gate_reason
+    else:
+        on_event(evt_bus.progress_event(tool_name, f"Running {tool_name}..."))
+        result = await dispatch(tool_name, args, store, on_event)
+        conversation.setdefault("tool_calls", []).append({
+            "tool": tool_name,
+            "args": args,
+            "result": result,
+            "deterministic": True,
+        })
+        if tool_name == "list_extracted_triplets":
+            reply = _format_triplet_inventory_message(result)
+        else:
+            reply = str(result.get("message") or "No extracted-node inventory is available yet.")
+
+    _append_message(conversation, "assistant", reply)
+    on_event(evt_bus.chat_delta_event(reply))
+    on_event(evt_bus.done_event())
+    return True
+
+
 def _phase_greeting(store: dict) -> str:
     gs = store.get("graph_state") or {}
     phase = gs.get("current_phase", GraphPhase.LOADED.value)
@@ -1212,6 +1350,14 @@ async def handle_message(
 
         if await _maybe_handle_pending_or_process_command(
             pdf_id,
+            store,
+            conversation,
+            user_message,
+            on_event,
+        ):
+            return
+
+        if await _maybe_handle_inventory_request(
             store,
             conversation,
             user_message,

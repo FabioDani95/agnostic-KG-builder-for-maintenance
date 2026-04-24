@@ -3,6 +3,7 @@ import unittest
 from backend.graph.state import GraphPhase
 from backend.services.conversation.orchestrator import (
     _build_messages,
+    _detect_inventory_request,
     _detect_rerun_action,
     _maybe_build_direct_status_reply,
     _maybe_build_scope_guard_reply,
@@ -124,6 +125,14 @@ class ChatOrchestratorStatusTests(unittest.TestCase):
     def test_build_messages_includes_authoritative_live_snapshot(self):
         store = {
             "filename": "mock-manual.pdf",
+            "ontology_pipeline": {
+                "ontology": {
+                    "nodes": {
+                        "Asset": [{"asset_id": "ASSET-001", "name": "Mock Machine"}],
+                        "Symptom": [{"symptom_id": "SYM-001", "name": "Axis Backlash"}],
+                    }
+                }
+            },
             "validated_triplets": [{"id": "t1"}],
             "cut_plan": {
                 "pages_to_keep": [12, 13, 14, 30, 31],
@@ -151,6 +160,25 @@ class ChatOrchestratorStatusTests(unittest.TestCase):
         self.assertIn("selected_page_ranges: 12-14, 30-31", messages[1]["content"])
         self.assertIn("selected_sections: 1. Troubleshooting (pp. 12-14); 2. Diagnostics (pp. 30-31)", messages[1]["content"])
         self.assertIn("selected_sections_full: 1. Troubleshooting (pp. 12-14); 2. Diagnostics (pp. 30-31)", messages[1]["content"])
+        self.assertIn("extracted_node_count: 2", messages[1]["content"])
+        self.assertIn('"Asset": 1', messages[1]["content"])
+        self.assertIn("Mock Machine (ASSET-001)", messages[1]["content"])
+
+    def test_inventory_request_detection_handles_italian_node_questions(self):
+        detected = _detect_inventory_request("quali nodi e tipi hai estratto?")
+
+        self.assertIsNotNone(detected)
+        tool_name, args = detected
+        self.assertEqual(tool_name, "list_extracted_nodes")
+        self.assertEqual(args["limit"], 60)
+
+    def test_inventory_request_detection_handles_triplet_questions(self):
+        detected = _detect_inventory_request("fammi vedere le triplette estratte")
+
+        self.assertIsNotNone(detected)
+        tool_name, args = detected
+        self.assertEqual(tool_name, "list_extracted_triplets")
+        self.assertEqual(args["status"], "all")
 
     def test_strip_leading_widget_payload_keeps_plain_followup(self):
         text = (
