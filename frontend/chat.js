@@ -3,8 +3,8 @@
  * All user-facing text is in English.
  */
 
-import { renderSectionsWidget } from "./widgets/sections.js?v=20260422d";
-import { renderTripletWidget } from "./widgets/triplet.js?v=20260422d";
+import { renderSectionsWidget } from "./widgets/sections.js?v=20260424a";
+import { renderTripletWidget } from "./widgets/triplet.js?v=20260424b";
 import { renderRequiredFieldsWidget } from "./widgets/required_fields.js?v=20260422d";
 import { renderNodeCard } from "./widgets/node_card.js?v=20260422d";
 
@@ -32,6 +32,13 @@ let _sessionLost = false;
 let _kgGraphData = null;
 let _kgGraphMode = "all";
 let _pendingPdfPage = null;
+let _modifyWorkspaceUrl = null;
+let _modifyWorkspaceOpen = false;
+let _lastQuickActionsKey = "";
+let _lastWidgetType = "";
+let _autoExportRequested = false;
+let _lastDownloadedExportKey = "";
+let _lastAutoOpenedModifyKey = "";
 
 // ── Initialise ─────────────────────────────────────────────────────────
 
@@ -42,13 +49,16 @@ export async function initChat(pdfId, pdfPath, opts = {}) {
     chatLayout.hidden = false;
 
     _ensureGraphPanel();
+    _ensureModifyPanel();
     _setupInput();
     _setupPdfControls();
     _setupGraphControls();
+    _setupModifyControls();
     _setupColumnResize();
     _setPhaseLabel("loaded");
     _setSystemBusy("Starting the extraction workflow…", "scoping");
     _setPdfStatus("Loading PDF preview…", "loading");
+    _syncQuickActions({ widget: "startup" });
 
     // Open the chat session immediately so a slow PDF render cannot leave the UI
     // looking blank while the backend is already ready to speak.
@@ -109,6 +119,7 @@ function _ensureChatLayoutShell() {
             <div class="app-bar-center" id="chat-phase-label">Scoping</div>
             <div class="app-bar-right">
                 <span class="app-bar-meta" id="chat-operator"></span>
+                <button id="chat-modify-btn" class="app-bar-btn" hidden>Modify</button>
                 <button id="chat-audit-btn" class="app-bar-btn" hidden>Audit</button>
             </div>
         </header>
@@ -140,11 +151,11 @@ function _ensureChatLayoutShell() {
                 <section id="chat-graph-panel" class="chat-graph-panel" hidden>
                     <div class="chat-graph-head">
                         <div>
-                            <div class="chat-graph-title">Extraction Graph</div>
-                            <div id="chat-graph-meta" class="chat-graph-meta">Waiting for extracted triplets…</div>
+                            <div class="chat-graph-title">Review Graph</div>
+                            <div id="chat-graph-meta" class="chat-graph-meta">Waiting for reviewed triplets…</div>
                         </div>
                         <div class="chat-graph-actions">
-                            <button id="chat-graph-all" type="button" class="btn-secondary btn-sm" data-mode="all">Full graph</button>
+                            <button id="chat-graph-all" type="button" class="btn-secondary btn-sm" data-mode="all">Review graph</button>
                             <button id="chat-graph-focus" type="button" class="btn-secondary btn-sm" data-mode="focus">Current triplet</button>
                         </div>
                     </div>
@@ -219,6 +230,7 @@ function _handleEvent(e) {
             if (document.getElementById("chat-turn-indicator")?.dataset.mode !== "operator") {
                 _setAwaitingOperator();
             }
+            _syncQuickActions({ widget: _lastWidgetType || "done" });
             break;
         case "stream_closed":
             break;
@@ -413,7 +425,14 @@ function _renderWidget(widgetType, payload) {
 
     switch (widgetType) {
         case "extraction_graph":
+            _lastWidgetType = "extraction_graph";
             _showExtractionGraph(payload?.graph || payload, { mode: "all" });
+            _syncQuickActions({ widget: "extraction_graph", payload });
+            return;
+        case "modify_workspace_sync":
+            _lastWidgetType = "modify_workspace_sync";
+            _refreshModifyWorkspace(payload);
+            _syncQuickActions({ widget: "modify_workspace_sync", payload });
             return;
         case "sections":
             el = renderSectionsWidget(payload, onAction);
@@ -448,11 +467,16 @@ function _renderWidget(widgetType, payload) {
         case "export":
             el = _renderExportWidget(payload);
             break;
+        case "run_metrics":
+            el = _renderRunMetricsWidget(payload?.metrics || payload);
+            break;
     }
 
     if (el) {
+        _lastWidgetType = widgetType;
         _decorateWidget(el);
         stream.appendChild(el);
+        _syncQuickActions({ widget: widgetType, payload });
         _scrollToBottom();
     }
 }
@@ -510,7 +534,7 @@ function _applyDefaultWidgetSize(el) {
 
 function _widgetSizePreset(el) {
     if (el.classList.contains("chat-widget--sections")) {
-        return { width: 980, height: 520 };
+        return { width: 920, height: 620 };
     }
     if (el.classList.contains("chat-widget--triplet")) {
         return { width: 860, height: 400 };
@@ -523,6 +547,12 @@ function _widgetSizePreset(el) {
     }
     if (el.classList.contains("chat-widget--node-card")) {
         return { width: 780, height: 280 };
+    }
+    if (el.classList.contains("chat-widget--run-metrics")) {
+        return { width: 900, height: 620 };
+    }
+    if (el.classList.contains("chat-widget--export-metrics")) {
+        return { width: 900, height: 660 };
     }
     if (el.classList.contains("chat-widget--export")) {
         return { width: 680, height: 220 };
@@ -562,7 +592,7 @@ function _bindWidgetResize(el) {
         const stream = _stream();
         const maxWidth = Math.max(320, (stream?.clientWidth || window.innerWidth) - 8);
         const minWidth = Math.min(420, maxWidth);
-        const maxHeight = Math.max(220, Math.floor(window.innerHeight * 0.78));
+        const maxHeight = Math.max(220, Math.floor(window.innerHeight * 0.92));
         const minHeight = 220;
 
         el.classList.add("chat-widget--resizing");
@@ -730,6 +760,122 @@ function _storeColumnWidth(columns, left) {
     }
 }
 
+// ── Modify workspace ───────────────────────────────────────────────────
+
+function _ensureModifyPanel() {
+    const pdfSection = document.querySelector(".chat-pdf-section");
+    if (!pdfSection) return null;
+
+    let panel = document.getElementById("chat-modify-panel");
+    if (panel) return panel;
+
+    panel = document.createElement("section");
+    panel.id = "chat-modify-panel";
+    panel.className = "chat-modify-panel";
+    panel.hidden = true;
+    panel.innerHTML = `
+        <div class="chat-modify-head">
+            <div>
+                <div class="chat-modify-title">Modify Workspace</div>
+                <div id="chat-modify-meta" class="chat-modify-meta">Inspect and edit the exported ontology graph.</div>
+            </div>
+            <div class="chat-modify-actions">
+                <button id="chat-modify-open-tab" type="button" class="btn-secondary btn-sm">Open In Tab</button>
+                <button id="chat-modify-close" type="button" class="btn-secondary btn-sm">Back To Manual</button>
+            </div>
+        </div>
+        <iframe id="chat-modify-frame" class="chat-modify-frame" title="Modify workspace"></iframe>
+    `;
+    pdfSection.appendChild(panel);
+    return panel;
+}
+
+function _setupModifyControls() {
+    const btn = document.getElementById("chat-modify-btn");
+    const panel = _ensureModifyPanel();
+    if (btn && btn.dataset.bound !== "true") {
+        btn.dataset.bound = "true";
+        btn.addEventListener("click", () => {
+            if (_modifyWorkspaceOpen) {
+                _closeModifyWorkspace();
+            } else if (_modifyWorkspaceUrl) {
+                _openModifyWorkspace(_modifyWorkspaceUrl);
+            }
+        });
+    }
+
+    if (!panel || panel.dataset.bound === "true") return;
+    panel.dataset.bound = "true";
+
+    document.getElementById("chat-modify-close")?.addEventListener("click", () => {
+        _closeModifyWorkspace();
+    });
+    document.getElementById("chat-modify-open-tab")?.addEventListener("click", () => {
+        if (!_modifyWorkspaceUrl) return;
+        window.open(_modifyWorkspaceUrl, "_blank", "noopener");
+    });
+}
+
+function _setModifyWorkspaceAvailability(editorUrl) {
+    if (editorUrl) _modifyWorkspaceUrl = editorUrl;
+    const btn = document.getElementById("chat-modify-btn");
+    if (!btn) return;
+    btn.hidden = !_modifyWorkspaceUrl;
+    btn.textContent = _modifyWorkspaceOpen ? "Manual" : "Modify";
+    _syncQuickActions({ widget: "modify_workspace" });
+}
+
+function _workspaceFrameUrl(baseUrl) {
+    if (!baseUrl) return "";
+    const url = new URL(baseUrl, window.location.origin);
+    url.searchParams.set("embed", "1");
+    url.searchParams.set("refresh", String(Date.now()));
+    return url.toString();
+}
+
+function _openModifyWorkspace(editorUrl) {
+    const panel = _ensureModifyPanel();
+    const pdfSection = document.querySelector(".chat-pdf-section");
+    const frame = document.getElementById("chat-modify-frame");
+    const meta = document.getElementById("chat-modify-meta");
+    if (!panel || !pdfSection || !frame) return;
+
+    _setModifyWorkspaceAvailability(editorUrl);
+    if (!_modifyWorkspaceUrl) return;
+
+    panel.hidden = false;
+    pdfSection.classList.add("chat-pdf-section--modify");
+    frame.src = _workspaceFrameUrl(_modifyWorkspaceUrl);
+    if (meta) meta.textContent = "Inspect and edit the exported ontology graph while continuing the chat.";
+    _modifyWorkspaceOpen = true;
+    _setModifyWorkspaceAvailability(_modifyWorkspaceUrl);
+}
+
+function _closeModifyWorkspace() {
+    const panel = document.getElementById("chat-modify-panel");
+    const pdfSection = document.querySelector(".chat-pdf-section");
+    if (!panel || !pdfSection) return;
+    pdfSection.classList.remove("chat-pdf-section--modify");
+    panel.hidden = true;
+    _modifyWorkspaceOpen = false;
+    _setModifyWorkspaceAvailability(_modifyWorkspaceUrl);
+    if (_kgGraphData) {
+        _renderExtractionGraph();
+    }
+}
+
+function _refreshModifyWorkspace(payload = {}) {
+    if (payload?.editor_url) {
+        _setModifyWorkspaceAvailability(payload.editor_url);
+    }
+    if (_modifyWorkspaceOpen && _modifyWorkspaceUrl) {
+        const frame = document.getElementById("chat-modify-frame");
+        if (frame) {
+            frame.src = _workspaceFrameUrl(_modifyWorkspaceUrl);
+        }
+    }
+}
+
 // ── Extraction graph panel ─────────────────────────────────────────────
 
 function _ensureGraphPanel() {
@@ -746,11 +892,11 @@ function _ensureGraphPanel() {
     panel.innerHTML = `
         <div class="chat-graph-head">
             <div>
-                <div class="chat-graph-title">Extraction Graph</div>
-                <div id="chat-graph-meta" class="chat-graph-meta">Waiting for extracted triplets…</div>
+                <div class="chat-graph-title">Review Graph</div>
+                <div id="chat-graph-meta" class="chat-graph-meta">Waiting for reviewed triplets…</div>
             </div>
             <div class="chat-graph-actions">
-                <button id="chat-graph-all" type="button" class="btn-secondary btn-sm" data-mode="all">Full graph</button>
+                <button id="chat-graph-all" type="button" class="btn-secondary btn-sm" data-mode="all">Review graph</button>
                 <button id="chat-graph-focus" type="button" class="btn-secondary btn-sm" data-mode="focus">Current triplet</button>
             </div>
         </div>
@@ -813,7 +959,16 @@ function _renderExtractionGraph() {
         const focusLabel = renderMode === "focus" && _kgGraphData.focus_index != null
             ? ` · focusing triplet ${Number(_kgGraphData.focus_index) + 1}`
             : "";
-        meta.textContent = `${allNodes.length} node(s), ${allEdges.length} edge(s)${focusLabel}`;
+        if (_kgGraphData.review_graph) {
+            const approved = Number(_kgGraphData.approved_triplet_count || 0);
+            const total = Number(_kgGraphData.total_triplets || _kgGraphData.triplet_count || 0);
+            const preview = _kgGraphData.current_is_preview && _kgGraphData.current_triplet_index != null
+                ? ` · previewing triplet ${Number(_kgGraphData.current_triplet_index) + 1}`
+                : "";
+            meta.textContent = `${approved}/${total} approved · ${allNodes.length} node(s), ${allEdges.length} relation(s)${preview}${focusLabel}`;
+        } else {
+            meta.textContent = `${allNodes.length} node(s), ${allEdges.length} relation(s)${focusLabel}`;
+        }
     }
     _syncGraphModeButtons(hasFocus);
 
@@ -822,7 +977,7 @@ function _renderExtractionGraph() {
         return;
     }
 
-    canvas.innerHTML = _buildGraphSvg(visibleNodes, visibleEdges, focusNodeIds, focusEdgeIds, renderMode);
+    canvas.innerHTML = _buildGraphSvg(visibleNodes, visibleEdges, focusNodeIds, focusEdgeIds, renderMode, _kgGraphData);
 }
 
 function _syncGraphModeButtons(hasFocus) {
@@ -835,7 +990,7 @@ function _syncGraphModeButtons(hasFocus) {
     }
 }
 
-function _buildGraphSvg(nodes, edges, focusNodeIds, focusEdgeIds, mode) {
+function _buildGraphSvg(nodes, edges, focusNodeIds, focusEdgeIds, mode, graphData = {}) {
     const groupOrder = ["Symptom", "FailureMode", "CorrectiveAction"];
     const groups = new Map();
     nodes.forEach((node) => {
@@ -847,19 +1002,19 @@ function _buildGraphSvg(nodes, edges, focusNodeIds, focusEdgeIds, mode) {
         ...groupOrder.filter((group) => groups.has(group)),
         ...[...groups.keys()].filter((group) => !groupOrder.includes(group)).sort(),
     ];
-    const width = Math.max(540, orderedGroups.length * 230);
+    const width = Math.max(620, orderedGroups.length * 250);
     const maxGroupSize = Math.max(1, ...orderedGroups.map((group) => groups.get(group).length));
-    const height = Math.max(180, maxGroupSize * 86 + 58);
-    const xStep = orderedGroups.length > 1 ? (width - 160) / (orderedGroups.length - 1) : 1;
+    const height = Math.max(230, maxGroupSize * 96 + 76);
+    const xStep = orderedGroups.length > 1 ? (width - 180) / (orderedGroups.length - 1) : 1;
     const positions = new Map();
 
     orderedGroups.forEach((group, groupIndex) => {
         const items = groups.get(group);
-        const x = orderedGroups.length === 1 ? width / 2 : 80 + groupIndex * xStep;
-        const groupHeight = (items.length - 1) * 86;
-        const startY = Math.max(52, (height - groupHeight) / 2);
+        const x = orderedGroups.length === 1 ? width / 2 : 90 + groupIndex * xStep;
+        const groupHeight = (items.length - 1) * 96;
+        const startY = Math.max(72, (height - groupHeight) / 2);
         items.forEach((node, index) => {
-            positions.set(node.id, { x, y: startY + index * 86 });
+            positions.set(node.id, { x, y: startY + index * 96 });
         });
     });
 
@@ -869,9 +1024,9 @@ function _buildGraphSvg(nodes, edges, focusNodeIds, focusEdgeIds, mode) {
         if (!from || !to) return "";
         const focusClass = focusEdgeIds.has(edge.id) ? " is-focus" : "";
         const dx = Math.max(60, Math.abs(to.x - from.x) * 0.45);
-        const path = `M ${from.x + 64} ${from.y} C ${from.x + dx} ${from.y}, ${to.x - dx} ${to.y}, ${to.x - 64} ${to.y}`;
+        const path = `M ${from.x + 19} ${from.y} C ${from.x + dx} ${from.y}, ${to.x - dx} ${to.y}, ${to.x - 19} ${to.y}`;
         const midX = (from.x + to.x) / 2;
-        const midY = (from.y + to.y) / 2 - 8;
+        const midY = (from.y + to.y) / 2 - 10;
         return `
             <path class="kg-edge${focusClass}" d="${path}" marker-end="url(#kg-arrow)"></path>
             <text class="kg-edge-label${focusClass}" x="${midX}" y="${midY}">${_escapeHtml(edge.label || "")}</text>
@@ -883,19 +1038,20 @@ function _buildGraphSvg(nodes, edges, focusNodeIds, focusEdgeIds, mode) {
         if (!pos) return "";
         const isFocus = focusNodeIds.has(node.id);
         const focusClass = isFocus ? " is-focus" : (mode === "focus" ? "" : "");
-        const label = _truncateGraphLabel(node.label || node.id, 28);
+        const previewClass = graphData.current_is_preview && isFocus ? " is-preview" : "";
+        const label = _truncateGraphLabel(node.label || node.id, 30);
         const type = node.group || "Node";
         return `
-            <g class="kg-node kg-node--${_classToken(type)}${focusClass}" transform="translate(${pos.x - 64}, ${pos.y - 24})">
-                <rect width="128" height="48" rx="12"></rect>
-                <text class="kg-node-type" x="64" y="17">${_escapeHtml(type)}</text>
-                <text class="kg-node-label" x="64" y="34">${_escapeHtml(label)}</text>
+            <g class="kg-node kg-node--${_classToken(type)}${focusClass}${previewClass}" transform="translate(${pos.x}, ${pos.y})">
+                <circle r="18"></circle>
+                <text class="kg-node-type" x="0" y="-27">${_escapeHtml(type)}</text>
+                <text class="kg-node-label" x="0" y="36">${_escapeHtml(label)}</text>
             </g>
         `;
     }).join("");
 
     return `
-        <svg class="chat-graph-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Extraction knowledge graph">
+        <svg class="chat-graph-svg chat-graph-svg--review" viewBox="0 0 ${width} ${height}" role="img" aria-label="Review knowledge graph">
             <defs>
                 <marker id="kg-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
                     <path d="M 0 0 L 8 4 L 0 8 z" class="kg-arrow"></path>
@@ -1130,29 +1286,251 @@ function _appendRequiredFieldsForm(wrap, humanRequiredFields, onAction) {
     wrap.appendChild(form);
 }
 
-function _renderExportWidget(payload) {
+function _formatMetricsDuration(seconds) {
+    const safe = Math.max(0, Number(seconds) || 0);
+    const minutes = Math.floor(safe / 60);
+    const remainder = Math.round(safe % 60);
+    if (minutes === 0) return `${remainder}s`;
+    return `${minutes}m ${String(remainder).padStart(2, "0")}s`;
+}
+
+function _formatMetricsNumber(value) {
+    return new Intl.NumberFormat("en-US").format(Number(value) || 0);
+}
+
+function _formatMetricsUsd(value) {
+    const amount = Number(value) || 0;
+    return `$${amount.toFixed(amount >= 1 ? 2 : 4)}`;
+}
+
+function _buildNodeCountTable(nodesByType) {
+    if (!nodesByType || Object.keys(nodesByType).length === 0) return "";
+    const rows = Object.entries(nodesByType)
+        .sort((a, b) => b[1] - a[1])
+        .map(([type, count]) => `
+            <div class="kpi-stage-row">
+                <div class="kpi-stage-name">${_escapeHtml(type)}</div>
+                <div>${_escapeHtml(String(count))}</div>
+            </div>
+        `).join("");
+    return `
+        <div class="kpi-section">
+            <div class="kpi-section-title">Node Count by Type</div>
+            <div class="kpi-stage-list">${rows}</div>
+        </div>
+    `;
+}
+
+function _runMetricsMarkup(metrics) {
+    if (!metrics) return "";
+
+    const totals = metrics.totals || {};
+    const doc = metrics.document || {};
+    const review = metrics.review || {};
+    const derived = metrics.derived_kpis || {};
+    const stages = metrics.stages || {};
+    const pricingBasis = metrics.pricing_basis || {};
+    const totalByModel = totals.by_model || {};
+    const saved = Number(review.validated_triplets || 0);
+    const discarded = Number(review.discarded_triplets || 0);
+    const extractedTriplets = Number(review.extracted_triplets || stages.extraction?.details?.triplet_count || 0);
+
+    const stageRows = ["scoping", "ontology", "extraction", "export"]
+        .filter((name) => stages[name])
+        .map((name) => {
+            const stage = stages[name];
+            const details = stage.details || {};
+            const bits = [`${_formatMetricsDuration(stage.duration_seconds)}`];
+            if (stage.llm_calls) bits.push(`${_formatMetricsNumber(stage.llm_calls)} call(s)`);
+            if (stage.total_tokens) bits.push(`${_formatMetricsNumber(stage.total_tokens)} tok`);
+            if (stage.estimated_cost_usd) bits.push(_formatMetricsUsd(stage.estimated_cost_usd));
+            if (details.chunk_count) bits.push(`${_formatMetricsNumber(details.chunk_count)} chunk(s)`);
+            if (details.retry_count != null && details.retry_count > 0) bits.push(`${_formatMetricsNumber(details.retry_count)} retry`);
+            return `
+                <div class="kpi-stage-row">
+                    <div class="kpi-stage-name">${_escapeHtml(name)}</div>
+                    <div>${_escapeHtml(bits.join(" · "))}</div>
+                </div>
+            `;
+        }).join("");
+
+    const modelRows = Object.entries(totalByModel)
+        .sort((a, b) => (b[1].estimated_cost_usd || 0) - (a[1].estimated_cost_usd || 0))
+        .map(([modelKey, modelData]) => `
+            <div class="kpi-stage-row">
+                <div class="kpi-stage-name">${_escapeHtml(modelData.label || modelKey)}</div>
+                <div>${_escapeHtml(`${_formatMetricsUsd(modelData.estimated_cost_usd)} · ${_formatMetricsNumber(modelData.total_tokens)} tok · ${_formatMetricsNumber(modelData.llm_calls)} call(s)`)}</div>
+            </div>
+        `)
+        .join("");
+
+    return `
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Total Automation Time</div>
+                <div class="kpi-value">${_escapeHtml(_formatMetricsDuration(totals.duration_seconds))}</div>
+                <div class="kpi-note">${_escapeHtml(_formatMetricsNumber(doc.selected_pages || 0))} selected pages out of ${_escapeHtml(_formatMetricsNumber(doc.total_pages || 0))}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Estimated Cost</div>
+                <div class="kpi-value">${_escapeHtml(_formatMetricsUsd(totals.estimated_cost_usd))}</div>
+                <div class="kpi-note">${_escapeHtml(pricingBasis.label || "Estimated from model pricing")}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">LLM Tokens</div>
+                <div class="kpi-value">${_escapeHtml(_formatMetricsNumber(totals.total_tokens))}</div>
+                <div class="kpi-note">${_escapeHtml(_formatMetricsNumber(totals.prompt_tokens))} input · ${_escapeHtml(_formatMetricsNumber(totals.completion_tokens))} output</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Review Yield</div>
+                <div class="kpi-value">${_escapeHtml(_formatMetricsNumber(saved))} kept / ${_escapeHtml(_formatMetricsNumber(discarded))} dropped</div>
+                <div class="kpi-note">${_escapeHtml(_formatMetricsNumber(extractedTriplets))} extracted triplet(s)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Cost Per Selected Page</div>
+                <div class="kpi-value">${_escapeHtml(_formatMetricsUsd(derived.cost_per_selected_page_usd))}</div>
+                <div class="kpi-note">${_escapeHtml((Number(derived.pages_kept_ratio || 0) * 100).toFixed(1))}% of document kept after scoping</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Cost Per Extracted Triplet</div>
+                <div class="kpi-value">${_escapeHtml(_formatMetricsUsd(derived.cost_per_extracted_triplet_usd))}</div>
+                <div class="kpi-note">${_escapeHtml(_formatMetricsDuration(derived.seconds_per_selected_page || 0))} per selected page</div>
+            </div>
+        </div>
+        <div class="kpi-section">
+            <div class="kpi-section-title">Stage Breakdown</div>
+            <div class="kpi-stage-list">${stageRows}</div>
+        </div>
+        ${modelRows ? `
+        <div class="kpi-section">
+            <div class="kpi-section-title">Model Cost Breakdown</div>
+            <div class="kpi-stage-list">${modelRows}</div>
+        </div>
+        ` : ""}
+        ${_buildNodeCountTable(metrics.nodes_by_type)}
+    `;
+}
+
+function _renderRunMetricsWidget(metrics) {
     const wrap = document.createElement("div");
-    wrap.className = "chat-widget chat-widget--export";
+    wrap.className = "chat-widget chat-widget--run-metrics";
     wrap.innerHTML = `
         <div class="widget-header">
-            <span class="widget-icon">📦</span>
-            <span class="widget-title">Export Ready</span>
+            <span class="widget-icon">📊</span>
+            <span class="widget-title">Extraction KPIs</span>
         </div>
-        <p class="widget-hint">The ontology is complete and ready to export.</p>
+        <p class="widget-hint">Complete extraction metrics recovered from the legacy summary view.</p>
+        ${_runMetricsMarkup(metrics)}
     `;
+    return wrap;
+}
+
+function _renderExportWidget(payload) {
+    const exported = Boolean(payload?.exported);
+    const editorUrl = payload?.editor_url || _modifyWorkspaceUrl || "";
+    const metrics = payload?.metrics || null;
+    if (editorUrl) {
+        _setModifyWorkspaceAvailability(editorUrl);
+    }
+
+    const wrap = document.createElement("div");
+    wrap.className = "chat-widget chat-widget--export";
+    if (exported && metrics) {
+        wrap.classList.add("chat-widget--export-metrics");
+    }
+    wrap.innerHTML = exported
+        ? `
+            <div class="widget-header">
+                <span class="widget-icon">Modify</span>
+                <span class="widget-title">Export Complete</span>
+            </div>
+            <p class="widget-hint">The JSON download starts automatically. The modify workspace opens below so you can inspect and modify the graph.</p>
+        `
+        : `
+            <div class="widget-header">
+                <span class="widget-icon">Export</span>
+                <span class="widget-title">Export Starting</span>
+            </div>
+            <p class="widget-hint">All triplets have been reviewed. Export will run automatically.</p>
+        `;
+    if (exported && metrics) {
+        const metricsBlock = document.createElement("div");
+        metricsBlock.className = "export-metrics-block";
+        metricsBlock.innerHTML = _runMetricsMarkup(metrics);
+        wrap.appendChild(metricsBlock);
+    }
     const actions = document.createElement("div");
     actions.className = "widget-actions";
-    const btn = document.createElement("button");
-    btn.className = "btn-primary btn-sm";
-    btn.textContent = "Export Ontology JSON";
-    btn.addEventListener("click", () => {
-        btn.disabled = true;
-        btn.textContent = "Exporting…";
-        _postAction("export_ontology", {});
-    });
-    actions.appendChild(btn);
+
+    if (!exported) {
+        const btn = document.createElement("button");
+        btn.className = "btn-primary btn-sm";
+        btn.textContent = "Export Now";
+        btn.addEventListener("click", () => {
+            btn.disabled = true;
+            btn.textContent = "Exporting…";
+            _postAction("export_ontology", {});
+        });
+        actions.appendChild(btn);
+        _scheduleAutoExport();
+    } else {
+        const inspectBtn = document.createElement("button");
+        inspectBtn.className = "btn-primary btn-sm";
+        inspectBtn.textContent = "Inspect / Modify Graph";
+        inspectBtn.addEventListener("click", () => {
+            if (editorUrl) _openModifyWorkspace(editorUrl);
+        });
+        actions.appendChild(inspectBtn);
+
+        const openTabBtn = document.createElement("button");
+        openTabBtn.className = "btn-secondary btn-sm";
+        openTabBtn.textContent = "Open In New Tab";
+        openTabBtn.addEventListener("click", () => {
+            if (!editorUrl) return;
+            window.open(editorUrl, "_blank", "noopener");
+        });
+        actions.appendChild(openTabBtn);
+        _scheduleExportDownloadAndModifyOpen(payload);
+    }
     wrap.appendChild(actions);
     return wrap;
+}
+
+function _scheduleAutoExport() {
+    if (_autoExportRequested) return;
+    _autoExportRequested = true;
+    window.setTimeout(() => {
+        _postAction("export_ontology", { auto: true });
+    }, 120);
+}
+
+function _scheduleExportDownloadAndModifyOpen(payload = {}) {
+    window.setTimeout(() => {
+        _downloadExportOnce(payload);
+        const editorUrl = payload?.editor_url || _modifyWorkspaceUrl;
+        if (editorUrl) {
+            const key = `${editorUrl}:${payload?.output_path || payload?.download_filename || ""}`;
+            if (_lastAutoOpenedModifyKey !== key) {
+                _lastAutoOpenedModifyKey = key;
+                _openModifyWorkspace(editorUrl);
+            }
+        }
+    }, 180);
+}
+
+function _downloadExportOnce(payload = {}) {
+    if (!_pdfId) return;
+    const key = `${_pdfId}:${payload?.output_path || payload?.download_filename || "latest"}`;
+    if (_lastDownloadedExportKey === key) return;
+    _lastDownloadedExportKey = key;
+
+    const link = document.createElement("a");
+    link.href = `/chat/download/${encodeURIComponent(_pdfId)}?t=${Date.now()}`;
+    link.download = payload?.download_filename || "ontology_export.json";
+    link.hidden = true;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
 }
 
 // ── User input ─────────────────────────────────────────────────────────
@@ -1219,6 +1597,10 @@ async function _postAction(action, payload = {}) {
 // ── Quick-action chips ─────────────────────────────────────────────────
 
 export function setQuickActions(actions) {
+    _renderQuickActions(actions);
+}
+
+function _renderQuickActions(actions) {
     const bar = document.getElementById("chat-quick-actions");
     if (!bar) return;
     bar.innerHTML = "";
@@ -1232,6 +1614,74 @@ export function setQuickActions(actions) {
         });
         bar.appendChild(chip);
     });
+}
+
+function _syncQuickActions(context = {}) {
+    const phase = String(_currentPhase || "loaded").toLowerCase();
+    const widget = String(context.widget || "");
+    const graphKey = _kgGraphData
+        ? `${_kgGraphData.approved_triplet_count ?? ""}:${_kgGraphData.current_triplet_index ?? ""}:${_kgGraphData.total_triplets ?? ""}`
+        : "";
+    const key = `${phase}:${widget}:${Boolean(_modifyWorkspaceUrl)}:${graphKey}`;
+    if (key === _lastQuickActionsKey) return;
+    _lastQuickActionsKey = key;
+    _renderQuickActions(_quickActionsForPhase(phase, widget));
+}
+
+function _quickActionsForPhase(phase, widget = "") {
+    if (widget === "sections" || ["scoping", "propose_cut_plan", "edit_cut_plan", "approve_cut_plan"].includes(phase)) {
+        return [
+            { label: "Why these sections?", message: "Do these selected sections make sense for diagnostic extraction? Point out anything suspicious." },
+            { label: "List selected pages", message: "Which page ranges are currently selected and why are they useful?" },
+            { label: "What blocks next?", message: "What still needs to happen before ontology drafting can start?" },
+        ];
+    }
+
+    if (widget === "ontology_review" || widget === "required_fields" || ["ontology_draft", "draft_ontology"].includes(phase)) {
+        return [
+            { label: "Required fields", message: "Which required ontology fields are still missing?" },
+            { label: "Graph issues", message: "Which graph issues or weak links should I review before extraction?" },
+            { label: "Ready to extract?", message: "Is the ontology draft ready for triplet extraction? Give a concrete yes/no with reasons." },
+        ];
+    }
+
+    if (widget === "triplet" || ["validation", "get_next_triplet", "approve_triplet", "skip_triplet", "edit_triplet"].includes(phase)) {
+        return [
+            { label: "Assess triplet", message: "Assess the current triplet: does the symptom, failure mode, and corrective action chain make sense?" },
+            { label: "What remains?", message: "How many triplets remain to review and how many have been approved?" },
+            { label: "Re-extract source", message: "If this triplet looks weak, which source page should I re-extract and why?" },
+        ];
+    }
+
+    if (["extraction", "run_extraction"].includes(phase)) {
+        return [
+            { label: "Extraction status", message: "What is being extracted right now and what should I expect next?" },
+            { label: "Quality risks", message: "What quality risks should I watch for when triplets appear?" },
+            { label: "Selected scope", message: "Which selected pages are feeding this extraction?" },
+        ];
+    }
+
+    if (widget === "export" || ["export", "export_ontology"].includes(phase)) {
+        return [
+            { label: "Export status", message: "Is the JSON exported and where can I modify the graph now?" },
+            { label: "Show KPIs", message: "Show the extraction KPIs, including cost, duration, and validated triplets." },
+            { label: "Modify graph", message: "Open or explain the modify workspace for the exported graph." },
+        ];
+    }
+
+    if (_modifyWorkspaceUrl || phase === "completed") {
+        return [
+            { label: "Inspect graph", message: "Summarize the exported graph: node counts, relationship counts, and anything suspicious." },
+            { label: "Find a node", message: "How can I inspect a specific node in the modify workspace?" },
+            { label: "Save version", message: "What should I check before saving a modified graph version?" },
+        ];
+    }
+
+    return [
+        { label: "Current phase", message: "What phase are we in and what is the next concrete action?" },
+        { label: "Any blockers?", message: "What is blocking the workflow right now, if anything?" },
+        { label: "What should I check?", message: "What should I review on this screen before continuing?" },
+    ];
 }
 
 // ── PDF viewer ─────────────────────────────────────────────────────────
@@ -1597,11 +2047,13 @@ function _setSystemBusy(detail, phase = _currentPhase) {
     _setPhaseLabel(_currentPhase);
     const label = _humanPhaseLabel(_currentPhase);
     _setTurnIndicator("working", "System is working", detail ? `${label} · ${detail}` : `${label} in progress.`);
+    _syncQuickActions({ widget: "working" });
 }
 
 function _setAwaitingOperator(detail = "") {
     const fallback = "Ask about the manual, selected sections or pages, extracted ontology, triplets, or workflow status.";
     _setTurnIndicator("operator", "Your turn", detail || fallback);
+    _syncQuickActions({ widget: _lastWidgetType || "operator" });
 }
 
 function _widgetPrompt(widgetType) {
@@ -1615,7 +2067,9 @@ function _widgetPrompt(widgetType) {
         case "node_draft":
             return "Review the proposed node draft and confirm it if it is correct.";
         case "export":
-            return "Export is ready when you want to generate the ontology JSON.";
+            return "The JSON export runs automatically. The modify workspace opens as soon as the file is ready.";
+        case "run_metrics":
+            return "The full extraction KPIs are shown here, including duration, cost, token usage, stage breakdown, and node counts.";
         case "extraction_graph":
             return "The extraction graph is ready. Triplet review will focus it on the current symptom chain.";
         default:
@@ -1640,8 +2094,10 @@ function _humanPhaseLabel(phase) {
         approve_triplet: "Triplet Review",
         skip_triplet: "Triplet Review",
         edit_triplet: "Triplet Review",
+        get_run_metrics: "KPIs",
         export: "Export",
         export_ontology: "Export",
+        completed: "Completed",
     }[key] || key.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 }
 

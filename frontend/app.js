@@ -176,7 +176,7 @@ async function _enterChatLayout(pdfId, filename, operator) {
 
     // Dynamically import chat.js and boot, passing model selections directly to the
     // /chat/start endpoint so the store is correctly initialised before scoping runs.
-    const { initChat, setQuickActions } = await import("/chat.js?v=20260422f");
+    const { initChat } = await import("/chat.js?v=20260424b");
     await initChat(pdfId, `/pdf/${pdfId}`, {
         scopingModel,
         extractionModel,
@@ -190,12 +190,6 @@ async function _enterChatLayout(pdfId, filename, operator) {
     if (titleEl) titleEl.textContent = filename || "Document";
     const opEl = document.getElementById("chat-operator");
     if (opEl && operator) opEl.textContent = operator;
-
-    setQuickActions([
-        { label: "Where are we?", message: "Where are we in the process?" },
-        { label: "Show progress", message: "Show me the current progress." },
-        { label: "Re-scope", message: "Re-analyze the document sections." },
-    ]);
 
     if (uploadScreen) uploadScreen.hidden = true;
 }

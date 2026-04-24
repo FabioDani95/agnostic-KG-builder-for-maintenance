@@ -230,6 +230,9 @@ test("manual and chatbot columns can be resized horizontally", async ({ page }) 
 
 test("section widget starts larger and can be resized by dragging", async ({ page }) => {
   await page.setViewportSize({ width: 1800, height: 1000 });
+  await page.addInitScript(() => {
+    window.localStorage.removeItem("kg_chat_left_column_width");
+  });
   await stubBaseRoutes(
     page,
     [
@@ -258,7 +261,12 @@ test("section widget starts larger and can be resized by dragging", async ({ pag
     ].join("\n"),
   );
 
-  await openChat(page);
+  await page.goto("/");
+  await page.evaluate(() => {
+    window.localStorage.removeItem("kg_chat_left_column_width");
+  });
+  await page.selectOption("#manual-select", "mock-manual.pdf");
+  await page.click("#upload-btn");
 
   const widget = page.locator(".chat-widget--sections");
   await expect(widget).toBeVisible();
@@ -575,4 +583,241 @@ test("extraction graph panel focuses current triplet and keeps PDF on action pag
 
   await page.click("#chat-graph-all");
   await expect(page.locator("#chat-graph-canvas")).toContainText("Spindle alarm");
+});
+
+test("triplet review card saves editable field patches on approval", async ({ page }) => {
+  await page.setViewportSize({ width: 1500, height: 960 });
+  const actions = [];
+  await stubBaseRoutes(
+    page,
+    [
+      `data: ${JSON.stringify({
+        type: "widget",
+        widget: "triplet",
+        payload: {
+          index: 0,
+          total: 1,
+          logic_assessment: [
+            "Logic: Axis backlash forms a clear symptom-to-failure chain.",
+            "Sense check: page 24 has concrete adjustment instructions.",
+          ],
+          triplet: {
+            symptom: {
+              symptom_id: "SYM-001",
+              name: "Axis backlash",
+              description: "Backlash detected.",
+              severity: "Medium",
+              evidence_page: 20,
+            },
+            failure_modes: [
+              {
+                failure_mode_id: "FM-001",
+                name: "Compensation mismatch",
+                description: "Backlash compensation is incorrect.",
+                linked_symptom_id: "SYM-001",
+                evidence_page: 23,
+              },
+            ],
+            corrective_actions: [
+              {
+                action_id: "CA-001",
+                name: "Adjust compensation",
+                description: "Adjust backlash compensation.",
+                instruction_text: "Measure backlash and adjust compensation.",
+                source_page: 24,
+                linked_failure_mode_id: "FM-001",
+              },
+            ],
+          },
+          graph: {
+            nodes: [
+              { id: "SYM-001", label: "Axis backlash", group: "Symptom" },
+              { id: "FM-001", label: "Compensation mismatch", group: "FailureMode" },
+              { id: "CA-001", label: "Adjust compensation", group: "CorrectiveAction" },
+            ],
+            edges: [
+              { id: "e0", from: "SYM-001", to: "FM-001", label: "MAY_INDICATE" },
+              { id: "e1", from: "FM-001", to: "CA-001", label: "HAS_CORRECTIVE_ACTION" },
+            ],
+            focus_index: 0,
+            focus_node_ids: ["SYM-001", "FM-001", "CA-001"],
+            focus_edge_ids: ["e0", "e1"],
+            review_graph: true,
+            approved_triplet_count: 0,
+            total_triplets: 1,
+            current_triplet_index: 0,
+            current_is_preview: true,
+          },
+        },
+      })}`,
+      "",
+      'data: {"type":"done"}',
+      "",
+    ].join("\n"),
+  );
+  await page.route("**/chat/action", async (route) => {
+    actions.push(route.request().postDataJSON());
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ status: "ok" }),
+    });
+  });
+
+  await openChat(page);
+
+  const tripletWidget = page.locator(".chat-widget--triplet").first();
+  await expect(tripletWidget.locator(".triplet-logic")).toContainText("Logic: Axis backlash");
+  await tripletWidget.locator('[data-field-path="symptom.name"]').fill("Axis backlash after warmup");
+  await expect(tripletWidget.getByRole("button", { name: "Save Edits" })).toBeEnabled();
+  await tripletWidget.getByRole("button", { name: "Approve" }).click();
+
+  await expect.poll(() => actions.length).toBe(1);
+  expect(actions[0].action).toBe("approve_triplet");
+  expect(actions[0].payload.patch).toEqual({
+    "symptom.name": "Axis backlash after warmup",
+  });
+});
+
+test("export-ready widget automatically starts ontology export", async ({ page }) => {
+  await page.setViewportSize({ width: 1500, height: 960 });
+  const actions = [];
+  await stubBaseRoutes(
+    page,
+    [
+      `data: ${JSON.stringify({
+        type: "widget",
+        widget: "export",
+        payload: {
+          status: "done",
+          total: 2,
+          validated: 2,
+          exported: false,
+          message: "All triplets reviewed.",
+        },
+      })}`,
+      "",
+      'data: {"type":"done"}',
+      "",
+    ].join("\n"),
+  );
+  await page.route("**/chat/action", async (route) => {
+    actions.push(route.request().postDataJSON());
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ status: "ok" }),
+    });
+  });
+
+  await openChat(page);
+
+  await expect(page.locator(".chat-widget--export")).toContainText("Export will run automatically");
+  await expect.poll(() => actions.map((item) => item.action)).toContain("export_ontology");
+});
+
+test("export widget exposes the modify workspace inside the chat layout", async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 960 });
+  await stubBaseRoutes(
+    page,
+    [
+      `data: ${JSON.stringify({
+        type: "widget",
+        widget: "export",
+        payload: {
+          status: "ok",
+          exported: true,
+          editor_url: "/modify/mock-pdf",
+          metrics: {
+            document: { total_pages: 12, selected_pages: 4 },
+            pricing_basis: { label: "Estimated using configured model pricing" },
+            stages: {
+              scoping: {
+                duration_seconds: 3.2,
+                llm_calls: 1,
+                prompt_tokens: 400,
+                completion_tokens: 80,
+                total_tokens: 480,
+                estimated_cost_usd: 0.0012,
+                details: { selected_pages: 4, total_pages: 12 },
+              },
+              extraction: {
+                duration_seconds: 5.8,
+                llm_calls: 2,
+                prompt_tokens: 1200,
+                completion_tokens: 200,
+                total_tokens: 1400,
+                estimated_cost_usd: 0.0048,
+                details: { triplet_count: 3, selected_pages: 4 },
+              },
+              export: {
+                duration_seconds: 0.6,
+                llm_calls: 0,
+                prompt_tokens: 0,
+                completion_tokens: 0,
+                total_tokens: 0,
+                estimated_cost_usd: 0,
+                details: {},
+              },
+            },
+            totals: {
+              duration_seconds: 9.6,
+              llm_calls: 3,
+              prompt_tokens: 1600,
+              completion_tokens: 280,
+              total_tokens: 1880,
+              estimated_cost_usd: 0.006,
+              by_model: {
+                "gpt-5.4": {
+                  label: "GPT-5.4",
+                  llm_calls: 3,
+                  total_tokens: 1880,
+                  estimated_cost_usd: 0.006,
+                },
+              },
+            },
+            review: {
+              validated_triplets: 2,
+              discarded_triplets: 1,
+              extracted_triplets: 3,
+            },
+            derived_kpis: {
+              pages_kept_ratio: 0.3333,
+              seconds_per_selected_page: 2.4,
+              cost_per_selected_page_usd: 0.0015,
+              cost_per_extracted_triplet_usd: 0.002,
+            },
+            nodes_by_type: {
+              Component: 4,
+              FailureMode: 3,
+              CorrectiveAction: 2,
+            },
+          },
+          message: "Export complete.",
+        },
+      })}`,
+      "",
+      'data: {"type":"done"}',
+      "",
+    ].join("\n"),
+  );
+
+  await page.route("**/modify/mock-pdf**", async (route) => {
+    await route.fulfill({
+      contentType: "text/html",
+      body: "<!doctype html><html><body>Mock modify workspace</body></html>",
+    });
+  });
+
+  await openChat(page);
+
+  await expect(page.locator(".chat-widget--export")).toContainText("inspect and modify the graph");
+  await expect(page.locator(".chat-widget--export")).toContainText("Estimated Cost");
+  await expect(page.locator(".chat-widget--export")).toContainText("Model Cost Breakdown");
+  await expect(page.locator(".chat-widget--export")).toContainText("Node Count by Type");
+  await expect(page.locator("#chat-modify-btn")).toBeVisible();
+  await page.click(".chat-widget--export >> text=Inspect / Modify Graph");
+
+  await expect(page.locator(".chat-pdf-section")).toHaveClass(/chat-pdf-section--modify/);
+  await expect(page.locator("#chat-modify-btn")).toHaveText("Manual");
+  await expect(page.locator("#chat-modify-panel")).toBeVisible();
+  await expect(page.frameLocator("#chat-modify-frame").locator("body")).toContainText("Mock modify workspace");
 });

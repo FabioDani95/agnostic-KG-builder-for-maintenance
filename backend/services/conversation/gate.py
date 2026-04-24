@@ -77,6 +77,12 @@ _PHASE_TOOLS: dict[str, set[str]] = {
     },
     GraphPhase.COMPLETED.value: {
         "export_ontology",
+        "inspect_exported_graph",
+        "update_exported_node",
+        "delete_exported_node",
+        "add_exported_relationship",
+        "delete_exported_relationship",
+        "save_exported_graph",
         "get_progress",
     },
 }
@@ -84,6 +90,7 @@ _PHASE_TOOLS: dict[str, set[str]] = {
 # Tools allowed in *any* phase when a run is active (after scoping starts)
 _ALWAYS_ALLOWED: set[str] = {
     "get_progress",
+    "get_run_metrics",
     "explain_phase",
     "explain_decision",
 }
@@ -106,6 +113,12 @@ _TOOL_EARLIEST_PHASE: dict[str, str] = {
     "confirm_node_manual": GraphPhase.EXTRACTION.value,
     "get_next_triplet": GraphPhase.EXTRACTION.value,
     "export_ontology": GraphPhase.EXPORT.value,
+    "inspect_exported_graph": GraphPhase.COMPLETED.value,
+    "update_exported_node": GraphPhase.COMPLETED.value,
+    "delete_exported_node": GraphPhase.COMPLETED.value,
+    "add_exported_relationship": GraphPhase.COMPLETED.value,
+    "delete_exported_relationship": GraphPhase.COMPLETED.value,
+    "save_exported_graph": GraphPhase.COMPLETED.value,
 }
 
 _PHASE_LABELS: dict[str, str] = {
@@ -207,6 +220,31 @@ def validate_args(tool_name: str, args: dict[str, Any], store: dict) -> tuple[bo
             )
         if not args.get("raw_text"):
             return False, "add_node_manual requires raw_text describing the node."
+
+    if tool_name == "inspect_exported_graph":
+        limit = args.get("limit")
+        if limit is not None and (not isinstance(limit, int) or limit < 1 or limit > 20):
+            return False, "inspect_exported_graph limit must be an integer between 1 and 20."
+
+    if tool_name == "update_exported_node":
+        if not args.get("node_id"):
+            return False, "update_exported_node requires node_id."
+        attributes = args.get("attributes")
+        if not isinstance(attributes, dict) or not attributes:
+            return False, "update_exported_node requires a non-empty attributes object."
+
+    if tool_name == "delete_exported_node":
+        if not args.get("node_id"):
+            return False, "delete_exported_node requires node_id."
+
+    if tool_name == "add_exported_relationship":
+        if not args.get("relation_type") or not args.get("from_id") or not args.get("to_id"):
+            return False, "add_exported_relationship requires relation_type, from_id, and to_id."
+
+    if tool_name == "delete_exported_relationship":
+        index = args.get("index")
+        if not isinstance(index, int) or index < 0:
+            return False, "delete_exported_relationship requires a non-negative integer index."
 
     return True, ""
 

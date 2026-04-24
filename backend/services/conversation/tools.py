@@ -138,6 +138,11 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
                 "type": "object",
                 "properties": {
                     "index": {"type": "integer", "description": "0-based index in the triplet list."},
+                    "patch": {
+                        "type": "object",
+                        "description": "Optional dot-notation field patch to save before validating.",
+                        "additionalProperties": True,
+                    },
                 },
                 "required": ["index"],
             },
@@ -235,8 +240,112 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
     {
         "type": "function",
         "function": {
+            "name": "inspect_exported_graph",
+            "description": "Inspect the exported graph after JSON generation. Use this to answer questions about node counts, node types, matching nodes, or a specific exported node.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "Optional free-text search across node ids, names, types, and attributes.",
+                    },
+                    "node_id": {
+                        "type": "string",
+                        "description": "Optional exact node id to inspect in detail.",
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Maximum number of matching nodes to return.",
+                    },
+                },
+                "required": [],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "update_exported_node",
+            "description": "Modify one exported graph node by applying a partial attribute update in the shared modify workspace.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "node_id": {"type": "string"},
+                    "attributes": {
+                        "type": "object",
+                        "description": "Partial node attributes to replace.",
+                        "additionalProperties": True,
+                    },
+                },
+                "required": ["node_id", "attributes"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "delete_exported_node",
+            "description": "Delete an exported graph node and all of its connected relationships from the shared modify workspace.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "node_id": {"type": "string"},
+                },
+                "required": ["node_id"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "add_exported_relationship",
+            "description": "Add a relationship between two exported graph nodes in the shared modify workspace.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "relation_type": {"type": "string"},
+                    "from_id": {"type": "string"},
+                    "to_id": {"type": "string"},
+                },
+                "required": ["relation_type", "from_id", "to_id"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "delete_exported_relationship",
+            "description": "Delete one exported graph relationship by its index from the shared modify workspace.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "index": {"type": "integer"},
+                },
+                "required": ["index"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "save_exported_graph",
+            "description": "Save the current shared modify workspace as the next ontology file version.",
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "get_progress",
             "description": "Return the current pipeline phase, counts, and a human-readable status summary.",
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_run_metrics",
+            "description": "Show the extraction KPIs: total duration, estimated cost, token usage, stage breakdown, model cost breakdown, node counts, and derived metrics.",
             "parameters": {"type": "object", "properties": {}, "required": []},
         },
     },
@@ -452,6 +561,220 @@ def _build_triplet_graph_payload(
     }
 
 
+def _triplet_identity(triplet: Any) -> tuple[str, tuple[str, ...], tuple[str, ...]]:
+    plain = _as_plain_dict(triplet)
+    symptom = _as_plain_dict(plain.get("symptom"))
+    failure_modes = tuple(
+        str(_as_plain_dict(fm).get("failure_mode_id") or "")
+        for fm in (plain.get("failure_modes") or [])
+    )
+    corrective_actions = tuple(
+        str(_as_plain_dict(ca).get("action_id") or "")
+        for ca in (plain.get("corrective_actions") or [])
+    )
+    return (
+        str(symptom.get("symptom_id") or ""),
+        failure_modes,
+        corrective_actions,
+    )
+
+
+def _contains_triplet(triplets: list[Any], triplet: Any) -> bool:
+    identity = _triplet_identity(triplet)
+    return any(_triplet_identity(item) == identity for item in triplets or [])
+
+
+def _build_review_graph_payload(
+    store: dict[str, Any],
+    *,
+    focus_index: int | None = None,
+) -> dict[str, Any]:
+    """Graph shown during HITL review: approved triplets plus current preview."""
+    gs = store.get("graph_state") or {}
+    all_triplets = list(gs.get("cleaned_triplets") or [])
+    approved_triplets = list(store.get("validated_triplets") or [])
+    visible_triplets = list(approved_triplets)
+    focus_payload_index: int | None = None
+    current_is_preview = False
+
+    if focus_index is not None and 0 <= focus_index < len(all_triplets):
+        current = all_triplets[focus_index]
+        for idx, item in enumerate(visible_triplets):
+            if _triplet_identity(item) == _triplet_identity(current):
+                focus_payload_index = idx
+                break
+        if focus_payload_index is None:
+            visible_triplets.append(current)
+            focus_payload_index = len(visible_triplets) - 1
+            current_is_preview = True
+
+    graph = _build_triplet_graph_payload(visible_triplets, focus_index=focus_payload_index)
+    graph.update({
+        "review_graph": True,
+        "approved_triplet_count": len(approved_triplets),
+        "total_triplets": len(all_triplets),
+        "current_triplet_index": focus_index,
+        "current_is_preview": current_is_preview,
+    })
+    return graph
+
+
+def _triplet_logic_assessment(triplet: dict[str, Any]) -> list[str]:
+    def _safe_int(value: Any) -> int:
+        try:
+            return int(value or 0)
+        except (TypeError, ValueError):
+            return 0
+
+    symptom = _as_plain_dict(triplet.get("symptom"))
+    failure_modes = [_as_plain_dict(item) for item in (triplet.get("failure_modes") or [])]
+    corrective_actions = [_as_plain_dict(item) for item in (triplet.get("corrective_actions") or [])]
+
+    symptom_name = str(symptom.get("name") or symptom.get("symptom_id") or "this symptom")
+    linked_actions = [
+        action for action in corrective_actions
+        if str(action.get("linked_failure_mode_id") or "").strip()
+    ]
+    if failure_modes and corrective_actions and linked_actions:
+        line_one = (
+            f"Logic: '{symptom_name}' forms a reviewable chain with "
+            f"{len(failure_modes)} failure mode(s) and {len(corrective_actions)} corrective action(s)."
+        )
+    else:
+        missing = []
+        if not failure_modes:
+            missing.append("failure mode")
+        if not corrective_actions:
+            missing.append("corrective action")
+        if corrective_actions and not linked_actions:
+            missing.append("failure-to-action link")
+        line_one = (
+            f"Logic: '{symptom_name}' is incomplete; missing "
+            f"{', '.join(missing) or 'a clear chain'}."
+        )
+
+    pages = [
+        _safe_int(symptom.get("evidence_page")),
+        *[_safe_int(item.get("evidence_page")) for item in failure_modes],
+        *[_safe_int(item.get("source_page")) for item in corrective_actions],
+    ]
+    pages = [page for page in pages if page > 0]
+    action_with_instruction = any(str(action.get("instruction_text") or "").strip() for action in corrective_actions)
+    if pages and action_with_instruction:
+        line_two = (
+            f"Sense check: source page(s) {', '.join(map(str, sorted(set(pages))))} are traceable, "
+            "and at least one action has concrete instructions."
+        )
+    elif pages:
+        line_two = (
+            f"Sense check: source page(s) {', '.join(map(str, sorted(set(pages))))} are traceable, "
+            "but the corrective instruction is weak or empty."
+        )
+    else:
+        line_two = "Sense check: no source page is attached, so verify this against the manual before approving."
+    return [line_one, line_two]
+
+
+def _apply_triplet_patch(triplet: dict[str, Any], patch: dict[str, Any]) -> dict[str, Any]:
+    """Apply dot-notation patches, including list indices such as failure_modes.0.name."""
+    for key, value in (patch or {}).items():
+        parts = [part for part in str(key).split(".") if part]
+        if not parts:
+            continue
+        target: Any = triplet
+        for part in parts[:-1]:
+            if isinstance(target, list):
+                try:
+                    target = target[int(part)]
+                except (ValueError, IndexError):
+                    target = None
+            elif isinstance(target, dict):
+                target = target.setdefault(part, {})
+            else:
+                target = None
+            if target is None:
+                break
+        if target is None:
+            continue
+        leaf = parts[-1]
+        if isinstance(target, list):
+            try:
+                target[int(leaf)] = value
+            except (ValueError, IndexError):
+                continue
+        elif isinstance(target, dict):
+            target[leaf] = value
+    return triplet
+
+
+def _modify_workspace_payload(store: dict[str, Any], *, refresh: bool = False) -> dict[str, Any]:
+    pdf_id = str(store.get("pdf_id") or "latest")
+    return {
+        "editor_url": f"/modify/{pdf_id}" if pdf_id and pdf_id != "latest" else "/modify",
+        "pdf_id": pdf_id,
+        "refresh": refresh,
+    }
+
+
+def _resolve_exported_graph_path(store: dict[str, Any]):
+    from backend.services import graph_editor_session
+
+    return graph_editor_session.resolve_ontology_path(
+        str(store.get("pdf_id") or "latest"),
+        store=store,
+    )
+
+
+def _graph_type_counts(ontology: dict[str, Any]) -> tuple[dict[str, int], dict[str, int]]:
+    node_type_counts = {
+        str(node_type): len(items or [])
+        for node_type, items in (ontology.get("nodes") or {}).items()
+        if items
+    }
+
+    edge_type_counts: dict[str, int] = {}
+    for rel in ontology.get("relations") or ontology.get("relationships") or []:
+        rel_type = str(rel.get("name") or rel.get("type") or "").strip()
+        if not rel_type:
+            continue
+        edge_type_counts[rel_type] = edge_type_counts.get(rel_type, 0) + 1
+    return node_type_counts, edge_type_counts
+
+
+def _search_exported_nodes(ontology: dict[str, Any], query: str, *, limit: int = 8) -> list[dict[str, Any]]:
+    from modify.graph import _node_id, _node_label
+
+    terms = [term for term in str(query or "").lower().split() if term]
+    if not terms:
+        return []
+
+    matches: list[dict[str, Any]] = []
+    for node_type, items in (ontology.get("nodes") or {}).items():
+        for obj in items or []:
+            node_id = _node_id(obj)
+            if not node_id:
+                continue
+            label = _node_label(obj, node_id)
+            haystack = " ".join(
+                [
+                    str(node_type),
+                    str(node_id),
+                    str(label),
+                    *(str(value) for value in obj.values()),
+                ]
+            ).lower()
+            if not all(term in haystack for term in terms):
+                continue
+            matches.append({
+                "id": node_id,
+                "label": label,
+                "type": str(node_type),
+            })
+            if len(matches) >= limit:
+                return matches
+    return matches
+
+
 # --- Dispatch implementations -------------------------------------------
 
 async def dispatch(
@@ -471,6 +794,27 @@ async def dispatch(
         return {"status": "error", "message": str(exc)}
 
 
+def _visible_sections_for_widget(sections: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Sections shown in the UI widget: drop keyword-fallback entries.
+
+    Keyword-match sections are still kept in pages_to_keep so the pipeline
+    does not lose recall, but they are opaque to the operator (e.g. "Keyword
+    match (pp. 1-5)") and confuse the selection UI.
+    """
+    visible: list[dict[str, Any]] = []
+    for sec in sections or []:
+        if not isinstance(sec, dict):
+            continue
+        source = str(sec.get("source") or "").lower()
+        name = str(sec.get("name") or "")
+        if source == "keyword":
+            continue
+        if name.lower().startswith("keyword match"):
+            continue
+        visible.append(sec)
+    return visible
+
+
 async def _propose_cut_plan(args, store, on_event):
     from backend.models import CutPlanRequest
     from backend.services.scoping_workflow import create_cut_plan_workflow
@@ -487,18 +831,24 @@ async def _propose_cut_plan(args, store, on_event):
     # Persist cut plan in store
     from backend.graph.store import update_scoping_state
     update_scoping_state(store, result, model_name=str(req.model_name or ""))
+
+    all_sections = [
+        {
+            "name": s.name,
+            "start": s.page_range.start,
+            "end": s.page_range.end,
+            "source": s.source,
+        }
+        for s in result.sections
+    ]
+    visible_sections = _visible_sections_for_widget(all_sections)
+    keyword_section_count = len(all_sections) - len(visible_sections)
     return {
         "status": "ok",
-        "sections": [
-            {
-                "name": s.name,
-                "start": s.page_range.start,
-                "end": s.page_range.end,
-            }
-            for s in result.sections
-        ],
+        "sections": visible_sections,
         "pages_to_keep": result.pages_to_keep,
         "total_pages": result.total_pages,
+        "keyword_fallback_sections": keyword_section_count,
         "skipped": result.skipped,
         "product_info": result.product_info.model_dump() if result.product_info else None,
         "widget": "sections",
@@ -529,10 +879,19 @@ async def _edit_cut_plan(args, store, on_event):
     cut_plan["pages_to_keep"] = sorted(pages_to_keep)
     store["cut_plan"] = cut_plan
 
+    total_pages = (
+        cut_plan.get("total_pages")
+        or (store.get("graph_state") or {}).get("total_pages")
+        or len(store.get("pages") or [])
+    )
+    visible_sections = _visible_sections_for_widget(sections)
     return {
         "status": "ok",
-        "sections": sections,
+        "sections": visible_sections,
         "pages_to_keep": cut_plan["pages_to_keep"],
+        "total_pages": int(total_pages or 0),
+        "keyword_fallback_sections": len(sections) - len(visible_sections),
+        "product_info": cut_plan.get("product_info"),
         "widget": "sections",
     }
 
@@ -711,7 +1070,7 @@ async def _run_extraction(args, store, on_event):
         "status": "ok",
         "triplet_count": len(result.triplets),
         "message": f"Extraction complete — {len(result.triplets)} triplet(s) ready for review.",
-        "graph": _build_triplet_graph_payload(triplets),
+        "graph": _build_review_graph_payload(store, focus_index=0 if triplets else None),
         "widget": "extraction_graph",
     }
 
@@ -771,20 +1130,39 @@ async def _re_extract_pages(args, store, on_event):
 
 async def _approve_triplet(args, store, on_event):
     idx = args["index"]
+    patch = args.get("patch") or {}
     gs = store.get("graph_state") or {}
     triplets = gs.get("cleaned_triplets") or []
     triplet = triplets[idx]
+    if patch:
+        import copy
+        triplet = _apply_triplet_patch(copy.deepcopy(triplet), patch)
+        triplets[idx] = triplet
+        gs["cleaned_triplets"] = triplets
+        store["graph_state"] = gs
     validated = store.setdefault("validated_triplets", [])
-    if triplet not in validated:
+    if not _contains_triplet(validated, triplet):
         validated.append(triplet)
     store["review_index"] = idx + 1
-    return {"status": "ok", "action": "validated", "index": idx}
+    return {
+        "status": "ok",
+        "action": "validated",
+        "index": idx,
+        "graph": _build_review_graph_payload(store),
+        "widget": "extraction_graph",
+    }
 
 
 async def _skip_triplet(args, store, on_event):
     idx = args["index"]
     store["review_index"] = idx + 1
-    return {"status": "ok", "action": "skipped", "index": idx}
+    return {
+        "status": "ok",
+        "action": "skipped",
+        "index": idx,
+        "graph": _build_review_graph_payload(store),
+        "widget": "extraction_graph",
+    }
 
 
 async def _edit_triplet(args, store, on_event):
@@ -796,21 +1174,22 @@ async def _edit_triplet(args, store, on_event):
         return {"status": "error", "message": f"No triplet at index {idx}."}
 
     import copy
-    triplet = copy.deepcopy(triplets[idx])
-    # Apply simple dot-notation patch (e.g. "symptom.description": "new val")
-    for key, value in patch.items():
-        parts = key.split(".")
-        target = triplet
-        for part in parts[:-1]:
-            if isinstance(target, dict):
-                target = target.setdefault(part, {})
-        if isinstance(target, dict):
-            target[parts[-1]] = value
+    triplet = _apply_triplet_patch(copy.deepcopy(triplets[idx]), patch)
 
     triplets[idx] = triplet
     gs["cleaned_triplets"] = triplets
     store["graph_state"] = gs
-    return {"status": "ok", "action": "edited", "index": idx, "triplet": triplet}
+    return {
+        "status": "ok",
+        "action": "edited",
+        "index": idx,
+        "total": len(triplets),
+        "triplet": triplet,
+        "graph": _build_review_graph_payload(store, focus_index=idx),
+        "widget": "triplet",
+        "logic_assessment": _triplet_logic_assessment(triplet),
+        "message": "Triplet edits saved. Review the updated card before approving or skipping.",
+    }
 
 
 async def _get_next_triplet(args, store, on_event):
@@ -831,6 +1210,7 @@ async def _get_next_triplet(args, store, on_event):
             "status": "done",
             "total": len(triplets),
             "validated": len(validated),
+            "exported": False,
             "message": (
                 f"All {len(triplets)} triplet(s) reviewed — "
                 f"{len(validated)} validated, {len(triplets) - len(validated)} skipped. "
@@ -855,7 +1235,8 @@ async def _get_next_triplet(args, store, on_event):
         "index": review_index,
         "total": len(triplets),
         "triplet": triplet,
-        "graph": _build_triplet_graph_payload(triplets, focus_index=review_index),
+        "logic_assessment": _triplet_logic_assessment(triplet),
+        "graph": _build_review_graph_payload(store, focus_index=review_index),
         "widget": "triplet",
     }
 
@@ -964,12 +1345,18 @@ async def _confirm_node_manual(args, store, on_event):
 
 async def _export_ontology(args, store, on_event):
     import json
-    import os
+    import time
     from backend.services.pipeline_actions import get_current_ontology
-    from backend.services.ontology_pipeline import ontology_export_payload
+    from backend.services.ontology_export_store import (
+        persist_export_metrics,
+        persist_exported_ontology,
+        prepare_exported_ontology,
+    )
+    from backend.services.run_metrics import aggregate_usage, build_metrics_payload, record_stage_metrics
     from backend.services.style_cleanup_service import cleanup_export_ontology
     from backend.services.conversation import events as evt_bus
 
+    t0 = time.perf_counter()
     result = get_current_ontology(store)
     if not result:
         return {"status": "error", "message": "No ontology available to export."}
@@ -996,35 +1383,62 @@ async def _export_ontology(args, store, on_event):
 
     ontology_dict = result.ontology.model_dump()
     try:
-        cleaned, _, cleanup_report = await asyncio.to_thread(
+        cleaned, style_cleanup_usage, cleanup_report = await asyncio.to_thread(
             cleanup_export_ontology,
             ontology_dict,
             target_language=store.get("target_language", "en"),
         )
     except Exception:
         cleaned = ontology_dict
+        style_cleanup_usage = {}
         cleanup_report = {}
 
     from backend.models import OntologyInstance
     cleaned_ontology = OntologyInstance.model_validate(cleaned)
-    payload_json = ontology_export_payload(cleaned_ontology)
-
-    manual_name = (
-        (store.get("source_title") or store.get("pdf_id") or "export")
-        .replace(" ", "_")
-        .replace("/", "_")
+    ontology_payload = prepare_exported_ontology(cleaned_ontology.model_dump())
+    export_info = persist_exported_ontology(
+        ontology_payload,
+        store.get("pdf_id"),
+        manual_filename=store.get("filename"),
     )
-    output_dir = os.path.join("output", manual_name)
-    os.makedirs(output_dir, exist_ok=True)
-
-    ontology_path = os.path.join(output_dir, "ontology.json")
-    with open(ontology_path, "w", encoding="utf-8") as f:
-        f.write(payload_json)
+    ontology_path = export_info["target_path"]
+    store["ontology_path"] = ontology_path
 
     conversation = store.get("conversation") or {}
-    conversation_path = os.path.join(output_dir, "conversation.json")
+    from pathlib import Path
+    conversation_path = str(Path(ontology_path).with_name("conversation.json"))
     with open(conversation_path, "w", encoding="utf-8") as f:
         json.dump(conversation, f, indent=2, ensure_ascii=False, default=str)
+
+    export_usage = aggregate_usage([style_cleanup_usage] if style_cleanup_usage else [])
+    record_stage_metrics(
+        store,
+        "export",
+        {
+            "stage": "export",
+            "duration_seconds": round(max(0.0, time.perf_counter() - t0), 3),
+            **export_usage,
+            "details": {
+                "validated_triplets": len(store.get("validated_triplets") or []),
+                "filename": export_info.get("download_filename") or export_info["filename"],
+                "style_cleanup_fields_seen": int(cleanup_report.get("llm_fields_seen", 0) or 0),
+                "style_cleanup_fields_changed": int(cleanup_report.get("llm_fields_changed", 0) or 0),
+                "style_cleanup_fields_rejected": int(cleanup_report.get("llm_fields_rejected", 0) or 0),
+                "style_cleanup_deterministic_fields_changed": int(
+                    cleanup_report.get("deterministic_fields_changed", 0) or 0
+                ),
+                "style_cleanup_model": cleanup_report.get("model"),
+            },
+        },
+    )
+    metrics_payload = build_metrics_payload(store)
+    metrics_info = persist_export_metrics(
+        metrics_payload,
+        ontology_payload,
+        export_info,
+        manual_filename=store.get("filename"),
+    )
+    store["metrics_path"] = metrics_info["target_path"]
 
     # Update phase to COMPLETED
     from backend.graph.store import _record_phase
@@ -1041,14 +1455,194 @@ async def _export_ontology(args, store, on_event):
     return {
         "status": "ok",
         "output_path": ontology_path,
+        "download_filename": export_info.get("download_filename") or export_info["filename"],
         "triplets_total": len(triplets),
         "triplets_validated": len(validated),
         "cleanup_fields_changed": cleanup_report.get("deterministic_fields_changed", 0),
+        "exported": True,
+        "metrics": metrics_payload,
+        **_modify_workspace_payload(store, refresh=False),
         "message": (
             f"Export complete — {len(validated)} validated triplet(s). "
-            f"Ontology saved to `{ontology_path}`."
+            f"Ontology saved to `{ontology_path}`. "
+            "The full extraction KPIs are shown below. Would you like to inspect and modify the graph now?"
         ),
         "widget": "export",
+    }
+
+async def _inspect_exported_graph(args, store, on_event):
+    from backend.services import graph_editor_session
+
+    path = _resolve_exported_graph_path(store)
+    ontology = graph_editor_session.current_ontology(path)
+    status = graph_editor_session.status_payload(path)
+    node_type_counts, edge_type_counts = _graph_type_counts(ontology)
+    total_nodes = sum(node_type_counts.values())
+    total_relationships = sum(edge_type_counts.values())
+
+    node_id = str(args.get("node_id") or "").strip()
+    query = str(args.get("query") or "").strip()
+    limit = max(1, min(int(args.get("limit") or 8), 20))
+
+    if node_id:
+        try:
+            node = graph_editor_session.node_detail_payload(path, node_id)
+        except KeyError:
+            return {
+                "status": "refused",
+                "node_id": node_id,
+                "message": f"I could not find node `{node_id}` in the exported graph.",
+                "total_nodes": total_nodes,
+                "total_relationships": total_relationships,
+                "node_type_counts": node_type_counts,
+                "relationship_type_counts": edge_type_counts,
+                **status,
+            }
+        return {
+            "status": "ok",
+            "node": node,
+            "total_nodes": total_nodes,
+            "total_relationships": total_relationships,
+            "node_type_counts": node_type_counts,
+            "relationship_type_counts": edge_type_counts,
+            **status,
+            "message": (
+                f"Found node `{node['id']}` ({node['type']}) with "
+                f"{len(node['relationships_out'])} outgoing and {len(node['relationships_in'])} incoming relationship(s)."
+            ),
+        }
+
+    matches = _search_exported_nodes(ontology, query, limit=limit) if query else []
+    if query:
+        summary = (
+            f"Found {len(matches)} matching node(s) for '{query}'."
+            if matches
+            else f"No exported nodes matched '{query}'."
+        )
+    else:
+        summary = f"The exported graph contains {total_nodes} node(s) and {total_relationships} relationship(s)."
+
+    return {
+        "status": "ok",
+        "query": query or None,
+        "matches": matches,
+        "total_nodes": total_nodes,
+        "total_relationships": total_relationships,
+        "node_type_counts": node_type_counts,
+        "relationship_type_counts": edge_type_counts,
+        **status,
+        "message": summary,
+    }
+
+
+async def _update_exported_node(args, store, on_event):
+    from backend.services import graph_editor_session
+
+    path = _resolve_exported_graph_path(store)
+    node_id = str(args.get("node_id") or "").strip()
+    attributes = args.get("attributes") or {}
+    try:
+        result = graph_editor_session.update_node(path, node_id, attributes)
+    except ValueError as exc:
+        return {"status": "refused", "message": str(exc)}
+    except KeyError:
+        return {"status": "refused", "message": f"Node `{node_id}` was not found in the exported graph."}
+
+    return {
+        "status": "ok",
+        "node_id": node_id,
+        "vis_node": result.get("vis_node"),
+        "message": f"Node `{node_id}` updated in the modify workspace. Save a new version when you are ready.",
+        **_modify_workspace_payload(store, refresh=True),
+        "widget": "modify_workspace_sync",
+    }
+
+
+async def _delete_exported_node(args, store, on_event):
+    from backend.services import graph_editor_session
+
+    path = _resolve_exported_graph_path(store)
+    node_id = str(args.get("node_id") or "").strip()
+    try:
+        result = graph_editor_session.delete_node(path, node_id)
+    except KeyError:
+        return {"status": "refused", "message": f"Node `{node_id}` was not found in the exported graph."}
+
+    return {
+        "status": "ok",
+        "node_id": node_id,
+        "removed_relationships": result.get("removed_relationships", 0),
+        "message": (
+            f"Node `{node_id}` deleted from the modify workspace. "
+            f"{result.get('removed_relationships', 0)} relationship(s) were removed with it."
+        ),
+        **_modify_workspace_payload(store, refresh=True),
+        "widget": "modify_workspace_sync",
+    }
+
+
+async def _add_exported_relationship(args, store, on_event):
+    from backend.services import graph_editor_session
+
+    path = _resolve_exported_graph_path(store)
+    relation_type = str(args.get("relation_type") or "").strip()
+    from_id = str(args.get("from_id") or "").strip()
+    to_id = str(args.get("to_id") or "").strip()
+    try:
+        result = graph_editor_session.add_relationship(path, relation_type, from_id, to_id)
+    except ValueError as exc:
+        return {"status": "refused", "message": str(exc)}
+
+    return {
+        "status": "ok",
+        "edge": result.get("edge"),
+        "message": (
+            f"Relationship `{relation_type}` added from `{from_id}` to `{to_id}` in the modify workspace. "
+            "Save a new version when you are ready."
+        ),
+        **_modify_workspace_payload(store, refresh=True),
+        "widget": "modify_workspace_sync",
+    }
+
+
+async def _delete_exported_relationship(args, store, on_event):
+    from backend.services import graph_editor_session
+
+    path = _resolve_exported_graph_path(store)
+    index = int(args.get("index"))
+    try:
+        result = graph_editor_session.delete_relationship(path, index)
+    except IndexError as exc:
+        return {"status": "refused", "message": str(exc)}
+
+    removed = result.get("removed") or {}
+    rel_type = removed.get("name") or removed.get("type") or "relationship"
+    return {
+        "status": "ok",
+        "index": index,
+        "removed": removed,
+        "message": f"Relationship {index} (`{rel_type}`) was removed from the modify workspace.",
+        **_modify_workspace_payload(store, refresh=True),
+        "widget": "modify_workspace_sync",
+    }
+
+
+async def _save_exported_graph(args, store, on_event):
+    from backend.services import graph_editor_session
+
+    path = _resolve_exported_graph_path(store)
+    try:
+        result = graph_editor_session.save_session(path, store=store)
+    except ValueError as exc:
+        return {"status": "refused", "message": str(exc)}
+
+    return {
+        "status": "ok",
+        "version": result.get("version"),
+        "saved_as": result.get("saved_as"),
+        "message": f"Modify workspace saved as `{result.get('saved_as')}` (version {result.get('version')}).",
+        **_modify_workspace_payload(store, refresh=True),
+        "widget": "modify_workspace_sync",
     }
 
 
@@ -1074,6 +1668,25 @@ async def _get_progress(args, store, on_event):
     }
 
 
+async def _get_run_metrics(args, store, on_event):
+    from backend.services.run_metrics import build_metrics_payload
+
+    metrics = build_metrics_payload(store)
+    totals = metrics.get("totals") or {}
+    review = metrics.get("review") or {}
+    return {
+        "status": "ok",
+        "metrics": metrics,
+        "message": (
+            f"Full extraction KPIs ready: {int(totals.get('llm_calls', 0) or 0)} LLM call(s), "
+            f"{int(totals.get('total_tokens', 0) or 0)} token(s), "
+            f"${float(totals.get('estimated_cost_usd', 0) or 0):.4f} estimated cost, "
+            f"and {int(review.get('validated_triplets', 0) or 0)} validated triplet(s)."
+        ),
+        "widget": "run_metrics",
+    }
+
+
 async def _explain_phase(args, store, on_event):
     from backend.graph.state import GraphPhase
     gs = store.get("graph_state") or {}
@@ -1085,7 +1698,7 @@ async def _explain_phase(args, store, on_event):
         GraphPhase.EXTRACTION.value: "Ontology is drafted. Review the required fields and suggested relations before extraction.",
         GraphPhase.VALIDATION.value: "Triplet extraction is done. Review each Symptom → FailureMode → CorrectiveAction chain. Validate the ones you want to keep.",
         GraphPhase.EXPORT.value: "All triplets reviewed. Ready to export the ontology JSON.",
-        GraphPhase.COMPLETED.value: "Export complete. The ontology JSON is available in output/.",
+        GraphPhase.COMPLETED.value: "Export complete. The ontology JSON is available in output/, and you can now inspect or modify the exported graph.",
     }
     return {"status": "ok", "phase": phase, "explanation": explanations.get(phase, f"Current phase: {phase}.")}
 
@@ -1207,7 +1820,14 @@ _DISPATCH_MAP = {
     "add_node_manual": _add_node_manual,
     "confirm_node_manual": _confirm_node_manual,
     "export_ontology": _export_ontology,
+    "inspect_exported_graph": _inspect_exported_graph,
+    "update_exported_node": _update_exported_node,
+    "delete_exported_node": _delete_exported_node,
+    "add_exported_relationship": _add_exported_relationship,
+    "delete_exported_relationship": _delete_exported_relationship,
+    "save_exported_graph": _save_exported_graph,
     "get_progress": _get_progress,
+    "get_run_metrics": _get_run_metrics,
     "explain_phase": _explain_phase,
     "explain_decision": _explain_decision,
     "explain_entity": _explain_entity,

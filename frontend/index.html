@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KG Diagnostic Extraction</title>
-    <link rel="stylesheet" href="/style.css?v=20">
+    <link rel="stylesheet" href="/style.css?v=22">
 </head>
 <body>
 
@@ -133,6 +133,7 @@
             <div class="app-bar-center" id="chat-phase-label">Scoping</div>
             <div class="app-bar-right">
                 <span class="app-bar-meta" id="chat-operator"></span>
+                <button id="chat-modify-btn" class="app-bar-btn" hidden>Modify</button>
                 <button id="chat-audit-btn" class="app-bar-btn" hidden>Audit</button>
             </div>
         </header>
@@ -167,11 +168,11 @@
                 <section id="chat-graph-panel" class="chat-graph-panel" hidden>
                     <div class="chat-graph-head">
                         <div>
-                            <div class="chat-graph-title">Extraction Graph</div>
-                            <div id="chat-graph-meta" class="chat-graph-meta">Waiting for extracted triplets…</div>
+                            <div class="chat-graph-title">Review Graph</div>
+                            <div id="chat-graph-meta" class="chat-graph-meta">Waiting for reviewed triplets…</div>
                         </div>
                         <div class="chat-graph-actions">
-                            <button id="chat-graph-all" type="button" class="btn-secondary btn-sm" data-mode="all">Full graph</button>
+                            <button id="chat-graph-all" type="button" class="btn-secondary btn-sm" data-mode="all">Review graph</button>
                             <button id="chat-graph-focus" type="button" class="btn-secondary btn-sm" data-mode="focus">Current triplet</button>
                         </div>
                     </div>
@@ -211,6 +212,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
-    <script src="/app.js?v=20260422f" type="module"></script>
+    <script src="/app.js?v=20260424b" type="module"></script>
 </body>
 </html>

@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from backend.routers import upload, extract, generate, cutplan, ontology, graph_editor, multi_agent, chat
+from backend.routers import upload, extract, generate, cutplan, ontology, graph_editor, modify, multi_agent, chat
 from backend.app_config import (
     get_scoping_config, get_extraction_config,
     get_effective_small_doc_threshold, get_effective_reflective_loop_config,
@@ -33,6 +33,7 @@ app.include_router(extract.router)
 app.include_router(generate.router)
 app.include_router(ontology.router)
 app.include_router(graph_editor.router)
+app.include_router(modify.router)
 app.include_router(multi_agent.router)
 app.include_router(chat.router)
 

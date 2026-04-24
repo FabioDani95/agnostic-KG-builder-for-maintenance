@@ -11,9 +11,10 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
 from backend.graph.store import seed_conversation_state
@@ -178,7 +179,6 @@ _CHAIN_ON_SUCCESS: dict[str, str] = {
     "run_extraction": "get_next_triplet",   # show first triplet immediately after extraction
     "approve_triplet": "get_next_triplet",
     "skip_triplet": "get_next_triplet",
-    "edit_triplet": "get_next_triplet",
 }
 
 _CHAIN_PREAMBLE: dict[str, str] = {
@@ -186,7 +186,6 @@ _CHAIN_PREAMBLE: dict[str, str] = {
     "run_extraction": "",
     "approve_triplet": "",
     "skip_triplet": "",
-    "edit_triplet": "",
 }
 
 
@@ -231,3 +230,21 @@ async def get_history(pdf_id: str):
             if m.get("role") in ("user", "assistant")
         ],
     }
+
+
+@router.get("/download/{pdf_id}")
+async def download_export(pdf_id: str):
+    if pdf_id not in pdf_store:
+        raise HTTPException(status_code=404, detail="PDF not found.")
+    store = pdf_store[pdf_id]
+    path_value = store.get("ontology_path")
+    if not path_value:
+        raise HTTPException(status_code=404, detail="No exported ontology is available yet.")
+    path = Path(str(path_value))
+    if not path.exists() or not path.is_file():
+        raise HTTPException(status_code=404, detail="Exported ontology file was not found.")
+    return FileResponse(
+        path,
+        media_type="application/json",
+        filename=path.name,
+    )

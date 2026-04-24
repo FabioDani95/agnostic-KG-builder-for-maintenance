@@ -239,6 +239,8 @@ def build_metrics_payload(store: dict[str, Any]) -> dict[str, Any]:
     )
     total_pages = int(scoping.get("details", {}).get("total_pages") or store.get("page_count") or len(store.get("pages", [])) or 0)
     extracted_triplets = int(extraction.get("details", {}).get("triplet_count") or 0)
+    validated_triplets = len(store.get("validated_triplets") or [])
+    discarded_triplets = max(0, extracted_triplets - validated_triplets)
 
     # Node count by type from the stored ontology pipeline state
     ontology_pipeline = store.get("ontology_pipeline") or {}
@@ -261,6 +263,11 @@ def build_metrics_payload(store: dict[str, Any]) -> dict[str, Any]:
         "agent_token_ledger": project_agent_token_ledger(store),
         "totals": totals,
         "nodes_by_type": nodes_by_type,
+        "review": {
+            "validated_triplets": validated_triplets,
+            "discarded_triplets": discarded_triplets,
+            "extracted_triplets": extracted_triplets,
+        },
         "derived_kpis": {
             "pages_kept_ratio": round((selected_pages / total_pages), 4) if total_pages else 0.0,
             "seconds_per_selected_page": round((totals["duration_seconds"] / selected_pages), 3) if selected_pages else 0.0,

@@ -36,13 +36,25 @@ Your role is to guide the operator through each phase of extracting a maintenanc
   3. Triplet review — validate Symptom → FailureMode → CorrectiveAction chains
   4. Export — produce the final JSON bundle
 
+How to reason and respond:
+- Reason about what you see. When the live state looks suspicious — very few sections, a huge selection dominated by front-matter pages, a section name that looks like a ToC/cover, zero triplets after extraction, etc. — call it out and propose a concrete next step the operator can take.
+- Do not answer only with canned facts. If the user asks a question, draw a short inference from the live state: what is noteworthy, what looks normal, what the operator may want to tweak before approving.
+- When the operator asks "what do you think?" / "is this good?" / "are these the right sections?", give an opinion with a reason grounded in the snapshot, not a generic acknowledgement.
+- Keep replies short (2–5 sentences). Do not pad with boilerplate. One observation + one next step is usually enough.
+
+What the operator can edit in each phase:
+- Scoping: add or remove **sections** (by name or page range) from the Section Selection widget or by asking you. Page-level editing is NOT supported at this phase — individual pages are only addressable later through re_extract_pages once extraction has run. If the user asks to add/remove individual pages during scoping, explain this and offer the section-level equivalent.
+- Ontology drafting: fill required fields, accept suggested relations, add manual nodes.
+- Triplet review: approve / skip / edit each Symptom → FailureMode → CorrectiveAction card; or call re_extract_pages to redo a page range.
+
 Rules you must follow:
 - Always respond in English.
-- Be concise but informative. Prefer short paragraphs.
 - You are limited to the loaded manual and this extraction workflow. Refuse off-topic requests and redirect the user to document, scoping, ontology, triplet review, export, or workflow-status questions.
+- After export completes, you can also help inspect and modify the exported graph through the shared modify workspace.
+- When the operator asks for KPIs, metrics, cost, duration, or tokens, call get_run_metrics so the full KPI widget is shown in chat.
 - When a pipeline action is needed, use the provided tools rather than describing the action in text.
 - When a user request is not currently possible (wrong phase, invalid arguments), explain why clearly and suggest what they can do instead.
-- Never hallucinate pipeline state — always query get_progress or rely on tool results.
+- Never hallucinate pipeline state — always rely on the LIVE STATE SNAPSHOT or tool results.
 - Do not reveal internal implementation details (class names, file paths, error tracebacks).
 - When you critique a triplet or node, propose a concrete improvement, not just a complaint.
 - Phase transitions are automatic: once scoping is approved, move to ontology draft automatically.
@@ -98,6 +110,19 @@ _SCOPE_ANCHORS = (
     "workflow",
     "process",
     "progress",
+    "metrics",
+    "metric",
+    "metriche",
+    "kpi",
+    "kpis",
+    "cost",
+    "costs",
+    "costo",
+    "costi",
+    "duration",
+    "durata",
+    "token",
+    "tokens",
     "status",
     "phase",
     "next step",
@@ -106,6 +131,9 @@ _SCOPE_ANCHORS = (
     "relation",
     "relations",
     "graph",
+    "modify",
+    "modifica",
+    "editor",
     "field",
     "fields",
     "asset",
@@ -409,7 +437,7 @@ def _workflow_blockers(store: dict[str, Any]) -> tuple[list[str], str]:
         return [], "Export the ontology JSON."
 
     if phase == GraphPhase.COMPLETED.value:
-        return [], "The workflow is complete."
+        return [], "The workflow is complete. You can inspect or modify the exported graph."
 
     return [], status["next_step"] or "Continue with the current workflow step."
 
@@ -550,6 +578,21 @@ def _summarise_tool_result_for_followup(tool_name: str, result: dict[str, Any]) 
         summary["next_action"] = "Ask the operator to review the Ontology Draft widget."
         return summary
 
+    if widget == "run_metrics":
+        metrics = result.get("metrics") or {}
+        totals = metrics.get("totals") or {}
+        review = metrics.get("review") or {}
+        summary.update({
+            "duration_seconds": totals.get("duration_seconds", 0),
+            "estimated_cost_usd": totals.get("estimated_cost_usd", 0),
+            "llm_calls": totals.get("llm_calls", 0),
+            "total_tokens": totals.get("total_tokens", 0),
+            "validated_triplets": review.get("validated_triplets", 0),
+            "discarded_triplets": review.get("discarded_triplets", 0),
+            "next_action": "Point the operator to the KPI widget for the full extraction metrics.",
+        })
+        return summary
+
     if widget == "triplet":
         for key in ("index", "total", "current_index", "total_triplets"):
             if key in result:
@@ -570,6 +613,8 @@ def _default_tool_followup_text(executed_tools: list[tuple[str, dict[str, Any]]]
             return "Section selection is ready. Review the widget to adjust or approve the selected sections."
         if result.get("widget") == "ontology_review":
             return "Ontology draft is ready. Review the widget before continuing."
+        if result.get("widget") == "run_metrics":
+            return "The extraction KPI summary is ready in the chat."
         if result.get("widget") == "triplet":
             return "The next triplet is ready for review."
         if result.get("status") == "ok":
@@ -589,13 +634,59 @@ def _maybe_build_scope_guard_reply(store: dict[str, Any], user_message: str | No
     return (
         "I can only help with the loaded manual and this extraction workflow. "
         f"The active document is **{status['filename']}** and the current phase is {_phase_label(status['phase'])}. "
-        "Ask me about the document, selected pages or sections, ontology or triplets, validation, export, or current progress."
+        "Ask me about the document, selected pages or sections, ontology or triplets, validation, export, graph editing, or current progress."
     )
+
+
+_OPINION_MARKERS = (
+    "think",
+    "opinion",
+    "sense",
+    "good",
+    "right",
+    "correct",
+    "ok to",
+    "okay to",
+    "should i",
+    "should we",
+    "do you think",
+    "what do you",
+    "reasonable",
+    "weird",
+    "strange",
+    "suspicious",
+    "issue",
+    "problem",
+    "improve",
+    "better",
+    "why is",
+    "why are",
+    "why does",
+    "pensi",
+    "opinione",
+    "giusto",
+    "sbagliato",
+    "strano",
+    "ha senso",
+    "andare bene",
+    "va bene",
+    "perché",
+    "perche",
+)
+
+
+def _wants_reasoning(text: str) -> bool:
+    return any(marker in text for marker in _OPINION_MARKERS)
 
 
 def _maybe_build_direct_status_reply(store: dict[str, Any], user_message: str | None) -> str | None:
     text = _normalise_query(user_message or "")
     if not text:
+        return None
+
+    # If the operator is asking for judgment/reasoning, let the LLM handle it
+    # instead of short-circuiting to a canned count/fact.
+    if _wants_reasoning(text):
         return None
 
     status = _status_snapshot(store)
@@ -842,6 +933,8 @@ def _phase_greeting(store: dict) -> str:
         return "Triplets are ready for review. Let's go through them together."
     elif phase == GraphPhase.EXPORT.value:
         return "All triplets reviewed. Ready to export the final ontology."
+    elif phase == GraphPhase.COMPLETED.value:
+        return "Export complete. You can now inspect and modify the exported graph."
     return f"Resuming session for **{filename}**."
 
 

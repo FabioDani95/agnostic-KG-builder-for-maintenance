@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
@@ -10,10 +9,10 @@ from backend.routers.upload import pdf_store
 from backend.services import graph_editor_session
 from modify.template import render_html
 
-router = APIRouter(prefix="/graph-editor", tags=["graph-editor"])
+router = APIRouter(prefix="/modify", tags=["modify"])
 
 
-def _resolve_ontology_path(pdf_id: str | None) -> Path:
+def _resolve_ontology_path(pdf_id: str | None):
     try:
         return graph_editor_session.resolve_ontology_path(
             pdf_id,
@@ -24,15 +23,15 @@ def _resolve_ontology_path(pdf_id: str | None) -> Path:
 
 
 @router.get("", response_class=HTMLResponse)
-async def latest_graph_editor() -> HTMLResponse:
+async def latest_modify_page() -> HTMLResponse:
     path = _resolve_ontology_path("latest")
-    return HTMLResponse(render_html(graph_editor_session.safe_ontology_name(path), api_base="/graph-editor/latest/api"))
+    return HTMLResponse(render_html(graph_editor_session.safe_ontology_name(path), api_base="/modify/latest/api"))
 
 
 @router.get("/{pdf_id}", response_class=HTMLResponse)
-async def graph_editor_page(pdf_id: str) -> HTMLResponse:
+async def modify_page(pdf_id: str) -> HTMLResponse:
     path = _resolve_ontology_path(pdf_id)
-    return HTMLResponse(render_html(graph_editor_session.safe_ontology_name(path), api_base=f"/graph-editor/{pdf_id}/api"))
+    return HTMLResponse(render_html(graph_editor_session.safe_ontology_name(path), api_base=f"/modify/{pdf_id}/api"))
 
 
 @router.get("/{pdf_id}/api/data")
@@ -59,9 +58,8 @@ async def node_detail(pdf_id: str, node_id: str):
 @router.post("/{pdf_id}/api/node/{node_id}/update")
 async def node_update(pdf_id: str, node_id: str, body: dict[str, Any]):
     path = _resolve_ontology_path(pdf_id)
-    new_attrs = body.get("attributes", {})
     try:
-        return graph_editor_session.update_node(path, node_id, new_attrs)
+        return graph_editor_session.update_node(path, node_id, body.get("attributes", {}))
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except KeyError as exc:
@@ -80,12 +78,13 @@ async def node_delete(pdf_id: str, node_id: str):
 @router.post("/{pdf_id}/api/relationship/add")
 async def relationship_add(pdf_id: str, body: dict[str, Any]):
     path = _resolve_ontology_path(pdf_id)
-    rtype = body.get("type", "")
-    from_id = body.get("from_id", "")
-    to_id = body.get("to_id", "")
-
     try:
-        return graph_editor_session.add_relationship(path, rtype, from_id, to_id)
+        return graph_editor_session.add_relationship(
+            path,
+            body.get("type", ""),
+            body.get("from_id", ""),
+            body.get("to_id", ""),
+        )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
