@@ -1,6 +1,7 @@
 import unittest
 
 from backend.services.graph_editor_validation import (
+    validate_node_create,
     validate_node_update,
     validate_relationship_add,
 )
@@ -76,6 +77,37 @@ class GraphEditorValidationTests(unittest.TestCase):
         self.assertEqual(node_type, "Asset")
         self.assertEqual(updated["description"], "Updated machine")
         self.assertEqual(updated["asset_id"], "ASSET-001")
+
+    def test_validate_node_create_generates_unique_id_and_requires_fields(self):
+        node_id, node = validate_node_create(
+            ONTOLOGY,
+            SCHEMA,
+            "Symptom",
+            {
+                "name": "Oil leak",
+                "description": "Oil visible below the pump",
+                "severity": "Medium",
+            },
+        )
+        self.assertEqual(node_id, "SYM-002")
+        self.assertEqual(node["symptom_id"], "SYM-002")
+
+        with self.assertRaisesRegex(ValueError, "Symptom.description is required"):
+            validate_node_create(ONTOLOGY, SCHEMA, "Symptom", {"name": "No description", "severity": "Low"})
+
+    def test_validate_node_create_rejects_duplicate_id(self):
+        with self.assertRaisesRegex(ValueError, "already exists"):
+            validate_node_create(
+                ONTOLOGY,
+                SCHEMA,
+                "Component",
+                {
+                    "component_id": "CMP-001",
+                    "name": "Pump copy",
+                    "description": "Duplicate component",
+                    "category": "Hydraulics",
+                },
+            )
 
     def test_validate_relationship_add_rejects_wrong_domain_range(self):
         with self.assertRaisesRegex(ValueError, "MAY_INDICATE must start from Symptom"):

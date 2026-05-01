@@ -108,6 +108,19 @@ def get_chat_config() -> dict:
     return cfg
 
 
+def get_graph_cocreator_config() -> dict:
+    cfg = deepcopy(load_config().get("graph_cocreator", {}) or {})
+    chat_cfg = get_chat_config()
+    cfg.setdefault("llm_enabled", True)
+    cfg.setdefault("model", chat_cfg.get("model", "gpt-4o-mini"))
+    cfg.setdefault("timeout_seconds", 12)
+    cfg.setdefault("max_output_tokens", 1200)
+    cfg.setdefault("temperature", 0.1)
+    cfg.setdefault("relationship_candidate_limit", 30)
+    cfg.setdefault("relationship_llm_top_k", 12)
+    return cfg
+
+
 def get_style_cleanup_config() -> dict:
     cfg = deepcopy(load_config().get("style_cleanup", {}))
     cfg.setdefault("enabled", True)

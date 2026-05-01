@@ -1728,6 +1728,9 @@ async def _export_ontology(args, store, on_event):
         },
     )
     metrics_payload = build_metrics_payload(store)
+    correct_coverage = (ontology_payload.get("metadata") or {}).get("graph_coverage")
+    if correct_coverage:
+        metrics_payload["graph_coverage"] = correct_coverage
     metrics_info = persist_export_metrics(
         metrics_payload,
         ontology_payload,

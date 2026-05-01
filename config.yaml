@@ -7,6 +7,14 @@ chat:
   critic_enabled: true
   idle_reminder_seconds: 60
 
+graph_cocreator:
+  llm_enabled: true
+  model: gpt-5.4-nano
+  timeout_seconds: 12
+  max_output_tokens: 1200
+  temperature: 0.1
+  relationship_candidate_limit: 30
+
 shared_models: &strong_models
   - id: gpt-5.4
     label: GPT-5.4

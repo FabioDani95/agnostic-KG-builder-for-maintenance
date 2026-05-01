@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KG Diagnostic Extraction</title>
-    <link rel="stylesheet" href="/style.css?v=22">
+    <link rel="stylesheet" href="/style.css?v=34">
 </head>
 <body>
+    <a href="#chat-stream" class="skip-link">Skip to chat</a>
 
     <!-- ─── Startup Screen (full page, no scroll) ─── -->
     <div id="upload-screen">
@@ -186,7 +187,7 @@
             <!-- Right: Chat stream + input -->
             <section class="chat-section">
                 <!-- Message stream -->
-                <div id="chat-stream" class="chat-stream"></div>
+                <div id="chat-stream" class="chat-stream" role="log" aria-live="polite" aria-label="Chat messages"></div>
 
                 <div id="chat-turn-indicator" class="chat-turn-indicator" data-mode="working">
                     <span class="chat-turn-badge" id="chat-turn-badge">System is working</span>
@@ -211,7 +212,20 @@
         </div>
     </div>
 
+    <!-- Side-sheet overlay for interactive widgets -->
+    <div id="widget-sheet-backdrop" class="widget-sheet-backdrop" aria-hidden="true"></div>
+    <div id="widget-sheet" class="widget-sheet" role="dialog" aria-modal="true" aria-labelledby="widget-sheet-title" hidden>
+        <header class="widget-sheet-header">
+            <span id="widget-sheet-icon" class="widget-icon" aria-hidden="true"></span>
+            <h2 id="widget-sheet-title" class="widget-sheet-title">Widget</h2>
+            <span id="widget-sheet-meta" class="widget-sheet-meta" hidden></span>
+            <button id="widget-sheet-close" class="widget-sheet-close" aria-label="Close panel">✕</button>
+        </header>
+        <div id="widget-sheet-body" class="widget-sheet-body"></div>
+        <footer id="widget-sheet-footer" class="widget-sheet-footer" hidden></footer>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
-    <script src="/app.js?v=20260424b" type="module"></script>
+    <script src="/app.js?v=20260501" type="module"></script>
 </body>
 </html>

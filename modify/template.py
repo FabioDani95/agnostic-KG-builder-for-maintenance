@@ -31,7 +31,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         transition: grid-template-columns 0.25s ease;
       }
       .layout.edit-mode {
-        grid-template-columns: 260px 1fr 360px;
+        grid-template-columns: 260px 1fr minmax(390px, 34vw);
         grid-template-areas:
           "header header header"
           "sidebar main editpanel";
@@ -42,6 +42,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         background: #1f2937;
         border-bottom: 1px solid #374151;
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
       }
@@ -57,7 +58,25 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         font-size: 11px;
         color: #9ca3af;
       }
-      .header-right { display: flex; align-items: center; gap: 12px; }
+      .header-right { display: flex; align-items: center; gap: 10px; }
+      .header-btn {
+        height: 30px;
+        padding: 0 12px;
+        border-radius: 4px;
+        border: 1px solid #4b5563;
+        background: #374151;
+        color: #e5e7eb;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .header-btn:hover { background: #4b5563; }
+      .header-btn-primary {
+        background: #f59e0b;
+        border-color: #f59e0b;
+        color: #111827;
+      }
+      .header-btn-primary:hover { background: #d97706; }
       /* Toggle switch */
       .mode-switch {
         display: flex; align-items: center; gap: 6px;
@@ -197,6 +216,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         flex-shrink: 0;
       }
       .ep-header h2 { margin: 0; font-size: 13px; font-weight: 600; color: #f9fafb; }
+      .ep-header-actions { display: flex; gap: 6px; }
       .ep-body {
         flex: 1; overflow-y: auto; padding: 12px 14px;
       }
@@ -229,10 +249,68 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         border-color: #f59e0b;
       }
       .ep-field textarea { resize: vertical; min-height: 50px; }
+      .ep-muted { color: #6b7280; font-size: 11px; line-height: 1.4; }
+      .ep-field-note { color: #6b7280; font-size: 10px; margin-top: 3px; }
+      .ep-required {
+        display: inline-flex;
+        margin-left: 6px;
+        padding: 1px 5px;
+        border-radius: 3px;
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .ep-attr-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border: 1px solid #374151;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #111827;
+      }
+      .ep-attr-table th,
+      .ep-attr-table td {
+        padding: 8px;
+        border-bottom: 1px solid #1f2937;
+        vertical-align: top;
+      }
+      .ep-attr-table tr:last-child th,
+      .ep-attr-table tr:last-child td { border-bottom: 0; }
+      .ep-attr-table th {
+        width: 34%;
+        color: #9ca3af;
+        font-size: 11px;
+        font-weight: 600;
+        text-align: left;
+        background: #172033;
+        word-break: break-word;
+      }
+      .ep-attr-table td { min-width: 0; }
+      .ep-attr-actions {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .ep-field-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 6px;
+        align-items: start;
+      }
+      .ep-field-row .ep-btn { min-width: 58px; }
       .ep-btn {
         padding: 5px 12px; font-size: 11px; border-radius: 4px; cursor: pointer;
         border: 1px solid #4b5563; background: #374151; color: #e5e7eb;
         transition: background 0.15s;
+      }
+      .ep-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
       }
       .ep-btn:hover { background: #4b5563; }
       .ep-btn-primary { background: #f59e0b; border-color: #f59e0b; color: #111827; font-weight: 600; }
@@ -267,6 +345,211 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       }
       .ep-add-rel summary:hover { color: #e5e7eb; }
       .ep-add-rel-form { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+      .ep-tabs {
+        display: flex;
+        gap: 6px;
+        padding: 10px 14px 0;
+        border-bottom: 1px solid #374151;
+        background: #1f2937;
+      }
+      .ep-tab {
+        flex: 1;
+        padding: 7px 8px;
+        border: 1px solid #374151;
+        border-bottom: none;
+        border-radius: 5px 5px 0 0;
+        background: #111827;
+        color: #9ca3af;
+        font-size: 11px;
+        cursor: pointer;
+      }
+      .ep-tab.active {
+        background: #1f2937;
+        color: #f9fafb;
+      }
+      .create-step {
+        margin-bottom: 14px;
+        padding: 12px;
+        border: 1px solid #374151;
+        border-radius: 6px;
+        background: #111827;
+      }
+      .cocreate-mode-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      .cocreate-mode-btn {
+        padding: 7px 8px;
+        border: 1px solid #374151;
+        border-radius: 4px;
+        background: #172033;
+        color: #9ca3af;
+        font-size: 11px;
+        cursor: pointer;
+      }
+      .cocreate-mode-btn.active {
+        background: #374151;
+        color: #f9fafb;
+        border-color: #6b7280;
+      }
+      .cocreate-input-panel[hidden] { display: none; }
+      .cocreate-textarea {
+        width: 100%;
+        min-height: 86px;
+        resize: vertical;
+        border: 1px solid #374151;
+        border-radius: 5px;
+        background: #0d1117;
+        color: #e5e7eb;
+        padding: 8px;
+        font: inherit;
+        font-size: 12px;
+      }
+      .cocreate-action-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .cocreate-agent-note {
+        margin-top: 8px;
+        padding: 8px;
+        border-radius: 5px;
+        background: rgba(95, 168, 160, 0.10);
+        border: 1px solid rgba(95, 168, 160, 0.28);
+        color: #c7f3ec;
+        font-size: 11px;
+        line-height: 1.45;
+      }
+      .cocreate-status {
+        color: #9ca3af;
+        font-size: 11px;
+      }
+      .voice-meter {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #fbbf24;
+        font-size: 11px;
+      }
+      .voice-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #f59e0b;
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+        animation: pulseVoice 1.3s infinite;
+      }
+      @keyframes pulseVoice {
+        0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+        70% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+      }
+      .create-step-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .create-step-title {
+        margin: 0;
+        font-size: 12px;
+        color: #f9fafb;
+        font-weight: 700;
+      }
+      .create-step-index {
+        color: #f59e0b;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .create-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .create-preview {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px dashed #4b5563;
+        color: #9ca3af;
+        font-size: 11px;
+        line-height: 1.45;
+      }
+      .create-preview strong { color: #e5e7eb; }
+      .suggestion-list {
+        display: grid;
+        gap: 8px;
+      }
+      .suggestion-card {
+        border: 1px solid #374151;
+        border-radius: 6px;
+        padding: 9px;
+        background: #172033;
+      }
+      .suggestion-card.accepted {
+        border-color: #5fa8a0;
+        background: rgba(95, 168, 160, 0.12);
+      }
+      .suggestion-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        align-items: start;
+      }
+      .suggestion-flow {
+        color: #f9fafb;
+        font-size: 11px;
+        font-weight: 650;
+        line-height: 1.4;
+      }
+      .suggestion-confidence {
+        flex-shrink: 0;
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: #111827;
+        color: #fbbf24;
+        border: 1px solid #374151;
+        font-size: 10px;
+      }
+      .suggestion-reason {
+        margin-top: 5px;
+        color: #9ca3af;
+        font-size: 11px;
+        line-height: 1.35;
+      }
+      .suggestion-actions {
+        margin-top: 8px;
+        display: flex;
+        gap: 6px;
+      }
+      .create-summary {
+        display: grid;
+        gap: 5px;
+        font-size: 11px;
+        color: #d1d5db;
+      }
+      .create-summary-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        border-bottom: 1px solid #1f2937;
+        padding-bottom: 4px;
+      }
+      .create-summary-row span:first-child { color: #6b7280; }
+      .ep-inline-check {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #9ca3af;
+        font-size: 11px;
+      }
+      .ep-inline-check input { accent-color: #f59e0b; }
       /* Save bar */
       .ep-save-bar {
         flex-shrink: 0; padding: 10px 14px;
@@ -294,11 +577,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <header>
         <div class="header-left">
           <h1>__ONTOLOGY_NAME__</h1>
-          <span class="sub">Drag · Scroll to zoom · Click chips to filter</span>
+          <span class="sub">Click a node to edit · Add nodes with guided linking · Save versions</span>
         </div>
         <div class="header-right">
+          <button class="header-btn header-btn-primary" id="create-node-open" type="button">Add Node</button>
           <div class="mode-switch" id="edit-mode-toggle">
-            <span>Edit Mode</span>
+            <span>Editor Panel</span>
             <div class="sw"></div>
           </div>
         </div>
@@ -324,15 +608,22 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <main id="network-container">
         <div id="network"></div>
         <div id="error-box"></div>
-        <div class="hint">Drag nodes · scroll to zoom · click node in edit mode to modify</div>
+        <div class="hint">Drag nodes · scroll to zoom · click a node to edit · use Add Node to create and connect</div>
         <div class="status-pill" id="status-pill">Loading…</div>
       </main>
       <aside class="edit-panel" id="edit-panel">
         <div class="ep-header">
-          <h2 id="ep-title">Edit Node</h2>
+          <h2 id="ep-title">Graph Editor</h2>
+          <div class="ep-header-actions">
+            <button class="ep-btn" id="ep-new-node-btn" type="button">New Node</button>
+          </div>
+        </div>
+        <div class="ep-tabs" id="ep-tabs">
+          <button class="ep-tab active" id="ep-tab-edit" type="button">Node</button>
+          <button class="ep-tab" id="ep-tab-create" type="button">Create</button>
         </div>
         <div class="ep-body" id="ep-body">
-          <div class="ep-placeholder">Click a node in the graph to edit it.</div>
+          <div class="ep-placeholder">Click a node in the graph or create a new connected node.</div>
         </div>
         <div class="ep-save-bar">
           <span class="unsaved-dot" id="unsaved-dot"></span>
@@ -367,6 +658,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       let selectedNodeId = null;
       let schemaData = null;
       let allNodesList = [];
+      let currentPanelMode = "edit";
+      let coCreateMode = "write";
+      let coCreateDraft = null;
+      let acceptedSuggestions = [];
+      let speechRecognition = null;
+      let voiceStartedAt = null;
+      let voiceTimer = null;
 
       function pickColor(idx) {
         return COLOR_PALETTE[idx % COLOR_PALETTE.length];
@@ -390,13 +688,31 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         document.getElementById("unsaved-dot").classList.add("visible");
       }
 
+      function setEditorPanelOpen(open) {
+        editMode = Boolean(open);
+        document.getElementById("layout").classList.toggle("edit-mode", editMode);
+        document.getElementById("edit-mode-toggle").classList.toggle("active", editMode);
+        if (!editMode && typeof stopActiveRecognition === "function") stopActiveRecognition();
+        if (network) {
+          setTimeout(() => { network.redraw(); }, 260);
+        }
+      }
+
+      function setPanelMode(mode) {
+        const next = mode === "create" ? "create" : "edit";
+        if (next !== "create" && typeof stopActiveRecognition === "function") stopActiveRecognition();
+        currentPanelMode = next;
+        document.getElementById("ep-tab-edit")?.classList.toggle("active", currentPanelMode === "edit");
+        document.getElementById("ep-tab-create")?.classList.toggle("active", currentPanelMode === "create");
+      }
+
       function buildNodeChips(nodeTypes) {
         const container = document.getElementById("node-types");
         container.innerHTML = "";
         nodeTypes.forEach((val, idx) => {
           const color = pickColor(idx);
           const chip = document.createElement("div");
-          chip.className = "chip active";
+          chip.className = `chip ${activeNodeTypes.has(val) ? "active" : ""}`;
           chip.dataset.value = val;
           chip.innerHTML = `<span class="dot" style="background:${color}"></span>${val}`;
           chip.addEventListener("click", () => {
@@ -413,7 +729,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         container.innerHTML = "";
         edgeTypes.forEach((val) => {
           const chip = document.createElement("div");
-          chip.className = "chip active";
+          chip.className = `chip ${activeEdgeTypes.has(val) ? "active" : ""}`;
           chip.dataset.value = val;
           chip.textContent = val;
           chip.addEventListener("click", () => {
@@ -484,26 +800,24 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       }
 
       function renderEditPanel(data) {
+        setPanelMode("edit");
         const body = document.getElementById("ep-body");
         const color = colorByType[data.type] || "#4b5563";
-        const idKey = Object.keys(data.attributes).find(k => k.endsWith("_id")) || "";
+        const idKey = nodeIdKeyForType(data.type, data.attributes);
 
         let html = `<div class="ep-section">
           <div class="ep-badge"><span class="dot" style="background:${color}"></span>${data.type}</div>
           <div class="ep-id">${data.id}</div>
         </div>`;
 
-        // Attributes
-        html += `<div class="ep-section"><div class="ep-section-title">Attributes</div>`;
-        const editableKeys = Object.keys(data.attributes).filter(k => k !== idKey);
-        for (const key of editableKeys) {
-          const val = data.attributes[key] || "";
-          html += `<div class="ep-field">
-            <label>${key}</label>
-            <input type="text" data-attr-key="${key}" value="${escHtml(String(val))}" />
-          </div>`;
-        }
-        html += `<button class="ep-btn ep-btn-primary" id="apply-attrs-btn" style="margin-top:4px">Apply</button></div>`;
+        html += `<div class="ep-section">
+          <div class="ep-section-title">Attributes</div>
+          ${buildAttributeTable(data.type, data.attributes, { readonlyKeys: new Set([idKey]), scope: "edit" })}
+          <div class="ep-attr-actions">
+            <span class="ep-muted">Edit values directly in the table, then save this node.</span>
+            <button class="ep-btn ep-btn-primary" id="apply-attrs-btn">Save Attributes</button>
+          </div>
+        </div>`;
 
         // Outgoing relationships
         html += `<div class="ep-section"><div class="ep-section-title">Outgoing Relationships (${data.relationships_out.length})</div>`;
@@ -568,6 +882,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
         // Wire up events
         document.getElementById("apply-attrs-btn").addEventListener("click", () => applyAttrs(data.id));
+        body.querySelectorAll(".field-polish").forEach(btn => {
+          btn.addEventListener("click", () => polishFields(data.type, [btn.dataset.field], "#ep-body"));
+        });
 
         body.querySelectorAll(".rel-del").forEach(btn => {
           btn.addEventListener("click", () => deleteRelationship(parseInt(btn.dataset.relIdx)));
@@ -606,6 +923,123 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         });
       }
 
+      function schemaPropsFor(nodeType) {
+        return schemaData?.node_types?.[nodeType] || [];
+      }
+
+      function propByName(nodeType, key) {
+        return schemaPropsFor(nodeType).find(prop => prop.name === key) || null;
+      }
+
+      function nodeIdKeyForType(nodeType, attrs = {}) {
+        const schemaIdKey = schemaPropsFor(nodeType).find(prop => String(prop.name || "").endsWith("_id"))?.name;
+        return schemaIdKey || Object.keys(attrs).find(k => k.endsWith("_id")) || `${String(nodeType || "node").toLowerCase()}_id`;
+      }
+
+      function valueToEditorString(value) {
+        if (Array.isArray(value)) return value.join("\\n");
+        return value == null ? "" : String(value);
+      }
+
+      function shouldUseTextarea(key, value, prop) {
+        const text = valueToEditorString(value);
+        return prop?.type === "array" || text.length > 64 || /description|instruction|context|reference/i.test(key);
+      }
+
+      function buildFieldControl(nodeType, key, value, { readonly = false, scope = "edit" } = {}) {
+        const prop = propByName(nodeType, key);
+        const required = prop?.required ? `<span class="ep-required">Required</span>` : "";
+        const type = prop?.type || "string";
+        const readonlyAttr = readonly ? "readonly" : "";
+        const dataAttrs = readonly
+          ? ""
+          : `data-attr-key="${escHtml(key)}" data-attr-type="${escHtml(type)}" data-attr-scope="${escHtml(scope)}"`;
+        const valueText = valueToEditorString(value);
+        const control = shouldUseTextarea(key, value, prop)
+          ? `<textarea ${dataAttrs} ${readonlyAttr} rows="${type === "array" ? 3 : 4}">${escHtml(valueText)}</textarea>`
+          : `<input type="text" ${dataAttrs} ${readonlyAttr} value="${escHtml(valueText)}" />`;
+        const polishButton = !readonly && !key.endsWith("_id") && !["code", "severity"].includes(key)
+          ? `<button class="ep-btn field-polish" type="button" data-field="${escHtml(key)}">Polish</button>`
+          : "";
+        const note = type === "array" ? `<div class="ep-field-note">One item per line or comma-separated.</div>` : "";
+        return `
+          <div class="ep-field-row">
+            <div>
+              ${control}
+              ${note}
+            </div>
+            ${polishButton}
+          </div>
+          ${required}`;
+      }
+
+      function buildAttributeTable(nodeType, attrs, { readonlyKeys = new Set(), scope = "edit" } = {}) {
+        const keys = [];
+        for (const prop of schemaPropsFor(nodeType)) {
+          if (prop.name && !keys.includes(prop.name)) keys.push(prop.name);
+        }
+        for (const key of Object.keys(attrs || {})) {
+          if (!keys.includes(key)) keys.push(key);
+        }
+        if (keys.length === 0) {
+          return `<div class="ep-muted">No attributes are defined for this node type.</div>`;
+        }
+        const rows = keys.map(key => {
+          const value = attrs?.[key] ?? "";
+          return `<tr>
+            <th>${escHtml(key)}</th>
+            <td>${buildFieldControl(nodeType, key, value, {
+              readonly: readonlyKeys.has(key),
+              scope,
+            })}</td>
+          </tr>`;
+        }).join("");
+        return `<table class="ep-attr-table"><tbody>${rows}</tbody></table>`;
+      }
+
+      function collectAttributes(rootSelector) {
+        const attrs = {};
+        document.querySelectorAll(`${rootSelector} [data-attr-key]`).forEach(input => {
+          const key = input.dataset.attrKey;
+          if (!key) return;
+          const raw = input.value;
+          attrs[key] = input.dataset.attrType === "array"
+            ? raw.split(/[\\n,]+/).map(v => v.trim()).filter(Boolean)
+            : raw;
+        });
+        return attrs;
+      }
+
+      function setAttributeControls(rootSelector, attrs) {
+        document.querySelectorAll(`${rootSelector} [data-attr-key]`).forEach(input => {
+          const key = input.dataset.attrKey;
+          if (!key || !(key in attrs)) return;
+          input.value = valueToEditorString(attrs[key]);
+        });
+      }
+
+      async function polishFields(nodeType, fields, rootSelector) {
+        const attrs = collectAttributes(rootSelector);
+        try {
+          const res = await fetch(apiUrl("/node/polish"), {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ node_type: nodeType, attributes: attrs, fields }),
+          });
+          const result = await parseApiResponse(res);
+          if (result.ok && result.attributes) {
+            setAttributeControls(rootSelector, result.attributes);
+            if (currentPanelMode === "create") {
+              updateCreatePreview(nodeType);
+              updateCreateSummary(nodeType);
+            }
+            toast(fields?.length ? "Field polished" : "Text fields polished");
+          }
+        } catch (err) {
+          toast("Polish error: " + err.message);
+        }
+      }
+
       function buildRelTypeOptions() {
         const types = new Set();
         if (schemaData && schemaData.relation_constraints) {
@@ -621,17 +1055,21 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       function compatibleTargetTypes(currentNodeId) {
         const relationType = document.getElementById("add-rel-type")?.value || "";
         const direction = document.getElementById("add-rel-dir")?.value || "out";
-        const constraints = schemaData?.relation_constraints?.[relationType];
         const currentNode = allNodesList.find(n => n.id === currentNodeId);
-        if (!constraints || !currentNode) return null;
+        if (!currentNode) return null;
+        return compatibleTargetTypesFor(currentNode.type, relationType, direction);
+      }
 
+      function compatibleTargetTypesFor(nodeType, relationType, direction) {
+        const constraints = schemaData?.relation_constraints?.[relationType];
+        if (!constraints) return null;
         const domain = constraints.domain || [];
         const range = constraints.range || [];
         if (direction === "out") {
-          if (domain.length && !domain.includes(currentNode.type)) return [];
+          if (domain.length && !domain.includes(nodeType)) return [];
           return range.length ? range : null;
         }
-        if (range.length && !range.includes(currentNode.type)) return [];
+        if (range.length && !range.includes(nodeType)) return [];
         return domain.length ? domain : null;
       }
 
@@ -649,6 +1087,707 @@ HTML_TEMPLATE = """<!DOCTYPE html>
           opt.textContent = `[${n.type}] ${n.label}`;
           sel.appendChild(opt);
         }
+      }
+
+      function nodeTypePrefix(nodeType) {
+        const known = {
+          Asset: "ASSET",
+          Component: "CMP",
+          Symptom: "SYM",
+          FailureMode: "FM",
+          CorrectiveAction: "CA",
+          ErrorCode: "ERR",
+        };
+        if (known[nodeType]) return known[nodeType];
+        const parts = String(nodeType || "node").match(/[A-Z]?[a-z]+|[A-Z]+(?=[A-Z]|$)/g) || [];
+        return (parts.map(part => part[0]).join("") || String(nodeType || "node").slice(0, 3)).toUpperCase();
+      }
+
+      function suggestNextNodeId(nodeType) {
+        const prefix = nodeTypePrefix(nodeType);
+        let maxSeen = 0;
+        const pattern = new RegExp(`^${prefix}-(\\\\d+)$`, "i");
+        for (const item of allNodesList) {
+          const match = String(item.id || "").match(pattern);
+          if (match) maxSeen = Math.max(maxSeen, Number(match[1]));
+        }
+        let idx = maxSeen + 1;
+        while (allNodesList.some(item => item.id === `${prefix}-${String(idx).padStart(3, "0")}`)) {
+          idx += 1;
+        }
+        return `${prefix}-${String(idx).padStart(3, "0")}`;
+      }
+
+      function allSchemaNodeTypes() {
+        const fromSchema = Object.keys(schemaData?.node_types || {});
+        const fromGraph = Array.from(new Set(allNodesList.map(n => n.type).filter(Boolean)));
+        return Array.from(new Set([...fromSchema, ...fromGraph])).sort();
+      }
+
+      function initialCreateAttrs(nodeType) {
+        const attrs = {};
+        for (const prop of schemaPropsFor(nodeType)) {
+          attrs[prop.name] = prop.name === nodeIdKeyForType(nodeType) ? suggestNextNodeId(nodeType) : "";
+        }
+        return attrs;
+      }
+
+      function relationTypesForNodeType(nodeType) {
+        const entries = Object.entries(schemaData?.relation_constraints || {});
+        const compatible = entries.filter(([, constraint]) => {
+          const domain = constraint.domain || [];
+          const range = constraint.range || [];
+          return !domain.length || domain.includes(nodeType) || !range.length || range.includes(nodeType);
+        });
+        return compatible.map(([name]) => name).sort();
+      }
+
+      function directionOptionsFor(nodeType, relationType) {
+        const constraints = schemaData?.relation_constraints?.[relationType];
+        if (!constraints) return ["out", "in"];
+        const domain = constraints.domain || [];
+        const range = constraints.range || [];
+        const options = [];
+        if (!domain.length || domain.includes(nodeType)) options.push("out");
+        if (!range.length || range.includes(nodeType)) options.push("in");
+        return options.length ? options : ["out"];
+      }
+
+      function createInputText() {
+        const byMode = {
+          write: "cocreate-text",
+          voice: "cocreate-voice-text",
+          guide: "cocreate-guide-text",
+        };
+        const active = document.getElementById(byMode[coCreateMode] || "cocreate-text")?.value?.trim();
+        return active
+          || document.getElementById("cocreate-text")?.value?.trim()
+          || document.getElementById("cocreate-voice-text")?.value?.trim()
+          || document.getElementById("cocreate-guide-text")?.value?.trim()
+          || "";
+      }
+
+      function buildCoCreateInputStep(selectedType) {
+        const typeOptions = allSchemaNodeTypes()
+          .map(t => `<option value="${escHtml(t)}" ${coCreateDraft?.node_type === t ? "selected" : ""}>${escHtml(t)}</option>`)
+          .join("");
+        return `
+          <div class="create-step">
+            <div class="create-step-head">
+              <h3 class="create-step-title">Co-create intake</h3>
+              <span class="create-step-index">Step 1</span>
+            </div>
+            <div class="cocreate-mode-row">
+              <button class="cocreate-mode-btn ${coCreateMode === "write" ? "active" : ""}" data-cocreate-mode="write" type="button">Write</button>
+              <button class="cocreate-mode-btn ${coCreateMode === "voice" ? "active" : ""}" data-cocreate-mode="voice" type="button">Voice</button>
+              <button class="cocreate-mode-btn ${coCreateMode === "guide" ? "active" : ""}" data-cocreate-mode="guide" type="button">Guide</button>
+            </div>
+            <div class="cocreate-input-panel" id="cocreate-panel-write" ${coCreateMode === "write" ? "" : "hidden"}>
+              <textarea id="cocreate-text" class="cocreate-textarea" placeholder="Describe the node to add, with any useful context. Example: low hydraulic pressure appears during pump startup and may indicate pump wear.">${escHtml(coCreateDraft?.source_text || "")}</textarea>
+            </div>
+            <div class="cocreate-input-panel" id="cocreate-panel-voice" ${coCreateMode === "voice" ? "" : "hidden"}>
+              <textarea id="cocreate-voice-text" class="cocreate-textarea" placeholder="Voice transcript will appear here. You can edit it before generating the draft.">${escHtml(coCreateDraft?.source_text || "")}</textarea>
+              <div class="cocreate-action-row">
+                <div>
+                  <button class="ep-btn" id="voice-start-btn" type="button">Record</button>
+                  <button class="ep-btn" id="voice-stop-btn" type="button" disabled>Stop</button>
+                </div>
+                <span class="cocreate-status" id="voice-status">Voice input uses browser speech recognition when available.</span>
+              </div>
+            </div>
+            <div class="cocreate-input-panel" id="cocreate-panel-guide" ${coCreateMode === "guide" ? "" : "hidden"}>
+              <textarea id="cocreate-guide-text" class="cocreate-textarea" placeholder="Answer the graph co-creator: what is this thing, what problem does it describe, and what should it connect to?">${escHtml(coCreateDraft?.source_text || "")}</textarea>
+              <div class="cocreate-agent-note">
+                The co-creator will classify the note, fill a structured node draft, flag missing fields, and suggest schema-compatible links. You stay in control of the final create action.
+              </div>
+            </div>
+            <div class="cocreate-action-row">
+              <div class="ep-field" style="margin:0;min-width:150px;flex:1">
+                <label>Preferred type</label>
+                <select id="cocreate-preferred-type">
+                  <option value="">Auto-detect</option>
+                  ${typeOptions}
+                </select>
+              </div>
+              <button class="ep-btn ep-btn-primary" id="generate-draft-btn" type="button">Generate Draft</button>
+            </div>
+            <div class="cocreate-status" id="cocreate-status">${coCreateDraft?.rationale ? escHtml(coCreateDraft.rationale) : "Describe a node, then let the co-creator prepare the draft and possible links."}</div>
+          </div>
+        `;
+      }
+
+      function draftAttributesFor(selectedType) {
+        if (coCreateDraft?.node_type === selectedType && coCreateDraft?.attributes) {
+          return { ...initialCreateAttrs(selectedType), ...coCreateDraft.attributes };
+        }
+        return initialCreateAttrs(selectedType);
+      }
+
+      function renderCreateWizard(nodeType = "", options = {}) {
+        if (options.draft) {
+          coCreateDraft = options.draft;
+          acceptedSuggestions = [];
+        } else if (options.resetDraft) {
+          coCreateDraft = null;
+          acceptedSuggestions = [];
+        }
+        setEditorPanelOpen(true);
+        setPanelMode("create");
+        selectedNodeId = null;
+        document.getElementById("ep-title").textContent = "Co-create Node";
+        if (nodesDataSet) {
+          nodesDataSet.forEach(n => nodesDataSet.update({ id: n.id, borderWidth: 1 }));
+        }
+
+        const types = allSchemaNodeTypes();
+        const selectedType = types.includes(nodeType)
+          ? nodeType
+          : (types.includes(coCreateDraft?.node_type) ? coCreateDraft.node_type : (types[0] || ""));
+        const attrs = draftAttributesFor(selectedType);
+        const relationTypes = relationTypesForNodeType(selectedType);
+        const firstRelType = relationTypes[0] || "";
+        const directions = directionOptionsFor(selectedType, firstRelType);
+        const missingFields = coCreateDraft?.node_type === selectedType ? (coCreateDraft.missing_fields || []) : [];
+        const duplicateCandidates = coCreateDraft?.node_type === selectedType ? (coCreateDraft.duplicate_candidates || []) : [];
+
+        const body = document.getElementById("ep-body");
+        body.innerHTML = `
+          ${buildCoCreateInputStep(selectedType)}
+          <div class="create-step">
+            <div class="create-step-head">
+              <h3 class="create-step-title">Node type</h3>
+              <span class="create-step-index">Step 2</span>
+            </div>
+            <div class="ep-field">
+              <label>Type</label>
+              <select id="create-node-type">
+                ${types.map(t => `<option value="${escHtml(t)}" ${t === selectedType ? "selected" : ""}>${escHtml(t)}</option>`).join("")}
+              </select>
+              <div class="ep-field-note">The form below follows the ontology schema for the selected type.</div>
+            </div>
+            ${missingFields.length ? `<div class="cocreate-agent-note">Missing required fields: ${missingFields.map(escHtml).join(", ")}.</div>` : ""}
+            ${duplicateCandidates.length ? `<div class="cocreate-agent-note">Possible duplicates: ${duplicateCandidates.map(c => `${escHtml(c.label)} (${Math.round(Number(c.score || 0) * 100)}%)`).join(", ")}.</div>` : ""}
+          </div>
+
+          <div class="create-step">
+            <div class="create-step-head">
+              <h3 class="create-step-title">Attributes</h3>
+              <span class="create-step-index">Step 3</span>
+            </div>
+            ${buildAttributeTable(selectedType, attrs, { scope: "create" })}
+            <div class="ep-attr-actions">
+              <span class="ep-muted">IDs are suggested automatically and can be edited before creation.</span>
+              <button class="ep-btn" id="create-polish-all" type="button">Polish Text</button>
+            </div>
+          </div>
+
+          <div class="create-step">
+            <div class="create-step-head">
+              <h3 class="create-step-title">Connect to KG</h3>
+              <span class="create-step-index">Step 4</span>
+            </div>
+            <div class="suggestion-list" id="relationship-suggestions"></div>
+            <div class="cocreate-action-row">
+              <span class="ep-muted">Accept suggested links or choose one manually below.</span>
+              <button class="ep-btn" id="suggest-links-btn" type="button">Suggest Links</button>
+            </div>
+            <div class="create-grid">
+              <div class="ep-field">
+                <label>Relationship</label>
+                <select id="create-rel-type">
+                  ${relationTypes.map(t => `<option value="${escHtml(t)}" ${t === firstRelType ? "selected" : ""}>${escHtml(t)}</option>`).join("")}
+                </select>
+              </div>
+              <div class="ep-field">
+                <label>Direction</label>
+                <select id="create-rel-dir">
+                  ${directions.map(d => `<option value="${d}">${d === "out" ? "New node -> existing" : "Existing -> new node"}</option>`).join("")}
+                </select>
+              </div>
+            </div>
+            <div class="ep-field">
+              <label>Existing node</label>
+              <input type="text" id="create-rel-node-search" placeholder="Search nodes..." autocomplete="off" />
+              <select id="create-rel-node" size="5" style="margin-top:4px;max-height:150px"></select>
+            </div>
+            <label class="ep-inline-check">
+              <input type="checkbox" id="create-skip-rel" />
+              <span>Create as orphan for now</span>
+            </label>
+            <div class="create-preview" id="create-link-preview">Select a target node to preview the new link.</div>
+          </div>
+
+            <div class="create-step">
+            <div class="create-step-head">
+              <h3 class="create-step-title">Review</h3>
+              <span class="create-step-index">Step 5</span>
+            </div>
+            <div class="create-summary" id="create-summary"></div>
+            <div class="ep-attr-actions">
+              <span class="ep-muted" id="create-validation-hint">A connected node is recommended for co-editing the KG.</span>
+              <button class="ep-btn ep-btn-primary" id="create-node-btn" type="button">Create Node</button>
+            </div>
+          </div>
+        `;
+
+        wireCreateWizard(selectedType);
+      }
+
+      async function generateDraftFromCoCreate() {
+        const text = createInputText();
+        const preferredType = document.getElementById("cocreate-preferred-type")?.value || "";
+        if (!text) {
+          toast("Describe the node first");
+          return;
+        }
+        const status = document.getElementById("cocreate-status");
+        if (status) status.textContent = "Co-creator is drafting the node...";
+        try {
+          const res = await fetch(apiUrl("/node/draft-from-text"), {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ text, preferred_type: preferredType || null }),
+          });
+          const draft = await parseApiResponse(res);
+          draft.source_text = text;
+          renderCreateWizard(draft.node_type, { draft });
+          setTimeout(() => suggestLinksForDraft(draft.node_type), 0);
+          toast("Draft generated");
+        } catch (err) {
+          if (status) status.textContent = err.message;
+          toast("Draft error: " + err.message);
+        }
+      }
+
+      async function suggestLinksForDraft(nodeType) {
+        const attrs = collectAttributes("#ep-body");
+        const box = document.getElementById("relationship-suggestions");
+        if (box) box.innerHTML = '<div class="ep-muted">Co-creator is ranking compatible links...</div>';
+        try {
+          const res = await fetch(apiUrl("/relationship/suggest"), {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ node_type: nodeType, attributes: attrs, limit: 6 }),
+          });
+          const result = await parseApiResponse(res);
+          renderRelationshipSuggestions(result.suggestions || [], nodeType);
+          updateCreateSummary(nodeType);
+        } catch (err) {
+          if (box) box.innerHTML = `<div class="ep-muted" style="color:#f87171">${escHtml(err.message)}</div>`;
+          toast("Suggestion error: " + err.message);
+        }
+      }
+
+      function suggestionKey(suggestion) {
+        return [
+          suggestion.relation_type,
+          suggestion.direction,
+          suggestion.target_id,
+        ].join("|");
+      }
+
+      function renderRelationshipSuggestions(suggestions, nodeType) {
+        const box = document.getElementById("relationship-suggestions");
+        if (!box) return;
+        if (!suggestions.length) {
+          box.innerHTML = '<div class="ep-muted">No strong link suggestions yet. Use manual linking below or create as orphan.</div>';
+          return;
+        }
+        box.innerHTML = suggestions.map((s, idx) => {
+          const key = suggestionKey(s);
+          const accepted = acceptedSuggestions.some(item => suggestionKey(item) === key);
+          const attrs = collectAttributes("#ep-body");
+          const newLabel = attrs.name || attrs[nodeIdKeyForType(nodeType)] || "new node";
+          const flow = s.direction === "out"
+            ? `${escHtml(newLabel)} -> ${escHtml(s.relation_type)} -> ${escHtml(s.target_label)}`
+            : `${escHtml(s.target_label)} -> ${escHtml(s.relation_type)} -> ${escHtml(newLabel)}`;
+          return `<div class="suggestion-card ${accepted ? "accepted" : ""}" data-suggestion-index="${idx}">
+            <div class="suggestion-top">
+              <div class="suggestion-flow">${flow}</div>
+              <span class="suggestion-confidence">${Math.round(Number(s.confidence || 0) * 100)}%</span>
+            </div>
+            <div class="suggestion-reason">${escHtml(s.reason || "")}</div>
+            <div class="suggestion-actions">
+              <button class="ep-btn ${accepted ? "" : "ep-btn-primary"} suggestion-accept" type="button" data-suggestion-index="${idx}">${accepted ? "Accepted" : "Accept"}</button>
+              <button class="ep-btn suggestion-focus" type="button" data-target-id="${escHtml(s.target_id)}">Show target</button>
+            </div>
+          </div>`;
+        }).join("");
+        box.querySelectorAll(".suggestion-accept").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const suggestion = suggestions[Number(btn.dataset.suggestionIndex)];
+            const key = suggestionKey(suggestion);
+            if (acceptedSuggestions.some(item => suggestionKey(item) === key)) {
+              acceptedSuggestions = acceptedSuggestions.filter(item => suggestionKey(item) !== key);
+            } else {
+              acceptedSuggestions.push(suggestion);
+            }
+            renderRelationshipSuggestions(suggestions, nodeType);
+            updateCreatePreview(nodeType);
+            updateCreateSummary(nodeType);
+          });
+        });
+        box.querySelectorAll(".suggestion-focus").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const targetId = btn.dataset.targetId;
+            if (!targetId || !nodesDataSet.get(targetId)) return;
+            network.selectNodes([targetId]);
+            network.focus(targetId, { scale: 1.15, animation: { duration: 350 } });
+          });
+        });
+      }
+
+      function stopActiveRecognition() {
+        if (speechRecognition) {
+          try { speechRecognition.onresult = null; } catch {}
+          try { speechRecognition.onend = null; } catch {}
+          try { speechRecognition.onerror = null; } catch {}
+          try { speechRecognition.stop(); } catch {}
+          try { speechRecognition.abort(); } catch {}
+        }
+        speechRecognition = null;
+        if (voiceTimer) {
+          clearInterval(voiceTimer);
+          voiceTimer = null;
+        }
+      }
+
+      function detectVoiceLang() {
+        const fromTextarea = document.getElementById("cocreate-voice-text");
+        if (fromTextarea?.lang) return fromTextarea.lang;
+        return navigator.language || "en-US";
+      }
+
+      function setupVoiceInput() {
+        const startBtn = document.getElementById("voice-start-btn");
+        const stopBtn = document.getElementById("voice-stop-btn");
+        const status = document.getElementById("voice-status");
+        if (!startBtn || !stopBtn) return;
+        // Recognition started in a previous wizard render must not outlive its DOM.
+        stopActiveRecognition();
+        const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!Recognition) {
+          startBtn.disabled = true;
+          if (status) status.textContent = "Voice recognition is not available in this browser.";
+          return;
+        }
+        const restoreIdle = (message) => {
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
+          if (voiceTimer) { clearInterval(voiceTimer); voiceTimer = null; }
+          if (status && message) status.textContent = message;
+        };
+        startBtn.addEventListener("click", () => {
+          stopActiveRecognition();
+          const transcriptEl = document.getElementById("cocreate-voice-text");
+          // Track only the recognizer's own committed output; user edits stay untouched.
+          let recognizedFinal = "";
+          let lastWrittenValue = transcriptEl?.value || "";
+          try {
+            speechRecognition = new Recognition();
+            speechRecognition.lang = detectVoiceLang();
+            speechRecognition.interimResults = true;
+            speechRecognition.continuous = true;
+            voiceStartedAt = Date.now();
+            speechRecognition.onresult = (event) => {
+              let interim = "";
+              for (let i = event.resultIndex; i < event.results.length; i += 1) {
+                const chunk = event.results[i][0]?.transcript || "";
+                if (event.results[i].isFinal) recognizedFinal += `${chunk} `;
+                else interim += chunk;
+              }
+              if (!transcriptEl) return;
+              // Preserve any manual edits the user made between recognition events:
+              // only rewrite the textarea if it still matches what we last set.
+              if (transcriptEl.value !== lastWrittenValue) {
+                lastWrittenValue = transcriptEl.value;
+                recognizedFinal = lastWrittenValue.endsWith(" ") || !lastWrittenValue
+                  ? lastWrittenValue
+                  : `${lastWrittenValue} `;
+                return;
+              }
+              const next = `${recognizedFinal}${interim}`.replace(/\\s+$/g, "");
+              transcriptEl.value = next;
+              lastWrittenValue = next;
+            };
+            speechRecognition.onerror = (event) => {
+              const code = event?.error || "unknown";
+              const message = code === "not-allowed" || code === "service-not-allowed"
+                ? "Microphone access was blocked. Allow it in the browser to dictate."
+                : code === "no-speech"
+                  ? "No speech detected. Try again closer to the microphone."
+                  : code === "audio-capture"
+                    ? "No microphone found."
+                    : `Voice input error: ${code}.`;
+              restoreIdle(message);
+            };
+            speechRecognition.onend = () => {
+              restoreIdle("Recording stopped. Review the transcript and generate the draft.");
+            };
+            speechRecognition.start();
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            if (status) status.innerHTML = '<span class="voice-meter"><span class="voice-dot"></span>Listening 0:00</span>';
+            voiceTimer = setInterval(() => {
+              const elapsed = Math.floor((Date.now() - voiceStartedAt) / 1000);
+              const min = Math.floor(elapsed / 60);
+              const sec = String(elapsed % 60).padStart(2, "0");
+              if (status) status.innerHTML = `<span class="voice-meter"><span class="voice-dot"></span>Listening ${min}:${sec}</span>`;
+            }, 500);
+          } catch (err) {
+            restoreIdle(err.message || "Could not start voice input.");
+          }
+        });
+        stopBtn.addEventListener("click", () => {
+          if (speechRecognition) {
+            try { speechRecognition.stop(); } catch { stopActiveRecognition(); }
+          }
+        });
+      }
+
+      function wireCreateWizard(nodeType) {
+        const body = document.getElementById("ep-body");
+        body.querySelectorAll("[data-cocreate-mode]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const next = btn.dataset.cocreateMode || "write";
+            if (next !== "voice") stopActiveRecognition();
+            coCreateMode = next;
+            body.querySelectorAll("[data-cocreate-mode]").forEach(el => el.classList.toggle("active", el === btn));
+            body.querySelectorAll(".cocreate-input-panel").forEach(panel => {
+              panel.hidden = panel.id !== `cocreate-panel-${coCreateMode}`;
+            });
+          });
+        });
+        body.querySelector("#generate-draft-btn")?.addEventListener("click", generateDraftFromCoCreate);
+        setupVoiceInput();
+        body.querySelector("#create-node-type")?.addEventListener("change", (e) => {
+          acceptedSuggestions = [];
+          coCreateDraft = null;
+          renderCreateWizard(e.target.value);
+        });
+        body.querySelector("#create-polish-all")?.addEventListener("click", () => polishFields(nodeType, null, "#ep-body"));
+        body.querySelectorAll(".field-polish").forEach(btn => {
+          btn.addEventListener("click", () => polishFields(nodeType, [btn.dataset.field], "#ep-body"));
+        });
+
+        const relType = body.querySelector("#create-rel-type");
+        const relDir = body.querySelector("#create-rel-dir");
+        const search = body.querySelector("#create-rel-node-search");
+        const skip = body.querySelector("#create-skip-rel");
+
+        const refreshDirectionOptions = () => {
+          const selected = relDir.value;
+          const directions = directionOptionsFor(nodeType, relType.value);
+          relDir.innerHTML = directions.map(d => `<option value="${d}">${d === "out" ? "New node -> existing" : "Existing -> new node"}</option>`).join("");
+          if (directions.includes(selected)) relDir.value = selected;
+        };
+        const refreshAll = () => {
+          refreshDirectionOptions();
+          populateCreateTargetSelect(nodeType);
+          updateCreatePreview(nodeType);
+          updateCreateSummary(nodeType);
+        };
+
+        relType?.addEventListener("change", refreshAll);
+        relDir?.addEventListener("change", refreshAll);
+        body.querySelector("#suggest-links-btn")?.addEventListener("click", () => suggestLinksForDraft(nodeType));
+        search?.addEventListener("input", () => {
+          populateCreateTargetSelect(nodeType);
+          updateCreatePreview(nodeType);
+        });
+        skip?.addEventListener("change", () => {
+          updateCreatePreview(nodeType);
+          updateCreateSummary(nodeType);
+        });
+        body.querySelector("#create-rel-node")?.addEventListener("change", () => {
+          updateCreatePreview(nodeType);
+          updateCreateSummary(nodeType);
+        });
+        body.querySelectorAll("[data-attr-key]").forEach(input => {
+          input.addEventListener("input", () => {
+            updateCreatePreview(nodeType);
+            updateCreateSummary(nodeType);
+          });
+        });
+        body.querySelector("#create-node-btn")?.addEventListener("click", () => createNodeFromWizard(nodeType));
+
+        refreshAll();
+      }
+
+      function populateCreateTargetSelect(nodeType) {
+        const sel = document.getElementById("create-rel-node");
+        if (!sel) return;
+        const relType = document.getElementById("create-rel-type")?.value || "";
+        const direction = document.getElementById("create-rel-dir")?.value || "out";
+        const filter = (document.getElementById("create-rel-node-search")?.value || "").trim().toLowerCase();
+        const allowedTypes = compatibleTargetTypesFor(nodeType, relType, direction);
+        sel.innerHTML = "";
+        const items = allNodesList.filter(n =>
+          (!allowedTypes || allowedTypes.includes(n.type)) &&
+          (!filter || n.label.toLowerCase().includes(filter) || n.id.toLowerCase().includes(filter) || n.type.toLowerCase().includes(filter))
+        ).slice(0, 80);
+        for (const n of items) {
+          const opt = document.createElement("option");
+          opt.value = n.id;
+          opt.textContent = `[${n.type}] ${n.label}`;
+          sel.appendChild(opt);
+        }
+      }
+
+      function requiredMissingFromControls(nodeType, attrs) {
+        return schemaPropsFor(nodeType)
+          .filter(prop => prop.required)
+          .filter(prop => {
+            const value = attrs[prop.name];
+            if (prop.type === "array") return !Array.isArray(value) || value.length === 0;
+            return !String(value || "").trim();
+          })
+          .map(prop => prop.name);
+      }
+
+      function manualRelationshipDraft(nodeType, nodeId) {
+        const relType = document.getElementById("create-rel-type")?.value || "";
+        const direction = document.getElementById("create-rel-dir")?.value || "out";
+        const targetId = document.getElementById("create-rel-node")?.value || "";
+        const skip = document.getElementById("create-skip-rel")?.checked || false;
+        if (skip || !relType || !targetId || !nodeId) return null;
+        return {
+          type: relType,
+          from_id: direction === "out" ? nodeId : targetId,
+          to_id: direction === "out" ? targetId : nodeId,
+        };
+      }
+
+      function acceptedRelationshipDrafts(nodeId) {
+        return acceptedSuggestions.map(s => ({
+          type: s.relation_type,
+          from_id: s.from_id === "__NEW_NODE__" ? nodeId : s.from_id,
+          to_id: s.to_id === "__NEW_NODE__" ? nodeId : s.to_id,
+        }));
+      }
+
+      function updateCreatePreview(nodeType) {
+        const preview = document.getElementById("create-link-preview");
+        const targetId = document.getElementById("create-rel-node")?.value || "";
+        const relType = document.getElementById("create-rel-type")?.value || "";
+        const direction = document.getElementById("create-rel-dir")?.value || "out";
+        const skip = document.getElementById("create-skip-rel")?.checked || false;
+        const attrs = collectAttributes("#ep-body");
+        const newLabel = attrs.name || attrs[nodeIdKeyForType(nodeType)] || "new node";
+        const target = allNodesList.find(n => n.id === targetId);
+        if (!preview) return;
+        if (acceptedSuggestions.length) {
+          preview.innerHTML = `${acceptedSuggestions.length} accepted link${acceptedSuggestions.length === 1 ? "" : "s"} will be created with <strong>${escHtml(newLabel)}</strong>.`;
+          return;
+        }
+        if (skip) {
+          preview.innerHTML = `The node <strong>${escHtml(newLabel)}</strong> will be created without a relationship.`;
+          return;
+        }
+        if (!target || !relType) {
+          preview.textContent = "Select a compatible relationship and existing node to connect the new node.";
+          return;
+        }
+        preview.innerHTML = direction === "out"
+          ? `<strong>${escHtml(newLabel)}</strong> ${escHtml(relType)} <strong>${escHtml(target.label)}</strong>`
+          : `<strong>${escHtml(target.label)}</strong> ${escHtml(relType)} <strong>${escHtml(newLabel)}</strong>`;
+      }
+
+      function updateCreateSummary(nodeType) {
+        const summary = document.getElementById("create-summary");
+        const createBtn = document.getElementById("create-node-btn");
+        const hint = document.getElementById("create-validation-hint");
+        const attrs = collectAttributes("#ep-body");
+        const idKey = nodeIdKeyForType(nodeType);
+        const nodeId = String(attrs[idKey] || "").trim();
+        const skip = document.getElementById("create-skip-rel")?.checked || false;
+        const targetId = document.getElementById("create-rel-node")?.value || "";
+        const relType = document.getElementById("create-rel-type")?.value || "";
+        const target = allNodesList.find(n => n.id === targetId);
+        const missing = requiredMissingFromControls(nodeType, attrs);
+        const manualRel = manualRelationshipDraft(nodeType, nodeId);
+        const linkLabel = acceptedSuggestions.length
+          ? `${acceptedSuggestions.length} accepted suggestion${acceptedSuggestions.length === 1 ? "" : "s"}`
+          : (skip ? "orphan" : (relType && target ? `${relType} ${target.label}` : "missing"));
+        if (summary) {
+          summary.innerHTML = `
+            <div class="create-summary-row"><span>Type</span><strong>${escHtml(nodeType)}</strong></div>
+            <div class="create-summary-row"><span>ID</span><strong>${escHtml(nodeId || "missing")}</strong></div>
+            <div class="create-summary-row"><span>Name</span><strong>${escHtml(attrs.name || "missing")}</strong></div>
+            <div class="create-summary-row"><span>Required</span><strong>${missing.length ? escHtml(missing.join(", ")) : "complete"}</strong></div>
+            <div class="create-summary-row"><span>Link</span><strong>${escHtml(linkLabel)}</strong></div>
+          `;
+        }
+        const canCreate = Boolean(nodeId) && missing.length === 0 && (acceptedSuggestions.length > 0 || skip || Boolean(manualRel));
+        if (createBtn) createBtn.disabled = !canCreate;
+        if (hint) hint.textContent = canCreate
+          ? "Ready to create. Save Version persists the edited graph to disk."
+          : "Fill required fields and accept a link, choose one manually, or explicitly create it as orphan.";
+      }
+
+      async function createNodeFromWizard(nodeType) {
+        const attrs = collectAttributes("#ep-body");
+        const idKey = nodeIdKeyForType(nodeType);
+        const nodeId = String(attrs[idKey] || "").trim();
+        const missing = requiredMissingFromControls(nodeType, attrs);
+        if (missing.length) {
+          toast(`Missing required fields: ${missing.join(", ")}`);
+          return;
+        }
+        const manualRel = manualRelationshipDraft(nodeType, nodeId);
+        const relationships = [
+          ...acceptedRelationshipDrafts(nodeId),
+          ...(acceptedSuggestions.length === 0 && manualRel ? [manualRel] : []),
+        ];
+
+        try {
+          const res = await fetch(apiUrl("/node/create"), {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ node_type: nodeType, attributes: attrs, relationships }),
+          });
+          const result = await parseApiResponse(res);
+          if (result.ok && result.vis_node) {
+            ensureNodeTypeVisible(nodeType);
+            const enriched = enrichNode(result.vis_node);
+            enriched.borderWidth = 3;
+            nodesDataSet.add(enriched);
+            allNodes.push(enriched);
+            allNodesList.push(result.all_node || { id: result.node_id, label: result.vis_node.label, type: nodeType });
+            if (Array.isArray(result.edges) && result.edges.length) {
+              edgesDataSet.add(result.edges);
+              allEdges.push(...result.edges);
+              refreshEdgeTypeChips();
+            }
+            markUnsaved();
+            updateStatusPill();
+            network.selectNodes([result.node_id]);
+            network.focus(result.node_id, { scale: 1.2, animation: { duration: 400 } });
+            toast("Node created and linked");
+            loadNodeEdit(result.node_id);
+          }
+        } catch (err) {
+          toast("Create error: " + err.message);
+        }
+      }
+
+      function ensureNodeTypeVisible(nodeType) {
+        if (!colorByType[nodeType]) {
+          colorByType[nodeType] = pickColor(Object.keys(colorByType).length);
+        }
+        if (!activeNodeTypes.has(nodeType)) {
+          activeNodeTypes.add(nodeType);
+          buildNodeChips(allSchemaNodeTypes());
+        }
+      }
+
+      function refreshEdgeTypeChips() {
+        const edgeTypes = Array.from(new Set([
+          ...allEdges.map(e => e.label).filter(Boolean),
+          ...Object.keys(schemaData?.relation_constraints || {}),
+        ])).sort();
+        edgeTypes.forEach(t => activeEdgeTypes.add(t));
+        buildEdgeChips(edgeTypes);
       }
 
       function escHtml(s) {
@@ -670,9 +1809,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       }
 
       async function applyAttrs(nodeId) {
-        const inputs = document.querySelectorAll("#ep-body input[data-attr-key]");
-        const attrs = {};
-        inputs.forEach(inp => { attrs[inp.dataset.attrKey] = inp.value; });
+        const attrs = collectAttributes("#ep-body");
 
         try {
           const res = await fetch(apiUrl(`/node/${encodeURIComponent(nodeId)}/update`), {
@@ -790,7 +1927,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
           edgesDataSet.clear();
           edgesDataSet.add(allEdges);
           // Refresh edge type chips
-          const edgeTypes = payload.edge_types || [];
+          const edgeTypes = Array.from(new Set([
+            ...(payload.edge_types || []),
+            ...Object.keys(schemaData?.relation_constraints || {}),
+          ])).sort();
           activeEdgeTypes.clear();
           edgeTypes.forEach(t => activeEdgeTypes.add(t));
           buildEdgeChips(edgeTypes);
@@ -835,8 +1975,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
         allNodes = payload.nodes || [];
         allEdges = payload.edges || [];
-        const nodeTypes = payload.node_types || [];
-        const edgeTypes = payload.edge_types || [];
+        const nodeTypes = Array.from(new Set([
+          ...(payload.node_types || []),
+          ...Object.keys(schemaData?.node_types || {}),
+        ])).sort();
+        const edgeTypes = Array.from(new Set([
+          ...(payload.edge_types || []),
+          ...Object.keys(schemaData?.relation_constraints || {}),
+        ])).sort();
 
         if (allNodes.length === 0) {
           showError("No nodes found in the current ontology.");
@@ -943,16 +2089,26 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
         // Edit mode toggle
         document.getElementById("edit-mode-toggle").addEventListener("click", () => {
-          editMode = !editMode;
-          document.getElementById("layout").classList.toggle("edit-mode", editMode);
-          document.getElementById("edit-mode-toggle").classList.toggle("active", editMode);
-          // Resize network after layout transition
-          setTimeout(() => { network.redraw(); network.fit(); }, 300);
+          setEditorPanelOpen(!editMode);
+        });
+        document.getElementById("create-node-open").addEventListener("click", () => renderCreateWizard("", { resetDraft: true }));
+        document.getElementById("ep-new-node-btn").addEventListener("click", () => renderCreateWizard("", { resetDraft: true }));
+        document.getElementById("ep-tab-create").addEventListener("click", () => renderCreateWizard());
+        document.getElementById("ep-tab-edit").addEventListener("click", () => {
+          setPanelMode("edit");
+          if (selectedNodeId) {
+            loadNodeEdit(selectedNodeId);
+          } else {
+            document.getElementById("ep-title").textContent = "Graph Editor";
+            document.getElementById("ep-body").innerHTML =
+              '<div class="ep-placeholder">Click a node in the graph to edit it.</div>';
+          }
         });
 
-        // Node click in edit mode
+        // Node click opens the editor directly.
         network.on("click", params => {
-          if (!editMode || params.nodes.length === 0) return;
+          if (params.nodes.length === 0) return;
+          setEditorPanelOpen(true);
           loadNodeEdit(params.nodes[0]);
         });
 

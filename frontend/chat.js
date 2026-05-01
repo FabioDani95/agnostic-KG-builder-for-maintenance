@@ -8,6 +8,16 @@ import { renderTripletWidget } from "./widgets/triplet.js?v=20260424b";
 import { renderRequiredFieldsWidget } from "./widgets/required_fields.js?v=20260422d";
 import { renderNodeCard } from "./widgets/node_card.js?v=20260422d";
 
+// ── Utilities ──────────────────────────────────────────────────────────
+
+function _debounce(fn, ms) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), ms);
+    };
+}
+
 // ── State ──────────────────────────────────────────────────────────────
 
 let _pdfId = null;
@@ -55,6 +65,7 @@ export async function initChat(pdfId, pdfPath, opts = {}) {
     _setupGraphControls();
     _setupModifyControls();
     _setupColumnResize();
+    _setupStreamDelegation();
     _setPhaseLabel("loaded");
     _setSystemBusy("Starting the extraction workflow…", "scoping");
     _setPdfStatus("Loading PDF preview…", "loading");
@@ -423,6 +434,15 @@ function _renderWidget(widgetType, payload) {
     let el = null;
     const onAction = (action, data) => _postAction(action, data);
 
+    // Non-sheet widgets indicate the previous interactive panel is no longer
+    // the operator's focus — dismiss it so the reopen pill doesn't linger.
+    const NON_SHEET_TYPES = new Set([
+        "extraction_graph", "modify_workspace_sync", "export", "run_metrics",
+    ]);
+    if (NON_SHEET_TYPES.has(widgetType) && _sheetCurrentEl) {
+        _dismissWidgetSheet();
+    }
+
     switch (widgetType) {
         case "extraction_graph":
             _lastWidgetType = "extraction_graph";
@@ -489,8 +509,27 @@ function _decorateWidget(el) {
     el.dataset.decorated = "true";
     el.classList.add("chat-widget--interactive");
     _wrapWidgetBody(el);
-    _applyDefaultWidgetSize(el);
     _bindWidgetScroll(el.querySelector(".chat-widget-body"));
+
+    // Determine if this widget should open in the side sheet
+    const isSheetWidget = [..._SHEET_WIDGET_TYPES].some((cls) => el.classList.contains(cls));
+    if (isSheetWidget) {
+        // Open sheet immediately
+        _openWidgetSheet(el);
+
+        // Add a compact "open" button to the stream placeholder card
+        const header = el.querySelector(".widget-header");
+        if (header) {
+            const openBtn = document.createElement("button");
+            openBtn.className = "btn-secondary btn-sm";
+            openBtn.textContent = "Open panel";
+            openBtn.setAttribute("aria-label", "Reopen widget panel");
+            openBtn.addEventListener("click", () => _openWidgetSheet(el));
+            header.appendChild(openBtn);
+        }
+    } else {
+        _applyDefaultWidgetSize(el);
+    }
 }
 
 function _wrapWidgetBody(el) {
@@ -567,6 +606,191 @@ function _bindWidgetScroll(body) {
     }, { passive: false });
 }
 
+// ── Side-sheet overlay ─────────────────────────────────────────────────
+// Interactive widgets (sections, triplet, fields, ontology, node) open in
+// a full-height side panel instead of being embedded in the stream.
+
+const _SHEET_WIDGET_TYPES = new Set([
+    "chat-widget--sections",
+    "chat-widget--triplet",
+    "chat-widget--required-fields",
+    "chat-widget--ontology-review",
+    "chat-widget--node-card",
+]);
+
+let _sheetCurrentEl = null;  // widget el currently loaded in the sheet (persists when closed)
+let _sheetFocusReturn = null; // element to restore focus to on close
+let _sheetIsOpen = false;
+
+function _initWidgetSheet() {
+    const sheet = document.getElementById("widget-sheet");
+    const backdrop = document.getElementById("widget-sheet-backdrop");
+    const closeBtn = document.getElementById("widget-sheet-close");
+    if (!sheet || sheet.dataset.sheetInit === "true") return;
+    sheet.dataset.sheetInit = "true";
+
+    closeBtn.addEventListener("click", () => _closeWidgetSheet());
+    backdrop.addEventListener("click", () => _closeWidgetSheet());
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && _sheetIsOpen) _closeWidgetSheet();
+    });
+}
+
+function _openWidgetSheet(widgetEl) {
+    _initWidgetSheet();
+
+    const sheet = document.getElementById("widget-sheet");
+    const backdrop = document.getElementById("widget-sheet-backdrop");
+    const sheetBody = document.getElementById("widget-sheet-body");
+    const sheetFooter = document.getElementById("widget-sheet-footer");
+    const sheetTitle = document.getElementById("widget-sheet-title");
+    const sheetMeta = document.getElementById("widget-sheet-meta");
+    const sheetIcon = document.getElementById("widget-sheet-icon");
+    if (!sheet || !sheetBody) return;
+
+    const isNewWidget = widgetEl && widgetEl !== _sheetCurrentEl;
+
+    if (isNewWidget) {
+        // Load new widget content into the sheet
+        const header = widgetEl.querySelector(".widget-header");
+        const titleEl = header?.querySelector(".widget-title");
+        const metaEl = header?.querySelector(".widget-meta");
+        const iconEl = header?.querySelector(".widget-icon");
+        const actionsEl = widgetEl.querySelector(".widget-actions");
+        const body = widgetEl.querySelector(".chat-widget-body") || widgetEl;
+
+        sheetTitle.textContent = titleEl?.textContent || "Widget";
+        if (metaEl) {
+            sheetMeta.textContent = metaEl.textContent;
+            sheetMeta.hidden = false;
+        } else {
+            sheetMeta.hidden = true;
+        }
+        sheetIcon.textContent = iconEl?.textContent || "";
+
+        sheetBody.innerHTML = "";
+        [...body.children].forEach((child) => sheetBody.appendChild(child));
+
+        sheetFooter.innerHTML = "";
+        if (actionsEl) {
+            [...actionsEl.children].forEach((btn) => sheetFooter.appendChild(btn));
+            sheetFooter.hidden = false;
+        } else {
+            sheetFooter.hidden = true;
+        }
+
+        _sheetCurrentEl = widgetEl;
+    }
+
+    _sheetFocusReturn = document.activeElement;
+    _sheetIsOpen = true;
+
+    // Remove close-animation class so re-open plays slide-in
+    sheet.classList.remove("is-closing");
+    backdrop.classList.remove("is-closing");
+
+    sheet.classList.add("is-open");
+    sheet.hidden = false;
+
+    // Push the chat columns left so the PDF stays fully visible
+    document.body.classList.add("widget-sheet-pushing");
+
+    _updateSheetHeaderBtn();
+
+    requestAnimationFrame(() => {
+        document.getElementById("widget-sheet-close")?.focus();
+    });
+}
+
+function _closeWidgetSheet() {
+    const sheet = document.getElementById("widget-sheet");
+    if (!sheet || !_sheetIsOpen) return;
+
+    _sheetIsOpen = false;
+    sheet.classList.remove("is-open");
+    sheet.classList.add("is-closing");
+
+    // Stop pushing the chat columns
+    document.body.classList.remove("widget-sheet-pushing");
+
+    setTimeout(() => {
+        sheet.classList.remove("is-closing");
+        // Keep sheet DOM loaded but hidden — content is preserved for re-open
+        sheet.hidden = true;
+    }, 260);
+
+    if (_sheetFocusReturn?.isConnected) {
+        _sheetFocusReturn.focus();
+    }
+    _sheetFocusReturn = null;
+
+    _updateSheetHeaderBtn();
+}
+
+// Fully discard the loaded widget — used after a final action so the
+// reopen pill doesn't keep advertising a stale panel.
+function _dismissWidgetSheet() {
+    _closeWidgetSheet();
+    _sheetCurrentEl = null;
+    setTimeout(() => _updateSheetHeaderBtn(), 280);
+}
+
+// Shows/hides the floating "Reopen panel" pill in #chat-bar
+function _updateSheetHeaderBtn() {
+    let btn = document.getElementById("sheet-reopen-btn");
+
+    if (!_sheetCurrentEl) {
+        // No widget loaded — remove button if present
+        btn?.remove();
+        return;
+    }
+
+    if (!btn) {
+        btn = document.createElement("button");
+        btn.id = "sheet-reopen-btn";
+        btn.className = "sheet-reopen-btn";
+        btn.setAttribute("aria-label", "Reopen panel");
+        btn.addEventListener("click", () => _openWidgetSheet(_sheetCurrentEl));
+
+        const bar = document.getElementById("chat-bar");
+        if (bar) bar.appendChild(btn);
+    }
+
+    // Update label from current widget title
+    const titleEl = _sheetCurrentEl.querySelector(".widget-title");
+    const iconEl = _sheetCurrentEl.querySelector(".widget-icon");
+    const icon = iconEl?.textContent?.trim() || "📋";
+    const label = titleEl?.textContent?.trim() || "Panel";
+    btn.innerHTML = `<span class="sheet-reopen-icon">${icon}</span><span class="sheet-reopen-label">${label}</span>`;
+
+    // Show when closed, pulse when open to indicate it's active
+    if (_sheetIsOpen) {
+        btn.classList.remove("is-collapsed");
+        btn.classList.add("is-active");
+    } else {
+        btn.classList.remove("is-active");
+        btn.classList.add("is-collapsed");
+    }
+}
+
+
+// ── Stream event delegation ────────────────────────────────────────────
+// Single listener on #chat-stream handles all dynamic button clicks,
+// including [[panel-link]] buttons injected via _md().
+
+function _setupStreamDelegation() {
+    const stream = _stream();
+    if (!stream || stream.dataset.delegated === "true") return;
+    stream.dataset.delegated = "true";
+
+    stream.addEventListener("click", (e) => {
+        const link = e.target.closest("[data-sheet-link]");
+        if (link && _sheetCurrentEl) {
+            e.preventDefault();
+            _openWidgetSheet(_sheetCurrentEl);
+        }
+    });
+}
 
 // ── Column resize ──────────────────────────────────────────────────────
 
@@ -605,8 +829,10 @@ function _setupColumnResize() {
         document.body.classList.add("chat-resizing-columns");
 
         const onMove = (moveEvent) => {
-            const width = setLeftWidth(moveEvent.clientX - rect.left);
-            handle.setAttribute("aria-valuenow", String(Math.round(width)));
+            requestAnimationFrame(() => {
+                const width = setLeftWidth(moveEvent.clientX - rect.left);
+                handle.setAttribute("aria-valuenow", String(Math.round(width)));
+            });
         };
 
         const stop = () => {
@@ -804,8 +1030,19 @@ function _closeModifyWorkspace() {
     panel.hidden = true;
     _modifyWorkspaceOpen = false;
     _setModifyWorkspaceAvailability(_modifyWorkspaceUrl);
+
+    // Re-show the extraction graph panel if we have data. If we don't,
+    // unhide it anyway and request a fresh payload — otherwise the
+    // operator stares at the bare PDF after Back-To-Manual.
+    const graphPanel = document.getElementById("chat-graph-panel");
+    if (graphPanel) graphPanel.hidden = false;
     if (_kgGraphData) {
         _renderExtractionGraph();
+    } else {
+        const canvas = document.getElementById("chat-graph-canvas");
+        if (canvas) {
+            canvas.innerHTML = `<div class="chat-graph-empty">No graph yet — keep reviewing triplets.</div>`;
+        }
     }
 }
 
@@ -857,9 +1094,43 @@ function _setupGraphControls() {
     panel.dataset.bound = "true";
     panel.querySelectorAll("[data-mode]").forEach((button) => {
         button.addEventListener("click", () => {
-            _kgGraphMode = button.dataset.mode || "all";
-            _renderExtractionGraph();
+            const mode = button.dataset.mode || "all";
+            _kgGraphMode = mode;
+
+            // If the modify workspace is in front, hide it so the graph panel
+            // is visible again. The user explicitly asked to see the graph.
+            if (_modifyWorkspaceOpen) _closeModifyWorkspace();
+
+            // Force the graph panel out of any hidden state.
+            const p = document.getElementById("chat-graph-panel");
+            if (p) p.hidden = false;
+
+            if (_kgGraphData) {
+                _renderExtractionGraph();
+            } else {
+                // No cached graph data — ask the backend to send the latest one.
+                _requestExtractionGraphRefresh();
+            }
         });
+    });
+}
+
+// Best-effort refresh: ask the backend for the current extraction graph.
+// Falls back to a chat hint if no triplet has been reviewed yet.
+function _requestExtractionGraphRefresh() {
+    const panel = document.getElementById("chat-graph-panel");
+    const canvas = document.getElementById("chat-graph-canvas");
+    if (panel) panel.hidden = false;
+    if (canvas) {
+        canvas.innerHTML = `<div class="chat-graph-empty">Loading graph…</div>`;
+    }
+    // Most lifecycle phases re-emit extraction_graph on get_next_triplet.
+    // If we are mid-review this will repaint; if we are pre-extraction it
+    // will at least keep the panel open with the empty hint.
+    _postAction("get_next_triplet", {}).catch(() => {
+        if (canvas) {
+            canvas.innerHTML = `<div class="chat-graph-empty">Graph will appear once triplets are available.</div>`;
+        }
     });
 }
 
@@ -1063,33 +1334,34 @@ function renderOntologyReviewWidget(payload, onAction) {
     `;
     wrap.appendChild(header);
 
+    const KPI_INFO = {
+        scoped_pages: "Number of PDF pages selected during scoping that feed the extraction.",
+        sections: "Sections inside the scoped pages that contain diagnostic content.",
+        graph_issues: "Schema-level issues detected in the draft ontology (missing relations, broken chains). Reported but not blocking — you can fix them later during triplet review.",
+        suggestions: "Relations the system proposes between existing nodes. High-confidence ones are applied automatically; lower-confidence ones surface during triplet review.",
+        auto_approve: "Nodes with high enough confidence to be approved automatically without operator review.",
+        human_review: "Nodes that need an operator to confirm or edit them during triplet review.",
+    };
+
+    const _statCard = (label, value, infoKey) => `
+        <div class="ontology-stat-card">
+            <span class="ontology-stat-label">
+                ${label}
+                <span class="info-tip" tabindex="0" role="button" aria-label="${_escapeHtml(KPI_INFO[infoKey])}" data-tip="${_escapeHtml(KPI_INFO[infoKey])}">i</span>
+            </span>
+            <span class="ontology-stat-value">${value}</span>
+        </div>
+    `;
+
     const summary = document.createElement("div");
     summary.className = "ontology-review-summary";
     summary.innerHTML = `
-        <div class="ontology-stat-card">
-            <span class="ontology-stat-label">Scoped Pages</span>
-            <span class="ontology-stat-value">${payload.selected_pages_count || 0}</span>
-        </div>
-        <div class="ontology-stat-card">
-            <span class="ontology-stat-label">Sections</span>
-            <span class="ontology-stat-value">${payload.selected_sections_count || 0}</span>
-        </div>
-        <div class="ontology-stat-card">
-            <span class="ontology-stat-label">Graph Issues</span>
-            <span class="ontology-stat-value">${payload.graph_issues_count || 0}</span>
-        </div>
-        <div class="ontology-stat-card">
-            <span class="ontology-stat-label">Suggestions</span>
-            <span class="ontology-stat-value">${payload.suggested_relations_count || 0}</span>
-        </div>
-        <div class="ontology-stat-card">
-            <span class="ontology-stat-label">Auto-Approve</span>
-            <span class="ontology-stat-value">${confidenceCounts.auto_approve || 0}</span>
-        </div>
-        <div class="ontology-stat-card">
-            <span class="ontology-stat-label">Human Review</span>
-            <span class="ontology-stat-value">${confidenceCounts.human_review || 0}</span>
-        </div>
+        ${_statCard("Scoped Pages", payload.selected_pages_count || 0, "scoped_pages")}
+        ${_statCard("Sections", payload.selected_sections_count || 0, "sections")}
+        ${_statCard("Graph Issues", payload.graph_issues_count || 0, "graph_issues")}
+        ${_statCard("Suggestions", payload.suggested_relations_count || 0, "suggestions")}
+        ${_statCard("Auto-Approve", confidenceCounts.auto_approve || 0, "auto_approve")}
+        ${_statCard("Human Review", confidenceCounts.human_review || 0, "human_review")}
     `;
     wrap.appendChild(summary);
 
@@ -1124,35 +1396,78 @@ function renderOntologyReviewWidget(payload, onAction) {
         wrap.appendChild(hint);
     }
 
-    if (topGraphIssues.length > 0) {
-        const issuesBlock = document.createElement("div");
-        issuesBlock.className = "ontology-review-issues";
-        issuesBlock.innerHTML = `
-            <div class="ontology-review-subtitle">Top graph issues</div>
-            ${topGraphIssues.map((issue) => `
-                <div class="ontology-review-issue-row">
-                    <span class="ontology-review-issue-type">${issue.issue_type}</span>
-                    <span class="ontology-review-issue-text">${_md(issue.description || "")}</span>
-                </div>
-            `).join("")}
-        `;
-        wrap.appendChild(issuesBlock);
-    }
+    // Suggested links: split by confidence threshold.
+    // ≥70% → presented as "auto-applied" (no operator action needed here).
+    // <70% → surface only count; the operator will see them during triplet review.
+    const AUTO_THRESHOLD = 0.70;
+    const autoLinks = previewRelations.filter((r) => Number(r.confidence || 0) >= AUTO_THRESHOLD);
+    const reviewLinks = previewRelations.filter((r) => Number(r.confidence || 0) < AUTO_THRESHOLD);
 
-    if (previewRelations.length > 0) {
+    if (autoLinks.length > 0 || reviewLinks.length > 0) {
         const relationBlock = document.createElement("div");
         relationBlock.className = "ontology-review-relations";
-        relationBlock.innerHTML = `
-            <div class="ontology-review-subtitle">Suggested links</div>
-            ${previewRelations.map((relation) => `
-                <div class="ontology-review-relation-row">
-                    <span class="ontology-review-relation-name">${relation.relation_name}</span>
-                    <span class="ontology-review-relation-path">${_md(`${relation.from_label} → ${relation.to_label}`)}</span>
-                    <span class="ontology-review-relation-confidence">${Math.round(Number(relation.confidence || 0) * 100)}%</span>
+
+        let html = `<div class="ontology-review-subtitle">Suggested links</div>`;
+
+        if (autoLinks.length > 0) {
+            html += `
+                <div class="ontology-review-auto-summary" role="status">
+                    <span class="ontology-auto-icon" aria-hidden="true">✓</span>
+                    <span>
+                        <strong>${autoLinks.length}</strong> high-confidence
+                        ${autoLinks.length === 1 ? "link will be applied" : "links will be applied"} automatically
+                        (≥${Math.round(AUTO_THRESHOLD * 100)}% confidence).
+                    </span>
                 </div>
-            `).join("")}
-        `;
+                <details class="ontology-auto-details">
+                    <summary>Show auto-applied links</summary>
+                    ${autoLinks.map((relation) => `
+                        <div class="ontology-review-relation-row ontology-review-relation-row--auto">
+                            <span class="ontology-review-relation-name">${_escapeHtml(relation.relation_name)}</span>
+                            <span class="ontology-review-relation-path">${_md(`${relation.from_label} → ${relation.to_label}`)}</span>
+                            <span class="ontology-review-relation-confidence">${Math.round(Number(relation.confidence || 0) * 100)}%</span>
+                        </div>
+                    `).join("")}
+                </details>
+            `;
+        }
+
+        if (reviewLinks.length > 0) {
+            html += `
+                <div class="ontology-review-defer-note">
+                    <strong>${reviewLinks.length}</strong> lower-confidence
+                    ${reviewLinks.length === 1 ? "link" : "links"} will be presented during triplet review.
+                </div>
+            `;
+        }
+
+        relationBlock.innerHTML = html;
         wrap.appendChild(relationBlock);
+    }
+
+    // Top graph issues — operator can't act here; they'll surface during
+    // triplet review. Keep them collapsed for transparency only.
+    if (topGraphIssues.length > 0) {
+        const issuesBlock = document.createElement("details");
+        issuesBlock.className = "ontology-review-issues-collapse";
+        issuesBlock.innerHTML = `
+            <summary>
+                <span>${payload.graph_issues_count} graph issue${payload.graph_issues_count === 1 ? "" : "s"} detected — review later</span>
+                <span class="ontology-review-collapse-meta">Show details</span>
+            </summary>
+            <div class="ontology-review-issues">
+                <p class="ontology-review-issues-hint">
+                    These issues don't block extraction. You can fix them during triplet review.
+                </p>
+                ${topGraphIssues.map((issue) => `
+                    <div class="ontology-review-issue-row">
+                        <span class="ontology-review-issue-type">${issue.issue_type}</span>
+                        <span class="ontology-review-issue-text">${_md(issue.description || "")}</span>
+                    </div>
+                `).join("")}
+            </div>
+        `;
+        wrap.appendChild(issuesBlock);
     }
 
     const actions = document.createElement("div");
@@ -1166,6 +1481,7 @@ function renderOntologyReviewWidget(payload, onAction) {
     }
     continueBtn.addEventListener("click", () => {
         continueBtn.disabled = true;
+        _dismissWidgetSheet();
         onAction("run_extraction", {});
     });
     actions.appendChild(continueBtn);
@@ -1856,9 +2172,11 @@ function _setupPdfControls() {
             void _runPdfSearch(searchInput.value);
         }
     });
-    searchInput.addEventListener("input", () => {
-        if (!searchInput.value.trim()) _clearPdfSearch();
-    });
+    const _debouncedSearch = _debounce((val) => {
+        if (val.trim()) void _runPdfSearch(val);
+        else _clearPdfSearch();
+    }, 300);
+    searchInput.addEventListener("input", () => _debouncedSearch(searchInput.value));
 }
 
 function _setupPdfObservers(container) {
@@ -2189,6 +2507,9 @@ function _md(text) {
     return _escapeHtml(text)
         .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
         .replace(/`(.+?)`/g, "<code>$1</code>")
+        .replace(/\[\[(.+?)\]\]/g, (_m, label) =>
+            `<button class="chat-panel-link" data-sheet-link="true">${label}</button>`
+        )
         .replace(/\n/g, "<br>");
 }
 

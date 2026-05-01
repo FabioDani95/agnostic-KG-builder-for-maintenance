@@ -456,6 +456,9 @@ async def generate_json(req: GenerateJsonRequest):
             },
         )
         metrics_payload = build_metrics_payload(pdf_store[req.pdf_id])
+        correct_coverage = (ontology_payload.get("metadata") or {}).get("graph_coverage")
+        if correct_coverage:
+            metrics_payload["graph_coverage"] = correct_coverage
         metrics_info = persist_export_metrics(
             metrics_payload,
             ontology_payload,
@@ -544,6 +547,9 @@ async def generate_json(req: GenerateJsonRequest):
             },
         )
         metrics_payload = build_metrics_payload(pdf_store[req.pdf_id])
+        correct_coverage = (ontology_payload.get("metadata") or {}).get("graph_coverage")
+        if correct_coverage:
+            metrics_payload["graph_coverage"] = correct_coverage
         metrics_info = persist_export_metrics(
             metrics_payload,
             ontology_payload,
