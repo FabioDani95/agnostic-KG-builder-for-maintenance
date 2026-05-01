@@ -491,6 +491,8 @@ def _build_ontology_review_payload(result, store: dict[str, Any]) -> dict[str, A
     selected_pages = list(cut_plan.get("pages_to_keep") or graph_state.get("selected_pages") or [])
     selected_sections = list(cut_plan.get("sections") or [])
     confidence_report = getattr(result, "confidence_report", None)
+    resolution_report = getattr(result, "resolution_completion_report", {}) or {}
+    resolution_attempts = list(resolution_report.get("attempts") or [])
 
     return {
         "status": getattr(result, "status", "ready"),
@@ -504,6 +506,12 @@ def _build_ontology_review_payload(result, store: dict[str, Any]) -> dict[str, A
         "human_fields_count": len(getattr(result, "human_required_fields", []) or []),
         "schema_issues_count": len(getattr(result, "schema_issues", []) or []),
         "suggested_relations_count": len(getattr(result, "suggested_relations", []) or []),
+        "resolution_completion": {
+            "target_count": int(resolution_report.get("target_count", 0) or 0),
+            "attempted": int(resolution_report.get("attempted", 0) or 0),
+            "completed": int(resolution_report.get("completed", 0) or 0),
+            "attempts": resolution_attempts[:5],
+        },
         "preview_relations": preview_relations,
         "confidence_counts": getattr(confidence_report, "counts", {}) if confidence_report else {},
         "human_required_fields": [

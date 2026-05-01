@@ -100,9 +100,9 @@ export function renderTripletWidget(payload, onAction) {
     saveBtn.textContent = "Save Edits";
     saveBtn.disabled = true;
     saveBtn.addEventListener("click", async () => {
-        const patch = _collectPatch(wrap);
+        const patch = _collectPatch(_activeTripletScope(wrap, saveBtn));
         if (Object.keys(patch).length === 0) return;
-        _disableButtons(actions);
+        _disableButtons(_actionButtonScope(actions, saveBtn));
         saveBtn.textContent = "Saving...";
         await onAction("edit_triplet", { index, patch });
     });
@@ -111,7 +111,7 @@ export function renderTripletWidget(payload, onAction) {
     skipBtn.className = "btn-secondary btn-sm";
     skipBtn.textContent = "Skip";
     skipBtn.addEventListener("click", async () => {
-        _disableButtons(actions);
+        _disableButtons(_actionButtonScope(actions, skipBtn));
         await onAction("skip_triplet", { index });
     });
 
@@ -119,8 +119,8 @@ export function renderTripletWidget(payload, onAction) {
     approveBtn.className = "btn-primary btn-sm";
     approveBtn.textContent = "Approve";
     approveBtn.addEventListener("click", async () => {
-        _disableButtons(actions);
-        const patch = _collectPatch(wrap);
+        _disableButtons(_actionButtonScope(actions, approveBtn));
+        const patch = _collectPatch(_activeTripletScope(wrap, approveBtn));
         await onAction("approve_triplet", { index, patch });
     });
 
@@ -253,7 +253,8 @@ function _empty(text) {
 function _bindDirtyTracking(wrap, saveBtn) {
     wrap.querySelectorAll("[data-field-path]").forEach((field) => {
         field.addEventListener("input", () => {
-            const hasChanges = Object.keys(_collectPatch(wrap)).length > 0;
+            const scope = _activeTripletScope(wrap, field);
+            const hasChanges = Object.keys(_collectPatch(scope)).length > 0;
             saveBtn.disabled = !hasChanges;
             wrap.classList.toggle("triplet-has-edits", hasChanges);
             field.classList.toggle("is-edited", _fieldValue(field) !== (field.dataset.initialValue || ""));
@@ -265,6 +266,14 @@ function _bindDirtyTracking(wrap, saveBtn) {
             }
         });
     });
+}
+
+function _activeTripletScope(wrap, node) {
+    return node?.closest?.(".widget-sheet") || node?.closest?.(".chat-widget--triplet") || wrap;
+}
+
+function _actionButtonScope(actions, button) {
+    return button?.closest?.(".widget-sheet-footer") || actions;
 }
 
 function _focusNextField(wrap, current) {

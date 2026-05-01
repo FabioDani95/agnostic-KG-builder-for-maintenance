@@ -170,23 +170,48 @@ def _parse_table_rows(table_text: str) -> list[list[str]]:
     return rows
 
 
-def _split_tables(raw: str) -> tuple[str, str, str]:
-    """Split the raw LLM output into three table strings."""
-    # Find tables by looking for the header patterns
-    symptom_match = re.search(
-        r"(\| *symptom_id.*?\n(?:\|.*\n)*)", raw, re.IGNORECASE
-    )
-    failure_match = re.search(
-        r"(\| *failure_mode_id.*?\n(?:\|.*\n)*)", raw, re.IGNORECASE
-    )
-    action_match = re.search(
-        r"(\| *action_id.*?\n(?:\|.*\n)*)", raw, re.IGNORECASE
-    )
+_TABLE_HEADER_RE = {
+    "symptom": re.compile(r"^\|\s*symptom_id\s*\|", re.IGNORECASE),
+    "failure": re.compile(r"^\|\s*failure_mode_id\s*\|", re.IGNORECASE),
+    "action": re.compile(r"^\|\s*action_id\s*\|", re.IGNORECASE),
+}
 
+
+def _is_known_table_header(line: str) -> bool:
+    return any(pattern.search(line.strip()) for pattern in _TABLE_HEADER_RE.values())
+
+
+def _extract_markdown_table(lines: list[str], start_index: int) -> str:
+    """Return one Markdown table, stopping at the next table/header boundary."""
+    table_lines: list[str] = []
+    for index in range(start_index, len(lines)):
+        stripped = lines[index].strip()
+        if index > start_index and _is_known_table_header(stripped):
+            break
+        if table_lines and (not stripped or stripped.startswith("#")):
+            break
+        if stripped.startswith("|"):
+            table_lines.append(lines[index])
+            continue
+        if table_lines:
+            break
+    return "\n".join(table_lines).strip()
+
+
+def _split_tables(raw: str) -> tuple[str, str, str]:
+    """Split the raw LLM output into exactly the three expected Markdown tables."""
+    lines = raw.splitlines()
+    table_by_kind = {"symptom": "", "failure": "", "action": ""}
+    for index, line in enumerate(lines):
+        stripped = line.strip()
+        for kind, pattern in _TABLE_HEADER_RE.items():
+            if table_by_kind[kind] or not pattern.search(stripped):
+                continue
+            table_by_kind[kind] = _extract_markdown_table(lines, index)
     return (
-        symptom_match.group(1) if symptom_match else "",
-        failure_match.group(1) if failure_match else "",
-        action_match.group(1) if action_match else "",
+        table_by_kind["symptom"],
+        table_by_kind["failure"],
+        table_by_kind["action"],
     )
 
 

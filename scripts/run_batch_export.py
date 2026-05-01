@@ -14,8 +14,11 @@ Results are written to the standard output bundles:
 - output/<manual_slug>/ontology.json
 - output/<manual_slug>/metrics.json
 
-A batch summary is also written to:
-- batch_runs/<timestamp>_batch_export_summary.json
+A dedicated batch result folder is also written to:
+- batch_runs/<timestamp>_batch_export/summary.json
+- batch_runs/<timestamp>_batch_export/kpi_summary.json
+- batch_runs/<timestamp>_batch_export/manuals/<manual_key>_kpis.json
+- batch_runs/<timestamp>_batch_export/exports/<manual_key>/{ontology,metrics}.json
 """
 
 from __future__ import annotations
@@ -24,9 +27,11 @@ import argparse
 import asyncio
 import json
 import logging
+import re
 import shutil
 import sys
 import time
+import unicodedata
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -58,8 +63,10 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--log-level", default="INFO", help="Logging verbosity.")
     parser.add_argument(
         "--summary-dir",
+        "--results-dir",
+        dest="summary_dir",
         default=str(DEFAULT_SUMMARY_DIR.relative_to(REPO_ROOT)),
-        help="Directory where the batch summary JSON is written.",
+        help="Root directory where timestamped batch result folders are written.",
     )
     return parser.parse_args()
 
@@ -70,6 +77,16 @@ def _now_iso() -> str:
 
 def _utc_timestamp() -> str:
     return datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+
+
+def _slugify(value: str) -> str:
+    normalized = unicodedata.normalize("NFKD", value or "").encode("ascii", "ignore").decode("ascii")
+    slug = re.sub(r"[^a-zA-Z0-9]+", "_", normalized.strip().lower()).strip("_")
+    return slug or "manual"
+
+
+def _manual_key(manual_path: Path, index: int) -> str:
+    return f"{index:02d}_{_slugify(manual_path.stem)}"
 
 
 def _list_manual_paths() -> list[Path]:
@@ -152,6 +169,13 @@ def _prompt_page_one_absolute_page(manuals: list[Path]) -> dict[str, int]:
 
 def _page_offset_from_absolute_page_one(absolute_page_one: int) -> int:
     return max(0, int(absolute_page_one) - 1)
+
+
+def _ratio(numerator: int | float, denominator: int | float) -> float:
+    denominator = float(denominator or 0)
+    if denominator <= 0:
+        return 0.0
+    return round(float(numerator or 0) / denominator, 4)
 
 
 def _build_store(pdf_path: Path, model_name: str) -> dict[str, Any]:
@@ -238,6 +262,50 @@ def _approve_cut_plan(store: dict[str, Any], *, page_offset: int, model_name: st
     }
 
 
+def _confidence_kpis(confidence_report: Any) -> dict[str, Any]:
+    if confidence_report is None:
+        return {
+            "available": False,
+            "counts": {},
+            "total_entries": 0,
+            "human_review_ratio": 0.0,
+            "auto_reject_ratio": 0.0,
+        }
+    if hasattr(confidence_report, "model_dump"):
+        report = confidence_report.model_dump()
+    elif isinstance(confidence_report, dict):
+        report = confidence_report
+    else:
+        report = {}
+
+    counts = {
+        str(key): int(value or 0)
+        for key, value in (report.get("counts") or {}).items()
+    }
+    entries = [
+        item for item in (report.get("entries") or [])
+        if isinstance(item, dict)
+    ]
+    scores = [
+        float(item.get("score"))
+        for item in entries
+        if isinstance(item.get("score"), (int, float))
+    ]
+    total = sum(counts.values()) or len(entries)
+    return {
+        "available": True,
+        "counts": counts,
+        "total_entries": total,
+        "theta_high": float(report.get("theta_high", 0.0) or 0.0),
+        "theta_low": float(report.get("theta_low", 0.0) or 0.0),
+        "auto_reject_enabled": bool(report.get("auto_reject_enabled", False)),
+        "average_score": round(sum(scores) / len(scores), 4) if scores else 0.0,
+        "minimum_score": round(min(scores), 4) if scores else 0.0,
+        "human_review_ratio": _ratio(counts.get("human_review", 0), total),
+        "auto_reject_ratio": _ratio(counts.get("auto_reject", 0), total),
+    }
+
+
 async def _run_ontology_phase(store: dict[str, Any], *, model_name: str, target_language: str) -> dict[str, Any]:
     from backend.agents.ontology_draft_agent import run_ontology_draft_agent
     from backend.models import OntologyDraftRequest
@@ -253,12 +321,16 @@ async def _run_ontology_phase(store: dict[str, Any], *, model_name: str, target_
     result = await run_ontology_draft_agent(store, req)
     return {
         "status": result.status,
+        "retry_count": result.retry_count,
+        "semantic_issues": len(result.semantic_issues),
         "schema_issues": len(result.schema_issues),
         "human_required_fields": len(result.human_required_fields),
         "graph_issues": len(result.graph_issues),
         "suggested_relations": len(result.suggested_relations),
+        "is_schema_compliant": result.is_schema_compliant,
         "total_nodes": sum(len(items) for items in (result.ontology.nodes or {}).values()),
         "total_relations": len(result.ontology.relations or []),
+        "confidence": _confidence_kpis(result.confidence_report),
     }
 
 
@@ -282,6 +354,69 @@ def _run_extraction_phase(store: dict[str, Any], *, model_name: str, target_lang
         "total_failure_modes": sum(len(triplet.failure_modes) for triplet in triplets),
         "total_corrective_actions": sum(len(triplet.corrective_actions) for triplet in triplets),
     }
+
+
+def _run_batch_quality_checks(store: dict[str, Any]) -> dict[str, Any]:
+    """Run deterministic advisory checks that enrich batch KPIs without blocking export."""
+    logger = logging.getLogger("batch_export")
+    summary: dict[str, Any] = {
+        "validation": {"enabled": True, "status": "not_run"},
+        "coverage": {"enabled": True, "status": "not_run"},
+    }
+    try:
+        from backend.agents.validation_agent import run_validation_agent
+
+        verdicts, validation_summary = run_validation_agent(store)
+        scores = [
+            float(item.get("grounding_score", 0.0) or 0.0)
+            for item in verdicts
+            if isinstance(item, dict)
+        ]
+        summary["validation"] = {
+            "enabled": True,
+            "status": "ok",
+            **validation_summary,
+            "average_grounding_score": round(sum(scores) / len(scores), 4) if scores else 0.0,
+            "minimum_grounding_score": round(min(scores), 4) if scores else 0.0,
+        }
+    except Exception as exc:
+        logger.warning("Batch validation KPI check failed: %s", exc)
+        summary["validation"] = {
+            "enabled": True,
+            "status": "failed",
+            "error": str(exc),
+        }
+
+    try:
+        from backend.agents.coverage_agent import run_coverage_agent
+
+        coverage_map = run_coverage_agent(store)
+        gap_counts: dict[str, int] = {}
+        for details in coverage_map.values():
+            gap_type = str((details or {}).get("gap_type", "") or "")
+            if not gap_type:
+                continue
+            gap_counts[gap_type] = gap_counts.get(gap_type, 0) + 1
+        selected_pages = len(coverage_map)
+        summary["coverage"] = {
+            "enabled": True,
+            "status": "ok",
+            "selected_pages": selected_pages,
+            "gap_counts": gap_counts,
+            "missing_extraction_pages": gap_counts.get("missing_extraction", 0),
+            "partially_covered_pages": gap_counts.get("partially_covered", 0),
+            "fully_covered_pages": gap_counts.get("fully_covered", 0),
+            "missing_extraction_page_ratio": _ratio(gap_counts.get("missing_extraction", 0), selected_pages),
+            "partially_covered_page_ratio": _ratio(gap_counts.get("partially_covered", 0), selected_pages),
+        }
+    except Exception as exc:
+        logger.warning("Batch coverage KPI check failed: %s", exc)
+        summary["coverage"] = {
+            "enabled": True,
+            "status": "failed",
+            "error": str(exc),
+        }
+    return summary
 
 
 async def _run_export_phase(
@@ -319,15 +454,243 @@ def _cost_and_tokens(store: dict[str, Any]) -> tuple[float, int]:
     )
 
 
-def _summary_path(summary_dir: Path) -> Path:
-    summary_dir.mkdir(parents=True, exist_ok=True)
-    return summary_dir / f"{_utc_timestamp()}_batch_export_summary.json"
+def _read_json_file(path_value: str | Path | None) -> dict[str, Any]:
+    if not path_value:
+        return {}
+    path = Path(path_value)
+    if not path.exists() or not path.is_file():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def _nested(payload: dict[str, Any], *keys: str, default: Any = None) -> Any:
+    current: Any = payload
+    for key in keys:
+        if not isinstance(current, dict):
+            return default
+        current = current.get(key)
+        if current is None:
+            return default
+    return current
+
+
+def _average(values: list[float]) -> float:
+    items = [float(value) for value in values if isinstance(value, (int, float))]
+    return round(sum(items) / len(items), 4) if items else 0.0
+
+
+def _quality_flags(kpis: dict[str, Any], result: dict[str, Any]) -> list[str]:
+    flags: list[str] = []
+    if result.get("status") != "success":
+        flags.append("batch_processing_not_successful")
+
+    ontology = kpis.get("ontology_quality") or {}
+    extraction = kpis.get("extraction_quality") or {}
+    graph = kpis.get("graph_coverage") or {}
+    validation = kpis.get("advisory_validation") or {}
+    page_coverage = kpis.get("page_coverage") or {}
+    confidence = kpis.get("confidence") or {}
+
+    if int(extraction.get("triplet_count", 0) or 0) == 0 and int(kpis.get("scope", {}).get("selected_pages", 0) or 0) > 0:
+        flags.append("zero_triplets_extracted")
+    if float(extraction.get("triplets_per_selected_page", 0.0) or 0.0) < 0.10 and int(extraction.get("triplet_count", 0) or 0) > 0:
+        flags.append("low_triplet_density")
+    if int(ontology.get("schema_issue_count", 0) or 0) > 0:
+        flags.append("ontology_schema_issues")
+    if int(ontology.get("human_required_field_count", 0) or 0) > 0:
+        flags.append("ontology_requires_human_fields")
+    if int(ontology.get("semantic_issue_count", 0) or 0) > 0:
+        flags.append("semantic_validation_issues")
+    if int(ontology.get("retry_count", 0) or 0) > 0:
+        flags.append("reflective_loop_used")
+
+    health_score = float(graph.get("health_score", 0.0) or 0.0)
+    if graph and health_score < 0.65:
+        flags.append("low_graph_health_score")
+    schema_integrity = graph.get("schema_integrity") or {}
+    if int(schema_integrity.get("dangling_references", 0) or 0) > 0:
+        flags.append("dangling_graph_references")
+    if int(schema_integrity.get("domain_range_violations", 0) or 0) > 0:
+        flags.append("domain_range_violations")
+    failure_mode_coverage = graph.get("failure_mode_coverage") or {}
+    if (
+        int(failure_mode_coverage.get("failure_modes_total", 0) or 0) > 0
+        and float(failure_mode_coverage.get("with_corrective_action_ratio", 0.0) or 0.0) < 0.75
+    ):
+        flags.append("low_failure_mode_resolution_coverage")
+    if int(page_coverage.get("missing_extraction_pages", 0) or 0) > 0:
+        flags.append("selected_pages_without_extractions")
+    if int(page_coverage.get("partially_covered_pages", 0) or 0) > 0:
+        flags.append("partially_covered_selected_pages")
+    if float(validation.get("flagged_entity_ratio", 0.0) or 0.0) > 0.25:
+        flags.append("high_advisory_validation_flag_rate")
+    if float(confidence.get("human_review_ratio", 0.0) or 0.0) > 0.20:
+        flags.append("high_confidence_human_review_ratio")
+    if int((confidence.get("counts") or {}).get("auto_reject", 0) or 0) > 0:
+        flags.append("confidence_auto_rejects_present")
+
+    return sorted(dict.fromkeys(flags))
+
+
+def _quality_status(flags: list[str]) -> str:
+    blocking = {
+        "batch_processing_not_successful",
+        "zero_triplets_extracted",
+        "ontology_schema_issues",
+        "ontology_requires_human_fields",
+        "low_graph_health_score",
+        "dangling_graph_references",
+        "domain_range_violations",
+    }
+    if any(flag in blocking for flag in flags):
+        return "needs_attention"
+    return "watch" if flags else "ok"
+
+
+def _collect_manual_kpis(store: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
+    from backend.app_config import get_effective_reflective_loop_config
+    from backend.services.run_metrics import build_metrics_payload
+
+    metrics_payload = build_metrics_payload(store)
+    totals = metrics_payload.get("totals", {}) or {}
+    stages = metrics_payload.get("stages", {}) or {}
+    ontology_details = (stages.get("ontology", {}) or {}).get("details", {}) or {}
+    validation_details = (stages.get("validation", {}) or {}).get("details", {}) or {}
+    batch_quality_checks = result.get("batch_quality_checks") or {}
+    page_coverage = (batch_quality_checks.get("coverage") or {}).copy()
+
+    ontology_payload = _read_json_file(store.get("ontology_path"))
+    graph_coverage = (
+        _nested(ontology_payload, "metadata", "graph_coverage", default=None)
+        or metrics_payload.get("graph_coverage")
+        or {}
+    )
+    ontology_summary = result.get("ontology") if isinstance(result.get("ontology"), dict) else {}
+    confidence = (
+        ontology_summary.get("confidence")
+        or _confidence_kpis((store.get("ontology_pipeline") or {}).get("confidence_report"))
+    )
+
+    selected_pages = int(
+        _nested(metrics_payload, "document", "selected_pages", default=0)
+        or result.get("selected_pages")
+        or 0
+    )
+    total_pages = int(
+        _nested(metrics_payload, "document", "total_pages", default=0)
+        or result.get("page_count")
+        or 0
+    )
+    triplet_count = int(result.get("triplet_count", 0) or 0)
+    failure_modes = int(result.get("total_failure_modes", 0) or 0)
+    corrective_actions = int(result.get("total_corrective_actions", 0) or 0)
+    flagged_entities = int(validation_details.get("flagged_entities", 0) or 0)
+    total_entities = int(validation_details.get("total_entities", 0) or 0)
+    page_coverage.setdefault("missing_extraction_pages", 0)
+    page_coverage.setdefault("partially_covered_pages", 0)
+    page_coverage.setdefault("missing_extraction_page_ratio", _ratio(page_coverage["missing_extraction_pages"], selected_pages))
+
+    kpis: dict[str, Any] = {
+        "quality_status": "unknown",
+        "human_input": {
+            "required_fields": ["absolute_page_one"],
+            "absolute_page_one": result.get("absolute_page_one"),
+            "page_offset": result.get("page_offset"),
+        },
+        "automation": {
+            "accepted_all_triplets": result.get("status") == "success",
+            "operator_triplet_validation_required": False,
+            "reflective_loop": get_effective_reflective_loop_config(),
+            "batch_quality_checks": {
+                "validation": (batch_quality_checks.get("validation") or {}).get("status"),
+                "coverage": (batch_quality_checks.get("coverage") or {}).get("status"),
+            },
+        },
+        "scope": {
+            "total_pages": total_pages,
+            "selected_pages": selected_pages,
+            "pages_kept_ratio": _ratio(selected_pages, total_pages),
+            "selected_sections": int(result.get("selected_sections", 0) or 0),
+            "scoping_skipped": bool(result.get("scoping_skipped", False)),
+        },
+        "ontology_quality": {
+            "status": ontology_summary.get("status") or ontology_details.get("status"),
+            "retry_count": int(ontology_summary.get("retry_count") or ontology_details.get("retry_count") or 0),
+            "semantic_issue_count": int(ontology_summary.get("semantic_issues") or ontology_details.get("semantic_issue_count") or 0),
+            "schema_issue_count": int(ontology_summary.get("schema_issues") or ontology_details.get("schema_issue_count") or 0),
+            "graph_issue_count": int(ontology_summary.get("graph_issues") or ontology_details.get("graph_issue_count") or 0),
+            "suggested_relation_count": int(ontology_summary.get("suggested_relations") or ontology_details.get("suggested_relation_count") or 0),
+            "human_required_field_count": int(ontology_summary.get("human_required_fields") or ontology_details.get("human_required_count") or 0),
+            "is_schema_compliant": bool(ontology_summary.get("is_schema_compliant", False)),
+            "total_nodes": int(ontology_summary.get("total_nodes", 0) or 0),
+            "total_relations": int(ontology_summary.get("total_relations", 0) or 0),
+        },
+        "extraction_quality": {
+            "triplet_count": triplet_count,
+            "failure_mode_count": failure_modes,
+            "corrective_action_count": corrective_actions,
+            "triplets_per_selected_page": _ratio(triplet_count, selected_pages),
+            "failure_modes_per_triplet": _ratio(failure_modes, triplet_count),
+            "corrective_actions_per_failure_mode": _ratio(corrective_actions, failure_modes),
+        },
+        "advisory_validation": {
+            **validation_details,
+            "flagged_entity_ratio": _ratio(flagged_entities, total_entities),
+        },
+        "page_coverage": page_coverage,
+        "confidence": confidence,
+        "graph_coverage": graph_coverage,
+        "resolution_completion": metrics_payload.get("resolution_completion") or {},
+        "cost_and_runtime": {
+            "duration_seconds": round(float(result.get("duration_seconds", 0.0) or 0.0), 3),
+            "tokens": int(totals.get("total_tokens", result.get("total_tokens", 0)) or 0),
+            "estimated_cost_usd": round(float(totals.get("estimated_cost_usd", result.get("estimated_cost_usd", 0.0)) or 0.0), 6),
+            "seconds_per_selected_page": _ratio(float(result.get("duration_seconds", 0.0) or 0.0), selected_pages),
+            "cost_per_extracted_triplet_usd": _ratio(float(totals.get("estimated_cost_usd", 0.0) or 0.0), triplet_count),
+        },
+    }
+    flags = _quality_flags(kpis, result)
+    kpis["quality_flags"] = flags
+    kpis["quality_status"] = _quality_status(flags)
+    return kpis
+
+
+def _copy_export_artifacts(
+    batch_results_dir: Path,
+    *,
+    manual_key: str,
+    ontology_path: str,
+    metrics_path: str,
+) -> dict[str, str]:
+    export_dir = batch_results_dir / "exports" / manual_key
+    export_dir.mkdir(parents=True, exist_ok=True)
+    copied: dict[str, str] = {"batch_export_dir": str(export_dir)}
+    for label, source_value in (("ontology", ontology_path), ("metrics", metrics_path)):
+        source_path = Path(str(source_value or ""))
+        if not source_path.exists() or not source_path.is_file():
+            continue
+        target_path = export_dir / f"{label}.json"
+        shutil.copy2(str(source_path), str(target_path))
+        copied[f"batch_{label}_path"] = str(target_path)
+    return copied
+
+
+def _batch_results_dir(results_root: Path) -> Path:
+    results_root.mkdir(parents=True, exist_ok=True)
+    batch_dir = results_root / f"{_utc_timestamp()}_batch_export"
+    batch_dir.mkdir(parents=True, exist_ok=False)
+    return batch_dir
 
 
 def _batch_totals(results: list[dict[str, Any]]) -> dict[str, Any]:
     successful = [item for item in results if item.get("status") == "success"]
     failed = [item for item in results if item.get("status") == "failed"]
     interrupted = [item for item in results if item.get("status") == "interrupted"]
+    quality_kpis = [item.get("quality_kpis") or {} for item in successful]
     return {
         "processed": len(results),
         "success": len(successful),
@@ -343,6 +706,53 @@ def _batch_totals(results: list[dict[str, Any]]) -> dict[str, Any]:
             sum(float(item.get("duration_seconds", 0.0) or 0.0) for item in results),
             3,
         ),
+        "total_semantic_issues": sum(
+            int(_nested(kpis, "ontology_quality", "semantic_issue_count", default=0) or 0)
+            for kpis in quality_kpis
+        ),
+        "total_schema_issues": sum(
+            int(_nested(kpis, "ontology_quality", "schema_issue_count", default=0) or 0)
+            for kpis in quality_kpis
+        ),
+        "total_graph_issues": sum(
+            int(_nested(kpis, "ontology_quality", "graph_issue_count", default=0) or 0)
+            for kpis in quality_kpis
+        ),
+        "total_reflective_retries": sum(
+            int(_nested(kpis, "ontology_quality", "retry_count", default=0) or 0)
+            for kpis in quality_kpis
+        ),
+        "avg_graph_health_score": _average([
+            _nested(kpis, "graph_coverage", "health_score", default=0.0)
+            for kpis in quality_kpis
+            if kpis.get("graph_coverage")
+        ]),
+        "avg_triplets_per_selected_page": _average([
+            _nested(kpis, "extraction_quality", "triplets_per_selected_page", default=0.0)
+            for kpis in quality_kpis
+        ]),
+    }
+
+
+def _batch_config_snapshot() -> dict[str, Any]:
+    from backend.app_config import (
+        get_agents_config,
+        get_effective_reflective_loop_config,
+        get_pipeline_config,
+    )
+
+    agents = get_agents_config()
+    return {
+        "pipeline": get_pipeline_config(),
+        "reflective_loop": get_effective_reflective_loop_config(),
+        "agents_enabled": {
+            name: bool((cfg or {}).get("enabled", False))
+            for name, cfg in agents.items()
+        },
+        "batch_quality_checks": {
+            "validation": "always_run_advisory",
+            "coverage": "always_run_advisory",
+        },
     }
 
 
@@ -352,22 +762,138 @@ def _build_summary(
     model_name: str,
     target_language: str,
     interrupted: bool,
+    batch_results_dir: Path,
 ) -> dict[str, Any]:
     return {
         "started_at": results[0]["started_at"] if results else _now_iso(),
         "finished_at": _now_iso(),
         "batch_directory": str(BATCH_MANUALS_DIR.relative_to(REPO_ROOT)),
+        "batch_results_directory": str(batch_results_dir),
         "model": model_name,
         "target_language": target_language,
+        "config": _batch_config_snapshot(),
         "interrupted": interrupted,
         "manuals": results,
         "totals": _batch_totals(results),
     }
 
 
-def _write_summary(summary_path: Path, summary: dict[str, Any]) -> None:
-    summary_path.parent.mkdir(parents=True, exist_ok=True)
-    summary_path.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+def _build_batch_kpi_summary(summary: dict[str, Any]) -> dict[str, Any]:
+    successful = [
+        item for item in summary.get("manuals", [])
+        if item.get("status") == "success"
+    ]
+    kpis = [item.get("quality_kpis") or {} for item in successful]
+    quality_status_counts: dict[str, int] = {}
+    flag_counts: dict[str, int] = {}
+    for manual_kpis in kpis:
+        status = str(manual_kpis.get("quality_status") or "unknown")
+        quality_status_counts[status] = quality_status_counts.get(status, 0) + 1
+        for flag in manual_kpis.get("quality_flags") or []:
+            flag = str(flag)
+            flag_counts[flag] = flag_counts.get(flag, 0) + 1
+
+    return {
+        "started_at": summary.get("started_at"),
+        "finished_at": summary.get("finished_at"),
+        "batch_results_directory": summary.get("batch_results_directory"),
+        "batch_directory": summary.get("batch_directory"),
+        "model": summary.get("model"),
+        "target_language": summary.get("target_language"),
+        "automation_contract": {
+            "human_inputs_required": ["absolute_page_one_per_manual"],
+            "triplet_validation": "auto_accept_all",
+            "cut_plan_approval": "auto_accept_scoping_agent_output",
+        },
+        "config": summary.get("config") or {},
+        "totals": summary.get("totals") or {},
+        "quality_status_counts": quality_status_counts,
+        "quality_flag_counts": dict(sorted(flag_counts.items())),
+        "aggregate_quality": {
+            "avg_graph_health_score": _average([
+                _nested(item, "graph_coverage", "health_score", default=0.0)
+                for item in kpis
+                if item.get("graph_coverage")
+            ]),
+            "avg_pages_kept_ratio": _average([
+                _nested(item, "scope", "pages_kept_ratio", default=0.0)
+                for item in kpis
+            ]),
+            "avg_triplets_per_selected_page": _average([
+                _nested(item, "extraction_quality", "triplets_per_selected_page", default=0.0)
+                for item in kpis
+            ]),
+            "avg_corrective_actions_per_failure_mode": _average([
+                _nested(item, "extraction_quality", "corrective_actions_per_failure_mode", default=0.0)
+                for item in kpis
+            ]),
+            "avg_advisory_validation_flagged_entity_ratio": _average([
+                _nested(item, "advisory_validation", "flagged_entity_ratio", default=0.0)
+                for item in kpis
+            ]),
+            "avg_confidence_human_review_ratio": _average([
+                _nested(item, "confidence", "human_review_ratio", default=0.0)
+                for item in kpis
+                if (item.get("confidence") or {}).get("available")
+            ]),
+        },
+        "per_manual": [
+            {
+                "manual_key": item.get("manual_key"),
+                "filename": item.get("filename"),
+                "status": item.get("status"),
+                "quality_status": (item.get("quality_kpis") or {}).get("quality_status"),
+                "quality_flags": (item.get("quality_kpis") or {}).get("quality_flags") or [],
+                "graph_health_score": _nested(item.get("quality_kpis") or {}, "graph_coverage", "health_score", default=None),
+                "triplets_per_selected_page": _nested(item.get("quality_kpis") or {}, "extraction_quality", "triplets_per_selected_page", default=None),
+                "validation_flagged_entity_ratio": _nested(item.get("quality_kpis") or {}, "advisory_validation", "flagged_entity_ratio", default=None),
+                "retry_count": _nested(item.get("quality_kpis") or {}, "ontology_quality", "retry_count", default=0),
+                "ontology_path": item.get("ontology_path"),
+                "metrics_path": item.get("metrics_path"),
+                "batch_artifacts": item.get("batch_artifacts") or {},
+            }
+            for item in summary.get("manuals", [])
+        ],
+        "kpi_definitions": {
+            "graph_health_score": "0-1 aggregate graph coverage/integrity score computed from the exported ontology.",
+            "triplets_per_selected_page": "Extracted diagnostic triplets divided by scoped pages.",
+            "flagged_entity_ratio": "Advisory validation entities not accepted divided by all validated entities.",
+            "confidence_human_review_ratio": "Ontology nodes classified as human_review divided by all confidence-scored nodes.",
+            "missing_extraction_page_ratio": "Scoped diagnostic pages with no extracted entities divided by scoped pages.",
+        },
+    }
+
+
+def _write_json(path: Path, payload: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def _write_batch_artifacts(batch_results_dir: Path, summary: dict[str, Any]) -> None:
+    _write_json(batch_results_dir / "summary.json", summary)
+    _write_json(batch_results_dir / "kpi_summary.json", _build_batch_kpi_summary(summary))
+    manuals_dir = batch_results_dir / "manuals"
+    manuals_dir.mkdir(parents=True, exist_ok=True)
+    for item in summary.get("manuals", []):
+        manual_key = str(item.get("manual_key") or _slugify(str(item.get("filename") or "manual")))
+        _write_json(
+            manuals_dir / f"{manual_key}_kpis.json",
+            {
+                "manual_key": manual_key,
+                "filename": item.get("filename"),
+                "status": item.get("status"),
+                "started_at": item.get("started_at"),
+                "finished_at": item.get("finished_at"),
+                "paths": {
+                    "ontology": item.get("ontology_path"),
+                    "metrics": item.get("metrics_path"),
+                    **(item.get("batch_artifacts") or {}),
+                },
+                "quality_kpis": item.get("quality_kpis") or {},
+                "batch_quality_checks": item.get("batch_quality_checks") or {},
+                "error": item.get("error"),
+            },
+        )
 
 
 async def _process_manual(

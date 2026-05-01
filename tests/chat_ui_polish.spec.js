@@ -129,6 +129,28 @@ test("thinking indicator disappears as soon as progress arrives", async ({ page 
   expect(classes[1]).toContain("chat-bubble--progress");
 });
 
+test("assistant messages render progressively word by word", async ({ page }) => {
+  await page.setViewportSize({ width: 1500, height: 960 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  const text = Array.from({ length: 80 }, (_, index) => `word${index + 1}`).join(" ");
+  await stubBaseRoutes(
+    page,
+    [
+      `data: ${JSON.stringify({ type: "chat_delta", text })}`,
+      "",
+      'data: {"type":"done"}',
+      "",
+    ].join("\n"),
+  );
+
+  await openChat(page);
+
+  const bubble = page.locator(".chat-bubble--assistant").first();
+  await expect(bubble).toBeVisible();
+  await expect.poll(async () => (await bubble.textContent()) || "").not.toBe(text);
+  await expect(bubble).toContainText(text, { timeout: 10000 });
+});
+
 test("turn indicator makes it clear when the system is still working", async ({ page }) => {
   await page.setViewportSize({ width: 1500, height: 960 });
   await stubBaseRoutes(
@@ -176,7 +198,7 @@ test("assistant messages hide raw widget update json", async ({ page }) => {
 
   await openChat(page);
 
-  await expect(page.locator(".chat-widget--sections")).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "Section Selection" })).toBeVisible();
   await expect(page.locator(".chat-bubble--assistant")).toContainText("Scoping is complete");
   await expect(page.locator("#chat-stream")).not.toContainText('{"widget":"sections"');
 });
@@ -228,7 +250,7 @@ test("manual and chatbot columns can be resized horizontally", async ({ page }) 
   await expect(right).toBeVisible();
 });
 
-test("section widget starts larger and can be resized by dragging", async ({ page }) => {
+test("section widget opens in sheet with scrollable body", async ({ page }) => {
   await page.setViewportSize({ width: 1800, height: 1000 });
   await page.addInitScript(() => {
     window.localStorage.removeItem("kg_chat_left_column_width");
@@ -268,21 +290,16 @@ test("section widget starts larger and can be resized by dragging", async ({ pag
   await page.selectOption("#manual-select", "mock-manual.pdf");
   await page.click("#upload-btn");
 
-  const widget = page.locator(".chat-widget--sections");
+  const widget = page.getByRole("dialog", { name: "Section Selection" });
   await expect(widget).toBeVisible();
-  await expect(page.locator(".chat-widget--sections .widget-resize-handle")).toBeVisible();
 
   const initialBox = await widget.boundingBox();
   expect(initialBox).not.toBeNull();
-  expect(initialBox.height).toBeGreaterThan(390);
+  expect(initialBox.height).toBeGreaterThan(900);
 
-  const bodyScroll = await page.locator(".chat-widget--sections .chat-widget-body").evaluate((body) => {
+  const bodyScroll = await widget.locator(".widget-sheet-body").evaluate((body) => {
     const before = body.scrollTop;
-    body.dispatchEvent(new WheelEvent("wheel", {
-      deltaY: 320,
-      bubbles: true,
-      cancelable: true,
-    }));
+    body.scrollTop = before + 320;
     return {
       before,
       after: body.scrollTop,
@@ -292,38 +309,6 @@ test("section widget starts larger and can be resized by dragging", async ({ pag
   });
   expect(bodyScroll.scrollHeight).toBeGreaterThan(bodyScroll.clientHeight);
   expect(bodyScroll.after).toBeGreaterThan(bodyScroll.before);
-
-  await widget.evaluate((el) => {
-    const rect = el.getBoundingClientRect();
-    const startX = rect.right - 12;
-    const startY = rect.bottom - 12;
-    const endX = startX + 120;
-    const endY = startY + 140;
-
-    el.dispatchEvent(new MouseEvent("mousedown", {
-      bubbles: true,
-      button: 0,
-      clientX: startX,
-      clientY: startY,
-    }));
-    window.dispatchEvent(new MouseEvent("mousemove", {
-      bubbles: true,
-      buttons: 1,
-      clientX: endX,
-      clientY: endY,
-    }));
-    window.dispatchEvent(new MouseEvent("mouseup", {
-      bubbles: true,
-      button: 0,
-      clientX: endX,
-      clientY: endY,
-    }));
-  });
-
-  const resizedBox = await widget.boundingBox();
-  expect(resizedBox).not.toBeNull();
-  expect(resizedBox.width).toBeGreaterThan(initialBox.width + 20);
-  expect(resizedBox.height).toBeGreaterThan(initialBox.height + 60);
 });
 
 test("chat pdf panel is scrollable and supports text search", async ({ page }) => {
@@ -396,7 +381,7 @@ test("ontology review shows required fields before enabling extraction", async (
 
   await openChat(page);
 
-  const widget = page.locator(".chat-widget--ontology-review");
+  const widget = page.getByRole("dialog", { name: "Ontology Draft Ready" });
   await expect(widget).toContainText("Provide the brand");
   await expect(widget.locator("[data-field-key='Asset::ASSET-001::brand']")).toHaveValue("Fryer");
   await expect(page.getByRole("button", { name: "Complete Required Items" })).toBeDisabled();
@@ -444,6 +429,15 @@ test("ontology review widget shows draft stats and graph issue candidates", asyn
           selected_sections_count: 42,
           graph_issues_count: 6,
           graph_issue_types: { orphan: 6 },
+          resolution_completion: {
+            target_count: 3,
+            attempted: 3,
+            completed: 2,
+            attempts: [
+              { target_id: "FM-001", status: "completed", pages: [12, 13] },
+              { target_id: "ERR-504", status: "not_found", pages: [44] },
+            ],
+          },
           top_graph_issues: [
             {
               issue_type: "orphan",
@@ -484,13 +478,15 @@ test("ontology review widget shows draft stats and graph issue candidates", asyn
   await expect(page.locator(".critique-candidate-path")).toContainText("Backlash compensation mismatch");
   await expect(page.locator(".critique-candidate-row button")).toHaveText("Apply candidate");
 
-  const widget = page.locator(".chat-widget--ontology-review");
+  const widget = page.getByRole("dialog", { name: "Ontology Draft Ready" });
   await expect(widget).toContainText("Scoped Pages");
   await expect(widget).toContainText("82");
   await expect(widget).toContainText("Sections");
   await expect(widget).toContainText("42");
   await expect(widget).toContainText("Graph Issues");
   await expect(widget).toContainText("6");
+  await expect(widget).toContainText("Resolved Gaps");
+  await expect(widget).toContainText("2/3");
   await expect(widget).toContainText("Suggested links");
   await expect(widget).toContainText("MAY_INDICATE");
   await expect(page.getByRole("button", { name: "Continue to Extraction" })).toBeEnabled();
@@ -665,9 +661,12 @@ test("triplet review card saves editable field patches on approval", async ({ pa
 
   await openChat(page);
 
-  const tripletWidget = page.locator(".chat-widget--triplet").first();
+  const tripletWidget = page.getByRole("dialog", { name: "Triplet 1 / 1" });
   await expect(tripletWidget.locator(".triplet-logic")).toContainText("Logic: Axis backlash");
-  await tripletWidget.locator('[data-field-path="symptom.name"]').fill("Axis backlash after warmup");
+  await tripletWidget.locator('[data-field-path="symptom.name"]').evaluate((field, value) => {
+    field.textContent = value;
+    field.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertText", data: value }));
+  }, "Axis backlash after warmup");
   await expect(tripletWidget.getByRole("button", { name: "Save Edits" })).toBeEnabled();
   await tripletWidget.getByRole("button", { name: "Approve" }).click();
 

@@ -97,6 +97,19 @@ def get_validation_config() -> dict:
     return cfg
 
 
+def get_resolution_completion_config() -> dict:
+    cfg = deepcopy(load_config().get("resolution_completion", {}) or {})
+    cfg.setdefault("enabled", True)
+    cfg.setdefault("timeout_seconds", 90)
+    cfg.setdefault("max_input_chars", 50000)
+    cfg.setdefault("estimated_max_input_tokens", 12500)
+    cfg.setdefault("max_output_tokens", 2500)
+    cfg.setdefault("max_targets", 8)
+    cfg.setdefault("top_pages_per_target", 6)
+    cfg.setdefault("context_window_pages", 1)
+    return cfg
+
+
 def get_chat_config() -> dict:
     cfg = deepcopy(load_config().get("chat", {}) or {})
     cfg.setdefault("model", "gpt-4o-mini")

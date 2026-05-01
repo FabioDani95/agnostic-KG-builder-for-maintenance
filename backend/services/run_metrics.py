@@ -255,6 +255,11 @@ def build_metrics_payload(store: dict[str, Any]) -> dict[str, Any]:
     from backend.services.ontology_coverage import compute_graph_coverage
 
     graph_coverage = compute_graph_coverage(ontology_snapshot)
+    resolution_completion = (
+        ontology_pipeline.get("resolution_completion_report")
+        or (stages.get("ontology", {}).get("details", {}) or {}).get("resolution_completion")
+        or {}
+    )
 
     return {
         "document": {
@@ -269,6 +274,7 @@ def build_metrics_payload(store: dict[str, Any]) -> dict[str, Any]:
         "totals": totals,
         "nodes_by_type": nodes_by_type,
         "graph_coverage": graph_coverage,
+        "resolution_completion": resolution_completion,
         "review": {
             "validated_triplets": validated_triplets,
             "discarded_triplets": discarded_triplets,

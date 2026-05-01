@@ -20,12 +20,15 @@ Analyze the provided technical text and extract all diagnostic information into 
 
 ### FailureMode Rules
 - A FailureMode describes the **technical cause** responsible for one or more symptoms.
-- It must reference a specific component or subsystem.
+- It should reference a specific component or subsystem when the manual names one.
+- If the cause is genuinely general to the whole asset, use `asset_level` in `material_context`.
 - It must NOT contain repair instructions.
 - It must NOT be a test outcome, inspection outcome, verification result, or procedural checkpoint.
-- A FailureMode MUST name (a) a component or subsystem AND (b) a stative condition
+- A component-specific FailureMode MUST name (a) a component or subsystem AND (b) a stative condition
   (worn, loose, misaligned, dead, disconnected, out of adjustment, phased incorrectly,
   seized, contaminated, corroded, cracked, obstructed, low, high, ...).
+- An asset-level FailureMode must still name a technical condition, configuration state, communication state,
+  operating state, or other causal condition; do NOT use `asset_level` to restate a symptom.
 - If the only "failure" you can find is a restatement of the symptom in past tense or
   different wording, OMIT it — do NOT invent a FailureMode.
 - INCORRECT FailureMode examples:
@@ -300,16 +303,15 @@ def build_seed_rows_block(
         return ""
 
     lines: list[str] = [
-        "## PRE-VALIDATED ROWS FROM ONTOLOGY DRAFT (extend — do NOT reclassify)",
-        "The rows below were already produced by the ontology-draft pass and passed its "
-        "type/semantic checks. Treat them as a RECALL FLOOR and the GROUND TRUTH for "
-        "type assignment:",
-        "- Do NOT demote a pre-validated FailureMode to a Symptom or vice versa.",
+        "## CANDIDATE ROWS FROM ONTOLOGY DRAFT (extend and verify)",
+        "The rows below were produced by the ontology-draft pass. Treat them as a "
+        "RECALL FLOOR and ID catalog, not unquestionable ground truth:",
+        "- Reuse the type assignment when the chunk text supports it.",
+        "- If the chunk clearly contradicts a candidate type, omit or correct that row rather than preserving an error.",
         "- Reuse their IDs verbatim when the same concept reappears in this chunk.",
-        "- Emit each pre-validated row in your output tables UNMODIFIED, then ADD new "
-        "rows you discover in the chunk text (using fresh sequential IDs that do not "
-        "collide with the IDs above).",
-        "- When writing a new FailureMode, you MAY use a pre-validated Component as "
+        "- Emit supported candidate rows, then ADD new rows you discover in the chunk text "
+        "(using fresh sequential IDs that do not collide with the IDs above).",
+        "- When writing a new FailureMode, you MAY use a candidate Component as "
         "material_context even if that Component is not mentioned in this chunk.",
         "",
     ]

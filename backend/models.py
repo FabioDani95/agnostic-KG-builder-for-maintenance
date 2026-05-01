@@ -259,6 +259,7 @@ class OntologyPipelineResponse(BaseModel):
     graph_issues: list[GraphIssue] = []
     suggested_relations: list[SuggestedRelation] = []
     confidence_report: ConfidenceReport | None = None
+    resolution_completion_report: dict[str, Any] = Field(default_factory=dict)
 
 
 class OntologyExportRequest(BaseModel):

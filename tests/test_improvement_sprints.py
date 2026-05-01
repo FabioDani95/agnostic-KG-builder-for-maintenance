@@ -32,6 +32,7 @@ from backend.services.candidate_mining_service import (
     render_candidates_prompt_block,
 )
 from backend.services.llm_service import parse_extraction
+from backend.services.graph_reasoning import run_graph_analysis
 from backend.services.ontology_merge_service import merge_validated_triplets
 from backend.services.ontology_pipeline import (
     _call_extractor_llm,
@@ -40,6 +41,10 @@ from backend.services.ontology_pipeline import (
     _reset_parse_repair_events,
     consume_parse_repair_events,
     validate_ontology_instance,
+)
+from backend.services.resolution_completion_service import (
+    build_resolution_targets,
+    complete_resolution_gaps,
 )
 from backend.services.ontology_schema_service import dump_ontology_schema_json, load_ontology_schema
 from backend.services.type_consistency_service import evaluate_type_consistency
@@ -356,6 +361,26 @@ class EvidencePageParsingTests(unittest.TestCase):
         self.assertEqual(triplets["SYM-002"].symptom.evidence_page, 12)
         self.assertEqual(triplets["SYM-001"].failure_modes[0].evidence_page, 7)
 
+    def test_parse_extraction_handles_adjacent_tables_without_headings(self) -> None:
+        raw = (
+            "| symptom_id | name | description | severity | evidence_page |\n"
+            "|---|---|---|---|---|\n"
+            "| SYM-001 | Alarm displayed | Alarm appears on the panel | Medium | 1 |\n"
+            "| failure_mode_id | name | description | material_context | linked_symptom_id | evidence_page | why_failure_mode |\n"
+            "|---|---|---|---|---|---|---|\n"
+            "| FM-001 | Motor loose | Motor mounting is loose | Motor | SYM-001 | 2 | Motor: loose |\n"
+            "| action_id | name | description | instruction_text | source_type | source_title | source_page | linked_failure_mode_id |\n"
+            "|---|---|---|---|---|---|---|---|\n"
+            "| CA-001 | Tighten motor | Tighten motor bolts | 1. Tighten the motor bolts. | Service Manual | Demo | 3 | FM-001 |\n"
+        )
+
+        result = parse_extraction(raw, "Service Manual", "Demo")
+
+        self.assertEqual(len(result.triplets), 1)
+        self.assertEqual(result.triplets[0].symptom.symptom_id, "SYM-001")
+        self.assertEqual(result.triplets[0].failure_modes[0].failure_mode_id, "FM-001")
+        self.assertEqual(result.triplets[0].corrective_actions[0].action_id, "CA-001")
+
     def test_parse_extraction_back_compat_missing_evidence_column(self) -> None:
         raw = (
             "### Table 1: Symptoms\n"
@@ -445,6 +470,224 @@ class MaterialContextValidationTests(unittest.TestCase):
         issues, _ = validate_ontology_instance(ontology)
         codes = {i.code for i in issues}
         self.assertNotIn("material_context_not_linked", codes)
+
+    def test_silent_when_material_context_is_asset_level(self) -> None:
+        ontology = self._ontology(
+            components=[],
+            failure_modes=[{
+                "failure_mode_id": "FM-001",
+                "name": "Invalid startup configuration",
+                "description": "The asset startup configuration is invalid.",
+                "material_context": "asset_level",
+                "linked_symptom_id": "SYM-001",
+            }],
+        )
+        issues, _ = validate_ontology_instance(ontology)
+        codes = {i.code for i in issues}
+        self.assertNotIn("material_context_not_linked", codes)
+
+
+class ResolutionGapAnalysisTests(unittest.TestCase):
+    def _ontology(self, relations: list[dict]) -> OntologyInstance:
+        return OntologyInstance.model_validate({
+            "ontology_name": "diagnostic",
+            "version": "V1",
+            "language": "en",
+            "source_type": "Service Manual",
+            "source_title": "Demo",
+            "nodes": {
+                "Asset": [{
+                    "asset_id": "ASSET-001", "name": "Demo", "description": "d",
+                    "brand": "Demo", "model": "M1", "asset_type": "machine",
+                }],
+                "Component": [],
+                "Symptom": [],
+                "FailureMode": [{
+                    "failure_mode_id": "FM-001",
+                    "name": "Configuration invalid",
+                    "description": "The startup configuration is invalid.",
+                    "material_context": "asset_level",
+                }],
+                "CorrectiveAction": [],
+                "ErrorCode": [{
+                    "error_code_id": "ERR-001",
+                    "name": "Alarm E01",
+                    "description": "Startup configuration alarm.",
+                    "code": "E01",
+                }],
+            },
+            "relations": relations,
+        })
+
+    def test_error_code_without_failure_link_is_flagged(self) -> None:
+        issues, _ = run_graph_analysis(self._ontology([]), load_ontology_schema())
+
+        self.assertTrue(any(
+            issue.issue_type == "missing_relation"
+            and "ERR-001" in issue.affected_nodes
+            and "INDICATES" in issue.description
+            for issue in issues
+        ))
+
+    def test_error_code_to_unresolved_failure_is_flagged(self) -> None:
+        issues, _ = run_graph_analysis(self._ontology([
+            {
+                "name": "INDICATES",
+                "from_type": "ErrorCode",
+                "from_id": "ERR-001",
+                "to_type": "FailureMode",
+                "to_id": "FM-001",
+                "evidence": [],
+            },
+        ]), load_ontology_schema())
+
+        self.assertTrue(any(
+            issue.issue_type == "broken_chain"
+            and issue.affected_nodes == ["ERR-001", "FM-001"]
+            and "RESOLVED_BY" in issue.description
+            for issue in issues
+        ))
+
+
+class ResolutionCompletionServiceTests(unittest.TestCase):
+    class _FakeResponse:
+        def __init__(self, content: str):
+            self.model = "gpt-5.4"
+            self.choices = [type("Choice", (), {
+                "message": type("Message", (), {"content": content})(),
+            })()]
+            self.usage = type("Usage", (), {
+                "prompt_tokens": 100,
+                "completion_tokens": 50,
+                "total_tokens": 150,
+                "prompt_tokens_details": type("PromptDetails", (), {"cached_tokens": 0})(),
+            })()
+
+    class _FakeCompletions:
+        def __init__(self, responses):
+            self._responses = list(responses)
+
+        def create(self, **kwargs):
+            return self._responses.pop(0)
+
+    class _FakeOpenAI:
+        def __init__(self, responses):
+            self.chat = type("Chat", (), {"completions": ResolutionCompletionServiceTests._FakeCompletions(responses)})()
+
+    def _base_ontology(self, *, include_failure: bool = True, include_error: bool = False) -> OntologyInstance:
+        return OntologyInstance.model_validate({
+            "ontology_name": "diagnostic",
+            "version": "V1",
+            "language": "en",
+            "source_type": "Service Manual",
+            "source_title": "Demo",
+            "nodes": {
+                "Asset": [{
+                    "asset_id": "ASSET-001", "name": "Demo", "description": "d",
+                    "brand": "Demo", "model": "M1", "asset_type": "machine",
+                }],
+                "Component": [],
+                "Symptom": [],
+                "FailureMode": ([{
+                    "failure_mode_id": "FM-001",
+                    "name": "Low air pressure",
+                    "description": "Air pressure is low.",
+                    "material_context": "asset_level",
+                }] if include_failure else []),
+                "CorrectiveAction": [],
+                "ErrorCode": ([{
+                    "error_code_id": "ERR-001",
+                    "name": "Alarm E01",
+                    "description": "Low air pressure alarm.",
+                    "code": "E01",
+                }] if include_error else []),
+            },
+            "relations": [],
+        })
+
+    def test_build_resolution_targets_flags_unresolved_failure_and_unlinked_error(self) -> None:
+        ontology = self._base_ontology(include_failure=True, include_error=True)
+
+        targets = build_resolution_targets(ontology, max_targets=10)
+
+        self.assertEqual(
+            [(target.target_type, target.target_id) for target in targets],
+            [("failure_mode", "FM-001"), ("error_code", "ERR-001")],
+        )
+
+    def test_completion_adds_corrective_action_for_existing_failure(self) -> None:
+        ontology = self._base_ontology(include_failure=True, include_error=False)
+        response = self._FakeResponse(
+            '{"status":"found","failure_mode":{"failure_mode_id":"FM-001"},'
+            '"corrective_actions":[{"action_id":"ca_adjust_air_pressure",'
+            '"name":"Adjust air pressure","description":"Adjust the air supply pressure.",'
+            '"instruction_text":"1. Adjust the regulator to the specified pressure.",'
+            '"source_page":4,"source_reference":"PAGE 4",'
+            '"evidence_quote":"Adjust the regulator to the specified pressure."}]}'
+        )
+        text = "--- PAGE 4 ---\nLow air pressure. Adjust the regulator to the specified pressure."
+
+        with patch(
+            "backend.services.resolution_completion_service.OpenAI",
+            lambda *args, **kwargs: self._FakeOpenAI([response]),
+        ):
+            updated, usage, report = complete_resolution_gaps(
+                ontology=ontology,
+                text_with_pages=text,
+                model_name="gpt-5.4",
+                parse_json=_extract_json_object,
+            )
+
+        self.assertEqual(report["completed"], 1)
+        self.assertEqual(len(usage), 1)
+        self.assertEqual(updated.nodes["CorrectiveAction"][0]["action_id"], "ca_adjust_air_pressure")
+        self.assertTrue(any(
+            relation.name == "RESOLVED_BY"
+            and relation.from_id == "FM-001"
+            and relation.to_id == "ca_adjust_air_pressure"
+            for relation in updated.relations
+        ))
+
+    def test_completion_can_link_error_code_to_new_failure_and_action(self) -> None:
+        ontology = self._base_ontology(include_failure=False, include_error=True)
+        response = self._FakeResponse(
+            '{"status":"found",'
+            '"failure_mode":{"failure_mode_id":"fm_low_air_pressure",'
+            '"name":"Low air pressure","description":"Air pressure is below the required value.",'
+            '"material_context":"asset_level"},'
+            '"corrective_actions":[{"action_id":"ca_adjust_air_pressure",'
+            '"name":"Adjust air pressure","description":"Adjust the air supply pressure.",'
+            '"instruction_text":"1. Adjust the regulator to the specified pressure.",'
+            '"source_page":4,"source_reference":"PAGE 4",'
+            '"evidence_quote":"Alarm E01: adjust the regulator to the specified pressure."}]}'
+        )
+        text = "--- PAGE 4 ---\nAlarm E01: adjust the regulator to the specified pressure."
+
+        with patch(
+            "backend.services.resolution_completion_service.OpenAI",
+            lambda *args, **kwargs: self._FakeOpenAI([response]),
+        ):
+            updated, _, report = complete_resolution_gaps(
+                ontology=ontology,
+                text_with_pages=text,
+                model_name="gpt-5.4",
+                parse_json=_extract_json_object,
+            )
+
+        self.assertEqual(report["completed"], 1)
+        self.assertEqual(updated.nodes["FailureMode"][0]["failure_mode_id"], "fm_low_air_pressure")
+        self.assertTrue(any(
+            relation.name == "INDICATES"
+            and relation.from_id == "ERR-001"
+            and relation.to_id == "fm_low_air_pressure"
+            for relation in updated.relations
+        ))
+        self.assertTrue(any(
+            relation.name == "RESOLVED_BY"
+            and relation.from_id == "fm_low_air_pressure"
+            and relation.to_id == "ca_adjust_air_pressure"
+            for relation in updated.relations
+        ))
 
 
 class MergeEvidenceAndDedupTests(unittest.TestCase):

@@ -93,15 +93,16 @@ def detect_chain_gaps(
     issues: list[GraphIssue] = []
     symptoms = ontology.nodes.get("Symptom", [])
     failure_modes = ontology.nodes.get("FailureMode", [])
+    error_codes = ontology.nodes.get("ErrorCode", [])
 
     # Build quick sets of existing relation pairs
-    may_indicate_targets: set[str] = set()
     resolved_by_sources: set[str] = set()
+    indicates_targets_by_error: dict[str, set[str]] = {}
     for rel in ontology.relations:
-        if rel.name == "MAY_INDICATE":
-            may_indicate_targets.add(rel.to_id)
         if rel.name == "RESOLVED_BY":
             resolved_by_sources.add(rel.from_id)
+        if rel.name == "INDICATES" and rel.from_id and rel.to_id:
+            indicates_targets_by_error.setdefault(rel.from_id, set()).add(rel.to_id)
 
     # Symptoms with no outgoing MAY_INDICATE
     for symptom in symptoms:
@@ -132,6 +133,51 @@ def detect_chain_gaps(
                 affected_nodes=[fid],
                 description=f"FailureMode '{fm.get('name', fid)}' has no RESOLVED_BY relation to a CorrectiveAction.",
                 suggested_fix="Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY.",
+                auto_fixable=False,
+            ))
+
+    # ErrorCodes should either identify a FailureMode that is resolved, or be
+    # escalated to targeted retrieval/HITL. Manuals usually explain the remedy
+    # near the code table, but the relation may require a second pass.
+    for error_code in error_codes:
+        eid = _item_id("ErrorCode", error_code)
+        if not eid:
+            continue
+        indicated_failure_modes = indicates_targets_by_error.get(eid, set())
+        if not indicated_failure_modes:
+            issues.append(GraphIssue(
+                issue_type="missing_relation",
+                affected_nodes=[eid],
+                description=(
+                    f"ErrorCode '{error_code.get('name', eid)}' has no INDICATES "
+                    "relation to a FailureMode."
+                ),
+                suggested_fix=(
+                    "Use targeted retrieval around the error-code pages to link this "
+                    "code to the failure condition it signals."
+                ),
+                auto_fixable=False,
+            ))
+            continue
+
+        unresolved_failure_modes = [
+            failure_mode_id
+            for failure_mode_id in sorted(indicated_failure_modes)
+            if failure_mode_id not in resolved_by_sources
+        ]
+        if unresolved_failure_modes:
+            issues.append(GraphIssue(
+                issue_type="broken_chain",
+                affected_nodes=[eid, *unresolved_failure_modes],
+                description=(
+                    f"ErrorCode '{error_code.get('name', eid)}' indicates FailureMode(s) "
+                    f"{', '.join(unresolved_failure_modes)} without a RESOLVED_BY "
+                    "CorrectiveAction."
+                ),
+                suggested_fix=(
+                    "Run targeted corrective-action retrieval for the indicated "
+                    "failure mode(s), then add RESOLVED_BY relation(s)."
+                ),
                 auto_fixable=False,
             ))
 

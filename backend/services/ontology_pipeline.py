@@ -82,6 +82,7 @@ class PipelineState(TypedDict, total=False):
     suggested_relations: list[SuggestedRelation]
     # Confidence scoring state (Step 3)
     confidence_report: ConfidenceReport | None
+    resolution_completion_report: dict[str, Any]
     llm_usage: list[dict[str, Any]]
 
 
@@ -961,6 +962,26 @@ def _build_relation_pass_text(
     return compact_text
 
 
+_GENERAL_MATERIAL_CONTEXT_VALUES = {
+    "asset",
+    "asset_level",
+    "asset level",
+    "general",
+    "system",
+    "whole_asset",
+    "whole asset",
+    "machine",
+}
+
+
+def _is_general_material_context(value: str) -> bool:
+    normalized = re.sub(r"[\s-]+", "_", str(value or "").strip().lower())
+    return normalized in {
+        re.sub(r"[\s-]+", "_", item)
+        for item in _GENERAL_MATERIAL_CONTEXT_VALUES
+    }
+
+
 def _validate_schema(ontology: OntologyInstance, schema: OntologySchemaDefinition) -> tuple[list[PipelineIssue], list[HumanRequiredField]]:
     issues: list[PipelineIssue] = []
     human_required_fields: list[HumanRequiredField] = []
@@ -1067,6 +1088,8 @@ def _validate_schema(ontology: OntologyInstance, schema: OntologySchemaDefinitio
             continue
         material_context = str(fm.get("material_context", "") or "").strip()
         if not material_context:
+            continue
+        if _is_general_material_context(material_context):
             continue
         if material_context not in component_ids:
             issues.append(PipelineIssue(
@@ -1324,7 +1347,7 @@ def _relation_extract_node(state: PipelineState) -> PipelineState:
 
 def _semantic_validate_node(state: PipelineState) -> PipelineState:
     loop_cfg = get_reflective_loop_config()
-    max_retries = int(loop_cfg.get("max_retries", 2))
+    max_retries = int(loop_cfg.get("max_retries", 0))
     if max_retries == 0:
         logger.info("[ontology] Semantic validation skipped (max_retries=0)")
         return {"semantic_issues": []}
@@ -1417,6 +1440,55 @@ def _graph_validate_node(state: PipelineState) -> PipelineState:
     }
 
 
+def _resolution_completion_node(state: PipelineState) -> PipelineState:
+    """Run targeted corrective-action retrieval for graph resolution gaps."""
+    from backend.services.graph_reasoning import run_graph_analysis
+    from backend.services.resolution_completion_service import complete_resolution_gaps
+
+    started = time.perf_counter()
+    ontology, usage_entries, report = complete_resolution_gaps(
+        ontology=state["ontology"],
+        text_with_pages=state["text_with_pages"],
+        model_name=state["model_name"] or settings.MODEL_NAME,
+        parse_json=_extract_json_object,
+    )
+    if report.get("completed", 0):
+        ontology = _normalize_ontology_instance(
+            ontology=ontology,
+            schema=state["schema"],
+            source_type=state["source_type"],
+            source_title=state["source_title"],
+            asset_identity=state.get("asset_identity"),
+        )
+        schema_issues, human_fields = _validate_schema(ontology, state["schema"])
+        graph_issues, suggested_relations = run_graph_analysis(ontology, state["schema"])
+        logger.info(
+            "[ontology] Resolution completion completed %d/%d target(s) (%.1fs)",
+            int(report.get("completed", 0) or 0),
+            int(report.get("attempted", 0) or 0),
+            time.perf_counter() - started,
+        )
+        return {
+            "ontology": ontology,
+            "schema_issues": schema_issues,
+            "human_required_fields": human_fields,
+            "graph_issues": graph_issues,
+            "suggested_relations": suggested_relations,
+            "resolution_completion_report": report,
+            "llm_usage": [*state.get("llm_usage", []), *usage_entries],
+        }
+
+    logger.info(
+        "[ontology] Resolution completion completed 0/%d target(s) (%.1fs)",
+        int(report.get("attempted", 0) or 0),
+        time.perf_counter() - started,
+    )
+    return {
+        "resolution_completion_report": report,
+        "llm_usage": [*state.get("llm_usage", []), *usage_entries],
+    }
+
+
 def _confidence_score_node(state: PipelineState) -> PipelineState:
     """Compute schema-aware confidence scores for adaptive HITL (Step 3 of roadmap).
 
@@ -1495,7 +1567,7 @@ def _re_extract_node(state: PipelineState) -> PipelineState:
     client = _get_client(cfg["timeout_seconds"])
     retry_count = state.get("retry_count", 0)
     previous_ontology = state["ontology"]
-    logger.info("[ontology] Re-extraction attempt %d/%d", retry_count, get_reflective_loop_config().get("max_retries", 2))
+    logger.info("[ontology] Re-extraction attempt %d/%d", retry_count, get_reflective_loop_config().get("max_retries", 0))
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": state["text_with_pages"]},
@@ -1598,7 +1670,7 @@ def _route_after_semantic_validate(state: PipelineState) -> str:
     - Issues found, retries exhausted → human_review
     """
     loop_cfg = get_reflective_loop_config()
-    max_retries = int(loop_cfg.get("max_retries", 2))
+    max_retries = int(loop_cfg.get("max_retries", 0))
     if max_retries == 0:
         # Reflective loop disabled — preserve original linear behaviour.
         return "schema_validate"
@@ -1640,6 +1712,7 @@ def _build_graph():
     graph.add_node("capture_issues", _update_last_issues)
     graph.add_node("schema_validate", _schema_validate_node)
     graph.add_node("graph_validate", _graph_validate_node)
+    graph.add_node("resolution_completion", _resolution_completion_node)
     graph.add_node("confidence_score", _confidence_score_node)
 
     # Reflective loop nodes
@@ -1674,7 +1747,8 @@ def _build_graph():
 
     # Schema validation flows into graph reasoning, then confidence scoring
     graph.add_edge("schema_validate", "graph_validate")
-    graph.add_edge("graph_validate", "confidence_score")
+    graph.add_edge("graph_validate", "resolution_completion")
+    graph.add_edge("resolution_completion", "confidence_score")
     graph.add_edge("confidence_score", END)
 
     return graph.compile()
@@ -1734,6 +1808,7 @@ def build_initial_ontology(
         "suggested_relations": [],
         # Confidence scoring initial state
         "confidence_report": None,
+        "resolution_completion_report": {},
         "llm_usage": [],
     })
     ontology = result["ontology"]
@@ -1745,6 +1820,7 @@ def build_initial_ontology(
     graph_issues = result.get("graph_issues", [])
     suggested_relations = result.get("suggested_relations", [])
     confidence_report = result.get("confidence_report")
+    resolution_completion_report = result.get("resolution_completion_report", {})
     llm_usage = result.get("llm_usage", [])
     is_schema_compliant = not schema_issues and not human_fields
 
@@ -1791,6 +1867,7 @@ def build_initial_ontology(
         graph_issues=graph_issues,
         suggested_relations=suggested_relations,
         confidence_report=confidence_report,
+        resolution_completion_report=resolution_completion_report,
     )
     parse_repair_events = consume_parse_repair_events()
     return response, {
@@ -1798,6 +1875,7 @@ def build_initial_ontology(
         "retry_count": retry_count,
         "parse_repair_events": parse_repair_events,
         "mining_summary": mining_result.to_summary(),
+        "resolution_completion": resolution_completion_report,
     }
 
 
@@ -1835,6 +1913,7 @@ def apply_human_binding(
         is_schema_compliant=not schema_issues and not human_fields,
         is_ready_for_human_review=not schema_issues,
         confidence_report=confidence_report,
+        resolution_completion_report={},
     )
 
 

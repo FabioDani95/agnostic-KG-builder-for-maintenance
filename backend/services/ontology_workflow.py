@@ -548,6 +548,15 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
         for item in chunk_metrics
         for event in (item.get("parse_repair_events") or [])
     ]
+    resolution_reports: list[dict] = [
+        report
+        for item in chunk_metrics
+        for report in [item.get("resolution_completion")]
+        if isinstance(report, dict) and report
+    ]
+    resolution_attempts = sum(int(report.get("attempted", 0) or 0) for report in resolution_reports)
+    resolution_completed = sum(int(report.get("completed", 0) or 0) for report in resolution_reports)
+    resolution_target_count = sum(int(report.get("target_count", 0) or 0) for report in resolution_reports)
 
     record_stage_metrics(
         store,
@@ -576,6 +585,12 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                 "suggested_relation_count": len(result.suggested_relations),
                 "parse_repair_count": len(parse_repair_events),
                 "parse_repair_events": parse_repair_events,
+                "resolution_completion": {
+                    "target_count": resolution_target_count,
+                    "attempted": resolution_attempts,
+                    "completed": resolution_completed,
+                    "reports": resolution_reports,
+                },
             },
         },
     )

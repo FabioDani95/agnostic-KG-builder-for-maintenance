@@ -4,7 +4,7 @@
  */
 
 import { renderSectionsWidget } from "./widgets/sections.js?v=20260424a";
-import { renderTripletWidget } from "./widgets/triplet.js?v=20260424b";
+import { renderTripletWidget } from "./widgets/triplet.js?v=20260501a";
 import { renderRequiredFieldsWidget } from "./widgets/required_fields.js?v=20260422d";
 import { renderNodeCard } from "./widgets/node_card.js?v=20260422d";
 
@@ -49,6 +49,10 @@ let _lastWidgetType = "";
 let _autoExportRequested = false;
 let _lastDownloadedExportKey = "";
 let _lastAutoOpenedModifyKey = "";
+let _assistantTypeQueue = [];
+let _assistantTyping = false;
+
+const _ASSISTANT_WORD_DELAY_MS = 18;
 
 // ── Initialise ─────────────────────────────────────────────────────────
 
@@ -263,10 +267,53 @@ function _appendAssistantMessage(text) {
     const bubble = document.createElement("div");
     bubble.className = "chat-bubble chat-bubble--assistant";
 
-    // Simple markdown: **bold**, `code`, newlines
-    bubble.innerHTML = _md(text);
+    bubble.innerHTML = "";
     stream.appendChild(bubble);
+    _enqueueAssistantTyping(bubble, text);
     _scrollToBottom();
+}
+
+function _enqueueAssistantTyping(bubble, text) {
+    const fullText = String(text || "");
+    if (!fullText) return;
+
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) {
+        bubble.innerHTML = _md(fullText);
+        _scrollToBottom();
+        return;
+    }
+
+    _assistantTypeQueue.push({ bubble, text: fullText });
+    if (!_assistantTyping) {
+        void _runAssistantTypingQueue();
+    }
+}
+
+async function _runAssistantTypingQueue() {
+    _assistantTyping = true;
+    while (_assistantTypeQueue.length) {
+        const item = _assistantTypeQueue.shift();
+        if (!item?.bubble?.isConnected) continue;
+
+        let rendered = "";
+        for (const token of _splitAssistantTextForTyping(item.text)) {
+            rendered += token;
+            item.bubble.innerHTML = _md(rendered);
+            _scrollToBottom();
+            await _delay(_ASSISTANT_WORD_DELAY_MS);
+        }
+        item.bubble.innerHTML = _md(item.text);
+        _scrollToBottom();
+    }
+    _assistantTyping = false;
+}
+
+function _splitAssistantTextForTyping(text) {
+    return String(text || "").match(/\S+\s*|\s+/g) || [];
+}
+
+function _delay(ms) {
+    return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
 function _appendUserMessage(text) {
@@ -494,10 +541,17 @@ function _renderWidget(widgetType, payload) {
 
     if (el) {
         _lastWidgetType = widgetType;
-        _decorateWidget(el);
-        stream.appendChild(el);
-        _syncQuickActions({ widget: widgetType, payload });
-        _scrollToBottom();
+        try {
+            stream.appendChild(el);
+            _decorateWidget(el);
+            _syncQuickActions({ widget: widgetType, payload });
+            _scrollToBottom();
+        } catch (err) {
+            console.error("[chat] widget render failed", widgetType, err);
+            // Best-effort recovery: ensure the sheet doesn't stay in a broken
+            // half-loaded state if decoration threw mid-way.
+            try { _dismissWidgetSheet(); } catch (_) { /* ignore */ }
+        }
     }
 }
 
@@ -622,6 +676,23 @@ let _sheetCurrentEl = null;  // widget el currently loaded in the sheet (persist
 let _sheetFocusReturn = null; // element to restore focus to on close
 let _sheetIsOpen = false;
 
+// Return the body/action children currently living in the sheet back to the
+// originating widget element. We move children rather than clone to preserve
+// listeners and contentEditable state. Safe to call when nothing is loaded.
+function _restoreSheetContentToWidget() {
+    if (!_sheetCurrentEl) return;
+    const sheetBody = document.getElementById("widget-sheet-body");
+    const sheetFooter = document.getElementById("widget-sheet-footer");
+    const widgetBody = _sheetCurrentEl.querySelector(".chat-widget-body");
+    const widgetActions = _sheetCurrentEl.querySelector(".widget-actions");
+    if (sheetBody && widgetBody) {
+        [...sheetBody.children].forEach((child) => widgetBody.appendChild(child));
+    }
+    if (sheetFooter && widgetActions) {
+        [...sheetFooter.children].forEach((child) => widgetActions.appendChild(child));
+    }
+}
+
 function _initWidgetSheet() {
     const sheet = document.getElementById("widget-sheet");
     const backdrop = document.getElementById("widget-sheet-backdrop");
@@ -633,6 +704,104 @@ function _initWidgetSheet() {
     backdrop.addEventListener("click", () => _closeWidgetSheet());
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape" && _sheetIsOpen) _closeWidgetSheet();
+    });
+
+    _setupSheetResize();
+    _applyStoredSheetWidth();
+}
+
+// ── Sheet resize ───────────────────────────────────────────────────────
+
+const _SHEET_MIN_PX = 360;
+const _SHEET_STORAGE_KEY = "kg_widget_sheet_width_px";
+
+function _applyStoredSheetWidth() {
+    try {
+        const saved = window.localStorage?.getItem(_SHEET_STORAGE_KEY);
+        const px = parseInt(saved, 10);
+        if (Number.isFinite(px) && px >= _SHEET_MIN_PX) {
+            document.documentElement.style.setProperty("--widget-sheet-width", `${px}px`);
+        }
+    } catch { /* ignore */ }
+}
+
+function _sheetMaxPx() {
+    return Math.max(_SHEET_MIN_PX, Math.round(window.innerWidth * 0.85));
+}
+
+function _setSheetWidthPx(px) {
+    const clamped = Math.max(_SHEET_MIN_PX, Math.min(_sheetMaxPx(), Math.round(px)));
+    document.documentElement.style.setProperty("--widget-sheet-width", `${clamped}px`);
+    return clamped;
+}
+
+function _setupSheetResize() {
+    const sheet = document.getElementById("widget-sheet");
+    const handle = document.getElementById("widget-sheet-resizer");
+    if (!sheet || !handle || handle.dataset.bound === "true") return;
+    handle.dataset.bound = "true";
+
+    let dragging = false;
+    let lastWidth = null;
+
+    const beginDrag = (event) => {
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+        dragging = true;
+        event.preventDefault();
+        handle.setPointerCapture?.(event.pointerId);
+        sheet.classList.add("is-resizing");
+        document.body.classList.add("widget-sheet-resizing");
+
+        const onMove = (moveEvent) => {
+            // Sheet is anchored to right; new width is distance from cursor
+            // to viewport's right edge.
+            const next = window.innerWidth - moveEvent.clientX;
+            requestAnimationFrame(() => {
+                lastWidth = _setSheetWidthPx(next);
+            });
+        };
+
+        const stop = (stopEvent) => {
+            dragging = false;
+            sheet.classList.remove("is-resizing");
+            document.body.classList.remove("widget-sheet-resizing");
+            window.removeEventListener("pointermove", onMove);
+            window.removeEventListener("pointerup", stop);
+            window.removeEventListener("pointercancel", stop);
+            handle.releasePointerCapture?.(stopEvent.pointerId);
+            if (lastWidth) {
+                try { window.localStorage?.setItem(_SHEET_STORAGE_KEY, String(lastWidth)); }
+                catch { /* ignore */ }
+            }
+        };
+
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", stop);
+        window.addEventListener("pointercancel", stop);
+    };
+
+    handle.addEventListener("pointerdown", beginDrag);
+
+    handle.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const current = parseInt(getComputedStyle(document.documentElement)
+            .getPropertyValue("--widget-sheet-width"), 10) || 520;
+        let next = current;
+        if (event.key === "ArrowLeft")  next = current + 32; // wider
+        if (event.key === "ArrowRight") next = current - 32; // narrower
+        if (event.key === "Home")       next = _sheetMaxPx();
+        if (event.key === "End")        next = _SHEET_MIN_PX;
+        const applied = _setSheetWidthPx(next);
+        try { window.localStorage?.setItem(_SHEET_STORAGE_KEY, String(applied)); }
+        catch { /* ignore */ }
+    });
+
+    // Re-clamp on viewport resize so the sheet never exceeds 85vw.
+    window.addEventListener("resize", () => {
+        const current = parseInt(getComputedStyle(document.documentElement)
+            .getPropertyValue("--widget-sheet-width"), 10);
+        if (Number.isFinite(current)) _setSheetWidthPx(current);
     });
 }
 
@@ -651,6 +820,12 @@ function _openWidgetSheet(widgetEl) {
     const isNewWidget = widgetEl && widgetEl !== _sheetCurrentEl;
 
     if (isNewWidget) {
+        // Move any content currently in the sheet back to its origin widget
+        // before loading a new one. Otherwise innerHTML="" below would destroy
+        // DOM that still belongs to the previous widget, leaving it hollow and
+        // breaking subsequent renders.
+        _restoreSheetContentToWidget();
+
         // Load new widget content into the sheet
         const header = widgetEl.querySelector(".widget-header");
         const titleEl = header?.querySelector(".widget-title");
@@ -730,6 +905,7 @@ function _closeWidgetSheet() {
 // Fully discard the loaded widget — used after a final action so the
 // reopen pill doesn't keep advertising a stale panel.
 function _dismissWidgetSheet() {
+    _restoreSheetContentToWidget();
     _closeWidgetSheet();
     _sheetCurrentEl = null;
     setTimeout(() => _updateSheetHeaderBtn(), 280);
@@ -790,6 +966,85 @@ function _setupStreamDelegation() {
             _openWidgetSheet(_sheetCurrentEl);
         }
     });
+
+    _setupInfoTipDelegation();
+}
+
+// ── Info-tip popover ───────────────────────────────────────────────────
+// Single global popover shown on hover/focus of any [.info-tip] element.
+// Uses position:fixed so it escapes any overflow:hidden ancestor.
+
+function _ensureInfoTipPopover() {
+    let pop = document.getElementById("info-tip-popover");
+    if (pop) return pop;
+    pop = document.createElement("div");
+    pop.id = "info-tip-popover";
+    pop.setAttribute("role", "tooltip");
+    document.body.appendChild(pop);
+    return pop;
+}
+
+function _showInfoTip(target) {
+    const text = target?.dataset?.tip;
+    if (!text) return;
+    const pop = _ensureInfoTipPopover();
+    pop.textContent = text;
+    pop.classList.add("is-visible");
+    _positionInfoTip(target, pop);
+}
+
+function _positionInfoTip(target, pop) {
+    const rect = target.getBoundingClientRect();
+    const padding = 8;
+    // Reset to measure natural size at top-left
+    pop.style.left = "0px";
+    pop.style.top = "0px";
+    const popRect = pop.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    // Default: above the trigger, centred horizontally
+    let left = rect.left + rect.width / 2 - popRect.width / 2;
+    let top = rect.top - popRect.height - padding;
+
+    // If would overflow top, flip below
+    if (top < padding) {
+        top = rect.bottom + padding;
+    }
+    // Clamp horizontally
+    if (left < padding) left = padding;
+    if (left + popRect.width > vw - padding) left = vw - popRect.width - padding;
+    // Clamp vertically (just in case)
+    if (top + popRect.height > vh - padding) top = vh - popRect.height - padding;
+
+    pop.style.left = `${Math.round(left)}px`;
+    pop.style.top = `${Math.round(top)}px`;
+}
+
+function _hideInfoTip() {
+    const pop = document.getElementById("info-tip-popover");
+    if (pop) pop.classList.remove("is-visible");
+}
+
+function _setupInfoTipDelegation() {
+    if (document.body.dataset.infoTipBound === "true") return;
+    document.body.dataset.infoTipBound = "true";
+
+    const onEnter = (e) => {
+        const tip = e.target.closest?.(".info-tip");
+        if (tip) _showInfoTip(tip);
+    };
+    const onLeave = (e) => {
+        const tip = e.target.closest?.(".info-tip");
+        if (tip) _hideInfoTip();
+    };
+
+    document.addEventListener("mouseover", onEnter, true);
+    document.addEventListener("mouseout", onLeave, true);
+    document.addEventListener("focusin", onEnter, true);
+    document.addEventListener("focusout", onLeave, true);
+    window.addEventListener("scroll", _hideInfoTip, true);
+    window.addEventListener("resize", _hideInfoTip);
 }
 
 // ── Column resize ──────────────────────────────────────────────────────
@@ -1319,6 +1574,9 @@ function renderOntologyReviewWidget(payload, onAction) {
     const topGraphIssues = payload.top_graph_issues || [];
     const nodeTypeCounts = payload.node_type_counts || {};
     const requiredFields = payload.human_required_fields || [];
+    const resolutionCompletion = payload.resolution_completion || {};
+    const resolutionAttempted = Number(resolutionCompletion.attempted || 0);
+    const resolutionCompleted = Number(resolutionCompletion.completed || 0);
     const hardBlockerCount = requiredFields.length;
 
     const header = document.createElement("div");
@@ -1339,6 +1597,7 @@ function renderOntologyReviewWidget(payload, onAction) {
         sections: "Sections inside the scoped pages that contain diagnostic content.",
         graph_issues: "Schema-level issues detected in the draft ontology (missing relations, broken chains). Reported but not blocking — you can fix them later during triplet review.",
         suggestions: "Relations the system proposes between existing nodes. High-confidence ones are applied automatically; lower-confidence ones surface during triplet review.",
+        resolution_completion: "Missing corrective actions the system tried to recover with targeted page retrieval.",
         auto_approve: "Nodes with high enough confidence to be approved automatically without operator review.",
         human_review: "Nodes that need an operator to confirm or edit them during triplet review.",
     };
@@ -1360,6 +1619,7 @@ function renderOntologyReviewWidget(payload, onAction) {
         ${_statCard("Sections", payload.selected_sections_count || 0, "sections")}
         ${_statCard("Graph Issues", payload.graph_issues_count || 0, "graph_issues")}
         ${_statCard("Suggestions", payload.suggested_relations_count || 0, "suggestions")}
+        ${_statCard("Resolved Gaps", `${resolutionCompleted}/${resolutionAttempted}`, "resolution_completion")}
         ${_statCard("Auto-Approve", confidenceCounts.auto_approve || 0, "auto_approve")}
         ${_statCard("Human Review", confidenceCounts.human_review || 0, "human_review")}
     `;
@@ -1394,6 +1654,35 @@ function renderOntologyReviewWidget(payload, onAction) {
         hint.className = "widget-hint";
         hint.textContent = "Review the draft summary and optional suggested links. Extraction can start now.";
         wrap.appendChild(hint);
+    }
+
+    if (resolutionAttempted > 0) {
+        const completionBlock = document.createElement("details");
+        completionBlock.className = "ontology-review-issues-collapse";
+        const attempts = Array.isArray(resolutionCompletion.attempts) ? resolutionCompletion.attempts : [];
+        completionBlock.innerHTML = `
+            <summary>
+                <span>${resolutionCompleted}/${resolutionAttempted} resolution gap${resolutionAttempted === 1 ? "" : "s"} completed automatically</span>
+                <span class="ontology-review-collapse-meta">Show details</span>
+            </summary>
+            <div class="ontology-review-issues">
+                <p class="ontology-review-issues-hint">
+                    The system searched targeted pages for missing corrective actions before scoring the draft.
+                </p>
+                ${attempts.map((attempt) => {
+                    const pages = Array.isArray(attempt.pages) && attempt.pages.length
+                        ? ` · pp. ${attempt.pages.join(", ")}`
+                        : "";
+                    return `
+                        <div class="ontology-review-issue-row">
+                            <span class="ontology-review-issue-type">${_escapeHtml(attempt.status || "unknown")}</span>
+                            <span class="ontology-review-issue-text">${_md(`${attempt.target_id || "target"}${pages}`)}</span>
+                        </div>
+                    `;
+                }).join("")}
+            </div>
+        `;
+        wrap.appendChild(completionBlock);
     }
 
     // Suggested links: split by confidence threshold.
@@ -1591,6 +1880,7 @@ function _runMetricsMarkup(metrics) {
     const derived = metrics.derived_kpis || {};
     const stages = metrics.stages || {};
     const pricingBasis = metrics.pricing_basis || {};
+    const resolutionCompletion = metrics.resolution_completion || {};
     const totalByModel = totals.by_model || {};
     const saved = Number(review.validated_triplets || 0);
     const discarded = Number(review.discarded_triplets || 0);
@@ -1669,7 +1959,42 @@ function _runMetricsMarkup(metrics) {
         </div>
         ` : ""}
         ${_buildNodeCountTable(metrics.nodes_by_type)}
+        ${_buildResolutionCompletionSection(resolutionCompletion)}
         ${_buildGraphCoverageSection(metrics.graph_coverage)}
+    `;
+}
+
+function _buildResolutionCompletionSection(report) {
+    const attempted = Number(report?.attempted || 0);
+    const completed = Number(report?.completed || 0);
+    const targetCount = Number(report?.target_count || 0);
+    if (!attempted && !completed && !targetCount) return "";
+    const reports = Array.isArray(report?.reports) ? report.reports : [];
+    const attempts = Array.isArray(report?.attempts)
+        ? report.attempts
+        : reports.flatMap((item) => Array.isArray(item?.attempts) ? item.attempts : []);
+    const rows = attempts.slice(0, 8).map((attempt) => {
+        const pages = Array.isArray(attempt.pages) && attempt.pages.length
+            ? ` · pp. ${attempt.pages.join(", ")}`
+            : "";
+        return `
+            <div class="kpi-stage-row">
+                <div class="kpi-stage-name">${_escapeHtml(attempt.target_id || "target")}</div>
+                <div>${_escapeHtml(`${attempt.status || "unknown"}${pages}`)}</div>
+            </div>
+        `;
+    }).join("");
+    return `
+        <div class="kpi-section">
+            <div class="kpi-section-title">Resolution Completion</div>
+            <div class="kpi-stage-list">
+                <div class="kpi-stage-row">
+                    <div class="kpi-stage-name">Targets</div>
+                    <div>${_escapeHtml(`${completed}/${attempted || targetCount} completed`)}</div>
+                </div>
+                ${rows}
+            </div>
+        </div>
     `;
 }
 

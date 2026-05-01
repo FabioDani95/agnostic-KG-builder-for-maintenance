@@ -88,6 +88,12 @@ class ChatGraphModifyToolsTests(unittest.TestCase):
         pipeline_result = OntologyPipelineResponse(
             status="ready",
             ontology=ontology,
+            resolution_completion_report={
+                "target_count": 2,
+                "attempted": 2,
+                "completed": 1,
+                "attempts": [{"target_id": "FM-001", "status": "completed", "pages": [4]}],
+            },
         )
 
         with TemporaryDirectory() as tmpdir:
@@ -175,6 +181,12 @@ class ChatGraphModifyToolsTests(unittest.TestCase):
         pipeline_result = OntologyPipelineResponse(
             status="ready",
             ontology=ontology,
+            resolution_completion_report={
+                "target_count": 2,
+                "attempted": 2,
+                "completed": 1,
+                "attempts": [{"target_id": "FM-001", "status": "completed", "pages": [4]}],
+            },
         )
         store = {
             "pdf_id": "pdf-metrics",
@@ -248,6 +260,7 @@ class ChatGraphModifyToolsTests(unittest.TestCase):
         self.assertEqual(result["metrics"]["review"]["validated_triplets"], 1)
         self.assertEqual(result["metrics"]["review"]["discarded_triplets"], 2)
         self.assertEqual(result["metrics"]["nodes_by_type"]["FailureMode"], 1)
+        self.assertEqual(result["metrics"]["resolution_completion"]["completed"], 1)
         self.assertGreater(result["metrics"]["totals"]["estimated_cost_usd"], 0)
 
     def test_graph_tools_can_inspect_modify_and_save_exported_workspace(self):

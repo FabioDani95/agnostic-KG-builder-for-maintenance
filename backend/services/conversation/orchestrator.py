@@ -587,6 +587,10 @@ def _summarise_tool_result_for_followup(tool_name: str, result: dict[str, Any]) 
         ):
             if key in result:
                 summary[key] = result.get(key)
+        resolution = result.get("resolution_completion") or {}
+        if resolution:
+            summary["resolution_completed"] = resolution.get("completed", 0)
+            summary["resolution_attempted"] = resolution.get("attempted", 0)
         summary["next_action"] = "Ask the operator to review the Ontology Draft widget."
         return summary
 

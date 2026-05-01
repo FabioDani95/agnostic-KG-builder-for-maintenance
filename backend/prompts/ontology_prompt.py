@@ -45,7 +45,8 @@ You must follow the ontology definition exactly.
    - **Symptom**: "An observed issue, anomaly, or visible manifestation detected by the user or system."
      Extract observable problems the user would report. Fill severity based on impact described in the text.
    - **FailureMode**: "The underlying technical cause or failure mechanism that may explain one or more symptoms."
-     Extract root causes, NOT tests or inspection steps. Fill material_context with the physical component or system involved.
+     Extract root causes, NOT tests or inspection steps. Fill material_context with the physical component, subsystem,
+     or the literal value "asset_level" when the failure is genuinely general to the whole asset.
    - **CorrectiveAction**: "An action, procedure, or remediation step intended to resolve a failure mode."
      Extract repair or remediation procedures, NOT inspection-only steps. Fill instruction_text with the actual steps,
      source_reference as "PAGE N".
@@ -85,12 +86,12 @@ You must follow the ontology definition exactly.
     If the only FailureMode you can find is a lexical restatement of the Symptom, OMIT it —
     do not invent one.
 19. A CorrectiveAction must be a restorative action, not an inspection-only or verification-only step unless that step itself resolves the fault according to the text.
-20. FailureMode.material_context MUST reference an EXISTING Component node by its
-    component_id (e.g. "comp_spindle_motor") — not a free-text label like "Robot arm".
-    If no Component node represents the material context, add it to the Component list
-    FIRST, then set material_context to that component_id. If the failure cannot be
-    tied to a specific component mentioned in the text, leave material_context as an
-    empty string.
+20. FailureMode.material_context should reference an EXISTING Component.component_id
+    when the text names a specific component or subsystem (e.g. "comp_spindle_motor").
+    If no Component node represents a specifically named component/subsystem, add it
+    FIRST, then set material_context to that component_id. If the failure is general
+    to the whole asset or the manual does not state a component, set material_context
+    to "asset_level". Do NOT invent a component solely to satisfy this field.
 21. If the text contains alphanumeric patterns matching alarm/error conventions
     (e.g. "C0330", "H0216", "Alarm 215", "E504") or phrases of the form
     "<adjective> alarm is set", "alarm '<text>' is displayed", "error <code>
@@ -265,8 +266,9 @@ identified the following issues that must be resolved:
    - Asset scope must remain aligned with source_title.
    - AFFECTS must point to the MOST SPECIFIC Component in the failure context;
      add a Component node BEFORE emitting AFFECTS when the specific part is missing.
-   - FailureMode.material_context must reference an existing Component.component_id
-     (or be an empty string when the text does not name a specific part).
+   - FailureMode.material_context should reference an existing Component.component_id
+     when the text names a specific part/subsystem, or "asset_level" when the failure
+     is general to the whole asset.
    - ErrorCode nodes MUST be produced whenever the text shows alphanumeric alarm
      tokens or natural-language alarm phrases, with GENERATES_ERROR and (when
      linked to a failure) INDICATES relations.

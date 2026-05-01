@@ -176,7 +176,7 @@ async function _enterChatLayout(pdfId, filename, operator) {
 
     // Dynamically import chat.js and boot, passing model selections directly to the
     // /chat/start endpoint so the store is correctly initialised before scoping runs.
-    const { initChat } = await import("/chat.js?v=20260424b");
+    const { initChat } = await import("/chat.js?v=20260501a");
     await initChat(pdfId, `/pdf/${pdfId}`, {
         scopingModel,
         extractionModel,
@@ -868,6 +868,9 @@ function renderOntologyDraft(result) {
     const hasSchemaIssues = result.schema_issues.length > 0;
     const hasHumanInputs = result.human_required_fields.length > 0;
     const hasSuggestions = (result.suggested_relations || []).length > 0;
+    const resolutionReport = result.resolution_completion_report || {};
+    const resolutionCompleted = Number(resolutionReport.completed || 0);
+    const resolutionAttempted = Number(resolutionReport.attempted || 0);
     const extractionRunning = state.extractionInProgress;
 
     const totalNodes = Object.values(result.ontology.nodes || {}).reduce((s, arr) => s + arr.length, 0);
@@ -906,8 +909,13 @@ function renderOntologyDraft(result) {
                 <div class="ontology-summary-label">Fields to fill</div>
                 <div class="ontology-summary-value">${result.human_required_fields.length}</div>
             </div>
+            <div class="ontology-summary-item">
+                <div class="ontology-summary-label">Resolved gaps</div>
+                <div class="ontology-summary-value">${esc(`${resolutionCompleted}/${resolutionAttempted}`)}</div>
+            </div>
         </div>
         ${nodeCounts ? `<div class="ontology-field-reason" style="margin-top:0.55rem">${esc(nodeCounts)}</div>` : ""}
+        ${renderResolutionCompletionSummary(resolutionReport)}
         <div class="ontology-field-reason" style="margin-top:0.3rem;color:var(--text-dim);font-style:italic;">
             ${extractionRunning
                 ? "Step 2 of 2 in progress. Diagnostic triplets are already being extracted."
@@ -1032,6 +1040,31 @@ function renderOntologyDraft(result) {
     state.escalations = synthesizeEscalations(result);
     renderOntologyNodes(result);
     renderEscalations(state.escalations, graphIssues);
+}
+
+function renderResolutionCompletionSummary(report) {
+    const attempted = Number(report?.attempted || 0);
+    const completed = Number(report?.completed || 0);
+    if (!attempted && !completed) return "";
+    const attempts = Array.isArray(report?.attempts) ? report.attempts : [];
+    const rows = attempts.slice(0, 5).map((attempt) => {
+        const pages = Array.isArray(attempt.pages) && attempt.pages.length
+            ? ` · pp. ${attempt.pages.join(", ")}`
+            : "";
+        return `
+            <div class="kpi-stage-row">
+                <div class="kpi-stage-name">${esc(attempt.target_id || "target")}</div>
+                <div>${esc(`${attempt.status || "unknown"}${pages}`)}</div>
+            </div>
+        `;
+    }).join("");
+    return `
+        <div class="kpi-section" style="margin-top:0.7rem">
+            <div class="kpi-section-title">Resolution Completion</div>
+            <div class="kpi-note">${esc(`${completed}/${attempted} missing corrective-action target(s) completed automatically.`)}</div>
+            ${rows ? `<div class="kpi-stage-list">${rows}</div>` : ""}
+        </div>
+    `;
 }
 
 function syncOntologyActionButtons() {
@@ -2411,6 +2444,7 @@ function renderRunMetrics(metrics) {
     const derived = metrics.derived_kpis || {};
     const stages = metrics.stages || {};
     const pricingBasis = metrics.pricing_basis || {};
+    const resolutionCompletion = metrics.resolution_completion || {};
     const totalByModel = totals.by_model || {};
     const saved = state.validatedTriplets.length;
     const discarded = state.triplets.length - saved;
@@ -2491,6 +2525,41 @@ function renderRunMetrics(metrics) {
         </div>
         ` : ""}
         ${buildNodeCountTable(metrics.nodes_by_type)}
+        ${buildResolutionCompletionMetrics(resolutionCompletion)}
+    `;
+}
+
+function buildResolutionCompletionMetrics(report) {
+    const attempted = Number(report?.attempted || 0);
+    const completed = Number(report?.completed || 0);
+    const targetCount = Number(report?.target_count || 0);
+    if (!attempted && !completed && !targetCount) return "";
+    const reports = Array.isArray(report?.reports) ? report.reports : [];
+    const attempts = Array.isArray(report?.attempts)
+        ? report.attempts
+        : reports.flatMap(item => Array.isArray(item?.attempts) ? item.attempts : []);
+    const rows = attempts.slice(0, 8).map((attempt) => {
+        const pages = Array.isArray(attempt.pages) && attempt.pages.length
+            ? ` · pp. ${attempt.pages.join(", ")}`
+            : "";
+        return `
+            <div class="kpi-stage-row">
+                <div class="kpi-stage-name">${esc(attempt.target_id || "target")}</div>
+                <div>${esc(`${attempt.status || "unknown"}${pages}`)}</div>
+            </div>
+        `;
+    }).join("");
+    return `
+        <div class="kpi-section">
+            <div class="kpi-section-title">Resolution Completion</div>
+            <div class="kpi-stage-list">
+                <div class="kpi-stage-row">
+                    <div class="kpi-stage-name">Targets</div>
+                    <div>${esc(`${completed}/${attempted || targetCount} completed`)}</div>
+                </div>
+                ${rows}
+            </div>
+        </div>
     `;
 }
 

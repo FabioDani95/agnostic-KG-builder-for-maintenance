@@ -323,6 +323,12 @@ class ChatToolPayloadTests(unittest.TestCase):
                 self.schema_issues = []
                 self.suggested_relations = [_Suggestion()]
                 self.confidence_report = _Confidence()
+                self.resolution_completion_report = {
+                    "target_count": 2,
+                    "attempted": 2,
+                    "completed": 1,
+                    "attempts": [{"target_id": "FM-001", "status": "completed", "pages": [4]}],
+                }
 
         payload = _build_ontology_review_payload(
             _Result(),
@@ -340,6 +346,8 @@ class ChatToolPayloadTests(unittest.TestCase):
         self.assertEqual(payload["graph_issues_count"], 1)
         self.assertEqual(payload["suggested_relations_count"], 1)
         self.assertEqual(payload["confidence_counts"]["human_review"], 2)
+        self.assertEqual(payload["resolution_completion"]["completed"], 1)
+        self.assertEqual(payload["resolution_completion"]["attempted"], 2)
         self.assertEqual(payload["top_graph_issues"][0]["issue_type"], "orphan")
         self.assertEqual(payload["preview_relations"][0]["relation_name"], "MAY_INDICATE")
 

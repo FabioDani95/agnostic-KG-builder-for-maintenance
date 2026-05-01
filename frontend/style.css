@@ -3643,41 +3643,42 @@ details[open] > .ontology-nodes-group-head::before {
     line-height: 1.1;
 }
 
-/* ── Info tooltip (i) ─────────────────────────────────────────── */
+/* ── Info tooltip (i) — JS-positioned global popover ─────────── */
 
 .info-tip {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     background: rgba(195, 197, 202, 0.18);
     color: var(--text-dim);
     font-family: 'Georgia', serif;
-    font-size: 10px;
+    font-size: 11px;
     font-style: italic;
     font-weight: 700;
     cursor: help;
     transition: background 0.15s, color 0.15s;
-    position: relative;
     text-transform: none;
     letter-spacing: 0;
+    user-select: none;
+    flex-shrink: 0;
+    border: none;
+    padding: 0;
 }
 
 .info-tip:hover,
 .info-tip:focus-visible {
-    background: rgba(242, 100, 48, 0.20);
+    background: rgba(242, 100, 48, 0.22);
     color: var(--accent);
     outline: none;
 }
 
-.info-tip::after {
-    content: attr(data-tip);
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%) translateY(4px);
+/* Global popover, positioned via JS — escapes any overflow:hidden ancestor */
+#info-tip-popover {
+    position: fixed;
+    z-index: 9999;
     background: var(--bg-base);
     color: var(--text-primary);
     border: 1px solid var(--border-light);
@@ -3685,58 +3686,23 @@ details[open] > .ontology-nodes-group-head::before {
     border-radius: var(--r-sm);
     font-family: var(--font-sans);
     font-size: 0.8125rem;
-    font-style: normal;
     font-weight: 400;
-    text-transform: none;
-    letter-spacing: 0;
-    line-height: 1.45;
+    line-height: 1.5;
     width: max-content;
-    max-width: 260px;
+    max-width: 280px;
     white-space: normal;
     text-align: left;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-lg);
     pointer-events: none;
     opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.15s, transform 0.15s, visibility 0s linear 0.15s;
-    z-index: 50;
-}
-
-.info-tip::before {
-    content: "";
-    position: absolute;
-    bottom: calc(100% + 2px);
-    left: 50%;
-    transform: translateX(-50%) translateY(4px);
-    border: 6px solid transparent;
-    border-top-color: var(--border-light);
-    pointer-events: none;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.15s, transform 0.15s, visibility 0s linear 0.15s;
-}
-
-.info-tip:hover::after,
-.info-tip:focus-visible::after,
-.info-tip:hover::before,
-.info-tip:focus-visible::before {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(0);
-    transition-delay: 0s;
-}
-
-/* If tooltip would overflow on a card near the right edge, anchor right */
-.ontology-stat-card:last-child .info-tip::after,
-.ontology-stat-card:nth-child(3n) .info-tip::after {
-    left: auto;
-    right: 0;
     transform: translateY(4px);
+    transition: opacity 0.15s, transform 0.15s;
+    top: 0;
+    left: 0;
 }
-.ontology-stat-card:last-child .info-tip:hover::after,
-.ontology-stat-card:last-child .info-tip:focus-visible::after,
-.ontology-stat-card:nth-child(3n) .info-tip:hover::after,
-.ontology-stat-card:nth-child(3n) .info-tip:focus-visible::after {
+
+#info-tip-popover.is-visible {
+    opacity: 1;
     transform: translateY(0);
 }
 
@@ -4031,6 +3997,59 @@ details[open] > .ontology-nodes-group-head::before {
 .widget-sheet.is-open {
     display: flex;
     transform: translateX(0);
+}
+
+/* Resizer along the left edge of the sheet — drag to widen/narrow */
+.widget-sheet-resizer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 6px;
+    cursor: col-resize;
+    background: transparent;
+    z-index: 2;
+    transition: background 0.15s;
+    touch-action: none;
+}
+
+.widget-sheet-resizer:hover,
+.widget-sheet-resizer:focus-visible,
+.widget-sheet.is-resizing .widget-sheet-resizer {
+    background: rgba(0, 155, 114, 0.32);
+    outline: none;
+}
+
+.widget-sheet-resizer::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 40px;
+    transform: translate(-50%, -50%);
+    border-radius: 999px;
+    background: rgba(195, 197, 202, 0.28);
+    transition: background 0.15s;
+}
+
+.widget-sheet-resizer:hover::before,
+.widget-sheet-resizer:focus-visible::before,
+.widget-sheet.is-resizing .widget-sheet-resizer::before {
+    background: rgba(0, 155, 114, 0.88);
+}
+
+/* While dragging the sheet edge, suppress the smooth width transitions
+   on the columns / topbar so the chase feels 1:1.                    */
+body.widget-sheet-resizing .chat-columns,
+body.widget-sheet-resizing #chat-bar,
+body.widget-sheet-resizing .widget-sheet {
+    transition: none !important;
+}
+
+body.widget-sheet-resizing {
+    cursor: col-resize;
+    user-select: none;
 }
 
 /* When the sheet is open: hide the chat column entirely and let the PDF +
@@ -4813,6 +4832,168 @@ body.widget-sheet-pushing #chat-bar {
    The .is-open class is removed by JS, transform returns to 100%.   */
 .widget-sheet.is-closing {
     transform: translateX(100%);
+}
+
+/* ── Minimal monochrome theme ──────────────────────────────────
+   ChatGPT-style polish: black canvas, quiet gray surfaces, white primary
+   actions. Kept as an override layer so behaviour and component structure
+   stay unchanged. */
+:root {
+    --bg-base:     #000000;
+    --bg-surface:  #0A0A0A;
+    --bg-elevated: #141414;
+    --bg-panel:    #1F1F1F;
+    --bg-input:    #101010;
+
+    --text-primary:   #F5F5F5;
+    --text-secondary: #D4D4D4;
+    --text-dim:       #A3A3A3;
+
+    --accent:      #F5F5F5;
+    --accent-dim:  #D4D4D4;
+    --blue:        #E5E5E5;
+    --blue-dim:    #C7C7C7;
+
+    --border:       rgba(255, 255, 255, 0.10);
+    --border-light: rgba(255, 255, 255, 0.18);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.42);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.34);
+    --shadow-lg: 0 20px 56px rgba(0, 0, 0, 0.48);
+
+    --conf-mid:      #D4D4D4;
+    --conf-mid-bg:   rgba(255, 255, 255, 0.08);
+    --conf-mid-bdr:  rgba(255, 255, 255, 0.18);
+}
+
+html,
+body,
+#app,
+#chat-screen {
+    background: #000;
+}
+
+#upload-screen,
+.chat-section {
+    background: var(--bg-base);
+}
+
+.upload-logo {
+    background: var(--text-primary);
+    color: #000;
+}
+
+.upload-card,
+.summary-card,
+.chat-widget,
+.widget-sheet,
+.chat-bubble--assistant,
+.chat-bubble--progress,
+.chat-bubble--thinking {
+    background: var(--bg-elevated);
+    border-color: var(--border);
+    box-shadow: none;
+}
+
+.chat-bubble {
+    border-radius: 18px;
+}
+
+.chat-bubble--user {
+    background: var(--text-primary);
+    color: #0A0A0A;
+    box-shadow: none;
+}
+
+.chat-bubble--assistant strong,
+.progress-phase,
+.progress-pct,
+.critique-candidate-relation,
+.chat-panel-link,
+.sheet-reopen-btn {
+    color: var(--text-primary);
+}
+
+.chat-bubble--critique,
+.critique-candidate-row,
+.widget-header,
+.widget-sheet-header,
+.widget-sheet-footer,
+#chat-input-form {
+    background: rgba(255, 255, 255, 0.035);
+    border-color: var(--border);
+}
+
+.progress-bar-fill {
+    background: var(--text-primary);
+}
+
+.btn-primary,
+.chat-send-btn {
+    background: var(--text-primary);
+    color: #0A0A0A;
+    border: 1px solid var(--text-primary);
+    box-shadow: none;
+}
+
+.btn-primary:hover:not(:disabled),
+.chat-send-btn:hover,
+.chat-send-btn:active {
+    background: var(--accent-dim);
+    border-color: var(--accent-dim);
+    color: #0A0A0A;
+}
+
+.btn-secondary,
+.quick-chip,
+.sheet-reopen-btn {
+    background: var(--bg-panel);
+    color: var(--text-primary);
+    border: 1px solid var(--border-light);
+}
+
+.btn-secondary:hover:not(:disabled),
+.quick-chip:hover,
+.sheet-reopen-btn:hover,
+.sheet-reopen-btn.is-active,
+.sheet-reopen-btn.is-collapsed {
+    background: #2A2A2A;
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.28);
+}
+
+#chat-input {
+    background: var(--bg-input);
+    border-color: var(--border-light);
+    color: var(--text-primary);
+}
+
+#chat-input:focus {
+    background: #151515;
+    border-color: rgba(255, 255, 255, 0.42);
+}
+
+.widget-meta,
+.widget-sheet-meta,
+.node-count-pill,
+.wi-value {
+    background: rgba(255, 255, 255, 0.055);
+    border-color: var(--border);
+    color: var(--text-secondary);
+}
+
+.chat-pdf-page--active-match {
+    border-color: rgba(255, 255, 255, 0.42);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.chat-panel-link {
+    border-bottom-color: rgba(255, 255, 255, 0.36);
+}
+
+.chat-panel-link:hover {
+    color: var(--accent-dim);
+    border-bottom-color: var(--accent-dim);
 }
 
 /* ── Responsive breakpoints ─────────────────────────────────── */
