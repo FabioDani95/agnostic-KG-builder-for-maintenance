@@ -8,7 +8,7 @@ from typing import Any
 from backend.app_config import get_extraction_config
 from backend.models import ExtractRequest, ExtractionResult
 from backend.services.llm_service import _split_page_chunks, extract_triplets_chunked
-from backend.services.run_metrics import record_stage_metrics
+from backend.services.run_metrics import aggregate_usage, record_stage_metrics
 
 
 def _build_chunk_metadata(pages: list[dict]) -> list[dict[str, Any]]:
@@ -50,20 +50,38 @@ def extract_triplets_workflow(
     chunk_metadata = _build_chunk_metadata(pages)
     ontology_draft = (store.get("ontology_pipeline") or {}).get("ontology")
 
-    try:
-        result, usage_summary = extract_triplets_chunked(
-            pages=pages,
+    # Fase A3 — unified extractor: when the draft graph already contains
+    # diagnostic chains, derive the triplets to validate from the graph itself
+    # instead of running a second, independent LLM extraction. The triplets keep
+    # the graph's own ids, so export becomes an identity merge (no fuzzy id
+    # reconciliation) and the operator validates exactly what was extracted.
+    from backend.services.graph_projection_service import (
+        graph_has_validatable_chains,
+        project_graph_to_triplets,
+    )
+
+    if graph_has_validatable_chains(ontology_draft or {}):
+        result = project_graph_to_triplets(
+            ontology_draft,
             source_type=req.source_type,
             source_title=req.source_title,
-            target_language=req.target_language,
-            model_name=req.model_name,
-            sections=sections,
-            ontology_draft=ontology_draft,
-            on_event=on_event,
         )
-    except RuntimeError as exc:
-        detail = str(exc)
-        raise RuntimeError(detail) from exc
+        usage_summary = {"chunk_count": 0, "projected_from_graph": True, **aggregate_usage([])}
+    else:
+        try:
+            result, usage_summary = extract_triplets_chunked(
+                pages=pages,
+                source_type=req.source_type,
+                source_title=req.source_title,
+                target_language=req.target_language,
+                model_name=req.model_name,
+                sections=sections,
+                ontology_draft=ontology_draft,
+                on_event=on_event,
+            )
+        except RuntimeError as exc:
+            detail = str(exc)
+            raise RuntimeError(detail) from exc
 
     record_stage_metrics(
         store,
@@ -78,6 +96,9 @@ def extract_triplets_workflow(
                 "source_type": req.source_type,
                 "source_title": req.source_title,
                 "chunk_count": len(chunk_metadata),
+                "extraction_mode": (
+                    "graph_projection" if usage_summary.get("projected_from_graph") else "llm_extraction"
+                ),
             },
         },
     )

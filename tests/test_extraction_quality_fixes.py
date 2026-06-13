@@ -425,6 +425,60 @@ class GraphClosureTests(unittest.TestCase):
         self.assertEqual(len(remaining), 1)
 
 
+class GraphProjectionTests(unittest.TestCase):
+    def _chained_graph(self) -> dict:
+        return {
+            "nodes": {
+                "Symptom": [{"symptom_id": "sym_a", "name": "Door stuck",
+                             "description": "Door does not open.", "severity": "Medium"}],
+                "FailureMode": [{"failure_mode_id": "fm_a", "name": "Hinge seized",
+                                 "description": "Hinge seized.", "material_context": "comp_door"}],
+                "CorrectiveAction": [{"action_id": "ca_a", "name": "Replace hinge",
+                                      "description": "Replace.", "instruction_text": "1. Replace the hinge.",
+                                      "source_page": 5}],
+                "Component": [{"component_id": "comp_door", "name": "Door",
+                               "description": "d", "category": "Enclosure"}],
+            },
+            "relations": [
+                {"name": "MAY_INDICATE", "from_id": "sym_a", "to_id": "fm_a",
+                 "evidence": [{"source_page": 5}]},
+                {"name": "RESOLVED_BY", "from_id": "fm_a", "to_id": "ca_a",
+                 "evidence": [{"source_page": 5}]},
+            ],
+        }
+
+    def test_projection_preserves_graph_ids_and_chain(self):
+        from backend.services.graph_projection_service import (
+            graph_has_validatable_chains, project_graph_to_triplets,
+        )
+        graph = self._chained_graph()
+        self.assertTrue(graph_has_validatable_chains(graph))
+        result = project_graph_to_triplets(graph)
+        self.assertEqual(len(result.triplets), 1)
+        t = result.triplets[0]
+        self.assertEqual(t.symptom.symptom_id, "sym_a")
+        self.assertEqual([fm.failure_mode_id for fm in t.failure_modes], ["fm_a"])
+        self.assertEqual([ca.action_id for ca in t.corrective_actions], ["ca_a"])
+        self.assertEqual(t.corrective_actions[0].linked_failure_mode_id, "fm_a")
+        self.assertEqual(t.corrective_actions[0].source_page, 5)
+
+    def test_orphan_symptom_is_not_projected_as_triplet(self):
+        from backend.services.graph_projection_service import project_graph_to_triplets
+        graph = self._chained_graph()
+        graph["nodes"]["Symptom"].append({
+            "symptom_id": "sym_orphan", "name": "Noise", "description": "Odd noise.",
+            "severity": "Low",
+        })
+        result = project_graph_to_triplets(graph)
+        ids = {t.symptom.symptom_id for t in result.triplets}
+        self.assertEqual(ids, {"sym_a"})
+
+    def test_no_chains_means_no_projection(self):
+        from backend.services.graph_projection_service import graph_has_validatable_chains
+        graph = {"nodes": {"Symptom": [{"symptom_id": "s"}]}, "relations": []}
+        self.assertFalse(graph_has_validatable_chains(graph))
+
+
 def _gappy_contract() -> dict:
     # Internal shape: a symptom with no FM, an FM with no action, an unwired error code.
     return {
