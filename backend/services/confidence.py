@@ -231,17 +231,19 @@ def _signal_chain_participation(
 def _signal_clean_extraction(
     node_type: str,
     node_id: str,
-    retry_count: int,
     semantic_issues: list[PipelineIssue],
     schema_issues: list[PipelineIssue],
 ) -> float:
-    """Grades extraction cleanliness at three levels:
+    """Grades per-node extraction cleanliness:
 
-    1.0 — node not targeted by any issue AND no retries occurred (ideal case)
-    0.5 — retries occurred but this node was not a direct issue target
-          (pipeline self-corrected something elsewhere; slight confidence discount)
+    1.0 — this node was not directly targeted by any semantic or schema issue
     0.0 — this node was directly targeted by at least one semantic or schema issue
           (even after re-extraction the issue may remain, so trust is low)
+
+    The global retry signal is intentionally NOT folded in here: it is applied
+    once, uniformly, via the per_retry penalty. With the reflective loop enabled
+    by default a single self-correcting retry would otherwise blanket-discount
+    every node and flood the human-review queue, hurting the validation UX.
     """
     is_direct_target = any(
         issue.target_type == node_type and issue.target_id == node_id
@@ -249,8 +251,6 @@ def _signal_clean_extraction(
     )
     if is_direct_target:
         return 0.0
-    if retry_count > 0:
-        return 0.5
     return 1.0
 
 
@@ -267,6 +267,7 @@ def score_ontology(
     human_required_fields: list[HumanRequiredField] | None = None,
     retry_count: int = 0,
     config: dict[str, Any] | None = None,
+    ungrounded_node_keys: set[tuple[str, str]] | None = None,
 ) -> ConfidenceReport:
     """Score every node in the ontology and classify it for adaptive HITL."""
     cfg = config or get_confidence_config()
@@ -285,10 +286,12 @@ def score_ontology(
     penalties_cfg = cfg.get("penalties", {}) or {}
     penalty_human = float(penalties_cfg.get("human_binding_required", 0.0) or 0.0)
     penalty_retry = float(penalties_cfg.get("per_retry", 0.0) or 0.0)
+    penalty_ungrounded = float(penalties_cfg.get("ungrounded_evidence", 0.0) or 0.0)
 
     semantic_issues = semantic_issues or []
     schema_issues = schema_issues or []
     human_required_fields = human_required_fields or []
+    ungrounded_node_keys = ungrounded_node_keys or set()
 
     # Pre-compute per-node incoming/outgoing relation sets (by relation name)
     outgoing_actual: dict[str, set[str]] = {}
@@ -349,7 +352,6 @@ def score_ontology(
                 "clean_extraction": _signal_clean_extraction(
                     node_type,
                     node_id,
-                    retry_count,
                     semantic_issues,
                     schema_issues,
                 ),
@@ -365,6 +367,8 @@ def score_ontology(
             if retry_count > 0 and penalty_retry > 0:
                 # Cap retry penalty at 3× to avoid runaway deductions on long loops.
                 applied_penalties["per_retry"] = min(3.0, float(retry_count)) * penalty_retry
+            if (node_type, node_id) in ungrounded_node_keys and penalty_ungrounded > 0:
+                applied_penalties["ungrounded_evidence"] = penalty_ungrounded
 
             final_score = _clamp(weighted - sum(applied_penalties.values()))
 
@@ -388,6 +392,8 @@ def score_ontology(
                 reasons.append("validation issues or retries")
             if "human_binding_required" in applied_penalties:
                 reasons.append("human binding required")
+            if "ungrounded_evidence" in applied_penalties:
+                reasons.append("evidence quote not found on cited page")
 
             entries.append(ConfidenceEntry(
                 node_type=node_type,

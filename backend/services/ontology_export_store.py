@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 import re
 import unicodedata
 from datetime import datetime, timezone
@@ -12,7 +13,19 @@ from backend.services.ontology_contract import build_and_validate_contract_ontol
 from backend.services.ontology_coverage import compute_graph_coverage
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
-OUTPUT_DIR = ROOT_DIR / "output"
+
+
+def _resolve_output_dir() -> Path:
+    # KG_OUTPUT_DIR redirects every export bundle (including output/latest) so
+    # e2e/test runs never clobber real production exports.
+    override = str(os.environ.get("KG_OUTPUT_DIR", "") or "").strip()
+    if not override:
+        return ROOT_DIR / "output"
+    override_path = Path(override)
+    return override_path if override_path.is_absolute() else ROOT_DIR / override_path
+
+
+OUTPUT_DIR = _resolve_output_dir()
 GENERATED_DIR = ROOT_DIR / "data" / "generated"
 LATEST_OUTPUT_DIR = OUTPUT_DIR / "latest"
 LATEST_ONTOLOGY_PATH = LATEST_OUTPUT_DIR / "ontology.json"

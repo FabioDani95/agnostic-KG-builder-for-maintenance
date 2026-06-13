@@ -51,8 +51,14 @@ from backend.services.ontology_schema_service import (
     dump_ontology_schema_json,
     load_ontology_schema,
 )
-from backend.services.ontology_semantics import infer_asset_type, normalize_asset_node
-from backend.services.ontology_semantics import infer_component_match_for_failure_mode
+from backend.services.ontology_semantics import (
+    has_actionable_instruction,
+    infer_asset_type,
+    infer_component_match_for_failure_mode,
+    normalize_asset_node,
+    normalize_severity,
+    resolve_material_context,
+)
 from backend.services.pdf_service import format_text_with_pages
 from backend.services.run_metrics import aggregate_usage, usage_from_response
 
@@ -486,6 +492,25 @@ def _normalize_ontology_instance(
                 _default_asset_node(source_title, source_type, asset_identity=asset_identity)
             )
 
+    asset_node_ids = {
+        str(asset.get("asset_id", "")).strip()
+        for asset in nodes.get("Asset", [])
+        if isinstance(asset, dict) and str(asset.get("asset_id", "")).strip()
+    }
+    for failure_mode in nodes.get("FailureMode", []):
+        if not isinstance(failure_mode, dict):
+            continue
+        material_context = str(failure_mode.get("material_context", "") or "").strip()
+        if material_context and not _is_general_material_context(material_context):
+            failure_mode["material_context"] = resolve_material_context(
+                material_context,
+                nodes.get("Component", []),
+                asset_node_ids,
+            )
+    for symptom in nodes.get("Symptom", []):
+        if isinstance(symptom, dict) and str(symptom.get("severity", "") or "").strip():
+            symptom["severity"] = normalize_severity(str(symptom["severity"]))
+
     relations = []
     for rel in normalized.get("relations", []):
         if isinstance(rel, dict):
@@ -495,6 +520,11 @@ def _normalize_ontology_instance(
         try:
             relation = OntologyRelationInstance.model_validate(rel)
         except Exception:
+            continue
+        # Drop AFFECTS edges whose target is a general material-context sentinel
+        # (e.g. "asset_level"): these mean "no specific component" and would
+        # otherwise dangle into a blocking relation_missing_target error.
+        if relation.name == "AFFECTS" and _is_general_material_context(relation.to_id):
             continue
         if not _relation_exists(relations, relation):
             relations.append(relation)
@@ -1078,6 +1108,29 @@ def _validate_schema(ontology: OntologyInstance, schema: OntologySchemaDefinitio
                         suggested_value=suggested_value,
                     ))
 
+    for action in ontology.nodes.get("CorrectiveAction", []):
+        if not isinstance(action, dict):
+            continue
+        instruction_text = str(action.get("instruction_text", "") or "").strip()
+        if instruction_text and not has_actionable_instruction(instruction_text):
+            issues.append(PipelineIssue(
+                severity="warning",
+                code="instruction_not_actionable",
+                message=(
+                    f"CorrectiveAction '{action.get('name', action.get('action_id', ''))}' has "
+                    "instruction_text without any restorative action step (it reads like a cause, "
+                    "observation, or inspection note)."
+                ),
+                target_type="CorrectiveAction",
+                target_id=str(action.get("action_id", "")).strip(),
+                property_name="instruction_text",
+                fix_hint=(
+                    "Rewrite instruction_text as numbered restorative steps (replace, reconnect, "
+                    "tighten, clean, adjust, calibrate, reset, ...) supported by the source page, "
+                    "or remove the action if the manual provides no repair procedure."
+                ),
+            ))
+
     component_ids = {
         str(item.get("component_id", "")).strip()
         for item in ontology.nodes.get("Component", [])
@@ -1440,55 +1493,6 @@ def _graph_validate_node(state: PipelineState) -> PipelineState:
     }
 
 
-def _resolution_completion_node(state: PipelineState) -> PipelineState:
-    """Run targeted corrective-action retrieval for graph resolution gaps."""
-    from backend.services.graph_reasoning import run_graph_analysis
-    from backend.services.resolution_completion_service import complete_resolution_gaps
-
-    started = time.perf_counter()
-    ontology, usage_entries, report = complete_resolution_gaps(
-        ontology=state["ontology"],
-        text_with_pages=state["text_with_pages"],
-        model_name=state["model_name"] or settings.MODEL_NAME,
-        parse_json=_extract_json_object,
-    )
-    if report.get("completed", 0):
-        ontology = _normalize_ontology_instance(
-            ontology=ontology,
-            schema=state["schema"],
-            source_type=state["source_type"],
-            source_title=state["source_title"],
-            asset_identity=state.get("asset_identity"),
-        )
-        schema_issues, human_fields = _validate_schema(ontology, state["schema"])
-        graph_issues, suggested_relations = run_graph_analysis(ontology, state["schema"])
-        logger.info(
-            "[ontology] Resolution completion completed %d/%d target(s) (%.1fs)",
-            int(report.get("completed", 0) or 0),
-            int(report.get("attempted", 0) or 0),
-            time.perf_counter() - started,
-        )
-        return {
-            "ontology": ontology,
-            "schema_issues": schema_issues,
-            "human_required_fields": human_fields,
-            "graph_issues": graph_issues,
-            "suggested_relations": suggested_relations,
-            "resolution_completion_report": report,
-            "llm_usage": [*state.get("llm_usage", []), *usage_entries],
-        }
-
-    logger.info(
-        "[ontology] Resolution completion completed 0/%d target(s) (%.1fs)",
-        int(report.get("attempted", 0) or 0),
-        time.perf_counter() - started,
-    )
-    return {
-        "resolution_completion_report": report,
-        "llm_usage": [*state.get("llm_usage", []), *usage_entries],
-    }
-
-
 def _confidence_score_node(state: PipelineState) -> PipelineState:
     """Compute schema-aware confidence scores for adaptive HITL (Step 3 of roadmap).
 
@@ -1712,7 +1716,6 @@ def _build_graph():
     graph.add_node("capture_issues", _update_last_issues)
     graph.add_node("schema_validate", _schema_validate_node)
     graph.add_node("graph_validate", _graph_validate_node)
-    graph.add_node("resolution_completion", _resolution_completion_node)
     graph.add_node("confidence_score", _confidence_score_node)
 
     # Reflective loop nodes
@@ -1745,10 +1748,11 @@ def _build_graph():
     # Human review routes to schema_validate
     graph.add_edge("human_review", "schema_validate")
 
-    # Schema validation flows into graph reasoning, then confidence scoring
+    # Schema validation flows into graph reasoning, then confidence scoring.
+    # Resolution completion now runs once at run level (after chunk merge) in
+    # ontology_workflow, where it can see the full scoped text.
     graph.add_edge("schema_validate", "graph_validate")
-    graph.add_edge("graph_validate", "resolution_completion")
-    graph.add_edge("resolution_completion", "confidence_score")
+    graph.add_edge("graph_validate", "confidence_score")
     graph.add_edge("confidence_score", END)
 
     return graph.compile()
@@ -1823,10 +1827,14 @@ def build_initial_ontology(
     resolution_completion_report = result.get("resolution_completion_report", {})
     llm_usage = result.get("llm_usage", [])
     is_schema_compliant = not schema_issues and not human_fields
+    blocking_schema_issues = [
+        issue for issue in schema_issues
+        if str(issue.severity).strip().lower() != "warning"
+    ]
 
     if needs_human_review:
         status = "needs_human_review"
-    elif schema_issues:
+    elif blocking_schema_issues:
         status = "blocked"
     elif human_fields:
         status = "needs_human"
@@ -1862,7 +1870,7 @@ def build_initial_ontology(
         schema_issues=schema_issues,
         human_required_fields=human_fields,
         is_schema_compliant=is_schema_compliant,
-        is_ready_for_human_review=not schema_issues,
+        is_ready_for_human_review=not blocking_schema_issues,
         retry_count=retry_count,
         graph_issues=graph_issues,
         suggested_relations=suggested_relations,
@@ -1894,6 +1902,10 @@ def apply_human_binding(
         source_title=updated.source_title,
     )
     schema_issues, human_fields = _validate_schema(updated, schema)
+    blocking_schema_issues = [
+        issue for issue in schema_issues
+        if str(issue.severity).strip().lower() != "warning"
+    ]
     confidence_cfg = get_confidence_config()
     confidence_report = None
     if confidence_cfg.get("enabled", True):
@@ -1905,13 +1917,13 @@ def apply_human_binding(
             config=confidence_cfg,
         )
     return OntologyPipelineResponse(
-        status="blocked" if schema_issues else ("needs_human" if human_fields else "ready"),
+        status="blocked" if blocking_schema_issues else ("needs_human" if human_fields else "ready"),
         ontology=updated,
         semantic_issues=[],
         schema_issues=schema_issues,
         human_required_fields=human_fields,
         is_schema_compliant=not schema_issues and not human_fields,
-        is_ready_for_human_review=not schema_issues,
+        is_ready_for_human_review=not blocking_schema_issues,
         confidence_report=confidence_report,
         resolution_completion_report={},
     )
@@ -1928,6 +1940,17 @@ def validate_ontology_instance(
         source_title=ontology.source_title,
     )
     return _validate_schema(normalized, schema)
+
+
+def normalize_ontology_instance(ontology: OntologyInstance) -> OntologyInstance:
+    """Public deterministic normalization pass (ids, severity, material_context, inferred relations)."""
+    schema = load_ontology_schema()
+    return _normalize_ontology_instance(
+        ontology=ontology,
+        schema=schema,
+        source_type=ontology.source_type,
+        source_title=ontology.source_title,
+    )
 
 
 def ontology_export_payload(ontology: OntologyInstance) -> str:

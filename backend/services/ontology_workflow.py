@@ -213,7 +213,11 @@ def _merge_pipeline_results(
     # Per-chunk statuses can include "blocked" due to empty_draft_content (now filtered) which
     # would otherwise propagate to the merged result even though the combined ontology is valid.
     merged_human_required = list(human_required_fields.values())
-    if all_schema:
+    blocking_schema = [
+        issue for issue in all_schema
+        if str(getattr(issue, "severity", "")).strip().lower() != "warning"
+    ]
+    if blocking_schema:
         worst_status = "blocked"
     elif any(result.status == "needs_human_review" for result in results):
         worst_status = "needs_human_review"
@@ -252,7 +256,7 @@ def _merge_pipeline_results(
         schema_issues=all_schema,
         human_required_fields=merged_human_required,
         is_schema_compliant=not all_schema and not merged_human_required,
-        is_ready_for_human_review=not all_schema,
+        is_ready_for_human_review=not blocking_schema,
         retry_count=retry_total,
         graph_issues=all_graph,
         suggested_relations=all_suggested,
@@ -408,6 +412,155 @@ def _build_section_header(sections: list[dict]) -> str:
     return "\n".join(lines)
 
 
+def _finalize_run_level_quality(
+    result: OntologyPipelineResponse,
+    pages: list[dict],
+    model_name: str | None,
+    asset_identity: dict[str, str] | None,
+) -> tuple[OntologyPipelineResponse, list[dict], dict, dict]:
+    """Run-level quality passes executed once on the merged ontology.
+
+    1. Resolution completion: targeted retrieval for FailureModes without a
+       CorrectiveAction and ErrorCodes without INDICATES, over the FULL scoped
+       text (per-chunk runs could not see solutions living in other chunks).
+    2. Graph closure: auto-apply grounded association relations (MAY_INDICATE,
+       AFFECTS) the graph reasoner only suggested, so connected gaps the system
+       can verify don't reach the operator.
+    3. Evidence grounding: verify every relation evidence quote against the
+       cited page; ungrounded relations push their nodes into the human-review
+       confidence band.
+
+    Returns (updated_result, llm_usage_entries, resolution_report, quality_stats).
+    """
+    from backend.config import settings
+    from backend.app_config import get_confidence_config
+    from backend.services.confidence import score_ontology
+    from backend.services.evidence_grounding_service import ground_relation_evidence
+    from backend.services.graph_closure_service import close_grounded_gaps
+    from backend.services.graph_reasoning import run_graph_analysis
+    from backend.services.ontology_pipeline import _extract_json_object, _validate_schema
+    from backend.services.resolution_completion_service import complete_resolution_gaps
+
+    schema = load_ontology_schema()
+    ontology = result.ontology
+    usage_entries: list[dict] = []
+
+    text_with_pages = format_text_with_pages(pages)
+    try:
+        ontology, usage_entries, resolution_report = complete_resolution_gaps(
+            ontology=ontology,
+            text_with_pages=text_with_pages,
+            model_name=model_name or settings.MODEL_NAME,
+            parse_json=_extract_json_object,
+        )
+    except Exception:
+        # Resolution completion is best-effort: never abort the draft for it.
+        logger.exception("[ontology] Run-level resolution completion failed; keeping merged ontology")
+        ontology = result.ontology
+        usage_entries = []
+        resolution_report = {"attempted": 0, "completed": 0, "error": "resolution_completion_failed"}
+    resolution_changed = bool(resolution_report.get("completed", 0))
+    if resolution_changed:
+        ontology = _normalize_ontology_instance(
+            ontology=ontology,
+            schema=schema,
+            source_type=ontology.source_type,
+            source_title=ontology.source_title,
+            asset_identity=asset_identity,
+        )
+        logger.info(
+            "[ontology] Run-level resolution completion: %d/%d target(s) completed",
+            int(resolution_report.get("completed", 0) or 0),
+            int(resolution_report.get("attempted", 0) or 0),
+        )
+
+    page_text_by_page = {
+        int(page["page_number"]): str(page.get("text", "") or "")
+        for page in pages
+    }
+
+    # Graph closure: auto-apply grounded association relations that the reasoner
+    # only suggested. Anything not grounded stays in suggested_relations for the
+    # operator.
+    _, pre_suggestions = run_graph_analysis(ontology, schema)
+    closure_stats: dict = {"considered": 0, "applied": 0}
+    try:
+        ontology, remaining_suggestions, closure_stats = close_grounded_gaps(
+            ontology,
+            pre_suggestions,
+            page_text_by_page,
+        )
+    except Exception:
+        logger.exception("[ontology] Graph closure pass failed; keeping ontology unchanged")
+        remaining_suggestions = pre_suggestions
+    if closure_stats.get("applied"):
+        ontology = _normalize_ontology_instance(
+            ontology=ontology,
+            schema=schema,
+            source_type=ontology.source_type,
+            source_title=ontology.source_title,
+            asset_identity=asset_identity,
+        )
+
+    grounding_issues, ungrounded_node_keys, grounding_stats = ground_relation_evidence(
+        ontology,
+        page_text_by_page,
+    )
+
+    semantic_issues = [*result.semantic_issues, *grounding_issues]
+    schema_issues, human_fields = _validate_schema(ontology, schema)
+    graph_issues, _ = run_graph_analysis(ontology, schema)
+    # Surface only the suggestions we did NOT auto-apply.
+    suggested_relations = remaining_suggestions
+
+    confidence_report = result.confidence_report
+    confidence_cfg = get_confidence_config()
+    if confidence_cfg.get("enabled", True):
+        try:
+            confidence_report = score_ontology(
+                ontology=ontology,
+                schema=schema,
+                semantic_issues=semantic_issues,
+                schema_issues=schema_issues,
+                human_required_fields=human_fields,
+                retry_count=result.retry_count,
+                config=confidence_cfg,
+                ungrounded_node_keys=ungrounded_node_keys,
+            )
+        except Exception:
+            logger.exception("[ontology] Confidence re-scoring after run-level passes failed")
+
+    blocking_schema = [
+        issue for issue in schema_issues
+        if str(getattr(issue, "severity", "")).strip().lower() != "warning"
+    ]
+    if result.status == "needs_human_review":
+        status = "needs_human_review"
+    elif blocking_schema:
+        status = "blocked"
+    elif human_fields:
+        status = "needs_human"
+    else:
+        status = "ready"
+
+    updated = OntologyPipelineResponse(
+        status=status,
+        ontology=ontology,
+        semantic_issues=semantic_issues,
+        schema_issues=schema_issues,
+        human_required_fields=human_fields,
+        is_schema_compliant=not schema_issues and not human_fields,
+        is_ready_for_human_review=not blocking_schema,
+        retry_count=result.retry_count,
+        graph_issues=graph_issues,
+        suggested_relations=suggested_relations,
+        confidence_report=confidence_report,
+        resolution_completion_report=resolution_report,
+    )
+    quality_stats = {"grounding": grounding_stats, "closure": closure_stats}
+    return updated, usage_entries, resolution_report, quality_stats
+
+
 def _resolve_draft_pages(
     all_pages: list[dict],
     pages_to_keep: list[int] | None,
@@ -520,6 +673,25 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
         chunk_metrics.append(metrics)
 
     result = _merge_pipeline_results(chunk_results, asset_identity=asset_identity)
+    result, finalize_usage_entries, run_resolution_report, quality_stats = await asyncio.to_thread(
+        _finalize_run_level_quality,
+        result,
+        filtered_pages,
+        req.model_name,
+        asset_identity,
+    )
+    grounding_stats = quality_stats.get("grounding", {})
+    closure_stats = quality_stats.get("closure", {})
+    if finalize_usage_entries:
+        from backend.services.run_metrics import aggregate_usage
+
+        finalize_usage = aggregate_usage(finalize_usage_entries)
+        chunk_metrics.append({
+            **finalize_usage,
+            "chunk_index": 0,
+            "chunk_pages": 0,
+            "section_count": 0,
+        })
     total_prompt_tokens = sum(int(item.get("prompt_tokens", 0) or 0) for item in chunk_metrics)
     total_cached_prompt_tokens = sum(int(item.get("cached_prompt_tokens", 0) or 0) for item in chunk_metrics)
     total_non_cached_prompt_tokens = sum(int(item.get("non_cached_prompt_tokens", 0) or 0) for item in chunk_metrics)
@@ -548,15 +720,9 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
         for item in chunk_metrics
         for event in (item.get("parse_repair_events") or [])
     ]
-    resolution_reports: list[dict] = [
-        report
-        for item in chunk_metrics
-        for report in [item.get("resolution_completion")]
-        if isinstance(report, dict) and report
-    ]
-    resolution_attempts = sum(int(report.get("attempted", 0) or 0) for report in resolution_reports)
-    resolution_completed = sum(int(report.get("completed", 0) or 0) for report in resolution_reports)
-    resolution_target_count = sum(int(report.get("target_count", 0) or 0) for report in resolution_reports)
+    resolution_attempts = int(run_resolution_report.get("attempted", 0) or 0)
+    resolution_completed = int(run_resolution_report.get("completed", 0) or 0)
+    resolution_target_count = int(run_resolution_report.get("target_count", 0) or 0)
 
     record_stage_metrics(
         store,
@@ -589,8 +755,10 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                     "target_count": resolution_target_count,
                     "attempted": resolution_attempts,
                     "completed": resolution_completed,
-                    "reports": resolution_reports,
+                    "reports": [run_resolution_report] if run_resolution_report else [],
                 },
+                "evidence_grounding": grounding_stats,
+                "graph_closure": closure_stats,
             },
         },
     )

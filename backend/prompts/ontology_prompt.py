@@ -44,6 +44,7 @@ You must follow the ontology definition exactly.
      or subsystem named in the text. Fill category from the component's functional group.
    - **Symptom**: "An observed issue, anomaly, or visible manifestation detected by the user or system."
      Extract observable problems the user would report. Fill severity based on impact described in the text.
+     severity MUST be exactly one of: "Low", "Medium", "High", "Critical".
    - **FailureMode**: "The underlying technical cause or failure mechanism that may explain one or more symptoms."
      Extract root causes, NOT tests or inspection steps. Fill material_context with the physical component, subsystem,
      or the literal value "asset_level" when the failure is genuinely general to the whole asset.
@@ -99,6 +100,12 @@ You must follow the ontology definition exactly.
     corresponding INDICATES relation (ErrorCode → FailureMode) whenever the text
     links the code to a specific failure. A GENERATES_ERROR relation (Asset →
     ErrorCode) MUST also be emitted for each ErrorCode.
+    HOWEVER, an ErrorCode is ONLY valid when the text presents it as an alarm,
+    error, or fault indication produced by the asset. Do NOT emit ErrorCode nodes for:
+    - part numbers or position codes from parts lists, exploded views, or assembly drawings
+    - referenced standards or regulations (e.g. "ANSI Z136", "ISO 13849")
+    - fuse/connector/pin designators (e.g. "F3", "CN1") unless the text describes them as displayed codes
+    If you cannot point to text presenting the token as an alarm/error/fault, OMIT it.
 
 ## IMPORTANT: ID Uniqueness
 - All IDs must be globally unique and descriptive, not just sequential numbers.
@@ -271,7 +278,10 @@ identified the following issues that must be resolved:
      is general to the whole asset.
    - ErrorCode nodes MUST be produced whenever the text shows alphanumeric alarm
      tokens or natural-language alarm phrases, with GENERATES_ERROR and (when
-     linked to a failure) INDICATES relations.
+     linked to a failure) INDICATES relations. Do NOT emit ErrorCode nodes for
+     part numbers from parts lists/exploded views, referenced standards
+     (e.g. ANSI Z136), or fuse/connector designators not shown as displayed codes.
+   - Symptom.severity must be exactly one of: "Low", "Medium", "High", "Critical".
 10. Every relation MUST include an "evidence" array with at least one entry.
    Each evidence entry must use this exact shape (all three fields required):
      {{"source_page": 14, "source_reference": "PAGE 14", "quote": "short verbatim text from that page"}}

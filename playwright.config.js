@@ -16,5 +16,9 @@ module.exports = {
     url: "http://127.0.0.1:8000",
     reuseExistingServer: true,
     timeout: 120000,
+    env: {
+      // Keep e2e exports away from the real output/ bundles (see ontology_export_store).
+      KG_OUTPUT_DIR: "output_e2e",
+    },
   },
 };

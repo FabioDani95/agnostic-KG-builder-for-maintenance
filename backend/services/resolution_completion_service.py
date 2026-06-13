@@ -25,6 +25,7 @@ class ResolutionTarget:
     target_id: str
     label: str
     query_text: str
+    code: str = ""  # literal machine code for error_code targets
 
 
 _PAGE_MARKER_RE = re.compile(r"(?m)^--- PAGE (\d+) ---$")
@@ -134,7 +135,13 @@ def build_resolution_targets(ontology: OntologyInstance, *, max_targets: int) ->
         )
         key = ("error_code", error_id)
         if key not in seen:
-            targets.append(ResolutionTarget("error_code", error_id, label, query))
+            targets.append(ResolutionTarget(
+                "error_code",
+                error_id,
+                label,
+                query,
+                code=str(error_code.get("code") or "").strip(),
+            ))
             seen.add(key)
 
     return targets[:max(0, int(max_targets or 0))]
@@ -347,6 +354,14 @@ def _apply_completion_payload(
         instruction_text = str(raw_action.get("instruction_text") or "").strip()
         if not name or not instruction_text:
             continue
+        evidence_quote = str(raw_action.get("evidence_quote") or raw_action.get("quote") or "").strip()
+        if not evidence_quote:
+            logger.info(
+                "[resolution_completion] Dropping retrieved action '%s' for %s — no verbatim evidence quote",
+                name,
+                target.target_id,
+            )
+            continue
         action_id = str(raw_action.get("action_id") or "").strip()
         if not action_id or action_id in used_ids:
             action_id = _unique_id(name, used_ids, prefix="ca", fallback="retrieved_corrective_action")
@@ -419,19 +434,47 @@ def complete_resolution_gaps(
         if not selected_pages:
             attempts.append({"target_id": target.target_id, "status": "no_pages"})
             continue
+        if target.target_type == "error_code" and target.code:
+            code_lower = target.code.lower()
+            if not any(code_lower in str(page.get("text", "")).lower() for page in selected_pages):
+                logger.info(
+                    "[resolution_completion] Skipping error code %s — literal code '%s' not found in scoped pages",
+                    target.target_id,
+                    target.code,
+                )
+                attempts.append({
+                    "target_type": target.target_type,
+                    "target_id": target.target_id,
+                    "status": "code_not_in_scope",
+                })
+                continue
         system_prompt, user_prefix = _target_prompt(target, updated)
         user_text = user_prefix + _format_pages(selected_pages)
-        enforce_llm_limits(
-            phase="Resolution completion",
-            cfg={
-                "timeout_seconds": int(cfg.get("timeout_seconds", 90)),
-                "max_input_chars": int(cfg.get("max_input_chars", 50000)),
-                "estimated_max_input_tokens": int(cfg.get("estimated_max_input_tokens", 12500)),
-                "max_output_tokens": int(cfg.get("max_output_tokens", 2500)),
-            },
-            system_text=system_prompt,
-            user_text=user_text,
-        )
+        try:
+            enforce_llm_limits(
+                phase="Resolution completion",
+                cfg={
+                    "timeout_seconds": int(cfg.get("timeout_seconds", 90)),
+                    "max_input_chars": int(cfg.get("max_input_chars", 50000)),
+                    "estimated_max_input_tokens": int(cfg.get("estimated_max_input_tokens", 12500)),
+                    "max_output_tokens": int(cfg.get("max_output_tokens", 2500)),
+                },
+                system_text=system_prompt,
+                user_text=user_text,
+            )
+        except RuntimeError as exc:
+            # A single oversized target must not abort the whole draft run.
+            logger.warning(
+                "[resolution_completion] Skipping target %s — %s",
+                target.target_id,
+                exc,
+            )
+            attempts.append({
+                "target_type": target.target_type,
+                "target_id": target.target_id,
+                "status": "input_too_large",
+            })
+            continue
         try:
             response = client.chat.completions.create(
                 model=model_name or settings.MODEL_NAME,

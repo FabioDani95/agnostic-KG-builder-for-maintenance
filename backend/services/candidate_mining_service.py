@@ -88,6 +88,28 @@ _ALARM_PHRASE_NOISE_PREFIXES: tuple[str, ...] = (
 
 _PAGE_MARKER_RE = re.compile(r"---\s*PAGE\s+(\d+)\s*---", re.IGNORECASE)
 
+# An alphanumeric token only counts as an error-code candidate when the nearby
+# text presents it as an alarm/error/fault indication. This keeps part numbers
+# from exploded views / parts lists (e.g. "W262") and referenced standards
+# (e.g. "ANSI Z136") out of the candidate list.
+_ERROR_CONTEXT_RE = re.compile(
+    r"(?i)\b("
+    r"alarm|error|fault|alert|trouble|warning|diagnos|self-diagnosis|"
+    r"display|displayed|code|f-code|abnormal|malfunction|fail"
+    r")"
+)
+_ERROR_CONTEXT_WINDOW_CHARS = 160
+_STANDARD_REFERENCE_RE = re.compile(r"(?i)\b(ansi|iso|iec|en|ul|din|nfpa|astm)\b")
+
+
+def _has_error_context(segment: str, start: int, end: int) -> bool:
+    window_start = max(0, start - _ERROR_CONTEXT_WINDOW_CHARS)
+    window_end = min(len(segment), end + _ERROR_CONTEXT_WINDOW_CHARS)
+    window = segment[window_start:window_end]
+    if _STANDARD_REFERENCE_RE.search(segment[window_start:start]):
+        return False
+    return _ERROR_CONTEXT_RE.search(window) is not None
+
 
 @dataclass
 class ComponentCandidate:
@@ -183,9 +205,11 @@ def mine_candidates(
                 candidate.pages.add(page_number)
 
         for pattern in _ERROR_CODE_PATTERNS:
-            for match in pattern.findall(segment):
-                token = match.strip()
+            for match in pattern.finditer(segment):
+                token = match.group(1).strip()
                 if not token:
+                    continue
+                if not _has_error_context(segment, match.start(1), match.end(1)):
                     continue
                 key = token.upper()
                 candidate = error_index.setdefault(key, ErrorCodeCandidate(token=token))

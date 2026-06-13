@@ -249,6 +249,89 @@ def normalize_asset_node(
     return normalized
 
 
+_SEVERITY_KEYWORD_MAP: tuple[tuple[tuple[str, ...], str], ...] = (
+    (("critical", "safety", "hazard", "hazardous", "fatal", "emergency", "danger"), "Critical"),
+    (("high", "major", "severe", "serious", "grave"), "High"),
+    (("low", "minor", "slight", "negligible", "trivial"), "Low"),
+    (("medium", "moderate", "normal", "average", "mid"), "Medium"),
+)
+
+
+def normalize_severity(value: str) -> str:
+    """Map free-text severity onto the canonical Low/Medium/High/Critical scale.
+
+    Empty input stays empty so required-field validation can still ask the human.
+    Unrecognized non-empty values fall back to Medium.
+    """
+    normalized = normalize_semantic_text(value)
+    if not normalized:
+        return ""
+    tokens = set(normalized.split())
+    for keywords, canonical in _SEVERITY_KEYWORD_MAP:
+        if tokens & set(keywords):
+            return canonical
+    return "Medium"
+
+
+def resolve_material_context(
+    material_context: str,
+    components: list[dict],
+    asset_ids: set[str] | None = None,
+) -> str:
+    """Resolve a FailureMode.material_context value to a real Component.component_id.
+
+    Handles the common LLM drift cases: casing mismatches ("Comp_door" vs
+    "comp_door"), component referenced by name instead of id, and contexts that
+    point at the Asset itself (mapped to the literal "asset_level"). Values that
+    cannot be resolved are returned unchanged so validation can flag them.
+    """
+    value = str(material_context or "").strip()
+    if not value:
+        return value
+
+    component_ids = [
+        str(component.get("component_id", "")).strip()
+        for component in components
+        if isinstance(component, dict) and str(component.get("component_id", "")).strip()
+    ]
+    if value in component_ids:
+        return value
+
+    lowered = value.lower()
+    by_lowered_id = {component_id.lower(): component_id for component_id in component_ids}
+    if lowered in by_lowered_id:
+        return by_lowered_id[lowered]
+
+    if lowered in {str(asset_id).lower() for asset_id in (asset_ids or set()) if asset_id}:
+        return "asset_level"
+
+    normalized_value = normalize_semantic_text(value)
+    # "Comp_door" / "component door" → "door" so a name match can still resolve it.
+    stripped_tokens = [
+        token for token in normalized_value.split()
+        if token not in {"comp", "component"}
+    ]
+    stripped_value = " ".join(stripped_tokens)
+    for component in components:
+        if not isinstance(component, dict):
+            continue
+        component_id = str(component.get("component_id", "")).strip()
+        component_name = normalize_semantic_text(str(component.get("name", "")))
+        if not component_id or not component_name:
+            continue
+        if normalized_value == component_name or (stripped_value and stripped_value == component_name):
+            return component_id
+    return value
+
+
+def has_actionable_instruction(instruction_text: str) -> bool:
+    """True when at least one instruction step contains a restorative action verb."""
+    steps = informative_instruction_steps(instruction_text)
+    if not steps:
+        return False
+    return any(_REPAIR_ACTION_RE.search(step) for step in steps)
+
+
 def is_failure_mode_candidate(name: str, description: str, material_context: str) -> bool:
     combined = " ".join([name or "", description or "", material_context or ""]).strip()
     if not normalize_semantic_text(combined):

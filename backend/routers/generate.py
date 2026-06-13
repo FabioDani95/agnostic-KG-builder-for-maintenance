@@ -20,7 +20,10 @@ from backend.services.ontology_export_store import (
     persist_exported_ontology,
     prepare_exported_ontology,
 )
-from backend.services.ontology_pipeline import validate_ontology_instance
+from backend.services.ontology_pipeline import (
+    normalize_ontology_instance,
+    validate_ontology_instance,
+)
 from backend.services.ontology_schema_service import load_ontology_schema
 from backend.services.ontology_semantics import infer_asset_type, normalize_asset_node
 from backend.services.run_metrics import aggregate_usage, build_metrics_payload, record_stage_metrics
@@ -357,7 +360,7 @@ async def generate_json(req: GenerateJsonRequest):
         best_effort_rank = None
         for base_label, base_ontology in export_base_candidates:
             output = merge_validated_triplets(base_ontology, req.validated_triplets)
-            candidate = OntologyInstance.model_validate(output)
+            candidate = normalize_ontology_instance(OntologyInstance.model_validate(output))
             schema_issues, human_fields = validate_ontology_instance(candidate)
             blocking_issues, advisory_for_candidate = _split_schema_issues(schema_issues)
             candidate_rank = _candidate_rank(blocking_issues, human_fields, candidate.model_dump())
