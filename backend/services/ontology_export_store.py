@@ -135,6 +135,18 @@ def prepare_exported_ontology(
     metadata["total_nodes"] = sum(len(items) for items in prepared.get("nodes", {}).values())
     metadata["total_relationships"] = len(prepared.get("relationships", []))
     metadata["graph_coverage"] = compute_graph_coverage(prepared)
+
+    # Export is best-effort but never silent about what is incomplete: list the
+    # specific open structural gaps so the downstream agent (and the operator)
+    # see exactly which diagnostic chains are not closed.
+    from backend.services.review_queue_service import compute_open_gaps, summarize_queue
+
+    open_gaps = compute_open_gaps(prepared)
+    metadata["open_gaps"] = open_gaps
+    gap_summary = summarize_queue(open_gaps)
+    metadata["open_gap_count"] = gap_summary["total"]
+    metadata["open_gaps_by_kind"] = gap_summary["by_kind"]
+    metadata["requires_human_review"] = gap_summary["requires_human_review"]
     return prepared
 
 

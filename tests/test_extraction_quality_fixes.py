@@ -24,12 +24,18 @@ from backend.services.ontology_pipeline import (
     normalize_ontology_instance,
 )
 from backend.services.ontology_schema_service import load_ontology_schema
+from backend.services.ontology_export_store import prepare_exported_ontology
 from backend.services.ontology_semantics import (
     has_actionable_instruction,
     normalize_severity,
     resolve_material_context,
 )
 from backend.services.resolution_completion_service import complete_resolution_gaps
+from backend.services.review_queue_service import (
+    build_review_queue,
+    compute_open_gaps,
+    summarize_queue,
+)
 
 
 class SeverityNormalizationTests(unittest.TestCase):
@@ -417,6 +423,85 @@ class GraphClosureTests(unittest.TestCase):
 
         self.assertEqual(report["applied"], 0)
         self.assertEqual(len(remaining), 1)
+
+
+def _gappy_contract() -> dict:
+    # Internal shape: a symptom with no FM, an FM with no action, an unwired error code.
+    return {
+        "nodes": {
+            "Asset": [{"asset_id": "asset_demo", "name": "Demo", "description": "d",
+                       "brand": "Demo", "model": "M1"}],
+            "Component": [{"component_id": "comp_door", "name": "Door",
+                           "description": "Front door", "category": "Enclosure"}],
+            "Symptom": [{"symptom_id": "sym_orphan", "name": "Door stuck",
+                         "description": "Door does not open.", "severity": "Medium"}],
+            "FailureMode": [{"failure_mode_id": "fm_no_action", "name": "Hinge seized",
+                             "description": "Hinge seized.", "material_context": "comp_door"}],
+            "CorrectiveAction": [],
+            "ErrorCode": [{"error_code_id": "err_e1", "name": "E1",
+                           "description": "Fault.", "code": "E1"}],
+        },
+        "relations": [],
+    }
+
+
+class OpenGapsTests(unittest.TestCase):
+    def test_open_gaps_name_the_specific_nodes(self):
+        gaps = compute_open_gaps(_gappy_contract())
+        kinds = {(g["kind"], g["target_id"]) for g in gaps}
+        self.assertIn(("symptom_without_failure_mode", "sym_orphan"), kinds)
+        self.assertIn(("failure_mode_without_action", "fm_no_action"), kinds)
+        self.assertIn(("error_code_without_failure_mode", "err_e1"), kinds)
+
+    def test_complete_chain_has_no_gaps(self):
+        contract = _gappy_contract()
+        contract["nodes"]["CorrectiveAction"] = [{
+            "action_id": "ca_fix", "name": "Replace hinge", "description": "Replace.",
+            "instruction_text": "1. Replace the hinge.",
+        }]
+        contract["relations"] = [
+            {"name": "MAY_INDICATE", "from_id": "sym_orphan", "to_id": "fm_no_action"},
+            {"name": "RESOLVED_BY", "from_id": "fm_no_action", "to_id": "ca_fix"},
+            {"name": "INDICATES", "from_id": "err_e1", "to_id": "fm_no_action"},
+        ]
+        self.assertEqual(compute_open_gaps(contract), [])
+
+    def test_review_queue_orders_blocking_before_advisory(self):
+        from backend.models import PipelineIssue
+        issues = [
+            PipelineIssue(severity="warning", code="instruction_not_actionable",
+                          message="m", target_type="CorrectiveAction", target_id="ca_x"),
+        ]
+        queue = build_review_queue(_gappy_contract(), schema_issues=issues)
+        severities = [item["severity"] for item in queue]
+        self.assertEqual(severities, sorted(severities, key=lambda s: {"blocking": 0, "open": 1, "reject": 2, "review": 3, "advisory": 4}[s]))
+        self.assertTrue(summarize_queue(queue)["requires_human_review"])
+
+
+class ExportGatingTests(unittest.TestCase):
+    def test_export_metadata_lists_open_gaps(self):
+        prepared = prepare_exported_ontology(_gappy_contract())
+        meta = prepared["metadata"]
+        self.assertTrue(meta["requires_human_review"])
+        self.assertGreater(meta["open_gap_count"], 0)
+        kinds = {g["kind"] for g in meta["open_gaps"]}
+        self.assertIn("symptom_without_failure_mode", kinds)
+
+    def test_export_metadata_clean_when_connected(self):
+        contract = _gappy_contract()
+        contract["nodes"]["CorrectiveAction"] = [{
+            "action_id": "ca_fix", "name": "Replace hinge", "description": "Replace.",
+            "instruction_text": "1. Replace the hinge.",
+        }]
+        contract["relations"] = [
+            {"name": "MAY_INDICATE", "from_id": "sym_orphan", "to_id": "fm_no_action"},
+            {"name": "RESOLVED_BY", "from_id": "fm_no_action", "to_id": "ca_fix"},
+            {"name": "INDICATES", "from_id": "err_e1", "to_id": "fm_no_action"},
+        ]
+        prepared = prepare_exported_ontology(contract)
+        meta = prepared["metadata"]
+        self.assertEqual(meta["open_gap_count"], 0)
+        self.assertFalse(meta["requires_human_review"])
 
 
 if __name__ == "__main__":

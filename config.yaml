@@ -155,6 +155,15 @@ reflective_loop:
 confidence:
   enabled: true
 
+  # Triage thresholds (Fase A2). A node scoring >= theta_high is auto-accepted
+  # (green); below it goes to the human-review queue (red). Calibration note:
+  # on the LG sample these values send ~13% of nodes to review, and they are the
+  # right ones (CorrectiveActions with no evidence at 0.25-0.40, borderline
+  # Symptom/FailureMode at ~0.75 with an incomplete chain), while auto-approved
+  # nodes sit at 0.80-0.98. Re-tune against an annotated "golden" manual set for
+  # a formal balanced calibration. Note: structural open gaps always reach the
+  # operator via the review queue regardless of score (review_queue_service),
+  # so a generous theta_high never lets an unresolved chain pass silently.
   theta_high: 0.80
   theta_low: 0.45
 
