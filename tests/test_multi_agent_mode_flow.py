@@ -174,6 +174,8 @@ def test_ontology_draft_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkey
         "suggested_relations",
         "confidence_report",
         "resolution_completion_report",
+        "review_queue",
+        "review_summary",
     }
 
 

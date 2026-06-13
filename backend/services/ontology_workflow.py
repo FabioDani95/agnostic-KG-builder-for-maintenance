@@ -543,6 +543,21 @@ def _finalize_run_level_quality(
     else:
         status = "ready"
 
+    # Build the unified review queue (the operator's "red zone").
+    from backend.services.review_queue_service import build_review_queue, summarize_queue
+
+    review_queue = build_review_queue(
+        ontology.model_dump(),
+        confidence_report=confidence_report,
+        schema_issues=schema_issues,
+    )
+    review_summary = summarize_queue(review_queue)
+    logger.info(
+        "[ontology] Review queue: %d item(s) for the operator (%s)",
+        review_summary["total"],
+        review_summary.get("by_severity", {}),
+    )
+
     updated = OntologyPipelineResponse(
         status=status,
         ontology=ontology,
@@ -556,6 +571,8 @@ def _finalize_run_level_quality(
         suggested_relations=suggested_relations,
         confidence_report=confidence_report,
         resolution_completion_report=resolution_report,
+        review_queue=review_queue,
+        review_summary=review_summary,
     )
     quality_stats = {"grounding": grounding_stats, "closure": closure_stats}
     return updated, usage_entries, resolution_report, quality_stats
