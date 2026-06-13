@@ -514,6 +514,8 @@ def _build_ontology_review_payload(result, store: dict[str, Any]) -> dict[str, A
         },
         "preview_relations": preview_relations,
         "confidence_counts": getattr(confidence_report, "counts", {}) if confidence_report else {},
+        "review_summary": getattr(result, "review_summary", {}) or {},
+        "review_queue": (getattr(result, "review_queue", []) or [])[:20],
         "human_required_fields": [
             field.model_dump() for field in (getattr(result, "human_required_fields", []) or [])
         ],
