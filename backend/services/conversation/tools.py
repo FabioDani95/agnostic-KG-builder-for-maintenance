@@ -1956,7 +1956,7 @@ async def _save_exported_graph(args, store, on_event):
 
 
 async def _get_progress(args, store, on_event):
-    from backend.graph.store import build_status_payload
+    from backend.graph.projections import build_status_payload
     payload = build_status_payload(store)
     gs = store.get("graph_state") or {}
     cut_plan = store.get("cut_plan") or {}

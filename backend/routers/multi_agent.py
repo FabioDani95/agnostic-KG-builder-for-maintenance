@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, Query
 
-from backend.graph.store import build_audit_payload, build_status_payload, find_store_by_run_id
+from backend.graph.projections import build_audit_payload, build_status_payload
+from backend.graph.store import find_store_by_run_id
 from backend.routers.upload import pdf_store
 
 router = APIRouter(prefix="/multi-agent", tags=["multi-agent"])
