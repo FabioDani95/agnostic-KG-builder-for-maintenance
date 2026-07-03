@@ -12,6 +12,7 @@ from openai import OpenAI
 
 from backend.app_config import get_graph_cocreator_config
 from backend.config import settings
+from backend.services.llm_gateway import get_client, is_mock_mode
 from backend.services.graph_editor_validation import (
     _node_id_key_from_schema,
     _node_index,
@@ -47,8 +48,13 @@ def _get_openai_client(api_key: str, timeout_seconds: float) -> OpenAI:
     key = (api_key or "", float(timeout_seconds))
     client = _openai_client_cache.get(key)
     if client is None:
-        client = OpenAI(api_key=api_key, timeout=Timeout(timeout_seconds, connect=5.0))
-        _openai_client_cache[key] = client
+        client = get_client(
+            api_key=api_key,
+            timeout=Timeout(timeout_seconds, connect=5.0),
+            client_factory=OpenAI,
+        )
+        if not is_mock_mode():
+            _openai_client_cache[key] = client
     return client
 
 

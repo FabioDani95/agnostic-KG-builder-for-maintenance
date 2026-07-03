@@ -4,7 +4,6 @@ from collections import OrderedDict
 from difflib import SequenceMatcher
 
 from httpx import Timeout
-from openai import OpenAI
 
 from backend.config import settings
 from backend.models import (
@@ -22,6 +21,7 @@ from backend.services.llm_guardrails import (
     llm_timeout_message,
     resolve_guardrails,
 )
+from backend.services.llm_gateway import get_client
 from backend.services.run_metrics import aggregate_usage, usage_from_response
 from backend.services.ontology_semantics import (
     build_semantic_key,
@@ -69,10 +69,7 @@ def call_openai_scoping(
         system_text=prompt_text,
     )
 
-    client = OpenAI(
-        api_key=settings.OPENAI_API_KEY,
-        timeout=Timeout(cfg["timeout_seconds"], connect=10.0),
-    )
+    client = get_client(timeout=Timeout(cfg["timeout_seconds"], connect=10.0))
     try:
         response = client.chat.completions.create(
             model=model_name or settings.MODEL_NAME,
@@ -130,10 +127,7 @@ def call_openai(
         system_text=system_prompt,
         user_text=user_message,
     )
-    client = OpenAI(
-        api_key=settings.OPENAI_API_KEY,
-        timeout=Timeout(cfg["timeout_seconds"], connect=10.0),
-    )
+    client = get_client(timeout=Timeout(cfg["timeout_seconds"], connect=10.0))
     try:
         response = client.chat.completions.create(
             model=model_name or settings.MODEL_NAME,

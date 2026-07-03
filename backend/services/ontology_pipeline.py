@@ -9,7 +9,6 @@ from typing import Any, TypedDict
 
 from httpx import Timeout
 from langgraph.graph import END, StateGraph
-from openai import OpenAI
 
 from backend.app_config import (
     get_confidence_config,
@@ -61,6 +60,7 @@ from backend.services.ontology_semantics import (
 )
 from backend.services.pdf_service import format_text_with_pages
 from backend.services.run_metrics import aggregate_usage, usage_from_response
+from backend.services.llm_gateway import get_client
 
 logger = logging.getLogger(__name__)
 
@@ -92,11 +92,8 @@ class PipelineState(TypedDict, total=False):
     llm_usage: list[dict[str, Any]]
 
 
-def _get_client(timeout_seconds: int = 300) -> OpenAI:
-    return OpenAI(
-        api_key=settings.OPENAI_API_KEY,
-        timeout=Timeout(timeout_seconds, connect=10.0),
-    )
+def _get_client(timeout_seconds: int = 300):
+    return get_client(timeout=Timeout(timeout_seconds, connect=10.0))
 
 
 def _ontology_cfg(max_output_tokens: int) -> dict[str, int]:

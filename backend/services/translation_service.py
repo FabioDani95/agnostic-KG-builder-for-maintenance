@@ -19,11 +19,11 @@ import logging
 from copy import deepcopy
 from typing import Any
 
-from openai import OpenAI
 from httpx import Timeout
 
 from backend.config import settings
 from backend.services.language_utils import language_label, normalize_language_code
+from backend.services.llm_gateway import get_client
 from backend.services.run_metrics import usage_from_response
 
 logger = logging.getLogger(__name__)
@@ -171,10 +171,7 @@ def translate_extraction(
     system_prompt = _SYSTEM_PROMPT.format(target_language_label=target_label)
     user_payload = json.dumps(flat_all, ensure_ascii=False)
 
-    client = OpenAI(
-        api_key=settings.OPENAI_API_KEY,
-        timeout=Timeout(120.0, connect=10.0),
-    )
+    client = get_client(timeout=Timeout(120.0, connect=10.0))
     model = model_name or settings.MODEL_NAME
     logger.info(
         "[translation] Translating %d fields to %s using %s",

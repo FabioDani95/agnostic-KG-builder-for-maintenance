@@ -1550,18 +1550,14 @@ async def _get_next_triplet(args, store, on_event):
 async def _add_node_manual(args, store, on_event):
     import json
     from backend.app_config import get_chat_config
-    from backend.config import settings
-    from openai import AsyncOpenAI
     from httpx import Timeout
+    from backend.services.llm_gateway import get_async_client
 
     node_type = args["node_type"]
     raw_text = args["raw_text"]
     cfg = get_chat_config()
 
-    client = AsyncOpenAI(
-        api_key=settings.OPENAI_API_KEY,
-        timeout=Timeout(20.0),
-    )
+    client = get_async_client(timeout=Timeout(20.0))
     prompt = (
         f"Normalize an ontology node for a maintenance knowledge graph.\n"
         f"Node type: {node_type}\n"

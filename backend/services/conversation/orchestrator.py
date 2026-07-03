@@ -16,13 +16,12 @@ import re
 from typing import Any
 
 from httpx import Timeout
-from openai import AsyncOpenAI
 
 from backend.app_config import get_chat_config
-from backend.config import settings
 from backend.graph.state import GraphPhase
 from backend.graph.store import seed_conversation_state
 from backend.services.conversation import events as evt_bus
+from backend.services.llm_gateway import get_async_client
 from backend.services.conversation.gate import check as gate_check
 from backend.services.conversation.tools import (
     TOOL_SCHEMAS,
@@ -1334,10 +1333,7 @@ async def handle_message(
     conversation = seed_conversation_state(store)
     cfg = get_chat_config()
 
-    client = AsyncOpenAI(
-        api_key=settings.OPENAI_API_KEY,
-        timeout=Timeout(float(cfg.get("timeout", 30)), connect=10.0),
-    )
+    client = get_async_client(timeout=Timeout(float(cfg.get("timeout", 30)), connect=10.0))
 
     on_event = evt_bus.make_on_event(pdf_id)
     gs = store.get("graph_state") or {}

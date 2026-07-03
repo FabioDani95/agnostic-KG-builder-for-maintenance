@@ -13,6 +13,7 @@ from backend.app_config import get_resolution_completion_config
 from backend.config import settings
 from backend.models import OntologyEvidence, OntologyInstance, OntologyRelationInstance
 from backend.services.llm_guardrails import enforce_llm_limits, llm_timeout_message
+from backend.services.llm_gateway import get_client
 from backend.services.ontology_semantics import build_semantic_key, semantic_tokens
 from backend.services.run_metrics import usage_from_response
 
@@ -33,10 +34,7 @@ _ID_SAFE_RE = re.compile(r"[^a-z0-9_]+")
 
 
 def _get_client(timeout_seconds: int) -> OpenAI:
-    return OpenAI(
-        api_key=settings.OPENAI_API_KEY,
-        timeout=Timeout(timeout_seconds, connect=10.0),
-    )
+    return get_client(timeout=Timeout(timeout_seconds, connect=10.0), client_factory=OpenAI)
 
 
 def _node_id(node_type: str, item: dict[str, Any]) -> str:

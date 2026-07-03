@@ -20,6 +20,7 @@ from backend.services.ontology_semantics import (
     semantic_tokens,
     semantically_equivalent,
 )
+from backend.services.llm_gateway import get_client
 from backend.services.run_metrics import usage_from_response
 
 logger = logging.getLogger(__name__)
@@ -289,10 +290,7 @@ def _rewrite_fields_with_llm(
     timeout_seconds: int,
     max_output_tokens: int,
 ) -> tuple[dict[str, str], dict[str, Any]]:
-    client = OpenAI(
-        api_key=settings.OPENAI_API_KEY,
-        timeout=Timeout(float(timeout_seconds), connect=10.0),
-    )
+    client = get_client(timeout=Timeout(float(timeout_seconds), connect=10.0), client_factory=OpenAI)
     model = model_name or settings.MODEL_NAME
     target_label = language_label(target_language)
     user_payload = json.dumps(flat_fields, ensure_ascii=False)
