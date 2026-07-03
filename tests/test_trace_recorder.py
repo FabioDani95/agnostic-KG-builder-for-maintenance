@@ -75,6 +75,50 @@ def test_trace_recorder_writes_phase_metrics_and_supervisor_steps(tmp_path, monk
     assert trace[2]["human_handoff"] is True
 
 
+def test_trace_recorder_summarizes_metric_and_supervisor_text(tmp_path, monkeypatch):
+    monkeypatch.setenv("KG_RUNS_DIR", str(tmp_path))
+    clear_registry()
+    sentinel = "UNIQUE_LONG_MANUAL_SENTINEL_6f2cf60b58cf4a7599f3d409d0a3d4b6_" + "X" * 120
+    store = {
+        "pdf_id": "pdf-trace-privacy",
+        "filename": "trace.pdf",
+        "pages": [{"page_number": 1, "text": sentinel}],
+        "page_count": 1,
+        "selected_models": {"scoping": "mock", "ontology_draft": "mock", "extraction": "mock"},
+    }
+    seed_graph_state(store, "pdf-trace-privacy")
+    run_dir = RunStore().create_run(store)
+
+    record_stage_metrics(store, "scoping", {
+        "stage": "scoping",
+        "duration_seconds": 1.25,
+        "llm_calls": 1,
+        "total_tokens": 12,
+        "estimated_cost_usd": 0.001,
+        "operations": ["scoping"],
+        "details": {"manual_excerpt": sentinel, "human_required_count": 1},
+    })
+    append_supervisor_log(
+        store,
+        {
+            "timestamp": "2026-07-03T12:00:00Z",
+            "phase": GraphPhase.SCOPING.value,
+            "decision": "awaiting_operator",
+            "next_step": "cut_plan_review",
+            "manual_excerpt": sentinel,
+        },
+        run_status="awaiting_operator",
+        next_step="cut_plan_review",
+    )
+
+    raw_trace = (run_dir / "trace.jsonl").read_text(encoding="utf-8")
+    trace = _jsonl(run_dir / "trace.jsonl")
+    assert sentinel not in raw_trace
+    assert trace[0]["output_summary"]["details"]["manual_excerpt"]["type"] == "str"
+    assert trace[1]["output_summary"]["manual_excerpt"]["type"] == "str"
+    assert trace[1]["human_handoff"] is True
+
+
 def test_multi_agent_audit_reads_persisted_trace_when_run_is_not_in_memory(tmp_path, monkeypatch):
     monkeypatch.setenv("KG_RUNS_DIR", str(tmp_path))
     clear_registry()

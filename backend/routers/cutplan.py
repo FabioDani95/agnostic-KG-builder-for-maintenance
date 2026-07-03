@@ -1,4 +1,9 @@
-"""Endpoints for PDF cut-plan: propose and approve page selection."""
+"""Deprecated step-wise cut-plan endpoints.
+
+These routes are kept only for legacy/manual compatibility and are mounted
+when KG_ENABLE_LEGACY_ROUTES=1. Chat-first multi-agent services are the active
+runtime path.
+"""
 
 from __future__ import annotations
 
@@ -13,7 +18,7 @@ from backend.services.scoping_workflow import (
     approve_cut_plan_workflow,
 )
 
-router = APIRouter()
+router = APIRouter(tags=["legacy-step-wise"], deprecated=True)
 
 
 @router.post("/cut-plan", response_model=CutPlan)

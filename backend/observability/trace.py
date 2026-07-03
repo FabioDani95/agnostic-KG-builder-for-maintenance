@@ -57,6 +57,43 @@ def compact_digest(value: Any, *, preview: int = 3) -> dict[str, Any]:
     }
 
 
+def compact_summary(value: Any, *, preview: int = 3) -> Any:
+    """Return a bounded summary without verbatim free text."""
+    if isinstance(value, dict):
+        keys = sorted(str(key) for key in value.keys())
+        summary: dict[str, Any] = {
+            "type": "dict",
+            "count": len(keys),
+            "sha256": _stable_digest(value),
+        }
+        for key in keys[:preview]:
+            summary[key] = compact_summary(value.get(key), preview=preview)
+        if len(keys) > preview:
+            summary["omitted_keys"] = keys[preview:]
+        return summary
+    if isinstance(value, list):
+        return {
+            "type": "list",
+            "count": len(value),
+            "sha256": _stable_digest(value),
+            "preview": [compact_summary(item, preview=preview) for item in value[:preview]],
+        }
+    if isinstance(value, tuple):
+        return compact_summary(list(value), preview=preview)
+    if isinstance(value, str):
+        return {
+            "type": "str",
+            "length": len(value),
+            "sha256": _stable_digest(value),
+        }
+    if isinstance(value, (int, float, bool)) or value is None:
+        return value
+    return {
+        "type": type(value).__name__,
+        "sha256": _stable_digest(value),
+    }
+
+
 def _confidence_from_details(details: dict[str, Any]) -> float | None:
     for key in ("confidence", "average_grounding_score", "coverage_score", "score"):
         if key not in details:
@@ -92,7 +129,7 @@ def step_from_phase_entry(entry: dict[str, Any], *, state: dict[str, Any] | None
             "selected_pages": (state or {}).get("selected_pages") if state else None,
             "current_phase": (state or {}).get("current_phase") if state else entry.get("phase"),
         }),
-        output_summary=details,
+        output_summary=compact_summary(details),
         decision=str(entry.get("decision") or ""),
         confidence=_confidence_from_details(details),
         human_handoff=_is_handoff(details, str(entry.get("decision") or "")),
@@ -121,7 +158,7 @@ def trace_from_state(state: dict[str, Any]) -> list[dict[str, Any]]:
                 "current_phase": state.get("current_phase"),
                 "phase_history_count": len(state.get("phase_history") or []),
             }),
-            output_summary=deepcopy(entry),
+            output_summary=compact_summary(entry),
             decision=str(entry.get("condition_met") or entry.get("decision") or entry.get("next_step") or ""),
             human_handoff=str(entry.get("next_step") or "").endswith("_review")
             or str(entry.get("run_status") or "") == "awaiting_operator",

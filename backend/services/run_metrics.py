@@ -4,7 +4,7 @@ from copy import deepcopy
 from time import perf_counter
 from typing import Any
 
-from backend.observability.trace import compact_digest
+from backend.observability.trace import compact_digest, compact_summary
 from backend.runstore import append_trace_step
 
 
@@ -207,8 +207,8 @@ def record_stage_metrics(store: dict[str, Any], stage: str, summary: dict[str, A
             "output_summary": {
                 "duration_seconds": summary.get("duration_seconds"),
                 "llm_calls": summary.get("llm_calls", 0),
-                "operations": summary.get("operations", []),
-                "details": details,
+                "operations": compact_summary(summary.get("operations", [])),
+                "details": compact_summary(details),
             },
             "decision": "recorded stage metrics",
             "human_handoff": int(details.get("human_required_count", 0) or details.get("needs_human", 0) or 0) > 0,

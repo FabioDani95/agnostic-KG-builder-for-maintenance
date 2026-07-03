@@ -1,3 +1,10 @@
+"""Deprecated step-wise ontology endpoints.
+
+These routes are kept only for legacy/manual compatibility and are mounted
+when KG_ENABLE_LEGACY_ROUTES=1. Chat-first multi-agent services are the active
+runtime path.
+"""
+
 import json
 
 from fastapi import APIRouter, HTTPException
@@ -20,7 +27,7 @@ from backend.services.ontology_pipeline import (
 )
 from backend.services.pipeline_actions import apply_ontology_suggestions
 
-router = APIRouter(prefix="/ontology", tags=["ontology"])
+router = APIRouter(prefix="/ontology", tags=["legacy-step-wise"], deprecated=True)
 
 
 @router.post("/draft", response_model=OntologyPipelineResponse)

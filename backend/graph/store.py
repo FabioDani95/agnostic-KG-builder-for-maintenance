@@ -5,7 +5,7 @@ from typing import Any
 
 from backend.graph.config_snapshot import build_config_snapshot, default_selected_models
 from backend.graph.state import GraphPhase, GraphState, create_initial_graph_state, utc_now_iso
-from backend.observability.trace import compact_digest, step_from_phase_entry
+from backend.observability.trace import compact_digest, compact_summary, step_from_phase_entry
 from backend.runstore import append_trace_step, snapshot_store
 from backend.schemas.run_state import RunState
 from backend.services.run_metrics import project_agent_token_ledger
@@ -452,7 +452,7 @@ def append_supervisor_log(
             "phase_history_count": len(state.get("phase_history") or []),
             "run_status": state.get("run_status"),
         }),
-        "output_summary": deepcopy(entry),
+        "output_summary": compact_summary(entry),
         "decision": str(entry.get("condition_met") or entry.get("decision") or entry.get("next_step") or ""),
         "human_handoff": str(run_status or state.get("run_status") or "") == "awaiting_operator",
     })

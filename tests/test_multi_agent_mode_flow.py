@@ -1,10 +1,23 @@
+import asyncio
+
 from fastapi.testclient import TestClient
 
 from backend import app_config
+from backend.agents.ontology_draft_agent import run_ontology_draft_agent
+from backend.agents.scoping_agent import run_scoping_agent
 from backend.main import app
-from backend.routers.upload import pdf_store
-from backend.services.run_metrics import ensure_run_metrics
 from backend.graph.store import seed_graph_state
+from backend.models import (
+    CutPlan,
+    CutPlanRequest,
+    ExtractRequest,
+    ExtractionResult,
+    OntologyDraftRequest,
+    OntologyPipelineResponse,
+)
+from backend.routers.upload import pdf_store
+from backend.services.extraction_pipeline import run_extraction_pipeline
+from backend.services.run_metrics import ensure_run_metrics
 
 
 client = TestClient(app)
@@ -76,13 +89,13 @@ def teardown_function():
     app_config._runtime_overrides.clear()
 
 
-def test_cut_plan_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkeypatch):
-    pdf_store["pdf-cut"] = _sample_store("pdf-cut")
-    called = {"wrapper": False}
+def test_scoping_agent_uses_workflow_and_keeps_cut_plan_shape(monkeypatch):
+    store = _sample_store("pdf-cut")
+    called = {"workflow": False}
 
-    def fake_agent(store, req):
-        called["wrapper"] = True
-        return {
+    def fake_workflow(store, req):
+        called["workflow"] = True
+        return CutPlan.model_validate({
             "pdf_id": req.pdf_id,
             "total_pages": 2,
             "sections": [],
@@ -91,16 +104,16 @@ def test_cut_plan_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkeypatch)
             "toc": None,
             "skipped": False,
             "product_info": None,
-        }
+        })
 
-    monkeypatch.setattr("backend.routers.cutplan.run_scoping_agent", fake_agent)
+    monkeypatch.setattr("backend.agents.scoping_agent.create_cut_plan_workflow", fake_workflow)
 
-    response = client.post("/cut-plan", json={"pdf_id": "pdf-cut", "model_name": "gpt-5.4-nano", "page_offset": 0})
+    result = run_scoping_agent(store, CutPlanRequest(pdf_id="pdf-cut", model_name="gpt-5.4-nano", page_offset=0))
+    payload = result.model_dump()
 
-    assert response.status_code == 200
-    assert called["wrapper"] is True
-    assert response.json()["pages_to_keep"] == [1, 2]
-    assert set(response.json().keys()) == {
+    assert called["workflow"] is True
+    assert payload["pages_to_keep"] == [1, 2]
+    assert set(payload.keys()) == {
         "pdf_id",
         "total_pages",
         "sections",
@@ -110,15 +123,16 @@ def test_cut_plan_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkeypatch)
         "skipped",
         "product_info",
     }
+    assert store["graph_state"]["current_phase"] == "scoping"
 
 
-def test_ontology_draft_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkeypatch):
-    pdf_store["pdf-ontology"] = _sample_store("pdf-ontology")
-    called = {"wrapper": False}
+def test_ontology_draft_agent_uses_workflow_and_keeps_shape(monkeypatch):
+    store = _sample_store("pdf-ontology")
+    called = {"workflow": False}
 
-    async def fake_agent(store, req):
-        called["wrapper"] = True
-        return {
+    async def fake_workflow(store, req):
+        called["workflow"] = True
+        return OntologyPipelineResponse.model_validate({
             "status": "ready",
             "ontology": {
                 "ontology_name": "DiagnosticOntology",
@@ -144,22 +158,25 @@ def test_ontology_draft_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkey
             "retry_count": 0,
             "graph_issues": [],
             "suggested_relations": [],
-        }
+        })
 
-    monkeypatch.setattr("backend.routers.ontology.run_ontology_draft_agent", fake_agent)
+    monkeypatch.setattr("backend.agents.ontology_draft_agent.draft_ontology_workflow", fake_workflow)
 
-    response = client.post("/ontology/draft", json={
-        "pdf_id": "pdf-ontology",
-        "source_type": "Service manual",
-        "source_title": "Mock Robot",
-        "model_name": "gpt-5.4",
-        "target_language": "en",
-    })
+    result = asyncio.run(run_ontology_draft_agent(
+        store,
+        OntologyDraftRequest(
+            pdf_id="pdf-ontology",
+            source_type="Service manual",
+            source_title="Mock Robot",
+            model_name="gpt-5.4",
+            target_language="en",
+        ),
+    ))
+    payload = result.model_dump()
 
-    assert response.status_code == 200
-    assert called["wrapper"] is True
-    assert response.json()["status"] == "ready"
-    assert set(response.json().keys()) == {
+    assert called["workflow"] is True
+    assert payload["status"] == "ready"
+    assert set(payload.keys()) == {
         "status",
         "ontology",
         "semantic_issues",
@@ -175,54 +192,58 @@ def test_ontology_draft_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkey
         "review_queue",
         "review_summary",
     }
+    assert store["graph_state"]["current_phase"] == "ontology_draft"
 
 
-def test_extract_tables_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkeypatch):
-    pdf_store["pdf-extract"] = _sample_store("pdf-extract")
-    called = {"wrapper": False}
+def test_extraction_pipeline_uses_extraction_agent_and_keeps_shape(monkeypatch):
+    store = _sample_store("pdf-extract")
+    called = {"agent": False}
     validation = {"called": False}
     advanced = {"coverage": False, "grounding": False, "conflict": False, "refiner": False}
 
     def fake_agent(store, req):
-        called["wrapper"] = True
-        return {
+        called["agent"] = True
+        return ExtractionResult.model_validate({
             "triplets": _sample_triplet_payload(),
             "raw_symptom_table": "",
             "raw_failure_mode_table": "",
             "raw_corrective_action_table": "",
-        }
+        })
 
-    monkeypatch.setattr("backend.routers.extract.run_extraction_agent", fake_agent)
+    monkeypatch.setattr("backend.services.extraction_pipeline.run_extraction_agent", fake_agent)
     monkeypatch.setattr(
-        "backend.routers.extract.run_validation_agent",
+        "backend.services.extraction_pipeline.run_validation_agent",
         lambda store: validation.update({"called": True}) or ([], {"total_entities": 0}),
     )
-    monkeypatch.setattr("backend.routers.extract.run_coverage_agent", lambda store: advanced.update({"coverage": True}) or {})
-    monkeypatch.setattr("backend.routers.extract.run_grounding_agent", lambda store: advanced.update({"grounding": True}) or ([], []))
+    monkeypatch.setattr("backend.services.extraction_pipeline.run_coverage_agent", lambda store: advanced.update({"coverage": True}) or {})
+    monkeypatch.setattr("backend.services.extraction_pipeline.run_grounding_agent", lambda store: advanced.update({"grounding": True}) or ([], []))
     monkeypatch.setattr(
-        "backend.routers.extract.run_conflict_resolution_agent",
+        "backend.services.extraction_pipeline.run_conflict_resolution_agent",
         lambda store: advanced.update({"conflict": True}) or [],
     )
     monkeypatch.setattr(
-        "backend.routers.extract.run_refiner_agent",
+        "backend.services.extraction_pipeline.run_refiner_agent",
         lambda store: advanced.update({"refiner": True}) or ([], []),
     )
 
-    response = client.post("/extract-tables", json={
-        "pdf_id": "pdf-extract",
-        "source_type": "Service manual",
-        "source_title": "Mock Robot",
-        "model_name": "gpt-5.4",
-        "pages_to_keep": [1, 2],
-        "target_language": "en",
-    })
+    result = run_extraction_pipeline(
+        store,
+        ExtractRequest(
+            pdf_id="pdf-extract",
+            source_type="Service manual",
+            source_title="Mock Robot",
+            model_name="gpt-5.4",
+            pages_to_keep=[1, 2],
+            target_language="en",
+        ),
+    )
+    payload = result.model_dump()
 
-    assert response.status_code == 200
-    assert called["wrapper"] is True
+    assert called["agent"] is True
     assert validation["called"] is True
     assert advanced == {"coverage": False, "grounding": False, "conflict": False, "refiner": False}
-    assert len(response.json()["triplets"]) == 1
-    assert set(response.json().keys()) == {
+    assert len(payload["triplets"]) == 1
+    assert set(payload.keys()) == {
         "triplets",
         "raw_symptom_table",
         "raw_failure_mode_table",
@@ -230,19 +251,19 @@ def test_extract_tables_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkey
     }
 
 
-def test_extract_tables_runs_phase3_agents_when_enabled_and_preserves_shape(monkeypatch):
-    pdf_store["pdf-phase3"] = _sample_store("pdf-phase3")
+def test_extraction_pipeline_runs_phase3_agents_when_enabled_and_preserves_shape(monkeypatch):
+    store = _sample_store("pdf-phase3")
     call_order: list[str] = []
 
     def fake_extraction(store, req):
         store["graph_state"]["selected_pages"] = [1, 2]
         store["graph_state"]["cleaned_triplets"] = _sample_triplet_payload()
-        return {
+        return ExtractionResult.model_validate({
             "triplets": _sample_triplet_payload(),
             "raw_symptom_table": "",
             "raw_failure_mode_table": "",
             "raw_corrective_action_table": "",
-        }
+        })
 
     def fake_validation(store):
         call_order.append("validation")
@@ -303,14 +324,14 @@ def test_extract_tables_runs_phase3_agents_when_enabled_and_preserves_shape(monk
             "refinement_log": store["graph_state"]["refinement_log"],
         }
 
-    monkeypatch.setattr("backend.routers.extract.run_extraction_agent", fake_extraction)
-    monkeypatch.setattr("backend.routers.extract.run_validation_agent", fake_validation)
-    monkeypatch.setattr("backend.routers.extract.run_coverage_agent", fake_coverage)
-    monkeypatch.setattr("backend.routers.extract.run_grounding_agent", fake_grounding)
-    monkeypatch.setattr("backend.routers.extract.run_conflict_resolution_agent", fake_conflict)
-    monkeypatch.setattr("backend.routers.extract.run_refiner_agent", fake_refiner)
+    monkeypatch.setattr("backend.services.extraction_pipeline.run_extraction_agent", fake_extraction)
+    monkeypatch.setattr("backend.services.extraction_pipeline.run_validation_agent", fake_validation)
+    monkeypatch.setattr("backend.services.extraction_pipeline.run_coverage_agent", fake_coverage)
+    monkeypatch.setattr("backend.services.extraction_pipeline.run_grounding_agent", fake_grounding)
+    monkeypatch.setattr("backend.services.extraction_pipeline.run_conflict_resolution_agent", fake_conflict)
+    monkeypatch.setattr("backend.services.extraction_pipeline.run_refiner_agent", fake_refiner)
     monkeypatch.setattr(
-        "backend.routers.extract.get_agents_config",
+        "backend.services.extraction_pipeline.get_agents_config",
         lambda: {
             "validation": {"enabled": True},
             "coverage": {"enabled": True},
@@ -320,16 +341,19 @@ def test_extract_tables_runs_phase3_agents_when_enabled_and_preserves_shape(monk
         },
     )
 
-    response = client.post("/extract-tables", json={
-        "pdf_id": "pdf-phase3",
-        "source_type": "Service manual",
-        "source_title": "Mock Robot",
-        "model_name": "gpt-5.4",
-        "pages_to_keep": [1, 2],
-        "target_language": "en",
-    })
+    result = run_extraction_pipeline(
+        store,
+        ExtractRequest(
+            pdf_id="pdf-phase3",
+            source_type="Service manual",
+            source_title="Mock Robot",
+            model_name="gpt-5.4",
+            pages_to_keep=[1, 2],
+            target_language="en",
+        ),
+    )
+    payload = result.model_dump()
 
-    assert response.status_code == 200
     assert call_order == [
         "validation",
         "coverage",
@@ -339,8 +363,8 @@ def test_extract_tables_runs_phase3_agents_when_enabled_and_preserves_shape(monk
         "grounding",
         "conflict",
     ]
-    assert response.json()["triplets"][0]["corrective_actions"][0]["instruction_text"] == "Refined action text."
-    assert set(response.json().keys()) == {
+    assert payload["triplets"][0]["corrective_actions"][0]["instruction_text"] == "Refined action text."
+    assert set(payload.keys()) == {
         "triplets",
         "raw_symptom_table",
         "raw_failure_mode_table",
