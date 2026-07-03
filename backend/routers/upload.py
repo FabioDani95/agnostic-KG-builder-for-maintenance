@@ -1,3 +1,4 @@
+import os
 import shutil
 import uuid
 from pathlib import Path
@@ -17,8 +18,17 @@ from backend.services.run_metrics import ensure_run_metrics
 
 router = APIRouter()
 
-DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
-MANUALS_DIR = Path(__file__).resolve().parent.parent.parent / "manuals"
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+DATA_DIR = ROOT_DIR / "data"
+
+
+def _manuals_dir() -> Path:
+    """Manuals directory, overridable via KG_MANUALS_DIR (used by e2e tests)."""
+    override = str(os.environ.get("KG_MANUALS_DIR", "") or "").strip()
+    if not override:
+        return ROOT_DIR / "manuals"
+    path = Path(override)
+    return path if path.is_absolute() else ROOT_DIR / path
 
 pdf_store: dict[str, dict] = {}
 
@@ -26,10 +36,11 @@ pdf_store: dict[str, dict] = {}
 @router.get("/api/manuals")
 async def list_manuals():
     """List available PDF manuals in the manuals/ directory."""
-    if not MANUALS_DIR.exists():
+    manuals_dir = _manuals_dir()
+    if not manuals_dir.exists():
         return {"manuals": []}
     manuals = []
-    for f in sorted(MANUALS_DIR.iterdir()):
+    for f in sorted(manuals_dir.iterdir()):
         if f.suffix.lower() == ".pdf":
             manuals.append({
                 "filename": f.name,
@@ -41,7 +52,7 @@ async def list_manuals():
 @router.post("/api/load-manual", response_model=UploadResponse)
 async def load_manual(req: LoadManualRequest):
     """Load a PDF from the manuals/ directory into memory for processing."""
-    manual_path = MANUALS_DIR / req.filename
+    manual_path = _manuals_dir() / req.filename
     if not manual_path.exists() or not manual_path.suffix.lower() == ".pdf":
         raise HTTPException(status_code=404, detail=f"Manual not found: {req.filename}")
 

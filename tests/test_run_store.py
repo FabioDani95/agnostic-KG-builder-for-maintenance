@@ -60,3 +60,25 @@ def test_run_store_writes_manifest_events_snapshots_and_export(tmp_path, monkeyp
     assert (run_dir / "export" / "ontology.json").exists()
     assert (run_dir / "export" / "metrics.json").exists()
     assert (run_dir / "export" / "conversation.json").exists()
+
+
+def test_append_survives_restart_by_rebuilding_registry_from_manifest(tmp_path, monkeypatch):
+    monkeypatch.setenv("KG_RUNS_DIR", str(tmp_path))
+    clear_registry()
+    store = {
+        "pdf_id": "pdf-restart",
+        "run_id": "run-restart",
+        "filename": "restart.pdf",
+        "pages": [{"page_number": 1, "text": "Troubleshooting"}],
+        "graph_state": {"pdf_id": "pdf-restart", "run_id": "run-restart", "current_phase": "loaded"},
+    }
+    run_dir = RunStore().create_run(store)
+
+    # Simulate a process restart: the in-memory pdf→run registry is gone.
+    clear_registry()
+
+    append_chat_event("pdf-restart", {"type": "progress", "phase": "scoping", "message": "after restart"})
+    events = _jsonl(run_dir / "events.jsonl")
+
+    assert [event["kind"] for event in events] == ["chat_event"]
+    assert events[0]["event"]["message"] == "after restart"

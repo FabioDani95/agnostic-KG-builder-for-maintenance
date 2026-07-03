@@ -86,5 +86,3 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
-
-pdf_store: dict[str, dict] = {}

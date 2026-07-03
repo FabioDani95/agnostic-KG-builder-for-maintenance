@@ -54,7 +54,29 @@ class RunStore:
         return self.root_dir / run_id
 
     def run_id_for_pdf(self, pdf_id: str) -> str | None:
-        return _pdf_to_run_id.get(pdf_id)
+        run_id = _pdf_to_run_id.get(pdf_id)
+        if run_id:
+            return run_id
+        return self._rebuild_run_id(pdf_id)
+
+    def _rebuild_run_id(self, pdf_id: str) -> str | None:
+        """Recover the pdf→run mapping from persisted manifests.
+
+        The in-memory registry dies with the process; without this, appends
+        for a run created before a restart would silently become no-ops.
+        """
+        if not pdf_id or not self.root_dir.exists():
+            return None
+        for manifest_path in self.root_dir.glob("*/manifest.json"):
+            try:
+                manifest = _read_json(manifest_path, {})
+            except Exception:
+                continue
+            if str(manifest.get("pdf_id") or "") == pdf_id:
+                run_id = str(manifest.get("run_id") or manifest_path.parent.name)
+                _pdf_to_run_id[pdf_id] = run_id
+                return run_id
+        return None
 
     def load_manifest(self, run_id: str) -> dict[str, Any]:
         return _read_json(self.run_dir(run_id) / "manifest.json", {})
@@ -124,7 +146,7 @@ class RunStore:
         return run_dir
 
     def append_event(self, pdf_id: str, kind: str, payload: dict[str, Any]) -> None:
-        run_id = _pdf_to_run_id.get(pdf_id)
+        run_id = self.run_id_for_pdf(pdf_id)
         if not run_id:
             return
         event = {
@@ -138,7 +160,7 @@ class RunStore:
             handle.write(json.dumps(event, ensure_ascii=False, default=_json_default) + "\n")
 
     def append_trace(self, pdf_id: str, step: dict[str, Any]) -> None:
-        run_id = _pdf_to_run_id.get(pdf_id)
+        run_id = self.run_id_for_pdf(pdf_id)
         if not run_id:
             return
         from backend.observability.trace import TraceRecorder
@@ -148,7 +170,7 @@ class RunStore:
     def snapshot(self, store: dict[str, Any]) -> None:
         graph_state = store.get("graph_state") or {}
         pdf_id = str(store.get("pdf_id") or graph_state.get("pdf_id") or "").strip()
-        run_id = _pdf_to_run_id.get(pdf_id)
+        run_id = self.run_id_for_pdf(pdf_id)
         if not run_id:
             return
         phase = str(graph_state.get("current_phase") or "unknown").strip() or "unknown"
@@ -157,7 +179,7 @@ class RunStore:
     def copy_export_artifacts(self, store: dict[str, Any]) -> None:
         graph_state = store.get("graph_state") or {}
         pdf_id = str(store.get("pdf_id") or graph_state.get("pdf_id") or "").strip()
-        run_id = _pdf_to_run_id.get(pdf_id)
+        run_id = self.run_id_for_pdf(pdf_id)
         if not run_id:
             return
         export_dir = self.run_dir(run_id) / "export"
