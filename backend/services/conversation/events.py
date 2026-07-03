@@ -47,6 +47,16 @@ def register(pdf_id: str) -> None:
         _locks[pdf_id] = asyncio.Lock()
 
 
+def is_registered(pdf_id: str) -> bool:
+    """Return True when this run has an event queue."""
+    return pdf_id in _queues
+
+
+def ensure_registered(pdf_id: str) -> None:
+    """Public idempotent registration API for routers and services."""
+    register(pdf_id)
+
+
 def unregister(pdf_id: str) -> None:
     """Tear down queue and lock after a run is fully consumed."""
     _queues.pop(pdf_id, None)
