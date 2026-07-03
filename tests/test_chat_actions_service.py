@@ -73,3 +73,34 @@ def test_run_action_refuses_action_when_gate_blocks_it():
     assert outcome.task is None
     assert events[0]["type"] == "error"
     assert events[0]["client_action_id"] == "client-2"
+
+
+def test_run_action_emits_error_and_done_when_dispatch_raises():
+    store = {
+        "pdf_id": "pdf-actions",
+        "pages": [{"page_number": 1}],
+        "graph_state": {"current_phase": GraphPhase.SCOPING.value},
+    }
+    events: list[dict] = []
+
+    async def _broken_dispatch(tool_name, args, store, on_event=None):
+        raise RuntimeError("boom")
+
+    async def run():
+        with patch("backend.services.conversation.tools.dispatch", side_effect=_broken_dispatch):
+            outcome = run_action(
+                "pdf-actions",
+                store,
+                HumanAction(action="approve_cut_plan", payload={}, client_action_id="client-err"),
+                events.append,
+            )
+            assert outcome.status == "ok"
+            await outcome.task
+
+    asyncio.run(run())
+
+    # The stream must always terminate: error first, then the done marker,
+    # otherwise the frontend spinner would hang forever.
+    types = [event["type"] for event in events]
+    assert types == ["progress", "error", "done"]
+    assert "boom" in events[1]["message"]

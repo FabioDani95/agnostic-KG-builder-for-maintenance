@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from dataclasses import dataclass
 from typing import Any, Callable
 
@@ -12,6 +13,8 @@ from backend.schemas.widgets import validate_widget_payload
 from backend.runstore import append_human_action, append_trace_step
 from backend.services.conversation import events as evt_bus
 from backend.services.conversation.gate import check as gate_check
+
+logger = logging.getLogger(__name__)
 
 OnEvent = Callable[[dict[str, Any]], None]
 
@@ -23,14 +26,17 @@ class ActionOutcome:
     task: asyncio.Task | None = None
 
 
-_CHAIN_ON_SUCCESS: dict[str, str] = {
+# Single source of truth for action chaining, shared with the orchestrator's
+# deterministic-action path — the same action must chain the same way whether
+# it arrives from a widget or from a chat message.
+CHAIN_ON_SUCCESS: dict[str, str] = {
     "approve_cut_plan": "draft_ontology",
     "run_extraction": "get_next_triplet",
     "approve_triplet": "get_next_triplet",
     "skip_triplet": "get_next_triplet",
 }
 
-_CHAIN_PREAMBLE: dict[str, str] = {
+CHAIN_PREAMBLE: dict[str, str] = {
     "approve_cut_plan": "Section selection confirmed. Starting ontology draft now…",
     "run_extraction": "",
     "approve_triplet": "",
@@ -105,19 +111,46 @@ async def _run_accepted_action(
 ) -> None:
     from backend.services.conversation.tools import dispatch
 
-    on_event(evt_bus.progress_event(action, f"Running {action.replace('_', ' ')}…"))
-    result = await dispatch(action, payload, store, on_event)
-    _emit_result(result, on_event)
+    try:
+        on_event(evt_bus.progress_event(action, f"Running {action.replace('_', ' ')}…"))
+        result = await dispatch(action, payload, store, on_event)
+        _emit_result(result, on_event)
 
-    next_tool = _CHAIN_ON_SUCCESS.get(action)
-    if next_tool and result.get("status") == "ok":
-        preamble = _CHAIN_PREAMBLE.get(action, "")
-        if preamble:
-            on_event(evt_bus.chat_delta_event(preamble))
-        next_result = await dispatch(next_tool, {}, store, on_event)
-        _emit_result(next_result, on_event, include_triplet_review_start=True)
+        next_tool = CHAIN_ON_SUCCESS.get(action)
+        if next_tool and result.get("status") == "ok":
+            preamble = CHAIN_PREAMBLE.get(action, "")
+            if preamble:
+                on_event(evt_bus.chat_delta_event(preamble))
+            next_result = await dispatch(next_tool, {}, store, on_event)
+            _emit_result(next_result, on_event, include_triplet_review_start=True)
+    except Exception as exc:
+        # The task runs detached from the request: without this the client
+        # would never receive a terminal event and the spinner would hang.
+        logger.exception("Chat action '%s' failed for %s", action, pdf_id)
+        on_event(evt_bus.error_event(f"Action '{action}' failed: {exc}"))
+    finally:
+        on_event(evt_bus.done_event())
 
-    on_event(evt_bus.done_event())
+
+def emit_widget_result(
+    result: dict[str, Any],
+    on_event: OnEvent,
+    *,
+    include_triplet_review_start: bool = False,
+) -> str | None:
+    """Validate and emit the widget carried by a tool result, if any.
+
+    Every widget that reaches the SSE stream must pass through here so the
+    Pydantic contract is enforced on all emission paths (widget actions and
+    orchestrator tool calls alike). Returns the widget type when emitted.
+    """
+    widget = result.get("widget")
+    if widget and (include_triplet_review_start or widget not in ("triplet_review_start",)):
+        payload = {key: value for key, value in result.items() if key != "widget"}
+        validate_widget_payload({"widget": widget, **payload})
+        on_event(evt_bus.widget_event(widget, payload))
+        return str(widget)
+    return None
 
 
 def _emit_result(
@@ -126,11 +159,7 @@ def _emit_result(
     *,
     include_triplet_review_start: bool = False,
 ) -> None:
-    widget = result.get("widget")
-    if widget and (include_triplet_review_start or widget not in ("triplet_review_start",)):
-        payload = {key: value for key, value in result.items() if key != "widget"}
-        validate_widget_payload({"widget": widget, **payload})
-        on_event(evt_bus.widget_event(widget, payload))
+    emit_widget_result(result, on_event, include_triplet_review_start=include_triplet_review_start)
 
     summary = result.get("message") or ""
     if summary:

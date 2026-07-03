@@ -20,6 +20,7 @@ from httpx import Timeout
 from backend.app_config import get_chat_config
 from backend.graph.state import GraphPhase
 from backend.graph.store import seed_conversation_state
+from backend.services.conversation import actions as action_service
 from backend.services.conversation import events as evt_bus
 from backend.services.llm_gateway import get_async_client
 from backend.services.conversation.gate import check as gate_check
@@ -1195,15 +1196,6 @@ async def _run_deterministic_action(
     if reset_downstream:
         _reset_downstream_for_action(action, store)
 
-    chain_on_success = {
-        "approve_cut_plan": "draft_ontology",
-        "run_extraction": "get_next_triplet",
-    }
-    chain_preamble = {
-        "approve_cut_plan": "Section selection confirmed. Starting ontology draft now...",
-        "run_extraction": "",
-    }
-
     async def _run_one(tool_name: str) -> dict[str, Any]:
         on_event(evt_bus.progress_event(tool_name, f"Running {tool_name}..."))
         result = await dispatch(tool_name, {}, store, on_event)
@@ -1213,11 +1205,7 @@ async def _run_deterministic_action(
             "result": result,
             "deterministic": True,
         })
-        if result.get("widget") and result["widget"] not in ("triplet_review_start",):
-            on_event(evt_bus.widget_event(
-                result["widget"],
-                {k: v for k, v in result.items() if k != "widget"},
-            ))
+        action_service.emit_widget_result(result, on_event)
         message = _strip_leading_widget_payload(str(result.get("message") or ""))
         if message:
             _append_message(conversation, "assistant", message)
@@ -1225,9 +1213,9 @@ async def _run_deterministic_action(
         return result
 
     result = await _run_one(action)
-    next_tool = chain_on_success.get(action)
+    next_tool = action_service.CHAIN_ON_SUCCESS.get(action)
     if next_tool and result.get("status") == "ok":
-        preamble = chain_preamble.get(action, "")
+        preamble = action_service.CHAIN_PREAMBLE.get(action, "")
         if preamble:
             _append_message(conversation, "assistant", preamble)
             on_event(evt_bus.chat_delta_event(preamble))
@@ -1451,12 +1439,10 @@ async def handle_message(
                 conversation.setdefault("tool_calls", []).append({
                     "tool": tool_name, "args": args, "result": tool_result,
                 })
-                # If the result includes a widget, emit it
-                if tool_result.get("widget"):
-                    on_event(evt_bus.widget_event(
-                        tool_result["widget"],
-                        {k: v for k, v in tool_result.items() if k != "widget"},
-                    ))
+                # If the result includes a widget, emit it (validated)
+                action_service.emit_widget_result(
+                    tool_result, on_event, include_triplet_review_start=True,
+                )
 
             executed_tools.append((tool_name, tool_result))
             tool_results.append({
