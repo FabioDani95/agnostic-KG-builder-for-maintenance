@@ -5,7 +5,8 @@ from typing import Any
 
 from backend.graph.config_snapshot import build_config_snapshot, default_selected_models
 from backend.graph.state import GraphPhase, GraphState, create_initial_graph_state, utc_now_iso
-from backend.runstore import snapshot_store
+from backend.observability.trace import compact_digest, step_from_phase_entry
+from backend.runstore import append_trace_step, snapshot_store
 from backend.schemas.run_state import RunState
 from backend.services.run_metrics import project_agent_token_ledger
 
@@ -75,7 +76,7 @@ def _record_phase(
     state = ensure_graph_state(store, pdf_id=store.get("pdf_id"))
     stage_summary = (store.get("run_metrics") or {}).get("stages", {}).get(stage_name or phase.value, {})
     state["current_phase"] = phase.value
-    state.setdefault("phase_history", []).append({
+    entry = {
         "phase": phase.value,
         "agent": agent,
         "timestamp": utc_now_iso(),
@@ -83,7 +84,10 @@ def _record_phase(
         "tokens_used": int(stage_summary.get("total_tokens", 0) or 0),
         "llm_calls": int(stage_summary.get("llm_calls", 0) or 0),
         "details": details or {},
-    })
+    }
+    state.setdefault("phase_history", []).append(entry)
+    step = step_from_phase_entry(entry, state={**state, "run_metrics": store.get("run_metrics") or {}})
+    append_trace_step(state["pdf_id"], step.model_dump(exclude_none=True))
     return persist_graph_state(store, state)
 
 
@@ -438,6 +442,20 @@ def append_supervisor_log(
     if completed:
         state["completed_at"] = utc_now_iso()
         state["current_phase"] = GraphPhase.COMPLETED.value
+    append_trace_step(state["pdf_id"], {
+        "step": "supervisor_decision",
+        "phase": str(entry.get("phase") or entry.get("phase_to") or entry.get("phase_from") or state.get("current_phase") or ""),
+        "agent": str(entry.get("agent") or "Supervisor"),
+        "timestamp": entry.get("timestamp") or utc_now_iso(),
+        "input_digest": compact_digest({
+            "current_phase": state.get("current_phase"),
+            "phase_history_count": len(state.get("phase_history") or []),
+            "run_status": state.get("run_status"),
+        }),
+        "output_summary": deepcopy(entry),
+        "decision": str(entry.get("condition_met") or entry.get("decision") or entry.get("next_step") or ""),
+        "human_handoff": str(run_status or state.get("run_status") or "") == "awaiting_operator",
+    })
     return persist_graph_state(store, state)
 
 

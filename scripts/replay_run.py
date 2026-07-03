@@ -66,9 +66,11 @@ def _triplet_count(state: dict[str, Any]) -> int:
 def build_summary(run_dir: Path) -> dict[str, Any]:
     manifest = _read_json(run_dir / "manifest.json", {})
     events = _read_jsonl(run_dir / "events.jsonl")
+    trace = _read_jsonl(run_dir / "trace.jsonl")
     state = _latest_snapshot(run_dir)
     metrics = _load_export_metrics(run_dir)
     phase_history = state.get("phase_history") or []
+    trace_timeline = trace or phase_history
     human_actions = [event for event in events if event.get("kind") == "human_action"]
     chat_events = [event for event in events if event.get("kind") == "chat_event"]
     totals = metrics.get("totals") or metrics.get("extraction_performance") or {}
@@ -79,9 +81,11 @@ def build_summary(run_dir: Path) -> dict[str, Any]:
         "current_phase": state.get("current_phase"),
         "run_status": state.get("run_status"),
         "phase_timeline": phase_history,
+        "trace_timeline": trace_timeline,
         "event_counts": {
             "chat_events": len(chat_events),
             "human_actions": len(human_actions),
+            "trace_steps": len(trace),
         },
         "human_actions": [event.get("action") for event in human_actions],
         "counts": {

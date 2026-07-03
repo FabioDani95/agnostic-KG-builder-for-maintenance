@@ -25,6 +25,18 @@ def _write_json(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False, default=_json_default), encoding="utf-8")
 
 
+def _read_json(path: Path, default: Any = None) -> Any:
+    if not path.exists():
+        return default
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _read_jsonl(path: Path) -> list[dict[str, Any]]:
+    if not path.exists():
+        return []
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
 class RunStore:
     def __init__(self, root_dir: str | Path | None = None):
         self.root_dir = self._resolve_root_dir(root_dir)
@@ -40,6 +52,47 @@ class RunStore:
 
     def run_dir(self, run_id: str) -> Path:
         return self.root_dir / run_id
+
+    def run_id_for_pdf(self, pdf_id: str) -> str | None:
+        return _pdf_to_run_id.get(pdf_id)
+
+    def load_manifest(self, run_id: str) -> dict[str, Any]:
+        return _read_json(self.run_dir(run_id) / "manifest.json", {})
+
+    def read_trace(self, run_id: str) -> list[dict[str, Any]]:
+        return _read_jsonl(self.run_dir(run_id) / "trace.jsonl")
+
+    def latest_snapshot(self, run_id: str) -> dict[str, Any]:
+        snapshot_dir = self.run_dir(run_id) / "state_snapshots"
+        snapshots = sorted(snapshot_dir.glob("*.json"), key=lambda path: path.stat().st_mtime)
+        if not snapshots:
+            return {}
+        return _read_json(snapshots[-1], {})
+
+    def load_persisted_store(self, run_id: str) -> dict[str, Any] | None:
+        run_dir = self.run_dir(run_id)
+        if not run_dir.exists():
+            return None
+        manifest = self.load_manifest(run_id)
+        state = self.latest_snapshot(run_id)
+        if not state:
+            state = {
+                "run_id": run_id,
+                "pdf_id": manifest.get("pdf_id", ""),
+                "filename": manifest.get("filename", ""),
+                "current_phase": "loaded",
+                "run_status": "loaded",
+                "phase_history": [],
+                "supervisor_log": [],
+            }
+        return {
+            "run_id": run_id,
+            "pdf_id": state.get("pdf_id") or manifest.get("pdf_id"),
+            "filename": manifest.get("filename") or state.get("filename", ""),
+            "graph_state": state,
+            "pipeline_trace": self.read_trace(run_id),
+            "run_dir": str(run_dir),
+        }
 
     def create_run(self, store: dict[str, Any], *, input_path: str | Path | None = None) -> Path:
         graph_state = store.get("graph_state") or {}
@@ -83,6 +136,14 @@ class RunStore:
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(event, ensure_ascii=False, default=_json_default) + "\n")
+
+    def append_trace(self, pdf_id: str, step: dict[str, Any]) -> None:
+        run_id = _pdf_to_run_id.get(pdf_id)
+        if not run_id:
+            return
+        from backend.observability.trace import TraceRecorder
+
+        TraceRecorder(self.run_dir(run_id)).record(step)
 
     def snapshot(self, store: dict[str, Any]) -> None:
         graph_state = store.get("graph_state") or {}
@@ -138,6 +199,13 @@ def append_chat_event(pdf_id: str, event: dict[str, Any]) -> None:
 def append_human_action(pdf_id: str, action: dict[str, Any]) -> None:
     try:
         RunStore().append_event(pdf_id, "human_action", {"action": action})
+    except Exception:
+        pass
+
+
+def append_trace_step(pdf_id: str, step: dict[str, Any]) -> None:
+    try:
+        RunStore().append_trace(pdf_id, step)
     except Exception:
         pass
 

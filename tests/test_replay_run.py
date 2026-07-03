@@ -5,7 +5,7 @@ import subprocess
 import sys
 
 from backend.graph.store import seed_graph_state
-from backend.runstore import RunStore, append_chat_event, append_human_action, clear_registry
+from backend.runstore import RunStore, append_chat_event, append_human_action, append_trace_step, clear_registry
 
 
 def _make_run(tmp_path, monkeypatch, pdf_id: str, *, triplets: int = 1):
@@ -27,6 +27,12 @@ def _make_run(tmp_path, monkeypatch, pdf_id: str, *, triplets: int = 1):
     RunStore().snapshot(store)
     append_chat_event(pdf_id, {"type": "progress", "phase": "scoping", "message": "Running"})
     append_human_action(pdf_id, {"action": "approve_cut_plan", "payload": {}})
+    append_trace_step(pdf_id, {
+        "step": "scoping",
+        "phase": "scoping",
+        "agent": "ScopingAgent",
+        "decision": "selected 1 page",
+    })
     return store, run_dir
 
 
@@ -50,7 +56,8 @@ def test_replay_run_summary_events_state_and_diff(tmp_path, monkeypatch):
     diff = _run_script(str(run_a), "--diff", str(run_b))
 
     assert summary["run_id"] == store_a["run_id"]
-    assert summary["event_counts"] == {"chat_events": 1, "human_actions": 1}
+    assert summary["event_counts"] == {"chat_events": 1, "human_actions": 1, "trace_steps": 1}
+    assert summary["trace_timeline"][0]["step"] == "scoping"
     assert events[0]["event"]["type"] == "progress"
     assert state["run_id"] == store_a["run_id"]
     assert diff["delta"]["triplets"] == 1

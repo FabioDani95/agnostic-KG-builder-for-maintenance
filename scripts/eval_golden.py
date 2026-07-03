@@ -169,7 +169,9 @@ async def _run_fixture(fixture_id: str, *, mode: str, model_name: str, target_la
     from backend.agents.extraction_agent import run_extraction_agent
     from backend.agents.ontology_draft_agent import run_ontology_draft_agent
     from backend.agents.scoping_agent import run_scoping_agent
+    from backend.observability.trace import trace_from_state
     from backend.models import CutPlanApproval, CutPlanApprovalSection, CutPlanRequest, ExtractRequest, OntologyDraftRequest
+    from backend.runstore import RunStore
     from backend.services.manual_loader import build_store_from_markdown
     from backend.services.run_metrics import build_metrics_payload
     from backend.services.scoping_workflow import approve_cut_plan_workflow
@@ -218,6 +220,9 @@ async def _run_fixture(fixture_id: str, *, mode: str, model_name: str, target_la
     )
 
     metrics = build_metrics_payload(store)
+    run_id = str(store.get("run_id") or "")
+    persisted_trace = RunStore().read_trace(run_id) if run_id else []
+    trace = persisted_trace or trace_from_state(store.get("graph_state") or {})
     selected_pages = list(cut_plan.pages_to_keep)
     expected_pages = list((expected.get("expected_scoping") or {}).get("must_keep_pages") or [])
     triplet_match = _match_triplets(expected.get("expected_triplets") or [], extraction_result.triplets)
@@ -256,6 +261,7 @@ async def _run_fixture(fixture_id: str, *, mode: str, model_name: str, target_la
             "totals": metrics.get("totals", {}),
             "stages": metrics.get("stages", {}),
         },
+        "trace": trace,
     }
 
 

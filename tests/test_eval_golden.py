@@ -35,3 +35,5 @@ def test_eval_golden_mock_runs_all_fixtures_and_writes_report(tmp_path):
         assert "triplets" in fixture
         assert "export_checks" in fixture
         assert "metrics" in fixture
+        assert "trace" in fixture
+        assert fixture["trace"]

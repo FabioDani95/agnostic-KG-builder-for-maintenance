@@ -4,6 +4,9 @@ from copy import deepcopy
 from time import perf_counter
 from typing import Any
 
+from backend.observability.trace import compact_digest
+from backend.runstore import append_trace_step
+
 
 MODEL_PRICING = {
     "gpt-5.4": {
@@ -193,6 +196,26 @@ def ensure_run_metrics(store: dict[str, Any]) -> dict[str, Any]:
 def record_stage_metrics(store: dict[str, Any], stage: str, summary: dict[str, Any]) -> None:
     metrics = ensure_run_metrics(store)
     metrics["stages"][stage] = summary
+    pdf_id = str(store.get("pdf_id") or (store.get("graph_state") or {}).get("pdf_id") or "")
+    if pdf_id:
+        details = summary.get("details") or {}
+        append_trace_step(pdf_id, {
+            "step": f"{stage}_metrics",
+            "phase": stage,
+            "agent": AGENT_STAGE_MAP.get(stage, stage),
+            "input_digest": compact_digest(details),
+            "output_summary": {
+                "duration_seconds": summary.get("duration_seconds"),
+                "llm_calls": summary.get("llm_calls", 0),
+                "operations": summary.get("operations", []),
+                "details": details,
+            },
+            "decision": "recorded stage metrics",
+            "human_handoff": int(details.get("human_required_count", 0) or details.get("needs_human", 0) or 0) > 0,
+            "retry_count": int(details.get("retry_count", 0) or 0),
+            "tokens": int(summary.get("total_tokens", 0) or 0),
+            "cost": float(summary.get("estimated_cost_usd", 0.0) or 0.0),
+        })
 
 
 def build_metrics_payload(store: dict[str, Any]) -> dict[str, Any]:

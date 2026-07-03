@@ -6,9 +6,10 @@ import asyncio
 from dataclasses import dataclass
 from typing import Any, Callable
 
+from backend.observability.trace import compact_digest
 from backend.schemas.actions import HumanAction
 from backend.schemas.widgets import validate_widget_payload
-from backend.runstore import append_human_action
+from backend.runstore import append_human_action, append_trace_step
 from backend.services.conversation import events as evt_bus
 from backend.services.conversation.gate import check as gate_check
 
@@ -53,6 +54,20 @@ def run_action(
     ok, reason = gate_check(action.action, action.payload, store)
     recorded_action = action.model_copy(update={"gate_result": {"allowed": ok, "reason": reason}})
     append_human_action(pdf_id, recorded_action.model_dump())
+    append_trace_step(pdf_id, {
+        "step": "human_action",
+        "phase": str((store.get("graph_state") or {}).get("current_phase") or ""),
+        "agent": "Operator",
+        "input_digest": compact_digest(action.payload),
+        "output_summary": {
+            "action": action.action,
+            "client_action_id": action.client_action_id,
+            "gate_result": {"allowed": ok, "reason": reason},
+        },
+        "decision": action.action,
+        "human_handoff": True,
+        "error": None if ok else reason,
+    })
     if not ok:
         tagged_on_event(evt_bus.error_event(reason))
         return ActionOutcome(status="refused", reason=reason)

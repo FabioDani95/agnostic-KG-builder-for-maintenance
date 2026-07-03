@@ -7,6 +7,7 @@ from typing import Any
 
 from backend.graph.state import GraphPhase
 from backend.graph.store import ensure_graph_state
+from backend.observability.trace import trace_from_state
 
 
 def _progress_percent_for_phase(current_phase: str) -> int:
@@ -107,6 +108,9 @@ def build_status_payload(store: dict[str, Any]) -> dict[str, Any]:
 
 def build_audit_payload(store: dict[str, Any]) -> dict[str, Any]:
     state = ensure_graph_state(store, pdf_id=store.get("pdf_id"))
+    pipeline_trace = deepcopy(store.get("pipeline_trace") or [])
+    if not pipeline_trace:
+        pipeline_trace = trace_from_state(state)
     return {
         "run_id": state.get("run_id"),
         "pdf_id": state.get("pdf_id"),
@@ -128,4 +132,5 @@ def build_audit_payload(store: dict[str, Any]) -> dict[str, Any]:
         "refinement_log": deepcopy(state.get("refinement_log", [])),
         "token_ledger": deepcopy(state.get("token_ledger", {})),
         "export_base": state.get("export_base"),
+        "pipeline_trace": pipeline_trace,
     }
