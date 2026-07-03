@@ -1,0 +1,34 @@
+{
+  "fixture_id": "ambiguous_conveyor_manual",
+  "manual": "manuals/ambiguous_conveyor_manual.md",
+  "asset": {
+    "name": "Northline Conveyor C-20",
+    "type": "conveyor"
+  },
+  "expected_scoping": {
+    "diagnostic_sections": ["Diagnostic Notes"],
+    "must_keep_pages": [2]
+  },
+  "expected_triplets": [
+    {
+      "symptom": "Belt stops intermittently",
+      "failure_mode": "photo-eye sensor is blocked by dust",
+      "corrective_action": "clean the photo-eye lens and reflector"
+    },
+    {
+      "symptom": "Belt stops intermittently",
+      "failure_mode": "belt tension is below specification",
+      "corrective_action": "adjust the belt tensioner to 8 mm to 12 mm deflection"
+    }
+  ],
+  "expected_human_review": {
+    "required": true,
+    "reason": "The same symptom has two valid causes that should both remain candidates."
+  },
+  "expected_export_checks": {
+    "min_symptoms": 1,
+    "min_failure_modes": 2,
+    "min_corrective_actions": 2,
+    "required_relations": ["HAS_FAILURE_MODE", "HAS_CORRECTIVE_ACTION"]
+  }
+}

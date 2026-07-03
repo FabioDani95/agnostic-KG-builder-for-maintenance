@@ -1,0 +1,34 @@
+{
+  "fixture_id": "clean_pump_manual",
+  "manual": "manuals/clean_pump_manual.md",
+  "asset": {
+    "name": "Acme Pump P-100",
+    "type": "pump"
+  },
+  "expected_scoping": {
+    "diagnostic_sections": ["Troubleshooting"],
+    "must_keep_pages": [2]
+  },
+  "expected_triplets": [
+    {
+      "symptom": "Pump does not start",
+      "failure_mode": "blown motor fuse",
+      "corrective_action": "replace the 10 A motor fuse"
+    },
+    {
+      "symptom": "Low discharge pressure",
+      "failure_mode": "clogged inlet filter",
+      "corrective_action": "remove and wash the inlet filter"
+    }
+  ],
+  "expected_human_review": {
+    "required": false,
+    "reason": "Diagnostic chains are explicit and unambiguous."
+  },
+  "expected_export_checks": {
+    "min_symptoms": 2,
+    "min_failure_modes": 2,
+    "min_corrective_actions": 2,
+    "required_relations": ["HAS_FAILURE_MODE", "HAS_CORRECTIVE_ACTION"]
+  }
+}

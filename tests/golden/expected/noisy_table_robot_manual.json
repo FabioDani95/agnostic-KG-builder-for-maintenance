@@ -1,0 +1,37 @@
+{
+  "fixture_id": "noisy_table_robot_manual",
+  "manual": "manuals/noisy_table_robot_manual.md",
+  "asset": {
+    "name": "RoboLift RL-5",
+    "type": "robot"
+  },
+  "expected_scoping": {
+    "diagnostic_sections": ["Fault Table", "Split Text Addendum"],
+    "must_keep_pages": [2, 3]
+  },
+  "expected_triplets": [
+    {
+      "error_code": "E17",
+      "symptom": "arm jerks then stops",
+      "failure_mode": "loose encoder cable at joint J2",
+      "corrective_action": "re-seat J2 encoder cable and tighten both connector screws"
+    },
+    {
+      "error_code": "E22",
+      "symptom": "gripper will not close",
+      "failure_mode": "low pneumatic pressure below 5 bar",
+      "corrective_action": "restore air supply to 6 bar and repeat grip test"
+    }
+  ],
+  "expected_human_review": {
+    "required": false,
+    "reason": "Table rows explicitly connect code, symptom, cause, and instruction."
+  },
+  "expected_export_checks": {
+    "min_error_codes": 2,
+    "min_symptoms": 2,
+    "min_failure_modes": 2,
+    "min_corrective_actions": 2,
+    "required_relations": ["GENERATES_ERROR", "HAS_FAILURE_MODE", "HAS_CORRECTIVE_ACTION"]
+  }
+}
