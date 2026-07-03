@@ -1,0 +1,85 @@
+{
+  "widget": "triplet",
+  "status": "ok",
+  "index": 0,
+  "total": 1,
+  "triplet": {
+    "symptom": {
+      "symptom_id": "SYM-001",
+      "name": "Low Flow",
+      "description": "Pump flow is below target.",
+      "severity": "Medium",
+      "evidence_page": 3
+    },
+    "failure_modes": [
+      {
+        "failure_mode_id": "FM-001",
+        "name": "Clogged Filter",
+        "description": "The inlet filter is clogged.",
+        "material_context": "Hydraulic circuit",
+        "linked_symptom_id": "SYM-001",
+        "evidence_page": 3
+      }
+    ],
+    "corrective_actions": [
+      {
+        "action_id": "CA-001",
+        "name": "Clean Filter",
+        "description": "Clean or replace the inlet filter.",
+        "instruction_text": "Stop the pump and clean the filter.",
+        "source_type": "manual",
+        "source_title": "Characterization Manual",
+        "source_page": 4,
+        "linked_failure_mode_id": "FM-001"
+      }
+    ]
+  },
+  "logic_assessment": {
+    "status": "ok",
+    "issues": []
+  },
+  "graph": {
+    "nodes": [
+      {
+        "id": "SYM-001",
+        "label": "Low Flow",
+        "type": "Symptom"
+      },
+      {
+        "id": "FM-001",
+        "label": "Clogged Filter",
+        "type": "FailureMode"
+      },
+      {
+        "id": "CA-001",
+        "label": "Clean Filter",
+        "type": "CorrectiveAction"
+      }
+    ],
+    "edges": [
+      {
+        "id": "SYM-001->FM-001",
+        "from": "SYM-001",
+        "to": "FM-001",
+        "label": "MAY_INDICATE"
+      },
+      {
+        "id": "FM-001->CA-001",
+        "from": "FM-001",
+        "to": "CA-001",
+        "label": "HAS_REMEDY"
+      }
+    ],
+    "triplet_count": 1,
+    "focus_index": 0,
+    "focus_node_ids": [
+      "SYM-001",
+      "FM-001",
+      "CA-001"
+    ],
+    "focus_edge_ids": [
+      "SYM-001->FM-001",
+      "FM-001->CA-001"
+    ]
+  }
+}

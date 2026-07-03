@@ -7,6 +7,7 @@ import { renderSectionsWidget } from "./widgets/sections.js?v=20260424a";
 import { renderTripletWidget } from "./widgets/triplet.js?v=20260501a";
 import { renderRequiredFieldsWidget } from "./widgets/required_fields.js?v=20260422d";
 import { renderNodeCard } from "./widgets/node_card.js?v=20260422d";
+import { NON_SHEET_WIDGET_TYPES, renderRegisteredWidget } from "./widgets/registry.js?v=20260703a";
 
 // ── Utilities ──────────────────────────────────────────────────────────
 
@@ -493,48 +494,42 @@ function _renderWidget(widgetType, payload) {
     const stream = _stream();
     if (!stream) return;
 
-    let el = null;
     const onAction = (action, data) => _postAction(action, data);
 
     // Non-sheet widgets indicate the previous interactive panel is no longer
     // the operator's focus — dismiss it so the reopen pill doesn't linger.
-    const NON_SHEET_TYPES = new Set([
-        "extraction_graph", "modify_workspace_sync", "export", "run_metrics",
-    ]);
-    if (NON_SHEET_TYPES.has(widgetType) && _sheetCurrentEl) {
+    if (NON_SHEET_WIDGET_TYPES.has(widgetType) && _sheetCurrentEl) {
         _dismissWidgetSheet();
     }
 
-    switch (widgetType) {
-        case "extraction_graph":
+    const rendered = renderRegisteredWidget(widgetType, payload, {
+        extraction_graph: () => {
             _lastWidgetType = "extraction_graph";
             _showExtractionGraph(payload?.graph || payload, { mode: "all" });
             _syncQuickActions({ widget: "extraction_graph", payload });
-            return;
-        case "modify_workspace_sync":
+            return null;
+        },
+        modify_workspace_sync: () => {
             _lastWidgetType = "modify_workspace_sync";
             _refreshModifyWorkspace(payload);
             _syncQuickActions({ widget: "modify_workspace_sync", payload });
-            return;
-        case "sections":
-            el = renderSectionsWidget(payload, onAction);
-            break;
-        case "ontology_review":
-            el = renderOntologyReviewWidget(payload, onAction);
-            break;
-        case "triplet_review_start":
+            return null;
+        },
+        sections: () => renderSectionsWidget(payload, onAction),
+        ontology_review: () => renderOntologyReviewWidget(payload, onAction),
+        triplet_review_start: () => {
             // Request the first triplet from the backend via message
             _sendMessage("[system: begin triplet review]");
-            return;
-        case "triplet":
-            el = renderTripletWidget(payload, onAction);
+            return null;
+        },
+        triplet: () => {
+            const el = renderTripletWidget(payload, onAction);
             _showTripletGraphFocus(payload);
             _navigateToTripletSource(payload?.triplet);
-            break;
-        case "required_fields":
-            el = renderRequiredFieldsWidget(payload, onAction);
-            break;
-        case "node_draft":
+            return el;
+        },
+        required_fields: () => renderRequiredFieldsWidget(payload, onAction),
+        node_draft: () => {
             if (payload.node_type) {
                 const draftNode = {
                     name: payload.normalized_name || payload.raw_text || "",
@@ -545,14 +540,13 @@ function _renderWidget(widgetType, payload) {
                     onConfirm: (node, type) => _postAction("confirm_node_manual", { node_type: type, node }),
                 });
             }
-            break;
-        case "export":
-            el = _renderExportWidget(payload);
-            break;
-        case "run_metrics":
-            el = _renderRunMetricsWidget(payload?.metrics || payload);
-            break;
-    }
+            return null;
+        },
+        export: () => _renderExportWidget(payload),
+        run_metrics: () => _renderRunMetricsWidget(payload?.metrics || payload),
+    });
+
+    const el = rendered.element;
 
     if (el) {
         _lastWidgetType = widgetType;

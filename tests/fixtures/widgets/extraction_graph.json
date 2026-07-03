@@ -1,0 +1,50 @@
+{
+  "widget": "extraction_graph",
+  "status": "ok",
+  "graph": {
+    "nodes": [
+      {
+        "id": "SYM-001",
+        "label": "Low Flow",
+        "type": "Symptom"
+      },
+      {
+        "id": "FM-001",
+        "label": "Clogged Filter",
+        "type": "FailureMode"
+      },
+      {
+        "id": "CA-001",
+        "label": "Clean Filter",
+        "type": "CorrectiveAction"
+      }
+    ],
+    "edges": [
+      {
+        "id": "SYM-001->FM-001",
+        "from": "SYM-001",
+        "to": "FM-001",
+        "label": "MAY_INDICATE"
+      },
+      {
+        "id": "FM-001->CA-001",
+        "from": "FM-001",
+        "to": "CA-001",
+        "label": "HAS_REMEDY"
+      }
+    ],
+    "triplet_count": 1,
+    "focus_index": 0,
+    "focus_node_ids": [
+      "SYM-001",
+      "FM-001",
+      "CA-001"
+    ],
+    "focus_edge_ids": [
+      "SYM-001->FM-001",
+      "FM-001->CA-001"
+    ]
+  },
+  "action": "validated",
+  "index": 0
+}
