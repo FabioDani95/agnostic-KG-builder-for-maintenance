@@ -18,6 +18,8 @@ output_e2e/
 node_modules/
 test-results/
 ontology.json
+# Golden mock fixtures are versioned even though they match patterns above.
+!tests/golden/mock_responses/**
 
 __pycache__/
 *.py[cod]

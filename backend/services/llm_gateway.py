@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
+from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
@@ -9,6 +11,11 @@ from httpx import Timeout
 from openai import AsyncOpenAI, OpenAI
 
 from backend.config import settings
+
+logger = logging.getLogger(__name__)
+
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+DEFAULT_MOCK_RESPONSES_DIR = ROOT_DIR / "tests" / "golden" / "mock_responses"
 
 
 def llm_mode() -> str:
@@ -98,13 +105,51 @@ def _messages_text(kwargs: dict[str, Any]) -> str:
     return "\n\n".join(parts)
 
 
+def _fixture_mock_content(stage: str) -> str | None:
+    """Return the fixture-specific mock response for `stage`, if configured.
+
+    `KG_LLM_FIXTURE` selects a directory under tests/golden/mock_responses/
+    (overridable via `KG_LLM_MOCK_DIR`). A `<stage>.json` holding only a
+    "content" key is returned as raw text; any other JSON payload is dumped
+    verbatim, matching what the real model would emit for that stage.
+    """
+    fixture_id = str(os.environ.get("KG_LLM_FIXTURE", "") or "").strip()
+    if not fixture_id or not stage:
+        return None
+    base = str(os.environ.get("KG_LLM_MOCK_DIR", "") or "").strip()
+    base_dir = Path(base) if base else DEFAULT_MOCK_RESPONSES_DIR
+    if not base_dir.is_absolute():
+        base_dir = ROOT_DIR / base_dir
+    path = base_dir / fixture_id / f"{stage}.json"
+    if not path.exists():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        logger.warning("Unreadable mock fixture response: %s", path)
+        return None
+    if isinstance(payload, dict) and set(payload.keys()) == {"content"}:
+        return str(payload["content"])
+    return json.dumps(payload)
+
+
 def _mock_content(kwargs: dict[str, Any]) -> str:
     text = _messages_text(kwargs)
     lower = text.lower()
     if kwargs.get("tools"):
         return "Mock assistant response."
+    stage, generic = _stage_mock_content(lower, text)
+    if stage:
+        fixture_content = _fixture_mock_content(stage)
+        if fixture_content is not None:
+            return fixture_content
+    return generic
+
+
+def _stage_mock_content(lower: str, text: str) -> tuple[str | None, str]:
+    """Detect the pipeline stage from the prompt and return (stage, generic reply)."""
     if "toc_entries" in lower or "table of contents" in lower:
-        return json.dumps({
+        return "scoping", json.dumps({
             "product_info": {
                 "product_name": "Mock Maintenance Manual",
                 "product_short_name": "mock_manual",
@@ -120,7 +165,7 @@ def _mock_content(kwargs: dict[str, Any]) -> str:
             ],
         })
     if "manual_page_start" in lower or '"sections"' in lower or "section selection" in lower:
-        return json.dumps({
+        return "sections", json.dumps({
             "sections": [
                 {
                     "name": "Troubleshooting",
@@ -131,22 +176,27 @@ def _mock_content(kwargs: dict[str, Any]) -> str:
             ]
         })
     if "exactly three markdown tables" in lower or "output only the three tables" in lower:
-        return _mock_extraction_tables()
+        return "extraction", _mock_extraction_tables()
     if "return the same keys" in lower or "stylistically normalized" in lower:
-        return _echo_json_object(text)
+        return None, _echo_json_object(text)
     if "translate" in lower or "translating" in lower:
-        return _echo_json_object(text)
+        return None, _echo_json_object(text)
     if "issues" in lower and ("semantic" in lower or "validation" in lower):
-        return json.dumps({"issues": []})
+        return "validation", json.dumps({"issues": []})
     if "normalize an ontology node" in lower:
-        return json.dumps({"name": "Mock Node", "description": "Mock normalized node."})
+        return "node_normalization", json.dumps({"name": "Mock Node", "description": "Mock normalized node."})
+    if "relation extraction agent" in lower:
+        # Must win over the generic ontology branch: this stage merges its
+        # output after asset-id canonicalisation, so echoing a full ontology
+        # here would reintroduce unmapped node ids.
+        return "relations", json.dumps({"relations": []})
     if "ontology" in lower or "nodes" in lower:
-        return json.dumps(_mock_ontology())
+        return "ontology", json.dumps(_mock_ontology())
     if "relations" in lower and ("relation" in lower or "candidate" in lower):
-        return json.dumps({"relations": []})
+        return "relations", json.dumps({"relations": []})
     if "resolution" in lower or "failure_mode" in lower:
-        return json.dumps({"matches": [], "relations": []})
-    return "Mock assistant response."
+        return "resolution", json.dumps({"matches": [], "relations": []})
+    return None, "Mock assistant response."
 
 
 def _echo_json_object(text: str) -> str:

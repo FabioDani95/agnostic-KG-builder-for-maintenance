@@ -1,0 +1,197 @@
+{
+  "ontology_name": "NorthlineConveyorC20Ontology",
+  "version": "1.0",
+  "language": "en",
+  "source_type": "troubleshooting guide",
+  "source_title": "Northline Conveyor C-20 Troubleshooting Guide",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "Northline Conveyor C-20",
+        "description": "Conveyor that moves cartons between packing stations.",
+        "brand": "Northline",
+        "model": "C-20",
+        "asset_type": "conveyor"
+      }
+    ],
+    "Component": [
+      {
+        "component_id": "CMP-001",
+        "name": "Photo-eye Sensor",
+        "description": "Photo-eye sensor watching the belt path.",
+        "category": "Sensor"
+      },
+      {
+        "component_id": "CMP-002",
+        "name": "Belt Tensioner",
+        "description": "Tensioner keeping belt deflection in specification.",
+        "category": "Mechanical"
+      }
+    ],
+    "Symptom": [
+      {
+        "symptom_id": "SYM-001",
+        "name": "Belt stops intermittently",
+        "description": "The belt stops intermittently during operation.",
+        "severity": "Medium",
+        "evidence_page": 2
+      }
+    ],
+    "FailureMode": [
+      {
+        "failure_mode_id": "FM-001",
+        "name": "Photo-eye sensor blocked by dust",
+        "description": "The photo-eye sensor is blocked by dust on the lens or reflector.",
+        "material_context": "Photo-eye Sensor",
+        "linked_symptom_id": "SYM-001",
+        "evidence_page": 2
+      },
+      {
+        "failure_mode_id": "FM-002",
+        "name": "Belt tension below specification",
+        "description": "Belt tension is below the specified deflection range.",
+        "material_context": "Belt Tensioner",
+        "linked_symptom_id": "SYM-001",
+        "evidence_page": 2
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "CA-001",
+        "name": "Clean the photo-eye lens and reflector",
+        "description": "Clean the photo-eye optics and confirm the sensor LED is green.",
+        "instruction_text": "Clean the photo-eye lens, remove dust from the reflector, and confirm that the sensor LED is green.",
+        "source_type": "troubleshooting guide",
+        "source_title": "Northline Conveyor C-20 Troubleshooting Guide",
+        "source_reference": "PAGE 2",
+        "linked_failure_mode_id": "FM-001"
+      },
+      {
+        "action_id": "CA-002",
+        "name": "Adjust the belt tensioner to 8 mm to 12 mm deflection",
+        "description": "Adjust the belt tensioner until deflection is within specification.",
+        "instruction_text": "Adjust the belt tensioner until belt deflection is between 8 mm and 12 mm.",
+        "source_type": "troubleshooting guide",
+        "source_title": "Northline Conveyor C-20 Troubleshooting Guide",
+        "source_reference": "PAGE 2",
+        "linked_failure_mode_id": "FM-002"
+      }
+    ],
+    "ErrorCode": []
+  },
+  "relations": [
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-001",
+      "evidence": [
+        {
+          "source_page": 1,
+          "source_reference": "",
+          "quote": "photo-eye sensor"
+        }
+      ]
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-002",
+      "evidence": [
+        {
+          "source_page": 1,
+          "source_reference": "",
+          "quote": "belt tensioner"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-001",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "photo-eye sensor is blocked by dust"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-002",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "belt tension is below specification"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-001",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-001",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "clean the photo-eye lens, remove dust from the reflector"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-002",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-002",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "adjust the belt tensioner until belt deflection is between 8 mm and 12 mm"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-001",
+      "to_type": "Component",
+      "to_id": "CMP-001",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "photo-eye sensor is blocked by dust"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-002",
+      "to_type": "Component",
+      "to_id": "CMP-002",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "belt tension is below specification"
+        }
+      ]
+    }
+  ]
+}

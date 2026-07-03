@@ -1,0 +1,204 @@
+{
+  "ontology_name": "AcmePumpP100Ontology",
+  "version": "1.0",
+  "language": "en",
+  "source_type": "maintenance manual",
+  "source_title": "Acme Pump P-100 Service Manual",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "Acme Pump P-100",
+        "description": "Pump covered by the Acme P-100 service manual.",
+        "brand": "Acme",
+        "model": "P-100",
+        "asset_type": "pump"
+      }
+    ],
+    "Component": [
+      {
+        "component_id": "CMP-001",
+        "name": "Motor Fuse",
+        "description": "10 A fuse protecting the pump motor.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-002",
+        "name": "Inlet Filter",
+        "description": "Filter on the pump inlet line.",
+        "category": "Hydraulic"
+      }
+    ],
+    "Symptom": [
+      {
+        "symptom_id": "SYM-001",
+        "name": "Pump does not start",
+        "description": "The pump does not start when power is applied.",
+        "severity": "High",
+        "evidence_page": 2
+      },
+      {
+        "symptom_id": "SYM-002",
+        "name": "Low discharge pressure",
+        "description": "Discharge pressure is below the expected value.",
+        "severity": "Medium",
+        "evidence_page": 2
+      }
+    ],
+    "FailureMode": [
+      {
+        "failure_mode_id": "FM-001",
+        "name": "Blown motor fuse",
+        "description": "The 10 A motor fuse is blown.",
+        "material_context": "Motor Fuse",
+        "linked_symptom_id": "SYM-001",
+        "evidence_page": 2
+      },
+      {
+        "failure_mode_id": "FM-002",
+        "name": "Clogged inlet filter",
+        "description": "The inlet filter is clogged and restricts flow.",
+        "material_context": "Inlet Filter",
+        "linked_symptom_id": "SYM-002",
+        "evidence_page": 2
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "CA-001",
+        "name": "Replace the 10 A motor fuse",
+        "description": "Replace the blown motor fuse and restart the pump.",
+        "instruction_text": "Replace the 10 A motor fuse, close the fuse holder, and restart the pump.",
+        "source_type": "maintenance manual",
+        "source_title": "Acme Pump P-100 Service Manual",
+        "source_reference": "PAGE 2",
+        "linked_failure_mode_id": "FM-001"
+      },
+      {
+        "action_id": "CA-002",
+        "name": "Remove and wash the inlet filter",
+        "description": "Clean the clogged inlet filter and verify discharge pressure.",
+        "instruction_text": "Remove the inlet filter, wash it with clean water, reinstall it, and run a pressure test.",
+        "source_type": "maintenance manual",
+        "source_title": "Acme Pump P-100 Service Manual",
+        "source_reference": "PAGE 2",
+        "linked_failure_mode_id": "FM-002"
+      }
+    ],
+    "ErrorCode": []
+  },
+  "relations": [
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-001",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "replace the 10 A motor fuse"
+        }
+      ]
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-002",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "remove the inlet filter"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-001",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "Likely failure mode: blown motor fuse."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-002",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "Likely failure mode: clogged inlet filter."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-001",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-001",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "replace the 10 A motor fuse, close the fuse holder"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-002",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-002",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "remove the inlet filter, wash it with clean water"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-001",
+      "to_type": "Component",
+      "to_id": "CMP-001",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "blown motor fuse"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-002",
+      "to_type": "Component",
+      "to_id": "CMP-002",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "clogged inlet filter"
+        }
+      ]
+    }
+  ]
+}

@@ -26,3 +26,19 @@ baseline for regression detection:
 
 Future evaluation code should compare semantic keys and normalized labels rather
 than exact free-text wording.
+
+## Mock Responses (`mock_responses/`)
+
+`mock_responses/<fixture_id>/<stage>.json` holds the deterministic LLM replies
+the mock gateway (`KG_LLM_MODE=mock`) returns while evaluating that fixture
+(`KG_LLM_FIXTURE=<fixture_id>`, set automatically by `scripts/eval_golden.py`).
+Stage names match the gateway's prompt detection: `scoping`, `sections`,
+`extraction`, `ontology`, `relations`, `validation`, `node_normalization`,
+`resolution`. A file holding only a `"content"` key is returned as raw text;
+any other JSON payload is returned dumped verbatim. Stages without a file fall
+back to the generic mock reply.
+
+These files are mock *responses*, not new golden manuals: they exist so the
+mock eval exercises each fixture's real diagnostic content (recall 1.0 is the
+deterministic baseline) instead of a one-size-fits-all reply that pins every
+quality metric to zero.

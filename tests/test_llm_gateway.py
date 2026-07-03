@@ -153,3 +153,55 @@ def test_mock_ontology_pipeline_call_site(monkeypatch):
     assert result.ontology.nodes["Symptom"]
     assert metrics["llm_calls"] >= 1
     assert metrics["total_tokens"] == 0
+
+
+def test_mock_fixture_response_overrides_generic_stage_reply(monkeypatch, tmp_path):
+    monkeypatch.setenv("KG_LLM_MODE", "mock")
+    monkeypatch.setenv("KG_LLM_FIXTURE", "demo_fixture")
+    monkeypatch.setenv("KG_LLM_MOCK_DIR", str(tmp_path))
+
+    fixture_dir = tmp_path / "demo_fixture"
+    fixture_dir.mkdir()
+    (fixture_dir / "ontology.json").write_text(
+        json.dumps({"ontology_name": "FixtureDrivenOntology", "nodes": {}}),
+        encoding="utf-8",
+    )
+    (fixture_dir / "extraction.json").write_text(
+        json.dumps({"content": "| fixture extraction tables |"}),
+        encoding="utf-8",
+    )
+
+    client = get_client()
+
+    ontology_reply = client.chat.completions.create(
+        model="mock",
+        messages=[{"role": "user", "content": "Extract the ontology nodes from this manual."}],
+    ).choices[0].message.content
+    assert json.loads(ontology_reply)["ontology_name"] == "FixtureDrivenOntology"
+
+    # A "content"-only payload is returned as raw text, not JSON.
+    extraction_reply = client.chat.completions.create(
+        model="mock",
+        messages=[{"role": "user", "content": "Return exactly three markdown tables."}],
+    ).choices[0].message.content
+    assert extraction_reply == "| fixture extraction tables |"
+
+    # Stages without a fixture file keep the generic deterministic reply.
+    validation_reply = client.chat.completions.create(
+        model="mock",
+        messages=[{"role": "user", "content": "List semantic validation issues."}],
+    ).choices[0].message.content
+    assert json.loads(validation_reply) == {"issues": []}
+
+
+def test_mock_without_fixture_env_keeps_generic_replies(monkeypatch):
+    monkeypatch.setenv("KG_LLM_MODE", "mock")
+    monkeypatch.delenv("KG_LLM_FIXTURE", raising=False)
+
+    client = get_client()
+    reply = client.chat.completions.create(
+        model="mock",
+        messages=[{"role": "user", "content": "Extract the ontology nodes from this manual."}],
+    ).choices[0].message.content
+
+    assert json.loads(reply)["ontology_name"] == "MockMaintenanceOntology"

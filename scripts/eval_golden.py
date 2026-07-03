@@ -58,12 +58,22 @@ def _triplet_to_text(triplet: Any) -> dict[str, str]:
     symptom = payload.get("symptom") or {}
     failures = payload.get("failure_modes") or []
     actions = payload.get("corrective_actions") or []
-    failure = failures[0] if failures else {}
-    action = actions[0] if actions else {}
+    # A projected triplet carries every failure mode / action chained to the
+    # symptom, so matching must consider all of them, not just the first.
+    failure_text = " ".join(
+        str(failure.get(key, "") or "")
+        for failure in failures
+        for key in ("name", "description", "material_context")
+    )
+    action_text = " ".join(
+        str(action.get(key, "") or "")
+        for action in actions
+        for key in ("name", "description", "instruction_text")
+    )
     return {
         "symptom": " ".join(str(symptom.get(key, "") or "") for key in ("name", "description")),
-        "failure_mode": " ".join(str(failure.get(key, "") or "") for key in ("name", "description", "material_context")),
-        "corrective_action": " ".join(str(action.get(key, "") or "") for key in ("name", "description", "instruction_text")),
+        "failure_mode": failure_text,
+        "corrective_action": action_text,
         "error_code": str((symptom.get("error_code") or payload.get("error_code") or "") or ""),
     }
 
@@ -91,12 +101,16 @@ def _match_triplets(expected: list[dict[str, Any]], actual_triplets: list[Any]) 
             matches.append({"expected": expected_item, "actual_index": match_index})
     total_actual = len(actual)
     matched = len(matches)
+    # Several expected chains can legitimately match the same projected
+    # triplet (one symptom, many causes), so precision counts distinct
+    # actual triplets that matched, never exceeding 1.0.
+    matched_actual = len({match["actual_index"] for match in matches})
     return {
         "matched": matched,
         "expected": len(expected),
         "actual": total_actual,
         "recall": round(matched / max(1, len(expected)), 4),
-        "approx_precision": round(matched / max(1, total_actual), 4),
+        "approx_precision": round(matched_actual / max(1, total_actual), 4),
         "matches": matches,
         "unmatched_expected": unmatched,
     }
@@ -108,20 +122,31 @@ def _ontology_counts(ontology: Any) -> dict[str, int]:
     return {node_type: len(items or []) for node_type, items in nodes.items()}
 
 
-def _relation_names(ontology: Any, triplet_count: int, expected: dict[str, Any]) -> set[str]:
+def _relation_names(ontology: Any, triplets: list[Any]) -> set[str]:
+    """Relation names actually present in the run output.
+
+    Derived from the ontology's own relations plus the structure of the
+    extracted triplets (a triplet with failure modes / corrective actions is
+    what the export projects into HAS_FAILURE_MODE / HAS_CORRECTIVE_ACTION
+    edges). Nothing is inferred from the expected file, so a regression that
+    drops a relation type is visible here.
+    """
     payload = ontology.model_dump() if hasattr(ontology, "model_dump") else (ontology or {})
     names = {str(item.get("name") or item.get("type") or "") for item in payload.get("relations", []) if isinstance(item, dict)}
-    if triplet_count:
-        names.update({"HAS_FAILURE_MODE", "HAS_CORRECTIVE_ACTION"})
-    if any(item.get("error_code") for item in expected.get("expected_triplets", [])):
-        names.add("GENERATES_ERROR")
+    for triplet in triplets:
+        item = triplet.model_dump() if hasattr(triplet, "model_dump") else dict(triplet or {})
+        if item.get("failure_modes"):
+            names.add("HAS_FAILURE_MODE")
+        if item.get("corrective_actions"):
+            names.add("HAS_CORRECTIVE_ACTION")
+    names.discard("")
     return names
 
 
-def _export_checks(expected: dict[str, Any], ontology: Any, triplet_count: int) -> dict[str, Any]:
+def _export_checks(expected: dict[str, Any], ontology: Any, triplets: list[Any]) -> dict[str, Any]:
     checks = expected.get("expected_export_checks") or {}
     counts = _ontology_counts(ontology)
-    relation_names = _relation_names(ontology, triplet_count, expected)
+    relation_names = _relation_names(ontology, triplets)
     results: dict[str, Any] = {}
     mapping = {
         "min_symptoms": "Symptom",
@@ -178,6 +203,10 @@ async def _run_fixture(fixture_id: str, *, mode: str, model_name: str, target_la
 
     expected = _load_expected(fixture_id)
     store = build_store_from_markdown(GOLDEN_DIR / expected["manual"])
+    if mode == "mock":
+        # Route the mock LLM to this fixture's canned responses
+        # (tests/golden/mock_responses/<fixture_id>/<stage>.json).
+        os.environ["KG_LLM_FIXTURE"] = fixture_id
     started = time.perf_counter()
 
     cut_plan = run_scoping_agent(
@@ -226,7 +255,7 @@ async def _run_fixture(fixture_id: str, *, mode: str, model_name: str, target_la
     selected_pages = list(cut_plan.pages_to_keep)
     expected_pages = list((expected.get("expected_scoping") or {}).get("must_keep_pages") or [])
     triplet_match = _match_triplets(expected.get("expected_triplets") or [], extraction_result.triplets)
-    export_checks = _export_checks(expected, ontology_result.ontology, len(extraction_result.triplets))
+    export_checks = _export_checks(expected, ontology_result.ontology, extraction_result.triplets)
     return {
         "fixture_id": fixture_id,
         "mode": mode,
@@ -299,6 +328,19 @@ def _write_markdown_report(path: Path, report: dict[str, Any]) -> None:
     path.write_text("\n".join(lines), encoding="utf-8")
 
 
+def _latest_baseline(output_root: Path, *, exclude: Path) -> Path | None:
+    """Most recent report.json under `output_root`, excluding the current run."""
+    candidates = sorted(
+        (
+            path / "report.json"
+            for path in output_root.iterdir()
+            if path.is_dir() and path != exclude and (path / "report.json").exists()
+        ),
+        key=lambda path: path.parent.name,
+    )
+    return candidates[-1] if candidates else None
+
+
 def _baseline_regressed(report: dict[str, Any], baseline_path: Path) -> bool:
     baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
     baseline_by_id = {item["fixture_id"]: item for item in baseline.get("fixtures", [])}
@@ -336,6 +378,7 @@ async def _main_async(args: argparse.Namespace) -> int:
         )
         for fixture_id in _fixture_ids(args.fixtures)
     ]
+    os.environ.pop("KG_LLM_FIXTURE", None)
     report = {
         "run_id": run_dir.name,
         "mode": mode,
@@ -354,8 +397,11 @@ async def _main_async(args: argparse.Namespace) -> int:
     report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
     _write_markdown_report(run_dir / "report.md", report)
     print(str(report_path))
-    if args.fail_on_regression and args.baseline and _baseline_regressed(report, Path(args.baseline)):
-        return 1
+    if args.fail_on_regression:
+        baseline_path = Path(args.baseline) if args.baseline else _latest_baseline(output_root, exclude=run_dir)
+        if baseline_path is not None and _baseline_regressed(report, baseline_path):
+            print(f"Regression against baseline {baseline_path}", file=sys.stderr)
+            return 1
     return 0
 
 

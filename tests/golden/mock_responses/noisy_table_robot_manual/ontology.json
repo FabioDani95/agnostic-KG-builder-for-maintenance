@@ -1,0 +1,273 @@
+{
+  "ontology_name": "RoboLiftRL5Ontology",
+  "version": "1.0",
+  "language": "en",
+  "source_type": "service bulletin",
+  "source_title": "RoboLift RL-5 Field Notes",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "RoboLift RL-5",
+        "description": "Robot lift covered by the RL-5 field notes.",
+        "brand": "RoboLift",
+        "model": "RL-5",
+        "asset_type": "robot"
+      }
+    ],
+    "Component": [
+      {
+        "component_id": "CMP-001",
+        "name": "J2 Encoder Cable",
+        "description": "Encoder cable at joint J2.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-002",
+        "name": "Gripper",
+        "description": "Pneumatic gripper on the arm.",
+        "category": "Pneumatic"
+      }
+    ],
+    "Symptom": [
+      {
+        "symptom_id": "SYM-001",
+        "name": "Arm jerks then stops",
+        "description": "The arm jerks and then stops during motion.",
+        "severity": "High",
+        "evidence_page": 2
+      },
+      {
+        "symptom_id": "SYM-002",
+        "name": "Gripper will not close",
+        "description": "The gripper will not close on command.",
+        "severity": "Medium",
+        "evidence_page": 2
+      }
+    ],
+    "FailureMode": [
+      {
+        "failure_mode_id": "FM-001",
+        "name": "Loose encoder cable at joint J2",
+        "description": "The encoder cable at joint J2 is loose.",
+        "material_context": "J2 Encoder Cable",
+        "linked_symptom_id": "SYM-001",
+        "evidence_page": 2
+      },
+      {
+        "failure_mode_id": "FM-002",
+        "name": "Low pneumatic pressure below 5 bar",
+        "description": "Pneumatic supply pressure is below 5 bar.",
+        "material_context": "Gripper",
+        "linked_symptom_id": "SYM-002",
+        "evidence_page": 2
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "CA-001",
+        "name": "Re-seat J2 encoder cable and tighten both connector screws",
+        "description": "Re-seat the J2 encoder cable and tighten the connector screws.",
+        "instruction_text": "Re-seat J2 encoder cable and tighten both connector screws.",
+        "source_type": "service bulletin",
+        "source_title": "RoboLift RL-5 Field Notes",
+        "source_reference": "PAGE 2",
+        "linked_failure_mode_id": "FM-001"
+      },
+      {
+        "action_id": "CA-002",
+        "name": "Restore air supply to 6 bar and repeat grip test",
+        "description": "Restore the pneumatic supply and repeat the grip test.",
+        "instruction_text": "Restore air supply to 6 bar and repeat grip test.",
+        "source_type": "service bulletin",
+        "source_title": "RoboLift RL-5 Field Notes",
+        "source_reference": "PAGE 2",
+        "linked_failure_mode_id": "FM-002"
+      }
+    ],
+    "ErrorCode": [
+      {
+        "error_code_id": "EC-001",
+        "name": "E17",
+        "description": "Arm jerks then stops.",
+        "code": "E17"
+      },
+      {
+        "error_code_id": "EC-002",
+        "name": "E22",
+        "description": "Gripper will not close.",
+        "code": "E22"
+      }
+    ]
+  },
+  "relations": [
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-001",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "loose encoder cable at joint J2"
+        }
+      ]
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-002",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "gripper will not close"
+        }
+      ]
+    },
+    {
+      "name": "GENERATES_ERROR",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "ErrorCode",
+      "to_id": "EC-001",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "E17"
+        }
+      ]
+    },
+    {
+      "name": "GENERATES_ERROR",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "ErrorCode",
+      "to_id": "EC-002",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "E22"
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-001",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "loose encoder cable at joint J2"
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-002",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "low pneumatic pressure below 5 bar"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-001",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "arm jerks then stops"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-002",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "gripper will not close"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-001",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-001",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "re-seat J2 encoder cable and tighten both connector screws"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-002",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-002",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "restore air supply to 6 bar and repeat grip test"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-001",
+      "to_type": "Component",
+      "to_id": "CMP-001",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "loose encoder cable at joint J2"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-002",
+      "to_type": "Component",
+      "to_id": "CMP-002",
+      "evidence": [
+        {
+          "source_page": 2,
+          "source_reference": "",
+          "quote": "low pneumatic pressure below 5 bar"
+        }
+      ]
+    }
+  ]
+}
