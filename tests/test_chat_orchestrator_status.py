@@ -1,16 +1,18 @@
 import unittest
 
 from backend.graph.state import GraphPhase
+from backend.services.conversation.heuristics import (
+    detect_inventory_request as _detect_inventory_request,
+    detect_rerun_action as _detect_rerun_action,
+    maybe_build_direct_status_reply as _maybe_build_direct_status_reply,
+    maybe_build_scope_guard_reply as _maybe_build_scope_guard_reply,
+    workflow_status_reply as _workflow_status_reply,
+)
 from backend.services.conversation.orchestrator import (
     _build_messages,
-    _detect_inventory_request,
-    _detect_rerun_action,
-    _maybe_build_direct_status_reply,
-    _maybe_build_scope_guard_reply,
     _next_action_for_continue,
     _strip_leading_widget_payload,
     _summarise_tool_result_for_followup,
-    _workflow_status_reply,
 )
 
 
