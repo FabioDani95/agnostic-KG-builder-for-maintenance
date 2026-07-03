@@ -79,6 +79,98 @@ async function openChat(page) {
   await page.click("#upload-btn");
 }
 
+async function installMockEventSource(page) {
+  await page.addInitScript(() => {
+    window.__mockEventSources = [];
+    window.__emitMockSse = (event) => {
+      const source = window.__mockEventSources[window.__mockEventSources.length - 1];
+      if (source?.onmessage) {
+        source.onmessage({ data: JSON.stringify(event) });
+      }
+    };
+
+    class MockEventSource {
+      constructor(url) {
+        this.url = url;
+        this.readyState = 1;
+        window.__mockEventSources.push(this);
+        setTimeout(() => this.onopen?.({ type: "open" }), 0);
+      }
+
+      close() {
+        this.readyState = 2;
+      }
+    }
+
+    window.EventSource = MockEventSource;
+  });
+}
+
+async function emitSse(page, event) {
+  await page.evaluate((evt) => window.__emitMockSse(evt), event);
+}
+
+function sampleGraph(index = 0, total = 2) {
+  const suffix = String(index + 1).padStart(3, "0");
+  return {
+    nodes: [
+      { id: `SYM-${suffix}`, label: `Symptom ${index + 1}`, group: "Symptom" },
+      { id: `FM-${suffix}`, label: `Failure ${index + 1}`, group: "FailureMode" },
+      { id: `CA-${suffix}`, label: `Action ${index + 1}`, group: "CorrectiveAction" },
+    ],
+    edges: [
+      { id: `e${index}-0`, from: `SYM-${suffix}`, to: `FM-${suffix}`, label: "MAY_INDICATE" },
+      { id: `e${index}-1`, from: `FM-${suffix}`, to: `CA-${suffix}`, label: "HAS_CORRECTIVE_ACTION" },
+    ],
+    focus_index: index,
+    focus_node_ids: [`SYM-${suffix}`, `FM-${suffix}`, `CA-${suffix}`],
+    focus_edge_ids: [`e${index}-0`, `e${index}-1`],
+    review_graph: true,
+    approved_triplet_count: index,
+    total_triplets: total,
+    current_triplet_index: index,
+    current_is_preview: true,
+  };
+}
+
+function sampleTripletPayload(index = 0, total = 2) {
+  const suffix = String(index + 1).padStart(3, "0");
+  return {
+    index,
+    total,
+    graph: sampleGraph(index, total),
+    triplet: {
+      symptom: {
+        symptom_id: `SYM-${suffix}`,
+        name: `Symptom ${index + 1}`,
+        description: `Symptom ${index + 1} description.`,
+        severity: "Medium",
+        evidence_page: 1,
+      },
+      failure_modes: [
+        {
+          failure_mode_id: `FM-${suffix}`,
+          name: `Failure ${index + 1}`,
+          description: `Failure ${index + 1} description.`,
+          material_context: "Drive",
+          linked_symptom_id: `SYM-${suffix}`,
+          evidence_page: 1,
+        },
+      ],
+      corrective_actions: [
+        {
+          action_id: `CA-${suffix}`,
+          name: `Action ${index + 1}`,
+          description: `Action ${index + 1} description.`,
+          instruction_text: "Inspect, adjust, and verify.",
+          source_page: 1,
+          linked_failure_mode_id: `FM-${suffix}`,
+        },
+      ],
+    },
+  };
+}
+
 test("startup sends zero page offset when manual page 1 is PDF page 1", async ({ page }) => {
   await page.setViewportSize({ width: 1500, height: 960 });
   let chatStartBody = null;
@@ -675,6 +767,102 @@ test("triplet review card saves editable field patches on approval", async ({ pa
   expect(actions[0].payload.patch).toEqual({
     "symptom.name": "Axis backlash after warmup",
   });
+});
+
+test("stale done event does not reset the turn indicator after starting extraction from widget", async ({ page }) => {
+  await page.setViewportSize({ width: 1500, height: 960 });
+  await installMockEventSource(page);
+  const actions = [];
+  await stubBaseRoutes(page, "");
+  await page.route("**/chat/action", async (route) => {
+    actions.push(route.request().postDataJSON());
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ status: "ok" }),
+    });
+  });
+
+  await openChat(page);
+  await expect(page.locator("#chat-layout")).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.__mockEventSources?.length || 0)).toBeGreaterThan(0);
+
+  await emitSse(page, {
+    type: "widget",
+    widget: "ontology_review",
+    payload: {
+      status: "ready",
+      node_count: 3,
+      node_type_counts: { Asset: 1, Symptom: 1, CorrectiveAction: 1 },
+      selected_pages_count: 8,
+      selected_sections_count: 2,
+      graph_issues_count: 0,
+      schema_issues_count: 0,
+      human_fields_count: 0,
+      suggested_relations_count: 0,
+      preview_relations: [],
+      confidence_counts: {},
+      human_required_fields: [],
+    },
+  });
+
+  const widget = page.getByRole("dialog", { name: "Ontology Draft Ready" });
+  await expect(widget).toBeVisible();
+  await widget.getByRole("button", { name: "Continue to Extraction" }).click();
+
+  await expect.poll(() => actions.length).toBe(1);
+  expect(actions[0].action).toBe("run_extraction");
+  expect(actions[0].client_action_id).toMatch(/^action-/);
+
+  await emitSse(page, { type: "done" });
+
+  await expect(page.locator("#chat-turn-badge")).toHaveText("System is working");
+  await expect(page.locator("#chat-turn-text")).toContainText("Extraction");
+});
+
+test("next triplet sheet remains visible when it arrives during the previous close animation", async ({ page }) => {
+  await page.setViewportSize({ width: 1500, height: 960 });
+  await installMockEventSource(page);
+  const actions = [];
+  await stubBaseRoutes(page, "");
+  await page.route("**/chat/action", async (route) => {
+    actions.push(route.request().postDataJSON());
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ status: "ok" }),
+    });
+  });
+
+  await openChat(page);
+  await expect(page.locator("#chat-layout")).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.__mockEventSources?.length || 0)).toBeGreaterThan(0);
+
+  await emitSse(page, {
+    type: "widget",
+    widget: "triplet",
+    payload: sampleTripletPayload(0, 2),
+  });
+
+  const firstTriplet = page.getByRole("dialog", { name: "Triplet 1 / 2" });
+  await expect(firstTriplet).toBeVisible();
+  await firstTriplet.getByRole("button", { name: "Approve" }).click();
+  await expect.poll(() => actions.length).toBe(1);
+
+  await emitSse(page, {
+    type: "widget",
+    widget: "extraction_graph",
+    payload: { graph: sampleGraph(0, 2) },
+  });
+  await emitSse(page, {
+    type: "widget",
+    widget: "triplet",
+    payload: sampleTripletPayload(1, 2),
+  });
+
+  await page.waitForTimeout(420);
+
+  await expect(page.getByRole("dialog", { name: "Triplet 2 / 2" })).toBeVisible();
+  await expect(page.locator("#widget-sheet")).toHaveClass(/is-open/);
+  await expect(page.locator("#widget-sheet")).not.toHaveAttribute("hidden", "");
 });
 
 test("export-ready widget automatically starts ontology export", async ({ page }) => {

@@ -43,6 +43,7 @@ class ChatActionRequest(BaseModel):
     pdf_id: str
     action: str          # e.g. "approve_triplet", "approve_cut_plan"
     payload: dict = {}   # action-specific data
+    client_action_id: str | None = None
 
 
 # ── Start (auto-kick) ──────────────────────────────────────────────────
@@ -153,12 +154,15 @@ async def post_action(req: ChatActionRequest):
         evt_bus.register(req.pdf_id)
 
     from backend.services.conversation.gate import check as gate_check
-    from backend.services.conversation.tools import dispatch
 
     on_event = evt_bus.make_on_event(req.pdf_id)
+    tagged_on_event = _tag_client_action(on_event, req.client_action_id)
     ok, reason = gate_check(req.action, req.payload, store)
     if not ok:
-        await evt_bus.put(req.pdf_id, evt_bus.error_event(reason))
+        event = evt_bus.error_event(reason)
+        if req.client_action_id:
+            event["client_action_id"] = req.client_action_id
+        await evt_bus.put(req.pdf_id, event)
         # Still send a natural-language explanation via the orchestrator
         asyncio.create_task(
             handle_message(
@@ -169,7 +173,7 @@ async def post_action(req: ChatActionRequest):
         )
         return {"status": "refused", "reason": reason}
 
-    asyncio.create_task(_run_action(req.pdf_id, store, req.action, req.payload, on_event))
+    asyncio.create_task(_run_action(req.pdf_id, store, req.action, req.payload, tagged_on_event))
     return {"status": "ok"}
 
 
@@ -189,9 +193,22 @@ _CHAIN_PREAMBLE: dict[str, str] = {
 }
 
 
+def _tag_client_action(on_event, client_action_id: str | None):
+    if not client_action_id:
+        return on_event
+
+    def _emit(event: dict) -> None:
+        tagged = dict(event)
+        tagged["client_action_id"] = client_action_id
+        on_event(tagged)
+
+    return _emit
+
+
 async def _run_action(pdf_id: str, store: dict, action: str, payload: dict, on_event) -> None:
     from backend.services.conversation.tools import dispatch
 
+    on_event(evt_bus.progress_event(action, f"Running {action.replace('_', ' ')}…"))
     result = await dispatch(action, payload, store, on_event)
     if result.get("widget") and result["widget"] not in ("triplet_review_start",):
         on_event(evt_bus.widget_event(result["widget"], {k: v for k, v in result.items() if k != "widget"}))

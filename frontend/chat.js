@@ -218,6 +218,9 @@ function _handleEvent(e) {
             _updateProgressBubble(data);
             break;
         case "widget":
+            if (data.client_action_id && data.client_action_id === _activeClientActionId) {
+                _activeClientActionId = null;
+            }
             _clearThinkingIndicator();
             _finishProgress();
             _renderWidget(data.widget, data.payload);
@@ -227,11 +230,17 @@ function _handleEvent(e) {
             _appendCritique(data);
             break;
         case "needs_input":
+            if (data.client_action_id && data.client_action_id === _activeClientActionId) {
+                _activeClientActionId = null;
+            }
             _clearThinkingIndicator();
             _appendAssistantMessage(data.message || "I need some input from you.");
             _setAwaitingOperator(data.message || "I need your input before I can continue.");
             break;
         case "error":
+            if (data.client_action_id && data.client_action_id === _activeClientActionId) {
+                _activeClientActionId = null;
+            }
             _clearThinkingIndicator();
             _appendErrorMessage(data.message || "An error occurred.");
             _setAwaitingOperator("The workflow stopped because of an error. Review the last message and decide the next step.");
@@ -240,6 +249,12 @@ function _handleEvent(e) {
             _showThinkingIndicator(data.message || "Preparing a response…");
             break;
         case "done":
+            if (_activeClientActionId) {
+                if (data.client_action_id !== _activeClientActionId) {
+                    return;
+                }
+                _activeClientActionId = null;
+            }
             _finishProgress();
             _clearThinkingIndicator();
             if (document.getElementById("chat-turn-indicator")?.dataset.mode !== "operator") {
@@ -675,6 +690,9 @@ const _SHEET_WIDGET_TYPES = new Set([
 let _sheetCurrentEl = null;  // widget el currently loaded in the sheet (persists when closed)
 let _sheetFocusReturn = null; // element to restore focus to on close
 let _sheetIsOpen = false;
+let _sheetCloseTimer = null;
+let _clientActionSeq = 0;
+let _activeClientActionId = null;
 
 // Return the body/action children currently living in the sheet back to the
 // originating widget element. We move children rather than clone to preserve
@@ -817,6 +835,11 @@ function _openWidgetSheet(widgetEl) {
     const sheetIcon = document.getElementById("widget-sheet-icon");
     if (!sheet || !sheetBody) return;
 
+    if (_sheetCloseTimer) {
+        window.clearTimeout(_sheetCloseTimer);
+        _sheetCloseTimer = null;
+    }
+
     const isNewWidget = widgetEl && widgetEl !== _sheetCurrentEl;
 
     if (isNewWidget) {
@@ -864,8 +887,8 @@ function _openWidgetSheet(widgetEl) {
     sheet.classList.remove("is-closing");
     backdrop.classList.remove("is-closing");
 
-    sheet.classList.add("is-open");
     sheet.hidden = false;
+    sheet.classList.add("is-open");
 
     // Push the chat columns left so the PDF stays fully visible
     document.body.classList.add("widget-sheet-pushing");
@@ -879,7 +902,18 @@ function _openWidgetSheet(widgetEl) {
 
 function _closeWidgetSheet() {
     const sheet = document.getElementById("widget-sheet");
-    if (!sheet || !_sheetIsOpen) return;
+    if (!sheet) return;
+
+    if (_sheetCloseTimer) {
+        window.clearTimeout(_sheetCloseTimer);
+        _sheetCloseTimer = null;
+    }
+
+    if (!_sheetIsOpen) {
+        document.body.classList.remove("widget-sheet-pushing");
+        if (!sheet.classList.contains("is-open")) sheet.hidden = true;
+        return;
+    }
 
     _sheetIsOpen = false;
     sheet.classList.remove("is-open");
@@ -888,7 +922,9 @@ function _closeWidgetSheet() {
     // Stop pushing the chat columns
     document.body.classList.remove("widget-sheet-pushing");
 
-    setTimeout(() => {
+    _sheetCloseTimer = window.setTimeout(() => {
+        _sheetCloseTimer = null;
+        if (_sheetIsOpen) return;
         sheet.classList.remove("is-closing");
         // Keep sheet DOM loaded but hidden — content is preserved for re-open
         sheet.hidden = true;
@@ -2290,23 +2326,33 @@ function _sendMessage(text) {
 
 async function _postAction(action, payload = {}) {
     if (!_pdfId) return;
+    const clientActionId = `action-${Date.now()}-${++_clientActionSeq}`;
+    _activeClientActionId = clientActionId;
     _setSystemBusy(`Running ${_humanPhaseLabel(action)}…`, _currentPhase);
     _showThinkingIndicator(`Running ${_humanPhaseLabel(action)}…`);
     try {
         const res = await fetch("/chat/action", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ pdf_id: _pdfId, action, payload }),
+            body: JSON.stringify({
+                pdf_id: _pdfId,
+                action,
+                payload,
+                client_action_id: clientActionId,
+            }),
         });
         if (!res.ok) {
             if (res.status === 404) {
+                if (_activeClientActionId === clientActionId) _activeClientActionId = null;
                 _markSessionLost();
                 return;
             }
             const err = await res.json().catch(() => ({}));
+            if (_activeClientActionId === clientActionId) _activeClientActionId = null;
             _appendErrorMessage(err.detail || "Action failed.");
         }
     } catch {
+        if (_activeClientActionId === clientActionId) _activeClientActionId = null;
         _appendErrorMessage("Could not reach the server.");
     }
 }
