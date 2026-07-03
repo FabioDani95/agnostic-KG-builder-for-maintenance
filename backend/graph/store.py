@@ -1,5 +1,3 @@
-"""Bridge between GraphState and the existing in-memory pdf_store entries."""
-
 from __future__ import annotations
 
 from copy import deepcopy
