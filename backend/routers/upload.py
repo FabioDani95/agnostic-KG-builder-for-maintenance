@@ -7,6 +7,7 @@ from fastapi.responses import FileResponse
 
 from backend.graph.store import seed_graph_state
 from backend.models import LoadManualRequest, UploadResponse
+from backend.runstore import RunStore
 from backend.services.pdf_service import (
     PdfEncryptedError,
     PdfReadError,
@@ -80,6 +81,10 @@ async def load_manual(req: LoadManualRequest):
     pdf_store[pdf_id] = store
     ensure_run_metrics(store)
     seed_graph_state(store, pdf_id)
+    try:
+        RunStore().create_run(store, input_path=pdf_path)
+    except Exception:
+        pass
 
     return UploadResponse(
         pdf_id=pdf_id,

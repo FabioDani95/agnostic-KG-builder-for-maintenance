@@ -8,6 +8,7 @@ from typing import Any, Callable
 
 from backend.schemas.actions import HumanAction
 from backend.schemas.widgets import validate_widget_payload
+from backend.runstore import append_human_action
 from backend.services.conversation import events as evt_bus
 from backend.services.conversation.gate import check as gate_check
 
@@ -50,6 +51,8 @@ def run_action(
     """
     tagged_on_event = _tag_client_action(on_event, action.client_action_id)
     ok, reason = gate_check(action.action, action.payload, store)
+    recorded_action = action.model_copy(update={"gate_result": {"allowed": ok, "reason": reason}})
+    append_human_action(pdf_id, recorded_action.model_dump())
     if not ok:
         tagged_on_event(evt_bus.error_event(reason))
         return ActionOutcome(status="refused", reason=reason)

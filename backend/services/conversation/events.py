@@ -15,6 +15,8 @@ import asyncio
 import logging
 from typing import Any
 
+from backend.runstore import append_chat_event
+
 logger = logging.getLogger(__name__)
 
 # Event type literals (keeps callers honest without a full enum)
@@ -81,6 +83,7 @@ def make_on_event(pdf_id: str):
 
     def _emit(event: dict[str, Any]) -> None:
         try:
+            append_chat_event(pdf_id, event)
             if loop is not None and not loop.is_closed():
                 loop.call_soon_threadsafe(queue.put_nowait, event)
             else:
@@ -101,6 +104,7 @@ async def put(pdf_id: str, event: dict[str, Any]) -> None:
     """Enqueue an event from async context."""
     queue = _queues.get(pdf_id)
     if queue is not None:
+        append_chat_event(pdf_id, event)
         await queue.put(event)
 
 

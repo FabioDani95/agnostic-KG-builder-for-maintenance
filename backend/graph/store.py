@@ -7,6 +7,7 @@ from typing import Any
 
 from backend.graph.config_snapshot import build_config_snapshot, default_selected_models
 from backend.graph.state import GraphPhase, GraphState, create_initial_graph_state, utc_now_iso
+from backend.runstore import snapshot_store
 from backend.schemas.run_state import RunState
 from backend.services.run_metrics import project_agent_token_ledger
 
@@ -17,6 +18,7 @@ def persist_graph_state(store: dict[str, Any], state: GraphState) -> GraphState:
     store["run_id"] = state["run_id"]
     store["config_snapshot"] = deepcopy(state.get("config_snapshot", {}))
     store["selected_models"] = deepcopy(state.get("selected_models", {}))
+    snapshot_store(store)
     return state
 
 

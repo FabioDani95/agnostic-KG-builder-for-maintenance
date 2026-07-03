@@ -1748,6 +1748,11 @@ async def _export_ontology(args, store, on_event):
         manual_filename=store.get("filename"),
     )
     store["metrics_path"] = metrics_info["target_path"]
+    try:
+        from backend.runstore import copy_export_artifacts
+        copy_export_artifacts(store)
+    except Exception:
+        pass
 
     # Update phase to COMPLETED
     from backend.graph.store import _record_phase
