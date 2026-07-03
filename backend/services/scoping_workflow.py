@@ -1,4 +1,4 @@
-"""Reusable scoping workflow shared by classic and multi-agent modes."""
+"""Reusable scoping workflow used by the multi-agent pipeline."""
 
 from __future__ import annotations
 

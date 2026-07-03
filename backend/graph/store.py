@@ -560,7 +560,7 @@ def build_status_payload(store: dict[str, Any]) -> dict[str, Any]:
         "run_id": state.get("run_id"),
         "pdf_id": state.get("pdf_id"),
         "filename": state.get("filename", ""),
-        "pipeline_mode": state.get("config_snapshot", {}).get("pipeline", {}).get("mode", "classic"),
+        "pipeline_mode": state.get("config_snapshot", {}).get("pipeline", {}).get("mode", "multi_agent"),
         "current_phase": state.get("current_phase"),
         "run_status": state.get("run_status", "loaded"),
         "next_step": state.get("next_step"),

@@ -153,7 +153,7 @@ def test_seed_graph_state_initializes_run_metadata():
     assert graph_state["run_id"].startswith("run_")
     assert graph_state["current_phase"] == "loaded"
     assert graph_state["filename"] == "manual.pdf"
-    assert graph_state["config_snapshot"]["pipeline"]["mode"] in {"classic", "multi_agent"}
+    assert graph_state["config_snapshot"]["pipeline"]["mode"] == "multi_agent"
     assert graph_state["selected_models"] == {
         "scoping": None,
         "ontology_draft": None,

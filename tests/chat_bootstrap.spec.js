@@ -14,7 +14,7 @@ test("chat bootstrap recovers if the chat layout shell is missing from the DOM",
         body: JSON.stringify({
           scoping_models: [{ id: "gpt-5.4", label: "GPT-5.4", default: true }],
           extraction_models: [{ id: "gpt-5.4", label: "GPT-5.4", default: true }],
-          pipeline: { mode: "classic" },
+          pipeline: { mode: "multi_agent" },
           small_doc_threshold: 15,
           reflective_loop: { max_retries: 0, retry_on_severity: "error" },
         }),

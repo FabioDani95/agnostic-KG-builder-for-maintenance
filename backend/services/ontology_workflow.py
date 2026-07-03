@@ -1,4 +1,4 @@
-"""Reusable ontology-drafting workflow shared by classic and multi-agent modes."""
+"""Reusable ontology-drafting workflow used by the multi-agent pipeline."""
 
 from __future__ import annotations
 

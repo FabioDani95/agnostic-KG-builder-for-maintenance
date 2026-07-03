@@ -5,14 +5,12 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException
 
 from backend.agents.scoping_agent import run_scoping_agent
-from backend.app_config import get_pipeline_config
 from backend.graph.supervisor import record_cut_plan_approval_route, record_scoping_route
 from backend.graph.store import update_cut_plan_approval
 from backend.models import CutPlan, CutPlanApproval, CutPlanRequest
 from backend.routers.upload import pdf_store
 from backend.services.scoping_workflow import (
     approve_cut_plan_workflow,
-    create_cut_plan_workflow,
 )
 
 router = APIRouter()
@@ -24,11 +22,9 @@ async def create_cut_plan(req: CutPlanRequest):
         raise HTTPException(status_code=404, detail="PDF not found. Upload a PDF first.")
 
     store = pdf_store[req.pdf_id]
-    if get_pipeline_config().get("mode") == "multi_agent":
-        result = run_scoping_agent(store, req)
-        record_scoping_route(store)
-        return result
-    return create_cut_plan_workflow(store, req)
+    result = run_scoping_agent(store, req)
+    record_scoping_route(store)
+    return result
 
 
 @router.post("/cut-plan/approve")
@@ -55,6 +51,5 @@ async def approve_cut_plan(req: CutPlanApproval):
         page_offset=req.page_offset,
         sections=sections_for_state,
     )
-    if get_pipeline_config().get("mode") == "multi_agent":
-        record_cut_plan_approval_route(store)
+    record_cut_plan_approval_route(store)
     return response

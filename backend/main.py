@@ -49,7 +49,7 @@ async def get_frontend_config():
         "scoping_models": scoping.get("models", []),
         "extraction_models": extraction.get("models", []),
         "pipeline": {
-            "mode": pipeline.get("mode", "classic"),
+            "mode": pipeline.get("mode", "multi_agent"),
         },
         "small_doc_threshold": get_effective_small_doc_threshold(),
         "reflective_loop": {
@@ -62,10 +62,16 @@ async def get_frontend_config():
 @app.post("/api/config")
 async def update_runtime_config(body: dict):
     """Apply in-memory overrides to runtime-editable settings."""
-    allowed = {"small_doc_threshold", "max_retries", "retry_on_severity", "pipeline_mode"}
+    allowed = {"small_doc_threshold", "max_retries", "retry_on_severity"}
     overrides = {k: v for k, v in body.items() if k in allowed}
     apply_runtime_overrides(overrides)
     return {"status": "ok", "applied": overrides}
+
+
+@app.get("/api/health")
+async def health_check():
+    """Health endpoint used by dev/test launchers."""
+    return {"status": "ok", "pipeline_mode": "multi_agent"}
 
 
 pdf_store: dict[str, dict] = {}

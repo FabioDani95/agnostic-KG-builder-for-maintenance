@@ -77,7 +77,6 @@ def teardown_function():
 
 
 def test_cut_plan_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkeypatch):
-    app_config.apply_runtime_overrides({"pipeline_mode": "multi_agent"})
     pdf_store["pdf-cut"] = _sample_store("pdf-cut")
     called = {"wrapper": False}
 
@@ -114,7 +113,6 @@ def test_cut_plan_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkeypatch)
 
 
 def test_ontology_draft_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkeypatch):
-    app_config.apply_runtime_overrides({"pipeline_mode": "multi_agent"})
     pdf_store["pdf-ontology"] = _sample_store("pdf-ontology")
     called = {"wrapper": False}
 
@@ -180,7 +178,6 @@ def test_ontology_draft_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkey
 
 
 def test_extract_tables_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkeypatch):
-    app_config.apply_runtime_overrides({"pipeline_mode": "multi_agent"})
     pdf_store["pdf-extract"] = _sample_store("pdf-extract")
     called = {"wrapper": False}
     validation = {"called": False}
@@ -234,7 +231,6 @@ def test_extract_tables_endpoint_uses_multi_agent_wrapper_and_keeps_shape(monkey
 
 
 def test_extract_tables_runs_phase3_agents_when_enabled_and_preserves_shape(monkeypatch):
-    app_config.apply_runtime_overrides({"pipeline_mode": "multi_agent"})
     pdf_store["pdf-phase3"] = _sample_store("pdf-phase3")
     call_order: list[str] = []
 
@@ -353,7 +349,6 @@ def test_extract_tables_runs_phase3_agents_when_enabled_and_preserves_shape(monk
 
 
 def test_generate_json_reads_ontology_from_graph_state_in_multi_agent(monkeypatch):
-    app_config.apply_runtime_overrides({"pipeline_mode": "multi_agent"})
     store = _sample_store("pdf-generate")
     store["graph_state"]["selected_models"]["extraction"] = "gpt-5.4-mini"
     store["graph_state"]["ontology_pipeline"] = {
@@ -500,7 +495,6 @@ def test_generate_json_minimal_fallback_autofills_asset_identity(monkeypatch):
 
 
 def test_multi_agent_status_and_audit_endpoints_are_read_only(monkeypatch):
-    app_config.apply_runtime_overrides({"pipeline_mode": "multi_agent"})
     store = _sample_store("pdf-status")
     run_id = store["graph_state"]["run_id"]
     store["graph_state"]["current_phase"] = "validation"

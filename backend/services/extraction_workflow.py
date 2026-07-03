@@ -1,4 +1,4 @@
-"""Reusable extraction workflow shared by classic and multi-agent modes."""
+"""Reusable extraction workflow used by the multi-agent pipeline."""
 
 from __future__ import annotations
 

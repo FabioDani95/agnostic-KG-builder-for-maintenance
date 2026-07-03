@@ -7,7 +7,6 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
 
-from backend.app_config import get_pipeline_config
 from backend.config import settings
 from backend.graph.supervisor import record_export_route
 from backend.graph.store import update_export_state
@@ -332,10 +331,7 @@ async def generate_json(req: GenerateJsonRequest):
     if req.pdf_id and req.pdf_id in pdf_store:
         store = pdf_store[req.pdf_id]
         graph_state = store.get("graph_state") or {}
-        if get_pipeline_config().get("mode") == "multi_agent":
-            pipeline_state = graph_state.get("ontology_pipeline") or store.get("ontology_pipeline")
-        else:
-            pipeline_state = store.get("ontology_pipeline")
+        pipeline_state = graph_state.get("ontology_pipeline") or store.get("ontology_pipeline")
         pipeline_has_ontology = bool(pipeline_state and pipeline_state.get("ontology"))
         pipeline_is_clean = (
             pipeline_has_ontology
@@ -469,13 +465,12 @@ async def generate_json(req: GenerateJsonRequest):
             manual_filename=store.get("filename"),
         )
         pdf_store[req.pdf_id]["metrics_path"] = metrics_info["target_path"]
-        if get_pipeline_config().get("mode") == "multi_agent":
-            update_export_state(
-                store,
-                ontology_payload=ontology_payload,
-                export_base=selected_base_label,
-            )
-            record_export_route(store)
+        update_export_state(
+            store,
+            ontology_payload=ontology_payload,
+            export_base=selected_base_label,
+        )
+        record_export_route(store)
         json_str = json.dumps(ontology_payload, indent=2, ensure_ascii=False)
         return Response(
             content=json_str,
@@ -560,13 +555,12 @@ async def generate_json(req: GenerateJsonRequest):
             manual_filename=pdf_store[req.pdf_id].get("filename"),
         )
         pdf_store[req.pdf_id]["metrics_path"] = metrics_info["target_path"]
-        if get_pipeline_config().get("mode") == "multi_agent":
-            update_export_state(
-                pdf_store[req.pdf_id],
-                ontology_payload=ontology_payload,
-                export_base="minimal_fallback",
-            )
-            record_export_route(pdf_store[req.pdf_id])
+        update_export_state(
+            pdf_store[req.pdf_id],
+            ontology_payload=ontology_payload,
+            export_base="minimal_fallback",
+        )
+        record_export_route(pdf_store[req.pdf_id])
     json_str = json.dumps(ontology_payload, indent=2, ensure_ascii=False)
     return Response(
         content=json_str,

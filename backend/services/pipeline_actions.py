@@ -9,7 +9,7 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any
 
-from backend.app_config import get_confidence_config, get_pipeline_config
+from backend.app_config import get_confidence_config
 from backend.graph.store import sync_ontology_pipeline_state
 from backend.graph.supervisor import record_ontology_review_route
 from backend.models import (
@@ -87,8 +87,7 @@ def apply_ontology_suggestions(
     )
     store["ontology_pipeline"] = result.model_dump()
     sync_ontology_pipeline_state(store)
-    if get_pipeline_config().get("mode") == "multi_agent":
-        record_ontology_review_route(store)
+    record_ontology_review_route(store)
     return result
 
 

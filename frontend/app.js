@@ -29,16 +29,12 @@ dateInput.value = new Date().toISOString().split("T")[0];
         const thresholdInput = document.getElementById("small-doc-threshold");
         const retriesInput = document.getElementById("reflective-max-retries");
         const severitySelect = document.getElementById("reflective-severity");
-        const pipelineModeEl = document.getElementById("pipeline-mode");
         if (thresholdInput && cfg.small_doc_threshold != null)
             thresholdInput.value = cfg.small_doc_threshold;
         if (retriesInput && cfg.reflective_loop?.max_retries != null)
             retriesInput.value = cfg.reflective_loop.max_retries;
         if (severitySelect && cfg.reflective_loop?.retry_on_severity)
             severitySelect.value = cfg.reflective_loop.retry_on_severity;
-        if (pipelineModeEl && cfg.pipeline?.mode) {
-            pipelineModeEl.value = cfg.pipeline.mode;
-        }
     } catch (e) {
         console.warn("Could not load model config, using HTML defaults", e);
     }
@@ -109,7 +105,6 @@ const state = {
     runMetrics: null,
 
     runId: null,
-    pipelineMode: "classic",
     supervisorStatus: null,
     supervisorAudit: null,
     statusPollTimer: null,
@@ -276,7 +271,6 @@ const bulkApproveBtn = document.getElementById("bulk-approve-btn");
 const escalationsBlock = document.getElementById("escalations-block");
 const escalationsList = document.getElementById("escalations-list");
 const escalationsCount = document.getElementById("escalations-count");
-const pipelineModeSelect = document.getElementById("pipeline-mode");
 
 const ontologyAdvancedPanel = document.getElementById("ontology-advanced-panel");
 if (ontologyAdvancedPanel) {
@@ -312,14 +306,9 @@ uploadForm.addEventListener("submit", async (e) => {
     const threshVal = parseInt(document.getElementById("small-doc-threshold")?.value);
     const retriesVal = parseInt(document.getElementById("reflective-max-retries")?.value);
     const severityVal = document.getElementById("reflective-severity")?.value;
-    const pipelineModeVal = pipelineModeSelect?.value;
     if (!isNaN(threshVal)) advancedOverrides.small_doc_threshold = threshVal;
     if (!isNaN(retriesVal)) advancedOverrides.max_retries = retriesVal;
     if (severityVal) advancedOverrides.retry_on_severity = severityVal;
-    if (pipelineModeVal) {
-        advancedOverrides.pipeline_mode = pipelineModeVal;
-        state.pipelineMode = pipelineModeVal;
-    }
     if (Object.keys(advancedOverrides).length > 0) {
         try {
             await fetch("/api/config", {
@@ -834,7 +823,7 @@ function enterOntologyScreen() {
     suggestedRelationsList.innerHTML = "";
     suggestedRelationsBulk.hidden = true;
 
-    if (state.pipelineMode === "multi_agent" && state.runId) {
+    if (state.runId) {
         if (auditDrawerToggle) auditDrawerToggle.hidden = false;
         startStatusPolling();
     } else {
@@ -1378,7 +1367,7 @@ function displayKeyForBackendPhase(phase) {
 
 function renderPhaseStrip(statusPayload) {
     if (!phaseStrip) return;
-    if (state.pipelineMode !== "multi_agent" || !statusPayload) {
+    if (!statusPayload) {
         phaseStrip.classList.add("is-hidden");
         phaseStrip.innerHTML = "";
         return;
@@ -1457,7 +1446,7 @@ function stopStatusPolling() {
 }
 
 async function pollSupervisorStatusOnce() {
-    if (!state.runId || state.pipelineMode !== "multi_agent") return;
+    if (!state.runId) return;
     try {
         const payload = await api.multiAgentStatus(state.runId);
         state.supervisorStatus = payload;
@@ -1472,14 +1461,14 @@ async function pollSupervisorStatusOnce() {
 }
 
 function startStatusPolling() {
-    if (!state.runId || state.pipelineMode !== "multi_agent") return;
+    if (!state.runId) return;
     stopStatusPolling();
     pollSupervisorStatusOnce();
     state.statusPollTimer = setInterval(pollSupervisorStatusOnce, 2000);
 }
 
 async function openAuditDrawer() {
-    if (!auditDrawer || !state.runId || state.pipelineMode !== "multi_agent") return;
+    if (!auditDrawer || !state.runId) return;
     auditDrawer.classList.add("open");
     auditDrawer.setAttribute("aria-hidden", "false");
     if (auditDrawerToggle) auditDrawerToggle.setAttribute("aria-expanded", "true");

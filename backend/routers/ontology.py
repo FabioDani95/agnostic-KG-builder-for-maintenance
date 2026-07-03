@@ -1,11 +1,9 @@
 import json
-from copy import deepcopy
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
 
 from backend.agents.ontology_draft_agent import run_ontology_draft_agent
-from backend.app_config import get_pipeline_config
 from backend.graph.supervisor import record_ontology_review_route, record_ontology_route
 from backend.graph.store import sync_ontology_pipeline_state
 from backend.models import (
@@ -16,14 +14,10 @@ from backend.models import (
     OntologyReviewRequest,
 )
 from backend.routers.upload import pdf_store
-from backend.services.graph_reasoning import run_graph_analysis
 from backend.services.ontology_pipeline import (
     apply_human_binding,
     ontology_export_payload,
-    validate_ontology_instance,
 )
-from backend.services.ontology_schema_service import load_ontology_schema
-from backend.services.ontology_workflow import draft_ontology_workflow
 from backend.services.pipeline_actions import apply_ontology_suggestions
 
 router = APIRouter(prefix="/ontology", tags=["ontology"])
@@ -35,11 +29,9 @@ async def draft_ontology(req: OntologyDraftRequest):
         raise HTTPException(status_code=404, detail="PDF not found. Upload a PDF first.")
 
     store = pdf_store[req.pdf_id]
-    if get_pipeline_config().get("mode") == "multi_agent":
-        result = await run_ontology_draft_agent(store, req)
-        record_ontology_route(store)
-        return result
-    return await draft_ontology_workflow(store, req)
+    result = await run_ontology_draft_agent(store, req)
+    record_ontology_route(store)
+    return result
 
 
 @router.get("/{pdf_id}", response_model=OntologyPipelineResponse)
@@ -71,8 +63,7 @@ async def review_ontology(req: OntologyReviewRequest):
         result.semantic_issues = existing.semantic_issues
     store["ontology_pipeline"] = result.model_dump()
     sync_ontology_pipeline_state(store)
-    if get_pipeline_config().get("mode") == "multi_agent":
-        record_ontology_review_route(store)
+    record_ontology_review_route(store)
     return result
 
 
