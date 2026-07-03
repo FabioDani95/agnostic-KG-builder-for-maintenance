@@ -3,11 +3,8 @@
  * All user-facing text is in English.
  */
 
-import { renderSectionsWidget } from "./widgets/sections.js?v=20260424a";
-import { renderTripletWidget } from "./widgets/triplet.js?v=20260501a";
-import { renderRequiredFieldsWidget } from "./widgets/required_fields.js?v=20260422d";
-import { renderNodeCard } from "./widgets/node_card.js?v=20260422d";
 import { NON_SHEET_WIDGET_TYPES, renderRegisteredWidget } from "./widgets/registry.js?v=20260703a";
+import { buildWidgetHandlers } from "./widgets/handlers.js?v=20260703a";
 
 // ── Utilities ──────────────────────────────────────────────────────────
 
@@ -502,49 +499,24 @@ function _renderWidget(widgetType, payload) {
         _dismissWidgetSheet();
     }
 
-    const rendered = renderRegisteredWidget(widgetType, payload, {
-        extraction_graph: () => {
+    const rendered = renderRegisteredWidget(widgetType, payload, buildWidgetHandlers(payload, {
+        onAction,
+        sendMessage: _sendMessage,
+        showExtractionGraph: (graph, opts) => {
             _lastWidgetType = "extraction_graph";
-            _showExtractionGraph(payload?.graph || payload, { mode: "all" });
-            _syncQuickActions({ widget: "extraction_graph", payload });
-            return null;
+            _showExtractionGraph(graph, opts);
         },
-        modify_workspace_sync: () => {
+        refreshModifyWorkspace: (p) => {
             _lastWidgetType = "modify_workspace_sync";
-            _refreshModifyWorkspace(payload);
-            _syncQuickActions({ widget: "modify_workspace_sync", payload });
-            return null;
+            _refreshModifyWorkspace(p);
         },
-        sections: () => renderSectionsWidget(payload, onAction),
-        ontology_review: () => renderOntologyReviewWidget(payload, onAction),
-        triplet_review_start: () => {
-            // Request the first triplet from the backend via message
-            _sendMessage("[system: begin triplet review]");
-            return null;
-        },
-        triplet: () => {
-            const el = renderTripletWidget(payload, onAction);
-            _showTripletGraphFocus(payload);
-            _navigateToTripletSource(payload?.triplet);
-            return el;
-        },
-        required_fields: () => renderRequiredFieldsWidget(payload, onAction),
-        node_draft: () => {
-            if (payload.node_type) {
-                const draftNode = {
-                    name: payload.normalized_name || payload.raw_text || "",
-                    description: payload.normalized_description || "",
-                };
-                el = renderNodeCard(draftNode, payload.node_type, {
-                    isDraft: true,
-                    onConfirm: (node, type) => _postAction("confirm_node_manual", { node_type: type, node }),
-                });
-            }
-            return null;
-        },
-        export: () => _renderExportWidget(payload),
-        run_metrics: () => _renderRunMetricsWidget(payload?.metrics || payload),
-    });
+        syncQuickActions: _syncQuickActions,
+        showTripletGraphFocus: _showTripletGraphFocus,
+        navigateToTripletSource: _navigateToTripletSource,
+        renderOntologyReview: renderOntologyReviewWidget,
+        renderExport: _renderExportWidget,
+        renderRunMetrics: _renderRunMetricsWidget,
+    }));
 
     const el = rendered.element;
 

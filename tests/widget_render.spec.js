@@ -9,7 +9,25 @@ function widgetFixtures() {
     .map((name) => JSON.parse(fs.readFileSync(path.join(dir, name), "utf8")));
 }
 
-test("registered widget fixtures render through the frontend registry", async ({ page }) => {
+// Widgets whose real handler renders an element into the chat stream.
+const ELEMENT_WIDGETS = new Set([
+  "sections",
+  "ontology_review",
+  "triplet",
+  "required_fields",
+  "node_draft",
+  "export",
+  "run_metrics",
+]);
+
+// Widgets whose real handler performs a host-app side effect instead.
+const SIDE_EFFECT_WIDGETS = {
+  extraction_graph: "showExtractionGraph",
+  modify_workspace_sync: "refreshModifyWorkspace",
+  triplet_review_start: "sendMessage",
+};
+
+test("registered widget fixtures render through the real chat handlers", async ({ page }) => {
   const consoleErrors = [];
   page.on("console", (message) => {
     if (message.type() === "error") consoleErrors.push(message.text());
@@ -21,10 +39,7 @@ test("registered widget fixtures render through the frontend registry", async ({
 
   const rendered = await page.evaluate(async (payloads) => {
     const registry = await import("/widgets/registry.js");
-    const sections = await import("/widgets/sections.js");
-    const triplet = await import("/widgets/triplet.js");
-    const required = await import("/widgets/required_fields.js");
-    const nodeCard = await import("/widgets/node_card.js");
+    const { buildWidgetHandlers } = await import("/widgets/handlers.js");
 
     const mount = document.createElement("main");
     mount.id = "widget-contract-mount";
@@ -44,41 +59,48 @@ test("registered widget fixtures render through the frontend registry", async ({
       return el;
     };
 
-    const handlers = {
-      sections: (payload) => sections.renderSectionsWidget(payload, () => {}),
-      ontology_review: (payload) => placeholder("ontology_review", payload),
-      triplet: (payload) => triplet.renderTripletWidget(payload, () => {}),
-      triplet_review_start: (payload) => placeholder("triplet_review_start", payload),
-      required_fields: (payload) => required.renderRequiredFieldsWidget(payload, () => {}),
-      node_draft: (payload) => nodeCard.renderNodeCard(
-        {
-          name: payload.normalized_name || payload.raw_text || "Draft node",
-          description: payload.normalized_description || "",
-        },
-        payload.node_type || "Symptom",
-        { isDraft: true, onConfirm: () => {} },
-      ),
-      extraction_graph: (payload) => placeholder("extraction_graph", payload),
-      modify_workspace_sync: (payload) => placeholder("modify_workspace_sync", payload),
-      export: (payload) => placeholder("export", payload),
-      run_metrics: (payload) => placeholder("run_metrics", payload),
-    };
-
     return payloads.map((payload) => {
+      // The chat-specific integrations (SSE, PDF panel, KG canvas) are
+      // stubbed; the per-widget wiring in buildWidgetHandlers is the real
+      // production code path.
+      const ctxCalls = [];
+      const ctx = {
+        onAction: () => {},
+        sendMessage: () => ctxCalls.push("sendMessage"),
+        showExtractionGraph: () => ctxCalls.push("showExtractionGraph"),
+        refreshModifyWorkspace: () => ctxCalls.push("refreshModifyWorkspace"),
+        syncQuickActions: () => {},
+        showTripletGraphFocus: () => {},
+        navigateToTripletSource: () => {},
+        renderOntologyReview: (p) => placeholder("ontology_review", p),
+        renderExport: (p) => placeholder("export", p),
+        renderRunMetrics: (p) => placeholder("run_metrics", p),
+      };
+      const handlers = buildWidgetHandlers(payload, ctx);
       const result = registry.renderRegisteredWidget(payload.widget, payload, handlers);
-      if (!result.handled || !result.element) {
-        return { widget: payload.widget, handled: result.handled, nonEmpty: false };
-      }
-      mount.appendChild(result.element);
+      if (result.element) mount.appendChild(result.element);
       return {
         widget: payload.widget,
         handled: result.handled,
-        nonEmpty: Boolean(result.element.textContent.trim() || result.element.children.length),
+        nonEmpty: Boolean(
+          result.element
+          && (result.element.textContent.trim() || result.element.children.length),
+        ),
+        ctxCalls,
       };
     });
   }, fixtures);
 
   expect(rendered).toHaveLength(fixtures.length);
-  expect(rendered.filter((item) => !item.handled || !item.nonEmpty)).toEqual([]);
+  for (const item of rendered) {
+    expect(item.handled, `${item.widget} not handled by registry`).toBe(true);
+    if (ELEMENT_WIDGETS.has(item.widget)) {
+      expect(item.nonEmpty, `${item.widget} rendered an empty element`).toBe(true);
+    } else {
+      const expectedCall = SIDE_EFFECT_WIDGETS[item.widget];
+      expect(expectedCall, `${item.widget} has no expected behavior defined`).toBeTruthy();
+      expect(item.ctxCalls, `${item.widget} did not trigger ${expectedCall}`).toContain(expectedCall);
+    }
+  }
   expect(consoleErrors).toEqual([]);
 });
