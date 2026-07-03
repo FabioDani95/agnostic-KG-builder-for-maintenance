@@ -2445,7 +2445,10 @@ function _quickActionsForPhase(phase, widget = "") {
 
 async function _loadPdf(pdfPath) {
     try {
-        _pdfjsLib = await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs");
+        _pdfjsLib = window.__kgPdfjsPromise ? await window.__kgPdfjsPromise : null;
+        if (!_pdfjsLib) {
+            _pdfjsLib = await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs");
+        }
         _pdfjsLib.GlobalWorkerOptions.workerSrc =
             "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
         _pdfDoc = await _pdfjsLib.getDocument(pdfPath).promise;
