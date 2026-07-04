@@ -126,6 +126,36 @@ class ApplyMissingChainsTests(unittest.TestCase):
         _, report = apply_missing_chains(_ontology(), {"missing_chains": chains}, _PAGES, max_chains=1)
         self.assertEqual(report["applied"], 1)
 
+    def test_placeholder_ids_never_produce_dangling_relations(self):
+        # Real-run regression: the model copied the prompt placeholder
+        # "existing_or_new_id" into BOTH failure_mode_id and action_id. The
+        # global id-reuse resolved the second occurrence to the first node
+        # (wrong type), emitting RESOLVED_BY to a target that did not exist.
+        chain = {
+            "symptom": {"symptom_id": "existing_or_new_id", "name": "No water filling",
+                        "description": "", "severity": "Medium"},
+            "failure_mode": {"failure_mode_id": "existing_or_new_id", "name": "Drain hose end set too low",
+                             "description": "", "material_context": "asset_level"},
+            "corrective_action": {"action_id": "existing_or_new_id", "name": "Raise the drain hose end",
+                                  "description": "", "instruction_text": "Raise the drain hose end.",
+                                  "source_page": 19},
+            "evidence": {"source_page": 19, "source_reference": "PAGE 19",
+                         "quote": "replace the wire unit"},
+        }
+        updated, report = apply_missing_chains(_ontology(), {"missing_chains": [chain]}, _PAGES, max_chains=12)
+        self.assertEqual(report["applied"], 1)
+        node_ids = {
+            str(node.get(field))
+            for label, field in (("Symptom", "symptom_id"), ("FailureMode", "failure_mode_id"),
+                                 ("CorrectiveAction", "action_id"))
+            for node in updated.nodes.get(label, [])
+        }
+        self.assertNotIn("existing_or_new_id", node_ids)
+        # Every relation endpoint must reference an existing node.
+        for relation in updated.relations:
+            self.assertIn(relation.from_id, node_ids | {"comp_valve"}, relation)
+            self.assertIn(relation.to_id, node_ids | {"comp_valve"}, relation)
+
     def test_empty_payload_is_noop(self):
         updated, report = apply_missing_chains(_ontology(), {"missing_chains": []}, _PAGES, max_chains=12)
         self.assertEqual(report, {"returned": 0, "applied": 0, "dropped_no_quote": 0, "dropped_duplicate": 0})

@@ -84,9 +84,9 @@ Return valid JSON only:
 {
   "missing_chains": [
     {
-      "symptom": {"symptom_id": "existing_or_new_id", "name": "...", "description": "...", "severity": "Low|Medium|High|Critical"},
-      "failure_mode": {"failure_mode_id": "existing_or_new_id", "name": "technical cause", "description": "...", "material_context": "component_id_or_asset_level"},
-      "corrective_action": {"action_id": "existing_or_new_id", "name": "...", "description": "...", "instruction_text": "...", "source_page": 12},
+      "symptom": {"symptom_id": "sym_descriptive_id", "name": "...", "description": "...", "severity": "Low|Medium|High|Critical"},
+      "failure_mode": {"failure_mode_id": "fm_descriptive_id", "name": "technical cause", "description": "...", "material_context": "component_id_or_asset_level"},
+      "corrective_action": {"action_id": "ca_descriptive_id", "name": "...", "description": "...", "instruction_text": "...", "source_page": 12},
       "evidence": {"source_page": 12, "source_reference": "PAGE 12", "quote": "short verbatim text stating this chain"}
     }
   ]
@@ -94,6 +94,9 @@ Return valid JSON only:
 
 Rules:
 - Report ONLY chains absent from the summary. Do not re-emit covered chains.
+- Ids: reuse the node's EXACT existing id when the symptom/failure mode/action already
+  exists; otherwise invent a new descriptive snake_case id with the type prefix
+  (sym_/fm_/ca_). Never copy the placeholder ids from the example shape.
 - Reuse the exact symptom name from the summary when the missing branch belongs to an
   already-extracted symptom.
 - The failure mode must be a technical cause: a component or subsystem (physical OR
@@ -131,6 +134,11 @@ def _semantic_index(nodes: list[Any], node_type: str) -> dict[str, str]:
     return index
 
 
+# Prompt-placeholder ids the model sometimes copies verbatim instead of
+# choosing a real id. Never honored: treated as "no id proposed".
+_PLACEHOLDER_IDS = {"existing_or_new_id", "existing_or_new", "new_id", "node_id"}
+
+
 def _resolve_or_create(
     raw: dict[str, Any],
     *,
@@ -142,15 +150,29 @@ def _resolve_or_create(
     semantic: dict[str, str],
     builder: Callable[[str, dict[str, Any]], dict[str, Any]],
 ) -> tuple[str, bool]:
-    """Return (node_id, created). Reuse by id, then by semantic name key."""
+    """Return (node_id, created). Reuse by id, then by semantic name key.
+
+    Id reuse is TYPE-AWARE: a candidate id is honored as "existing" only when a
+    node of THIS type carries it. A global check let a placeholder id copied
+    into two fields resolve the second occurrence to a node of the wrong type,
+    producing a relation to a target that does not exist (observed as a
+    blocking relation_missing_target on a real run).
+    """
+    type_ids = {
+        _node_id(node_type, item)
+        for item in nodes.get(node_type, []) or []
+        if isinstance(item, dict)
+    }
     candidate_id = str(raw.get(id_field) or "").strip()
-    if candidate_id and candidate_id in used_ids:
+    if candidate_id.lower() in _PLACEHOLDER_IDS:
+        candidate_id = ""
+    if candidate_id and candidate_id in type_ids:
         return candidate_id, False
     name = str(raw.get("name") or "").strip()
     key = build_semantic_key(name)
     if key and key in semantic:
         return semantic[key], False
-    if candidate_id:
+    if candidate_id and candidate_id not in used_ids:
         # The model proposed a fresh, unused id: keep it verbatim.
         used_ids.add(candidate_id)
         node_id = candidate_id
