@@ -108,6 +108,17 @@ def get_resolution_completion_config() -> dict:
     return cfg
 
 
+def get_coverage_completion_config() -> dict:
+    cfg = deepcopy(load_config().get("coverage_completion", {}) or {})
+    cfg.setdefault("enabled", True)
+    cfg.setdefault("timeout_seconds", 120)
+    cfg.setdefault("max_input_chars", 120000)
+    cfg.setdefault("estimated_max_input_tokens", 30000)
+    cfg.setdefault("max_output_tokens", 6000)
+    cfg.setdefault("max_chains", 12)
+    return cfg
+
+
 def get_chat_config() -> dict:
     cfg = deepcopy(load_config().get("chat", {}) or {})
     cfg.setdefault("model", "gpt-4o-mini")

@@ -198,6 +198,11 @@ def _stage_mock_content(lower: str, text: str) -> tuple[str | None, str]:
         # output after asset-id canonicalisation, so echoing a full ontology
         # here would reintroduce unmapped node ids.
         return "relations", json.dumps({"relations": []})
+    if "missing_chains" in lower:
+        # Coverage completion: must also win over the generic ontology branch.
+        # The deterministic mock baseline declares full coverage; a fixture can
+        # override via mock_responses/<fixture>/coverage.json.
+        return "coverage", json.dumps({"missing_chains": []})
     if "ontology" in lower or "nodes" in lower:
         return "ontology", json.dumps(_mock_ontology())
     if "relations" in lower and ("relation" in lower or "candidate" in lower):

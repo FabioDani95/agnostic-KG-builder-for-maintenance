@@ -90,6 +90,18 @@ resolution_completion:
   top_pages_per_target: 6
   context_window_pages: 1
 
+# Second-harvest pass: one targeted call that returns diagnostic chains stated
+# in the text but missing from the draft (branch coverage is nondeterministic
+# run-to-run). Strictly additive; chains without a verified verbatim quote are
+# dropped before application.
+coverage_completion:
+  enabled: true
+  timeout_seconds: 120
+  max_input_chars: 120000
+  estimated_max_input_tokens: 30000
+  max_output_tokens: 6000
+  max_chains: 12
+
 style_cleanup:
   enabled: true
   deterministic_enabled: true

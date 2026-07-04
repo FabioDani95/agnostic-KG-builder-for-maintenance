@@ -474,6 +474,32 @@ def _finalize_run_level_quality(
             int(resolution_report.get("attempted", 0) or 0),
         )
 
+    # Coverage completion: second harvest of diagnostic branches the draft
+    # missed (branch coverage is nondeterministic run-to-run). Best-effort,
+    # strictly additive; runs before closure/grounding so its additions go
+    # through the same validation as everything else.
+    from backend.services.coverage_completion_service import complete_coverage_gaps
+
+    try:
+        ontology, coverage_usage, coverage_report = complete_coverage_gaps(
+            ontology=ontology,
+            text_with_pages=text_with_pages,
+            model_name=model_name or settings.MODEL_NAME,
+            parse_json=_extract_json_object,
+        )
+        usage_entries = [*usage_entries, *coverage_usage]
+    except Exception:
+        logger.exception("[ontology] Coverage completion failed; keeping ontology unchanged")
+        coverage_report = {"returned": 0, "applied": 0, "error": "coverage_completion_failed"}
+    if coverage_report.get("applied"):
+        ontology = _normalize_ontology_instance(
+            ontology=ontology,
+            schema=schema,
+            source_type=ontology.source_type,
+            source_title=ontology.source_title,
+            asset_identity=asset_identity,
+        )
+
     page_text_by_page = {
         int(page["page_number"]): str(page.get("text", "") or "")
         for page in pages
@@ -574,7 +600,11 @@ def _finalize_run_level_quality(
         review_queue=review_queue,
         review_summary=review_summary,
     )
-    quality_stats = {"grounding": grounding_stats, "closure": closure_stats}
+    quality_stats = {
+        "grounding": grounding_stats,
+        "closure": closure_stats,
+        "coverage_completion": coverage_report,
+    }
     return updated, usage_entries, resolution_report, quality_stats
 
 
@@ -776,6 +806,7 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                 },
                 "evidence_grounding": grounding_stats,
                 "graph_closure": closure_stats,
+                "coverage_completion": quality_stats.get("coverage_completion", {}),
             },
         },
     )
