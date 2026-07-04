@@ -6,8 +6,17 @@
     "type": "washing machine"
   },
   "expected_scoping": {
-    "diagnostic_sections": ["Trouble Alarm And Solve Method", "No Water Filling", "No Draining", "Keep Filling Water"],
-    "must_keep_pages": [16, 18, 19]
+    "diagnostic_sections": [
+      "Trouble Alarm And Solve Method",
+      "No Water Filling",
+      "No Draining",
+      "Keep Filling Water"
+    ],
+    "must_keep_pages": [
+      16,
+      18,
+      19
+    ]
   },
   "expected_triplets": [
     {
@@ -50,6 +59,10 @@
       "failure_mode": "water inlet valve"
     }
   ],
+  "expected_quality_gates": {
+    "min_recall": 0.75,
+    "max_unsupported_rate": 0.0
+  },
   "expected_human_review": {
     "max_blocking": 0,
     "reason": "Flowchart symptoms are legitimately multi-cause, so advisory/review items are expected; nothing may be blocking."
@@ -59,6 +72,10 @@
     "min_symptoms": 4,
     "min_failure_modes": 4,
     "min_corrective_actions": 4,
-    "required_relations": ["GENERATES_ERROR", "HAS_FAILURE_MODE", "HAS_CORRECTIVE_ACTION"]
+    "required_relations": [
+      "GENERATES_ERROR",
+      "HAS_FAILURE_MODE",
+      "HAS_CORRECTIVE_ACTION"
+    ]
   }
 }

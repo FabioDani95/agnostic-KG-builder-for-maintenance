@@ -167,6 +167,58 @@ def test_paraphrased_fm_is_grounded_via_relation_quote():
     assert result["chains"]["unsupported"] == 1
 
 
+def test_quality_gates_floor_and_unsupported_rate():
+    eg = _load_eval_module()
+    expected = {"expected_quality_gates": {"min_recall": 0.75, "max_unsupported_rate": 0.0}}
+    ok = eg._quality_gates_result(expected, {"recall": 0.8, "chains": {"unsupported_rate": 0.0}})
+    assert ok["passed"] and ok["min_recall"]["passed"] and ok["max_unsupported_rate"]["passed"]
+
+    low_recall = eg._quality_gates_result(expected, {"recall": 0.5, "chains": {"unsupported_rate": 0.0}})
+    assert not low_recall["passed"] and not low_recall["min_recall"]["passed"]
+
+    hallucinating = eg._quality_gates_result(expected, {"recall": 1.0, "chains": {"unsupported_rate": 0.1}})
+    assert not hallucinating["passed"]
+
+    # No gates defined → vacuously passing, and no baseline-recall skip.
+    assert eg._quality_gates_result({}, {"recall": 0.1})["passed"]
+
+
+def test_gate_failures_include_quality_gates():
+    eg = _load_eval_module()
+    report = {"fixtures": [{
+        "fixture_id": "fx",
+        "triplets": {"forbidden": {"violations": []}},
+        "quality_gates": {"min_recall": {"expected": 0.75, "actual": 0.5, "passed": False}, "passed": False},
+    }]}
+    failures = eg._report_gate_failures(report)
+    assert any("min_recall" in failure for failure in failures)
+
+
+def test_recall_floor_replaces_baseline_recall_comparison(tmp_path):
+    eg = _load_eval_module()
+
+    def _fixture(recall, gates):
+        return {
+            "fixture_id": "fx",
+            "triplets": {"recall": recall, "chains": {"unsupported_rate": 0.0}},
+            "ontology": {"schema_compliant": True, "human_review": {"matched": True}},
+            "quality_gates": gates,
+        }
+
+    baseline_path = tmp_path / "report.json"
+    baseline_path.write_text(json.dumps({"fixtures": [_fixture(0.85, {})]}), encoding="utf-8")
+
+    # Without a floor, 0.725 < 0.85 is a regression (variance false-alarm).
+    without_floor = {"fixtures": [_fixture(0.725, {})]}
+    assert eg._baseline_regressed(without_floor, baseline_path)
+
+    # With a floor, the absolute gate replaces the comparison.
+    with_floor = {"fixtures": [_fixture(
+        0.725, {"min_recall": {"expected": 0.7, "actual": 0.725, "passed": True}, "passed": True},
+    )]}
+    assert not eg._baseline_regressed(with_floor, baseline_path)
+
+
 def test_extra_chains_are_split_into_grounded_and_unsupported():
     eg = _load_eval_module()
     page_texts = [
@@ -201,10 +253,11 @@ def test_eval_golden_mock_runs_all_fixtures_and_writes_report(tmp_path):
     report = json.loads(open(report_path, encoding="utf-8").read())
 
     assert report["mode"] == "mock"
-    assert report["summary"]["fixture_count"] == 4
+    assert report["summary"]["fixture_count"] == 5
     assert {item["fixture_id"] for item in report["fixtures"]} == {
         "ambiguous_conveyor_manual",
         "clean_pump_manual",
+        "eagle_s3l_laser_cutter_manual",
         "haier_lma4120_washer_manual",
         "noisy_table_robot_manual",
     }
@@ -235,6 +288,9 @@ def test_eval_golden_mock_runs_all_fixtures_and_writes_report(tmp_path):
             f"{fixture['triplets']['forbidden']['violations']}"
         )
         assert fixture["artifacts"], "expected audit artifacts to be written"
+        assert fixture["quality_gates"]["passed"] is True, (
+            f"{fixture['fixture_id']}: quality gates failed {fixture['quality_gates']}"
+        )
         assert fixture["ontology"]["schema_compliant"] is True
         assert fixture["ontology"]["human_review"]["matched"] is True, (
             f"{fixture['fixture_id']}: human review requirement mismatch "

@@ -443,6 +443,37 @@ _REVIEW_SEVERITY_KEYS = (
 )
 
 
+def _quality_gates_result(expected: dict[str, Any], triplet_match: dict[str, Any]) -> dict[str, Any]:
+    """Absolute per-fixture quality gates from `expected_quality_gates`.
+
+    Real-model recall oscillates run-to-run (observed ±0.1 on the same code),
+    so "never worse than the previous run" false-alarms on pure variance. A
+    per-fixture floor (min_recall) states the actual quality bar; when
+    present it REPLACES the baseline recall comparison. max_unsupported_rate
+    (typically 0.0) turns the no-hallucination result into a hard gate.
+    """
+    gates = expected.get("expected_quality_gates") or {}
+    results: dict[str, Any] = {}
+    if "min_recall" in gates:
+        actual = float(triplet_match.get("recall", 0))
+        results["min_recall"] = {
+            "expected": float(gates["min_recall"]),
+            "actual": actual,
+            "passed": actual >= float(gates["min_recall"]),
+        }
+    if "max_unsupported_rate" in gates:
+        actual = float((triplet_match.get("chains") or {}).get("unsupported_rate", 0))
+        results["max_unsupported_rate"] = {
+            "expected": float(gates["max_unsupported_rate"]),
+            "actual": actual,
+            "passed": actual <= float(gates["max_unsupported_rate"]),
+        }
+    results["passed"] = all(
+        value.get("passed", True) for value in results.values() if isinstance(value, dict)
+    )
+    return results
+
+
 def _human_review_result(expected: dict[str, Any], ontology_result: Any) -> dict[str, Any]:
     """Compare the review queue against the expectation.
 
@@ -567,6 +598,7 @@ async def _run_fixture(
         forbidden=list(expected.get("forbidden_chains") or []),
     )
     export_checks = _export_checks(expected, ontology_result.ontology, extraction_result.triplets)
+    quality_gates = _quality_gates_result(expected, triplet_match)
     artifacts: dict[str, str] = {}
     if artifacts_dir is not None:
         # Full payloads for offline audit: a real-model run costs real money,
@@ -622,6 +654,7 @@ async def _run_fixture(
         },
         "triplets": triplet_match,
         "export_checks": export_checks,
+        "quality_gates": quality_gates,
         "artifacts": artifacts,
         "metrics": {
             "totals": metrics.get("totals", {}),
@@ -653,6 +686,12 @@ def _write_markdown_report(path: Path, report: dict[str, Any]) -> None:
     for fixture in report["fixtures"]:
         chains = fixture["triplets"].get("chains") or {}
         forbidden = fixture["triplets"].get("forbidden") or {}
+        gates = fixture.get("quality_gates") or {}
+        gate_line = ", ".join(
+            f"{name} {'pass' if gate.get('passed') else 'FAIL'} ({gate.get('actual')}/{gate.get('expected')})"
+            for name, gate in gates.items()
+            if isinstance(gate, dict)
+        ) or "none defined"
         lines.extend([
             f"### {fixture['fixture_id']}",
             "",
@@ -663,6 +702,7 @@ def _write_markdown_report(path: Path, report: dict[str, Any]) -> None:
             f"{chains.get('unsupported', 0)} unsupported (of {chains.get('total', 0)})",
             f"- chain precision (strict/grounded): {chains.get('precision_strict', 0)} / {chains.get('grounded_precision', 0)}",
             f"- forbidden chains: {'pass' if forbidden.get('passed', True) else 'FAIL (' + str(len(forbidden.get('violations') or [])) + ' violations)'}",
+            f"- quality gates: {gate_line}",
             f"- schema issues: {fixture['ontology']['schema_issues']}",
             f"- human review match: {fixture['ontology']['human_review']['matched']}",
             f"- export checks: {'pass' if fixture['export_checks']['passed'] else 'fail'}",
@@ -685,12 +725,19 @@ def _latest_baseline(output_root: Path, *, exclude: Path) -> Path | None:
 
 
 def _report_gate_failures(report: dict[str, Any]) -> list[str]:
-    """Absolute failures that do not need a baseline (e.g. forbidden chains)."""
+    """Absolute failures that do not need a baseline (forbidden chains, quality gates)."""
     failures: list[str] = []
     for item in report.get("fixtures", []):
         violations = (item.get("triplets", {}).get("forbidden") or {}).get("violations") or []
         if violations:
             failures.append(f"{item['fixture_id']}: {len(violations)} forbidden chain violation(s)")
+        gates = item.get("quality_gates") or {}
+        for gate_name, gate in gates.items():
+            if isinstance(gate, dict) and not gate.get("passed", True):
+                failures.append(
+                    f"{item['fixture_id']}: quality gate {gate_name} failed "
+                    f"(expected {gate.get('expected')}, actual {gate.get('actual')})"
+                )
     return failures
 
 
@@ -701,18 +748,23 @@ def _baseline_regressed(report: dict[str, Any], baseline_path: Path) -> bool:
         previous = baseline_by_id.get(item["fixture_id"])
         if not previous:
             continue
-        if item["triplets"]["recall"] < previous.get("triplets", {}).get("recall", 0):
+        # When the fixture defines a min_recall floor, that absolute gate
+        # replaces the "never worse than the previous run" comparison: real
+        # model recall oscillates ±0.1 run-to-run, so comparing against the
+        # latest run false-alarms on pure variance.
+        has_recall_floor = "min_recall" in (item.get("quality_gates") or {})
+        if not has_recall_floor and item["triplets"]["recall"] < previous.get("triplets", {}).get("recall", 0):
             return True
         previous_compliant = bool(previous.get("ontology", {}).get("schema_compliant"))
         if previous_compliant and not item["ontology"]["schema_compliant"]:
             return True
-        # Chain-level gates only apply when the baseline already has them
-        # (older reports predate the chain metrics).
+        # Chain-level gate only applies when the baseline already has the
+        # metrics (older reports predate them). unsupported_rate is the
+        # quality signal; precision_strict is deliberately NOT compared — its
+        # denominator is total branch coverage, which varies run-to-run.
         previous_chains = previous.get("triplets", {}).get("chains") or {}
         current_chains = item["triplets"].get("chains") or {}
         if previous_chains and current_chains:
-            if current_chains.get("precision_strict", 0) < previous_chains.get("precision_strict", 0):
-                return True
             if current_chains.get("unsupported_rate", 0) > previous_chains.get("unsupported_rate", 0):
                 return True
         previous_review = bool(previous.get("ontology", {}).get("human_review", {}).get("matched"))

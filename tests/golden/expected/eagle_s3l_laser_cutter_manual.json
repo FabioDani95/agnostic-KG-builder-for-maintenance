@@ -1,0 +1,107 @@
+{
+  "fixture_id": "eagle_s3l_laser_cutter_manual",
+  "manual": "manuals/eagle_s3l_laser_cutter_manual.md",
+  "asset": {
+    "name": "Eastman Eagle S3L Laser Cutting System",
+    "type": "laser cutting system"
+  },
+  "expected_scoping": {
+    "diagnostic_sections": [
+      "Trouble Shooting Guide"
+    ],
+    "must_keep_pages": [
+      37,
+      38,
+      39
+    ]
+  },
+  "expected_triplets": [
+    {
+      "symptom": "Machine Stop during Cut Due to Unintentional pause",
+      "failure_mode": "intermittent pause circuit, usually in the stop discs",
+      "corrective_action": "Tighten the plunger to increase activation pressure"
+    },
+    {
+      "symptom": "The buttons on the Touch Screen are out of alignment",
+      "failure_mode": "Touch screen calibration is required",
+      "corrective_action": "Select save and exit to complete calibration"
+    },
+    {
+      "symptom": "The Cutting Tool or Pen does not move down",
+      "failure_mode": "layer is not mapped to a tool or the tool is not on the tool holder",
+      "corrective_action": "click and drag the tool to the spindle or the layer to the tool"
+    },
+    {
+      "symptom": "Laser cutting path is too wide",
+      "failure_mode": "nozzle is bent or the mirrors may need to be adjusted",
+      "corrective_action": "mirrors may need to be adjusted"
+    },
+    {
+      "symptom": "Laser Fume Extractor has reduced vacuum or no vacuum",
+      "failure_mode": "vacuum filters",
+      "corrective_action": "Replace vacuum filters"
+    },
+    {
+      "symptom": "Laser Fume Extractor has reduced vacuum or no vacuum",
+      "failure_mode": "vacuum hose and funnel",
+      "corrective_action": "Clean vacuum hose and funnel"
+    },
+    {
+      "symptom": "Laser cutting path is too wide",
+      "failure_mode": "damage to brass laser nozzle",
+      "corrective_action": "Replace nozzle if any damage is present"
+    },
+    {
+      "symptom": "Loss of laser cutting power",
+      "failure_mode": "focusing lens",
+      "corrective_action": "Clean or replace lens as required"
+    },
+    {
+      "symptom": "Loss of laser cutting power",
+      "failure_mode": "beam deflecting mirrors",
+      "corrective_action": "Clean or replace mirrors as required"
+    },
+    {
+      "symptom": "Loss of laser cutting power",
+      "failure_mode": "Damage or debris in laser nozzle",
+      "corrective_action": "Clean or replace laser nozzle as required"
+    }
+  ],
+  "forbidden_chains": [
+    {
+      "corrective_action": "clean and oil linear rails"
+    },
+    {
+      "corrective_action": "check rack and rail for wear"
+    },
+    {
+      "corrective_action": "inspect and clean vfd cooling fan"
+    },
+    {
+      "symptom": "laser cutting path is too wide",
+      "failure_mode": "fume extractor"
+    },
+    {
+      "symptom": "does not power up",
+      "failure_mode": "nozzle"
+    }
+  ],
+  "expected_quality_gates": {
+    "min_recall": 0.7,
+    "max_unsupported_rate": 0.0
+  },
+  "expected_human_review": {
+    "max_blocking": 0,
+    "reason": "Prose troubleshooting blocks are explicit; advisory/review items allowed, nothing blocking."
+  },
+  "expected_export_checks": {
+    "min_error_codes": 0,
+    "min_symptoms": 6,
+    "min_failure_modes": 6,
+    "min_corrective_actions": 6,
+    "required_relations": [
+      "HAS_FAILURE_MODE",
+      "HAS_CORRECTIVE_ACTION"
+    ]
+  }
+}
