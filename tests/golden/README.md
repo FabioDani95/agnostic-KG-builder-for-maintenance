@@ -11,6 +11,7 @@ mocked extraction tests, or low-token LLM evaluation runs.
 - `manuals/clean_pump_manual.md`: straightforward diagnostic content.
 - `manuals/ambiguous_conveyor_manual.md`: one symptom with multiple possible causes.
 - `manuals/noisy_table_robot_manual.md`: diagnostic table with split/noisy wording.
+- `manuals/eagle_s3l_laser_cutter_manual.md`: real laser cutter troubleshooting prose with preventive-maintenance distractors.
 - `expected/*.json`: minimal expected entities, triplets, human-review hints, and export checks.
 
 ## Intended Use

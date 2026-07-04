@@ -1,0 +1,869 @@
+{
+  "ontology_name": "EastmanEagleS3LLaserCuttingSystemOntology",
+  "version": "1.0",
+  "language": "en",
+  "source_type": "service manual",
+  "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "Eastman Eagle S3L Laser Cutting System",
+        "description": "Automatic laser cutting system covered by the service manual.",
+        "brand": "Eastman",
+        "model": "Eagle S3L",
+        "asset_type": "laser cutting system"
+      }
+    ],
+    "Component": [
+      {
+        "component_id": "CMP-001",
+        "name": "Stop Discs",
+        "description": "Stop discs in the pause circuit.",
+        "category": "Safety control"
+      },
+      {
+        "component_id": "CMP-002",
+        "name": "Touch Screen",
+        "description": "User interface touch screen.",
+        "category": "Operator interface"
+      },
+      {
+        "component_id": "CMP-003",
+        "name": "Tool And Layer Mapping",
+        "description": "Software mapping between layers, tools, and tool holders.",
+        "category": "Cutting software"
+      },
+      {
+        "component_id": "CMP-004",
+        "name": "Fume Extractor Control Panel",
+        "description": "Control panel used to adjust fume extractor vacuum pressure.",
+        "category": "Fume extraction"
+      },
+      {
+        "component_id": "CMP-005",
+        "name": "Vacuum Filters",
+        "description": "Vacuum filters in the laser fume extractor.",
+        "category": "Fume extraction"
+      },
+      {
+        "component_id": "CMP-006",
+        "name": "Vacuum Hose And Funnel",
+        "description": "Vacuum hose and funnel for laser fume extraction.",
+        "category": "Fume extraction"
+      },
+      {
+        "component_id": "CMP-007",
+        "name": "Brass Laser Nozzle",
+        "description": "Brass laser nozzle at the laser beam outlet.",
+        "category": "Laser optics"
+      },
+      {
+        "component_id": "CMP-008",
+        "name": "Focusing Lens",
+        "description": "Laser focusing lens.",
+        "category": "Laser optics"
+      },
+      {
+        "component_id": "CMP-009",
+        "name": "Beam Deflecting Mirrors",
+        "description": "Mirrors that deflect the laser beam.",
+        "category": "Laser optics"
+      }
+    ],
+    "Symptom": [
+      {
+        "symptom_id": "SYM-001",
+        "name": "UIT Does Not Power Up",
+        "description": "The UIT does not power. Screen is blank and not lit up.",
+        "severity": "High",
+        "evidence_page": 37
+      },
+      {
+        "symptom_id": "SYM-002",
+        "name": "Machine Stop during Cut Due to Unintentional pause",
+        "description": "The machine stops in middle of cut and displays message Machine Paused.",
+        "severity": "High",
+        "evidence_page": 37
+      },
+      {
+        "symptom_id": "SYM-003",
+        "name": "The buttons on the Touch Screen are out of alignment",
+        "description": "The touch screen buttons do not match where the screen needs to be touched.",
+        "severity": "Medium",
+        "evidence_page": 37
+      },
+      {
+        "symptom_id": "SYM-004",
+        "name": "The Cutting Tool or Pen does not move down",
+        "description": "The tool or Pen does not move down when cutting a file.",
+        "severity": "High",
+        "evidence_page": 38
+      },
+      {
+        "symptom_id": "SYM-005",
+        "name": "Laser Fume Extractor has reduced vacuum or no vacuum",
+        "description": "An odor is present when cutting with the laser tool or Laser cutting path is wider than normal.",
+        "severity": "High",
+        "evidence_page": 38
+      },
+      {
+        "symptom_id": "SYM-006",
+        "name": "Laser cutting path is too wide",
+        "description": "The laser cutting path increases to an undesirable width.",
+        "severity": "High",
+        "evidence_page": 39
+      },
+      {
+        "symptom_id": "SYM-007",
+        "name": "Loss of laser cutting power",
+        "description": "The laser cutting power decreases causing non-cut edges.",
+        "severity": "High",
+        "evidence_page": 39
+      }
+    ],
+    "FailureMode": [
+      {
+        "failure_mode_id": "FM-001",
+        "name": "Intermittent pause circuit, usually in the stop discs",
+        "description": "The cut interruption is typically caused by an intermittent pause circuit, usually in the stop discs.",
+        "material_context": "CMP-001",
+        "linked_symptom_id": "SYM-002",
+        "evidence_page": 37
+      },
+      {
+        "failure_mode_id": "FM-002",
+        "name": "Touch screen calibration is required",
+        "description": "Touch screen calibration is required when buttons are out of alignment.",
+        "material_context": "CMP-002",
+        "linked_symptom_id": "SYM-003",
+        "evidence_page": 37
+      },
+      {
+        "failure_mode_id": "FM-003",
+        "name": "Layer is not mapped to a tool or the tool is not on the tool holder",
+        "description": "The layer is not mapped to a tool or the tool is not on the tool holder.",
+        "material_context": "CMP-003",
+        "linked_symptom_id": "SYM-004",
+        "evidence_page": 38
+      },
+      {
+        "failure_mode_id": "FM-004",
+        "name": "Nozzle is bent or the mirrors may need to be adjusted",
+        "description": "If the dot has a ring or partial ring around it, the nozzle is bent or the mirrors may need to be adjusted.",
+        "material_context": "CMP-009",
+        "linked_symptom_id": "SYM-006",
+        "evidence_page": 39
+      },
+      {
+        "failure_mode_id": "FM-005",
+        "name": "Vacuum filters require replacement",
+        "description": "The fume extractor vacuum filters require replacement.",
+        "material_context": "CMP-005",
+        "linked_symptom_id": "SYM-005",
+        "evidence_page": 38
+      },
+      {
+        "failure_mode_id": "FM-006",
+        "name": "Vacuum hose and funnel require cleaning",
+        "description": "The vacuum hose and funnel require cleaning.",
+        "material_context": "CMP-006",
+        "linked_symptom_id": "SYM-005",
+        "evidence_page": 38
+      },
+      {
+        "failure_mode_id": "FM-007",
+        "name": "Damage to brass laser nozzle",
+        "description": "Damage to brass laser nozzle can make the cutting path too wide.",
+        "material_context": "CMP-007",
+        "linked_symptom_id": "SYM-006",
+        "evidence_page": 39
+      },
+      {
+        "failure_mode_id": "FM-008",
+        "name": "Damaged or dirty lens",
+        "description": "The focusing lens is damaged or dirty.",
+        "material_context": "CMP-008",
+        "linked_symptom_id": "SYM-007",
+        "evidence_page": 39
+      },
+      {
+        "failure_mode_id": "FM-009",
+        "name": "Damage, burn mark or dirt on the beam deflecting mirrors",
+        "description": "The beam deflecting mirrors have damage, burn mark or dirt.",
+        "material_context": "CMP-009",
+        "linked_symptom_id": "SYM-007",
+        "evidence_page": 39
+      },
+      {
+        "failure_mode_id": "FM-010",
+        "name": "Damage or debris in laser nozzle",
+        "description": "Damage or debris in laser nozzle reduces cutting power.",
+        "material_context": "CMP-007",
+        "linked_symptom_id": "SYM-007",
+        "evidence_page": 39
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "CA-001",
+        "name": "Tighten the plunger to increase activation pressure",
+        "description": "Tighten the plunger to increase activation pressure and loosen to decrease activation pressure.",
+        "instruction_text": "Tighten the plunger to increase activation pressure and loosen to decrease activation pressure.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 37,
+        "source_reference": "PAGE 37",
+        "linked_failure_mode_id": "FM-001"
+      },
+      {
+        "action_id": "CA-002",
+        "name": "Select save and exit to complete calibration",
+        "description": "Navigate to screen page 3 and select save and exit to complete calibration.",
+        "instruction_text": "Calibrate the touch screen. Select save and exit to complete calibration.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 38,
+        "source_reference": "PAGE 38",
+        "linked_failure_mode_id": "FM-002"
+      },
+      {
+        "action_id": "CA-003",
+        "name": "Click and drag the tool to the spindle or the layer to the tool",
+        "description": "Click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+        "instruction_text": "Adjust the tool and layer mapping. Click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 38,
+        "source_reference": "PAGE 38",
+        "linked_failure_mode_id": "FM-003"
+      },
+      {
+        "action_id": "CA-004",
+        "name": "Adjust mirrors as required",
+        "description": "Adjust mirrors when the nozzle is bent or the mirrors may need to be adjusted.",
+        "instruction_text": "Adjust mirrors as required. If the dot has a ring or partial ring around it, the nozzle is bent or the mirrors may need to be adjusted.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 39,
+        "source_reference": "PAGE 39",
+        "linked_failure_mode_id": "FM-004"
+      },
+      {
+        "action_id": "CA-005",
+        "name": "Replace vacuum filters",
+        "description": "Replace vacuum filters.",
+        "instruction_text": "Replace vacuum filters.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 38,
+        "source_reference": "PAGE 38",
+        "linked_failure_mode_id": "FM-005"
+      },
+      {
+        "action_id": "CA-006",
+        "name": "Clean vacuum hose and funnel",
+        "description": "Clean vacuum hose and funnel.",
+        "instruction_text": "Clean vacuum hose and funnel.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 38,
+        "source_reference": "PAGE 38",
+        "linked_failure_mode_id": "FM-006"
+      },
+      {
+        "action_id": "CA-007",
+        "name": "Replace nozzle if any damage is present",
+        "description": "Replace nozzle if any damage is present.",
+        "instruction_text": "Replace nozzle if any damage is present.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 39,
+        "source_reference": "PAGE 39",
+        "linked_failure_mode_id": "FM-007"
+      },
+      {
+        "action_id": "CA-008",
+        "name": "Clean or replace lens as required",
+        "description": "Clean or replace lens as required.",
+        "instruction_text": "Clean or replace lens as required.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 39,
+        "source_reference": "PAGE 39",
+        "linked_failure_mode_id": "FM-008"
+      },
+      {
+        "action_id": "CA-009",
+        "name": "Clean or replace mirrors as required",
+        "description": "Clean or replace mirrors as required.",
+        "instruction_text": "Clean or replace mirrors as required.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 39,
+        "source_reference": "PAGE 39",
+        "linked_failure_mode_id": "FM-009"
+      },
+      {
+        "action_id": "CA-010",
+        "name": "Clean or replace laser nozzle as required",
+        "description": "Clean or replace laser nozzle as required.",
+        "instruction_text": "Clean or replace laser nozzle as required.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 39,
+        "source_reference": "PAGE 39",
+        "linked_failure_mode_id": "FM-010"
+      }
+    ],
+    "ErrorCode": []
+  },
+  "relations": [
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-001",
+      "evidence": [
+        {
+          "source_page": 37,
+          "source_reference": "PAGE 37",
+          "quote": "intermittent pause circuit, usually in the stop discs"
+        }
+      ]
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-002",
+      "evidence": [
+        {
+          "source_page": 37,
+          "source_reference": "PAGE 37",
+          "quote": "Touch screen calibration is required"
+        }
+      ]
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-003",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "tool and layer mapping"
+        }
+      ]
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-004",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "fume extractor control panel"
+        }
+      ]
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-005",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "Replace vacuum filters"
+        }
+      ]
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-006",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "Clean vacuum hose and funnel"
+        }
+      ]
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-007",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "Check for damage to brass laser nozzle"
+        }
+      ]
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-008",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "focusing lens"
+        }
+      ]
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-009",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "beam deflecting mirrors"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-001",
+      "evidence": [
+        {
+          "source_page": 37,
+          "source_reference": "PAGE 37",
+          "quote": "intermittent pause circuit, usually in the stop discs"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-003",
+      "to_type": "FailureMode",
+      "to_id": "FM-002",
+      "evidence": [
+        {
+          "source_page": 37,
+          "source_reference": "PAGE 37",
+          "quote": "Touch screen calibration is required"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-004",
+      "to_type": "FailureMode",
+      "to_id": "FM-003",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "layer is not mapped to a tool or the tool is not on the tool holder"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-006",
+      "to_type": "FailureMode",
+      "to_id": "FM-004",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "nozzle is bent or the mirrors may need to be adjusted"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-005",
+      "to_type": "FailureMode",
+      "to_id": "FM-005",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "Replace vacuum filters"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-005",
+      "to_type": "FailureMode",
+      "to_id": "FM-006",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "Clean vacuum hose and funnel"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-006",
+      "to_type": "FailureMode",
+      "to_id": "FM-007",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "Check for damage to brass laser nozzle"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-007",
+      "to_type": "FailureMode",
+      "to_id": "FM-008",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "Damaged or dirty lens"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-007",
+      "to_type": "FailureMode",
+      "to_id": "FM-009",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "damage, burn mark or dirt on the beam deflecting mirrors"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-007",
+      "to_type": "FailureMode",
+      "to_id": "FM-010",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "Damage or debris in laser nozzle"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-001",
+      "to_type": "Component",
+      "to_id": "CMP-001",
+      "evidence": [
+        {
+          "source_page": 37,
+          "source_reference": "PAGE 37",
+          "quote": "stop discs"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-002",
+      "to_type": "Component",
+      "to_id": "CMP-002",
+      "evidence": [
+        {
+          "source_page": 37,
+          "source_reference": "PAGE 37",
+          "quote": "Touch screen calibration is required"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-003",
+      "to_type": "Component",
+      "to_id": "CMP-003",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "tool and layer mapping"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-004",
+      "to_type": "Component",
+      "to_id": "CMP-009",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "mirrors may need to be adjusted"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-005",
+      "to_type": "Component",
+      "to_id": "CMP-005",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "Replace vacuum filters"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-006",
+      "to_type": "Component",
+      "to_id": "CMP-006",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "Clean vacuum hose and funnel"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-007",
+      "to_type": "Component",
+      "to_id": "CMP-007",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "damage to brass laser nozzle"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-008",
+      "to_type": "Component",
+      "to_id": "CMP-008",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "focusing lens"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-009",
+      "to_type": "Component",
+      "to_id": "CMP-009",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "beam deflecting mirrors"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-010",
+      "to_type": "Component",
+      "to_id": "CMP-007",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "Damage or debris in laser nozzle"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-001",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-001",
+      "evidence": [
+        {
+          "source_page": 37,
+          "source_reference": "PAGE 37",
+          "quote": "Tighten the plunger to increase activation pressure"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-002",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-002",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "Select save and exit to complete calibration"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-003",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-003",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "click and drag the tool to the spindle or the layer to the tool"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-004",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-004",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "mirrors may need to be adjusted"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-005",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-005",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "Replace vacuum filters"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-006",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-006",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "Clean vacuum hose and funnel"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-007",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-007",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "Replace nozzle if any damage is present"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-008",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-008",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "Clean or replace lens as required"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-009",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-009",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "Clean or replace mirrors as required"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-010",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-010",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "Clean or replace laser nozzle as required"
+        }
+      ]
+    }
+  ]
+}
