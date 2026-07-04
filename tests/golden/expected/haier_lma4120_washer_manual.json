@@ -1,0 +1,64 @@
+{
+  "fixture_id": "haier_lma4120_washer_manual",
+  "manual": "manuals/haier_lma4120_washer_manual.md",
+  "asset": {
+    "name": "Haier LMA4120WBAB0 Automatic Washing Machine",
+    "type": "washing machine"
+  },
+  "expected_scoping": {
+    "diagnostic_sections": ["Trouble Alarm And Solve Method", "No Water Filling", "No Draining", "Keep Filling Water"],
+    "must_keep_pages": [16, 18, 19]
+  },
+  "expected_triplets": [
+    {
+      "error_code": "E1",
+      "symptom": "machine does not drain or drains slowly",
+      "failure_mode": "drain hose blocked",
+      "corrective_action": "remove the blockage"
+    },
+    {
+      "error_code": "E4",
+      "failure_mode": "water inlet valve blocked",
+      "corrective_action": "clean the water inlet valve"
+    },
+    {
+      "symptom": "No draining",
+      "failure_mode": "drain motor does not act when voltage exists",
+      "corrective_action": "replace the drain motor"
+    },
+    {
+      "symptom": "Keep filling water",
+      "failure_mode": "water can fill into the water inlet valve without power",
+      "corrective_action": "replace the water inlet valve"
+    }
+  ],
+  "forbidden_chains": [
+    {
+      "symptom": "machine does not drain or drains slowly",
+      "failure_mode": "machine not level"
+    },
+    {
+      "symptom": "No draining",
+      "failure_mode": "machine not level"
+    },
+    {
+      "symptom": "No water filling",
+      "failure_mode": "laundry unevenly placed"
+    },
+    {
+      "symptom": "machine does not spin",
+      "failure_mode": "water inlet valve"
+    }
+  ],
+  "expected_human_review": {
+    "max_blocking": 0,
+    "reason": "Flowchart symptoms are legitimately multi-cause, so advisory/review items are expected; nothing may be blocking."
+  },
+  "expected_export_checks": {
+    "min_error_codes": 2,
+    "min_symptoms": 4,
+    "min_failure_modes": 4,
+    "min_corrective_actions": 4,
+    "required_relations": ["GENERATES_ERROR", "HAS_FAILURE_MODE", "HAS_CORRECTIVE_ACTION"]
+  }
+}

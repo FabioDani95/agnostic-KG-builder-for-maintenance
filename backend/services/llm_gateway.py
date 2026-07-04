@@ -26,6 +26,14 @@ def is_mock_mode() -> bool:
     return llm_mode() == "mock"
 
 
+def chat_temperature_kwargs(model_name: str | None, temperature: float) -> dict[str, float]:
+    """Return temperature kwargs only for models that support custom values."""
+    raw = str(model_name or settings.MODEL_NAME or "").strip().lower()
+    if raw == "gpt-5.5" or raw.startswith("gpt-5.5-"):
+        return {}
+    return {"temperature": temperature}
+
+
 def get_client(
     *,
     timeout: Timeout | float | int | None = None,

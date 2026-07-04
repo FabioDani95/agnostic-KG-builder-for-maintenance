@@ -1,0 +1,431 @@
+{
+  "ontology_name": "HaierLMA4120WasherOntology",
+  "version": "1.0",
+  "language": "en",
+  "source_type": "service manual",
+  "source_title": "Haier LMA4120WBAB0 Automatic Washing Machine Service Manual",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "Haier LMA4120WBAB0 Automatic Washing Machine",
+        "description": "Automatic washing machine covered by the service manual.",
+        "brand": "Haier",
+        "model": "LMA4120WBAB0",
+        "asset_type": "washing machine"
+      }
+    ],
+    "Component": [
+      {
+        "component_id": "CMP-001",
+        "name": "Drain Hose",
+        "description": "Drain hose used by the washing machine.",
+        "category": "Drain system"
+      },
+      {
+        "component_id": "CMP-002",
+        "name": "Water Inlet Valve Filter Screen",
+        "description": "Filter screen on the water inlet valve.",
+        "category": "Water inlet"
+      },
+      {
+        "component_id": "CMP-003",
+        "name": "Drain Motor",
+        "description": "Drain motor used for draining.",
+        "category": "Drain system"
+      },
+      {
+        "component_id": "CMP-004",
+        "name": "Water Inlet Valve",
+        "description": "Water inlet valve for filling water.",
+        "category": "Water inlet"
+      }
+    ],
+    "Symptom": [
+      {
+        "symptom_id": "SYM-001",
+        "name": "Machine does not drain or drains slowly",
+        "description": "The washing machine does not drain or drains slowly and displays E1.",
+        "severity": "High"
+      },
+      {
+        "symptom_id": "SYM-002",
+        "name": "Display shows E4",
+        "description": "The washing machine display shows E4.",
+        "severity": "High"
+      },
+      {
+        "symptom_id": "SYM-003",
+        "name": "No draining",
+        "description": "The washer does not drain during rinse or spin.",
+        "severity": "High"
+      },
+      {
+        "symptom_id": "SYM-004",
+        "name": "Keep filling water",
+        "description": "Water continues filling when it should not.",
+        "severity": "High"
+      }
+    ],
+    "FailureMode": [
+      {
+        "failure_mode_id": "FM-001",
+        "name": "Drain hose blocked",
+        "description": "The drain hose is blocked.",
+        "material_context": "CMP-001"
+      },
+      {
+        "failure_mode_id": "FM-002",
+        "name": "Water inlet valve blocked",
+        "description": "The water inlet valve is blocked.",
+        "material_context": "CMP-002"
+      },
+      {
+        "failure_mode_id": "FM-003",
+        "name": "Drain motor does not act when voltage exists",
+        "description": "The drain motor does not act even though voltage exists at its terminals.",
+        "material_context": "CMP-003"
+      },
+      {
+        "failure_mode_id": "FM-004",
+        "name": "Water can fill into the water inlet valve without power",
+        "description": "Water enters the water inlet valve with power off.",
+        "material_context": "CMP-004"
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "CA-001",
+        "name": "Remove the blockage",
+        "description": "Remove the drain blockage and push Start/Pause once.",
+        "instruction_text": "Remove the blockage. Push the Start/Pause button once.",
+        "source_type": "service manual",
+        "source_title": "Haier LMA4120WBAB0 Automatic Washing Machine Service Manual",
+        "source_reference": "PAGE 16"
+      },
+      {
+        "action_id": "CA-002",
+        "name": "Clean the water inlet valve",
+        "description": "Clean the water inlet valve and restart operation.",
+        "instruction_text": "Clean the water inlet valve. Push the Start/Pause button once.",
+        "source_type": "service manual",
+        "source_title": "Haier LMA4120WBAB0 Automatic Washing Machine Service Manual",
+        "source_reference": "PAGE 16"
+      },
+      {
+        "action_id": "CA-003",
+        "name": "Replace the drain motor",
+        "description": "Replace the drain motor.",
+        "instruction_text": "Replace the drain motor.",
+        "source_type": "service manual",
+        "source_title": "Haier LMA4120WBAB0 Automatic Washing Machine Service Manual",
+        "source_reference": "PAGE 19"
+      },
+      {
+        "action_id": "CA-004",
+        "name": "Replace the water inlet valve",
+        "description": "Replace the water inlet valve.",
+        "instruction_text": "Replace the water inlet valve.",
+        "source_type": "service manual",
+        "source_title": "Haier LMA4120WBAB0 Automatic Washing Machine Service Manual",
+        "source_reference": "PAGE 19"
+      }
+    ],
+    "ErrorCode": [
+      {
+        "error_code_id": "EC-001",
+        "name": "E1",
+        "description": "Drain fault alarm.",
+        "code": "E1"
+      },
+      {
+        "error_code_id": "EC-002",
+        "name": "E4",
+        "description": "Water inlet fault alarm.",
+        "code": "E4"
+      }
+    ]
+  },
+  "relations": [
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-001",
+      "evidence": [
+        {
+          "source_page": 16,
+          "source_reference": "PAGE 16",
+          "quote": "Is the drain hose blocked?"
+        }
+      ]
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-002",
+      "evidence": [
+        {
+          "source_page": 16,
+          "source_reference": "PAGE 16",
+          "quote": "Is the water inlet valve blocked?"
+        }
+      ]
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-003",
+      "evidence": [
+        {
+          "source_page": 19,
+          "source_reference": "PAGE 19",
+          "quote": "replace the drain motor"
+        }
+      ]
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "CMP-004",
+      "evidence": [
+        {
+          "source_page": 19,
+          "source_reference": "PAGE 19",
+          "quote": "replace the water inlet valve"
+        }
+      ]
+    },
+    {
+      "name": "GENERATES_ERROR",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "ErrorCode",
+      "to_id": "EC-001",
+      "evidence": [
+        {
+          "source_page": 16,
+          "source_reference": "PAGE 16",
+          "quote": "The display shows E1"
+        }
+      ]
+    },
+    {
+      "name": "GENERATES_ERROR",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "ErrorCode",
+      "to_id": "EC-002",
+      "evidence": [
+        {
+          "source_page": 16,
+          "source_reference": "PAGE 16",
+          "quote": "The display shows E4"
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-001",
+      "evidence": [
+        {
+          "source_page": 16,
+          "source_reference": "PAGE 16",
+          "quote": "The machine does not drain or drains slowly. The display shows E1."
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-002",
+      "evidence": [
+        {
+          "source_page": 16,
+          "source_reference": "PAGE 16",
+          "quote": "The display shows E4. Is the water inlet valve blocked?"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-001",
+      "evidence": [
+        {
+          "source_page": 16,
+          "source_reference": "PAGE 16",
+          "quote": "Is the drain hose blocked?"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-002",
+      "evidence": [
+        {
+          "source_page": 16,
+          "source_reference": "PAGE 16",
+          "quote": "Is the water inlet valve blocked?"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-003",
+      "to_type": "FailureMode",
+      "to_id": "FM-003",
+      "evidence": [
+        {
+          "source_page": 19,
+          "source_reference": "PAGE 19",
+          "quote": "voltage exists at the two ends of the drain motor"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-004",
+      "to_type": "FailureMode",
+      "to_id": "FM-004",
+      "evidence": [
+        {
+          "source_page": 19,
+          "source_reference": "PAGE 19",
+          "quote": "water can fill into the water inlet valve"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-001",
+      "to_type": "Component",
+      "to_id": "CMP-001",
+      "evidence": [
+        {
+          "source_page": 16,
+          "source_reference": "PAGE 16",
+          "quote": "drain hose blocked"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-002",
+      "to_type": "Component",
+      "to_id": "CMP-002",
+      "evidence": [
+        {
+          "source_page": 16,
+          "source_reference": "PAGE 16",
+          "quote": "water inlet valve blocked"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-003",
+      "to_type": "Component",
+      "to_id": "CMP-003",
+      "evidence": [
+        {
+          "source_page": 19,
+          "source_reference": "PAGE 19",
+          "quote": "replace the drain motor"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-004",
+      "to_type": "Component",
+      "to_id": "CMP-004",
+      "evidence": [
+        {
+          "source_page": 19,
+          "source_reference": "PAGE 19",
+          "quote": "replace the water inlet valve"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-001",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-001",
+      "evidence": [
+        {
+          "source_page": 16,
+          "source_reference": "PAGE 16",
+          "quote": "Remove the blockage"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-002",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-002",
+      "evidence": [
+        {
+          "source_page": 16,
+          "source_reference": "PAGE 16",
+          "quote": "Clean the water inlet valve"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-003",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-003",
+      "evidence": [
+        {
+          "source_page": 19,
+          "source_reference": "PAGE 19",
+          "quote": "replace the drain motor"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-004",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-004",
+      "evidence": [
+        {
+          "source_page": 19,
+          "source_reference": "PAGE 19",
+          "quote": "replace the water inlet valve"
+        }
+      ]
+    }
+  ]
+}

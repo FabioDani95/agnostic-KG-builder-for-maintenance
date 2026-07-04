@@ -61,6 +61,7 @@ from backend.services.ontology_semantics import (
 from backend.services.pdf_service import format_text_with_pages
 from backend.services.run_metrics import aggregate_usage, usage_from_response
 from backend.services.llm_gateway import get_client
+from backend.services.llm_gateway import chat_temperature_kwargs
 
 logger = logging.getLogger(__name__)
 
@@ -1237,9 +1238,10 @@ def _call_extractor_llm(state: PipelineState) -> PipelineState:
 
     def _run_completion(max_output_tokens: int):
         try:
+            model_name = state["model_name"] or settings.MODEL_NAME
             response = client.chat.completions.create(
-                model=state["model_name"] or settings.MODEL_NAME,
-                temperature=0.0,
+                model=model_name,
+                **chat_temperature_kwargs(model_name, 0.0),
                 max_completion_tokens=max_output_tokens,
                 messages=messages,
             )
@@ -1337,9 +1339,10 @@ def _relation_extract_node(state: PipelineState) -> PipelineState:
     )
     client = _get_client(cfg["timeout_seconds"])
     try:
+        model_name = state["model_name"] or settings.MODEL_NAME
         response = client.chat.completions.create(
-            model=state["model_name"] or settings.MODEL_NAME,
-            temperature=0.0,
+            model=model_name,
+            **chat_temperature_kwargs(model_name, 0.0),
             max_completion_tokens=cfg["max_output_tokens"],
             messages=[
                 {"role": "system", "content": system_prompt},
@@ -1419,9 +1422,10 @@ def _semantic_validate_node(state: PipelineState) -> PipelineState:
     )
     client = _get_client(cfg["timeout_seconds"])
     try:
+        model_name = state["model_name"] or settings.MODEL_NAME
         response = client.chat.completions.create(
-            model=state["model_name"] or settings.MODEL_NAME,
-            temperature=0.0,
+            model=model_name,
+            **chat_temperature_kwargs(model_name, 0.0),
             max_completion_tokens=cfg["max_output_tokens"],
             messages=[
                 {"role": "system", "content": system_prompt},
@@ -1581,9 +1585,10 @@ def _re_extract_node(state: PipelineState) -> PipelineState:
 
     def _run_completion(max_output_tokens: int):
         try:
+            model_name = state["model_name"] or settings.MODEL_NAME
             response = client.chat.completions.create(
-                model=state["model_name"] or settings.MODEL_NAME,
-                temperature=0.0,
+                model=model_name,
+                **chat_temperature_kwargs(model_name, 0.0),
                 max_completion_tokens=max_output_tokens,
                 messages=messages,
             )
@@ -1618,6 +1623,16 @@ def _re_extract_node(state: PipelineState) -> PipelineState:
             "retry_count": retry_count + 1,
             "llm_usage": [*state.get("llm_usage", []), *usages],
         }
+
+    from backend.services.ontology_patch_service import apply_ontology_patch, is_ontology_patch
+
+    if is_ontology_patch(data):
+        # Patch path: the model only returns what the issues require; the
+        # deterministic merge keeps everything else verbatim. Output size
+        # scales with the issue list instead of the document, which removes
+        # the truncation → keep-previous fallback observed on real manuals.
+        data, patch_report = apply_ontology_patch(previous_ontology.model_dump(), data)
+        logger.info("[ontology] Re-extraction returned a patch; applied: %s", patch_report)
 
     ontology = OntologyInstance.model_validate(_coerce_raw_ontology_data(
         data=data,

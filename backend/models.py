@@ -28,6 +28,9 @@ class FailureMode(BaseModel):
     material_context: str
     linked_symptom_id: str
     evidence_page: int = 0
+    # Codes of ErrorCode nodes wired to this failure via INDICATES, so the
+    # alarm-code chain survives the projection into triplets.
+    error_codes: list[str] = Field(default_factory=list)
 
 
 class CorrectiveAction(BaseModel):
@@ -45,6 +48,8 @@ class Triplet(BaseModel):
     symptom: Symptom
     failure_modes: list[FailureMode]
     corrective_actions: list[CorrectiveAction]
+    # Union of the error codes carried by this triplet's failure modes.
+    error_codes: list[str] = Field(default_factory=list)
 
 
 class ExtractionResult(BaseModel):

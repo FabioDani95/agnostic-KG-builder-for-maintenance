@@ -106,6 +106,14 @@ You must follow the ontology definition exactly.
     - referenced standards or regulations (e.g. "ANSI Z136", "ISO 13849")
     - fuse/connector/pin designators (e.g. "F3", "CN1") unless the text describes them as displayed codes
     If you cannot point to text presenting the token as an alarm/error/fault, OMIT it.
+22. Preserve the granularity of alarm/fault tables. When a table presents distinct rows
+    (typically one per error code or per problem), keep one distinct diagnostic chain per row:
+    the row's own Symptom, its own FailureMode(s), its own CorrectiveAction(s), and — when the
+    row shows a code — the ErrorCode with its INDICATES link to that row's FailureMode(s).
+    Do NOT merge the causes or actions of one row into a broader symptom taken from another
+    row or another section (e.g. a troubleshooting flowchart). When the same underlying failure
+    appears both in an alarm table and in a flowchart, extract BOTH views and connect them by
+    reusing the same FailureMode node — never by collapsing one view into the other.
 
 ## IMPORTANT: ID Uniqueness
 - All IDs must be globally unique and descriptive, not just sequential numbers.
@@ -194,6 +202,9 @@ Your task is to add only ontology relations between already-extracted nodes.
 3. Do NOT emit HAS_COMPONENT. The system derives it deterministically.
 4. Do NOT repeat any relation already present in Existing Relations.
 5. Return only relations strongly supported by the text. Prefer precision, but do not omit clear links.
+   For causal relations (MAY_INDICATE, RESOLVED_BY, INDICATES) the evidence must come from the
+   SAME text unit that states the link — the same table row, the same flowchart branch, or the
+   same sentence. Two entities merely appearing on the same page is NOT evidence of causation.
 6. Every returned relation MUST include an "evidence" array with at least one entry.
    Each evidence entry must use this exact shape:
      {{"source_page": 14, "source_reference": "PAGE 14", "quote": "short verbatim text from that page"}}
@@ -243,31 +254,38 @@ identified the following issues that must be resolved:
 - source_type: {source_type}
 - source_title: {source_title}
 
-## Previous Ontology Instance (for reference)
+## Previous Ontology Instance (authoritative baseline — do NOT re-emit it)
 {previous_ontology_json}
 
 {candidate_candidates_block}
 
 ## Instructions
-1. Produce a corrected ontology instance that addresses every issue listed above.
+1. Return ONLY a JSON PATCH against the previous ontology instance. Do NOT return the full
+   ontology: everything not mentioned in your patch is kept unchanged by the system.
+   The patch must use exactly this shape (all four keys optional):
+{{
+  "upsert_nodes": {{"NodeType": [ complete node objects, same shape as in the previous instance ]}},
+  "remove_node_ids": ["node_id", ...],
+  "add_relations": [ complete relation objects with evidence ],
+  "remove_relations": [{{"name": "RELATION_NAME", "from_id": "node_id", "to_id": "node_id"}}]
+}}
 2. For each issue, apply the fix_hint if provided; do not invent facts not in the text.
    When an issue has code="symptom_failure_duplicate", you MUST either:
-   (a) rewrite the FailureMode in causal form (name a component AND a stative condition
+   (a) upsert the FailureMode rewritten in causal form (name a component AND a stative condition
        like worn/loose/misaligned/dead/disconnected/out of adjustment/phased incorrectly/...), or
-   (b) DELETE the FailureMode and its MAY_INDICATE edge.
+   (b) put the FailureMode id in remove_node_ids — its MAY_INDICATE edges are dropped automatically.
    Do NOT simply rename the FailureMode while keeping the same observational description.
-3. This is still a FULL ontology extraction pass, not a minimal patch. Rebuild the complete ontology instance.
-4. Keep all nodes and relations that were already correct; only modify what the issues describe.
-5. Preserve existing IDs and wording unless an issue specifically requires a change.
+3. Touch ONLY what the issues describe. Never re-emit nodes or relations that are already correct.
+4. Each entry in "upsert_nodes" REPLACES the node with the same id, or ADDS a new node when the id
+   does not exist yet. Always emit COMPLETE node objects (all properties), never partial diffs.
+5. Preserve existing IDs and wording unless an issue specifically requires a change. New nodes
+   follow the original ID rules: type prefix + snake_case name, lowercase [a-z0-9_] only.
 6. Do NOT introduce new speculative nodes or relations beyond what the text supports.
-7. Previous coverage is the baseline. If the previous ontology already contains substantive non-Asset nodes,
-   do NOT drop them unless the issues or the source text clearly prove they were unsupported.
-   Returning only the Asset node is INVALID when the previous ontology contained supported substantive content.
-8. Re-apply the original extraction coverage rules:
-   - attempt ALL 6 node types defined in the schema
-   - attempt ALL 6 ontology relation types when supported by the text
-   - keep Component and ErrorCode nodes even when they are not part of a complete diagnostic chain
-9. Apply all constraints from the original extraction instructions:
+   If no valid fix exists for an issue, omit it rather than inventing content — an empty patch
+   {{}} is valid when nothing can be fixed from the text.
+7. Removing nodes also removes every relation touching them; do not list those relations again
+   in remove_relations.
+8. Apply all constraints from the original extraction instructions to everything you upsert:
    - FailureMode must be a technical cause, not a test/verification/inspection result.
    - CorrectiveAction must be a restorative action, not inspection-only.
    - Asset scope must remain aligned with source_title.
@@ -281,13 +299,18 @@ identified the following issues that must be resolved:
      linked to a failure) INDICATES relations. Do NOT emit ErrorCode nodes for
      part numbers from parts lists/exploded views, referenced standards
      (e.g. ANSI Z136), or fuse/connector designators not shown as displayed codes.
+   - Preserve alarm/fault table granularity: one distinct diagnostic chain per table
+     row; do not merge one row's causes or actions into a broader symptom from another
+     row or section. Connect table and flowchart views by reusing the same FailureMode
+     node, never by collapsing one into the other.
    - Symptom.severity must be exactly one of: "Low", "Medium", "High", "Critical".
-10. Every relation MUST include an "evidence" array with at least one entry.
+9. Every relation in "add_relations" MUST include an "evidence" array with at least one entry.
    Each evidence entry must use this exact shape (all three fields required):
      {{"source_page": 14, "source_reference": "PAGE 14", "quote": "short verbatim text from that page"}}
    Use the integer page number from the "--- PAGE N ---" markers in the text as source_page.
-   The quote should be a short verbatim excerpt (10-20 words) from that page that supports the relation.
-11. Return JSON only. No markdown. No commentary.
+   The quote should be a short verbatim excerpt (10-20 words) from the SAME text unit
+   (table row, flowchart branch, or sentence) that states the relation.
+10. Return JSON only — the patch object, nothing else. No markdown. No commentary.
 """
 
 

@@ -92,6 +92,11 @@ def project_graph_to_triplets(
         for n in nodes.get("Symptom", []) or []
         if isinstance(n, dict) and str(n.get("symptom_id", "")).strip()
     }
+    error_codes = {
+        str(n.get("error_code_id", "")).strip(): str(n.get("code") or n.get("name") or "").strip()
+        for n in nodes.get("ErrorCode", []) or []
+        if isinstance(n, dict) and str(n.get("error_code_id", "")).strip()
+    }
     failure_modes = {
         str(n.get("failure_mode_id", "")).strip(): n
         for n in nodes.get("FailureMode", []) or []
@@ -108,6 +113,10 @@ def project_graph_to_triplets(
     resolved_by: dict[str, list[str]] = {}
     fm_evidence: dict[str, int] = {}
     ca_link_page: dict[str, int] = {}
+    # failure_mode -> [error code text], via ErrorCode -INDICATES-> FailureMode.
+    # Alarm-code chains are first-class diagnostic knowledge (the user reports
+    # the displayed code, not the symptom), so the projection must not drop them.
+    fm_error_codes: dict[str, list[str]] = {}
     for rel in relations:
         name = str(rel.get("name") or rel.get("type") or "").strip()
         from_id = str(rel.get("from_id") or "").strip()
@@ -122,6 +131,12 @@ def project_graph_to_triplets(
             if to_id not in resolved_by[from_id]:
                 resolved_by[from_id].append(to_id)
             ca_link_page.setdefault(to_id, _first_evidence_page(rel))
+        elif name == "INDICATES" and from_id in error_codes and to_id in failure_modes:
+            code = error_codes[from_id]
+            if code:
+                fm_error_codes.setdefault(to_id, [])
+                if code not in fm_error_codes[to_id]:
+                    fm_error_codes[to_id].append(code)
 
     triplets: list[Triplet] = []
     for symptom_id, sym_node in symptoms.items():
@@ -145,6 +160,7 @@ def project_graph_to_triplets(
                 material_context=str(fm_node.get("material_context", "")),
                 linked_symptom_id=symptom_id,
                 evidence_page=fm_evidence.get(fm_id, 0),
+                error_codes=list(fm_error_codes.get(fm_id, [])),
             ))
             for action_id in resolved_by.get(fm_id, []):
                 ca_node = actions[action_id]
@@ -162,10 +178,16 @@ def project_graph_to_triplets(
                     source_page=source_page or ca_link_page.get(action_id, 0),
                     linked_failure_mode_id=fm_id,
                 ))
+        triplet_codes: list[str] = []
+        for fm_model in fm_models:
+            for code in fm_model.error_codes:
+                if code not in triplet_codes:
+                    triplet_codes.append(code)
         triplets.append(Triplet(
             symptom=symptom,
             failure_modes=fm_models,
             corrective_actions=ca_models,
+            error_codes=triplet_codes,
         ))
 
     logger.info(

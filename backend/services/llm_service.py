@@ -21,7 +21,7 @@ from backend.services.llm_guardrails import (
     llm_timeout_message,
     resolve_guardrails,
 )
-from backend.services.llm_gateway import get_client
+from backend.services.llm_gateway import chat_temperature_kwargs, get_client
 from backend.services.run_metrics import aggregate_usage, usage_from_response
 from backend.services.ontology_semantics import (
     build_semantic_key,
@@ -71,12 +71,13 @@ def call_openai_scoping(
 
     client = get_client(timeout=Timeout(cfg["timeout_seconds"], connect=10.0))
     try:
+        resolved_model = model_name or settings.MODEL_NAME
         response = client.chat.completions.create(
-            model=model_name or settings.MODEL_NAME,
+            model=resolved_model,
             messages=[
                 {"role": "system", "content": prompt_text},
             ],
-            temperature=0.0,
+            **chat_temperature_kwargs(resolved_model, 0.0),
             max_completion_tokens=cfg["max_output_tokens"],
         )
     except Exception as exc:
@@ -129,13 +130,14 @@ def call_openai(
     )
     client = get_client(timeout=Timeout(cfg["timeout_seconds"], connect=10.0))
     try:
+        resolved_model = model_name or settings.MODEL_NAME
         response = client.chat.completions.create(
-            model=model_name or settings.MODEL_NAME,
+            model=resolved_model,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_message},
             ],
-            temperature=0.0,
+            **chat_temperature_kwargs(resolved_model, 0.0),
             max_completion_tokens=cfg["max_output_tokens"],
         )
     except Exception as exc:

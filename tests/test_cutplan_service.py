@@ -2,6 +2,7 @@ import unittest
 
 from backend.models import TocEntry
 from backend.services.cutplan_service import (
+    extract_asset_identity,
     is_component_inventory_section,
     normalize_product_info,
     select_toc_sections,
@@ -29,6 +30,31 @@ class CutPlanServiceTests(unittest.TestCase):
         normalized = normalize_product_info({}, filename="Service-Manual-UR-Series-en.pdf")
         self.assertEqual(normalized["product_name"], "UR Series")
         self.assertEqual(normalized["asset_id"], "asset_ur_series")
+
+    def test_extract_asset_identity_prefers_source_title_over_filename(self):
+        identity = extract_asset_identity(
+            {},
+            fallback_name="Acme Pump P-100",
+            source_type="maintenance manual",
+            filename="clean_pump_manual.md",
+        )
+
+        self.assertEqual(identity["name"], "Acme Pump P-100")
+        self.assertEqual(identity["brand"], "Acme")
+        self.assertEqual(identity["model"], "P-100")
+        self.assertEqual(identity["asset_id"], "asset_acme_p_100")
+
+    def test_extract_asset_identity_infers_brand_and_model_from_source_title(self):
+        identity = extract_asset_identity(
+            {},
+            fallback_name="RoboLift RL-5",
+            source_type="service bulletin",
+            filename="noisy_table_robot_manual.md",
+        )
+
+        self.assertEqual(identity["brand"], "RoboLift")
+        self.assertEqual(identity["model"], "RL-5")
+        self.assertEqual(identity["product_short_name"], "RoboLift RL-5")
 
     def test_normalize_product_info_preserves_brand_and_model_when_available(self):
         normalized = normalize_product_info(

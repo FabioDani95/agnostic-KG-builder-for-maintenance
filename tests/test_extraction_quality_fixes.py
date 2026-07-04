@@ -13,7 +13,7 @@ from __future__ import annotations
 import unittest
 from unittest.mock import patch
 
-from backend.models import OntologyInstance, SuggestedRelation
+from backend.models import ConfidenceEntry, ConfidenceReport, OntologyInstance, SuggestedRelation
 from backend.services.candidate_mining_service import mine_candidates
 from backend.services.confidence import score_ontology
 from backend.services.evidence_grounding_service import ground_relation_evidence
@@ -34,6 +34,7 @@ from backend.services.resolution_completion_service import complete_resolution_g
 from backend.services.review_queue_service import (
     build_review_queue,
     compute_open_gaps,
+    compute_review_flags,
     summarize_queue,
 )
 
@@ -349,8 +350,12 @@ class GraphClosureTests(unittest.TestCase):
             "nodes": {
                 "Asset": [{"asset_id": "asset_demo", "name": "Demo Machine", "description": "d",
                            "brand": "Demo", "model": "M1", "asset_type": "machine"}],
-                "Component": [{"component_id": "comp_door", "name": "Door",
-                               "description": "Front door", "category": "Enclosure"}],
+                "Component": [
+                    {"component_id": "comp_door", "name": "Door",
+                     "description": "Front door", "category": "Enclosure"},
+                    {"component_id": "comp_hinge", "name": "Hinge",
+                     "description": "Door hinge", "category": "Enclosure"},
+                ],
                 "Symptom": [{"symptom_id": "sym_door_stuck", "name": "Door stuck",
                              "description": "The door does not open.", "severity": "Medium"}],
                 "FailureMode": [{"failure_mode_id": "fm_hinge_seized", "name": "Hinge seized",
@@ -365,29 +370,47 @@ class GraphClosureTests(unittest.TestCase):
             }],
         })
 
-    def test_grounded_may_indicate_is_auto_applied(self):
+    def test_grounded_affects_is_auto_applied(self):
         ontology = self._orphan_symptom_ontology()
         suggestions = [SuggestedRelation(
-            relation_name="MAY_INDICATE", from_type="Symptom", from_id="sym_door_stuck",
-            from_label="Door stuck", to_type="FailureMode", to_id="fm_hinge_seized",
-            to_label="Hinge seized", confidence=0.5, rationale="overlap",
+            relation_name="AFFECTS", from_type="FailureMode", from_id="fm_hinge_seized",
+            from_label="Hinge seized", to_type="Component", to_id="comp_hinge",
+            to_label="Hinge", confidence=0.5, rationale="overlap",
         )]
-        pages = {5: "Door stuck: the hinge is seized by corrosion. Replace the hinge."}
+        pages = {5: "Door stuck. Hinge seized by corrosion on the door hinge."}
         updated, remaining, report = close_grounded_gaps(ontology, suggestions, pages)
 
         self.assertEqual(report["applied"], 1)
         self.assertEqual(remaining, [])
         self.assertTrue(any(
-            r.name == "MAY_INDICATE" and r.from_id == "sym_door_stuck" and r.to_id == "fm_hinge_seized"
+            r.name == "AFFECTS" and r.from_id == "fm_hinge_seized" and r.to_id == "comp_hinge"
             for r in updated.relations
         ))
 
-    def test_ungrounded_suggestion_is_left_for_the_operator(self):
+    def test_may_indicate_is_never_auto_applied(self):
+        # MAY_INDICATE is a causal claim: page co-occurrence is not causal
+        # evidence (alarm tables put many unrelated symptoms and causes on the
+        # same page), so even a grounded, confident suggestion stays with the
+        # operator.
         ontology = self._orphan_symptom_ontology()
         suggestions = [SuggestedRelation(
             relation_name="MAY_INDICATE", from_type="Symptom", from_id="sym_door_stuck",
             from_label="Door stuck", to_type="FailureMode", to_id="fm_hinge_seized",
-            to_label="Hinge seized", confidence=0.5, rationale="overlap",
+            to_label="Hinge seized", confidence=0.9, rationale="overlap",
+        )]
+        pages = {5: "Door stuck. Hinge seized by corrosion. Replace the hinge."}
+        updated, remaining, report = close_grounded_gaps(ontology, suggestions, pages)
+
+        self.assertEqual(report["applied"], 0)
+        self.assertEqual(len(remaining), 1)
+        self.assertFalse(any(r.name == "MAY_INDICATE" for r in updated.relations))
+
+    def test_ungrounded_suggestion_is_left_for_the_operator(self):
+        ontology = self._orphan_symptom_ontology()
+        suggestions = [SuggestedRelation(
+            relation_name="AFFECTS", from_type="FailureMode", from_id="fm_hinge_seized",
+            from_label="Hinge seized", to_type="Component", to_id="comp_hinge",
+            to_label="Hinge", confidence=0.5, rationale="overlap",
         )]
         # No page mentions both endpoints → not grounded.
         pages = {5: "Unrelated maintenance note about lubrication schedules."}
@@ -395,7 +418,9 @@ class GraphClosureTests(unittest.TestCase):
 
         self.assertEqual(report["applied"], 0)
         self.assertEqual(len(remaining), 1)
-        self.assertFalse(any(r.name == "MAY_INDICATE" for r in updated.relations))
+        self.assertFalse(any(
+            r.name == "AFFECTS" and r.to_id == "comp_hinge" for r in updated.relations
+        ))
 
     def test_resolved_by_is_never_auto_applied(self):
         ontology = self._orphan_symptom_ontology()
@@ -414,11 +439,11 @@ class GraphClosureTests(unittest.TestCase):
     def test_low_confidence_suggestion_is_not_applied(self):
         ontology = self._orphan_symptom_ontology()
         suggestions = [SuggestedRelation(
-            relation_name="MAY_INDICATE", from_type="Symptom", from_id="sym_door_stuck",
-            from_label="Door stuck", to_type="FailureMode", to_id="fm_hinge_seized",
-            to_label="Hinge seized", confidence=0.21, rationale="weak overlap",
+            relation_name="AFFECTS", from_type="FailureMode", from_id="fm_hinge_seized",
+            from_label="Hinge seized", to_type="Component", to_id="comp_hinge",
+            to_label="Hinge", confidence=0.21, rationale="weak overlap",
         )]
-        pages = {5: "Door stuck: the hinge is seized by corrosion."}
+        pages = {5: "Door stuck. Hinge seized by corrosion on the door hinge."}
         _, remaining, report = close_grounded_gaps(ontology, suggestions, pages)
 
         self.assertEqual(report["applied"], 0)
@@ -461,6 +486,23 @@ class GraphProjectionTests(unittest.TestCase):
         self.assertEqual([ca.action_id for ca in t.corrective_actions], ["ca_a"])
         self.assertEqual(t.corrective_actions[0].linked_failure_mode_id, "fm_a")
         self.assertEqual(t.corrective_actions[0].source_page, 5)
+
+    def test_projection_carries_error_codes_from_indicates(self):
+        from backend.services.graph_projection_service import project_graph_to_triplets
+        graph = self._chained_graph()
+        graph["nodes"]["ErrorCode"] = [{
+            "error_code_id": "err_e9", "name": "E9", "description": "Door alarm.",
+            "code": "E9",
+        }]
+        graph["relations"].append({
+            "name": "INDICATES", "from_id": "err_e9", "to_id": "fm_a",
+            "evidence": [{"source_page": 5}],
+        })
+        result = project_graph_to_triplets(graph)
+        self.assertEqual(len(result.triplets), 1)
+        t = result.triplets[0]
+        self.assertEqual(t.failure_modes[0].error_codes, ["E9"])
+        self.assertEqual(t.error_codes, ["E9"])
 
     def test_orphan_symptom_is_not_projected_as_triplet(self):
         from backend.services.graph_projection_service import project_graph_to_triplets
@@ -520,6 +562,40 @@ class OpenGapsTests(unittest.TestCase):
         ]
         self.assertEqual(compute_open_gaps(contract), [])
 
+    def test_multi_cause_symptom_is_review_flag_not_open_gap(self):
+        contract = _gappy_contract()
+        contract["nodes"]["FailureMode"].append({
+            "failure_mode_id": "fm_sensor_blocked", "name": "Sensor blocked",
+            "description": "Sensor blocked by dust.", "material_context": "comp_door",
+        })
+        contract["nodes"]["CorrectiveAction"] = [
+            {
+                "action_id": "ca_fix_hinge", "name": "Replace hinge", "description": "Replace.",
+                "instruction_text": "1. Replace the hinge.",
+            },
+            {
+                "action_id": "ca_clean_sensor", "name": "Clean sensor", "description": "Clean.",
+                "instruction_text": "1. Clean the sensor.",
+            },
+        ]
+        contract["relations"] = [
+            {"name": "MAY_INDICATE", "from_id": "sym_orphan", "to_id": "fm_no_action"},
+            {"name": "MAY_INDICATE", "from_id": "sym_orphan", "to_id": "fm_sensor_blocked"},
+            {"name": "RESOLVED_BY", "from_id": "fm_no_action", "to_id": "ca_fix_hinge"},
+            {"name": "RESOLVED_BY", "from_id": "fm_sensor_blocked", "to_id": "ca_clean_sensor"},
+            {"name": "INDICATES", "from_id": "err_e1", "to_id": "fm_no_action"},
+        ]
+
+        self.assertEqual(compute_open_gaps(contract), [])
+        flags = compute_review_flags(contract)
+        self.assertEqual([flag["kind"] for flag in flags], ["ambiguous_multi_cause_symptom"])
+        self.assertEqual(flags[0]["target_id"], "sym_orphan")
+        self.assertEqual(flags[0]["candidate_count"], 2)
+
+        queue = build_review_queue(contract)
+        self.assertEqual([item["kind"] for item in queue], ["ambiguous_multi_cause_symptom"])
+        self.assertTrue(summarize_queue(queue)["requires_human_review"])
+
     def test_review_queue_orders_blocking_before_advisory(self):
         from backend.models import PipelineIssue
         issues = [
@@ -556,6 +632,53 @@ class ExportGatingTests(unittest.TestCase):
         meta = prepared["metadata"]
         self.assertEqual(meta["open_gap_count"], 0)
         self.assertFalse(meta["requires_human_review"])
+
+
+class ReviewQueueConfidenceTests(unittest.TestCase):
+    def test_soft_confidence_band_does_not_force_operator_review(self):
+        report = ConfidenceReport(
+            theta_low=0.45,
+            entries=[
+                ConfidenceEntry(
+                    node_type="Component",
+                    node_id="comp_cover",
+                    score=0.7805,
+                    classification="human_review",
+                    reasons=["evidence inferred from relations only", "incomplete schema-expected relations"],
+                )
+            ],
+        )
+
+        queue = build_review_queue({"nodes": {}, "relations": []}, confidence_report=report)
+
+        self.assertEqual(queue, [])
+        self.assertFalse(summarize_queue(queue)["requires_human_review"])
+
+    def test_actionable_confidence_reason_still_forces_operator_review(self):
+        report = ConfidenceReport(
+            theta_low=0.45,
+            entries=[
+                ConfidenceEntry(
+                    node_type="Symptom",
+                    node_id="sym_missing_required",
+                    score=0.70,
+                    classification="human_review",
+                    reasons=["missing required properties"],
+                ),
+                ConfidenceEntry(
+                    node_type="FailureMode",
+                    node_id="fm_very_low",
+                    score=0.30,
+                    classification="human_review",
+                    reasons=["evidence inferred from relations only"],
+                ),
+            ],
+        )
+
+        queue = build_review_queue({"nodes": {}, "relations": []}, confidence_report=report)
+
+        self.assertEqual([item["target_id"] for item in queue], ["sym_missing_required", "fm_very_low"])
+        self.assertTrue(summarize_queue(queue)["requires_human_review"])
 
 
 if __name__ == "__main__":

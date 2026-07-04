@@ -10,11 +10,15 @@ Closure is intentionally conservative — the golden rule of the architecture is
 "only promote to green what is grounded; everything else degrades to the human
 gate, never to auto-accept":
 
-- Only association-style relations are auto-applied here: MAY_INDICATE
-  (Symptom → FailureMode) and AFFECTS (FailureMode → Component). RESOLVED_BY is
-  deliberately excluded — "FM and CA share tokens" does not prove the action
-  remedies the fault, so resolution stays with the LLM retrieval pass
-  (resolution_completion) which verifies remediation against the text.
+- Only association-style relations are auto-applied here: AFFECTS
+  (FailureMode → Component). RESOLVED_BY is deliberately excluded — "FM and CA
+  share tokens" does not prove the action remedies the fault, so resolution
+  stays with the LLM retrieval pass (resolution_completion) which verifies
+  remediation against the text. MAY_INDICATE is also excluded: it is a CAUSAL
+  claim, and page-level co-occurrence is not evidence of causation — alarm
+  tables and flowcharts put many unrelated symptoms and causes on the same
+  page, so token overlap + shared page systematically fabricates wrong
+  Symptom→FailureMode edges. Causal suggestions stay in the operator queue.
 - A candidate is applied only when (a) its similarity confidence clears a
   threshold AND (b) it is grounded: both endpoints are evidenced on a common
   page, or both node names co-occur on a page of the source text.
@@ -46,8 +50,10 @@ _ID_FIELD_BY_TYPE: dict[str, str] = {
     "ErrorCode": "error_code_id",
 }
 
-# Relations safe to auto-apply from similarity + grounding alone.
-_AUTO_CLOSE_RELATIONS = {"MAY_INDICATE", "AFFECTS"}
+# Relations safe to auto-apply from similarity + grounding alone. Causal
+# relations (MAY_INDICATE, RESOLVED_BY) are never auto-closed: co-occurrence
+# grounding cannot distinguish "same page" from "same diagnostic chain".
+_AUTO_CLOSE_RELATIONS = {"AFFECTS"}
 
 # Minimum similarity confidence before a grounded candidate is auto-applied.
 # Kept above the suggestion floor (0.20) so weak token coincidences stay in the

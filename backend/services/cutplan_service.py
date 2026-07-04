@@ -401,22 +401,33 @@ def extract_asset_identity(
     source_type: str = "",
     filename: str = "",
 ) -> dict[str, str]:
-    normalized = normalize_product_info(raw_product_info or {}, filename=filename)
-    product_name = normalized.get("product_name") or _clean_product_name(fallback_name)
-    product_short_name = normalized.get("product_short_name") or _build_product_short_name(
+    raw = raw_product_info or {}
+    fallback_product_name = _clean_product_name(fallback_name)
+    # Do not let a filename-derived product name override an explicit runtime
+    # source_title. Golden markdown fixtures and some PDFs expose the canonical
+    # asset name outside the scoping product_info payload.
+    normalized = normalize_product_info(raw, filename="" if fallback_product_name else filename)
+    raw_product_name = _clean_product_name(str(raw.get("product_name") or raw.get("name") or ""))
+    product_name = raw_product_name or fallback_product_name or normalized.get("product_name")
+    inferred_brand, inferred_model = _infer_brand_model_from_product_name(product_name)
+    brand = normalized.get("brand", "") or inferred_brand
+    model = normalized.get("model", "") or inferred_model
+    raw_product_short_name = _clean_product_name(str(raw.get("product_short_name") or ""))
+    product_short_name = raw_product_short_name or _build_product_short_name(
         product_name,
-        normalized.get("brand", ""),
-        normalized.get("model", ""),
-    )
+        brand,
+        model,
+    ) or normalized.get("product_short_name")
     document_type = normalized.get("document_type") or _normalize_label(source_type)
     asset_type = normalized.get("asset_type") or infer_asset_type(product_name or product_short_name, document_type)
-    asset_id = normalized.get("asset_id") or _build_asset_id(product_short_name or product_name)
+    raw_asset_id = _normalize_asset_id(str(raw.get("asset_id") or ""))
+    asset_id = raw_asset_id or _build_asset_id(product_short_name or product_name) or normalized.get("asset_id")
     return {
         "asset_id": asset_id,
         "name": product_name,
         "product_short_name": product_short_name,
-        "brand": normalized.get("brand", ""),
-        "model": normalized.get("model", ""),
+        "brand": brand,
+        "model": model,
         "asset_type": asset_type,
         "document_type": document_type,
     }
@@ -556,6 +567,16 @@ def _extract_model_from_product_name(product_name: str) -> str:
     if match:
         return _normalize_label(match.group(1))
     return ""
+
+
+def _infer_brand_model_from_product_name(product_name: str) -> tuple[str, str]:
+    cleaned = _clean_product_name(product_name)
+    parts = cleaned.split()
+    if len(parts) < 2:
+        return "", ""
+    brand = parts[0] if re.search(r"[A-Za-z]", parts[0]) else ""
+    model = parts[-1] if re.search(r"\d", parts[-1]) else ""
+    return brand, model
 
 
 def _build_product_short_name(product_name: str, brand: str, model: str) -> str:

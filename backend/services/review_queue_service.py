@@ -7,6 +7,8 @@ into one explicit, structured queue:
 
 - open structural gaps (deterministic): symptoms with no failure mode, failure
   modes with no corrective action, error codes not wired to a failure, etc.
+- ambiguous but valid diagnostic alternatives: one symptom pointing at multiple
+  failure modes that the operator should confirm as parallel candidates
 - low-confidence nodes (the confidence human_review / auto_reject band)
 - advisory schema/graph issues (e.g. non-actionable instruction text)
 
@@ -24,6 +26,13 @@ from collections import defaultdict
 from typing import Any
 
 from backend.services.ontology_coverage import _NODE_ID_FIELDS, _iter_relations
+
+
+_ACTIONABLE_CONFIDENCE_REASONS = {
+    "missing required properties",
+    "human binding required",
+    "evidence quote not found on cited page",
+}
 
 
 def _rel_endpoints(rel: dict[str, Any]) -> tuple[str, str, str]:
@@ -130,6 +139,35 @@ def compute_open_gaps(ontology: dict[str, Any]) -> list[dict[str, Any]]:
     return gaps
 
 
+def compute_review_flags(ontology: dict[str, Any]) -> list[dict[str, Any]]:
+    """Deterministic review-only flags for complete but ambiguous chains."""
+    nodes, out_edges, _ = _index(ontology)
+    flags: list[dict[str, Any]] = []
+
+    for sid, node in nodes.get("Symptom", {}).items():
+        failure_ids = sorted(out_edges["MAY_INDICATE"].get(sid) or [])
+        if len(failure_ids) < 2:
+            continue
+        labels = [
+            _label(nodes.get("FailureMode", {}).get(fid, {}), fid)
+            for fid in failure_ids
+        ]
+        flags.append({
+            "kind": "ambiguous_multi_cause_symptom",
+            "severity": "review",
+            "target_type": "Symptom",
+            "target_id": sid,
+            "label": _label(node, sid),
+            "reason": "Symptom has multiple MAY_INDICATE links to possible FailureModes.",
+            "suggested_fix": "Confirm that all listed failure modes are valid parallel causes, or remove the incorrect link.",
+            "candidate_count": len(failure_ids),
+            "candidate_failure_mode_ids": failure_ids,
+            "candidate_failure_mode_labels": labels,
+        })
+
+    return flags
+
+
 def build_review_queue(
     ontology: dict[str, Any],
     *,
@@ -155,10 +193,23 @@ def build_review_queue(
     for gap in compute_open_gaps(ontology):
         _add(gap)
 
+    for flag in compute_review_flags(ontology):
+        _add(flag)
+
     if confidence_report is not None:
         for entry in getattr(confidence_report, "entries", []) or []:
             classification = getattr(entry, "classification", "")
             if classification not in ("human_review", "auto_reject"):
+                continue
+            reasons = list(getattr(entry, "reasons", []) or [])
+            score = getattr(entry, "score", None)
+            theta_low = getattr(confidence_report, "theta_low", 0.0)
+            try:
+                below_low_threshold = float(score) < float(theta_low)
+            except (TypeError, ValueError):
+                below_low_threshold = False
+            actionable_reason = any(reason in _ACTIONABLE_CONFIDENCE_REASONS for reason in reasons)
+            if classification == "human_review" and not (below_low_threshold or actionable_reason):
                 continue
             _add({
                 "kind": "low_confidence",
@@ -166,9 +217,9 @@ def build_review_queue(
                 "target_type": getattr(entry, "node_type", ""),
                 "target_id": getattr(entry, "node_id", ""),
                 "label": getattr(entry, "node_id", ""),
-                "reason": "; ".join(getattr(entry, "reasons", []) or []) or "Low confidence score.",
+                "reason": "; ".join(reasons) or "Low confidence score.",
                 "suggested_fix": "Verify this node against the manual before accepting.",
-                "score": getattr(entry, "score", None),
+                "score": score,
             })
 
     for issue in schema_issues or []:

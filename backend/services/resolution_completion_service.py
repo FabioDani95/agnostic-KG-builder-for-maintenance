@@ -13,7 +13,7 @@ from backend.app_config import get_resolution_completion_config
 from backend.config import settings
 from backend.models import OntologyEvidence, OntologyInstance, OntologyRelationInstance
 from backend.services.llm_guardrails import enforce_llm_limits, llm_timeout_message
-from backend.services.llm_gateway import get_client
+from backend.services.llm_gateway import chat_temperature_kwargs, get_client
 from backend.services.ontology_semantics import build_semantic_key, semantic_tokens
 from backend.services.run_metrics import usage_from_response
 
@@ -474,9 +474,10 @@ def complete_resolution_gaps(
             })
             continue
         try:
+            resolved_model = model_name or settings.MODEL_NAME
             response = client.chat.completions.create(
-                model=model_name or settings.MODEL_NAME,
-                temperature=0.0,
+                model=resolved_model,
+                **chat_temperature_kwargs(resolved_model, 0.0),
                 max_completion_tokens=int(cfg.get("max_output_tokens", 2500)),
                 messages=[
                     {"role": "system", "content": system_prompt},
