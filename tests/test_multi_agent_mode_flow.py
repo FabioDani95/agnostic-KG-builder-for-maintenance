@@ -119,6 +119,7 @@ def test_scoping_agent_uses_workflow_and_keeps_cut_plan_shape(monkeypatch):
         "sections",
         "pages_to_keep",
         "page_offset",
+        "page_offset_detection",
         "toc",
         "skipped",
         "product_info",

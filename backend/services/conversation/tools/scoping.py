@@ -17,12 +17,12 @@ async def _propose_cut_plan(args, store, on_event):
     from backend.models import CutPlanRequest
     from backend.services.scoping_workflow import create_cut_plan_workflow
 
-    page_offset = store.get("page_offset")
-    if page_offset is None:
-        page_offset = 0
+    # None → the workflow autodetects the printed-page offset from the
+    # document; an explicit store value (set via the start-request override)
+    # is passed through untouched.
     req = CutPlanRequest(
         pdf_id=store["pdf_id"],
-        page_offset=page_offset,
+        page_offset=store.get("page_offset"),
         model_name=(store.get("selected_models") or {}).get("scoping") or None,
     )
     result = await asyncio.to_thread(create_cut_plan_workflow, store, req, on_event)

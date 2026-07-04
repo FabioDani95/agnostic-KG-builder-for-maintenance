@@ -321,6 +321,9 @@ class CutPlan(BaseModel):
     sections: list[SectionInfo]
     pages_to_keep: list[int]
     page_offset: int = 0
+    # How page_offset was determined (source, confidence, votes) when
+    # autodetected; None for explicit overrides.
+    page_offset_detection: dict | None = None
     toc: StructuredToc | None = None
     skipped: bool = False
     product_info: ProductInfo | None = None
@@ -329,7 +332,9 @@ class CutPlan(BaseModel):
 class CutPlanRequest(BaseModel):
     pdf_id: str
     model_name: str = DEFAULT_MODEL_NAME
-    page_offset: int = 0
+    # None (default) → the printed-page offset is autodetected from the
+    # document; an explicit integer (including 0) is a manual override.
+    page_offset: int | None = None
 
 
 class CutPlanApprovalSection(BaseModel):

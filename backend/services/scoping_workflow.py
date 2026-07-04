@@ -124,7 +124,23 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
 
     pages = store["pages"]
     total_pages = len(pages)
-    page_offset = req.page_offset
+    # None → autodetect from printed page labels (refined with ToC anchoring
+    # below, once the entries are parsed). An explicit value — including 0 —
+    # is an operator override and is never second-guessed.
+    from backend.services.page_offset_service import detect_page_offset
+
+    offset_detection: dict | None = None
+    if req.page_offset is None:
+        offset_detection = detect_page_offset(pages)
+        page_offset = int(offset_detection["offset"])
+        logger.info(
+            "[scoping] Page offset autodetected: %d (source=%s, confidence=%s)",
+            page_offset,
+            offset_detection["source"],
+            offset_detection["confidence"],
+        )
+    else:
+        page_offset = int(req.page_offset)
     scoping_usage_entries: list[dict] = []
 
     logger.info(
@@ -166,6 +182,7 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
             sections=[],
             pages_to_keep=[p["page_number"] for p in pages],
             page_offset=page_offset,
+            page_offset_detection=offset_detection,
             skipped=True,
         )
 
@@ -213,6 +230,26 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
             )
 
             if toc_entries:
+                if req.page_offset is None:
+                    # ToC anchoring measures exactly the printed→physical shift
+                    # the offset is used for; when confident it supersedes the
+                    # label-based estimate.
+                    refined = detect_page_offset(
+                        pages,
+                        toc_entries,
+                        toc_page_range=(toc_start, toc_end),
+                    )
+                    if refined["offset"] != page_offset and refined["source"] != "default":
+                        logger.info(
+                            "[scoping] Page offset refined by ToC anchoring: %d -> %d (confidence=%s)",
+                            page_offset,
+                            refined["offset"],
+                            refined["confidence"],
+                        )
+                    if refined["source"] != "default":
+                        page_offset = int(refined["offset"])
+                        offset_detection = refined
+
                 structured_toc = StructuredToc(
                     entries=toc_entries,
                     toc_start_page=toc_start,
@@ -449,6 +486,7 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
         ],
         "pages_to_keep": filtered_pages,
         "page_offset": page_offset,
+        "page_offset_detection": offset_detection,
         "toc": structured_toc.model_dump() if structured_toc else None,
         "skipped": False,
         "product_info": product_info.model_dump() if product_info else None,
@@ -467,6 +505,7 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
         sections=merged,
         pages_to_keep=filtered_pages,
         page_offset=page_offset,
+        page_offset_detection=offset_detection,
         toc=structured_toc,
         product_info=product_info,
     )
