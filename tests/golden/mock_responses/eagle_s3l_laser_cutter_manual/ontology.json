@@ -149,8 +149,8 @@
       },
       {
         "failure_mode_id": "FM-004",
-        "name": "Nozzle is bent or the mirrors may need to be adjusted",
-        "description": "If the dot has a ring or partial ring around it, the nozzle is bent or the mirrors may need to be adjusted.",
+        "name": "Brass laser nozzle bent",
+        "description": "The tube or nozzle is bent, so the laser beam reflects off the inside wall of the nozzle causing a wide path.",
         "material_context": "CMP-009",
         "linked_symptom_id": "SYM-006",
         "evidence_page": 39
@@ -202,6 +202,14 @@
         "material_context": "CMP-007",
         "linked_symptom_id": "SYM-007",
         "evidence_page": 39
+      },
+      {
+        "failure_mode_id": "FM-011",
+        "name": "Beam mirrors out of adjustment",
+        "description": "The mirrors may need to be adjusted, widening the laser cutting path.",
+        "material_context": "CMP-009",
+        "linked_symptom_id": "SYM-006",
+        "evidence_page": 39
       }
     ],
     "CorrectiveAction": [
@@ -240,14 +248,14 @@
       },
       {
         "action_id": "CA-004",
-        "name": "Adjust mirrors as required",
-        "description": "Adjust mirrors when the nozzle is bent or the mirrors may need to be adjusted.",
-        "instruction_text": "Adjust mirrors as required. If the dot has a ring or partial ring around it, the nozzle is bent or the mirrors may need to be adjusted.",
+        "name": "Adjust the mirrors",
+        "description": "Adjust the mirrors when the laser cutting path is too wide.",
+        "instruction_text": "Adjust the mirrors as required.",
         "source_type": "service manual",
         "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
         "source_page": 39,
         "source_reference": "PAGE 39",
-        "linked_failure_mode_id": "FM-004"
+        "linked_failure_mode_id": "FM-011"
       },
       {
         "action_id": "CA-005",
@@ -772,12 +780,12 @@
       "from_type": "FailureMode",
       "from_id": "FM-004",
       "to_type": "CorrectiveAction",
-      "to_id": "CA-004",
+      "to_id": "CA-007",
       "evidence": [
         {
           "source_page": 39,
           "source_reference": "PAGE 39",
-          "quote": "mirrors may need to be adjusted"
+          "quote": "Replace nozzle if any damage is present"
         }
       ]
     },
@@ -862,6 +870,48 @@
           "source_page": 39,
           "source_reference": "PAGE 39",
           "quote": "Clean or replace laser nozzle as required"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-006",
+      "to_type": "FailureMode",
+      "to_id": "FM-011",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "the nozzle is bent or the mirrors may need to be adjusted"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-011",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-004",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "the nozzle is bent or the mirrors may need to be adjusted"
+        }
+      ]
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "FM-011",
+      "to_type": "Component",
+      "to_id": "CMP-009",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "the nozzle is bent or the mirrors may need to be adjusted"
         }
       ]
     }

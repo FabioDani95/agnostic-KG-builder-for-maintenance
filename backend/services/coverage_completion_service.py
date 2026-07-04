@@ -96,8 +96,10 @@ Rules:
 - Report ONLY chains absent from the summary. Do not re-emit covered chains.
 - Reuse the exact symptom name from the summary when the missing branch belongs to an
   already-extracted symptom.
-- The failure mode must be a technical cause (component + stative condition), not a
-  test, verification, or inspection result.
+- The failure mode must be a technical cause: a component or subsystem (physical OR
+  software/control) in a stative condition — physical (worn, loose, seized, ...) or
+  configuration (not mapped, misconfigured, out of calibration, ...). Never a test,
+  verification, or inspection result, and never operator error without a system state.
 - The corrective action must be restorative, not inspection-only.
 - The evidence quote must be a short verbatim excerpt (10-20 words) from the SAME text
   unit (table row, flowchart branch, sentence) that states the chain, with the integer

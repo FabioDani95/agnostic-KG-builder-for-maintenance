@@ -38,10 +38,12 @@ You must follow the ontology definition exactly.
    For each node type, use its schema description as your extraction guide:
    - **Asset**: "The product, machine, robot, cobot, controller, or other technical asset that is the subject of troubleshooting knowledge."
      Extract exactly one Asset node per document.
-   - **Component**: "A physical component or subsystem of the asset involved in troubleshooting."
+   - **Component**: "A physical or software component or subsystem of the asset involved in troubleshooting."
      Look for: parts lists, exploded diagrams, subsystem descriptions, installation instructions naming hardware,
      maintenance sections referencing serviceable parts. Extract a Component node for each distinct physical part
-     or subsystem named in the text. Fill category from the component's functional group.
+     or subsystem named in the text. Software and control subsystems (cutting/control software, operator UI,
+     PLC, parameter sets) are Components too — set category to "software" or "control" for them.
+     Fill category from the component's functional group.
    - **Symptom**: "An observed issue, anomaly, or visible manifestation detected by the user or system."
      Extract observable problems the user would report. Fill severity based on impact described in the text.
      severity MUST be exactly one of: "Low", "Medium", "High", "Critical".
@@ -75,15 +77,24 @@ You must follow the ontology definition exactly.
 16. Return JSON only. No markdown. No commentary.
 17. Keep the Asset scope aligned with source_title. Do NOT broaden a "control box" or "controller" manual into a whole "robot system" unless the manual text explicitly requires that broader scope.
 18. A FailureMode must be a technical cause, not a failed test, verification result, inspection result, or procedural step.
-    A valid FailureMode MUST name (a) a component AND (b) a stative condition (worn, loose,
+    A valid FailureMode MUST name (a) a component or subsystem — physical OR software/control
+    (a software application, a configuration set, a parameter, a calibration, a mapping) —
+    AND (b) a stative condition. Stative conditions include physical states (worn, loose,
     misaligned, dead, disconnected, out of adjustment, phased incorrectly, seized,
-    contaminated, cracked, obstructed, ...). Contrast examples:
+    contaminated, cracked, obstructed, ...) AND configuration states (not mapped,
+    not assigned, misconfigured, disabled, out of calibration, wrong parameter value, ...).
+    Contrast examples:
     - Symptom "The tool changer gets hung up." → FailureMode "Pneumatic solenoid valve
       stuck open on ATC circuit." (NOT "Tool changer hung up")
     - Symptom "An alarm is displayed." → FailureMode "Spindle orient parameter P4031
       misconfigured after control reload." (NOT "A fault occurs")
     - Symptom "Window damaged or severely scratched." → FailureMode "Impact from flying chip
       cracked the polycarbonate window pane." (NOT "Damaged or scratched window panel")
+    - Symptom "The cutting tool does not move down." → FailureMode "Cutting layer not mapped
+      to a tool in the cutting software." (NOT "Tool mapping problem", NOT "Tool does not
+      come down")
+    Still NOT valid FailureModes: outcomes of checks ("Verification of tool mapping failed"),
+    and operator or context faults that name no system state ("operator error", "wrong usage").
     If the only FailureMode you can find is a lexical restatement of the Symptom, OMIT it —
     do not invent one.
 19. A CorrectiveAction must be a restorative action, not an inspection-only or verification-only step unless that step itself resolves the fault according to the text.
@@ -286,7 +297,10 @@ identified the following issues that must be resolved:
 7. Removing nodes also removes every relation touching them; do not list those relations again
    in remove_relations.
 8. Apply all constraints from the original extraction instructions to everything you upsert:
-   - FailureMode must be a technical cause, not a test/verification/inspection result.
+   - FailureMode must be a technical cause naming a component or subsystem (physical OR
+     software/control) in a stative condition — physical (worn, loose, seized, ...) or
+     configuration (not mapped, misconfigured, out of calibration, ...). Never a
+     test/verification/inspection result, and never operator error without a system state.
    - CorrectiveAction must be a restorative action, not inspection-only.
    - Asset scope must remain aligned with source_title.
    - AFFECTS must point to the MOST SPECIFIC Component in the failure context;
