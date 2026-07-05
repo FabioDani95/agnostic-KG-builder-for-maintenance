@@ -21,6 +21,8 @@ class ChatStartRequest(BaseModel):
     selected_scoping_model: str | None = None
     selected_extraction_model: str | None = None
     target_language: str = "en"
+    # Operator initials for the session audit trail (HITL console).
+    operator: str | None = None
     # The printed-page offset is autodetected by the scoping workflow; this
     # field remains only as an expert override for pathological documents.
     page_offset: int | None = None

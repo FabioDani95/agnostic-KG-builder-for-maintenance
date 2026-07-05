@@ -79,6 +79,38 @@ def _refinement_summary(refinement_log: list[dict[str, Any]] | None) -> dict[str
     }
 
 
+def _metrics_totals(store: dict[str, Any]) -> dict[str, Any]:
+    """Duration/cost totals for the console KPIs, from run_metrics stage summaries."""
+    stages = ((store.get("run_metrics") or {}).get("stages") or {})
+    if stages:
+        return {
+            "duration_seconds": round(sum(float(stage.get("duration_seconds", 0) or 0) for stage in stages.values()), 3),
+            "estimated_cost_usd": round(sum(float(stage.get("estimated_cost_usd", 0) or 0) for stage in stages.values()), 6),
+            "total_tokens": sum(int(stage.get("total_tokens", 0) or 0) for stage in stages.values()),
+            "llm_calls": sum(int(stage.get("llm_calls", 0) or 0) for stage in stages.values()),
+        }
+    # Persisted runs reloaded from disk have no in-memory run_metrics: recover the
+    # totals from the per-stage metrics steps recorded in trace.jsonl.
+    duration = 0.0
+    cost = 0.0
+    tokens = 0
+    calls = 0
+    for step in store.get("pipeline_trace") or []:
+        if not str(step.get("step", "")).endswith("_metrics"):
+            continue
+        summary = step.get("output_summary") or {}
+        duration += float(summary.get("duration_seconds", 0) or 0)
+        calls += int(summary.get("llm_calls", 0) or 0)
+        tokens += int(step.get("tokens", 0) or 0)
+        cost += float(step.get("cost", 0) or 0)
+    return {
+        "duration_seconds": round(duration, 3),
+        "estimated_cost_usd": round(cost, 6),
+        "total_tokens": tokens,
+        "llm_calls": calls,
+    }
+
+
 def build_status_payload(store: dict[str, Any]) -> dict[str, Any]:
     state = ensure_graph_state(store, pdf_id=store.get("pdf_id"))
     supervisor_log = state.get("supervisor_log", [])
@@ -103,6 +135,7 @@ def build_status_payload(store: dict[str, Any]) -> dict[str, Any]:
         "last_supervisor_decision": deepcopy(supervisor_log[-1]) if supervisor_log else None,
         "token_ledger": deepcopy(state.get("token_ledger", {})),
         "phase_history": deepcopy(state.get("phase_history", [])),
+        "metrics": _metrics_totals(store),
     }
 
 

@@ -1,0 +1,92 @@
+/* Console HITL — design tokens and shared components (from Console HITL.dc.html) */
+html, body { margin: 0; padding: 0; height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #F4F3EF;
+  color: #22211D;
+}
+* { box-sizing: border-box; }
+::selection { background: rgba(201, 100, 66, 0.18); }
+input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(201, 100, 66, 0.12);
+  border-color: rgba(201, 100, 66, 0.4) !important;
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-track { background: transparent; }
+@keyframes ins-in {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+#app { height: 100vh; display: flex; flex-direction: column; overflow: hidden; min-width: 1024px; }
+
+.c-header {
+  height: 54px; flex: none; display: flex; align-items: center; gap: 14px;
+  padding: 0 18px; border-bottom: 1px solid rgba(0,0,0,0.08); background: #F4F3EF;
+}
+.c-body { flex: 1; display: flex; min-height: 0; }
+.c-nav {
+  width: 204px; flex: none; display: flex; flex-direction: column;
+  padding: 14px 10px; border-right: 1px solid rgba(0,0,0,0.07); background: #EFEEE8;
+}
+.c-main { flex: 1; min-width: 0; overflow-y: auto; background: #F7F6F2; }
+.c-inspector {
+  width: 352px; flex: none; overflow-y: auto; border-left: 1px solid rgba(0,0,0,0.07);
+  background: #F4F3EF; padding: 20px 22px; animation: ins-in .2s ease;
+}
+
+.serif { font-family: ui-serif, Georgia, serif; letter-spacing: -0.01em; }
+.mono { font-family: ui-monospace, Menlo, monospace; }
+.tnum { font-variant-numeric: tabular-nums; }
+
+.card {
+  border-radius: 14px; background: #FFFFFF;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.04);
+}
+.kicker {
+  font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em;
+  text-transform: uppercase; color: #8A867D;
+}
+.pill { border-radius: 99px; font-weight: 600; white-space: nowrap; }
+
+button { font-family: inherit; cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+.btn-primary {
+  font-size: 13px; font-weight: 600; padding: 10px 18px; border-radius: 10px;
+  border: none; background: var(--accent, #C96442); color: #FFFFFF;
+}
+.btn-primary:hover:not(:disabled) { filter: brightness(1.06); }
+.btn-ghost {
+  font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.10); background: #FFFFFF; color: #22211D;
+}
+.btn-ghost:hover:not(:disabled) { background: #FAFAF8; }
+
+.nav-btn {
+  display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px;
+  margin-bottom: 2px; border: none; border-radius: 9px; text-align: left; background: transparent;
+}
+.nav-btn:hover:not([data-locked]) { background: rgba(255,255,255,0.7); }
+.nav-btn[data-active] { background: #FFFFFF; }
+
+.row-hover:hover { background: #FBFAF7 !important; }
+
+input[type="text"], input[type="number"], input:not([type]) {
+  font-family: inherit; color: #22211D;
+}
+
+.c-toast {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+  background: #22211D; color: #F4F3EF; font-size: 12.5px; padding: 10px 18px;
+  border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.25); z-index: 50;
+  max-width: 70vw;
+}
+.c-toast.error { background: #B4543E; }

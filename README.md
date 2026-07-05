@@ -38,12 +38,16 @@ Scoping is recall-oriented for component coverage:
 ### Runtime Model
 
 - Backend: FastAPI
-- Frontend: static browser UI served by the backend
+- Frontend: static browser UIs served by the backend — the chat UI at `/` and the HITL console at `/console.html`
 - Input source: PDFs placed locally in `manuals/`
 - Runtime workspace: `data/`
 - Export destination: `output/latest/` and `output/<manual_slug>/`
 
 The current default execution mode is `multi_agent`, configured in `config.yaml`. In practice, the operator still follows the same staged UI flow while backend execution is routed through the current agent wrappers and state tracking.
+
+### HITL Console
+
+`/console.html` is the operator-facing review console. It lists every persisted run (from `data/runs/`, exposed via `/api/runs`), reopens archived sessions with their review decisions intact, and drives a live run end to end: start a new session (manual + models + language + operator initials), approve the scoping page selection, start extraction, inspect the extracted graph and diagnostic chains, work through the review queue (confidence signals, evidence quotes, suggested relations, multi-cause ambiguities), fill the fields the extraction could not complete, and export once the pipeline reaches the export phase. Review verdicts are appended to each run's `events.jsonl` audit trail via `/api/runs/{id}/review-decisions`, so a session can be closed and resumed later. Export stays locked until extraction and validation are complete; open gaps are declared in the exported file rather than hidden.
 
 ### Operator Workflow
 

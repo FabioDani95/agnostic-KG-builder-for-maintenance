@@ -37,6 +37,10 @@ def apply_start_options(store: dict[str, Any], req: Any) -> None:
         gs["target_language"] = req.target_language
     if req.page_offset is not None:
         store["page_offset"] = req.page_offset
+    operator = str(getattr(req, "operator", "") or "").strip()
+    if operator:
+        store["operator"] = operator
+        gs["operator"] = operator
     store["selected_models"] = dict(sm)
 
 

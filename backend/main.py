@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from backend.routers import upload, generate, graph_editor, modify, multi_agent, chat
+from backend.routers import upload, generate, graph_editor, modify, multi_agent, chat, runs
 from backend.app_config import (
     get_scoping_config, get_extraction_config,
     get_effective_small_doc_threshold, get_effective_reflective_loop_config,
@@ -46,6 +46,7 @@ def create_app() -> FastAPI:
     app.include_router(modify.router)
     app.include_router(multi_agent.router)
     app.include_router(chat.router)
+    app.include_router(runs.router)
 
     @app.get("/api/config")
     async def get_frontend_config():
