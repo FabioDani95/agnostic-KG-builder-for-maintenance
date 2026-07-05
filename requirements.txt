@@ -1,4 +1,6 @@
-fastapi
+# <0.130: da 0.130 include_router avvolge le route in _IncludedRouter e
+# rompe l'introspezione APIRoute usata da test e tooling.
+fastapi<0.130
 uvicorn[standard]
 python-multipart
 pymupdf

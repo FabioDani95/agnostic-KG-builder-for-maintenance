@@ -62,7 +62,7 @@ function createVenv() {
 function ensurePythonDeps() {
   createVenv();
   const py = pythonBin();
-  const check = spawnSync(py, ["-c", "import fastapi, fitz, langgraph, jsonschema, networkx"], {
+  const check = spawnSync(py, ["-c", "import fastapi, fitz, langgraph, jsonschema, networkx, json_repair, yaml, pydantic_settings"], {
     cwd: repoRoot,
     stdio: "ignore",
     env: process.env,
