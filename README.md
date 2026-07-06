@@ -38,7 +38,7 @@ Scoping is recall-oriented for component coverage:
 ### Runtime Model
 
 - Backend: FastAPI
-- Frontend: static browser UIs served by the backend — the chat UI at `/` and the HITL console at `/console.html`
+- Frontend: the HITL console, a static browser UI served by the backend at `/` (also reachable as `/console.html`). The legacy chat/wizard UI was removed on 2026-07-06.
 - Input source: PDFs placed locally in `manuals/`
 - Runtime workspace: `data/`
 - Export destination: `output/latest/` and `output/<manual_slug>/`
@@ -47,7 +47,13 @@ The current default execution mode is `multi_agent`, configured in `config.yaml`
 
 ### HITL Console
 
-`/console.html` is the operator-facing review console. It lists every persisted run (from `data/runs/`, exposed via `/api/runs`), reopens archived sessions with their review decisions intact, and drives a live run end to end: start a new session (manual + models + language + operator initials), approve the scoping page selection, start extraction, inspect the extracted graph and diagnostic chains, work through the review queue (confidence signals, evidence quotes, suggested relations, multi-cause ambiguities), fill the fields the extraction could not complete, and export once the pipeline reaches the export phase. Review verdicts are appended to each run's `events.jsonl` audit trail via `/api/runs/{id}/review-decisions`, so a session can be closed and resumed later. Export stays locked until extraction and validation are complete; open gaps are declared in the exported file rather than hidden.
+The console (served at `/`) is the operator-facing UI. It lists every persisted run (from `data/runs/`, exposed via `/api/runs`), reopens archived sessions with their review decisions intact, and drives a live run end to end: start a new session (manual + models + language + operator initials), approve the scoping page selection, start extraction, inspect the extracted graph and diagnostic chains, work through the review queue (confidence signals, evidence quotes, suggested relations, multi-cause ambiguities), fill the fields the extraction could not complete, and export once the pipeline reaches the export phase. Review verdicts are appended to each run's `events.jsonl` audit trail via `/api/runs/{id}/review-decisions`, so a session can be closed and resumed later. Export stays locked until extraction and validation are complete; open gaps are declared in the exported file rather than hidden.
+
+The pipeline pauses at explicit operator handoffs (cut-plan approval, extraction start): the backend marks them in the run status (`run_status = awaiting_operator` plus the pending `next_step`) and the console dashboard announces them with a "your turn" banner and a direct call-to-action. While a phase is running, the banner shows a live "last recorded progress N s ago" ticker; a session whose backend process died mid-flow is labelled as interrupted rather than complete. Note: reopening a persisted run is read-only for pipeline actions — a run interrupted mid-flow (e.g. by a server restart) currently requires a new session to complete the extraction.
+
+### Quality Evaluation
+
+Extraction quality is measured with golden fixtures under `tests/golden/` via `scripts/eval_golden.py`. The normative procedure — metric definitions (sample recall, unsupported-chain rate, grounded precision), fixture anatomy, the two-phase authoring/calibration process, and the experimental protocol for publications — is in `docs/EVALUATION_PROTOCOL.md`. Per-fixture calibration reports live in `docs/*_GOLDEN_EVAL.md`; the deterministic mock gate is `python3 scripts/eval_golden.py --mode mock --fail-on-regression`.
 
 ### Operator Workflow
 
@@ -145,3 +151,5 @@ Frontend end-to-end tests use Playwright:
 npm install
 npx playwright test
 ```
+
+See `tests/README.md` for a map of the suite (unit / contract / integration / eval-harness / E2E layers) and `docs/EVALUATION_PROTOCOL.md` for the quality-evaluation procedure.
