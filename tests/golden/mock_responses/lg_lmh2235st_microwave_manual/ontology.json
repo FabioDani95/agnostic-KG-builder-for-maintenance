@@ -1,0 +1,502 @@
+{
+  "ontology_name": "LGLMH2235STMicrowaveOntology",
+  "version": "1.0",
+  "language": "en",
+  "source_type": "service manual",
+  "source_title": "LG LMH2235ST Microwave Oven Service Manual",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "LG LMH2235ST Microwave Oven",
+        "description": "Microwave oven covered by the service manual.",
+        "brand": "LG",
+        "model": "LMH2235ST",
+        "asset_type": "microwave oven"
+      }
+    ],
+    "Symptom": [
+      {
+        "symptom_id": "SYM-001",
+        "name": "No Display or Dead",
+        "description": "The unit is dead or the display does not operate.",
+        "severity": "High"
+      },
+      {
+        "symptom_id": "SYM-002",
+        "name": "Keypad Failure",
+        "description": "Keys other than START and EZ-ON do not operate.",
+        "severity": "Medium"
+      },
+      {
+        "symptom_id": "SYM-003",
+        "name": "No Heat / No Cook",
+        "description": "The product operates but does not heat or cook.",
+        "severity": "High"
+      },
+      {
+        "symptom_id": "SYM-004",
+        "name": "Turntable Motor Does Not Work",
+        "description": "The turntable motor does not operate.",
+        "severity": "Medium"
+      }
+    ],
+    "FailureMode": [
+      {
+        "failure_mode_id": "FM-001",
+        "name": "Fuse has no continuity (open fuse)",
+        "description": "The fuse has no continuity in the continuity test between the ends of the fuse.",
+        "material_context": "CMP-001"
+      },
+      {
+        "failure_mode_id": "FM-002",
+        "name": "Noise filter has no continuity",
+        "description": "The noise filter has no continuity in the continuity test between the ends of the noise filter.",
+        "material_context": "CMP-002"
+      },
+      {
+        "failure_mode_id": "FM-003",
+        "name": "Latch board secondary switch has no continuity",
+        "description": "No beeping sound in the continuity test between the ends of the latch board secondary switch with the door closed.",
+        "material_context": "CMP-003"
+      },
+      {
+        "failure_mode_id": "FM-004",
+        "name": "Resistance of the high voltage transformer out of range",
+        "description": "High voltage transformer winding resistance outside the test point ranges.",
+        "material_context": "CMP-004"
+      },
+      {
+        "failure_mode_id": "FM-005",
+        "name": "Resistance of the high voltage capacitor out of range",
+        "description": "High voltage capacitor resistance out of range.",
+        "material_context": "CMP-005"
+      },
+      {
+        "failure_mode_id": "FM-006",
+        "name": "Resistance of the high voltage diode out of range",
+        "description": "High voltage diode resistance out of range.",
+        "material_context": "CMP-006"
+      },
+      {
+        "failure_mode_id": "FM-007",
+        "name": "Turntable motor does not operate although the oven lamp turns on",
+        "description": "The turntable motor does not operate although the oven lamp turns on with the door closed.",
+        "material_context": "CMP-007"
+      },
+      {
+        "failure_mode_id": "FM-008",
+        "name": "PCB thermistor short",
+        "description": "The PCB thermistor is short.",
+        "material_context": "CMP-008"
+      },
+      {
+        "failure_mode_id": "FM-009",
+        "name": "PCB thermistor open",
+        "description": "The PCB thermistor is open.",
+        "material_context": "CMP-008"
+      },
+      {
+        "failure_mode_id": "FM-010",
+        "name": "Humidity sensor open or short",
+        "description": "The humidity sensor is open or short.",
+        "material_context": "CMP-009"
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "CA-001",
+        "name": "Replace the fuse",
+        "description": "Replace the fuse.",
+        "instruction_text": "Replace the fuse.",
+        "source_type": "service manual",
+        "source_title": "LG LMH2235ST Microwave Oven Service Manual",
+        "source_reference": "PAGE 15"
+      },
+      {
+        "action_id": "CA-002",
+        "name": "Replace the noise filter",
+        "description": "Replace the noise filter.",
+        "instruction_text": "Replace the noise filter.",
+        "source_type": "service manual",
+        "source_title": "LG LMH2235ST Microwave Oven Service Manual",
+        "source_reference": "PAGE 15"
+      },
+      {
+        "action_id": "CA-003",
+        "name": "Adjust the latch board",
+        "description": "Adjust the latch board (refer to section 9-1, 9-2).",
+        "instruction_text": "Adjust the latch board (refer to section 9-1, 9-2).",
+        "source_type": "service manual",
+        "source_title": "LG LMH2235ST Microwave Oven Service Manual",
+        "source_reference": "PAGE 17"
+      },
+      {
+        "action_id": "CA-004",
+        "name": "Replace the high voltage transformer",
+        "description": "Replace the high voltage transformer.",
+        "instruction_text": "Replace the high voltage transformer.",
+        "source_type": "service manual",
+        "source_title": "LG LMH2235ST Microwave Oven Service Manual",
+        "source_reference": "PAGE 20"
+      },
+      {
+        "action_id": "CA-005",
+        "name": "Replace the high voltage capacitor",
+        "description": "Replace the high voltage capacitor.",
+        "instruction_text": "Replace the high voltage capacitor.",
+        "source_type": "service manual",
+        "source_title": "LG LMH2235ST Microwave Oven Service Manual",
+        "source_reference": "PAGE 21"
+      },
+      {
+        "action_id": "CA-006",
+        "name": "Replace the high voltage diode",
+        "description": "Replace the high voltage diode.",
+        "instruction_text": "Replace the high voltage diode.",
+        "source_type": "service manual",
+        "source_title": "LG LMH2235ST Microwave Oven Service Manual",
+        "source_reference": "PAGE 21"
+      },
+      {
+        "action_id": "CA-007",
+        "name": "Replace the turntable motor",
+        "description": "Replace the turntable motor.",
+        "instruction_text": "Replace the turntable motor.",
+        "source_type": "service manual",
+        "source_title": "LG LMH2235ST Microwave Oven Service Manual",
+        "source_reference": "PAGE 22"
+      }
+    ],
+    "ErrorCode": [
+      {
+        "error_code_id": "EC-001",
+        "name": "F-1",
+        "description": "Self-diagnosis error code for PCB thermistor short.",
+        "code": "F-1"
+      },
+      {
+        "error_code_id": "EC-002",
+        "name": "F-2",
+        "description": "Self-diagnosis error code for PCB thermistor open.",
+        "code": "F-2"
+      },
+      {
+        "error_code_id": "EC-003",
+        "name": "F-4",
+        "description": "Self-diagnosis error code for humidity sensor open or short.",
+        "code": "F-4"
+      }
+    ],
+    "Component": [
+      {
+        "component_id": "CMP-001",
+        "name": "Fuse",
+        "description": "Line fuse in the primary circuit.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-002",
+        "name": "Noise Filter",
+        "description": "Noise filter on the power input.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-003",
+        "name": "Latch Board",
+        "description": "Latch board with the secondary interlock switch.",
+        "category": "Door interlock"
+      },
+      {
+        "component_id": "CMP-004",
+        "name": "High Voltage Transformer",
+        "description": "High voltage transformer.",
+        "category": "High voltage"
+      },
+      {
+        "component_id": "CMP-005",
+        "name": "High Voltage Capacitor",
+        "description": "High voltage capacitor.",
+        "category": "High voltage"
+      },
+      {
+        "component_id": "CMP-006",
+        "name": "High Voltage Diode",
+        "description": "High voltage diode.",
+        "category": "High voltage"
+      },
+      {
+        "component_id": "CMP-007",
+        "name": "Turntable Motor",
+        "description": "Turntable motor.",
+        "category": "Drive"
+      },
+      {
+        "component_id": "CMP-008",
+        "name": "PCB Thermistor",
+        "description": "PCB thermistor checked by self diagnosis.",
+        "category": "Control board"
+      },
+      {
+        "component_id": "CMP-009",
+        "name": "Humidity Sensor",
+        "description": "PCB humidity sensor checked by self diagnosis.",
+        "category": "Control board"
+      }
+    ]
+  },
+  "relations": [
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-001",
+      "evidence": [
+        {
+          "source_page": 15,
+          "source_reference": "PAGE 15",
+          "quote": "the fuse has no continuity (open fuse): replace the fuse"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-002",
+      "evidence": [
+        {
+          "source_page": 15,
+          "source_reference": "PAGE 15",
+          "quote": "the noise filter has no continuity: replace the"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-003",
+      "evidence": [
+        {
+          "source_page": 17,
+          "source_reference": "PAGE 17",
+          "quote": "the latch\nboard secondary switch has no continuity: adjust the latch board"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-003",
+      "to_type": "FailureMode",
+      "to_id": "FM-004",
+      "evidence": [
+        {
+          "source_page": 20,
+          "source_reference": "PAGE 20",
+          "quote": "Is the resistance of the high voltage transformer out of range?"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-003",
+      "to_type": "FailureMode",
+      "to_id": "FM-005",
+      "evidence": [
+        {
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "Is the resistance of the high voltage capacitor out of range?"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-003",
+      "to_type": "FailureMode",
+      "to_id": "FM-006",
+      "evidence": [
+        {
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "Is the resistance of the high voltage diode out of range?"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-004",
+      "to_type": "FailureMode",
+      "to_id": "FM-007",
+      "evidence": [
+        {
+          "source_page": 22,
+          "source_reference": "PAGE 22",
+          "quote": "the turntable motor\ndoes not operate although the oven lamp turns on: replace the turntable\nmotor"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-001",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-001",
+      "evidence": [
+        {
+          "source_page": 15,
+          "source_reference": "PAGE 15",
+          "quote": "replace the fuse"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-002",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-002",
+      "evidence": [
+        {
+          "source_page": 15,
+          "source_reference": "PAGE 15",
+          "quote": "replace the\nnoise filter"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-003",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-003",
+      "evidence": [
+        {
+          "source_page": 17,
+          "source_reference": "PAGE 17",
+          "quote": "adjust the latch board (refer to\nsection 9-1, 9-2)"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-004",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-004",
+      "evidence": [
+        {
+          "source_page": 20,
+          "source_reference": "PAGE 20",
+          "quote": "replace the high voltage transformer"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-005",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-005",
+      "evidence": [
+        {
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "replace the high voltage capacitor"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-006",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-006",
+      "evidence": [
+        {
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "replace the high voltage diode"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-007",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-007",
+      "evidence": [
+        {
+          "source_page": 22,
+          "source_reference": "PAGE 22",
+          "quote": "replace the turntable\nmotor"
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-008",
+      "evidence": [
+        {
+          "source_page": 12,
+          "source_reference": "PAGE 12",
+          "quote": "Error code F-1. Symptom: PCB thermistor short."
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-009",
+      "evidence": [
+        {
+          "source_page": 12,
+          "source_reference": "PAGE 12",
+          "quote": "Error code F-2. Symptom: PCB thermistor open."
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-003",
+      "to_type": "FailureMode",
+      "to_id": "FM-010",
+      "evidence": [
+        {
+          "source_page": 12,
+          "source_reference": "PAGE 12",
+          "quote": "Error code F-4. Symptom: Humidity sensor open or short."
+        }
+      ]
+    },
+    {
+      "name": "GENERATES_ERROR",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "ErrorCode",
+      "to_id": "EC-002",
+      "evidence": [
+        {
+          "source_page": 12,
+          "source_reference": "PAGE 12",
+          "quote": "If it has an error, it will beep and display an error code."
+        }
+      ]
+    }
+  ]
+}

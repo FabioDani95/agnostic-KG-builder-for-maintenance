@@ -1,0 +1,292 @@
+{
+  "ontology_name": "FryerVBSeriesCNCOntology",
+  "version": "1.0",
+  "language": "en",
+  "source_type": "maintenance manual",
+  "source_title": "Fryer VB Series FANUC 0i-MF CNC Maintenance Manual",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "Fryer VB Series Vertical Machining Center (FANUC 0i-MF control)",
+        "description": "CNC vertical machining center with FANUC 0i-MF control.",
+        "brand": "Fryer",
+        "model": "VB Series",
+        "asset_type": "CNC vertical machining center"
+      }
+    ],
+    "Component": [
+      {
+        "component_id": "CMP-001",
+        "name": "Way Lube System",
+        "description": "Automatic axis way lubrication system.",
+        "category": "Lubrication"
+      },
+      {
+        "component_id": "CMP-002",
+        "name": "Pneumatic System",
+        "description": "Compressed air supply system.",
+        "category": "Pneumatics"
+      },
+      {
+        "component_id": "CMP-003",
+        "name": "ATC Carousel",
+        "description": "Automatic tool changer carousel magazine.",
+        "category": "Tool changer"
+      },
+      {
+        "component_id": "CMP-004",
+        "name": "Door Interlock",
+        "description": "Door interlock safety switch.",
+        "category": "Safety"
+      },
+      {
+        "component_id": "CMP-005",
+        "name": "Absolute Encoder",
+        "description": "Battery backed up absolute encoder on X, Y and Z axes.",
+        "category": "Feedback"
+      },
+      {
+        "component_id": "CMP-006",
+        "name": "Ballscrew and Linear Guide Rails",
+        "description": "Axis drive ballscrew and linear guides.",
+        "category": "Motion"
+      }
+    ],
+    "Symptom": [
+      {
+        "symptom_id": "SYM-001",
+        "name": "Machine home position is lost",
+        "description": "The machine home position is lost after an absolute encoder alarm.",
+        "severity": "High"
+      },
+      {
+        "symptom_id": "SYM-002",
+        "name": "Loss of motion in the axis",
+        "description": "Measured backlash shows loss of motion in the axis.",
+        "severity": "Medium"
+      }
+    ],
+    "FailureMode": [
+      {
+        "failure_mode_id": "FM-001",
+        "name": "Low way lube",
+        "description": "Way lube level is low.",
+        "material_context": "CMP-001"
+      },
+      {
+        "failure_mode_id": "FM-002",
+        "name": "Low air pressure",
+        "description": "Air pressure is low.",
+        "material_context": "CMP-002"
+      },
+      {
+        "failure_mode_id": "FM-003",
+        "name": "ATC carousel miscount",
+        "description": "The ATC carousel position count is wrong.",
+        "material_context": "CMP-003"
+      },
+      {
+        "failure_mode_id": "FM-004",
+        "name": "Door interlock open",
+        "description": "The door interlock is open.",
+        "material_context": "CMP-004"
+      },
+      {
+        "failure_mode_id": "FM-005",
+        "name": "Battery for the absolute encoder goes dead",
+        "description": "The absolute encoder battery is dead or the encoder is disconnected, losing position tracking.",
+        "material_context": "CMP-005"
+      },
+      {
+        "failure_mode_id": "FM-006",
+        "name": "Backlash in ballscrew and linear guide rails",
+        "description": "Backlash from the ballscrew and linear guide rails is out of specification.",
+        "material_context": "CMP-006"
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "CA-001",
+        "name": "Execute M61 to home the ATC carousel",
+        "description": "Run M61 to restore the ATC carousel count and home it to pocket 1 (assumes tool 0 in spindle).",
+        "instruction_text": "Run M61 to restore the ATC carousel count and home it to pocket 1 (assumes tool 0 in spindle).",
+        "source_type": "maintenance manual",
+        "source_title": "Fryer VB Series FANUC 0i-MF CNC Maintenance Manual",
+        "source_reference": "PAGE 30"
+      },
+      {
+        "action_id": "CA-002",
+        "name": "Reference the axis",
+        "description": "Reset the home position and reference the axis: set parameter 1815 APZ bit to 0, power down, jog the axis to the alignment marks, set the APZ bit to 1 and power down again.",
+        "instruction_text": "Reset the home position and reference the axis: set parameter 1815 APZ bit to 0, power down, jog the axis to the alignment marks, set the APZ bit to 1 and power down again.",
+        "source_type": "maintenance manual",
+        "source_title": "Fryer VB Series FANUC 0i-MF CNC Maintenance Manual",
+        "source_reference": "PAGE 20"
+      },
+      {
+        "action_id": "CA-003",
+        "name": "Adjust backlash compensation",
+        "description": "Adjust backlash compensation according to the procedure in Section 3.33.",
+        "instruction_text": "Adjust backlash compensation according to the procedure in Section 3.33.",
+        "source_type": "maintenance manual",
+        "source_title": "Fryer VB Series FANUC 0i-MF CNC Maintenance Manual",
+        "source_reference": "PAGE 21"
+      }
+    ],
+    "ErrorCode": [
+      {
+        "error_code_id": "EC-001",
+        "name": "1001",
+        "description": "Fryer PLC alarm: LOW WAY LUBE.",
+        "code": "1001"
+      },
+      {
+        "error_code_id": "EC-002",
+        "name": "1002",
+        "description": "Fryer PLC alarm: LOW AIR PRESSURE.",
+        "code": "1002"
+      },
+      {
+        "error_code_id": "EC-003",
+        "name": "1011",
+        "description": "Fryer PLC alarm: ATC CAR. MISCOUNT - DO M61.",
+        "code": "1011"
+      },
+      {
+        "error_code_id": "EC-004",
+        "name": "1014",
+        "description": "Fryer PLC alarm: DOOR INTERLOCK OPEN.",
+        "code": "1014"
+      }
+    ]
+  },
+  "relations": [
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-001",
+      "evidence": [
+        {
+          "source_page": 30,
+          "source_reference": "PAGE 30",
+          "quote": "Alarm 1001 (A001.0): LOW WAY LUBE."
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-002",
+      "evidence": [
+        {
+          "source_page": 30,
+          "source_reference": "PAGE 30",
+          "quote": "Alarm 1002 (A001.1): LOW AIR PRESSURE."
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-003",
+      "to_type": "FailureMode",
+      "to_id": "FM-003",
+      "evidence": [
+        {
+          "source_page": 30,
+          "source_reference": "PAGE 30",
+          "quote": "Alarm 1011 (A002.3): ATC CAR. MISCOUNT - DO M61 !!!!"
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-004",
+      "to_type": "FailureMode",
+      "to_id": "FM-004",
+      "evidence": [
+        {
+          "source_page": 30,
+          "source_reference": "PAGE 30",
+          "quote": "Alarm 1014 (A002.6): DOOR INTERLOCK OPEN."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-005",
+      "evidence": [
+        {
+          "source_page": 20,
+          "source_reference": "PAGE 20",
+          "quote": "battery\nfor the absolute encoder goes dead"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-006",
+      "evidence": [
+        {
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "the loss of motion\nin the axis from the ballscrew and linear guide rails"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-003",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-001",
+      "evidence": [
+        {
+          "source_page": 30,
+          "source_reference": "PAGE 30",
+          "quote": "DO M61"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-005",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-002",
+      "evidence": [
+        {
+          "source_page": 20,
+          "source_reference": "PAGE 20",
+          "quote": "you will have to reference the axis"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-006",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-003",
+      "evidence": [
+        {
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "backlash\ncompensation can be adjusted according to the procedure outlined in Section\n3.33"
+        }
+      ]
+    }
+  ]
+}

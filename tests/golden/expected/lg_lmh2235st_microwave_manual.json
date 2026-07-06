@@ -1,0 +1,90 @@
+{
+  "fixture_id": "lg_lmh2235st_microwave_manual",
+  "manual": "manuals/lg_lmh2235st_microwave_manual.md",
+  "asset": {
+    "name": "LG LMH2235ST Microwave Oven",
+    "type": "microwave oven"
+  },
+  "expected_scoping": {
+    "diagnostic_sections": [
+      "Self Diagnosis and Error Code",
+      "No Display or Dead",
+      "Keypad Failure",
+      "No Heat / No Cook",
+      "Turntable Motor Does Not Work",
+      "Turns On Automatically"
+    ],
+    "must_keep_pages": [
+      12,
+      15,
+      17,
+      20,
+      21,
+      22
+    ]
+  },
+  "expected_triplets": [
+    {
+      "error_code": "F-2",
+      "failure_mode": "PCB thermistor open"
+    },
+    {
+      "error_code": "F-4",
+      "failure_mode": "Humidity sensor open or short"
+    },
+    {
+      "symptom": "No display",
+      "failure_mode": "fuse has no continuity (open fuse)",
+      "corrective_action": "replace the fuse"
+    },
+    {
+      "symptom": "No display",
+      "failure_mode": "noise filter has no continuity",
+      "corrective_action": "replace the noise filter"
+    },
+    {
+      "symptom": "Keypad Failure",
+      "failure_mode": "latch board secondary switch has no continuity",
+      "corrective_action": "adjust the latch board"
+    },
+    {
+      "symptom": "No Heat / No Cook",
+      "failure_mode": "resistance of the high voltage transformer out of range",
+      "corrective_action": "replace the high voltage transformer"
+    },
+    {
+      "symptom": "No Heat / No Cook",
+      "failure_mode": "resistance of the high voltage capacitor out of range",
+      "corrective_action": "replace the high voltage capacitor"
+    },
+    {
+      "symptom": "No Heat / No Cook",
+      "failure_mode": "resistance of the high voltage diode out of range",
+      "corrective_action": "replace the high voltage diode"
+    },
+    {
+      "symptom": "Turntable motor does not work",
+      "failure_mode": "turntable motor",
+      "corrective_action": "replace the turntable motor"
+    }
+  ],
+  "expected_quality_gates": {
+    "min_recall": 0.85,
+    "max_unsupported_rate": 0.0
+  },
+  "expected_human_review": {
+    "max_blocking": 0,
+    "reason": "Flowchart symptoms are legitimately multi-cause (several branches per symptom), so advisory/review items are expected; nothing may be blocking."
+  },
+  "expected_export_checks": {
+    "min_error_codes": 3,
+    "min_symptoms": 4,
+    "min_failure_modes": 6,
+    "min_corrective_actions": 5,
+    "required_relations": [
+      "INDICATES",
+      "HAS_FAILURE_MODE",
+      "HAS_CORRECTIVE_ACTION"
+    ]
+  }
+}

@@ -1,7 +1,12 @@
 # Golden Maintenance Fixtures
 
-This folder contains small synthetic manuals and minimal expected outputs for
-future golden/evaluation tests.
+> **Normative procedure:** fixture anatomy, metric definitions, and the
+> step-by-step process for creating/calibrating a new fixture live in
+> [docs/EVALUATION_PROTOCOL.md](../../docs/EVALUATION_PROTOCOL.md). This file
+> is a local quick-reference.
+
+This folder contains golden manuals (synthetic and real) and expected outputs
+for the quality evaluation harness (`scripts/eval_golden.py`).
 
 The fixtures are intentionally short so they can be used in cheap smoke tests,
 mocked extraction tests, or low-token LLM evaluation runs.

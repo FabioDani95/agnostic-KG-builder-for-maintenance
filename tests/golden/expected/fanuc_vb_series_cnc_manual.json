@@ -1,0 +1,67 @@
+{
+  "fixture_id": "fanuc_vb_series_cnc_manual",
+  "manual": "manuals/fanuc_vb_series_cnc_manual.md",
+  "asset": {
+    "name": "Fryer VB Series Vertical Machining Center (FANUC 0i-MF control)",
+    "type": "CNC vertical machining center"
+  },
+  "expected_scoping": {
+    "diagnostic_sections": [
+      "Reference Procedure After Absolute Encoder Alarm",
+      "Check Axis Backlash and Adjust Compensation",
+      "Alarms and Fryer PLC Alarm Descriptions"
+    ],
+    "must_keep_pages": [
+      20,
+      21,
+      30
+    ]
+  },
+  "expected_triplets": [
+    {
+      "error_code": "1001",
+      "failure_mode": "low way lube"
+    },
+    {
+      "error_code": "1002",
+      "failure_mode": "low air pressure"
+    },
+    {
+      "error_code": "1014",
+      "failure_mode": "door interlock open"
+    },
+    {
+      "error_code": "1011",
+      "failure_mode": "ATC carousel miscount",
+      "corrective_action": "M61"
+    },
+    {
+      "failure_mode": "battery for the absolute encoder goes dead",
+      "corrective_action": "reference the axis"
+    },
+    {
+      "symptom": "backlash",
+      "failure_mode": "ballscrew",
+      "corrective_action": "adjust backlash compensation"
+    }
+  ],
+  "expected_human_review": {
+    "max_blocking": 0,
+    "reason": "Most PLC alarms carry no corrective action in the manual, so open/advisory review items are expected; nothing may be blocking."
+  },
+  "expected_export_checks": {
+    "min_error_codes": 4,
+    "min_symptoms": 2,
+    "min_failure_modes": 4,
+    "min_corrective_actions": 2,
+    "required_relations": [
+      "INDICATES",
+      "HAS_FAILURE_MODE",
+      "HAS_CORRECTIVE_ACTION"
+    ]
+  },
+  "expected_quality_gates": {
+    "min_recall": 0.8,
+    "max_unsupported_rate": 0.0
+  }
+}

@@ -253,14 +253,12 @@ def test_eval_golden_mock_runs_all_fixtures_and_writes_report(tmp_path):
     report = json.loads(open(report_path, encoding="utf-8").read())
 
     assert report["mode"] == "mock"
-    assert report["summary"]["fixture_count"] == 5
-    assert {item["fixture_id"] for item in report["fixtures"]} == {
-        "ambiguous_conveyor_manual",
-        "clean_pump_manual",
-        "eagle_s3l_laser_cutter_manual",
-        "haier_lma4120_washer_manual",
-        "noisy_table_robot_manual",
+    expected_ids = {
+        path.stem
+        for path in (Path(__file__).resolve().parent / "golden" / "expected").glob("*.json")
     }
+    assert report["summary"]["fixture_count"] == len(expected_ids)
+    assert {item["fixture_id"] for item in report["fixtures"]} == expected_ids
     for fixture in report["fixtures"]:
         assert "scoping" in fixture
         assert "ontology" in fixture
