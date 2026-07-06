@@ -1,24 +1,14 @@
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 
 from backend.schemas.widgets import WidgetType, validate_widget_payload
 
-REGISTRY_PATH = Path("frontend/widgets/registry.js")
+# The legacy chat frontend (and its widget renderer registry) was removed;
+# widget payloads remain part of the persisted chat-event contract, so the
+# backend schema and its fixtures stay under test.
 FIXTURE_DIR = Path("tests/fixtures/widgets")
-
-
-def _registry_widget_types() -> set[str]:
-    source = REGISTRY_PATH.read_text(encoding="utf-8")
-    match = re.search(r"WIDGET_RENDERERS\s*=\s*Object\.freeze\(\{(?P<body>.*?)\}\);", source, re.DOTALL)
-    assert match, "WIDGET_RENDERERS registry not found"
-    return set(re.findall(r"^\s*([a-zA-Z0-9_]+)\s*:", match.group("body"), flags=re.MULTILINE))
-
-
-def test_backend_widget_types_are_registered_in_frontend_registry():
-    assert {item.value for item in WidgetType}.issubset(_registry_widget_types())
 
 
 def test_widget_payload_fixtures_validate_against_backend_schema():

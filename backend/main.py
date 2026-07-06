@@ -4,6 +4,7 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from backend.routers import upload, generate, graph_editor, modify, multi_agent, chat, runs
@@ -82,6 +83,12 @@ def create_app() -> FastAPI:
         return {"status": "ok", "pipeline_mode": "multi_agent"}
 
     frontend_dir = Path(__file__).resolve().parent.parent / "frontend"
+
+    @app.get("/", include_in_schema=False)
+    async def console_home():
+        """The HITL console is the only frontend; serve it at the root."""
+        return FileResponse(frontend_dir / "console.html")
+
     app.mount("/", StaticFiles(directory=str(frontend_dir), html=True), name="frontend")
     return app
 
