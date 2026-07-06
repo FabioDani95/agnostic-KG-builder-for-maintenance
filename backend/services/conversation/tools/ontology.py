@@ -37,6 +37,10 @@ async def _draft_ontology(args, store, on_event):
 
     payload = _build_ontology_review_payload(result, store)
 
+    from backend.graph.store import set_run_progress
+    # The draft is done; nothing runs until the operator starts the extraction.
+    set_run_progress(store, run_status="awaiting_operator", next_step="run_extraction")
+
     return {
         "status": result.status,
         **payload,

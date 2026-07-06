@@ -16,7 +16,11 @@ from backend.services.conversation.tools.common import (
 async def _run_extraction(args, store, on_event):
     from backend.models import ExtractRequest
     from backend.services.extraction_workflow import extract_triplets_workflow
-    from backend.graph.store import update_extraction_state
+    from backend.graph.store import set_run_progress, update_extraction_state
+
+    # Flip the status immediately so the console stops showing "your turn"
+    # while the (long) extraction is running.
+    set_run_progress(store, run_status="in_progress", next_step="extraction")
 
     req = ExtractRequest(
         pdf_id=store["pdf_id"],
@@ -38,6 +42,9 @@ async def _run_extraction(args, store, on_event):
         pages_to_keep=pages_to_keep,
     )
     triplets = [triplet.model_dump() for triplet in result.triplets]
+    from backend.graph.store import set_run_progress
+    # Triplets are extracted; the ball is in the operator's court (review).
+    set_run_progress(store, run_status="awaiting_operator", next_step="review")
     return {
         "status": "ok",
         "triplet_count": len(result.triplets),

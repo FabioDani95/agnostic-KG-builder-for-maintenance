@@ -665,9 +665,38 @@ function viewDashboard(st) {
     </div>`;
   }).join("");
 
-  const running = run.isLive && !run.pipeline.review_queue && phase !== "completed";
-  let bannerTitle, bannerDetail, bannerGlyph, bannerBg, bannerColor;
-  if (running) {
+  // Operator handoffs: the authoritative signal is run_status/next_step set by
+  // the backend at each handoff; the structural checks keep runs persisted
+  // before that change (and transient states) covered.
+  const runStatusRaw = (run.status || {}).run_status || "";
+  const nextStep = (run.status || {}).next_step || "";
+  const awaitingScoping = !!run.cutPlan && !run.pipeline.ontology && ["scoping", "loaded"].includes(phase);
+  const awaitingExtraction = phase === "ontology_draft";
+  const handoff = awaitingScoping || awaitingExtraction ||
+    (runStatusRaw === "awaiting_operator" && ["approve_cut_plan", "run_extraction"].includes(nextStep));
+  const awaitingOperator = run.isLive && phase !== "completed" && handoff;
+  // Mid-flow run whose backend session is gone (e.g. server restart): without
+  // this branch the banner used to fall through to "run complete".
+  const interrupted = !run.isLive && phase !== "completed" && handoff;
+  const running = run.isLive && !awaitingOperator && !run.pipeline.review_queue && phase !== "completed";
+  let bannerTitle, bannerDetail, bannerGlyph, bannerBg, bannerColor, bannerCta = "";
+  if (interrupted) {
+    bannerTitle = L("Sessione non più attiva — run incompleto", "Session no longer active — run incomplete");
+    bannerDetail = L("Il run si era fermato in attesa dell'operatore (" , "The run had stopped waiting for the operator (")
+      + (awaitingScoping ? L("approvazione della selezione pagine", "page-selection approval") : L("avvio dell'estrazione", "extraction start"))
+      + L(") e il processo backend non è più attivo. I dati restano consultabili; per completare l'estrazione avvia una nuova sessione.", ") and the backend process is no longer active. The data is still browsable; start a new session to complete the extraction.");
+    bannerGlyph = "!"; bannerBg = C.dangerBg; bannerColor = C.danger;
+  } else if (awaitingOperator) {
+    bannerGlyph = "!"; bannerBg = C.warnBg; bannerColor = C.warn;
+    if (awaitingScoping || nextStep === "approve_cut_plan") {
+      bannerTitle = L("Tocca a te: approva la selezione delle pagine", "Your turn: approve the page selection");
+      bannerDetail = L("Lo scoping è completato e il run resta in pausa finché non approvi (o correggi) la selezione nella scheda Scoping.", "Scoping is done and the run stays paused until you approve (or fix) the selection in the Scoping tab.");
+      bannerCta = `<button class="btn-primary" style="--accent:${ACCENT};padding:9px 18px;" data-h="${on(() => { S.view = "scoping"; S.selected = null; render(); })}">${L("Vai allo Scoping", "Go to Scoping")}</button>`;
+    } else {
+      bannerTitle = L("Tocca a te: avvia l'estrazione", "Your turn: start the extraction");
+      bannerDetail = L("La bozza dell'ontologia è pronta. L'estrazione parte solo quando la avvii tu.", "The ontology draft is ready. Extraction starts only when you launch it.");
+    }
+  } else if (running) {
     bannerTitle = phase === "loaded" ? L("Avvio in corso…", "Starting…") : phaseLabel(phase) + L(" — in corso…", " — in progress…");
     bannerDetail = L("Il sistema sta lavorando: la pagina si aggiorna da sola.", "The system is working: this page refreshes on its own.");
     bannerGlyph = "●"; bannerBg = C.muteBg; bannerColor = C.mute;
@@ -750,7 +779,9 @@ function viewDashboard(st) {
       <div style="flex:1;min-width:0;">
         <div class="serif" style="font-size:18px;font-weight:600;">${esc(bannerTitle)}</div>
         <div style="font-size:13px;color:#55524B;margin-top:2px;line-height:1.5;">${esc(bannerDetail)}</div>
+        ${running ? `<div class="tnum" id="kg-live-tick" style="font-size:11.5px;color:#8A867D;margin-top:4px;"></div>` : ""}
       </div>
+      ${bannerCta}
       ${run.isLive && phase === "ontology_draft" ? `<button class="btn-primary" style="--accent:${ACCENT};padding:9px 18px;" data-h="${on(async () => {
         if (S.extracting) return;
         S.extracting = true; render();
@@ -761,7 +792,7 @@ function viewDashboard(st) {
         } catch (e) { toast(e.message, true); }
         S.extracting = false; render();
       })}" ${S.extracting ? "disabled" : ""}>${S.extracting ? L("Avvio…", "Starting…") : L("Avvia estrazione", "Start extraction")}</button>` : ""}
-      ${!running ? `<button class="btn-primary" style="--accent:${ACCENT};padding:9px 18px;" data-h="${nav("review")}">${L("Apri Review Center", "Open Review Center")}</button>` : ""}
+      ${!running && !awaitingOperator ? `<button class="btn-primary" style="--accent:${ACCENT};padding:9px 18px;" data-h="${nav("review")}">${L("Apri Review Center", "Open Review Center")}</button>` : ""}
     </div>
     <div class="card" style="display:flex;align-items:center;margin-top:22px;padding:16px 20px;overflow-x:auto;">${stages}</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px;">${groups}</div>
@@ -1633,6 +1664,18 @@ window.addEventListener("mouseup", () => {
 });
 
 /* ── boot ── */
+// Liveness ticker: while a phase is running the banner shows how long ago the
+// backend last persisted progress, updated every second without re-rendering.
+// A frozen cumulative-duration KPI used to read as "the run is stuck".
+setInterval(() => {
+  const el = document.getElementById("kg-live-tick");
+  if (!el) return;
+  const ts = S.run && (S.run.status || {}).updated_at;
+  if (!ts) { el.textContent = ""; return; }
+  const secs = Math.max(0, Math.round((Date.now() - new Date(ts).getTime()) / 1000));
+  const span = secs < 60 ? secs + " s" : Math.floor(secs / 60) + " min " + (secs % 60) + " s";
+  el.textContent = L("ultimo avanzamento registrato ", "last recorded progress ") + span + L(" fa", " ago");
+}, 1000);
 render();
 loadRuns();
 })();

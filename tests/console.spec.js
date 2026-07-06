@@ -22,8 +22,12 @@ test("console: new session flow, decision persistence, export gating", async ({ 
   await expect(header).toContainText("fase: scoping", { timeout: 60000 });
   const runShort = (await header.innerText()).match(/run_[0-9a-f]+/)[0];
 
-  // Approve the page selection → chained ontology draft.
-  await page.getByRole("button", { name: "Scoping" }).click();
+  // The dashboard must announce the operator handoff before approval.
+  await expect(page.getByText("Tocca a te: approva la selezione delle pagine")).toBeVisible();
+
+  // Approve the page selection → chained ontology draft. exact:true — the
+  // handoff banner adds a "Vai allo Scoping" CTA that also matches "Scoping".
+  await page.getByRole("button", { name: "Scoping", exact: true }).click();
   await page.getByRole("button", { name: "Approva selezione e continua" }).click();
   await expect(header).toContainText("fase: ontology_draft", { timeout: 60000 });
 

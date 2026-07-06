@@ -27,8 +27,11 @@ async def _propose_cut_plan(args, store, on_event):
     )
     result = await asyncio.to_thread(create_cut_plan_workflow, store, req, on_event)
     # Persist cut plan in store
-    from backend.graph.store import update_scoping_state
+    from backend.graph.store import set_run_progress, update_scoping_state
     update_scoping_state(store, result, model_name=str(req.model_name or ""))
+    # The pipeline now waits for the operator to approve the selection; the
+    # console banner keys off run_status/next_step to say so explicitly.
+    set_run_progress(store, run_status="awaiting_operator", next_step="approve_cut_plan")
 
     all_sections = [
         {
@@ -181,6 +184,10 @@ async def _approve_cut_plan(args, store, on_event):
         page_offset=page_offset,
         sections=sections_raw,
     )
+    from backend.graph.store import set_run_progress
+    # approve_cut_plan chains draft_ontology (ACTION_CHAIN), so the run is
+    # actively working again right after the approval.
+    set_run_progress(store, run_status="in_progress", next_step="draft_ontology")
     return {
         "status": "ok",
         "pages_approved": len(pages_to_keep),
