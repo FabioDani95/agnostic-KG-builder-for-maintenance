@@ -1,0 +1,642 @@
+{
+  "ontology_name": "ABBIRC5ControllerOntology",
+  "version": "1.0",
+  "language": "en",
+  "source_type": "operating manual",
+  "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "ABB IRC5 Robot Controller",
+        "description": "IRC5 based robot system controller covered by the trouble shooting manual.",
+        "brand": "ABB",
+        "model": "IRC5",
+        "asset_type": "industrial robot controller"
+      }
+    ],
+    "Component": [
+      {
+        "component_id": "CMP-001",
+        "name": "Main fuse Q1",
+        "description": "Mains fuse inside the Drive Module.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-002",
+        "name": "Circuit breaker F6",
+        "description": "Circuit breaker F6 in the controller mains circuit.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-003",
+        "name": "Mains power supply",
+        "description": "Mains power supply to the robot system.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-004",
+        "name": "Circuit breaker F5",
+        "description": "Circuit breaker for the Control Module service outlet.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-005",
+        "name": "Earth fault protection F4",
+        "description": "Earth fault protection for the service outlet.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-006",
+        "name": "FlexPendant joystick",
+        "description": "Joystick on the FlexPendant used to jog the robot.",
+        "category": "Electromechanical"
+      },
+      {
+        "component_id": "CMP-007",
+        "name": "Gearbox seal",
+        "description": "Seal between gearbox and motor.",
+        "category": "Mechanical"
+      },
+      {
+        "component_id": "CMP-008",
+        "name": "Gearbox",
+        "description": "Robot axis gearbox with oil filling.",
+        "category": "Mechanical"
+      },
+      {
+        "component_id": "CMP-009",
+        "name": "Bearings",
+        "description": "Bearings in motors, gearboxes and joints.",
+        "category": "Mechanical"
+      },
+      {
+        "component_id": "CMP-010",
+        "name": "Motor holding brake",
+        "description": "Holding brake integral to each motor.",
+        "category": "Electromechanical"
+      },
+      {
+        "component_id": "CMP-011",
+        "name": "Brake contactor K44",
+        "description": "Brake contactor K44 in the Drive Module.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-012",
+        "name": "Drive Module power supply",
+        "description": "Power supply in the Drive Module, incl. 24V BRAKE.",
+        "category": "Electrical"
+      }
+    ],
+    "Symptom": [
+      {
+        "symptom_id": "SYM-001",
+        "name": "Controller not responding",
+        "description": "Robot controller not responding; LED indicators not lit.",
+        "severity": "High"
+      },
+      {
+        "symptom_id": "SYM-002",
+        "name": "All LEDs are OFF at Controller",
+        "description": "No LEDs at all are lit on the Control Module or the Drive Module.",
+        "severity": "High"
+      },
+      {
+        "symptom_id": "SYM-003",
+        "name": "No voltage in service outlet",
+        "description": "No voltage is available in the Control Module service outlet.",
+        "severity": "Medium"
+      },
+      {
+        "symptom_id": "SYM-004",
+        "name": "Problem jogging the robot",
+        "description": "The system can be started but the joystick on the FlexPendant does not work.",
+        "severity": "Medium"
+      },
+      {
+        "symptom_id": "SYM-005",
+        "name": "Oil and grease stains on motors and gearboxes",
+        "description": "The area surrounding the motor or gearbox shows signs of oil leaks.",
+        "severity": "Medium"
+      },
+      {
+        "symptom_id": "SYM-006",
+        "name": "Mechanical noise",
+        "description": "A faulty bearing emits scraping, grinding, or clicking noises shortly before failing.",
+        "severity": "Medium"
+      },
+      {
+        "symptom_id": "SYM-007",
+        "name": "Manipulator crashes on power down",
+        "description": "When Motors OFF is active the manipulator collapses under its own weight.",
+        "severity": "High"
+      },
+      {
+        "symptom_id": "SYM-008",
+        "name": "Problem releasing Robot brakes",
+        "description": "The internal robot brakes do not release, no robot movement is possible.",
+        "severity": "High"
+      }
+    ],
+    "FailureMode": [
+      {
+        "failure_mode_id": "FM-001",
+        "name": "Main fuse (Q1) might have tripped",
+        "description": "The mains fuse Q1 inside the Drive Module has tripped.",
+        "material_context": "CMP-001"
+      },
+      {
+        "failure_mode_id": "FM-002",
+        "name": "Circuit breaker F6 is malfunctioning or open",
+        "description": "Circuit breaker F6 (if used) is malfunctioning or open for any other reason.",
+        "material_context": "CMP-002"
+      },
+      {
+        "failure_mode_id": "FM-003",
+        "name": "The system is not supplied with power",
+        "description": "The system is not supplied with power.",
+        "material_context": "CMP-003"
+      },
+      {
+        "failure_mode_id": "FM-004",
+        "name": "Tripped circuit breaker (F5)",
+        "description": "The circuit breaker F5 has tripped.",
+        "material_context": "CMP-004"
+      },
+      {
+        "failure_mode_id": "FM-005",
+        "name": "Tripped earth fault protection (F4)",
+        "description": "The earth fault protection F4 has tripped.",
+        "material_context": "CMP-005"
+      },
+      {
+        "failure_mode_id": "FM-006",
+        "name": "The joystick is malfunctioning",
+        "description": "The joystick on the FlexPendant is malfunctioning.",
+        "material_context": "CMP-006"
+      },
+      {
+        "failure_mode_id": "FM-007",
+        "name": "Leaking seal between gearbox and motor",
+        "description": "The seal between gearbox and motor is leaking oil.",
+        "material_context": "CMP-007"
+      },
+      {
+        "failure_mode_id": "FM-008",
+        "name": "Gearbox overfilled with oil",
+        "description": "The gearbox is overfilled with oil.",
+        "material_context": "CMP-008"
+      },
+      {
+        "failure_mode_id": "FM-009",
+        "name": "Loss of lubrication in bearings",
+        "description": "The bearings have lost lubrication.",
+        "material_context": "CMP-009"
+      },
+      {
+        "failure_mode_id": "FM-010",
+        "name": "Faulty power supply to the brake",
+        "description": "The power supply to the motor holding brake is faulty.",
+        "material_context": "CMP-010"
+      },
+      {
+        "failure_mode_id": "FM-011",
+        "name": "Brake contactor (K44) does not work correctly",
+        "description": "The brake contactor K44 does not work correctly.",
+        "material_context": "CMP-011"
+      },
+      {
+        "failure_mode_id": "FM-012",
+        "name": "Supply voltage 24V BRAKE missing",
+        "description": "The 24V BRAKE supply voltage is missing.",
+        "material_context": "CMP-012"
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "CA-001",
+        "name": "Ensure that the mains fuse (Q1) inside the Drive Module is not tripped",
+        "description": "Ensure that the mains fuse (Q1) inside the Drive Module is not tripped.",
+        "instruction_text": "Ensure that the mains fuse (Q1) inside the Drive Module is not tripped. Reset the fuse if tripped.",
+        "source_type": "operating manual",
+        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
+        "source_reference": "PAGE 35"
+      },
+      {
+        "action_id": "CA-002",
+        "name": "Make sure circuit breaker F6 is closed in position 3",
+        "description": "Make sure circuit breaker F6 is closed in position 3.",
+        "instruction_text": "Make sure circuit breaker F6 (if used) is closed in position 3. The circuit breaker F6 is shown in the circuit diagram in the product manual for the controller. Reset circuit breaker F6 to the closed position 3.",
+        "source_type": "operating manual",
+        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
+        "source_reference": "PAGE 39"
+      },
+      {
+        "action_id": "CA-003",
+        "name": "Make sure the system is supplied with power",
+        "description": "Make sure the system is supplied with power.",
+        "instruction_text": "Make sure the system is supplied with power. Use a voltmeter to measure incoming mains voltage. Restore the main power supply.",
+        "source_type": "operating manual",
+        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
+        "source_reference": "PAGE 39"
+      },
+      {
+        "action_id": "CA-004",
+        "name": "Make sure the circuit breaker in the Control Module has not been tripped",
+        "description": "Make sure the circuit breaker in the Control Module has not been tripped.",
+        "instruction_text": "Make sure the circuit breaker in the Control Module has not been tripped. Make sure any equipment connected to the service outlet does not consume too much power. Reset the circuit breaker.",
+        "source_type": "operating manual",
+        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
+        "source_reference": "PAGE 41"
+      },
+      {
+        "action_id": "CA-005",
+        "name": "Make sure the earth fault protection has not been tripped",
+        "description": "Make sure the earth fault protection has not been tripped.",
+        "instruction_text": "Make sure the earth fault protection has not been tripped. Make sure any equipment connected to the service outlet does not conduct current to ground. Reset the earth fault protection.",
+        "source_type": "operating manual",
+        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
+        "source_reference": "PAGE 41"
+      },
+      {
+        "action_id": "CA-006",
+        "name": "Inspect all seals and gaskets between motor and gearbox",
+        "description": "Inspect all seals and gaskets between motor and gearbox.",
+        "instruction_text": "Inspect all seals and gaskets between motor and gearbox. Replace seals and gaskets as specified in the product manual for the robot.",
+        "source_type": "operating manual",
+        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
+        "source_reference": "PAGE 48"
+      },
+      {
+        "action_id": "CA-007",
+        "name": "Check the gearbox oil level",
+        "description": "Check the gearbox oil level.",
+        "instruction_text": "Check the gearbox oil level. Correct oil level is specified in the product manual for the robot. Adjust the oil level to the specified level.",
+        "source_type": "operating manual",
+        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
+        "source_reference": "PAGE 48"
+      },
+      {
+        "action_id": "CA-008",
+        "name": "Make sure the bearing has sufficient lubrication",
+        "description": "Make sure the bearing has sufficient lubrication.",
+        "instruction_text": "Make sure the bearing has sufficient lubrication, as specified in the product manual for the robot. Clean the bearing and apply fresh lubrication as specified in the product manual.",
+        "source_type": "operating manual",
+        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
+        "source_reference": "PAGE 49"
+      },
+      {
+        "action_id": "CA-009",
+        "name": "Check the brake power supply to the collapsing motor",
+        "description": "Check the brake power supply to the collapsing motor.",
+        "instruction_text": "Check the brake power supply to the collapsing motor during the Motors OFF state. Also see the circuit diagrams in the product manuals for the robot and the controller. Replace the motor as a complete unit if found faulty.",
+        "source_type": "operating manual",
+        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
+        "source_reference": "PAGE 51"
+      },
+      {
+        "action_id": "CA-010",
+        "name": "Make sure the brake contactor is activated",
+        "description": "Make sure the brake contactor is activated.",
+        "instruction_text": "Make sure the brake contactor is activated. A 'tick' should be audible, or you may measure the resistance across the auxiliary contacts on top of the contactor. Replace the brake contactor K44 if it does not activate.",
+        "source_type": "operating manual",
+        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
+        "source_reference": "PAGE 53"
+      },
+      {
+        "action_id": "CA-011",
+        "name": "Check the Drive Module power supply to make sure 24V BRAKE voltage is OK",
+        "description": "Check the Drive Module power supply to make sure 24V BRAKE voltage is OK.",
+        "instruction_text": "Check the Drive Module power supply to make sure 24V BRAKE voltage is OK. Replace the Drive Module power supply if the 24V BRAKE voltage is missing.",
+        "source_type": "operating manual",
+        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
+        "source_reference": "PAGE 53"
+      }
+    ]
+  },
+  "relations": [
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-001",
+      "evidence": [
+        {
+          "source_page": 35,
+          "source_reference": "PAGE 35",
+          "quote": "Cause: main fuse (Q1) might have tripped."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-001",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-001",
+      "evidence": [
+        {
+          "source_page": 35,
+          "source_reference": "PAGE 35",
+          "quote": "ensure that the mains fuse (Q1) inside the Drive Module is not tripped"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-002",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "circuit breaker F6 (if used) is malfunctioning or open for any other reason"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-002",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-002",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "Make sure circuit breaker F6 (if used) is closed in position 3."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-003",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "PAGE 38",
+          "quote": "the system is not supplied with power"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-003",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-003",
+      "evidence": [
+        {
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "Make sure the system is supplied with power. Use a voltmeter to measure incoming mains voltage."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-003",
+      "to_type": "FailureMode",
+      "to_id": "FM-004",
+      "evidence": [
+        {
+          "source_page": 40,
+          "source_reference": "PAGE 40",
+          "quote": "tripped circuit breaker (F5)"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-004",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-004",
+      "evidence": [
+        {
+          "source_page": 41,
+          "source_reference": "PAGE 41",
+          "quote": "Make sure the circuit breaker in the Control Module has not been tripped."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-003",
+      "to_type": "FailureMode",
+      "to_id": "FM-005",
+      "evidence": [
+        {
+          "source_page": 40,
+          "source_reference": "PAGE 40",
+          "quote": "tripped earth fault protection (F4)"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-005",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-005",
+      "evidence": [
+        {
+          "source_page": 41,
+          "source_reference": "PAGE 41",
+          "quote": "Make sure the earth fault protection has not been tripped."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-004",
+      "to_type": "FailureMode",
+      "to_id": "FM-006",
+      "evidence": [
+        {
+          "source_page": 45,
+          "source_reference": "PAGE 45",
+          "quote": "the joystick is malfunctioning"
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-005",
+      "to_type": "FailureMode",
+      "to_id": "FM-007",
+      "evidence": [
+        {
+          "source_page": 48,
+          "source_reference": "PAGE 48",
+          "quote": "leaking seal between gearbox and motor"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-007",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-006",
+      "evidence": [
+        {
+          "source_page": 48,
+          "source_reference": "PAGE 48",
+          "quote": "Inspect all seals and gaskets between motor and gearbox."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-005",
+      "to_type": "FailureMode",
+      "to_id": "FM-008",
+      "evidence": [
+        {
+          "source_page": 48,
+          "source_reference": "PAGE 48",
+          "quote": "gearbox overfilled with oil"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-008",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-007",
+      "evidence": [
+        {
+          "source_page": 48,
+          "source_reference": "PAGE 48",
+          "quote": "Check the gearbox oil level."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-006",
+      "to_type": "FailureMode",
+      "to_id": "FM-009",
+      "evidence": [
+        {
+          "source_page": 49,
+          "source_reference": "PAGE 49",
+          "quote": "loss of lubrication in bearings"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-009",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-008",
+      "evidence": [
+        {
+          "source_page": 49,
+          "source_reference": "PAGE 49",
+          "quote": "Make sure the bearing has sufficient lubrication."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-007",
+      "to_type": "FailureMode",
+      "to_id": "FM-010",
+      "evidence": [
+        {
+          "source_page": 51,
+          "source_reference": "PAGE 51",
+          "quote": "faulty power supply to the brake"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-010",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-009",
+      "evidence": [
+        {
+          "source_page": 51,
+          "source_reference": "PAGE 51",
+          "quote": "Check the brake power supply to the collapsing motor during the Motors OFF state."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-008",
+      "to_type": "FailureMode",
+      "to_id": "FM-011",
+      "evidence": [
+        {
+          "source_page": 52,
+          "source_reference": "PAGE 52",
+          "quote": "brake contactor (K44) does not work correctly"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-011",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-010",
+      "evidence": [
+        {
+          "source_page": 53,
+          "source_reference": "PAGE 53",
+          "quote": "Make sure the brake contactor is activated."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-008",
+      "to_type": "FailureMode",
+      "to_id": "FM-012",
+      "evidence": [
+        {
+          "source_page": 52,
+          "source_reference": "PAGE 52",
+          "quote": "supply voltage 24V BRAKE missing"
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-012",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-011",
+      "evidence": [
+        {
+          "source_page": 53,
+          "source_reference": "PAGE 53",
+          "quote": "Check the Drive Module power supply to make sure 24V BRAKE voltage is OK."
+        }
+      ]
+    }
+  ]
+}

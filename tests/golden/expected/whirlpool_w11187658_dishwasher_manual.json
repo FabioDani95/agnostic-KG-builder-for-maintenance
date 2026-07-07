@@ -1,0 +1,83 @@
+{
+  "fixture_id": "whirlpool_w11187658_dishwasher_manual",
+  "manual": "manuals/whirlpool_w11187658_dishwasher_manual.md",
+  "asset": {
+    "name": "Whirlpool 18\" & 24\" ADA Built-In Dishwasher",
+    "type": "dishwasher"
+  },
+  "expected_scoping": {
+    "diagnostic_sections": [
+      "Service Error Codes",
+      "Troubleshooting Guide",
+      "Customer Troubleshooting Guide"
+    ],
+    "must_keep_pages": [18, 19, 20, 21, 22]
+  },
+  "expected_triplets": [
+    {
+      "error_code": "E1",
+      "failure_mode": "water inlet failure",
+      "corrective_action": "check the inlet valve"
+    },
+    {
+      "error_code": "E3",
+      "failure_mode": "heater failure",
+      "corrective_action": "check the heater"
+    },
+    {
+      "error_code": "E4",
+      "failure_mode": "overflow",
+      "corrective_action": "check the overflow switch"
+    },
+    {
+      "error_code": "E6",
+      "failure_mode": "NTC open circuit failure",
+      "corrective_action": "check the thermistor"
+    },
+    {
+      "symptom": "won't run or power up (dead keypad/console)",
+      "failure_mode": "no power to unit or bad connection",
+      "corrective_action": "check fuses, circuit breakers and junction box connections"
+    },
+    {
+      "symptom": "will not fill or low water",
+      "failure_mode": "inlet screen on fill valve plugged",
+      "corrective_action": "disconnect water line to fill valve and inspect inlet for obstruction"
+    },
+    {
+      "symptom": "wash pump will not pump",
+      "failure_mode": "faulty motor start capacitor",
+      "corrective_action": "disconnect capacitor leads and confirm capacitance is as labeled"
+    },
+    {
+      "symptom": "will not drain or excess water left in unit",
+      "failure_mode": "drain pump impeller fractured",
+      "corrective_action": "remove drain pump and check impeller"
+    },
+    {
+      "symptom": "will not drain or excess water left in unit",
+      "failure_mode": "obstructed drain hose or path",
+      "corrective_action": "check for blockages from sump check valve to customer's plumbing"
+    },
+    {
+      "symptom": "detergent not dispensing",
+      "failure_mode": "mechanical binding of dispenser lid",
+      "corrective_action": "check/replace dispenser"
+    }
+  ],
+  "expected_human_review": {
+    "max_blocking": 0,
+    "reason": "Troubleshooting-guide symptoms are legitimately multi-cause (several potential causes per description row), so advisory items are expected; nothing may be blocking."
+  },
+  "expected_export_checks": {
+    "min_error_codes": 3,
+    "min_symptoms": 5,
+    "min_failure_modes": 8,
+    "min_corrective_actions": 8,
+    "required_relations": [
+      "INDICATES",
+      "HAS_FAILURE_MODE",
+      "HAS_CORRECTIVE_ACTION"
+    ]
+  }
+}

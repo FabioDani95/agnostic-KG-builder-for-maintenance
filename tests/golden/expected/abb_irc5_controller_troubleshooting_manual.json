@@ -1,0 +1,99 @@
+{
+  "fixture_id": "abb_irc5_controller_troubleshooting_manual",
+  "manual": "manuals/abb_irc5_controller_troubleshooting_manual.md",
+  "asset": {
+    "name": "ABB IRC5 Robot Controller",
+    "type": "industrial robot controller"
+  },
+  "expected_scoping": {
+    "diagnostic_sections": [
+      "Controller not responding",
+      "All LEDs are OFF at Controller",
+      "No voltage in service outlet",
+      "Problem jogging the robot",
+      "Oil and grease stains on motors and gearboxes",
+      "Mechanical noise",
+      "Manipulator crashes on power down",
+      "Problem releasing Robot brakes"
+    ],
+    "must_keep_pages": [35, 38, 39, 40, 41, 48, 49, 51, 52, 53]
+  },
+  "expected_triplets": [
+    {
+      "symptom": "Controller not responding",
+      "failure_mode": "main fuse (Q1) might have tripped",
+      "corrective_action": "ensure that the mains fuse (Q1) inside the Drive Module is not tripped"
+    },
+    {
+      "symptom": "All LEDs are OFF at Controller",
+      "failure_mode": "circuit breaker F6 is malfunctioning or open",
+      "corrective_action": "make sure circuit breaker F6 is closed in position 3"
+    },
+    {
+      "symptom": "All LEDs are OFF at Controller",
+      "failure_mode": "the system is not supplied with power",
+      "corrective_action": "make sure the system is supplied with power"
+    },
+    {
+      "symptom": "No voltage in service outlet",
+      "failure_mode": "tripped circuit breaker (F5)",
+      "corrective_action": "make sure the circuit breaker in the Control Module has not been tripped"
+    },
+    {
+      "symptom": "No voltage in service outlet",
+      "failure_mode": "tripped earth fault protection (F4)",
+      "corrective_action": "make sure the earth fault protection has not been tripped"
+    },
+    {
+      "symptom": "Problem jogging the robot",
+      "failure_mode": "the joystick is malfunctioning"
+    },
+    {
+      "symptom": "Oil and grease stains on motors and gearboxes",
+      "failure_mode": "leaking seal between gearbox and motor",
+      "corrective_action": "inspect all seals and gaskets between motor and gearbox"
+    },
+    {
+      "symptom": "Oil and grease stains on motors and gearboxes",
+      "failure_mode": "gearbox overfilled with oil",
+      "corrective_action": "check the gearbox oil level"
+    },
+    {
+      "symptom": "Mechanical noise",
+      "failure_mode": "loss of lubrication in bearings",
+      "corrective_action": "make sure the bearing has sufficient lubrication"
+    },
+    {
+      "symptom": "Manipulator crashes on power down",
+      "failure_mode": "faulty power supply to the brake",
+      "corrective_action": "check the brake power supply to the collapsing motor"
+    },
+    {
+      "symptom": "Problem releasing Robot brakes",
+      "failure_mode": "brake contactor (K44) does not work correctly",
+      "corrective_action": "make sure the brake contactor is activated"
+    },
+    {
+      "symptom": "Problem releasing Robot brakes",
+      "failure_mode": "supply voltage 24V BRAKE missing",
+      "corrective_action": "check the Drive Module power supply to make sure 24V BRAKE voltage is OK"
+    }
+  ],
+  "expected_quality_gates": {
+    "min_recall": 0.85,
+    "max_unsupported_rate": 0.0
+  },
+  "expected_human_review": {
+    "max_blocking": 0,
+    "reason": "Fault-symptom sections legitimately list multiple probable causes per symptom and symptom-level action tables, so advisory items are expected; nothing may be blocking."
+  },
+  "expected_export_checks": {
+    "min_symptoms": 5,
+    "min_failure_modes": 8,
+    "min_corrective_actions": 6,
+    "required_relations": [
+      "HAS_FAILURE_MODE",
+      "HAS_CORRECTIVE_ACTION"
+    ]
+  }
+}

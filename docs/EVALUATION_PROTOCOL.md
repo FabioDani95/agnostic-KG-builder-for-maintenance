@@ -346,6 +346,8 @@ For model/config comparisons intended for publication:
 | `haier_lma4120_washer_manual` | real (washer) | alarm codes + flowcharts | min_recall 0.75, unsupported 0.0 |
 | `lg_lmh2235st_microwave_manual` | real (microwave) | CA-less self-diagnosis codes + test-point flowcharts | min_recall 0.85, unsupported 0.0 |
 | `fanuc_vb_series_cnc_manual` | real (CNC) | scattered knowledge: terse alarm list w/ embedded CAs, prose procedures, cross-page references | min_recall 0.8, unsupported 0.0 |
+| `abb_irc5_controller_troubleshooting_manual` | real (robot controller) | symptom-level pairing: causes listed by probability + separate action tables | min_recall 0.85, unsupported 0.0 |
+| `whirlpool_w11187658_dishwasher_manual` | real (dishwasher) | error-code table w/ indicator aliases + all-caps multi-cause symptom table | **Phase B pending** (see fixture doc) |
 
 Gaps this protocol does not yet cover (candidate future work): exhaustive
 (non-sample) recall on one fully-annotated manual; inter-annotator agreement

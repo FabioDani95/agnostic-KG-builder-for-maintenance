@@ -1,0 +1,623 @@
+{
+  "ontology_name": "WhirlpoolADADishwasherOntology",
+  "version": "1.0",
+  "language": "en",
+  "source_type": "service manual",
+  "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "Whirlpool 18\" & 24\" ADA Built-In Dishwasher",
+        "description": "Built-in dishwasher covered by the service manual.",
+        "brand": "Whirlpool",
+        "model": "W11187658",
+        "asset_type": "dishwasher"
+      }
+    ],
+    "ErrorCode": [
+      {
+        "error_code_id": "EC-001",
+        "name": "E1",
+        "description": "Water inlet failure: the flow meter can't detect a correct fill after 4 minutes.",
+        "code": "E1"
+      },
+      {
+        "error_code_id": "EC-002",
+        "name": "E3",
+        "description": "Heater failure: the temperature doesn't reach the correct value after 90 minutes.",
+        "code": "E3"
+      },
+      {
+        "error_code_id": "EC-003",
+        "name": "E4",
+        "description": "Overflow: water flows into the base and activates the overflow switch.",
+        "code": "E4"
+      },
+      {
+        "error_code_id": "EC-004",
+        "name": "E6",
+        "description": "NTC open circuit failure: temperature sensor open circuit.",
+        "code": "E6"
+      },
+      {
+        "error_code_id": "EC-005",
+        "name": "E7",
+        "description": "NTC short circuit failure: temperature sensor short circuit.",
+        "code": "E7"
+      }
+    ],
+    "Symptom": [
+      {
+        "symptom_id": "SYM-001",
+        "name": "Won't run or power up (dead keypad/console)",
+        "description": "No operation, no keypad response, no LEDs or display.",
+        "severity": "High"
+      },
+      {
+        "symptom_id": "SYM-002",
+        "name": "Will not fill or low water",
+        "description": "The dishwasher will not fill with water or fills with too little water.",
+        "severity": "Medium"
+      },
+      {
+        "symptom_id": "SYM-003",
+        "name": "Wash pump will not pump",
+        "description": "The wash pump does not pump water during the cycle.",
+        "severity": "High"
+      },
+      {
+        "symptom_id": "SYM-004",
+        "name": "Will not drain or excess water left in unit",
+        "description": "The dishwasher will not drain or excess water remains in the unit.",
+        "severity": "High"
+      },
+      {
+        "symptom_id": "SYM-005",
+        "name": "Detergent not dispensing",
+        "description": "The detergent dispenser does not release detergent during the cycle.",
+        "severity": "Medium"
+      }
+    ],
+    "FailureMode": [
+      {
+        "failure_mode_id": "FM-001",
+        "name": "Water inlet failure",
+        "description": "During the water inlet step the flow meter can't detect a correct fill after 4 minutes.",
+        "material_context": "CMP-001"
+      },
+      {
+        "failure_mode_id": "FM-002",
+        "name": "Heater failure",
+        "description": "The temperature doesn't reach the correct value after 90 minutes.",
+        "material_context": "CMP-002"
+      },
+      {
+        "failure_mode_id": "FM-003",
+        "name": "Overflow",
+        "description": "Water flows into the base and activates the overflow switch.",
+        "material_context": "CMP-003"
+      },
+      {
+        "failure_mode_id": "FM-004",
+        "name": "NTC open circuit failure",
+        "description": "Temperature sensor open circuit.",
+        "material_context": "CMP-004"
+      },
+      {
+        "failure_mode_id": "FM-005",
+        "name": "NTC short circuit failure",
+        "description": "Temperature sensor short circuit.",
+        "material_context": "CMP-004"
+      },
+      {
+        "failure_mode_id": "FM-006",
+        "name": "No power to unit or bad connection",
+        "description": "No power to the unit or a bad power connection.",
+        "material_context": "CMP-005"
+      },
+      {
+        "failure_mode_id": "FM-007",
+        "name": "Inlet screen on fill valve plugged",
+        "description": "The inlet screen on the fill valve is plugged.",
+        "material_context": "CMP-001"
+      },
+      {
+        "failure_mode_id": "FM-008",
+        "name": "Faulty motor start capacitor",
+        "description": "The wash pump motor start capacitor is faulty.",
+        "material_context": "CMP-006"
+      },
+      {
+        "failure_mode_id": "FM-009",
+        "name": "Drain pump impeller fractured",
+        "description": "The drain pump impeller is fractured or stripped.",
+        "material_context": "CMP-007"
+      },
+      {
+        "failure_mode_id": "FM-010",
+        "name": "Obstructed drain hose or path",
+        "description": "The drain hose or drain path is obstructed.",
+        "material_context": "CMP-008"
+      },
+      {
+        "failure_mode_id": "FM-011",
+        "name": "Mechanical binding of dispenser lid",
+        "description": "The dispenser lid is mechanically binding.",
+        "material_context": "CMP-009"
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "CA-001",
+        "name": "Check the inlet valve",
+        "description": "Check the inlet valve.",
+        "instruction_text": "Check the water supply. Check the inlet valve. Check the inlet. Check the flow meter. Replace the inlet valve if faulty.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_reference": "PAGE 18"
+      },
+      {
+        "action_id": "CA-002",
+        "name": "Check the heater",
+        "description": "Check the heater.",
+        "instruction_text": "Check the heater. Check the thermistor. Check the control. Replace the heater if faulty.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_reference": "PAGE 18"
+      },
+      {
+        "action_id": "CA-003",
+        "name": "Check the overflow switch",
+        "description": "Check the overflow switch.",
+        "instruction_text": "Check whether the appliance is level. Check the overflow switch. Check the drain pump. Locate leak and repair.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_reference": "PAGE 18"
+      },
+      {
+        "action_id": "CA-004",
+        "name": "Check the thermistor",
+        "description": "Check the thermistor.",
+        "instruction_text": "Check the inlet water temperature. Check the thermistor. Check the control. Replace the thermistor if out of range.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_reference": "PAGE 18"
+      },
+      {
+        "action_id": "CA-005",
+        "name": "Check fuses, circuit breakers and junction box connections",
+        "description": "Check fuses, circuit breakers and junction box connections.",
+        "instruction_text": "Check fuses, circuit breakers and junction box connections. Replace the fuse or reset the circuit breaker.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_reference": "PAGE 19"
+      },
+      {
+        "action_id": "CA-006",
+        "name": "Disconnect water line to fill valve and inspect inlet for obstruction",
+        "description": "Disconnect the water line to the fill valve and inspect the inlet for obstruction.",
+        "instruction_text": "Disconnect water line to fill valve and inspect inlet for obstruction. Remove any obstruction.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_reference": "PAGE 20"
+      },
+      {
+        "action_id": "CA-007",
+        "name": "Disconnect capacitor leads and confirm capacitance is as labeled",
+        "description": "Disconnect the capacitor leads and confirm the capacitance is as labeled on the part.",
+        "instruction_text": "Unplug dishwasher or disconnect power. Disconnect capacitor leads and confirm capacitance is as labeled on part or check resistance for open circuit across the terminals. Replace if open.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_reference": "PAGE 21"
+      },
+      {
+        "action_id": "CA-008",
+        "name": "Remove drain pump and check impeller",
+        "description": "Remove the drain pump and check the impeller by pulling and rotating.",
+        "instruction_text": "Unplug dishwasher or disconnect power. Remove drain pump and check impeller by pulling and rotating. If stripped - replace.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_reference": "PAGE 21"
+      },
+      {
+        "action_id": "CA-009",
+        "name": "Check for blockages from sump check valve to customer's plumbing",
+        "description": "Check for blockages from the sump check valve to the customer's plumbing.",
+        "instruction_text": "Unplug dishwasher or disconnect power. Check for blockages from sump check valve to customer's plumbing. Remove the blockage.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_reference": "PAGE 21"
+      },
+      {
+        "action_id": "CA-010",
+        "name": "Check/replace dispenser",
+        "description": "Check or replace the dispenser.",
+        "instruction_text": "Unplug dishwasher or disconnect power. Check/replace dispenser.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_reference": "PAGE 22"
+      }
+    ],
+    "Component": [
+      {
+        "component_id": "CMP-001",
+        "name": "Water Inlet Valve",
+        "description": "Fill valve that admits water into the tub.",
+        "category": "Hydraulic"
+      },
+      {
+        "component_id": "CMP-002",
+        "name": "Heater",
+        "description": "Recessed heating element for wash water and drying.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-003",
+        "name": "Overflow Switch",
+        "description": "Switch in the base activated by overflow water.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-004",
+        "name": "NTC Thermistor",
+        "description": "Temperature sensor (NTC) for wash water.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-005",
+        "name": "Power Supply Circuit",
+        "description": "Household supply, fuses, circuit breakers and junction box.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-006",
+        "name": "Wash Pump Motor Capacitor",
+        "description": "Start capacitor of the wash pump motor.",
+        "category": "Electrical"
+      },
+      {
+        "component_id": "CMP-007",
+        "name": "Drain Pump",
+        "description": "Pump that drains water from the sump.",
+        "category": "Hydraulic"
+      },
+      {
+        "component_id": "CMP-008",
+        "name": "Drain Hose",
+        "description": "Hose and drain path from sump check valve to plumbing.",
+        "category": "Hydraulic"
+      },
+      {
+        "component_id": "CMP-009",
+        "name": "Detergent Dispenser",
+        "description": "Detergent and rinse aid dispenser with lid and solenoid.",
+        "category": "Mechanical"
+      }
+    ]
+  },
+  "relations": [
+    {
+      "name": "GENERATES_ERROR",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "ErrorCode",
+      "to_id": "EC-001",
+      "evidence": [
+        {
+          "source_page": 18,
+          "source_reference": "PAGE 18",
+          "quote": "during the water inlet step, if the flow meter can't detect a correct fill after 4 minutes, E1 will be displayed"
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-001",
+      "evidence": [
+        {
+          "source_page": 18,
+          "source_reference": "PAGE 18",
+          "quote": "Error code E1 (\"QUICK\" indicator flashes). Error: WATER INLET FAILURE."
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-002",
+      "evidence": [
+        {
+          "source_page": 18,
+          "source_reference": "PAGE 18",
+          "quote": "Error code E3 (\"QUICK\" & \"GLASS\" indicators flash). Error: HEATER FAILURE."
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-003",
+      "to_type": "FailureMode",
+      "to_id": "FM-003",
+      "evidence": [
+        {
+          "source_page": 18,
+          "source_reference": "PAGE 18",
+          "quote": "Error code E4 (\"LIGHT\" indicator flashes). Error: OVERFLOW."
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-004",
+      "to_type": "FailureMode",
+      "to_id": "FM-004",
+      "evidence": [
+        {
+          "source_page": 18,
+          "source_reference": "PAGE 18",
+          "quote": "Error code E6 (\"LIGHT\" & \"GLASS\" indicators flash). Error: NTC OPEN CIRCUIT FAILURE."
+        }
+      ]
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "EC-005",
+      "to_type": "FailureMode",
+      "to_id": "FM-005",
+      "evidence": [
+        {
+          "source_page": 18,
+          "source_reference": "PAGE 18",
+          "quote": "Error code E7 (\"LIGHT, GLASS & QUICK\" indicators flash). Error: NTC SHORT CIRCUIT FAILURE."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-001",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-001",
+      "evidence": [
+        {
+          "source_page": 18,
+          "source_reference": "PAGE 18",
+          "quote": "What to check: 1. Check the water supply. 2. Check the inlet valve."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-002",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-002",
+      "evidence": [
+        {
+          "source_page": 18,
+          "source_reference": "PAGE 18",
+          "quote": "What to check: 1. Check the heater. 2. Check the thermistor."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-003",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-003",
+      "evidence": [
+        {
+          "source_page": 18,
+          "source_reference": "PAGE 18",
+          "quote": "3. Check the overflow switch. 4. Check the drain pump."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-004",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-004",
+      "evidence": [
+        {
+          "source_page": 18,
+          "source_reference": "PAGE 18",
+          "quote": "Causes: temperature sensor open circuit, E6 will be displayed. What to check: 1. Check the inlet water temperature. 2. Check the thermistor."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-005",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-004",
+      "evidence": [
+        {
+          "source_page": 18,
+          "source_reference": "PAGE 18",
+          "quote": "Causes: temperature sensor short circuit, E7 will be displayed. What to check: 1. Check the inlet water temperature. 2. Check the thermistor."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-006",
+      "evidence": [
+        {
+          "source_page": 19,
+          "source_reference": "PAGE 19",
+          "quote": "Potential cause: no power to unit or bad connection."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-006",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-005",
+      "evidence": [
+        {
+          "source_page": 19,
+          "source_reference": "PAGE 19",
+          "quote": "Check: check fuses, circuit breakers and junction box connections."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-007",
+      "evidence": [
+        {
+          "source_page": 20,
+          "source_reference": "PAGE 20",
+          "quote": "Potential cause: inlet screen on fill valve plugged."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-007",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-006",
+      "evidence": [
+        {
+          "source_page": 20,
+          "source_reference": "PAGE 20",
+          "quote": "Check: disconnect water line to fill valve and inspect inlet for obstruction."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-003",
+      "to_type": "FailureMode",
+      "to_id": "FM-008",
+      "evidence": [
+        {
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "Potential cause: faulty motor start capacitor."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-008",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-007",
+      "evidence": [
+        {
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "Disconnect capacitor leads and confirm capacitance is as labeled on part or check resistance for open circuit across the terminals."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-004",
+      "to_type": "FailureMode",
+      "to_id": "FM-009",
+      "evidence": [
+        {
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "Potential cause: drain pump impeller fractured."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-009",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-008",
+      "evidence": [
+        {
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "Remove drain pump and check impeller by pulling and rotating. If stripped - replace."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-004",
+      "to_type": "FailureMode",
+      "to_id": "FM-010",
+      "evidence": [
+        {
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "Potential cause: obstructed drain hose or path."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-010",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-009",
+      "evidence": [
+        {
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "Check for blockages from sump check valve to customer's plumbing."
+        }
+      ]
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-005",
+      "to_type": "FailureMode",
+      "to_id": "FM-011",
+      "evidence": [
+        {
+          "source_page": 22,
+          "source_reference": "PAGE 22",
+          "quote": "Potential cause: mechanical binding of dispenser lid."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-011",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-010",
+      "evidence": [
+        {
+          "source_page": 22,
+          "source_reference": "PAGE 22",
+          "quote": "Check: 1. Unplug dishwasher or disconnect power. 2. Check/replace dispenser."
+        }
+      ]
+    }
+  ]
+}
