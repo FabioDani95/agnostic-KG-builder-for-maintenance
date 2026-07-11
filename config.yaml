@@ -157,7 +157,9 @@ ontology:
   relation_extraction_max_output_tokens: 6000
   validation_max_output_tokens: 4000
 
-  max_pages_per_chunk: 30
+  # Cap unsectioned manuals as well: dense troubleshooting tables otherwise
+  # become a single oversized ontology-draft completion.
+  max_pages_per_chunk: 5
 
 reflective_loop:
   max_retries: 1
