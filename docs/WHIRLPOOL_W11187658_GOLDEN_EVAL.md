@@ -99,10 +99,12 @@ the full ontology/triplet/chain/review-queue artifacts.
    heading (“water inlet failure”). The current expectation uses the heading
    as failure mode and an inspection as corrective action. This needs an
    explicit annotation-semantics decision before changing the golden.
-3. The `won't run / no power` sample chain is missed in both runs because no
-   linked action is emitted. The obstructed-drain chain is additionally
-   missed in Run 3 but recovered in Run 4. These are model/pipeline recall
-   findings, not annotation changes to make silently.
+3. The `won't run / no power` sample chain is missed in both runs: Run 3 has
+   no linked action, while Run 4 emits the restorative paraphrase “replace
+   fuse or reset circuit breaker” rather than the source's inspection list.
+   The obstructed-drain chain is additionally missed in Run 3 but recovered
+   in Run 4. These are model/pipeline recall findings, not annotation changes
+   to make silently.
 4. Run 4 has three blocking review items caused by `INDICATES`, `AFFECTS`,
    and `RESOLVED_BY` relations pointing to a missing `fm_overflow` node. The
    existing `max_blocking: 0` expectation therefore correctly fails on that
@@ -115,9 +117,9 @@ the full ontology/triplet/chain/review-queue artifacts.
    the manual's causal text with no corrective action (the latter matches the
    current restorative-action contract). Re-score the saved artifacts after
    the decision; no paid rerun is needed for an annotation-only correction.
-2. Fix the dangling `fm_overflow` relations and the missing code/action or
-   no-power links as product work, then repeat the two real runs on the new
-   commit.
+2. Fix the dangling `fm_overflow` relations and decide how the no-power
+   inspection/action mapping should be represented, then repeat the two real
+   runs on the new commit.
 3. Only after both the recall semantics and `max_blocking: 0` are stable, set
    `min_recall` / `max_unsupported_rate`, freeze the annotation, and update
    this document to Phase B complete.
