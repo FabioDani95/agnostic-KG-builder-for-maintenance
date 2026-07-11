@@ -151,7 +151,9 @@ ontology:
   max_input_chars: 600000
   estimated_max_input_tokens: 150000
   extraction_max_output_tokens: 16000
-  extraction_retry_max_output_tokens: 16000
+  # Dense troubleshooting tables can exhaust the initial 16k response budget.
+  # Keep ordinary drafts at 16k; only a detected truncation retries with headroom.
+  extraction_retry_max_output_tokens: 24000
   relation_extraction_max_output_tokens: 6000
   validation_max_output_tokens: 4000
 
