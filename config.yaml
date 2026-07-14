@@ -100,9 +100,18 @@ resolution_completion:
   max_input_chars: 50000
   estimated_max_input_tokens: 12500
   max_output_tokens: 2500
-  max_targets: 8
+  # 0 = no cap: attempt every unresolved FailureMode and every unlinked
+  # ErrorCode. Each target is an independent, page-scoped call whose prompt does
+  # not grow with the target count, so the only cost of lifting the cap is one
+  # more call per orphan — the price of not leaving recoverable remedies behind.
+  max_targets: 0
   top_pages_per_target: 6
   context_window_pages: 1
+  # Retrieve candidate pages from the FULL manual, not only the pages the cut
+  # plan kept for drafting: a remedy often lives in a maintenance/reference
+  # chapter the scoping pass dropped as non-diagnostic. The LLM still sees only
+  # top_pages_per_target pages, so this widens the search space, not the prompt.
+  search_full_manual: true
 
 # Second-harvest pass: one targeted call that returns diagnostic chains stated
 # in the text but missing from the draft (branch coverage is nondeterministic

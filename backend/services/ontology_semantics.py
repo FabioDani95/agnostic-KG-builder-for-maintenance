@@ -356,6 +356,28 @@ def has_actionable_instruction(instruction_text: str) -> bool:
     return any(_REPAIR_ACTION_RE.search(step) for step in steps)
 
 
+# Documented escalation: the manual's prescribed remedy is to contact the
+# maker/dealer/service rather than a step the operator performs on-site. This is
+# a legitimate corrective action, so it must NOT be flagged as "not actionable".
+_ESCALATION_RE = re.compile(
+    r"(?i)\b("
+    r"contact\s+(?:your\s+|the\s+)?(?:haas\s+)?(?:factory\s+outlet|hfo|dealer|"
+    r"distributor|manufacturer|supplier|vendor|service\s+(?:center|centre|"
+    r"department|provider|representative)|customer\s+(?:service|support)|"
+    r"technical\s+support|authorized\s+service)|"
+    r"call\s+(?:your\s+|the\s+)?(?:dealer|distributor|manufacturer|service|hfo|"
+    r"factory\s+outlet|customer\s+(?:service|support)|technical\s+support)|"
+    r"return\s+(?:the\s+\w+\s+)?to\s+(?:the\s+)?(?:factory|manufacturer)|"
+    r"seek\s+(?:qualified|authorized)\s+service"
+    r")\b"
+)
+
+
+def is_escalation_instruction(text: str) -> bool:
+    """True when the text prescribes contacting the maker/dealer/service."""
+    return bool(_ESCALATION_RE.search(str(text or "")))
+
+
 def is_operational_state_failure_mode(
     name: str,
     description: str,

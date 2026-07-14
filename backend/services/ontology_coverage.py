@@ -14,6 +14,11 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import Any, Iterable
 
+from backend.services.ontology_semantics import (
+    is_escalation_instruction,
+    is_operational_state_failure_mode,
+)
+
 _NODE_ID_FIELDS = {
     "Asset": "asset_id",
     "Component": "component_id",
@@ -67,6 +72,8 @@ def compute_graph_coverage(ontology: dict[str, Any]) -> dict[str, Any]:
 
     id_by_label: dict[str, str] = {}
     ids_by_label: dict[str, set[str]] = {label: set() for label in _NODE_ID_FIELDS}
+    fm_nodes: dict[str, dict[str, Any]] = {}
+    ca_nodes: dict[str, dict[str, Any]] = {}
     for label, id_field in _NODE_ID_FIELDS.items():
         items = nodes_by_type.get(label) or []
         for node in items:
@@ -77,6 +84,10 @@ def compute_graph_coverage(ontology: dict[str, Any]) -> dict[str, Any]:
                 continue
             ids_by_label[label].add(node_id)
             id_by_label[node_id] = label
+            if label == "FailureMode":
+                fm_nodes[node_id] = node
+            elif label == "CorrectiveAction":
+                ca_nodes[node_id] = node
 
     # relationship index: (type) -> from -> {to}; (type) -> to -> {from}
     out_edges: dict[str, dict[str, set[str]]] = defaultdict(lambda: defaultdict(set))
@@ -149,6 +160,40 @@ def compute_graph_coverage(ontology: dict[str, Any]) -> dict[str, Any]:
                 break
         if reached:
             chain_complete_symptoms += 1
+
+    # Resolution outcome disaggregation: a remedy is either an on-site
+    # procedure or a documented escalation ("contact the factory outlet"). Both
+    # close the diagnostic chain for the agent, but the agent presents them
+    # differently, so we report the split instead of collapsing them.
+    def _action_kind(node: dict[str, Any]) -> str:
+        kind = str(node.get("action_kind", "") or "").strip().lower()
+        if kind in ("procedure", "escalation"):
+            return kind
+        text = f"{node.get('name', '')} {node.get('instruction_text', '')}"
+        return "escalation" if is_escalation_instruction(text) else "procedure"
+
+    escalation_action_ids = {aid for aid, node in ca_nodes.items() if _action_kind(node) == "escalation"}
+    procedure_action_ids = set(action_ids) - escalation_action_ids
+    fm_resolved_by_procedure = {
+        fid for fid in fm_with_action
+        if any(aid in procedure_action_ids for aid in out_edges["RESOLVED_BY"].get(fid, ()))
+    }
+    fm_resolved_by_escalation_only = fm_with_action - fm_resolved_by_procedure
+
+    # Actionable denominator: operational/safety-interlock states (door open,
+    # e-stop pressed) are advisory-flagged as not-really-failure-modes and gated
+    # to the human. Reporting coverage over the actionable subset as well as the
+    # gross total keeps the health number honest without hiding the raw figure.
+    operational_state_fm_ids = {
+        fid for fid, node in fm_nodes.items()
+        if is_operational_state_failure_mode(
+            str(node.get("name", "") or ""),
+            str(node.get("description", "") or ""),
+            str(node.get("material_context", "") or ""),
+        )
+    }
+    actionable_fm_ids = set(failure_ids) - operational_state_fm_ids
+    actionable_with_action = fm_with_action & actionable_fm_ids
 
     # Breadth metrics
     ca_counts_per_fm = [
@@ -229,6 +274,25 @@ def compute_graph_coverage(ontology: dict[str, Any]) -> dict[str, Any]:
             "orphan_upstream": len(failure_ids) - len(fm_reachable_from_diagnostic_root),
             "avg_corrective_actions_per_failure_mode": avg_actions_per_fm,
             "avg_symptoms_per_failure_mode": avg_symptoms_per_fm,
+            "operational_state_count": len(operational_state_fm_ids),
+            "actionable_failure_modes_total": len(actionable_fm_ids),
+            "actionable_with_corrective_action": len(actionable_with_action),
+            "actionable_with_corrective_action_ratio": _ratio(
+                len(actionable_with_action), len(actionable_fm_ids)
+            ),
+        },
+        "resolution_outcome": {
+            # FMs whose diagnostic chain is closed by any remedy (procedure or
+            # escalation), over the actionable denominator. This is the honest
+            # "did the agent get a next step" number.
+            "resolved_or_escalated": len(actionable_with_action),
+            "resolved_or_escalated_ratio": _ratio(
+                len(actionable_with_action), len(actionable_fm_ids)
+            ),
+            "fm_resolved_by_procedure": len(fm_resolved_by_procedure),
+            "fm_resolved_by_escalation_only": len(fm_resolved_by_escalation_only),
+            "escalation_actions_total": len(escalation_action_ids),
+            "procedure_actions_total": len(procedure_action_ids),
         },
         "corrective_action_coverage": {
             "corrective_actions_total": len(action_ids),

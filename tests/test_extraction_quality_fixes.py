@@ -202,6 +202,20 @@ class InstructionGuardValidationTests(unittest.TestCase):
             [],
         )
 
+    def test_escalation_action_is_not_flagged_non_actionable(self) -> None:
+        """An escalation remedy has no on-site repair verb but is a valid action
+        (Leva 2) — it must not raise the instruction_not_actionable warning."""
+        ontology = _ontology_fixture()
+        ontology.nodes["CorrectiveAction"][0]["instruction_text"] = (
+            "1. Contact your Haas Factory Outlet with the alarm history."
+        )
+        ontology.nodes["CorrectiveAction"][0]["action_kind"] = "escalation"
+        issues, _ = _validate_schema(ontology, load_ontology_schema())
+        self.assertEqual(
+            [issue for issue in issues if issue.code == "instruction_not_actionable"],
+            [],
+        )
+
 
 class EvidenceGroundingTests(unittest.TestCase):
     _PAGES = {5: "If the door is stuck, the hinge is seized by corrosion. Replace the hinge."}
@@ -608,6 +622,26 @@ class OpenGapsTests(unittest.TestCase):
         queue = build_review_queue(contract)
         self.assertEqual([item["kind"] for item in queue], ["ambiguous_multi_cause_symptom"])
         self.assertTrue(summarize_queue(queue)["requires_human_review"])
+
+    def test_review_queue_attaches_resolved_by_candidates_to_orphan_fm(self):
+        """A failure_mode_without_action gap carries the reasoner's top RESOLVED_BY
+        candidates so the operator can confirm a link in one click (Leva 3)."""
+        suggestions = [
+            {"relation_name": "RESOLVED_BY", "from_type": "FailureMode", "from_id": "fm_no_action",
+             "to_type": "CorrectiveAction", "to_id": "ca_free_hinge", "to_label": "Free the hinge",
+             "confidence": 0.61},
+            {"relation_name": "RESOLVED_BY", "from_type": "FailureMode", "from_id": "fm_no_action",
+             "to_type": "CorrectiveAction", "to_id": "ca_oil_hinge", "to_label": "Oil the hinge",
+             "confidence": 0.42},
+            {"relation_name": "MAY_INDICATE", "from_type": "Symptom", "from_id": "sym_orphan",
+             "to_type": "FailureMode", "to_id": "fm_no_action", "to_label": "Hinge seized",
+             "confidence": 0.9},
+        ]
+        queue = build_review_queue(_gappy_contract(), suggested_relations=suggestions)
+        gap = next(item for item in queue if item["kind"] == "failure_mode_without_action")
+        self.assertEqual([c["action_id"] for c in gap["candidate_actions"]],
+                         ["ca_free_hinge", "ca_oil_hinge"])
+        self.assertEqual(gap["candidate_actions"][0]["confidence"], 0.61)
 
     def test_review_queue_orders_blocking_before_advisory(self):
         from backend.models import PipelineIssue

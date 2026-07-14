@@ -58,12 +58,13 @@
       },
       {
         "name": "CorrectiveAction",
-        "description": "An action, procedure, or remediation step intended to resolve a failure mode.",
+        "description": "An action, procedure, or remediation step intended to resolve a failure mode. A corrective action may be an operational procedure the technician performs (action_kind 'procedure') or a documented escalation the manual prescribes when it provides no on-site fix, e.g. 'contact your factory outlet / dealer / service' (action_kind 'escalation').",
         "properties": [
           { "name": "action_id", "type": "string", "required": true, "unique": true },
           { "name": "name", "type": "string", "required": true },
           { "name": "description", "type": "string", "required": true },
           { "name": "instruction_text", "type": "string", "required": true },
+          { "name": "action_kind", "type": "string", "required": false },
           { "name": "source_type", "type": "string", "required": true },
           { "name": "source_title", "type": "string", "required": true },
           { "name": "source_reference", "type": "string", "required": true }

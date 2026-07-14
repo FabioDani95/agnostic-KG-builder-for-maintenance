@@ -168,17 +168,54 @@ def compute_review_flags(ontology: dict[str, Any]) -> list[dict[str, Any]]:
     return flags
 
 
+def _resolved_by_candidates_by_failure_mode(
+    suggested_relations: list | None,
+) -> dict[str, list[dict[str, Any]]]:
+    """Index RESOLVED_BY suggestions (FailureMode -> CorrectiveAction) by FM id.
+
+    Accepts either SuggestedRelation objects or plain dicts so the queue can be
+    built from an already-serialized response.
+    """
+    by_fm: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for suggestion in suggested_relations or []:
+        def _field(name: str) -> Any:
+            if isinstance(suggestion, dict):
+                return suggestion.get(name)
+            return getattr(suggestion, name, None)
+
+        if str(_field("relation_name") or "") != "RESOLVED_BY":
+            continue
+        from_id = str(_field("from_id") or "").strip()
+        to_id = str(_field("to_id") or "").strip()
+        if not from_id or not to_id:
+            continue
+        by_fm[from_id].append({
+            "action_id": to_id,
+            "action_label": str(_field("to_label") or to_id),
+            "confidence": _field("confidence"),
+        })
+    for candidates in by_fm.values():
+        candidates.sort(key=lambda c: (c.get("confidence") is None, -(c.get("confidence") or 0.0)))
+    return by_fm
+
+
 def build_review_queue(
     ontology: dict[str, Any],
     *,
     confidence_report: Any | None = None,
     schema_issues: list | None = None,
+    suggested_relations: list | None = None,
 ) -> list[dict[str, Any]]:
     """Unified, de-duplicated, priority-ordered queue of what the human must touch.
 
     Priority: open structural gaps > low-confidence nodes > advisory issues.
     De-duplicated by (target_type, target_id, kind) so a node flagged by two
     signals appears once with the highest-priority framing.
+
+    When ``suggested_relations`` is provided, each ``failure_mode_without_action``
+    gap is enriched with the top RESOLVED_BY candidates the reasoner proposed, so
+    the operator can confirm a link in one click instead of hunting for the
+    action. RESOLVED_BY stays human-gated — these are proposals, never applied.
     """
     queue: list[dict[str, Any]] = []
     seen: set[tuple[str, str, str]] = set()
@@ -190,7 +227,19 @@ def build_review_queue(
         seen.add(key)
         queue.append(item)
 
+    candidates_by_fm = _resolved_by_candidates_by_failure_mode(suggested_relations)
     for gap in compute_open_gaps(ontology):
+        if gap.get("kind") == "failure_mode_without_action":
+            candidates = candidates_by_fm.get(gap.get("target_id", ""))
+            if candidates:
+                gap = {
+                    **gap,
+                    "candidate_actions": candidates[:3],
+                    "suggested_fix": (
+                        "Confirm one of the proposed corrective actions (candidate_actions), "
+                        "attach the remediation procedure from the manual, or mark as unresolved."
+                    ),
+                }
         _add(gap)
 
     for flag in compute_review_flags(ontology):

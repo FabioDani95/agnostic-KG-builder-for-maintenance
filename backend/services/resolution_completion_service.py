@@ -14,7 +14,11 @@ from backend.config import settings
 from backend.models import OntologyEvidence, OntologyInstance, OntologyRelationInstance
 from backend.services.llm_guardrails import enforce_llm_limits, llm_timeout_message
 from backend.services.llm_gateway import chat_temperature_kwargs, get_client
-from backend.services.ontology_semantics import build_semantic_key, semantic_tokens
+from backend.services.ontology_semantics import (
+    build_semantic_key,
+    is_escalation_instruction,
+    semantic_tokens,
+)
 from backend.services.run_metrics import usage_from_response
 
 logger = logging.getLogger(__name__)
@@ -144,7 +148,10 @@ def build_resolution_targets(ontology: OntologyInstance, *, max_targets: int) ->
             seen.add(key)
 
     max_total = max(0, int(max_targets or 0))
-    if len(failure_targets) + len(error_targets) <= max_total:
+    # max_targets <= 0 means "no cap": attempt every orphan. Each target is an
+    # independent page-scoped call, so lifting the cap costs one call per orphan
+    # and never grows a single prompt.
+    if max_total == 0 or len(failure_targets) + len(error_targets) <= max_total:
         return failure_targets + error_targets
 
     # Reserve a quota for error codes: with a flat cap, a long unresolved-FM
@@ -275,6 +282,7 @@ Return valid JSON only with this exact shape:
       "name": "action name",
       "description": "short description",
       "instruction_text": "1. first supported step. 2. second supported step.",
+      "action_kind": "procedure|escalation",
       "source_page": 12,
       "source_reference": "PAGE 12",
       "evidence_quote": "short verbatim quote supporting the action"
@@ -284,9 +292,11 @@ Return valid JSON only with this exact shape:
 Rules:
 - For a failure_mode target, keep the provided failure_mode_id.
 - For an error_code target, identify the FailureMode the code indicates; reuse an existing FailureMode id when it matches.
-- A found result must include at least one restorative CorrectiveAction.
+- A found result must include at least one CorrectiveAction.
+- action_kind="procedure" for an on-site operational remedy (replace, clean, adjust, reset, reconnect, ...).
+- action_kind="escalation" when the manual's only prescribed remedy is to contact the manufacturer / factory outlet / dealer / authorized service. This IS a valid corrective action — capture it, with the instruction_text stating whom to contact and what data to provide, and the verbatim quote supporting it.
 - Inspection-only or verification-only steps are not corrective actions unless the text says they resolve the fault.
-- If the selected pages do not contain a supported action, return {"status":"not_found","corrective_actions":[]}.
+- If the selected pages contain neither an operational remedy nor a prescribed escalation, return {"status":"not_found","corrective_actions":[]}.
 """
     user = (
         f"TARGET_TYPE: {target.target_type}\n"
@@ -505,11 +515,19 @@ def _apply_completion_payload(
         if not source_reference and source_page:
             source_reference = f"PAGE {source_page}"
         if create_node:
+            action_kind = str(raw_action.get("action_kind") or "").strip().lower()
+            if action_kind not in ("procedure", "escalation"):
+                action_kind = (
+                    "escalation"
+                    if is_escalation_instruction(f"{name} {instruction_text}")
+                    else "procedure"
+                )
             nodes.setdefault("CorrectiveAction", []).append({
                 "action_id": action_id,
                 "name": name,
                 "description": str(raw_action.get("description") or name).strip(),
                 "instruction_text": instruction_text,
+                "action_kind": action_kind,
                 "source_type": ontology.source_type,
                 "source_title": ontology.source_title,
                 "source_page": source_page,
@@ -539,13 +557,20 @@ def complete_resolution_gaps(
     text_with_pages: str,
     model_name: str,
     parse_json: Callable[[str], dict[str, Any]],
+    search_text_with_pages: str | None = None,
 ) -> tuple[OntologyInstance, list[dict[str, Any]], dict[str, Any]]:
     cfg = get_resolution_completion_config()
     if not cfg.get("enabled", True):
         return ontology, [], {"attempted": 0, "completed": 0, "skipped": "disabled"}
 
-    pages = _parse_pages(text_with_pages)
-    targets = build_resolution_targets(ontology, max_targets=int(cfg.get("max_targets", 8)))
+    # Retrieval corpus: the full manual when provided (and enabled), so a remedy
+    # living on a page the cut plan dropped is still reachable. The LLM still
+    # only ever sees select_target_pages() top pages, and quote verification runs
+    # against those same selected pages, so widening the corpus never weakens the
+    # "no verified quote, no chain" guarantee.
+    use_full = bool(cfg.get("search_full_manual", True)) and bool(search_text_with_pages)
+    pages = _parse_pages(search_text_with_pages if use_full else text_with_pages)
+    targets = build_resolution_targets(ontology, max_targets=int(cfg.get("max_targets", 0)))
     if not pages or not targets:
         return ontology, [], {"attempted": 0, "completed": 0, "target_count": len(targets)}
 
@@ -646,5 +671,6 @@ def complete_resolution_gaps(
         "attempted": len(attempts),
         "completed": completed,
         "target_count": len(targets),
+        "search_scope": "full_manual" if use_full else "kept_pages",
         "attempts": attempts,
     }

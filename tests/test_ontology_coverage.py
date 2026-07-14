@@ -58,3 +58,78 @@ def test_error_code_is_a_valid_diagnostic_root_for_failure_mode():
         "causal_relations_with_evidence_quote": 1,
         "causal_relations_with_evidence_quote_ratio": 0.25,
     }
+
+
+def test_operational_state_failure_modes_are_excluded_from_actionable_denominator():
+    coverage = compute_graph_coverage({
+        "nodes": {
+            "Asset": [{"asset_id": "asset"}],
+            "Component": [],
+            "Symptom": [],
+            "FailureMode": [
+                {
+                    "failure_mode_id": "fm_worn_belt",
+                    "name": "Drive belt worn",
+                    "description": "The drive belt is worn.",
+                    "material_context": "comp_belt",
+                },
+                {
+                    "failure_mode_id": "fm_door_open",
+                    "name": "Door in open state",
+                    "description": "The safety door is in the open state.",
+                    "material_context": "asset_level",
+                },
+            ],
+            "CorrectiveAction": [
+                {"action_id": "ca_replace_belt", "name": "Replace belt",
+                 "instruction_text": "1. Replace the drive belt."},
+            ],
+            "ErrorCode": [],
+        },
+        "relations": [
+            {"name": "RESOLVED_BY", "from_id": "fm_worn_belt", "to_id": "ca_replace_belt"},
+        ],
+    })
+
+    fm = coverage["failure_mode_coverage"]
+    # Gross denominator still reports both FMs...
+    assert fm["failure_modes_total"] == 2
+    assert fm["with_corrective_action"] == 1
+    # ...but the operational-state door is out of the actionable denominator,
+    # so actionable coverage reads 1/1 instead of 1/2.
+    assert fm["operational_state_count"] == 1
+    assert fm["actionable_failure_modes_total"] == 1
+    assert fm["actionable_with_corrective_action_ratio"] == 1.0
+
+
+def test_resolution_outcome_splits_procedure_and_escalation():
+    coverage = compute_graph_coverage({
+        "nodes": {
+            "Asset": [{"asset_id": "asset"}],
+            "Component": [],
+            "Symptom": [],
+            "FailureMode": [
+                {"failure_mode_id": "fm_a", "name": "Fault A", "description": "d", "material_context": "asset_level"},
+                {"failure_mode_id": "fm_b", "name": "Fault B", "description": "d", "material_context": "asset_level"},
+            ],
+            "CorrectiveAction": [
+                {"action_id": "ca_fix", "name": "Replace part",
+                 "instruction_text": "1. Replace the part.", "action_kind": "procedure"},
+                {"action_id": "ca_call", "name": "Contact dealer",
+                 "instruction_text": "1. Contact your dealer.", "action_kind": "escalation"},
+            ],
+            "ErrorCode": [],
+        },
+        "relations": [
+            {"name": "RESOLVED_BY", "from_id": "fm_a", "to_id": "ca_fix"},
+            {"name": "RESOLVED_BY", "from_id": "fm_b", "to_id": "ca_call"},
+        ],
+    })
+
+    outcome = coverage["resolution_outcome"]
+    assert outcome["resolved_or_escalated"] == 2
+    assert outcome["resolved_or_escalated_ratio"] == 1.0
+    assert outcome["fm_resolved_by_procedure"] == 1
+    assert outcome["fm_resolved_by_escalation_only"] == 1
+    assert outcome["escalation_actions_total"] == 1
+    assert outcome["procedure_actions_total"] == 1

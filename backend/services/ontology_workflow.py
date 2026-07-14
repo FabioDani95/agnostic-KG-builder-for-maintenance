@@ -460,6 +460,7 @@ def _finalize_run_level_quality(
     pages: list[dict],
     model_name: str | None,
     asset_identity: dict[str, str] | None,
+    all_pages: list[dict] | None = None,
 ) -> tuple[OntologyPipelineResponse, list[dict], dict, dict]:
     """Run-level quality passes executed once on the merged ontology.
 
@@ -489,6 +490,12 @@ def _finalize_run_level_quality(
     usage_entries: list[dict] = []
 
     text_with_pages = format_text_with_pages(pages)
+    # Full-manual corpus for resolution completion's retrieval: a remedy often
+    # lives on a maintenance/reference page the cut plan dropped. Falls back to
+    # the kept pages when the caller has no wider set.
+    search_text_with_pages = (
+        format_text_with_pages(all_pages) if all_pages else text_with_pages
+    )
 
     # Coverage completion FIRST: second harvest of diagnostic branches the draft
     # missed (branch coverage is nondeterministic run-to-run). Best-effort,
@@ -523,6 +530,7 @@ def _finalize_run_level_quality(
             text_with_pages=text_with_pages,
             model_name=model_name or settings.MODEL_NAME,
             parse_json=_extract_json_object,
+            search_text_with_pages=search_text_with_pages,
         )
         usage_entries = [*usage_entries, *resolution_usage]
     except Exception:
@@ -620,6 +628,7 @@ def _finalize_run_level_quality(
         ontology.model_dump(),
         confidence_report=confidence_report,
         schema_issues=schema_issues,
+        suggested_relations=suggested_relations,
     )
     review_summary = summarize_queue(review_queue)
     logger.info(
@@ -773,6 +782,7 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
         filtered_pages,
         req.model_name,
         asset_identity,
+        all_pages,
     )
     grounding_stats = quality_stats.get("grounding", {})
     closure_stats = quality_stats.get("closure", {})

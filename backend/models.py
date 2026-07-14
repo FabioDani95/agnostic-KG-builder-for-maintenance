@@ -42,6 +42,9 @@ class CorrectiveAction(BaseModel):
     source_title: str
     source_page: int
     linked_failure_mode_id: str
+    # "procedure" (on-site operational remedy) or "escalation" (contact the
+    # maker/dealer/service). Lets the downstream agent present the two differently.
+    action_kind: str = "procedure"
 
 
 class Triplet(BaseModel):

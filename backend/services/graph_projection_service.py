@@ -168,6 +168,7 @@ def project_graph_to_triplets(
                     source_page = int(ca_node.get("source_page") or 0)
                 except (TypeError, ValueError):
                     source_page = 0
+                action_kind = str(ca_node.get("action_kind", "") or "procedure").strip().lower()
                 ca_models.append(CorrectiveAction(
                     action_id=action_id,
                     name=str(ca_node.get("name", "")),
@@ -177,6 +178,7 @@ def project_graph_to_triplets(
                     source_title=str(ca_node.get("source_title", "") or source_title),
                     source_page=source_page or ca_link_page.get(action_id, 0),
                     linked_failure_mode_id=fm_id,
+                    action_kind=action_kind if action_kind in ("procedure", "escalation") else "procedure",
                 ))
         triplet_codes: list[str] = []
         for fm_model in fm_models:

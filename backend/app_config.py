@@ -116,9 +116,10 @@ def get_resolution_completion_config() -> dict:
     cfg.setdefault("max_input_chars", 50000)
     cfg.setdefault("estimated_max_input_tokens", 12500)
     cfg.setdefault("max_output_tokens", 2500)
-    cfg.setdefault("max_targets", 8)
+    cfg.setdefault("max_targets", 0)
     cfg.setdefault("top_pages_per_target", 6)
     cfg.setdefault("context_window_pages", 1)
+    cfg.setdefault("search_full_manual", True)
     return cfg
 
 

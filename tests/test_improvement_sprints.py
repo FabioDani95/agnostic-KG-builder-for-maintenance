@@ -800,6 +800,118 @@ class ResolutionCompletionServiceTests(unittest.TestCase):
         self.assertEqual(action["source_page"], 5)
         self.assertEqual(action["source_reference"], "PAGE 5")
 
+    def _many_orphan_failures(self, count: int) -> OntologyInstance:
+        data = self._base_ontology(include_failure=True, include_error=False).model_dump()
+        data["nodes"]["FailureMode"] = [
+            {
+                "failure_mode_id": f"fm_{i}",
+                "name": f"Failure {i}",
+                "description": f"Description {i}.",
+                "material_context": "asset_level",
+            }
+            for i in range(count)
+        ]
+        return OntologyInstance.model_validate(data)
+
+    def test_build_resolution_targets_uncapped_when_max_is_zero(self) -> None:
+        """max_targets=0 must attempt every orphan, not a truncated slice."""
+        ontology = self._many_orphan_failures(20)
+        targets = build_resolution_targets(ontology, max_targets=0)
+        self.assertEqual(len(targets), 20)
+
+    def test_completion_searches_full_manual_corpus(self) -> None:
+        """When search_text_with_pages is provided, a remedy on a page absent
+        from the kept text is still reachable (Leva 1 full-manual retrieval)."""
+        ontology = self._base_ontology(include_failure=True, include_error=False)
+        response = self._FakeResponse(
+            '{"status":"found","failure_mode":{"failure_mode_id":"FM-001"},'
+            '"corrective_actions":[{"action_id":"ca_adjust_air_pressure",'
+            '"name":"Adjust air pressure","description":"Adjust the air supply pressure.",'
+            '"instruction_text":"1. Adjust the regulator to the specified pressure.",'
+            '"action_kind":"procedure",'
+            '"source_page":92,"source_reference":"PAGE 92",'
+            '"evidence_quote":"Adjust the regulator to the specified pressure."}]}'
+        )
+        kept_text = "--- PAGE 4 ---\nLow air pressure troubleshooting index."
+        full_text = (
+            "--- PAGE 4 ---\nLow air pressure troubleshooting index.\n\n"
+            "--- PAGE 92 ---\nMaintenance: adjust the regulator to the specified pressure."
+        )
+
+        with patch(
+            "backend.services.resolution_completion_service.get_client",
+            return_value=self._FakeOpenAI([response]),
+        ):
+            updated, _, report = complete_resolution_gaps(
+                ontology=ontology,
+                text_with_pages=kept_text,
+                model_name="gpt-5.4",
+                parse_json=_extract_json_object,
+                search_text_with_pages=full_text,
+            )
+
+        self.assertEqual(report["completed"], 1)
+        self.assertEqual(report["search_scope"], "full_manual")
+        action = updated.nodes["CorrectiveAction"][0]
+        self.assertEqual(action["source_page"], 92)
+
+    def test_completion_captures_escalation_action(self) -> None:
+        """An escalation remedy ('contact your dealer') is a valid corrective
+        action tagged action_kind='escalation' (Leva 2)."""
+        ontology = self._base_ontology(include_failure=True, include_error=False)
+        response = self._FakeResponse(
+            '{"status":"found","failure_mode":{"failure_mode_id":"FM-001"},'
+            '"corrective_actions":[{"action_id":"ca_contact_dealer",'
+            '"name":"Contact dealer","description":"Escalate to the dealer.",'
+            '"instruction_text":"1. Contact your authorized dealer with the alarm history.",'
+            '"action_kind":"escalation",'
+            '"source_page":4,"source_reference":"PAGE 4",'
+            '"evidence_quote":"Contact your authorized dealer with the alarm history."}]}'
+        )
+        text = "--- PAGE 4 ---\nLow air pressure. Contact your authorized dealer with the alarm history."
+
+        with patch(
+            "backend.services.resolution_completion_service.get_client",
+            return_value=self._FakeOpenAI([response]),
+        ):
+            updated, _, report = complete_resolution_gaps(
+                ontology=ontology,
+                text_with_pages=text,
+                model_name="gpt-5.4",
+                parse_json=_extract_json_object,
+            )
+
+        self.assertEqual(report["completed"], 1)
+        action = updated.nodes["CorrectiveAction"][0]
+        self.assertEqual(action["action_kind"], "escalation")
+
+    def test_completion_infers_escalation_kind_when_absent(self) -> None:
+        """If the model omits action_kind but the text is an escalation, the
+        node is still classified as escalation."""
+        ontology = self._base_ontology(include_failure=True, include_error=False)
+        response = self._FakeResponse(
+            '{"status":"found","failure_mode":{"failure_mode_id":"FM-001"},'
+            '"corrective_actions":[{"action_id":"ca_contact_hfo",'
+            '"name":"Contact Haas Factory Outlet","description":"Escalate.",'
+            '"instruction_text":"1. Contact your Haas Factory Outlet.",'
+            '"source_page":4,"source_reference":"PAGE 4",'
+            '"evidence_quote":"Contact your Haas Factory Outlet."}]}'
+        )
+        text = "--- PAGE 4 ---\nUnresolvable fault. Contact your Haas Factory Outlet."
+
+        with patch(
+            "backend.services.resolution_completion_service.get_client",
+            return_value=self._FakeOpenAI([response]),
+        ):
+            updated, _, _ = complete_resolution_gaps(
+                ontology=ontology,
+                text_with_pages=text,
+                model_name="gpt-5.4",
+                parse_json=_extract_json_object,
+            )
+
+        self.assertEqual(updated.nodes["CorrectiveAction"][0]["action_kind"], "escalation")
+
 
 class DerivedGeneratesErrorTests(unittest.TestCase):
     def test_normalize_derives_generates_error_for_every_error_code(self) -> None:

@@ -54,6 +54,7 @@ from backend.services.ontology_semantics import (
     has_actionable_instruction,
     infer_asset_type,
     infer_component_match_for_failure_mode,
+    is_escalation_instruction,
     is_operational_state_failure_mode,
     normalize_asset_node,
     normalize_severity,
@@ -1145,7 +1146,14 @@ def _validate_schema(ontology: OntologyInstance, schema: OntologySchemaDefinitio
         if not isinstance(action, dict):
             continue
         instruction_text = str(action.get("instruction_text", "") or "").strip()
-        if instruction_text and not has_actionable_instruction(instruction_text):
+        # A documented escalation ("contact your factory outlet") is a valid
+        # corrective action with no on-site repair verb — never flag it as
+        # non-actionable.
+        is_escalation = (
+            str(action.get("action_kind", "") or "").strip().lower() == "escalation"
+            or is_escalation_instruction(instruction_text)
+        )
+        if instruction_text and not is_escalation and not has_actionable_instruction(instruction_text):
             issues.append(PipelineIssue(
                 severity="warning",
                 code="instruction_not_actionable",
