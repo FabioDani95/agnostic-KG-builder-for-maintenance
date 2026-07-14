@@ -284,5 +284,19 @@ class ConfidenceScoringTests(unittest.TestCase):
         self.assertEqual(len(report.entries), 0)
 
 
+class NodeIdResolutionTests(unittest.TestCase):
+    def test_node_id_uses_schema_field_regardless_of_key_order(self):
+        from backend.services.confidence import _node_id
+
+        failure_mode = {"related_link_id": "WRONG", "failure_mode_id": "fm_x"}
+        self.assertEqual(_node_id("FailureMode", failure_mode), "fm_x")
+
+        action = {"linked_failure_mode_id": "fm_y", "action_id": "ca_x"}
+        self.assertEqual(_node_id("CorrectiveAction", action), "ca_x")
+
+        error_code = {"legacy_id": "WRONG", "error_code_id": "err_x"}
+        self.assertEqual(_node_id("ErrorCode", error_code), "err_x")
+
+
 if __name__ == "__main__":
     unittest.main()

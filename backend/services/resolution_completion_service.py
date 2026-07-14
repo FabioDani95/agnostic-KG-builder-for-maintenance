@@ -101,7 +101,8 @@ def _existing_resolution_indexes(ontology: OntologyInstance) -> tuple[set[str], 
 
 def build_resolution_targets(ontology: OntologyInstance, *, max_targets: int) -> list[ResolutionTarget]:
     resolved_failure_ids, indicated_by_error = _existing_resolution_indexes(ontology)
-    targets: list[ResolutionTarget] = []
+    failure_targets: list[ResolutionTarget] = []
+    error_targets: list[ResolutionTarget] = []
     seen: set[tuple[str, str]] = set()
 
     for failure_mode in ontology.nodes.get("FailureMode", []) or []:
@@ -117,7 +118,7 @@ def build_resolution_targets(ontology: OntologyInstance, *, max_targets: int) ->
         )
         key = ("failure_mode", failure_id)
         if key not in seen:
-            targets.append(ResolutionTarget("failure_mode", failure_id, label, query))
+            failure_targets.append(ResolutionTarget("failure_mode", failure_id, label, query))
             seen.add(key)
 
     for error_code in ontology.nodes.get("ErrorCode", []) or []:
@@ -133,7 +134,7 @@ def build_resolution_targets(ontology: OntologyInstance, *, max_targets: int) ->
         )
         key = ("error_code", error_id)
         if key not in seen:
-            targets.append(ResolutionTarget(
+            error_targets.append(ResolutionTarget(
                 "error_code",
                 error_id,
                 label,
@@ -142,7 +143,29 @@ def build_resolution_targets(ontology: OntologyInstance, *, max_targets: int) ->
             ))
             seen.add(key)
 
-    return targets[:max(0, int(max_targets or 0))]
+    max_total = max(0, int(max_targets or 0))
+    if len(failure_targets) + len(error_targets) <= max_total:
+        return failure_targets + error_targets
+
+    # Reserve a quota for error codes: with a flat cap, a long unresolved-FM
+    # list starved them entirely, and error codes have no other completion path.
+    error_quota = min(len(error_targets), max(1, max_total // 3)) if error_targets else 0
+    failure_quota = min(len(failure_targets), max_total - error_quota)
+    # Backfill unused quota from the other bucket.
+    spare = max_total - failure_quota - error_quota
+    if spare > 0:
+        error_quota = min(len(error_targets), error_quota + spare)
+    selected = failure_targets[:failure_quota] + error_targets[:error_quota]
+    if len(failure_targets) > failure_quota or len(error_targets) > error_quota:
+        logger.info(
+            "[resolution_completion] Target cap %d reached — selected %d/%d failure mode(s) and %d/%d error code(s)",
+            max_total,
+            failure_quota,
+            len(failure_targets),
+            error_quota,
+            len(error_targets),
+        )
+    return selected
 
 
 def _score_page(target: ResolutionTarget, page_text: str) -> float:
@@ -203,12 +226,38 @@ def _format_pages(pages: list[dict[str, Any]]) -> str:
     )
 
 
+def _compact_prompt_nodes(ontology: OntologyInstance) -> dict[str, list[dict[str, str]]]:
+    """Id+name view of the reusable nodes for the completion prompt.
+
+    Embedding the FULL node payloads made the prompt scale with graph size:
+    on a 741-node graph the node dump alone exceeded the 50k-char input
+    guardrail and every target was skipped as input_too_large. The model only
+    needs ids (to reuse) and names (to recognize) — never descriptions or
+    instruction texts.
+    """
+    compact: dict[str, list[dict[str, str]]] = {}
+    for node_type, id_field in (
+        ("FailureMode", "failure_mode_id"),
+        ("CorrectiveAction", "action_id"),
+        ("ErrorCode", "error_code_id"),
+    ):
+        rows: list[dict[str, str]] = []
+        for item in ontology.nodes.get(node_type, []) or []:
+            if not isinstance(item, dict):
+                continue
+            row = {
+                id_field: str(item.get(id_field, "") or ""),
+                "name": str(item.get("name", "") or ""),
+            }
+            if node_type == "ErrorCode" and str(item.get("code", "") or ""):
+                row["code"] = str(item["code"])
+            rows.append(row)
+        compact[node_type] = rows
+    return compact
+
+
 def _target_prompt(target: ResolutionTarget, ontology: OntologyInstance) -> tuple[str, str]:
-    compact_nodes = {
-        "FailureMode": ontology.nodes.get("FailureMode", []),
-        "CorrectiveAction": ontology.nodes.get("CorrectiveAction", []),
-        "ErrorCode": ontology.nodes.get("ErrorCode", []),
-    }
+    compact_nodes = _compact_prompt_nodes(ontology)
     system = """You complete missing troubleshooting resolution links in an ontology-first extraction pipeline.
 Use only the provided manual pages. Do not invent actions or causes.
 Return valid JSON only with this exact shape:
@@ -276,10 +325,54 @@ def _evidence_from_action(action: dict[str, Any]) -> list[OntologyEvidence]:
     return [OntologyEvidence(source_page=page, source_reference=source_reference, quote=quote)]
 
 
+def _find_supporting_page(
+    quote: str,
+    source_page: int,
+    pages: list[dict[str, Any]] | None,
+) -> int:
+    """Return the page number that supports `quote`, or 0 when unsupported.
+
+    The cited page is checked first; a match on another provided page corrects
+    the citation instead of rejecting the action. Mirrors the "no verified
+    quote, no chain" guardrail already enforced by coverage_completion.
+    """
+    if pages is None:
+        return source_page or -1  # verification disabled: keep legacy behaviour
+    if not quote:
+        return 0
+
+    from backend.services.llm_service import _fragment_supported_by_page
+
+    by_page = {int(page.get("page_number") or 0): str(page.get("text", "") or "") for page in pages}
+    cited_text = by_page.get(source_page, "")
+    if cited_text and _fragment_supported_by_page(quote, cited_text):
+        return source_page
+    for page_number in sorted(by_page):
+        if page_number == source_page:
+            continue
+        if by_page[page_number] and _fragment_supported_by_page(quote, by_page[page_number]):
+            return page_number
+    return 0
+
+
+def _semantic_id_index(items: list[Any], id_field: str) -> dict[str, str]:
+    index: dict[str, str] = {}
+    for item in items or []:
+        if not isinstance(item, dict):
+            continue
+        node_id = str(item.get(id_field, "") or "").strip()
+        key = build_semantic_key(str(item.get("name", "") or ""))
+        if node_id and key and key not in index:
+            index[key] = node_id
+    return index
+
+
 def _apply_completion_payload(
     ontology: OntologyInstance,
     target: ResolutionTarget,
     payload: dict[str, Any],
+    *,
+    pages: list[dict[str, Any]] | None = None,
 ) -> tuple[OntologyInstance, bool]:
     if str(payload.get("status") or "").strip().lower() != "found":
         return ontology, False
@@ -312,8 +405,14 @@ def _apply_completion_payload(
             for item in nodes.get("FailureMode", []) or []
             if isinstance(item, dict)
         }
+        fm_semantic_index = _semantic_id_index(nodes.get("FailureMode", []), "failure_mode_id")
+        fm_semantic_key = build_semantic_key(str(raw_fm.get("name") or target.label))
         if candidate_fm_id in existing_failure_ids:
             failure_id = candidate_fm_id
+        elif fm_semantic_key and fm_semantic_key in fm_semantic_index:
+            # Same failure stated with a fresh id: reuse the existing node
+            # instead of adding a near-identical duplicate.
+            failure_id = fm_semantic_index[fm_semantic_key]
         else:
             failure_id = _unique_id(
                 str(raw_fm.get("name") or target.label),
@@ -360,28 +459,62 @@ def _apply_completion_payload(
                 target.target_id,
             )
             continue
-        action_id = str(raw_action.get("action_id") or "").strip()
-        if not action_id or action_id in used_ids:
-            action_id = _unique_id(name, used_ids, prefix="ca", fallback="retrieved_corrective_action")
-        else:
-            used_ids.add(action_id)
         try:
             source_page = int(raw_action.get("source_page") or 0)
         except (TypeError, ValueError):
             source_page = 0
+        supported_page = _find_supporting_page(evidence_quote, source_page, pages)
+        if supported_page == 0:
+            logger.info(
+                "[resolution_completion] Dropping retrieved action '%s' for %s — evidence quote not found in the selected pages",
+                name,
+                target.target_id,
+            )
+            continue
+        if supported_page > 0 and supported_page != source_page:
+            # Quote found on a different selected page: correct the citation so the
+            # downstream grounding pass verifies against the right page.
+            raw_action = dict(raw_action)
+            raw_action["source_page"] = supported_page
+            raw_action["source_reference"] = f"PAGE {supported_page}"
+            source_page = supported_page
+
+        raw_action_id = str(raw_action.get("action_id") or "").strip()
+        existing_action_ids = {
+            _node_id("CorrectiveAction", item)
+            for item in nodes.get("CorrectiveAction", []) or []
+            if isinstance(item, dict)
+        }
+        ca_semantic_index = _semantic_id_index(nodes.get("CorrectiveAction", []), "action_id")
+        ca_semantic_key = build_semantic_key(name)
+        create_node = False
+        if raw_action_id and raw_action_id in existing_action_ids:
+            # The model correctly reused an existing action id: link to it,
+            # never rename it into a duplicate node.
+            action_id = raw_action_id
+        elif ca_semantic_key and ca_semantic_key in ca_semantic_index:
+            action_id = ca_semantic_index[ca_semantic_key]
+        else:
+            if not raw_action_id or raw_action_id in used_ids:
+                action_id = _unique_id(name, used_ids, prefix="ca", fallback="retrieved_corrective_action")
+            else:
+                used_ids.add(raw_action_id)
+                action_id = raw_action_id
+            create_node = True
         source_reference = str(raw_action.get("source_reference") or "").strip()
         if not source_reference and source_page:
             source_reference = f"PAGE {source_page}"
-        nodes.setdefault("CorrectiveAction", []).append({
-            "action_id": action_id,
-            "name": name,
-            "description": str(raw_action.get("description") or name).strip(),
-            "instruction_text": instruction_text,
-            "source_type": ontology.source_type,
-            "source_title": ontology.source_title,
-            "source_page": source_page,
-            "source_reference": source_reference,
-        })
+        if create_node:
+            nodes.setdefault("CorrectiveAction", []).append({
+                "action_id": action_id,
+                "name": name,
+                "description": str(raw_action.get("description") or name).strip(),
+                "instruction_text": instruction_text,
+                "source_type": ontology.source_type,
+                "source_title": ontology.source_title,
+                "source_page": source_page,
+                "source_reference": source_reference,
+            })
         resolved_by = OntologyRelationInstance(
             name="RESOLVED_BY",
             from_type="FailureMode",
@@ -498,7 +631,7 @@ def complete_resolution_gaps(
             logger.warning("[resolution_completion] Failed to parse response for %s", target.target_id)
             attempts.append({"target_id": target.target_id, "status": "parse_failed"})
             continue
-        updated, changed = _apply_completion_payload(updated, target, payload)
+        updated, changed = _apply_completion_payload(updated, target, payload, pages=selected_pages)
         status = "completed" if changed else str(payload.get("status") or "not_found")
         if changed:
             completed += 1

@@ -144,6 +144,16 @@ Schema by example (all keys shown; optional blocks marked):
 6. `forbidden_chains` are added only for contamination actually observed in a
    run or plausibly induced by layout (adjacent table rows, shared columns) —
    they are regression tripwires, not an exhaustive negative set.
+7. **Inspection-only steps are not corrective actions.** When the manual gives
+   a cause plus check/verify steps and no restorative remedy (typical of
+   error-code tables), annotate the chain with the manual's causal text
+   (e.g. the *Causes* column) and **omit** `corrective_action`: the truthful
+   graph is `ErrorCode → FailureMode` with a declared
+   `failure_mode_without_action` gap. Annotating a check step as a remedy
+   measures behaviour the restorative-action contract is designed to reject
+   and makes recall oscillate on semantics, not extraction. (Decision taken
+   for the Whirlpool fixture on 2026-07-14; see
+   `WHIRLPOOL_W11187658_GOLDEN_EVAL.md`, Phase B complete.)
 
 ### 3.3 Mock responses (`mock_responses/<fixture_id>/<stage>.json`)
 

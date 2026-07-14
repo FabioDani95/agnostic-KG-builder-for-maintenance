@@ -16,23 +16,23 @@
   "expected_triplets": [
     {
       "error_code": "E1",
-      "failure_mode": "water inlet failure",
-      "corrective_action": "check the inlet valve"
+      "failure_mode": "during the water inlet step the flow meter cannot detect a correct fill",
+      "annotation_note": "The manual's E1 row gives a cause and inspection-only 'check' steps, no restorative remedy. Per the restorative-action contract the chain is ErrorCode->FailureMode with a declared failure_mode_without_action gap. Failure-mode text is the row's Causes column."
     },
     {
       "error_code": "E3",
-      "failure_mode": "heater failure",
-      "corrective_action": "check the heater"
+      "failure_mode": "temperature does not reach the correct value",
+      "annotation_note": "Manual gives the cause (Causes column) and check-only steps; no restorative remedy stated."
     },
     {
       "error_code": "E4",
       "failure_mode": "overflow",
-      "corrective_action": "check the overflow switch"
+      "annotation_note": "Manual gives the cause (water flows into the base and activates the overflow switch) and check-only steps; no restorative remedy stated."
     },
     {
       "error_code": "E6",
-      "failure_mode": "NTC open circuit failure",
-      "corrective_action": "check the thermistor"
+      "failure_mode": "temperature sensor open circuit",
+      "annotation_note": "Manual gives the cause (Causes column: temperature sensor open circuit, shown as NTC OPEN CIRCUIT FAILURE) and check-only steps; no restorative remedy stated."
     },
     {
       "symptom": "won't run or power up (dead keypad/console)",
@@ -65,6 +65,10 @@
       "corrective_action": "check/replace dispenser"
     }
   ],
+  "expected_quality_gates": {
+    "min_recall": 0.7,
+    "max_unsupported_rate": 0.0
+  },
   "expected_human_review": {
     "max_blocking": 0,
     "reason": "Troubleshooting-guide symptoms are legitimately multi-cause (several potential causes per description row), so advisory items are expected; nothing may be blocking."

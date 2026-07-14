@@ -29,6 +29,8 @@ One service or algorithm, mocked collaborators.
 | `test_confidence.py` | schema-aware confidence scoring |
 | `test_cutplan_service.py` | cut-plan building |
 | `test_page_offset_service.py` | PDF↔printed page offset detection |
+| `test_pdf_service.py` | physical-page preservation + selective OCR fallback |
+| `test_ontology_coverage.py` | internal/export relation formats + diagnostic-root KPIs |
 | `test_coverage_completion_service.py` | coverage completion (id reuse, dangling relations) |
 | `test_style_cleanup_service.py` | guarded LLM style rewrites |
 | `test_ontology_merge_service.py`, `test_ontology_patch_service.py` | graph merge/patch |

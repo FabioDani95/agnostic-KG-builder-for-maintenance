@@ -116,6 +116,20 @@ http://127.0.0.1:8000/graph-editor/latest
 - Python 3.11+
 - An OpenAI API key
 - Local PDF manuals to process
+- Optional: Tesseract OCR with the `eng` language data. Without it, native PDF
+  extraction continues normally and low-text pages are reported as OCR-unavailable.
+
+### Selective OCR
+
+PDF ingestion preserves every physical page, including image-only pages. OCR is
+selective rather than document-wide: it is attempted on low-text front-matter
+pages needed for ToC discovery and on low-text pages inside the sections chosen
+by scoping. Limits, language, DPI, and the native-text threshold are configured
+under `pdf_ingestion.ocr` in `config.yaml`. Each page records `text_source` and
+`ocr_status`, and the run metrics list unreadable pages explicitly.
+
+On macOS, Tesseract can be installed with `brew install tesseract`; on Debian or
+Ubuntu, install the `tesseract-ocr` and `tesseract-ocr-eng` packages.
 
 ## Setup
 

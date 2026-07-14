@@ -70,6 +70,20 @@ def get_pipeline_config() -> dict:
     return cfg
 
 
+def get_pdf_ingestion_config() -> dict:
+    cfg = deepcopy(load_config().get("pdf_ingestion", {}) or {})
+    cfg.setdefault("preserve_all_pages", True)
+    ocr = cfg.setdefault("ocr", {})
+    ocr.setdefault("enabled", True)
+    ocr.setdefault("language", "eng")
+    ocr.setdefault("dpi", 200)
+    ocr.setdefault("min_native_chars", 80)
+    ocr.setdefault("bootstrap_pages", 15)
+    ocr.setdefault("bootstrap_max_pages", 5)
+    ocr.setdefault("selected_max_pages", 24)
+    return cfg
+
+
 def get_agents_config() -> dict:
     return deepcopy(load_config().get("agents", {}))
 

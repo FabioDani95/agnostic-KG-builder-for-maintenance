@@ -39,10 +39,20 @@ logger = logging.getLogger(__name__)
 # Helpers
 # ---------------------------------------------------------------------------
 
+_ID_FIELD_BY_TYPE: dict[str, str] = {
+    "Asset": "asset_id",
+    "Component": "component_id",
+    "Symptom": "symptom_id",
+    "FailureMode": "failure_mode_id",
+    "CorrectiveAction": "action_id",
+    "ErrorCode": "error_code_id",
+}
+
+
 def _node_id(node_type: str, item: dict[str, Any]) -> str:
     """Extract the canonical id for a node dict, matching graph_reasoning conventions."""
-    # Prefer a type-specific key (e.g. symptom_id) then fall back to any *_id field.
-    expected = f"{node_type.lower()}_id"
+    # Prefer the schema's type-specific key, then fall back to any *_id field.
+    expected = _ID_FIELD_BY_TYPE.get(node_type, f"{node_type.lower()}_id")
     val = str(item.get(expected, "") or "").strip()
     if val:
         return val

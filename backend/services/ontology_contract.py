@@ -96,10 +96,15 @@ def _normalize_relationships(raw_relations: Any) -> list[ExportOntologyRelations
     return relationships
 
 
-def _prune_non_traversable_nodes(
+def _prune_dangling_relationships(
     nodes: dict[str, list[dict[str, Any]]],
     relationships: list[ExportOntologyRelationship],
 ) -> tuple[dict[str, list[dict[str, Any]]], list[ExportOntologyRelationship]]:
+    """Drop relationships whose endpoints are not valid node ids.
+
+    Nodes are returned unchanged: orphan nodes are legitimate export content
+    (declared via open_gaps), only dangling edges are removed.
+    """
     pruned_nodes = {node_type: list(items) for node_type, items in nodes.items()}
 
     valid_ids = {
@@ -158,7 +163,7 @@ def build_contract_ontology(raw_ontology: dict[str, Any]) -> dict[str, Any]:
     nodes = _normalize_nodes(migrated.get("nodes", {}))
     metadata = _build_metadata(migrated, nodes)
     relationships = _normalize_relationships(migrated.get("relations", []))
-    nodes, relationships = _prune_non_traversable_nodes(nodes, relationships)
+    nodes, relationships = _prune_dangling_relationships(nodes, relationships)
     contract = ExportOntologyInstance(
         metadata=metadata,
         nodes=nodes,

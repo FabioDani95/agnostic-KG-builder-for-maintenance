@@ -628,8 +628,8 @@ class ResolutionCompletionServiceTests(unittest.TestCase):
         text = "--- PAGE 4 ---\nLow air pressure. Adjust the regulator to the specified pressure."
 
         with patch(
-            "backend.services.resolution_completion_service.OpenAI",
-            lambda *args, **kwargs: self._FakeOpenAI([response]),
+            "backend.services.resolution_completion_service.get_client",
+            return_value=self._FakeOpenAI([response]),
         ):
             updated, usage, report = complete_resolution_gaps(
                 ontology=ontology,
@@ -664,8 +664,8 @@ class ResolutionCompletionServiceTests(unittest.TestCase):
         text = "--- PAGE 4 ---\nAlarm E01: adjust the regulator to the specified pressure."
 
         with patch(
-            "backend.services.resolution_completion_service.OpenAI",
-            lambda *args, **kwargs: self._FakeOpenAI([response]),
+            "backend.services.resolution_completion_service.get_client",
+            return_value=self._FakeOpenAI([response]),
         ):
             updated, _, report = complete_resolution_gaps(
                 ontology=ontology,
@@ -688,6 +688,162 @@ class ResolutionCompletionServiceTests(unittest.TestCase):
             and relation.to_id == "ca_adjust_air_pressure"
             for relation in updated.relations
         ))
+
+    def _ontology_with_existing_action(self) -> OntologyInstance:
+        data = self._base_ontology(include_failure=True, include_error=False).model_dump()
+        data["nodes"]["CorrectiveAction"] = [{
+            "action_id": "ca_adjust_air_pressure",
+            "name": "Adjust air pressure",
+            "description": "Adjust the air supply pressure.",
+            "instruction_text": "1. Adjust the regulator to the specified pressure.",
+            "source_type": "Service Manual",
+            "source_title": "Demo",
+            "source_page": 4,
+            "source_reference": "PAGE 4",
+        }]
+        return OntologyInstance.model_validate(data)
+
+    def test_completion_reuses_existing_action_id_without_duplicating(self) -> None:
+        """A correctly reused action_id must link to the existing node, never
+        be renamed into a near-identical duplicate (ca_..._2)."""
+        ontology = self._ontology_with_existing_action()
+        response = self._FakeResponse(
+            '{"status":"found","failure_mode":{"failure_mode_id":"FM-001"},'
+            '"corrective_actions":[{"action_id":"ca_adjust_air_pressure",'
+            '"name":"Adjust air pressure","description":"Adjust the air supply pressure.",'
+            '"instruction_text":"1. Adjust the regulator to the specified pressure.",'
+            '"source_page":4,"source_reference":"PAGE 4",'
+            '"evidence_quote":"Adjust the regulator to the specified pressure."}]}'
+        )
+        text = "--- PAGE 4 ---\nLow air pressure. Adjust the regulator to the specified pressure."
+
+        with patch(
+            "backend.services.resolution_completion_service.get_client",
+            return_value=self._FakeOpenAI([response]),
+        ):
+            updated, _, report = complete_resolution_gaps(
+                ontology=ontology,
+                text_with_pages=text,
+                model_name="gpt-5.4",
+                parse_json=_extract_json_object,
+            )
+
+        self.assertEqual(report["completed"], 1)
+        action_ids = [item["action_id"] for item in updated.nodes["CorrectiveAction"]]
+        self.assertEqual(action_ids, ["ca_adjust_air_pressure"])
+        self.assertTrue(any(
+            relation.name == "RESOLVED_BY"
+            and relation.from_id == "FM-001"
+            and relation.to_id == "ca_adjust_air_pressure"
+            for relation in updated.relations
+        ))
+
+    def test_completion_drops_action_with_unsupported_evidence_quote(self) -> None:
+        """A retrieved action whose quote is not found in the selected pages is
+        dropped — same guardrail already enforced by coverage_completion."""
+        ontology = self._base_ontology(include_failure=True, include_error=False)
+        response = self._FakeResponse(
+            '{"status":"found","failure_mode":{"failure_mode_id":"FM-001"},'
+            '"corrective_actions":[{"action_id":"ca_hallucinated",'
+            '"name":"Recalibrate flux capacitor","description":"Invented action.",'
+            '"instruction_text":"1. Recalibrate the flux capacitor.",'
+            '"source_page":4,"source_reference":"PAGE 4",'
+            '"evidence_quote":"this quote does not exist anywhere in the manual pages"}]}'
+        )
+        text = "--- PAGE 4 ---\nLow air pressure. Adjust the regulator to the specified pressure."
+
+        with patch(
+            "backend.services.resolution_completion_service.get_client",
+            return_value=self._FakeOpenAI([response]),
+        ):
+            updated, _, report = complete_resolution_gaps(
+                ontology=ontology,
+                text_with_pages=text,
+                model_name="gpt-5.4",
+                parse_json=_extract_json_object,
+            )
+
+        self.assertEqual(report["completed"], 0)
+        self.assertEqual(updated.nodes["CorrectiveAction"], [])
+        self.assertFalse(any(relation.name == "RESOLVED_BY" for relation in updated.relations))
+
+    def test_completion_corrects_cited_page_when_quote_found_elsewhere(self) -> None:
+        """A quote supported by a different selected page corrects the citation so
+        the downstream grounding pass verifies against the right page."""
+        ontology = self._base_ontology(include_failure=True, include_error=False)
+        response = self._FakeResponse(
+            '{"status":"found","failure_mode":{"failure_mode_id":"FM-001"},'
+            '"corrective_actions":[{"action_id":"ca_adjust_air_pressure",'
+            '"name":"Adjust air pressure","description":"Adjust the air supply pressure.",'
+            '"instruction_text":"1. Adjust the regulator to the specified pressure.",'
+            '"source_page":4,"source_reference":"PAGE 4",'
+            '"evidence_quote":"Adjust the regulator to the specified pressure."}]}'
+        )
+        text = (
+            "--- PAGE 4 ---\nLow air pressure troubleshooting index.\n\n"
+            "--- PAGE 5 ---\nRemedy: adjust the regulator to the specified pressure."
+        )
+
+        with patch(
+            "backend.services.resolution_completion_service.get_client",
+            return_value=self._FakeOpenAI([response]),
+        ):
+            updated, _, report = complete_resolution_gaps(
+                ontology=ontology,
+                text_with_pages=text,
+                model_name="gpt-5.4",
+                parse_json=_extract_json_object,
+            )
+
+        self.assertEqual(report["completed"], 1)
+        action = updated.nodes["CorrectiveAction"][0]
+        self.assertEqual(action["source_page"], 5)
+        self.assertEqual(action["source_reference"], "PAGE 5")
+
+
+class DerivedGeneratesErrorTests(unittest.TestCase):
+    def test_normalize_derives_generates_error_for_every_error_code(self) -> None:
+        from backend.services.ontology_pipeline import normalize_ontology_instance
+        from backend.models import OntologyInstance
+
+        ontology = OntologyInstance.model_validate({
+            "ontology_name": "diagnostic",
+            "version": "V1",
+            "language": "en",
+            "source_type": "Service Manual",
+            "source_title": "Demo",
+            "nodes": {
+                "Asset": [{
+                    "asset_id": "ASSET-001", "name": "Demo", "description": "d",
+                    "brand": "Demo", "model": "M1", "asset_type": "machine",
+                }],
+                "Component": [],
+                "Symptom": [],
+                "FailureMode": [],
+                "CorrectiveAction": [],
+                "ErrorCode": [
+                    {"error_code_id": "err_e01", "name": "E01", "description": "Alarm", "code": "E01"},
+                    {"error_code_id": "err_e02", "name": "E02", "description": "Alarm", "code": "E02"},
+                ],
+            },
+            "relations": [
+                # One link already present: must not be duplicated.
+                {"name": "GENERATES_ERROR", "from_type": "Asset", "from_id": "ASSET-001",
+                 "to_type": "ErrorCode", "to_id": "err_e01", "evidence": []},
+            ],
+        })
+
+        normalized = normalize_ontology_instance(ontology)
+
+        generates = [
+            (relation.from_id, relation.to_id)
+            for relation in normalized.relations
+            if relation.name == "GENERATES_ERROR"
+        ]
+        self.assertEqual(
+            sorted(generates),
+            [("ASSET-001", "err_e01"), ("ASSET-001", "err_e02")],
+        )
 
 
 class MergeEvidenceAndDedupTests(unittest.TestCase):

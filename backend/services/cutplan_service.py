@@ -296,26 +296,39 @@ def _build_keyword_section(
     )
 
 
+# Upper bound of contiguous ToC pages collected once the header is found.
+# Large manuals (500+ pages) legitimately have 15+ ToC pages; the collection
+# loop below still stops early when a page no longer looks like ToC entries.
+_TOC_MAX_COLLECT_PAGES = 24
+
+
 def find_toc_pages(
-    pages: list[dict], max_scan: int = 15,
+    pages: list[dict], max_scan: int | None = None,
 ) -> tuple[bool, str | None, int | None, int | None]:
-    """Search first N pages for a Table of Contents.
+    """Search the front matter for a Table of Contents.
+
+    `max_scan` defaults to ~10% of the document (min 15, max 60 pages):
+    large manuals bury the ToC behind legal/front-matter pages, so a fixed
+    15-page window misses it entirely (observed on a 588-page Haas manual
+    with the ToC starting at physical page 17).
 
     Returns (found, toc_text, toc_start_page, toc_end_page).
     toc_start_page and toc_end_page are absolute PDF page numbers.
     """
+    if max_scan is None:
+        max_scan = min(60, max(15, len(pages) // 10))
     scan_pages = [p for p in pages if p["page_number"] <= max_scan]
 
     for page in scan_pages:
         text = page["text"]
         if _TOC_HEADER_RE.search(text):
-            # Collect ToC text from this page and next few pages
+            # Collect ToC text from this page and the following ToC-like pages
             toc_parts: list[str] = []
             start_idx = pages.index(page)
             toc_start_page = page["page_number"]
             toc_end_page = page["page_number"]
 
-            for toc_page in pages[start_idx : start_idx + 6]:
+            for toc_page in pages[start_idx : start_idx + _TOC_MAX_COLLECT_PAGES]:
                 toc_text = toc_page["text"]
                 # Check it still looks like ToC (has entry-like lines)
                 if toc_parts and not _TOC_ENTRY_RE.search(toc_text):

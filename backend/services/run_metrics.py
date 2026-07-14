@@ -297,6 +297,7 @@ def build_metrics_payload(store: dict[str, Any]) -> dict[str, Any]:
         "totals": totals,
         "nodes_by_type": nodes_by_type,
         "graph_coverage": graph_coverage,
+        "ingestion": deepcopy(store.get("ingestion") or {}),
         "resolution_completion": resolution_completion,
         "review": {
             "validated_triplets": validated_triplets,

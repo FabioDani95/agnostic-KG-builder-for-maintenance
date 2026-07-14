@@ -67,6 +67,30 @@ _LOW_SIGNAL_ACTION_STEP_RE = re.compile(
     r"refer to (?:the )?plant documentation.*"
     r")\s*$"
 )
+# Physical/logical element that can sit in a reversible operational or safety
+# interlock position (as opposed to a serviceable part that can degrade).
+_OPERATIONAL_STATE_CUE_RE = re.compile(
+    r"(?i)\b("
+    r"door|doors|guard|guards|cover|covers|panel|panels|gate|hatch|latch|"
+    r"e-?stop|emergency\s+stop|setup\s+mode|key\s?switch|interlock|"
+    r"pallet|station|cycle|operation|fixture\s+clamp"
+    r")\b"
+)
+# Reversible operational condition (a normal position/mode, not a defect).
+# Bare "open"/"closed" are deliberately excluded from the standalone token list
+# — they match incidental test context ("measured with the door closed") — and
+# only count inside an explicit "in ... state" phrase.
+_REVERSIBLE_STATE_RE = re.compile(
+    r"(?i)("
+    r"\b(?:unlocked|locked|"
+    r"pressed|pushed|depressed|released|"
+    r"activated|engaged|disengaged|enabled|disabled|"
+    r"interrupted|paused|halted|suspended|incomplete)\b|"
+    r"\bnot\s+cycled\b|"
+    r"\bin\s+[\w\s-]{0,30}?state\b|"
+    r"\bin\s+emergency\s+stop\b"
+    r")"
+)
 _ASSET_TYPE_HINTS: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"(?i)\bcontrol\s+box\b|\bcontrol\s+cabinet\b|\bcontroller\b"), "control box"),
     (re.compile(r"(?i)\bteach\s+pendant\b"), "teach pendant"),
@@ -330,6 +354,38 @@ def has_actionable_instruction(instruction_text: str) -> bool:
     if not steps:
         return False
     return any(_REPAIR_ACTION_RE.search(step) for step in steps)
+
+
+def is_operational_state_failure_mode(
+    name: str,
+    description: str,
+    material_context: str = "",
+) -> bool:
+    """True when the "failure mode" describes a reversible operational or safety
+    interlock state (door open, e-stop pressed, cycle interrupted) rather than a
+    component in a degraded condition.
+
+    Advisory only — never used to hard-filter. A safety interlock IS a
+    legitimate reason a machine will not start, so on some manuals these are
+    valid diagnostic content; the point is to flag the ambiguity for the human
+    gate, not to decide it automatically. The presence of any degradation/cause
+    token (worn, broken, faulty, disconnected, ...) means the node is a real
+    failure that merely names an operational element, so it is not flagged.
+    """
+    label = str(name or "").strip()
+    if not normalize_semantic_text(label):
+        return False
+    # The operational-state signal must be in the NAME (the failure mode's
+    # identity), not incidental test context in the description (e.g. "no
+    # continuity measured with the door closed" is a real electrical fault).
+    if not (_OPERATIONAL_STATE_CUE_RE.search(label) and _REVERSIBLE_STATE_RE.search(label)):
+        return False
+    combined = " ".join(
+        part for part in (name or "", description or "", material_context or "") if part
+    )
+    if _CAUSE_RE.search(combined):
+        return False
+    return True
 
 
 def is_failure_mode_candidate(name: str, description: str, material_context: str) -> bool:

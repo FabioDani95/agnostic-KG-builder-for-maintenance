@@ -3,6 +3,7 @@ import unittest
 from backend.models import TocEntry
 from backend.services.cutplan_service import (
     extract_asset_identity,
+    find_toc_pages,
     is_component_inventory_section,
     normalize_product_info,
     select_toc_sections,
@@ -131,6 +132,46 @@ class CutPlanServiceTests(unittest.TestCase):
         self.assertTrue(is_component_inventory_section("VB-60 Assembly Drawings & Parts Lists"))
         self.assertTrue(is_component_inventory_section("Control Circuit Reference Diagram"))
         self.assertFalse(is_component_inventory_section("Revision History"))
+
+
+class FindTocPagesTests(unittest.TestCase):
+    @staticmethod
+    def _pages(total: int, toc_start: int, toc_len: int) -> list[dict]:
+        pages = []
+        for number in range(1, total + 1):
+            if toc_start <= number < toc_start + toc_len:
+                header = "Contents\n" if number == toc_start else ""
+                text = header + "\n".join(
+                    f"Section {number}.{idx} title . . . . . . {number + idx}"
+                    for idx in range(1, 6)
+                )
+            else:
+                text = f"Ordinary body text of page {number}."
+            pages.append({"page_number": number, "text": text})
+        return pages
+
+    def test_toc_behind_long_front_matter_is_found_on_large_manuals(self):
+        # ToC at physical page 17 of a 500-page manual: the old fixed 15-page
+        # scan window missed it entirely (observed on a real Haas manual).
+        pages = self._pages(total=500, toc_start=17, toc_len=3)
+        found, toc_text, start, end = find_toc_pages(pages)
+        self.assertTrue(found)
+        self.assertEqual(start, 17)
+        self.assertGreaterEqual(end, 19)
+
+    def test_long_toc_is_collected_beyond_six_pages(self):
+        pages = self._pages(total=200, toc_start=5, toc_len=15)
+        found, toc_text, start, end = find_toc_pages(pages)
+        self.assertTrue(found)
+        self.assertEqual(start, 5)
+        self.assertEqual(end, 19)
+        self.assertIn("--- PAGE 19 ---", toc_text)
+
+    def test_small_doc_default_window_still_15_pages(self):
+        pages = self._pages(total=30, toc_start=14, toc_len=2)
+        found, _, start, _ = find_toc_pages(pages)
+        self.assertTrue(found)
+        self.assertEqual(start, 14)
 
 
 if __name__ == "__main__":

@@ -26,9 +26,10 @@ _ID_FIELD_BY_TYPE: dict[str, str] = {
     "ErrorCode": "error_code_id",
 }
 
-# Relations whose endpoints both exist are trusted even without quotes;
-# only structurally derived relations are exempt from quote checks entirely.
+# Structurally derived relations are exempt. Causal relations without a quote
+# are explicitly ungrounded; non-causal association edges remain advisory.
 _DERIVED_RELATIONS = {"HAS_COMPONENT"}
+_CAUSAL_RELATIONS = {"MAY_INDICATE", "RESOLVED_BY", "INDICATES"}
 
 
 def _node_label_index(ontology: OntologyInstance) -> dict[str, tuple[str, str]]:
@@ -60,17 +61,25 @@ def ground_relation_evidence(
 
     checked = 0
     grounded = 0
+    causal_total = 0
+    causal_without_quote = 0
     ungrounded_relations: list[Any] = []
 
     for relation in ontology.relations or []:
         if relation.name in _DERIVED_RELATIONS:
             continue
+        if relation.name in _CAUSAL_RELATIONS:
+            causal_total += 1
         quotes = [
             (int(getattr(ev, "source_page", 0) or 0), str(getattr(ev, "quote", "") or "").strip())
             for ev in (relation.evidence or [])
         ]
         quotes = [(page, quote) for page, quote in quotes if quote]
         if not quotes:
+            if relation.name in _CAUSAL_RELATIONS:
+                checked += 1
+                causal_without_quote += 1
+                ungrounded_relations.append(relation)
             continue
         checked += 1
         supported = False
@@ -120,6 +129,13 @@ def ground_relation_evidence(
         "relations_grounded": grounded,
         "relations_ungrounded": len(ungrounded_relations),
         "nodes_flagged": len(ungrounded_node_keys),
+        "causal_relations_total": causal_total,
+        "causal_relations_without_quote": causal_without_quote,
+        "causal_grounding_ratio": round(
+            (causal_total - sum(1 for rel in ungrounded_relations if rel.name in _CAUSAL_RELATIONS))
+            / max(1, causal_total),
+            4,
+        ),
     }
     if ungrounded_relations:
         logger.info(

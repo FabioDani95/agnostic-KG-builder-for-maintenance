@@ -228,19 +228,38 @@ def detect_orphans(
 
 
 def detect_invalid_cycles(G: nx.DiGraph) -> list[GraphIssue]:
-    """Detect cycles in the directed relation graph (should be a DAG)."""
+    """Detect cycles in the directed relation graph (should be a DAG).
+
+    Uses strongly connected components instead of simple-cycle enumeration:
+    nx.simple_cycles is exponential in the worst case, while every cycle lives
+    inside a non-trivial SCC (or a self-loop) and one issue per SCC is what the
+    operator needs anyway.
+    """
     issues: list[GraphIssue] = []
     try:
-        cycles = list(nx.simple_cycles(G))
+        non_trivial_sccs = [
+            sorted(component)
+            for component in nx.strongly_connected_components(G)
+            if len(component) > 1
+        ]
+        self_loops = sorted(nx.nodes_with_selfloops(G))
     except Exception:
         return issues
 
-    for cycle in cycles:
+    for component in sorted(non_trivial_sccs):
         issues.append(GraphIssue(
             issue_type="cycle",
-            affected_nodes=cycle,
-            description=f"Cycle detected among nodes: {', '.join(cycle)}.",
+            affected_nodes=component,
+            description=f"Cycle detected among nodes: {', '.join(component)}.",
             suggested_fix="Review the relations forming this cycle and remove the incorrect edge.",
+            auto_fixable=False,
+        ))
+    for node in self_loops:
+        issues.append(GraphIssue(
+            issue_type="cycle",
+            affected_nodes=[node],
+            description=f"Self-referencing relation detected on node: {node}.",
+            suggested_fix="Remove the relation pointing the node at itself.",
             auto_fixable=False,
         ))
     return issues
@@ -287,6 +306,10 @@ _SUGGESTION_PAIRS: list[tuple[str, str, str]] = [
 
 # Minimum token-overlap ratio to propose a suggestion
 _SIMILARITY_THRESHOLD = 0.20
+# Maximum suggestions per (source node, relation type). Real diagnostic graphs
+# are multi-cause/multi-target: proposing only the single best candidate hid
+# legitimate parallel links from the operator.
+_MAX_SUGGESTIONS_PER_SOURCE = 3
 
 
 def suggest_missing_relations(
@@ -297,6 +320,7 @@ def suggest_missing_relations(
 
     Only proposes relations that do not already exist in the ontology.
     Uses token_overlap from ontology_semantics as the similarity signal.
+    Returns up to _MAX_SUGGESTIONS_PER_SOURCE candidates per source node.
     """
     suggestions: list[SuggestedRelation] = []
 
@@ -315,36 +339,31 @@ def suggest_missing_relations(
             if not from_id:
                 continue
             from_text = _node_text(from_item)
+            from_label = from_item.get("name", from_id)
 
-            best_score = 0.0
-            best_to_id = ""
-            best_to_label = ""
-
+            scored: list[tuple[float, str, str]] = []
             for to_item in to_items:
                 to_id = _item_id(to_type, to_item)
                 if not to_id or (rel_name, from_id, to_id) in existing_edges:
                     continue
-                to_text = _node_text(to_item)
-                score = _token_overlap(from_text, to_text)
-                if score > best_score:
-                    best_score = score
-                    best_to_id = to_id
-                    best_to_label = to_item.get("name", to_id)
+                score = _token_overlap(from_text, _node_text(to_item))
+                if score >= _SIMILARITY_THRESHOLD:
+                    scored.append((score, to_id, to_item.get("name", to_id)))
 
-            if best_score >= _SIMILARITY_THRESHOLD and best_to_id:
-                from_label = from_item.get("name", from_id)
+            scored.sort(key=lambda item: (-item[0], item[1]))
+            for score, to_id, to_label in scored[:_MAX_SUGGESTIONS_PER_SOURCE]:
                 suggestions.append(SuggestedRelation(
                     relation_name=rel_name,
                     from_type=from_type,
                     from_id=from_id,
                     from_label=from_label,
                     to_type=to_type,
-                    to_id=best_to_id,
-                    to_label=best_to_label,
-                    confidence=round(best_score, 3),
+                    to_id=to_id,
+                    to_label=to_label,
+                    confidence=round(score, 3),
                     rationale=(
-                        f"Token overlap {best_score:.2f} between "
-                        f"'{from_label}' and '{best_to_label}'."
+                        f"Token overlap {score:.2f} between "
+                        f"'{from_label}' and '{to_label}'."
                     ),
                 ))
 

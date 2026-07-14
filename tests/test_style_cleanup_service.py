@@ -142,7 +142,7 @@ def test_cleanup_export_ontology_accepts_guarded_llm_rewrites(monkeypatch):
         lambda: _style_cleanup_config(deterministic_enabled=False, llm_enabled=True),
     )
     monkeypatch.setattr(
-        "backend.services.style_cleanup_service.OpenAI",
+        "backend.services.style_cleanup_service.get_client",
         lambda *args, **kwargs: _FakeOpenAI(
             content=json.dumps({
                 "node__Symptom__0__name": "Power board fault",
@@ -193,7 +193,7 @@ def test_cleanup_export_ontology_rejects_llm_rewrites_with_numeric_drift(monkeyp
         lambda: _style_cleanup_config(deterministic_enabled=False, llm_enabled=True),
     )
     monkeypatch.setattr(
-        "backend.services.style_cleanup_service.OpenAI",
+        "backend.services.style_cleanup_service.get_client",
         lambda *args, **kwargs: _FakeOpenAI(
             content=json.dumps({
                 "node__CorrectiveAction__0__instruction_text": "1. Replace the blown 48 V fuse. 2. Restart the controller.",

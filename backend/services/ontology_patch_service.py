@@ -127,13 +127,29 @@ def apply_ontology_patch(
     ]
     removed_relations = before - len(relations)
 
+    # Valid endpoints AFTER upserts and removals: patched relations may only
+    # reference nodes that actually exist in the merged instance. Without this
+    # gate a contradictory patch (remove fm_x + add RESOLVED_BY from fm_x) or
+    # an invented id produced dangling edges that surfaced as blocking
+    # relation_missing_source errors (observed on a real 588-page manual run).
+    valid_node_ids = {
+        str(node.get(id_field) or "").strip()
+        for label, id_field in _NODE_ID_FIELDS.items()
+        for node in nodes.get(label) or []
+        if isinstance(node, dict) and str(node.get(id_field) or "").strip()
+    }
+
     existing_keys = {_relation_key(rel) for rel in relations}
     added_relations = 0
+    skipped_dangling = 0
     for rel in patch.get("add_relations") or []:
         if not isinstance(rel, dict):
             continue
         key = _relation_key(rel)
         if not all(key) or key in existing_keys:
+            continue
+        if key[1] not in valid_node_ids or key[2] not in valid_node_ids:
+            skipped_dangling += 1
             continue
         relations.append(rel)
         existing_keys.add(key)
@@ -145,5 +161,6 @@ def apply_ontology_patch(
         "removed_nodes": removed_nodes,
         "added_relations": added_relations,
         "removed_relations": removed_relations,
+        "skipped_dangling_relations": skipped_dangling,
     }
     return result, report

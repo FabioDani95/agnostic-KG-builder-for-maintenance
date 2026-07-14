@@ -8,6 +8,7 @@ import time
 
 from backend.app_config import (
     get_effective_small_doc_threshold,
+    get_pdf_ingestion_config,
     get_scoping_config,
 )
 from backend.models import (
@@ -39,6 +40,7 @@ from backend.services.cutplan_service import (
 )
 from backend.services.llm_service import call_openai_scoping
 from backend.services.pdf_service import format_text_with_pages
+from backend.services.pdf_service import apply_selective_ocr, summarize_page_ingestion
 from backend.services.run_metrics import record_stage_metrics, summarize_stage
 
 logger = logging.getLogger(__name__)
@@ -55,9 +57,16 @@ def _clean_json(raw: str) -> str:
 
 
 def _parse_toc_response(raw: str) -> tuple[list[TocEntry], dict]:
-    """Parse LLM ToC extraction response into (toc_entries, product_info_raw)."""
+    """Parse LLM ToC extraction response into (toc_entries, product_info_raw).
+
+    Uses the pipeline's JSON repair ladder: a response truncated at the
+    completion limit (long ToCs) still yields every complete entry instead of
+    silently degrading the whole run to the keyword fallback.
+    """
+    from backend.services.ontology_pipeline import _extract_json_object
+
     try:
-        data = json.loads(_clean_json(raw))
+        data = _extract_json_object(_clean_json(raw))
     except json.JSONDecodeError:
         logger.warning("Failed to parse ToC extraction response: %s", raw[:200])
         return [], {}
@@ -86,8 +95,10 @@ def _parse_section_response(
     total_pages: int,
 ) -> list[SectionInfo]:
     """Parse LLM section selection response and convert manual pages to absolute pages."""
+    from backend.services.ontology_pipeline import _extract_json_object
+
     try:
-        data = json.loads(_clean_json(raw))
+        data = _extract_json_object(_clean_json(raw))
     except json.JSONDecodeError:
         logger.warning("Failed to parse section selection response: %s", raw[:200])
         return []
@@ -115,6 +126,72 @@ def _parse_section_response(
     return sections
 
 
+def _identify_product_from_first_pages(
+    store: dict,
+    req: CutPlanRequest,
+    timeout_seconds: int,
+    scoping_usage_entries: list[dict],
+) -> ProductInfo | None:
+    """Identify the product from the first pages and persist the asset identity.
+
+    Best-effort: returns None (and logs) on any failure so scoping never aborts
+    for identity extraction.
+    """
+    pages = store["pages"]
+    total_pages = len(pages)
+    try:
+        first_pages = [p for p in pages if p["page_number"] <= 5]
+        first_pages_text = format_text_with_pages(first_pages)
+        product_id_prompt = build_product_id_prompt(first_pages_text)
+        raw_pid, usage_pid = call_openai_scoping(
+            product_id_prompt,
+            model_name=req.model_name,
+            timeout=timeout_seconds,
+        )
+        scoping_usage_entries.append(usage_pid)
+        try:
+            pid_data = json.loads(raw_pid.strip())
+        except Exception:
+            import re as _re
+            match = _re.search(r"\{.*\}", raw_pid, _re.DOTALL)
+            pid_data = json.loads(match.group(0)) if match else {}
+        if not pid_data:
+            return None
+        normalized_pid = normalize_product_info(
+            pid_data,
+            filename=store.get("filename", ""),
+        )
+        product_info = ProductInfo(
+            product_name=normalized_pid.get("product_name", ""),
+            product_short_name=normalized_pid.get("product_short_name", ""),
+            brand=normalized_pid.get("brand", ""),
+            model=normalized_pid.get("model", ""),
+            asset_id=normalized_pid.get("asset_id", ""),
+            asset_type=normalized_pid.get("asset_type", ""),
+            document_type=normalized_pid.get("document_type", ""),
+            language=normalized_pid.get("language", ""),
+            page_count=total_pages,
+        )
+        store["source_type"] = product_info.document_type
+        store["source_title"] = product_info.product_name
+        store["asset_identity"] = extract_asset_identity(
+            normalized_pid,
+            fallback_name=product_info.product_name,
+            source_type=product_info.document_type,
+            filename=store.get("filename", ""),
+        )
+        logger.info(
+            "[scoping] Product identified from first pages: %s",
+            product_info.product_name,
+        )
+        return product_info
+    except Exception:
+        logger.warning(
+            "[scoping] Product identification from first pages failed — using filename",
+        )
+        return None
+
+
 def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) -> CutPlan:
     """Run the cut-plan flow against one in-memory store entry."""
     t0 = time.perf_counter()
@@ -124,6 +201,21 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
 
     pages = store["pages"]
     total_pages = len(pages)
+    ocr_cfg = dict((get_pdf_ingestion_config().get("ocr") or {}))
+
+    def _ocr_selected(candidate_pages: list[int]) -> dict:
+        report = apply_selective_ocr(
+            str(store.get("pdf_path") or ""),
+            pages,
+            candidate_pages,
+            config=ocr_cfg,
+            max_pages=int(ocr_cfg.get("selected_max_pages", 24) or 24),
+        )
+        store["ingestion"] = {
+            **summarize_page_ingestion(pages),
+            "selective_ocr": report,
+        }
+        return report
     # None → autodetect from printed page labels (refined with ToC anchoring
     # below, once the entries are parsed). An explicit value — including 0 —
     # is an operator override and is never second-guessed.
@@ -154,11 +246,18 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
                   "message": f"Scoping started — {total_pages} pages to analyze."})
 
     if total_pages <= small_doc_threshold:
+        ocr_report = _ocr_selected([page["page_number"] for page in pages])
         logger.info(
-            "[scoping] Small doc (%d <= %d), skipping (%.1fs)",
+            "[scoping] Small doc (%d <= %d), skipping section scoping (%.1fs)",
             total_pages,
             small_doc_threshold,
             time.perf_counter() - t0,
+        )
+        # Small docs skip section scoping, not identity: without this the Asset
+        # node falls back to the filename and the whole run loses its canonical
+        # product identity.
+        small_doc_product_info = _identify_product_from_first_pages(
+            store, req, timeout_seconds, scoping_usage_entries,
         )
         record_stage_metrics(
             store,
@@ -166,16 +265,28 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
             summarize_stage(
                 "scoping",
                 t0,
-                [],
+                scoping_usage_entries,
                 details={
                     "total_pages": total_pages,
                     "selected_pages": total_pages,
                     "selected_sections": 0,
                     "skipped": True,
                     "page_offset": page_offset,
+                    "ocr": ocr_report,
                 },
             ),
         )
+        store["cut_plan"] = {
+            "pdf_id": req.pdf_id,
+            "total_pages": total_pages,
+            "sections": [],
+            "pages_to_keep": [p["page_number"] for p in pages],
+            "page_offset": page_offset,
+            "page_offset_detection": offset_detection,
+            "toc": None,
+            "skipped": True,
+            "product_info": small_doc_product_info.model_dump() if small_doc_product_info else None,
+        }
         return CutPlan(
             pdf_id=req.pdf_id,
             total_pages=total_pages,
@@ -184,6 +295,7 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
             page_offset=page_offset,
             page_offset_detection=offset_detection,
             skipped=True,
+            product_info=small_doc_product_info,
         )
 
     toc_found, toc_text, toc_start, toc_end = find_toc_pages(pages)
@@ -329,54 +441,9 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
             )
 
     if not product_info:
-        try:
-            first_pages = [p for p in pages if p["page_number"] <= 5]
-            first_pages_text = format_text_with_pages(first_pages)
-            product_id_prompt = build_product_id_prompt(first_pages_text)
-            raw_pid, usage_pid = call_openai_scoping(
-                product_id_prompt,
-                model_name=req.model_name,
-                timeout=timeout_seconds,
-            )
-            scoping_usage_entries.append(usage_pid)
-            try:
-                pid_data = json.loads(raw_pid.strip())
-            except Exception:
-                import re as _re
-                match = _re.search(r"\{.*\}", raw_pid, _re.DOTALL)
-                pid_data = json.loads(match.group(0)) if match else {}
-            if pid_data:
-                normalized_pid = normalize_product_info(
-                    pid_data,
-                    filename=store.get("filename", ""),
-                )
-                product_info = ProductInfo(
-                    product_name=normalized_pid.get("product_name", ""),
-                    product_short_name=normalized_pid.get("product_short_name", ""),
-                    brand=normalized_pid.get("brand", ""),
-                    model=normalized_pid.get("model", ""),
-                    asset_id=normalized_pid.get("asset_id", ""),
-                    asset_type=normalized_pid.get("asset_type", ""),
-                    document_type=normalized_pid.get("document_type", ""),
-                    language=normalized_pid.get("language", ""),
-                    page_count=total_pages,
-                )
-                store["source_type"] = product_info.document_type
-                store["source_title"] = product_info.product_name
-                store["asset_identity"] = extract_asset_identity(
-                    normalized_pid,
-                    fallback_name=product_info.product_name,
-                    source_type=product_info.document_type,
-                    filename=store.get("filename", ""),
-                )
-                logger.info(
-                    "[scoping] Product identified from first pages: %s",
-                    product_info.product_name,
-                )
-        except Exception:
-            logger.warning(
-                "[scoping] Product identification from first pages failed — using filename",
-            )
+        product_info = _identify_product_from_first_pages(
+            store, req, timeout_seconds, scoping_usage_entries,
+        )
 
     kw_sections = keyword_scan(pages)
     logger.info(
@@ -413,6 +480,16 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
         merged = merge_sections(rule_sections, llm_sections, kw_sections)
 
     all_pages = sections_to_page_list(merged)
+    ocr_candidate_pages = all_pages or [page["page_number"] for page in pages]
+    ocr_report = _ocr_selected(ocr_candidate_pages)
+    if ocr_report.get("succeeded"):
+        logger.info(
+            "[scoping] Selective OCR recovered %d/%d candidate page(s)",
+            int(ocr_report.get("succeeded", 0) or 0),
+            int(ocr_report.get("attempted", 0) or 0),
+        )
+    elif ocr_report.get("unavailable"):
+        logger.warning("[scoping] Selective OCR unavailable; native text preserved")
     filtered_pages = filter_pages_by_language(pages, all_pages)
     component_pages = sections_to_page_list([
         section for section in merged
@@ -457,6 +534,7 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
                 "selected_sections": len(merged),
                 "skipped": False,
                 "page_offset": page_offset,
+                "ocr": ocr_report,
             },
         ),
     )
@@ -523,9 +601,14 @@ def approve_cut_plan_workflow(store: dict, req: CutPlanApproval) -> dict[str, st
         for section in req.sections
     ] if req.sections else store.get("cut_plan", {}).get("sections", [])
 
-    store["cut_plan"] = {
+    # Merge the approval into the existing cut plan instead of replacing it:
+    # a full replace used to drop product_info, toc, total_pages and the
+    # page-offset detection metadata gathered during scoping.
+    existing_cut_plan = dict(store.get("cut_plan") or {})
+    existing_cut_plan.update({
         "pages_to_keep": sorted(req.pages_to_keep),
         "page_offset": req.page_offset,
         "sections": sections_for_store,
-    }
+    })
+    store["cut_plan"] = existing_cut_plan
     return {"status": "ok"}

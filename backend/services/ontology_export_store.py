@@ -237,6 +237,30 @@ def build_metrics_export_document(
     }
 
 
+def _is_contract_payload(ontology: dict[str, Any]) -> bool:
+    """True when the payload already went through prepare_exported_ontology."""
+    metadata = ontology.get("metadata")
+    return (
+        isinstance(ontology.get("relationships"), list)
+        and isinstance(metadata, dict)
+        and "export_status" in metadata
+    )
+
+
+def _next_file_version(target_path: Path) -> str:
+    """Bump the version of an existing export bundle; first export is V0."""
+    if not target_path.exists():
+        return "V0"
+    try:
+        existing = json.loads(target_path.read_text(encoding="utf-8"))
+        current = (existing.get("metadata") or {}).get("file_version") or (
+            existing.get("metadata") or {}
+        ).get("version")
+    except Exception:
+        return "V0"
+    return bump_file_version(current)
+
+
 def persist_exported_ontology(
     ontology: dict[str, Any],
     pdf_id: str | None = None,
@@ -244,9 +268,22 @@ def persist_exported_ontology(
     manual_filename: str | None = None,
 ) -> dict[str, str]:
     GENERATED_DIR.mkdir(parents=True, exist_ok=True)
-    prepared = prepare_exported_ontology(ontology, version="V0")
-    export_dir = build_export_directory(prepared, manual_filename=manual_filename)
+    export_dir = build_export_directory(ontology, manual_filename=manual_filename)
     target_path = export_dir / "ontology.json"
+    # Re-exporting the same bundle bumps the file version (V0 → V1 → ...):
+    # a re-export is a new revision, not the same file.
+    file_version = _next_file_version(target_path)
+    if _is_contract_payload(ontology):
+        # Callers that already ran prepare_exported_ontology (routers, export
+        # tools) only need the version stamped — re-preparing an already
+        # validated contract payload is wasted work and relies on the legacy
+        # migration to survive the second pass.
+        prepared = copy.deepcopy(ontology)
+        metadata = prepared.setdefault("metadata", {})
+        metadata["version"] = file_version
+        metadata["file_version"] = file_version
+    else:
+        prepared = prepare_exported_ontology(ontology, version=file_version)
 
     _write_json(target_path, prepared)
     _write_json(LATEST_ONTOLOGY_PATH, prepared)

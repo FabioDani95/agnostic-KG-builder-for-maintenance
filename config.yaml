@@ -28,6 +28,20 @@ shared_models: &strong_models
 pipeline:
   mode: multi_agent
 
+# Preserve the physical PDF page map and invoke OCR only when native text is
+# too sparse to be useful. The first pages bootstrap ToC discovery; after
+# scoping, only low-text pages inside selected sections are considered.
+pdf_ingestion:
+  preserve_all_pages: true
+  ocr:
+    enabled: true
+    language: eng
+    dpi: 200
+    min_native_chars: 80
+    bootstrap_pages: 15
+    bootstrap_max_pages: 5
+    selected_max_pages: 24
+
 agents:
   scoping:
     enabled: true
@@ -122,15 +136,15 @@ style_cleanup:
     ErrorCode: [name, description]
 
 scoping:
-  max_pages: 12
-
   small_doc_threshold: 15
 
   timeout_seconds: 120
 
   max_input_chars: 90000
   estimated_max_input_tokens: 22000
-  max_output_tokens: 2200
+  # Large manuals produce multi-page ToCs with hundreds of entries: 2200
+  # tokens truncated the ToC-extraction JSON on a 588-page manual.
+  max_output_tokens: 6000
 
   models: *strong_models
 

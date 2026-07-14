@@ -33,7 +33,7 @@ def _triplet(symptom: str, pairs: list[tuple[str, str]], codes_by_fm: dict[str, 
                 "instruction_text": "", "linked_failure_mode_id": fm_id,
             })
     return {
-        "symptom": {"name": symptom, "description": ""},
+        "symptom": {"symptom_id": "sym_x", "name": symptom, "description": ""},
         "failure_modes": failure_modes,
         "corrective_actions": corrective_actions,
     }
@@ -152,11 +152,18 @@ def test_paraphrased_fm_is_grounded_via_relation_quote():
     triplet = _triplet("No water filling", [("Wire unit disconnected in inlet circuit", "Replace the wire unit")])
     ontology = {
         "nodes": {},
-        "relations": [{
-            "name": "MAY_INDICATE", "from_id": "sym_x", "to_id": "fm_0",
-            "evidence": [{"source_page": 18, "source_reference": "PAGE 18",
-                          "quote": "replace the wire unit"}],
-        }],
+        "relations": [
+            {
+                "name": "MAY_INDICATE", "from_id": "sym_x", "to_id": "fm_0",
+                "evidence": [{"source_page": 18, "source_reference": "PAGE 18",
+                              "quote": "no voltage at the water inlet valve"}],
+            },
+            {
+                "name": "RESOLVED_BY", "from_id": "fm_0", "to_id": "ca_0",
+                "evidence": [{"source_page": 18, "source_reference": "PAGE 18",
+                              "quote": "replace the wire unit"}],
+            },
+        ],
     }
     result = eg._match_triplets([], [triplet], ontology=ontology, page_texts=page_texts)
     assert result["chains"]["extra_grounded"] == 1
@@ -194,6 +201,27 @@ def test_gate_failures_include_quality_gates():
     assert any("min_recall" in failure for failure in failures)
 
 
+def test_gate_failures_include_structural_contracts():
+    eg = _load_eval_module()
+    report = {"fixtures": [{
+        "fixture_id": "fx",
+        "scoping": {"must_keep_passed": False},
+        "export_checks": {"passed": False},
+        "ontology": {
+            "schema_issues_by_severity": {"error": 2},
+            "dangling_relations": 1,
+            "human_review": {"matched": False},
+        },
+        "triplets": {"forbidden": {"violations": []}},
+        "quality_gates": {"passed": True},
+    }]}
+
+    failures = eg._report_gate_failures(report)
+    assert len(failures) == 5
+    assert any("must-keep" in failure for failure in failures)
+    assert any("dangling" in failure for failure in failures)
+
+
 def test_recall_floor_replaces_baseline_recall_comparison(tmp_path):
     eg = _load_eval_module()
 
@@ -222,7 +250,7 @@ def test_recall_floor_replaces_baseline_recall_comparison(tmp_path):
 def test_extra_chains_are_split_into_grounded_and_unsupported():
     eg = _load_eval_module()
     page_texts = [
-        "If the drain motor does not act and voltage exists, replace the drain motor.",
+        "No draining: if the drain motor does not act and voltage exists, replace the drain motor.",
     ]
     grounded = _triplet("No draining", [("drain motor does not act", "replace the drain motor")])
     hallucinated = _triplet("No draining", [("quantum flux destabilized", "recalibrate the flux capacitor")])
@@ -233,6 +261,21 @@ def test_extra_chains_are_split_into_grounded_and_unsupported():
     statuses = {c["failure_mode_name"]: c["status"] for c in result["actual_chains"]}
     assert statuses["drain motor does not act"] == "extra_grounded"
     assert statuses["quantum flux destabilized"] == "unsupported"
+
+
+def test_one_actual_chain_cannot_satisfy_two_expected_items():
+    eg = _load_eval_module()
+    actual = _triplet("No draining", [("drain hose blocked", "remove the blockage")])
+    expected = [
+        {"symptom": "No draining", "failure_mode": "drain hose blocked",
+         "corrective_action": "remove the blockage"},
+        {"symptom": "No draining", "failure_mode": "blocked drain hose",
+         "corrective_action": "remove blockage"},
+    ]
+
+    result = eg._match_triplets(expected, [actual])
+    assert result["matched"] == 1
+    assert len(result["unmatched_expected"]) == 1
 
 
 def test_eval_golden_mock_runs_all_fixtures_and_writes_report(tmp_path):

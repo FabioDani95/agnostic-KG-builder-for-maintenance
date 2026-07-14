@@ -23,7 +23,7 @@ from httpx import Timeout
 
 from backend.config import settings
 from backend.services.language_utils import language_label, normalize_language_code
-from backend.services.llm_gateway import get_client
+from backend.services.llm_gateway import chat_temperature_kwargs, get_client
 from backend.services.run_metrics import usage_from_response
 
 logger = logging.getLogger(__name__)
@@ -180,7 +180,7 @@ def translate_extraction(
     try:
         response = client.chat.completions.create(
             model=model,
-            temperature=0.0,
+            **chat_temperature_kwargs(model, 0.0),
             max_completion_tokens=8000,
             messages=[
                 {"role": "system", "content": system_prompt},

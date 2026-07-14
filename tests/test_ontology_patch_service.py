@@ -13,6 +13,9 @@ def _previous() -> dict:
         "source_type": "Service Manual",
         "source_title": "Demo Manual",
         "nodes": {
+            "Component": [
+                {"component_id": "comp_door", "name": "Door", "description": "d", "category": "Enclosure"},
+            ],
             "Symptom": [
                 {"symptom_id": "sym_a", "name": "Door stuck", "description": "d", "severity": "Medium"},
             ],
@@ -67,7 +70,8 @@ class ApplyOntologyPatchTests(unittest.TestCase):
             {"component_id": "comp_hinge", "name": "Hinge", "description": "d", "category": "Enclosure"},
         ]}}
         merged, _ = apply_ontology_patch(_previous(), patch)
-        self.assertEqual(merged["nodes"]["Component"][0]["component_id"], "comp_hinge")
+        component_ids = [item["component_id"] for item in merged["nodes"]["Component"]]
+        self.assertIn("comp_hinge", component_ids)
 
     def test_remove_node_also_drops_incident_relations(self):
         merged, report = apply_ontology_patch(_previous(), {"remove_node_ids": ["fm_bad"]})
@@ -102,7 +106,8 @@ class ApplyOntologyPatchTests(unittest.TestCase):
         merged, report = apply_ontology_patch(previous, {})
         self.assertEqual(merged, previous)
         self.assertEqual(report, {"upserted_nodes": 0, "removed_nodes": 0,
-                                  "added_relations": 0, "removed_relations": 0})
+                                  "added_relations": 0, "removed_relations": 0,
+                                  "skipped_dangling_relations": 0})
 
     def test_inputs_are_not_mutated(self):
         previous = _previous()

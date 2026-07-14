@@ -20,7 +20,7 @@ from backend.services.ontology_semantics import (
     semantic_tokens,
     semantically_equivalent,
 )
-from backend.services.llm_gateway import get_client
+from backend.services.llm_gateway import chat_temperature_kwargs, get_client
 from backend.services.run_metrics import usage_from_response
 
 logger = logging.getLogger(__name__)
@@ -99,13 +99,24 @@ def cleanup_export_ontology(
         return cleaned, {}, report
 
     target_lang = normalize_language_code(target_language or cleaned.get("language"))
-    rewrites, usage = _rewrite_fields_with_llm(
-        flat_fields=flat_fields,
-        target_language=target_lang,
-        model_name=model_name,
-        timeout_seconds=int(cfg.get("timeout_seconds", 120) or 120),
-        max_output_tokens=int(cfg.get("max_output_tokens", 6000) or 6000),
-    )
+    # One giant call over every field used to truncate on large exports (the
+    # rewrite output is roughly as long as the input) and a single parse failure
+    # silently disabled the whole cleanup. Batch by payload size instead: each
+    # call stays well inside the output budget and failures only cost one batch.
+    rewrites: dict[str, str] = {}
+    batch_usages: list[dict[str, Any]] = []
+    for batch in _batch_flat_fields(flat_fields, _MAX_BATCH_PAYLOAD_CHARS):
+        batch_rewrites, batch_usage = _rewrite_fields_with_llm(
+            flat_fields=batch,
+            target_language=target_lang,
+            model_name=model_name,
+            timeout_seconds=int(cfg.get("timeout_seconds", 120) or 120),
+            max_output_tokens=int(cfg.get("max_output_tokens", 6000) or 6000),
+        )
+        if batch_usage:
+            batch_usages.append(batch_usage)
+        rewrites.update(batch_rewrites)
+    usage = _sum_usage(batch_usages)
     if usage:
         report["model"] = str(usage.get("model", "") or model_name or settings.MODEL_NAME)
     if not rewrites:
@@ -133,6 +144,53 @@ def cleanup_export_ontology(
     if accepted_updates:
         cleaned["nodes"] = _apply_flat_updates(nodes, accepted_updates)
     return cleaned, usage, report
+
+
+# Per-batch payload budget for the LLM rewrite call. The rewrite output is
+# roughly as long as its input, so this must stay comfortably below
+# max_output_tokens * ~4 chars/token (6000 tokens ≈ 24000 chars).
+_MAX_BATCH_PAYLOAD_CHARS = 16000
+
+
+def _batch_flat_fields(
+    flat_fields: dict[str, str],
+    max_payload_chars: int,
+) -> list[dict[str, str]]:
+    """Split the flat field map into payload-bounded batches (order-preserving)."""
+    batches: list[dict[str, str]] = []
+    current: dict[str, str] = {}
+    current_chars = 0
+    for key, value in flat_fields.items():
+        entry_chars = len(key) + len(value) + 8
+        if current and current_chars + entry_chars > max_payload_chars:
+            batches.append(current)
+            current = {}
+            current_chars = 0
+        current[key] = value
+        current_chars += entry_chars
+    if current:
+        batches.append(current)
+    return batches
+
+
+def _sum_usage(usages: list[dict[str, Any]]) -> dict[str, Any]:
+    """Aggregate per-batch usage entries into one usage-shaped dict."""
+    entries = [usage for usage in usages if usage]
+    if not entries:
+        return {}
+    if len(entries) == 1:
+        return entries[0]
+    total = dict(entries[0])
+    for usage in entries[1:]:
+        for key in ("prompt", "completion", "total", "cached_prompt", "non_cached_prompt"):
+            total[key] = int(total.get(key, 0) or 0) + int(usage.get(key, 0) or 0)
+        total["estimated_cost_usd"] = round(
+            float(total.get("estimated_cost_usd", 0) or 0)
+            + float(usage.get("estimated_cost_usd", 0) or 0),
+            6,
+        )
+    total["batches"] = len(entries)
+    return total
 
 
 def _collect_editable_fields(
@@ -301,7 +359,7 @@ def _rewrite_fields_with_llm(
     try:
         response = client.chat.completions.create(
             model=model,
-            temperature=0.0,
+            **chat_temperature_kwargs(model, 0.0),
             max_completion_tokens=max_output_tokens,
             messages=[
                 {"role": "system", "content": _SYSTEM_PROMPT},

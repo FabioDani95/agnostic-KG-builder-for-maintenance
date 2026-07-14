@@ -86,11 +86,38 @@ def _merge_pipeline_results(
         }.get(node_type, "id")
         return str(node.get(id_field, node.get("id", ""))).strip()
 
+    def _with_node_id(node: dict, node_type: str, node_id: str) -> dict:
+        """Copy a richer duplicate while preserving the canonical identifier."""
+        id_field = {
+            "Asset": "asset_id",
+            "Component": "component_id",
+            "Symptom": "symptom_id",
+            "FailureMode": "failure_mode_id",
+            "CorrectiveAction": "action_id",
+            "ErrorCode": "error_code_id",
+        }.get(node_type, "id")
+        canonical = dict(node)
+        canonical[id_field] = node_id
+        return canonical
+
     def _node_name(node: dict) -> str:
         return str(node.get("name", node.get("title", ""))).strip()
 
     def _node_richness(node: dict) -> int:
         return sum(1 for value in node.values() if value not in ("", [], {}, None))
+
+    def _fill_missing_fields(primary: dict, secondary: dict) -> dict:
+        """Keep `primary` but fill its empty fields from `secondary`.
+
+        Duplicate nodes across chunks often carry complementary detail (one has
+        the description, the other the category): a plain "richer wins" replace
+        silently drops the loser's fields.
+        """
+        filled = dict(primary)
+        for key, value in secondary.items():
+            if filled.get(key) in ("", [], {}, None) and value not in ("", [], {}, None):
+                filled[key] = value
+        return filled
 
     for result in results:
         for node_type, node_list in result.ontology.nodes.items():
@@ -123,8 +150,11 @@ def _merge_pipeline_results(
                 )
                 if existing_by_id is not None:
                     if _node_richness(node) > _node_richness(existing_by_id):
-                        merged_nodes[node_type].remove(existing_by_id)
-                        merged_nodes[node_type].append(node)
+                        primary, secondary = node, existing_by_id
+                    else:
+                        primary, secondary = existing_by_id, node
+                    index = merged_nodes[node_type].index(existing_by_id)
+                    merged_nodes[node_type][index] = _fill_missing_fields(primary, secondary)
                     continue
 
                 if node_name and node_name in name_to_id[node_type]:
@@ -138,37 +168,50 @@ def _merge_pipeline_results(
                             ),
                             None,
                         )
-                        if (
-                            existing_by_name is not None
-                            and _node_richness(node) > _node_richness(existing_by_name)
-                        ):
-                            merged_nodes[node_type].remove(existing_by_name)
-                            merged_nodes[node_type].append(node)
+                        if existing_by_name is not None:
+                            candidate = _with_node_id(node, node_type, canonical_id)
+                            if _node_richness(candidate) > _node_richness(existing_by_name):
+                                primary, secondary = candidate, existing_by_name
+                            else:
+                                primary, secondary = existing_by_name, candidate
+                            index = merged_nodes[node_type].index(existing_by_name)
+                            merged_nodes[node_type][index] = _fill_missing_fields(primary, secondary)
                     continue
 
                 merged_nodes[node_type].append(node)
                 if node_name:
                     name_to_id[node_type][node_name] = node_id
 
-    merged_relations: list[OntologyRelationInstance] = []
-    seen_relations: set[tuple] = set()
-
+    # Duplicate relations across chunks corroborate each other: union their
+    # evidence instead of keeping only the first occurrence, so the confidence
+    # corroboration signal sees every cited page.
+    merged_relations_by_key: dict[tuple, OntologyRelationInstance] = {}
     for result in results:
         for relation in result.ontology.relations:
             from_id = id_remap.get(relation.from_id, relation.from_id)
             to_id = id_remap.get(relation.to_id, relation.to_id)
             key = (relation.name, from_id, to_id)
-            if key in seen_relations:
+            existing = merged_relations_by_key.get(key)
+            if existing is None:
+                merged_relations_by_key[key] = OntologyRelationInstance(
+                    name=relation.name,
+                    from_type=relation.from_type,
+                    from_id=from_id,
+                    to_type=relation.to_type,
+                    to_id=to_id,
+                    evidence=list(relation.evidence or []),
+                )
                 continue
-            merged_relations.append(OntologyRelationInstance(
-                name=relation.name,
-                from_type=relation.from_type,
-                from_id=from_id,
-                to_type=relation.to_type,
-                to_id=to_id,
-                evidence=relation.evidence,
-            ))
-            seen_relations.add(key)
+            seen_evidence = {
+                (ev.source_page, ev.quote) for ev in existing.evidence or []
+            }
+            for evidence_item in relation.evidence or []:
+                signature = (evidence_item.source_page, evidence_item.quote)
+                if signature in seen_evidence:
+                    continue
+                existing.evidence.append(evidence_item)
+                seen_evidence.add(signature)
+    merged_relations = list(merged_relations_by_key.values())
 
     merged_ontology = deepcopy(results[0].ontology)
     merged_ontology.nodes = merged_nodes
@@ -446,38 +489,12 @@ def _finalize_run_level_quality(
     usage_entries: list[dict] = []
 
     text_with_pages = format_text_with_pages(pages)
-    try:
-        ontology, usage_entries, resolution_report = complete_resolution_gaps(
-            ontology=ontology,
-            text_with_pages=text_with_pages,
-            model_name=model_name or settings.MODEL_NAME,
-            parse_json=_extract_json_object,
-        )
-    except Exception:
-        # Resolution completion is best-effort: never abort the draft for it.
-        logger.exception("[ontology] Run-level resolution completion failed; keeping merged ontology")
-        ontology = result.ontology
-        usage_entries = []
-        resolution_report = {"attempted": 0, "completed": 0, "error": "resolution_completion_failed"}
-    resolution_changed = bool(resolution_report.get("completed", 0))
-    if resolution_changed:
-        ontology = _normalize_ontology_instance(
-            ontology=ontology,
-            schema=schema,
-            source_type=ontology.source_type,
-            source_title=ontology.source_title,
-            asset_identity=asset_identity,
-        )
-        logger.info(
-            "[ontology] Run-level resolution completion: %d/%d target(s) completed",
-            int(resolution_report.get("completed", 0) or 0),
-            int(resolution_report.get("attempted", 0) or 0),
-        )
 
-    # Coverage completion: second harvest of diagnostic branches the draft
+    # Coverage completion FIRST: second harvest of diagnostic branches the draft
     # missed (branch coverage is nondeterministic run-to-run). Best-effort,
-    # strictly additive; runs before closure/grounding so its additions go
-    # through the same validation as everything else.
+    # strictly additive. It runs before resolution completion so that chains it
+    # adds without a corrective action become resolution targets in the same
+    # run instead of surviving as unresolved gaps.
     from backend.services.coverage_completion_service import complete_coverage_gaps
 
     try:
@@ -498,6 +515,33 @@ def _finalize_run_level_quality(
             source_type=ontology.source_type,
             source_title=ontology.source_title,
             asset_identity=asset_identity,
+        )
+
+    try:
+        ontology, resolution_usage, resolution_report = complete_resolution_gaps(
+            ontology=ontology,
+            text_with_pages=text_with_pages,
+            model_name=model_name or settings.MODEL_NAME,
+            parse_json=_extract_json_object,
+        )
+        usage_entries = [*usage_entries, *resolution_usage]
+    except Exception:
+        # Resolution completion is best-effort: never abort the draft for it.
+        logger.exception("[ontology] Run-level resolution completion failed; keeping ontology unchanged")
+        resolution_report = {"attempted": 0, "completed": 0, "error": "resolution_completion_failed"}
+    resolution_changed = bool(resolution_report.get("completed", 0))
+    if resolution_changed:
+        ontology = _normalize_ontology_instance(
+            ontology=ontology,
+            schema=schema,
+            source_type=ontology.source_type,
+            source_title=ontology.source_title,
+            asset_identity=asset_identity,
+        )
+        logger.info(
+            "[ontology] Run-level resolution completion: %d/%d target(s) completed",
+            int(resolution_report.get("completed", 0) or 0),
+            int(resolution_report.get("attempted", 0) or 0),
         )
 
     page_text_by_page = {
@@ -671,7 +715,10 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
     chunk_semaphore = asyncio.Semaphore(5)
 
     async def _process_chunk(index, chunk_pages, chunk_sections):
-        chunk_header = _build_section_header(chunk_sections) if chunk_sections else _build_section_header(sections)
+        # Only describe the sections these pages actually belong to: listing the
+        # whole manual's sections on an uncovered-pages chunk is prompt noise
+        # that invites wrong section attributions.
+        chunk_header = _build_section_header(chunk_sections)
         chunk_text = format_text_with_pages(chunk_pages)
         if chunk_header:
             chunk_text = chunk_header + "\n\n" + chunk_text

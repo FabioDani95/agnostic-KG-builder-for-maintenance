@@ -217,6 +217,19 @@ class EvidenceGroundingTests(unittest.TestCase):
         self.assertIn(("CorrectiveAction", "ca_replace_hinge"), ungrounded_keys)
         self.assertTrue(all(issue.code == "ungrounded_evidence" for issue in issues))
 
+    def test_causal_relation_without_quote_is_ungrounded(self) -> None:
+        ontology = _ontology_fixture().model_copy(deep=True)
+        ontology.relations[0].evidence = []
+
+        issues, ungrounded_keys, stats = ground_relation_evidence(ontology, self._PAGES)
+
+        self.assertEqual(stats["causal_relations_total"], 2)
+        self.assertEqual(stats["causal_relations_without_quote"], 1)
+        self.assertEqual(stats["relations_checked"], 2)
+        self.assertEqual(stats["relations_ungrounded"], 2)
+        self.assertIn(("Symptom", "sym_door_stuck"), ungrounded_keys)
+        self.assertTrue(issues)
+
     def test_ungrounded_nodes_drop_out_of_auto_approve(self) -> None:
         ontology = normalize_ontology_instance(_ontology_fixture())
         config = {

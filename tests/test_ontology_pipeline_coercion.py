@@ -1,9 +1,10 @@
+from copy import deepcopy
 from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from backend.models import OntologyInstance, OntologyPipelineResponse
+from backend.models import OntologyInstance, OntologyPipelineResponse, OntologyRelationInstance
 from backend.services.ontology_pipeline import (
     _coerce_raw_ontology_data,
     _normalize_ontology_instance,
@@ -322,3 +323,71 @@ def test_merge_pipeline_results_collapses_asset_variants_to_scoping_identity():
         "comp_tool_head",
     ]
     assert {rel.from_id for rel in merged.ontology.relations} == {"asset_eastman_eagle_s3l"}
+
+
+def test_merge_pipeline_results_preserves_canonical_id_for_richer_named_duplicate():
+    base_nodes = {
+        "Asset": [{
+            "asset_id": "asset_machine",
+            "name": "Machine",
+            "description": "Machine",
+            "brand": "Example",
+            "model": "M1",
+        }],
+        "Component": [{
+            "component_id": "comp_pump",
+            "name": "Pump",
+            "description": "Pump",
+            "category": "mechanical",
+        }],
+        "Symptom": [{
+            "symptom_id": "sym_no_flow",
+            "name": "No flow",
+            "description": "No flow is observed.",
+            "severity": "High",
+        }],
+        "CorrectiveAction": [],
+        "ErrorCode": [],
+    }
+
+    def result(failure_mode_id: str, *, richer: bool) -> OntologyPipelineResponse:
+        nodes = deepcopy(base_nodes)
+        failure_mode = {
+            "failure_mode_id": failure_mode_id,
+            "name": "Pump blocked",
+            "description": "The pump is blocked.",
+            "material_context": "comp_pump",
+        }
+        if richer:
+            failure_mode["related_measurements"] = ["outlet pressure"]
+        nodes["FailureMode"] = [failure_mode]
+        ontology = OntologyInstance(
+            ontology_name="Core_Ontology",
+            version="2.0",
+            language="en",
+            source_type="service manual",
+            source_title="Machine",
+            nodes=nodes,
+            relations=[OntologyRelationInstance(
+                name="MAY_INDICATE",
+                from_type="Symptom",
+                from_id="sym_no_flow",
+                to_type="FailureMode",
+                to_id=failure_mode_id,
+            )],
+        )
+        return OntologyPipelineResponse(status="ready", ontology=ontology)
+
+    merged = _merge_pipeline_results([
+        result("fm_pump_blocked", richer=False),
+        result("fm_blocked_pump_variant", richer=True),
+    ])
+
+    assert [
+        node["failure_mode_id"] for node in merged.ontology.nodes["FailureMode"]
+    ] == ["fm_pump_blocked"]
+    assert {
+        relation.to_id
+        for relation in merged.ontology.relations
+        if relation.name == "MAY_INDICATE"
+    } == {"fm_pump_blocked"}

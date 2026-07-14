@@ -279,6 +279,81 @@ class OntologyMergeServiceTests(unittest.TestCase):
             "CMP-PUMP",
         )
 
+    def test_merge_preserves_error_code_chain_without_symptom(self):
+        """ErrorCode → FailureMode → CorrectiveAction chains have no symptom-triplet
+        path that could re-add them after pruning: the export merge must keep them."""
+        base = {
+            "ontology_name": "diagnostic",
+            "version": "V1",
+            "language": "en",
+            "source_type": "Service Manual",
+            "source_title": "Demo",
+            "nodes": {
+                "Asset": [{
+                    "asset_id": "ASSET-001", "name": "Demo", "description": "d",
+                    "brand": "Demo", "model": "M1", "asset_type": "machine",
+                }],
+                "Component": [],
+                "Symptom": [],
+                "FailureMode": [
+                    {
+                        "failure_mode_id": "fm_board_fault",
+                        "name": "Control board fault",
+                        "description": "Control board is defective.",
+                        "material_context": "asset_level",
+                    },
+                    {
+                        "failure_mode_id": "fm_unresolved_sensor",
+                        "name": "Sensor drift",
+                        "description": "Sensor out of calibration.",
+                        "material_context": "asset_level",
+                    },
+                ],
+                "CorrectiveAction": [{
+                    "action_id": "ca_replace_board",
+                    "name": "Replace board",
+                    "description": "Replace the control board.",
+                    "instruction_text": "1. Replace the control board.",
+                    "source_type": "Service Manual",
+                    "source_title": "Demo",
+                    "source_page": 12,
+                    "source_reference": "PAGE 12",
+                }],
+                "ErrorCode": [
+                    {"error_code_id": "err_e42", "name": "E42", "description": "Board error", "code": "E42"},
+                    {"error_code_id": "err_e51", "name": "E51", "description": "Sensor error", "code": "E51"},
+                ],
+            },
+            "relations": [
+                {"name": "INDICATES", "from_type": "ErrorCode", "from_id": "err_e42",
+                 "to_type": "FailureMode", "to_id": "fm_board_fault",
+                 "evidence": [{"source_page": 12, "source_reference": "PAGE 12", "quote": "q"}]},
+                {"name": "RESOLVED_BY", "from_type": "FailureMode", "from_id": "fm_board_fault",
+                 "to_type": "CorrectiveAction", "to_id": "ca_replace_board",
+                 "evidence": [{"source_page": 12, "source_reference": "PAGE 12", "quote": "q"}]},
+                {"name": "INDICATES", "from_type": "ErrorCode", "from_id": "err_e51",
+                 "to_type": "FailureMode", "to_id": "fm_unresolved_sensor",
+                 "evidence": [{"source_page": 14, "source_reference": "PAGE 14", "quote": "q"}]},
+            ],
+        }
+
+        merged = merge_validated_triplets(base, [])
+
+        failure_ids = {item["failure_mode_id"] for item in merged["nodes"]["FailureMode"]}
+        action_ids = {item["action_id"] for item in merged["nodes"]["CorrectiveAction"]}
+        relation_keys = {
+            (rel["name"], rel["from_id"], rel["to_id"]) for rel in merged["relations"]
+        }
+        # Resolved error-code chain survives intact.
+        self.assertIn("fm_board_fault", failure_ids)
+        self.assertIn("ca_replace_board", action_ids)
+        self.assertIn(("INDICATES", "err_e42", "fm_board_fault"), relation_keys)
+        self.assertIn(("RESOLVED_BY", "fm_board_fault", "ca_replace_board"), relation_keys)
+        # Unresolved error-indicated failure mode stays as a declared gap
+        # instead of vanishing into a false error_code_without_failure_mode.
+        self.assertIn("fm_unresolved_sensor", failure_ids)
+        self.assertIn(("INDICATES", "err_e51", "fm_unresolved_sensor"), relation_keys)
+
 
 if __name__ == "__main__":
     unittest.main()

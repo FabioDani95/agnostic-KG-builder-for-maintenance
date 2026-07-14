@@ -83,11 +83,6 @@ def _sanitize_base_ontology(base_ontology: dict) -> dict:
         for rel in relations
         if str(rel.get("name", "")).strip() == "RESOLVED_BY"
     }
-    affects_pairs = {
-        (str(rel.get("from_id", "")).strip(), str(rel.get("to_id", "")).strip())
-        for rel in relations
-        if str(rel.get("name", "")).strip() == "AFFECTS"
-    }
     indicates_pairs = {
         (str(rel.get("from_id", "")).strip(), str(rel.get("to_id", "")).strip())
         for rel in relations
@@ -99,6 +94,13 @@ def _sanitize_base_ontology(base_ontology: dict) -> dict:
         failure_mode_id
         for _, failure_mode_id in may_pairs
         if failure_mode_id in resolved_failure_mode_ids
+    }
+    # ErrorCode → FailureMode chains are first-class diagnostic knowledge and have
+    # no symptom-triplet path that could re-add them after pruning: keep every
+    # FailureMode indicated by an ErrorCode (resolved or not) so INDICATES edges
+    # survive and unresolved ones surface as declared gaps instead of vanishing.
+    kept_failure_mode_ids |= {
+        failure_mode_id for _, failure_mode_id in indicates_pairs
     }
     kept_symptom_ids = {
         symptom_id

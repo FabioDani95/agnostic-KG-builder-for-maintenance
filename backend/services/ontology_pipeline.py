@@ -54,6 +54,7 @@ from backend.services.ontology_semantics import (
     has_actionable_instruction,
     infer_asset_type,
     infer_component_match_for_failure_mode,
+    is_operational_state_failure_mode,
     normalize_asset_node,
     normalize_severity,
     resolve_material_context,
@@ -520,9 +521,13 @@ def _normalize_ontology_instance(
         except Exception:
             continue
         # Drop AFFECTS edges whose target is a general material-context sentinel
-        # (e.g. "asset_level"): these mean "no specific component" and would
-        # otherwise dangle into a blocking relation_missing_target error.
-        if relation.name == "AFFECTS" and _is_general_material_context(relation.to_id):
+        # (e.g. "asset_level") OR the Asset node itself: both mean "no specific
+        # component" and would otherwise become a blocking domain/range or
+        # dangling-target error.
+        if relation.name == "AFFECTS" and (
+            _is_general_material_context(relation.to_id)
+            or relation.to_id in asset_node_ids
+        ):
             continue
         if not _relation_exists(relations, relation):
             relations.append(relation)
@@ -546,6 +551,31 @@ def _normalize_ontology_instance(
                 from_id=primary_asset_id,
                 to_type="Component",
                 to_id=component_id,
+                evidence=[],
+            )
+            if not _relation_exists(relations, relation):
+                relations.append(relation)
+
+    # GENERATES_ERROR is fully derivable: there is one canonical Asset and every
+    # ErrorCode belongs to it by definition — mirror the HAS_COMPONENT auto-link
+    # so KPI wiring never depends on the LLM remembering to emit it.
+    error_codes = nodes.get("ErrorCode", [])
+    if primary_asset_id and error_codes:
+        linked_error_code_ids = {
+            rel.to_id
+            for rel in relations
+            if rel.name == "GENERATES_ERROR" and rel.from_type == "Asset" and rel.to_type == "ErrorCode"
+        }
+        for error_code in error_codes:
+            error_code_id = str(error_code.get("error_code_id", "")).strip()
+            if not error_code_id or error_code_id in linked_error_code_ids:
+                continue
+            relation = OntologyRelationInstance(
+                name="GENERATES_ERROR",
+                from_type="Asset",
+                from_id=primary_asset_id,
+                to_type="ErrorCode",
+                to_id=error_code_id,
                 evidence=[],
             )
             if not _relation_exists(relations, relation):
@@ -990,6 +1020,11 @@ def _build_relation_pass_text(
     return compact_text
 
 
+# A missing required property is asked per-node up to this group size; from this
+# size on, the group collapses into one wildcard field whose answer is broadcast
+# to every node of that type missing the property.
+_WILDCARD_HUMAN_FIELD_THRESHOLD = 4
+
 _GENERAL_MATERIAL_CONTEXT_VALUES = {
     "asset",
     "asset_level",
@@ -1129,6 +1164,32 @@ def _validate_schema(ontology: OntologyInstance, schema: OntologySchemaDefinitio
                 ),
             ))
 
+    for fm in ontology.nodes.get("FailureMode", []):
+        if not isinstance(fm, dict):
+            continue
+        if is_operational_state_failure_mode(
+            str(fm.get("name", "") or ""),
+            str(fm.get("description", "") or ""),
+            str(fm.get("material_context", "") or ""),
+        ):
+            issues.append(PipelineIssue(
+                severity="warning",
+                code="operational_state_failure_mode",
+                message=(
+                    f"FailureMode '{fm.get('name', fm.get('failure_mode_id', ''))}' reads like a "
+                    "reversible operational or safety-interlock state (e.g. door open, e-stop "
+                    "pressed, cycle interrupted), not a degraded component condition."
+                ),
+                target_type="FailureMode",
+                target_id=str(fm.get("failure_mode_id", "")).strip(),
+                property_name="name",
+                fix_hint=(
+                    "Confirm this is a genuine failure mode. If it is an operational state or a "
+                    "safety-interlock precondition, remove it, or rewrite the cause as a component "
+                    "in a degraded condition that the manual supports."
+                ),
+            ))
+
     component_ids = {
         str(item.get("component_id", "")).strip()
         for item in ontology.nodes.get("Component", [])
@@ -1155,8 +1216,10 @@ def _validate_schema(ontology: OntologyInstance, schema: OntologySchemaDefinitio
                 property_name="material_context",
                 fix_hint=(
                     "Either set material_context to an existing Component.component_id, "
-                    "add the missing Component node and link it here, or leave the field "
-                    "empty and emit an AFFECTS relation to represent the link instead."
+                    "add the missing Component node and link it here, or set it to "
+                    "\"asset_level\" when the failure is genuinely general to the whole "
+                    "asset. Do not leave it empty: the field is required by the export "
+                    "contract."
                 ),
             ))
 
@@ -1197,16 +1260,33 @@ def _validate_schema(ontology: OntologyInstance, schema: OntologySchemaDefinitio
                 target_id=rel.name,
             ))
 
-    # Deduplicate by (node_type, property_name): if multiple nodes of the same type
-    # are missing the same property, show a single field that applies to all of them.
-    deduped_human_fields: dict[str, HumanRequiredField] = {}
+    # Group by (node_type, property_name). Small groups keep one field per node
+    # so the operator can give node-specific values; only large groups collapse
+    # into a single wildcard field (broadcast), trading per-node precision for
+    # a manageable review queue.
+    grouped_fields: dict[str, list[HumanRequiredField]] = {}
     for field in human_required_fields:
         group_key = f"{field.target_type}::*::{field.property_name}"
-        if group_key not in deduped_human_fields:
-            # Represent the group with a wildcard key so _apply_human_answers broadcasts the value.
-            grouped = field.model_copy(update={"field_key": group_key, "target_id": "*"})
-            deduped_human_fields[group_key] = grouped
-    return issues, list(deduped_human_fields.values())
+        grouped_fields.setdefault(group_key, []).append(field)
+
+    deduped_human_fields: list[HumanRequiredField] = []
+    for group_key, fields in grouped_fields.items():
+        if len(fields) >= _WILDCARD_HUMAN_FIELD_THRESHOLD:
+            # Represent the group with a wildcard key so _apply_human_answers
+            # broadcasts the value to every node of this type missing the property.
+            first = fields[0]
+            prompt = (
+                f"{first.prompt} The same value will be applied to all "
+                f"{len(fields)} {first.target_type} nodes missing {first.property_name}."
+            )
+            deduped_human_fields.append(first.model_copy(update={
+                "field_key": group_key,
+                "target_id": "*",
+                "prompt": prompt,
+            }))
+        else:
+            deduped_human_fields.extend(fields)
+    return issues, deduped_human_fields
 
 
 def _call_extractor_llm(state: PipelineState) -> PipelineState:
@@ -1370,6 +1450,25 @@ def _relation_extract_node(state: PipelineState) -> PipelineState:
         ontology.model_dump().get("nodes", {}),
         state["schema"],
     )
+    # The prompt forbids creating nodes ("use only the node IDs listed"), so a
+    # candidate whose endpoints do not exist is an invented id: enforce the
+    # rule deterministically instead of letting it dangle into a blocking
+    # relation_missing_source/target error.
+    node_index = _collect_node_index(ontology, state["schema"])
+    known_ids = {node_id for ids in node_index.values() for node_id in ids}
+    dropped_unknown = [
+        rel for rel in candidate_relations
+        if rel["from_id"] not in known_ids or rel["to_id"] not in known_ids
+    ]
+    if dropped_unknown:
+        logger.info(
+            "[ontology] Relation pass dropped %d relation(s) referencing unknown node ids",
+            len(dropped_unknown),
+        )
+        candidate_relations = [
+            rel for rel in candidate_relations
+            if rel["from_id"] in known_ids and rel["to_id"] in known_ids
+        ]
     if not candidate_relations:
         logger.info("[ontology] Relation pass returned no additional relations")
         return {
@@ -1386,6 +1485,7 @@ def _relation_extract_node(state: PipelineState) -> PipelineState:
         schema=state["schema"],
         source_type=state["source_type"],
         source_title=state["source_title"],
+        asset_identity=state.get("asset_identity"),
     )
     logger.info(
         "[ontology] Relation pass completed (%.1fs) — +%d candidate relations",

@@ -40,6 +40,8 @@ quote the manual's own wording.
 | 2 | `eval_runs/20260706T173538Z` | — | — | aborted: OpenAI `insufficient_quota` before this fixture started |
 | 3 | `eval_runs/20260711T190612Z` | 0.4 (4/10) | 0.0 (0/59) | valid run; all must-keep pages selected; no blocking review items |
 | 4 | `eval_runs/20260711T191059Z` | 0.5 (5/10) | 0.0 (0/49) | valid run; three blocking review items from dangling relations |
+| 5 | `eval_runs/20260712T081536Z` | 0.4 (4/10) | 0.0 (0/50) | post-MVP-stabilization run; zero dangling relations and zero schema errors |
+| 6 | `eval_runs/20260712T081922Z` | 0.7 (7/10) | 0.0 (0/51) | repeated post-fix run; zero dangling relations, E1 + both prose chains recovered |
 
 ### Finding from run 1 (pipeline, not annotation)
 
@@ -124,8 +126,88 @@ the full ontology/triplet/chain/review-queue artifacts.
    `min_recall` / `max_unsupported_rate`, freeze the annotation, and update
    this document to Phase B complete.
 
+### MVP stabilization measurements — 2026-07-12
+
+Runs 5 and 6 used `gpt-5.4-2026-03-05` after three implementation fixes that
+do not change the ontology: canonical-id preservation during chunk merge,
+relation-specific evaluator grounding/structural gates, and corrected graph
+coverage KPIs. Selective OCR was enabled, but the source Whirlpool PDF has
+usable native text on all 64 physical pages, so no OCR call was needed.
+
+Both runs retried one ontology completion from 16k to 24k tokens after a
+truncated JSON response; both were repaired successfully and neither fell
+back to an empty chunk. Structural stability improved from run 4: both new
+runs have zero dangling relations, zero schema errors, zero blocking review
+items, and every causal relation has a verified non-empty quote.
+
+| Metric | Run 5 | Run 6 |
+|---|---:|---:|
+| Recall | 4/10 | 7/10 |
+| Total projected chains | 50 | 51 |
+| Unsupported chains | 0 | 0 |
+| Dangling relations | 0 | 0 |
+| Causal grounding ratio | 1.0 | 1.0 |
+| Open review items | 27 | 6 |
+| Schema warnings / errors | 7 / 0 | 34 / 0 |
+| Tokens | 215,392 | 225,528 |
+| Estimated cost | $1.138 | $1.160 |
+| Duration | 208.9 s | 221.2 s |
+
+The repeated measurements confirm that the canonical-id bug is fixed while
+content recall remains stochastic. Run 6 recovered E1 and both prose chains
+that run 5 missed; E3, E4, and E6 remained unmatched. Its larger warning count
+comes from inspection-only `check` actions: this is the existing annotation
+semantics decision, not a structural regression and not addressed by changing
+the ontology in the MVP stabilization sprint.
+
+### Phase B complete — 2026-07-14
+
+The two pending Phase B decisions are closed:
+
+1. **Inspection-only "check" steps are NOT corrective actions.** The four
+   error-code expectations (E1, E3, E4, E6) are revised to the manual's causal
+   text (the error-code table's *Causes* column) with **no** `corrective_action`:
+   the manual states a cause and check-only steps, so the truthful chain is
+   `ErrorCode → FailureMode` with a declared `failure_mode_without_action`
+   gap. This matches the pipeline's restorative-action contract
+   (`has_actionable_instruction`, resolution-completion prompt) — annotating a
+   "check" as a remedy would either measure what the pipeline is designed to
+   reject, or force the guardrails to be weakened.
+2. **The dangling `fm_overflow` relations from run 4 are fixed** by the
+   2026-07-14 pipeline consistency work (blocks A–C of the pipeline audit):
+   the 2026-07-14 real run has zero dangling relations and zero blocking
+   review items.
+
+Offline re-score of the saved artifacts against the revised annotation
+(no paid rerun; harness matcher via `_match_triplets`):
+
+| Run | Artifacts | Recall (old ann.) | Recall (revised) | unsupported_rate |
+|---|---|---:|---:|---:|
+| 5 | `eval_runs/20260712T081536Z` | 4/10 | **8/10** | 0.0 |
+| 6 | `eval_runs/20260712T081922Z` | 7/10 | **10/10** | 0.0 |
+| 7 (post-audit code) | `eval_runs/20260714T095559Z` | 4/10 | **8/10** | 0.0 |
+
+All six error-code chains now match deterministically in every run: the
+previous oscillation on E1/E3/E4/E6 was an annotation-semantics artifact
+(Error-column label vs Causes-column phrasing, check-step promoted or
+rejected), not extraction variance. The residual variance is confined to two
+prose troubleshooting-guide chains ("won't run or power up", "will not
+drain — drain pump impeller fractured"), which are genuine model recall
+findings (see "Findings before freezing gates").
+
+Frozen gates (added to the fixture):
+
+- `min_recall: 0.7` — observed 0.8 / 1.0 / 0.8 across the three scored runs;
+  floor set below the observed stable value per protocol §6 step 7.
+- `max_unsupported_rate: 0.0` — zero hallucinated chains in all scored runs.
+
+Run 7 also carries the pipeline-audit improvements: error codes 5/5 fully
+wired (GENERATES_ERROR + INDICATES), causal-relation evidence-quote ratio
+1.0, zero dangling relations, zero blocking review items, graph health
+score 0.892.
+
 ## Mock gate
 
-Mock eval recall is 1.0 and `pytest` is green with this fixture included,
-so it already serves as a deterministic CI regression guard while Phase B
-is pending.
+Mock eval recall is 1.0 (10/10 against the revised annotation, quality gates
+passing) and `pytest` is green with this fixture included, so it serves as a
+deterministic CI regression guard now that Phase B is complete.

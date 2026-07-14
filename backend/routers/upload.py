@@ -13,6 +13,7 @@ from backend.services.pdf_service import (
     PdfEncryptedError,
     PdfReadError,
     extract_text_by_page,
+    summarize_page_ingestion,
 )
 from backend.services.run_metrics import ensure_run_metrics
 
@@ -71,9 +72,12 @@ async def load_manual(req: LoadManualRequest):
         pdf_path.unlink(missing_ok=True)
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
-    if not pages:
+    if not pages or not any(str(page.get("text", "") or "").strip() for page in pages):
         pdf_path.unlink(missing_ok=True)
-        raise HTTPException(status_code=400, detail="Could not extract text from PDF.")
+        raise HTTPException(
+            status_code=400,
+            detail="Could not extract text from PDF; OCR is unavailable or returned no text.",
+        )
 
     store = {
         "pdf_id": pdf_id,
@@ -81,6 +85,7 @@ async def load_manual(req: LoadManualRequest):
         "pdf_path": str(pdf_path),
         "pages": pages,
         "page_count": len(pages),
+        "ingestion": summarize_page_ingestion(pages),
         "source_type": "",      # filled by scoping
         "source_title": "",     # filled by scoping
         "selected_models": {

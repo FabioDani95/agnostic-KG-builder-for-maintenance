@@ -33,6 +33,7 @@ from backend.services.llm_guardrails import enforce_llm_limits, llm_timeout_mess
 from backend.services.llm_gateway import chat_temperature_kwargs
 from backend.services.ontology_semantics import build_semantic_key
 from backend.services.resolution_completion_service import (
+    _find_supporting_page,
     _format_pages,
     _get_client,
     _node_id,
@@ -112,14 +113,60 @@ Rules:
 """
 
 
-def _quote_supported(quote: str, source_page: int, pages: list[dict[str, Any]]) -> bool:
-    from backend.services.llm_service import _fragment_supported_by_page
+# Rough per-page diagnostic score used only to stay inside the input budget on
+# very large scoped selections: pages that read like troubleshooting content
+# (tables, alarm rows, cause/remedy language) are kept first.
+_DIAGNOSTIC_PAGE_TERMS: tuple[tuple[str, int], ...] = (
+    ("troubleshoot", 6), ("symptom", 4), ("remedy", 4), ("corrective", 4),
+    ("cause", 3), ("alarm", 3), ("error", 3), ("fault", 3), ("failure", 3),
+    ("replace", 2), ("repair", 2), ("check", 1), ("solution", 2),
+    ("[structured tables detected", 5),
+)
 
-    if not quote:
-        return False
-    cited = [page for page in pages if int(page.get("page_number") or 0) == source_page]
-    candidates = cited or pages
-    return any(_fragment_supported_by_page(quote, str(page.get("text", "") or "")) for page in candidates)
+
+def _diagnostic_page_score(page_text: str) -> int:
+    haystack = str(page_text or "").lower()
+    return sum(weight * haystack.count(term) for term, weight in _DIAGNOSTIC_PAGE_TERMS)
+
+
+def select_pages_within_budget(
+    pages: list[dict[str, Any]],
+    max_chars: int,
+) -> tuple[list[dict[str, Any]], list[int]]:
+    """Keep the most diagnostic pages within a character budget.
+
+    Returns (kept_pages_in_document_order, dropped_page_numbers). When the full
+    selection already fits, everything is kept — the ranking only kicks in on
+    manuals whose scoped text exceeds the coverage-completion input budget,
+    which previously aborted the whole pass.
+    """
+    total = sum(len(str(page.get("text", "") or "")) + 32 for page in pages)
+    if total <= max_chars:
+        return pages, []
+
+    ranked = sorted(
+        pages,
+        key=lambda page: (
+            -_diagnostic_page_score(str(page.get("text", "") or "")),
+            int(page.get("page_number") or 0),
+        ),
+    )
+    kept_numbers: set[int] = set()
+    used = 0
+    for page in ranked:
+        page_chars = len(str(page.get("text", "") or "")) + 32
+        if used + page_chars > max_chars:
+            continue
+        kept_numbers.add(int(page.get("page_number") or 0))
+        used += page_chars
+
+    kept = [page for page in pages if int(page.get("page_number") or 0) in kept_numbers]
+    dropped = [
+        int(page.get("page_number") or 0)
+        for page in pages
+        if int(page.get("page_number") or 0) not in kept_numbers
+    ]
+    return kept, dropped
 
 
 def _semantic_index(nodes: list[Any], node_type: str) -> dict[str, str]:
@@ -233,7 +280,8 @@ def apply_missing_chains(
             source_page = int(raw_evidence.get("source_page") or 0)
         except (TypeError, ValueError):
             source_page = 0
-        if not _quote_supported(quote, source_page, pages):
+        supported_page = _find_supporting_page(quote, source_page, pages)
+        if supported_page <= 0:
             report["dropped_no_quote"] += 1
             logger.info(
                 "[coverage_completion] Dropping chain '%s -> %s' — evidence quote not found in pages",
@@ -241,10 +289,15 @@ def apply_missing_chains(
                 raw_failure.get("name"),
             )
             continue
+        if supported_page != source_page:
+            # Quote found on a different kept page: correct the citation so the
+            # downstream grounding pass verifies against the right page instead
+            # of flagging content this pass just accepted.
+            source_page = supported_page
 
         evidence = [OntologyEvidence(
             source_page=source_page,
-            source_reference=str(raw_evidence.get("source_reference") or (f"PAGE {source_page}" if source_page else "")),
+            source_reference=f"PAGE {source_page}",
             quote=quote,
         )]
 
@@ -333,9 +386,28 @@ def complete_coverage_gaps(
         return ontology, [], {"returned": 0, "applied": 0, "skipped": "no_pages"}
 
     summary = build_chain_summary(ontology)
+    summary_json = json.dumps(summary, ensure_ascii=False, indent=2)
+
+    # Large manuals used to abort this pass on the input guardrail — exactly the
+    # runs where a second harvest matters most. Rank pages by diagnostic signal
+    # and keep the best ones inside the remaining budget instead.
+    max_input_chars = int(cfg.get("max_input_chars", 120000))
+    page_budget = max(10000, max_input_chars - len(_SYSTEM_PROMPT) - len(summary_json) - 2000)
+    budget_pages, dropped_page_numbers = select_pages_within_budget(pages, page_budget)
+    if dropped_page_numbers:
+        logger.info(
+            "[coverage_completion] Input over budget — keeping %d/%d page(s) by diagnostic score (dropped: %s)",
+            len(budget_pages),
+            len(pages),
+            dropped_page_numbers[:20],
+        )
+    if not budget_pages:
+        return ontology, [], {"returned": 0, "applied": 0, "skipped": "input_too_large"}
+    pages = budget_pages
+
     user_text = (
         "CHAINS ALREADY EXTRACTED (symptom -> failure modes)\n"
-        f"{json.dumps(summary, ensure_ascii=False, indent=2)}\n\n"
+        f"{summary_json}\n\n"
         "MANUAL PAGES\n"
         f"{_format_pages(pages)}"
     )
@@ -382,6 +454,8 @@ def complete_coverage_gaps(
         pages,
         max_chains=int(cfg.get("max_chains", 12)),
     )
+    if dropped_page_numbers:
+        report["pages_dropped_for_budget"] = len(dropped_page_numbers)
     if report.get("applied"):
         logger.info(
             "[coverage_completion] Applied %d missing chain(s) (%d returned, %d dropped without quote)",

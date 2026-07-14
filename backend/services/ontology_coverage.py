@@ -32,6 +32,8 @@ _SCHEMA_RELATIONS = {
     "INDICATES": ("ErrorCode", "FailureMode"),
 }
 
+_CAUSAL_RELATIONS = {"MAY_INDICATE", "RESOLVED_BY", "INDICATES"}
+
 
 def _ratio(numerator: int, denominator: int) -> float:
     if not denominator:
@@ -50,7 +52,7 @@ def _iter_relations(ontology: dict[str, Any]) -> Iterable[dict[str, Any]]:
 
 
 def _relation_endpoints(rel: dict[str, Any]) -> tuple[str, str, str]:
-    rel_type = str(rel.get("type") or "").strip()
+    rel_type = str(rel.get("type") or rel.get("name") or "").strip()
     from_id = str(rel.get("from_id") or rel.get("from") or "").strip()
     to_id = str(rel.get("to_id") or rel.get("to") or "").strip()
     return rel_type, from_id, to_id
@@ -82,6 +84,8 @@ def compute_graph_coverage(ontology: dict[str, Any]) -> dict[str, Any]:
     rel_type_counts: dict[str, int] = defaultdict(int)
     dangling_refs = 0
     domain_range_violations = 0
+    causal_relations_total = 0
+    causal_relations_with_evidence_quote = 0
 
     for rel in _iter_relations(ontology):
         if not isinstance(rel, dict):
@@ -90,6 +94,14 @@ def compute_graph_coverage(ontology: dict[str, Any]) -> dict[str, Any]:
         if not rel_type or not from_id or not to_id:
             continue
         rel_type_counts[rel_type] += 1
+        if rel_type in _CAUSAL_RELATIONS:
+            causal_relations_total += 1
+            if any(
+                str((item or {}).get("quote") or "").strip()
+                for item in (rel.get("evidence") or [])
+                if isinstance(item, dict)
+            ):
+                causal_relations_with_evidence_quote += 1
         fl = id_by_label.get(from_id)
         tl = id_by_label.get(to_id)
         if fl is None or tl is None:
@@ -116,6 +128,16 @@ def compute_graph_coverage(ontology: dict[str, Any]) -> dict[str, Any]:
     components_in_fm = {c for c in component_ids if in_edges["AFFECTS"].get(c)}
     error_with_generates = {e for e in error_ids if in_edges["GENERATES_ERROR"].get(e)}
     error_with_indicates = {e for e in error_ids if out_edges["INDICATES"].get(e)}
+    fm_reachable_from_error = {f for f in failure_ids if in_edges["INDICATES"].get(f)}
+    fm_reachable_from_diagnostic_root = fm_reachable_from_symptom | fm_reachable_from_error
+    error_end_to_end_resolved = {
+        error_id
+        for error_id in error_ids
+        if any(
+            out_edges["RESOLVED_BY"].get(failure_mode_id)
+            for failure_mode_id in out_edges["INDICATES"].get(error_id, ())
+        )
+    }
 
     # End-to-end diagnostic chain: Symptom -> FailureMode -> CorrectiveAction
     chain_complete_symptoms = 0
@@ -159,7 +181,7 @@ def compute_graph_coverage(ontology: dict[str, Any]) -> dict[str, Any]:
         _ratio(len(sym_with_fm), len(symptom_ids)),
         _ratio(len(fm_with_action), len(failure_ids)),
         _ratio(len(fm_with_component), len(failure_ids)),
-        _ratio(len(fm_reachable_from_symptom), len(failure_ids)),
+        _ratio(len(fm_reachable_from_diagnostic_root), len(failure_ids)),
         _ratio(len(action_used), len(action_ids)),
         _ratio(chain_complete_symptoms, len(symptom_ids)),
     ]
@@ -196,9 +218,15 @@ def compute_graph_coverage(ontology: dict[str, Any]) -> dict[str, Any]:
             "with_component_anchor_ratio": _ratio(len(fm_with_component), len(failure_ids)),
             "reachable_from_symptom": len(fm_reachable_from_symptom),
             "reachable_from_symptom_ratio": _ratio(len(fm_reachable_from_symptom), len(failure_ids)),
+            "reachable_from_error_code": len(fm_reachable_from_error),
+            "reachable_from_error_code_ratio": _ratio(len(fm_reachable_from_error), len(failure_ids)),
+            "reachable_from_diagnostic_root": len(fm_reachable_from_diagnostic_root),
+            "reachable_from_diagnostic_root_ratio": _ratio(
+                len(fm_reachable_from_diagnostic_root), len(failure_ids)
+            ),
             "without_corrective_action": len(failure_ids) - len(fm_with_action),
             "without_component_anchor": len(failure_ids) - len(fm_with_component),
-            "orphan_upstream": len(failure_ids) - len(fm_reachable_from_symptom),
+            "orphan_upstream": len(failure_ids) - len(fm_reachable_from_diagnostic_root),
             "avg_corrective_actions_per_failure_mode": avg_actions_per_fm,
             "avg_symptoms_per_failure_mode": avg_symptoms_per_fm,
         },
@@ -220,6 +248,15 @@ def compute_graph_coverage(ontology: dict[str, Any]) -> dict[str, Any]:
             "with_failure_mode_link": len(error_with_indicates),
             "fully_wired": len(error_with_generates & error_with_indicates),
             "fully_wired_ratio": _ratio(len(error_with_generates & error_with_indicates), len(error_ids)),
+            "end_to_end_resolved": len(error_end_to_end_resolved),
+            "end_to_end_resolved_ratio": _ratio(len(error_end_to_end_resolved), len(error_ids)),
+        },
+        "evidence_coverage": {
+            "causal_relations_total": causal_relations_total,
+            "causal_relations_with_evidence_quote": causal_relations_with_evidence_quote,
+            "causal_relations_with_evidence_quote_ratio": _ratio(
+                causal_relations_with_evidence_quote, causal_relations_total
+            ),
         },
         "schema_integrity": {
             "dangling_references": dangling_refs,

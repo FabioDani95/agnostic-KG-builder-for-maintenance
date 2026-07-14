@@ -97,6 +97,7 @@ def _triplet_chains(triplet: Any, triplet_index: int) -> list[dict[str, Any]]:
     payload = triplet.model_dump() if hasattr(triplet, "model_dump") else dict(triplet or {})
     symptom = payload.get("symptom") or {}
     symptom_text = _part_text(symptom, ("name", "description"))
+    symptom_id = str(symptom.get("symptom_id", "") or "")
     failures = payload.get("failure_modes") or []
     actions = payload.get("corrective_actions") or []
 
@@ -119,6 +120,7 @@ def _triplet_chains(triplet: Any, triplet_index: int) -> list[dict[str, Any]]:
         linked_actions = actions_by_fm.get(fm_id) or unlinked_actions
         base = {
             "triplet_index": triplet_index,
+            "symptom_id": symptom_id,
             "symptom": symptom_text,
             "failure_mode": _part_text(failure, ("name", "description")),
             "failure_mode_name": str(failure.get("name", "") or ""),
@@ -220,16 +222,10 @@ def _forbidden_matches_chain(rule: dict[str, Any], chain: dict[str, Any]) -> boo
     return all(checks)
 
 
-def _relation_quotes_index(ontology: Any) -> dict[str, list[str]]:
-    """node_id → verbatim evidence quotes of the relations touching that node.
-
-    Quotes are verbatim excerpts by construction (and the pipeline's own
-    evidence grounding validates them), so they anchor a chain to the source
-    even when the node *name* is a paraphrase ("Wire unit disconnected in
-    inlet circuit" vs "replace the wire unit").
-    """
+def _relation_quotes_index(ontology: Any) -> dict[tuple[str, str, str], list[str]]:
+    """(relation type, source id, target id) → attached evidence quotes."""
     payload = ontology.model_dump() if hasattr(ontology, "model_dump") else (ontology or {})
-    index: dict[str, list[str]] = {}
+    index: dict[tuple[str, str, str], list[str]] = {}
     for rel in payload.get("relations") or []:
         if not isinstance(rel, dict):
             continue
@@ -240,45 +236,71 @@ def _relation_quotes_index(ontology: Any) -> dict[str, list[str]]:
         ]
         if not quotes:
             continue
-        for node_id in (str(rel.get("from_id") or ""), str(rel.get("to_id") or "")):
-            if node_id:
-                index.setdefault(node_id, []).extend(quotes)
+        key = (
+            str(rel.get("name") or rel.get("type") or "").strip(),
+            str(rel.get("from_id") or "").strip(),
+            str(rel.get("to_id") or "").strip(),
+        )
+        if all(key):
+            index.setdefault(key, []).extend(quotes)
     return index
 
 
 def _chain_grounded(
     chain: dict[str, Any],
     page_texts: list[str],
-    quotes_index: dict[str, list[str]] | None = None,
+    quotes_index: dict[tuple[str, str, str], list[str]] | None = None,
+    *,
+    require_relation_evidence: bool = False,
 ) -> bool:
-    """A chain is grounded when its FM and CA are supported by the kept pages.
-
-    Support means: the node name appears in the text, OR a verbatim evidence
-    quote of a relation touching the node does. Distinguishes "valid branch the
-    golden simply does not enumerate" from a true false positive, so extra
-    coverage is not punished as hallucination and paraphrased node names are
-    not punished as fabrication.
-    """
+    """Verify the specific Symptom→FM and FM→CA links, not isolated node names."""
     from backend.services.llm_service import _fragment_supported_by_page
 
     quotes_index = quotes_index or {}
 
-    def _supported(name: str, node_id: str) -> bool:
-        fragments = [name] if name else []
-        fragments.extend(quotes_index.get(node_id, []))
+    def _quoted_relation_supported(name: str, from_id: str, to_id: str) -> bool:
         return any(
-            _fragment_supported_by_page(fragment, text)
-            for fragment in fragments
+            _fragment_supported_by_page(quote, text)
+            for quote in quotes_index.get((name, from_id, to_id), [])
             for text in page_texts
         )
 
-    fm_ok = _supported(
-        str(chain.get("failure_mode_name") or chain.get("failure_mode") or ""),
-        str(chain.get("failure_mode_id") or ""),
+    symptom_id = str(chain.get("symptom_id") or "")
+    failure_mode_id = str(chain.get("failure_mode_id") or "")
+    action_id = str(chain.get("action_id") or "")
+    if require_relation_evidence:
+        may_indicate_ok = _quoted_relation_supported(
+            "MAY_INDICATE", symptom_id, failure_mode_id
+        )
+        resolved_by_ok = True if not action_id else _quoted_relation_supported(
+            "RESOLVED_BY", failure_mode_id, action_id
+        )
+        return may_indicate_ok and resolved_by_ok
+
+    # Legacy/no-ontology fallback: both endpoints of each causal link must
+    # occur in the same line or sentence, not merely somewhere in the scope.
+    units = [
+        unit.strip()
+        for page_text in page_texts
+        for unit in re.split(r"(?:\n+|(?<=[.!?;])\s+)", page_text)
+        if unit.strip()
+    ]
+
+    def _same_unit(left: str, right: str) -> bool:
+        if not left or not right:
+            return False
+        return any(
+            _fragment_supported_by_page(left, unit)
+            and _fragment_supported_by_page(right, unit)
+            for unit in units
+        )
+
+    symptom_name = str(chain.get("symptom") or "")
+    failure_mode_name = str(chain.get("failure_mode_name") or chain.get("failure_mode") or "")
+    action_name = str(chain.get("corrective_action_name") or chain.get("corrective_action") or "")
+    return _same_unit(symptom_name, failure_mode_name) and (
+        True if not action_name else _same_unit(failure_mode_name, action_name)
     )
-    ca_name = str(chain.get("corrective_action_name") or chain.get("corrective_action") or "")
-    ca_ok = True if not ca_name else _supported(ca_name, str(chain.get("action_id") or ""))
-    return fm_ok and ca_ok
 
 
 def _match_triplets(
@@ -298,9 +320,12 @@ def _match_triplets(
     unmatched: list[dict[str, Any]] = []
     matched_chain_indexes: set[int] = set()
     matched_triplet_indexes: set[int] = set()
+    matched_graph_chain_indexes: set[int] = set()
     for expected_item in expected:
         found: dict[str, Any] | None = None
         for index, chain in enumerate(projection_chains):
+            if index in matched_chain_indexes:
+                continue
             if _expected_matches_chain(expected_item, chain):
                 found = {"expected": expected_item, "chain_index": index, "source": "projection",
                          "actual_index": chain["triplet_index"]}
@@ -309,8 +334,11 @@ def _match_triplets(
                 break
         if found is None:
             for index, chain in enumerate(graph_chains):
+                if index in matched_graph_chain_indexes:
+                    continue
                 if _expected_matches_chain(expected_item, chain):
                     found = {"expected": expected_item, "chain_index": index, "source": "graph_error_code"}
+                    matched_graph_chain_indexes.add(index)
                     break
         if found is None:
             unmatched.append(expected_item)
@@ -328,7 +356,12 @@ def _match_triplets(
     for index, chain in enumerate(projection_chains):
         if index in matched_chain_indexes:
             status = "matched"
-        elif _chain_grounded(chain, page_texts, quotes_index):
+        elif _chain_grounded(
+            chain,
+            page_texts,
+            quotes_index,
+            require_relation_evidence=ontology is not None,
+        ):
             status = "extra_grounded"
             extra_grounded += 1
         else:
@@ -379,6 +412,35 @@ def _ontology_counts(ontology: Any) -> dict[str, int]:
     payload = ontology.model_dump() if hasattr(ontology, "model_dump") else (ontology or {})
     nodes = payload.get("nodes") or {}
     return {node_type: len(items or []) for node_type, items in nodes.items()}
+
+
+def _dangling_relation_count(ontology: Any) -> int:
+    payload = ontology.model_dump() if hasattr(ontology, "model_dump") else (ontology or {})
+    nodes = payload.get("nodes") or {}
+    id_fields = {
+        "Asset": "asset_id",
+        "Component": "component_id",
+        "Symptom": "symptom_id",
+        "FailureMode": "failure_mode_id",
+        "CorrectiveAction": "action_id",
+        "ErrorCode": "error_code_id",
+    }
+    node_ids = {
+        str(item.get(id_fields[node_type]) or "").strip()
+        for node_type, items in nodes.items()
+        if node_type in id_fields
+        for item in (items or [])
+        if isinstance(item, dict) and str(item.get(id_fields[node_type]) or "").strip()
+    }
+    return sum(
+        1
+        for rel in payload.get("relations") or []
+        if isinstance(rel, dict)
+        and (
+            str(rel.get("from_id") or "").strip() not in node_ids
+            or str(rel.get("to_id") or "").strip() not in node_ids
+        )
+    )
 
 
 def _relation_names(ontology: Any, triplets: list[Any]) -> set[str]:
@@ -650,6 +712,7 @@ async def _run_fixture(
             "schema_issues_by_severity": _count_by([item.severity for item in ontology_result.schema_issues]),
             "node_counts": _ontology_counts(ontology_result.ontology),
             "relation_count": len(ontology_result.ontology.relations or []),
+            "dangling_relations": _dangling_relation_count(ontology_result.ontology),
             "human_review": _human_review_result(expected, ontology_result),
         },
         "triplets": triplet_match,
@@ -728,6 +791,21 @@ def _report_gate_failures(report: dict[str, Any]) -> list[str]:
     """Absolute failures that do not need a baseline (forbidden chains, quality gates)."""
     failures: list[str] = []
     for item in report.get("fixtures", []):
+        if not bool((item.get("scoping") or {}).get("must_keep_passed")):
+            failures.append(f"{item['fixture_id']}: scoping must-keep pages failed")
+        if not bool((item.get("export_checks") or {}).get("passed")):
+            failures.append(f"{item['fixture_id']}: export checks failed")
+        schema_errors = int(
+            ((item.get("ontology") or {}).get("schema_issues_by_severity") or {}).get("error", 0)
+            or 0
+        )
+        if schema_errors:
+            failures.append(f"{item['fixture_id']}: {schema_errors} schema error(s)")
+        dangling = int((item.get("ontology") or {}).get("dangling_relations", 0) or 0)
+        if dangling:
+            failures.append(f"{item['fixture_id']}: {dangling} dangling relation(s)")
+        if not bool(((item.get("ontology") or {}).get("human_review") or {}).get("matched", True)):
+            failures.append(f"{item['fixture_id']}: human-review bounds failed")
         violations = (item.get("triplets", {}).get("forbidden") or {}).get("violations") or []
         if violations:
             failures.append(f"{item['fixture_id']}: {len(violations)} forbidden chain violation(s)")
