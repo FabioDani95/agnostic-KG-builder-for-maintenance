@@ -8,9 +8,9 @@ from dataclasses import dataclass
 from typing import Any, Callable
 
 from backend.observability.trace import compact_digest
+from backend.runstore import append_human_action, append_trace_step
 from backend.schemas.actions import HumanAction
 from backend.schemas.widgets import validate_widget_payload
-from backend.runstore import append_human_action, append_trace_step
 from backend.services.conversation import events as evt_bus
 from backend.services.conversation.gate import check as gate_check
 

@@ -29,8 +29,8 @@ from typing import Any, Callable
 from backend.app_config import get_coverage_completion_config
 from backend.config import settings
 from backend.models import OntologyEvidence, OntologyInstance, OntologyRelationInstance
-from backend.services.llm_guardrails import enforce_llm_limits, llm_timeout_message
 from backend.services.llm_gateway import chat_temperature_kwargs
+from backend.services.llm_guardrails import enforce_llm_limits, llm_timeout_message
 from backend.services.ontology_semantics import build_semantic_key
 from backend.services.resolution_completion_service import (
     _find_supporting_page,

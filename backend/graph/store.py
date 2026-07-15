@@ -10,6 +10,7 @@ from backend.runstore import append_trace_step, snapshot_store
 from backend.schemas.run_state import RunState
 from backend.services.run_metrics import project_agent_token_ledger
 
+
 def persist_graph_state(store: dict[str, Any], state: GraphState) -> GraphState:
     RunState.model_validate(state)
     state["updated_at"] = utc_now_iso()

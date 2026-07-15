@@ -6,7 +6,6 @@ Split out of the former tools.py god-file (stabilization P6); pure move.
 from __future__ import annotations
 
 import logging
-
 from typing import Any
 
 from backend.services.conversation.tools.export import (
@@ -18,12 +17,10 @@ from backend.services.conversation.tools.export import (
     _save_exported_graph,
     _update_exported_node,
 )
-
 from backend.services.conversation.tools.extraction import (
     _re_extract_pages,
     _run_extraction,
 )
-
 from backend.services.conversation.tools.inspect import (
     _explain_decision,
     _explain_entity,
@@ -33,7 +30,6 @@ from backend.services.conversation.tools.inspect import (
     _list_extracted_nodes,
     _list_extracted_triplets,
 )
-
 from backend.services.conversation.tools.ontology import (
     _add_node_manual,
     _apply_suggested_relation,
@@ -41,14 +37,12 @@ from backend.services.conversation.tools.ontology import (
     _draft_ontology,
     _fill_required_field,
 )
-
 from backend.services.conversation.tools.review import (
     _approve_triplet,
     _edit_triplet,
     _get_next_triplet,
     _skip_triplet,
 )
-
 from backend.services.conversation.tools.scoping import (
     _approve_cut_plan,
     _edit_cut_plan,

@@ -8,7 +8,6 @@ from __future__ import annotations
 from typing import Any
 
 from backend.graph.state import GraphPhase
-
 from backend.services.conversation.tools.common import (
     _collect_extracted_nodes,
     _contains_triplet,
@@ -17,6 +16,7 @@ from backend.services.conversation.tools.common import (
     _node_type_counts,
     _triplet_summary,
 )
+
 
 async def _get_progress(args, store, on_event):
     from backend.graph.projections import build_status_payload

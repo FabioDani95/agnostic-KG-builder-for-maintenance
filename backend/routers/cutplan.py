@@ -10,8 +10,8 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException
 
 from backend.agents.scoping_agent import run_scoping_agent
-from backend.graph.supervisor import record_cut_plan_approval_route, record_scoping_route
 from backend.graph.store import update_cut_plan_approval
+from backend.graph.supervisor import record_cut_plan_approval_route, record_scoping_route
 from backend.models import CutPlan, CutPlanApproval, CutPlanRequest
 from backend.routers.upload import pdf_store
 from backend.services.scoping_workflow import (

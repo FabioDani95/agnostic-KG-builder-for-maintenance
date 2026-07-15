@@ -13,7 +13,6 @@ from backend.routers.upload import pdf_store
 from backend.runstore import RunStore, append_trace_step, clear_registry
 from backend.services.run_metrics import record_stage_metrics
 
-
 client = TestClient(app)
 
 

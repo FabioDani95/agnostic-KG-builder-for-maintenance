@@ -39,8 +39,7 @@ from backend.services.cutplan_service import (
     select_toc_sections,
 )
 from backend.services.llm_service import call_openai_scoping
-from backend.services.pdf_service import format_text_with_pages
-from backend.services.pdf_service import apply_selective_ocr, summarize_page_ingestion
+from backend.services.pdf_service import apply_selective_ocr, format_text_with_pages, summarize_page_ingestion
 from backend.services.run_metrics import record_stage_metrics, summarize_stage
 
 logger = logging.getLogger(__name__)

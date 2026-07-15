@@ -11,8 +11,8 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
 
 from backend.agents.ontology_draft_agent import run_ontology_draft_agent
-from backend.graph.supervisor import record_ontology_review_route, record_ontology_route
 from backend.graph.store import sync_ontology_pipeline_state
+from backend.graph.supervisor import record_ontology_review_route, record_ontology_route
 from backend.models import (
     ApplySuggestionsRequest,
     OntologyDraftRequest,

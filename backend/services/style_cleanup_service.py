@@ -14,13 +14,13 @@ from openai import OpenAI
 from backend.app_config import get_style_cleanup_config
 from backend.config import settings
 from backend.services.language_utils import language_label, normalize_language_code
+from backend.services.llm_gateway import chat_temperature_kwargs, get_client
 from backend.services.ontology_semantics import (
     instruction_steps,
     normalize_semantic_text,
     semantic_tokens,
     semantically_equivalent,
 )
-from backend.services.llm_gateway import chat_temperature_kwargs, get_client
 from backend.services.run_metrics import usage_from_response
 
 logger = logging.getLogger(__name__)

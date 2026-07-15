@@ -5,13 +5,16 @@ import json
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from backend.services.legacy_ontology_migration import migrate_legacy_ontology
 from backend.services.ontology_export_store import (
     LATEST_ONTOLOGY_PATH as EXPORT_LATEST_PATH,
+)
+from backend.services.ontology_export_store import (
     bump_file_version,
     normalize_file_version,
     prepare_exported_ontology,
 )
-from backend.services.legacy_ontology_migration import migrate_legacy_ontology
+
 from .config import ONTOLOGY_PATH
 
 _working_ontology: Optional[Dict[str, Any]] = None

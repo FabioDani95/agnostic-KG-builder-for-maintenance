@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from typing import Any
 
+
 def _build_ontology_review_payload(result, store: dict[str, Any]) -> dict[str, Any]:
     ontology_nodes = (getattr(result.ontology, "nodes", None) or {})
     node_type_counts = {

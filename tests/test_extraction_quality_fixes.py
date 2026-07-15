@@ -18,13 +18,13 @@ from backend.services.candidate_mining_service import mine_candidates
 from backend.services.confidence import score_ontology
 from backend.services.evidence_grounding_service import ground_relation_evidence
 from backend.services.graph_closure_service import close_grounded_gaps
+from backend.services.ontology_export_store import prepare_exported_ontology
 from backend.services.ontology_pipeline import (
     _extract_json_object,
     _validate_schema,
     normalize_ontology_instance,
 )
 from backend.services.ontology_schema_service import load_ontology_schema
-from backend.services.ontology_export_store import prepare_exported_ontology
 from backend.services.ontology_semantics import (
     has_actionable_instruction,
     normalize_severity,
@@ -501,7 +501,8 @@ class GraphProjectionTests(unittest.TestCase):
 
     def test_projection_preserves_graph_ids_and_chain(self):
         from backend.services.graph_projection_service import (
-            graph_has_validatable_chains, project_graph_to_triplets,
+            graph_has_validatable_chains,
+            project_graph_to_triplets,
         )
         graph = self._chained_graph()
         self.assertTrue(graph_has_validatable_chains(graph))

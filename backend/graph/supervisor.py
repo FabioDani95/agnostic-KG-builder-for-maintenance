@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from hashlib import sha1
 import json
+from hashlib import sha1
 from typing import Any
 
-from backend.graph.store import append_supervisor_log, ensure_graph_state
 from backend.graph.state import GraphPhase, utc_now_iso
+from backend.graph.store import append_supervisor_log, ensure_graph_state
 
 
 def _phase_token_agent(phase_from: str) -> str:

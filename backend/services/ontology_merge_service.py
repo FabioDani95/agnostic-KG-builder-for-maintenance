@@ -15,7 +15,6 @@ from backend.services.ontology_semantics import (
     symptoms_match,
 )
 
-
 _SEQUENTIAL_ID_RE = re.compile(r"^(SYM|FM|CA)-\d+$")
 _DESCRIPTIVE_ID_RE = re.compile(r"^(sym|fm|ca)_[a-z0-9_]+$")
 

@@ -586,8 +586,14 @@ async def _run_fixture(
     from backend.agents.extraction_agent import run_extraction_agent
     from backend.agents.ontology_draft_agent import run_ontology_draft_agent
     from backend.agents.scoping_agent import run_scoping_agent
+    from backend.models import (
+        CutPlanApproval,
+        CutPlanApprovalSection,
+        CutPlanRequest,
+        ExtractRequest,
+        OntologyDraftRequest,
+    )
     from backend.observability.trace import trace_from_state
-    from backend.models import CutPlanApproval, CutPlanApprovalSection, CutPlanRequest, ExtractRequest, OntologyDraftRequest
     from backend.runstore import RunStore
     from backend.services.manual_loader import build_store_from_markdown
     from backend.services.run_metrics import build_metrics_payload

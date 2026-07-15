@@ -4,12 +4,14 @@ from unittest.mock import patch
 from backend.graph.state import GraphPhase
 from backend.models import CutPlan
 from backend.services.conversation.critic import critique_ontology_draft
-from backend.services.conversation.tools import _build_ontology_review_payload
-from backend.services.conversation.tools import _build_triplet_graph_payload
-from backend.services.conversation.tools import _explain_decision
-from backend.services.conversation.tools import _propose_cut_plan
-from backend.services.conversation.tools import build_extraction_memory_snapshot
-from backend.services.conversation.tools import dispatch
+from backend.services.conversation.tools import (
+    _build_ontology_review_payload,
+    _build_triplet_graph_payload,
+    _explain_decision,
+    _propose_cut_plan,
+    build_extraction_memory_snapshot,
+    dispatch,
+)
 
 
 class ChatToolStateTests(unittest.IsolatedAsyncioTestCase):

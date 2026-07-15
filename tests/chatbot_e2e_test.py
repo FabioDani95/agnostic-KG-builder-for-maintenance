@@ -30,9 +30,8 @@ import json
 import os
 import sys
 import time
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
-from typing import Any
 
 import httpx
 
@@ -220,7 +219,7 @@ def _log_event(evt: dict):
     elif t == "error":
         print(f"    [error] {evt.get('message', '')}")
     elif t == "done":
-        print(f"    [done]")
+        print("    [done]")
 
 
 def _extract_widgets(events: list[dict]) -> list[str]:
@@ -627,7 +626,7 @@ async def phase_add_node(
             },
         })
         events2, _ = await sse.drain_until(stop_on="done", timeout=30.0, verbose=verbose)
-        confirm_msgs = _extract_chat(events2)
+        _extract_chat(events2)
 
         if confirm_resp.get("status") == "ok":
             phase.status = "pass"
@@ -892,7 +891,7 @@ def parse_args() -> argparse.Namespace:
 def main():
     args = parse_args()
     print(f"\n{'═'*60}")
-    print(f"  HITL Chatbot E2E Test")
+    print("  HITL Chatbot E2E Test")
     print(f"  Server : {args.url}  Model : {args.model}")
     print(f"{'═'*60}")
 

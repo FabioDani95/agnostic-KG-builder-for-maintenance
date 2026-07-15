@@ -12,12 +12,12 @@ from fastapi import HTTPException
 
 from backend.app_config import get_ontology_config
 from backend.models import OntologyDraftRequest, OntologyPipelineResponse, OntologyRelationInstance
+from backend.services.cutplan_service import extract_asset_identity
 from backend.services.ontology_pipeline import _normalize_ontology_instance, build_initial_ontology
 from backend.services.ontology_schema_service import load_ontology_schema
-from backend.services.cutplan_service import extract_asset_identity
+from backend.services.ontology_semantics import normalize_asset_node
 from backend.services.pdf_service import format_text_with_pages
 from backend.services.run_metrics import record_stage_metrics
-from backend.services.ontology_semantics import normalize_asset_node
 
 logger = logging.getLogger(__name__)
 
@@ -476,8 +476,8 @@ def _finalize_run_level_quality(
 
     Returns (updated_result, llm_usage_entries, resolution_report, quality_stats).
     """
-    from backend.config import settings
     from backend.app_config import get_confidence_config
+    from backend.config import settings
     from backend.services.confidence import score_ontology
     from backend.services.evidence_grounding_service import ground_relation_evidence
     from backend.services.graph_closure_service import close_grounded_gaps

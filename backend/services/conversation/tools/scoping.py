@@ -6,12 +6,12 @@ Split out of the former tools.py god-file (stabilization P6); pure move.
 from __future__ import annotations
 
 import asyncio
-
 from typing import Any
 
 from backend.services.conversation.tools.common import (
     _visible_sections_for_widget,
 )
+
 
 async def _propose_cut_plan(args, store, on_event):
     from backend.models import CutPlanRequest
@@ -148,9 +148,9 @@ async def _edit_cut_plan(args, store, on_event):
 
 
 async def _approve_cut_plan(args, store, on_event):
+    from backend.graph.store import update_cut_plan_approval
     from backend.models import CutPlanApproval
     from backend.services.scoping_workflow import approve_cut_plan_workflow
-    from backend.graph.store import update_cut_plan_approval
 
     cut_plan = store.get("cut_plan") or {}
     pages_to_keep = cut_plan.get("pages_to_keep") or [p["page_number"] for p in store.get("pages", [])]

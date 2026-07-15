@@ -4,7 +4,6 @@ from typing import Any
 
 from backend.services.conversation import events as evt_bus
 
-
 KNOWN_EVENT_TYPES = {
     evt_bus.EVT_PROGRESS,
     evt_bus.EVT_CHAT_DELTA,

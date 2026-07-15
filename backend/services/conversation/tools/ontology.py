@@ -9,10 +9,11 @@ from backend.services.conversation.tools.common import (
     _build_ontology_review_payload,
 )
 
+
 async def _draft_ontology(args, store, on_event):
+    from backend.graph.store import update_ontology_state
     from backend.models import OntologyDraftRequest
     from backend.services.ontology_workflow import draft_ontology_workflow
-    from backend.graph.store import update_ontology_state
 
     req = OntologyDraftRequest(
         pdf_id=store["pdf_id"],
@@ -116,8 +117,10 @@ async def _apply_suggested_relation(args, store, on_event):
 
 async def _add_node_manual(args, store, on_event):
     import json
-    from backend.app_config import get_chat_config
+
     from httpx import Timeout
+
+    from backend.app_config import get_chat_config
     from backend.services.llm_gateway import get_async_client
 
     node_type = args["node_type"]

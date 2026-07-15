@@ -12,7 +12,6 @@ from openai import OpenAI
 
 from backend.app_config import get_graph_cocreator_config
 from backend.config import settings
-from backend.services.llm_gateway import get_client, is_mock_mode
 from backend.services.graph_editor_validation import (
     _node_id_key_from_schema,
     _node_index,
@@ -20,6 +19,7 @@ from backend.services.graph_editor_validation import (
     validate_node_update,
     validate_relationship_add,
 )
+from backend.services.llm_gateway import get_client, is_mock_mode
 from backend.services.ontology_export_store import (
     LATEST_ONTOLOGY_PATH,
     ontology_path_for_pdf,

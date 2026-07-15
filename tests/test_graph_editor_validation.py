@@ -6,7 +6,6 @@ from backend.services.graph_editor_validation import (
     validate_relationship_add,
 )
 
-
 SCHEMA = {
     "node_types": {
         "Asset": [

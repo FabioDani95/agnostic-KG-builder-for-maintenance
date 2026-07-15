@@ -440,6 +440,6 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
 
 def tools_for_phase(phase: str) -> list[dict[str, Any]]:
     """Return the subset of tool schemas relevant to the current phase."""
-    from backend.services.conversation.gate import _PHASE_TOOLS, _ALWAYS_ALLOWED
+    from backend.services.conversation.gate import _ALWAYS_ALLOWED, _PHASE_TOOLS
     allowed = _PHASE_TOOLS.get(phase, set()) | _ALWAYS_ALLOWED
     return [t for t in TOOL_SCHEMAS if t["function"]["name"] in allowed]

@@ -20,7 +20,6 @@ from backend.services.graph_reasoning import (
 )
 from backend.services.ontology_schema_service import load_ontology_schema
 
-
 RAW_ONTOLOGY = {
     "ontology_name": "DiagnosticOntology",
     "version": "V0",

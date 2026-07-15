@@ -60,10 +60,10 @@ def _now_iso() -> str:
 
 def _build_store(pdf_path: Path) -> dict:
     """Replicate the side effects of POST /api/load-manual without FastAPI."""
+    from backend.graph.store import seed_graph_state
     from backend.routers.upload import DATA_DIR, pdf_store
     from backend.services.pdf_service import extract_text_by_page
     from backend.services.run_metrics import ensure_run_metrics
-    from backend.graph.store import seed_graph_state
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     pdf_id = str(uuid.uuid4())
@@ -97,8 +97,8 @@ def _build_store(pdf_path: Path) -> dict:
 # ─── Phase runners ──────────────────────────────────────────────────────────
 
 def _run_scoping_phase(store: dict, page_offset: int, model_name: str) -> dict:
-    from backend.models import CutPlanRequest
     from backend.agents.scoping_agent import run_scoping_agent
+    from backend.models import CutPlanRequest
 
     req = CutPlanRequest(
         pdf_id=store["pdf_id"],
@@ -160,8 +160,8 @@ def _run_scoping_phase(store: dict, page_offset: int, model_name: str) -> dict:
 
 
 async def _run_ontology_phase(store: dict, model_name: str, target_language: str) -> dict:
-    from backend.models import OntologyDraftRequest
     from backend.agents.ontology_draft_agent import run_ontology_draft_agent
+    from backend.models import OntologyDraftRequest
 
     req = OntologyDraftRequest(
         pdf_id=store["pdf_id"],
@@ -238,8 +238,8 @@ async def _run_ontology_phase(store: dict, model_name: str, target_language: str
 
 
 def _run_extract_phase(store: dict, model_name: str, target_language: str) -> dict:
-    from backend.models import ExtractRequest
     from backend.agents.extraction_agent import run_extraction_agent
+    from backend.models import ExtractRequest
 
     req = ExtractRequest(
         pdf_id=store["pdf_id"],
@@ -312,8 +312,8 @@ async def _main_async() -> int:
         logger.error("PDF not found: %s", pdf_path)
         return 2
 
-    from backend.config import settings as _settings  # noqa: F401 — ensure env is loaded
     from backend.app_config import get_confidence_config, get_effective_reflective_loop_config
+    from backend.config import settings as _settings  # noqa: F401 — ensure env is loaded
 
     model_name = args.model or _settings.MODEL_NAME
 

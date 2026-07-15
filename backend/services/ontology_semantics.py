@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 from difflib import SequenceMatcher
 
-
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
 _WHITESPACE_RE = re.compile(r"\s+")
 _STEP_NUMBER_RE = re.compile(r"(?:(?<=^)|(?<=[\n\r])|(?<=\.\s))\d+\.\s+")

@@ -5,20 +5,19 @@ from fastapi.testclient import TestClient
 from backend import app_config
 from backend.agents.ontology_draft_agent import run_ontology_draft_agent
 from backend.agents.scoping_agent import run_scoping_agent
-from backend.main import app
 from backend.graph.store import seed_graph_state
+from backend.main import app
 from backend.models import (
     CutPlan,
     CutPlanRequest,
-    ExtractRequest,
     ExtractionResult,
+    ExtractRequest,
     OntologyDraftRequest,
     OntologyPipelineResponse,
 )
 from backend.routers.upload import pdf_store
 from backend.services.extraction_pipeline import run_extraction_pipeline
 from backend.services.run_metrics import ensure_run_metrics
-
 
 client = TestClient(app)
 

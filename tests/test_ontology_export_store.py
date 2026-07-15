@@ -3,7 +3,6 @@ from pathlib import Path
 
 from backend.services import ontology_export_store
 
-
 RAW_ONTOLOGY = {
     "ontology_name": "DiagnosticOntology",
     "version": "V0",

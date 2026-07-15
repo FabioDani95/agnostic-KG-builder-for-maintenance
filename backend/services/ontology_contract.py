@@ -10,7 +10,6 @@ from backend.models import (
 from backend.services.legacy_ontology_migration import migrate_legacy_ontology
 from backend.services.ontology_semantics import infer_asset_type, normalize_asset_node
 
-
 REQUIRED_METADATA_FIELDS = (
     "product_name",
     "product_short_name",

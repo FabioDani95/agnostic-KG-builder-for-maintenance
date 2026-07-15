@@ -27,7 +27,6 @@ from typing import Any
 
 from backend.services.ontology_coverage import _NODE_ID_FIELDS, _iter_relations
 
-
 _ACTIONABLE_CONFIDENCE_REASONS = {
     "missing required properties",
     "human binding required",

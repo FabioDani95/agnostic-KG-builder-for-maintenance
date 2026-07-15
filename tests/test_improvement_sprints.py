@@ -31,8 +31,8 @@ from backend.services.candidate_mining_service import (
     mine_candidates,
     render_candidates_prompt_block,
 )
-from backend.services.llm_service import parse_extraction
 from backend.services.graph_reasoning import run_graph_analysis
+from backend.services.llm_service import parse_extraction
 from backend.services.ontology_merge_service import merge_validated_triplets
 from backend.services.ontology_pipeline import (
     _call_extractor_llm,
@@ -42,11 +42,11 @@ from backend.services.ontology_pipeline import (
     consume_parse_repair_events,
     validate_ontology_instance,
 )
+from backend.services.ontology_schema_service import dump_ontology_schema_json, load_ontology_schema
 from backend.services.resolution_completion_service import (
     build_resolution_targets,
     complete_resolution_gaps,
 )
-from backend.services.ontology_schema_service import dump_ontology_schema_json, load_ontology_schema
 from backend.services.type_consistency_service import evaluate_type_consistency
 
 
@@ -915,8 +915,8 @@ class ResolutionCompletionServiceTests(unittest.TestCase):
 
 class DerivedGeneratesErrorTests(unittest.TestCase):
     def test_normalize_derives_generates_error_for_every_error_code(self) -> None:
-        from backend.services.ontology_pipeline import normalize_ontology_instance
         from backend.models import OntologyInstance
+        from backend.services.ontology_pipeline import normalize_ontology_instance
 
         ontology = OntologyInstance.model_validate({
             "ontology_name": "diagnostic",

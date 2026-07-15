@@ -7,7 +7,7 @@ runtime path.
 
 from fastapi import APIRouter, HTTPException
 
-from backend.models import ExtractRequest, ExtractionResult
+from backend.models import ExtractionResult, ExtractRequest
 from backend.routers.upload import pdf_store
 from backend.services.extraction_pipeline import run_extraction_pipeline
 

@@ -5,14 +5,13 @@ Split out of the former tools.py god-file (stabilization P6); pure move.
 
 from __future__ import annotations
 
-from backend.graph.state import GraphPhase
-
 from backend.services.conversation.tools.common import (
     _apply_triplet_patch,
     _build_review_graph_payload,
     _contains_triplet,
     _triplet_logic_assessment,
 )
+
 
 async def _approve_triplet(args, store, on_event):
     idx = args["index"]
@@ -85,8 +84,8 @@ async def _get_next_triplet(args, store, on_event):
 
     if review_index >= len(triplets):
         # All done — update phase to EXPORT
-        from backend.graph.store import _record_phase
         from backend.graph.state import GraphPhase
+        from backend.graph.store import _record_phase
         _record_phase(
             store, phase=GraphPhase.EXPORT,
             agent="TripletReviewAgent", decision="all_reviewed",

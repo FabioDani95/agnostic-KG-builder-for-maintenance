@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from copy import deepcopy
 import re
 import time
+from copy import deepcopy
 from difflib import SequenceMatcher
 from typing import Any
 

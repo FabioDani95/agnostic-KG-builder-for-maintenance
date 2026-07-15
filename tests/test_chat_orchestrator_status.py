@@ -3,9 +3,17 @@ import unittest
 from backend.graph.state import GraphPhase
 from backend.services.conversation.heuristics import (
     detect_inventory_request as _detect_inventory_request,
+)
+from backend.services.conversation.heuristics import (
     detect_rerun_action as _detect_rerun_action,
+)
+from backend.services.conversation.heuristics import (
     maybe_build_direct_status_reply as _maybe_build_direct_status_reply,
+)
+from backend.services.conversation.heuristics import (
     maybe_build_scope_guard_reply as _maybe_build_scope_guard_reply,
+)
+from backend.services.conversation.heuristics import (
     workflow_status_reply as _workflow_status_reply,
 )
 from backend.services.conversation.orchestrator import (

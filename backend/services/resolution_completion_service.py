@@ -12,8 +12,8 @@ from openai import OpenAI
 from backend.app_config import get_resolution_completion_config
 from backend.config import settings
 from backend.models import OntologyEvidence, OntologyInstance, OntologyRelationInstance
-from backend.services.llm_guardrails import enforce_llm_limits, llm_timeout_message
 from backend.services.llm_gateway import chat_temperature_kwargs, get_client
+from backend.services.llm_guardrails import enforce_llm_limits, llm_timeout_message
 from backend.services.ontology_semantics import (
     build_semantic_key,
     is_escalation_instruction,
