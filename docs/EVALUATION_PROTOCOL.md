@@ -1,11 +1,11 @@
 # Evaluation Protocol for the Maintenance KG Builder
 
 **Status:** normative — this document defines *the* procedure for measuring
-extraction quality. Any performance number quoted in a report, README, or
-paper must be traceable to a run produced by this protocol.
+extraction quality. Any performance number quoted in a report or the README
+must be traceable to a run produced by this protocol.
 
-**Audience:** developers adding golden fixtures or interpreting eval reports,
-and paper co-authors reproducing the experiments.
+**Audience:** developers adding golden fixtures, interpreting eval reports, or
+reproducing a model/config comparison.
 
 ---
 
@@ -328,11 +328,12 @@ manuals" rests on. Budget ~2–4 h per real manual, plus 1–3 paid runs.
 one committed real-run report demonstrating the gates hold; fixture doc in
 `docs/`.
 
-## 7. Experimental protocol for the paper (APMS)
+## 7. Protocol for model/config comparisons
 
-For model/config comparisons intended for publication:
+When deciding which model or configuration to ship — or benchmarking a change
+before it reaches customers:
 
-1. **Fix the code**: one git commit for the whole experiment; record it.
+1. **Fix the code**: one git commit for the whole comparison; record it.
 2. **Fixture set**: all real-manual fixtures (synthetic fixtures are smoke
    tests — report them separately or not at all).
 3. **Repetitions**: ≥ 3 runs per (model, fixture) — observed recall variance
@@ -342,8 +343,8 @@ For model/config comparisons intended for publication:
    `grounded_precision`, forbidden-chain violations, blocking-review count.
    Secondary: tokens, cost, duration, schema issues.
 5. **No post-hoc annotation edits** once comparison runs start (§6 step 8).
-6. Keep every `eval_runs/<ts>/` directory quoted in the paper; the artifacts
-   are the audit trail.
+6. Keep every `eval_runs/<ts>/` directory referenced in the decision; the
+   artifacts are the audit trail.
 
 ## 8. Current fixture inventory & roadmap
 

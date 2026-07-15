@@ -53,7 +53,7 @@ The pipeline pauses at explicit operator handoffs (cut-plan approval, extraction
 
 ### Quality Evaluation
 
-Extraction quality is measured with golden fixtures under `tests/golden/` via `scripts/eval_golden.py`. The normative procedure — metric definitions (sample recall, unsupported-chain rate, grounded precision), fixture anatomy, the two-phase authoring/calibration process, and the experimental protocol for publications — is in `docs/EVALUATION_PROTOCOL.md`. Per-fixture calibration reports live in `docs/*_GOLDEN_EVAL.md`; the deterministic mock gate is `python3 scripts/eval_golden.py --mode mock --fail-on-regression`.
+Extraction quality is measured with golden fixtures under `tests/golden/` via `scripts/eval_golden.py`. The normative procedure — metric definitions (sample recall, unsupported-chain rate, grounded precision), fixture anatomy, the two-phase authoring/calibration process, and the protocol for model/config comparisons — is in `docs/EVALUATION_PROTOCOL.md`. Per-fixture calibration reports live in `docs/*_GOLDEN_EVAL.md`; the deterministic mock gate is `python3 scripts/eval_golden.py --mode mock --fail-on-regression`.
 
 ### Operator Workflow
 
