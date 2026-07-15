@@ -7,12 +7,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from backend.routers import upload, generate, graph_editor, modify, multi_agent, chat, runs
 from backend.app_config import (
-    get_scoping_config, get_extraction_config,
-    get_effective_small_doc_threshold, get_effective_reflective_loop_config,
-    apply_runtime_overrides, get_pipeline_config,
+    apply_runtime_overrides,
+    get_effective_reflective_loop_config,
+    get_effective_small_doc_threshold,
+    get_extraction_config,
+    get_pipeline_config,
+    get_scoping_config,
 )
+from backend.routers import chat, generate, modify, multi_agent, runs, upload
 
 logging.basicConfig(
     level=logging.INFO,
@@ -43,7 +46,6 @@ def create_app() -> FastAPI:
         app.include_router(extract.router)
         app.include_router(ontology.router)
     app.include_router(generate.router)
-    app.include_router(graph_editor.router)
     app.include_router(modify.router)
     app.include_router(multi_agent.router)
     app.include_router(chat.router)

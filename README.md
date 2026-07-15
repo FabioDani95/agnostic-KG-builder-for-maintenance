@@ -102,7 +102,7 @@ The exported ontology is normalized and validated against the current contract b
 After an export is available, the latest ontology can be inspected in the browser at:
 
 ```text
-http://127.0.0.1:8000/graph-editor/latest
+http://127.0.0.1:8000/modify/latest
 ```
 
 ### Current Repository Policy
