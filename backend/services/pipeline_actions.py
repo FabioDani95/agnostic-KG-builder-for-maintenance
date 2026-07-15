@@ -7,7 +7,6 @@ directly, so logic is never duplicated between the two entry points.
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Any
 
 from backend.app_config import get_confidence_config
 from backend.graph.store import sync_ontology_pipeline_state
@@ -97,15 +96,3 @@ def get_current_ontology(store: dict) -> OntologyPipelineResponse | None:
     if not pipeline_state:
         return None
     return OntologyPipelineResponse.model_validate(pipeline_state)
-
-
-def get_run_phase(store: dict) -> str:
-    """Return the current graph phase string."""
-    gs = store.get("graph_state") or {}
-    return str(gs.get("current_phase") or "loaded")
-
-
-def get_triplets_from_store(store: dict) -> list[dict[str, Any]]:
-    """Return cleaned triplets as dicts (empty list if not yet extracted)."""
-    gs = store.get("graph_state") or {}
-    return list(gs.get("cleaned_triplets") or store.get("triplets") or [])

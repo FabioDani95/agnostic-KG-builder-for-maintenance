@@ -9,7 +9,6 @@ All user-facing text is in English.
 
 from __future__ import annotations
 
-import asyncio
 import json
 import logging
 from typing import Any
@@ -21,32 +20,60 @@ from backend.graph.state import GraphPhase
 from backend.graph.store import seed_conversation_state
 from backend.services.conversation import actions as action_service
 from backend.services.conversation import events as evt_bus
-from backend.services.llm_gateway import get_async_client
 from backend.services.conversation.gate import check as gate_check
 from backend.services.conversation.heuristics import (
     action_already_completed as _action_already_completed,
+)
+from backend.services.conversation.heuristics import (
     action_label as _action_label,
+)
+from backend.services.conversation.heuristics import (
     clean_section_name as _clean_section_name,
+)
+from backend.services.conversation.heuristics import (
     compress_page_ranges as _compress_page_ranges,
+)
+from backend.services.conversation.heuristics import (
     detect_inventory_request as _detect_inventory_request,
+)
+from backend.services.conversation.heuristics import (
     detect_rerun_action as _detect_rerun_action,
+)
+from backend.services.conversation.heuristics import (
     format_triplet_inventory_message as _format_triplet_inventory_message,
+)
+from backend.services.conversation.heuristics import (
     is_cancel_message as _is_cancel_message,
+)
+from backend.services.conversation.heuristics import (
     is_confirm_message as _is_confirm_message,
+)
+from backend.services.conversation.heuristics import (
     is_continue_command as _is_continue_command,
+)
+from backend.services.conversation.heuristics import (
     maybe_build_direct_status_reply as _maybe_build_direct_status_reply,
+)
+from backend.services.conversation.heuristics import (
     maybe_build_scope_guard_reply as _maybe_build_scope_guard_reply,
+)
+from backend.services.conversation.heuristics import (
     normalise_query as _normalise_query,
+)
+from backend.services.conversation.heuristics import (
     phase_label as _phase_label,
+)
+from backend.services.conversation.heuristics import (
     status_snapshot as _status_snapshot,
+)
+from backend.services.conversation.heuristics import (
     workflow_blockers as _workflow_blockers,
 )
 from backend.services.conversation.tools import (
-    TOOL_SCHEMAS,
-    build_extraction_memory_snapshot,
     dispatch,
     tools_for_phase,
 )
+from backend.services.llm_gateway import get_async_client
 
 logger = logging.getLogger(__name__)
 
@@ -667,7 +694,7 @@ async def handle_message(
 def _auto_advance(pdf_id: str, store: dict, on_event) -> None:
     """Check if a phase just completed and trigger the next step automatically."""
     gs = store.get("graph_state") or {}
-    phase = gs.get("current_phase", "")
+    gs.get("current_phase", "")
     # After cut-plan approval (state transitions to ONTOLOGY_DRAFT), auto-trigger draft
     # This is handled in the approve_cut_plan tool result → frontend re-triggers
     pass  # Extend in later phases as needed

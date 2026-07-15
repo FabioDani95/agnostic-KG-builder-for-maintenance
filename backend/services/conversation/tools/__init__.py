@@ -17,6 +17,10 @@ from backend.services.conversation.tools.scoping import _propose_cut_plan
 
 __all__ = [
     "TOOL_SCHEMAS",
+    "_build_ontology_review_payload",
+    "_build_triplet_graph_payload",
+    "_explain_decision",
+    "_propose_cut_plan",
     "build_extraction_memory_snapshot",
     "dispatch",
     "tools_for_phase",

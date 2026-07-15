@@ -91,25 +91,6 @@ def build_export_directory(
     return OUTPUT_DIR / build_export_bundle_name(ontology, manual_filename=manual_filename)
 
 
-def build_export_filename(ontology: dict[str, Any]) -> str:
-    asset = _primary_asset_node(ontology)
-    product = (
-        str(asset.get("model") or "").strip()
-        or str(asset.get("name") or "").strip()
-        or Path(str(ontology.get("source_title") or "ontology")).stem
-    )
-    brand = (
-        str(asset.get("manufacturer") or "").strip()
-        or str(asset.get("brand") or "").strip()
-        or "unknown"
-    )
-    version = normalize_file_version(
-        ontology.get("metadata", {}).get("file_version")
-        or ontology.get("version")
-    )
-    return f"{_slugify(product)}_{_slugify(brand)}_{version}.json"
-
-
 def prepare_exported_ontology(
     ontology: dict[str, Any],
     version: str | None = None,

@@ -33,13 +33,6 @@ _queues: dict[str, asyncio.Queue] = {}
 _locks: dict[str, asyncio.Lock] = {}
 
 
-def get_lock(pdf_id: str) -> asyncio.Lock:
-    """Return (creating if needed) the per-run mutex."""
-    if pdf_id not in _locks:
-        _locks[pdf_id] = asyncio.Lock()
-    return _locks[pdf_id]
-
-
 def register(pdf_id: str) -> None:
     """Ensure a queue and lock exist for this run.  Idempotent — safe to call
     from both /chat/stream and /chat/start regardless of ordering."""
@@ -47,11 +40,6 @@ def register(pdf_id: str) -> None:
         _queues[pdf_id] = asyncio.Queue()
     if pdf_id not in _locks:
         _locks[pdf_id] = asyncio.Lock()
-
-
-def is_registered(pdf_id: str) -> bool:
-    """Return True when this run has an event queue."""
-    return pdf_id in _queues
 
 
 def ensure_registered(pdf_id: str) -> None:

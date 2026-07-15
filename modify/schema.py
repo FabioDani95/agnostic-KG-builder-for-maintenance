@@ -52,6 +52,3 @@ def load_schema(ont: Dict[str, Any]) -> Dict[str, Any]:
     return _schema_cache
 
 
-def invalidate_schema_cache() -> None:
-    global _schema_cache
-    _schema_cache = None

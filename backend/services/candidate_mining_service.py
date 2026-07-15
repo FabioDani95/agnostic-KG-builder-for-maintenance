@@ -15,9 +15,7 @@ language alarm phrases ("low air alarm", "timeout in ...").
 from __future__ import annotations
 
 import re
-from collections import defaultdict
 from dataclasses import dataclass, field
-
 
 _COMPONENT_LEXICON: tuple[str, ...] = (
     "valve", "solenoid", "solenoid valve",

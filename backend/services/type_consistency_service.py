@@ -29,7 +29,6 @@ from dataclasses import dataclass
 
 from backend.models import OntologyInstance, PipelineIssue
 
-
 _CAUSE_TOKENS: frozenset[str] = frozenset({
     "broken", "loose", "misaligned", "dead", "worn", "disconnected",
     "out of adjustment", "incorrect", "dirty", "saturated", "depleted",
@@ -77,10 +76,6 @@ def _cause_tokens_in(text: str) -> set[str]:
             if re.search(rf"\b{re.escape(token)}\b", lowered):
                 hits.add(token)
     return hits
-
-
-def _contains_cause_token(text: str) -> bool:
-    return bool(_cause_tokens_in(text))
 
 
 def _has_distinctive_cause_token(failure_text: str, symptom_text: str) -> bool:

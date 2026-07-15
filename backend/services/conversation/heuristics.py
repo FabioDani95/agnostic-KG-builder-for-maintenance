@@ -501,7 +501,7 @@ def maybe_build_direct_status_reply(store: dict[str, Any], user_message: str | N
     selected_page_ranges = status["selected_page_ranges"]
     total_pages = status["total_pages"]
     section_count = status["section_count"]
-    rendered_sections = status["rendered_sections"]
+    status["rendered_sections"]
     rendered_sections_full = status["rendered_sections_full"]
     next_step = status["next_step"] or "not set"
 

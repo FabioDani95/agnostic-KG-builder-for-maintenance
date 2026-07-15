@@ -31,11 +31,6 @@ def _page_text_by_page(store: dict[str, Any], selected_pages: list[int]) -> dict
     }
 
 
-def _has_draft_nodes(ontology_draft: dict[str, Any] | None, node_type: str) -> bool:
-    node_list = ((ontology_draft or {}).get("nodes") or {}).get(node_type) or []
-    return bool(node_list)
-
-
 def _ontology_supports_symptom(ontology_draft: dict[str, Any] | None, symptom: dict[str, Any]) -> bool:
     node_list = ((ontology_draft or {}).get("nodes") or {}).get("Symptom") or []
     if not node_list:

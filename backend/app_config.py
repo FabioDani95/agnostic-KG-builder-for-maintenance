@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from pathlib import Path
 from functools import lru_cache
+from pathlib import Path
 
 import yaml
 
@@ -178,12 +178,6 @@ def get_style_cleanup_config() -> dict:
     editable_fields.setdefault("CorrectiveAction", ["name", "description", "instruction_text"])
     editable_fields.setdefault("ErrorCode", ["name", "description"])
     return cfg
-
-
-def reload_config() -> dict:
-    """Force-reload from disk (e.g. after user edits the file)."""
-    _load_raw.cache_clear()
-    return load_config()
 
 
 _runtime_overrides: dict = {}

@@ -8,7 +8,6 @@ from __future__ import annotations
 import asyncio
 
 from backend.graph.state import GraphPhase
-
 from backend.services.conversation.tools.common import (
     _graph_type_counts,
     _modify_workspace_payload,
@@ -16,18 +15,20 @@ from backend.services.conversation.tools.common import (
     _search_exported_nodes,
 )
 
+
 async def _export_ontology(args, store, on_event):
     import json
     import time
-    from backend.services.pipeline_actions import get_current_ontology
+
+    from backend.services.conversation import events as evt_bus
     from backend.services.ontology_export_store import (
         persist_export_metrics,
         persist_exported_ontology,
         prepare_exported_ontology,
     )
+    from backend.services.pipeline_actions import get_current_ontology
     from backend.services.run_metrics import aggregate_usage, build_metrics_payload, record_stage_metrics
     from backend.services.style_cleanup_service import cleanup_export_ontology
-    from backend.services.conversation import events as evt_bus
 
     t0 = time.perf_counter()
     result = get_current_ontology(store)
@@ -123,7 +124,6 @@ async def _export_ontology(args, store, on_event):
 
     # Update phase to COMPLETED
     from backend.graph.store import _record_phase
-    from backend.graph.state import GraphPhase
     _record_phase(
         store, phase=GraphPhase.COMPLETED,
         agent="ExportAgent", decision="exported",

@@ -7,7 +7,6 @@ from typing import Any
 from backend.observability.trace import compact_digest, compact_summary
 from backend.runstore import append_trace_step
 
-
 MODEL_PRICING = {
     "gpt-5.4": {
         "label": "GPT-5.4",
@@ -46,10 +45,6 @@ AGENT_STAGE_MAP = {
     "refinement": "refiner_agent",
     "export": "export",
 }
-
-
-def now_perf() -> float:
-    return perf_counter()
 
 
 def normalize_model_pricing_key(model_name: str | None) -> str:

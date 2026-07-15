@@ -121,7 +121,7 @@ def critique_triplet(
 
     # 4. Type-consistency check: highly similar Symptom name ↔ FailureMode name
     try:
-        from backend.services.ontology_semantics import normalize_semantic_text, semantic_tokens
+        from backend.services.ontology_semantics import semantic_tokens
         sym_tokens = set(semantic_tokens(symptom_name))
         for fm in failure_modes:
             fm_tokens = set(semantic_tokens(fm.get("name", "")))
@@ -147,7 +147,7 @@ def critique_triplet(
         issues.append(critique_event(
             message=f"Symptom '{symptom_name}' cites evidence page {evidence_page}, which is not in the document.",
             entity_id=symptom_id,
-            suggestion=f"Check the evidence page reference — it may be a page-offset error.",
+            suggestion="Check the evidence page reference — it may be a page-offset error.",
         ))
 
     return issues[:_MAX_CRITIQUES]
