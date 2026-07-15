@@ -6,7 +6,7 @@ import time
 from typing import Any
 
 from backend.app_config import get_extraction_config
-from backend.models import ExtractRequest, ExtractionResult
+from backend.models import ExtractionResult, ExtractRequest
 from backend.services.llm_service import _split_page_chunks, extract_triplets_chunked
 from backend.services.run_metrics import aggregate_usage, record_stage_metrics
 
@@ -60,7 +60,7 @@ def extract_triplets_workflow(
         project_graph_to_triplets,
     )
 
-    if graph_has_validatable_chains(ontology_draft or {}):
+    if not req.force_llm and graph_has_validatable_chains(ontology_draft or {}):
         result = project_graph_to_triplets(
             ontology_draft,
             source_type=req.source_type,
@@ -78,6 +78,7 @@ def extract_triplets_workflow(
                 sections=sections,
                 ontology_draft=ontology_draft,
                 on_event=on_event,
+                hint=req.hint,
             )
         except RuntimeError as exc:
             detail = str(exc)

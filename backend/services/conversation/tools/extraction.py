@@ -7,16 +7,15 @@ from __future__ import annotations
 
 import asyncio
 
-from backend.graph.state import GraphPhase
-
 from backend.services.conversation.tools.common import (
     _build_review_graph_payload,
 )
 
+
 async def _run_extraction(args, store, on_event):
+    from backend.graph.store import set_run_progress, update_extraction_state
     from backend.models import ExtractRequest
     from backend.services.extraction_workflow import extract_triplets_workflow
-    from backend.graph.store import set_run_progress, update_extraction_state
 
     # Flip the status immediately so the console stops showing "your turn"
     # while the (long) extraction is running.
@@ -57,12 +56,10 @@ async def _run_extraction(args, store, on_event):
 async def _re_extract_pages(args, store, on_event):
     from backend.models import ExtractRequest
     from backend.services.extraction_workflow import extract_triplets_workflow
-    from backend.services.llm_service import _merge_extraction_results
-    from backend.graph.state import GraphPhase
 
     start = args["start_page"]
     end = args["end_page"]
-    hint = args.get("hint", "")
+    hint = str(args.get("hint", "") or "").strip()
 
     pages = store.get("pages") or []
     target_pages = [p for p in pages if start <= p["page_number"] <= end]
@@ -74,13 +71,18 @@ async def _re_extract_pages(args, store, on_event):
     fake_store["pages"] = target_pages
     fake_store["cut_plan"] = {**(store.get("cut_plan") or {}), "pages_to_keep": [p["page_number"] for p in target_pages]}
 
-    req = ExtractRequest(
-        pdf_id=store["pdf_id"],
-        source_type=store.get("source_type", ""),
-        source_title=store.get("source_title", ""),
-        model_name=(store.get("selected_models") or {}).get("extraction") or None,
-        target_language=store.get("target_language", "en"),
-    )
+    req_kwargs = {
+        "pdf_id": store["pdf_id"],
+        "source_type": store.get("source_type", ""),
+        "source_title": store.get("source_title", ""),
+        "target_language": store.get("target_language", "en"),
+        "hint": hint,
+        "force_llm": True,
+    }
+    selected_model = (store.get("selected_models") or {}).get("extraction")
+    if selected_model:
+        req_kwargs["model_name"] = selected_model
+    req = ExtractRequest(**req_kwargs)
     new_result, _ = await asyncio.to_thread(extract_triplets_workflow, fake_store, req, on_event)
 
     # Merge new triplets with existing ones
@@ -88,7 +90,6 @@ async def _re_extract_pages(args, store, on_event):
     existing_triplets = gs.get("cleaned_triplets") or []
 
     # Filter out triplets from the re-extracted page range in the existing set
-    from backend.models import Triplet
     kept = [
         t for t in existing_triplets
         if not (start <= int((t.get("symptom") or {}).get("evidence_page", 0) or 0) <= end)

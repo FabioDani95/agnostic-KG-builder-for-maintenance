@@ -206,6 +206,7 @@ def extract_triplets_chunked(
     sections: list[dict] | None = None,
     ontology_draft: dict | None = None,
     on_event=None,
+    hint: str = "",
 ) -> ExtractionResult:
     cfg = get_extraction_config()
     chunks = _split_page_chunks(
@@ -245,6 +246,14 @@ def extract_triplets_chunked(
             [f"--- PAGE {page['page_number']} ---\n{page['text']}" for page in chunk]
         )
         section_context = _build_section_context(chunk, sections or [])
+        if hint:
+            hint_block = (
+                "## OPERATOR HINT\n"
+                f"The operator expects to find the following in these pages: {hint}\n"
+                "Prioritize extracting diagnostic information related to this hint, "
+                "but do not invent content that is not supported by the page text."
+            )
+            section_context = f"{section_context}\n\n{hint_block}" if section_context else hint_block
         page_text_by_page = {page["page_number"]: page["text"] for page in chunk}
         raw_response, usage = call_openai(
             text_with_pages=text_with_pages,

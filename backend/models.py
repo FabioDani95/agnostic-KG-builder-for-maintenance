@@ -76,6 +76,11 @@ class ExtractRequest(BaseModel):
     model_name: str = DEFAULT_MODEL_NAME
     pages_to_keep: list[int] | None = None
     target_language: str = "en"
+    # Optional operator hint about what to look for (used by chat re-extraction).
+    hint: str = ""
+    # Skip the graph-projection shortcut and always run LLM extraction.
+    # Targeted re-extraction needs this: projection ignores the page range.
+    force_llm: bool = False
 
 
 class GenerateJsonRequest(BaseModel):
