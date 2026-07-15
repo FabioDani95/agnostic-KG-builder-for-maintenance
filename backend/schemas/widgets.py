@@ -46,7 +46,7 @@ class TripletWidgetPayload(_WidgetPayloadBase):
     total: int | None = None
     triplet: dict[str, Any] | None = None
     graph: dict[str, Any] | None = None
-    logic_assessment: dict[str, Any] | None = None
+    logic_assessment: dict[str, Any] | list[str] | None = None
 
 
 class TripletReviewStartWidgetPayload(_WidgetPayloadBase):

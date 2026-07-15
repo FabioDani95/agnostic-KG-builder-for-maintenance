@@ -24,6 +24,7 @@ test("console: new session flow, decision persistence, export gating", async ({ 
 
   // The dashboard must announce the operator handoff before approval.
   await expect(page.getByText("Tocca a te: approva la selezione delle pagine")).toBeVisible();
+  await expect(page.locator(".flow-rail")).toContainText("Scoping");
 
   // Approve the page selection → chained ontology draft. exact:true — the
   // handoff banner adds a "Vai allo Scoping" CTA that also matches "Scoping".
@@ -40,16 +41,15 @@ test("console: new session flow, decision persistence, export gating", async ({ 
   await expect(page.getByText("Estrazione non completata")).toBeVisible();
   await expect(page.getByRole("button", { name: /Esporta/ })).toBeDisabled();
 
-  // Handle the advisory queue item from the inspector.
+  // Handle the low-risk advisory batch (one persisted decision per item).
   await page.getByRole("button", { name: /Review Center/ }).click();
-  await page.locator(".c-main .card button.row-hover").first().click();
-  await page.locator(".c-inspector").getByRole("button", { name: "Prendi atto" }).click();
-  await expect(header).toContainText("1 di 1 gestiti");
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("button", { name: "Prendi atto degli advisory" }).click();
+  await expect(header).toContainText(/1 di \d+ gestiti/);
 
-  // The decision must survive a full reload + reopen from the sessions list.
+  // The decision and the current context must survive a full reload.
   await page.reload();
-  await expect(page.getByRole("heading", { name: "Sessioni" })).toBeVisible();
-  const row = page.locator(".c-main .card > div", { hasText: runShort });
-  await row.getByRole("button", { name: "Apri" }).click();
-  await expect(header).toContainText("1 di 1 gestiti", { timeout: 30000 });
+  await expect(header).toContainText(/1 di \d+ gestiti/, { timeout: 30000 });
+  await expect(page).toHaveURL(new RegExp("[?&]run="));
+  await expect(page.locator(".flow-rail")).toBeVisible();
 });

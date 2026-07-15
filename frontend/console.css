@@ -25,6 +25,9 @@ input:focus {
   from { opacity: 0; transform: translateX(8px); }
   to { opacity: 1; transform: none; }
 }
+@keyframes view-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+@keyframes progress-slide { from { transform: translateX(-110%); } to { transform: translateX(320%); } }
+@keyframes check-sweep { from { background-position: -160% 0; } to { background-position: 160% 0; } }
 
 #app { height: 100vh; display: flex; flex-direction: column; overflow: hidden; min-width: 1024px; }
 
@@ -38,6 +41,7 @@ input:focus {
   padding: 14px 10px; border-right: 1px solid rgba(0,0,0,0.07); background: #EFEEE8;
 }
 .c-main { flex: 1; min-width: 0; overflow-y: auto; background: #F7F6F2; }
+.c-view-enter { min-height: 100%; animation: view-in .16s ease-out; }
 .c-inspector {
   width: 352px; flex: none; overflow-y: auto; border-left: 1px solid rgba(0,0,0,0.07);
   background: #F4F3EF; padding: 20px 22px; animation: ins-in .2s ease;
@@ -90,3 +94,21 @@ input[type="text"], input[type="number"], input:not([type]) {
   max-width: 70vw;
 }
 .c-toast.error { background: #B4543E; }
+
+.flow-rail { max-width: 960px; margin: 18px auto -8px; padding: 12px 18px; border-radius: 12px; background: #fffdf9; box-shadow: 0 0 0 1px rgba(0,0,0,.05); }
+.flow-steps { display: flex; align-items: flex-start; min-width: 700px; overflow-x: auto; }
+.flow-step { display:flex; flex-direction:column; align-items:center; gap:3px; color:#aaa59b; min-width:74px; }
+.flow-step span { display:grid; place-items:center; width:20px; height:20px; border-radius:50%; background:rgba(0,0,0,.05); font-size:10px; }
+.flow-step small { font-size:10px; font-weight:600; white-space:nowrap; }
+.flow-step.done { color:#638368; }.flow-step.done span { background:rgba(122,155,126,.15); }
+.flow-step.current { color:#3a3934; }.flow-step.current span { color:#fff; background:#C96442; box-shadow:0 0 0 4px rgba(201,100,66,.14); }
+.flow-steps i { display:block; flex:1; height:1px; min-width:14px; margin:10px 2px 0; background:rgba(0,0,0,.1); }.flow-steps i.done { background:rgba(122,155,126,.45); }
+.flow-action { margin-top:8px; text-align:center; color:#6e6a61; font-size:11.5px; }
+.state-panel { display:flex; align-items:center; gap:10px; padding:14px 16px; border-radius:10px; background:rgba(0,0,0,.04); color:#55524b; font-size:12.5px; }
+.state-panel.error { background:rgba(180,84,62,.09); }.state-panel small { display:block; margin-top:3px; color:#8a867d; }
+.run-skeleton { height:56px; margin:0 20px; border-top:1px solid rgba(0,0,0,.05); background:linear-gradient(90deg, rgba(0,0,0,.025), rgba(0,0,0,.055), rgba(0,0,0,.025)); background-size:220% 100%; animation:check-sweep 1.2s linear infinite; }
+.live-progress { margin-top:9px; max-width:520px; }.live-progress > div:first-child { display:flex; gap:10px; align-items:baseline; font-size:11.5px; color:#55524b; }.live-progress > div:first-child span { color:#8a867d; }.live-progress small,.progress-fallback { display:block; margin-top:4px; font-size:11px; color:#8a867d; }
+.progress-track { height:5px; margin-top:5px; overflow:hidden; border-radius:99px; background:rgba(0,0,0,.08); }.progress-track span { display:block; height:100%; border-radius:inherit; background:#C96442; transition:width .18s ease; }.progress-track.indeterminate span { width:35%; animation:progress-slide 1.2s ease-in-out infinite; }
+.executive-kpis { margin-top:18px; padding:16px 20px; border-radius:14px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.04), 0 0 0 1px rgba(0,0,0,.04); background-image:linear-gradient(100deg, transparent 35%, rgba(122,155,126,.12) 50%, transparent 65%); background-size:220% 100%; animation:check-sweep .5s ease-out; }.executive-grid { display:grid; grid-template-columns:repeat(7, 1fr); gap:10px; margin-top:10px; }.executive-grid strong,.executive-grid span { display:block; }.executive-grid strong { font-size:18px; letter-spacing:-.02em; }.executive-grid span,.executive-kpis p { font-size:11px; color:#6e6a61; line-height:1.35; }.executive-kpis p { margin:12px 0 0; }
+.review-footer { position:sticky; bottom:12px; display:flex; justify-content:space-between; gap:10px; margin-top:14px; padding:10px 14px; border-radius:10px; background:rgba(34,33,29,.94); color:#f4f3ef; box-shadow:0 3px 12px rgba(0,0,0,.16); font-size:11.5px; }
+@media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; } }

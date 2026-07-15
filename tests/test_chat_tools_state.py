@@ -1,3 +1,5 @@
+import asyncio
+import threading
 import unittest
 from unittest.mock import patch
 
@@ -75,6 +77,45 @@ class ChatToolStateTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(captured_offsets, [0])
         self.assertEqual(result["status"], "ok")
         self.assertEqual(store["graph_state"]["scoping_metadata"]["page_offset"], 0)
+
+    async def test_propose_cut_plan_deduplicates_concurrent_execution(self):
+        started = threading.Event()
+        release = threading.Event()
+        calls = 0
+
+        def fake_create_cut_plan(store, req, on_event=None):
+            nonlocal calls
+            calls += 1
+            started.set()
+            release.wait(timeout=2)
+            return CutPlan(
+                pdf_id=req.pdf_id,
+                total_pages=1,
+                sections=[],
+                pages_to_keep=[1],
+                page_offset=0,
+                skipped=False,
+            )
+
+        store = {
+            "pdf_id": "pdf-concurrent",
+            "selected_models": {"scoping": "mock-model"},
+            "pages": [{"page_number": 1, "text": ""}],
+        }
+        with patch(
+            "backend.services.scoping_workflow.create_cut_plan_workflow",
+            side_effect=fake_create_cut_plan,
+        ):
+            first = asyncio.create_task(_propose_cut_plan({}, store, None))
+            await asyncio.to_thread(started.wait, 1)
+            duplicate = await _propose_cut_plan({}, store, None)
+            release.set()
+            result = await first
+
+        self.assertEqual(calls, 1)
+        self.assertEqual(duplicate["status"], "in_progress")
+        self.assertEqual(result["status"], "ok")
+        self.assertNotIn("_scoping_in_progress", store)
 
     async def test_list_extracted_nodes_returns_names_and_types_from_current_state(self):
         store = {

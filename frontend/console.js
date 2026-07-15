@@ -15,6 +15,7 @@
 "use strict";
 
 const ACCENT = "#C96442";
+const ENABLE_LIVE_PROGRESS = true;
 const app = document.getElementById("app");
 
 /* ── colors (design tokens) ── */
@@ -31,18 +32,20 @@ const ID_FIELDS = { Asset: "asset_id", Component: "component_id", Symptom: "symp
 /* ── state ── */
 const S = {
   view: "runs", lang: "it",
-  runsList: [], manuals: [], config: null,
+  runsList: [], manuals: [], config: null, runsLoading: true, runsError: null,
   run: null,            // derived session (see deriveSession)
   decisions: {}, removedCauses: {}, fieldAnswers: {}, answersSent: false, exportDone: false,
   filter: "all", search: "", selected: null,
-  graph: { mode: "rete", colorBy: "tipo", showComp: true, zoom: 1, panX: 0, panY: 0, pos: {} },
-  setup: { manual: "", scopingModel: "", extractionModel: "", lang: "italiano", operator: "", smallDoc: "40", maxRetries: "2", retrySev: "error" },
   busy: false, toast: null, starting: false, extracting: false,
+  runError: null, runMetrics: null, metricsError: null, liveProgress: null, liveError: null,
+  setup: { manual: "", scopingModel: "", extractionModel: "", lang: "italiano", operator: "", smallDoc: "40", maxRetries: "2", retrySev: "error", showAdvanced: false },
+  graph: { mode: "rete", colorBy: "tipo", showComp: true, zoom: 1, panX: 0, panY: 0, pos: {}, focusChain: null },
 };
 let H = [];                 // per-render handler registry
 let layoutCache = {};       // graph layout cache, invalidated per session
 let dragInfo = null;
 let pollTimer = null;
+let progressStream = null;
 
 const L = (it, en) => (S.lang === "it" ? it : en);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -133,13 +136,13 @@ function deriveSession(payload) {
   nodes.filter((n) => n.type === "Symptom").forEach((sym) => {
     const fms = (out.MAY_INDICATE || {})[sym.id] || [];
     if (!fms.length) {
-      triplets.push({ id: "t_" + sym.id, symptom: sym.label, fm: L("— nessuna causa collegata", "— no linked cause"), ca: "—", conf: sym.conf, complete: false, quote: sym.quote, page: sym.page, queueRef: "symptom_without_failure_mode|" + sym.id });
+      triplets.push({ id: "t_" + sym.id, symptomId: sym.id, symptom: sym.label, fm: L("— nessuna causa collegata", "— no linked cause"), ca: "—", conf: sym.conf, complete: false, quote: sym.quote, page: sym.page, queueRef: "symptom_without_failure_mode|" + sym.id });
       return;
     }
     if (fms.length > 1) {
       const cas = fms.flatMap((f) => (out.RESOLVED_BY || {})[f] || []);
       triplets.push({
-        id: "t_" + sym.id, symptom: sym.label,
+        id: "t_" + sym.id, symptomId: sym.id, failureModeIds: fms, symptom: sym.label,
         fm: fms.length + L(" cause candidate (ambiguità)", " candidate causes (ambiguity)"),
         ca: cas.slice(0, 2).map((c) => (nodeById[c] || {}).label || c).join(" / ") || "—",
         conf: Math.min(...[sym.conf, ...fms.map((f) => (nodeById[f] || {}).conf)].filter((v) => v != null).concat([1])),
@@ -154,7 +157,7 @@ function deriveSession(payload) {
     const confs = [sym.conf, fm && fm.conf, ca && ca.conf].filter((v) => v != null);
     const conf = confs.length ? Math.min(...confs) : null;
     triplets.push({
-      id: "t_" + sym.id, symptom: sym.label, fm: fm ? fm.label : fms[0], ca: ca ? ca.label : L("— nessun rimedio", "— no remedy"),
+      id: "t_" + sym.id, symptomId: sym.id, failureModeIds: fms, correctiveActionIds: cas, symptom: sym.label, fm: fm ? fm.label : fms[0], ca: ca ? ca.label : L("— nessun rimedio", "— no remedy"),
       conf, complete: !!ca, weak: conf != null && conf < 0.65,
       quote: sym.quote || (fm && fm.quote) || "", page: sym.page || (fm && fm.page) || "",
       queueRef: !ca ? "failure_mode_without_action|" + fms[0] : null,
@@ -217,7 +220,10 @@ function deriveSession(payload) {
 
 /* ── data loading ── */
 async function loadRuns() {
-  try { S.runsList = await api("/api/runs"); } catch (e) { toast(L("Errore nel caricare le sessioni: ", "Could not load sessions: ") + e.message, true); }
+  S.runsLoading = true; S.runsError = null; render();
+  try { S.runsList = await api("/api/runs"); }
+  catch (e) { S.runsError = e.message; toast(L("Errore nel caricare le sessioni: ", "Could not load sessions: ") + e.message, true); }
+  S.runsLoading = false;
   render();
 }
 async function loadSetupData() {
@@ -252,11 +258,16 @@ async function openRun(runId, view) {
     S.decisions = { ...S.run.serverDecisions };
     S.removedCauses = {}; S.fieldAnswers = {}; S.answersSent = false; S.exportDone = false;
     S.selected = null; S.filter = "all"; S.search = "";
-    S.graph = { mode: "rete", colorBy: "tipo", showComp: true, zoom: 1, panX: 0, panY: 0, pos: {} };
+    S.graph = { mode: "rete", colorBy: "tipo", showComp: true, zoom: 1, panX: 0, panY: 0, pos: {}, focusChain: null };
+    S.runError = null; S.liveError = null; S.liveProgress = null;
     layoutCache = {};
     S.view = view || "dashboard";
+    saveContext();
     schedulePoll();
+    connectProgressStream(S.run.pdfId);
+    loadRunMetrics();
   } catch (e) {
+    S.runError = e.message;
     toast(L("Impossibile aprire la sessione: ", "Could not open the session: ") + e.message, true);
   }
   S.busy = false; render();
@@ -269,8 +280,43 @@ async function refreshRun(keepUi) {
     S.run = deriveSession(payload);
     S.decisions = keepUi ? { ...S.run.serverDecisions, ...prevDecisions } : { ...S.run.serverDecisions };
     layoutCache = {};
-  } catch (e) { /* transient poll error: keep last state */ }
+    S.runError = null;
+    loadRunMetrics();
+  } catch (e) { S.runError = e.message; }
   render();
+}
+
+function saveContext() {
+  if (!S.run) return;
+  const ctx = { runId: S.run.runId, view: S.view };
+  sessionStorage.setItem("kg-console-context", JSON.stringify(ctx));
+  const url = new URL(window.location.href);
+  url.searchParams.set("run", ctx.runId); url.searchParams.set("view", ctx.view);
+  history.replaceState(ctx, "", url);
+}
+function clearProgressStream() {
+  if (progressStream) { progressStream.close(); progressStream = null; }
+}
+function connectProgressStream(pdfId) {
+  clearProgressStream();
+  if (!ENABLE_LIVE_PROGRESS || !pdfId || !window.EventSource) return;
+  progressStream = new EventSource("/chat/stream/" + encodeURIComponent(pdfId));
+  progressStream.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      if (data.type === "progress") { S.liveProgress = { ...data, receivedAt: Date.now() }; S.liveError = null; render(); }
+      if (data.type === "error") { S.liveError = data.message || L("Aggiornamento live non disponibile", "Live update unavailable"); render(); }
+      if (data.type === "done" && S.run && !S.run.isLive) clearProgressStream();
+    } catch (e) { /* malformed SSE event: polling remains authoritative */ }
+  };
+  progressStream.onerror = () => { S.liveError = L("Aggiornamento live interrotto: continuo con il polling.", "Live update interrupted: polling continues."); clearProgressStream(); render(); };
+}
+async function loadRunMetrics() {
+  const run = S.run;
+  const phase = run && (run.status || {}).current_phase;
+  if (!run || !run.pdfId || !["export", "completed"].includes(phase)) return;
+  try { S.runMetrics = await api("/run-metrics/" + encodeURIComponent(run.pdfId)); S.metricsError = null; }
+  catch (e) { S.metricsError = e.message; }
 }
 function schedulePoll() {
   clearTimeout(pollTimer);
@@ -294,6 +340,7 @@ const qKey = (item) => item.kind + "|" + item.target_id;
 const getDec = (item) => S.decisions[qKey(item)];
 function decide(item, status, label) {
   S.decisions = { ...S.decisions, [qKey(item)]: { status, label } };
+  selectNextReviewItem(item);
   persistDecision(item, status, label);
   render();
 }
@@ -307,7 +354,47 @@ function persistDecision(item, verdict, note) {
   api("/api/runs/" + encodeURIComponent(S.run.runId) + "/review-decisions", {
     method: "POST",
     body: { kind: item.kind, target_id: item.target_id, target_type: item.target_type || "", verdict, note: note || "", operator: S.run.state.operator || "" },
-  }).catch((e) => toast(L("Decisione non salvata sul server: ", "Decision not saved server-side: ") + e.message, true));
+  }).then(() => refreshRun(false))
+    .catch((e) => toast(L("Decisione non salvata sul server: ", "Decision not saved server-side: ") + e.message, true));
+}
+function orderedOpenReviewItems() {
+  if (!S.run) return [];
+  const sevOrder = { blocking: 0, open: 1, reject: 2, review: 3, advisory: 4 };
+  return S.run.queue.filter((item) => !getDec(item)).sort((a, b) => (sevOrder[a.severity] ?? 9) - (sevOrder[b.severity] ?? 9));
+}
+function selectNextReviewItem(previous) {
+  if (S.view !== "review") return;
+  const open = orderedOpenReviewItems();
+  const index = open.findIndex((item) => qKey(item) === qKey(previous));
+  const next = open[index >= 0 ? index : 0];
+  S.selected = next ? { t: "queue", id: qKey(next) } : null;
+}
+function applyReviewShortcut(kind) {
+  if (!S.run || !S.selected || S.selected.t !== "queue") return;
+  const item = S.run.queue.find((q) => qKey(q) === S.selected.id);
+  if (!item || getDec(item)) return;
+  if (kind === "reject") {
+    if (item.kind === "low_confidence") decide(item, "rejected");
+    return;
+  }
+  if (item.kind === "low_confidence" || item.kind === "ambiguous_multi_cause_symptom") decide(item, "confirmed");
+  else if (item.severity === "advisory") decide(item, "acknowledged");
+  else if (item.severity === "open") decide(item, "resolved");
+  else if (item.severity === "blocking") { S.view = "fields"; S.selected = null; render(); }
+}
+async function acknowledgeAdvisories() {
+  const advisories = orderedOpenReviewItems().filter((item) => item.severity === "advisory");
+  if (!advisories.length || !window.confirm(L("Prendere atto di tutti gli advisory aperti? Ogni decisione verrà salvata separatamente.", "Acknowledge all open advisories? Each decision will be saved separately."))) return;
+  let completed = 0;
+  for (const item of advisories) {
+    try {
+      await api("/api/runs/" + encodeURIComponent(S.run.runId) + "/review-decisions", { method: "POST", body: { kind: item.kind, target_id: item.target_id, target_type: item.target_type || "", verdict: "acknowledged", note: "", operator: S.run.state.operator || "" } });
+      S.decisions = { ...S.decisions, [qKey(item)]: { status: "acknowledged", label: "" } }; completed++;
+    } catch (e) { toast(L("Batch interrotto dopo ", "Batch stopped after ") + completed + ": " + e.message, true); break; }
+  }
+  selectNextReviewItem({ kind: "", target_id: "" });
+  await refreshRun(false);
+  toast(completed + L(" advisory gestiti.", " advisories handled."));
 }
 
 /* ── meta dictionaries ── */
@@ -420,10 +507,30 @@ function render() {
         <div style="display:flex;justify-content:space-between;"><span>${L("Durata", "Duration")}</span><span class="tnum">${durTxt}</span></div>
       </div>` : ""}
     </nav>
-    <main class="c-main">${(views[S.view] || viewRuns)(st)}</main>
+    <main class="c-main"><div class="c-view-enter">${run && ["dashboard", "scoping", "graph", "review", "quality", "fields", "export"].includes(S.view) ? renderFlowRail(st) : ""}${(views[S.view] || viewRuns)(st)}</div></main>
     ${inspector}
   </div>
   ${S.toast ? `<div class="c-toast ${S.toast.isError ? "error" : ""}">${esc(S.toast.msg)}</div>` : ""}`;
+  animateKpiCounts();
+}
+
+function animateKpiCounts() {
+  const run = S.run;
+  if (!run || !["export", "completed"].includes((run.status || {}).current_phase) || S.kpiAnimatedFor === run.runId || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const nodes = app.querySelectorAll(".kpi-count[data-count]");
+  if (!nodes.length) return;
+  S.kpiAnimatedFor = run.runId;
+  nodes.forEach((node) => {
+    const target = Number(node.dataset.count);
+    if (!Number.isFinite(target) || target > 1000) return;
+    const start = performance.now();
+    const tick = (now) => {
+      const progress = Math.min(1, (now - start) / 420);
+      node.textContent = String(Math.round(target * (1 - Math.pow(1 - progress, 3))));
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    node.textContent = "0"; requestAnimationFrame(tick);
+  });
 }
 
 function shortRunId(id) { return id && id.length > 12 ? id.slice(0, 12) : (id || ""); }
@@ -441,6 +548,71 @@ function phaseLabel(phase) {
     export: "Export", completed: L("Completato", "Completed"),
   };
   return map[phase] || phase || L("In corso", "Running");
+}
+
+function flowStep(run) {
+  const status = run.status || {}, phase = status.current_phase || "loaded", next = status.next_step || "";
+  if (["export", "completed"].includes(phase)) return 6;
+  if (next === "review" && status.run_status === "awaiting_operator") return 5;
+  if (phase === "extraction" || ["validation", "coverage", "grounding", "conflict_resolution", "refinement"].includes(phase)) return 4;
+  if (phase === "ontology_draft") return next === "run_extraction" || status.run_status === "awaiting_operator" ? 3 : 3;
+  if (phase === "scoping" || next === "approve_cut_plan") return 2;
+  return phase === "loaded" ? 1 : 0;
+}
+function renderFlowRail(st) {
+  const run = S.run;
+  if (!run) return "";
+  const steps = [L("Manuale", "Manual"), L("Impostazioni", "Settings"), "Scoping", L("Ontologia", "Ontology"), L("Estrazione", "Extraction"), "Review", "KPI / Export"];
+  const current = flowStep(run);
+  const next = (run.status || {}).next_step || "";
+  const action = next === "approve_cut_plan" ? L("Controlla le pagine selezionate", "Review selected pages")
+    : next === "run_extraction" ? L("Avvia l'estrazione", "Start extraction")
+    : st.open.length ? st.open.length + L(" item pronti per la review", " items ready for review")
+    : (run.status || {}).run_status === "in_progress" ? L("Elaborazione in corso", "Processing") : "";
+  return `<div class="flow-rail" aria-label="${L("Avanzamento della sessione", "Session progress")}">
+    <div class="flow-steps">${steps.map((label, i) => `<div class="flow-step ${i < current ? "done" : i === current ? "current" : ""}"><span>${i < current ? "✓" : i === current ? "●" : "○"}</span><small>${esc(label)}</small></div>${i < steps.length - 1 ? `<i class="${i < current ? "done" : ""}"></i>` : ""}`).join("")}</div>
+    ${action ? `<div class="flow-action">${esc(action)}</div>` : ""}
+  </div>`;
+}
+function statePanel(kind, message, retry, stale) {
+  const color = kind === "error" ? C.danger : C.mute;
+  return `<div class="state-panel ${kind}" role="status"><span style="color:${color};font-size:18px;">${kind === "error" ? "!" : "…"}</span><span style="flex:1;">${esc(message)}${stale ? `<small>${L("I dati mostrati sono l'ultimo snapshot disponibile.", "The displayed data is the last available snapshot.")}</small>` : ""}</span>${retry ? `<button class="btn-ghost" data-h="${on(retry)}">${L("Riprova", "Retry")}</button>` : ""}</div>`;
+}
+function reviewDecisionTotals() {
+  const totals = { confirmed: 0, rejected: 0, acknowledged: 0, open: 0 };
+  if (!S.run) return totals;
+  S.run.queue.forEach((item) => {
+    const verdict = (getDec(item) || {}).status;
+    if (!verdict) totals.open++;
+    else if (verdict === "confirmed" || verdict === "accepted" || verdict === "resolved") totals.confirmed++;
+    else if (verdict === "rejected") totals.rejected++;
+    else if (verdict === "acknowledged") totals.acknowledged++;
+  });
+  return totals;
+}
+function renderLiveProgress() {
+  const p = S.liveProgress;
+  if (!p) return S.liveError ? `<div class="progress-fallback">${esc(S.liveError)}</div>` : "";
+  const total = Number(p.total_chunks), current = Number(p.current_chunk);
+  const determinate = Number.isFinite(total) && total > 0 && Number.isFinite(current);
+  const triplets = p.total_triplets != null ? p.total_triplets : p.triplets_in_chunk != null ? "+" + p.triplets_in_chunk : null;
+  return `<div class="live-progress"><div><b>${esc(phaseLabel(p.phase))}</b>${determinate ? `<span class="tnum">${current} / ${total} ${L("chunk", "chunks")}</span>` : ""}</div><div class="progress-track ${determinate ? "" : "indeterminate"}"><span style="width:${determinate ? Math.min(100, Math.round(current / total * 100)) : 35}%"></span></div><small>${esc(p.message || L("Aggiornamento ricevuto", "Update received"))}${triplets != null ? ` · ${triplets} ${L("triplette", "triplets")}` : ""}</small></div>`;
+}
+function renderExecutiveKpis() {
+  const run = S.run;
+  if (!run || !["export", "completed"].includes((run.status || {}).current_phase)) return "";
+  const metric = (S.runMetrics || {}).metrics || S.runMetrics || {};
+  const coverage = metric.graph_coverage || {};
+  const totals = metric.totals || {};
+  const pages = run.state.selected_pages || (run.cutPlan || {}).pages_to_keep || [];
+  const failures = run.nodes.filter((n) => n.type === "FailureMode").length;
+  const completedChains = run.triplets.filter((t) => t.complete).length;
+  const e2e = coverage.end_to_end_percent ?? coverage.end_to_end_coverage ?? (run.triplets.length ? Math.round(completedChains / run.triplets.length * 100) : null);
+  const fmAction = coverage.failure_mode_to_corrective_action_percent ?? coverage.failure_mode_with_action_percent ?? null;
+  const human = reviewDecisionTotals();
+  const value = (v) => v == null ? "—" : (typeof v === "number" && v <= 1 && v > 0 ? Math.round(v * 100) + "%" : v);
+  const cards = [[run.nodes.length, L("Entità", "Entities")], [failures, "Failure mode"], [value(e2e), "Coverage E2E"], [value(fmAction), L("Guasti con rimedio", "Failure modes with remedy")], [pages.length ? pages.length + "/" + (run.totalPages || "—") : "—", L("Pagine usate", "Pages used")], [fmtDuration(totals.duration_seconds ?? (run.status.metrics || {}).duration_seconds), L("Tempo", "Time")], [totals.estimated_cost_usd != null ? "$ " + Number(totals.estimated_cost_usd).toFixed(2) : ((run.status.metrics || {}).estimated_cost_usd != null ? "$ " + Number((run.status.metrics || {}).estimated_cost_usd).toFixed(2) : "—"), L("Costo", "Cost")]];
+  return `<section class="executive-kpis"><div class="kicker">${L("Run verificato", "Verified run")}</div><div class="executive-grid">${cards.map(([v,l]) => `<div><strong class="tnum kpi-count" data-count="${typeof v === "number" ? v : ""}">${esc(v)}</strong><span>${esc(l)}</span></div>`).join("")}</div><p>${L("Decisioni umane:", "Human decisions:")} ${human.confirmed} ${L("confermati", "confirmed")} · ${human.rejected} ${L("rifiutati", "rejected")} · ${human.acknowledged} advisory ${L("presi in carico", "acknowledged")} · ${human.open} ${L("aperti", "open")}${S.metricsError ? ` · ${L("metriche complete non disponibili per questo snapshot", "full metrics unavailable for this snapshot")}` : ""}</p></section>`;
 }
 
 /* ── nav ── */
@@ -471,7 +643,7 @@ function renderNav(st) {
   const btns = defs.map(([id, label, count]) => {
     const locked = sessionViews.includes(id) && !S.run;
     const go = on(() => {
-      if (locked) { S.view = "runs"; } else { S.view = id; S.selected = null; if (id === "runs") loadRuns(); if (id === "setup") loadSetupData(); }
+      if (locked) { S.view = "runs"; } else { S.view = id; S.selected = null; if (id === "review") { const first = orderedOpenReviewItems()[0]; if (first) S.selected = { t: "queue", id: qKey(first) }; } if (S.run) saveContext(); if (id === "runs") loadRuns(); if (id === "setup") loadSetupData(); }
       render();
     });
     return `
@@ -498,14 +670,25 @@ function viewRuns() {
     completed: { label: L("completato", "completed"), color: C.ok, bg: C.okBg },
     failed: { label: L("fallito", "failed"), color: C.danger, bg: C.dangerBg },
   };
+  const resumeMeta = (r) => {
+    const next = r.next_step || "", phase = r.last_phase || "";
+    if (!r.is_live && !["completed", "export"].includes(phase)) return { label: L("Interrotta · consultabile", "Interrupted · view snapshot"), color: C.danger, bg: C.dangerBg, button: L("Apri snapshot", "Open snapshot") };
+    if (r.run_status === "awaiting_operator" || r.run_status === "needs_human_review" || r.run_status === "needs_human") {
+      const label = next === "approve_cut_plan" ? L("Azione richiesta · Approva pagine", "Action required · Approve pages") : next === "run_extraction" ? L("Azione richiesta · Avvia estrazione", "Action required · Start extraction") : phase === "extraction" ? L("Azione richiesta · Review", "Action required · Review") : L("Azione richiesta", "Action required");
+      return { label, color: C.warn, bg: C.warnBg, button: L("Continua", "Continue") };
+    }
+    if (r.has_export || ["export", "completed"].includes(phase)) return { label: L("Pronto all'export", "Ready for export"), color: C.ok, bg: C.okBg, button: L("Apri", "Open") };
+    if (r.run_status === "in_progress") return { label: L("In elaborazione · ", "Processing · ") + phaseLabel(phase), color: C.brown, bg: C.brownBg, button: L("Apri", "Open") };
+    return { ...(statusMeta[r.run_status] || { label: r.run_status || "—", color: C.mute, bg: C.muteBg }), button: L("Apri", "Open") };
+  };
   const rows = S.runsList.map((r) => {
-    const m = statusMeta[r.run_status] || { label: r.run_status || "—", color: C.mute, bg: C.muteBg };
+    const m = resumeMeta(r);
     const isCurrent = S.run && S.run.runId === r.run_id;
     const dt = r.created_at ? new Date(r.created_at) : null;
     const dateTxt = dt && !isNaN(dt) ? dt.toLocaleDateString(S.lang === "it" ? "it-IT" : "en-GB", { day: "numeric", month: "short", year: "numeric" }) : "";
     const models = [r.selected_scoping_model || "—", r.selected_extraction_model || "—"].join(" / ");
     return `
-    <div style="display:grid;grid-template-columns:110px 1fr 140px 180px 116px 70px;gap:12px;align-items:center;padding:12px 20px;border-top:1px solid rgba(0,0,0,0.05);">
+    <div style="display:grid;grid-template-columns:110px 1fr 140px 180px 170px 100px;gap:12px;align-items:center;padding:12px 20px;border-top:1px solid rgba(0,0,0,0.05);">
       <span class="mono" style="font-size:12px;">${esc(shortRunId(r.run_id))}</span>
       <span style="font-size:13px;font-weight:500;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(r.manual_filename || "—")}
         ${isCurrent ? `<span style="margin-left:8px;font-size:10.5px;font-weight:600;color:${ACCENT};">${L("corrente", "current")}</span>` : ""}
@@ -513,7 +696,7 @@ function viewRuns() {
       <span style="font-size:12px;color:#8A867D;">${esc([r.operator, dateTxt].filter(Boolean).join(" · ") || "—")}</span>
       <span class="mono" style="font-size:11px;color:#8A867D;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(models)}</span>
       <span class="pill" style="font-size:11px;color:${m.color};background:${m.bg};padding:3px 9px;text-align:center;">${esc(m.label)}</span>
-      <button class="btn-ghost" data-h="${on(() => openRun(r.run_id))}">${L("Apri", "Open")}</button>
+      <button class="btn-ghost" data-h="${on(() => openRun(r.run_id))}">${m.button}</button>
     </div>`;
   }).join("");
   return `
@@ -526,10 +709,10 @@ function viewRuns() {
       <button class="btn-primary" style="--accent:${ACCENT};" data-h="${on(() => { S.view = "setup"; loadSetupData(); })}">${L("+ Nuova sessione", "+ New session")}</button>
     </div>
     <div class="card" style="overflow:hidden;">
-      <div class="kicker" style="display:grid;grid-template-columns:110px 1fr 140px 180px 116px 70px;gap:12px;padding:10px 20px;">
+      <div class="kicker" style="display:grid;grid-template-columns:110px 1fr 140px 180px 170px 100px;gap:12px;padding:10px 20px;">
         <span>Run</span><span>${L("Manuale", "Manual")}</span><span>${L("Operatore · data", "Operator · date")}</span><span>${L("Modelli (scop. / estraz.)", "Models (scop. / extr.)")}</span><span>${L("Stato", "Status")}</span><span></span>
       </div>
-      ${rows || `<div style="padding:28px 20px;font-size:13px;color:#8A867D;border-top:1px solid rgba(0,0,0,0.05);">${L("Nessuna sessione salvata — avviane una nuova.", "No saved sessions — start a new one.")}</div>`}
+      ${S.runsLoading ? Array.from({length: 6}, () => `<div class="run-skeleton"></div>`).join("") : S.runsError ? statePanel("error", L("Non riesco a caricare le sessioni.", "Unable to load sessions."), loadRuns, S.runsList.length) : (rows || `<div style="padding:28px 20px;font-size:13px;color:#8A867D;border-top:1px solid rgba(0,0,0,0.05);">${L("Nessuna sessione salvata — avviane una nuova.", "No saved sessions — start a new one.")}</div>`)}
     </div>
   </div>`;
 }
@@ -574,10 +757,10 @@ function viewSetup() {
   return `
   <div style="max-width:700px;margin:0 auto;padding:26px 32px 40px;">
     <h1 class="serif" style="font-size:22px;font-weight:600;margin:0 0 6px;">${L("Nuova sessione", "New session")}</h1>
-    <p style="font-size:13px;color:#55524B;line-height:1.55;margin:0 0 18px;">${L("Due passi: scegli il manuale e i modelli, poi avvia. La selezione delle pagine utili e l'allineamento dei numeri di pagina sono automatici.", "Two steps: pick the manual and the models, then start. Selecting the useful pages and aligning page numbers happen automatically.")}</p>
+    <p style="font-size:13px;color:#55524B;line-height:1.55;margin:0 0 18px;">${L("Scegli un manuale disponibile e i modelli, poi avvia. La selezione delle pagine utili e l'allineamento dei numeri di pagina sono automatici.", "Choose an available manual and the models, then start. Selecting the useful pages and aligning page numbers happen automatically.")}</p>
 
     <div class="card" style="padding:16px 20px;margin-bottom:12px;">
-      <div class="kicker" style="margin-bottom:10px;">${L("Manuale", "Manual")}</div>
+      <div class="kicker" style="margin-bottom:10px;">${L("Manuali disponibili", "Available manuals")}</div>
       ${manuals}
     </div>
 
@@ -609,7 +792,8 @@ function viewSetup() {
     </div>
 
     <div class="card" style="padding:16px 20px;margin-bottom:16px;">
-      <div class="kicker" style="margin-bottom:12px;">${L("Avanzate", "Advanced")}</div>
+      <button data-h="${on(() => { SU.showAdvanced = !SU.showAdvanced; render(); })}" style="display:flex;align-items:center;width:100%;padding:0;border:0;background:transparent;text-align:left;"><span class="kicker">${L("Avanzate", "Advanced")}</span><span style="flex:1;"></span><span style="font-size:12px;color:#8A867D;">${SU.showAdvanced ? "−" : "+"}</span></button>
+      ${SU.showAdvanced ? `<div style="margin-top:12px;">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;">
         <span style="font-size:12.5px;color:#55524B;width:170px;flex:none;">${L("Documenti brevi", "Short documents")}</span>
         <input type="number" min="1" value="${esc(SU.smallDoc)}" data-h="${on((e) => SU.smallDoc = e.target.value)}" data-evt="change" class="tnum" style="width:80px;font-size:13px;padding:7px 12px;border-radius:9px;border:1px solid rgba(0,0,0,0.10);background:#FDFCFA;">
@@ -623,11 +807,12 @@ function viewSetup() {
           ${[["error", L("solo errori", "errors only")], ["warning", L("anche avvisi", "warnings too")]].map(([o, lbl]) => `<button data-h="${on(() => { SU.retrySev = o; render(); })}" style="font-size:12px;font-weight:500;font-family:inherit;padding:6px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.10);background:${SU.retrySev === o ? "#3A3934" : "#FFFFFF"};color:${SU.retrySev === o ? "#FFFFFF" : "#55524B"};">${lbl}</button>`).join("")}
         </div>
       </div>
+      </div>` : ""}
     </div>
 
     <div style="display:flex;align-items:center;gap:12px;">
       <button class="btn-primary" style="--accent:${ACCENT};padding:11px 22px;" data-h="${startBtn}" ${S.starting ? "disabled" : ""}>${S.starting ? L("Avvio in corso…", "Starting…") : L("Carica il PDF e avvia", "Load the PDF and start")}</button>
-      <span style="font-size:11.5px;color:#A5A196;line-height:1.5;max-width:340px;">${L("Il sistema legge il manuale, seleziona da solo le pagine utili e ti avvisa quando serve la tua verifica.", "The system reads the manual, picks the useful pages on its own and alerts you when your verification is needed.")}</span>
+      <span style="font-size:11.5px;color:#A5A196;line-height:1.5;max-width:340px;">${L("Riepilogo: ", "Summary: ")}${esc(SU.manual || "—")} · ${esc(SU.scopingModel || "—")} / ${esc(SU.extractionModel || "—")}. ${L("Il sistema ti avvisa quando serve la tua verifica.", "The system alerts you when your verification is needed.")}</span>
     </div>
   </div>`;
 }
@@ -638,40 +823,14 @@ function viewDashboard(st) {
   if (!run) return viewRuns();
   const status = run.status || {};
   const phase = status.current_phase || "loaded";
-  const phaseOrder = ["loaded", "scoping", "ontology_draft", "extraction", "validation", "coverage", "grounding", "conflict_resolution", "refinement", "export", "completed"];
-  const stageDefs = [
-    ["Upload", "loaded"], ["Scoping", "scoping"], [L("Bozza ontologia", "Ontology draft"), "ontology_draft"],
-    [L("Estrazione", "Extraction"), "extraction"], ["Review", "review"], ["Export", "export"],
-  ];
-  const idx = phaseOrder.indexOf(phase);
-  const reviewActive = run.queue.length > 0 && !["export", "completed"].includes(phase);
-  const stageState = (key) => {
-    if (key === "review") return reviewActive ? "current" : (["export", "completed"].includes(phase) ? "done" : "pending");
-    const kidx = phaseOrder.indexOf(key);
-    if (kidx < 0) return "pending";
-    if (kidx < idx || phase === "completed") return "done";
-    if (kidx === idx && !reviewActive) return "current";
-    return kidx <= idx ? "done" : "pending";
-  };
-  const stages = stageDefs.map(([label, key], i) => {
-    const stt = stageState(key);
-    return `
-    <div style="display:flex;align-items:center;flex:${i < stageDefs.length - 1 ? "1" : "0 0 auto"};min-width:0;">
-      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;min-width:76px;">
-        <span style="width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;background:${stt === "done" ? C.okBg : stt === "current" ? ACCENT : "rgba(0,0,0,0.05)"};color:${stt === "done" ? C.ok : stt === "current" ? "#FFFFFF" : "#B5B1A6"};box-shadow:${stt === "current" ? "0 0 0 4px rgba(201,100,66,0.15)" : "none"};">${stt === "done" ? "✓" : stt === "current" ? "●" : "○"}</span>
-        <span style="font-size:11px;font-weight:${stt === "current" ? 600 : 500};color:${stt === "pending" ? "#B5B1A6" : "#3A3934"};white-space:nowrap;">${esc(label)}</span>
-      </div>
-      ${i < stageDefs.length - 1 ? `<div style="flex:1;height:1.5px;background:${stt === "done" ? "rgba(122,155,126,0.4)" : "rgba(0,0,0,0.08)"};margin:0 4px 18px;min-width:20px;"></div>` : ""}
-    </div>`;
-  }).join("");
-
   // Operator handoffs: the authoritative signal is run_status/next_step set by
   // the backend at each handoff; the structural checks keep runs persisted
   // before that change (and transient states) covered.
   const runStatusRaw = (run.status || {}).run_status || "";
   const nextStep = (run.status || {}).next_step || "";
-  const awaitingScoping = !!run.cutPlan && !run.pipeline.ontology && ["scoping", "loaded"].includes(phase);
-  const awaitingExtraction = phase === "ontology_draft";
+  const draftingOntology = runStatusRaw === "in_progress" && nextStep === "draft_ontology";
+  const awaitingScoping = !draftingOntology && !!run.cutPlan && !run.pipeline.ontology && ["scoping", "loaded"].includes(phase);
+  const awaitingExtraction = !draftingOntology && phase === "ontology_draft";
   const handoff = awaitingScoping || awaitingExtraction ||
     (runStatusRaw === "awaiting_operator" && ["approve_cut_plan", "run_extraction"].includes(nextStep));
   const awaitingOperator = run.isLive && phase !== "completed" && handoff;
@@ -720,7 +879,7 @@ function viewDashboard(st) {
   const counts = (run.report && run.report.counts) || {};
   const metrics = run.status.metrics || {};
 
-  const nav = (view) => on(() => { S.view = view; S.selected = null; render(); });
+  const nav = (view) => on(() => { S.view = view; S.selected = null; saveContext(); render(); });
   const kpi = (value, label, color, go) => `
     <button data-h="${go}" style="flex:1;min-width:104px;text-align:left;border:none;background:transparent;padding:0;font-family:inherit;cursor:pointer;">
       <div class="tnum" style="font-size:19px;font-weight:600;letter-spacing:-0.02em;white-space:nowrap;color:${color || "#22211D"};">${value}</div>
@@ -779,10 +938,10 @@ function viewDashboard(st) {
       <div style="flex:1;min-width:0;">
         <div class="serif" style="font-size:18px;font-weight:600;">${esc(bannerTitle)}</div>
         <div style="font-size:13px;color:#55524B;margin-top:2px;line-height:1.5;">${esc(bannerDetail)}</div>
-        ${running ? `<div class="tnum" id="kg-live-tick" style="font-size:11.5px;color:#8A867D;margin-top:4px;"></div>` : ""}
+        ${running ? renderLiveProgress() + `<div class="tnum" id="kg-live-tick" style="font-size:11.5px;color:#8A867D;margin-top:4px;"></div>` : ""}
       </div>
       ${bannerCta}
-      ${run.isLive && phase === "ontology_draft" ? `<button class="btn-primary" style="--accent:${ACCENT};padding:9px 18px;" data-h="${on(async () => {
+      ${run.isLive && phase === "ontology_draft" && !draftingOntology ? `<button class="btn-primary" style="--accent:${ACCENT};padding:9px 18px;" data-h="${on(async () => {
         if (S.extracting) return;
         S.extracting = true; render();
         try {
@@ -794,7 +953,8 @@ function viewDashboard(st) {
       })}" ${S.extracting ? "disabled" : ""}>${S.extracting ? L("Avvio…", "Starting…") : L("Avvia estrazione", "Start extraction")}</button>` : ""}
       ${!running && !awaitingOperator ? `<button class="btn-primary" style="--accent:${ACCENT};padding:9px 18px;" data-h="${nav("review")}">${L("Apri Review Center", "Open Review Center")}</button>` : ""}
     </div>
-    <div class="card" style="display:flex;align-items:center;margin-top:22px;padding:16px 20px;overflow-x:auto;">${stages}</div>
+    ${S.runError ? `<div style="margin-top:14px;">${statePanel("error", L("Non riesco ad aggiornare questa sessione.", "Unable to update this session."), () => refreshRun(true), true)}</div>` : ""}
+    ${renderExecutiveKpis()}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px;">${groups}</div>
     <div class="card" style="margin-top:22px;overflow:hidden;">
       <div class="kicker" style="padding:14px 20px 10px;">${L("Diario del run", "Run log")}</div>
@@ -827,7 +987,9 @@ function viewScoping() {
     </button>`;
   }).join("");
   const approved = !!run.pipeline.ontology;
-  const canApprove = run.isLive && !approved;
+  const draftingOntology = (run.status || {}).run_status === "in_progress" &&
+    (run.status || {}).next_step === "draft_ontology";
+  const canApprove = run.isLive && !approved && !draftingOntology;
   const approveBtn = canApprove ? `
     <button class="btn-primary" style="--accent:${ACCENT};" data-h="${on(async () => {
       try { await chatAction(run.pdfId, "approve_cut_plan"); toast(L("Selezione approvata — parte la bozza dell'ontologia.", "Selection approved — ontology draft starting.")); setTimeout(() => refreshRun(true), 1500); }
@@ -934,6 +1096,9 @@ function viewGraph() {
   const layout = graphLayout(G.mode, run);
   const shown = run.nodes.filter((n) => G.showComp || n.type !== "Component");
   const shownIds = new Set(shown.map((n) => n.id));
+  const defaultChain = run.triplets.find((t) => t.complete && !t.ambiguous) || run.triplets.find((t) => t.complete) || run.triplets[0];
+  const focusedChain = G.focusChain ? run.triplets.find((t) => t.id === G.focusChain) : null;
+  const focusIds = new Set(focusedChain ? [focusedChain.symptomId, ...(focusedChain.failureModeIds || []), ...(focusedChain.correctiveActionIds || [])] : []);
   const dragPos = (G.pos && G.pos[G.mode]) || {};
   const P = (id) => dragPos[id] || layout[id] || { x: 550, y: 310 };
   const selId = S.selected && S.selected.t === "gnode" ? S.selected.id : null;
@@ -949,11 +1114,12 @@ function viewGraph() {
   const edgesSvg = run.edges.filter((e) => shownIds.has(e.s) && shownIds.has(e.t)).map((e) => {
     const a = P(e.s), b = P(e.t);
     const touches = selId && (e.s === selId || e.t === selId);
+    const inFocus = focusIds.size && focusIds.has(e.s) && focusIds.has(e.t);
     const ambig = e.rel === "MAY_INDICATE" && ambigEdges.has(e.s + ">" + e.t);
     const d = G.mode === "catene"
       ? `M ${a.x} ${a.y} C ${(a.x + b.x) / 2} ${a.y}, ${(a.x + b.x) / 2} ${b.y}, ${b.x} ${b.y}`
       : `M ${a.x} ${a.y} L ${b.x} ${b.y}`;
-    return `<path d="${d}" fill="none" stroke="${touches ? ACCENT : ambig ? "#9A8352" : "#22211D"}" stroke-width="${touches ? 2.2 : 1.3}" stroke-dasharray="${ambig ? "5 4" : "none"}" opacity="${selId ? (touches ? 0.85 : 0.06) : (ambig ? 0.55 : 0.16)}"></path>`;
+    return `<path d="${d}" fill="none" stroke="${touches || inFocus ? ACCENT : ambig ? "#9A8352" : "#22211D"}" stroke-width="${touches || inFocus ? 2.4 : 1.3}" stroke-dasharray="${ambig ? "5 4" : "none"}" opacity="${selId ? (touches ? 0.85 : 0.06) : focusIds.size ? (inFocus ? 0.9 : 0.045) : (ambig ? 0.55 : 0.16)}"></path>`;
   }).join("");
 
   const nodesSvg = shown.map((n) => {
@@ -961,7 +1127,7 @@ function viewGraph() {
     const qi = queueBy[n.id];
     const r = Math.min(17, 8 + (deg[n.id] || 0) * 1.4);
     const isSel = n.id === selId;
-    const dim = selId && !isSel && !nbr.has(n.id);
+    const dim = (selId && !isSel && !nbr.has(n.id)) || (focusIds.size && !focusIds.has(n.id));
     const conf = n.conf == null ? 0.85 : n.conf;
     const fill = G.colorBy === "conf"
       ? (conf >= 0.8 ? "#7A9B7E" : conf >= 0.45 ? "#C2A36B" : "#B4543E")
@@ -1040,6 +1206,7 @@ function viewGraph() {
         <div style="display:flex;gap:2px;background:rgba(0,0,0,0.05);border-radius:9px;padding:2px;">${seg([["rete", L("Rete", "Network")], ["catene", L("Catene per livelli", "Layered chains")]], G.mode, "mode")}</div>
         <div style="display:flex;gap:2px;background:rgba(0,0,0,0.05);border-radius:9px;padding:2px;">${seg([["tipo", L("Per tipo", "By type")], ["conf", L("Per affidabilità", "By confidence")]], G.colorBy, "colorBy")}</div>
         <button data-h="${on(() => setG({ showComp: !G.showComp }))}" style="font-size:12px;font-weight:500;padding:6px 12px;border-radius:99px;border:1px solid rgba(0,0,0,0.10);font-family:inherit;background:${G.showComp ? "#3A3934" : "#FFFFFF"};color:${G.showComp ? "#FFFFFF" : "#55524B"};">${L("Componenti", "Components")}${G.showComp ? " ✓" : ""}</button>
+        ${defaultChain ? `<button class="btn-ghost" style="font-size:11.5px;" data-h="${on(() => setG({ focusChain: G.focusChain ? null : defaultChain.id }))}">${G.focusChain ? L("Mostra tutto il grafo", "Show full graph") : L("Mostra prima catena diagnostica", "Show first diagnostic chain")}</button>` : ""}
         <span style="flex:1;"></span>
         <div style="display:flex;align-items:center;gap:4px;">
           <button class="btn-ghost" style="width:26px;height:26px;padding:0;font-size:14px;line-height:1;" data-h="${on(() => setG({ zoom: Math.max(0.5, G.zoom / 1.25) }))}">−</button>
@@ -1151,17 +1318,20 @@ function viewReview(st) {
   <div style="max-width:960px;margin:0 auto;padding:26px 32px 40px;">
     <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;">
       <h1 class="serif" style="font-size:22px;font-weight:600;margin:0;">Review Center</h1>
+      <span class="tnum" style="font-size:12.5px;font-weight:600;color:#55524B;">${st.decided.length}/${st.visible.length} ${L("gestiti", "handled")} · ${st.open.length} ${L("restano", "remaining")}</span>
       <span style="font-size:12.5px;color:#8A867D;">${L("coda prioritaria: bloccanti → lacune → auto-rifiutati → revisione → advisory", "priority queue: blocking → gaps → auto-rejected → review → advisory")}</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin:16px 0 14px;flex-wrap:wrap;">
       ${filters}
       <span style="flex:1;"></span>
+      ${visible.filter((item) => item.severity === "advisory" && !getDec(item)).length ? `<button class="btn-ghost" style="font-size:11.5px;" data-h="${on(acknowledgeAdvisories)}">${L("Prendi atto degli advisory", "Acknowledge advisories")}</button>` : ""}
       <input value="${esc(S.search)}" data-h="${on((e) => { S.search = e.target.value; render(); })}" data-evt="change" placeholder="${L("Cerca per id o nome…", "Search by id or name…")}" style="font-size:12.5px;padding:6px 12px;border-radius:9px;border:1px solid rgba(0,0,0,0.10);background:#FFFFFF;width:200px;">
     </div>
     ${rows ? `<div class="card" style="overflow:hidden;">${rows}</div>` : `
       <div style="padding:36px 20px;text-align:center;border-radius:14px;background:#FFFFFF;box-shadow:0 0 0 1px rgba(0,0,0,0.04);">
         <div style="font-size:14px;font-weight:500;color:#55524B;">${q ? L("Nessun elemento corrisponde a «" + esc(S.search) + "».", "Nothing matches “" + esc(S.search) + "”.") : S.filter === "done" ? L("Nessun elemento gestito finora.", "Nothing handled yet.") : L("Nessun elemento in questa vista — la coda è pulita.", "Nothing in this view — the queue is clean.")}</div>
       </div>`}
+    <div class="review-footer"><span class="tnum">${st.decided.length}/${st.visible.length} ${L("gestiti", "handled")} · ${st.open.length} ${L("restano", "remaining")}</span><span>${L("J/K cambia item · Invio/A conferma · R rifiuta (bassa conf.) · Esc chiude", "J/K changes item · Enter/A confirms · R rejects (low confidence) · Esc closes")}</span></div>
   </div>`;
 }
 
@@ -1624,6 +1794,22 @@ app.addEventListener("change", (e) => {
     if (fn) fn(e);
   }
 });
+window.addEventListener("keydown", (e) => {
+  const target = e.target;
+  if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)) return;
+  if (S.view !== "review" || !S.selected || S.selected.t !== "queue") return;
+  const items = orderedOpenReviewItems();
+  const index = items.findIndex((item) => qKey(item) === S.selected.id);
+  if (e.key === "Escape") { S.selected = null; render(); return; }
+  if (e.key === "j" || e.key === "J" || e.key === "k" || e.key === "K") {
+    if (!items.length) return;
+    const delta = e.key.toLowerCase() === "j" ? 1 : -1;
+    const next = items[(Math.max(0, index) + delta + items.length) % items.length];
+    S.selected = { t: "queue", id: qKey(next) }; render(); e.preventDefault(); return;
+  }
+  if (e.key === "Enter" || e.key.toLowerCase() === "a") { applyReviewShortcut("confirm"); e.preventDefault(); }
+  if (e.key.toLowerCase() === "r") { applyReviewShortcut("reject"); e.preventDefault(); }
+});
 
 /* graph drag/pan */
 app.addEventListener("mousedown", (e) => {
@@ -1676,6 +1862,16 @@ setInterval(() => {
   const span = secs < 60 ? secs + " s" : Math.floor(secs / 60) + " min " + (secs % 60) + " s";
   el.textContent = L("ultimo avanzamento registrato ", "last recorded progress ") + span + L(" fa", " ago");
 }, 1000);
+window.addEventListener("popstate", () => {
+  const url = new URL(window.location.href), runId = url.searchParams.get("run"), view = url.searchParams.get("view");
+  if (runId) openRun(runId, view || "dashboard");
+  else { clearProgressStream(); S.run = null; S.view = "runs"; loadRuns(); }
+});
 render();
-loadRuns();
+const initialUrl = new URL(window.location.href);
+let initialContext = null;
+try { initialContext = JSON.parse(sessionStorage.getItem("kg-console-context") || "null"); } catch (e) { /* ignored */ }
+const initialRun = initialUrl.searchParams.get("run") || (initialContext || {}).runId;
+const initialView = initialUrl.searchParams.get("view") || (initialContext || {}).view || "dashboard";
+if (initialRun) openRun(initialRun, initialView); else loadRuns();
 })();

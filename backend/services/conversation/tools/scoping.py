@@ -17,43 +17,49 @@ async def _propose_cut_plan(args, store, on_event):
     from backend.models import CutPlanRequest
     from backend.services.scoping_workflow import create_cut_plan_workflow
 
-    # None → the workflow autodetects the printed-page offset from the
-    # document; an explicit store value (set via the start-request override)
-    # is passed through untouched.
-    req = CutPlanRequest(
-        pdf_id=store["pdf_id"],
-        page_offset=store.get("page_offset"),
-        model_name=(store.get("selected_models") or {}).get("scoping") or None,
-    )
-    result = await asyncio.to_thread(create_cut_plan_workflow, store, req, on_event)
-    # Persist cut plan in store
-    from backend.graph.store import set_run_progress, update_scoping_state
-    update_scoping_state(store, result, model_name=str(req.model_name or ""))
-    # The pipeline now waits for the operator to approve the selection; the
-    # console banner keys off run_status/next_step to say so explicitly.
-    set_run_progress(store, run_status="awaiting_operator", next_step="approve_cut_plan")
+    if store.get("_scoping_in_progress"):
+        return {"status": "in_progress", "message": "Scoping is already in progress."}
+    store["_scoping_in_progress"] = True
+    try:
+        # None → the workflow autodetects the printed-page offset from the
+        # document; an explicit store value (set via the start-request override)
+        # is passed through untouched.
+        req = CutPlanRequest(
+            pdf_id=store["pdf_id"],
+            page_offset=store.get("page_offset"),
+            model_name=(store.get("selected_models") or {}).get("scoping") or None,
+        )
+        result = await asyncio.to_thread(create_cut_plan_workflow, store, req, on_event)
+        # Persist cut plan in store
+        from backend.graph.store import set_run_progress, update_scoping_state
+        update_scoping_state(store, result, model_name=str(req.model_name or ""))
+        # The pipeline now waits for the operator to approve the selection; the
+        # console banner keys off run_status/next_step to say so explicitly.
+        set_run_progress(store, run_status="awaiting_operator", next_step="approve_cut_plan")
 
-    all_sections = [
-        {
-            "name": s.name,
-            "start": s.page_range.start,
-            "end": s.page_range.end,
-            "source": s.source,
+        all_sections = [
+            {
+                "name": s.name,
+                "start": s.page_range.start,
+                "end": s.page_range.end,
+                "source": s.source,
+            }
+            for s in result.sections
+        ]
+        visible_sections = _visible_sections_for_widget(all_sections)
+        keyword_section_count = len(all_sections) - len(visible_sections)
+        return {
+            "status": "ok",
+            "sections": visible_sections,
+            "pages_to_keep": result.pages_to_keep,
+            "total_pages": result.total_pages,
+            "keyword_fallback_sections": keyword_section_count,
+            "skipped": result.skipped,
+            "product_info": result.product_info.model_dump() if result.product_info else None,
+            "widget": "sections",
         }
-        for s in result.sections
-    ]
-    visible_sections = _visible_sections_for_widget(all_sections)
-    keyword_section_count = len(all_sections) - len(visible_sections)
-    return {
-        "status": "ok",
-        "sections": visible_sections,
-        "pages_to_keep": result.pages_to_keep,
-        "total_pages": result.total_pages,
-        "keyword_fallback_sections": keyword_section_count,
-        "skipped": result.skipped,
-        "product_info": result.product_info.model_dump() if result.product_info else None,
-        "widget": "sections",
-    }
+    finally:
+        store.pop("_scoping_in_progress", None)
 
 
 async def _edit_cut_plan(args, store, on_event):
@@ -184,9 +190,13 @@ async def _approve_cut_plan(args, store, on_event):
         page_offset=page_offset,
         sections=sections_raw,
     )
-    from backend.graph.store import set_run_progress
+    from backend.graph.state import GraphPhase
+    from backend.graph.store import ensure_graph_state, persist_graph_state, set_run_progress
     # approve_cut_plan chains draft_ontology (ACTION_CHAIN), so the run is
     # actively working again right after the approval.
+    state = ensure_graph_state(store, pdf_id=store.get("pdf_id"))
+    state["current_phase"] = GraphPhase.ONTOLOGY_DRAFT.value
+    persist_graph_state(store, state)
     set_run_progress(store, run_status="in_progress", next_step="draft_ontology")
     return {
         "status": "ok",

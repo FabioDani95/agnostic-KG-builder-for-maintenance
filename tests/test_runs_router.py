@@ -32,6 +32,7 @@ def _make_run(tmp_path, run_id="run_abc123", created_at="2026-07-01T09:00:00Z"):
         "pdf_id": "pdf-1",
         "current_phase": "validation",
         "run_status": "needs_human_review",
+        "next_step": "review",
         "operator": "FD",
         "selected_models": {"scoping": "gpt-5.4-mini", "extraction": "gpt-5.4"},
     }), encoding="utf-8")
@@ -60,6 +61,7 @@ def test_list_runs_sorted_and_tolerant(tmp_path, client):
     assert top["manual_filename"] == "manual.pdf"
     assert top["operator"] == "FD"
     assert top["run_status"] == "needs_human_review"
+    assert top["next_step"] == "review"
     assert top["last_phase"] == "validation"
     assert top["selected_extraction_model"] == "gpt-5.4"
 
@@ -105,3 +107,104 @@ def test_review_decision_invalid_verdict(tmp_path, client):
     _make_run(tmp_path)
     res = client.post("/api/runs/run_abc123/review-decisions", json={"kind": "x", "target_id": "y", "verdict": "maybe"})
     assert res.status_code == 422
+
+
+def test_last_review_decision_advances_live_run_to_export(tmp_path, client):
+    from backend.graph.state import GraphPhase, create_initial_graph_state
+    from backend.routers.upload import pdf_store
+    from backend.runstore import RunStore
+
+    state = create_initial_graph_state(pdf_id="pdf-live", filename="manual.pdf", total_pages=1)
+    state.update({
+        "run_id": "run_live",
+        "current_phase": GraphPhase.EXTRACTION.value,
+        "run_status": "awaiting_operator",
+        "next_step": "review",
+        "cleaned_triplets": [{"id": "triplet-1"}],
+        "ontology_pipeline": {
+            "review_queue": [
+                {"kind": "low_confidence", "target_id": "node-1"},
+                {"kind": "advisory", "target_id": "node-2"},
+            ]
+        },
+    })
+    live = {
+        "pdf_id": "pdf-live",
+        "run_id": "run_live",
+        "filename": "manual.pdf",
+        "graph_state": state,
+    }
+    RunStore().create_run(live)
+    pdf_store["pdf-live"] = live
+    try:
+        first = client.post("/api/runs/run_live/review-decisions", json={
+            "kind": "low_confidence", "target_id": "node-1", "verdict": "confirmed",
+        })
+        assert first.json()["review_completed"] is False
+        assert state["current_phase"] == GraphPhase.EXTRACTION.value
+
+        last = client.post("/api/runs/run_live/review-decisions", json={
+            "kind": "advisory", "target_id": "node-2", "verdict": "acknowledged",
+        })
+        assert last.json()["review_completed"] is True
+        assert live["graph_state"]["current_phase"] == GraphPhase.EXPORT.value
+        assert live["graph_state"]["next_step"] == "export"
+        assert live["review_index"] == 1
+        assert live["validated_triplets"] == [{"id": "triplet-1"}]
+    finally:
+        pdf_store.pop("pdf-live", None)
+
+
+def test_rejected_review_node_is_removed_with_incident_relations(tmp_path, client):
+    from backend.graph.state import GraphPhase, create_initial_graph_state
+    from backend.routers.upload import pdf_store
+    from backend.runstore import RunStore
+
+    triplet = {
+        "symptom": {"symptom_id": "sym-1", "name": "Low flow"},
+        "failure_modes": [{"failure_mode_id": "fm-1", "name": "Clogged filter"}],
+        "corrective_actions": [{"action_id": "ca-1", "linked_failure_mode_id": "fm-1"}],
+    }
+    state = create_initial_graph_state(pdf_id="pdf-reject", filename="manual.pdf", total_pages=1)
+    state.update({
+        "run_id": "run_reject",
+        "current_phase": GraphPhase.EXTRACTION.value,
+        "cleaned_triplets": [triplet],
+        "ontology_pipeline": {
+            "ontology": {
+                "nodes": {
+                    "Symptom": [{"symptom_id": "sym-1", "name": "Low flow"}],
+                    "FailureMode": [{"failure_mode_id": "fm-1", "name": "Clogged filter"}],
+                },
+                "relations": [
+                    {"name": "MAY_INDICATE", "from_id": "sym-1", "to_id": "fm-1"},
+                ],
+            },
+            "review_queue": [{"kind": "low_confidence", "target_id": "sym-1"}],
+        },
+    })
+    live = {
+        "pdf_id": "pdf-reject",
+        "run_id": "run_reject",
+        "filename": "manual.pdf",
+        "graph_state": state,
+        "validated_triplets": [triplet],
+    }
+    RunStore().create_run(live)
+    pdf_store["pdf-reject"] = live
+    try:
+        response = client.post("/api/runs/run_reject/review-decisions", json={
+            "kind": "low_confidence",
+            "target_id": "sym-1",
+            "target_type": "Symptom",
+            "verdict": "rejected",
+        })
+        assert response.status_code == 200
+        assert response.json()["node_removed"] is True
+        ontology = live["graph_state"]["ontology_pipeline"]["ontology"]
+        assert ontology["nodes"]["Symptom"] == []
+        assert ontology["relations"] == []
+        assert live["graph_state"]["cleaned_triplets"] == []
+        assert live["validated_triplets"] == []
+    finally:
+        pdf_store.pop("pdf-reject", None)
