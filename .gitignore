@@ -20,6 +20,7 @@ data/runs/
 eval_runs/
 node_modules/
 test-results/
+playwright-report/
 ontology.json
 # Golden mock fixtures are versioned even though they match patterns above.
 !tests/golden/mock_responses/**
@@ -35,8 +36,14 @@ env/
 .vscode/
 .idea/
 
+# Local AI-tool state, generated worktrees, and conversation visualizations.
+.claude/
+.codex/
+
 .DS_Store
 
 .pytest_cache/
+.mypy_cache/
+.coverage.*
 htmlcov/
 .coverage

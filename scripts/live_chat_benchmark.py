@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
-chatbot_e2e_test.py — End-to-end benchmark and validation script for the HITL chatbot.
+live_chat_benchmark.py — Live end-to-end benchmark for the HITL console backend.
 
 Runs a fully automated session against a live server. Simulates every phase of the
 extraction pipeline, measuring latency, validating event types, checking output files.
-Results saved to benchmark_runs/chatbot_e2e_<timestamp>.json for cyclical optimisation.
+Results are saved to `benchmark_runs/live_chat_benchmark_<timestamp>.json`.
 
 Usage:
-    python3 tests/chatbot_e2e_test.py [options]
+    python3 scripts/live_chat_benchmark.py [options]
 
     --url     Base URL (default: http://localhost:8000)
     --manual  Filename from manuals/ (default: first available)
-    --model   LLM model for scoping+extraction (default: gpt-4o-mini)
+    --model   LLM model for scoping+extraction (default: gpt-5.4)
     --max-triplets  Max triplets to review before stopping (default: 3)
     --timeout-phase  Seconds to wait per phase (default: 180)
     --save-dir  Directory for result JSON (default: benchmark_runs/)
@@ -38,7 +38,7 @@ import httpx
 # ─── Configuration ────────────────────────────────────────────────────────────
 
 DEFAULT_URL = "http://localhost:8000"
-DEFAULT_MODEL = "gpt-4o-mini"
+DEFAULT_MODEL = "gpt-5.4"
 DEFAULT_MAX_TRIPLETS = 3
 DEFAULT_PHASE_TIMEOUT = 180  # seconds per phase
 SSE_RECONNECT_DELAY = 1.0
@@ -867,7 +867,7 @@ def _print_phase(p: PhaseResult):
 
 def save_report(report: RunReport, save_dir: str) -> str:
     os.makedirs(save_dir, exist_ok=True)
-    filename = f"chatbot_e2e_{report.timestamp}.json"
+    filename = f"live_chat_benchmark_{report.timestamp}.json"
     path = os.path.join(save_dir, filename)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(asdict(report), f, indent=2, ensure_ascii=False)
@@ -891,7 +891,7 @@ def parse_args() -> argparse.Namespace:
 def main():
     args = parse_args()
     print(f"\n{'═'*60}")
-    print("  HITL Chatbot E2E Test")
+    print("  HITL Live Chat Benchmark")
     print(f"  Server : {args.url}  Model : {args.model}")
     print(f"{'═'*60}")
 

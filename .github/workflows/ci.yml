@@ -27,3 +27,25 @@ jobs:
 
       - name: Test (pytest)
         run: pytest
+
+      - name: Check documentation links
+        run: python scripts/check_docs_links.py
+
+      - name: Golden regression gate
+        run: python scripts/eval_golden.py --mode mock --fail-on-regression
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Test frontend (Playwright)
+        env:
+          PYTHON_BIN: python
+        run: npm run test:e2e

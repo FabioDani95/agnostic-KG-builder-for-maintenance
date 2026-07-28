@@ -1,0 +1,39 @@
+# Documentation
+
+This index separates current specifications from historical project records.
+The distinction matters: dated plans describe decisions and old code shapes,
+not work that is still pending.
+
+## Current
+
+- [Project README](../README.md) — product scope, setup, workflow, and outputs.
+- [Architecture](ARCHITECTURE.md) — runtime flow, module boundaries, state, and
+  extension points.
+- [Evaluation Protocol](EVALUATION_PROTOCOL.md) — normative golden-fixture and
+  model-comparison procedure.
+- [Test Suite Map](../tests/README.md) — correctness-test layers and commands.
+- [Cleanup Audit](CLEANUP_AUDIT.md) — cleanup actions, retained items, and
+  remaining release work as of 2026-07-28.
+
+## Frozen evaluation records
+
+These reports explain the annotations and gates for individual real-manual
+fixtures. Keep them next to any corresponding frozen expected output:
+
+- [ABB IRC5](ABB_IRC5_GOLDEN_EVAL.md)
+- [FANUC VB Series](FANUC_VB_SERIES_GOLDEN_EVAL.md)
+- [Haier LMA4120](HAIER_LMA4120_GOLDEN_EVAL.md)
+- [LG LMH2235ST](LG_LMH2235ST_GOLDEN_EVAL.md)
+- [Whirlpool W11187658](WHIRLPOOL_W11187658_GOLDEN_EVAL.md)
+
+## Historical records
+
+- [Stabilization Plan](archive/STABILIZATION_PLAN.md) — completed pre-refactor plan;
+  paths and metrics in its body are obsolete.
+- [Frontend Redesign Plan](archive/FRONTEND_REDESIGN_PLAN.md) — design rationale for
+  the redesign completed in commit `6303abb`.
+- [QA Demo Report](archive/QA_DEMO_REPORT.md) — pre-fix run evidence; its verdict is
+  scoped to the recorded build and is not the current release verdict.
+
+Historical records live under `docs/archive/` so they cannot be mistaken for
+current specifications.

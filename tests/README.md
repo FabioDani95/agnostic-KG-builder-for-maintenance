@@ -10,13 +10,15 @@ covers the code-correctness suites.
 
 ```bash
 # Full python suite (fast, deterministic, no API key)
-KG_LLM_MODE=mock python3 -m pytest tests/ -q
+KG_LLM_MODE=mock .venv/bin/python -m pytest tests/ -q
 
-# Frontend / E2E (needs dev server per playwright.config.js)
-npx playwright test
+# Frontend / E2E (the browser download is needed once)
+npm ci
+npx playwright install chromium
+npm run test:e2e
 
 # Quality gate on golden fixtures (deterministic, mock LLM)
-python3 scripts/eval_golden.py --mode mock --fail-on-regression
+.venv/bin/python scripts/eval_golden.py --mode mock --fail-on-regression
 ```
 
 ## Layers
@@ -63,7 +65,7 @@ Several services composed, real filesystem/run-store, `KG_LLM_MODE=mock`.
 | `test_graph_cocreator_agent.py` | graph co-creator agent |
 | `test_chat_actions_service.py`, `test_chat_tools_state.py`, `test_chat_graph_modify_tools.py`, `test_chat_orchestrator_status.py` | chat orchestration & graph-modify tools |
 | `test_run_store.py`, `test_replay_run.py` | run persistence & replay |
-| `test_runs_router.py`, `test_modify_routes.py`, `test_generate_export_route.py`, `test_legacy_routes_flag.py` | FastAPI routes (HITL console, modify, export) |
+| `test_runs_router.py`, `test_modify_routes.py`, `test_generate_export_route.py` | FastAPI routes (HITL console, modify, export) |
 | `test_ontology_export_store.py` | export store round-trip |
 | `test_llm_gateway.py` | gateway mode switching (mock/economy/full) |
 | `test_manual_loader.py` | markdown golden-manual loader |
@@ -87,17 +89,17 @@ Browser-level flows against the dev server.
 (The legacy chat/wizard frontend and its five specs were removed on
 2026-07-06; the console is the sole UI.)
 
-### Legacy / manual runners (not pass/fail tests)
+### Manual runners (not pass/fail tests)
 Kept for telemetry and ad-hoc exploration; they emit reports, not verdicts.
 Do **not** quote their output as performance results — use the golden eval.
 
 | File | Notes |
 |---|---|
-| `chatbot_e2e_test.py` | interactive chatbot e2e probe → `benchmark_runs/chatbot_e2e_*.json` |
+| `scripts/live_chat_benchmark.py` | live chatbot probe → `benchmark_runs/live_chat_benchmark_*.json` |
 | `scripts/run_manual_benchmark.py` | phased pipeline runner on PDFs → `benchmark_runs/` |
 | `scripts/run_batch_export.py` | interactive batch export → `batch_runs/` |
 
-## Known failures (as of 2026-07-05)
+## Known failures (verified 2026-07-28)
 
 None — the suite is green under `KG_LLM_MODE=mock`.
 

@@ -1,9 +1,12 @@
 # Piano di stabilizzazione e modularizzazione — KG Builder for Maintenance
 
-> Stato: proposta operativa (nessun codice ancora modificato).
-> Vincoli fissi: runtime unico `multi_agent`, flusso chat-first, nessun runtime `classic`,
-> i workflow deterministici restano building block interni, si usano solo i golden esistenti
-> in `tests/golden`, si mantiene `./run.sh` e la compatibilità con pytest e Playwright.
+> **Documento storico — piano completato e superato.** Fotografava la
+> codebase prima della stabilizzazione avviata nell'aprile 2026. I componenti
+> proposti (schemi, RunStore, replay, gateway mock, harness golden, split dei
+> tool, trace e rimozione del frontend legacy) sono ora presenti; diversi file
+> e conteggi citati sotto non esistono più. Non usare questo documento come
+> descrizione corrente o backlog. Vedi [Architecture](../ARCHITECTURE.md) e
+> [Cleanup Audit](../CLEANUP_AUDIT.md).
 
 ## 1. Executive summary
 

@@ -1,12 +1,17 @@
 # Piano incrementale di miglioramento frontend per demo enterprise
 
+> **Documento storico — implementazione completata il 15 luglio 2026 nel
+> commit `6303abb`.** Conservato come razionale del redesign, non come backlog
+> corrente. Per stato del repository e debito residuo vedi
+> [Cleanup Audit](../CLEANUP_AUDIT.md).
+
 **Data analisi:** 15 luglio 2026  
 **Perimetro:** `frontend/console.html`, `frontend/console.js`, `frontend/console.css`, verifica mirata di `frontend/editor/`  
 **Vincoli assunti:** vanilla JS/CSS, nessun framework o dipendenza nuova, nessun endpoint nuovo, nessuna riscrittura di `console.js`.
 
 ## Metodo ed evidenze
 
-Il piano deriva da un percorso realmente eseguito nell'app avviata con `./run.sh`, usando `manuals/LG_MICROWAVE.pdf`: nuova sessione, configurazione, scoping, approvazione, estrazione, quattro decisioni HITL, dashboard finale, grafo ed export. Per completare rapidamente tutte le schermate è stato usato `KG_LLM_MODE=mock`; layout, stato, polling, API e interazioni erano quelli reali. I risultati sono stati confrontati con il run LLM reale documentato in `docs/QA_DEMO_REPORT.md`.
+Il piano deriva da un percorso realmente eseguito nell'app avviata con `./run.sh`, usando `manuals/LG_MICROWAVE.pdf`: nuova sessione, configurazione, scoping, approvazione, estrazione, quattro decisioni HITL, dashboard finale, grafo ed export. Per completare rapidamente tutte le schermate è stato usato `KG_LLM_MODE=mock`; layout, stato, polling, API e interazioni erano quelli reali. I risultati sono stati confrontati con il run LLM reale documentato in `QA_DEMO_REPORT.md`.
 
 Run visuale di questa analisi: `run_2ee138d8e0f74083b625bd90ecf30b79`, 49 pagine, 5 nodi, 4 relazioni, 4 item HITL gestiti. Sono stati inoltre riprodotti:
 
@@ -244,4 +249,3 @@ Pre-mining completato: 13 componenti candidati, 0 codici errore
 - Dopo una decisione HITL, il prossimo item aperto è pronto senza click aggiuntivo; le shortcut non si attivano mentre si scrive.
 - La schermata finale mostra almeno entità, failure mode, coverage, tempo/costo e bilancio delle decisioni umane.
 - Tutte le animazioni rispettano `prefers-reduced-motion` e non governano mai lo stato applicativo.
-

@@ -1,9 +1,8 @@
-"""Phased benchmark runner for the multi-agent ontology pipeline.
+"""Phased scoping and ontology benchmark for PDF manuals.
 
-Runs scoping, ontology draft, and/or legacy triplet extraction against a PDF
-in the manuals/ folder without going through the HTTP layer. Produces a
-structured JSON report with per-phase counts, durations, and cost estimates
-so runs can be compared across manuals and configurations.
+Runs scoping and ontology drafting against a PDF without going through the HTTP
+layer. Produces a structured JSON report with per-phase counts, durations, and
+cost estimates so runs can be compared across manuals and configurations.
 
 Usage
 -----
@@ -16,9 +15,7 @@ Phases
 ------
 - scoping        → only the cut-plan workflow (cheap, LLM calls small)
 - ontology       → ontology draft (requires scoping to have run first in the same invocation)
-- extract        → legacy triplet extraction (requires scoping)
-- all            → scoping → ontology → extract, sequentially
-- scoping+ontology → the two new-flow phases without the legacy triplet extraction
+- scoping+ontology → explicit alias for scoping followed by ontology drafting
 
 Notes
 -----
@@ -237,44 +234,6 @@ async def _run_ontology_phase(store: dict, model_name: str, target_language: str
     return report
 
 
-def _run_extract_phase(store: dict, model_name: str, target_language: str) -> dict:
-    from backend.agents.extraction_agent import run_extraction_agent
-    from backend.models import ExtractRequest
-
-    req = ExtractRequest(
-        pdf_id=store["pdf_id"],
-        source_type=store.get("source_type") or "Owner's manual",
-        source_title=store.get("source_title") or store["filename"],
-        model_name=model_name,
-        pages_to_keep=None,  # fall back to cut_plan.pages_to_keep
-        target_language=target_language,
-    )
-    t0 = time.perf_counter()
-    result = run_extraction_agent(store, req)
-    duration = round(time.perf_counter() - t0, 2)
-
-    stage_metrics = store.get("run_metrics", {}).get("stages", {}).get("extraction", {})
-
-    triplets = getattr(result, "triplets", []) or []
-    triplet_count = len(triplets)
-    total_fm = sum(len(t.failure_modes) for t in triplets)
-    total_ca = sum(len(t.corrective_actions) for t in triplets)
-
-    return {
-        "phase": "extract",
-        "duration_seconds": duration,
-        "triplet_count": triplet_count,
-        "total_symptoms": triplet_count,
-        "total_failure_modes": total_fm,
-        "total_corrective_actions": total_ca,
-        "llm_calls": stage_metrics.get("llm_calls", 0),
-        "total_tokens": stage_metrics.get("total_tokens", 0),
-        "prompt_tokens": stage_metrics.get("prompt_tokens", 0),
-        "completion_tokens": stage_metrics.get("completion_tokens", 0),
-        "estimated_cost_usd": stage_metrics.get("estimated_cost_usd", 0.0),
-    }
-
-
 def _count_by(items, key) -> dict[str, int]:
     counts: dict[str, int] = {}
     for item in items or []:
@@ -291,7 +250,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--page-offset", type=int, default=0, help="Offset between manual pages and absolute PDF pages")
     parser.add_argument(
         "--phase",
-        choices=["scoping", "ontology", "extract", "scoping+ontology", "all"],
+        choices=["scoping", "ontology", "scoping+ontology"],
         default="scoping",
         help="Which phase(s) to run",
     )
@@ -341,9 +300,7 @@ async def _main_async() -> int:
     phases_to_run = {
         "scoping": ["scoping"],
         "ontology": ["scoping", "ontology"],
-        "extract": ["scoping", "extract"],
         "scoping+ontology": ["scoping", "ontology"],
-        "all": ["scoping", "ontology", "extract"],
     }[args.phase]
 
     try:
@@ -358,10 +315,6 @@ async def _main_async() -> int:
             if "ontology" in phases_to_run:
                 logger.info("─── Phase: ontology draft ───")
                 report["stages"]["ontology"] = await _run_ontology_phase(store, model_name, args.target_language)
-
-            if "extract" in phases_to_run:
-                logger.info("─── Phase: legacy triplet extraction ───")
-                report["stages"]["extract"] = _run_extract_phase(store, model_name, args.target_language)
     except Exception as exc:
         logger.exception("Phase failed: %s", exc)
         report["error"] = str(exc)

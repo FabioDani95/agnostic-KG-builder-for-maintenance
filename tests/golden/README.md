@@ -13,11 +13,12 @@ mocked extraction tests, or low-token LLM evaluation runs.
 
 ## Layout
 
-- `manuals/clean_pump_manual.md`: straightforward diagnostic content.
-- `manuals/ambiguous_conveyor_manual.md`: one symptom with multiple possible causes.
-- `manuals/noisy_table_robot_manual.md`: diagnostic table with split/noisy wording.
-- `manuals/eagle_s3l_laser_cutter_manual.md`: real laser cutter troubleshooting prose with preventive-maintenance distractors.
-- `expected/*.json`: minimal expected entities, triplets, human-review hints, and export checks.
+- `manuals/`: three synthetic fixtures (`clean_pump`, `ambiguous_conveyor`,
+  `noisy_table_robot`) and six real-manual excerpts (Eagle, Haier, LG, FANUC,
+  ABB, and Whirlpool).
+- `expected/<fixture_id>.json`: the frozen annotation, quality gates, review
+  expectations, and export checks for each manual.
+- `mock_responses/<fixture_id>/`: deterministic stage responses used by CI.
 
 ## Intended Use
 

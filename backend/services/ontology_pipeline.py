@@ -916,13 +916,3 @@ def normalize_ontology_instance(ontology: OntologyInstance) -> OntologyInstance:
         source_type=ontology.source_type,
         source_title=ontology.source_title,
     )
-
-
-def ontology_export_payload(ontology: OntologyInstance) -> str:
-    from backend.services.ontology_export_store import prepare_exported_ontology
-
-    return json.dumps(
-        prepare_exported_ontology(ontology.model_dump()),
-        indent=2,
-        ensure_ascii=False,
-    )

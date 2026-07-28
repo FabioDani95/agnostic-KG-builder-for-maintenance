@@ -1,5 +1,5 @@
-# <0.130: da 0.130 include_router avvolge le route in _IncludedRouter e
-# rompe l'introspezione APIRoute usata da test e tooling.
+# <0.130: starting with 0.130, include_router wraps routes in _IncludedRouter
+# and breaks the APIRoute introspection used by tests and tooling.
 fastapi<0.130
 uvicorn[standard]
 python-multipart

@@ -1,5 +1,4 @@
 import logging
-import os
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -23,11 +22,6 @@ logging.basicConfig(
     datefmt="%H:%M:%S",
 )
 
-
-def _legacy_routes_enabled() -> bool:
-    return str(os.environ.get("KG_ENABLE_LEGACY_ROUTES", "")).strip().lower() in {"1", "true", "yes", "on"}
-
-
 def create_app() -> FastAPI:
     app = FastAPI(title="Diagnostic Extraction API")
 
@@ -39,12 +33,6 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(upload.router)
-    if _legacy_routes_enabled():
-        from backend.routers import cutplan, extract, ontology
-
-        app.include_router(cutplan.router)
-        app.include_router(extract.router)
-        app.include_router(ontology.router)
     app.include_router(generate.router)
     app.include_router(modify.router)
     app.include_router(multi_agent.router)

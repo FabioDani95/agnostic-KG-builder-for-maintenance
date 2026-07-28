@@ -1,5 +1,13 @@
 # QA demo readiness report
 
+> **Snapshot storico, non verdetto corrente.** Il report descrive il build
+> testato prima delle correzioni D-01…D-05 e del redesign completato nel commit
+> `6303abb` del 15 luglio 2026. I test di regressione aggiunti in seguito sono
+> verdi; D-06…D-08 restano osservazioni da riesercitare in una nuova sessione
+> manuale con modello reale. Il verdetto sotto vale esclusivamente per il build
+> e il run indicati. Vedi [Cleanup Audit](../CLEANUP_AUDIT.md) per la verifica
+> automatica corrente.
+
 **Data esecuzione:** 15 luglio 2026  
 **Verdetto:** **NON PRONTA per una demo enterprise end-to-end**  
 **Build testata:** worktree locale, avvio con `./run.sh`, UI `http://127.0.0.1:8000/`  

@@ -2,6 +2,9 @@
 
 A FastAPI application with a browser UI for building diagnostic knowledge graphs from maintenance manuals, one manual at a time.
 
+Start with the [documentation index](docs/README.md) for the current
+architecture, evaluation protocol, and repository-cleanup status.
+
 ## What It Does
 
 - Loads PDF manuals placed in `manuals/`
@@ -62,7 +65,7 @@ The current shipped workflow is:
 1. Select a manual from the local `manuals/` directory.
 2. Provide the page offset when printed manual numbering does not start at PDF page 1.
 3. Run document scoping to produce a cut plan.
-4. Review and approve or edit the selected sections.
+4. Review and approve the selected sections.
 5. Generate an ontology draft from the approved pages.
 6. Review required ontology fields, graph issues, and suggested relations.
 7. Continue to triplet extraction.
@@ -89,6 +92,7 @@ Each successful export writes:
 - `output/latest/metrics.json`
 - `output/<manual_slug>/ontology.json`
 - `output/<manual_slug>/metrics.json`
+- `output/<manual_slug>/conversation.json` for exports initiated from the HITL console
 
 The exported ontology is normalized and validated against the current contract before being written. Export is best-effort:
 
@@ -110,11 +114,31 @@ http://127.0.0.1:8000/modify/latest
 - Sample manuals are not included in the repository.
 - Runtime outputs, local manuals, benchmarks, and installed dependencies are intentionally excluded from version control.
 - The root `README.md` is the canonical high-level description of the current repository state.
+- Generated state for local AI tools (`.claude/`, `.codex/`) is not part of the project.
+
+### Repository Layout
+
+```text
+backend/          FastAPI routes, pipeline services, agents, schemas, and run persistence
+frontend/         HITL console and standalone graph editor
+modify/           Graph-editor domain and rendering helpers
+scripts/          Evaluation, replay, benchmark, and batch utilities
+tests/            Python, contract, golden-evaluation, and browser tests
+docs/             Current technical docs plus clearly labelled historical records
+manuals/          Local PDF inputs (ignored except for directory placeholders)
+data/             Runtime run state and copied inputs (ignored)
+output/           Exported ontology bundles (ignored)
+```
+
+See [Architecture](docs/ARCHITECTURE.md) for module boundaries and the runtime
+flow. Follow the test and evaluation protocols before changing contracts or
+golden fixtures.
 
 ## Requirements
 
-- Python 3.11+
-- An OpenAI API key
+- Python 3.12+
+- Node.js 18+ for browser tests
+- An OpenAI API key for real-model runs (not required for deterministic mock tests)
 - Local PDF manuals to process
 - Optional: Tesseract OCR with the `eng` language data. Without it, native PDF
   extraction continues normally and low-text pages are reported as OCR-unavailable.
@@ -151,19 +175,32 @@ Ubuntu, install the `tesseract-ocr` and `tesseract-ocr-eng` packages.
 
 The script creates `.venv` if needed, installs Python dependencies when missing, and starts the server on `http://127.0.0.1:8000`.
 
+## Deployment Boundary
+
+The current application is designed for a trusted local operator. It has no
+authentication, accepts runtime configuration changes, uses permissive CORS,
+and reads/writes the local filesystem. Do not expose it directly to an
+untrusted network without adding authentication, authorization, restrictive
+CORS, request limits, and a hardened storage boundary.
+
 ## Tests
 
 Run the backend test suite with:
 
 ```bash
-python3 -m pytest
+.venv/bin/ruff check .
+.venv/bin/python -m pytest
+.venv/bin/python scripts/eval_golden.py --mode mock --fail-on-regression
 ```
 
 Frontend end-to-end tests use Playwright:
 
 ```bash
-npm install
-npx playwright test
+npm ci
+npx playwright install chromium  # one-time browser download
+npm run test:e2e
 ```
 
-See `tests/README.md` for a map of the suite (unit / contract / integration / eval-harness / E2E layers) and `docs/EVALUATION_PROTOCOL.md` for the quality-evaluation procedure.
+See [Test Suite Map](tests/README.md) for the unit, contract, integration,
+evaluation-harness, and E2E layers. The normative quality procedure is in
+[Evaluation Protocol](docs/EVALUATION_PROTOCOL.md).

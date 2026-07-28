@@ -44,11 +44,11 @@ The three layers above the line answer "is the code broken?". The golden eval
 answers "is the *output* good?" — a different question that unit tests cannot
 answer, because real-model quality varies run to run.
 
-Legacy exploratory runners (`scripts/run_manual_benchmark.py`,
-`scripts/run_batch_export.py`, `tests/chatbot_e2e_test.py`) predate this
-protocol. They produce useful telemetry (`benchmark_runs/`, `batch_runs/`)
-but **no pass/fail quality verdict**; do not quote their numbers as
-performance results. See [tests/README.md](../tests/README.md).
+Exploratory runners (`scripts/run_manual_benchmark.py`,
+`scripts/run_batch_export.py`, `scripts/live_chat_benchmark.py`) produce useful
+telemetry (`benchmark_runs/`, `batch_runs/`) but **no pass/fail quality
+verdict**; do not quote their numbers as performance results. See
+[tests/README.md](../tests/README.md).
 
 ## 3. Golden fixture anatomy
 
@@ -358,7 +358,7 @@ before it reaches customers:
 | `lg_lmh2235st_microwave_manual` | real (microwave) | CA-less self-diagnosis codes + test-point flowcharts | min_recall 0.85, unsupported 0.0 |
 | `fanuc_vb_series_cnc_manual` | real (CNC) | scattered knowledge: terse alarm list w/ embedded CAs, prose procedures, cross-page references | min_recall 0.8, unsupported 0.0 |
 | `abb_irc5_controller_troubleshooting_manual` | real (robot controller) | symptom-level pairing: causes listed by probability + separate action tables | min_recall 0.85, unsupported 0.0 |
-| `whirlpool_w11187658_dishwasher_manual` | real (dishwasher) | error-code table w/ indicator aliases + all-caps multi-cause symptom table | **Phase B pending** (see fixture doc) |
+| `whirlpool_w11187658_dishwasher_manual` | real (dishwasher) | error-code table w/ indicator aliases + all-caps multi-cause symptom table | min_recall 0.7, unsupported 0.0 |
 
 Gaps this protocol does not yet cover (candidate future work): exhaustive
 (non-sample) recall on one fully-annotated manual; inter-annotator agreement

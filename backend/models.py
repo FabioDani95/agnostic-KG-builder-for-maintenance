@@ -115,7 +115,7 @@ class OntologySchemaDefinition(BaseModel):
     version: str
     language: str
     description: str
-    design_principles: list[str] = []
+    design_principles: list[str] = Field(default_factory=list)
     nodes: list[OntologyNodeDefinition]
     relations: list[OntologyRelationDefinition]
 
@@ -132,7 +132,7 @@ class OntologyRelationInstance(BaseModel):
     from_id: str
     to_type: str
     to_id: str
-    evidence: list[OntologyEvidence] = []
+    evidence: list[OntologyEvidence] = Field(default_factory=list)
 
 
 class OntologyInstance(BaseModel):
@@ -188,7 +188,7 @@ class HumanRequiredField(BaseModel):
     reason: str
     expected_type: str = "string"
     suggested_value: str = ""
-    allowed_values: list[str] = []
+    allowed_values: list[str] = Field(default_factory=list)
 
 
 class HumanBindingAnswer(BaseModel):
@@ -205,15 +205,9 @@ class OntologyDraftRequest(BaseModel):
     target_language: str = "en"
 
 
-class OntologyReviewRequest(BaseModel):
-    pdf_id: str
-    answers: list[HumanBindingAnswer] = []
-    model_name: str = DEFAULT_MODEL_NAME
-
-
 class GraphIssue(BaseModel):
     issue_type: str  # orphan | missing_relation | broken_chain | cycle
-    affected_nodes: list[str] = []
+    affected_nodes: list[str] = Field(default_factory=list)
     description: str
     suggested_fix: str = ""
     auto_fixable: bool = False
@@ -229,11 +223,6 @@ class SuggestedRelation(BaseModel):
     to_label: str
     confidence: float
     rationale: str = ""
-
-
-class ApplySuggestionsRequest(BaseModel):
-    pdf_id: str
-    accepted_suggestions: list[SuggestedRelation] = []
 
 
 class ConfidenceEntry(BaseModel):
@@ -263,24 +252,20 @@ class ConfidenceReport(BaseModel):
 class OntologyPipelineResponse(BaseModel):
     status: str
     ontology: OntologyInstance
-    semantic_issues: list[PipelineIssue] = []
-    schema_issues: list[PipelineIssue] = []
-    human_required_fields: list[HumanRequiredField] = []
+    semantic_issues: list[PipelineIssue] = Field(default_factory=list)
+    schema_issues: list[PipelineIssue] = Field(default_factory=list)
+    human_required_fields: list[HumanRequiredField] = Field(default_factory=list)
     is_schema_compliant: bool = False
     is_ready_for_human_review: bool = False
     retry_count: int = 0
-    graph_issues: list[GraphIssue] = []
-    suggested_relations: list[SuggestedRelation] = []
+    graph_issues: list[GraphIssue] = Field(default_factory=list)
+    suggested_relations: list[SuggestedRelation] = Field(default_factory=list)
     confidence_report: ConfidenceReport | None = None
     resolution_completion_report: dict[str, Any] = Field(default_factory=dict)
     # Fase A4 — the unified "red zone" the operator must review: open structural
     # gaps + low-confidence nodes + advisory issues, priority-ordered.
     review_queue: list[dict[str, Any]] = Field(default_factory=list)
     review_summary: dict[str, Any] = Field(default_factory=dict)
-
-
-class OntologyExportRequest(BaseModel):
-    pdf_id: str
 
 
 # ─── Cut Plan Models ───
@@ -307,7 +292,7 @@ class SectionInfo(BaseModel):
     page_range: PageRange                      # absolute PDF pages
     manual_page_range: PageRange | None = None  # manual pages (for display)
     source: str                                # "rule" | "llm" | "keyword" | "user"
-    keyword_matches: list[str] = []
+    keyword_matches: list[str] = Field(default_factory=list)
     reasoning: str = ""
 
 
@@ -351,11 +336,12 @@ class CutPlanApprovalSection(BaseModel):
     page_range: PageRange
     source: str = ""
 
+
 class CutPlanApproval(BaseModel):
     pdf_id: str
     pages_to_keep: list[int]
     page_offset: int = 0
-    sections: list[CutPlanApprovalSection] = []
+    sections: list[CutPlanApprovalSection] = Field(default_factory=list)
 
 
 class LoadManualRequest(BaseModel):
