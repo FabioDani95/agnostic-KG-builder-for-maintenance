@@ -1,0 +1,26 @@
+{
+  "acceptance_id": "AC-PDF-002",
+  "status": "passed",
+  "timestamp_utc": "2026-07-29T13:09:02.507501Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "working_tree_dirty": true,
+  "command": "python3 -m pytest -q tests/planned/test_pdf_acceptance.py::test_ac_pdf_002",
+  "dataset": null,
+  "assertions": [
+    {
+      "description": "Every persisted PDF EvidenceUnit has source ID, physical page, extraction method, verifiable quote and one primary provenance reference.",
+      "passed": true
+    }
+  ],
+  "raw_artifacts": [
+    {
+      "path": "artifacts/raw/i03/pytest.txt",
+      "sha256": "4b902baab8f5698df2423f2360f5cf2b1da58ffecac77de9eff8d3a502e41e6a"
+    }
+  ],
+  "environment": {
+    "python": "3.12.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "secrets_included": false
+  }
+}

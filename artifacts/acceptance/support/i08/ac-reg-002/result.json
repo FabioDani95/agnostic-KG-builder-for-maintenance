@@ -1,0 +1,38 @@
+{
+  "acceptance_id": "AC-REG-002",
+  "status": "support",
+  "timestamp_utc": "2026-07-29T14:28:35.922684Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "working_tree_dirty": true,
+  "command": "python3 scripts/build_regression_report.py --junit artifacts/raw/i08/pytest-full.xml --golden-report artifacts/raw/i08/golden/latest/20260729T142626Z/report.json --output artifacts/regression/g1/result.json",
+  "dataset": null,
+  "assertions": [
+    {
+      "description": "Historical 301 reconciliation is distinct from the actual current suite count of 355.",
+      "passed": true
+    },
+    {
+      "description": "Nine mock golden fixtures are schema-compliant with average recall 1.0.",
+      "passed": true
+    },
+    {
+      "description": "JUnit, golden and browser evidence resolve to existing artifacts.",
+      "passed": true
+    }
+  ],
+  "raw_artifacts": [
+    {
+      "path": "artifacts/regression/g1/result.json",
+      "sha256": "6d7fcd576d64c3c83e8304d27c7537214754edcff8ea0daf07e3602c45220803"
+    },
+    {
+      "path": "artifacts/regression/g1/result.md",
+      "sha256": "0f45f722fd56e8d797f6326d59e5fa11cf7024890ea869d560c942f4d227f69d"
+    }
+  ],
+  "environment": {
+    "python": "3.12.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "secrets_included": false
+  }
+}

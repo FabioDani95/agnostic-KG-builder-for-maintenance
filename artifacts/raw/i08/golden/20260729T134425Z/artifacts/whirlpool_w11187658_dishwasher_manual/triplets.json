@@ -1,0 +1,259 @@
+[
+  {
+    "symptom": {
+      "symptom_id": "SYM-001",
+      "name": "Won't run or power up (dead keypad/console)",
+      "description": "No operation, no keypad response, no LEDs or display.",
+      "severity": "High",
+      "evidence_page": 0
+    },
+    "failure_modes": [
+      {
+        "failure_mode_id": "FM-013",
+        "name": "Faulty control",
+        "description": "The electronic control is faulty.",
+        "material_context": "CMP-005",
+        "linked_symptom_id": "SYM-001",
+        "evidence_page": 19,
+        "error_codes": []
+      },
+      {
+        "failure_mode_id": "FM-006",
+        "name": "No power to unit or bad connection",
+        "description": "No power to the unit or a bad power connection.",
+        "material_context": "CMP-005",
+        "linked_symptom_id": "SYM-001",
+        "evidence_page": 19,
+        "error_codes": []
+      }
+    ],
+    "corrective_actions": [
+      {
+        "action_id": "CA-002",
+        "name": "Replace control",
+        "description": "Replace the faulty electronic control.",
+        "instruction_text": "Unplug dishwasher or disconnect power. Check/replace control.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_page": 19,
+        "linked_failure_mode_id": "FM-013",
+        "action_kind": "procedure"
+      }
+    ],
+    "error_codes": []
+  },
+  {
+    "symptom": {
+      "symptom_id": "SYM-002",
+      "name": "Will not fill or low water",
+      "description": "The dishwasher will not fill with water or fills with too little water.",
+      "severity": "Medium",
+      "evidence_page": 0
+    },
+    "failure_modes": [
+      {
+        "failure_mode_id": "FM-012",
+        "name": "Low water pressure or no water to dishwasher",
+        "description": "Water pressure is low or no water reaches the dishwasher.",
+        "material_context": "CMP-001",
+        "linked_symptom_id": "SYM-002",
+        "evidence_page": 20,
+        "error_codes": []
+      },
+      {
+        "failure_mode_id": "FM-007",
+        "name": "Inlet screen on fill valve plugged",
+        "description": "The inlet screen on the fill valve is plugged.",
+        "material_context": "CMP-001",
+        "linked_symptom_id": "SYM-002",
+        "evidence_page": 20,
+        "error_codes": []
+      }
+    ],
+    "corrective_actions": [
+      {
+        "action_id": "CA-001",
+        "name": "Correct installation as necessary",
+        "description": "Restore an adequate water supply by correcting the installation.",
+        "instruction_text": "Restore an adequate water supply by correcting the installation as necessary.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_page": 20,
+        "linked_failure_mode_id": "FM-012",
+        "action_kind": "procedure"
+      }
+    ],
+    "error_codes": []
+  },
+  {
+    "symptom": {
+      "symptom_id": "SYM-003",
+      "name": "Wash pump will not pump",
+      "description": "The wash pump does not pump water during the cycle.",
+      "severity": "High",
+      "evidence_page": 0
+    },
+    "failure_modes": [
+      {
+        "failure_mode_id": "FM-014",
+        "name": "Excessive suds in pump",
+        "description": "Excessive suds are present in the wash pump.",
+        "material_context": "CMP-006",
+        "linked_symptom_id": "SYM-003",
+        "evidence_page": 21,
+        "error_codes": []
+      },
+      {
+        "failure_mode_id": "FM-008",
+        "name": "Faulty motor start capacitor",
+        "description": "The wash pump motor start capacitor is faulty.",
+        "material_context": "CMP-006",
+        "linked_symptom_id": "SYM-003",
+        "evidence_page": 21,
+        "error_codes": []
+      }
+    ],
+    "corrective_actions": [
+      {
+        "action_id": "CA-003",
+        "name": "Repeatedly fill and cancel/drain to remove suds",
+        "description": "Repeatedly fill and drain the dishwasher until excessive suds are removed.",
+        "instruction_text": "Repeatedly fill and cancel/drain to remove suds.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_page": 21,
+        "linked_failure_mode_id": "FM-014",
+        "action_kind": "procedure"
+      },
+      {
+        "action_id": "CA-007",
+        "name": "Replace the motor start capacitor if open",
+        "description": "Replace the wash-pump motor start capacitor when it tests open.",
+        "instruction_text": "Unplug dishwasher or disconnect power. Disconnect capacitor leads and confirm capacitance is as labeled on part or check resistance for open circuit across the terminals. Replace if open.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_page": 21,
+        "linked_failure_mode_id": "FM-008",
+        "action_kind": "procedure"
+      }
+    ],
+    "error_codes": []
+  },
+  {
+    "symptom": {
+      "symptom_id": "SYM-004",
+      "name": "Will not drain or excess water left in unit",
+      "description": "The dishwasher will not drain or excess water remains in the unit.",
+      "severity": "High",
+      "evidence_page": 0
+    },
+    "failure_modes": [
+      {
+        "failure_mode_id": "FM-015",
+        "name": "Diameter of drain hose too small",
+        "description": "The installed drain hose diameter is too small.",
+        "material_context": "CMP-008",
+        "linked_symptom_id": "SYM-004",
+        "evidence_page": 21,
+        "error_codes": []
+      },
+      {
+        "failure_mode_id": "FM-016",
+        "name": "Drain loop check valve not sealing and waste line plugged",
+        "description": "The drain loop check valve does not seal while the disposer or waste line is plugged.",
+        "material_context": "CMP-008",
+        "linked_symptom_id": "SYM-004",
+        "evidence_page": 21,
+        "error_codes": []
+      },
+      {
+        "failure_mode_id": "FM-009",
+        "name": "Drain pump impeller fractured",
+        "description": "The drain pump impeller is fractured or stripped.",
+        "material_context": "CMP-007",
+        "linked_symptom_id": "SYM-004",
+        "evidence_page": 21,
+        "error_codes": []
+      },
+      {
+        "failure_mode_id": "FM-010",
+        "name": "Obstructed drain hose or path",
+        "description": "The drain hose or drain path is obstructed.",
+        "material_context": "CMP-008",
+        "linked_symptom_id": "SYM-004",
+        "evidence_page": 21,
+        "error_codes": []
+      }
+    ],
+    "corrective_actions": [
+      {
+        "action_id": "CA-004",
+        "name": "Install proper drain hose",
+        "description": "Install a drain hose with the proper diameter.",
+        "instruction_text": "Check/install proper drain hose.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_page": 21,
+        "linked_failure_mode_id": "FM-015",
+        "action_kind": "procedure"
+      },
+      {
+        "action_id": "CA-005",
+        "name": "Replace entire drain loop",
+        "description": "Replace the complete drain loop when the check valve leaks back.",
+        "instruction_text": "If water flows into dishwasher, replace entire drain loop.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_page": 21,
+        "linked_failure_mode_id": "FM-016",
+        "action_kind": "procedure"
+      },
+      {
+        "action_id": "CA-008",
+        "name": "Replace the drain pump if the impeller is stripped",
+        "description": "Replace the drain pump when its impeller is stripped.",
+        "instruction_text": "Unplug dishwasher or disconnect power. Remove drain pump and check impeller by pulling and rotating. If stripped - replace.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_page": 21,
+        "linked_failure_mode_id": "FM-009",
+        "action_kind": "procedure"
+      }
+    ],
+    "error_codes": []
+  },
+  {
+    "symptom": {
+      "symptom_id": "SYM-005",
+      "name": "Detergent not dispensing",
+      "description": "The detergent dispenser does not release detergent during the cycle.",
+      "severity": "Medium",
+      "evidence_page": 0
+    },
+    "failure_modes": [
+      {
+        "failure_mode_id": "FM-011",
+        "name": "Mechanical binding of dispenser lid",
+        "description": "The dispenser lid is mechanically binding.",
+        "material_context": "CMP-009",
+        "linked_symptom_id": "SYM-005",
+        "evidence_page": 22,
+        "error_codes": []
+      }
+    ],
+    "corrective_actions": [
+      {
+        "action_id": "CA-010",
+        "name": "Replace the dispenser",
+        "description": "Replace the mechanically binding dispenser.",
+        "instruction_text": "Unplug dishwasher or disconnect power. Check/replace dispenser.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_page": 22,
+        "linked_failure_mode_id": "FM-011",
+        "action_kind": "procedure"
+      }
+    ],
+    "error_codes": []
+  }
+]

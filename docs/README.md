@@ -6,9 +6,16 @@ not work that is still pending.
 
 ## Current
 
-- [Project README](../README.md) — product scope, setup, workflow, and outputs.
-- [Architecture](ARCHITECTURE.md) — runtime flow, module boundaries, state, and
-  extension points.
+- [MVP Specification](../SPECIFICHE_MVP.md) — authoritative target product
+  requirements.
+- [Normative Specification Package](specs/README.md) — decisions, data
+  contracts, codebase implications, and acceptance criteria.
+- [UX Specification](specs/UX_SPECIFICATION.md) — unified multi-format
+  frontend flow and controlled HITL interaction.
+- [Project README](../README.md) — target pointer plus imported-baseline setup
+  and behavior.
+- [Architecture](ARCHITECTURE.md) — imported baseline runtime flow and module
+  boundaries; it is not the target architecture specification.
 - [Evaluation Protocol](EVALUATION_PROTOCOL.md) — normative golden-fixture and
   model-comparison procedure.
 - [Test Suite Map](../tests/README.md) — correctness-test layers and commands.
@@ -28,6 +35,8 @@ fixtures. Keep them next to any corresponding frozen expected output:
 
 ## Historical records
 
+- [MVP Specification 0.2 Draft](archive/SPECIFICHE_MVP_0.2_DRAFT.md) —
+  superseded and non-normative.
 - [Stabilization Plan](archive/STABILIZATION_PLAN.md) — completed pre-refactor plan;
   paths and metrics in its body are obsolete.
 - [Frontend Redesign Plan](archive/FRONTEND_REDESIGN_PLAN.md) — design rationale for

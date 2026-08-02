@@ -1,0 +1,70 @@
+{
+  "acceptance_id": "AC-UX-009",
+  "status": "support",
+  "timestamp_utc": "2026-07-29T20:04:55.664863Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "working_tree_dirty": true,
+  "command": "PORT=8014 PLAYWRIGHT_JSON_OUTPUT_NAME=artifacts/raw/i08/playwright.json npx playwright test --reporter=json",
+  "dataset": null,
+  "assertions": [
+    {
+      "description": "A fresh G1 workspace starts with a direct machine-identity form before any document controls appear.",
+      "passed": true
+    },
+    {
+      "description": "All four G1 views address the user directly and state the next action in plain Italian.",
+      "passed": true
+    },
+    {
+      "description": "Ambiguous terms expose accessible information on hover or keyboard focus without activating their parent fields.",
+      "passed": true
+    },
+    {
+      "description": "Upload, association confirmation and decision modification preserve the user scroll position.",
+      "passed": true
+    },
+    {
+      "description": "An accepted structured source ends G1 with File pronto, explains that it has no PDF pages and marks row processing as G2.",
+      "passed": true
+    },
+    {
+      "description": "The confirmed machine visibly exposes brand, model, serial number and machine type while internal identifiers stay collapsed.",
+      "passed": true
+    },
+    {
+      "description": "The document upload explains PDF, CSV, XLSX, JSON and JSONL and defines the four document types.",
+      "passed": true
+    },
+    {
+      "description": "Opening an accepted PDF shows a disabled analysis-in-progress state, then focuses and scrolls to the automatic page proposal.",
+      "passed": true
+    },
+    {
+      "description": "The PDF page proposal can be approved above the compact page controls without scrolling through the whole document.",
+      "passed": true
+    },
+    {
+      "description": "The flow keeps Pagine active until scope approval, then activates Controllo.",
+      "passed": true
+    },
+    {
+      "description": "The accounting view exposes five page choices, explained outcome metrics and zero elements without an outcome.",
+      "passed": true
+    },
+    {
+      "description": "Upload failures explain what stayed unchanged and what the user can do next.",
+      "passed": true
+    }
+  ],
+  "raw_artifacts": [
+    {
+      "path": "artifacts/raw/i08/playwright.json",
+      "sha256": "65d9cd33a4ce92ef877393fe10d080149c9f4a5bc65aa4d2b716313e2758f1b6"
+    }
+  ],
+  "environment": {
+    "python": "3.12.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "secrets_included": false
+  }
+}

@@ -21,11 +21,11 @@ extend-exclude = ["node_modules", "output", "output_e2e", "runs_e2e", "batch_run
 select = ["E4", "E7", "E9", "F", "I"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["backend", "modify", "scripts", "tests"]
+known-first-party = ["backend", "scripts", "tests"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-# Put the repo root on sys.path so `backend`/`modify` import under the bare
+# Put the repo root on sys.path so `backend` imports under the bare
 # `pytest` console script (CI), not just under `python -m pytest`.
 pythonpath = ["."]
 addopts = "-q"

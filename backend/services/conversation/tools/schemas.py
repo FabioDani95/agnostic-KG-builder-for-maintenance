@@ -179,49 +179,9 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
     {
         "type": "function",
         "function": {
-            "name": "add_node_manual",
-            "description": "Add a new ontology node entered by the user. The chatbot will normalize the text and check for duplicates.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "node_type": {
-                        "type": "string",
-                        "enum": ["Asset", "Component", "Symptom", "FailureMode", "CorrectiveAction", "ErrorCode"],
-                    },
-                    "raw_text": {"type": "string", "description": "Free-form text describing the node."},
-                },
-                "required": ["node_type", "raw_text"],
-            },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
             "name": "get_next_triplet",
             "description": "Present the next triplet in the review queue. Call this after approving/skipping a triplet, or when the user asks to start triplet review.",
             "parameters": {"type": "object", "properties": {}, "required": []},
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "confirm_node_manual",
-            "description": "Confirm and insert a manually-proposed ontology node after the user approves the normalized draft.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "node_type": {
-                        "type": "string",
-                        "enum": ["Asset", "Component", "Symptom", "FailureMode", "CorrectiveAction", "ErrorCode"],
-                    },
-                    "node": {
-                        "type": "object",
-                        "description": "The confirmed node data (name, description, …).",
-                        "additionalProperties": True,
-                    },
-                },
-                "required": ["node_type", "node"],
-            },
         },
     },
     {
@@ -255,77 +215,6 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
                 },
                 "required": [],
             },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "update_exported_node",
-            "description": "Modify one exported graph node by applying a partial attribute update in the shared modify workspace.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "node_id": {"type": "string"},
-                    "attributes": {
-                        "type": "object",
-                        "description": "Partial node attributes to replace.",
-                        "additionalProperties": True,
-                    },
-                },
-                "required": ["node_id", "attributes"],
-            },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "delete_exported_node",
-            "description": "Delete an exported graph node and all of its connected relationships from the shared modify workspace.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "node_id": {"type": "string"},
-                },
-                "required": ["node_id"],
-            },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "add_exported_relationship",
-            "description": "Add a relationship between two exported graph nodes in the shared modify workspace.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "relation_type": {"type": "string"},
-                    "from_id": {"type": "string"},
-                    "to_id": {"type": "string"},
-                },
-                "required": ["relation_type", "from_id", "to_id"],
-            },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "delete_exported_relationship",
-            "description": "Delete one exported graph relationship by its index from the shared modify workspace.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "index": {"type": "integer"},
-                },
-                "required": ["index"],
-            },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "save_exported_graph",
-            "description": "Save the current shared modify workspace as the next ontology file version.",
-            "parameters": {"type": "object", "properties": {}, "required": []},
         },
     },
     {

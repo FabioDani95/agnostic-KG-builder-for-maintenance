@@ -573,76 +573,6 @@ async def phase_natural_language(
     return phase
 
 
-async def phase_add_node(
-    client: httpx.AsyncClient, base: str, pdf_id: str, sse: SseCollector,
-    timeout: float, verbose: bool,
-) -> PhaseResult:
-    """Test add_node_manual: LLM normalisation + confirm."""
-    phase = PhaseResult(name="add_node_manual (LLM normalize + confirm)")
-    t0 = time.monotonic()
-    try:
-        resp = await api(client, "POST", f"{base}/chat/action", json={
-            "pdf_id": pdf_id,
-            "action": "add_node_manual",
-            "payload": {"node_type": "Component", "raw_text": "hydraulic pump P-200 high pressure"},
-        })
-        if resp.get("status") not in ("ok",):
-            phase.status = "fail"
-            phase.error = f"add_node_manual returned {resp.get('status')}: {resp}"
-            return phase
-
-        events, got_draft = await sse.drain_until(
-            want_widget="node_draft", stop_on="done", timeout=timeout, verbose=verbose
-        )
-        phase.events_received = len(events)
-        phase.widgets_emitted = _extract_widgets(events)
-
-        draft_evt = next(
-            (e for e in events if e.get("type") == "widget" and e.get("widget") == "node_draft"),
-            None,
-        )
-        if not got_draft or not draft_evt:
-            phase.status = "fail"
-            phase.error = "node_draft widget not received"
-            return phase
-
-        # normalized_name is nested inside the payload dict
-        draft_payload = draft_evt.get("payload") or {}
-        normalized_name = draft_payload.get("normalized_name", "")
-        if not normalized_name:
-            phase.status = "fail"
-            phase.error = "node_draft missing normalized_name"
-            return phase
-
-        phase.notes.append(f"normalized name: '{normalized_name}' ✓")
-
-        # Confirm the node
-        confirm_resp = await api(client, "POST", f"{base}/chat/action", json={
-            "pdf_id": pdf_id,
-            "action": "confirm_node_manual",
-            "payload": {
-                "node_type": "Component",
-                "node": {"name": normalized_name, "description": draft_payload.get("normalized_description", "")},
-            },
-        })
-        events2, _ = await sse.drain_until(stop_on="done", timeout=30.0, verbose=verbose)
-        _extract_chat(events2)
-
-        if confirm_resp.get("status") == "ok":
-            phase.status = "pass"
-            phase.notes.append("node inserted ✓")
-        else:
-            phase.status = "fail"
-            phase.error = f"confirm_node_manual failed: {confirm_resp}"
-
-    except Exception as exc:
-        phase.status = "fail"
-        phase.error = str(exc)
-    finally:
-        phase.duration_s = time.monotonic() - t0
-    return phase
-
-
 async def phase_export(
     client: httpx.AsyncClient, base: str, pdf_id: str, sse: SseCollector,
     timeout: float, verbose: bool, manual_name: str,
@@ -824,13 +754,7 @@ async def run(args: argparse.Namespace) -> RunReport:
         report.add_phase(p_nl)
         _print_phase(p_nl)
 
-        # ── 10. Add node manual ───────────────────────────────────────────────
-        print("  Phase: add_node_manual…")
-        p_add = await phase_add_node(client, base, pdf_id, sse, 60.0, args.verbose)
-        report.add_phase(p_add)
-        _print_phase(p_add)
-
-        # ── 11. Export ────────────────────────────────────────────────────────
+        # ── 10. Export ────────────────────────────────────────────────────────
         print("  Phase: export_ontology…")
         p_export, output_files = await phase_export(
             client, base, pdf_id, sse, args.timeout_phase, args.verbose,

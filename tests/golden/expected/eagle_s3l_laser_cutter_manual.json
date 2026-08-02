@@ -33,7 +33,8 @@
     },
     {
       "symptom": "Laser cutting path is too wide",
-      "failure_mode": "nozzle is bent"
+      "failure_mode": "nozzle is bent",
+      "corrective_action": "Replace nozzle if any damage is present"
     },
     {
       "symptom": "Laser cutting path is too wide",
@@ -91,6 +92,7 @@
     }
   ],
   "expected_quality_gates": {
+    "min_prediction_count": 1,
     "min_recall": 0.7,
     "max_unsupported_rate": 0.0
   },

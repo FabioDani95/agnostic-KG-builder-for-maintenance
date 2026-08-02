@@ -1,4 +1,4 @@
-"""Export tools: export the ontology and edit the exported graph.
+"""Export and read-only graph inspection tools.
 
 Split out of the former tools.py god-file (stabilization P6); pure move.
 """
@@ -10,7 +10,6 @@ import asyncio
 from backend.graph.state import GraphPhase
 from backend.services.conversation.tools.common import (
     _graph_type_counts,
-    _modify_workspace_payload,
     _resolve_exported_graph_path,
     _search_exported_nodes,
 )
@@ -142,22 +141,26 @@ async def _export_ontology(args, store, on_event):
         "cleanup_fields_changed": cleanup_report.get("deterministic_fields_changed", 0),
         "exported": True,
         "metrics": metrics_payload,
-        **_modify_workspace_payload(store, refresh=False),
         "message": (
             f"Export complete — {len(validated)} validated triplet(s). "
             f"Ontology saved to `{ontology_path}`. "
-            "The full extraction KPIs are shown below. Would you like to inspect and modify the graph now?"
+            "The full extraction KPIs are shown below. "
+            "You can now inspect the published graph in read-only mode."
         ),
         "widget": "export",
     }
 
 
 async def _inspect_exported_graph(args, store, on_event):
-    from backend.services import graph_editor_session
+    from backend.services.graph_view_service import (
+        load_published_graph,
+        published_graph_status,
+        published_node_detail,
+    )
 
     path = _resolve_exported_graph_path(store)
-    ontology = graph_editor_session.current_ontology(path)
-    status = graph_editor_session.status_payload(path)
+    ontology = load_published_graph(path)
+    status = published_graph_status(path, ontology)
     node_type_counts, edge_type_counts = _graph_type_counts(ontology)
     total_nodes = sum(node_type_counts.values())
     total_relationships = sum(edge_type_counts.values())
@@ -168,7 +171,7 @@ async def _inspect_exported_graph(args, store, on_event):
 
     if node_id:
         try:
-            node = graph_editor_session.node_detail_payload(path, node_id)
+            node = published_node_detail(ontology, node_id)
         except KeyError:
             return {
                 "status": "refused",
@@ -214,115 +217,4 @@ async def _inspect_exported_graph(args, store, on_event):
         "relationship_type_counts": edge_type_counts,
         **status,
         "message": summary,
-    }
-
-
-async def _update_exported_node(args, store, on_event):
-    from backend.services import graph_editor_session
-
-    path = _resolve_exported_graph_path(store)
-    node_id = str(args.get("node_id") or "").strip()
-    attributes = args.get("attributes") or {}
-    try:
-        result = graph_editor_session.update_node(path, node_id, attributes)
-    except ValueError as exc:
-        return {"status": "refused", "message": str(exc)}
-    except KeyError:
-        return {"status": "refused", "message": f"Node `{node_id}` was not found in the exported graph."}
-
-    return {
-        "status": "ok",
-        "node_id": node_id,
-        "vis_node": result.get("vis_node"),
-        "message": f"Node `{node_id}` updated in the modify workspace. Save a new version when you are ready.",
-        **_modify_workspace_payload(store, refresh=True),
-        "widget": "modify_workspace_sync",
-    }
-
-
-async def _delete_exported_node(args, store, on_event):
-    from backend.services import graph_editor_session
-
-    path = _resolve_exported_graph_path(store)
-    node_id = str(args.get("node_id") or "").strip()
-    try:
-        result = graph_editor_session.delete_node(path, node_id)
-    except KeyError:
-        return {"status": "refused", "message": f"Node `{node_id}` was not found in the exported graph."}
-
-    return {
-        "status": "ok",
-        "node_id": node_id,
-        "removed_relationships": result.get("removed_relationships", 0),
-        "message": (
-            f"Node `{node_id}` deleted from the modify workspace. "
-            f"{result.get('removed_relationships', 0)} relationship(s) were removed with it."
-        ),
-        **_modify_workspace_payload(store, refresh=True),
-        "widget": "modify_workspace_sync",
-    }
-
-
-async def _add_exported_relationship(args, store, on_event):
-    from backend.services import graph_editor_session
-
-    path = _resolve_exported_graph_path(store)
-    relation_type = str(args.get("relation_type") or "").strip()
-    from_id = str(args.get("from_id") or "").strip()
-    to_id = str(args.get("to_id") or "").strip()
-    try:
-        result = graph_editor_session.add_relationship(path, relation_type, from_id, to_id)
-    except ValueError as exc:
-        return {"status": "refused", "message": str(exc)}
-
-    return {
-        "status": "ok",
-        "edge": result.get("edge"),
-        "message": (
-            f"Relationship `{relation_type}` added from `{from_id}` to `{to_id}` in the modify workspace. "
-            "Save a new version when you are ready."
-        ),
-        **_modify_workspace_payload(store, refresh=True),
-        "widget": "modify_workspace_sync",
-    }
-
-
-async def _delete_exported_relationship(args, store, on_event):
-    from backend.services import graph_editor_session
-
-    path = _resolve_exported_graph_path(store)
-    index = int(args.get("index"))
-    try:
-        result = graph_editor_session.delete_relationship(path, index)
-    except IndexError as exc:
-        return {"status": "refused", "message": str(exc)}
-
-    removed = result.get("removed") or {}
-    rel_type = removed.get("name") or removed.get("type") or "relationship"
-    return {
-        "status": "ok",
-        "index": index,
-        "removed": removed,
-        "message": f"Relationship {index} (`{rel_type}`) was removed from the modify workspace.",
-        **_modify_workspace_payload(store, refresh=True),
-        "widget": "modify_workspace_sync",
-    }
-
-
-async def _save_exported_graph(args, store, on_event):
-    from backend.services import graph_editor_session
-
-    path = _resolve_exported_graph_path(store)
-    try:
-        result = graph_editor_session.save_session(path, store=store)
-    except ValueError as exc:
-        return {"status": "refused", "message": str(exc)}
-
-    return {
-        "status": "ok",
-        "version": result.get("version"),
-        "saved_as": result.get("saved_as"),
-        "message": f"Modify workspace saved as `{result.get('saved_as')}` (version {result.get('version')}).",
-        **_modify_workspace_payload(store, refresh=True),
-        "widget": "modify_workspace_sync",
     }

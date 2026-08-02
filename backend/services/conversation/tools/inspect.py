@@ -160,7 +160,10 @@ async def _explain_phase(args, store, on_event):
         GraphPhase.EXTRACTION.value: "Ontology is drafted. Review the required fields and suggested relations before extraction.",
         GraphPhase.VALIDATION.value: "Triplet extraction is done. Review each Symptom → FailureMode → CorrectiveAction chain. Validate the ones you want to keep.",
         GraphPhase.EXPORT.value: "All triplets reviewed. Ready to export the ontology JSON.",
-        GraphPhase.COMPLETED.value: "Export complete. The ontology JSON is available in output/, and you can now inspect or modify the exported graph.",
+        GraphPhase.COMPLETED.value: (
+            "Export complete. The ontology JSON is available in output/, "
+            "and you can inspect the published graph in read-only mode."
+        ),
     }
     return {"status": "ok", "phase": phase, "explanation": explanations.get(phase, f"Current phase: {phase}.")}
 

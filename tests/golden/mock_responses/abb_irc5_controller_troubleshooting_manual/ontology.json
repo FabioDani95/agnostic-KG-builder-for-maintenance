@@ -211,68 +211,68 @@
         "name": "Supply voltage 24V BRAKE missing",
         "description": "The 24V BRAKE supply voltage is missing.",
         "material_context": "CMP-012"
+      },
+      {
+        "failure_mode_id": "FM-013",
+        "name": "Drive Module power supply failure",
+        "description": "The Drive Module power supply receives 230 VAC but its LEDs remain off.",
+        "material_context": "CMP-012"
+      },
+      {
+        "failure_mode_id": "FM-014",
+        "name": "Faulty motor holding brake",
+        "description": "The holding brake integral to a motor is faulty.",
+        "material_context": "CMP-010"
+      },
+      {
+        "failure_mode_id": "FM-015",
+        "name": "Faulty brake on the robot axis",
+        "description": "A single robot-axis brake malfunctions.",
+        "material_context": "CMP-010"
       }
     ],
     "CorrectiveAction": [
       {
         "action_id": "CA-001",
-        "name": "Ensure that the mains fuse (Q1) inside the Drive Module is not tripped",
-        "description": "Ensure that the mains fuse (Q1) inside the Drive Module is not tripped.",
-        "instruction_text": "Ensure that the mains fuse (Q1) inside the Drive Module is not tripped. Reset the fuse if tripped.",
-        "source_type": "operating manual",
-        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
-        "source_reference": "PAGE 35"
-      },
-      {
-        "action_id": "CA-002",
-        "name": "Make sure circuit breaker F6 is closed in position 3",
-        "description": "Make sure circuit breaker F6 is closed in position 3.",
-        "instruction_text": "Make sure circuit breaker F6 (if used) is closed in position 3. The circuit breaker F6 is shown in the circuit diagram in the product manual for the controller. Reset circuit breaker F6 to the closed position 3.",
+        "name": "Replace the Drive Module power supply",
+        "description": "Replace the Drive Module power supply when incoming voltage is correct but its LEDs remain off.",
+        "instruction_text": "If the power supply incoming voltage is correct (230 VAC) but the LEDs still do not work, replace the Drive Module power supply.",
         "source_type": "operating manual",
         "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
         "source_reference": "PAGE 39"
       },
       {
         "action_id": "CA-003",
-        "name": "Make sure the system is supplied with power",
-        "description": "Make sure the system is supplied with power.",
-        "instruction_text": "Make sure the system is supplied with power. Use a voltmeter to measure incoming mains voltage. Restore the main power supply.",
+        "name": "Switch on the main switch and supply the system with power",
+        "description": "Switch on the main switch and restore system power.",
+        "instruction_text": "Restore the system power supply after switching on the main switch.",
         "source_type": "operating manual",
         "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
         "source_reference": "PAGE 39"
       },
       {
         "action_id": "CA-004",
-        "name": "Make sure the circuit breaker in the Control Module has not been tripped",
-        "description": "Make sure the circuit breaker in the Control Module has not been tripped.",
-        "instruction_text": "Make sure the circuit breaker in the Control Module has not been tripped. Make sure any equipment connected to the service outlet does not consume too much power. Reset the circuit breaker.",
+        "name": "Replace the motor as a complete unit",
+        "description": "Replace a faulty motor and its integral holding brake as a complete unit.",
+        "instruction_text": "Replace the motor as a complete unit if it is found faulty.",
         "source_type": "operating manual",
         "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
-        "source_reference": "PAGE 41"
+        "source_reference": "PAGE 51"
       },
       {
         "action_id": "CA-005",
-        "name": "Make sure the earth fault protection has not been tripped",
-        "description": "Make sure the earth fault protection has not been tripped.",
-        "instruction_text": "Make sure the earth fault protection has not been tripped. Make sure any equipment connected to the service outlet does not conduct current to ground. Reset the earth fault protection.",
+        "name": "Replace the faulty brake",
+        "description": "Replace the single faulty robot-axis brake.",
+        "instruction_text": "Replace the faulty brake if just one of the brakes malfunctions.",
         "source_type": "operating manual",
         "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
-        "source_reference": "PAGE 41"
+        "source_reference": "PAGE 53"
       },
       {
         "action_id": "CA-006",
-        "name": "Inspect all seals and gaskets between motor and gearbox",
-        "description": "Inspect all seals and gaskets between motor and gearbox.",
+        "name": "Replace seals and gaskets as specified",
+        "description": "Replace leaking seals and gaskets as specified for the robot.",
         "instruction_text": "Inspect all seals and gaskets between motor and gearbox. Replace seals and gaskets as specified in the product manual for the robot.",
-        "source_type": "operating manual",
-        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
-        "source_reference": "PAGE 48"
-      },
-      {
-        "action_id": "CA-007",
-        "name": "Check the gearbox oil level",
-        "description": "Check the gearbox oil level.",
-        "instruction_text": "Check the gearbox oil level. Correct oil level is specified in the product manual for the robot. Adjust the oil level to the specified level.",
         "source_type": "operating manual",
         "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
         "source_reference": "PAGE 48"
@@ -281,37 +281,10 @@
         "action_id": "CA-008",
         "name": "Make sure the bearing has sufficient lubrication",
         "description": "Make sure the bearing has sufficient lubrication.",
-        "instruction_text": "Make sure the bearing has sufficient lubrication, as specified in the product manual for the robot. Clean the bearing and apply fresh lubrication as specified in the product manual.",
+        "instruction_text": "Restore sufficient bearing lubrication as specified in the product manual for the robot.",
         "source_type": "operating manual",
         "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
         "source_reference": "PAGE 49"
-      },
-      {
-        "action_id": "CA-009",
-        "name": "Check the brake power supply to the collapsing motor",
-        "description": "Check the brake power supply to the collapsing motor.",
-        "instruction_text": "Check the brake power supply to the collapsing motor during the Motors OFF state. Also see the circuit diagrams in the product manuals for the robot and the controller. Replace the motor as a complete unit if found faulty.",
-        "source_type": "operating manual",
-        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
-        "source_reference": "PAGE 51"
-      },
-      {
-        "action_id": "CA-010",
-        "name": "Make sure the brake contactor is activated",
-        "description": "Make sure the brake contactor is activated.",
-        "instruction_text": "Make sure the brake contactor is activated. A 'tick' should be audible, or you may measure the resistance across the auxiliary contacts on top of the contactor. Replace the brake contactor K44 if it does not activate.",
-        "source_type": "operating manual",
-        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
-        "source_reference": "PAGE 53"
-      },
-      {
-        "action_id": "CA-011",
-        "name": "Check the Drive Module power supply to make sure 24V BRAKE voltage is OK",
-        "description": "Check the Drive Module power supply to make sure 24V BRAKE voltage is OK.",
-        "instruction_text": "Check the Drive Module power supply to make sure 24V BRAKE voltage is OK. Replace the Drive Module power supply if the 24V BRAKE voltage is missing.",
-        "source_type": "operating manual",
-        "source_title": "ABB IRC5 Robot Controller Trouble Shooting Manual",
-        "source_reference": "PAGE 53"
       }
     ]
   },
@@ -331,16 +304,16 @@
       ]
     },
     {
-      "name": "RESOLVED_BY",
-      "from_type": "FailureMode",
-      "from_id": "FM-001",
-      "to_type": "CorrectiveAction",
-      "to_id": "CA-001",
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-013",
       "evidence": [
         {
-          "source_page": 35,
-          "source_reference": "PAGE 35",
-          "quote": "ensure that the mains fuse (Q1) inside the Drive Module is not tripped"
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "If the power supply incoming voltage is correct (230 VAC) but the LEDs still do not work"
         }
       ]
     },
@@ -355,20 +328,6 @@
           "source_page": 38,
           "source_reference": "PAGE 38",
           "quote": "circuit breaker F6 (if used) is malfunctioning or open for any other reason"
-        }
-      ]
-    },
-    {
-      "name": "RESOLVED_BY",
-      "from_type": "FailureMode",
-      "from_id": "FM-002",
-      "to_type": "CorrectiveAction",
-      "to_id": "CA-002",
-      "evidence": [
-        {
-          "source_page": 39,
-          "source_reference": "PAGE 39",
-          "quote": "Make sure circuit breaker F6 (if used) is closed in position 3."
         }
       ]
     },
@@ -417,14 +376,14 @@
     {
       "name": "RESOLVED_BY",
       "from_type": "FailureMode",
-      "from_id": "FM-004",
+      "from_id": "FM-013",
       "to_type": "CorrectiveAction",
-      "to_id": "CA-004",
+      "to_id": "CA-001",
       "evidence": [
         {
-          "source_page": 41,
-          "source_reference": "PAGE 41",
-          "quote": "Make sure the circuit breaker in the Control Module has not been tripped."
+          "source_page": 39,
+          "source_reference": "PAGE 39",
+          "quote": "replace the Drive Module power supply"
         }
       ]
     },
@@ -443,16 +402,16 @@
       ]
     },
     {
-      "name": "RESOLVED_BY",
-      "from_type": "FailureMode",
-      "from_id": "FM-005",
-      "to_type": "CorrectiveAction",
-      "to_id": "CA-005",
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-007",
+      "to_type": "FailureMode",
+      "to_id": "FM-014",
       "evidence": [
         {
-          "source_page": 41,
-          "source_reference": "PAGE 41",
-          "quote": "Make sure the earth fault protection has not been tripped."
+          "source_page": 51,
+          "source_reference": "PAGE 51",
+          "quote": "Possible causes. The symptom can be caused by (the causes are listed in order of probability): faulty brake; faulty power supply to the brake."
         }
       ]
     },
@@ -494,7 +453,7 @@
         {
           "source_page": 48,
           "source_reference": "PAGE 48",
-          "quote": "Inspect all seals and gaskets between motor and gearbox."
+          "quote": "Inspect all seals and gaskets between motor and gearbox. The different manipulator models use different types of seals. Replace seals and gaskets as specified in the product manual for the robot."
         }
       ]
     },
@@ -515,14 +474,14 @@
     {
       "name": "RESOLVED_BY",
       "from_type": "FailureMode",
-      "from_id": "FM-008",
+      "from_id": "FM-014",
       "to_type": "CorrectiveAction",
-      "to_id": "CA-007",
+      "to_id": "CA-004",
       "evidence": [
         {
-          "source_page": 48,
-          "source_reference": "PAGE 48",
-          "quote": "Check the gearbox oil level."
+          "source_page": 51,
+          "source_reference": "PAGE 51",
+          "quote": "If found faulty, the motor must be replaced as a complete unit as detailed in the product manual for the robot."
         }
       ]
     },
@@ -569,16 +528,16 @@
       ]
     },
     {
-      "name": "RESOLVED_BY",
-      "from_type": "FailureMode",
-      "from_id": "FM-010",
-      "to_type": "CorrectiveAction",
-      "to_id": "CA-009",
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-008",
+      "to_type": "FailureMode",
+      "to_id": "FM-015",
       "evidence": [
         {
-          "source_page": 51,
-          "source_reference": "PAGE 51",
-          "quote": "Check the brake power supply to the collapsing motor during the Motors OFF state."
+          "source_page": 52,
+          "source_reference": "PAGE 52",
+          "quote": "faulty brake on the robot axis"
         }
       ]
     },
@@ -599,14 +558,14 @@
     {
       "name": "RESOLVED_BY",
       "from_type": "FailureMode",
-      "from_id": "FM-011",
+      "from_id": "FM-015",
       "to_type": "CorrectiveAction",
-      "to_id": "CA-010",
+      "to_id": "CA-005",
       "evidence": [
         {
           "source_page": 53,
           "source_reference": "PAGE 53",
-          "quote": "Make sure the brake contactor is activated."
+          "quote": "If just one of the brakes malfunctions, the brake at hand is probably faulty and must be replaced."
         }
       ]
     },
@@ -621,20 +580,6 @@
           "source_page": 52,
           "source_reference": "PAGE 52",
           "quote": "supply voltage 24V BRAKE missing"
-        }
-      ]
-    },
-    {
-      "name": "RESOLVED_BY",
-      "from_type": "FailureMode",
-      "from_id": "FM-012",
-      "to_type": "CorrectiveAction",
-      "to_id": "CA-011",
-      "evidence": [
-        {
-          "source_page": 53,
-          "source_reference": "PAGE 53",
-          "quote": "Check the Drive Module power supply to make sure 24V BRAKE voltage is OK."
         }
       ]
     }

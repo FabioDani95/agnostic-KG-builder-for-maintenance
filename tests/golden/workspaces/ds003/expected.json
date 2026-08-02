@@ -1,0 +1,681 @@
+{
+  "schema_ref": "tests/golden/workspaces/ds003_expected.schema.json",
+  "contract_version": "1.0.0",
+  "workspace_id": "ws_ds003_skeleton",
+  "graph_id": "kg_ds003_single_graph",
+  "asset": {
+    "asset_id": "node_ds003_00",
+    "name": "Hydraulic Press 7",
+    "model": "HP-700"
+  },
+  "sources": [
+    {
+      "source_id": "src_ds003_pdf_manual",
+      "kind": "pdf",
+      "sha256": "4b414215c25d786b46d6e8c9475e056f0e201a99e0392eb2bb70e482ed189139",
+      "split": "calibration",
+      "raw_path": "raw/maintenance_manual.pdf",
+      "ingestion_view": {
+        "path": "ingestion/maintenance_manual.txt",
+        "sha256": "7908ea8a6599cfc9d08c784b1fb2ca649fb67fb01c9ee204b3a96a20474cdf4c"
+      }
+    },
+    {
+      "source_id": "src_ds003_pdf_bulletin",
+      "kind": "pdf",
+      "sha256": "04259aafb39a22b44a1883821a813d9d605e5f11ede9ba4528235d3aa8dd7233",
+      "split": "held_out",
+      "raw_path": "raw/service_bulletin.pdf",
+      "ingestion_view": {
+        "path": "ingestion/service_bulletin.txt",
+        "sha256": "31ab3650a1c4727e02f8827d94f77836f320925d24a616bef14273fe3e957ba8"
+      }
+    },
+    {
+      "source_id": "src_ds003_csv_events",
+      "kind": "csv",
+      "sha256": "08d43e8825a99d2a9d40c3e21303076777c1b0b02ad44abc520904659817eed8",
+      "split": "calibration",
+      "raw_path": "raw/events.csv",
+      "ingestion_view": {
+        "path": "ingestion/events.csv",
+        "sha256": "08d43e8825a99d2a9d40c3e21303076777c1b0b02ad44abc520904659817eed8",
+        "columns": [
+          "timestamp",
+          "alarm_code",
+          "observation",
+          "action",
+          "outcome"
+        ]
+      }
+    },
+    {
+      "source_id": "src_ds003_xlsx_maintenance",
+      "kind": "xlsx",
+      "sha256": "0606a3ae5d622d937280ae0cb2f20c3dcd7e4dcbe5e9a1c6e7b2e853e15e88b9",
+      "split": "held_out",
+      "raw_path": "raw/maintenance.xlsx",
+      "ingestion_view": {
+        "path": "ingestion/maintenance.json",
+        "sha256": "14b154774c32f0cc38c7c5cbaffa4e873204c847c065ef681f3469f16e4cd991",
+        "columns": [
+          "alarm_code",
+          "observation",
+          "component_code",
+          "component_name"
+        ]
+      },
+      "sheet_count": 2
+    },
+    {
+      "source_id": "src_ds003_jsonl_observations",
+      "kind": "jsonl",
+      "sha256": "cfbb7c4f3c31ab9c3ca81a786770d20b7f433ec3c12c2e312b394892a2de08ee",
+      "split": "held_out",
+      "raw_path": "raw/observations.jsonl",
+      "ingestion_view": {
+        "path": "ingestion/observations.jsonl",
+        "sha256": "cfbb7c4f3c31ab9c3ca81a786770d20b7f433ec3c12c2e312b394892a2de08ee",
+        "columns": [
+          "timestamp",
+          "component",
+          "observation"
+        ]
+      }
+    }
+  ],
+  "claim_count": 30,
+  "expected": {
+    "nodes": [
+      {
+        "claim_id": "claim_node_00",
+        "node_type": "Asset",
+        "node_id": "node_ds003_00",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_node_01",
+        "node_type": "Component",
+        "node_id": "node_ds003_01",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_node_02",
+        "node_type": "Component",
+        "node_id": "node_ds003_02",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_node_03",
+        "node_type": "Component",
+        "node_id": "node_ds003_03",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_node_04",
+        "node_type": "Component",
+        "node_id": "node_ds003_04",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_node_05",
+        "node_type": "Component",
+        "node_id": "node_ds003_05",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_node_06",
+        "node_type": "Component",
+        "node_id": "node_ds003_06",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_node_07",
+        "node_type": "Component",
+        "node_id": "node_ds003_07",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_node_08",
+        "node_type": "Component",
+        "node_id": "node_ds003_08",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_node_09",
+        "node_type": "Component",
+        "node_id": "node_ds003_09",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "claim_id": "claim_property_00",
+        "node_id": "node_ds003_00",
+        "property": "name",
+        "value": "DS-003 placeholder entity 00",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_property_01",
+        "node_id": "node_ds003_01",
+        "property": "name",
+        "value": "DS-003 placeholder entity 01",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_property_02",
+        "node_id": "node_ds003_02",
+        "property": "name",
+        "value": "DS-003 placeholder entity 02",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_property_03",
+        "node_id": "node_ds003_03",
+        "property": "name",
+        "value": "DS-003 placeholder entity 03",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_property_04",
+        "node_id": "node_ds003_04",
+        "property": "name",
+        "value": "DS-003 placeholder entity 04",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_property_05",
+        "node_id": "node_ds003_05",
+        "property": "name",
+        "value": "DS-003 placeholder entity 05",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_property_06",
+        "node_id": "node_ds003_06",
+        "property": "name",
+        "value": "DS-003 placeholder entity 06",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_property_07",
+        "node_id": "node_ds003_07",
+        "property": "name",
+        "value": "DS-003 placeholder entity 07",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_property_08",
+        "node_id": "node_ds003_08",
+        "property": "name",
+        "value": "DS-003 placeholder entity 08",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_property_09",
+        "node_id": "node_ds003_09",
+        "property": "name",
+        "value": "DS-003 placeholder entity 09",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "claim_id": "claim_relationship_00",
+        "relationship": "HAS_COMPONENT",
+        "from_id": "node_ds003_00",
+        "to_id": "node_ds003_00",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_relationship_01",
+        "relationship": "HAS_COMPONENT",
+        "from_id": "node_ds003_00",
+        "to_id": "node_ds003_01",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_relationship_02",
+        "relationship": "HAS_COMPONENT",
+        "from_id": "node_ds003_00",
+        "to_id": "node_ds003_02",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_relationship_03",
+        "relationship": "HAS_COMPONENT",
+        "from_id": "node_ds003_00",
+        "to_id": "node_ds003_03",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_relationship_04",
+        "relationship": "HAS_COMPONENT",
+        "from_id": "node_ds003_00",
+        "to_id": "node_ds003_04",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_relationship_05",
+        "relationship": "HAS_COMPONENT",
+        "from_id": "node_ds003_00",
+        "to_id": "node_ds003_05",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_relationship_06",
+        "relationship": "HAS_COMPONENT",
+        "from_id": "node_ds003_00",
+        "to_id": "node_ds003_06",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_relationship_07",
+        "relationship": "HAS_COMPONENT",
+        "from_id": "node_ds003_00",
+        "to_id": "node_ds003_07",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_relationship_08",
+        "relationship": "HAS_COMPONENT",
+        "from_id": "node_ds003_00",
+        "to_id": "node_ds003_08",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      },
+      {
+        "claim_id": "claim_relationship_09",
+        "relationship": "HAS_COMPONENT",
+        "from_id": "node_ds003_00",
+        "to_id": "node_ds003_09",
+        "evidence": [
+          {
+            "source_id": "src_ds003_pdf_manual",
+            "unit_id": "raw_ds003_manual_a_p1_b1",
+            "locator": {
+              "kind": "pdf",
+              "page": 1,
+              "extraction_method": "native_text"
+            },
+            "quote": "Hydraulic pressure low",
+            "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+          }
+        ]
+      }
+    ]
+  },
+  "negative_claims": [
+    {
+      "claim_id": "negative_missing_supported_action",
+      "kind": "failure_mode_without_action",
+      "matcher": {
+        "failure_mode": "unsupported_placeholder_failure"
+      },
+      "prohibited": {
+        "invented_action": true
+      },
+      "evidence": [
+        {
+          "source_id": "src_ds003_pdf_manual",
+          "unit_id": "raw_ds003_manual_a_p1_b1",
+          "locator": {
+            "kind": "pdf",
+            "page": 1,
+            "extraction_method": "native_text"
+          },
+          "quote": "Hydraulic pressure low",
+          "content_sha256": "8318555df7b116e2994bd26da7282113a7e68992e4b30aad8d9f5258ac9f0e65"
+        }
+      ]
+    }
+  ]
+}

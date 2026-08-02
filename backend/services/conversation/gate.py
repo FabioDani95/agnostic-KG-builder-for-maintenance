@@ -46,8 +46,6 @@ _PHASE_TOOLS: dict[str, set[str]] = {
         "approve_triplet",
         "skip_triplet",
         "edit_triplet",
-        "add_node_manual",
-        "confirm_node_manual",
         "get_progress",
         "explain_phase",
         "explain_decision",
@@ -64,25 +62,16 @@ _PHASE_TOOLS: dict[str, set[str]] = {
         "explain_phase",
         "explain_decision",
         "explain_entity",
-        "add_node_manual",
-        "confirm_node_manual",
     },
     GraphPhase.EXPORT.value: {
         "export_ontology",
         "get_next_triplet",
         "get_progress",
         "explain_phase",
-        "add_node_manual",
-        "confirm_node_manual",
     },
     GraphPhase.COMPLETED.value: {
         "export_ontology",
         "inspect_exported_graph",
-        "update_exported_node",
-        "delete_exported_node",
-        "add_exported_relationship",
-        "delete_exported_relationship",
-        "save_exported_graph",
         "get_progress",
     },
 }
@@ -111,16 +100,9 @@ _TOOL_EARLIEST_PHASE: dict[str, str] = {
     "approve_triplet": GraphPhase.EXTRACTION.value,
     "skip_triplet": GraphPhase.EXTRACTION.value,
     "edit_triplet": GraphPhase.EXTRACTION.value,
-    "add_node_manual": GraphPhase.EXTRACTION.value,
-    "confirm_node_manual": GraphPhase.EXTRACTION.value,
     "get_next_triplet": GraphPhase.EXTRACTION.value,
     "export_ontology": GraphPhase.EXPORT.value,
     "inspect_exported_graph": GraphPhase.COMPLETED.value,
-    "update_exported_node": GraphPhase.COMPLETED.value,
-    "delete_exported_node": GraphPhase.COMPLETED.value,
-    "add_exported_relationship": GraphPhase.COMPLETED.value,
-    "delete_exported_relationship": GraphPhase.COMPLETED.value,
-    "save_exported_graph": GraphPhase.COMPLETED.value,
     "list_extracted_nodes": GraphPhase.ONTOLOGY_DRAFT.value,
     "list_extracted_triplets": GraphPhase.EXTRACTION.value,
 }
@@ -212,19 +194,6 @@ def validate_args(tool_name: str, args: dict[str, Any], store: dict) -> tuple[bo
                 f"Valid keys: {', '.join(sorted(valid_keys))}."
             )
 
-    if tool_name == "add_node_manual":
-        node_type = args.get("node_type")
-        valid_types = {"Asset", "Component", "Symptom", "FailureMode", "CorrectiveAction", "ErrorCode"}
-        if not node_type:
-            return False, "add_node_manual requires node_type."
-        if node_type not in valid_types:
-            return False, (
-                f"'{node_type}' is not a valid node type. "
-                f"Valid types: {', '.join(sorted(valid_types))}."
-            )
-        if not args.get("raw_text"):
-            return False, "add_node_manual requires raw_text describing the node."
-
     if tool_name == "inspect_exported_graph":
         limit = args.get("limit")
         if limit is not None and (not isinstance(limit, int) or limit < 1 or limit > 20):
@@ -242,26 +211,6 @@ def validate_args(tool_name: str, args: dict[str, Any], store: dict) -> tuple[bo
         status = args.get("status")
         if status is not None and status not in {"all", "pending", "validated", "skipped"}:
             return False, "list_extracted_triplets status must be all, pending, validated, or skipped."
-
-    if tool_name == "update_exported_node":
-        if not args.get("node_id"):
-            return False, "update_exported_node requires node_id."
-        attributes = args.get("attributes")
-        if not isinstance(attributes, dict) or not attributes:
-            return False, "update_exported_node requires a non-empty attributes object."
-
-    if tool_name == "delete_exported_node":
-        if not args.get("node_id"):
-            return False, "delete_exported_node requires node_id."
-
-    if tool_name == "add_exported_relationship":
-        if not args.get("relation_type") or not args.get("from_id") or not args.get("to_id"):
-            return False, "add_exported_relationship requires relation_type, from_id, and to_id."
-
-    if tool_name == "delete_exported_relationship":
-        index = args.get("index")
-        if not isinstance(index, int) or index < 0:
-            return False, "delete_exported_relationship requires a non-negative integer index."
 
     return True, ""
 

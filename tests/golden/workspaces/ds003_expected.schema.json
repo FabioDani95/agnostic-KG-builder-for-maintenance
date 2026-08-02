@@ -1,0 +1,313 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://log-kg-builder.local/schemas/ds003_expected.schema.json",
+  "title": "DS-003 multisource golden manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_ref",
+    "contract_version",
+    "workspace_id",
+    "graph_id",
+    "asset",
+    "sources",
+    "claim_count",
+    "expected",
+    "negative_claims"
+  ],
+  "properties": {
+    "schema_ref": {
+      "const": "tests/golden/workspaces/ds003_expected.schema.json"
+    },
+    "contract_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+\\.[0-9]+$"
+    },
+    "workspace_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "graph_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["asset_id", "name", "model"],
+      "properties": {
+        "asset_id": {"type": "string", "minLength": 1},
+        "name": {"type": "string", "minLength": 1},
+        "model": {"type": "string", "minLength": 1}
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 5,
+      "items": {"$ref": "#/$defs/source"},
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {"kind": {"const": "pdf"}}
+          },
+          "minContains": 2
+        },
+        {
+          "contains": {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {"kind": {"const": "csv"}}
+          },
+          "minContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {"kind": {"const": "xlsx"}}
+          },
+          "minContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {"kind": {"enum": ["json", "jsonl"]}}
+          },
+          "minContains": 1
+        }
+      ]
+    },
+    "claim_count": {
+      "type": "integer",
+      "minimum": 30,
+      "description": "Must equal nodes + properties + relationships; checked outside JSON Schema."
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodes", "properties", "relationships"],
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/node_claim"}
+        },
+        "properties": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/property_claim"}
+        },
+        "relationships": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/relationship_claim"}
+        }
+      }
+    },
+    "negative_claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/negative_claim"}
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "kind",
+        "sha256",
+        "split",
+        "raw_path",
+        "ingestion_view"
+      ],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "kind": {
+          "enum": ["pdf", "csv", "xlsx", "json", "jsonl"]
+        },
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "split": {
+          "enum": ["calibration", "held_out"]
+        },
+        "raw_path": {"type": "string", "minLength": 1},
+        "sheet_count": {"type": "integer", "minimum": 2},
+        "ingestion_view": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": {"type": "string", "minLength": 1},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "columns": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "not": {
+                  "enum": [
+                    "semantic_text",
+                    "event_signature_id",
+                    "linked_failure_mode_id",
+                    "linked_symptom_id",
+                    "quality_flags",
+                    "expected_claim",
+                    "gold_label",
+                    "split"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["kind"],
+            "properties": {"kind": {"const": "xlsx"}}
+          },
+          "then": {"required": ["sheet_count"]}
+        }
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "unit_id", "locator"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "unit_id": {"type": "string", "minLength": 1},
+        "locator": {
+          "type": "object",
+          "minProperties": 1
+        },
+        "quote": {"type": "string"},
+        "content_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "claim_base": {
+      "type": "object",
+      "required": ["claim_id", "evidence"],
+      "properties": {
+        "claim_id": {"type": "string", "minLength": 1},
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/evidence"}
+        }
+      }
+    },
+    "node_claim": {
+      "allOf": [
+        {"$ref": "#/$defs/claim_base"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["claim_id", "node_type", "node_id", "evidence"],
+          "properties": {
+            "claim_id": {"type": "string", "minLength": 1},
+            "node_type": {"type": "string", "minLength": 1},
+            "node_id": {"type": "string", "minLength": 1},
+            "evidence": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"$ref": "#/$defs/evidence"}
+            }
+          }
+        }
+      ]
+    },
+    "property_claim": {
+      "allOf": [
+        {"$ref": "#/$defs/claim_base"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "claim_id",
+            "node_id",
+            "property",
+            "value",
+            "evidence"
+          ],
+          "properties": {
+            "claim_id": {"type": "string", "minLength": 1},
+            "node_id": {"type": "string", "minLength": 1},
+            "property": {"type": "string", "minLength": 1},
+            "value": {},
+            "evidence": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"$ref": "#/$defs/evidence"}
+            }
+          }
+        }
+      ]
+    },
+    "relationship_claim": {
+      "allOf": [
+        {"$ref": "#/$defs/claim_base"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "claim_id",
+            "relationship",
+            "from_id",
+            "to_id",
+            "evidence"
+          ],
+          "properties": {
+            "claim_id": {"type": "string", "minLength": 1},
+            "relationship": {"type": "string", "minLength": 1},
+            "from_id": {"type": "string", "minLength": 1},
+            "to_id": {"type": "string", "minLength": 1},
+            "evidence": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"$ref": "#/$defs/evidence"}
+            }
+          }
+        }
+      ]
+    },
+    "negative_claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "kind", "matcher", "prohibited", "evidence"],
+      "properties": {
+        "claim_id": {"type": "string", "minLength": 1},
+        "kind": {
+          "enum": [
+            "failure_mode_without_action",
+            "prohibited_node",
+            "prohibited_property",
+            "prohibited_relationship"
+          ]
+        },
+        "matcher": {
+          "type": "object",
+          "minProperties": 1
+        },
+        "prohibited": {
+          "type": "object",
+          "minProperties": 1
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/evidence"}
+        }
+      }
+    }
+  }
+}

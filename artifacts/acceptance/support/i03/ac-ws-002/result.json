@@ -1,0 +1,29 @@
+{
+  "acceptance_id": "AC-WS-002",
+  "status": "support",
+  "timestamp_utc": "2026-07-29T13:09:02.734798Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "working_tree_dirty": true,
+  "command": "python3 -m pytest -q tests/planned/test_ds003_skeleton.py",
+  "dataset": {
+    "id": "DS-003",
+    "sha256": "43d34c48517ad9322c955110c442955ff9c5cf42169ed0bafee52977c117db6c"
+  },
+  "assertions": [
+    {
+      "description": "The gold-blind DS-003 skeleton contains two PDFs plus CSV/XLSX/JSONL placeholders and one declared graph ID; multisource semantic closure remains owned by E11.",
+      "passed": true
+    }
+  ],
+  "raw_artifacts": [
+    {
+      "path": "artifacts/raw/i03/pytest.txt",
+      "sha256": "4b902baab8f5698df2423f2360f5cf2b1da58ffecac77de9eff8d3a502e41e6a"
+    }
+  ],
+  "environment": {
+    "python": "3.12.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "secrets_included": false
+  }
+}

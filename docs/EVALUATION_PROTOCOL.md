@@ -1,8 +1,12 @@
 # Evaluation Protocol for the Maintenance KG Builder
 
-**Status:** normative — this document defines *the* procedure for measuring
-extraction quality. Any performance number quoted in a report or the README
-must be traceable to a run produced by this protocol.
+**Status:** normative for the imported PDF golden baseline. It defines the
+procedure for measuring one-manual extraction quality. For the unified
+multi-source MVP, [`docs/specs/ACCEPTANCE_CRITERIA.md`](specs/ACCEPTANCE_CRITERIA.md)
+is authoritative wherever it adds or changes a gate.
+
+Any baseline PDF performance number quoted in a report or the README must be
+traceable to a run produced by this protocol.
 
 **Audience:** developers adding golden fixtures, interpreting eval reports, or
 reproducing a model/config comparison.
@@ -99,7 +103,10 @@ Schema by example (all keys shown; optional blocks marked):
       "corrective_action": "remove the blockage" },
     { "error_code": "E4",                   // error-code-rooted: no symptom,
       "failure_mode": "water inlet valve blocked",   // matched on the graph
-      "corrective_action": "clean the water inlet valve" }
+      "corrective_action": "clean the water inlet valve" },
+    { "error_code": "E6",
+      "failure_mode": "temperature sensor open circuit",
+      "expected_gap": "failure_mode_without_action" } // explicit negative
   ],
 
   // Precision tool: chains that must NEVER appear (known contamination,
@@ -111,6 +118,7 @@ Schema by example (all keys shown; optional blocks marked):
   // Absolute quality floors for real-model runs. Optional but required for
   // real-manual fixtures (see §6 two-phase calibration).
   "expected_quality_gates": {
+    "min_prediction_count": 1,
     "min_recall": 0.75,
     "max_unsupported_rate": 0.0
   },
@@ -146,14 +154,18 @@ Schema by example (all keys shown; optional blocks marked):
    they are regression tripwires, not an exhaustive negative set.
 7. **Inspection-only steps are not corrective actions.** When the manual gives
    a cause plus check/verify steps and no restorative remedy (typical of
-   error-code tables), annotate the chain with the manual's causal text
-   (e.g. the *Causes* column) and **omit** `corrective_action`: the truthful
-   graph is `ErrorCode → FailureMode` with a declared
-   `failure_mode_without_action` gap. Annotating a check step as a remedy
-   measures behaviour the restorative-action contract is designed to reject
-   and makes recall oscillate on semantics, not extraction. (Decision taken
-   for the Whirlpool fixture on 2026-07-14; see
-   `WHIRLPOOL_W11187658_GOLDEN_EVAL.md`, Phase B complete.)
+   error-code tables), annotate the chain with the manual's causal text and
+   `"expected_gap": "failure_mode_without_action"`. `expected_gap` and a
+   non-empty `corrective_action` are mutually exclusive. Merely omitting
+   `corrective_action` is backward-compatible "action not scored"; it is
+   **not** a negative assertion. An explicit expected gap matches only an
+   actionless chain and the fixture fails if the same claim has any
+   `RESOLVED_BY` edge. Annotating a check step as a remedy measures behaviour
+   the restorative-action contract is designed to reject.
+8. Every checked-in fixture defines `min_prediction_count > 0`,
+   `min_recall`, and `max_unsupported_rate`. An empty predictor, a missing
+   gate block, or a zero prediction floor is a configuration failure, not a
+   passing zero-denominator result.
 
 ### 3.3 Mock responses (`mock_responses/<fixture_id>/<stage>.json`)
 
@@ -180,6 +192,7 @@ independent of how the projection groups symptoms.
 | soft match | symptom, failure_mode, corrective_action of expected chains | normalized (lowercase, alphanumeric) substring containment either way, **or** ≥ 0.6 token overlap of the expected tokens; empty actual never matches non-empty expected |
 | code match | `error_code` | token-exact subset ("E1" ≠ "E17"); empty actual never matches |
 | strict match | `forbidden_chains` | normalized substring containment only (no token-overlap fallback — stopword overlap must not create false violations) |
+| expected-gap context | `failure_mode_without_action` negative assertion | exact error-code token plus soft failure-mode match for code-rooted claims; strict failure-mode containment for prose-only claims; the matched chain must have no action, and any same-claim action is a violation |
 
 ### 4.2 Recall
 
@@ -216,13 +229,33 @@ not gated.
 
 - **Scoping**: `must_keep_pages ⊆ selected_pages` (boolean).
 - **Forbidden chains**: zero strict-matches against any produced chain.
+- **Expected gaps**: zero `RESOLVED_BY`/corrective actions for each explicitly
+  annotated `failure_mode_without_action`, across both projection and graph
+  chains.
 - **Export checks**: node-count floors and required relation names present.
 - **Human review**: per-severity upper bounds on the review queue
   (`max_blocking` is the meaningful bar; an empty queue is not).
 - **Schema compliance**: boolean + issue counts by severity (reported;
   regression-compared, see §5.3).
+- **Non-vacuity**: `total_chains >= min_prediction_count`, where
+  `min_prediction_count` is a positive integer.
 
-### 4.5 Efficiency
+### 4.5 Blinding boundary
+
+Gold labels are evaluator-only. For `machine_logs.csv`, the ingestion view
+excludes `semantic_text`, `event_signature_id`, `linked_failure_mode_id`,
+`linked_symptom_id`, and `quality_flags`. Candidate generation, linking,
+embeddings, lookup and model payloads receive only that view. The evaluator
+may join the excluded columns only after predictions are frozen; an adapter
+spy must prove none of them entered an upstream payload or feature.
+
+For DS-003 the same rule applies to the machine-readable workspace manifest:
+source split, expected node/property/relationship claims and
+`negative_claims` are never present in ingestion views. The multisource
+schema is
+[`tests/golden/workspaces/ds003_expected.schema.json`](../tests/golden/workspaces/ds003_expected.schema.json).
+
+### 4.6 Efficiency
 
 Per run: `duration_seconds`, prompt/completion/total tokens per stage and
 total (from `run_metrics`), and cost computed offline as
@@ -258,9 +291,13 @@ Every run writes `eval_runs/<timestamp>/`:
 ### 5.2 Absolute gates (no baseline needed)
 
 With `--fail-on-regression`, the run fails (exit 1) if any fixture has:
-- a `forbidden_chains` violation, or
-- a failed `expected_quality_gates` entry (`min_recall`,
-  `max_unsupported_rate`).
+
+- failed scoping must-keep pages, export checks, schema errors, dangling
+  relations or human-review bounds;
+- a `forbidden_chains` violation;
+- an explicit expected-gap violation;
+- a missing/invalid non-vacuity configuration or a failed quality gate
+  (`min_prediction_count`, `min_recall`, `max_unsupported_rate`).
 
 ### 5.3 Baseline regression comparison
 
@@ -299,7 +336,8 @@ manuals" rests on. Budget ~2–4 h per real manual, plus 1–3 paid runs.
 3. **Annotate the expected file** per §3.2 rules 1–5: `expected_scoping`,
    a 4–12 item `expected_triplets` sample, `expected_export_checks`,
    `expected_human_review` (start with `{"max_blocking": 0}`).
-   Do **not** set `expected_quality_gates` or `forbidden_chains` yet.
+   During authoring the file is not mergeable and must not be run as a CI
+   gate until Phase B supplies all three `expected_quality_gates`.
 4. **Create mock responses** (§3.3) so the new fixture passes the mock gate
    with recall 1.0: `python3 scripts/eval_golden.py --mode mock --fixtures <id>`.
 
@@ -313,7 +351,9 @@ manuals" rests on. Budget ~2–4 h per real manual, plus 1–3 paid runs.
    matches because your phrasing paraphrases the manual, re-phrase it from
    the source. If it never matches because the model is wrong, leave it — that
    is the finding.
-7. **Set the gates from observed behaviour**: `min_recall` = a floor safely
+7. **Set the gates from observed behaviour**:
+   `min_prediction_count` = a strictly positive coverage floor (at least 1);
+   `min_recall` = a floor safely
    below the observed stable recall (e.g. observed 0.75±0 → floor 0.75;
    observed 0.8–1.0 → floor 0.7); `max_unsupported_rate` = 0.0 unless the
    fixture has a known benign exception. Add `forbidden_chains` for every
@@ -350,9 +390,9 @@ before it reaches customers:
 
 | Fixture | Kind | Difficulty axis | Gates |
 |---|---|---|---|
-| `clean_pump_manual` | synthetic | clean prose baseline | export/review only |
-| `ambiguous_conveyor_manual` | synthetic | one symptom, multiple causes | export/review only |
-| `noisy_table_robot_manual` | synthetic | split/noisy table wording | export/review only |
+| `clean_pump_manual` | synthetic | clean prose baseline | predictions ≥1, recall ≥0.8, unsupported 0.0 |
+| `ambiguous_conveyor_manual` | synthetic | one symptom, multiple causes | predictions ≥1, recall ≥0.75, unsupported 0.0 |
+| `noisy_table_robot_manual` | synthetic | split/noisy table wording | predictions ≥1, recall ≥0.75, unsupported 0.0 |
 | `eagle_s3l_laser_cutter_manual` | real (laser cutter) | prose troubleshooting + PM distractors | min_recall 0.7, unsupported 0.0 |
 | `haier_lma4120_washer_manual` | real (washer) | alarm codes + flowcharts | min_recall 0.75, unsupported 0.0 |
 | `lg_lmh2235st_microwave_manual` | real (microwave) | CA-less self-diagnosis codes + test-point flowcharts | min_recall 0.85, unsupported 0.0 |

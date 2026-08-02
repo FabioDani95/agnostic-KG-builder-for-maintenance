@@ -17,55 +17,91 @@
     {
       "error_code": "E1",
       "failure_mode": "during the water inlet step the flow meter cannot detect a correct fill",
+      "expected_gap": "failure_mode_without_action",
       "annotation_note": "The manual's E1 row gives a cause and inspection-only 'check' steps, no restorative remedy. Per the restorative-action contract the chain is ErrorCode->FailureMode with a declared failure_mode_without_action gap. Failure-mode text is the row's Causes column."
     },
     {
       "error_code": "E3",
       "failure_mode": "temperature does not reach the correct value",
+      "expected_gap": "failure_mode_without_action",
       "annotation_note": "Manual gives the cause (Causes column) and check-only steps; no restorative remedy stated."
     },
     {
       "error_code": "E4",
       "failure_mode": "overflow",
+      "expected_gap": "failure_mode_without_action",
       "annotation_note": "Manual gives the cause (water flows into the base and activates the overflow switch) and check-only steps; no restorative remedy stated."
     },
     {
       "error_code": "E6",
       "failure_mode": "temperature sensor open circuit",
+      "expected_gap": "failure_mode_without_action",
       "annotation_note": "Manual gives the cause (Causes column: temperature sensor open circuit, shown as NTC OPEN CIRCUIT FAILURE) and check-only steps; no restorative remedy stated."
+    },
+    {
+      "error_code": "E7",
+      "failure_mode": "temperature sensor short circuit",
+      "expected_gap": "failure_mode_without_action",
+      "annotation_note": "Manual gives the cause and check-only steps; no restorative remedy stated."
     },
     {
       "symptom": "won't run or power up (dead keypad/console)",
       "failure_mode": "no power to unit or bad connection",
-      "corrective_action": "check fuses, circuit breakers and junction box connections"
+      "expected_gap": "failure_mode_without_action"
     },
     {
       "symptom": "will not fill or low water",
       "failure_mode": "inlet screen on fill valve plugged",
-      "corrective_action": "disconnect water line to fill valve and inspect inlet for obstruction"
+      "expected_gap": "failure_mode_without_action"
     },
     {
       "symptom": "wash pump will not pump",
       "failure_mode": "faulty motor start capacitor",
-      "corrective_action": "disconnect capacitor leads and confirm capacitance is as labeled"
+      "corrective_action": "replace the motor start capacitor if open"
     },
     {
       "symptom": "will not drain or excess water left in unit",
       "failure_mode": "drain pump impeller fractured",
-      "corrective_action": "remove drain pump and check impeller"
+      "corrective_action": "replace the drain pump if the impeller is stripped"
     },
     {
       "symptom": "will not drain or excess water left in unit",
       "failure_mode": "obstructed drain hose or path",
-      "corrective_action": "check for blockages from sump check valve to customer's plumbing"
+      "expected_gap": "failure_mode_without_action"
     },
     {
       "symptom": "detergent not dispensing",
       "failure_mode": "mechanical binding of dispenser lid",
-      "corrective_action": "check/replace dispenser"
+      "corrective_action": "replace the dispenser"
+    },
+    {
+      "symptom": "will not fill or low water",
+      "failure_mode": "low water pressure or no water to dishwasher",
+      "corrective_action": "correct installation as necessary"
+    },
+    {
+      "symptom": "won't run or power up (dead keypad/console)",
+      "failure_mode": "faulty control",
+      "corrective_action": "replace control"
+    },
+    {
+      "symptom": "wash pump will not pump",
+      "failure_mode": "excessive suds in pump",
+      "corrective_action": "repeatedly fill and cancel drain to remove suds"
+    },
+    {
+      "symptom": "will not drain or excess water left in unit",
+      "failure_mode": "diameter of drain hose too small",
+      "corrective_action": "install proper drain hose"
+    },
+    {
+      "symptom": "will not drain or excess water left in unit",
+      "failure_mode": "drain loop check valve not sealing and waste line plugged",
+      "corrective_action": "replace entire drain loop"
     }
   ],
   "expected_quality_gates": {
+    "min_prediction_count": 1,
     "min_recall": 0.7,
     "max_unsupported_rate": 0.0
   },

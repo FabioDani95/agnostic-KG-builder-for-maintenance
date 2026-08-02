@@ -7,7 +7,6 @@ import subprocess
 import sys
 
 from backend.services.conversation.orchestrator import handle_message
-from backend.services.conversation.tools import dispatch
 from backend.services.llm_gateway import get_client
 from backend.services.llm_service import call_openai, call_openai_scoping, parse_extraction
 from backend.services.ontology_pipeline import build_initial_ontology
@@ -71,7 +70,7 @@ def test_mock_scoping_and_extraction_call_sites(monkeypatch):
     assert len(parsed.triplets) == 1
 
 
-def test_mock_async_chat_and_node_normalization_call_sites(monkeypatch):
+def test_mock_async_chat_call_site(monkeypatch):
     monkeypatch.setenv("KG_LLM_MODE", "mock")
     events = []
     store = {
@@ -101,22 +100,13 @@ def test_mock_async_chat_and_node_normalization_call_sites(monkeypatch):
         evt_bus.make_on_event = lambda pdf_id: events.append
         try:
             await handle_message("pdf-mock", store, "What is the status?")
-            result = await dispatch(
-                "add_node_manual",
-                {"node_type": "Symptom", "raw_text": "pump vibrates"},
-                store,
-                events.append,
-            )
         finally:
             evt_bus.make_on_event = original
             evt_bus.unregister("pdf-mock")
-        return result
 
-    node_result = asyncio.run(run())
+    asyncio.run(run())
 
     assert any(event.get("type") == "chat_delta" for event in events)
-    assert node_result["status"] == "pending_confirmation"
-    assert node_result["normalized_name"] == "Mock Node"
 
 
 def test_mock_style_cleanup_call_site(monkeypatch):

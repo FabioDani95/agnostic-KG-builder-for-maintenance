@@ -20,15 +20,18 @@
   "expected_triplets": [
     {
       "error_code": "1001",
-      "failure_mode": "low way lube"
+      "failure_mode": "low way lube",
+      "expected_gap": "failure_mode_without_action"
     },
     {
       "error_code": "1002",
-      "failure_mode": "low air pressure"
+      "failure_mode": "low air pressure",
+      "expected_gap": "failure_mode_without_action"
     },
     {
       "error_code": "1014",
-      "failure_mode": "door interlock open"
+      "failure_mode": "door interlock open",
+      "expected_gap": "failure_mode_without_action"
     },
     {
       "error_code": "1011",
@@ -61,6 +64,7 @@
     ]
   },
   "expected_quality_gates": {
+    "min_prediction_count": 1,
     "min_recall": 0.8,
     "max_unsupported_rate": 0.0
   }

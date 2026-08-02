@@ -81,6 +81,7 @@ def get_pdf_ingestion_config() -> dict:
     ocr.setdefault("bootstrap_pages", 15)
     ocr.setdefault("bootstrap_max_pages", 5)
     ocr.setdefault("selected_max_pages", 24)
+    ocr.setdefault("min_confidence", 0.80)
     return cfg
 
 
@@ -142,19 +143,6 @@ def get_chat_config() -> dict:
     cfg.setdefault("critic_model", cfg["model"])
     cfg.setdefault("critic_enabled", True)
     cfg.setdefault("idle_reminder_seconds", 60)
-    return cfg
-
-
-def get_graph_cocreator_config() -> dict:
-    cfg = deepcopy(load_config().get("graph_cocreator", {}) or {})
-    chat_cfg = get_chat_config()
-    cfg.setdefault("llm_enabled", True)
-    cfg.setdefault("model", chat_cfg.get("model", "gpt-4o-mini"))
-    cfg.setdefault("timeout_seconds", 12)
-    cfg.setdefault("max_output_tokens", 1200)
-    cfg.setdefault("temperature", 0.1)
-    cfg.setdefault("relationship_candidate_limit", 30)
-    cfg.setdefault("relationship_llm_top_k", 12)
     return cfg
 
 

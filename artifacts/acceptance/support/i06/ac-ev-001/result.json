@@ -1,0 +1,30 @@
+{
+  "acceptance_id": "AC-EV-001",
+  "status": "support",
+  "timestamp_utc": "2026-07-29T13:25:20.788410Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "working_tree_dirty": true,
+  "command": "python3 -m pytest -q tests/planned/test_ev_acceptance.py::test_ac_ev_001 tests/planned/test_ev_acceptance.py::test_i06_disposition_retry_is_append_only tests/planned/test_hitl_acceptance.py",
+  "dataset": null,
+  "assertions": [
+    {
+      "description": "PDF source inventory equals the sum of active terminal dispositions at source, top-level, child aggregate and every parent group.",
+      "passed": true
+    },
+    {
+      "description": "Disposition retry creates attempt 2 while attempt 1 remains immutable.",
+      "passed": true
+    }
+  ],
+  "raw_artifacts": [
+    {
+      "path": "artifacts/raw/i06/pytest.xml",
+      "sha256": "8207933bd103506fb5431e5bea424f5a140e1bb37f66145cb32b73a7d142f10f"
+    }
+  ],
+  "environment": {
+    "python": "3.12.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "secrets_included": false
+  }
+}

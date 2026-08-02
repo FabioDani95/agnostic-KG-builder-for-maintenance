@@ -1,0 +1,26 @@
+{
+  "acceptance_id": "AC-REG-001",
+  "status": "support",
+  "timestamp_utc": "2026-07-29T13:16:05.585403Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "working_tree_dirty": true,
+  "command": "python3 -m pytest -q tests/planned/test_sec_acceptance.py tests/test_runs_router.py tests/test_generate_export_route.py",
+  "dataset": null,
+  "assertions": [
+    {
+      "description": "G1 security API and server characterization are green; full pytest/golden/E2E release regression remains owned by E11.",
+      "passed": true
+    }
+  ],
+  "raw_artifacts": [
+    {
+      "path": "artifacts/raw/i05/pytest.txt",
+      "sha256": "4f036a72070e5fc15fa573d2ec5d979f3736c90baf91c5f384f8e06fc4377391"
+    }
+  ],
+  "environment": {
+    "python": "3.12.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "secrets_included": false
+  }
+}

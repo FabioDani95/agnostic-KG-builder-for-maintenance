@@ -82,9 +82,6 @@ SCOPE_ANCHORS = (
     "relation",
     "relations",
     "graph",
-    "modify",
-    "modifica",
-    "editor",
     "field",
     "fields",
     "asset",
@@ -394,7 +391,7 @@ def workflow_blockers(store: dict[str, Any]) -> tuple[list[str], str]:
         return [], "Export the ontology JSON."
 
     if phase == GraphPhase.COMPLETED.value:
-        return [], "The workflow is complete. You can inspect or modify the exported graph."
+        return [], "The workflow is complete. You can inspect the published graph in read-only mode."
 
     return [], status["next_step"] or "Continue with the current workflow step."
 

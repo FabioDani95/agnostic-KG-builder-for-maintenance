@@ -106,3 +106,26 @@ def extract_triplets_workflow(
     store["source_type"] = req.source_type
     store["source_title"] = req.source_title
     return result, chunk_metadata
+
+
+def extract_triplets_from_evidence_workflow(
+    store: dict,
+    req: ExtractRequest,
+    evidence_units,
+    on_event=None,
+) -> tuple[ExtractionResult, list[dict[str, Any]]]:
+    """Invoke the characterized core through the temporary PDF evidence projection."""
+    from backend.adapters.pdf import evidence_units_to_legacy_pages
+
+    projected_store = dict(store)
+    projected_store["pages"] = evidence_units_to_legacy_pages(evidence_units)
+    projected_store["page_count"] = len(projected_store["pages"])
+    result = extract_triplets_workflow(projected_store, req, on_event=on_event)
+    store.update(
+        {
+            "run_metrics": projected_store.get("run_metrics", {}),
+            "source_type": projected_store.get("source_type", ""),
+            "source_title": projected_store.get("source_title", ""),
+        }
+    )
+    return result

@@ -1,0 +1,4700 @@
+{
+  "$schema": "./SPEC_INDEX.schema.json",
+  "schema_version": "1.0",
+  "package": {
+    "id": "maintenance-kg-builder-mvp",
+    "spec_version": "1.2",
+    "normative_documents": [
+      {
+        "path": "SPECIFICHE_MVP.md",
+        "defines": [
+          "requirement"
+        ]
+      },
+      {
+        "path": "docs/specs/UX_SPECIFICATION.md",
+        "defines": [
+          "requirement"
+        ]
+      },
+      {
+        "path": "docs/specs/DATA_CONTRACTS.md",
+        "defines": [
+          "contract"
+        ]
+      },
+      {
+        "path": "docs/specs/DECISION_REGISTER.md",
+        "defines": [
+          "decision"
+        ]
+      },
+      {
+        "path": "docs/specs/BASELINE_AND_CODEBASE_IMPACT.md",
+        "defines": []
+      },
+      {
+        "path": "docs/specs/ACCEPTANCE_CRITERIA.md",
+        "defines": [
+          "dataset",
+          "acceptance"
+        ]
+      },
+      {
+        "path": "docs/specs/AUDIT_REMEDIATION_REPORT.md",
+        "defines": []
+      },
+      {
+        "path": "docs/specs/TRACEABILITY_MATRIX.md",
+        "defines": []
+      }
+    ],
+    "ontology": {
+      "path": "ontology_schema.JSON",
+      "sha256": "81f2d894e8b4c3c0ba3bb2e7149941ae91b704ebd8a8b8dedef91b79bd1508db"
+    },
+    "snapshot_sha256": "sha256:66db17fbad207734889e6a671f218145f56b032034c15cbfcc656f1fe85fff28"
+  },
+  "obligations": [
+    {
+      "id": "OBL-INV-001",
+      "source_id": "INV-001",
+      "verified_behavior": "Ontologia invariata: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da INV-001.",
+      "acceptance_ids": [
+        "AC-ONT-001",
+        "AC-ONT-002",
+        "AC-ONT-003"
+      ],
+      "verification_ids": [
+        "TST-ONT-001",
+        "TST-ONT-002",
+        "TST-ONT-003"
+      ],
+      "artifact_ids": [
+        "ART-ONT-001",
+        "ART-ONT-002",
+        "ART-ONT-003"
+      ]
+    },
+    {
+      "id": "OBL-INV-002",
+      "source_id": "INV-002",
+      "verified_behavior": "Una macchina per workspace: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da INV-002.",
+      "acceptance_ids": [
+        "AC-WS-001",
+        "AC-ONT-003",
+        "AC-WS-005"
+      ],
+      "verification_ids": [
+        "TST-WS-001",
+        "TST-ONT-003",
+        "TST-WS-005"
+      ],
+      "artifact_ids": [
+        "ART-WS-001",
+        "ART-ONT-003",
+        "ART-WS-005"
+      ]
+    },
+    {
+      "id": "OBL-INV-003",
+      "source_id": "INV-003",
+      "verified_behavior": "Molte fonti, un solo grafo: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da INV-003.",
+      "acceptance_ids": [
+        "AC-WS-002",
+        "AC-WS-003"
+      ],
+      "verification_ids": [
+        "TST-WS-002",
+        "TST-WS-003"
+      ],
+      "artifact_ids": [
+        "ART-WS-002",
+        "ART-WS-003"
+      ]
+    },
+    {
+      "id": "OBL-INV-004",
+      "source_id": "INV-004",
+      "verified_behavior": "Separazione tra evidenza e conoscenza: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da INV-004.",
+      "acceptance_ids": [
+        "AC-EV-002",
+        "AC-PUB-001"
+      ],
+      "verification_ids": [
+        "TST-EV-002",
+        "TST-PUB-001"
+      ],
+      "artifact_ids": [
+        "ART-EV-002",
+        "ART-PUB-001"
+      ]
+    },
+    {
+      "id": "OBL-INV-005",
+      "source_id": "INV-005",
+      "verified_behavior": "Nessuna perdita silenziosa: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da INV-005.",
+      "acceptance_ids": [
+        "AC-EV-001",
+        "AC-TAB-001",
+        "AC-TAB-005"
+      ],
+      "verification_ids": [
+        "TST-EV-001",
+        "TST-TAB-001",
+        "TST-TAB-005"
+      ],
+      "artifact_ids": [
+        "ART-EV-001",
+        "ART-TAB-001",
+        "ART-TAB-005"
+      ]
+    },
+    {
+      "id": "OBL-INV-006",
+      "source_id": "INV-006",
+      "verified_behavior": "Pubblicazione esplicita e rigorosa: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da INV-006.",
+      "acceptance_ids": [
+        "AC-HITL-005",
+        "AC-PUB-002",
+        "AC-PUB-005"
+      ],
+      "verification_ids": [
+        "TST-HITL-005",
+        "TST-PUB-002",
+        "TST-PUB-005"
+      ],
+      "artifact_ids": [
+        "ART-HITL-005",
+        "ART-PUB-002",
+        "ART-PUB-005"
+      ]
+    },
+    {
+      "id": "OBL-INV-007",
+      "source_id": "INV-007",
+      "verified_behavior": "Una sola pipeline semantica: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da INV-007.",
+      "acceptance_ids": [
+        "AC-WS-002",
+        "AC-REG-001"
+      ],
+      "verification_ids": [
+        "TST-WS-002",
+        "TST-REG-001"
+      ],
+      "artifact_ids": [
+        "ART-WS-002",
+        "ART-REG-001"
+      ]
+    },
+    {
+      "id": "OBL-INV-008",
+      "source_id": "INV-008",
+      "verified_behavior": "Tracciabilità: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da INV-008.",
+      "acceptance_ids": [
+        "AC-EV-002",
+        "AC-PUB-001",
+        "AC-REG-001"
+      ],
+      "verification_ids": [
+        "TST-EV-002",
+        "TST-PUB-001",
+        "TST-REG-001"
+      ],
+      "artifact_ids": [
+        "ART-EV-002",
+        "ART-PUB-001",
+        "ART-REG-001"
+      ]
+    },
+    {
+      "id": "OBL-ACT-001",
+      "source_id": "ACT-001",
+      "verified_behavior": "Operatore tecnico: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da ACT-001.",
+      "acceptance_ids": [
+        "AC-HITL-001",
+        "AC-HITL-002",
+        "AC-HITL-005"
+      ],
+      "verification_ids": [
+        "TST-HITL-001",
+        "TST-HITL-002",
+        "TST-HITL-005"
+      ],
+      "artifact_ids": [
+        "ART-HITL-001",
+        "ART-HITL-002",
+        "ART-HITL-005"
+      ]
+    },
+    {
+      "id": "OBL-UC-001",
+      "source_id": "UC-001",
+      "verified_behavior": "Costruzione iniziale: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da UC-001.",
+      "acceptance_ids": [
+        "AC-WS-002",
+        "AC-PUB-001",
+        "AC-SEM-001"
+      ],
+      "verification_ids": [
+        "TST-WS-002",
+        "TST-PUB-001",
+        "TST-SEM-001"
+      ],
+      "artifact_ids": [
+        "ART-WS-002",
+        "ART-PUB-001",
+        "ART-SEM-001"
+      ]
+    },
+    {
+      "id": "OBL-UC-002",
+      "source_id": "UC-002",
+      "verified_behavior": "Aggiornamento incrementale: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da UC-002.",
+      "acceptance_ids": [
+        "AC-WS-003",
+        "AC-PUB-004",
+        "AC-NONREG-001"
+      ],
+      "verification_ids": [
+        "TST-WS-003",
+        "TST-PUB-004",
+        "TST-NONREG-001"
+      ],
+      "artifact_ids": [
+        "ART-WS-003",
+        "ART-PUB-004",
+        "ART-NONREG-001"
+      ]
+    },
+    {
+      "id": "OBL-UC-003",
+      "source_id": "UC-003",
+      "verified_behavior": "Troubleshooting: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da UC-003.",
+      "acceptance_ids": [
+        "AC-CHAT-001",
+        "AC-CHAT-002",
+        "AC-CHAT-004"
+      ],
+      "verification_ids": [
+        "TST-CHAT-001",
+        "TST-CHAT-002",
+        "TST-CHAT-004"
+      ],
+      "artifact_ids": [
+        "ART-CHAT-001",
+        "ART-CHAT-002",
+        "ART-CHAT-004"
+      ]
+    },
+    {
+      "id": "OBL-FR-001",
+      "source_id": "FR-001",
+      "verified_behavior": "Machine onboarding: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-001.",
+      "acceptance_ids": [
+        "AC-WS-001",
+        "AC-ONT-003"
+      ],
+      "verification_ids": [
+        "TST-WS-001",
+        "TST-ONT-003"
+      ],
+      "artifact_ids": [
+        "ART-WS-001",
+        "ART-ONT-003"
+      ]
+    },
+    {
+      "id": "OBL-FR-WS-IDENTITY-001",
+      "source_id": "FR-WS-IDENTITY-001",
+      "verified_behavior": "Appartenenza fonte–macchina: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-WS-IDENTITY-001.",
+      "acceptance_ids": [
+        "AC-WS-005"
+      ],
+      "verification_ids": [
+        "TST-WS-005"
+      ],
+      "artifact_ids": [
+        "ART-WS-005"
+      ]
+    },
+    {
+      "id": "OBL-FR-002",
+      "source_id": "FR-002",
+      "verified_behavior": "Source set: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-002.",
+      "acceptance_ids": [
+        "AC-WS-004",
+        "AC-EV-001"
+      ],
+      "verification_ids": [
+        "TST-WS-004",
+        "TST-EV-001"
+      ],
+      "artifact_ids": [
+        "ART-WS-004",
+        "ART-EV-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-003",
+      "source_id": "FR-003",
+      "verified_behavior": "Batch e run: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-003.",
+      "acceptance_ids": [
+        "AC-WS-002",
+        "AC-PUB-001"
+      ],
+      "verification_ids": [
+        "TST-WS-002",
+        "TST-PUB-001"
+      ],
+      "artifact_ids": [
+        "ART-WS-002",
+        "ART-PUB-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-004",
+      "source_id": "FR-004",
+      "verified_behavior": "Stati minimi del run: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-004.",
+      "acceptance_ids": [
+        "AC-HITL-004",
+        "AC-RES-001",
+        "AC-RES-002"
+      ],
+      "verification_ids": [
+        "TST-HITL-004",
+        "TST-RES-001",
+        "TST-RES-002"
+      ],
+      "artifact_ids": [
+        "ART-HITL-004",
+        "ART-RES-001",
+        "ART-RES-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-PDF-001",
+      "source_id": "FR-PDF-001",
+      "verified_behavior": "Capacità: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-PDF-001.",
+      "acceptance_ids": [
+        "AC-PDF-001",
+        "AC-PDF-002",
+        "AC-PDF-004"
+      ],
+      "verification_ids": [
+        "TST-PDF-001",
+        "TST-PDF-002",
+        "TST-PDF-004"
+      ],
+      "artifact_ids": [
+        "ART-PDF-001",
+        "ART-PDF-002",
+        "ART-PDF-004"
+      ]
+    },
+    {
+      "id": "OBL-FR-PDF-002",
+      "source_id": "FR-PDF-002",
+      "verified_behavior": "Gate di scoping: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-PDF-002.",
+      "acceptance_ids": [
+        "AC-PDF-003",
+        "AC-HITL-001"
+      ],
+      "verification_ids": [
+        "TST-PDF-003",
+        "TST-HITL-001"
+      ],
+      "artifact_ids": [
+        "ART-PDF-003",
+        "ART-HITL-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-PDF-003",
+      "source_id": "FR-PDF-003",
+      "verified_behavior": "Limiti: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-PDF-003.",
+      "acceptance_ids": [
+        "AC-PDF-004",
+        "AC-TAB-005"
+      ],
+      "verification_ids": [
+        "TST-PDF-004",
+        "TST-TAB-005"
+      ],
+      "artifact_ids": [
+        "ART-PDF-004",
+        "ART-TAB-005"
+      ]
+    },
+    {
+      "id": "OBL-FR-TAB-001",
+      "source_id": "FR-TAB-001",
+      "verified_behavior": "CSV: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-TAB-001.",
+      "acceptance_ids": [
+        "AC-TAB-001",
+        "AC-TAB-005"
+      ],
+      "verification_ids": [
+        "TST-TAB-001",
+        "TST-TAB-005"
+      ],
+      "artifact_ids": [
+        "ART-TAB-001",
+        "ART-TAB-005"
+      ]
+    },
+    {
+      "id": "OBL-FR-TAB-002",
+      "source_id": "FR-TAB-002",
+      "verified_behavior": "XLSX: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-TAB-002.",
+      "acceptance_ids": [
+        "AC-TAB-002",
+        "AC-TAB-005"
+      ],
+      "verification_ids": [
+        "TST-TAB-002",
+        "TST-TAB-005"
+      ],
+      "artifact_ids": [
+        "ART-TAB-002",
+        "ART-TAB-005"
+      ]
+    },
+    {
+      "id": "OBL-FR-TAB-003",
+      "source_id": "FR-TAB-003",
+      "verified_behavior": "JSON: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-TAB-003.",
+      "acceptance_ids": [
+        "AC-TAB-003",
+        "AC-TAB-005"
+      ],
+      "verification_ids": [
+        "TST-TAB-003",
+        "TST-TAB-005"
+      ],
+      "artifact_ids": [
+        "ART-TAB-003",
+        "ART-TAB-005"
+      ]
+    },
+    {
+      "id": "OBL-FR-TAB-004",
+      "source_id": "FR-TAB-004",
+      "verified_behavior": "Profiling: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-TAB-004.",
+      "acceptance_ids": [
+        "AC-TAB-001",
+        "AC-TAB-002",
+        "AC-TAB-003"
+      ],
+      "verification_ids": [
+        "TST-TAB-001",
+        "TST-TAB-002",
+        "TST-TAB-003"
+      ],
+      "artifact_ids": [
+        "ART-TAB-001",
+        "ART-TAB-002",
+        "ART-TAB-003"
+      ]
+    },
+    {
+      "id": "OBL-FR-TAB-005",
+      "source_id": "FR-TAB-005",
+      "verified_behavior": "Mapping e join: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-TAB-005.",
+      "acceptance_ids": [
+        "AC-TAB-004",
+        "AC-HITL-001",
+        "AC-JOIN-001"
+      ],
+      "verification_ids": [
+        "TST-TAB-004",
+        "TST-HITL-001",
+        "TST-JOIN-001"
+      ],
+      "artifact_ids": [
+        "ART-TAB-004",
+        "ART-HITL-001",
+        "ART-JOIN-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-NORM-001",
+      "source_id": "FR-NORM-001",
+      "verified_behavior": "Normalizzazione: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-NORM-001.",
+      "acceptance_ids": [
+        "AC-NORM-001"
+      ],
+      "verification_ids": [
+        "TST-NORM-001"
+      ],
+      "artifact_ids": [
+        "ART-NORM-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-NORM-002",
+      "source_id": "FR-NORM-002",
+      "verified_behavior": "Semantic text: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-NORM-002.",
+      "acceptance_ids": [
+        "AC-NORM-002"
+      ],
+      "verification_ids": [
+        "TST-NORM-002"
+      ],
+      "artifact_ids": [
+        "ART-NORM-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-EV-001",
+      "source_id": "FR-EV-001",
+      "verified_behavior": "Contratto comune: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-EV-001.",
+      "acceptance_ids": [
+        "AC-EV-001",
+        "AC-EV-002"
+      ],
+      "verification_ids": [
+        "TST-EV-001",
+        "TST-EV-002"
+      ],
+      "artifact_ids": [
+        "ART-EV-001",
+        "ART-EV-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-EV-002",
+      "source_id": "FR-EV-002",
+      "verified_behavior": "Locator: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-EV-002.",
+      "acceptance_ids": [
+        "AC-PDF-002",
+        "AC-TAB-001",
+        "AC-TAB-002",
+        "AC-TAB-003"
+      ],
+      "verification_ids": [
+        "TST-PDF-002",
+        "TST-TAB-001",
+        "TST-TAB-002",
+        "TST-TAB-003"
+      ],
+      "artifact_ids": [
+        "ART-PDF-002",
+        "ART-TAB-001",
+        "ART-TAB-002",
+        "ART-TAB-003"
+      ]
+    },
+    {
+      "id": "OBL-FR-EV-003",
+      "source_id": "FR-EV-003",
+      "verified_behavior": "Autorità: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-EV-003.",
+      "acceptance_ids": [
+        "AC-EV-003",
+        "AC-SEM-002"
+      ],
+      "verification_ids": [
+        "TST-EV-003",
+        "TST-SEM-002"
+      ],
+      "artifact_ids": [
+        "ART-EV-003",
+        "ART-SEM-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-NS-001",
+      "source_id": "FR-NS-001",
+      "verified_behavior": "Responsabilità neurali: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-NS-001.",
+      "acceptance_ids": [
+        "AC-ONT-002",
+        "AC-EV-002",
+        "AC-SEM-001"
+      ],
+      "verification_ids": [
+        "TST-ONT-002",
+        "TST-EV-002",
+        "TST-SEM-001"
+      ],
+      "artifact_ids": [
+        "ART-ONT-002",
+        "ART-EV-002",
+        "ART-SEM-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-NS-002",
+      "source_id": "FR-NS-002",
+      "verified_behavior": "Responsabilità simboliche: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-NS-002.",
+      "acceptance_ids": [
+        "AC-ONT-002",
+        "AC-PUB-002"
+      ],
+      "verification_ids": [
+        "TST-ONT-002",
+        "TST-PUB-002"
+      ],
+      "artifact_ids": [
+        "ART-ONT-002",
+        "ART-PUB-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-NS-003",
+      "source_id": "FR-NS-003",
+      "verified_behavior": "Structured output: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-NS-003.",
+      "acceptance_ids": [
+        "AC-RES-001",
+        "AC-REG-001"
+      ],
+      "verification_ids": [
+        "TST-RES-001",
+        "TST-REG-001"
+      ],
+      "artifact_ids": [
+        "ART-RES-001",
+        "ART-REG-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-NS-004",
+      "source_id": "FR-NS-004",
+      "verified_behavior": "Grounding: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-NS-004.",
+      "acceptance_ids": [
+        "AC-EV-002",
+        "AC-CHAT-001",
+        "AC-SEM-002"
+      ],
+      "verification_ids": [
+        "TST-EV-002",
+        "TST-CHAT-001",
+        "TST-SEM-002"
+      ],
+      "artifact_ids": [
+        "ART-EV-002",
+        "ART-CHAT-001",
+        "ART-SEM-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-MERGE-001",
+      "source_id": "FR-MERGE-001",
+      "verified_behavior": "Deduplica esatta: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-MERGE-001.",
+      "acceptance_ids": [
+        "AC-WS-004",
+        "AC-MERGE-002"
+      ],
+      "verification_ids": [
+        "TST-WS-004",
+        "TST-MERGE-002"
+      ],
+      "artifact_ids": [
+        "ART-WS-004",
+        "ART-MERGE-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-MERGE-002",
+      "source_id": "FR-MERGE-002",
+      "verified_behavior": "Entity linking: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-MERGE-002.",
+      "acceptance_ids": [
+        "AC-MERGE-001",
+        "AC-MERGE-003"
+      ],
+      "verification_ids": [
+        "TST-MERGE-001",
+        "TST-MERGE-003"
+      ],
+      "artifact_ids": [
+        "ART-MERGE-001",
+        "ART-MERGE-003"
+      ]
+    },
+    {
+      "id": "OBL-FR-MERGE-003",
+      "source_id": "FR-MERGE-003",
+      "verified_behavior": "Soglie iniziali: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-MERGE-003.",
+      "acceptance_ids": [
+        "AC-MERGE-002",
+        "AC-MERGE-003",
+        "AC-MERGE-004",
+        "AC-MERGE-005",
+        "AC-CAL-001"
+      ],
+      "verification_ids": [
+        "TST-MERGE-002",
+        "TST-MERGE-003",
+        "TST-MERGE-004",
+        "TST-MERGE-005",
+        "TST-CAL-001"
+      ],
+      "artifact_ids": [
+        "ART-MERGE-002",
+        "ART-MERGE-003",
+        "ART-MERGE-004",
+        "ART-MERGE-005",
+        "ART-CAL-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-MERGE-004",
+      "source_id": "FR-MERGE-004",
+      "verified_behavior": "Conflitti: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-MERGE-004.",
+      "acceptance_ids": [
+        "AC-EV-003",
+        "AC-MERGE-004",
+        "AC-SEM-002"
+      ],
+      "verification_ids": [
+        "TST-EV-003",
+        "TST-MERGE-004",
+        "TST-SEM-002"
+      ],
+      "artifact_ids": [
+        "ART-EV-003",
+        "ART-MERGE-004",
+        "ART-SEM-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-MERGE-005",
+      "source_id": "FR-MERGE-005",
+      "verified_behavior": "Incrementalità: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-MERGE-005.",
+      "acceptance_ids": [
+        "AC-WS-003",
+        "AC-NONREG-001"
+      ],
+      "verification_ids": [
+        "TST-WS-003",
+        "TST-NONREG-001"
+      ],
+      "artifact_ids": [
+        "ART-WS-003",
+        "ART-NONREG-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-EMB-001",
+      "source_id": "FR-EMB-001",
+      "verified_behavior": "Contenuto da embeddare: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-EMB-001.",
+      "acceptance_ids": [
+        "AC-EMB-001"
+      ],
+      "verification_ids": [
+        "TST-EMB-001"
+      ],
+      "artifact_ids": [
+        "ART-EMB-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-EMB-002",
+      "source_id": "FR-EMB-002",
+      "verified_behavior": "Versionamento e cache: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-EMB-002.",
+      "acceptance_ids": [
+        "AC-EMB-002",
+        "AC-MERGE-005",
+        "AC-CAL-001"
+      ],
+      "verification_ids": [
+        "TST-EMB-002",
+        "TST-MERGE-005",
+        "TST-CAL-001"
+      ],
+      "artifact_ids": [
+        "ART-EMB-002",
+        "ART-MERGE-005",
+        "ART-CAL-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-ONTO-001",
+      "source_id": "FR-ONTO-001",
+      "verified_behavior": "Asset: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-ONTO-001.",
+      "acceptance_ids": [
+        "AC-ONT-003"
+      ],
+      "verification_ids": [
+        "TST-ONT-003"
+      ],
+      "artifact_ids": [
+        "ART-ONT-003"
+      ]
+    },
+    {
+      "id": "OBL-FR-ONTO-002",
+      "source_id": "FR-ONTO-002",
+      "verified_behavior": "Component: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-ONTO-002.",
+      "acceptance_ids": [
+        "AC-ONT-003"
+      ],
+      "verification_ids": [
+        "TST-ONT-003"
+      ],
+      "artifact_ids": [
+        "ART-ONT-003"
+      ]
+    },
+    {
+      "id": "OBL-FR-ONTO-003",
+      "source_id": "FR-ONTO-003",
+      "verified_behavior": "Symptom: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-ONTO-003.",
+      "acceptance_ids": [
+        "AC-ONT-002",
+        "AC-SEM-001"
+      ],
+      "verification_ids": [
+        "TST-ONT-002",
+        "TST-SEM-001"
+      ],
+      "artifact_ids": [
+        "ART-ONT-002",
+        "ART-SEM-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-ONTO-004",
+      "source_id": "FR-ONTO-004",
+      "verified_behavior": "FailureMode: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-ONTO-004.",
+      "acceptance_ids": [
+        "AC-ONT-002",
+        "AC-ONT-004",
+        "AC-SEM-002"
+      ],
+      "verification_ids": [
+        "TST-ONT-002",
+        "TST-ONT-004",
+        "TST-SEM-002"
+      ],
+      "artifact_ids": [
+        "ART-ONT-002",
+        "ART-ONT-004",
+        "ART-SEM-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-ONTO-005",
+      "source_id": "FR-ONTO-005",
+      "verified_behavior": "CorrectiveAction: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-ONTO-005.",
+      "acceptance_ids": [
+        "AC-ONT-002",
+        "AC-SEM-002"
+      ],
+      "verification_ids": [
+        "TST-ONT-002",
+        "TST-SEM-002"
+      ],
+      "artifact_ids": [
+        "ART-ONT-002",
+        "ART-SEM-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-ONTO-006",
+      "source_id": "FR-ONTO-006",
+      "verified_behavior": "ErrorCode: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-ONTO-006.",
+      "acceptance_ids": [
+        "AC-ONT-002"
+      ],
+      "verification_ids": [
+        "TST-ONT-002"
+      ],
+      "artifact_ids": [
+        "ART-ONT-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-HITL-001",
+      "source_id": "FR-HITL-001",
+      "verified_behavior": "Gate 1: identità, scope e mapping: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-HITL-001.",
+      "acceptance_ids": [
+        "AC-HITL-001"
+      ],
+      "verification_ids": [
+        "TST-HITL-001"
+      ],
+      "artifact_ids": [
+        "ART-HITL-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-HITL-002",
+      "source_id": "FR-HITL-002",
+      "verified_behavior": "Gate 2: review semantica: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-HITL-002.",
+      "acceptance_ids": [
+        "AC-HITL-002",
+        "AC-HITL-003"
+      ],
+      "verification_ids": [
+        "TST-HITL-002",
+        "TST-HITL-003"
+      ],
+      "artifact_ids": [
+        "ART-HITL-002",
+        "ART-HITL-003"
+      ]
+    },
+    {
+      "id": "OBL-FR-HITL-003",
+      "source_id": "FR-HITL-003",
+      "verified_behavior": "Decisioni: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-HITL-003.",
+      "acceptance_ids": [
+        "AC-HITL-002",
+        "AC-HITL-004"
+      ],
+      "verification_ids": [
+        "TST-HITL-002",
+        "TST-HITL-004"
+      ],
+      "artifact_ids": [
+        "ART-HITL-002",
+        "ART-HITL-004"
+      ]
+    },
+    {
+      "id": "OBL-FR-HITL-004",
+      "source_id": "FR-HITL-004",
+      "verified_behavior": "Gate 3: pubblicazione: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-HITL-004.",
+      "acceptance_ids": [
+        "AC-HITL-005",
+        "AC-PUB-005"
+      ],
+      "verification_ids": [
+        "TST-HITL-005",
+        "TST-PUB-005"
+      ],
+      "artifact_ids": [
+        "ART-HITL-005",
+        "ART-PUB-005"
+      ]
+    },
+    {
+      "id": "OBL-FR-HITL-005",
+      "source_id": "FR-HITL-005",
+      "verified_behavior": "Delega, revoca ed eccezioni: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-HITL-005.",
+      "acceptance_ids": [
+        "AC-UX-013",
+        "AC-HITL-003"
+      ],
+      "verification_ids": [
+        "TST-UX-013",
+        "TST-HITL-003"
+      ],
+      "artifact_ids": [
+        "ART-UX-013",
+        "ART-HITL-003"
+      ]
+    },
+    {
+      "id": "OBL-FR-OUT-001",
+      "source_id": "FR-OUT-001",
+      "verified_behavior": "Artifact: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-OUT-001.",
+      "acceptance_ids": [
+        "AC-PUB-001",
+        "AC-PUB-003",
+        "AC-PUB-005"
+      ],
+      "verification_ids": [
+        "TST-PUB-001",
+        "TST-PUB-003",
+        "TST-PUB-005"
+      ],
+      "artifact_ids": [
+        "ART-PUB-001",
+        "ART-PUB-003",
+        "ART-PUB-005"
+      ]
+    },
+    {
+      "id": "OBL-FR-OUT-002",
+      "source_id": "FR-OUT-002",
+      "verified_behavior": "Immutabilità: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-OUT-002.",
+      "acceptance_ids": [
+        "AC-WS-003",
+        "AC-PUB-004",
+        "AC-NONREG-001"
+      ],
+      "verification_ids": [
+        "TST-WS-003",
+        "TST-PUB-004",
+        "TST-NONREG-001"
+      ],
+      "artifact_ids": [
+        "ART-WS-003",
+        "ART-PUB-004",
+        "ART-NONREG-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-OUT-003",
+      "source_id": "FR-OUT-003",
+      "verified_behavior": "Candidate versus published: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-OUT-003.",
+      "acceptance_ids": [
+        "AC-PUB-002"
+      ],
+      "verification_ids": [
+        "TST-PUB-002"
+      ],
+      "artifact_ids": [
+        "ART-PUB-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-OUT-004",
+      "source_id": "FR-OUT-004",
+      "verified_behavior": "Mutazioni controllate: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-OUT-004.",
+      "acceptance_ids": [
+        "AC-PUB-004",
+        "AC-UX-006",
+        "AC-UX-007"
+      ],
+      "verification_ids": [
+        "TST-PUB-004",
+        "TST-UX-006",
+        "TST-UX-007"
+      ],
+      "artifact_ids": [
+        "ART-PUB-004",
+        "ART-UX-006",
+        "ART-UX-007"
+      ]
+    },
+    {
+      "id": "OBL-FR-LLM-001",
+      "source_id": "FR-LLM-001",
+      "verified_behavior": "Configurazione: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-LLM-001.",
+      "acceptance_ids": [
+        "AC-SEC-001",
+        "AC-LLM-002",
+        "AC-SEC-002"
+      ],
+      "verification_ids": [
+        "TST-SEC-001",
+        "TST-LLM-002",
+        "TST-SEC-002"
+      ],
+      "artifact_ids": [
+        "ART-SEC-001",
+        "ART-LLM-002",
+        "ART-SEC-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-LLM-002",
+      "source_id": "FR-LLM-002",
+      "verified_behavior": "Adapter: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-LLM-002.",
+      "acceptance_ids": [
+        "AC-LLM-001"
+      ],
+      "verification_ids": [
+        "TST-LLM-001"
+      ],
+      "artifact_ids": [
+        "ART-LLM-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-LLM-003",
+      "source_id": "FR-LLM-003",
+      "verified_behavior": "Preflight: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-LLM-003.",
+      "acceptance_ids": [
+        "AC-LLM-002"
+      ],
+      "verification_ids": [
+        "TST-LLM-002"
+      ],
+      "artifact_ids": [
+        "ART-LLM-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-LANG-001",
+      "source_id": "FR-LANG-001",
+      "verified_behavior": "Release MVP: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-LANG-001.",
+      "acceptance_ids": [
+        "AC-LANG-001"
+      ],
+      "verification_ids": [
+        "TST-LANG-001"
+      ],
+      "artifact_ids": [
+        "ART-LANG-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-LANG-002",
+      "source_id": "FR-LANG-002",
+      "verified_behavior": "Italiano e tedesco: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-LANG-002.",
+      "acceptance_ids": [
+        "AC-LANG-002",
+        "AC-UX-012"
+      ],
+      "verification_ids": [
+        "TST-LANG-002",
+        "TST-UX-012"
+      ],
+      "artifact_ids": [
+        "ART-LANG-002",
+        "ART-UX-012"
+      ]
+    },
+    {
+      "id": "OBL-NFR-001",
+      "source_id": "NFR-001",
+      "verified_behavior": "Storage locale: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da NFR-001.",
+      "acceptance_ids": [
+        "AC-PUB-001",
+        "AC-HITL-004"
+      ],
+      "verification_ids": [
+        "TST-PUB-001",
+        "TST-HITL-004"
+      ],
+      "artifact_ids": [
+        "ART-PUB-001",
+        "ART-HITL-004"
+      ]
+    },
+    {
+      "id": "OBL-NFR-002",
+      "source_id": "NFR-002",
+      "verified_behavior": "Privacy: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da NFR-002.",
+      "acceptance_ids": [
+        "AC-SEC-001",
+        "AC-SEC-002"
+      ],
+      "verification_ids": [
+        "TST-SEC-001",
+        "TST-SEC-002"
+      ],
+      "artifact_ids": [
+        "ART-SEC-001",
+        "ART-SEC-002"
+      ]
+    },
+    {
+      "id": "OBL-NFR-003",
+      "source_id": "NFR-003",
+      "verified_behavior": "Audit: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da NFR-003.",
+      "acceptance_ids": [
+        "AC-PUB-001",
+        "AC-HITL-004",
+        "AC-REG-002"
+      ],
+      "verification_ids": [
+        "TST-PUB-001",
+        "TST-HITL-004",
+        "TST-REG-002"
+      ],
+      "artifact_ids": [
+        "ART-PUB-001",
+        "ART-HITL-004",
+        "ART-REG-002"
+      ]
+    },
+    {
+      "id": "OBL-NFR-004",
+      "source_id": "NFR-004",
+      "verified_behavior": "Error handling: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da NFR-004.",
+      "acceptance_ids": [
+        "AC-RES-001",
+        "AC-RES-002"
+      ],
+      "verification_ids": [
+        "TST-RES-001",
+        "TST-RES-002"
+      ],
+      "artifact_ids": [
+        "ART-RES-001",
+        "ART-RES-002"
+      ]
+    },
+    {
+      "id": "OBL-NFR-005",
+      "source_id": "NFR-005",
+      "verified_behavior": "Confine locale browser-safe: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da NFR-005.",
+      "acceptance_ids": [
+        "AC-SEC-003"
+      ],
+      "verification_ids": [
+        "TST-SEC-003"
+      ],
+      "artifact_ids": [
+        "ART-SEC-003"
+      ]
+    },
+    {
+      "id": "OBL-NFR-PERF-001",
+      "source_id": "NFR-PERF-001",
+      "verified_behavior": "Dataset strutturati: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da NFR-PERF-001.",
+      "acceptance_ids": [
+        "AC-PERF-001"
+      ],
+      "verification_ids": [
+        "TST-PERF-001"
+      ],
+      "artifact_ids": [
+        "ART-PERF-001"
+      ]
+    },
+    {
+      "id": "OBL-NFR-PERF-002",
+      "source_id": "NFR-PERF-002",
+      "verified_behavior": "Documenti: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da NFR-PERF-002.",
+      "acceptance_ids": [
+        "AC-PERF-002"
+      ],
+      "verification_ids": [
+        "TST-PERF-002"
+      ],
+      "artifact_ids": [
+        "ART-PERF-002"
+      ]
+    },
+    {
+      "id": "OBL-NFR-PERF-003",
+      "source_id": "NFR-PERF-003",
+      "verified_behavior": "Misurazione: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da NFR-PERF-003.",
+      "acceptance_ids": [
+        "AC-PERF-001",
+        "AC-PERF-002"
+      ],
+      "verification_ids": [
+        "TST-PERF-001",
+        "TST-PERF-002"
+      ],
+      "artifact_ids": [
+        "ART-PERF-001",
+        "ART-PERF-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-UI-001",
+      "source_id": "FR-UI-001",
+      "verified_behavior": "Schermate: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UI-001.",
+      "acceptance_ids": [
+        "AC-UX-001",
+        "AC-UX-002",
+        "AC-UX-003",
+        "AC-UX-008"
+      ],
+      "verification_ids": [
+        "TST-UX-001",
+        "TST-UX-002",
+        "TST-UX-003",
+        "TST-UX-008"
+      ],
+      "artifact_ids": [
+        "ART-UX-001",
+        "ART-UX-002",
+        "ART-UX-003",
+        "ART-UX-008"
+      ]
+    },
+    {
+      "id": "OBL-FR-CHAT-001",
+      "source_id": "FR-CHAT-001",
+      "verified_behavior": "Vincoli: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-CHAT-001.",
+      "acceptance_ids": [
+        "AC-CHAT-001",
+        "AC-CHAT-002",
+        "AC-CHAT-003",
+        "AC-CHAT-004"
+      ],
+      "verification_ids": [
+        "TST-CHAT-001",
+        "TST-CHAT-002",
+        "TST-CHAT-003",
+        "TST-CHAT-004"
+      ],
+      "artifact_ids": [
+        "ART-CHAT-001",
+        "ART-CHAT-002",
+        "ART-CHAT-003",
+        "ART-CHAT-004"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-001",
+      "source_id": "FR-UX-001",
+      "verified_behavior": "Un solo percorso principale: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-001.",
+      "acceptance_ids": [
+        "AC-UX-001",
+        "AC-UX-004"
+      ],
+      "verification_ids": [
+        "TST-UX-001",
+        "TST-UX-004"
+      ],
+      "artifact_ids": [
+        "ART-UX-001",
+        "ART-UX-004"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-002",
+      "source_id": "FR-UX-002",
+      "verified_behavior": "Linguaggio dell'operatore: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-002.",
+      "acceptance_ids": [
+        "AC-UX-001",
+        "AC-UX-009"
+      ],
+      "verification_ids": [
+        "TST-UX-001",
+        "TST-UX-009"
+      ],
+      "artifact_ids": [
+        "ART-UX-001",
+        "ART-UX-009"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-003",
+      "source_id": "FR-UX-003",
+      "verified_behavior": "Progressive disclosure e default sicuri: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-003.",
+      "acceptance_ids": [
+        "AC-UX-004"
+      ],
+      "verification_ids": [
+        "TST-UX-004"
+      ],
+      "artifact_ids": [
+        "ART-UX-004"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-018",
+      "source_id": "FR-UX-018",
+      "verified_behavior": "Scelta fra verifica manuale ed esecuzione automatica: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-018.",
+      "acceptance_ids": [
+        "AC-UX-004",
+        "AC-UX-005",
+        "AC-UX-013"
+      ],
+      "verification_ids": [
+        "TST-UX-004",
+        "TST-UX-005",
+        "TST-UX-013"
+      ],
+      "artifact_ids": [
+        "ART-UX-004",
+        "ART-UX-005",
+        "ART-UX-013"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-004",
+      "source_id": "FR-UX-004",
+      "verified_behavior": "Application shell: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-004.",
+      "acceptance_ids": [
+        "AC-UX-001",
+        "AC-UX-010"
+      ],
+      "verification_ids": [
+        "TST-UX-001",
+        "TST-UX-010"
+      ],
+      "artifact_ids": [
+        "ART-UX-001",
+        "ART-UX-010"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-005",
+      "source_id": "FR-UX-005",
+      "verified_behavior": "Onboarding macchina: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-005.",
+      "acceptance_ids": [
+        "AC-UX-001",
+        "AC-WS-001",
+        "AC-WS-005"
+      ],
+      "verification_ids": [
+        "TST-UX-001",
+        "TST-WS-001",
+        "TST-WS-005"
+      ],
+      "artifact_ids": [
+        "ART-UX-001",
+        "ART-WS-001",
+        "ART-WS-005"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-006",
+      "source_id": "FR-UX-006",
+      "verified_behavior": "Upload e source inventory: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-006.",
+      "acceptance_ids": [
+        "AC-UX-002"
+      ],
+      "verification_ids": [
+        "TST-UX-002"
+      ],
+      "artifact_ids": [
+        "ART-UX-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-007",
+      "source_id": "FR-UX-007",
+      "verified_behavior": "Coda di preparazione comune: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-007.",
+      "acceptance_ids": [
+        "AC-UX-003"
+      ],
+      "verification_ids": [
+        "TST-UX-003"
+      ],
+      "artifact_ids": [
+        "ART-UX-003"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-008",
+      "source_id": "FR-UX-008",
+      "verified_behavior": "Preparazione PDF: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-008.",
+      "acceptance_ids": [
+        "AC-UX-003",
+        "AC-PDF-003"
+      ],
+      "verification_ids": [
+        "TST-UX-003",
+        "TST-PDF-003"
+      ],
+      "artifact_ids": [
+        "ART-UX-003",
+        "ART-PDF-003"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-009",
+      "source_id": "FR-UX-009",
+      "verified_behavior": "Preparazione CSV, XLSX e JSON: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-009.",
+      "acceptance_ids": [
+        "AC-UX-003",
+        "AC-TAB-004",
+        "AC-JOIN-001"
+      ],
+      "verification_ids": [
+        "TST-UX-003",
+        "TST-TAB-004",
+        "TST-JOIN-001"
+      ],
+      "artifact_ids": [
+        "ART-UX-003",
+        "ART-TAB-004",
+        "ART-JOIN-001"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-010",
+      "source_id": "FR-UX-010",
+      "verified_behavior": "Avvio, progresso e recupero: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-010.",
+      "acceptance_ids": [
+        "AC-UX-005",
+        "AC-RES-001",
+        "AC-RES-002"
+      ],
+      "verification_ids": [
+        "TST-UX-005",
+        "TST-RES-001",
+        "TST-RES-002"
+      ],
+      "artifact_ids": [
+        "ART-UX-005",
+        "ART-RES-001",
+        "ART-RES-002"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-011",
+      "source_id": "FR-UX-011",
+      "verified_behavior": "Inbox di review: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-011.",
+      "acceptance_ids": [
+        "AC-UX-006"
+      ],
+      "verification_ids": [
+        "TST-UX-006"
+      ],
+      "artifact_ids": [
+        "ART-UX-006"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-012",
+      "source_id": "FR-UX-012",
+      "verified_behavior": "Modifica controllata, non editor libero: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-012.",
+      "acceptance_ids": [
+        "AC-UX-006",
+        "AC-UX-007"
+      ],
+      "verification_ids": [
+        "TST-UX-006",
+        "TST-UX-007"
+      ],
+      "artifact_ids": [
+        "ART-UX-006",
+        "ART-UX-007"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-013",
+      "source_id": "FR-UX-013",
+      "verified_behavior": "Revisione aggregata: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-013.",
+      "acceptance_ids": [
+        "AC-HITL-003",
+        "AC-UX-006"
+      ],
+      "verification_ids": [
+        "TST-HITL-003",
+        "TST-UX-006"
+      ],
+      "artifact_ids": [
+        "ART-HITL-003",
+        "ART-UX-006"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-014",
+      "source_id": "FR-UX-014",
+      "verified_behavior": "Gate di publish: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-014.",
+      "acceptance_ids": [
+        "AC-HITL-005",
+        "AC-UX-008",
+        "AC-PUB-005"
+      ],
+      "verification_ids": [
+        "TST-HITL-005",
+        "TST-UX-008",
+        "TST-PUB-005"
+      ],
+      "artifact_ids": [
+        "ART-HITL-005",
+        "ART-UX-008",
+        "ART-PUB-005"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-015",
+      "source_id": "FR-UX-015",
+      "verified_behavior": "Esplorazione sola lettura: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-015.",
+      "acceptance_ids": [
+        "AC-UX-008",
+        "AC-PUB-004"
+      ],
+      "verification_ids": [
+        "TST-UX-008",
+        "TST-PUB-004"
+      ],
+      "artifact_ids": [
+        "ART-UX-008",
+        "ART-PUB-004"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-016",
+      "source_id": "FR-UX-016",
+      "verified_behavior": "Errori azionabili: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-016.",
+      "acceptance_ids": [
+        "AC-UX-009"
+      ],
+      "verification_ids": [
+        "TST-UX-009"
+      ],
+      "artifact_ids": [
+        "ART-UX-009"
+      ]
+    },
+    {
+      "id": "OBL-FR-UX-017",
+      "source_id": "FR-UX-017",
+      "verified_behavior": "Accessibilità e robustezza: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-017.",
+      "acceptance_ids": [
+        "AC-UX-010",
+        "AC-UX-011",
+        "AC-UX-012"
+      ],
+      "verification_ids": [
+        "TST-UX-010",
+        "TST-UX-011",
+        "TST-UX-012"
+      ],
+      "artifact_ids": [
+        "ART-UX-010",
+        "ART-UX-011",
+        "ART-UX-012"
+      ]
+    },
+    {
+      "id": "OBL-DC-ID-001",
+      "source_id": "DC-ID-001",
+      "verified_behavior": "Formato: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-ID-001.",
+      "acceptance_ids": [
+        "AC-PUB-003",
+        "AC-WS-004"
+      ],
+      "verification_ids": [
+        "TST-PUB-003",
+        "TST-WS-004"
+      ],
+      "artifact_ids": [
+        "ART-PUB-003",
+        "ART-WS-004"
+      ]
+    },
+    {
+      "id": "OBL-DC-ID-002",
+      "source_id": "DC-ID-002",
+      "verified_behavior": "Unicità dei nodi: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-ID-002.",
+      "acceptance_ids": [
+        "AC-ONT-002",
+        "AC-PUB-002"
+      ],
+      "verification_ids": [
+        "TST-ONT-002",
+        "TST-PUB-002"
+      ],
+      "artifact_ids": [
+        "ART-ONT-002",
+        "ART-PUB-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-ID-003",
+      "source_id": "DC-ID-003",
+      "verified_behavior": "Stabilità: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-ID-003.",
+      "acceptance_ids": [
+        "AC-WS-003",
+        "AC-NONREG-001"
+      ],
+      "verification_ids": [
+        "TST-WS-003",
+        "TST-NONREG-001"
+      ],
+      "artifact_ids": [
+        "ART-WS-003",
+        "ART-NONREG-001"
+      ]
+    },
+    {
+      "id": "OBL-DC-TIME-001",
+      "source_id": "DC-TIME-001",
+      "verified_behavior": "Timestamp: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-TIME-001.",
+      "acceptance_ids": [
+        "AC-NORM-001",
+        "AC-EV-002"
+      ],
+      "verification_ids": [
+        "TST-NORM-001",
+        "TST-EV-002"
+      ],
+      "artifact_ids": [
+        "ART-NORM-001",
+        "ART-EV-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-SRC-001",
+      "source_id": "DC-SRC-001",
+      "verified_behavior": "`source_kind`: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-SRC-001.",
+      "acceptance_ids": [
+        "AC-WS-002",
+        "AC-UX-002"
+      ],
+      "verification_ids": [
+        "TST-WS-002",
+        "TST-UX-002"
+      ],
+      "artifact_ids": [
+        "ART-WS-002",
+        "ART-UX-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-SRC-002",
+      "source_id": "DC-SRC-002",
+      "verified_behavior": "`authority`: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-SRC-002.",
+      "acceptance_ids": [
+        "AC-EV-003",
+        "AC-SEM-002"
+      ],
+      "verification_ids": [
+        "TST-EV-003",
+        "TST-SEM-002"
+      ],
+      "artifact_ids": [
+        "ART-EV-003",
+        "ART-SEM-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-SRC-003",
+      "source_id": "DC-SRC-003",
+      "verified_behavior": "`status`: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-SRC-003.",
+      "acceptance_ids": [
+        "AC-UX-003",
+        "AC-EV-001"
+      ],
+      "verification_ids": [
+        "TST-UX-003",
+        "TST-EV-001"
+      ],
+      "artifact_ids": [
+        "ART-UX-003",
+        "ART-EV-001"
+      ]
+    },
+    {
+      "id": "OBL-DC-SRC-ASSESS-001",
+      "source_id": "DC-SRC-ASSESS-001",
+      "verified_behavior": "Appartenenza della fonte alla macchina: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-SRC-ASSESS-001.",
+      "acceptance_ids": [
+        "AC-WS-005",
+        "AC-HITL-001"
+      ],
+      "verification_ids": [
+        "TST-WS-005",
+        "TST-HITL-001"
+      ],
+      "artifact_ids": [
+        "ART-WS-005",
+        "ART-HITL-001"
+      ]
+    },
+    {
+      "id": "OBL-DC-DISPOSITION-001",
+      "source_id": "DC-DISPOSITION-001",
+      "verified_behavior": "Unità raw e disposizione terminale: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-DISPOSITION-001.",
+      "acceptance_ids": [
+        "AC-EV-001",
+        "AC-TAB-001"
+      ],
+      "verification_ids": [
+        "TST-EV-001",
+        "TST-TAB-001"
+      ],
+      "artifact_ids": [
+        "ART-EV-001",
+        "ART-TAB-001"
+      ]
+    },
+    {
+      "id": "OBL-DC-PARSER-001",
+      "source_id": "DC-PARSER-001",
+      "verified_behavior": "Matrice normativa dei casi limite: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-PARSER-001.",
+      "acceptance_ids": [
+        "AC-TAB-005"
+      ],
+      "verification_ids": [
+        "TST-TAB-005"
+      ],
+      "artifact_ids": [
+        "ART-TAB-005"
+      ]
+    },
+    {
+      "id": "OBL-DC-STATE-001",
+      "source_id": "DC-STATE-001",
+      "verified_behavior": "Quattro state machine canoniche: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-STATE-001.",
+      "acceptance_ids": [
+        "AC-UX-003",
+        "AC-UX-005",
+        "AC-HITL-004"
+      ],
+      "verification_ids": [
+        "TST-UX-003",
+        "TST-UX-005",
+        "TST-HITL-004"
+      ],
+      "artifact_ids": [
+        "ART-UX-003",
+        "ART-UX-005",
+        "ART-HITL-004"
+      ]
+    },
+    {
+      "id": "OBL-DC-EV-005",
+      "source_id": "DC-EV-005",
+      "verified_behavior": "`record_role`: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-EV-005.",
+      "acceptance_ids": [
+        "AC-NORM-002",
+        "AC-SEM-001"
+      ],
+      "verification_ids": [
+        "TST-NORM-002",
+        "TST-SEM-001"
+      ],
+      "artifact_ids": [
+        "ART-NORM-002",
+        "ART-SEM-001"
+      ]
+    },
+    {
+      "id": "OBL-DC-EV-001",
+      "source_id": "DC-EV-001",
+      "verified_behavior": "Contenuto minimo: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-EV-001.",
+      "acceptance_ids": [
+        "AC-EV-001",
+        "AC-EV-002"
+      ],
+      "verification_ids": [
+        "TST-EV-001",
+        "TST-EV-002"
+      ],
+      "artifact_ids": [
+        "ART-EV-001",
+        "ART-EV-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-EV-002",
+      "source_id": "DC-EV-002",
+      "verified_behavior": "Raw: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-EV-002.",
+      "acceptance_ids": [
+        "AC-EV-001"
+      ],
+      "verification_ids": [
+        "TST-EV-001"
+      ],
+      "artifact_ids": [
+        "ART-EV-001"
+      ]
+    },
+    {
+      "id": "OBL-DC-EV-003",
+      "source_id": "DC-EV-003",
+      "verified_behavior": "Informazioni inferite: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-EV-003.",
+      "acceptance_ids": [
+        "AC-EV-002",
+        "AC-SEM-001"
+      ],
+      "verification_ids": [
+        "TST-EV-002",
+        "TST-SEM-001"
+      ],
+      "artifact_ids": [
+        "ART-EV-002",
+        "ART-SEM-001"
+      ]
+    },
+    {
+      "id": "OBL-DC-PROV-001",
+      "source_id": "DC-PROV-001",
+      "verified_behavior": "Provenienza composita e trasformazioni: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-PROV-001.",
+      "acceptance_ids": [
+        "AC-EV-002",
+        "AC-JOIN-001",
+        "AC-PUB-001"
+      ],
+      "verification_ids": [
+        "TST-EV-002",
+        "TST-JOIN-001",
+        "TST-PUB-001"
+      ],
+      "artifact_ids": [
+        "ART-EV-002",
+        "ART-JOIN-001",
+        "ART-PUB-001"
+      ]
+    },
+    {
+      "id": "OBL-DC-EV-004",
+      "source_id": "DC-EV-004",
+      "verified_behavior": "Quality flags: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-EV-004.",
+      "acceptance_ids": [
+        "AC-PDF-004",
+        "AC-UX-009"
+      ],
+      "verification_ids": [
+        "TST-PDF-004",
+        "TST-UX-009"
+      ],
+      "artifact_ids": [
+        "ART-PDF-004",
+        "ART-UX-009"
+      ]
+    },
+    {
+      "id": "OBL-DC-ASSERT-001",
+      "source_id": "DC-ASSERT-001",
+      "verified_behavior": "OperatorAssertion: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-ASSERT-001.",
+      "acceptance_ids": [
+        "AC-ONT-004",
+        "AC-HITL-001",
+        "AC-UX-013"
+      ],
+      "verification_ids": [
+        "TST-ONT-004",
+        "TST-HITL-001",
+        "TST-UX-013"
+      ],
+      "artifact_ids": [
+        "ART-ONT-004",
+        "ART-HITL-001",
+        "ART-UX-013"
+      ]
+    },
+    {
+      "id": "OBL-DC-CONTEXT-001",
+      "source_id": "DC-CONTEXT-001",
+      "verified_behavior": "Identità contestuale: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-CONTEXT-001.",
+      "acceptance_ids": [
+        "AC-MERGE-001",
+        "AC-MERGE-003",
+        "AC-MERGE-004"
+      ],
+      "verification_ids": [
+        "TST-MERGE-001",
+        "TST-MERGE-003",
+        "TST-MERGE-004"
+      ],
+      "artifact_ids": [
+        "ART-MERGE-001",
+        "ART-MERGE-003",
+        "ART-MERGE-004"
+      ]
+    },
+    {
+      "id": "OBL-DC-OUTCOME-001",
+      "source_id": "DC-OUTCOME-001",
+      "verified_behavior": "OutcomeAssessment e supporto minimo: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-OUTCOME-001.",
+      "acceptance_ids": [
+        "AC-SEM-002"
+      ],
+      "verification_ids": [
+        "TST-SEM-002"
+      ],
+      "artifact_ids": [
+        "ART-SEM-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-CONFLICT-001",
+      "source_id": "DC-CONFLICT-001",
+      "verified_behavior": "Conflict: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-CONFLICT-001.",
+      "acceptance_ids": [
+        "AC-EV-003",
+        "AC-SEM-002"
+      ],
+      "verification_ids": [
+        "TST-EV-003",
+        "TST-SEM-002"
+      ],
+      "artifact_ids": [
+        "ART-EV-003",
+        "ART-SEM-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-GAP-001",
+      "source_id": "DC-GAP-001",
+      "verified_behavior": "KnowledgeGap: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-GAP-001.",
+      "acceptance_ids": [
+        "AC-ONT-004",
+        "AC-SEM-002"
+      ],
+      "verification_ids": [
+        "TST-ONT-004",
+        "TST-SEM-002"
+      ],
+      "artifact_ids": [
+        "ART-ONT-004",
+        "ART-SEM-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-JOIN-001",
+      "source_id": "DC-JOIN-001",
+      "verified_behavior": "JoinSpec: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-JOIN-001.",
+      "acceptance_ids": [
+        "AC-JOIN-001",
+        "AC-TAB-004"
+      ],
+      "verification_ids": [
+        "TST-JOIN-001",
+        "TST-TAB-004"
+      ],
+      "artifact_ids": [
+        "ART-JOIN-001",
+        "ART-TAB-004"
+      ]
+    },
+    {
+      "id": "OBL-DC-CAND-001",
+      "source_id": "DC-CAND-001",
+      "verified_behavior": "`candidate_kind`: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-CAND-001.",
+      "acceptance_ids": [
+        "AC-HITL-002",
+        "AC-PUB-002"
+      ],
+      "verification_ids": [
+        "TST-HITL-002",
+        "TST-PUB-002"
+      ],
+      "artifact_ids": [
+        "ART-HITL-002",
+        "ART-PUB-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-CAND-002",
+      "source_id": "DC-CAND-002",
+      "verified_behavior": "`operation`: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-CAND-002.",
+      "acceptance_ids": [
+        "AC-HITL-002",
+        "AC-NONREG-001"
+      ],
+      "verification_ids": [
+        "TST-HITL-002",
+        "TST-NONREG-001"
+      ],
+      "artifact_ids": [
+        "ART-HITL-002",
+        "ART-NONREG-001"
+      ]
+    },
+    {
+      "id": "OBL-DC-CAND-003",
+      "source_id": "DC-CAND-003",
+      "verified_behavior": "`status`: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-CAND-003.",
+      "acceptance_ids": [
+        "AC-HITL-002",
+        "AC-HITL-005"
+      ],
+      "verification_ids": [
+        "TST-HITL-002",
+        "TST-HITL-005"
+      ],
+      "artifact_ids": [
+        "ART-HITL-002",
+        "ART-HITL-005"
+      ]
+    },
+    {
+      "id": "OBL-DC-CALIBRATION-001",
+      "source_id": "DC-CALIBRATION-001",
+      "verified_behavior": "CalibrationProfile: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-CALIBRATION-001.",
+      "acceptance_ids": [
+        "AC-CAL-001",
+        "AC-MERGE-005"
+      ],
+      "verification_ids": [
+        "TST-CAL-001",
+        "TST-MERGE-005"
+      ],
+      "artifact_ids": [
+        "ART-CAL-001",
+        "ART-MERGE-005"
+      ]
+    },
+    {
+      "id": "OBL-DC-CGRAPH-001",
+      "source_id": "DC-CGRAPH-001",
+      "verified_behavior": "CandidateGraphRevision: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-CGRAPH-001.",
+      "acceptance_ids": [
+        "AC-WS-003",
+        "AC-NONREG-001"
+      ],
+      "verification_ids": [
+        "TST-WS-003",
+        "TST-NONREG-001"
+      ],
+      "artifact_ids": [
+        "ART-WS-003",
+        "ART-NONREG-001"
+      ]
+    },
+    {
+      "id": "OBL-DC-REVIEW-001",
+      "source_id": "DC-REVIEW-001",
+      "verified_behavior": "Lifecycle, reversal e atomicità: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-REVIEW-001.",
+      "acceptance_ids": [
+        "AC-HITL-002",
+        "AC-HITL-004",
+        "AC-UX-006"
+      ],
+      "verification_ids": [
+        "TST-HITL-002",
+        "TST-HITL-004",
+        "TST-UX-006"
+      ],
+      "artifact_ids": [
+        "ART-HITL-002",
+        "ART-HITL-004",
+        "ART-UX-006"
+      ]
+    },
+    {
+      "id": "OBL-DC-GRAPH-001",
+      "source_id": "DC-GRAPH-001",
+      "verified_behavior": "Formato: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-GRAPH-001.",
+      "acceptance_ids": [
+        "AC-PUB-001",
+        "AC-PUB-002"
+      ],
+      "verification_ids": [
+        "TST-PUB-001",
+        "TST-PUB-002"
+      ],
+      "artifact_ids": [
+        "ART-PUB-001",
+        "ART-PUB-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-GRAPH-002",
+      "source_id": "DC-GRAPH-002",
+      "verified_behavior": "Nodi: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-GRAPH-002.",
+      "acceptance_ids": [
+        "AC-ONT-002"
+      ],
+      "verification_ids": [
+        "TST-ONT-002"
+      ],
+      "artifact_ids": [
+        "ART-ONT-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-GRAPH-003",
+      "source_id": "DC-GRAPH-003",
+      "verified_behavior": "Relazioni: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-GRAPH-003.",
+      "acceptance_ids": [
+        "AC-ONT-002"
+      ],
+      "verification_ids": [
+        "TST-ONT-002"
+      ],
+      "artifact_ids": [
+        "ART-ONT-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-GRAPH-004",
+      "source_id": "DC-GRAPH-004",
+      "verified_behavior": "Cardinalità e completezza: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-GRAPH-004.",
+      "acceptance_ids": [
+        "AC-ONT-003"
+      ],
+      "verification_ids": [
+        "TST-ONT-003"
+      ],
+      "artifact_ids": [
+        "ART-ONT-003"
+      ]
+    },
+    {
+      "id": "OBL-DC-GRAPH-005",
+      "source_id": "DC-GRAPH-005",
+      "verified_behavior": "Errori bloccanti e knowledge gap: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-GRAPH-005.",
+      "acceptance_ids": [
+        "AC-ONT-004",
+        "AC-SEM-002"
+      ],
+      "verification_ids": [
+        "TST-ONT-004",
+        "TST-SEM-002"
+      ],
+      "artifact_ids": [
+        "ART-ONT-004",
+        "ART-SEM-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-EIDX-001",
+      "source_id": "DC-EIDX-001",
+      "verified_behavior": "Support type: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-EIDX-001.",
+      "acceptance_ids": [
+        "AC-EV-002",
+        "AC-CHAT-001"
+      ],
+      "verification_ids": [
+        "TST-EV-002",
+        "TST-CHAT-001"
+      ],
+      "artifact_ids": [
+        "ART-EV-002",
+        "ART-CHAT-001"
+      ]
+    },
+    {
+      "id": "OBL-DC-EIDX-002",
+      "source_id": "DC-EIDX-002",
+      "verified_behavior": "Copertura: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-EIDX-002.",
+      "acceptance_ids": [
+        "AC-EV-002",
+        "AC-PUB-001"
+      ],
+      "verification_ids": [
+        "TST-EV-002",
+        "TST-PUB-001"
+      ],
+      "artifact_ids": [
+        "ART-EV-002",
+        "ART-PUB-001"
+      ]
+    },
+    {
+      "id": "OBL-DC-DELEGATION-001",
+      "source_id": "DC-DELEGATION-001",
+      "verified_behavior": "Delega append-only e step catalog: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-DELEGATION-001.",
+      "acceptance_ids": [
+        "AC-UX-013",
+        "AC-HITL-003"
+      ],
+      "verification_ids": [
+        "TST-UX-013",
+        "TST-HITL-003"
+      ],
+      "artifact_ids": [
+        "ART-UX-013",
+        "ART-HITL-003"
+      ]
+    },
+    {
+      "id": "OBL-DC-CHECKPOINT-001",
+      "source_id": "DC-CHECKPOINT-001",
+      "verified_behavior": "Checkpoint, safe point e resume: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-CHECKPOINT-001.",
+      "acceptance_ids": [
+        "AC-RES-002",
+        "AC-UX-005"
+      ],
+      "verification_ids": [
+        "TST-RES-002",
+        "TST-UX-005"
+      ],
+      "artifact_ids": [
+        "ART-RES-002",
+        "ART-UX-005"
+      ]
+    },
+    {
+      "id": "OBL-DC-CALL-001",
+      "source_id": "DC-CALL-001",
+      "verified_behavior": "Lifecycle delle chiamate modello: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-CALL-001.",
+      "acceptance_ids": [
+        "AC-RES-001",
+        "AC-RES-002"
+      ],
+      "verification_ids": [
+        "TST-RES-001",
+        "TST-RES-002"
+      ],
+      "artifact_ids": [
+        "ART-RES-001",
+        "ART-RES-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-CACHE-001",
+      "source_id": "DC-CACHE-001",
+      "verified_behavior": "Matrice di invalidazione: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-CACHE-001.",
+      "acceptance_ids": [
+        "AC-EMB-002",
+        "AC-MERGE-005",
+        "AC-RES-002"
+      ],
+      "verification_ids": [
+        "TST-EMB-002",
+        "TST-MERGE-005",
+        "TST-RES-002"
+      ],
+      "artifact_ids": [
+        "ART-EMB-002",
+        "ART-MERGE-005",
+        "ART-RES-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-LANG-001",
+      "source_id": "DC-LANG-001",
+      "verified_behavior": "Qualifica linguistica e grafo canonico: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-LANG-001.",
+      "acceptance_ids": [
+        "AC-LANG-002",
+        "AC-UX-012"
+      ],
+      "verification_ids": [
+        "TST-LANG-002",
+        "TST-UX-012"
+      ],
+      "artifact_ids": [
+        "ART-LANG-002",
+        "ART-UX-012"
+      ]
+    },
+    {
+      "id": "OBL-DC-PROVIDER-001",
+      "source_id": "DC-PROVIDER-001",
+      "verified_behavior": "ProviderConfig canonico: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-PROVIDER-001.",
+      "acceptance_ids": [
+        "AC-LLM-001",
+        "AC-LLM-002"
+      ],
+      "verification_ids": [
+        "TST-LLM-001",
+        "TST-LLM-002"
+      ],
+      "artifact_ids": [
+        "ART-LLM-001",
+        "ART-LLM-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-EGRESS-001",
+      "source_id": "DC-EGRESS-001",
+      "verified_behavior": "Data egress per stage: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-EGRESS-001.",
+      "acceptance_ids": [
+        "AC-SEC-002"
+      ],
+      "verification_ids": [
+        "TST-SEC-002"
+      ],
+      "artifact_ids": [
+        "ART-SEC-002"
+      ]
+    },
+    {
+      "id": "OBL-DC-PUBLISH-001",
+      "source_id": "DC-PUBLISH-001",
+      "verified_behavior": "Truth table e bundle atomico: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-PUBLISH-001.",
+      "acceptance_ids": [
+        "AC-PUB-002",
+        "AC-PUB-005",
+        "AC-HITL-005"
+      ],
+      "verification_ids": [
+        "TST-PUB-002",
+        "TST-PUB-005",
+        "TST-HITL-005"
+      ],
+      "artifact_ids": [
+        "ART-PUB-002",
+        "ART-PUB-005",
+        "ART-HITL-005"
+      ]
+    },
+    {
+      "id": "OBL-DC-VERSION-001",
+      "source_id": "DC-VERSION-001",
+      "verified_behavior": "Ogni pubblicazione incrementa Vn senza sovrascrivere alcuna versione precedente.",
+      "acceptance_ids": [
+        "AC-PUB-004",
+        "AC-NONREG-001"
+      ],
+      "verification_ids": [
+        "TST-PUB-004",
+        "TST-NONREG-001"
+      ],
+      "artifact_ids": [
+        "ART-PUB-004",
+        "ART-NONREG-001"
+      ]
+    },
+    {
+      "id": "OBL-DC-VERSION-002",
+      "source_id": "DC-VERSION-002",
+      "verified_behavior": "Il diff distingue nodi, relazioni, evidenze, merge, split e knowledge gap tra versioni.",
+      "acceptance_ids": [
+        "AC-NONREG-001",
+        "AC-PUB-004"
+      ],
+      "verification_ids": [
+        "TST-NONREG-001",
+        "TST-PUB-004"
+      ],
+      "artifact_ids": [
+        "ART-NONREG-001",
+        "ART-PUB-004"
+      ]
+    },
+    {
+      "id": "OBL-DC-VERSION-003",
+      "source_id": "DC-VERSION-003",
+      "verified_behavior": "Ogni rimozione di conoscenza pubblicata richiede una decisione esplicita e auditabile.",
+      "acceptance_ids": [
+        "AC-NONREG-001",
+        "AC-HITL-005"
+      ],
+      "verification_ids": [
+        "TST-NONREG-001",
+        "TST-HITL-005"
+      ],
+      "artifact_ids": [
+        "ART-NONREG-001",
+        "ART-HITL-005"
+      ]
+    }
+  ],
+  "verifications": [
+    {
+      "id": "TST-ONT-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_ont_acceptance.py::test_ac_ont_001",
+      "assertion": "AC-ONT-001 — Checksum: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-ONT-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_ont_acceptance.py::test_ac_ont_002",
+      "assertion": "AC-ONT-002 — Tipi e proprietà: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-ONT-003",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_ont_acceptance.py::test_ac_ont_003",
+      "assertion": "AC-ONT-003 — Asset e componenti: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-ONT-004",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_ont_acceptance.py::test_ac_ont_004",
+      "assertion": "AC-ONT-004 — Nessuna invenzione di completezza: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-WS-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_ws_acceptance.py::test_ac_ws_001",
+      "assertion": "AC-WS-001 — Una macchina: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-WS-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_ws_acceptance.py::test_ac_ws_002",
+      "assertion": "AC-WS-002 — Un grafo multisource: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-WS-003",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_ws_acceptance.py::test_ac_ws_003",
+      "assertion": "AC-WS-003 — Incrementalità: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-WS-004",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_ws_acceptance.py::test_ac_ws_004",
+      "assertion": "AC-WS-004 — Idempotenza: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-WS-005",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_ws_acceptance.py::test_ac_ws_005",
+      "assertion": "AC-WS-005 — Attribuzione fonte–macchina: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-PDF-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_pdf_acceptance.py::test_ac_pdf_001",
+      "assertion": "AC-PDF-001 — Regressione: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-001"
+      ]
+    },
+    {
+      "id": "TST-PDF-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_pdf_acceptance.py::test_ac_pdf_002",
+      "assertion": "AC-PDF-002 — Locator: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-001"
+      ]
+    },
+    {
+      "id": "TST-PDF-003",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_pdf_acceptance.py::test_ac_pdf_003",
+      "assertion": "AC-PDF-003 — Scoping HITL: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-001"
+      ]
+    },
+    {
+      "id": "TST-PDF-004",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_pdf_acceptance.py::test_ac_pdf_004",
+      "assertion": "AC-PDF-004 — OCR incerto: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-001"
+      ]
+    },
+    {
+      "id": "TST-TAB-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_tab_acceptance.py::test_ac_tab_001",
+      "assertion": "AC-TAB-001 — CSV: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-002"
+      ]
+    },
+    {
+      "id": "TST-TAB-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_tab_acceptance.py::test_ac_tab_002",
+      "assertion": "AC-TAB-002 — XLSX: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-002"
+      ]
+    },
+    {
+      "id": "TST-TAB-003",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_tab_acceptance.py::test_ac_tab_003",
+      "assertion": "AC-TAB-003 — JSON: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-002"
+      ]
+    },
+    {
+      "id": "TST-TAB-004",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_tab_acceptance.py::test_ac_tab_004",
+      "assertion": "AC-TAB-004 — Mapping profile: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-002"
+      ]
+    },
+    {
+      "id": "TST-JOIN-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_join_acceptance.py::test_ac_join_001",
+      "assertion": "AC-JOIN-001 — Join esplicito e lineage composito: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-TAB-005",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_tab_acceptance.py::test_ac_tab_005",
+      "assertion": "AC-TAB-005 — Matrice edge policy dei parser: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-002"
+      ]
+    },
+    {
+      "id": "TST-NORM-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_norm_acceptance.py::test_ac_norm_001",
+      "assertion": "AC-NORM-001 — Valori: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-NORM-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_norm_acceptance.py::test_ac_norm_002",
+      "assertion": "AC-NORM-002 — Semantic text: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-EV-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_ev_acceptance.py::test_ac_ev_001",
+      "assertion": "AC-EV-001 — Accounting: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-EV-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_ev_acceptance.py::test_ac_ev_002",
+      "assertion": "AC-EV-002 — Copertura: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-EV-003",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_ev_acceptance.py::test_ac_ev_003",
+      "assertion": "AC-EV-003 — Autorità e conflitto: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-SEM-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_sem_acceptance.py::test_ac_sem_001",
+      "assertion": "AC-SEM-001 — Qualità semantica multisource: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-SEM-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_sem_acceptance.py::test_ac_sem_002",
+      "assertion": "AC-SEM-002 — Outcome, causalità e knowledge gap: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-MERGE-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_merge_acceptance.py::test_ac_merge_001",
+      "assertion": "AC-MERGE-001 — Set annotato: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-MERGE-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_merge_acceptance.py::test_ac_merge_002",
+      "assertion": "AC-MERGE-002 — Auto-merge: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-MERGE-003",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_merge_acceptance.py::test_ac_merge_003",
+      "assertion": "AC-MERGE-003 — Entity linking: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-MERGE-004",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_merge_acceptance.py::test_ac_merge_004",
+      "assertion": "AC-MERGE-004 — Fasce: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-MERGE-005",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_merge_acceptance.py::test_ac_merge_005",
+      "assertion": "AC-MERGE-005 — Cambio modello: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-CAL-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_cal_acceptance.py::test_ac_cal_001",
+      "assertion": "AC-CAL-001 — Calibrazione non vacua: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-002"
+      ]
+    },
+    {
+      "id": "TST-EMB-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_emb_acceptance.py::test_ac_emb_001",
+      "assertion": "AC-EMB-001 — Selezione: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-EMB-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_emb_acceptance.py::test_ac_emb_002",
+      "assertion": "AC-EMB-002 — Cache: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-HITL-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_hitl_acceptance.py::test_ac_hitl_001",
+      "assertion": "AC-HITL-001 — Gate 1: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-HITL-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_hitl_acceptance.py::test_ac_hitl_002",
+      "assertion": "AC-HITL-002 — Review: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-HITL-003",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_hitl_acceptance.py::test_ac_hitl_003",
+      "assertion": "AC-HITL-003 — Carico aggregato: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-HITL-004",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_hitl_acceptance.py::test_ac_hitl_004",
+      "assertion": "AC-HITL-004 — Persistenza: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-HITL-005",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_hitl_acceptance.py::test_ac_hitl_005",
+      "assertion": "AC-HITL-005 — Pubblicazione: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-PUB-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_pub_acceptance.py::test_ac_pub_001",
+      "assertion": "AC-PUB-001 — Artifact: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-PUB-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_pub_acceptance.py::test_ac_pub_002",
+      "assertion": "AC-PUB-002 — Strictness: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-PUB-003",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_pub_acceptance.py::test_ac_pub_003",
+      "assertion": "AC-PUB-003 — Determinismo: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-PUB-004",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_pub_acceptance.py::test_ac_pub_004",
+      "assertion": "AC-PUB-004 — Immutabilità: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-NONREG-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_nonreg_acceptance.py::test_ac_nonreg_001",
+      "assertion": "AC-NONREG-001 — Conservazione dei claim fra versioni: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-PUB-005",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_pub_acceptance.py::test_ac_pub_005",
+      "assertion": "AC-PUB-005 — Bundle atomico e concorrenza: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
+      "id": "TST-LLM-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_llm_acceptance.py::test_ac_llm_001",
+      "assertion": "AC-LLM-001 — Provider: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-LLM-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_llm_acceptance.py::test_ac_llm_002",
+      "assertion": "AC-LLM-002 — Preflight: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-SEC-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_sec_acceptance.py::test_ac_sec_001",
+      "assertion": "AC-SEC-001 — Segreti: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-SEC-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_sec_acceptance.py::test_ac_sec_002",
+      "assertion": "AC-SEC-002 — Payload remoto e data egress: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-SEC-003",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_sec_acceptance.py::test_ac_sec_003",
+      "assertion": "AC-SEC-003 — Confine locale browser-safe: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-LANG-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_lang_acceptance.py::test_ac_lang_001",
+      "assertion": "AC-LANG-001 — Inglese: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-LANG-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_lang_acceptance.py::test_ac_lang_002",
+      "assertion": "AC-LANG-002 — Italiano e tedesco: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-PERF-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_perf_acceptance.py::test_ac_perf_001",
+      "assertion": "AC-PERF-001 — 10.000 righe: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-004"
+      ]
+    },
+    {
+      "id": "TST-PERF-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_perf_acceptance.py::test_ac_perf_002",
+      "assertion": "AC-PERF-002 — Corpus PDF: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-005"
+      ]
+    },
+    {
+      "id": "TST-RES-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_res_acceptance.py::test_ac_res_001",
+      "assertion": "AC-RES-001 — Errore provider: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-RES-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_res_acceptance.py::test_ac_res_002",
+      "assertion": "AC-RES-002 — Checkpoint e failure injection: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-UX-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "playwright",
+      "target": "tests/planned/spec_acceptance.spec.js#AC-UX-001",
+      "assertion": "AC-UX-001 — Flusso unico: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-UX-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "playwright",
+      "target": "tests/planned/spec_acceptance.spec.js#AC-UX-002",
+      "assertion": "AC-UX-002 — Upload misto: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-UX-003",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "playwright",
+      "target": "tests/planned/spec_acceptance.spec.js#AC-UX-003",
+      "assertion": "AC-UX-003 — Preparazione adattiva: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-UX-004",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "playwright",
+      "target": "tests/planned/spec_acceptance.spec.js#AC-UX-004",
+      "assertion": "AC-UX-004 — Azione primaria e progressive disclosure: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-UX-005",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "playwright",
+      "target": "tests/planned/spec_acceptance.spec.js#AC-UX-005",
+      "assertion": "AC-UX-005 — Elaborazione e resume: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-UX-006",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "playwright",
+      "target": "tests/planned/spec_acceptance.spec.js#AC-UX-006",
+      "assertion": "AC-UX-006 — Review contestuale: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-UX-007",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "playwright",
+      "target": "tests/planned/spec_acceptance.spec.js#AC-UX-007",
+      "assertion": "AC-UX-007 — Assenza di editor e mutation generiche: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-UX-008",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "playwright",
+      "target": "tests/planned/spec_acceptance.spec.js#AC-UX-008",
+      "assertion": "AC-UX-008 — Publish ed explorer read-only: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-UX-009",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "playwright",
+      "target": "tests/planned/spec_acceptance.spec.js#AC-UX-009",
+      "assertion": "AC-UX-009 — Errori azionabili: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-UX-010",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "playwright",
+      "target": "tests/planned/spec_acceptance.spec.js#AC-UX-010",
+      "assertion": "AC-UX-010 — Persistenza dell'interfaccia: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-UX-011",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "playwright",
+      "target": "tests/planned/spec_acceptance.spec.js#AC-UX-011",
+      "assertion": "AC-UX-011 — Accessibilità desktop: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-UX-012",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "playwright",
+      "target": "tests/planned/spec_acceptance.spec.js#AC-UX-012",
+      "assertion": "AC-UX-012 — Lingua UI e fonte: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-UX-013",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "playwright",
+      "target": "tests/planned/spec_acceptance.spec.js#AC-UX-013",
+      "assertion": "AC-UX-013 — Delega automatica dello step: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-CHAT-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_chat_acceptance.py::test_ac_chat_001",
+      "assertion": "AC-CHAT-001 — Grounded answer: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-CHAT-001"
+      ]
+    },
+    {
+      "id": "TST-CHAT-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_chat_acceptance.py::test_ac_chat_002",
+      "assertion": "AC-CHAT-002 — Insufficienza: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-CHAT-001"
+      ]
+    },
+    {
+      "id": "TST-CHAT-003",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_chat_acceptance.py::test_ac_chat_003",
+      "assertion": "AC-CHAT-003 — Versione: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-CHAT-001"
+      ]
+    },
+    {
+      "id": "TST-CHAT-004",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_chat_acceptance.py::test_ac_chat_004",
+      "assertion": "AC-CHAT-004 — Accuracy non vacua e coerenza bundle: esegue assert deterministici e registra soglie, negativi ed evidenze richieste dal criterio.",
+      "dataset_ids": [
+        "DS-CHAT-001"
+      ]
+    },
+    {
+      "id": "TST-REG-001",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_reg_acceptance.py::test_ac_reg_001",
+      "assertion": "AC-REG-001 — il gate tecnico esegue pytest, Ruff, contract test, golden mock ed E2E quando applicabile.",
+      "dataset_ids": []
+    },
+    {
+      "id": "TST-REG-002",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "pytest",
+      "target": "tests/planned/test_reg_acceptance.py::test_ac_reg_002",
+      "assertion": "AC-REG-002 — la regression floor preserva test, golden fixture, recall mock e link verificati.",
+      "dataset_ids": [
+        "DS-001"
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "ART-ONT-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ont-001/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-ONT-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ont-002/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-ONT-003",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ont-003/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-ONT-004",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ont-004/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-WS-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ws-001/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-WS-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ws-002/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-WS-003",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ws-003/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-WS-004",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ws-004/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-WS-005",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ws-005/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-PDF-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-pdf-001/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-PDF-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-pdf-002/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-PDF-003",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-pdf-003/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-PDF-004",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-pdf-004/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-TAB-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-tab-001/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-TAB-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-tab-002/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-TAB-003",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-tab-003/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-TAB-004",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-tab-004/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-JOIN-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-join-001/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-TAB-005",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-tab-005/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-NORM-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-norm-001/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-NORM-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-norm-002/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-EV-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ev-001/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-EV-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ev-002/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-EV-003",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ev-003/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-SEM-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-sem-001/result.json",
+      "observables": [
+        "$.status",
+        "$.metrics",
+        "$.violations"
+      ]
+    },
+    {
+      "id": "ART-SEM-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-sem-002/result.json",
+      "observables": [
+        "$.status",
+        "$.metrics",
+        "$.violations"
+      ]
+    },
+    {
+      "id": "ART-MERGE-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-merge-001/result.json",
+      "observables": [
+        "$.status",
+        "$.metrics",
+        "$.violations"
+      ]
+    },
+    {
+      "id": "ART-MERGE-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-merge-002/result.json",
+      "observables": [
+        "$.status",
+        "$.metrics",
+        "$.violations"
+      ]
+    },
+    {
+      "id": "ART-MERGE-003",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-merge-003/result.json",
+      "observables": [
+        "$.status",
+        "$.metrics",
+        "$.violations"
+      ]
+    },
+    {
+      "id": "ART-MERGE-004",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-merge-004/result.json",
+      "observables": [
+        "$.status",
+        "$.metrics",
+        "$.violations"
+      ]
+    },
+    {
+      "id": "ART-MERGE-005",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-merge-005/result.json",
+      "observables": [
+        "$.status",
+        "$.metrics",
+        "$.violations"
+      ]
+    },
+    {
+      "id": "ART-CAL-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-cal-001/result.json",
+      "observables": [
+        "$.status",
+        "$.metrics",
+        "$.thresholds"
+      ]
+    },
+    {
+      "id": "ART-EMB-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-emb-001/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-EMB-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-emb-002/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-HITL-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-hitl-001/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-HITL-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-hitl-002/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-HITL-003",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-hitl-003/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-HITL-004",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-hitl-004/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-HITL-005",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-hitl-005/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-PUB-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-pub-001/result.json",
+      "observables": [
+        "$.status",
+        "$.bundle",
+        "$.checksums"
+      ]
+    },
+    {
+      "id": "ART-PUB-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-pub-002/result.json",
+      "observables": [
+        "$.status",
+        "$.bundle",
+        "$.checksums"
+      ]
+    },
+    {
+      "id": "ART-PUB-003",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-pub-003/result.json",
+      "observables": [
+        "$.status",
+        "$.bundle",
+        "$.checksums"
+      ]
+    },
+    {
+      "id": "ART-PUB-004",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-pub-004/result.json",
+      "observables": [
+        "$.status",
+        "$.bundle",
+        "$.checksums"
+      ]
+    },
+    {
+      "id": "ART-NONREG-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-nonreg-001/result.json",
+      "observables": [
+        "$.status",
+        "$.metrics",
+        "$.violations"
+      ]
+    },
+    {
+      "id": "ART-PUB-005",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-pub-005/result.json",
+      "observables": [
+        "$.status",
+        "$.bundle",
+        "$.checksums"
+      ]
+    },
+    {
+      "id": "ART-LLM-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-llm-001/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-LLM-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-llm-002/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-SEC-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-sec-001/result.json",
+      "observables": [
+        "$.status",
+        "$.violations",
+        "$.payload_manifest"
+      ]
+    },
+    {
+      "id": "ART-SEC-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-sec-002/result.json",
+      "observables": [
+        "$.status",
+        "$.violations",
+        "$.payload_manifest"
+      ]
+    },
+    {
+      "id": "ART-SEC-003",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-sec-003/result.json",
+      "observables": [
+        "$.status",
+        "$.violations",
+        "$.payload_manifest"
+      ]
+    },
+    {
+      "id": "ART-LANG-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-lang-001/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-LANG-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-lang-002/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-PERF-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-perf-001/result.json",
+      "observables": [
+        "$.status",
+        "$.metrics",
+        "$.thresholds"
+      ]
+    },
+    {
+      "id": "ART-PERF-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-perf-002/result.json",
+      "observables": [
+        "$.status",
+        "$.metrics",
+        "$.thresholds"
+      ]
+    },
+    {
+      "id": "ART-RES-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-res-001/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-RES-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-res-002/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-UX-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ux-001/result.json",
+      "observables": [
+        "$.status",
+        "$.steps[*].assertions",
+        "$.screenshots"
+      ]
+    },
+    {
+      "id": "ART-UX-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ux-002/result.json",
+      "observables": [
+        "$.status",
+        "$.steps[*].assertions",
+        "$.screenshots"
+      ]
+    },
+    {
+      "id": "ART-UX-003",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ux-003/result.json",
+      "observables": [
+        "$.status",
+        "$.steps[*].assertions",
+        "$.screenshots"
+      ]
+    },
+    {
+      "id": "ART-UX-004",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ux-004/result.json",
+      "observables": [
+        "$.status",
+        "$.steps[*].assertions",
+        "$.screenshots"
+      ]
+    },
+    {
+      "id": "ART-UX-005",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ux-005/result.json",
+      "observables": [
+        "$.status",
+        "$.steps[*].assertions",
+        "$.screenshots"
+      ]
+    },
+    {
+      "id": "ART-UX-006",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ux-006/result.json",
+      "observables": [
+        "$.status",
+        "$.steps[*].assertions",
+        "$.screenshots"
+      ]
+    },
+    {
+      "id": "ART-UX-007",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ux-007/result.json",
+      "observables": [
+        "$.status",
+        "$.steps[*].assertions",
+        "$.screenshots"
+      ]
+    },
+    {
+      "id": "ART-UX-008",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ux-008/result.json",
+      "observables": [
+        "$.status",
+        "$.steps[*].assertions",
+        "$.screenshots"
+      ]
+    },
+    {
+      "id": "ART-UX-009",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ux-009/result.json",
+      "observables": [
+        "$.status",
+        "$.steps[*].assertions",
+        "$.screenshots"
+      ]
+    },
+    {
+      "id": "ART-UX-010",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ux-010/result.json",
+      "observables": [
+        "$.status",
+        "$.steps[*].assertions",
+        "$.screenshots"
+      ]
+    },
+    {
+      "id": "ART-UX-011",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ux-011/result.json",
+      "observables": [
+        "$.status",
+        "$.steps[*].assertions",
+        "$.screenshots"
+      ]
+    },
+    {
+      "id": "ART-UX-012",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ux-012/result.json",
+      "observables": [
+        "$.status",
+        "$.steps[*].assertions",
+        "$.screenshots"
+      ]
+    },
+    {
+      "id": "ART-UX-013",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ux-013/result.json",
+      "observables": [
+        "$.status",
+        "$.steps[*].assertions",
+        "$.screenshots"
+      ]
+    },
+    {
+      "id": "ART-CHAT-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-chat-001/result.json",
+      "observables": [
+        "$.status",
+        "$.queries",
+        "$.grounding"
+      ]
+    },
+    {
+      "id": "ART-CHAT-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-chat-002/result.json",
+      "observables": [
+        "$.status",
+        "$.queries",
+        "$.grounding"
+      ]
+    },
+    {
+      "id": "ART-CHAT-003",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-chat-003/result.json",
+      "observables": [
+        "$.status",
+        "$.queries",
+        "$.grounding"
+      ]
+    },
+    {
+      "id": "ART-CHAT-004",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-chat-004/result.json",
+      "observables": [
+        "$.status",
+        "$.queries",
+        "$.grounding"
+      ]
+    },
+    {
+      "id": "ART-REG-001",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-reg-001/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    },
+    {
+      "id": "ART-REG-002",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-reg-002/result.json",
+      "observables": [
+        "$.status",
+        "$.assertions[*].passed",
+        "$.evidence_refs"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "DEC-001",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Il prodotto viene sviluppato in `log-kg-builder`; la repository originaria resta backup e riferimento"
+    },
+    {
+      "id": "DEC-002",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Si evolve la pipeline esistente; non si costruisce una seconda pipeline semantica"
+    },
+    {
+      "id": "DEC-003",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "L'ontologia centrale rimane esattamente quella fornita"
+    },
+    {
+      "id": "DEC-004",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Un workspace rappresenta una sola macchina"
+    },
+    {
+      "id": "DEC-005",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "`Component`, `HAS_COMPONENT` e `AFFECTS` restano supportati"
+    },
+    {
+      "id": "DEC-006",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Tutte le fonti del workspace producono un unico grafo"
+    },
+    {
+      "id": "DEC-007",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Il grafo pubblicato è JSON; Neo4j è fuori scope"
+    },
+    {
+      "id": "DEC-008",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "PDF, CSV, XLSX e JSON sono formati MVP"
+    },
+    {
+      "id": "DEC-009",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Word ed e-mail native sono fuori scope iniziale"
+    },
+    {
+      "id": "DEC-010",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "L'applicazione è locale, senza utenti e organizzazioni"
+    },
+    {
+      "id": "DEC-011",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "OpenAI è il provider predefinito configurato da `.env`"
+    },
+    {
+      "id": "DEC-012",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Il core deve supportare provider intercambiabili, incluso un endpoint locale generico"
+    },
+    {
+      "id": "DEC-013",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Inglese è la lingua canonica e qualificata dell'MVP"
+    },
+    {
+      "id": "DEC-014",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Italiano e tedesco richiedono una successiva qualifica, senza redesign"
+    },
+    {
+      "id": "DEC-015",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "La pipeline è neurosimbolica"
+    },
+    {
+      "id": "DEC-016",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Human in the Loop è obbligatorio ai gate di input, review e pubblicazione"
+    },
+    {
+      "id": "DEC-017",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "L'agente diagnostico nell'MVP è minimale e read-only"
+    },
+    {
+      "id": "DEC-018",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "L'implementazione deve essere progressiva e verificata dall'utente per gate"
+    },
+    {
+      "id": "DEC-019",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "L'ontologia è centrale; le differenze cliente sono mapping e configurazioni, non ontologie separate"
+    },
+    {
+      "id": "DEC-020",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Evidenze e knowledge graph sono artifact separati e collegati"
+    },
+    {
+      "id": "DEC-021",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Il frontend usa un solo flusso guidato multi-formato, non pagine tecniche scollegate"
+    },
+    {
+      "id": "DEC-022",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "L'editor libero e tutte le graph mutation generiche vengono rimossi"
+    },
+    {
+      "id": "DEC-023",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "L'operatore può delegare gli step non bloccanti all'automazione senza ometterli"
+    },
+    {
+      "id": "DEC-024",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Ogni fonte deve superare una valutazione esplicita di appartenenza alla macchina; incerte e incompatibili restano in quarantena"
+    },
+    {
+      "id": "DEC-025",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Le strutture si elaborano indipendentemente per default; ogni join è esplicito e conserva lineage di tutte le RawUnit partecipanti"
+    },
+    {
+      "id": "DEC-026",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Accounting e stati usano RawUnit, disposition terminali e quattro state machine canoniche; i casi limite parser hanno esito normativo"
+    },
+    {
+      "id": "DEC-027",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Il candidate graph è revisionato contro una base pubblicata; withdrawal e reversal producono nuove revisioni e il publish è un bundle atomico"
+    },
+    {
+      "id": "DEC-028",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Resume usa soltanto checkpoint committed con configurazione identica; retry, pause, cancel e invalidazione hanno semantica distinta"
+    },
+    {
+      "id": "DEC-029",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "I valori manuali richiedono OperatorAssertion; `material_context` usa il vocabolario applicativo fissato senza modificare l'ontologia"
+    },
+    {
+      "id": "DEC-030",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Component ed ErrorCode hanno identità contestuale nel sidecar; alias o codice uguali non autorizzano auto-link"
+    },
+    {
+      "id": "DEC-031",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Autorità, conflitti, outcome, causalità e knowledge gap seguono policy esplicite e non eliminano evidence"
+    },
+    {
+      "id": "DEC-032",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Delega e revoca sono eventi append-only con step catalog, checkpoint di efficacia e backpressure"
+    },
+    {
+      "id": "DEC-033",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "IT/DE non qualificato è preservato e non contribuisce automaticamente; una traduzione derivata richiede approvazione puntuale"
+    },
+    {
+      "id": "DEC-034",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Generation, embedding, endpoint, capability e data egress hanno configurazioni distinte; `MODEL_NAME` vale soltanto per generation"
+    },
+    {
+      "id": "DEC-035",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Auto-stage richiede un CalibrationProfile valido, non vacuo e qualificato per operation, modelli, lingua, feature e dataset"
+    }
+  ],
+  "findings": [
+    {
+      "id": "AUD-001",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "normative",
+      "summary": "source registry e gate identità",
+      "resolution_refs": [
+        "FR-WS-IDENTITY-001",
+        "DC-SRC-ASSESS-001",
+        "AC-WS-005"
+      ]
+    },
+    {
+      "id": "AUD-002",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "normative",
+      "summary": "lineage join-aware e property evidence",
+      "resolution_refs": [
+        "FR-TAB-005",
+        "DC-JOIN-001",
+        "DC-PROV-001",
+        "AC-JOIN-001"
+      ]
+    },
+    {
+      "id": "AUD-003",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "normative",
+      "summary": "ledger raw prima dei filtri",
+      "resolution_refs": [
+        "INV-005",
+        "DC-DISPOSITION-001",
+        "DC-STATE-001",
+        "AC-EV-001"
+      ]
+    },
+    {
+      "id": "AUD-004",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "normative",
+      "summary": "write path transazionale e withdrawal",
+      "resolution_refs": [
+        "FR-MERGE-005",
+        "DC-CGRAPH-001",
+        "DC-REVIEW-001",
+        "DC-PUBLISH-001"
+      ]
+    },
+    {
+      "id": "AUD-005",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "normative",
+      "summary": "checkpoint committed e failure injection",
+      "resolution_refs": [
+        "FR-004",
+        "DC-CHECKPOINT-001",
+        "DC-CACHE-001",
+        "AC-RES-002"
+      ]
+    },
+    {
+      "id": "AUD-006",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "normative",
+      "summary": "operator assertion, nessun default inventato",
+      "resolution_refs": [
+        "FR-ONTO-001",
+        "FR-ONTO-002",
+        "FR-ONTO-003",
+        "FR-ONTO-004",
+        "FR-ONTO-005",
+        "DC-ASSERT-001",
+        "AC-ONT-004"
+      ]
+    },
+    {
+      "id": "AUD-007",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "normative",
+      "summary": "guard di contesto e collision test",
+      "resolution_refs": [
+        "FR-MERGE-002",
+        "DC-CONTEXT-001",
+        "AC-MERGE-001",
+        "AC-MERGE-003"
+      ]
+    },
+    {
+      "id": "AUD-008",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "normative",
+      "summary": "policy di authority, outcome e causalità",
+      "resolution_refs": [
+        "FR-EV-003",
+        "FR-NS-004",
+        "DC-CONFLICT-001",
+        "DC-GAP-001",
+        "DC-OUTCOME-001",
+        "AC-SEM-002"
+      ]
+    },
+    {
+      "id": "AUD-009",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "normative",
+      "summary": "event log di delega e backpressure",
+      "resolution_refs": [
+        "FR-HITL-005",
+        "DC-DELEGATION-001",
+        "FR-UX-018",
+        "AC-UX-013"
+      ]
+    },
+    {
+      "id": "AUD-010",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "normative",
+      "summary": "ingest preserve, translation review-only",
+      "resolution_refs": [
+        "FR-LANG-002",
+        "DC-LANG-001",
+        "AC-LANG-002"
+      ]
+    },
+    {
+      "id": "AUD-011",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "normative",
+      "summary": "adapter, preflight ed egress allowlist",
+      "resolution_refs": [
+        "FR-LLM-001",
+        "FR-LLM-002",
+        "FR-LLM-003",
+        "DC-PROVIDER-001",
+        "DC-EGRESS-001",
+        "AC-LLM-001",
+        "AC-LLM-002",
+        "AC-SEC-002"
+      ]
+    },
+    {
+      "id": "AUD-012",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "acceptance",
+      "summary": "indice normativo è il gate, non la presenza globale",
+      "resolution_refs": [
+        "INV-008",
+        "AC-REG-001",
+        "DEC-018"
+      ]
+    },
+    {
+      "id": "AUD-013",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "normative",
+      "summary": "cache e payload separati per ruolo",
+      "resolution_refs": [
+        "FR-NORM-002",
+        "DC-EV-001",
+        "AC-NORM-002"
+      ]
+    },
+    {
+      "id": "AUD-014",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "normative",
+      "summary": "report di collection con commit/comando",
+      "resolution_refs": [
+        "AC-REG-002",
+        "DEC-018"
+      ]
+    },
+    {
+      "id": "AUD-015",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "acceptance",
+      "summary": "golden lint e negative relation check",
+      "resolution_refs": [
+        "FR-ONTO-005",
+        "AC-ONT-004",
+        "AC-REG-002"
+      ]
+    },
+    {
+      "id": "AUD-016",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "acceptance",
+      "summary": "golden workspace ed evaluator multisource",
+      "resolution_refs": [
+        "DS-003",
+        "AC-SEM-001"
+      ]
+    },
+    {
+      "id": "AUD-017",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "acceptance",
+      "summary": "precisione più copertura, zero denominator fail",
+      "resolution_refs": [
+        "DC-CALIBRATION-001",
+        "AC-CAL-001"
+      ]
+    },
+    {
+      "id": "AUD-018",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "acceptance",
+      "summary": "trace review legata al package digest",
+      "resolution_refs": [
+        "INV-008",
+        "AC-REG-001",
+        "DEC-018"
+      ]
+    },
+    {
+      "id": "AUD-019",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "acceptance",
+      "summary": "test di conservazione claim Vn",
+      "resolution_refs": [
+        "FR-MERGE-005",
+        "DC-CGRAPH-001",
+        "AC-NONREG-001"
+      ]
+    },
+    {
+      "id": "AUD-020",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "must_resolve_pre_plan",
+      "disposition": "acceptance",
+      "summary": "query supported non può rispondere sempre vuoto",
+      "resolution_refs": [
+        "DS-CHAT-001",
+        "AC-CHAT-004",
+        "DC-PUBLISH-001"
+      ]
+    },
+    {
+      "id": "AUD-021",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "plan_backlog",
+      "disposition": "PLANNING_INPUT",
+      "summary": "nuovo boundary workspace/source/evidence",
+      "resolution_refs": [
+        "INV-003",
+        "FR-002",
+        "FR-003",
+        "FR-EV-001",
+        "AC-WS-002"
+      ]
+    },
+    {
+      "id": "AUD-022",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "plan_backlog",
+      "disposition": "PLANNING_INPUT",
+      "summary": "rimuovere drop e troncamenti silenziosi",
+      "resolution_refs": [
+        "INV-005",
+        "DC-DISPOSITION-001",
+        "AC-EV-001"
+      ]
+    },
+    {
+      "id": "AUD-023",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "plan_backlog",
+      "disposition": "PLANNING_INPUT",
+      "summary": "publisher strict derivato dall'ontologia",
+      "resolution_refs": [
+        "DC-GRAPH-001",
+        "DC-GRAPH-002",
+        "DC-GRAPH-003",
+        "DC-GRAPH-004",
+        "DC-GRAPH-005",
+        "AC-PUB-002"
+      ]
+    },
+    {
+      "id": "AUD-024",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "plan_backlog",
+      "disposition": "PLANNING_INPUT",
+      "summary": "sostituire endpoint review legacy",
+      "resolution_refs": [
+        "DC-REVIEW-001",
+        "AC-HITL-002",
+        "AC-HITL-005",
+        "AC-UX-006"
+      ]
+    },
+    {
+      "id": "AUD-025",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "plan_backlog",
+      "disposition": "PLANNING_INPUT",
+      "summary": "run store riavviabile",
+      "resolution_refs": [
+        "FR-004",
+        "DC-CHECKPOINT-001",
+        "AC-RES-002"
+      ]
+    },
+    {
+      "id": "AUD-026",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "plan_backlog",
+      "disposition": "PLANNING_INPUT",
+      "summary": "provider adapter e capability preflight",
+      "resolution_refs": [
+        "FR-LLM-002",
+        "DC-PROVIDER-001",
+        "AC-LLM-002"
+      ]
+    },
+    {
+      "id": "AUD-027",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "plan_backlog",
+      "disposition": "PLANNING_INPUT",
+      "summary": "nuovo E2E del flusso completo",
+      "resolution_refs": [
+        "FR-UX-001",
+        "FR-UX-018",
+        "AC-UX-001",
+        "AC-UX-013"
+      ]
+    },
+    {
+      "id": "AUD-028",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "plan_backlog",
+      "disposition": "PLANNING_INPUT",
+      "summary": "containment, same-origin e request limits",
+      "resolution_refs": [
+        "NFR-005",
+        "AC-SEC-003"
+      ]
+    },
+    {
+      "id": "AUD-029",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "plan_backlog",
+      "disposition": "PLANNING_INPUT",
+      "summary": "capacity gate, RSS/call ceiling, tempo informativo",
+      "resolution_refs": [
+        "NFR-PERF-001",
+        "NFR-PERF-003",
+        "AC-PERF-001"
+      ]
+    },
+    {
+      "id": "AUD-030",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "plan_backlog",
+      "disposition": "PLANNING_INPUT",
+      "summary": "contract-test matrix dei parser",
+      "resolution_refs": [
+        "DC-PARSER-001",
+        "AC-TAB-005"
+      ]
+    },
+    {
+      "id": "AUD-031",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "plan_backlog",
+      "disposition": "PLANNING_INPUT",
+      "summary": "staging, lock, CAS e atomic commit",
+      "resolution_refs": [
+        "FR-OUT-001",
+        "DC-PUBLISH-001",
+        "AC-PUB-005"
+      ]
+    },
+    {
+      "id": "AUD-032",
+      "status": "CLOSED",
+      "planning_blocker": false,
+      "planning_disposition": "accepted_deferred",
+      "disposition": "deferred_guardrail",
+      "summary": "nessuna feature extra, nessun hard-code",
+      "resolution_refs": [
+        "FR-LANG-002",
+        "DC-LANG-001",
+        "FR-LLM-001",
+        "DC-PROVIDER-001",
+        "DC-CACHE-001",
+        "DC-CHECKPOINT-001",
+        "FR-CHAT-001",
+        "DC-PUBLISH-001",
+        "AC-LANG-002"
+      ]
+    }
+  ],
+  "readiness": {
+    "declared_status": "READY_FOR_PLANNING",
+    "semantic_review": {
+      "status": "APPROVED",
+      "reviewer": "Codex multi-agent semantic audit",
+      "approved_at": "2026-07-29T09:51:21Z",
+      "package_digest": "sha256:66db17fbad207734889e6a671f218145f56b032034c15cbfcc656f1fe85fff28"
+    },
+    "owner_approval": {
+      "status": "APPROVED",
+      "approver": "Product Owner",
+      "approved_at": "2026-07-29T12:13:44Z",
+      "package_digest": "sha256:66db17fbad207734889e6a671f218145f56b032034c15cbfcc656f1fe85fff28"
+    }
+  }
+}

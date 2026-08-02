@@ -1,0 +1,26 @@
+{
+  "acceptance_id": "AC-UX-002",
+  "status": "support",
+  "timestamp_utc": "2026-07-29T12:59:47.590567Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "working_tree_dirty": true,
+  "command": "node --check frontend/app/sources.js",
+  "dataset": null,
+  "assertions": [
+    {
+      "description": "The G1 source inventory displays format, hash, authority, state, assessment signals and locator drill-down; mixed-format E2E remains owned by E11.",
+      "passed": true
+    }
+  ],
+  "raw_artifacts": [
+    {
+      "path": "artifacts/raw/i02/pytest.txt",
+      "sha256": "265427817f899f06ddadf01406abc5fb999f43551e37529f3b5f69026ede304b"
+    }
+  ],
+  "environment": {
+    "python": "3.12.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "secrets_included": false
+  }
+}

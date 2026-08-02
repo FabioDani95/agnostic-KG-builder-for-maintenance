@@ -1,0 +1,29 @@
+{
+  "acceptance_id": "AC-EV-001",
+  "status": "support",
+  "timestamp_utc": "2026-07-29T13:29:52.025183Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "working_tree_dirty": true,
+  "command": "python3 -m pytest -q tests/planned/test_pdf_acceptance.py::test_ac_pdf_004",
+  "dataset": {
+    "id": "DS-G1-PDF-EDGE",
+    "sha256": "61a7d081602412e7ec01f04ad3bf33bb418dfdd7596e0a0a9eb3c19b11d8f4d8"
+  },
+  "assertions": [
+    {
+      "description": "Hierarchical accounting is balanced for five top-level pages, all children and each parent group.",
+      "passed": true
+    }
+  ],
+  "raw_artifacts": [
+    {
+      "path": "artifacts/raw/i07/pytest.xml",
+      "sha256": "cf4117d2b9448f25fc54af184944dc2ea321b3d005c151dc0f63cd1ec179b8fd"
+    }
+  ],
+  "environment": {
+    "python": "3.12.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "secrets_included": false
+  }
+}

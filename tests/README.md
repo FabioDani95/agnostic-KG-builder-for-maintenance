@@ -1,5 +1,9 @@
 # Test Suite Map
 
+> This is the test map for the imported PDF baseline. It remains a regression
+> floor. Unified MVP requirements and additional suites are governed by
+> [`docs/specs/ACCEPTANCE_CRITERIA.md`](../docs/specs/ACCEPTANCE_CRITERIA.md).
+
 How the tests are organized, what each layer answers, and how to run it.
 The **quality/performance evaluation** (golden fixtures, KPIs, real-model
 runs) is a separate layer governed by
@@ -38,7 +42,7 @@ One service or algorithm, mocked collaborators.
 | `test_ontology_merge_service.py`, `test_ontology_patch_service.py` | graph merge/patch |
 | `test_ontology_semantics.py`, `test_llm_service_semantics.py` | semantic validation rules |
 | `test_ontology_pipeline_coercion.py`, `test_ontology_pipeline_validation.py` | pipeline payload coercion/validation |
-| `test_graph_editor_validation.py` | manual graph-edit validation |
+| `test_no_graph_editor.py` | read-only graph view and absence of legacy editor/mutation APIs |
 | `test_extraction_quality_fixes.py` | regression tests for the Fase 0/1 extraction-quality bug fixes |
 | `test_improvement_sprints.py` | resolution/completion improvement passes |
 | `test_trace_recorder.py` | structured trace recording |
@@ -62,10 +66,9 @@ Several services composed, real filesystem/run-store, `KG_LLM_MODE=mock`.
 | `test_scoping_workflow.py` | scoping → cut-plan approval workflow |
 | `test_ontology_workflow_pages.py` | ontology draft over kept pages |
 | `test_multi_agent_mode_flow.py`, `test_multi_agent_state.py` | multi-agent orchestration & state |
-| `test_graph_cocreator_agent.py` | graph co-creator agent |
-| `test_chat_actions_service.py`, `test_chat_tools_state.py`, `test_chat_graph_modify_tools.py`, `test_chat_orchestrator_status.py` | chat orchestration & graph-modify tools |
+| `test_chat_actions_service.py`, `test_chat_tools_state.py`, `test_chat_orchestrator_status.py` | chat orchestration and read-only inspection tools |
 | `test_run_store.py`, `test_replay_run.py` | run persistence & replay |
-| `test_runs_router.py`, `test_modify_routes.py`, `test_generate_export_route.py` | FastAPI routes (HITL console, modify, export) |
+| `test_runs_router.py`, `test_generate_export_route.py`, `test_no_graph_editor.py` | FastAPI routes, export, and removed-route regression |
 | `test_ontology_export_store.py` | export store round-trip |
 | `test_llm_gateway.py` | gateway mode switching (mock/economy/full) |
 | `test_manual_loader.py` | markdown golden-manual loader |

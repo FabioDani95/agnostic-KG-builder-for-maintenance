@@ -1,0 +1,30 @@
+{
+  "acceptance_id": "AC-HITL-004",
+  "status": "support",
+  "timestamp_utc": "2026-07-29T13:25:20.850848Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "working_tree_dirty": true,
+  "command": "python3 -m pytest -q tests/planned/test_hitl_acceptance.py",
+  "dataset": null,
+  "assertions": [
+    {
+      "description": "Canonical run state and accounting survive application restart from SQLite.",
+      "passed": true
+    },
+    {
+      "description": "Service and database reject an illegal run transition.",
+      "passed": true
+    }
+  ],
+  "raw_artifacts": [
+    {
+      "path": "artifacts/raw/i06/pytest.xml",
+      "sha256": "8207933bd103506fb5431e5bea424f5a140e1bb37f66145cb32b73a7d142f10f"
+    }
+  ],
+  "environment": {
+    "python": "3.12.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "secrets_included": false
+  }
+}

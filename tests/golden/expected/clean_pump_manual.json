@@ -21,6 +21,11 @@
       "corrective_action": "remove and wash the inlet filter"
     }
   ],
+  "expected_quality_gates": {
+    "min_prediction_count": 1,
+    "min_recall": 0.8,
+    "max_unsupported_rate": 0.0
+  },
   "expected_human_review": {
     "required": false,
     "reason": "Diagnostic chains are explicit and unambiguous."

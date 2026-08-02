@@ -23,6 +23,11 @@
       "corrective_action": "restore air supply to 6 bar and repeat grip test"
     }
   ],
+  "expected_quality_gates": {
+    "min_prediction_count": 1,
+    "min_recall": 0.75,
+    "max_unsupported_rate": 0.0
+  },
   "expected_human_review": {
     "required": false,
     "reason": "Table rows explicitly connect code, symptom, cause, and instruction."

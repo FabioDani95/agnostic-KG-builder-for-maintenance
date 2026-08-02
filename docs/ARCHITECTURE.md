@@ -1,5 +1,11 @@
 # Architecture
 
+> **Imported baseline architecture.** This document describes the verified
+> one-PDF application at commit `54c1234`. It is not the target architecture
+> contract. Target requirements and codebase implications are defined in
+> [`/SPECIFICHE_MVP.md`](../SPECIFICHE_MVP.md) and
+> [`docs/specs/BASELINE_AND_CODEBASE_IMPACT.md`](specs/BASELINE_AND_CODEBASE_IMPACT.md).
+
 ## Purpose and scope
 
 The application turns one local maintenance PDF at a time into a reviewed,
@@ -7,8 +13,8 @@ diagnostic knowledge graph. It is an operator-assisted FastAPI application,
 not a multi-tenant service or an installable Python library.
 
 The ontology contract is defined by `ontology_schema.JSON`. The browser console
-at `/` is the only primary UI; `/modify/latest` opens the standalone editor for
-the latest exported graph.
+at `/` is the only UI. The standalone graph editor and `/modify` routes have
+been removed; graph visualization is read-only.
 
 ## Runtime flow
 
@@ -38,15 +44,14 @@ needed and runs `uvicorn backend.main:app`.
 |---|---|
 | `backend/main.py` | Application factory, router registration, health/config endpoints, static UI |
 | `backend/routers/` | HTTP and SSE adapters; no new domain logic should originate here |
-| `backend/services/` | Scoping, ontology, extraction, validation, review, export, and editor behavior |
+| `backend/services/` | Scoping, ontology, extraction, validation, review, export, and read-only graph views |
 | `backend/services/conversation/` | Action dispatch, gating, event emission, heuristics, and tool adapters |
 | `backend/agents/` | Phase-specific wrappers used by the multi-agent supervisor |
 | `backend/graph/` | Live graph state, state transitions, supervisor routing, and API projections |
 | `backend/runstore/` | Append-only events/trace, state snapshots, manifests, and archived-run loading |
 | `backend/schemas/` and `backend/models.py` | Wire, state, widget, and ontology contracts |
 | `backend/prompts/` | Model prompts only |
-| `frontend/` | HITL console plus static graph-editor assets |
-| `modify/` | Graph-editor rendering, state, schema, and graph helpers |
+| `frontend/` | HITL console |
 | `scripts/` | Offline evaluation, replay, page-offset diagnostics, and batch/manual runners |
 
 The codebase currently has no internal Python import cycles. Compatibility
@@ -75,9 +80,10 @@ in-flight model work.
 
 ## Active routes
 
-The UI uses the manual, chat/action, run, multi-agent status, export, and modify
-routes. The unused step-wise `cutplan`, `extract`, and `ontology` compatibility
-routers were removed during the cleanup on 2026-07-28.
+The UI uses the manual, chat/action, run, multi-agent status, and export routes.
+The unused step-wise `cutplan`, `extract`, and `ontology` compatibility routers
+were removed during the cleanup on 2026-07-28. The `/modify` routes were
+removed on 2026-07-29 by product decision.
 
 ## Configuration
 
@@ -102,8 +108,7 @@ correctness. See [Test Suite Map](../tests/README.md) and
 
 The architecture is modular, but several implementation units remain large:
 
-- `frontend/console.js` and `frontend/editor/editor.js`;
-- `backend/services/graph_editor_session.py`;
+- `frontend/console.js`;
 - `backend/services/scoping_workflow.py::create_cut_plan_workflow`;
 - `backend/services/ontology_workflow.py`;
 - `backend/routers/generate.py::generate_json`.

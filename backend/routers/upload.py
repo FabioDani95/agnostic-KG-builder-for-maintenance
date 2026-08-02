@@ -1,3 +1,4 @@
+import hashlib
 import os
 import shutil
 import uuid
@@ -9,6 +10,7 @@ from fastapi.responses import FileResponse
 from backend.graph.store import seed_graph_state
 from backend.models import LoadManualRequest, UploadResponse
 from backend.runstore import RunStore
+from backend.security.boundary import contained_file, validate_inventory_name
 from backend.services.pdf_service import (
     PdfEncryptedError,
     PdfReadError,
@@ -34,27 +36,49 @@ def _manuals_dir() -> Path:
 pdf_store: dict[str, dict] = {}
 
 
+def _manual_inventory() -> dict[str, Path]:
+    manuals_dir = _manuals_dir().resolve()
+    if not manuals_dir.exists():
+        return {}
+    inventory: dict[str, Path] = {}
+    for candidate in sorted(manuals_dir.iterdir()):
+        if candidate.suffix.casefold() != ".pdf":
+            continue
+        try:
+            path = contained_file(manuals_dir, candidate)
+        except FileNotFoundError:
+            continue
+        inventory[candidate.name] = path
+    return inventory
+
+
+def _inventory_id(name: str, path: Path) -> str:
+    digest = hashlib.sha256(f"{name}\x1f{path}".encode("utf-8")).hexdigest()[:24]
+    return f"manual_{digest}"
+
+
 @router.get("/api/manuals")
 async def list_manuals():
     """List available PDF manuals in the manuals/ directory."""
-    manuals_dir = _manuals_dir()
-    if not manuals_dir.exists():
-        return {"manuals": []}
     manuals = []
-    for f in sorted(manuals_dir.iterdir()):
-        if f.suffix.lower() == ".pdf":
-            manuals.append({
-                "filename": f.name,
-                "size_bytes": f.stat().st_size,
-            })
+    for name, path in _manual_inventory().items():
+        manuals.append({
+            "inventory_id": _inventory_id(name, path),
+            "filename": name,
+            "size_bytes": path.stat().st_size,
+        })
     return {"manuals": manuals}
 
 
 @router.post("/api/load-manual", response_model=UploadResponse)
 async def load_manual(req: LoadManualRequest):
     """Load a PDF from the manuals/ directory into memory for processing."""
-    manual_path = _manuals_dir() / req.filename
-    if not manual_path.exists() or not manual_path.suffix.lower() == ".pdf":
+    try:
+        inventory_name = validate_inventory_name(req.filename)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="Manual name is not an inventory entry") from exc
+    manual_path = _manual_inventory().get(inventory_name)
+    if manual_path is None:
         raise HTTPException(status_code=404, detail=f"Manual not found: {req.filename}")
 
     pdf_id = str(uuid.uuid4())

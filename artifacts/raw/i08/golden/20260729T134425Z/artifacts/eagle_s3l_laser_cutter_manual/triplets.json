@@ -1,0 +1,306 @@
+[
+  {
+    "symptom": {
+      "symptom_id": "SYM-002",
+      "name": "Machine Stop during Cut Due to Unintentional pause",
+      "description": "The machine stops in middle of cut and displays message Machine Paused.",
+      "severity": "High",
+      "evidence_page": 0
+    },
+    "failure_modes": [
+      {
+        "failure_mode_id": "FM-001",
+        "name": "Intermittent pause circuit, usually in the stop discs",
+        "description": "The cut interruption is typically caused by an intermittent pause circuit, usually in the stop discs.",
+        "material_context": "CMP-001",
+        "linked_symptom_id": "SYM-002",
+        "evidence_page": 37,
+        "error_codes": []
+      }
+    ],
+    "corrective_actions": [
+      {
+        "action_id": "CA-001",
+        "name": "Tighten the plunger to increase activation pressure",
+        "description": "Tighten the plunger to increase activation pressure and loosen to decrease activation pressure.",
+        "instruction_text": "Tighten the plunger to increase activation pressure and loosen to decrease activation pressure.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 37,
+        "linked_failure_mode_id": "FM-001",
+        "action_kind": "procedure"
+      }
+    ],
+    "error_codes": []
+  },
+  {
+    "symptom": {
+      "symptom_id": "SYM-003",
+      "name": "The buttons on the Touch Screen are out of alignment",
+      "description": "The touch screen buttons do not match where the screen needs to be touched.",
+      "severity": "Medium",
+      "evidence_page": 0
+    },
+    "failure_modes": [
+      {
+        "failure_mode_id": "FM-002",
+        "name": "Touch screen calibration is required",
+        "description": "Touch screen calibration is required when buttons are out of alignment.",
+        "material_context": "CMP-002",
+        "linked_symptom_id": "SYM-003",
+        "evidence_page": 37,
+        "error_codes": []
+      }
+    ],
+    "corrective_actions": [
+      {
+        "action_id": "CA-002",
+        "name": "Select save and exit to complete calibration",
+        "description": "Navigate to screen page 3 and select save and exit to complete calibration.",
+        "instruction_text": "Calibrate the touch screen. Select save and exit to complete calibration.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 38,
+        "linked_failure_mode_id": "FM-002",
+        "action_kind": "procedure"
+      }
+    ],
+    "error_codes": []
+  },
+  {
+    "symptom": {
+      "symptom_id": "SYM-004",
+      "name": "The Cutting Tool or Pen does not move down",
+      "description": "The tool or Pen does not move down when cutting a file.",
+      "severity": "High",
+      "evidence_page": 0
+    },
+    "failure_modes": [
+      {
+        "failure_mode_id": "FM-003",
+        "name": "Layer is not mapped to a tool or the tool is not on the tool holder",
+        "description": "The layer is not mapped to a tool or the tool is not on the tool holder.",
+        "material_context": "CMP-003",
+        "linked_symptom_id": "SYM-004",
+        "evidence_page": 38,
+        "error_codes": []
+      }
+    ],
+    "corrective_actions": [
+      {
+        "action_id": "CA-003",
+        "name": "Click and drag the tool to the spindle or the layer to the tool",
+        "description": "Click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+        "instruction_text": "Adjust the tool and layer mapping. Click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 38,
+        "linked_failure_mode_id": "FM-003",
+        "action_kind": "procedure"
+      }
+    ],
+    "error_codes": []
+  },
+  {
+    "symptom": {
+      "symptom_id": "SYM-005",
+      "name": "Laser Fume Extractor has reduced vacuum or no vacuum",
+      "description": "An odor is present when cutting with the laser tool or Laser cutting path is wider than normal.",
+      "severity": "High",
+      "evidence_page": 0
+    },
+    "failure_modes": [
+      {
+        "failure_mode_id": "FM-005",
+        "name": "Vacuum filters require replacement",
+        "description": "The fume extractor vacuum filters require replacement.",
+        "material_context": "CMP-005",
+        "linked_symptom_id": "SYM-005",
+        "evidence_page": 38,
+        "error_codes": []
+      },
+      {
+        "failure_mode_id": "FM-006",
+        "name": "Vacuum hose and funnel require cleaning",
+        "description": "The vacuum hose and funnel require cleaning.",
+        "material_context": "CMP-006",
+        "linked_symptom_id": "SYM-005",
+        "evidence_page": 38,
+        "error_codes": []
+      }
+    ],
+    "corrective_actions": [
+      {
+        "action_id": "CA-005",
+        "name": "Replace vacuum filters",
+        "description": "Replace vacuum filters.",
+        "instruction_text": "Replace vacuum filters.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 38,
+        "linked_failure_mode_id": "FM-005",
+        "action_kind": "procedure"
+      },
+      {
+        "action_id": "CA-006",
+        "name": "Clean vacuum hose and funnel",
+        "description": "Clean vacuum hose and funnel.",
+        "instruction_text": "Clean vacuum hose and funnel.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 38,
+        "linked_failure_mode_id": "FM-006",
+        "action_kind": "procedure"
+      }
+    ],
+    "error_codes": []
+  },
+  {
+    "symptom": {
+      "symptom_id": "SYM-006",
+      "name": "Laser cutting path is too wide",
+      "description": "The laser cutting path increases to an undesirable width.",
+      "severity": "High",
+      "evidence_page": 0
+    },
+    "failure_modes": [
+      {
+        "failure_mode_id": "FM-004",
+        "name": "Brass laser nozzle bent",
+        "description": "The tube or nozzle is bent, so the laser beam reflects off the inside wall of the nozzle causing a wide path.",
+        "material_context": "CMP-009",
+        "linked_symptom_id": "SYM-006",
+        "evidence_page": 39,
+        "error_codes": []
+      },
+      {
+        "failure_mode_id": "FM-007",
+        "name": "Damage to brass laser nozzle",
+        "description": "Damage to brass laser nozzle can make the cutting path too wide.",
+        "material_context": "CMP-007",
+        "linked_symptom_id": "SYM-006",
+        "evidence_page": 39,
+        "error_codes": []
+      },
+      {
+        "failure_mode_id": "FM-011",
+        "name": "Beam mirrors out of adjustment",
+        "description": "The mirrors may need to be adjusted, widening the laser cutting path.",
+        "material_context": "CMP-009",
+        "linked_symptom_id": "SYM-006",
+        "evidence_page": 39,
+        "error_codes": []
+      }
+    ],
+    "corrective_actions": [
+      {
+        "action_id": "CA-007",
+        "name": "Replace nozzle if any damage is present",
+        "description": "Replace nozzle if any damage is present.",
+        "instruction_text": "Replace nozzle if any damage is present.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 39,
+        "linked_failure_mode_id": "FM-004",
+        "action_kind": "procedure"
+      },
+      {
+        "action_id": "CA-007",
+        "name": "Replace nozzle if any damage is present",
+        "description": "Replace nozzle if any damage is present.",
+        "instruction_text": "Replace nozzle if any damage is present.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 39,
+        "linked_failure_mode_id": "FM-007",
+        "action_kind": "procedure"
+      },
+      {
+        "action_id": "CA-004",
+        "name": "Adjust the mirrors",
+        "description": "Adjust the mirrors when the laser cutting path is too wide.",
+        "instruction_text": "Adjust the mirrors as required.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 39,
+        "linked_failure_mode_id": "FM-011",
+        "action_kind": "procedure"
+      }
+    ],
+    "error_codes": []
+  },
+  {
+    "symptom": {
+      "symptom_id": "SYM-007",
+      "name": "Loss of laser cutting power",
+      "description": "The laser cutting power decreases causing non-cut edges.",
+      "severity": "High",
+      "evidence_page": 0
+    },
+    "failure_modes": [
+      {
+        "failure_mode_id": "FM-008",
+        "name": "Damaged or dirty lens",
+        "description": "The focusing lens is damaged or dirty.",
+        "material_context": "CMP-008",
+        "linked_symptom_id": "SYM-007",
+        "evidence_page": 39,
+        "error_codes": []
+      },
+      {
+        "failure_mode_id": "FM-009",
+        "name": "Damage, burn mark or dirt on the beam deflecting mirrors",
+        "description": "The beam deflecting mirrors have damage, burn mark or dirt.",
+        "material_context": "CMP-009",
+        "linked_symptom_id": "SYM-007",
+        "evidence_page": 39,
+        "error_codes": []
+      },
+      {
+        "failure_mode_id": "FM-010",
+        "name": "Damage or debris in laser nozzle",
+        "description": "Damage or debris in laser nozzle reduces cutting power.",
+        "material_context": "CMP-007",
+        "linked_symptom_id": "SYM-007",
+        "evidence_page": 39,
+        "error_codes": []
+      }
+    ],
+    "corrective_actions": [
+      {
+        "action_id": "CA-008",
+        "name": "Clean or replace lens as required",
+        "description": "Clean or replace lens as required.",
+        "instruction_text": "Clean or replace lens as required.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 39,
+        "linked_failure_mode_id": "FM-008",
+        "action_kind": "procedure"
+      },
+      {
+        "action_id": "CA-009",
+        "name": "Clean or replace mirrors as required",
+        "description": "Clean or replace mirrors as required.",
+        "instruction_text": "Clean or replace mirrors as required.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 39,
+        "linked_failure_mode_id": "FM-009",
+        "action_kind": "procedure"
+      },
+      {
+        "action_id": "CA-010",
+        "name": "Clean or replace laser nozzle as required",
+        "description": "Clean or replace laser nozzle as required.",
+        "instruction_text": "Clean or replace laser nozzle as required.",
+        "source_type": "service manual",
+        "source_title": "Eastman Eagle S3L Laser Cutting System Service Manual",
+        "source_page": 39,
+        "linked_failure_mode_id": "FM-010",
+        "action_kind": "procedure"
+      }
+    ],
+    "error_codes": []
+  }
+]

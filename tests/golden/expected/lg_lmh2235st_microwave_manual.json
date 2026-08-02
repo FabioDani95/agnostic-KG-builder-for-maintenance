@@ -26,11 +26,13 @@
   "expected_triplets": [
     {
       "error_code": "F-2",
-      "failure_mode": "PCB thermistor open"
+      "failure_mode": "PCB thermistor open",
+      "expected_gap": "failure_mode_without_action"
     },
     {
       "error_code": "F-4",
-      "failure_mode": "Humidity sensor open or short"
+      "failure_mode": "Humidity sensor open or short",
+      "expected_gap": "failure_mode_without_action"
     },
     {
       "symptom": "No display",
@@ -69,6 +71,7 @@
     }
   ],
   "expected_quality_gates": {
+    "min_prediction_count": 1,
     "min_recall": 0.85,
     "max_unsupported_rate": 0.0
   },

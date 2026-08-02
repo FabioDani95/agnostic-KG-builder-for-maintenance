@@ -1,0 +1,42 @@
+{
+  "status": "passed",
+  "timestamp_utc": "2026-07-29T18:42:30.492092Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "working_tree_dirty": true,
+  "historical_reconciliation": {
+    "imported_baseline": 313,
+    "spec_checker_delta": 1,
+    "removed_editor_tests_delta": -17,
+    "read_only_no_mutation_delta": 4,
+    "historical_checkpoint": 301,
+    "equation": "313 + 1 - 17 + 4 = 301"
+  },
+  "current_suite": {
+    "tests": 355,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "time_seconds": 29.598,
+    "count_label": "actual_current_suite",
+    "command": "python3 -m pytest -q --junitxml=artifacts/raw/i08/pytest-full.xml",
+    "artifact": "artifacts/raw/i08/pytest-full.xml"
+  },
+  "golden_mock": {
+    "fixture_count": 9,
+    "average_triplet_recall": 1.0,
+    "schema_compliant_count": 9,
+    "command": "python3 scripts/eval_golden.py --mode mock --fail-on-regression",
+    "artifact": "artifacts/raw/i08/golden/20260729T184212Z/report.json"
+  },
+  "additional_gates": {
+    "ruff": "python3 -m ruff check .",
+    "contract": "python3 scripts/check_spec_consistency.py --format json --require-status READY_FOR_PLANNING",
+    "console_e2e": "PORT=8010 PLAYWRIGHT_JSON_OUTPUT_NAME=artifacts/raw/i08/playwright.json npx playwright test --reporter=json"
+  },
+  "links": {
+    "junit": "artifacts/raw/i08/pytest-full.xml",
+    "golden_json": "artifacts/raw/i08/golden/20260729T184212Z/report.json",
+    "golden_markdown": "artifacts/raw/i08/golden/20260729T184212Z/report.md"
+  },
+  "secrets_included": false
+}

@@ -1,0 +1,23 @@
+{
+  "checkpoint": "G1",
+  "status": "pending_product_owner",
+  "timestamp_utc": "2026-07-29T20:06:14.863702Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "coverage_artifact": "artifacts/acceptance/g1/coverage.json",
+  "product_owner_checks": [
+    "Confermare una singola macchina e ricaricare la pagina.",
+    "Verificare che un documento incompatibile resti messo da parte e non venga usato.",
+    "Scegliere e approvare le cinque pagine del PDF G1.",
+    "Aprire il controllo del documento e filtrare gli elementi elaborati.",
+    "Aprire pagina 5 e trovare G1_TABLE_5_ROW_61_MARKER a tabella 5/riga 61.",
+    "Verificare zero elementi senza esito e la voce Totali verificati impostata a Sì.",
+    "Provocare il caricamento di un formato non supportato e verificare che l'errore dica cosa fare.",
+    "Ricaricare la pagina e verificare che elaborazione e conteggi siano invariati."
+  ],
+  "allowed_product_owner_decisions": [
+    "correggere G1",
+    "proseguire a G2"
+  ],
+  "decision": null,
+  "decided_at": null
+}

@@ -145,67 +145,88 @@
         "name": "Mechanical binding of dispenser lid",
         "description": "The dispenser lid is mechanically binding.",
         "material_context": "CMP-009"
+      },
+      {
+        "failure_mode_id": "FM-012",
+        "name": "Low water pressure or no water to dishwasher",
+        "description": "Water pressure is low or no water reaches the dishwasher.",
+        "material_context": "CMP-001"
+      },
+      {
+        "failure_mode_id": "FM-013",
+        "name": "Faulty control",
+        "description": "The electronic control is faulty.",
+        "material_context": "CMP-005"
+      },
+      {
+        "failure_mode_id": "FM-014",
+        "name": "Excessive suds in pump",
+        "description": "Excessive suds are present in the wash pump.",
+        "material_context": "CMP-006"
+      },
+      {
+        "failure_mode_id": "FM-015",
+        "name": "Diameter of drain hose too small",
+        "description": "The installed drain hose diameter is too small.",
+        "material_context": "CMP-008"
+      },
+      {
+        "failure_mode_id": "FM-016",
+        "name": "Drain loop check valve not sealing and waste line plugged",
+        "description": "The drain loop check valve does not seal while the disposer or waste line is plugged.",
+        "material_context": "CMP-008"
       }
     ],
     "CorrectiveAction": [
       {
         "action_id": "CA-001",
-        "name": "Check the inlet valve",
-        "description": "Check the inlet valve.",
-        "instruction_text": "Check the water supply. Check the inlet valve. Check the inlet. Check the flow meter. Replace the inlet valve if faulty.",
-        "source_type": "service manual",
-        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
-        "source_reference": "PAGE 18"
-      },
-      {
-        "action_id": "CA-002",
-        "name": "Check the heater",
-        "description": "Check the heater.",
-        "instruction_text": "Check the heater. Check the thermistor. Check the control. Replace the heater if faulty.",
-        "source_type": "service manual",
-        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
-        "source_reference": "PAGE 18"
-      },
-      {
-        "action_id": "CA-003",
-        "name": "Check the overflow switch",
-        "description": "Check the overflow switch.",
-        "instruction_text": "Check whether the appliance is level. Check the overflow switch. Check the drain pump. Locate leak and repair.",
-        "source_type": "service manual",
-        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
-        "source_reference": "PAGE 18"
-      },
-      {
-        "action_id": "CA-004",
-        "name": "Check the thermistor",
-        "description": "Check the thermistor.",
-        "instruction_text": "Check the inlet water temperature. Check the thermistor. Check the control. Replace the thermistor if out of range.",
-        "source_type": "service manual",
-        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
-        "source_reference": "PAGE 18"
-      },
-      {
-        "action_id": "CA-005",
-        "name": "Check fuses, circuit breakers and junction box connections",
-        "description": "Check fuses, circuit breakers and junction box connections.",
-        "instruction_text": "Check fuses, circuit breakers and junction box connections. Replace the fuse or reset the circuit breaker.",
-        "source_type": "service manual",
-        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
-        "source_reference": "PAGE 19"
-      },
-      {
-        "action_id": "CA-006",
-        "name": "Disconnect water line to fill valve and inspect inlet for obstruction",
-        "description": "Disconnect the water line to the fill valve and inspect the inlet for obstruction.",
-        "instruction_text": "Disconnect water line to fill valve and inspect inlet for obstruction. Remove any obstruction.",
+        "name": "Correct installation as necessary",
+        "description": "Restore an adequate water supply by correcting the installation.",
+        "instruction_text": "Restore an adequate water supply by correcting the installation as necessary.",
         "source_type": "service manual",
         "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
         "source_reference": "PAGE 20"
       },
       {
+        "action_id": "CA-002",
+        "name": "Replace control",
+        "description": "Replace the faulty electronic control.",
+        "instruction_text": "Unplug dishwasher or disconnect power. Check/replace control.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_reference": "PAGE 19"
+      },
+      {
+        "action_id": "CA-003",
+        "name": "Repeatedly fill and cancel/drain to remove suds",
+        "description": "Repeatedly fill and drain the dishwasher until excessive suds are removed.",
+        "instruction_text": "Repeatedly fill and cancel/drain to remove suds.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_reference": "PAGE 21"
+      },
+      {
+        "action_id": "CA-004",
+        "name": "Install proper drain hose",
+        "description": "Install a drain hose with the proper diameter.",
+        "instruction_text": "Check/install proper drain hose.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_reference": "PAGE 21"
+      },
+      {
+        "action_id": "CA-005",
+        "name": "Replace entire drain loop",
+        "description": "Replace the complete drain loop when the check valve leaks back.",
+        "instruction_text": "If water flows into dishwasher, replace entire drain loop.",
+        "source_type": "service manual",
+        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
+        "source_reference": "PAGE 21"
+      },
+      {
         "action_id": "CA-007",
-        "name": "Disconnect capacitor leads and confirm capacitance is as labeled",
-        "description": "Disconnect the capacitor leads and confirm the capacitance is as labeled on the part.",
+        "name": "Replace the motor start capacitor if open",
+        "description": "Replace the wash-pump motor start capacitor when it tests open.",
         "instruction_text": "Unplug dishwasher or disconnect power. Disconnect capacitor leads and confirm capacitance is as labeled on part or check resistance for open circuit across the terminals. Replace if open.",
         "source_type": "service manual",
         "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
@@ -213,26 +234,17 @@
       },
       {
         "action_id": "CA-008",
-        "name": "Remove drain pump and check impeller",
-        "description": "Remove the drain pump and check the impeller by pulling and rotating.",
+        "name": "Replace the drain pump if the impeller is stripped",
+        "description": "Replace the drain pump when its impeller is stripped.",
         "instruction_text": "Unplug dishwasher or disconnect power. Remove drain pump and check impeller by pulling and rotating. If stripped - replace.",
         "source_type": "service manual",
         "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
         "source_reference": "PAGE 21"
       },
       {
-        "action_id": "CA-009",
-        "name": "Check for blockages from sump check valve to customer's plumbing",
-        "description": "Check for blockages from the sump check valve to the customer's plumbing.",
-        "instruction_text": "Unplug dishwasher or disconnect power. Check for blockages from sump check valve to customer's plumbing. Remove the blockage.",
-        "source_type": "service manual",
-        "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
-        "source_reference": "PAGE 21"
-      },
-      {
         "action_id": "CA-010",
-        "name": "Check/replace dispenser",
-        "description": "Check or replace the dispenser.",
+        "name": "Replace the dispenser",
+        "description": "Replace the mechanically binding dispenser.",
         "instruction_text": "Unplug dishwasher or disconnect power. Check/replace dispenser.",
         "source_type": "service manual",
         "source_title": "Whirlpool 18\" & 24\" ADA Built-In Dishwashers Service Manual (W11187658)",
@@ -382,72 +394,72 @@
       ]
     },
     {
-      "name": "RESOLVED_BY",
-      "from_type": "FailureMode",
-      "from_id": "FM-001",
-      "to_type": "CorrectiveAction",
-      "to_id": "CA-001",
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-002",
+      "to_type": "FailureMode",
+      "to_id": "FM-012",
       "evidence": [
         {
-          "source_page": 18,
-          "source_reference": "PAGE 18",
-          "quote": "What to check: 1. Check the water supply. 2. Check the inlet valve."
+          "source_page": 20,
+          "source_reference": "PAGE 20",
+          "quote": "Potential cause: low water pressure or no water to dishwasher."
         }
       ]
     },
     {
-      "name": "RESOLVED_BY",
-      "from_type": "FailureMode",
-      "from_id": "FM-002",
-      "to_type": "CorrectiveAction",
-      "to_id": "CA-002",
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-001",
+      "to_type": "FailureMode",
+      "to_id": "FM-013",
       "evidence": [
         {
-          "source_page": 18,
-          "source_reference": "PAGE 18",
-          "quote": "What to check: 1. Check the heater. 2. Check the thermistor."
+          "source_page": 19,
+          "source_reference": "PAGE 19",
+          "quote": "Potential cause: faulty control."
         }
       ]
     },
     {
-      "name": "RESOLVED_BY",
-      "from_type": "FailureMode",
-      "from_id": "FM-003",
-      "to_type": "CorrectiveAction",
-      "to_id": "CA-003",
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-003",
+      "to_type": "FailureMode",
+      "to_id": "FM-014",
       "evidence": [
         {
-          "source_page": 18,
-          "source_reference": "PAGE 18",
-          "quote": "3. Check the overflow switch. 4. Check the drain pump."
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "Potential cause: excessive suds in pump due to using wrong or too much detergent or rinse aid."
         }
       ]
     },
     {
-      "name": "RESOLVED_BY",
-      "from_type": "FailureMode",
-      "from_id": "FM-004",
-      "to_type": "CorrectiveAction",
-      "to_id": "CA-004",
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-004",
+      "to_type": "FailureMode",
+      "to_id": "FM-015",
       "evidence": [
         {
-          "source_page": 18,
-          "source_reference": "PAGE 18",
-          "quote": "Causes: temperature sensor open circuit, E6 will be displayed. What to check: 1. Check the inlet water temperature. 2. Check the thermistor."
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "Potential cause: diameter of drain hose too small."
         }
       ]
     },
     {
-      "name": "RESOLVED_BY",
-      "from_type": "FailureMode",
-      "from_id": "FM-005",
-      "to_type": "CorrectiveAction",
-      "to_id": "CA-004",
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "SYM-004",
+      "to_type": "FailureMode",
+      "to_id": "FM-016",
       "evidence": [
         {
-          "source_page": 18,
-          "source_reference": "PAGE 18",
-          "quote": "Causes: temperature sensor short circuit, E7 will be displayed. What to check: 1. Check the inlet water temperature. 2. Check the thermistor."
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "Potential cause: drain loop check valve not sealing and customer disposer/waste line partially or fully plugged."
         }
       ]
     },
@@ -468,14 +480,14 @@
     {
       "name": "RESOLVED_BY",
       "from_type": "FailureMode",
-      "from_id": "FM-006",
+      "from_id": "FM-012",
       "to_type": "CorrectiveAction",
-      "to_id": "CA-005",
+      "to_id": "CA-001",
       "evidence": [
         {
-          "source_page": 19,
-          "source_reference": "PAGE 19",
-          "quote": "Check: check fuses, circuit breakers and junction box connections."
+          "source_page": 20,
+          "source_reference": "PAGE 20",
+          "quote": "Verify water is turned on and supply line adequate. Correct installation as necessary."
         }
       ]
     },
@@ -496,14 +508,14 @@
     {
       "name": "RESOLVED_BY",
       "from_type": "FailureMode",
-      "from_id": "FM-007",
+      "from_id": "FM-013",
       "to_type": "CorrectiveAction",
-      "to_id": "CA-006",
+      "to_id": "CA-002",
       "evidence": [
         {
-          "source_page": 20,
-          "source_reference": "PAGE 20",
-          "quote": "Check: disconnect water line to fill valve and inspect inlet for obstruction."
+          "source_page": 19,
+          "source_reference": "PAGE 19",
+          "quote": "Potential cause: faulty control. Check: 1. Unplug dishwasher or disconnect power. 2. Check/replace control."
         }
       ]
     },
@@ -531,7 +543,7 @@
         {
           "source_page": 21,
           "source_reference": "PAGE 21",
-          "quote": "Disconnect capacitor leads and confirm capacitance is as labeled on part or check resistance for open circuit across the terminals."
+          "quote": "Disconnect capacitor leads and confirm capacitance is as labeled on part or check resistance for open circuit across the terminals. Replace if open."
         }
       ]
     },
@@ -580,14 +592,42 @@
     {
       "name": "RESOLVED_BY",
       "from_type": "FailureMode",
-      "from_id": "FM-010",
+      "from_id": "FM-014",
       "to_type": "CorrectiveAction",
-      "to_id": "CA-009",
+      "to_id": "CA-003",
       "evidence": [
         {
           "source_page": 21,
           "source_reference": "PAGE 21",
-          "quote": "Check for blockages from sump check valve to customer's plumbing."
+          "quote": "Repeatedly fill and cancel/drain to remove suds."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-015",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-004",
+      "evidence": [
+        {
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "Potential cause: diameter of drain hose too small. Check: check/install proper drain hose."
+        }
+      ]
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "FM-016",
+      "to_type": "CorrectiveAction",
+      "to_id": "CA-005",
+      "evidence": [
+        {
+          "source_page": 21,
+          "source_reference": "PAGE 21",
+          "quote": "If water flows into dishwasher, replace entire drain loop."
         }
       ]
     },

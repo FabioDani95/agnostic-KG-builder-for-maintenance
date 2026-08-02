@@ -18,7 +18,9 @@ Completed actions:
   QA report to `docs/archive/`.
 - Removed the unused step-wise `cutplan`, `extract`, and `ontology` routers,
   their environment flag, and their compatibility-only tests. The active
-  `generate`, console, run, chat, multi-agent, upload, and modify routes remain.
+  `generate`, console, run, chat, multi-agent, upload, and, at the audit date,
+  `modify` routes remained. The `modify` routes were intentionally removed on
+  2026-07-29 by `DEC-022`.
 - Moved the live report-producing probe from
   `tests/chatbot_e2e_test.py` to `scripts/live_chat_benchmark.py`.
 - Removed the obsolete triplet-extraction phase from

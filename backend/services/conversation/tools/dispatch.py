@@ -9,13 +9,8 @@ import logging
 from typing import Any
 
 from backend.services.conversation.tools.export import (
-    _add_exported_relationship,
-    _delete_exported_node,
-    _delete_exported_relationship,
     _export_ontology,
     _inspect_exported_graph,
-    _save_exported_graph,
-    _update_exported_node,
 )
 from backend.services.conversation.tools.extraction import (
     _re_extract_pages,
@@ -31,9 +26,7 @@ from backend.services.conversation.tools.inspect import (
     _list_extracted_triplets,
 )
 from backend.services.conversation.tools.ontology import (
-    _add_node_manual,
     _apply_suggested_relation,
-    _confirm_node_manual,
     _draft_ontology,
     _fill_required_field,
 )
@@ -81,15 +74,8 @@ _DISPATCH_MAP = {
     "approve_triplet": _approve_triplet,
     "skip_triplet": _skip_triplet,
     "edit_triplet": _edit_triplet,
-    "add_node_manual": _add_node_manual,
-    "confirm_node_manual": _confirm_node_manual,
     "export_ontology": _export_ontology,
     "inspect_exported_graph": _inspect_exported_graph,
-    "update_exported_node": _update_exported_node,
-    "delete_exported_node": _delete_exported_node,
-    "add_exported_relationship": _add_exported_relationship,
-    "delete_exported_relationship": _delete_exported_relationship,
-    "save_exported_graph": _save_exported_graph,
     "list_extracted_nodes": _list_extracted_nodes,
     "list_extracted_triplets": _list_extracted_triplets,
     "get_progress": _get_progress,

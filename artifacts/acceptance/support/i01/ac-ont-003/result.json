@@ -1,0 +1,26 @@
+{
+  "acceptance_id": "AC-ONT-003",
+  "status": "support",
+  "timestamp_utc": "2026-07-29T12:52:51.346451Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "working_tree_dirty": true,
+  "command": "python3 -m pytest -q tests/planned/test_ws_acceptance.py",
+  "dataset": null,
+  "assertions": [
+    {
+      "description": "Workspace bootstrap persists exactly one Asset; publication validation remains owned by E08.",
+      "passed": true
+    }
+  ],
+  "raw_artifacts": [
+    {
+      "path": "artifacts/raw/i01/pytest.txt",
+      "sha256": "bcf1d5c4b48eb865c02e5e09caeecb0a60123acd90509e9dcbed439a180fde31"
+    }
+  ],
+  "environment": {
+    "python": "3.12.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "secrets_included": false
+  }
+}

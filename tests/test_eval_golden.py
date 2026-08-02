@@ -109,6 +109,109 @@ def test_error_code_rooted_expected_matches_graph_chain():
     assert result["matches"][0]["source"] == "graph_error_code"
 
 
+def test_expected_gap_rejects_resolved_by_even_when_projection_is_actionless():
+    eg = _load_eval_module()
+    actionless_projection = _triplet(
+        "Water inlet failure",
+        [("temperature sensor open circuit", "")],
+        codes_by_fm={"temperature sensor open circuit": ["E6"]},
+    )
+    ontology = {
+        "nodes": {
+            "ErrorCode": [
+                {"error_code_id": "ec_e6", "name": "E6", "code": "E6", "description": ""}
+            ],
+            "FailureMode": [
+                {
+                    "failure_mode_id": "fm_sensor",
+                    "name": "Temperature sensor open circuit",
+                    "description": "",
+                    "material_context": "",
+                }
+            ],
+            "CorrectiveAction": [
+                {
+                    "action_id": "ca_check",
+                    "name": "Check the thermistor",
+                    "description": "",
+                    "instruction_text": "",
+                }
+            ],
+        },
+        "relations": [
+            {"name": "INDICATES", "from_id": "ec_e6", "to_id": "fm_sensor"},
+            {"name": "RESOLVED_BY", "from_id": "fm_sensor", "to_id": "ca_check"},
+        ],
+    }
+    expected = [{
+        "error_code": "E6",
+        "failure_mode": "temperature sensor open circuit",
+        "expected_gap": "failure_mode_without_action",
+    }]
+
+    result = eg._match_triplets(expected, [actionless_projection], ontology=ontology)
+    assert result["matched"] == 1
+    assert not result["expected_gaps"]["passed"]
+    assert result["expected_gaps"]["violations"][0]["source"] == "graph_resolved_by"
+
+
+def test_expected_gap_passes_without_action_and_omission_is_not_negative():
+    eg = _load_eval_module()
+    actionless = _triplet("No draining", [("drain path blocked", "")])
+    gap = [{
+        "symptom": "No draining",
+        "failure_mode": "drain path blocked",
+        "expected_gap": "failure_mode_without_action",
+    }]
+    result = eg._match_triplets(gap, [actionless])
+    assert result["matched"] == 1
+    assert result["expected_gaps"]["passed"]
+
+    # A legacy omission remains "action not scored"; it is not a negative
+    # assertion and therefore does not create a gap violation.
+    with_action = _triplet("No draining", [("drain path blocked", "replace the drain hose")])
+    result = eg._match_triplets(
+        [{"symptom": "No draining", "failure_mode": "drain path blocked"}],
+        [with_action],
+    )
+    assert result["matched"] == 1
+    assert result["expected_gaps"]["expected"] == 0
+
+
+def test_expected_gap_validation_and_sibling_cause_disambiguation():
+    eg = _load_eval_module()
+    with_action = {
+        "failure_mode": "failed sensor",
+        "corrective_action": "replace sensor",
+        "expected_gap": "failure_mode_without_action",
+    }
+    try:
+        eg._match_triplets([with_action], [])
+    except ValueError as exc:
+        assert "mutually exclusive" in str(exc)
+    else:
+        raise AssertionError("expected invalid gap annotation to be rejected")
+
+    sibling = _triplet(
+        "Manipulator crashes on power down",
+        [("faulty motor holding brake", "replace the motor")],
+    )
+    expected = [{
+        "symptom": "Manipulator crashes on power down",
+        "failure_mode": "faulty power supply to the brake",
+        "expected_gap": "failure_mode_without_action",
+    }]
+    result = eg._match_triplets(expected, [sibling])
+    assert result["expected_gaps"]["passed"]
+
+    actionless_sibling = _triplet(
+        "Manipulator crashes on power down",
+        [("faulty motor holding brake", "")],
+    )
+    result = eg._match_triplets(expected, [actionless_sibling])
+    assert result["matched"] == 0
+
+
 def test_forbidden_chain_violation_is_detected():
     eg = _load_eval_module()
     contaminated = _triplet("No draining", [("machine not level", "Level the machine")])
@@ -176,18 +279,71 @@ def test_paraphrased_fm_is_grounded_via_relation_quote():
 
 def test_quality_gates_floor_and_unsupported_rate():
     eg = _load_eval_module()
-    expected = {"expected_quality_gates": {"min_recall": 0.75, "max_unsupported_rate": 0.0}}
-    ok = eg._quality_gates_result(expected, {"recall": 0.8, "chains": {"unsupported_rate": 0.0}})
-    assert ok["passed"] and ok["min_recall"]["passed"] and ok["max_unsupported_rate"]["passed"]
+    expected = {"expected_quality_gates": {
+        "min_prediction_count": 1,
+        "min_recall": 0.75,
+        "max_unsupported_rate": 0.0,
+    }}
+    ok = eg._quality_gates_result(
+        expected,
+        {"recall": 0.8, "chains": {"total": 1, "unsupported_rate": 0.0}},
+    )
+    assert (
+        ok["passed"]
+        and ok["min_prediction_count"]["passed"]
+        and ok["min_recall"]["passed"]
+        and ok["max_unsupported_rate"]["passed"]
+    )
 
-    low_recall = eg._quality_gates_result(expected, {"recall": 0.5, "chains": {"unsupported_rate": 0.0}})
+    low_recall = eg._quality_gates_result(
+        expected,
+        {"recall": 0.5, "chains": {"total": 1, "unsupported_rate": 0.0}},
+    )
     assert not low_recall["passed"] and not low_recall["min_recall"]["passed"]
 
-    hallucinating = eg._quality_gates_result(expected, {"recall": 1.0, "chains": {"unsupported_rate": 0.1}})
+    hallucinating = eg._quality_gates_result(
+        expected,
+        {"recall": 1.0, "chains": {"total": 1, "unsupported_rate": 0.1}},
+    )
     assert not hallucinating["passed"]
 
-    # No gates defined → vacuously passing, and no baseline-recall skip.
-    assert eg._quality_gates_result({}, {"recall": 0.1})["passed"]
+    empty = eg._quality_gates_result({}, {"recall": 0.0, "chains": {"total": 0}})
+    assert not empty["passed"] and not empty["configuration"]["passed"]
+
+    no_predictions = eg._quality_gates_result(
+        expected,
+        {"recall": 1.0, "chains": {"total": 0, "unsupported_rate": 0.0}},
+    )
+    assert not no_predictions["passed"]
+    assert not no_predictions["min_prediction_count"]["passed"]
+
+
+def test_machine_logs_ingestion_view_is_blinded():
+    eg = _load_eval_module()
+    views = eg._machine_log_views()
+
+    assert views["ingestion_rows"], "machine_logs.csv must contain regression rows"
+    assert set(views["label_columns"]) == set(eg.MACHINE_LOG_LABEL_COLUMNS)
+    assert not set(views["ingestion_columns"]) & set(eg.MACHINE_LOG_LABEL_COLUMNS)
+    assert all(
+        not set(row) & set(eg.MACHINE_LOG_LABEL_COLUMNS)
+        for row in views["ingestion_rows"]
+    )
+    assert len(views["ingestion_rows"]) == len(views["label_rows"])
+
+
+def test_all_checked_in_fixtures_make_actionless_expectations_explicit():
+    expected_dir = Path(__file__).resolve().parent / "golden" / "expected"
+    for path in expected_dir.glob("*.json"):
+        fixture = json.loads(path.read_text(encoding="utf-8"))
+        gates = fixture.get("expected_quality_gates") or {}
+        assert gates.get("min_prediction_count", 0) > 0, path.name
+        for item in fixture.get("expected_triplets") or []:
+            if not str(item.get("corrective_action") or "").strip():
+                assert item.get("expected_gap") == "failure_mode_without_action", (
+                    path.name,
+                    item,
+                )
 
 
 def test_gate_failures_include_quality_gates():
@@ -199,6 +355,27 @@ def test_gate_failures_include_quality_gates():
     }]}
     failures = eg._report_gate_failures(report)
     assert any("min_recall" in failure for failure in failures)
+
+
+def test_gate_failures_include_expected_gap_violations():
+    eg = _load_eval_module()
+    report = {"fixtures": [{
+        "fixture_id": "fx",
+        "scoping": {"must_keep_passed": True},
+        "export_checks": {"passed": True},
+        "ontology": {
+            "schema_issues_by_severity": {"error": 0},
+            "dangling_relations": 0,
+            "human_review": {"matched": True},
+        },
+        "triplets": {
+            "forbidden": {"violations": []},
+            "expected_gaps": {"violations": [{"failure_mode": "failed sensor"}]},
+        },
+        "quality_gates": {"passed": True},
+    }]}
+    failures = eg._report_gate_failures(report)
+    assert any("expected-gap" in failure for failure in failures)
 
 
 def test_gate_failures_include_structural_contracts():
@@ -327,6 +504,10 @@ def test_eval_golden_mock_runs_all_fixtures_and_writes_report(tmp_path):
         assert fixture["triplets"]["forbidden"]["passed"] is True, (
             f"{fixture['fixture_id']}: forbidden chain violations "
             f"{fixture['triplets']['forbidden']['violations']}"
+        )
+        assert fixture["triplets"]["expected_gaps"]["passed"] is True, (
+            f"{fixture['fixture_id']}: expected-gap violations "
+            f"{fixture['triplets']['expected_gaps']['violations']}"
         )
         assert fixture["artifacts"], "expected audit artifacts to be written"
         assert fixture["quality_gates"]["passed"] is True, (

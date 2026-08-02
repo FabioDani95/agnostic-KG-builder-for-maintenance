@@ -1,0 +1,37 @@
+{
+  "acceptance_id": "AC-EV-001",
+  "status": "support",
+  "timestamp_utc": "2026-07-29T14:28:35.916737Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "working_tree_dirty": true,
+  "command": "python3 -m pytest -q --junitxml=artifacts/raw/i08/pytest-full.xml",
+  "dataset": {
+    "id": "DS-G1-PDF-EDGE",
+    "sha256": "61a7d081602412e7ec01f04ad3bf33bb418dfdd7596e0a0a9eb3c19b11d8f4d8"
+  },
+  "assertions": [
+    {
+      "description": "All G1 fixtures have zero unclassified RawUnits with balanced source/top-level/child/parent accounting.",
+      "passed": true
+    },
+    {
+      "description": "The run manifest records the canonical active-ledger hash.",
+      "passed": true
+    }
+  ],
+  "raw_artifacts": [
+    {
+      "path": "artifacts/raw/i08/pytest-full.xml",
+      "sha256": "05121b1ad25e7004110727eab1405d60c54e5834d496a967737cda7172b56c25"
+    },
+    {
+      "path": "artifacts/regression/g1/result.json",
+      "sha256": "6d7fcd576d64c3c83e8304d27c7537214754edcff8ea0daf07e3602c45220803"
+    }
+  ],
+  "environment": {
+    "python": "3.12.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "secrets_included": false
+  }
+}

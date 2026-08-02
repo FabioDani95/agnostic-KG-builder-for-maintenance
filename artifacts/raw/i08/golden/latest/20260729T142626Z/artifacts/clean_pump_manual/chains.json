@@ -1,0 +1,30 @@
+[
+  {
+    "triplet_index": 0,
+    "symptom_id": "SYM-001",
+    "symptom": "Pump does not start The pump does not start when power is applied.",
+    "failure_mode": "Blown motor fuse The 10 A motor fuse is blown.",
+    "failure_mode_name": "Blown motor fuse",
+    "failure_mode_id": "FM-001",
+    "error_code": "",
+    "source": "projection",
+    "corrective_action": "Replace the 10 A motor fuse Replace the blown motor fuse and restart the pump. Replace the 10 A motor fuse, close the fuse holder, and restart the pump.",
+    "corrective_action_name": "Replace the 10 A motor fuse",
+    "action_id": "CA-001",
+    "status": "matched"
+  },
+  {
+    "triplet_index": 1,
+    "symptom_id": "SYM-002",
+    "symptom": "Low discharge pressure Discharge pressure is below the expected value.",
+    "failure_mode": "Clogged inlet filter The inlet filter is clogged and restricts flow.",
+    "failure_mode_name": "Clogged inlet filter",
+    "failure_mode_id": "FM-002",
+    "error_code": "",
+    "source": "projection",
+    "corrective_action": "Remove and wash the inlet filter Clean the clogged inlet filter and verify discharge pressure. Remove the inlet filter, wash it with clean water, reinstall it, and run a pressure test.",
+    "corrective_action_name": "Remove and wash the inlet filter",
+    "action_id": "CA-002",
+    "status": "matched"
+  }
+]

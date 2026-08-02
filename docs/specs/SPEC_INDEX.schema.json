@@ -1,0 +1,525 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "SPEC_INDEX.schema.json",
+  "title": "Maintenance KG Builder specification index",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "package",
+    "obligations",
+    "verifications",
+    "artifacts",
+    "decisions",
+    "findings",
+    "readiness"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schema_version": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "integer",
+          "minimum": 1
+        }
+      ]
+    },
+    "package": {
+      "$ref": "#/$defs/package"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/item"
+      }
+    },
+    "obligations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/obligation"
+      }
+    },
+    "verifications": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/verification"
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact"
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/decision"
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "readiness": {
+      "$ref": "#/$defs/readiness"
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "idArray": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/nonEmptyString"
+      }
+    },
+    "package": {
+      "type": "object",
+      "required": [
+        "spec_version",
+        "normative_documents",
+        "ontology"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "spec_version": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "normative_documents": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/nonEmptyString"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "path"
+                ],
+                "properties": {
+                  "path": {
+                    "$ref": "#/$defs/nonEmptyString"
+                  },
+                  "defines": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                      "enum": [
+                        "requirement",
+                        "contract",
+                        "acceptance",
+                        "dataset",
+                        "decision"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": true
+              }
+            ]
+          }
+        },
+        "ontology": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "$ref": "#/$defs/nonEmptyString"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^(?:sha256:)?[0-9a-fA-F]{64}$"
+            }
+          },
+          "additionalProperties": true
+        },
+        "snapshot_sha256": {
+          "type": "string",
+          "pattern": "^(?:sha256:)?[0-9a-fA-F]{64}$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "location": {
+      "type": "object",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "heading": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      },
+      "additionalProperties": true
+    },
+    "item": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "status",
+        "defined_at"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "kind": {
+          "enum": [
+            "requirement",
+            "contract",
+            "acceptance",
+            "dataset"
+          ]
+        },
+        "status": {
+          "enum": [
+            "active",
+            "superseded",
+            "deprecated"
+          ]
+        },
+        "defined_at": {
+          "$ref": "#/$defs/location"
+        }
+      },
+      "additionalProperties": true
+    },
+    "obligation": {
+      "type": "object",
+      "required": [
+        "id",
+        "source_id",
+        "verified_behavior",
+        "acceptance_ids",
+        "verification_ids",
+        "artifact_ids"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "source_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "verified_behavior": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "acceptance_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "verification_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "artifact_ids": {
+          "$ref": "#/$defs/idArray"
+        }
+      },
+      "additionalProperties": true
+    },
+    "verification": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "lifecycle",
+        "assertion"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "kind": {
+          "enum": [
+            "automated",
+            "manual"
+          ]
+        },
+        "lifecycle": {
+          "enum": [
+            "specified",
+            "implemented"
+          ]
+        },
+        "runner": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "target": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "protocol": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "assertion": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "dataset_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "target"
+          ]
+        },
+        {
+          "required": [
+            "protocol"
+          ]
+        }
+      ],
+      "additionalProperties": true
+    },
+    "artifact": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "lifecycle"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "kind": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "lifecycle": {
+          "enum": [
+            "specified",
+            "implemented"
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "path_pattern": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "schema_ref": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "observables": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "description": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "path"
+          ]
+        },
+        {
+          "required": [
+            "path_pattern"
+          ]
+        },
+        {
+          "required": [
+            "schema_ref"
+          ]
+        },
+        {
+          "required": [
+            "observables"
+          ]
+        }
+      ],
+      "additionalProperties": true
+    },
+    "decision": {
+      "type": "object",
+      "required": [
+        "id",
+        "status",
+        "scope",
+        "planning_blocker",
+        "statement"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "status": {
+          "enum": [
+            "OPEN",
+            "PROPOSED",
+            "ACCEPTED",
+            "REJECTED",
+            "SUPERSEDED",
+            "DEFERRED"
+          ]
+        },
+        "scope": {
+          "enum": [
+            "product",
+            "implementation"
+          ]
+        },
+        "planning_blocker": {
+          "type": "boolean"
+        },
+        "statement": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "rationale": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "owner": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "related_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "superseded_by": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      },
+      "additionalProperties": true
+    },
+    "finding": {
+      "type": "object",
+      "required": [
+        "id",
+        "status",
+        "planning_blocker",
+        "summary"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "status": {
+          "enum": [
+            "OPEN",
+            "RESOLVED",
+            "CLOSED",
+            "ACCEPTED_RISK",
+            "DEFERRED"
+          ]
+        },
+        "planning_blocker": {
+          "type": "boolean"
+        },
+        "planning_disposition": {
+          "enum": [
+            "must_resolve_pre_plan",
+            "plan_backlog",
+            "accepted_deferred"
+          ]
+        },
+        "summary": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "related_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "resolution_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "approval": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "PENDING",
+            "APPROVED",
+            "REJECTED"
+          ]
+        },
+        "reviewer": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "approver": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "approved_at": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "package_digest": {
+          "type": "string",
+          "pattern": "^(?:sha256:)?[0-9a-fA-F]{64}$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "readiness": {
+      "type": "object",
+      "required": [
+        "declared_status",
+        "semantic_review",
+        "owner_approval"
+      ],
+      "properties": {
+        "declared_status": {
+          "enum": [
+            "NOT_READY",
+            "AWAITING_OWNER_APPROVAL",
+            "READY_FOR_PLANNING"
+          ]
+        },
+        "semantic_review": {
+          "$ref": "#/$defs/approval"
+        },
+        "owner_approval": {
+          "$ref": "#/$defs/approval"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

@@ -17,6 +17,10 @@
 const ACCENT = "#C96442";
 const ENABLE_LIVE_PROGRESS = true;
 const app = document.getElementById("app");
+if (window.KGFoundation && window.KGFoundation.shouldMount()) {
+  window.KGFoundation.mount(app);
+  return;
+}
 
 /* ── colors (design tokens) ── */
 const C = {
@@ -1702,7 +1706,7 @@ function buildInspector() {
           note = L("Accettando, la relazione suggerita viene aggiunta al grafo.", "Accepting adds the suggested relation to the graph.");
         } else {
           btns.push(actionBtn(L("Segna come gestita", "Mark as handled"), "primary", () => decide(item, "resolved")));
-          note = L("Per collegare i nodi a mano usa l'editor del grafo. La decisione resta nel diario della sessione.", "To link nodes by hand use the graph editor. The decision is recorded in the session log.");
+          note = L("Non creare collegamenti manuali: lascia l'elemento aperto oppure rigenera la proposta da un'evidenza verificabile.", "Do not create manual links: leave the item open or regenerate the proposal from verifiable evidence.");
         }
         btns.push(actionBtn(L("Lascia aperta (dichiarata nell'export)", "Leave open (declared in the export)"), "ghost", () => decide(item, "ignored")));
       } else if (item.kind === "low_confidence") {
@@ -1713,7 +1717,7 @@ function buildInspector() {
           : L("Il rifiuto esclude il nodo dal grafo. La decisione resta nel diario della sessione.", "Rejecting removes the node from the graph. The decision is recorded in the session log.");
       } else {
         btns.push(actionBtn(L("Prendi atto", "Acknowledge"), "ghost", () => decide(item, "acknowledged")));
-        note = L("Segnalazione informativa: non blocca l'export. L'eventuale correzione si fa nell'editor del grafo.", "Informational note: it does not block the export. Any fix is done in the graph editor.");
+        note = L("Segnalazione informativa: non blocca la pubblicazione. Una correzione richiede una nuova proposta supportata da evidenza.", "Informational note: it does not block publication. A correction requires a new evidence-backed proposal.");
       }
       inner += actionsBlock(btns, note);
     }

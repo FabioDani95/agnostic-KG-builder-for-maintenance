@@ -1,0 +1,26 @@
+{
+  "acceptance_id": "AC-PDF-001",
+  "status": "passed",
+  "timestamp_utc": "2026-07-29T13:09:02.431934Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "working_tree_dirty": true,
+  "command": "python3 -m pytest -q tests/planned/test_pdf_acceptance.py tests/test_pdf_service.py tests/test_page_offset_service.py tests/test_cutplan_service.py tests/test_scoping_workflow.py tests/test_ontology_workflow_pages.py tests/test_extraction_quality_fixes.py tests/test_generate_export_route.py",
+  "dataset": null,
+  "assertions": [
+    {
+      "description": "Characterized native text, selective OCR, page offset, scoping, tables, grounding, controlled review and legacy publish remain green.",
+      "passed": true
+    }
+  ],
+  "raw_artifacts": [
+    {
+      "path": "artifacts/raw/i03/pytest.txt",
+      "sha256": "4b902baab8f5698df2423f2360f5cf2b1da58ffecac77de9eff8d3a502e41e6a"
+    }
+  ],
+  "environment": {
+    "python": "3.12.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "secrets_included": false
+  }
+}

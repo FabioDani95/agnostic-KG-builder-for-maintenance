@@ -21,9 +21,7 @@ KNOWN_WIDGET_TYPES = {
     "triplet",
     "triplet_review_start",
     "required_fields",
-    "node_draft",
     "extraction_graph",
-    "modify_workspace_sync",
     "export",
     "run_metrics",
 }
@@ -96,23 +94,11 @@ def sample_widget_payloads() -> dict[str, dict[str, Any]]:
                 }
             ],
         },
-        "node_draft": {
-            "status": "pending_confirmation",
-            "node_type": "Symptom",
-            "raw_text": "pump vibrates",
-            "normalized_name": "Pump Vibration",
-            "normalized_description": "The pump vibrates during operation.",
-        },
         "extraction_graph": {
             "status": "ok",
             "graph": sample_extraction_graph(),
             "action": "validated",
             "index": 0,
-        },
-        "modify_workspace_sync": {
-            "status": "ok",
-            "editor_url": "/modify/pdf-characterization",
-            "workspace": {"nodes": [], "edges": []},
         },
         "export": {
             "status": "done",

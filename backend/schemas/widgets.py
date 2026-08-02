@@ -12,9 +12,7 @@ class WidgetType(StrEnum):
     TRIPLET = "triplet"
     TRIPLET_REVIEW_START = "triplet_review_start"
     REQUIRED_FIELDS = "required_fields"
-    NODE_DRAFT = "node_draft"
     EXTRACTION_GRAPH = "extraction_graph"
-    MODIFY_WORKSPACE_SYNC = "modify_workspace_sync"
     EXPORT = "export"
     RUN_METRICS = "run_metrics"
 
@@ -60,23 +58,9 @@ class RequiredFieldsWidgetPayload(_WidgetPayloadBase):
     fields: list[dict[str, Any]] = Field(default_factory=list)
 
 
-class NodeDraftWidgetPayload(_WidgetPayloadBase):
-    widget: Literal[WidgetType.NODE_DRAFT]
-    node_type: str | None = None
-    raw_text: str | None = None
-    normalized_name: str | None = None
-    normalized_description: str | None = None
-
-
 class ExtractionGraphWidgetPayload(_WidgetPayloadBase):
     widget: Literal[WidgetType.EXTRACTION_GRAPH]
     graph: dict[str, Any] | None = None
-
-
-class ModifyWorkspaceSyncWidgetPayload(_WidgetPayloadBase):
-    widget: Literal[WidgetType.MODIFY_WORKSPACE_SYNC]
-    editor_url: str | None = None
-    workspace: dict[str, Any] | None = None
 
 
 class ExportWidgetPayload(_WidgetPayloadBase):
@@ -98,9 +82,7 @@ WidgetPayload = Annotated[
     | TripletWidgetPayload
     | TripletReviewStartWidgetPayload
     | RequiredFieldsWidgetPayload
-    | NodeDraftWidgetPayload
     | ExtractionGraphWidgetPayload
-    | ModifyWorkspaceSyncWidgetPayload
     | ExportWidgetPayload
     | RunMetricsWidgetPayload,
     Field(discriminator="widget"),

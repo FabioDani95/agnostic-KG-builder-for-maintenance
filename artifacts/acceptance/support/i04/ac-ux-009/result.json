@@ -1,0 +1,26 @@
+{
+  "acceptance_id": "AC-UX-009",
+  "status": "support",
+  "timestamp_utc": "2026-07-29T13:14:08.249116Z",
+  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "working_tree_dirty": true,
+  "command": "python3 -m pytest -q tests/planned/test_sec_acceptance.py",
+  "dataset": null,
+  "assertions": [
+    {
+      "description": "Upload failures expose object, cause, preserved state, action, technical detail and retryability without hiding existing sources; parser/provider/validator cases remain owned by E11.",
+      "passed": true
+    }
+  ],
+  "raw_artifacts": [
+    {
+      "path": "artifacts/raw/i04/pytest.txt",
+      "sha256": "4f036a72070e5fc15fa573d2ec5d979f3736c90baf91c5f384f8e06fc4377391"
+    }
+  ],
+  "environment": {
+    "python": "3.12.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "secrets_included": false
+  }
+}

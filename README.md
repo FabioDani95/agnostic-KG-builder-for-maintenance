@@ -1,4 +1,24 @@
-# Agnostic KG Builder for Maintenance
+# Maintenance Knowledge Graph Builder
+
+> Development fork. The code below is the verified PDF-pipeline baseline imported
+> from `agnostic-KG-builder-for-maintenance`. The target product is specified in
+> [SPECIFICHE_MVP.md](SPECIFICHE_MVP.md): one machine per workspace, many PDF,
+> CSV, XLSX and JSON sources, and one merged knowledge graph. The central
+> ontology remains unchanged.
+
+## Target Product
+
+The authoritative specification is:
+
+- [MVP specification](SPECIFICHE_MVP.md)
+- [normative specification package](docs/specs/README.md)
+
+The specification-driven implementation has started with G1: secure workspace,
+source/evidence foundations, PDF ingestion and accounting. G1 is ready for
+Product Owner verification; the behavior described below still includes the
+imported baseline surfaces that remain during the migration.
+
+## Imported Baseline
 
 A FastAPI application with a browser UI for building diagnostic knowledge graphs from maintenance manuals, one manual at a time.
 
@@ -15,7 +35,7 @@ architecture, evaluation protocol, and repository-cleanup status.
 - Supports human validation before export
 - Exports a best-effort ontology JSON bundle to `output/`, surfacing contract gaps as warnings instead of blocking the final file
 
-## Current System Specification
+## Baseline System Specification
 
 ### Product Scope
 
@@ -101,13 +121,12 @@ The exported ontology is normalized and validated against the current contract b
 - export warnings are stored in `metadata.export_warnings` and counted in `metadata.export_warning_count`
 - the HTTP export response also returns `X-Export-Warnings-Count`
 
-### Graph Editor
+### Graph access
 
-After an export is available, the latest ontology can be inspected in the browser at:
-
-```text
-http://127.0.0.1:8000/modify/latest
-```
+The standalone graph editor and the `/modify` API were intentionally removed.
+Published graphs are immutable. The console may visualize review candidates
+and published data in read-only mode; corrections must go through an
+evidence-backed HITL decision before a new version is published.
 
 ### Current Repository Policy
 
@@ -120,8 +139,7 @@ http://127.0.0.1:8000/modify/latest
 
 ```text
 backend/          FastAPI routes, pipeline services, agents, schemas, and run persistence
-frontend/         HITL console and standalone graph editor
-modify/           Graph-editor domain and rendering helpers
+frontend/         HITL console
 scripts/          Evaluation, replay, benchmark, and batch utilities
 tests/            Python, contract, golden-evaluation, and browser tests
 docs/             Current technical docs plus clearly labelled historical records
@@ -178,10 +196,12 @@ The script creates `.venv` if needed, installs Python dependencies when missing,
 ## Deployment Boundary
 
 The current application is designed for a trusted local operator. It has no
-authentication, accepts runtime configuration changes, uses permissive CORS,
-and reads/writes the local filesystem. Do not expose it directly to an
-untrusted network without adding authentication, authorization, restrictive
-CORS, request limits, and a hardened storage boundary.
+authentication and accepts runtime configuration changes. The G1 boundary
+binds to loopback by default, accepts only configured local Host/Origin values,
+uses server-side file inventories with canonical containment, and enforces
+documented upload/body/request limits. It still must not be exposed directly
+to an untrusted network; doing so requires authentication and authorization in
+addition to the trusted-local controls.
 
 ## Tests
 

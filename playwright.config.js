@@ -1,6 +1,7 @@
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const port = process.env.PORT || "8000";
 const baseURL = `http://127.0.0.1:${port}`;
+const foundationDataRoot = `/tmp/log-kg-builder-e2e-${process.pid}`;
 
 module.exports = {
   testDir: "./tests",
@@ -19,6 +20,9 @@ module.exports = {
       // and run persistence away from data/runs (see backend/runstore).
       KG_OUTPUT_DIR: "output_e2e",
       KG_RUNS_DIR: "runs_e2e",
+      KG_OPERATIONAL_DB: `${foundationDataRoot}/operational.db`,
+      KG_RAW_DIR: `${foundationDataRoot}/raw`,
+      KG_INCOMING_DIR: `${foundationDataRoot}/incoming`,
       // No tokens in e2e: the LLM gateway serves deterministic mock replies.
       KG_LLM_MODE: "mock",
       // The real-backend spec loads this small committed fixture manual.

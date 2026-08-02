@@ -1,0 +1,20 @@
+[
+  {
+    "kind": "ambiguous_multi_cause_symptom",
+    "severity": "review",
+    "target_type": "Symptom",
+    "target_id": "SYM-001",
+    "label": "Belt stops intermittently",
+    "reason": "Symptom has multiple MAY_INDICATE links to possible FailureModes.",
+    "suggested_fix": "Confirm that all listed failure modes are valid parallel causes, or remove the incorrect link.",
+    "candidate_count": 2,
+    "candidate_failure_mode_ids": [
+      "FM-001",
+      "FM-002"
+    ],
+    "candidate_failure_mode_labels": [
+      "Photo-eye sensor blocked by dust",
+      "Belt tension below specification"
+    ]
+  }
+]

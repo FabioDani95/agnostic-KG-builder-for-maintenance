@@ -27,6 +27,7 @@ from backend.graph.store import (
 )
 from backend.routers.upload import pdf_store
 from backend.runstore import RunStore
+from backend.security.boundary import contained_file, validate_inventory_name
 from backend.services.ontology_patch_service import apply_ontology_patch
 
 router = APIRouter(prefix="/api/runs", tags=["runs"])
@@ -148,8 +149,10 @@ async def get_run(run_id: str) -> dict[str, Any]:
 async def download_export_file(run_id: str, filename: str):
     """Download one persisted export artifact of an archived run."""
     run_dir = RunStore().run_dir(run_id)
-    path = (run_dir / "export" / filename).resolve()
-    if not str(path).startswith(str((run_dir / "export").resolve())) or not path.is_file():
+    try:
+        inventory_name = validate_inventory_name(filename)
+        path = contained_file(run_dir / "export", run_dir / "export" / inventory_name)
+    except (ValueError, FileNotFoundError):
         raise HTTPException(status_code=404, detail="Export file not found.")
     return FileResponse(path, filename=path.name)
 

@@ -14,7 +14,22 @@ from backend.app_config import (
     get_pipeline_config,
     get_scoping_config,
 )
-from backend.routers import chat, generate, modify, multi_agent, runs, upload
+from backend.routers import (
+    chat,
+    generate,
+    multi_agent,
+    preparation,
+    runs,
+    sources,
+    upload,
+    workspaces,
+)
+from backend.security.boundary import (
+    LocalRequestBoundaryMiddleware,
+    RequestLimitMiddleware,
+    allowed_origins,
+)
+from backend.storage.database import get_database
 
 logging.basicConfig(
     level=logging.INFO,
@@ -23,21 +38,26 @@ logging.basicConfig(
 )
 
 def create_app() -> FastAPI:
+    get_database()
     app = FastAPI(title="Diagnostic Extraction API")
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_origins=allowed_origins(),
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["Accept", "Content-Type", "Origin"],
     )
+    app.add_middleware(RequestLimitMiddleware)
+    app.add_middleware(LocalRequestBoundaryMiddleware)
 
     app.include_router(upload.router)
     app.include_router(generate.router)
-    app.include_router(modify.router)
     app.include_router(multi_agent.router)
     app.include_router(chat.router)
     app.include_router(runs.router)
+    app.include_router(workspaces.router)
+    app.include_router(sources.router)
+    app.include_router(preparation.router)
 
     @app.get("/api/config")
     async def get_frontend_config():

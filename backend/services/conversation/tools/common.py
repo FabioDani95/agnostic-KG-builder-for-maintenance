@@ -299,8 +299,8 @@ def _build_triplet_graph_payload(
     *,
     focus_index: int | None = None,
 ) -> dict[str, Any]:
-    """Build the same graph data shape used by modify.graph, with review focus metadata."""
-    from modify.graph import build_graph
+    """Build a read-only graph payload with review focus metadata."""
+    from backend.services.graph_view_service import build_graph
 
     nodes_by_type: dict[str, list[dict[str, Any]]] = {
         "Symptom": [],
@@ -515,22 +515,10 @@ def _apply_triplet_patch(triplet: dict[str, Any], patch: dict[str, Any]) -> dict
     return triplet
 
 
-def _modify_workspace_payload(store: dict[str, Any], *, refresh: bool = False) -> dict[str, Any]:
-    pdf_id = str(store.get("pdf_id") or "latest")
-    return {
-        "editor_url": f"/modify/{pdf_id}" if pdf_id and pdf_id != "latest" else "/modify",
-        "pdf_id": pdf_id,
-        "refresh": refresh,
-    }
-
-
 def _resolve_exported_graph_path(store: dict[str, Any]):
-    from backend.services import graph_editor_session
+    from backend.services.graph_view_service import resolve_published_graph_path
 
-    return graph_editor_session.resolve_ontology_path(
-        str(store.get("pdf_id") or "latest"),
-        store=store,
-    )
+    return resolve_published_graph_path(store)
 
 
 def _graph_type_counts(ontology: dict[str, Any]) -> tuple[dict[str, int], dict[str, int]]:
@@ -550,7 +538,7 @@ def _graph_type_counts(ontology: dict[str, Any]) -> tuple[dict[str, int], dict[s
 
 
 def _search_exported_nodes(ontology: dict[str, Any], query: str, *, limit: int = 8) -> list[dict[str, Any]]:
-    from modify.graph import _node_id, _node_label
+    from backend.services.graph_view_service import node_id, node_label
 
     terms = [term for term in str(query or "").lower().split() if term]
     if not terms:
@@ -559,14 +547,14 @@ def _search_exported_nodes(ontology: dict[str, Any], query: str, *, limit: int =
     matches: list[dict[str, Any]] = []
     for node_type, items in (ontology.get("nodes") or {}).items():
         for obj in items or []:
-            node_id = _node_id(obj)
-            if not node_id:
+            current_node_id = node_id(obj)
+            if not current_node_id:
                 continue
-            label = _node_label(obj, node_id)
+            label = node_label(obj, current_node_id)
             haystack = " ".join(
                 [
                     str(node_type),
-                    str(node_id),
+                    str(current_node_id),
                     str(label),
                     *(str(value) for value in obj.values()),
                 ]
@@ -574,7 +562,7 @@ def _search_exported_nodes(ontology: dict[str, Any], query: str, *, limit: int =
             if not all(term in haystack for term in terms):
                 continue
             matches.append({
-                "id": node_id,
+                "id": current_node_id,
                 "label": label,
                 "type": str(node_type),
             })

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import csv
 import json
 import os
 import re
@@ -16,6 +17,15 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 GOLDEN_DIR = REPO_ROOT / "tests" / "golden"
+MACHINE_LOG_LABEL_COLUMNS = frozenset({
+    "semantic_text",
+    "event_signature_id",
+    "linked_failure_mode_id",
+    "linked_symptom_id",
+    "quality_flags",
+})
+EXPECTED_GAP_FAILURE_MODE_WITHOUT_ACTION = "failure_mode_without_action"
+ALLOWED_EXPECTED_GAPS = frozenset({EXPECTED_GAP_FAILURE_MODE_WITHOUT_ACTION})
 
 
 def _now_slug() -> str:
@@ -23,7 +33,48 @@ def _now_slug() -> str:
 
 
 def _load_expected(fixture_id: str) -> dict[str, Any]:
-    return json.loads((GOLDEN_DIR / "expected" / f"{fixture_id}.json").read_text(encoding="utf-8"))
+    expected = json.loads(
+        (GOLDEN_DIR / "expected" / f"{fixture_id}.json").read_text(encoding="utf-8")
+    )
+    for item in expected.get("expected_triplets") or []:
+        _validate_expected_item(item)
+    return expected
+
+
+def _machine_log_views(path: Path = REPO_ROOT / "machine_logs.csv") -> dict[str, Any]:
+    """Return a label-free ingestion view and evaluator-only label view.
+
+    The raw CSV is read once and left untouched. Candidate generation,
+    linking, embeddings and model adapters may consume only
+    ``ingestion_rows``. ``label_rows`` is reserved for scoring after
+    predictions have been frozen.
+    """
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        reader = csv.DictReader(handle)
+        if reader.fieldnames is None:
+            raise ValueError(f"{path}: missing CSV header")
+        raw_columns = [str(name) for name in reader.fieldnames]
+        rows = [dict(row) for row in reader]
+
+    ingestion_columns = [
+        name for name in raw_columns if name not in MACHINE_LOG_LABEL_COLUMNS
+    ]
+    label_columns = [
+        name for name in raw_columns if name in MACHINE_LOG_LABEL_COLUMNS
+    ]
+    return {
+        "raw_columns": raw_columns,
+        "ingestion_columns": ingestion_columns,
+        "label_columns": label_columns,
+        "ingestion_rows": [
+            {name: row.get(name) for name in ingestion_columns}
+            for row in rows
+        ],
+        "label_rows": [
+            {name: row.get(name) for name in label_columns}
+            for row in rows
+        ],
+    }
 
 
 def _fixture_ids(selected: str | None) -> list[str]:
@@ -79,6 +130,22 @@ def _strict_match(expected: str, actual: str) -> bool:
         return True
     actual_norm = _normalize(actual)
     return bool(actual_norm) and expected_norm in actual_norm
+
+
+def _validate_expected_item(expected_item: dict[str, Any]) -> None:
+    gap = str(expected_item.get("expected_gap") or "").strip()
+    if not gap:
+        return
+    if gap not in ALLOWED_EXPECTED_GAPS:
+        raise ValueError(
+            f"unsupported expected_gap {gap!r}; allowed: {sorted(ALLOWED_EXPECTED_GAPS)}"
+        )
+    if str(expected_item.get("corrective_action") or "").strip():
+        raise ValueError(
+            "expected_gap and corrective_action are mutually exclusive in one expected item"
+        )
+    if not str(expected_item.get("failure_mode") or "").strip():
+        raise ValueError("expected_gap requires a non-empty failure_mode")
 
 
 def _part_text(node: dict[str, Any], keys: tuple[str, ...]) -> str:
@@ -183,6 +250,7 @@ def _graph_error_code_chains(ontology: Any) -> list[dict[str, Any]]:
             "symptom": "",
             "failure_mode": _part_text(failure, ("name", "description")),
             "failure_mode_name": str(failure.get("name", "") or ""),
+            "failure_mode_id": fm_id,
             "error_code": code,
             "source": "graph_error_code",
         }
@@ -194,21 +262,139 @@ def _graph_error_code_chains(ontology: Any) -> list[dict[str, Any]]:
                     **base,
                     "corrective_action": _part_text(action, ("name", "description", "instruction_text")),
                     "corrective_action_name": str(action.get("name", "") or ""),
+                    "action_id": action_id,
                 })
         else:
-            chains.append({**base, "corrective_action": "", "corrective_action_name": ""})
+            chains.append({
+                **base,
+                "corrective_action": "",
+                "corrective_action_name": "",
+                "action_id": "",
+            })
     return chains
 
 
-def _expected_matches_chain(expected_item: dict[str, Any], chain: dict[str, Any]) -> bool:
+def _graph_resolved_chains(ontology: Any) -> list[dict[str, Any]]:
+    """Every explicit graph FM→RESOLVED_BY→CA edge with available context.
+
+    This view is used for negative gap assertions. It deliberately does not
+    depend on projected triplets: a projection bug or an actionless projection
+    must never hide a RESOLVED_BY edge that exists in the ontology.
+    """
+    payload = ontology.model_dump() if hasattr(ontology, "model_dump") else (ontology or {})
+    nodes = payload.get("nodes") or {}
+
+    def _by_id(label: str, id_field: str) -> dict[str, dict[str, Any]]:
+        return {
+            str(node.get(id_field, "") or "").strip(): node
+            for node in nodes.get(label) or []
+            if isinstance(node, dict) and str(node.get(id_field, "") or "").strip()
+        }
+
+    symptoms = _by_id("Symptom", "symptom_id")
+    error_codes = _by_id("ErrorCode", "error_code_id")
+    failure_modes = _by_id("FailureMode", "failure_mode_id")
+    actions = _by_id("CorrectiveAction", "action_id")
+    symptoms_by_fm: dict[str, list[str]] = {}
+    codes_by_fm: dict[str, list[str]] = {}
+    actions_by_fm: dict[str, list[str]] = {}
+
+    for relation in payload.get("relations") or []:
+        if not isinstance(relation, dict):
+            continue
+        name = str(relation.get("name") or relation.get("type") or "").strip()
+        from_id = str(relation.get("from_id") or "").strip()
+        to_id = str(relation.get("to_id") or "").strip()
+        if name == "MAY_INDICATE" and from_id in symptoms and to_id in failure_modes:
+            symptoms_by_fm.setdefault(to_id, []).append(from_id)
+        elif name == "INDICATES" and from_id in error_codes and to_id in failure_modes:
+            codes_by_fm.setdefault(to_id, []).append(from_id)
+        elif name == "RESOLVED_BY" and from_id in failure_modes and to_id in actions:
+            actions_by_fm.setdefault(from_id, []).append(to_id)
+
+    chains: list[dict[str, Any]] = []
+    for fm_id, action_ids in actions_by_fm.items():
+        failure = failure_modes[fm_id]
+        symptom_ids: list[str | None] = symptoms_by_fm.get(fm_id) or [None]
+        error_code_ids: list[str | None] = codes_by_fm.get(fm_id) or [None]
+        for symptom_id in symptom_ids:
+            symptom = symptoms.get(symptom_id or "", {})
+            for error_code_id in error_code_ids:
+                error_code = error_codes.get(error_code_id or "", {})
+                for action_id in action_ids:
+                    action = actions[action_id]
+                    chains.append({
+                        "symptom": _part_text(symptom, ("name", "description")),
+                        "symptom_id": symptom_id or "",
+                        "failure_mode": _part_text(failure, ("name", "description")),
+                        "failure_mode_name": str(failure.get("name", "") or ""),
+                        "failure_mode_id": fm_id,
+                        "corrective_action": _part_text(
+                            action,
+                            ("name", "description", "instruction_text"),
+                        ),
+                        "corrective_action_name": str(action.get("name", "") or ""),
+                        "action_id": action_id,
+                        "error_code": str(
+                            error_code.get("code") or error_code.get("name") or ""
+                        ).strip(),
+                        "source": "graph_resolved_by",
+                    })
+    return chains
+
+
+def _expected_context_matches_chain(
+    expected_item: dict[str, Any],
+    chain: dict[str, Any],
+) -> bool:
     checks = [
         _soft_match(expected_item.get("symptom", ""), chain.get("symptom", "")),
         _soft_match(expected_item.get("failure_mode", ""), chain.get("failure_mode", "")),
-        _soft_match(expected_item.get("corrective_action", ""), chain.get("corrective_action", "")),
     ]
     if expected_item.get("error_code"):
         checks.append(_code_match(expected_item.get("error_code", ""), chain.get("error_code", "")))
     return all(checks)
+
+
+def _expected_gap_context_matches_chain(
+    expected_item: dict[str, Any],
+    chain: dict[str, Any],
+) -> bool:
+    """Identify the same claim conservatively before asserting no action.
+
+    Gap violations are negative assertions. A loose 0.6 token-overlap match
+    can conflate sibling causes (for example "faulty power supply to the
+    brake" with "faulty motor holding brake"). Error codes disambiguate code
+    chains; prose-only gaps therefore require strict failure-mode containment.
+    """
+    if not _soft_match(expected_item.get("symptom", ""), chain.get("symptom", "")):
+        return False
+    if expected_item.get("error_code"):
+        return _code_match(
+            expected_item.get("error_code", ""),
+            chain.get("error_code", ""),
+        ) and _soft_match(
+            expected_item.get("failure_mode", ""),
+            chain.get("failure_mode", ""),
+        )
+    return _strict_match(
+        expected_item.get("failure_mode", ""),
+        chain.get("failure_mode", ""),
+    )
+
+
+def _expected_matches_chain(expected_item: dict[str, Any], chain: dict[str, Any]) -> bool:
+    if expected_item.get("expected_gap") == EXPECTED_GAP_FAILURE_MODE_WITHOUT_ACTION:
+        return (
+            _expected_gap_context_matches_chain(expected_item, chain)
+            and not _normalize(chain.get("corrective_action", ""))
+        )
+    if not _expected_context_matches_chain(expected_item, chain):
+        return False
+    return _soft_match(
+        expected_item.get("corrective_action", ""),
+        chain.get("corrective_action", ""),
+    )
 
 
 def _forbidden_matches_chain(rule: dict[str, Any], chain: dict[str, Any]) -> bool:
@@ -311,10 +497,39 @@ def _match_triplets(
     page_texts: list[str] | None = None,
     forbidden: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
+    for expected_item in expected:
+        _validate_expected_item(expected_item)
+
     projection_chains: list[dict[str, Any]] = []
     for index, triplet in enumerate(actual_triplets):
         projection_chains.extend(_triplet_chains(triplet, index))
     graph_chains = _graph_error_code_chains(ontology) if ontology is not None else []
+    graph_resolved_chains = (
+        _graph_resolved_chains(ontology) if ontology is not None else []
+    )
+
+    expected_gap_items = [
+        item
+        for item in expected
+        if item.get("expected_gap") == EXPECTED_GAP_FAILURE_MODE_WITHOUT_ACTION
+    ]
+    expected_gap_violations: list[dict[str, Any]] = []
+    for expected_item in expected_gap_items:
+        for chain in [*projection_chains, *graph_resolved_chains]:
+            if (
+                _expected_gap_context_matches_chain(expected_item, chain)
+                and _normalize(chain.get("corrective_action", ""))
+            ):
+                expected_gap_violations.append({
+                    "expected": expected_item,
+                    "source": chain.get("source", ""),
+                    "symptom": chain.get("symptom", ""),
+                    "failure_mode": chain.get("failure_mode", ""),
+                    "failure_mode_id": chain.get("failure_mode_id", ""),
+                    "corrective_action": chain.get("corrective_action", ""),
+                    "action_id": chain.get("action_id", ""),
+                    "error_code": chain.get("error_code", ""),
+                })
 
     matches: list[dict[str, Any]] = []
     unmatched: list[dict[str, Any]] = []
@@ -404,6 +619,11 @@ def _match_triplets(
             "rules": len(forbidden or []),
             "violations": violations,
             "passed": not violations,
+        },
+        "expected_gaps": {
+            "expected": len(expected_gap_items),
+            "violations": expected_gap_violations,
+            "passed": not expected_gap_violations,
         },
     }
 
@@ -513,22 +733,62 @@ def _quality_gates_result(expected: dict[str, Any], triplet_match: dict[str, Any
     per-fixture floor (min_recall) states the actual quality bar; when
     present it REPLACES the baseline recall comparison. max_unsupported_rate
     (typically 0.0) turns the no-hallucination result into a hard gate.
+    min_prediction_count is mandatory and strictly positive, so an empty
+    predictor cannot pass on zero denominators.
     """
     gates = expected.get("expected_quality_gates") or {}
     results: dict[str, Any] = {}
-    if "min_recall" in gates:
+    minimum_predictions = gates.get("min_prediction_count")
+    minimum_recall = gates.get("min_recall")
+    maximum_unsupported = gates.get("max_unsupported_rate")
+
+    def _is_number(value: Any) -> bool:
+        return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+    valid_minimum = (
+        isinstance(minimum_predictions, int)
+        and not isinstance(minimum_predictions, bool)
+        and minimum_predictions > 0
+    )
+    valid_recall = bool(
+        _is_number(minimum_recall) and 0 < float(minimum_recall) <= 1
+    )
+    valid_unsupported = bool(
+        _is_number(maximum_unsupported)
+        and 0 <= float(maximum_unsupported) <= 1
+    )
+    results["configuration"] = {
+        "expected": (
+            "min_prediction_count > 0, 0 < min_recall <= 1, "
+            "0 <= max_unsupported_rate <= 1"
+        ),
+        "actual": {
+            "min_prediction_count": minimum_predictions,
+            "min_recall": minimum_recall,
+            "max_unsupported_rate": maximum_unsupported,
+        },
+        "passed": valid_minimum and valid_recall and valid_unsupported,
+    }
+    if valid_minimum:
+        actual = int((triplet_match.get("chains") or {}).get("total", 0) or 0)
+        results["min_prediction_count"] = {
+            "expected": minimum_predictions,
+            "actual": actual,
+            "passed": actual >= minimum_predictions,
+        }
+    if valid_recall:
         actual = float(triplet_match.get("recall", 0))
         results["min_recall"] = {
-            "expected": float(gates["min_recall"]),
+            "expected": float(minimum_recall),
             "actual": actual,
-            "passed": actual >= float(gates["min_recall"]),
+            "passed": actual >= float(minimum_recall),
         }
-    if "max_unsupported_rate" in gates:
+    if valid_unsupported:
         actual = float((triplet_match.get("chains") or {}).get("unsupported_rate", 0))
         results["max_unsupported_rate"] = {
-            "expected": float(gates["max_unsupported_rate"]),
+            "expected": float(maximum_unsupported),
             "actual": actual,
-            "passed": actual <= float(gates["max_unsupported_rate"]),
+            "passed": actual <= float(maximum_unsupported),
         }
     results["passed"] = all(
         value.get("passed", True) for value in results.values() if isinstance(value, dict)
@@ -716,6 +976,10 @@ async def _run_fixture(
             "schema_compliant": ontology_result.is_schema_compliant,
             "schema_issues": len(ontology_result.schema_issues),
             "schema_issues_by_severity": _count_by([item.severity for item in ontology_result.schema_issues]),
+            "schema_issue_details": [
+                item.model_dump() if hasattr(item, "model_dump") else dict(item)
+                for item in ontology_result.schema_issues
+            ],
             "node_counts": _ontology_counts(ontology_result.ontology),
             "relation_count": len(ontology_result.ontology.relations or []),
             "dangling_relations": _dangling_relation_count(ontology_result.ontology),
@@ -755,6 +1019,7 @@ def _write_markdown_report(path: Path, report: dict[str, Any]) -> None:
     for fixture in report["fixtures"]:
         chains = fixture["triplets"].get("chains") or {}
         forbidden = fixture["triplets"].get("forbidden") or {}
+        expected_gaps = fixture["triplets"].get("expected_gaps") or {}
         gates = fixture.get("quality_gates") or {}
         gate_line = ", ".join(
             f"{name} {'pass' if gate.get('passed') else 'FAIL'} ({gate.get('actual')}/{gate.get('expected')})"
@@ -771,6 +1036,7 @@ def _write_markdown_report(path: Path, report: dict[str, Any]) -> None:
             f"{chains.get('unsupported', 0)} unsupported (of {chains.get('total', 0)})",
             f"- chain precision (strict/grounded): {chains.get('precision_strict', 0)} / {chains.get('grounded_precision', 0)}",
             f"- forbidden chains: {'pass' if forbidden.get('passed', True) else 'FAIL (' + str(len(forbidden.get('violations') or [])) + ' violations)'}",
+            f"- expected gaps: {'pass' if expected_gaps.get('passed', True) else 'FAIL (' + str(len(expected_gaps.get('violations') or [])) + ' unexpected action(s))'}",
             f"- quality gates: {gate_line}",
             f"- schema issues: {fixture['ontology']['schema_issues']}",
             f"- human review match: {fixture['ontology']['human_review']['matched']}",
@@ -815,6 +1081,13 @@ def _report_gate_failures(report: dict[str, Any]) -> list[str]:
         violations = (item.get("triplets", {}).get("forbidden") or {}).get("violations") or []
         if violations:
             failures.append(f"{item['fixture_id']}: {len(violations)} forbidden chain violation(s)")
+        gap_violations = (
+            item.get("triplets", {}).get("expected_gaps") or {}
+        ).get("violations") or []
+        if gap_violations:
+            failures.append(
+                f"{item['fixture_id']}: {len(gap_violations)} expected-gap violation(s)"
+            )
         gates = item.get("quality_gates") or {}
         for gate_name, gate in gates.items():
             if isinstance(gate, dict) and not gate.get("passed", True):
