@@ -140,7 +140,7 @@ Qualsiasi differenza deve bloccare il run prima dell'estrazione.
 
 ### AC-ONT-002 — Tipi e proprietà
 
-Per ogni artifact pubblicato:
+Per ogni sottografo candidato approvabile e per ogni artifact pubblicato:
 
 - tipi di nodo ammessi: esattamente i 6 dell'ontologia;
 - relazioni ammesse: esattamente le 6 dell'ontologia;
@@ -149,6 +149,11 @@ Per ogni artifact pubblicato:
 - endpoint mancanti: `0`;
 - domain/range errati: `0`;
 - ID duplicati: `0`.
+
+La validazione deve essere eseguita sul payload effettivo, non dedotta dal
+checksum dello schema o da enum dei soli nomi. Inserendo una proprietà
+obbligatoria vuota o una proprietà extra, API e UI devono impedire
+`approve_source_subgraph` e indicare nodo e proprietà da correggere.
 
 ### AC-ONT-003 — Asset e componenti
 
@@ -186,7 +191,10 @@ Tentare di approvare una fonte attribuita a una macchina differente deve:
 
 - deve esistere un solo `graph_id`;
 - il manifest deve elencare tutte le source approvate;
-- non devono esistere export per singolo documento;
+- deve esistere una revisione di sottografo candidata per ogni source, con
+  approvazione source-scoped precedente al merge;
+- non devono esistere versioni pubblicate o export finali separati per singolo
+  documento;
 - evidenze equivalenti devono supportare gli stessi nodi o relazioni;
 - il graph diff deve riferirsi allo stesso workspace.
 
@@ -195,31 +203,42 @@ Tentare di approvare una fonte attribuita a una macchina differente deve:
 Dopo la pubblicazione `V001`, aggiungere una nuova fonte deve:
 
 - lasciare `V001` byte-invariata;
-- produrre un candidate delta;
+- non rieseguire parsing, generation o approvazione delle fonti già presenti,
+  salvo fingerprint/configurazione esplicitamente invalidati;
+- produrre e richiedere approvazione del solo sottografo della nuova fonte;
+- impedire linking/merge con `V001` finché quel sottografo non è approvato;
+- produrre un candidate delta rispetto a `base_graph_version=V001` con nuovi
+  nodi, link, merge, conflitti e invariati distinguibili;
 - creare `V002` soltanto dopo approvazione;
-- elencare nuova fonte e decisioni nel manifest `V002`.
+- elencare nuova fonte, revisione del sottografo e decisioni nel manifest
+  `V002`;
+- dimostrare che `apply(V001, approved_delta) == V002`.
 
 ### AC-WS-004 — Idempotenza
 
-Ricaricare lo stesso file con configurazione compatibile deve:
+Selezionare o inviare nuovamente un file già attivo con configurazione
+compatibile deve:
 
 - riutilizzare il raw;
 - non duplicare evidence unit;
 - non duplicare nodi o relazioni;
-- mostrare cache hit;
-- produrre lo stesso candidate result deterministico, salvo output modello
-  esplicitamente non deterministico.
+- essere bloccato nella UI prima dell'invio con un messaggio esplicito;
+- essere rifiutato dalla API con `409` se il controllo client viene aggirato.
 
-### AC-WS-005 — Attribuzione fonte–macchina
+Se il file era stato rimosso, il nuovo caricamento deve invece ripristinare la
+stessa Source e riusare raw, evidence, scope e run compatibili.
 
-Su una fixture per ciascun esito `compatible`, `uncertain` e `incompatible`:
+### AC-WS-005 — Attribuzione operatore della fonte
 
-- segnali osservati e locator devono essere registrati;
-- soltanto `compatible` può contribuire automaticamente al candidate graph;
-- `uncertain` e `incompatible` devono restare fuori dal candidate graph;
-- la risoluzione di `uncertain` richiede una decisione operatore tracciata;
-- un override non può creare un secondo Asset;
-- riaprire la decisione deve ripristinare lo stato precedente.
+Caricando file supportati scelti dall'operatore:
+
+- ogni file deve apparire subito nell'inventory come accettato;
+- non deve essere eseguita una classificazione contenutistica di appartenenza;
+- non devono apparire conferme `uncertain`/`incompatible` o quarantene;
+- l'operatore deve poter rimuovere ogni file con una × rossa e conferma
+  esplicita prima di procedere;
+- ricaricare lo stesso contenuto deve ripristinarlo senza duplicare il raw;
+- deve restare un solo Asset nel workspace.
 
 ## 5. Ingestion PDF
 
@@ -246,13 +265,16 @@ Ogni evidenza derivata da PDF deve avere:
 
 Copertura locator sulle evidenze PDF usate dal grafo: `100%`.
 
-### AC-PDF-003 — Scoping HITL
+### AC-PDF-003 — Preparazione automatica e idempotente
 
-L'operatore deve poter modificare lo scope. Dopo l'approvazione:
+Al caricamento di un PDF:
 
-- pagine escluse non alimentano l'estrazione ordinaria;
-- modifiche sono registrate;
-- ripetere il run riusa lo scope approvato compatibile.
+- tutte le pagine fisiche devono essere incluse automaticamente;
+- la UI non deve mostrare checkbox, elenco pagina-per-pagina o approvazione;
+- il riepilogo deve dire che il file è caricato e tutte le pagine sono incluse;
+- ripetere simultaneamente o in sequenza lo stesso caricamento deve rispondere
+  con successo e riusare source, scope versione 1 e run compatibile;
+- l'endpoint manuale di modifica dello scope non deve essere disponibile.
 
 ### AC-PDF-004 — OCR incerto
 
@@ -315,6 +337,11 @@ Un mapping approvato deve essere riutilizzato con fingerprint compatibile.
 
 Una modifica a nome, tipo o presenza di una colonna chiave deve richiedere
 nuova approvazione.
+
+Una matrice con intestazioni canoniche, sinonimi, nomi aziendali con spazi,
+intestazioni italiane e colonne sconosciute deve verificare che ogni campo
+diagnostico sia mappato oppure produca un'eccezione bloccante. La perdita
+semantica silenziosa tramite fallback `attribute` deve essere `0`.
 
 ### AC-JOIN-001 — Join esplicito e lineage composito
 
@@ -538,20 +565,33 @@ nodo già pubblicato.
 
 ## 9. Human in the Loop
 
+La numerazione dei gate HITL di questa sezione è distinta dai checkpoint
+Product Owner `G1`–`G5`: `AC-HITL-002` non è il test del checkpoint Product
+Owner G2, che è definito da `AC-UX-014` insieme ai criteri di ingestion
+strutturata.
+
 ### AC-HITL-001 — Gate 1
 
 Non deve essere possibile avviare l'estrazione semantica se esiste:
 
 - macchina non confermata;
-- PDF senza scope approvato;
-- tabella inclusa senza mapping approvato;
-- join non validato.
+- nessun file supportato caricato dall'operatore.
 
-Uno scope o mapping completato automaticamente conta come approvato soltanto
-se esiste una delega operatore registrata, non presenta eccezioni bloccanti e
-riporta configurazione e soglie applicate.
+Il caricamento costituisce la decisione di attribuzione. Tutte le pagine PDF
+sono preparate automaticamente; G1 non richiede scope manuale, mapping,
+classificazione contenutistica o delega aggiuntiva.
 
 ### AC-HITL-002 — Review
+
+Per ogni fonte il test deve prima mostrare il sottografo generato e richiedere
+una decisione persistita `approve_source_subgraph` o
+`reject_source_subgraph`. Prima che tutte le fonti incluse siano approvate, le
+operazioni cross-source devono produrre zero proposte e restare bloccate alla
+barriera di merge.
+
+La decisione `approve_source_subgraph` deve essere rifiutata se la validazione
+strict dell'ontologia non è `passed`, se esistono mapping semantici irrisolti o
+se il risultato parziale non ha disposition e knowledge gap espliciti.
 
 Per ogni candidate ambiguo l'operatore deve poter:
 
@@ -789,13 +829,19 @@ Con la stessa configurazione immutabile:
 Un test E2E deve attraversare:
 
 ```text
-Macchina → Fonti → Preparazione → Elaborazione → Revisione → Pubblicazione
+Home workspace → Macchina → Caricamento → Controllo file → Struttura dati → Elaborazione → Revisione → Pubblicazione
 ```
 
 con un solo workspace e senza dover usare schermate tecniche esterne al
 percorso. Lo stepper deve mostrare passo corrente, passi completati e primo
 blocco. Una URL non consentita dallo stato deve riportare al blocco precedente
 con spiegazione.
+
+La home deve mostrare il workspace G1 persistito con stato derivato e conteggio
+dei documenti. Aprirlo deve ripristinare per ID la stessa macchina e lo stesso
+source inventory; tornando alla home il conteggio deve essere aggiornato.
+`+ Nuovo workspace` deve aprire un onboarding vuoto, creare un ID differente e
+far comparire una seconda card senza modificare il primo workspace.
 
 ### AC-UX-002 — Upload misto
 
@@ -806,18 +852,24 @@ Nello stesso source inventory deve essere possibile caricare almeno:
 - 1 XLSX;
 - 1 JSON o JSONL.
 
-Ogni fonte deve mostrare formato, hash, lingua, autorità e stato. Il test deve
-verificare duplicate detection, rifiuto di un formato non supportato e
-quarantena per macchina incompatibile senza creare un altro grafo.
+Ogni fonte deve mostrare almeno formato, nome, hash abbreviato, autorità e
+stato. Il test deve verificare duplicate detection, rifiuto di un formato non
+supportato prima dell'invio, rimozione intuitiva e assenza di gate di
+associazione.
 
-### AC-UX-003 — Preparazione adattiva
+### AC-UX-003 — Preparazione automatica G1
 
-Selezionare un PDF deve mostrare preview pagina/testo/tabella e controllo dello
-scope. Selezionare una fonte strutturata deve mostrare profiling, mapping,
-semantic text e join.
+Caricare PDF e fonti strutturate deve mostrare lo stato `Caricato` accanto alla
+× di ogni documento, senza box riepilogativo finale. Per ogni PDF il sistema
+include tutte le pagine senza aprire preview massive o controlli per pagina;
+per CSV/XLSX/JSON conserva integralmente righe e record per le fasi successive.
 
-Entrambe devono usare gli stessi stati finali e la stessa coda. Il proseguimento
-deve essere bloccato finché ogni fonte inclusa non è `pronta`.
+Lo stepper deve mostrare `Macchina`, `Caricamento`, `Controllo file` e
+`Struttura dati`; `Controllo file` risulta completato automaticamente quando i
+documenti sono pronti, senza introdurre una schermata di conferma massiva. Il test E2E deve caricare almeno
+due PDF e due CSV, bloccare un PDF attivo duplicato prima dell'invio, ripristinarlo
+dopo la rimozione e verificare che non esistano pulsanti o checkbox di scoping
+manuale.
 
 ### AC-UX-004 — Azione primaria e progressive disclosure
 
@@ -839,6 +891,44 @@ Dopo refresh e restart devono essere ripristinati stato, decisioni e ultimo
 checkpoint. Un errore riprendibile deve offrire `Riprendi` o `Riprova` senza
 duplicare candidate.
 
+Il test E2E deve generare almeno due sottografi, mostrarli e approvarli uno per
+fonte. Il secondo non può essere sostituito da una preview del grafo aggregato;
+prima della seconda approvazione la UI e la API devono mostrare la barriera
+cross-source chiusa. Soltanto dopo entrambe le approvazioni possono comparire
+le proposte di linking e merge.
+
+Per ciascun sottografo il test deve inoltre verificare:
+
+- selezione e navigazione dei nodi nel grafo con evidenziazione delle relazioni
+  dirette;
+- tabella completa dei nodi con ricerca e filtro per tipo;
+- tabella completa delle relazioni;
+- apertura delle evidenze con locator alla riga sorgente;
+- deduplica intra-source osservabile tramite conteggi e più evidence collegate
+  allo stesso nodo;
+- assenza di termini `Gate 3` nella UI operatore.
+
+Due CSV sintetici con schema identico verificano soltanto wiring e UX, non
+agnosticità o qualità semantica. Prima del checkpoint Product Owner la suite
+deve includere almeno:
+
+- intestazioni canoniche e sinonimi inglesi;
+- intestazioni italiane e tedesche;
+- nomi aziendali, spazi, maiuscole, abbreviazioni e colonne riordinate;
+- campi mancanti, nulli, duplicati e contraddittori;
+- più sintomi, cause o azioni nella stessa riga senza creare relazioni
+  cartesiane non supportate;
+- separatori, encoding, quoting, righe irregolari e file di dimensioni
+  differenti;
+- casi negativi che devono fallire chiuso anziché generare un grafo parziale
+  approvabile;
+- output validato al `100%` rispetto a tipi, proprietà e relazioni
+  dell'ontologia e provenance risolvibile al `100%`.
+
+Solo dopo il superamento della matrice CSV il medesimo contratto viene provato
+sui PDF. I PDF restano fuori dal denominatore del checkpoint CSV, ma il Gate 3
+complessivo non è accettato finché anche la seconda fase non è completata.
+
 ### AC-UX-006 — Review contestuale
 
 Per un campione contenente conflitto, merge ambiguo, proprietà mancante e
@@ -851,6 +941,11 @@ auto-stage, la review deve:
 - registrare before/after ed evidenze viste;
 - impedire azioni bulk sui bloccanti;
 - permettere sample inspection prima della conferma aggregata.
+
+La UI deve separare la review del sottografo della singola fonte dalla review
+multisource: la prima decide se quel risultato può entrare nel confronto; la
+seconda decide link, merge e conflitti con altri sottografi o con la versione
+pubblicata di base.
 
 ### AC-UX-007 — Assenza di editor e mutation generiche
 
@@ -933,6 +1028,53 @@ Il test deve verificare che:
 - identità macchina e publish richiedano sempre conferma esplicita;
 - nessun valore mancante venga inventato per completare automaticamente lo
   step.
+
+### AC-UX-014 — Preparazione G2 semplice e progressiva
+
+Un test E2E deve riaprire dalla home il workspace accettato in G1 con PDF,
+CSV, XLSX multi-foglio e JSONL, quindi completare G2 senza ricominciare
+l'upload. Il dataset deve contenere intenzionalmente un mapping da correggere,
+un join esplicito da approvare e una linea JSONL malformata isolabile.
+
+Il test deve verificare che:
+
+- nessuna etichetta `Gate 1`, `Gate 2` o equivalente compaia
+  nell'interfaccia e il passo corrente sia `Struttura dati`;
+- la modalità iniziale sia automatica con eccezioni e non presenti tre azioni
+  concorrenti per ogni fonte;
+- ogni schermata mostri al massimo una decisione aperta e una sola azione
+  primaria;
+- fonti, fogli e colonne non ambigui arrivino a `Preparato` senza conferme
+  puntuali;
+- nessuna azione riga-per-riga, pagina-per-pagina o colonna-per-colonna sia
+  necessaria nel percorso ordinario;
+- ogni fonte strutturata mostri una tabella semantica con al massimo 5 righe,
+  costruita dai dati realmente profilati;
+- una mappa mostri quali colonne alimenteranno componenti, sintomi, cause,
+  azioni e codici, chiarendo che il grafo verrà proposto nel successivo passo
+  `Elaborazione`;
+- ogni fonte strutturata mostri la propria azione `Conferma` nella card e lo
+  stato `Confermata`; non esista una conferma globale separata;
+- una matrice CSV aggiuntiva copra almeno separatore punto e virgola, testo
+  Latin-1/Windows-1252, record quoted multiline, riga corta, riga lunga e
+  payload binario: le righe irregolari sono isolate senza perdita, mentre il
+  payload non testuale blocca soltanto la fonte con causa e azione leggibili;
+- una fixture EN/IT/DE/mixed preservi i testi originali, mostri il riepilogo
+  linguistico nella card e qualifichi automaticamente soltanto EN;
+- le preview estese mostrino al massimo 20 righe per pagina e i dettagli tecnici siano
+  chiusi di default;
+- l'eccezione di mapping spieghi problema, proposta ed effetto nello stesso
+  pannello e sia correggibile inline;
+- il join sia mostrato soltanto per la fixture che lo richiede, uno alla volta,
+  con confronto leggibile prima/dopo e senza join impliciti;
+- la linea JSONL malformata sia indicata con causa e locator, mentre le altre
+  linee e le altre fonti continuano;
+- gli stati positivi compaiano sulle card delle fonti senza un box finale che
+  duplichi l'inventory;
+- refresh e ritorno dalla home preservino progresso e decisioni;
+- risolte le sole eccezioni bloccanti e confermate tutte le card, il passo si
+  chiuda automaticamente e produca accounting senza perdite o duplicazioni
+  silenziose.
 
 ## 14. Chat diagnostica
 

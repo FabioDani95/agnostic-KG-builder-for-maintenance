@@ -7,7 +7,10 @@ not work that is still pending.
 ## Current
 
 - [MVP Specification](../SPECIFICHE_MVP.md) — authoritative target product
-  requirements.
+- [CSV Hardening Campaign](CSV_HARDENING_CAMPAIGN.md) — comportamento
+  deterministico, risultati dei CSV reali, regressioni e prossimi casi.
+- [G3 Engine Hardening Handoff](G3_ENGINE_HARDENING_HANDOFF.md) — stato del
+  gate umano, limiti dichiarati e sequenza CSV→PDF senza approvazioni implicite.
 - [Normative Specification Package](specs/README.md) — decisions, data
   contracts, codebase implications, and acceptance criteria.
 - [UX Specification](specs/UX_SPECIFICATION.md) — unified multi-format

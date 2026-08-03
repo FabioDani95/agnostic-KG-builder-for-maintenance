@@ -4,13 +4,13 @@
 
 | Campo | Valore |
 |---|---|
-| Specifica normativa | MVP `1.2` |
-| Digest approvato | `sha256:66db17fbad207734889e6a671f218145f56b032034c15cbfcc656f1fe85fff28` |
-| Owner approval | `Product Owner`, `2026-07-29T12:13:44Z` |
+| Specifica normativa | MVP `2.1` |
+| Digest approvato | `sha256:fd41a66b9d2b0eeaef53e0cd8840a31c2daa09ed0fdbd27a53451a5ccc8e57d2` |
+| Owner approval | `Product Owner`, `2026-08-03T09:20:43Z` |
 | Readiness verificata | `READY_FOR_PLANNING` |
 | Checker | `python3 scripts/check_spec_consistency.py --format json --require-status READY_FOR_PLANNING` |
 | Esito checker al momento del piano | `valid=true`, `issues=[]`, digest invariato |
-| Stato del presente documento | Piano eseguibile; implementazione avviata; G1 pronta per la verifica Product Owner |
+| Stato del presente documento | G1 accettato; G2 completato; prima campagna CSV G3 implementata e verificata; G3 non accettato, gate umano aperto e campagna PDF bloccata |
 
 Questo piano usa come fonti normative `SPECIFICHE_MVP.md`,
 `docs/specs/SPEC_INDEX.json`, `docs/specs/TRACEABILITY_MATRIX.md`,
@@ -19,7 +19,7 @@ Questo piano usa come fonti normative `SPECIFICHE_MVP.md`,
 `docs/specs/BASELINE_AND_CODEBASE_IMPACT.md` e
 `docs/specs/AUDIT_REMEDIATION_REPORT.md`.
 
-Le decisioni `DEC-001`–`DEC-035` sono input congelati, non opzioni da
+Le decisioni attive `DEC-001`–`DEC-044` (con `DEC-024` sostituita) sono input congelati, non opzioni da
 rinegoziare. Tutte le capacità associate ad `AUD-021`–`AUD-031` hanno stato
 iniziale **PLANNED / NOT IMPLEMENTED**. La loro presenza in questo piano non
 costituisce evidenza di implementazione. `AUD-032` resta un guardrail: niente
@@ -86,6 +86,8 @@ flowchart LR
     LED["RawUnit Ledger + Checkpoint Store"]
     EV["Evidence Store canonico"]
     CORE["Semantic Core condiviso"]
+    SG["Source Subgraph Revision"]
+    APR["Approvazione sottografo per fonte"]
     ER["Entity Linking + Merge"]
     REV["Candidate Revision + Review Transaction"]
     VAL["Strict Ontology Validator"]
@@ -100,7 +102,9 @@ flowchart LR
     ADP --> LED
     LED --> EV
     EV --> CORE
-    CORE --> ER
+    CORE --> SG
+    SG --> APR
+    APR --> ER
     ER --> REV
     REV --> VAL
     VAL --> PUB
@@ -206,6 +210,11 @@ artifacts/
 - Il core usa locator discriminati e `provenance_refs[]`, non una sola pagina.
 - Il candidate graph è una sequenza di revisioni immutabili basate su una
   versione pubblicata.
+- La generation produce una revisione di sottografo per fonte; la barriera di
+  linking/merge si apre soltanto dopo l'approvazione di tutti i sottografi
+  inclusi nel run.
+- Una fonte aggiunta a una versione pubblicata genera soltanto il proprio
+  sottografo e il delta verso la base, salvo invalidazioni esplicite.
 - Graph, evidence index e manifest sono una sola unità di lettura atomica.
 - Explorer e chat verificano hash/versione e non accedono a candidate graph.
 - Nessuna route o tool consente graph mutation generiche.
@@ -319,20 +328,28 @@ Nessuna demo con upload reale può bypassarlo.
 
 ## 4. Checkpoint Product Owner e Definition of Done per fase
 
-### G1 — Fondazioni sicure e una prima fonte
+### G1 — Fondazioni sicure e inventory documentale semplice
 
 **Quando:** dopo I01–I08.  
-**Prova Product Owner:** creare/confermare una macchina, caricare una fonte
-compatibile, una incerta e una incompatibile, vedere segnali/locator e
-quarantena; caricare un PDF, modificare lo scope e ispezionare le RawUnit;
-provare file duplicato, traversal e origine non ammessa.  
+**Prova Product Owner:** creare/confermare una macchina; caricare liberamente
+più PDF e CSV; vedere ogni file comparire; verificare che tutti i PDF risultino
+preparati con tutte le pagine incluse senza schermata pagina-per-pagina;
+rimuovere un file con la × rossa confermando l'azione; ricaricare lo stesso
+PDF senza 500; verificare che un duplicato attivo e un formato non supportato
+siano bloccati prima dell'invio; provare traversal e origine non ammessa.
 **Decisione richiesta:** `correggere G1` oppure `proseguire a G2`.
+
+**Esito Product Owner:** `proseguire a G2`; G1 accettato il
+`2026-08-02` dopo verifica di caricamento, rimozione/ripristino, rifiuto di
+duplicati/formati non supportati, persistenza e home workspace.
 
 Definition of Done:
 
 - ontology checksum e un solo Asset sono verificati;
 - workspace/source/evidence usano ID stabili e locator generici;
 - PDF baseline resta verde;
+- PDF all-pages è automatico e idempotente; nessun endpoint di scope manuale;
+- upload multiplo 2 PDF + 2 CSV è coperto da API ed E2E;
 - nessun path arbitrario, wildcard CORS o upload oltre limite;
 - inventario e disposition PDF sono bilanciati anche sui child;
 - fixture scheletro DS-003 è versionata e gold-blind;
@@ -341,30 +358,81 @@ Definition of Done:
 
 ### G2 — Preparazione multisource
 
+**Stato implementazione:** completato e superato per proseguire a G3.
+La verifica automatica copre il percorso browser `AC-UX-014`, i contratti
+`AC-TAB-001..005`, `AC-JOIN-001`, `AC-LANG-001..002`, la capacità da 10.000
+righe e le regressioni G1. Il Product Owner ha autorizzato il passaggio a G3;
+l'hardening semantico emerso successivamente appartiene al checkpoint G3.
+
 **Quando:** dopo I09–I11.  
-**Prova Product Owner:** nello stesso inventory preparare PDF, CSV, XLSX
-multi-foglio e JSONL; correggere un mapping; ispezionare semantic text separati;
-approvare un join; verificare un record in quarantena e nessuna perdita.
+**Prova Product Owner:** dalla home riaprire il workspace accettato in G1,
+senza ricaricare i documenti. Il sistema prepara automaticamente PDF, CSV,
+XLSX multi-foglio e JSONL e mostra sulle card quali fonti sono pronte. Il
+passo visibile è `Struttura dati`, senza etichette G1/G2: per ogni fonte
+tabellare il Product Owner vede le prime cinque righe interpretate e la mappa
+dalle colonne ai concetti che alimenteranno il grafo. Interviene soltanto sulle
+eccezioni intenzionali, presentate una alla volta: corregge un mapping, approva
+un join dopo il confronto prima/dopo e verifica che una linea JSONL malformata
+sia isolata senza fermare gli altri dati. Conclude confermando ogni fonte
+nella rispettiva card. Il grafo vero viene proposto nel successivo passo
+`Elaborazione`, non simulato in questa schermata.
+
+**Rafforzamento Product Owner:** la conferma finale globale è sostituita dalla
+conferma sulla card di ciascuna fonte. Prima dell'accettazione vengono eseguiti
+anche CSV con `;`, Latin-1/Windows-1252, multilinea, righe corte/lunghe, payload
+binario e fixture EN/IT/DE/mixed. Traccia: `DEC-041`, `AC-TAB-001`,
+`AC-LANG-002`, `AC-UX-014`.
 **Decisione richiesta:** `correggere G2` oppure `proseguire a G3`.
+
+**Guardrail UX non negoziabili:** il percorso predefinito è automatico con
+eccezioni; una sola decisione e una sola azione primaria per schermata;
+nessuna approvazione riga-per-riga, pagina-per-pagina o colonna-per-colonna;
+tabella ordinaria limitata alle prime 5 righe e preview estese di massimo 20
+righe per pagina; dettagli tecnici chiusi; nessun box di
+successo che duplichi le card; join assenti per default e mostrati soltanto
+quando proposti esplicitamente. Il gate non viene presentato al Product Owner
+finché `AC-UX-014` non è verde in E2E.
 
 Definition of Done:
 
 - tutti i formati MVP producono EvidenceUnit nello stesso workspace;
+- il workspace G1 viene ripreso senza duplicare inventory o caricamenti;
+- il percorso senza eccezioni richiede soltanto la conferma sulla card di ogni
+  fonte;
+- le eccezioni sono azionabili e non nascondono né fermano fonti indipendenti;
 - matrice edge parser parametrizzata e verde;
 - mapping/fingerprint/join/normalizzazione sono versionati;
 - dati IT/DE non qualificati sono preservati ma non auto-staged;
 - DS-002 e porzione strutturata di DS-003 sono eseguiti;
 - DS-004 da almeno 10.000 righe è già versionato, benché il capacity gate
   finale appartenga a E10;
+- `AC-UX-014 / TST-UX-014 / ART-UX-014` dimostra semplicità e progressive
+  disclosure con Playwright;
 - artifact automatici e `artifacts/user-gates/g2/result.json` sono presenti.
 
 ### G3 — Elaborazione riprendibile e provider controllato
 
 **Quando:** dopo I12–I17.  
-**Prova Product Owner:** vedere preflight ed egress preview; avviare con fake,
-interrompere, riavviare l'app e riprendere senza chiamate duplicate; cambiare
-mapping/modello e vedere `Avvia nuovo run`; provare modalità manuale,
-automatica ed exceptions-only.  
+**Stato Product Owner:** `correggere G3`; checkpoint non accettato. La UI
+permette già di navigare grafo, nodi, relazioni ed evidenze, ma i due CSV
+sintetici iniziali dimostrano soltanto wiring e UX. Il mapper diretto corrente
+non è ancora agnostico e il sottografo visualizzato non supera il contratto
+ontologico strict.
+
+**Prima slice obbligatoria — hardening CSV:** costruire una matrice eterogenea
+di intestazioni, lingue, separatori, encoding, campi mancanti e casi negativi;
+rendere il mapping configurabile e fail-closed; usare il core neurosimbolico
+condiviso; serializzare proprietà canoniche; impedire l'approvazione finché
+ogni controllo di `AC-ONT-002`, `AC-TAB-004`, `AC-HITL-002` e `AC-UX-005` non
+è verde. Il report diagnostico e l'ordine di lavoro sono congelati in
+`docs/G3_ENGINE_HARDENING_HANDOFF.md`.
+
+**Seconda slice obbligatoria — PDF:** applicare lo stesso contratto source-scoped
+alla pipeline PDF già riusata dalla codebase di origine; vedere preflight ed
+egress preview; interrompere, riavviare l'app e riprendere senza chiamate
+duplicate; cambiare mapping/modello e vedere `Avvia nuovo run`; provare
+modalità manuale, automatica ed exceptions-only. Il differimento del collaudo
+PDF non autorizza una seconda pipeline né riduce i requisiti di provenance.
 **Decisione richiesta:** `correggere G3` oppure `proseguire a G4`.
 
 Definition of Done:
@@ -374,6 +442,19 @@ Definition of Done:
 - fake, OpenAI e local endpoint superano lo stesso contract test;
 - preview e payload remoto coincidono, secret leak è zero;
 - core semantico usa EvidenceUnit e structured output;
+- generation e deduplica intra-source producono una SourceSubgraphRevision
+  immutabile per fonte;
+- mapping semanticamente incompleto o output parziale non classificato non
+  possono produrre un sottografo approvabile;
+- ogni revisione passa il validatore strict dell'ontologia sul payload reale:
+  proprietà obbligatorie `100%`, proprietà extra `0`, domain/range errati `0`,
+  endpoint mancanti `0`, ID duplicati `0`, provenance risolvibile `100%`;
+- la matrice CSV eterogenea e i casi negativi fail-closed sono verdi prima di
+  iniziare il collaudo PDF;
+- grafo, tabella nodi e tabella relazioni rappresentano la stessa revisione e
+  aprono locator/evidenze senza permettere mutation libere;
+- ogni sottografo richiede approvazione umana source-scoped prima della
+  barriera di merge;
 - entity linking/merge non auto-stage senza profilo valido;
 - report preliminare DS-003 reale è non vuoto; eventuali gap di soglia sono
   visibili e bloccano l'automazione, non lo sviluppo delle slice manuali;
@@ -384,7 +465,9 @@ Definition of Done:
 **Quando:** dopo I18–I24.  
 **Prova Product Owner:** risolvere un conflitto, correggere un candidato,
 riaprire prima del publish, confermare auto-staged in aggregato; pubblicare
-V001, aggiungere fonte e pubblicare V002; confrontare versioni, aprire evidence
+V001, aggiungere una nuova fonte senza rielaborare le tre precedenti,
+approvarne il sottografo, revisionare il delta verso V001 e pubblicare V002;
+confrontare versioni, aprire evidence
 e interrogare la chat; verificare che editor/mutation non esistano.
 **Decisione richiesta:** `correggere G4` oppure `proseguire a G5`.
 
@@ -394,6 +477,8 @@ Definition of Done:
 - ogni candidate graph-affecting è terminale prima del publish;
 - strict validator non corregge o pota silenziosamente;
 - V002 è ricostruibile come `apply(V001, approved_delta)`;
+- V001 e i sottografi delle fonti già incluse restano byte-invariati; il run
+  incrementale genera soltanto il sottografo nuovo e il delta cross-source;
 - failure injection e concorrenza non espongono bundle parziali;
 - explorer e chat aprono soltanto bundle committed hash-validi;
 - publish richiede conferma umana e l'editor libero è assente;
@@ -426,14 +511,15 @@ Definition of Done:
 
 ### E01 — `AUD-021`: nuovo boundary workspace/source/evidence
 
-**Stato iniziale:** `PLANNING_INPUT`, non implementato.  
+**Stato:** implementato e accettato nel checkpoint G1.
 **Obiettivo:** sostituire il PDF come boundary del dominio senza duplicare la
 pipeline semantica.
 
 #### I01 — Spine del dominio e persistence bootstrap
 
-**Output verticale:** API e UI possono creare/riprendere l'unico workspace,
-confermare il suo Asset e leggere lo stato derivato.
+**Output verticale:** API e UI possono creare/riprendere il workspace
+selezionato, elencare i workspace persistiti nella home, confermare il suo
+Asset e leggere lo stato derivato.
 
 Attività e tracciabilità:
 
@@ -449,12 +535,17 @@ Attività e tracciabilità:
   senza default inventati. Traccia: `ACT-001`, `FR-UX-005`,
   `DC-ASSERT-001`, `OBL-ACT-001`, `OBL-FR-UX-005`,
   `OBL-DC-ASSERT-001`.
+- Esporre la home G1 con stato, conteggio documenti, ultimo aggiornamento e
+  apertura del workspace per ID; `+ Nuovo workspace` avvia un onboarding vuoto
+  e crea un ID distinto. Questa slice è implementata e coperta da test API/E2E.
+  Traccia: `FR-UX-004`, `AC-UX-001`, `DEC-038`.
 
 Codebase probabile:
 `backend/domain/ids.py`, `backend/domain/workspace.py`,
 `backend/storage/database.py`, `backend/storage/migrations/001_operational_core.sql`,
 `backend/storage/repositories/workspaces.py`, `backend/routers/workspaces.py`,
-`backend/main.py`, `frontend/app/machine.js`; adattare
+`backend/main.py`, `frontend/home.html`, `frontend/app/home.js`,
+`frontend/app/machine.js`; adattare
 `backend/models.py` senza rimuovere ancora i modelli PDF legacy.
 
 Verifica e artifact:
@@ -470,10 +561,11 @@ chiude/riapre il browser e ritrova la scheda senza un secondo Asset.
 Exit: un Asset completo e confermato è persistito; checksum ontologia
 registrato; un placeholder o secondo Asset fallisce prima della persistenza.
 
-#### I02 — Source registry e assessment di appartenenza
+#### I02 — Source registry e attribuzione operatore
 
-**Output verticale:** upload di una source immutabile con hash, duplicate
-detection e assessment visibile `compatible|uncertain|incompatible`.
+**Output verticale:** upload di una source immutabile con hash, blocco dei
+duplicati attivi prima dell'invio, comparsa immediata nell'inventory e
+rimozione intuitiva.
 
 Attività e tracciabilità:
 
@@ -481,8 +573,8 @@ Attività e tracciabilità:
   Traccia: `FR-002`, `DC-SRC-001`, `DC-SRC-002`, `DC-SRC-003`,
   `OBL-FR-002`, `OBL-DC-SRC-001`, `OBL-DC-SRC-002`,
   `OBL-DC-SRC-003`.
-- Implementare assessment append-only, segnali con locator, quarantena e
-  risoluzione della sola incertezza tramite assertion. Traccia:
+- Registrare la selezione del file come attribuzione operatore, senza analisi
+  contenutistica, conferma o quarantena. Traccia:
   `FR-WS-IDENTITY-001`, `DC-SRC-ASSESS-001`,
   `OBL-FR-WS-IDENTITY-001`, `OBL-DC-SRC-ASSESS-001`.
 - Esporre source inventory nella stessa shell, senza creare grafi o sessioni
@@ -500,12 +592,13 @@ Verifica e artifact:
 `AC-WS-005 / TST-WS-005 / ART-WS-005`,
 `AC-UX-002 / TST-UX-002 / ART-UX-002`.
 
-Gate utente: contribuisce a **G1**; il Product Owner carica tre fixture di
-assessment, risolve `uncertain`, verifica che `incompatible` non sia forzabile
-e che il duplicato non sia copiato.
+Gate utente: contribuisce a **G1**; il Product Owner carica quanti file
+supportati desidera, ne rimuove uno con la × rossa dopo aver confermato e
+verifica che un duplicato attivo sia segnalato e non inviato, mentre un file
+rimosso possa essere ripristinato.
 
-Exit: ogni source ha hash e assessment attivo; solo `compatible` può entrare
-in preparazione; reopen ripristina la quarantena.
+Exit: ogni source ha hash e decisione di upload tracciata; non esiste un gate
+di associazione; reopen ripristina l'inventory.
 
 #### I03 — EvidenceUnit e adapter PDF di compatibilità
 
@@ -542,15 +635,16 @@ Verifica e artifact:
 `AC-EV-002 / TST-EV-002 / ART-EV-002`,
 `AC-WS-002 / TST-WS-002 / ART-WS-002`.
 
-Gate utente: contribuisce a **G1**; il Product Owner modifica lo scope, apre
-quote/pagina/metodo di estrazione e vede un solo workspace/graph ID.
+Gate utente: contribuisce a **G1**; il Product Owner carica il PDF e vede lo
+stato `Caricato` nella relativa card, senza riepilogo finale né controlli per
+pagina, nello stesso workspace/graph ID.
 
 Exit: characterization PDF verde; core invocabile con EvidenceUnit; nessuna
 nuova pipeline semantica per il formato.
 
 ### E02 — `AUD-028`: containment, same-origin e request limits
 
-**Stato iniziale:** `PLANNING_INPUT`, non implementato.  
+**Stato:** implementato e accettato nel checkpoint G1.
 **Obiettivo:** rendere browser-safe il confine trusted-local prima dell'E2E
 di upload.
 
@@ -616,7 +710,7 @@ limiti effettivi.
 
 ### E03 — `AUD-022`: rimuovere drop e troncamenti silenziosi
 
-**Stato iniziale:** `PLANNING_INPUT`, non implementato.  
+**Stato:** implementato e accettato nel checkpoint G1.
 **Obiettivo:** registrare RawUnit e disposition prima di qualunque filtro,
 pruning, cap o merge.
 
@@ -680,8 +774,8 @@ Verifica e artifact:
 `AC-PDF-004 / TST-PDF-004 / ART-PDF-004`,
 `AC-EV-001 / TST-EV-001 / ART-EV-001`.
 
-Gate utente: contribuisce a **G1**; il Product Owner apre la quinta tabella e
-la riga 61 dal report accounting.
+Gate automatico: contribuisce a **G1**; il test recupera la quinta tabella e la
+riga 61 dal report accounting senza esporre il drill-down al Product Owner.
 
 Exit: marker recuperabile; ogni parent group è bilanciato; nessun cap limita
 l'inventario.
@@ -697,8 +791,8 @@ Attività e tracciabilità:
   ledger hash nel manifest di run. Traccia:
   `DC-DISPOSITION-001`, `NFR-003`,
   `OBL-DC-DISPOSITION-001`, `OBL-NFR-003`.
-- Esporre drill-down UI dalla metrica alla RawUnit/locator e separare gli
-  errori riprendibili/terminali. Traccia:
+- Conservare il drill-down tecnico via report/API e separare gli errori
+  riprendibili/terminali senza caricare centinaia di RawUnit nella UI G1. Traccia:
   `FR-UX-010`, `FR-UX-016`, `NFR-004` e relative `OBL-*`.
 - Registrare il vero conteggio suite, commit e comando senza etichettarlo
   automaticamente come 301. Traccia:
@@ -706,7 +800,7 @@ Attività e tracciabilità:
 
 Codebase probabile:
 `backend/services/run_metrics.py`, `backend/routers/runs.py`,
-`backend/graph/projections.py`, `frontend/app/processing.js`,
+`backend/graph/projections.py`,
 `scripts/eval_golden.py`, `tests/planned/test_ev_acceptance.py`,
 `tests/planned/test_reg_acceptance.py`.
 
@@ -716,19 +810,23 @@ Verifica e artifact:
 `AC-REG-002 / TST-REG-002 / ART-REG-002`.
 
 Gate utente: completa **G1**; il Product Owner decide correggere/proseguire
-solo dopo report e drill-down.
+dopo il riepilogo semplice, mentre accounting e drill-down sono verificati
+automaticamente.
 
 Exit: perdita non classificata zero su tutte le fixture G1; regressione PDF e
 suite corrente documentate.
 
 ### E04 — `AUD-030`: contract-test matrix dei parser
 
-**Stato iniziale:** `PLANNING_INPUT`, non implementato.  
+**Stato:** implementato e completato per il checkpoint G2.
 **Obiettivo:** aggiungere i formati strutturati attraverso lo stesso Evidence
 Model, con edge policy normativa e senza superare il limite MVP di 10.000
 righe verificato.
 
 #### I09 — CSV, profiling e mapping verticale
+
+**Stato implementazione:** completato. Adapter CSV, fingerprint, profiling,
+mapping verticale, semantic text e UI a eccezioni sono attivi.
 
 **Output verticale:** `machine_logs.csv` viene inventariato, profilato, mappato
 e trasformato in EvidenceUnit role-specific nello stesso workspace.
@@ -740,9 +838,15 @@ Attività e tracciabilità:
   `FR-TAB-001`, `FR-TAB-004`, `DC-PARSER-001`,
   `OBL-FR-TAB-001`, `OBL-FR-TAB-004`,
   `OBL-DC-PARSER-001`.
-- Implementare MappingProfile/fingerprint, preview, tipi e Gate 1.
-  Traccia: `FR-TAB-005`, `FR-HITL-001`, `OBL-FR-TAB-005`,
-  `OBL-FR-HITL-001`.
+- Implementare in G2 MappingProfile/fingerprint, preview e tipi.
+  Traccia: `FR-TAB-005`, `FR-UX-009`, `OBL-FR-TAB-005`,
+  `OBL-FR-UX-009`.
+- Costruire la prima slice della corsia semplice: profiling automatico, card
+  per fonte, dettagli chiusi, tabella semantica delle prime 5 righe, mappa
+  colonne→famiglie del grafo e una sola eccezione di mapping aperta. La UI usa
+  `Struttura dati`, mai il nome del checkpoint; nodi e relazioni restano nel
+  successivo passo `Elaborazione`. Traccia: `FR-UX-003`, `FR-UX-009`, `DEC-039`, `DEC-040`,
+  `AC-UX-014` e relative `OBL-*`.
 - Costruire semantic text separati e normalizzazione raw-preserving.
   Traccia: `FR-NORM-001`, `FR-NORM-002`, `DC-EV-005`,
   `OBL-FR-NORM-001`, `OBL-FR-NORM-002`, `OBL-DC-EV-005`.
@@ -753,14 +857,14 @@ Codebase probabile:
 `backend/services/ingestion/mapping.py`,
 `backend/services/ingestion/normalization.py`,
 `backend/domain/evidence.py`, `backend/routers/preparation.py`,
-`frontend/app/preparation.js`, `machine_logs.csv`, `tests/planned/test_tab_acceptance.py`.
+un nuovo modulo UI G2, `machine_logs.csv`, `tests/planned/test_tab_acceptance.py`.
 
 Verifica e artifact:
 `AC-TAB-001 / TST-TAB-001 / ART-TAB-001`,
 `AC-TAB-004 / TST-TAB-004 / ART-TAB-004`,
 `AC-NORM-001 / TST-NORM-001 / ART-NORM-001`,
 `AC-NORM-002 / TST-NORM-002 / ART-NORM-002`,
-`AC-HITL-001 / TST-HITL-001 / ART-HITL-001`.
+evidenza di supporto per `AC-UX-014 / TST-UX-014 / ART-UX-014`.
 
 Gate utente: contribuisce a **G2**; il Product Owner corregge mapping e vede
 la preview esatta dei testi per ruolo.
@@ -769,6 +873,10 @@ Exit: DS-002 ha loss zero; label-like columns non entrano nell'ingestion
 view; cambio template invalida solo il downstream dichiarato.
 
 #### I10 — XLSX, JSON/JSONL e matrice edge
+
+**Stato implementazione:** completato. XLSX multi-foglio, fogli nascosti,
+formule senza cache, JSON lossless, JSONPath e isolamento JSONL sono coperti
+da test di contratto.
 
 **Output verticale:** XLSX multi-foglio e JSON/JSONL usano gli stessi stati,
 ledger, mapping ed EvidenceUnit.
@@ -785,6 +893,10 @@ Attività e tracciabilità:
   `OBL-FR-TAB-003`, `OBL-DC-PARSER-001`.
 - Rendere parametrizzata l'intera matrice parser; ogni caso dimostra
   accounting esatto.
+- Presentare errori isolabili sulla card interessata con causa, stato
+  preservato e prossima azione; nessuna pagina tecnica separata e nessun
+  arresto delle fonti indipendenti. Traccia: `FR-UX-009`, `FR-UX-016`,
+  `DEC-039`, `AC-UX-009`, `AC-UX-014` e relative `OBL-*`.
 
 Codebase probabile:
 `backend/adapters/structured/xlsx.py`,
@@ -809,6 +921,9 @@ dopo un errore isolabile.
 
 #### I11 — Join esplicito, lingua e preparazione adattiva
 
+**Stato implementazione:** completato. JoinSpec n:1 esplicito, lineage lookup,
+qualifica EN/IT/DE/mixed, ledger bilanciato e conferma per fonte sono attivi.
+
 **Output verticale:** strutture indipendenti restano separate per default; un
 JoinSpec approvato produce lineage composita e la coda di preparazione si
 chiude per tutti i formati.
@@ -823,9 +938,11 @@ Attività e tracciabilità:
   IT/DE è preservato, non auto-staged; traduzione eventuale resta puntualmente
   revisionata. Traccia: `FR-LANG-002`, `DC-LANG-001`,
   `OBL-FR-LANG-002`, `OBL-DC-LANG-001`.
-- Completare UI di preparazione adattiva e delegation choice per scope,
-  selection, mapping, join e normalization. Traccia:
-  `FR-UX-007`, `FR-UX-008`, `FR-UX-009`, `FR-UX-018` e relative `OBL-*`.
+- Completare in G2 la UI adattiva per selection, mapping, join e
+  normalization con una decisione alla volta, modalità automatica con
+  eccezioni e conferma sulla card di ogni fonte; il PDF all-pages di G1 resta senza scope
+  manuale. Traccia: `FR-UX-003`, `FR-UX-007`, `FR-UX-008`, `FR-UX-009`,
+  `FR-UX-018`, `DEC-039` e relative `OBL-*`.
 - Versionare `DS-004` con 10.000 righe, 3 tabelle logiche e 30 colonne; in
   questa fase verifica parsing/accounting, non ancora RSS/call ceiling.
 
@@ -833,7 +950,7 @@ Codebase probabile:
 `backend/services/ingestion/join.py`,
 `backend/services/language_utils.py`,
 `backend/services/translation_service.py`,
-`backend/routers/preparation.py`, `frontend/app/preparation.js`,
+`backend/routers/preparation.py`, una nuova UI G2 dedicata,
 `tests/fixtures/scale/ds004/`, `tests/golden/workspaces/ds003/`,
 `tests/planned/test_join_acceptance.py`,
 `tests/planned/spec_acceptance.spec.js`.
@@ -842,13 +959,16 @@ Verifica e artifact:
 `AC-JOIN-001 / TST-JOIN-001 / ART-JOIN-001`,
 `AC-LANG-002 / TST-LANG-002 / ART-LANG-002`,
 `AC-UX-003 / TST-UX-003 / ART-UX-003`,
-`AC-UX-012 / TST-UX-012 / ART-UX-012`.
+`AC-UX-012 / TST-UX-012 / ART-UX-012`,
+`AC-UX-014 / TST-UX-014 / ART-UX-014`.
 
 Gate utente: completa **G2**; il Product Owner decide correggere/proseguire
 dopo mixed-source preparation e verifica del lineage.
 
 Exit: nessun join implicito; lineage di ogni lookup risolvibile; tutte le
-source incluse sono `ready` o hanno un esito esplicito.
+source incluse sono `ready` o hanno un esito esplicito; il Product Owner può
+completare la prova G2 senza aprire dettagli tecnici né approvare elementi
+non ambigui.
 
 ### E05 — `AUD-025`: run store riavviabile
 
@@ -863,7 +983,7 @@ call response e checkpoint `prepared|committed|aborted`.
 
 Attività e tracciabilità:
 
-- Congelare RunInput con workspace/source/mapping/scope/assessment/join/lingua,
+- Congelare RunInput con workspace/source/mapping/policy PDF/attribuzione/join/lingua,
   ontology, provider, prompt, soglie e base version. Traccia:
   `FR-003`, `FR-004`, `OBL-FR-003`, `OBL-FR-004`.
 - Implementare checkpoint scope discriminato e commit atomico di output,
@@ -902,7 +1022,7 @@ Attività e tracciabilità:
   work unit e cancel terminale. Traccia:
   `FR-004`, `DC-STATE-001`, `DC-CHECKPOINT-001` e relative `OBL-*`.
 - Applicare la matrice di invalidazione a raw, identity, adapter, mapping,
-  authority, assessment, language, provider, model, prompt, embedding,
+  authority, attribuzione source, language, provider, model, prompt, embedding,
   threshold e decision. Traccia: `DC-CACHE-001`,
   `OBL-DC-CACHE-001`.
 - Aggiungere failure injection prima/dopo response persist, prepare e commit;
@@ -913,7 +1033,7 @@ Codebase probabile:
 `backend/services/run_orchestrator.py`,
 `backend/storage/repositories/checkpoints.py`,
 `backend/routers/runs.py`, adattare `backend/graph/supervisor.py`,
-`backend/graph/store.py`, `frontend/app/processing.js`,
+`backend/graph/store.py`, un nuovo modulo UI run,
 `tests/planned/test_res_acceptance.py`.
 
 Verifica e artifact:
@@ -948,7 +1068,7 @@ Codebase probabile:
 `backend/domain/runs.py`,
 `backend/storage/repositories/delegations.py`,
 `backend/services/run_orchestrator.py`, `backend/routers/runs.py`,
-`frontend/app/preparation.js`, `frontend/app/processing.js`,
+nuovi moduli UI G2/G3,
 `tests/planned/spec_acceptance.spec.js`.
 
 Verifica e artifact:
@@ -1010,7 +1130,7 @@ provider/modello/base URL distinti.
 
 **Output verticale:** un batch EvidenceUnit passa dal provider adapter alla
 candidate generation con preview byte-equivalente e structured output
-validato.
+validato, producendo una SourceSubgraphRevision distinta per fonte.
 
 Attività e tracciabilità:
 
@@ -1022,12 +1142,23 @@ Attività e tracciabilità:
   persistere solo secret reference. Traccia:
   `FR-LLM-001`, `NFR-002` e relative `OBL-*`.
 - Adattare candidate mining, extraction, grounding e ontology pipeline a
-  evidence bundle e schema output, mantenendo retry limitato/quarantena.
+  evidence bundle e schema output, mantenendo retry limitato/quarantena. La
+  generation usa scope `source` o `partition` e consolida duplicati soltanto
+  dentro il sottografo corrente.
   Traccia: `FR-NS-001`, `FR-NS-002`, `FR-NS-003`, `FR-NS-004` e relative
   `OBL-*`.
 - Applicare outcome/causalità minimi senza usare rationale o co-occorrenza
   come evidence. Traccia: `DC-OUTCOME-001`,
   `OBL-DC-OUTCOME-001`.
+- Eliminare il mapper CSV parallelo come autorità semantica: gli adapter
+  strutturati producono EvidenceUnit, mentre lo stesso core condiviso genera e
+  valida il grafo. Intestazioni sconosciute diventano mapping exception o
+  esclusioni esplicite, mai perdita silenziosa.
+- Validare ogni `SourceSubgraphRevision` sul payload ontologico completo prima
+  dello stato `reviewing`; un esito non conforme resta `invalid` e non espone
+  l'approvazione.
+- Eseguire la matrice definita in `docs/G3_ENGINE_HARDENING_HANDOFF.md`, prima
+  CSV e poi PDF, conservando report per fixture e failure class.
 
 Codebase probabile:
 `backend/services/data_egress.py`,
@@ -1036,7 +1167,7 @@ Codebase probabile:
 `backend/services/evidence_grounding_service.py`,
 `backend/services/ontology_pipeline.py`,
 `backend/services/ontology_pipeline_validation.py`,
-`backend/services/llm_guardrails.py`, `frontend/app/processing.js`,
+`backend/services/llm_guardrails.py`, un nuovo modulo UI elaborazione,
 `tests/planned/test_sec_acceptance.py`,
 `tests/planned/test_sem_acceptance.py`.
 
@@ -1050,12 +1181,14 @@ Gate utente: contribuisce a **G3**; il Product Owner confronta preview e
 payload spy, poi osserva il blocco di una policy non approvata.
 
 Exit: full file, colonne escluse, path e secret non escono; parsing libero non
-alimenta il candidate graph.
+alimenta il candidate graph; ogni fonte produce un sottografo identificabile,
+senza merge cross-source implicito.
 
 #### I17 — Embedding, entity linking, merge e calibrazione
 
-**Output verticale:** deduplica e matching cross-source producono candidate
-revisionabili; auto-stage è possibile soltanto con CalibrationProfile valido.
+**Output verticale:** ogni sottografo viene approvato source-by-source; soltanto
+dopo la barriera, deduplica e matching cross-source producono candidate
+revisionabili. Auto-stage è possibile soltanto con CalibrationProfile valido.
 
 Attività e tracciabilità:
 
@@ -1066,6 +1199,14 @@ Attività e tracciabilità:
   type/asset/component/error/firmware e soglie congelate. Traccia:
   `FR-MERGE-001`, `FR-MERGE-002`, `FR-MERGE-003`,
   `FR-MERGE-004`, `DC-CONTEXT-001` e relative `OBL-*`.
+- Persistire decisione `approve_source_subgraph|reject_source_subgraph` legata
+  a revisione, fingerprint, config hash ed evidenze; bloccare la barriera
+  cross-source finché ogni sottografo incluso non è approvato. Traccia:
+  `FR-HITL-002`, `FR-MERGE-005`, `DC-CGRAPH-001`, `AC-HITL-002`,
+  `AC-UX-005` e relative `OBL-*`.
+- Nel run incrementale, confrontare il solo nuovo sottografo approvato con
+  `base_graph_version`; non rigenerare fonti già pubblicate salvo invalidazione
+  esplicita. Traccia: `FR-MERGE-005`, `AC-WS-003`, `AC-NONREG-001`.
 - Implementare CalibrationProfile non vacuo con precisione, coverage,
   minimum sample, dataset hash e invalidazione provider/model/language/
   feature/schema. Traccia:
@@ -1097,14 +1238,17 @@ Verifica e artifact:
 `AC-SEM-001 / TST-SEM-001 / ART-SEM-001`,
 `AC-LANG-001 / TST-LANG-001 / ART-LANG-001`.
 
-Gate utente: completa **G3**; il Product Owner ispeziona candidate
-auto-staged/review-only e vede perché un cambio modello invalida
+Gate utente: completa **G3** soltanto dopo l'hardening; il Product Owner approva un sottografo alla volta,
+osserva la barriera cross-source e poi ispeziona candidate
+auto-staged/review-only, vedendo perché un cambio modello invalida
 l'automazione.
 
-Exit: false auto-stage su guard simboliche zero; profilo invalido forza
-review; DS-003 produce claim `>0`. Se le soglie reali non sono ancora
-raggiunte, G3 può approvare solo il proseguimento con automazione disabilitata
-e rischio aperto; G5 resta bloccato.
+Exit: false auto-stage su guard simboliche zero; nessun merge precede le
+approvazioni source-scoped; profilo invalido forza review; DS-003 produce claim
+`>0`. Se le soglie reali non sono ancora
+raggiunte, G3 resta non accettato. La UI può essere dimostrata separatamente,
+ma non sostituisce conformità ontologica e qualità del motore; G4 e G5 restano
+bloccati.
 
 ### E07 — `AUD-024`: sostituire gli endpoint review legacy
 
@@ -1490,8 +1634,9 @@ precedenti in un solo percorso operatore, senza editor libero.
 
 #### I27 — Application shell e percorso Macchina→Preparazione
 
-**Output verticale:** shell persistente, stepper e source queue portano dal
-workspace vuoto a tutte le source `ready` senza pagine tecniche esterne.
+**Output verticale:** partendo dalla home workspace già consegnata in G1,
+shell persistente, stepper e source queue portano dal workspace vuoto a tutte
+le source `ready` senza pagine tecniche esterne.
 
 Attività e tracciabilità:
 
@@ -1499,6 +1644,8 @@ Attività e tracciabilità:
   autosave e redirect al primo blocco. Traccia:
   `FR-UI-001`, `FR-UX-001`, `FR-UX-002`, `FR-UX-003`,
   `FR-UX-004` e relative `OBL-*`.
+- Estendere, senza ricrearla, la home G1 già implementata; I27 aggiunge i
+  pannelli e i redirect del flusso completo, non una seconda dashboard.
 - Integrare onboarding, mixed upload e preparazione adattiva già costruiti,
   con un'azione primaria e progressive disclosure. Traccia:
   `FR-UX-005`–`FR-UX-009` e relative `OBL-*`.
@@ -1541,7 +1688,7 @@ Attività e tracciabilità:
   `FR-UX-016`, `FR-UX-017`, `FR-LANG-002` e relative `OBL-*`.
 
 Codebase probabile:
-`frontend/app/processing.js`, `review.js`, `publish.js`, `explore.js`,
+nuovi moduli UI `processing`, `review`, `publish`, `explore`,
 `frontend/console.css`, `backend/main.py`,
 `backend/services/conversation/tools/dispatch.py`,
 `backend/services/conversation/tools/schemas.py`,
@@ -1669,7 +1816,7 @@ Lo sviluppo si arresta immediatamente se:
 - cambia il digest normativo;
 - il checker non deriva più `READY_FOR_PLANNING`;
 - si scopre una decisione di prodotto necessaria non coperta da
-  `DEC-001`–`DEC-035`;
+  `DEC-001`–`DEC-044`;
 - un incremento richiederebbe modificare l'ontologia;
 - la baseline PDF degrada senza copertura equivalente;
 - accounting, containment, strict publish o bundle hash possono essere
@@ -1727,7 +1874,7 @@ immutabilità del bundle e limite verificato di 10.000 righe.
 | TD-04 | vanilla JS senza framework | accettato per MVP; moduli ES per capability e contract API impediscono nuova monoliticità |
 | TD-05 | local endpoint contract-compatible ma non quality-qualified | capability disponibile; nessuna dichiarazione di qualità semantica fino a profilo reale dedicato |
 | TD-06 | wall-clock senza reference hardware | resta informativo; non diventa SLA MVP |
-| TD-07 | singolo workspace attivo | decisione MVP; schema usa workspace ID ma UI multi-workspace resta fuori scope |
+| TD-07 | un solo workspace selezionato e operativo alla volta | la home elenca, crea e riapre workspace per ID; eliminazione e amministrazione avanzata multi-workspace restano fuori scope |
 
 ## 8. Milestone finali dell'MVP
 
@@ -1755,10 +1902,10 @@ AC/TST/ART.
 
 | Epica | Requirement con owner primario | Contract con owner primario |
 |---|---|---|
-| E01 / `AUD-021` | `INV-001`, `INV-002`, `INV-003`, `INV-004`, `INV-007`, `INV-008`, `FR-001`, `FR-WS-IDENTITY-001`, `FR-002`, `FR-003`, `FR-PDF-001`, `FR-PDF-002`, `FR-PDF-003`, `FR-EV-001`, `FR-EV-002`, `NFR-001` | `DC-ID-001`, `DC-ID-002`, `DC-ID-003`, `DC-TIME-001`, `DC-SRC-001`, `DC-SRC-002`, `DC-SRC-003`, `DC-SRC-ASSESS-001`, `DC-EV-005`, `DC-EV-001`, `DC-EV-002`, `DC-EV-003`, `DC-PROV-001`, `DC-EV-004` |
+| E01 / `AUD-021` | `INV-001`, `INV-002`, `INV-003`, `INV-004`, `INV-007`, `INV-008`, `FR-001`, `FR-WS-IDENTITY-001`, `FR-002`, `FR-003`, `FR-PDF-001`, `FR-PDF-002`, `FR-PDF-003`, `FR-EV-001`, `FR-EV-002`, `FR-HITL-001`, `NFR-001` | `DC-ID-001`, `DC-ID-002`, `DC-ID-003`, `DC-TIME-001`, `DC-SRC-001`, `DC-SRC-002`, `DC-SRC-003`, `DC-SRC-ASSESS-001`, `DC-EV-005`, `DC-EV-001`, `DC-EV-002`, `DC-EV-003`, `DC-PROV-001`, `DC-EV-004` |
 | E02 / `AUD-028` | `NFR-005` | — |
 | E03 / `AUD-022` | `INV-005`, `FR-004`, `NFR-003`, `NFR-004` | `DC-DISPOSITION-001`, `DC-STATE-001` |
-| E04 / `AUD-030` | `FR-TAB-001`, `FR-TAB-002`, `FR-TAB-003`, `FR-TAB-004`, `FR-TAB-005`, `FR-NORM-001`, `FR-NORM-002`, `FR-HITL-001`, `FR-LANG-002` | `DC-PARSER-001`, `DC-JOIN-001`, `DC-LANG-001` |
+| E04 / `AUD-030` | `FR-TAB-001`, `FR-TAB-002`, `FR-TAB-003`, `FR-TAB-004`, `FR-TAB-005`, `FR-NORM-001`, `FR-NORM-002`, `FR-LANG-002` | `DC-PARSER-001`, `DC-JOIN-001`, `DC-LANG-001` |
 | E05 / `AUD-025` | `FR-HITL-005` | `DC-DELEGATION-001`, `DC-CHECKPOINT-001`, `DC-CALL-001`, `DC-CACHE-001` |
 | E06 / `AUD-026` | `FR-NS-001`, `FR-NS-002`, `FR-NS-003`, `FR-NS-004`, `FR-MERGE-001`, `FR-MERGE-002`, `FR-MERGE-003`, `FR-MERGE-004`, `FR-EMB-001`, `FR-EMB-002`, `FR-LLM-001`, `FR-LLM-002`, `FR-LLM-003`, `FR-LANG-001`, `NFR-002` | `DC-CONTEXT-001`, `DC-OUTCOME-001`, `DC-CALIBRATION-001`, `DC-PROVIDER-001`, `DC-EGRESS-001` |
 | E07 / `AUD-024` | `ACT-001`, `FR-EV-003`, `FR-MERGE-005`, `FR-HITL-002`, `FR-HITL-003` | `DC-ASSERT-001`, `DC-CONFLICT-001`, `DC-GAP-001`, `DC-CAND-001`, `DC-CAND-002`, `DC-CAND-003`, `DC-CGRAPH-001`, `DC-REVIEW-001` |
@@ -1779,10 +1926,10 @@ tutti questi ID:
 
 | Epica | Obligation |
 |---|---|
-| E01 | `OBL-INV-001`, `OBL-INV-002`, `OBL-INV-003`, `OBL-INV-004`, `OBL-INV-007`, `OBL-INV-008`, `OBL-FR-001`, `OBL-FR-WS-IDENTITY-001`, `OBL-FR-002`, `OBL-FR-003`, `OBL-FR-PDF-001`, `OBL-FR-PDF-002`, `OBL-FR-PDF-003`, `OBL-FR-EV-001`, `OBL-FR-EV-002`, `OBL-NFR-001`, `OBL-DC-ID-001`, `OBL-DC-ID-002`, `OBL-DC-ID-003`, `OBL-DC-TIME-001`, `OBL-DC-SRC-001`, `OBL-DC-SRC-002`, `OBL-DC-SRC-003`, `OBL-DC-SRC-ASSESS-001`, `OBL-DC-EV-005`, `OBL-DC-EV-001`, `OBL-DC-EV-002`, `OBL-DC-EV-003`, `OBL-DC-PROV-001`, `OBL-DC-EV-004` |
+| E01 | `OBL-INV-001`, `OBL-INV-002`, `OBL-INV-003`, `OBL-INV-004`, `OBL-INV-007`, `OBL-INV-008`, `OBL-FR-001`, `OBL-FR-WS-IDENTITY-001`, `OBL-FR-002`, `OBL-FR-003`, `OBL-FR-PDF-001`, `OBL-FR-PDF-002`, `OBL-FR-PDF-003`, `OBL-FR-EV-001`, `OBL-FR-EV-002`, `OBL-FR-HITL-001`, `OBL-NFR-001`, `OBL-DC-ID-001`, `OBL-DC-ID-002`, `OBL-DC-ID-003`, `OBL-DC-TIME-001`, `OBL-DC-SRC-001`, `OBL-DC-SRC-002`, `OBL-DC-SRC-003`, `OBL-DC-SRC-ASSESS-001`, `OBL-DC-EV-005`, `OBL-DC-EV-001`, `OBL-DC-EV-002`, `OBL-DC-EV-003`, `OBL-DC-PROV-001`, `OBL-DC-EV-004` |
 | E02 | `OBL-NFR-005` |
 | E03 | `OBL-INV-005`, `OBL-FR-004`, `OBL-NFR-003`, `OBL-NFR-004`, `OBL-DC-DISPOSITION-001`, `OBL-DC-STATE-001` |
-| E04 | `OBL-FR-TAB-001`, `OBL-FR-TAB-002`, `OBL-FR-TAB-003`, `OBL-FR-TAB-004`, `OBL-FR-TAB-005`, `OBL-FR-NORM-001`, `OBL-FR-NORM-002`, `OBL-FR-HITL-001`, `OBL-FR-LANG-002`, `OBL-DC-PARSER-001`, `OBL-DC-JOIN-001`, `OBL-DC-LANG-001` |
+| E04 | `OBL-FR-TAB-001`, `OBL-FR-TAB-002`, `OBL-FR-TAB-003`, `OBL-FR-TAB-004`, `OBL-FR-TAB-005`, `OBL-FR-NORM-001`, `OBL-FR-NORM-002`, `OBL-FR-LANG-002`, `OBL-DC-PARSER-001`, `OBL-DC-JOIN-001`, `OBL-DC-LANG-001` |
 | E05 | `OBL-FR-HITL-005`, `OBL-DC-DELEGATION-001`, `OBL-DC-CHECKPOINT-001`, `OBL-DC-CALL-001`, `OBL-DC-CACHE-001` |
 | E06 | `OBL-FR-NS-001`, `OBL-FR-NS-002`, `OBL-FR-NS-003`, `OBL-FR-NS-004`, `OBL-FR-MERGE-001`, `OBL-FR-MERGE-002`, `OBL-FR-MERGE-003`, `OBL-FR-MERGE-004`, `OBL-FR-EMB-001`, `OBL-FR-EMB-002`, `OBL-FR-LLM-001`, `OBL-FR-LLM-002`, `OBL-FR-LLM-003`, `OBL-FR-LANG-001`, `OBL-NFR-002`, `OBL-DC-CONTEXT-001`, `OBL-DC-OUTCOME-001`, `OBL-DC-CALIBRATION-001`, `OBL-DC-PROVIDER-001`, `OBL-DC-EGRESS-001` |
 | E07 | `OBL-ACT-001`, `OBL-FR-EV-003`, `OBL-FR-MERGE-005`, `OBL-FR-HITL-002`, `OBL-FR-HITL-003`, `OBL-DC-ASSERT-001`, `OBL-DC-CONFLICT-001`, `OBL-DC-GAP-001`, `OBL-DC-CAND-001`, `OBL-DC-CAND-002`, `OBL-DC-CAND-003`, `OBL-DC-CGRAPH-001`, `OBL-DC-REVIEW-001` |
@@ -1795,10 +1942,10 @@ tutti questi ID:
 
 | Epica | Acceptance | Verification | Artifact |
 |---|---|---|---|
-| E01 | `AC-ONT-001`, `AC-WS-001`, `AC-WS-004`, `AC-WS-005`, `AC-PDF-001`, `AC-PDF-002`, `AC-PDF-003` | `TST-ONT-001`, `TST-WS-001`, `TST-WS-004`, `TST-WS-005`, `TST-PDF-001`, `TST-PDF-002`, `TST-PDF-003` | `ART-ONT-001`, `ART-WS-001`, `ART-WS-004`, `ART-WS-005`, `ART-PDF-001`, `ART-PDF-002`, `ART-PDF-003` |
+| E01 | `AC-ONT-001`, `AC-WS-001`, `AC-WS-004`, `AC-WS-005`, `AC-PDF-001`, `AC-PDF-002`, `AC-PDF-003`, `AC-HITL-001` | `TST-ONT-001`, `TST-WS-001`, `TST-WS-004`, `TST-WS-005`, `TST-PDF-001`, `TST-PDF-002`, `TST-PDF-003`, `TST-HITL-001` | `ART-ONT-001`, `ART-WS-001`, `ART-WS-004`, `ART-WS-005`, `ART-PDF-001`, `ART-PDF-002`, `ART-PDF-003`, `ART-HITL-001` |
 | E02 | `AC-SEC-003` | `TST-SEC-003` | `ART-SEC-003` |
 | E03 | `AC-PDF-004` | `TST-PDF-004` | `ART-PDF-004` |
-| E04 | `AC-TAB-001`, `AC-TAB-002`, `AC-TAB-003`, `AC-TAB-004`, `AC-TAB-005`, `AC-JOIN-001`, `AC-NORM-001`, `AC-NORM-002`, `AC-EV-001`, `AC-HITL-001`, `AC-LANG-002` | `TST-TAB-001`, `TST-TAB-002`, `TST-TAB-003`, `TST-TAB-004`, `TST-TAB-005`, `TST-JOIN-001`, `TST-NORM-001`, `TST-NORM-002`, `TST-EV-001`, `TST-HITL-001`, `TST-LANG-002` | `ART-TAB-001`, `ART-TAB-002`, `ART-TAB-003`, `ART-TAB-004`, `ART-TAB-005`, `ART-JOIN-001`, `ART-NORM-001`, `ART-NORM-002`, `ART-EV-001`, `ART-HITL-001`, `ART-LANG-002` |
+| E04 | `AC-TAB-001`, `AC-TAB-002`, `AC-TAB-003`, `AC-TAB-004`, `AC-TAB-005`, `AC-JOIN-001`, `AC-NORM-001`, `AC-NORM-002`, `AC-EV-001`, `AC-LANG-002`, `AC-UX-014` | `TST-TAB-001`, `TST-TAB-002`, `TST-TAB-003`, `TST-TAB-004`, `TST-TAB-005`, `TST-JOIN-001`, `TST-NORM-001`, `TST-NORM-002`, `TST-EV-001`, `TST-LANG-002`, `TST-UX-014` | `ART-TAB-001`, `ART-TAB-002`, `ART-TAB-003`, `ART-TAB-004`, `ART-TAB-005`, `ART-JOIN-001`, `ART-NORM-001`, `ART-NORM-002`, `ART-EV-001`, `ART-LANG-002`, `ART-UX-014` |
 | E05 | `AC-RES-001`, `AC-RES-002`, `AC-UX-005`, `AC-UX-013` | `TST-RES-001`, `TST-RES-002`, `TST-UX-005`, `TST-UX-013` | `ART-RES-001`, `ART-RES-002`, `ART-UX-005`, `ART-UX-013` |
 | E06 | `AC-LLM-001`, `AC-LLM-002`, `AC-SEC-001`, `AC-SEC-002`, `AC-LANG-001`, `AC-MERGE-001`, `AC-MERGE-002`, `AC-MERGE-003`, `AC-MERGE-004`, `AC-MERGE-005`, `AC-CAL-001`, `AC-EMB-001`, `AC-EMB-002` | `TST-LLM-001`, `TST-LLM-002`, `TST-SEC-001`, `TST-SEC-002`, `TST-LANG-001`, `TST-MERGE-001`, `TST-MERGE-002`, `TST-MERGE-003`, `TST-MERGE-004`, `TST-MERGE-005`, `TST-CAL-001`, `TST-EMB-001`, `TST-EMB-002` | `ART-LLM-001`, `ART-LLM-002`, `ART-SEC-001`, `ART-SEC-002`, `ART-LANG-001`, `ART-MERGE-001`, `ART-MERGE-002`, `ART-MERGE-003`, `ART-MERGE-004`, `ART-MERGE-005`, `ART-CAL-001`, `ART-EMB-001`, `ART-EMB-002` |
 | E07 | `AC-EV-003`, `AC-SEM-002`, `AC-HITL-002`, `AC-HITL-003`, `AC-HITL-004`, `AC-UX-006` | `TST-EV-003`, `TST-SEM-002`, `TST-HITL-002`, `TST-HITL-003`, `TST-HITL-004`, `TST-UX-006` | `ART-EV-003`, `ART-SEM-002`, `ART-HITL-002`, `ART-HITL-003`, `ART-HITL-004`, `ART-UX-006` |
@@ -1807,7 +1954,7 @@ tutti questi ID:
 | E10 | `AC-PERF-001`, `AC-PERF-002` | `TST-PERF-001`, `TST-PERF-002` | `ART-PERF-001`, `ART-PERF-002` |
 | E11 | `AC-WS-002`, `AC-SEM-001`, `AC-UX-001`, `AC-UX-002`, `AC-UX-003`, `AC-UX-004`, `AC-UX-007`, `AC-UX-009`, `AC-UX-010`, `AC-UX-011`, `AC-UX-012`, `AC-REG-001`, `AC-REG-002` | `TST-WS-002`, `TST-SEM-001`, `TST-UX-001`, `TST-UX-002`, `TST-UX-003`, `TST-UX-004`, `TST-UX-007`, `TST-UX-009`, `TST-UX-010`, `TST-UX-011`, `TST-UX-012`, `TST-REG-001`, `TST-REG-002` | `ART-WS-002`, `ART-SEM-001`, `ART-UX-001`, `ART-UX-002`, `ART-UX-003`, `ART-UX-004`, `ART-UX-007`, `ART-UX-009`, `ART-UX-010`, `ART-UX-011`, `ART-UX-012`, `ART-REG-001`, `ART-REG-002` |
 
-Copertura dichiarata: **75 acceptance**, **75 verification** e **75
+Copertura dichiarata: **76 acceptance**, **76 verification** e **76
 artifact**. `DS-001`, `DS-002`, `DS-003`, `DS-004`, `DS-005` e
 `DS-CHAT-001` sono tutti assegnati rispettivamente a E01/E03, E04, E01→E11,
 E04→E10, E10 ed E09.
@@ -1856,20 +2003,20 @@ E04→E10, E10 ed E09.
 | Repository e architettura | `DEC-001`, `DEC-002`, `DEC-003`, `DEC-015`, `DEC-019` | evolve `log-kg-builder`, una pipeline, ontology invariata |
 | Scope prodotto | `DEC-004`, `DEC-005`, `DEC-006`, `DEC-007`, `DEC-008`, `DEC-009`, `DEC-010`, `DEC-020` | una macchina, componenti, un graph JSON, formati fissati, locale |
 | Provider e lingua | `DEC-011`, `DEC-012`, `DEC-013`, `DEC-014`, `DEC-033`, `DEC-034` | OpenAI default configurato, adapter, EN qualificato, IT/DE non qualificato |
-| HITL e UX | `DEC-016`, `DEC-017`, `DEC-018`, `DEC-021`, `DEC-022`, `DEC-023`, `DEC-032` | tre gate umani, cinque checkpoint PO, flusso unico, no editor, delega tracciata |
-| Identità, join, accounting | `DEC-024`, `DEC-025`, `DEC-026`, `DEC-029`, `DEC-030` | assessment, JoinSpec, RawUnit, assertion e context sidecar |
+| HITL e UX | `DEC-016`, `DEC-017`, `DEC-018`, `DEC-021`, `DEC-022`, `DEC-023`, `DEC-032`, `DEC-037`, `DEC-038`, `DEC-039`, `DEC-040`, `DEC-041`, `DEC-042`, `DEC-043`, `DEC-044` | gate umani mirati, checkpoint PO, flusso prodotto senza etichette di sviluppo; UI G3 separata dalla readiness del motore, hardening CSV strict prima del PDF e dell'approvazione |
+| Identità, join, accounting | `DEC-025`, `DEC-026`, `DEC-029`, `DEC-030`, `DEC-036` | attribuzione operatore, JoinSpec, RawUnit, assertion e context sidecar |
 | Lifecycle e publish | `DEC-027`, `DEC-028`, `DEC-031`, `DEC-035` | revisioni/withdrawal, checkpoint committed, authority/outcome, calibrazione non vacua |
 
-## 10. Criterio di handoff all'implementazione
+## 10. Stato dell'handoff all'implementazione
 
-L'implementazione può iniziare soltanto dopo approvazione del presente piano.
-Il primo incarico deve essere **I01**, non un parser, un redesign completo o
-il publisher. L'incarico deve includere:
+L'handoff è stato autorizzato e gli incrementi **I01–I11** sono stati eseguiti
+in ordine. Restano validi i vincoli originali:
 
 - scope dei file elencati in I01;
 - tuple normative di I01;
 - test e artifact prima del codice di I02;
 - nessuna modifica alle fonti normative;
-- arresto a G1 dopo I08.
+- arresto al checkpoint G2 dopo I11, in attesa della decisione Product Owner.
 
-Il piano non autorizza commit, push, PR o implementazione in questa fase.
+Commit, push e PR restano azioni separate e non sono implicati dalla sola
+preparazione del checkpoint.

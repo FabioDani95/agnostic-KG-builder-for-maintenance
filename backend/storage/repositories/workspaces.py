@@ -50,20 +50,34 @@ class WorkspaceRepository:
             ).fetchone()
             if row is None:
                 return None
-            identifiers = [
-                AssetIdentifier.model_validate(dict(item))
-                for item in connection.execute(
-                    """
-                    SELECT namespace, value, kind
-                    FROM asset_identifiers
-                    WHERE workspace_id = ?
-                    ORDER BY identifier_id
-                    """,
-                    (row["workspace_id"],),
-                )
-            ]
-            status = self._derive_state(connection, row["workspace_id"])
-        return self._workspace_from_row(row, identifiers, status)
+            return self._workspace_from_connection(connection, row)
+
+    def get_by_id(self, workspace_id: str) -> Workspace | None:
+        with self.database.read() as connection:
+            row = connection.execute(
+                """
+                SELECT w.*, a.asset_id, a.name, a.description, a.brand, a.model, a.asset_type
+                FROM workspaces w
+                JOIN assets a ON a.workspace_id = w.workspace_id
+                WHERE w.workspace_id = ?
+                """,
+                (workspace_id,),
+            ).fetchone()
+            if row is None:
+                return None
+            return self._workspace_from_connection(connection, row)
+
+    def list_all(self) -> list[Workspace]:
+        with self.database.read() as connection:
+            rows = connection.execute(
+                """
+                SELECT w.*, a.asset_id, a.name, a.description, a.brand, a.model, a.asset_type
+                FROM workspaces w
+                JOIN assets a ON a.workspace_id = w.workspace_id
+                ORDER BY w.updated_at DESC, w.created_at DESC, w.workspace_id
+                """
+            ).fetchall()
+            return [self._workspace_from_connection(connection, row) for row in rows]
 
     def create_confirmed(
         self,
@@ -73,9 +87,10 @@ class WorkspaceRepository:
         assertion_reason: str,
         observation_basis: str,
         operator: str,
+        allow_new: bool = False,
     ) -> tuple[Workspace, OperatorAssertion, bool]:
         existing = self.get()
-        if existing is not None:
+        if existing is not None and not allow_new:
             requested = {
                 key: (str(asset_values.get(key) or "").strip() or None)
                 for key in ("name", "description", "brand", "model", "asset_type")
@@ -99,7 +114,7 @@ class WorkspaceRepository:
 
         with self.database.transaction() as connection:
             already = connection.execute("SELECT workspace_id FROM workspaces LIMIT 1").fetchone()
-            if already is not None:
+            if already is not None and not allow_new:
                 raise WorkspaceConflictError("This MVP already contains a confirmed Asset")
             for entity_id, entity_type in (
                 (workspace_id, "workspace"),
@@ -294,12 +309,29 @@ class WorkspaceRepository:
             SELECT COUNT(*)
             FROM sources s
             LEFT JOIN preparations p ON p.source_id = s.source_id
-            WHERE s.workspace_id = ? AND s.source_kind != 'operator_input'
+            WHERE s.workspace_id = ? AND s.source_kind = 'pdf'
               AND s.status = 'accepted' AND COALESCE(p.state, 'not_started') != 'ready'
             """,
             (workspace_id,),
         ).fetchone()[0]
         return WorkspaceState.PREPARATION_REQUIRED if not_ready else WorkspaceState.READY
+
+    @staticmethod
+    def _workspace_from_connection(connection: sqlite3.Connection, row) -> Workspace:
+        identifiers = [
+            AssetIdentifier.model_validate(dict(item))
+            for item in connection.execute(
+                """
+                SELECT namespace, value, kind
+                FROM asset_identifiers
+                WHERE workspace_id = ?
+                ORDER BY identifier_id
+                """,
+                (row["workspace_id"],),
+            )
+        ]
+        status = WorkspaceRepository._derive_state(connection, row["workspace_id"])
+        return WorkspaceRepository._workspace_from_row(row, identifiers, status)
 
     @staticmethod
     def _workspace_from_row(

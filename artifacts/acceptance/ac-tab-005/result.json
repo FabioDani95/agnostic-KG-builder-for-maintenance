@@ -1,0 +1,10 @@
+{
+  "acceptance_id": "AC-TAB-005",
+  "status": "passed",
+  "timestamp_utc": "2026-08-02T21:34:08Z",
+  "commit": "cc162fa1916920b8971a3b457dfcd3f7daa3005a",
+  "working_tree_dirty": true,
+  "command": ".venv/bin/python -m pytest -q tests/planned/test_g2_acceptance.py tests/planned/test_tab_acceptance.py",
+  "dataset": "generated DS-004 boundary fixture, 10000 CSV rows",
+  "assertions": ["10000 rows produce 10000 evidence units", "Preview is capped at 20", "Unclassified RawUnit count is zero"]
+}

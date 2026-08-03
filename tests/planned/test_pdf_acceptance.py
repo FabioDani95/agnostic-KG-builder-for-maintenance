@@ -40,24 +40,27 @@ def _prepared_source(foundation_client, machine_payload, *, two_pages: bool = Fa
 
 def test_ac_pdf_001(foundation_client, machine_payload):
     workspace, source = _prepared_source(foundation_client, machine_payload)
-    preview = foundation_client.get(f"/api/sources/{source['source_id']}/pdf/preview")
-    assert preview.status_code == 200
-    payload = preview.json()
-    assert payload["pages"]
-    assert payload["raw_units"]
-    assert all(item["source_id"] == source["source_id"] for item in payload["raw_units"])
-    assert workspace["workspace_id"] == payload["evidence_units"][0]["workspace_id"]
+    preparation = foundation_client.get(
+        f"/api/sources/{source['source_id']}/pdf/preparation"
+    )
+    assert preparation.status_code == 200
+    assert preparation.json()["mode"] == "automatic_all_pages"
+    assert preparation.json()["page_count"] == preparation.json()["included_page_count"] == 1
+    evidence = foundation_client.get(
+        f"/api/workspaces/{workspace['workspace_id']}/evidence",
+        params={"source_id": source["source_id"]},
+    ).json()
+    assert evidence
+    assert all(item["workspace_id"] == workspace["workspace_id"] for item in evidence)
 
 
 def test_ac_pdf_002(foundation_client, machine_payload):
     workspace, source = _prepared_source(foundation_client, machine_payload)
-    scoped = foundation_client.post(
-        f"/api/sources/{source['source_id']}/pdf/scope",
-        json={"included_pages": [1], "excluded_pages": {}, "operator": "FD"},
-    )
-    assert scoped.status_code == 200
     assert foundation_client.get("/api/workspace").json()["workspace"]["status"] == "awaiting_review"
-    evidence = scoped.json()["evidence_units"]
+    evidence = foundation_client.get(
+        f"/api/workspaces/{workspace['workspace_id']}/evidence",
+        params={"source_id": source["source_id"]},
+    ).json()
     assert evidence
     for item in evidence:
         assert item["source_id"] == source["source_id"]
@@ -75,52 +78,32 @@ def test_ac_pdf_002(foundation_client, machine_payload):
 
 
 def test_ac_pdf_003(foundation_client, machine_payload):
-    _, source = _prepared_source(foundation_client, machine_payload, two_pages=True)
+    workspace, source = _prepared_source(foundation_client, machine_payload, two_pages=True)
     source_id = source["source_id"]
-    first = foundation_client.post(
-        f"/api/sources/{source_id}/pdf/scope",
-        json={
-            "included_pages": [1],
-            "excluded_pages": {"2": "Non-maintenance legal notice"},
-            "operator": "FD",
-        },
-    )
-    assert first.status_code == 200
-    assert {item["locator"]["page"] for item in first.json()["evidence_units"]} == {1}
-    reopened = foundation_client.get(f"/api/sources/{source_id}/pdf/preview").json()
-    assert reopened["current_scope"]["version"] == 1
-    assert [item["included"] for item in reopened["pages"]] == [True, False]
-
-    second = foundation_client.post(
-        f"/api/sources/{source_id}/pdf/scope",
-        json={"included_pages": [1, 2], "excluded_pages": {}, "operator": "FD"},
-    )
-    assert second.status_code == 200
-    assert second.json()["current_scope"]["version"] == 2
-    assert {item["locator"]["page"] for item in second.json()["evidence_units"]} == {1, 2}
-
-    third = foundation_client.post(
-        f"/api/sources/{source_id}/pdf/scope",
-        json={
-            "included_pages": [2],
-            "excluded_pages": {"1": "Operator narrowed the troubleshooting scope"},
-            "operator": "FD",
-        },
-    )
-    assert third.status_code == 200
-    assert third.json()["current_scope"]["version"] == 3
-    assert {item["locator"]["page"] for item in third.json()["evidence_units"]} == {2}
+    first = foundation_client.get(f"/api/sources/{source_id}/pdf/preparation").json()
+    assert first["page_count"] == first["included_page_count"] == 2
+    assert first["excluded_page_count"] == 0
+    assert first["scope_version"] == 1
+    second = foundation_client.get(f"/api/sources/{source_id}/pdf/preparation").json()
+    assert second == first
+    evidence = foundation_client.get(
+        f"/api/workspaces/{workspace['workspace_id']}/evidence",
+        params={"source_id": source_id},
+    ).json()
+    assert {item["locator"]["page"] for item in evidence} == {1, 2}
+    assert foundation_client.get(f"/api/sources/{source_id}/pdf/preview").status_code == 404
+    assert foundation_client.post(f"/api/sources/{source_id}/pdf/scope", json={}).status_code == 405
 
 
 def test_i03_evidence_bridge_keeps_pdf_dependency_inside_adapter(
     foundation_client,
     machine_payload,
 ):
-    _, source = _prepared_source(foundation_client, machine_payload)
-    evidence_payload = foundation_client.post(
-        f"/api/sources/{source['source_id']}/pdf/scope",
-        json={"included_pages": [1], "excluded_pages": {}, "operator": "FD"},
-    ).json()["evidence_units"]
+    workspace, source = _prepared_source(foundation_client, machine_payload)
+    evidence_payload = foundation_client.get(
+        f"/api/workspaces/{workspace['workspace_id']}/evidence",
+        params={"source_id": source["source_id"]},
+    ).json()
     from backend.domain.evidence import EvidenceUnit
 
     evidence = [EvidenceUnit.model_validate(item) for item in evidence_payload]
@@ -131,12 +114,12 @@ def test_i03_evidence_bridge_keeps_pdf_dependency_inside_adapter(
 
 
 def test_i03_evidence_ids_are_cross_type_registered(foundation_client, machine_payload):
-    _, source = _prepared_source(foundation_client, machine_payload)
-    response = foundation_client.post(
-        f"/api/sources/{source['source_id']}/pdf/scope",
-        json={"included_pages": [1], "excluded_pages": {}, "operator": "FD"},
-    )
-    ids = {item["evidence_id"] for item in response.json()["evidence_units"]}
+    workspace, source = _prepared_source(foundation_client, machine_payload)
+    evidence = foundation_client.get(
+        f"/api/workspaces/{workspace['workspace_id']}/evidence",
+        params={"source_id": source["source_id"]},
+    ).json()
+    ids = {item["evidence_id"] for item in evidence}
     import sqlite3
 
     with sqlite3.connect(operational_db_path()) as connection:
@@ -149,7 +132,7 @@ def test_i03_evidence_ids_are_cross_type_registered(foundation_client, machine_p
         {
             row["evidence_id"]
             for row in foundation_client.get(
-                f"/api/workspaces/{response.json()['evidence_units'][0]['workspace_id']}/evidence"
+                f"/api/workspaces/{workspace['workspace_id']}/evidence"
             ).json()
         }
     )
@@ -157,21 +140,6 @@ def test_i03_evidence_ids_are_cross_type_registered(foundation_client, machine_p
 
 def test_ac_pdf_004(foundation_client, machine_payload, monkeypatch):
     workspace = foundation_client.post("/api/workspace", json=machine_payload).json()["workspace"]
-    uploaded = foundation_client.post(
-        f"/api/workspaces/{workspace['workspace_id']}/sources",
-        data={"authority": "normative"},
-        files={
-            "file": (
-                G1_FIXTURE.name,
-                G1_FIXTURE.read_bytes(),
-                "application/pdf",
-            )
-        },
-    )
-    assert uploaded.status_code == 200
-    source = uploaded.json()["source"]
-    assert source["status"] == "accepted"
-
     def low_confidence_fixture(path: str):
         pages = extract_text_by_page(path)
         pages[0].update(
@@ -193,9 +161,19 @@ def test_ac_pdf_004(foundation_client, machine_payload, monkeypatch):
         "backend.adapters.pdf.extract_text_by_page",
         low_confidence_fixture,
     )
-    preview = foundation_client.get(f"/api/sources/{source['source_id']}/pdf/preview")
-    assert preview.status_code == 200
-    raw_units = preview.json()["raw_units"]
+    uploaded = foundation_client.post(
+        f"/api/workspaces/{workspace['workspace_id']}/sources",
+        data={"authority": "normative"},
+        files={"file": (G1_FIXTURE.name, G1_FIXTURE.read_bytes(), "application/pdf")},
+    )
+    assert uploaded.status_code == 200
+    source = uploaded.json()["source"]
+    preparation = uploaded.json()["preparation"]
+    assert preparation["page_count"] == preparation["included_page_count"] == 5
+    report = foundation_client.get(
+        f"/api/foundation/runs/{preparation['run_id']}/accounting"
+    ).json()
+    raw_units = report["raw_units"]
     pages = [item for item in raw_units if item["unit_kind"] == "pdf_page"]
     tables = [item for item in raw_units if item["unit_kind"] == "table"]
     table_rows = [item for item in raw_units if item["unit_kind"] == "table_row"]
@@ -221,13 +199,6 @@ def test_ac_pdf_004(foundation_client, machine_payload, monkeypatch):
     assert marker[0]["locator"]["row_index"] == 61
     assert "OCR_LOW_CONFIDENCE" in ocr_regions[0]["quality_flags"]
 
-    scoped = foundation_client.post(
-        f"/api/sources/{source['source_id']}/pdf/scope",
-        json={"included_pages": [1, 2, 3, 4, 5], "excluded_pages": {}, "operator": "FD"},
-    )
-    assert scoped.status_code == 200
-    payload = scoped.json()
-    report = payload["accounting"]
     assert report["balanced"] is True
     assert report["unclassified_total"] == 0
     assert report["sources"][0]["top_level"]["inventory"] == 5
@@ -242,8 +213,12 @@ def test_ac_pdf_004(foundation_client, machine_payload, monkeypatch):
         item for item in report["raw_units"] if item["unit_kind"] == "ocr_region"
     ]
     assert low_ocr_ledger[0]["disposition"]["outcome"] == "quarantined"
+    evidence = foundation_client.get(
+        f"/api/workspaces/{workspace['workspace_id']}/evidence",
+        params={"source_id": source["source_id"]},
+    ).json()
     assert any(
         "OCR_LOW_CONFIDENCE" in item["quality_flags"]
-        for item in payload["evidence_units"]
+        for item in evidence
         if item["locator"].get("ocr_region_index") == 1
     )

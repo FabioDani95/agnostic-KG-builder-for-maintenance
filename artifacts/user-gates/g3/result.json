@@ -1,0 +1,23 @@
+{
+  "checkpoint": "G3",
+  "scope": "ux_prototype_and_engine_diagnostic_audit",
+  "status": "rejected_product_owner",
+  "timestamp_utc": "2026-08-03T09:20:43Z",
+  "baseline_commit": "cc162fa1916920b8971a3b457dfcd3f7daa3005a",
+  "coverage_artifact": "artifacts/acceptance/g3/coverage.json",
+  "accepted_scope": [
+    "navigazione del grafo per fonte",
+    "tabelle nodi e relazioni",
+    "drill-down alle evidenze",
+    "wiring della barriera source-scoped"
+  ],
+  "rejection_reasons": [
+    "mapping CSV dipendente da alias limitati e non agnostico",
+    "grafi parziali possono risultare approvabili senza blocco sufficiente",
+    "SourceSubgraphRevision non validata strict contro tutte le proprietà ontologiche",
+    "campione sintetico iniziale insufficiente a dimostrare maturità"
+  ],
+  "next_work": "docs/G3_ENGINE_HARDENING_HANDOFF.md",
+  "decision": "correggere G3: hardening CSV eterogeneo, poi PDF sul core condiviso",
+  "decided_at": "2026-08-03T09:20:43Z"
+}

@@ -1,0 +1,62 @@
+{
+  "checkpoint": "G3",
+  "scope": "ux_prototype_and_engine_diagnostic_audit",
+  "status": "not_accepted",
+  "timestamp_utc": "2026-08-03T09:20:43Z",
+  "spec_version": "2.1",
+  "spec_digest": "sha256:fd41a66b9d2b0eeaef53e0cd8840a31c2daa09ed0fdbd27a53451a5ccc8e57d2",
+  "automated_checks": {
+    "g2_g3_pytest": {
+      "command": ".venv/bin/pytest -q tests/planned/test_g2_acceptance.py tests/planned/test_g3_acceptance.py",
+      "result": "15 passed"
+    },
+    "g3_playwright": {
+      "command": "PORT=8011 npx playwright test tests/planned/spec_acceptance.spec.js --grep each CSV graph",
+      "result": "1 passed"
+    },
+    "spec_consistency": {
+      "command": ".venv/bin/python scripts/check_spec_consistency.py --format json --require-status READY_FOR_PLANNING",
+      "result": "valid=true; issues=[]"
+    }
+  },
+  "verified_behaviors": [
+    "un sottografo immutabile per ogni fonte CSV confermata",
+    "deduplica esatta intra-source con tutte le evidenze preservate",
+    "grafo SVG navigabile con focus su nodo e relazioni dirette",
+    "tabella completa dei nodi con ricerca e filtro per tipo",
+    "tabella completa delle relazioni con drill-down ai nodi",
+    "locator alle righe originali e testi di evidenza",
+    "approvazione o rifiuto con motivazione per singola fonte",
+    "barriera cross-source chiusa fino a tutte le approvazioni",
+    "corrispondenze esatte mostrate solo dopo lo sblocco",
+    "PDF differiti alla seconda slice senza entrare nel denominatore CSV"
+  ],
+  "limits_of_previous_checks": [
+    "le fixture G3 iniziali condividono lo stesso schema canonico e provano wiring e UX, non agnosticità",
+    "i test non validavano il payload SourceSubgraphRevision contro tutte le proprietà di ontology_schema.JSON",
+    "successo HTTP e presenza dei sei tipi non dimostrano completezza o qualità semantica"
+  ],
+  "diagnostic_csv_matrix": [
+    {"case": "canonical_en", "result": "complete_graph"},
+    {"case": "known_english_suffixes", "result": "complete_graph"},
+    {"case": "italian_headers", "result": "generation_409"},
+    {"case": "business_headers_with_spaces", "result": "partial_graph_without_sufficient_block"},
+    {"case": "observation_only", "result": "symptom_only_graph_still_approvable"},
+    {"case": "missing_cause", "result": "partial_graph_still_approvable"}
+  ],
+  "live_ontology_audit": {
+    "nodes": 108,
+    "relations": 133,
+    "relation_direction_violations": 0,
+    "nodes_missing_required_properties": 36,
+    "missing_required_property_occurrences": 90,
+    "extra_property_occurrences": 36
+  },
+  "conclusion": "UX retained; graph-generation engine and G3 rejected pending CSV then PDF hardening",
+  "pdf_reuse_evidence": {
+    "source_repository": "agnostic-KG-builder-for-maintenance",
+    "pdf_service_sha256": "39f67f331fc70814c58fe9b56354a2f781a052b6949374c254688fcf4ba15f68",
+    "ontology_workflow_sha256": "b7e033e08525c0bcf16d9614598dcb55ebef7c34e180dd56fee940d7496d61c4",
+    "status": "byte-identical core services; PDF human acceptance deferred"
+  }
+}

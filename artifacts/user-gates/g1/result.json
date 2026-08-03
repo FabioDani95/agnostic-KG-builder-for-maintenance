@@ -1,23 +1,31 @@
 {
   "checkpoint": "G1",
-  "status": "pending_product_owner",
-  "timestamp_utc": "2026-07-29T20:06:14.863702Z",
-  "commit": "54c1234e33f2bab09c69df22d9404afb79702224",
+  "status": "accepted",
+  "timestamp_utc": "2026-08-02T20:27:41Z",
+  "commit": "cc162fa1916920b8971a3b457dfcd3f7daa3005a",
   "coverage_artifact": "artifacts/acceptance/g1/coverage.json",
   "product_owner_checks": [
-    "Confermare una singola macchina e ricaricare la pagina.",
-    "Verificare che un documento incompatibile resti messo da parte e non venga usato.",
-    "Scegliere e approvare le cinque pagine del PDF G1.",
-    "Aprire il controllo del documento e filtrare gli elementi elaborati.",
-    "Aprire pagina 5 e trovare G1_TABLE_5_ROW_61_MARKER a tabella 5/riga 61.",
-    "Verificare zero elementi senza esito e la voce Totali verificati impostata a Sì.",
-    "Provocare il caricamento di un formato non supportato e verificare che l'errore dica cosa fare.",
-    "Ricaricare la pagina e verificare che elaborazione e conteggi siano invariati."
+    "Creare o riaprire un workspace dalla home e ritrovare la macchina confermata.",
+    "Caricare liberamente più PDF e file strutturati supportati.",
+    "Verificare che ogni documento appaia come Caricato senza controllo pagina-per-pagina.",
+    "Rimuovere un documento dopo conferma e ricaricarlo senza HTTP 500.",
+    "Verificare che duplicati attivi e formati non supportati siano bloccati prima dell'invio.",
+    "Ricaricare la pagina e verificare che l'inventory sia invariato."
   ],
   "allowed_product_owner_decisions": [
     "correggere G1",
     "proseguire a G2"
   ],
-  "decision": null,
-  "decided_at": null
+  "decision": "proseguire a G2",
+  "decided_at": "2026-08-02T20:27:41Z",
+  "decided_by": "Product Owner",
+  "verification_evidence": "artifacts/user-gates/g1/log-audit.json",
+  "scope": "Identità workspace, home, caricamento/rimozione/ripristino documenti, blocco duplicati e formati non supportati; nessuna validazione semantica G2.",
+  "current_verification": {
+    "automated_tests": 361,
+    "failures": 0,
+    "e2e_workspace_flow": "passed",
+    "specification_status": "READY_FOR_PLANNING",
+    "specification_digest": "6905a41834249bfff3681f31fd1ce0431fb6ca6d45b2a3df853c3b83ec6eeee2"
+  }
 }

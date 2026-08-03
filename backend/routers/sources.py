@@ -1,20 +1,17 @@
-"""Source inventory, content-addressed upload and assessment APIs."""
+"""Source inventory and content-addressed upload APIs."""
 
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Literal
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, Response, UploadFile
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, ConfigDict, Field
 
 from backend.domain.sources import Source, SourceAuthority, SourceKind, SourceRegistration
 from backend.security.boundary import actionable_error, security_limits, validate_inventory_name
-from backend.services.source_assessment import decide_assessment, observe_asset_claims
+from backend.services.pdf_auto_preparation import PdfAutoPreparationService
 from backend.storage.raw_store import RawStore, UploadTooLargeError
 from backend.storage.repositories.sources import (
-    SourceAssessmentError,
     SourceNotFoundError,
     SourceRepository,
 )
@@ -30,20 +27,10 @@ _KINDS = {
 }
 
 
-class ResolveAssessmentRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    action: Literal["confirm", "exclude"]
-    reason: str = Field(min_length=10, max_length=2000)
-    observation_basis: Literal["direct_observation", "nameplate", "operator_record"]
-    operator: str = Field(min_length=1, max_length=200)
-    evidence_seen: list[str] = Field(min_length=1)
-
-
 @router.get("/workspaces/{workspace_id}/sources", response_model=list[Source])
 def list_sources(workspace_id: str):
-    workspace = WorkspaceRepository().get()
-    if workspace is None or workspace.workspace_id != workspace_id:
+    workspace = WorkspaceRepository().get_by_id(workspace_id)
+    if workspace is None:
         raise HTTPException(status_code=404, detail="Workspace not found")
     return SourceRepository().list_for_workspace(workspace_id)
 
@@ -54,8 +41,8 @@ async def upload_source(
     file: UploadFile = File(...),
     authority: SourceAuthority = Form(SourceAuthority.INFORMAL),
 ):
-    workspace = WorkspaceRepository().get()
-    if workspace is None or workspace.workspace_id != workspace_id:
+    workspace = WorkspaceRepository().get_by_id(workspace_id)
+    if workspace is None:
         raise HTTPException(status_code=404, detail="Workspace not found")
     try:
         file_name = validate_inventory_name(str(file.filename or ""))
@@ -108,32 +95,7 @@ async def upload_source(
             ),
         ) from exc
 
-    repository = SourceRepository()
-    existing = repository.find_by_hash(workspace_id, stored.sha256)
-    if existing is not None:
-        source, duplicate = repository.register(
-            workspace_id=workspace_id,
-            source_kind=source_kind,
-            authority=authority,
-            file_name=Path(file_name).name,
-            media_type=canonical_media_type,
-            size_bytes=stored.size_bytes,
-            sha256=stored.sha256,
-            raw_relpath=stored.relative_path,
-            observed_claims=[],
-            outcome=existing.active_assessment.outcome,
-            reason_codes=existing.active_assessment.reason_codes,
-        )
-        return SourceRegistration(source=source, duplicate=duplicate, raw_cache_hit=True)
-
-    claims = observe_asset_claims(
-        path=stored.absolute_path,
-        source_kind=source_kind,
-        asset=workspace.asset,
-        identifiers=workspace.identifiers,
-    )
-    outcome, reason_codes = decide_assessment(claims, workspace.identifiers)
-    source, duplicate = repository.register(
+    source, duplicate = SourceRepository().register(
         workspace_id=workspace_id,
         source_kind=source_kind,
         authority=authority,
@@ -142,38 +104,41 @@ async def upload_source(
         size_bytes=stored.size_bytes,
         sha256=stored.sha256,
         raw_relpath=stored.relative_path,
-        observed_claims=claims,
-        outcome=outcome,
-        reason_codes=reason_codes,
     )
-    return SourceRegistration(source=source, duplicate=duplicate, raw_cache_hit=stored.cache_hit)
-
-
-@router.post("/sources/{source_id}/assessment/resolve", response_model=Source)
-def resolve_assessment(source_id: str, request: ResolveAssessmentRequest):
-    try:
-        return SourceRepository().resolve_uncertain(
-            source_id,
-            action=request.action,
-            reason=request.reason,
-            observation_basis=request.observation_basis,
-            operator=request.operator,
-            evidence_seen=request.evidence_seen,
+    if duplicate:
+        raise HTTPException(
+            status_code=409,
+            detail=actionable_error(
+                title="Documento già caricato",
+                object_ref=file_name,
+                cause=f'Il contenuto coincide con “{source.file_name}”, già presente nel workspace.',
+                preserved="Non è stata creata una seconda fonte e il documento esistente è invariato.",
+                action="Non serve ricaricarlo. Per sostituirlo, rimuovere prima il documento presente.",
+                technical_detail=f"DUPLICATE_SOURCE_SHA256 {stored.sha256}",
+                retryability="non richiede elaborazione",
+            ),
         )
-    except SourceNotFoundError as exc:
-        raise HTTPException(status_code=404, detail="Source not found") from exc
-    except SourceAssessmentError as exc:
-        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    preparation = None
+    if source.source_kind is SourceKind.PDF:
+        preparation = PdfAutoPreparationService().prepare(
+            workspace=workspace,
+            source=source,
+        )
+    return SourceRegistration(
+        source=source,
+        duplicate=duplicate,
+        raw_cache_hit=stored.cache_hit,
+        preparation=preparation,
+    )
 
 
-@router.post("/sources/{source_id}/assessment/reopen", response_model=Source)
-def reopen_assessment(source_id: str):
+@router.delete("/sources/{source_id}", status_code=204)
+def remove_source(source_id: str):
     try:
-        return SourceRepository().reopen_resolution(source_id)
+        SourceRepository().remove(source_id)
     except SourceNotFoundError as exc:
         raise HTTPException(status_code=404, detail="Source not found") from exc
-    except SourceAssessmentError as exc:
-        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return Response(status_code=204)
 
 
 @router.get("/sources/{source_id}/content")

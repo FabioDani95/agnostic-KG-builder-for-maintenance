@@ -13,10 +13,33 @@ The authoritative specification is:
 - [MVP specification](SPECIFICHE_MVP.md)
 - [normative specification package](docs/specs/README.md)
 
-The specification-driven implementation has started with G1: secure workspace,
-source/evidence foundations, PDF ingestion and accounting. G1 is ready for
-Product Owner verification; the behavior described below still includes the
-imported baseline surfaces that remain during the migration.
+The specification-driven implementation has completed G2 and is stopped at a
+non-accepted G3 checkpoint. G1 provides secure workspaces, a simple multi-file inventory,
+automatic all-pages PDF preparation and accounting. G2 reopens the same
+workspace and prepares CSV, XLSX, JSON and JSONL into the canonical Evidence
+Model without another upload. Unambiguous sources complete automatically;
+only a real mapping, hidden-sheet or join decision is shown, one at a time.
+The imported baseline surfaces described below remain available during the
+migration.
+
+The G2 specification carries the same UX constraints learned in G1: the
+system profiles and prepares unambiguous data automatically, shows one
+exception at a time, keeps technical detail collapsed, and never asks for
+row-by-row or column-by-column approval. G2 is implemented and completed.
+
+G3 ora costruisce sottografi source-scoped, navigabili fino alla riga-evidenza,
+con mapping fail-closed, validazione ontologica strict, consolidamento
+deterministico e knowledge gap espliciti. La prima campagna su CSV reali ha
+confermato il comportamento tecnico, ma **G3 non è ancora accettato**: il gate
+umano resta aperto e nessun sottografo viene approvato, unito o pubblicato in
+automatico. Restano da estendere la matrice CSV, la canonicalizzazione
+multilingua, il redesign dell'explorer e la stessa campagna sul core PDF. Vedi
+[campagna di hardening CSV](docs/CSV_HARDENING_CAMPAIGN.md) e
+[handoff G3](docs/G3_ENGINE_HARDENING_HANDOFF.md).
+
+The root route opens a lightweight workspace home. It shows each persisted
+workspace with derived status and document count, creates a new workspace from
+the `+` action, and reopens the selected G1 workspace by its stable ID.
 
 ## Imported Baseline
 
@@ -61,7 +84,19 @@ Scoping is recall-oriented for component coverage:
 ### Runtime Model
 
 - Backend: FastAPI
-- Frontend: the HITL console, a static browser UI served by the backend at `/` (also reachable as `/console.html`). The legacy chat/wizard UI was removed on 2026-07-06.
+- Frontend: the G1 Product Owner preparation flow, served by the backend at `/`
+  (canonical target `/console.html?foundation=1`). The retained PDF-baseline
+  console remains directly reachable at `/console.html` during migration.
+- G1 upload: multiple PDF, CSV, XLSX, JSON and JSONL files per operation;
+  client-side duplicate rejection and removed-source restoration; automatic
+  all-pages PDF preparation; compact inventory with confirmed red × removal.
+- G2 preparation: deterministic CSV/XLSX/JSON/JSONL adapters, versioned
+  profiling and mapping, separate semantic texts, explicit n:1 joins,
+  complete RawUnit accounting and una conferma finale per fonte.
+- G3 review candidate: sottografo per fonte, validazione strict del payload,
+  provenienza navigabile, consolidamento deterministico e barriera di
+  approvazione; maturity semantica, merge multilingua e UX finale non sono
+  ancora accettati.
 - Input source: PDFs placed locally in `manuals/`
 - Runtime workspace: `data/`
 - Export destination: `output/latest/` and `output/<manual_slug>/`

@@ -3,7 +3,7 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from backend.app_config import (
@@ -21,6 +21,7 @@ from backend.routers import (
     preparation,
     runs,
     sources,
+    subgraphs,
     upload,
     workspaces,
 )
@@ -56,8 +57,10 @@ def create_app() -> FastAPI:
     app.include_router(chat.router)
     app.include_router(runs.router)
     app.include_router(workspaces.router)
+    app.include_router(workspaces.inventory_router)
     app.include_router(sources.router)
     app.include_router(preparation.router)
+    app.include_router(subgraphs.router)
 
     @app.get("/api/config")
     async def get_frontend_config():
@@ -96,8 +99,11 @@ def create_app() -> FastAPI:
 
     @app.get("/", include_in_schema=False)
     async def console_home():
-        """The HITL console is the only frontend; serve it at the root."""
-        return FileResponse(frontend_dir / "console.html")
+        """Open the workspace home at the canonical app URL."""
+        return RedirectResponse(
+            url="/home.html",
+            headers={"Cache-Control": "no-store"},
+        )
 
     app.mount("/", StaticFiles(directory=str(frontend_dir), html=True), name="frontend")
     return app

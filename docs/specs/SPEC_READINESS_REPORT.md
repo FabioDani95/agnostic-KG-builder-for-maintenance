@@ -4,16 +4,16 @@
 
 **READY FOR PLANNING**
 
-La remediation tecnica e la semantic review del pacchetto versione `1.2` sono
+La remediation tecnica e la semantic review del pacchetto versione `2.1` sono
 complete. Il Product Owner ha approvato esplicitamente il seguente snapshot
 e l'approvazione è registrata in `SPEC_INDEX.json`:
 
 ```text
-sha256:66db17fbad207734889e6a671f218145f56b032034c15cbfcc656f1fe85fff28
+sha256:fd41a66b9d2b0eeaef53e0cd8840a31c2daa09ed0fdbd27a53451a5ccc8e57d2
 ```
 
 Approvatore: `Product Owner`. Timestamp UTC:
-`2026-07-29T12:13:44Z`.
+`2026-08-03T09:20:43Z`.
 
 Il checker deriva `READY_FOR_PLANNING` senza issue o blocker.
 
@@ -24,10 +24,10 @@ Il checker deriva `READY_FOR_PLANNING` senza issue o blocker.
 | Requisiti normativi | 89 |
 | Data contract | 47 |
 | Obligation tracciate | 136 |
-| Criteri di accettazione | 75 |
+| Criteri di accettazione | 76 |
 | Dataset di accettazione | 6 |
-| Verification e artifact pianificati | 75 + 75 |
-| Decisioni congelate | 35 |
+| Verification e artifact pianificati | 76 + 76 |
+| Decisioni registrate | 44 (43 accettate, 1 sostituita) |
 | Finding audit classificati | 32 |
 | Finding senza disposition | 0 |
 | Errori strutturali o semantici P1 residui | 0 |
@@ -42,18 +42,24 @@ Le 32 disposition comprendono:
 `PLANNING_INPUT` significa lavoro obbligatorio per il futuro piano, non
 capacità già implementata.
 
+`READY_FOR_PLANNING` descrive la coerenza della specifica, non la readiness del
+checkpoint applicativo. Per decisione `DEC-044`, l'implementazione resta ferma
+a G3 non accettato e G4 è bloccato.
+
 ## 3. Verifiche eseguite
 
 | Verifica | Risultato osservato |
 |---|---|
-| Pytest | 325 raccolti, 325 superati |
+| Pytest | 384 raccolti, 384 superati |
 | Test del consistency checker | 19 superati, inclusi 18 mutation test |
 | Ruff sui file modificati Python | superato |
 | Golden mock | 9/9 fixture schema-compliant |
 | Golden mock recall media | 1.0 |
 | Link Markdown | 41 file, tutti i target locali risolvibili |
 | Blocchi JSON nei data contract | 30 validi |
-| Playwright console E2E | 1/1 superato |
+| Playwright console E2E | 3/3 superati |
+| Audit diagnostico G3 CSV | 6 schemi provati; 2 completi, 1 fallito, 3 parziali/non sufficientemente bloccati |
+| Audit ontologico sottografo PO | domain/range 0 errori; 36 nodi incompleti, 90 proprietà obbligatorie mancanti, 36 attributi extra |
 | Checker strutturale | zero errori di ID, schema, traceability, decisioni o finding |
 | Readiness derivata | `READY_FOR_PLANNING`, zero issue e zero blocker |
 
@@ -62,9 +68,22 @@ dell'editor (`313 + 1 - 17 + 4`); non è il conteggio della suite corrente.
 
 ## 4. Decisioni e contratti chiusi
 
-La versione `1.2` congela, fra gli altri:
+La versione `2.1` congela, fra gli altri:
 
-- assessment di appartenenza della fonte alla macchina;
+- attribuzione dei file affidata all'operatore, senza gate contenutistico;
+- preparazione PDF G1 automatica e idempotente su tutte le pagine;
+- preparazione G2 automatica con eccezioni, una decisione alla volta, preview
+  limitate e dettagli tecnici chiusi di default;
+- linguaggio UI basato sulle attività, senza nomi dei checkpoint di sviluppo,
+  con tabella semantica e mappa colonne→grafo nel passo `Struttura dati`;
+- conferma per singola fonte e matrice CSV/lingue prima dell'avanzamento;
+- generation source-scoped, approvazione di ogni sottografo prima del merge e
+  aggiornamento incrementale senza rigenerare la base pubblicata;
+- ispezione di ogni sottografo tramite grafo navigabile, tabella nodi, tabella
+  relazioni ed evidenze;
+- separazione esplicita fra UX verificata e maturità del motore: G3 non è
+  accettato; hardening CSV eterogeneo e validazione ontologica strict precedono
+  il collaudo PDF sullo stesso contratto;
 - accounting gerarchico di ogni RawUnit e disposition per tentativo;
 - join espliciti con lineage composito;
 - CandidateGraphRevision, withdrawal e non-regressione fra versioni;
@@ -89,7 +108,7 @@ dataset multisource, UX target o boundary di sicurezza.
 
 ## 6. Ultimo gate completato
 
-Il gate è stato completato il `2026-07-29T12:13:44Z`:
+Il gate è stato aggiornato il `2026-08-03T08:20:18Z`:
 
 1. il proprietario ha approvato esplicitamente il digest indicato;
 2. approvatore, timestamp e digest sono registrati in `SPEC_INDEX.json`;

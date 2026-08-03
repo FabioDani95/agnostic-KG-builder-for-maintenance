@@ -4,9 +4,9 @@
 
 | Campo | Valore |
 |---|---|
-| Versione | `1.2` |
-| Data | `2026-07-29` |
-| Stato | Remediation e semantic review completate; in attesa di owner approval |
+| Versione | `2.1` |
+| Data | `2026-08-03` |
+| Stato | Aggiornata con DEC-036–044; G3 non accettato, hardening engine CSV→PDF pianificato |
 | Prodotto | Maintenance Knowledge Graph Builder |
 | Esecuzione | Locale |
 | Backend | FastAPI |
@@ -188,7 +188,9 @@ essere riconducibile a:
 ### 4.1 Incluso
 
 - applicazione locale con backend FastAPI e frontend web;
-- un workspace locale attivo;
+- una home locale che elenca i workspace persistiti, ne apre uno per ID e
+  consente di crearne uno nuovo;
+- un workspace selezionato attivo alla volta;
 - una macchina per workspace;
 - caricamento multiplo e incrementale di fonti;
 - PDF testuali e PDF scansionati;
@@ -219,7 +221,7 @@ essere riconducibile a:
 - collegamento a mailbox;
 - immagini standalone;
 - celle o linee con più macchine;
-- più workspace amministrabili dalla UI;
+- eliminazione o amministrazione avanzata di più workspace dalla UI;
 - Neo4j o altri database a grafo;
 - utenti, login, ruoli, organizzazioni e multi-tenancy;
 - integrazioni live con CMMS, ERP, PLC o SCADA;
@@ -263,14 +265,19 @@ L'operatore locale deve poter:
 ### UC-001 — Costruzione iniziale
 
 Dato un workspace vuoto e un insieme misto di fonti riferite alla stessa
-macchina, il sistema deve produrre un candidate graph revisionabile e quindi
-una prima versione pubblicata.
+macchina, il sistema deve produrre un sottografo candidato separato per ogni
+fonte approvata. L'operatore approva ogni sottografo prima che il sistema possa
+eseguire linking e merge cross-source. Soltanto il risultato multisource
+revisionabile può diventare la prima versione pubblicata.
 
 ### UC-002 — Aggiornamento incrementale
 
 Dato un grafo già pubblicato, nuove fonti devono produrre un delta candidato.
 La versione pubblicata precedente deve restare immutata fino al nuovo gate di
-pubblicazione.
+pubblicazione. Le fonti già incluse non vengono rigenerate: la nuova fonte
+attraversa caricamento, struttura dati, generazione del proprio sottografo e
+approvazione; soltanto dopo vengono proposti i link e merge fra quel
+sottografo e la versione pubblicata di base.
 
 ### UC-003 — Troubleshooting
 
@@ -295,30 +302,26 @@ Prima del processamento deve esistere una scheda macchina con:
 
 I campi obbligatori derivano esclusivamente dall'ontologia.
 
-Una fonte apparentemente relativa a un'altra macchina deve essere posta in
-quarantena e non può creare un secondo `Asset`.
+La scelta dei file appartenenti alla macchina è responsabilità dell'operatore.
+Il caricamento non crea mai un secondo `Asset` e non introduce un gate
+automatico di attribuzione basato sul contenuto.
 
 ### FR-WS-IDENTITY-001 — Appartenenza fonte–macchina
 
-Ogni fonte deve avere un `SourceAssetAssessment` prima di profiling, scoping o
-estrazione semantica. Gli esiti ammessi sono:
+La selezione di un file supportato nel workspace costituisce l'attribuzione
+esplicita dell'operatore alla macchina confermata. Il sistema deve registrare
+questa decisione, accettare il file senza analizzarne il contenuto per dedurre
+l'appartenenza e mostrarlo immediatamente nell'inventory.
 
-- `compatible`: può contribuire al candidate graph;
-- `uncertain`: resta in quarantena finché l'operatore non registra una
-  decisione supportata;
-- `incompatible`: non può contribuire e deve essere riassegnata o esclusa.
+Non esistono nel gate G1 stati `uncertain` o `incompatible`, conferme di
+associazione o override. L'operatore può rimuovere intuitivamente un file
+caricato per errore e ricaricarlo in seguito. La pipeline non deve creare un
+secondo Asset né spostare automaticamente documenti in quarantena.
 
-Seriale, equipment tag e asset ID nello stesso namespace sono segnali forti.
-Brand, modello, serie, linea, sito, componenti e similarità testuale sono
-segnali contestuali e, da soli, non dimostrano l'identità fisica. Ogni segnale
-osservato deve avere un locator. Un conflitto fra identificativi forti produce
-`incompatible`; assenza di segnali forti o presenza dei soli segnali
-contestuali produce `uncertain`.
-
-L'operatore può risolvere `uncertain` soltanto tramite `OperatorAssertion` con
-motivazione ed evidenze viste. Non può trasformare un conflitto forte in
-`compatible`: deve correggere l'attribuzione o la scheda sorgente e generare
-un nuovo assessment.
+Un formato non supportato è bloccato alla selezione e non viene inviato. Un
+contenuto identico a una Source già attiva è segnalato e non ammesso; la API
+risponde `409` come difesa. Se la Source era stata rimossa, lo stesso contenuto
+la ripristina senza duplicare il raw.
 
 ### FR-002 — Source set
 
@@ -339,7 +342,7 @@ immutabile di:
 - workspace;
 - fonti;
 - mapping e scoping;
-- assessment di appartenenza, join e lingua;
+- attribuzione operatore della fonte, join e lingua;
 - ontologia;
 - provider, modelli e policy di data egress;
 - prompt;
@@ -388,17 +391,18 @@ Per ogni PDF il sistema deve:
 - creare evidence unit con documento, pagina, sezione e citazione;
 - segnalare pagine illeggibili o a bassa qualità.
 
-### FR-PDF-002 — Gate di scoping
+### FR-PDF-002 — Preparazione automatica completa
 
-L'operatore deve poter:
+Al caricamento di un PDF il sistema deve inventariare e includere
+automaticamente tutte le pagine fisiche. Nel gate G1 l'operatore non deve
+spuntare pagine, approvare uno scope o ispezionare centinaia di righe tecniche.
 
-- vedere pagine e sezioni proposte;
-- includere o escludere pagine;
-- ispezionare testo e tabelle estratti;
-- verificare che il documento appartenga alla macchina;
-- approvare lo scope prima dell'estrazione semantica.
-
-Un nuovo PDF non deve generare un grafo separato.
+La preparazione deve essere idempotente: un PDF già attivo è bloccato come
+duplicato prima dell'invio e dalla API con `409`; un PDF precedentemente
+rimosso riusa file, scope e run compatibili senza generare duplicati o errori
+HTTP 500. Un nuovo PDF non genera un grafo separato.
+L'ottimizzazione dell'estrazione e la review delle evidenze appartengono alle
+fasi successive.
 
 ### FR-PDF-003 — Limiti
 
@@ -470,6 +474,21 @@ Per ogni nuovo schema l'operatore deve poter:
 Un mapping può essere riutilizzato automaticamente soltanto con fingerprint
 compatibile.
 
+Nel Gate 2 il sistema deve proporre un mapping completo e applicare
+automaticamente le parti non ambigue. L'operatore non deve approvare ogni
+colonna o record: vede un riepilogo per fonte, corregge soltanto le eccezioni
+bloccanti e conferma il mapping risultante una sola volta. Campi tecnici
+conservati ma non usati semanticamente devono essere raggruppati e disponibili
+nel dettaglio, non presentati come decisioni aperte.
+
+Una colonna sconosciuta non può diventare silenziosamente `attribute` quando
+nome, tipo o valori suggeriscono contenuto diagnostico. Deve essere associata
+a un ruolo semantico, esclusa esplicitamente oppure presentata come singola
+eccezione bloccante. La conferma della fonte non è consentita se il mapping
+perderebbe senza avviso sintomi, cause, azioni, componenti o codici errore.
+Alias e normalizzazione delle intestazioni devono essere configurabili e
+multilingua; una lista chiusa di soli nomi inglesi non dimostra agnosticità.
+
 Tabelle, fogli e array sono elaborati indipendentemente per default. Un join è
 ammesso soltanto con un `JoinSpec` approvato che dichiari:
 
@@ -484,6 +503,11 @@ Join uno-a-molti o molti-a-molti non possono essere auto-approvati. Ogni output
 deve conservare `provenance_refs[]` per tutti i record partecipanti; un limite
 o un match ambiguo produce una disposition, non la duplicazione o la perdita
 silenziosa del record principale.
+
+L'assenza di un join è un esito valido e non richiede conferma. Quando un join
+è necessario, la UI deve presentarne uno alla volta, spiegare in linguaggio
+operativo quali dati collega e mostrare un confronto compatto prima/dopo; il
+contratto tecnico completo resta espandibile.
 
 ### FR-NORM-001 — Normalizzazione
 
@@ -596,6 +620,12 @@ Le regole deterministiche devono:
 - bloccare evidenze o candidati incompatibili;
 - calcolare stato di review e pubblicabilità.
 
+Le stesse verifiche devono essere eseguite su ogni
+`SourceSubgraphRevision` prima che l'azione `Approva sottografo` sia abilitata.
+Checksum corretto e nomi di tipo ammessi non bastano: proprietà obbligatorie,
+assenza di proprietà extra, domain/range, endpoint, ID, provenance e
+vocabolari devono essere validi sul payload effettivamente mostrato.
+
 ### FR-NS-003 — Structured output
 
 Ogni risposta modello destinata alla pipeline deve essere validata contro uno
@@ -610,6 +640,12 @@ Ogni candidato deve avere evidenza verificabile. La motivazione del modello non
 costituisce evidenza.
 
 Una relazione causale o risolutiva priva di supporto non deve essere pubblicata.
+
+La presenza di due valori nella stessa riga non costituisce da sola supporto
+per una relazione causale o risolutiva. Mapping esplicito, struttura del record
+ed evidence devono giustificare il legame; combinazioni cartesiane fra più
+sintomi, cause o azioni nella stessa riga devono essere bloccate o presentate
+come proposte da revisionare.
 
 `MAY_INDICATE` richiede linguaggio causale esplicito nella fonte oppure una
 decisione umana su un'inferenza dichiarata; una semplice co-occorrenza non
@@ -631,6 +667,25 @@ Duplicati deterministici possono essere consolidati automaticamente usando:
 - locator identico nella stessa sorgente.
 
 La deduplica deve essere reversibile e non deve cancellare la provenienza.
+
+La deduplica esatta dimostra soltanto identità deterministica. Non può essere
+descritta come deduplica semantica o agnostica e non autorizza merge fra
+lingue, sinonimi o contesti differenti senza entity linking qualificato.
+
+L'ordine obbligatorio è:
+
+1. deduplica di Source/raw identici al caricamento;
+2. normalizzazione deterministica e deduplica esatta delle EvidenceUnit nella
+   singola fonte prima delle chiamate modello;
+3. consolidamento di nodi e relazioni duplicati all'interno del sottografo
+   generato per quella fonte;
+4. approvazione umana del sottografo della fonte;
+5. entity linking e merge cross-source contro gli altri sottografi approvati
+   e l'eventuale versione pubblicata di base.
+
+La pulizia stilistica può avvenire dopo la generazione ma non può cambiare
+identità, semantica, relazioni o provenance; ogni modifica semantica resta una
+proposta revisionabile.
 
 ### FR-MERGE-002 — Entity linking
 
@@ -719,6 +774,22 @@ sovrascrivere direttamente il grafo pubblicato. Un nodo, proprietà o relazione
 presente nella base può mancare dalla nuova versione soltanto in presenza di
 un withdrawal approvato o di lineage approvato di merge/split; in caso
 contrario il publish deve fallire come degradazione non spiegata.
+
+Per ogni fonte deve esistere una revisione di sottografo candidata distinta,
+legata a `source_id`, fingerprint della preparazione, configurazione e
+EvidenceUnit usate. Un sottografo non approvato non può superare la barriera di
+merge cross-source. L'approvazione del sottografo non approva automaticamente
+i merge con entità già presenti: tali proposte restano decisioni separate.
+
+Quando una nuova fonte viene aggiunta a posteriori, il sistema deve:
+
+- riusare senza modificarli la versione pubblicata e gli artifact delle fonti
+  già incluse;
+- generare soltanto il sottografo della nuova fonte, salvo invalidazioni
+  esplicite di configurazione o fingerprint;
+- richiedere l'approvazione di quel sottografo;
+- produrre un delta di linking/merge rispetto a `base_graph_version`;
+- pubblicare una nuova versione monotona soltanto dopo review e conferma.
 
 ### FR-EMB-001 — Contenuto da embeddare
 
@@ -832,24 +903,25 @@ concorrente.
 
 ## 13. Human in the Loop
 
-### FR-HITL-001 — Gate 1: identità, scope e mapping
+I gate HITL descritti in questa sezione sono punti di controllo operativi della
+pipeline e non coincidono con i checkpoint Product Owner `G1`–`G5` del piano
+di sviluppo. In particolare, il checkpoint Product Owner `G2` riguarda la
+preparazione multisource; la review semantica di `FR-HITL-002` viene verificata
+in un checkpoint successivo. Nella UI devono essere usati i nomi dei passi,
+non numeri di gate ambigui. Le espressioni `Gate 1`–`Gate 5` non devono essere
+visibili nell'interfaccia di prodotto.
 
-Il gate è obbligatorio per:
+### FR-HITL-001 — Gate 1: identità e inventory delle fonti
 
-- conferma della macchina;
-- nuovo PDF o scoping modificato;
-- nuovo schema tabellare;
-- join;
-- ricostruzione del semantic text;
-- imputazioni o correzioni di tipo.
+Il gate G1 richiede la conferma della macchina e la scelta esplicita dei file.
+Ogni file supportato scelto dall'operatore entra nell'inventory; l'operatore è
+responsabile della correttezza dei documenti e può rimuoverli con un'azione
+diretta.
 
-Mapping e scoping già approvati possono essere riutilizzati quando il
-fingerprint e la configurazione sono compatibili.
-
-L'operatore può delegare l'esecuzione di scope, mapping e inclusioni proposte.
-In tal caso il gate deve registrare la delega e l'esito automatico. Conferma
-della macchina, anomalie bloccanti, join rischiosi e valori non inferibili
-richiedono comunque intervento umano.
+PDF e fonti strutturate non richiedono in G1 approvazioni pagina-per-pagina,
+riga-per-riga, mapping o associazione. Tutte le pagine PDF sono incluse
+automaticamente. Mapping, join, correzioni semantiche e review delle evidenze
+sono gate delle fasi successive quando tali capacità vengono introdotte.
 
 ### FR-HITL-002 — Gate 2: review semantica
 
@@ -867,6 +939,16 @@ La review queue deve contenere almeno:
 Gli elementi ad alta confidence possono essere auto-staged e presentati in
 forma aggregata. Non è richiesta l'approvazione individuale di migliaia di
 elementi non ambigui.
+
+La review avviene in due barriere obbligatorie e non intercambiabili:
+
+1. `approvazione sottografo fonte`: dopo la generazione e la deduplica
+   intra-source, l'operatore approva o rifiuta il risultato di ciascuna fonte;
+2. `review multisource`: soltanto i sottografi approvati entrano in entity
+   linking, merge, conflitti e delta verso la versione pubblicata di base.
+
+L'approvazione della struttura dati precedente alla generazione autorizza
+l'uso della fonte, ma non sostituisce l'approvazione del sottografo generato.
 
 ### FR-HITL-003 — Decisioni
 
@@ -1163,12 +1245,28 @@ finché non viene congelato un reference hardware.
 Il frontend deve implementare un unico percorso:
 
 ```text
-Macchina → Fonti → Preparazione → Elaborazione → Revisione → Pubblicazione
+Macchina → Caricamento → Controllo file → Struttura dati → Elaborazione → Revisione → Pubblicazione
 ```
 
-`Preparazione` deve adattarsi al formato senza creare pipeline o esperienze
-separate. Dopo il publish devono essere disponibili `Esplora`, in sola lettura,
+`Controllo file` comunica soltanto l'esito dell'intake, senza approvazioni
+massive. `Struttura dati` mostra per le fonti tabellari una preview semantica
+compatta e la mappa colonne→concetti; la costruzione di nodi e relazioni resta
+nel successivo passo `Elaborazione`. Ogni fonte viene confermata nella propria
+card; il riepilogo linguistico distingue EN qualificato da IT, DE e mixed
+preservati. Dopo il publish devono essere disponibili `Esplora`, in sola lettura,
 e la chat diagnostica di test.
+
+Nel passo `Elaborazione` il sistema genera un sottografo alla volta, con scope
+di fonte. Ogni card deve mostrare il relativo risultato e richiedere
+approvazione prima della barriera cross-source. Nel passo `Revisione` vengono
+poi presentati linking, merge e conflitti fra sottografi approvati e fra il
+nuovo sottografo e la versione pubblicata di base.
+
+`Approva sottografo` deve restare disabilitato quando la validazione ontologica
+strict fallisce, il mapping ha colonne diagnostiche non risolte o il sistema ha
+prodotto un risultato parziale senza disposition esplicita. La UI deve
+distinguere chiaramente un prototipo visualizzabile da un sottografo valido e
+approvabile.
 
 Per ogni passo delegabile l'operatore deve poter scegliere se verificarlo
 manualmente o farlo eseguire automaticamente con default, soglie e
@@ -1224,7 +1322,9 @@ L'MVP non è accettabile se:
 - una fonte approvata viene persa;
 - viene pubblicato un grafo non conforme;
 - un nodo, proprietà o relazione pubblicati non hanno provenance completa;
-- due documenti dello stesso workspace producono grafi separati;
+- due documenti dello stesso workspace producono versioni pubblicate separate;
+  sottografi candidati interni per fonte sono invece obbligatori prima del
+  merge;
 - una nuova fonte sovrascrive una versione pubblicata;
 - una versione perde un claim della base senza withdrawal/merge/split
   approvato;

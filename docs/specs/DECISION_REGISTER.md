@@ -35,7 +35,7 @@ sostituisce l'owner approval del pacchetto, registrata separatamente in
 | DEC-021 | ACCEPTED | Il frontend usa un solo flusso guidato multi-formato, non pagine tecniche scollegate |
 | DEC-022 | ACCEPTED | L'editor libero e tutte le graph mutation generiche vengono rimossi |
 | DEC-023 | ACCEPTED | L'operatore può delegare gli step non bloccanti all'automazione senza ometterli |
-| DEC-024 | ACCEPTED | Ogni fonte deve superare una valutazione esplicita di appartenenza alla macchina; incerte e incompatibili restano in quarantena |
+| DEC-024 | SUPERSEDED | Sostituita da DEC-036: nessun gate contenutistico di appartenenza al caricamento |
 | DEC-025 | ACCEPTED | Le strutture si elaborano indipendentemente per default; ogni join è esplicito e conserva lineage di tutte le RawUnit partecipanti |
 | DEC-026 | ACCEPTED | Accounting e stati usano RawUnit, disposition terminali e quattro state machine canoniche; i casi limite parser hanno esito normativo |
 | DEC-027 | ACCEPTED | Il candidate graph è revisionato contro una base pubblicata; withdrawal e reversal producono nuove revisioni e il publish è un bundle atomico |
@@ -47,6 +47,15 @@ sostituisce l'owner approval del pacchetto, registrata separatamente in
 | DEC-033 | ACCEPTED | IT/DE non qualificato è preservato e non contribuisce automaticamente; una traduzione derivata richiede approvazione puntuale |
 | DEC-034 | ACCEPTED | Generation, embedding, endpoint, capability e data egress hanno configurazioni distinte; `MODEL_NAME` vale soltanto per generation |
 | DEC-035 | ACCEPTED | Auto-stage richiede un CalibrationProfile valido, non vacuo e qualificato per operation, modelli, lingua, feature e dataset |
+| DEC-036 | ACCEPTED | Il caricamento di un formato supportato è l'attribuzione operatore; nessuna conferma di associazione o quarantena contenutistica in G1 |
+| DEC-037 | ACCEPTED | G1 prepara ogni PDF includendo automaticamente tutte le pagine, senza controllo pagina-per-pagina, in modo idempotente |
+| DEC-038 | ACCEPTED | La route iniziale è una home minimale dei workspace persistiti, apribili per ID e creabili con un'azione + dedicata |
+| DEC-039 | ACCEPTED | G2 usa una preparazione automatica con eccezioni, una decisione alla volta e dettagli tecnici chiusi; nessuna approvazione massiva o ripetitiva |
+| DEC-040 | ACCEPTED | La UI usa soltanto nomi di attività, introduce `Struttura dati` con anteprima tabellare e mappa colonne→grafo, e rinvia la costruzione del grafo a `Elaborazione` |
+| DEC-041 | ACCEPTED | `Struttura dati` richiede conferma per singola fonte e dimostra robustezza CSV e qualifica EN/IT/DE/mixed prima dell'avanzamento |
+| DEC-042 | ACCEPTED | La generation crea e fa approvare un sottografo per fonte prima del merge; nuove fonti producono sottografo e delta incrementali senza rigenerare la base |
+| DEC-043 | ACCEPTED | L'accettazione iniziale di Elaborazione è CSV-first e mostra per ogni fonte grafo navigabile, tabella nodi, tabella relazioni ed evidenze; il collaudo PDF segue sullo stesso contratto e sulla pipeline riusata |
+| DEC-044 | ACCEPTED | G3 non è accettato: la UI è un prototipo verificato, mentre il motore deve superare hardening CSV eterogeneo e validazione ontologica strict prima del collaudo PDF |
 
 ## Dettaglio e razionale
 
@@ -143,8 +152,9 @@ e soglie calibrate specifiche.
 
 L'umano:
 
-- conferma la macchina e sceglie per scope, mapping e join se verificare
-  manualmente o delegare le sole decisioni autorizzabili;
+- conferma la macchina e sceglie i file da caricare;
+- nelle fasi successive sceglie per mapping e join se verificare manualmente o
+  delegare le sole decisioni autorizzabili;
 - risolve ambiguità e conflitti;
 - approva la pubblicazione.
 
@@ -168,15 +178,16 @@ La qualità del grafo ha precedenza sullo sviluppo dell'agente.
 
 La varietà dei formati deve essere assorbita dal passo `Preparazione`:
 
-- PDF usa scoping, preview pagina, testo, tabelle e OCR;
-- CSV, XLSX e JSON usano profiling, mapping, semantic text e join;
+- in G1 PDF include automaticamente tutte le pagine senza preview massiva;
+- in G1 CSV, XLSX e JSON sono caricati integralmente senza selezione di righe;
+- profiling, mapping, semantic text e join entrano nelle fasi successive;
 - tutte le fonti condividono inventory, stati, gate, elaborazione, review e
   pubblicazione;
 - le aree tecniche `Qualità` e `Campi richiesti` diventano filtri della stessa
   inbox di review.
 
 Il percorso dell'operatore è
-`Macchina → Fonti → Preparazione → Elaborazione → Revisione → Pubblicazione`.
+`Macchina → Caricamento → Controllo file → Struttura dati → Elaborazione → Revisione → Pubblicazione`.
 Il dettaglio completo è in `UX_SPECIFICATION.md`.
 
 ### DEC-022 — Nessun editor libero
@@ -221,6 +232,8 @@ risolvere conflitti bloccanti, superare guard simboliche o pubblicare. In questi
 casi la pipeline deve fermarsi al checkpoint e richiedere l'intervento umano.
 
 ### DEC-024 — Appartenenza fonte-macchina
+
+**Stato:** `SUPERSEDED` da `DEC-036`.
 
 Ogni Source riceve un `SourceAssetAssessment` append-only con outcome
 `compatible`, `uncertain` o `incompatible`.
@@ -407,6 +420,162 @@ counts, precisione e automation coverage. Denominatore zero, zero elementi
 auto-staged, precisione insufficiente o coverage sotto il minimo approvato
 rendono il profilo `invalid`; mandare tutto in review non soddisfa il gate di
 automazione.
+
+### DEC-036 — Attribuzione operatore al caricamento
+
+La selezione di un file supportato è la decisione esplicita con cui
+l'operatore lo attribuisce alla macchina confermata. L'app non esamina il
+contenuto per richiedere conferma, proporre esclusione o produrre quarantena.
+Ogni file appare subito nell'inventory e può essere rimosso con la × rossa;
+prima della rimozione l'app richiede una conferma esplicita.
+Lo stato sufficiente è `Caricato`, mostrato accanto alla ×: G1 non espone un
+box riepilogativo finale né una quarta fase `Controllo` nello stepper.
+
+Formati non supportati e duplicati esatti già attivi sono bloccati alla
+selezione prima dell'invio. La API mantiene rispettivamente le difese `415` e
+`409`; una Source rimossa può invece essere ripristinata dallo stesso hash.
+
+Questa decisione sostituisce `DEC-024` per il prodotto corrente. Il record
+tecnico legacy `SourceAssetAssessment` può restare temporaneamente come
+compatibility artifact con esito fisso `compatible`, ma non costituisce un
+gate e non deve essere esposto all'utente.
+
+### DEC-037 — Preparazione PDF completa e idempotente in G1
+
+Il caricamento di un PDF prepara automaticamente tutte le pagine fisiche.
+Non esistono a G1 preview pagina-per-pagina, checkbox, motivazioni di esclusione
+o approvazione dello scope. L'interfaccia comunica soltanto caricamento e
+inclusione completa; l'operatore può rimuovere il documento intero.
+
+Un duplicato attivo non è ammesso; un doppio click è prevenuto dalla UI e la
+API risponde `409` senza produrre una seconda Source. Dopo una rimozione, la
+ricarica deve riusare source, scope e run compatibili e non produrre HTTP 500.
+OCR, tabelle, locator, quality flag e accounting restano persistiti
+internamente per le fasi successive.
+
+### DEC-038 — Home minimale dei workspace
+
+La route iniziale apre una home semplice che elenca i workspace persistiti.
+Ogni card mostra macchina, marca/modello, stato derivato, numero di documenti e
+ultimo aggiornamento; `Apri workspace` riprende per ID la stessa macchina e il
+suo source inventory. La schermata G1 espone un collegamento per tornare alla
+home.
+
+Questa home è parte di G1 ed è già implementata. Non autorizza eliminazione o
+amministrazione avanzata multi-workspace. L'azione
+`+ Nuovo workspace` crea invece un Workspace/Asset separato tramite onboarding;
+un solo workspace è selezionato e operativo alla volta.
+
+### DEC-039 — Corsia semplice e progressiva per G2
+
+Le lezioni del Gate 1 diventano vincolanti per la preparazione multisource.
+G2 parte dall'inventory già accettato, profila e propone automaticamente
+mapping, semantic text e normalizzazioni, quindi porta all'operatore soltanto
+le eccezioni che richiedono davvero una scelta.
+
+La UI mostra una decisione alla volta e una sola azione primaria. Non richiede
+approvazioni per ogni riga, pagina, foglio o colonna e non ripete gli esiti
+positivi in un box separato. Preview, profiling, locator, fingerprint e
+contratti completi restano nei dettagli chiusi di default. Il percorso felice
+si conclude con una sola conferma della preparazione risultante.
+
+Nessun join è il default. Un join compare soltanto quando esiste una proposta
+esplicita, con spiegazione operativa e confronto prima/dopo. Errori isolabili
+restano associati alla fonte o RawUnit coinvolta e non fermano né nascondono le
+altre fonti. Il criterio osservabile è `AC-UX-014`.
+
+### DEC-040 — Linguaggio di prodotto e confine della struttura dati
+
+I checkpoint `G1`–`G5` appartengono al piano di sviluppo e non devono essere
+esposti all'operatore. Il percorso visibile usa i nomi delle attività:
+`Macchina`, `Caricamento`, `Controllo file`, `Struttura dati`, quindi
+`Elaborazione`, `Revisione` e `Pubblicazione` quando disponibili.
+
+`Struttura dati` deve dare un risultato comprensibile già nel frontend: per
+ogni fonte strutturata mostra le prime cinque righe in una tabella semantica e
+la corrispondenza tra colonne sorgente e famiglie di concetti del grafo. Non
+mostra un grafo fittizio: nodi e relazioni vengono proposti soltanto nel passo
+successivo `Elaborazione`, dopo l'estrazione. Il criterio osservabile è
+`AC-UX-014`.
+
+### DEC-041 — Conferma per fonte e matrice di robustezza
+
+L'accettazione della struttura avviene sulla card della singola fonte, accanto
+al suo stato. Non esiste una conferma globale separata: quando tutte le fonti
+strutturate pronte risultano `Confermata`, il passo è concluso automaticamente.
+La decisione è idempotente e legata al profilo/fingerprint corrente.
+
+Prima dell'avanzamento devono essere provati CSV con separatori e codifiche
+diverse, record multilinea, righe corte e lunghe e un payload non testuale. Le
+unità irregolari isolabili non fermano le righe valide e non alimentano il
+grafo; un file non decodificabile blocca soltanto la propria fonte con errore
+leggibile. Una fixture EN/IT/DE/mixed deve inoltre dimostrare conservazione del
+testo originale e qualifica automatica del solo inglese. I criteri osservabili
+sono `AC-TAB-001`, `AC-LANG-002` e `AC-UX-014`.
+
+### DEC-042 — Sottografi source-scoped e aggiornamento incrementale
+
+La pipeline non genera direttamente un grafo multisource monolitico. Dopo la
+conferma della struttura, ogni fonte produce una SourceSubgraphRevision
+immutabile. Deduplica e consolidamento intra-source avvengono prima della sua
+review; l'operatore deve approvare quel sottografo prima che linking, merge o
+conflitti cross-source possano essere calcolati. Approvare la fonte prima della
+generation e approvare il sottografo dopo la generation sono due decisioni
+distinte.
+
+Se un workspace possiede già una versione pubblicata e riceve una nuova fonte,
+la versione base e i sottografi preesistenti non vengono rigenerati. La nuova
+fonte produce il proprio sottografo, viene approvata, quindi genera un delta di
+linking/merge verso `base_graph_version`. La pubblicazione crea una nuova
+versione monotona; non modifica quella precedente. Riferimenti osservabili:
+`AC-WS-002`, `AC-WS-003`, `AC-HITL-002`, `AC-UX-005` e
+`DC-CGRAPH-001`.
+
+### DEC-043 — Ispezione source-scoped e sequenza CSV-first
+
+Il sottografo della singola fonte deve essere realmente controllabile senza
+esporre un editor libero. La stessa revisione viene rappresentata come grafo
+navigabile, tabella completa e filtrabile dei nodi e tabella completa delle
+relazioni; selezionare un nodo apre le evidence originali con locator. Liste e
+dettagli lunghi sono scorrevoli e chiusi nella card della fonte.
+
+La prima verifica Product Owner usa CSV sintetici multilingua per separare la
+qualità della rappresentazione del grafo dalla variabilità dell'estrazione
+documentale. I PDF rimangono preparati e visibili come seconda fase. Il loro
+estrattore continua a riusare i servizi PDF e ontology workflow della pipeline
+originaria e dovrà produrre lo stesso `SourceSubgraphRevision`; non è ammessa
+una pipeline semantica parallela. Riferimenti osservabili: `AC-HITL-002` e
+`AC-UX-005`.
+
+### DEC-044 — Stop G3 e hardening del cuore semantico
+
+Il Product Owner non accetta G3 sulla base dei soli CSV sintetici iniziali.
+L'interfaccia di ispezione rimane una base valida, ma non dimostra che il
+motore di costruzione del grafo sia maturo o agnostico.
+
+L'audit del `2026-08-03` ha dimostrato che intestazioni inglesi canoniche e
+alcuni sinonimi funzionano, mentre intestazioni italiane possono fallire e
+nomi aziendali possono produrre grafi parziali senza blocco sufficiente. Sul
+sottografo del workspace di prova le relazioni rispettavano domain/range, ma
+36 nodi mancavano di almeno una proprietà obbligatoria, per 90 occorrenze
+mancanti complessive, e comparivano 36 attributi non dichiarati dallo schema.
+
+Prima di una nuova richiesta di accettazione devono essere completati, in
+quest'ordine:
+
+1. matrice CSV eterogenea e casi negativi fail-closed;
+2. mapping configurabile e multilingua senza perdita semantica silenziosa;
+3. generazione tramite il core neurosimbolico condiviso, non tramite un mapper
+   parallelo limitato alle intestazioni note;
+4. serializzazione e validazione strict di ogni `SourceSubgraphRevision`
+   contro `ontology_schema.JSON` prima dell'approvazione;
+5. misure di qualità per nodi, proprietà, relazioni, deduplica e provenance;
+6. seconda campagna sui PDF riusando la pipeline esistente e lo stesso
+   contratto source-scoped.
+
+`DEC-043` resta valida per UX e ordine CSV→PDF, ma non costituisce evidenza di
+readiness. Riferimenti osservabili: `AC-ONT-002`, `AC-TAB-004`, `AC-HITL-002`
+e `AC-UX-005`.
 
 ### Guardrail comune — Ontologia invariata
 

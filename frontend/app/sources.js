@@ -6,22 +6,80 @@
   state.sourceBusy = false;
   state.sourceError = "";
   state.sourceErrorDetail = null;
+  state.sourceSelectionValid = false;
+
+  const supportedExtensions = new Set(["pdf", "csv", "xlsx", "json", "jsonl"]);
+  const fileDigests = new WeakMap();
 
   const escapeHtml = (value) => String(value == null ? "" : value).replace(/[&<>"']/g, (character) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   })[character]);
-  const claimLabel = {
-    serial: "Numero seriale trovato",
-    equipment_tag: "Codice macchina trovato",
-    model: "Modello trovato",
-    brand: "Marca trovata",
-  };
-  const outcomeHelp = {
-    compatible: "L’app ha trovato nel file elementi coerenti con la macchina. Puoi proseguire.",
-    uncertain: "L’app non ha trovato prove sufficienti. Controlla il file e decidi se appartiene alla macchina.",
-    incompatible: "L’app ha trovato elementi in conflitto con la macchina. Il file non verrà usato finché non correggi la decisione.",
+
+  const selectionError = (title, cause, action, technicalDetail) => ({
+    title,
+    detail: {
+      cause,
+      preserved: "Il file non è stato inviato e i documenti già caricati non sono stati modificati.",
+      action,
+      technical_detail: technicalDetail,
+      retryability: "Puoi scegliere subito un altro file.",
+    },
+  });
+
+  const extensionOf = (fileName) => {
+    const parts = String(fileName || "").toLowerCase().split(".");
+    return parts.length > 1 ? parts.pop() : "";
   };
 
+  const digestFile = async (file) => {
+    if (!fileDigests.has(file)) {
+      fileDigests.set(file, window.crypto.subtle.digest("SHA-256", await file.arrayBuffer()).then((buffer) => (
+        Array.from(new Uint8Array(buffer), (byte) => byte.toString(16).padStart(2, "0")).join("")
+      )));
+    }
+    return fileDigests.get(file);
+  };
+
+  const validateSelection = async (files) => {
+    const unsupported = files.find((file) => !supportedExtensions.has(extensionOf(file.name)));
+    if (unsupported) {
+      return selectionError(
+        "Formato non supportato",
+        `“${unsupported.name}” non è un file ammesso.`,
+        "Scegli un file PDF, CSV, XLSX, JSON o JSONL.",
+        `UNSUPPORTED_SOURCE_SUFFIX .${extensionOf(unsupported.name) || "missing"}`
+      );
+    }
+
+    const activeByDigest = new Map(
+      state.sources
+        .filter((source) => source.source_kind !== "operator_input" && source.sha256)
+        .map((source) => [source.sha256, source])
+    );
+    const selectedByDigest = new Map();
+    for (const file of files) {
+      const digest = await digestFile(file);
+      const activeSource = activeByDigest.get(digest);
+      if (activeSource) {
+        return selectionError(
+          "Documento già caricato",
+          `“${file.name}” coincide con “${activeSource.file_name}”, già presente nell’elenco.`,
+          "Non serve caricarlo di nuovo. Se vuoi sostituirlo, rimuovi prima il documento presente.",
+          `DUPLICATE_SOURCE_SHA256 ${digest}`
+        );
+      }
+      if (selectedByDigest.has(digest)) {
+        return selectionError(
+          "Documento selezionato due volte",
+          `“${file.name}” e “${selectedByDigest.get(digest)}” hanno lo stesso contenuto.`,
+          "Mantieni una sola copia nella selezione e riprova.",
+          `DUPLICATE_SELECTION_SHA256 ${digest}`
+        );
+      }
+      selectedByDigest.set(digest, file.name);
+    }
+    return null;
+  };
   root.loadSources = async function loadSources() {
     if (!state.workspace) return;
     state.sources = await root.api(`/api/workspaces/${state.workspace.workspace.workspace_id}/sources`);
@@ -30,75 +88,25 @@
   root.renderSources = function renderSources() {
     if (!state.workspace) return "";
     const fileSources = state.sources.filter((source) => source.source_kind !== "operator_input");
-    const acceptedStructured = fileSources.filter(
-      (source) => source.status === "accepted" && source.source_kind !== "pdf"
-    );
-    const hasAcceptedPdf = fileSources.some(
-      (source) => source.status === "accepted" && source.source_kind === "pdf"
-    );
-    const hasPendingSource = fileSources.some((source) => source.status === "quarantined");
-    const structuredReady = acceptedStructured.length > 0 && !hasAcceptedPdf && !hasPendingSource;
-    const structuredFormats = [...new Set(
-      acceptedStructured.map((source) => source.source_kind.toUpperCase())
-    )].join(", ");
     const rows = fileSources.map((source) => {
-      const assessment = source.active_assessment || {};
-      const signals = (assessment.observed_claims || []).map((claim) =>
-        `<li><strong>${escapeHtml(claimLabel[claim.claim_kind] || "Dato trovato")}</strong>: ${escapeHtml(claim.raw_value)} · pagina ${escapeHtml(claim.locator.page || "—")}<br><small>${escapeHtml(claim.locator.quote || "")}</small></li>`
-      ).join("");
-      const uncertain = assessment.outcome === "uncertain" && source.status === "quarantined";
-      const reopen = assessment.decided_by && assessment.decided_by.kind === "operator_assertion";
-      const outcome = {
-        compatible: "Compatibile",
-        uncertain: "Da confermare",
-        incompatible: "Non compatibile",
-      }[assessment.outcome] || assessment.outcome;
-      const sourceStatus = {
-        accepted: "Pronto",
-        quarantined: "In attesa",
-        excluded: "Escluso",
-      }[source.status] || source.status;
-      const guidance = assessment.outcome === "compatible"
-        ? (
-          source.source_kind === "pdf"
-            ? "Apri la proposta automatica di pagine, controllala e approvala."
-            : "Hai associato il file alla macchina. Non devi scegliere pagine: i file strutturati contengono righe o record. In G1 questo file è pronto."
-        )
-        : "Controlla il file: l’app non può ancora confermare da sola che appartenga a questa macchina.";
       return `
         <article class="foundation-source" data-source-id="${escapeHtml(source.source_id)}">
           <header>
-            <div>
+            <div class="source-identity">
               <span class="source-file-type">${escapeHtml(source.source_kind.toUpperCase())}</span>
               <strong>${escapeHtml(source.file_name)}</strong>
             </div>
-            <span class="source-assessment">
-              <span class="pill source-${escapeHtml(assessment.outcome)}">${escapeHtml(outcome)}</span>
-              ${root.infoTip(`esito-${source.source_id}`, outcome, outcomeHelp[assessment.outcome] || "Questo stato indica l’esito del controllo automatico del documento.")}
-            </span>
+            <div class="source-actions">
+              <span class="pill source-ready">Caricato</span>
+              <button class="source-remove" type="button" data-source-id="${escapeHtml(source.source_id)}"
+                aria-label="Rimuovi file ${escapeHtml(source.file_name)}" title="Rimuovi file"
+                ${state.sourceBusy ? "disabled" : ""}>×</button>
+            </div>
           </header>
-          <p><strong>Cosa devi fare:</strong> ${escapeHtml(guidance)} <span class="source-status-note">Stato del file: ${escapeHtml(sourceStatus)}.</span></p>
-          ${signals ? `<details><summary>Vedi perché l’app ha associato il documento alla macchina</summary><ul>${signals}</ul></details>` : ""}
-          ${uncertain ? `
-            <p class="source-decision-note">Controlla il file e conferma soltanto se contiene dati della macchina mostrata al punto 1.</p>
-            <form class="assessment-resolution">
-              <label>Come hai verificato che appartiene alla macchina?
-                <input name="reason" required minlength="10" placeholder="Esempio: seriale verificato nel file">
-              </label>
-              <label>Inserisci chi verifica<input name="operator" required placeholder="Nome o iniziali"></label>
-              <button type="submit" data-action="confirm">Conferma associazione</button>
-              <button type="submit" data-action="exclude">Escludi documento</button>
-            </form>` : ""}
-          ${reopen ? '<button class="reopen-assessment btn-ghost">Modifica la decisione</button>' : ""}
-          ${source.source_kind === "pdf" && source.status === "accepted" ? `
-            <button class="preview-pdf btn-primary" data-source-id="${escapeHtml(source.source_id)}"
-              ${state.previewLoading ? 'disabled aria-busy="true"' : ""}>
-              ${state.previewLoading ? "Analisi del PDF in corso…" : "Controlla le pagine proposte"}
-            </button>` : ""}
           <details class="source-technical">
             <summary>Dettagli tecnici del file</summary>
             <p>Formato <code>${escapeHtml(source.source_kind)}</code> · Impronta digitale <code>${escapeHtml(source.sha256.slice(0, 12))}…</code> · Dimensione ${escapeHtml(source.size_bytes)} byte</p>
-            <p>Classe interna <code>${escapeHtml(source.authority)}</code> · Motivi del controllo <code>${escapeHtml((assessment.reason_codes || []).join(", "))}</code></p>
+            <p>Classe interna <code>${escapeHtml(source.authority)}</code></p>
           </details>
         </article>`;
     }).join("");
@@ -108,17 +116,17 @@
           <span class="foundation-step-number">2</span>
           <div>
             <p class="kicker">Documenti della macchina</p>
-            <h2>Aggiungi i documenti da controllare</h2>
-            <p>Carica un documento della macchina. Se scegli un PDF, controllerai le pagine da usare. Se scegli CSV, XLSX, JSON o JSONL, confermerai che il file appartiene alla macchina.</p>
+            <h2>Aggiungi i documenti</h2>
+            <p>Carica tutti i file che vuoi. Il sistema accetta i formati supportati e blocca subito un documento già presente.</p>
           </div>
           <span class="pill source-count">${fileSources.length ? `${fileSources.length} file` : "Nessun file"}</span>
         </div>
         <form id="source-upload">
           <label class="source-file-picker">
-            <span class="label-with-info">File da caricare ${root.infoTip("formati-documento", "Formati accettati", "Puoi scegliere PDF, CSV, XLSX, JSON o JSONL. In questo passaggio selezioni le pagine dei PDF; gli altri formati restano associati alla macchina.")}</span>
-            <input type="file" name="file" required accept=".pdf,.csv,.xlsx,.json,.jsonl">
+            <span class="label-with-info">File da caricare ${root.infoTip("formati-documento", "Formati accettati", "Puoi scegliere uno o più file PDF, CSV, XLSX, JSON o JSONL.")}</span>
+            <input type="file" name="file" required multiple accept=".pdf,.csv,.xlsx,.json,.jsonl">
             <span class="source-file-control">
-              <b>Scegli un file</b>
+              <b>Scegli file</b>
               <small data-source-file-name>Nessun file selezionato</small>
             </span>
           </label>
@@ -130,7 +138,7 @@
               <option value="informal">Informale</option>
             </select>
           </label>
-          <button class="btn-primary" type="submit" ${state.sourceBusy ? "disabled" : ""}>${state.sourceBusy ? "Caricamento…" : "Carica documento"}</button>
+          <button class="btn-primary" type="submit" ${(state.sourceBusy || !state.sourceSelectionValid) ? "disabled" : ""}>${state.sourceBusy ? "Caricamento…" : "Carica documento"}</button>
         </form>
         ${state.sourceError ? `
           <div class="foundation-error" role="alert">
@@ -143,18 +151,14 @@
               <small>${escapeHtml(state.sourceErrorDetail.retryability)}</small>` : ""}
           </div>` : ""}
         <div class="foundation-source-list">${rows || '<p class="foundation-empty">Non hai ancora caricato documenti. Scegli un file qui sopra per iniziare.</p>'}</div>
-        ${state.previewError ? `<p class="foundation-error" role="alert">Non è stato possibile preparare le pagine del PDF: ${escapeHtml(state.previewError)}. Puoi riprovare dallo stesso pulsante.</p>` : ""}
-        ${structuredReady ? `
-          <section class="structured-ready" role="status" data-testid="structured-g1-ready">
-            <span class="structured-ready-check" aria-hidden="true">✓</span>
+        ${fileSources.length ? `
+          <div class="documents-next-action">
             <div>
-              <p class="kicker">Preparazione G1 completata</p>
-              <h3>${acceptedStructured.length === 1 ? "Il file è pronto" : "I file sono pronti"}: non ci sono pagine da scegliere</h3>
-              <p>${escapeHtml(structuredFormats)} contiene righe o record, non pagine PDF. Hai completato tutto ciò che è disponibile in G1 per ${acceptedStructured.length === 1 ? "questo documento" : "questi documenti"}.</p>
-              <p><strong>Passaggio successivo:</strong> la lettura e il collegamento delle righe saranno disponibili in G2. In questa schermata non devi premere altro.</p>
+              <strong>I documenti ci sono</strong>
+              <span>Il prossimo passo mostra come tabelle e colonne verranno interpretate prima di costruire il grafo.</span>
             </div>
-            <span class="pill structured-ready-next">Righe · G2</span>
-          </section>` : ""}
+            <a class="btn-primary" href="/console.html?foundation=1&amp;workspace_id=${encodeURIComponent(state.workspace.workspace.workspace_id)}&amp;stage=g2">Continua alla struttura dati</a>
+          </div>` : ""}
       </section>`;
   };
 
@@ -162,22 +166,71 @@
     const upload = document.getElementById("source-upload");
     const fileInput = upload && upload.querySelector('input[type="file"]');
     const fileName = upload && upload.querySelector("[data-source-file-name]");
+    const submitButton = upload && upload.querySelector('button[type="submit"]');
     if (fileInput && fileName) {
-      fileInput.addEventListener("change", () => {
-        fileName.textContent = fileInput.files.length
-          ? fileInput.files[0].name
-          : "Nessun file selezionato";
+      fileInput.addEventListener("change", async () => {
+        const files = Array.from(fileInput.files || []);
+        state.sourceSelectionValid = false;
+        if (submitButton) submitButton.disabled = true;
+        if (!files.length) {
+          fileName.textContent = "Nessun file selezionato";
+          return;
+        }
+        fileName.textContent = "Controllo dei file…";
+        let issue;
+        try {
+          issue = await validateSelection(files);
+        } catch (error) {
+          issue = selectionError(
+            "Impossibile controllare il file",
+            "Il browser non è riuscito a calcolare l’impronta del documento.",
+            "Seleziona nuovamente il file e riprova.",
+            `CLIENT_FILE_DIGEST_FAILED ${error.message}`
+          );
+        }
+        if (issue) {
+          state.sourceError = issue.title;
+          state.sourceErrorDetail = issue.detail;
+          fileInput.value = "";
+          render();
+          return;
+        }
+        state.sourceError = "";
+        state.sourceErrorDetail = null;
+        document.querySelector(".foundation-error")?.remove();
+        state.sourceSelectionValid = true;
+        if (submitButton) submitButton.disabled = false;
+        fileName.textContent = files.length > 1
+          ? `${files.length} file selezionati`
+          : files[0].name;
       });
     }
     if (upload) upload.addEventListener("submit", async (event) => {
       event.preventDefault();
+      const files = Array.from(fileInput.files || []);
+      const authority = upload.querySelector('[name="authority"]').value;
+      if (!files.length) return;
+      const issue = await validateSelection(files);
+      if (issue) {
+        state.sourceSelectionValid = false;
+        state.sourceError = issue.title;
+        state.sourceErrorDetail = issue.detail;
+        fileInput.value = "";
+        render();
+        return;
+      }
       state.sourceBusy = true;
+      state.sourceSelectionValid = false;
       state.sourceError = "";
       state.sourceErrorDetail = null;
       render();
       try {
-        const body = new FormData(event.currentTarget);
-        await root.api(`/api/workspaces/${state.workspace.workspace.workspace_id}/sources`, { method: "POST", body });
+        for (const file of files) {
+          const body = new FormData();
+          body.append("file", file);
+          body.append("authority", authority);
+          await root.api(`/api/workspaces/${state.workspace.workspace.workspace_id}/sources`, { method: "POST", body });
+        }
         await root.loadSources();
       } catch (error) {
         state.sourceError = error.message;
@@ -187,42 +240,24 @@
         render();
       }
     });
-    document.querySelectorAll(".assessment-resolution").forEach((form) => {
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const action = event.submitter.dataset.action;
-        const sourceId = form.closest("[data-source-id]").dataset.sourceId;
-        const values = new FormData(form);
-        try {
-          await root.api(`/api/sources/${sourceId}/assessment/resolve`, {
-            method: "POST",
-            body: {
-              action,
-              reason: values.get("reason"),
-              observation_basis: "direct_observation",
-              operator: values.get("operator"),
-              evidence_seen: [state.sources.find((item) => item.source_id === sourceId).asset_assessment_id],
-            },
-          });
-          await root.loadSources();
-          render();
-        } catch (error) {
-          state.sourceError = error.message;
-          state.sourceErrorDetail = error.detail || null;
-          render();
-        }
-      });
-    });
-    document.querySelectorAll(".reopen-assessment").forEach((button) => {
+    document.querySelectorAll(".source-remove").forEach((button) => {
       button.addEventListener("click", async () => {
-        const sourceId = button.closest("[data-source-id]").dataset.sourceId;
+        const sourceId = button.dataset.sourceId;
+        const source = state.sources.find((item) => item.source_id === sourceId);
+        const fileName = source && source.file_name ? source.file_name : "questo file";
+        if (!window.confirm(`Rimuovere “${fileName}”? Potrai ricaricarlo in seguito.`)) return;
+        state.sourceBusy = true;
+        state.sourceError = "";
+        state.sourceErrorDetail = null;
+        button.disabled = true;
         try {
-          await root.api(`/api/sources/${sourceId}/assessment/reopen`, { method: "POST" });
+          await root.api(`/api/sources/${sourceId}`, { method: "DELETE" });
           await root.loadSources();
-          render();
         } catch (error) {
           state.sourceError = error.message;
           state.sourceErrorDetail = error.detail || null;
+        } finally {
+          state.sourceBusy = false;
           render();
         }
       });

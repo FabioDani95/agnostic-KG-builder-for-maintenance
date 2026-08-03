@@ -1,0 +1,62 @@
+{
+  "checkpoint": "G1",
+  "verified_at": "2026-08-02T20:27:41Z",
+  "workspace_id": "ws_XAta2z7w4NpxhU_AhVHBmA",
+  "workspace_name": "Pressa idraulica",
+  "workspace_state": "awaiting_review",
+  "active_documents": 3,
+  "failed_or_quarantined_sources": 0,
+  "active_inventory": [
+    {
+      "file_name": "boy35e_maintenance_logs.csv",
+      "kind": "csv",
+      "status": "accepted"
+    },
+    {
+      "file_name": "Circ-HUB.pdf",
+      "kind": "pdf",
+      "status": "accepted",
+      "preparation_state": "ready"
+    },
+    {
+      "file_name": "ReWind-Implementation.pdf",
+      "kind": "pdf",
+      "status": "accepted",
+      "preparation_state": "ready"
+    }
+  ],
+  "http_log_evidence": {
+    "source_remove": "DELETE /api/sources/src_rmLUuY1n5nAbnUIyf1CClA -> 204",
+    "source_reload": "POST /api/workspaces/ws_XAta2z7w4NpxhU_AhVHBmA/sources -> 200",
+    "workspace_reopen": "GET /api/workspaces/ws_XAta2z7w4NpxhU_AhVHBmA -> 200",
+    "source_inventory": "GET /api/workspaces/ws_XAta2z7w4NpxhU_AhVHBmA/sources -> 200",
+    "unhandled_http_500_after_fix": 0
+  },
+  "audit_event_counts": {
+    "asset_identity_confirmed": 1,
+    "source_removed": 3,
+    "source_restored": 2,
+    "pdf_all_pages_prepared": 2,
+    "run_created": 2
+  },
+  "pdf_accounting": [
+    {
+      "run_id": "run_lJ2Qvq2IuRG5DfpljWQEgQ",
+      "inventory": 1100,
+      "classified": 1100,
+      "unclassified": 0,
+      "balanced": true
+    },
+    {
+      "run_id": "run_siCfUIB38gmS_W8pAxiVVw",
+      "inventory": 734,
+      "classified": 734,
+      "unclassified": 0,
+      "balanced": true
+    }
+  ],
+  "warnings": [
+    "PyMuPDF emitted non-fatal stitching-function syntax warnings on a loaded PDF; upload completed with HTTP 200 and accounting remained balanced. Extraction-quality optimization is outside G1 and belongs to later gates."
+  ],
+  "result": "passed_with_non_blocking_parser_warnings"
+}

@@ -45,7 +45,6 @@
             </details>
           </section>
           ${root.renderSources ? root.renderSources() : ""}
-          ${root.renderPreparation ? root.renderPreparation() : ""}
         </main>`;
     }
     return `
@@ -109,7 +108,9 @@
       root.state.error = "";
       render();
       try {
-        root.state.workspace = await root.api("/api/workspace", {
+        root.state.workspace = await root.api(
+          root.state.creatingWorkspace ? "/api/workspaces" : "/api/workspace",
+          {
           method: "POST",
           body: {
             asset: {
@@ -127,6 +128,15 @@
             },
           },
         });
+        if (root.state.creatingWorkspace) {
+          root.state.creatingWorkspace = false;
+          const workspaceId = root.state.workspace.workspace.workspace_id;
+          window.history.replaceState(
+            null,
+            "",
+            `/console.html?foundation=1&workspace_id=${encodeURIComponent(workspaceId)}`
+          );
+        }
       } catch (error) {
         root.state.error = error.message;
       } finally {

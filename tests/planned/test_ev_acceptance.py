@@ -11,6 +11,20 @@ from backend.storage.repositories.raw_units import RawUnitRepository
 from tests.planned.source_fixtures import upload_pdf
 
 
+def _automatic_payload(foundation_client, workspace, source):
+    preparation = foundation_client.get(
+        f"/api/sources/{source['source_id']}/pdf/preparation"
+    ).json()
+    accounting = foundation_client.get(
+        f"/api/foundation/runs/{preparation['run_id']}/accounting"
+    ).json()
+    evidence = foundation_client.get(
+        f"/api/workspaces/{workspace['workspace_id']}/evidence",
+        params={"source_id": source["source_id"]},
+    ).json()
+    return preparation, accounting, evidence
+
+
 def test_g1_pdf_evidence_contract_support(foundation_client, machine_payload):
     workspace = foundation_client.post("/api/workspace", json=machine_payload).json()["workspace"]
     source = upload_pdf(
@@ -19,11 +33,8 @@ def test_g1_pdf_evidence_contract_support(foundation_client, machine_payload):
         "manual.pdf",
         "SERIAL: HP7-000042\nPump vibration is resolved by tightening the coupling.",
     ).json()["source"]
-    payload = foundation_client.post(
-        f"/api/sources/{source['source_id']}/pdf/scope",
-        json={"included_pages": [1], "excluded_pages": {}, "operator": "FD"},
-    ).json()
-    units = [EvidenceUnit.model_validate(item) for item in payload["evidence_units"]]
+    _, _, evidence = _automatic_payload(foundation_client, workspace, source)
+    units = [EvidenceUnit.model_validate(item) for item in evidence]
     assert units
     assert all(item.eligible_for_semantic_processing for item in units)
     assert all(item.raw_ref.source_id == source["source_id"] for item in units)
@@ -54,14 +65,8 @@ def test_ac_ev_001(foundation_client, machine_payload):
         "ledger-manual.pdf",
         "SERIAL: HP7-000042\nInspect the coupling and reset motor alarm E017.",
     ).json()["source"]
-    scoped = foundation_client.post(
-        f"/api/sources/{source['source_id']}/pdf/scope",
-        json={"included_pages": [1], "excluded_pages": {}, "operator": "FD"},
-    )
-    assert scoped.status_code == 200
-    payload = scoped.json()
-    report = payload["accounting"]
-    assert payload["run"]["state"] == "awaiting_review"
+    preparation, report, _ = _automatic_payload(foundation_client, workspace, source)
+    assert preparation["run_state"] == "awaiting_review"
     assert report["balanced"] is True
     assert report["unclassified_total"] == 0
     source_report = report["sources"][0]
@@ -70,10 +75,8 @@ def test_ac_ev_001(foundation_client, machine_payload):
     assert source_report["top_level"]["balanced"] is True
     assert source_report["child_aggregate"]["balanced"] is True
     assert all(group["balanced"] for group in source_report["parent_groups"])
-    assert payload["run"]["manifest"]["ledger_hash"] == report["ledger_hash"]
-
     endpoint = foundation_client.get(
-        f"/api/foundation/runs/{payload['run']['run_id']}/accounting"
+        f"/api/foundation/runs/{preparation['run_id']}/accounting"
     )
     assert endpoint.status_code == 200
     assert endpoint.json()["ledger_hash"] == report["ledger_hash"]
@@ -87,12 +90,9 @@ def test_i06_disposition_retry_is_append_only(foundation_client, machine_payload
         "retry-ledger.pdf",
         "SERIAL: HP7-000042\nA deterministic maintenance instruction.",
     ).json()["source"]
-    payload = foundation_client.post(
-        f"/api/sources/{source['source_id']}/pdf/scope",
-        json={"included_pages": [1], "excluded_pages": {}, "operator": "FD"},
-    ).json()
-    raw_unit_id = payload["accounting"]["raw_units"][0]["raw_unit_id"]
-    run_id = payload["run"]["run_id"]
+    preparation, accounting, _ = _automatic_payload(foundation_client, workspace, source)
+    raw_unit_id = accounting["raw_units"][0]["raw_unit_id"]
+    run_id = preparation["run_id"]
     repository = RawUnitRepository()
     repository.append_disposition(
         run_id=run_id,
@@ -123,13 +123,10 @@ def test_i08_accounting_separates_actionable_failure_retryability(
         "actionable-failure.pdf",
         "SERIAL: HP7-000042\nInspect the hydraulic safety circuit.",
     ).json()["source"]
-    payload = foundation_client.post(
-        f"/api/sources/{source['source_id']}/pdf/scope",
-        json={"included_pages": [1], "excluded_pages": {}, "operator": "FD"},
-    ).json()
-    raw_unit_id = payload["accounting"]["raw_units"][0]["raw_unit_id"]
+    preparation, accounting, _ = _automatic_payload(foundation_client, workspace, source)
+    raw_unit_id = accounting["raw_units"][0]["raw_unit_id"]
     RawUnitRepository().append_disposition(
-        run_id=payload["run"]["run_id"],
+        run_id=preparation["run_id"],
         raw_unit_id=raw_unit_id,
         outcome=DispositionOutcome.FAILED,
         reason_code="ADAPTER_TRANSIENT_FAILURE",
@@ -145,7 +142,7 @@ def test_i08_accounting_separates_actionable_failure_retryability(
         ),
     )
     report = foundation_client.get(
-        f"/api/foundation/runs/{payload['run']['run_id']}/accounting"
+        f"/api/foundation/runs/{preparation['run_id']}/accounting"
     ).json()
     assert report["balanced"] is True
     assert len(report["attention"]["retryable_same_run"]) == 1

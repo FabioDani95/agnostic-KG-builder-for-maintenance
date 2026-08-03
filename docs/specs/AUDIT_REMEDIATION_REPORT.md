@@ -19,8 +19,8 @@ richiede zero decisioni di prodotto aperte, non zero lavoro di sviluppo.
 
 ## 2. Decisioni conservative adottate
 
-- una fonte è `compatible` soltanto con assessment risolvibile; `uncertain` e
-  `incompatible` non contribuiscono;
+- il caricamento di un formato supportato è l'attribuzione esplicita
+  dell'operatore; nessun gate contenutistico decide l'appartenenza in G1;
 - strutture indipendenti non vengono unite implicitamente;
 - ogni unità raw riceve una disposition terminale prima di filtri o cap;
 - una versione nuova è `apply(base, approved_delta)` e ogni perdita richiede
@@ -37,7 +37,7 @@ richiede zero decisioni di prodotto aperte, non zero lavoro di sviluppo.
 
 | Finding | Stato | Risoluzione normativa o acceptance | Conseguenza per il piano |
 |---|---|---|---|
-| AUD-001 | `CLOSED_NORMATIVE` | FR-WS-IDENTITY-001; DC-SRC-ASSESS-001; AC-WS-005 | source registry e gate identità |
+| AUD-001 | `CLOSED_NORMATIVE` | FR-WS-IDENTITY-001; DC-SRC-ASSESS-001; AC-WS-005; DEC-036 | source registry e attribuzione operatore senza gate contenutistico |
 | AUD-002 | `CLOSED_NORMATIVE` | FR-TAB-005; DC-JOIN-001; DC-PROV-001; AC-JOIN-001 | lineage join-aware e property evidence |
 | AUD-003 | `CLOSED_NORMATIVE` | INV-005; DC-DISPOSITION-001; DC-STATE-001; AC-EV-001 | ledger raw prima dei filtri |
 | AUD-004 | `CLOSED_NORMATIVE` | FR-MERGE-005; DC-CGRAPH-001; DC-REVIEW-001; DC-PUBLISH-001 | write path transazionale e withdrawal |
@@ -63,7 +63,7 @@ richiede zero decisioni di prodotto aperte, non zero lavoro di sviluppo.
 | AUD-024 | `PLANNING_INPUT` | GAP-012; DC-REVIEW-001; AC-HITL-002; AC-HITL-005; AC-UX-006 | sostituire endpoint review legacy |
 | AUD-025 | `PLANNING_INPUT` | GAP-013; DC-CHECKPOINT-001; AC-RES-002 | run store riavviabile |
 | AUD-026 | `PLANNING_INPUT` | GAP-015; DC-PROVIDER-001; AC-LLM-002 | provider adapter e capability preflight |
-| AUD-027 | `PLANNING_INPUT` | GAP-016; FR-UX-001; FR-UX-002; FR-UX-003; FR-UX-004; FR-UX-005; FR-UX-006; FR-UX-007; FR-UX-008; FR-UX-009; FR-UX-010; FR-UX-011; FR-UX-012; FR-UX-013; FR-UX-014; FR-UX-015; FR-UX-016; FR-UX-017; FR-UX-018; AC-UX-001; AC-UX-002; AC-UX-003; AC-UX-004; AC-UX-005; AC-UX-006; AC-UX-007; AC-UX-008; AC-UX-009; AC-UX-010; AC-UX-011; AC-UX-012; AC-UX-013 | nuovo E2E del flusso completo |
+| AUD-027 | `PLANNING_INPUT` | GAP-016; FR-UX-001; FR-UX-002; FR-UX-003; FR-UX-004; FR-UX-005; FR-UX-006; FR-UX-007; FR-UX-008; FR-UX-009; FR-UX-010; FR-UX-011; FR-UX-012; FR-UX-013; FR-UX-014; FR-UX-015; FR-UX-016; FR-UX-017; FR-UX-018; AC-UX-001; AC-UX-002; AC-UX-003; AC-UX-004; AC-UX-005; AC-UX-006; AC-UX-007; AC-UX-008; AC-UX-009; AC-UX-010; AC-UX-011; AC-UX-012; AC-UX-013; AC-UX-014 | nuovo E2E del flusso completo e corsia G2 semplice |
 | AUD-028 | `PLANNING_INPUT` | NFR-005; GAP-017; AC-SEC-003 | containment, same-origin e request limits |
 | AUD-029 | `PLANNING_INPUT` | NFR-PERF-001; NFR-PERF-003; AC-PERF-001 | capacity gate, RSS/call ceiling, tempo informativo |
 | AUD-030 | `PLANNING_INPUT` | DC-PARSER-001; AC-TAB-005 | contract-test matrix dei parser |
@@ -84,3 +84,24 @@ Il piano di sviluppo deve:
 
 Qualsiasi scelta che cambi una decisione della sezione 2 richiede una nuova
 versione del pacchetto, aggiornamento dell'indice e nuova semantic review.
+
+## 5. Audit di implementazione successivo — stop G3
+
+L'audit Product Owner del `2026-08-03` non riapre i finding pre-piano, ma
+dimostra che alcune obligation non sono ancora soddisfatte dall'implementazione
+G3 corrente. In particolare:
+
+- `FR-TAB-005 / AC-TAB-004`: mapping dipendente da alias inglesi e fallback
+  `attribute` con possibile perdita semantica;
+- `FR-NS-002 / AC-ONT-002`: assenza di validazione strict della
+  SourceSubgraphRevision sul payload reale prima dell'approvazione;
+- `FR-NS-004 / AC-SEM-002`: relazioni generate direttamente dalla co-presenza
+  dei ruoli nella riga senza un passaggio completo nel core condiviso;
+- `INV-007 / AC-REG-001`: mapper CSV diretto non ancora dimostrato equivalente
+  alla pipeline semantica comune;
+- `AC-UX-005`: i due CSV sintetici iniziali provano UI e wiring, non
+  agnosticità o qualità.
+
+Disposition: `DEC-044`, G3 non accettato e G4 bloccato. Evidenza e ordine di
+remediation sono in `docs/G3_ENGINE_HARDENING_HANDOFF.md` e
+`artifacts/acceptance/g3/coverage.json`.

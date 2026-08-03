@@ -109,4 +109,4 @@ class SourceRegistration(BaseModel):
     source: Source
     duplicate: bool
     raw_cache_hit: bool
-
+    preparation: dict | None = None

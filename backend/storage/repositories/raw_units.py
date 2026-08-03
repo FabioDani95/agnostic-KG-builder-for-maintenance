@@ -101,6 +101,32 @@ class RawUnitRepository:
                 )
         return raw_units
 
+    def list_inventory(self, source_id: str) -> list[RawUnitDraft]:
+        """Reload the immutable adapter inventory without parsing the source again."""
+        with self.database.read() as connection:
+            rows = connection.execute(
+                """
+                SELECT * FROM raw_units
+                WHERE source_id = ?
+                ORDER BY parent_raw_unit_id, raw_unit_id
+                """,
+                (source_id,),
+            ).fetchall()
+        return [
+            RawUnitDraft(
+                raw_unit_id=row["raw_unit_id"],
+                parent_raw_unit_id=row["parent_raw_unit_id"],
+                unit_kind=row["unit_kind"],
+                source_id=row["source_id"],
+                structure_id=row["structure_id"],
+                locator=json.loads(row["locator_json"]),
+                raw_hash=row["raw_hash"],
+                adapter_version=row["adapter_version"],
+                quality_flags=json.loads(row["quality_flags_json"]),
+            )
+            for row in rows
+        ]
+
     def append_disposition(
         self,
         *,
@@ -173,6 +199,72 @@ class RawUnitRepository:
                 ),
             )
         return disposition
+
+    def append_dispositions(
+        self,
+        *,
+        run_id: str,
+        items: list[dict[str, Any]],
+    ) -> list[RawUnitDisposition]:
+        """Append a prepared batch in one durable transaction for structured sources."""
+        now = utc_now()
+        dispositions: list[RawUnitDisposition] = []
+        with self.database.transaction() as connection:
+            for item in items:
+                disposition_id = new_id("disposition")
+                attempt = int(
+                    connection.execute(
+                        """
+                        SELECT COALESCE(MAX(attempt), 0) + 1
+                        FROM raw_unit_dispositions
+                        WHERE run_id = ? AND raw_unit_id = ?
+                        """,
+                        (run_id, item["raw_unit_id"]),
+                    ).fetchone()[0]
+                )
+                disposition = RawUnitDisposition(
+                    disposition_id=disposition_id,
+                    run_id=run_id,
+                    raw_unit_id=item["raw_unit_id"],
+                    attempt=attempt,
+                    outcome=item["outcome"],
+                    reason_code=item["reason_code"],
+                    evidence_ids=item.get("evidence_ids", []),
+                    retryability=item.get("retryability", Retryability.NOT_APPLICABLE),
+                    error=item.get("error"),
+                    created_at=now,
+                )
+                connection.execute(
+                    "INSERT INTO entity_ids(entity_id, entity_type, created_at) VALUES (?, 'disposition', ?)",
+                    (disposition_id, now),
+                )
+                connection.execute(
+                    """
+                    INSERT INTO raw_unit_dispositions(
+                        disposition_id, run_id, raw_unit_id, attempt, outcome, reason_code,
+                        canonical_raw_unit_id, evidence_ids_json, checkpoint_id,
+                        retryability, error_json, created_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, NULL, ?, NULL, ?, ?, ?)
+                    """,
+                    (
+                        disposition.disposition_id,
+                        disposition.run_id,
+                        disposition.raw_unit_id,
+                        disposition.attempt,
+                        disposition.outcome.value,
+                        disposition.reason_code,
+                        _canonical_json(disposition.evidence_ids),
+                        disposition.retryability.value,
+                        (
+                            _canonical_json(disposition.error.model_dump(mode="json"))
+                            if disposition.error
+                            else None
+                        ),
+                        now,
+                    ),
+                )
+                dispositions.append(disposition)
+        return dispositions
 
     def dispositions_for(self, run_id: str, raw_unit_id: str) -> list[RawUnitDisposition]:
         with self.database.read() as connection:

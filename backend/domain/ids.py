@@ -24,6 +24,10 @@ _PREFIXES = {
     "raw_unit": "raw",
     "disposition": "disp",
     "preparation": "prep",
+    "mapping_profile": "map",
+    "preparation_exception": "issue",
+    "join_spec": "join",
+    "source_subgraph": "sgrev",
 }
 
 
@@ -65,4 +69,3 @@ def validate_utc_timestamp(value: str) -> str:
 
 
 UtcTimestamp = Annotated[str, AfterValidator(validate_utc_timestamp)]
-

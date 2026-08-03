@@ -93,7 +93,7 @@ Invarianti:
   "size_bytes": 123456,
   "sha256": "...",
   "language_hints": ["en"],
-  "status": "quarantined",
+  "status": "accepted",
   "asset_assessment_id": "srcassess_001",
   "created_at": "2026-07-28T12:00:00Z"
 }
@@ -141,13 +141,17 @@ Valori minimi:
 - `duplicate`;
 - `failed_terminal`.
 
-`accepted` significa soltanto che la fonte appartiene alla macchina e può
-entrare in preparazione. Non significa `ready`, `processed` o pubblicata.
+`accepted` significa che l'operatore ha caricato un formato supportato nel
+workspace della macchina. Non è una classificazione del contenuto e non
+significa `ready`, `processed` o pubblicata.
 
-### DC-SRC-ASSESS-001 — Appartenenza della fonte alla macchina
+### DC-SRC-ASSESS-001 — Record di attribuzione operatore
 
-Ogni `Source` deve avere una valutazione append-only prima di poter assumere
-stato `accepted`.
+Durante la migrazione ogni `Source` conserva un record append-only compatibile
+con lo schema storico. Il caricamento del formato supportato produce sempre
+`compatible` con reason `OPERATOR_SELECTED_SUPPORTED_FILE`: è un artifact
+tecnico della scelta dell'operatore, non un assessment del contenuto e non un
+gate UI.
 
 ```json
 {
@@ -155,23 +159,9 @@ stato `accepted`.
   "source_id": "src_manual_001",
   "workspace_id": "ws_machine_001",
   "asset_identity_version": 1,
-  "observed_claims": [
-    {
-      "claim_kind": "model",
-      "namespace": "manufacturer_model",
-      "raw_value": "M-100 Series",
-      "normalized_value": "m-100",
-      "locator": {
-        "kind": "pdf",
-        "page": 1,
-        "section": "Cover",
-        "quote": "M-100 Series Maintenance Manual",
-        "extraction_method": "native_text"
-      }
-    }
-  ],
-  "outcome": "uncertain",
-  "reason_codes": ["MODEL_FAMILY_ONLY"],
+  "observed_claims": [],
+  "outcome": "compatible",
+  "reason_codes": ["OPERATOR_SELECTED_SUPPORTED_FILE"],
   "decided_by": {
     "kind": "deterministic_rule",
     "decision_id": null,
@@ -182,44 +172,10 @@ stato `accepted`.
 }
 ```
 
-Gli esiti ammessi sono:
-
-- `compatible`;
-- `uncertain`;
-- `incompatible`.
-
-I segnali ammessi e la loro semantica sono:
-
-| Segnale | Regola |
-|---|---|
-| seriale, equipment tag o identificativo cliente esatto nello stesso namespace | un match senza conflitti consente `compatible`; un valore differente esplicito produce `incompatible` |
-| brand e modello esatti | consente una proposta, ma senza identificatore forte resta `uncertain` |
-| famiglia o serie di modello, sito, reparto, work order | è soltanto contestuale e resta `uncertain` |
-| documento multi-modello che include il modello del workspace | resta `uncertain` finché l'operatore non conferma l'applicabilità |
-| brand o modello esplicitamente diversi senza conflitto di identificatori forti | resta `uncertain` con reason di mismatch contestuale e richiede decisione |
-| nessun identificativo osservabile o segnali discordanti | produce `uncertain` |
-
-`uncertain` e `incompatible` mappano lo stato della Source a `quarantined` e
-non possono contribuire a EvidenceUnit semantiche, candidate o cache
-riutilizzabili dal core.
-
-L'operatore può:
-
-- confermare o escludere una fonte `uncertain`, producendo una
-  OperatorAssertion, una nuova valutazione e il relativo `decision_id`;
-- correggere un claim estratto erroneamente e far ricalcolare la valutazione;
-- correggere l'identità del workspace, invalidando tutte le valutazioni
-  dipendenti.
-
-Non può forzare direttamente una valutazione `incompatible` a contribuire al
-grafo. Deve prima correggere il claim, dimostrare che lo scope della fonte
-include la macchina oppure correggere l'identità del workspace. Le valutazioni
-precedenti non vengono sovrascritte.
-
-La Source `src_manual_001` di questo esempio resta quindi quarantinata. Gli
-esempi di run e bundle successivi usano la Source distinta
-`src_manual_accepted_002`, la cui valutazione `compatible` non è ripetuta qui:
-`src_manual_001` non è input né fonte contribuente di quei payload.
+Gli enum `uncertain` e `incompatible` possono restare nello schema fisico per
+compatibilità con dati storici, ma non sono prodotti dal flusso G1 corrente.
+La UI non mostra segnali, conferme, override o quarantene di appartenenza.
+Rimuovere e ricaricare un file non altera il raw content-addressed.
 
 ## 5. Source locator
 
@@ -450,9 +406,9 @@ azzerare `resume_state` nella stessa transazione.
 
 Transizioni ammesse:
 
-- Source: `uploaded → assessing`; da `assessing` a uno stato terminale
-  dell'assessment; `quarantined → assessing|excluded`; `accepted → assessing`
-  soltanto dopo invalidazione dell'identità;
+- Source G1: `uploaded → assessing → accepted`; `accepted → excluded` quando
+  l'operatore rimuove il file ed `excluded → accepted` quando lo ricarica. Gli
+  stati legacy restano nello schema fisico ma non sono prodotti dal flusso;
 - Preparation: `not_started → profiling_or_scoping →
   awaiting_operator|ready|failed_resumable|failed_terminal`; da
   `awaiting_operator` si torna a `profiling_or_scoping` o si conclude in
@@ -1236,6 +1192,48 @@ Il candidate graph non è un oggetto mutabile in-place. Ogni output della
 pipeline o decisione attiva produce una revisione immutabile derivata dalla
 versione pubblicata di base.
 
+La generation produce prima una revisione di sottografo per singola fonte:
+
+```json
+{
+  "source_subgraph_revision_id": "sgrev_src_logs_001_001",
+  "workspace_id": "ws_machine_001",
+  "source_id": "src_logs_001",
+  "preparation_fingerprint": "...",
+  "input_config_hash": "...",
+  "evidence_ids": ["ev_001"],
+  "candidate_ids": ["cand_001"],
+  "ontology_validation": {
+    "status": "passed",
+    "ontology_sha256": "81f2d894e8b4c3c0ba3bb2e7149941ae91b704ebd8a8b8dedef91b79bd1508db",
+    "missing_required_properties": [],
+    "extra_properties": [],
+    "invalid_relations": [],
+    "unresolved_mapping_columns": []
+  },
+  "status": "approved",
+  "approval_decision_id": "decision_source_graph_001",
+  "supersedes": null,
+  "created_at": "2026-07-28T12:04:00Z"
+}
+```
+
+Stati ammessi: `building`, `invalid`, `reviewing`, `approved`, `rejected`,
+`superseded`. La chiave logica comprende `source_id`, preparation fingerprint
+e input config hash. Ogni rigenerazione crea una nuova revisione; non modifica
+quella approvata. Soltanto revisioni `approved` possono entrare nella barriera
+di linking/merge cross-source. L'approvazione è source-scoped, append-only e
+non autorizza automaticamente alcun merge.
+
+Il payload `graph` della revisione deve serializzare i nodi con gli esatti
+campi dichiarati da `ontology_schema.JSON`; label UI, conteggi, confidence,
+outcome, measurement e provenance restano in view model o sidecar e non
+diventano proprietà arbitrarie dei nodi. `ontology_validation.status` è
+`passed` soltanto con proprietà obbligatorie presenti al `100%`, proprietà
+extra `0`, domain/range errati `0`, endpoint mancanti `0`, ID duplicati `0` e
+mapping diagnostici irrisolti `0`. In ogni altro caso lo stato della revisione
+è `invalid` e nessuna decisione `approve_source_subgraph` è accettabile.
+
 ```json
 {
   "candidate_graph_revision_id": "cgrev_001",
@@ -1243,6 +1241,7 @@ versione pubblicata di base.
   "workspace_id": "ws_machine_001",
   "base_graph_version": null,
   "input_config_hash": "...",
+  "source_subgraph_revision_ids": ["sgrev_src_logs_001_001"],
   "candidate_ids": ["cand_001"],
   "active_decision_ids": ["decision_assert_001"],
   "status": "reviewing",
@@ -1260,6 +1259,14 @@ versione pubblicata di base.
 - `published`;
 - `superseded`;
 - `abandoned`.
+
+Per un aggiornamento incrementale, `base_graph_version` identifica l'ultima
+versione pubblicata e `source_subgraph_revision_ids` contiene soltanto le
+fonti nuove o esplicitamente invalidate nel run corrente. I sottografi già
+pubblicati non vengono rigenerati né riuniti in un nuovo input monolitico. Il
+delta cross-source può proporre `add`, `link`, `merge`, `conflict`, `withdraw`
+o `unchanged`; la base resta byte-invariata fino al publish della versione
+successiva.
 
 La pipeline può creare candidate e applicare transizioni deterministiche
 registrate. Qualsiasi cambiamento semantico iniziato dall'operatore richiede
@@ -1760,7 +1767,7 @@ per validare nodi e relazioni.
     }
   ],
   "step_execution": {
-    "pdf_scope": {
+    "structured_selection": {
       "mode": "automatic",
       "delegated_by": "local_operator",
       "delegated_at": "2026-07-28T12:00:00Z",
@@ -1883,7 +1890,7 @@ DC-PUBLISH-001.
 {
   "delegation_id": "delegation_001",
   "run_id": "run_001",
-  "step_id": "pdf_scope",
+  "step_id": "structured_selection",
   "scope": {
     "kind": "source",
     "source_id": "src_manual_accepted_002"
@@ -1904,7 +1911,6 @@ Catalogo stabile:
 
 | `step_id` | Modalità ammesse | Condizioni |
 |---|---|---|
-| `pdf_scope` | `manual`, `automatic`, `exceptions_only` | proposte e soglie visibili |
 | `structured_selection` | `manual`, `automatic`, `exceptions_only` | fogli, collection e colonne inventariati |
 | `mapping_apply` | `manual`, `automatic`, `exceptions_only` | profilo compatibile o proposta completa; valori non inferibili restano manuali |
 | `join_apply` | `manual`, `automatic`, `exceptions_only` | automatico o exceptions-only soltanto per JoinSpec già approvato e fingerprint compatibile; join nuovo, cambiato, many-to-many o oltre fan-out è manuale |
@@ -1917,7 +1923,8 @@ Catalogo stabile:
 Non sono delegabili:
 
 - conferma dell'identità macchina;
-- risoluzione di Source `incompatible`;
+- attribuzione dei file, eseguita dall'operatore tramite caricamento;
+- preparazione PDF G1, che include sempre tutte le pagine;
 - join nuovo o rischioso;
 - conflitto blocking;
 - override di guard simbolica;
@@ -1981,8 +1988,9 @@ publish.
 - `{"kind": "bundle", "bundle_id": "..."}`.
 
 Campi identificativi estranei alla variante sono vietati. Parsing,
-normalizzazione e generation usano scope `source` o `partition`; linking,
-merge e review usano scope `run`; publish usa scope `bundle`.
+normalizzazione, generation e approvazione del sottografo usano scope `source`
+o `partition`; linking, merge e review multisource usano scope `run`; publish
+usa scope `bundle`.
 
 Una work unit atomica è:
 
@@ -2040,13 +2048,13 @@ Idempotenza semantica e deduplica degli output restano obbligatorie.
 
 | Modifica | Riutilizzabile | Invalidato |
 |---|---|---|
-| hash del file raw | nulla per la source cambiata | assessment, parsing, EvidenceUnit, semantic text, cache e ogni downstream della source |
-| identità/alias macchina | raw e parsing puro | assessment ed eligibility delle Source, costanti di mapping, context, EvidenceUnit semantiche, semantic text, cache, candidate, merge, review e publish |
+| hash del file raw | nulla per la source cambiata | registrazione, parsing, EvidenceUnit, semantic text, cache e ogni downstream della source |
+| identità/alias macchina | raw e attribuzione source | costanti di mapping, context, EvidenceUnit semantiche, semantic text, cache, candidate, merge, review e publish |
 | versione adapter, encoding, header o opzioni parser | raw | RawUnit, EvidenceUnit e downstream della source |
-| scope PDF | raw e pagine non cambiate | EvidenceUnit e downstream delle pagine interessate |
+| nuova versione della policy PDF all-pages | raw e pagine non cambiate | EvidenceUnit e downstream del documento interessato |
 | mapping, join, normalizzatore o template | raw e profiling compatibile | EvidenceUnit, semantic text, embedding, candidate e downstream interessato |
 | classe di autorità | raw, parsing e EvidenceUnit raw | support type, conflict, staging, merge, review e publish dipendenti |
-| esito, reason o versione di SourceAssetAssessment | raw e parsing puro | eligibility della Source, EvidenceUnit semantiche, semantic text, embedding, model call e relative cache, candidate, conflict, staging, merge, review e publish dipendenti |
+| rimozione o ripristino operatore della Source | raw e parsing puro | eligibility della Source e downstream non committed |
 | lingua qualificata | raw e parsing | semantic text, embedding, candidate e calibrazione |
 | generation provider/model/prompt/schema o hash ProviderConfig | raw, mapping, semantic text ed embedding dimostrabilmente indipendente | model call, candidate generation, CalibrationProfile e downstream |
 | embedding provider/model/version o hash ProviderConfig | raw, mapping e generation dimostrabilmente indipendente | embedding, linking, merge, CalibrationProfile e downstream |
@@ -2186,8 +2194,7 @@ contenuto sorgente.
 
 | Stage | Contenuto remoto ammesso | Vietato di default |
 |---|---|---|
-| source asset assessment | brand/model e snippet esplicitamente selezionati; match di seriali e asset ID resta locale | file intero, path locale, identificativi cliente |
-| PDF scoping | testo estratto delle sole pagine selezionate, numero e heading | PDF o immagine completa |
+| PDF semantic extraction | chunk necessari derivati dall'inventory all-pages, numero e heading | PDF o immagine completa |
 | profiling/mapping | header, tipi, statistiche e campione limitato di campi inclusi | tabella completa, colonne escluse |
 | translation | il solo testo selezionato, lingua sorgente/target, prompt versionato e locator opaco | altre righe, altre fonti, codici e unità da tradurre |
 | generation | semantic text role-specific, codici esatti, contesto minimo, authority e locator opaco | raw record completo, join key, timestamp e campi esclusi |

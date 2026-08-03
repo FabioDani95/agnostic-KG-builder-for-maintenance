@@ -39,6 +39,10 @@ class EvidenceRepository:
             ).fetchone()
         if row is None:
             return None
+        return self._scope_from_row(row)
+
+    @staticmethod
+    def _scope_from_row(row) -> dict:
         return {
             "scope_id": row["scope_id"],
             "version": row["version"],
@@ -193,12 +197,33 @@ class EvidenceRepository:
         excluded_pages: dict[str, str],
         operator: str,
         evidence_units: list[EvidenceUnit],
+        reuse_matching: bool = False,
     ) -> dict:
-        current = self.current_scope(source_id)
-        version = int((current or {}).get("version", 0)) + 1
-        scope_id = f"scope_{source_id}_{version:04d}"
         now = utc_now()
         with self.database.transaction() as connection:
+            current_row = connection.execute(
+                """
+                SELECT s.*
+                FROM pdf_scopes s
+                JOIN preparations p ON p.active_config_id = s.scope_id
+                WHERE p.source_id = ?
+                """,
+                (source_id,),
+            ).fetchone()
+            current = self._scope_from_row(current_row) if current_row is not None else None
+            normalized_pages = sorted(included_pages)
+            normalized_excluded = dict(sorted(excluded_pages.items()))
+            if (
+                reuse_matching
+                and current is not None
+                and current["included_pages"] == normalized_pages
+                and current["excluded_pages"] == normalized_excluded
+                and current["operator"] == operator
+            ):
+                return current
+
+            version = int((current or {}).get("version", 0)) + 1
+            scope_id = f"scope_{source_id}_{version:04d}"
             preparation = connection.execute(
                 "SELECT * FROM preparations WHERE source_id = ?",
                 (source_id,),
@@ -257,8 +282,8 @@ class EvidenceRepository:
                     preparation_id,
                     source_id,
                     version,
-                    json.dumps(sorted(included_pages)),
-                    json.dumps(excluded_pages, sort_keys=True),
+                    json.dumps(normalized_pages),
+                    json.dumps(normalized_excluded, sort_keys=True),
                     operator,
                     (current or {}).get("scope_id"),
                     now,
@@ -307,17 +332,18 @@ class EvidenceRepository:
             connection.execute(
                 """
                 INSERT INTO audit_events(workspace_id, event_kind, subject_id, payload_json, created_at)
-                VALUES (?, 'pdf_scope_approved', ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?)
                 """,
                 (
                     workspace_id,
+                    "pdf_all_pages_prepared" if reuse_matching else "pdf_scope_approved",
                     source_id,
                     json.dumps(
                         {
                             "scope_id": scope_id,
                             "version": version,
-                            "included_pages": sorted(included_pages),
-                            "excluded_pages": excluded_pages,
+                            "included_pages": normalized_pages,
+                            "excluded_pages": normalized_excluded,
                             "evidence_count": len(evidence_units),
                         },
                         sort_keys=True,
@@ -335,8 +361,14 @@ class EvidenceRepository:
             LEFT JOIN preparations p ON p.source_id = e.source_id
             LEFT JOIN scope_evidence se
               ON se.scope_id = p.active_config_id AND se.evidence_id = e.evidence_id
+            LEFT JOIN structured_evidence ste
+              ON ste.profile_id = p.active_config_id AND ste.evidence_id = e.evidence_id
             WHERE e.workspace_id = ?
-              AND (s.source_kind = 'operator_input' OR se.evidence_id IS NOT NULL)
+              AND (
+                s.source_kind = 'operator_input'
+                OR se.evidence_id IS NOT NULL
+                OR ste.evidence_id IS NOT NULL
+              )
         """
         values: list[str] = [workspace_id]
         if source_id is not None:
@@ -346,3 +378,45 @@ class EvidenceRepository:
         with self.database.read() as connection:
             rows = connection.execute(query, values).fetchall()
         return [EvidenceUnit.model_validate_json(row["payload_json"]) for row in rows]
+
+    def save_structured_evidence(
+        self,
+        *,
+        profile_id: str,
+        evidence_units: list[EvidenceUnit],
+    ) -> list[EvidenceUnit]:
+        now = utc_now()
+        with self.database.transaction() as connection:
+            for evidence in evidence_units:
+                existing = connection.execute(
+                    "SELECT payload_json FROM evidence_units WHERE evidence_id = ?",
+                    (evidence.evidence_id,),
+                ).fetchone()
+                if existing is None:
+                    connection.execute(
+                        "INSERT INTO entity_ids(entity_id, entity_type, created_at) VALUES (?, 'evidence', ?)",
+                        (evidence.evidence_id, now),
+                    )
+                    connection.execute(
+                        """
+                        INSERT INTO evidence_units(
+                            evidence_id, workspace_id, asset_id, source_id, raw_unit_id,
+                            locator_hash, payload_json, created_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (
+                            evidence.evidence_id,
+                            evidence.workspace_id,
+                            evidence.asset_id,
+                            evidence.source_id,
+                            evidence.raw_ref.raw_unit_id,
+                            evidence.raw_ref.locator_hash,
+                            evidence.model_dump_json(),
+                            now,
+                        ),
+                    )
+                connection.execute(
+                    "INSERT OR IGNORE INTO structured_evidence(profile_id, evidence_id) VALUES (?, ?)",
+                    (profile_id, evidence.evidence_id),
+                )
+        return evidence_units

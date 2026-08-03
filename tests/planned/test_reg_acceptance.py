@@ -42,3 +42,15 @@ def test_ac_reg_002(tmp_path, monkeypatch):
     assert report["current_suite"]["count_label"] == "actual_current_suite"
     assert report["golden_mock"]["fixture_count"] == 9
     assert report["golden_mock"]["average_triplet_recall"] == 1.0
+
+
+def test_root_opens_the_workspace_home(foundation_client):
+    redirect = foundation_client.get("/", follow_redirects=False)
+    response = foundation_client.get("/")
+
+    assert redirect.status_code == 307
+    assert redirect.headers["location"] == "/home.html"
+    assert redirect.headers["cache-control"] == "no-store"
+    assert response.status_code == 200
+    assert str(response.url).endswith("/home.html")
+    assert "Workspace · Maintenance KG Builder" in response.text

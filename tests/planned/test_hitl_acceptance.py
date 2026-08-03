@@ -19,11 +19,10 @@ def test_ac_hitl_004(foundation_client, machine_payload):
         "restart.pdf",
         "SERIAL: HP7-000042\nInspect the pressure relief valve.",
     ).json()["source"]
-    payload = foundation_client.post(
-        f"/api/sources/{source['source_id']}/pdf/scope",
-        json={"included_pages": [1], "excluded_pages": {}, "operator": "FD"},
+    preparation = foundation_client.get(
+        f"/api/sources/{source['source_id']}/pdf/preparation"
     ).json()
-    run_id = payload["run"]["run_id"]
+    run_id = preparation["run_id"]
 
     from backend.main import create_app
 
@@ -48,11 +47,10 @@ def test_i06_run_transition_guards_service_and_database(
         "states.pdf",
         "SERIAL: HP7-000042\nState transition fixture.",
     ).json()["source"]
-    payload = foundation_client.post(
-        f"/api/sources/{source['source_id']}/pdf/scope",
-        json={"included_pages": [1], "excluded_pages": {}, "operator": "FD"},
+    preparation = foundation_client.get(
+        f"/api/sources/{source['source_id']}/pdf/preparation"
     ).json()
-    run_id = payload["run"]["run_id"]
+    run_id = preparation["run_id"]
     with pytest.raises(ValueError, match="Invalid run transition"):
         OperationalRunRepository().transition(run_id, RunState.PUBLISHED)
 

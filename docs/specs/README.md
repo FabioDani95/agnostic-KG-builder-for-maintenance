@@ -3,6 +3,28 @@
 Questa directory contiene le specifiche che devono essere lette prima di
 generare il piano di sviluppo.
 
+La versione `2.1` incorpora le decisioni Product Owner `DEC-036`–`DEC-044`:
+responsabilità dell'operatore nella scelta dei file, nessun gate contenutistico
+di associazione, preparazione PDF G1 automatica su tutte le pagine, home
+minimale dei workspace persistiti con creazione tramite azione `+` e corsia
+G2 automatica con eccezioni, una decisione alla volta e dettagli tecnici
+progressivi. La UI non espone i nomi dei gate di sviluppo: il quarto passo è
+`Struttura dati`, con anteprima tabellare e mappa colonne→grafo; il grafo viene
+costruito nel successivo passo `Elaborazione`.
+La conferma avviene sulla card della singola fonte; la matrice di accettazione
+copre inoltre varianti CSV, righe irregolari, payload non testuali e contenuti
+EN/IT/DE/misti.
+La generation produce inoltre un sottografo approvabile per ogni fonte prima
+del merge cross-source; una fonte aggiunta dopo V1 genera soltanto il proprio
+sottografo e il delta verso la versione pubblicata di base.
+La prima accettazione di `Elaborazione` è CSV-first: ogni fonte espone grafo
+navigabile, tabelle complete di nodi e relazioni e drill-down alle evidenze.
+La visualizzazione G3 è una base UX, non prova di maturità del motore. Il
+checkpoint non è accettato: prima si esegue hardening su CSV eterogenei con
+mapping agnostico e validazione ontologica strict, poi il collaudo PDF segue
+sullo stesso contratto source-scoped e sulla pipeline PDF riusata, senza
+creare un secondo percorso semantico.
+
 ## Documenti
 
 | Documento | Scopo |
@@ -18,6 +40,7 @@ generare il piano di sviluppo.
 | [`SPEC_INDEX.schema.json`](SPEC_INDEX.schema.json) | Schema dell'indice normativo |
 | [`AUDIT_REMEDIATION_REPORT.md`](AUDIT_REMEDIATION_REPORT.md) | Chiusura puntuale di AUD-001..032 e handoff al piano |
 | [`SPEC_READINESS_REPORT.md`](SPEC_READINESS_REPORT.md) | Esito dell'audit pre-piano |
+| [`../G3_ENGINE_HARDENING_HANDOFF.md`](../G3_ENGINE_HARDENING_HANDOFF.md) | Stato di fermo e piano operativo CSV→PDF prima di riproporre G3 |
 
 ## Regola di utilizzo
 

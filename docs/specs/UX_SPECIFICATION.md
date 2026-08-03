@@ -19,7 +19,7 @@ coerenti di un solo lavoro.
 Il percorso principale deve essere:
 
 ```text
-Macchina → Fonti → Preparazione → Elaborazione → Revisione → Pubblicazione
+Macchina → Caricamento → Controllo file → Struttura dati → Elaborazione → Revisione → Pubblicazione
 ```
 
 Dopo almeno una pubblicazione deve essere disponibile `Esplora`, in sola
@@ -40,6 +40,11 @@ specifica master.
 
 Etichette, messaggi e azioni devono descrivere il lavoro dell'operatore, non
 nomi di route, classi o stage interni.
+
+I nomi dei checkpoint di sviluppo `G1`–`G5` e le espressioni `Gate 1`,
+`Gate 2` e successive non devono comparire nell'interfaccia di prodotto.
+Restano ammessi soltanto nella documentazione, negli artifact e nei test
+interni.
 
 Esempi:
 
@@ -64,6 +69,24 @@ in `Impostazioni avanzate`, chiuse di default. In particolare:
 
 Ogni override deve mostrare l'impatto su cache, calibrazione e riprocessamento.
 
+La progressive disclosure è un vincolo osservabile, non soltanto uno stile
+grafico. Nella superficie ordinaria di ogni passo:
+
+- deve essere presentato un solo compito o una sola decisione alla volta;
+- gli esiti positivi devono comparire vicino all'elemento interessato, senza
+  box riepilogativi che ripetano le stesse informazioni;
+- preview complete, metriche di profiling, locator, hash e payload tecnici
+  devono restare chiusi finché l'operatore non chiede `Mostra dettagli`;
+- non deve essere richiesta una conferma per ogni pagina, riga o colonna
+  quando il sistema non ha rilevato un'eccezione;
+- quando non esistono blocchi, l'unico invito primario deve essere quello per
+  proseguire al passo successivo.
+
+Nel passo `Struttura dati` l'anteprima tabellare ordinaria mostra al massimo le
+prime 5 righe. Ricerca, paginazione o dettaglio tecnico, quando introdotti,
+consentono l'ispezione del resto senza caricare o presentare centinaia di
+elementi insieme.
+
 ### FR-UX-018 — Scelta fra verifica manuale ed esecuzione automatica
 
 Per ogni passo delegabile la UI deve permettere all'operatore di scegliere,
@@ -83,9 +106,9 @@ Nella microcopy può essere usato il termine `Salta`, ma deve essere sempre
 accompagnato da `esegui automaticamente`. Saltare non significa omettere lo
 step, perdere dati o disattivare validazioni.
 
-La scelta deve essere disponibile almeno per:
+La scelta deve essere disponibile, nelle fasi successive che la richiedono,
+almeno per:
 
-- scope proposto dei PDF;
 - mapping proposto quando esiste un profilo compatibile;
 - inclusione proposta di fogli, tabelle e colonne;
 - normalizzazioni deterministiche;
@@ -108,8 +131,19 @@ nonblocking_review
 advance_workflow
 ```
 
+`pdf_scope` resta un identificatore interno storico ma non è esposto nel gate
+G1: il caricamento include sempre tutte le pagine e non richiede delega o
+conferma separata.
+
 `join_apply` è delegabile soltanto per `JoinSpec` già approvati con
 fingerprint identico; un nuovo join uno-a-molti o molti-a-molti resta manuale.
+
+Nel passo `Struttura dati` la modalità iniziale è `Decidi caso per caso`: profiling, proposta
+di mapping, normalizzazioni deterministiche e strutture non ambigue avanzano
+automaticamente, mentre la UI porta in primo piano soltanto eccezioni e
+decisioni bloccanti. `Lo verifico io` e `Procedi automaticamente` restano
+disponibili tramite una sola azione secondaria `Cambia modalità`; non devono
+apparire come tre call to action concorrenti su ogni file o sotto-passo.
 
 Quando viene scelta l'automazione, la UI deve mostrare prima dell'esecuzione:
 
@@ -144,6 +178,14 @@ quale scope è fermo e quale continua.
 ## 3. Struttura globale
 
 ### FR-UX-004 — Application shell
+
+La route iniziale deve aprire una home semplice dei workspace persistiti. Ogni
+card mostra almeno macchina, marca/modello, stato derivato, numero di documenti
+e ultimo aggiornamento; l'azione primaria apre il workspace tramite il suo ID.
+Un'azione `+ Nuovo workspace` avvia un onboarding vuoto e salva una nuova
+coppia Workspace/Asset con ID distinti, senza alterare quelli esistenti. La
+home non introduce utenti, ruoli, eliminazione o amministrazione avanzata
+multi-workspace. Un solo workspace è selezionato e operativo alla volta.
 
 Il frontend deve avere una sola shell composta da:
 
@@ -187,7 +229,7 @@ Se il workspace contiene già una macchina, la schermata deve proporre la
 ripresa. Cambiare l'identità confermata deve invalidare le preparazioni
 dipendenti e richiedere una conferma con impatto visibile.
 
-## 5. Passo 2 — Fonti
+## 5. Passi 2 e 3 — Caricamento e controllo file
 
 ### FR-UX-006 — Upload e source inventory
 
@@ -202,35 +244,46 @@ L'upload deve supportare drag-and-drop e file picker. Ogni file deve apparire
 immediatamente come card o riga con:
 
 - nome, formato, dimensione e hash abbreviato;
-- lingua stimata;
-- classe di autorità proposta;
-- stato di upload, analisi e preparazione;
-- numero di unità fisiche rilevate, quando disponibile;
-- anomalie e azione richiesta;
-- azioni `Anteprima`, `Configura`, `Escludi`.
+- classe di autorità scelta;
+- stato di caricamento e preparazione;
+- azione di rimozione con una × rossa nell'angolo e conferma esplicita prima
+  di procedere.
 
-Duplicati esatti devono essere riconosciuti prima dell'elaborazione costosa e
-non devono generare una seconda copia. File non supportati devono essere
-rifiutati con elenco dei formati ammessi. Una probabile macchina differente
-deve produrre quarantena visibile, non un errore generico.
+Duplicati esatti già attivi devono essere riconosciuti dall'impronta prima
+dell'invio, segnalati chiaramente e non ammessi; la API applica lo stesso
+vincolo con `409`. Se la fonte era stata rimossa, lo stesso contenuto può
+ripristinarla senza duplicare il raw. File non supportati devono essere
+rifiutati già alla selezione, con elenco dei formati ammessi, e dalla API con
+`415` come difesa. L'app non deve analizzare il
+contenuto per confermare o negare l'appartenenza: l'operatore è responsabile
+della scelta dei documenti.
 
 L'inventory deve poter essere filtrato per formato, stato e necessità di
 intervento. L'operatore deve poter aggiungere nuove fonti senza creare un
 nuovo grafo.
 
-Per ogni fonte deve essere visibile l'assessment `compatible`, `uncertain` o
-`incompatible`, con segnali, locator e motivazione. `uncertain` e
-`incompatible` non possono apparire come semplici warning: restano fuori
-dall'elaborazione finché non viene registrata l'azione consentita dal
-contratto.
+Se il workspace possiede già una versione pubblicata, una nuova fonte deve
+essere marcata `Nuova` e percorrere i passi successivi soltanto per il proprio
+scope. Le fonti già incluse e il grafo pubblicato restano consultabili e
+immutati; la UI mostra che il nuovo sottografo verrà confrontato con la
+versione di base e che una nuova versione nascerà soltanto dopo review e
+pubblicazione.
 
-## 6. Passo 3 — Preparazione adattiva
+Non deve esistere una sezione di conferma/esclusione dell'associazione alla
+macchina. La rimozione del file è l'unica correzione necessaria a G1.
+Non deve esistere neppure un box riepilogativo finale: lo stato `Caricato`
+appare accanto alla × di ogni documento. Lo stepper separa il caricamento dal
+suo esito leggibile `Controllo file`; questo controllo non apre una nuova
+matrice di conferme e risulta completato automaticamente quando tutti i file
+accettati sono integri e pronti.
+
+## 6. Passo 4 — Struttura dati
 
 ### FR-UX-007 — Coda di preparazione comune
 
-La schermata deve mostrare un'unica coda di fonti, ordinata mettendo prima i
-blocchi. La UI apre il pannello adatto al formato senza cambiare il modello
-mentale dell'operatore.
+La schermata G1 mostra un unico inventory compatto. Il sistema completa la
+preparazione di intake automaticamente senza aprire pannelli tecnici per
+formato.
 
 Ogni fonte deve terminare in uno stato esplicito:
 
@@ -240,46 +293,91 @@ ready | excluded | duplicate | quarantined | failed_resumable | failed_terminal
 
 Il pulsante `Continua all'elaborazione` deve restare disabilitato finché tutte
 le fonti incluse non sono pronte e deve elencare i blocchi rimanenti.
-Questi sono stati di preparazione; la Source conserva separatamente il proprio
-stato di inventory e il relativo `SourceAssetAssessment`.
+Questi sono stati interni di preparazione; non introducono un gate di
+attribuzione della fonte.
+
+Entrando in `Struttura dati`, l'inventory già controllato non deve essere duplicato
+né richiedere un nuovo caricamento. Ogni card conserva nome e stato del file e
+aggiunge soltanto l'esito utile del nuovo passo: `Preparato`, `Da correggere`
+oppure `Non utilizzabile`, con causa e azione disponibili nello stesso
+contesto.
 
 ### FR-UX-008 — Preparazione PDF
 
-Per un PDF la UI deve mostrare:
+Per un PDF la UI G1 deve mostrare soltanto che:
 
-- elenco o miniature delle pagine con numero fisico;
-- stato testo nativo, OCR, tabella o pagina illeggibile;
-- sezioni e pagine proposte come rilevanti;
-- preview sincronizzata di pagina, testo e tabelle estratte;
-- include/exclude per pagina e selezione multipla;
-- warning OCR a bassa confidence;
-- verifica di appartenenza alla macchina;
-- riepilogo dello scope prima dell'approvazione.
+- il file è stato caricato;
+- la preparazione automatica è completata;
+- tutte le pagine fisiche sono incluse;
+- non è richiesta alcuna azione pagina-per-pagina.
 
-La conferma deve registrare esattamente pagine incluse, escluse e motivazioni.
+Il sistema conserva internamente numerazione, testo, tabelle, OCR, quality
+flag e accounting per le fasi successive. Nessuna preview massiva o checkbox
+per pagina deve essere caricata nel DOM del gate G1.
 
 ### FR-UX-009 — Preparazione CSV, XLSX e JSON
 
+Nel caricamento una fonte strutturata viene mostrata come pronta; righe e
+record restano integralmente disponibili e non richiedono selezione umana. Le
+capacità seguenti appartengono al passo `Struttura dati`:
+
+Il percorso deve restare lineare e usare la modalità automatica con
+eccezioni:
+
+1. il sistema profila tutte le fonti e propone mapping e semantic text;
+2. la UI mostra una card compatta per fonte e apre soltanto la prima eccezione
+   bloccante;
+3. risolta un'eccezione, porta alla successiva senza mostrare una matrice
+   completa da approvare campo per campo;
+4. un join compare soltanto quando esiste una proposta esplicita da valutare;
+   nessun join è il default valido;
+5. quando tutte le fonti hanno un esito, un'unica azione
+   `Conferma` sulla card di ciascuna fonte registra l'accettazione puntuale;
+   non deve esistere una conferma globale separata in fondo alla pagina.
+
+Una fonte senza anomalie non richiede interazione puntuale. La sua card mostra
+in linguaggio semplice strutture trovate, record preparati ed eventuali
+avvisi; il mapping completo, il profiling e i locator restano in
+`Dettagli tecnici`.
+
 Per una fonte strutturata la UI deve mostrare:
 
-- inventario di tabelle, fogli o array/path;
-- preview paginata di un campione, senza caricare migliaia di righe nel DOM;
-- header rilevato, tipi, null rate, cardinalità, esempi e anomalie;
-- inclusione ed esclusione di tabelle e colonne;
-- correzione di header e tipi;
-- ruolo semantico proposto per i campi;
-- preview separata dei semantic text per sintomo, causa, azione, componente e
-  codice;
-- chiavi e join, con cardinalità attesa e preview del risultato;
-- lingua, autorità e costanti applicate;
-- confronto con un mapping profile riutilizzabile.
+- nella superficie ordinaria, un riepilogo delle strutture trovate, dei record
+  preparati e delle sole anomalie che richiedono intervento;
+- una tabella semantica compatta con le prime 5 righe e intestazioni leggibili,
+  ottenuta dai dati realmente profilati;
+- una mappa leggibile dalle colonne sorgente alle famiglie di concetti del
+  grafo (`Componente`, `Sintomo/osservazione`, `Causa`, `Azione`,
+  `Codice errore`), dichiarando che nodi e collegamenti saranno proposti nel
+  successivo passo `Elaborazione`;
+- un riepilogo delle lingue rilevate che distingua inglese qualificato da
+  italiano, tedesco, mixed o unknown conservati ma non ancora idonei
+  all'alimentazione automatica del grafo;
+- l'azione `Conferma` nella stessa card, disponibile soltanto dopo la
+  risoluzione delle eccezioni della fonte e persistita per il suo fingerprint;
+- su richiesta, inventario di tabelle, fogli o array/path e preview paginata
+  del campione;
+- nei dettagli, header rilevato, tipi, null rate, cardinalità, esempi e
+  anomalie;
+- quando serve una correzione, inclusione o esclusione di tabelle e colonne,
+  header, tipo e ruolo semantico proposto nello stesso pannello;
+- preview separate dei semantic text per sintomo, causa, azione, componente e
+  codice, senza una tabella massiva;
+- soltanto per un join esplicito, chiavi, cardinalità attesa e confronto
+  leggibile prima/dopo;
+- nei dettagli, lingua, autorità, costanti e mapping profile applicato.
 
 Il mapping proposto deve essere modificabile prima dell'approvazione. Gli
 override devono essere validati inline. Join molti-a-molti, array uno-a-molti
 e colonne chiave instabili devono essere bloccanti finché non viene scelta una
 strategia esplicita.
 
-## 7. Passo 4 — Elaborazione
+Ogni eccezione deve spiegare in quest'ordine: che cosa è stato trovato, perché
+serve una decisione, quale scelta è consigliata e che effetto avrà. Termini
+come fingerprint, cardinalità, JSONPath e null rate non devono essere necessari
+per completare il percorso ordinario; restano disponibili nel dettaglio.
+
+## 7. Passo 5 — Elaborazione
 
 ### FR-UX-010 — Avvio, progresso e recupero
 
@@ -307,6 +405,51 @@ Durante il run deve mostrare:
 - indicazione chiara che chiudere il browser non cancella il lavoro
   checkpointato.
 
+La generazione procede per fonte, non come grafo multisource monolitico. Per
+ogni fonte approvata in `Struttura dati`, la UI deve mostrare una card con:
+
+- stato `In attesa`, `Generazione`, `Da verificare`, `Approvato` o `Da
+  correggere`;
+- conteggio di nodi, relazioni, evidenze e duplicati consolidati nel
+  sottografo della fonte;
+- preview leggibile del sottografo e accesso alle evidenze originali;
+- unica azione primaria `Approva sottografo` quando non esistono blocchi;
+- azione secondaria `Segnala da correggere` quando il risultato non è
+  accettabile.
+
+La preview non può essere un elenco statico o una rappresentazione soltanto
+decorativa. Deve offrire tre viste coerenti dello stesso sottografo:
+
+- un grafo navigabile in cui selezionare un nodo, evidenziare le relazioni
+  dirette e aprire le evidenze con locator alla riga o pagina originale;
+- una tabella completa dei nodi, ricercabile e filtrabile per tipo, con
+  conteggi di relazioni ed evidenze;
+- una tabella completa delle relazioni, con nodo di partenza, relazione, nodo
+  di arrivo ed evidenze.
+
+Le liste lunghe devono restare in contenitori scorrevoli e la UI deve partire
+da una vista sintetica, senza costringere l'operatore a controllare centinaia
+di righe una per una. La decisione resta unica e source-scoped: il dettaglio
+serve a ispezionare il risultato, non a trasformare il grafo in un editor.
+
+La prima visualizzazione implementata può essere usata per collaudare
+navigazione e progressive disclosure, ma non costituisce accettazione del
+motore. Prima di abilitare `Approva sottografo`, la card deve mostrare
+`Ontologia valida` e `Mapping completo`, derivati da controlli backend reali.
+Con proprietà obbligatorie mancanti, proprietà extra, domain/range errati,
+colonne diagnostiche non mappate o output parziale non classificato, la card
+resta `Da correggere`, spiega il primo blocco e non offre l'approvazione.
+
+L'hardening procede prima su una matrice eterogenea di CSV e soltanto dopo sui
+PDF. I PDF restano visibili come `Seconda fase`: conservano preparazione ed
+evidenze e confluiranno nello stesso contratto `SourceSubgraphRevision`, senza
+creare una pipeline semantica parallela.
+
+Il sistema non deve avviare entity linking o merge cross-source finché ogni
+sottografo incluso non è stato approvato. L'approvazione della struttura dati
+autorizza la generazione; l'approvazione del sottografo autorizza il merge.
+Sono decisioni diverse e persistite separatamente.
+
 Una percentuale non determinabile non deve essere simulata. In quel caso la UI
 deve mostrare contatori e attività corrente.
 
@@ -317,7 +460,7 @@ semantic template, provider/modello, prompt, lingua, soglia o asset identity
 cambiano, la UI deve offrire `Avvia nuovo run`, mostrando cosa viene
 invalidato; non deve presentarlo come resume.
 
-## 8. Passo 5 — Revisione
+## 8. Passo 6 — Revisione
 
 ### FR-UX-011 — Inbox di review
 
@@ -332,6 +475,14 @@ La review deve essere una coda operativa con categorie:
 Ogni elemento deve mostrare tipo di decisione, confidence, guard simboliche,
 fonti coinvolte e motivo della review. Filtri e contatori devono sostituire le
 schermate separate `Qualità` e `Campi richiesti`.
+
+La coda multisource si apre soltanto dopo la barriera di approvazione dei
+sottografi. Deve distinguere chiaramente:
+
+- deduplica e merge interni già applicati alla singola fonte;
+- link o merge proposti fra fonti diverse;
+- link o merge proposti verso nodi della versione pubblicata di base;
+- conflitti e claim che devono coesistere senza merge.
 
 L'elemento selezionato deve presentare nello stesso contesto:
 
@@ -399,7 +550,7 @@ dopo che la UI ha mostrato:
 Le azioni bulk non devono essere disponibili per bloccanti, conflitti o
 elementi sotto soglia.
 
-## 9. Passo 6 — Pubblicazione
+## 9. Passo 7 — Pubblicazione
 
 ### FR-UX-014 — Gate di publish
 
@@ -462,8 +613,8 @@ aggiungere, modificare, collegare o cancellare nodi e relazioni.
 | Stato workspace | Destinazione proposta | Azione primaria |
 |---|---|---|
 | `empty` | Macchina | `Conferma macchina` |
-| `sources_required` | Fonti | `Aggiungi fonti` |
-| `preparation_required` | Preparazione | `Completa preparazione` |
+| `sources_required` | Caricamento | `Aggiungi documenti` |
+| `preparation_required` | Struttura dati | `Conferma fonte` sulla card |
 | `ready` | Elaborazione | `Costruisci il grafo candidato` |
 | `processing` | Elaborazione | nessuna; mostra avanzamento |
 | `paused` | Elaborazione | `Riprendi` |

@@ -1,0 +1,9 @@
+{
+  "acceptance_id": "AC-UX-014",
+  "status": "passed",
+  "timestamp_utc": "2026-08-03T08:08:32Z",
+  "commit": "cc162fa1916920b8971a3b457dfcd3f7daa3005a",
+  "working_tree_dirty": true,
+  "command": "PORT=8010 npx playwright test tests/planned/spec_acceptance.spec.js --reporter=line",
+  "assertions": ["G1 regression passes", "The product UI does not expose gate labels", "The fourth user step is Struttura dati", "Each structured source shows a real five-row semantic table preview", "Source columns are mapped to graph concept families", "Confirmation is recorded on each source card", "Semicolon and Latin-1 CSV remains readable", "Short and long CSV rows are isolated without blocking valid rows", "Binary CSV is blocked with a source-local explanation", "EN/IT/DE/mixed text is preserved and qualified", "The UI states that graph construction belongs to the next processing step", "At most one decision is visible", "Final source confirmations survive refresh"]
+}

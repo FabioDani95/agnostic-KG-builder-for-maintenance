@@ -3,7 +3,7 @@
   "schema_version": "1.0",
   "package": {
     "id": "maintenance-kg-builder-mvp",
-    "spec_version": "1.2",
+    "spec_version": "2.1",
     "normative_documents": [
       {
         "path": "SPECIFICHE_MVP.md",
@@ -53,7 +53,7 @@
       "path": "ontology_schema.JSON",
       "sha256": "81f2d894e8b4c3c0ba3bb2e7149941ae91b704ebd8a8b8dedef91b79bd1508db"
     },
-    "snapshot_sha256": "sha256:66db17fbad207734889e6a671f218145f56b032034c15cbfcc656f1fe85fff28"
+    "snapshot_sha256": "sha256:fd41a66b9d2b0eeaef53e0cd8840a31c2daa09ed0fdbd27a53451a5ccc8e57d2"
   },
   "obligations": [
     {
@@ -307,7 +307,7 @@
     {
       "id": "OBL-FR-WS-IDENTITY-001",
       "source_id": "FR-WS-IDENTITY-001",
-      "verified_behavior": "Appartenenza fonte–macchina: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-WS-IDENTITY-001.",
+      "verified_behavior": "Attribuzione operatore della fonte senza gate contenutistico: verifica gli effetti osservabili di FR-WS-IDENTITY-001.",
       "acceptance_ids": [
         "AC-WS-005"
       ],
@@ -395,7 +395,7 @@
     {
       "id": "OBL-FR-PDF-002",
       "source_id": "FR-PDF-002",
-      "verified_behavior": "Gate di scoping: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-PDF-002.",
+      "verified_behavior": "Preparazione all-pages automatica e idempotente: verifica gli effetti osservabili di FR-PDF-002.",
       "acceptance_ids": [
         "AC-PDF-003",
         "AC-HITL-001"
@@ -504,17 +504,20 @@
       "acceptance_ids": [
         "AC-TAB-004",
         "AC-HITL-001",
-        "AC-JOIN-001"
+        "AC-JOIN-001",
+        "AC-UX-014"
       ],
       "verification_ids": [
         "TST-TAB-004",
         "TST-HITL-001",
-        "TST-JOIN-001"
+        "TST-JOIN-001",
+        "TST-UX-014"
       ],
       "artifact_ids": [
         "ART-TAB-004",
         "ART-HITL-001",
-        "ART-JOIN-001"
+        "ART-JOIN-001",
+        "ART-UX-014"
       ]
     },
     {
@@ -906,7 +909,7 @@
     {
       "id": "OBL-FR-HITL-001",
       "source_id": "FR-HITL-001",
-      "verified_behavior": "Gate 1: identità, scope e mapping: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-HITL-001.",
+      "verified_behavior": "Gate 1: identità e inventory delle fonti, senza scope pagina-per-pagina.",
       "acceptance_ids": [
         "AC-HITL-001"
       ],
@@ -1353,13 +1356,16 @@
       "source_id": "FR-UX-003",
       "verified_behavior": "Progressive disclosure e default sicuri: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-003.",
       "acceptance_ids": [
-        "AC-UX-004"
+        "AC-UX-004",
+        "AC-UX-014"
       ],
       "verification_ids": [
-        "TST-UX-004"
+        "TST-UX-004",
+        "TST-UX-014"
       ],
       "artifact_ids": [
-        "ART-UX-004"
+        "ART-UX-004",
+        "ART-UX-014"
       ]
     },
     {
@@ -1369,17 +1375,20 @@
       "acceptance_ids": [
         "AC-UX-004",
         "AC-UX-005",
-        "AC-UX-013"
+        "AC-UX-013",
+        "AC-UX-014"
       ],
       "verification_ids": [
         "TST-UX-004",
         "TST-UX-005",
-        "TST-UX-013"
+        "TST-UX-013",
+        "TST-UX-014"
       ],
       "artifact_ids": [
         "ART-UX-004",
         "ART-UX-005",
-        "ART-UX-013"
+        "ART-UX-013",
+        "ART-UX-014"
       ]
     },
     {
@@ -1438,13 +1447,16 @@
       "source_id": "FR-UX-007",
       "verified_behavior": "Coda di preparazione comune: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da FR-UX-007.",
       "acceptance_ids": [
-        "AC-UX-003"
+        "AC-UX-003",
+        "AC-UX-014"
       ],
       "verification_ids": [
-        "TST-UX-003"
+        "TST-UX-003",
+        "TST-UX-014"
       ],
       "artifact_ids": [
-        "ART-UX-003"
+        "ART-UX-003",
+        "ART-UX-014"
       ]
     },
     {
@@ -1471,17 +1483,20 @@
       "acceptance_ids": [
         "AC-UX-003",
         "AC-TAB-004",
-        "AC-JOIN-001"
+        "AC-JOIN-001",
+        "AC-UX-014"
       ],
       "verification_ids": [
         "TST-UX-003",
         "TST-TAB-004",
-        "TST-JOIN-001"
+        "TST-JOIN-001",
+        "TST-UX-014"
       ],
       "artifact_ids": [
         "ART-UX-003",
         "ART-TAB-004",
-        "ART-JOIN-001"
+        "ART-JOIN-001",
+        "ART-UX-014"
       ]
     },
     {
@@ -1745,7 +1760,7 @@
     {
       "id": "OBL-DC-SRC-ASSESS-001",
       "source_id": "DC-SRC-ASSESS-001",
-      "verified_behavior": "Appartenenza della fonte alla macchina: verifica gli effetti osservabili e tutti i vincoli normativi dichiarati da DC-SRC-ASSESS-001.",
+      "verified_behavior": "Record tecnico dell'attribuzione operatore, senza assessment contenutistico esposto.",
       "acceptance_ids": [
         "AC-WS-005",
         "AC-HITL-001"
@@ -3100,6 +3115,17 @@
       "dataset_ids": []
     },
     {
+      "id": "TST-UX-014",
+      "kind": "automated",
+      "lifecycle": "specified",
+      "runner": "playwright",
+      "target": "tests/planned/spec_acceptance.spec.js#AC-UX-014",
+      "assertion": "AC-UX-014 — Preparazione G2 semplice e progressiva: verifica corsia automatica con eccezioni, carico visivo limitato e una decisione alla volta.",
+      "dataset_ids": [
+        "DS-003"
+      ]
+    },
+    {
       "id": "TST-CHAT-001",
       "kind": "automated",
       "lifecycle": "specified",
@@ -3925,6 +3951,17 @@
       ]
     },
     {
+      "id": "ART-UX-014",
+      "kind": "acceptance_report",
+      "lifecycle": "specified",
+      "path_pattern": "artifacts/acceptance/ac-ux-014/result.json",
+      "observables": [
+        "$.status",
+        "$.steps[*].assertions",
+        "$.screenshots"
+      ]
+    },
+    {
       "id": "ART-CHAT-001",
       "kind": "acceptance_report",
       "lifecycle": "specified",
@@ -4155,10 +4192,11 @@
     },
     {
       "id": "DEC-024",
-      "status": "ACCEPTED",
+      "status": "SUPERSEDED",
       "scope": "product",
       "planning_blocker": false,
-      "statement": "Ogni fonte deve superare una valutazione esplicita di appartenenza alla macchina; incerte e incompatibili restano in quarantena"
+      "statement": "Il precedente gate contenutistico di appartenenza della fonte è sostituito dalla responsabilità esplicita dell'operatore al caricamento",
+      "superseded_by": "DEC-036"
     },
     {
       "id": "DEC-025",
@@ -4236,6 +4274,69 @@
       "scope": "product",
       "planning_blocker": false,
       "statement": "Auto-stage richiede un CalibrationProfile valido, non vacuo e qualificato per operation, modelli, lingua, feature e dataset"
+    },
+    {
+      "id": "DEC-036",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Il caricamento di un formato supportato è l'attribuzione operatore; G1 blocca formati non supportati e duplicati attivi prima dell'invio, senza gate contenutistico o fase Controllo"
+    },
+    {
+      "id": "DEC-037",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "G1 prepara ogni PDF includendo tutte le pagine; blocca i duplicati attivi e ripristina quelli rimossi senza controllo pagina-per-pagina"
+    },
+    {
+      "id": "DEC-038",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "La route iniziale è una home minimale dei workspace persistiti, apribili per ID e creabili con un'azione + dedicata"
+    },
+    {
+      "id": "DEC-039",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "G2 usa una preparazione automatica con eccezioni, una decisione alla volta e dettagli tecnici chiusi; nessuna approvazione massiva o ripetitiva"
+    },
+    {
+      "id": "DEC-040",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "La UI usa soltanto nomi di attività, introduce Struttura dati con anteprima tabellare e mappa colonne-grafo, e rinvia la costruzione del grafo a Elaborazione"
+    },
+    {
+      "id": "DEC-041",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "Struttura dati richiede conferma per singola fonte e dimostra robustezza CSV e qualifica EN-IT-DE-mixed prima dell'avanzamento"
+    },
+    {
+      "id": "DEC-042",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "La generation crea e fa approvare un sottografo per fonte prima del merge; nuove fonti producono sottografo e delta incrementali senza rigenerare la base"
+    },
+    {
+      "id": "DEC-043",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "L'accettazione iniziale di Elaborazione è CSV-first e mostra per ogni fonte grafo navigabile, tabella nodi, tabella relazioni ed evidenze; il collaudo PDF segue sullo stesso contratto e sulla pipeline riusata"
+    },
+    {
+      "id": "DEC-044",
+      "status": "ACCEPTED",
+      "scope": "product",
+      "planning_blocker": false,
+      "statement": "G3 non è accettato: la UI è un prototipo verificato, mentre il motore deve superare hardening CSV eterogeneo e validazione ontologica strict prima del collaudo PDF"
     }
   ],
   "findings": [
@@ -4609,7 +4710,8 @@
         "FR-UX-001",
         "FR-UX-018",
         "AC-UX-001",
-        "AC-UX-013"
+        "AC-UX-013",
+        "AC-UX-014"
       ]
     },
     {
@@ -4686,15 +4788,15 @@
     "declared_status": "READY_FOR_PLANNING",
     "semantic_review": {
       "status": "APPROVED",
-      "reviewer": "Codex multi-agent semantic audit",
-      "approved_at": "2026-07-29T09:51:21Z",
-      "package_digest": "sha256:66db17fbad207734889e6a671f218145f56b032034c15cbfcc656f1fe85fff28"
+      "reviewer": "Codex semantic consistency review",
+      "approved_at": "2026-08-03T09:20:43Z",
+      "package_digest": "sha256:fd41a66b9d2b0eeaef53e0cd8840a31c2daa09ed0fdbd27a53451a5ccc8e57d2"
     },
     "owner_approval": {
       "status": "APPROVED",
       "approver": "Product Owner",
-      "approved_at": "2026-07-29T12:13:44Z",
-      "package_digest": "sha256:66db17fbad207734889e6a671f218145f56b032034c15cbfcc656f1fe85fff28"
+      "approved_at": "2026-08-03T09:20:43Z",
+      "package_digest": "sha256:fd41a66b9d2b0eeaef53e0cd8840a31c2daa09ed0fdbd27a53451a5ccc8e57d2"
     }
   }
 }

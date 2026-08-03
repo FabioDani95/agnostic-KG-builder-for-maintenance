@@ -102,6 +102,7 @@ class IngestionInfo(BaseModel):
 
     adapter_version: str
     mapping_profile_id: OpaqueId | None = None
+    mapping_fingerprint: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     scope_version: int | None = Field(default=None, ge=1)
 
 
@@ -160,4 +161,3 @@ class RawUnitDraft(BaseModel):
     raw_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
     adapter_version: str
     quality_flags: list[QualityFlag] = Field(default_factory=list)
-

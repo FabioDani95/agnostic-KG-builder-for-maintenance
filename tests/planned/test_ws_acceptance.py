@@ -1,8 +1,16 @@
 from __future__ import annotations
 
 import sqlite3
+from concurrent.futures import ThreadPoolExecutor
 
+from backend.adapters.pdf import PdfAdapter
+from backend.services.pdf_auto_preparation import PdfAutoPreparationService
 from backend.storage.database import operational_db_path
+from backend.storage.raw_store import RawStore
+from backend.storage.repositories.evidence import EvidenceRepository
+from backend.storage.repositories.raw_units import RawUnitRepository
+from backend.storage.repositories.sources import SourceRepository
+from backend.storage.repositories.workspaces import WorkspaceRepository
 from tests.planned.source_fixtures import pdf_bytes, upload_pdf
 
 
@@ -79,10 +87,86 @@ def test_ac_ws_001(foundation_client, machine_payload):
     )
     assert response.status_code == 200
     source = response.json()["source"]
-    assert source["status"] == "quarantined"
-    assert source["active_assessment"]["outcome"] == "incompatible"
+    assert source["status"] == "accepted"
+    assert source["active_assessment"]["reason_codes"] == [
+        "OPERATOR_SELECTED_SUPPORTED_FILE"
+    ]
     reopened = foundation_client.get("/api/workspace").json()
     assert reopened["workspace"]["asset"]["asset_id"] == workspace["asset"]["asset_id"]
+
+
+def test_g1_workspace_home_lists_and_reopens_the_current_workspace(
+    foundation_client,
+    machine_payload,
+):
+    assert foundation_client.get("/api/workspaces").json() == []
+    workspace = _workspace(foundation_client, machine_payload)
+    uploaded = upload_pdf(
+        foundation_client,
+        workspace["workspace_id"],
+        "home-manual.pdf",
+        "Hydraulic press maintenance instructions",
+    )
+    assert uploaded.status_code == 200
+
+    home = foundation_client.get("/api/workspaces")
+    assert home.status_code == 200
+    assert home.json() == [
+        {
+            "workspace_id": workspace["workspace_id"],
+            "asset_name": "Hydraulic Press 7",
+            "brand": "ExampleWorks",
+            "model": "HP-700",
+            "status": "awaiting_review",
+            "document_count": 1,
+            "updated_at": uploaded.json()["source"]["created_at"],
+        }
+    ]
+
+    reopened = foundation_client.get(f"/api/workspaces/{workspace['workspace_id']}")
+    assert reopened.status_code == 200
+    assert reopened.json()["workspace"]["workspace_id"] == workspace["workspace_id"]
+    assert reopened.json()["resumed"] is True
+    assert foundation_client.get("/api/workspaces/ws_missing").status_code == 404
+
+
+def test_g1_workspace_home_can_create_a_second_workspace(
+    foundation_client,
+    machine_payload,
+):
+    first = _workspace(foundation_client, machine_payload)
+    second_payload = {
+        **machine_payload,
+        "asset": {
+            **machine_payload["asset"],
+            "name": "Conveyor 2",
+            "description": "Packaging conveyor in production line two.",
+            "model": "CV-200",
+        },
+        "identifiers": [
+            {
+                "namespace": "manufacturer_serial",
+                "value": "CV2-0007",
+                "kind": "serial",
+            }
+        ],
+    }
+    created = foundation_client.post("/api/workspaces", json=second_payload)
+    assert created.status_code == 201
+    assert created.json()["resumed"] is False
+    second = created.json()["workspace"]
+    assert second["workspace_id"] != first["workspace_id"]
+    assert second["asset"]["name"] == "Conveyor 2"
+
+    home = foundation_client.get("/api/workspaces").json()
+    assert {item["workspace_id"] for item in home} == {
+        first["workspace_id"],
+        second["workspace_id"],
+    }
+    assert {item["document_count"] for item in home} == {0}
+    assert foundation_client.get("/api/workspace").json()["workspace"]["workspace_id"] == first[
+        "workspace_id"
+    ]
 
 
 def test_ac_ws_004(foundation_client, machine_payload, tmp_path):
@@ -99,95 +183,186 @@ def test_ac_ws_004(foundation_client, machine_payload, tmp_path):
         data={"authority": "normative"},
         files={"file": ("manual-copy.pdf", payload, "application/pdf")},
     )
-    assert first.status_code == second.status_code == 200
-    assert first.json()["source"]["source_id"] == second.json()["source"]["source_id"]
-    assert second.json()["duplicate"] is True
-    assert second.json()["raw_cache_hit"] is True
+    assert first.status_code == 200
+    assert second.status_code == 409
+    assert second.json()["detail"]["title"] == "Documento già caricato"
+    assert second.json()["detail"]["technical_detail"].startswith(
+        "DUPLICATE_SOURCE_SHA256 "
+    )
     raw_files = [item for item in (tmp_path / "raw").rglob("*") if item.is_file()]
     assert len(raw_files) == 1
     source_id = first.json()["source"]["source_id"]
-    first_scope = foundation_client.post(
-        f"/api/sources/{source_id}/pdf/scope",
-        json={"included_pages": [1], "excluded_pages": {}, "operator": "FD"},
+    first_preparation = first.json()["preparation"]
+    assert first_preparation["mode"] == "automatic_all_pages"
+    assert first_preparation["page_count"] == 1
+    assert first_preparation["included_page_count"] == 1
+    assert first_preparation["excluded_page_count"] == 0
+    assert first_preparation["scope_version"] == 1
+    assert first_preparation["balanced"] is True
+    assert first_preparation["unclassified_total"] == 0
+    evidence = foundation_client.get(
+        f"/api/workspaces/{workspace['workspace_id']}/evidence",
+        params={"source_id": source_id},
+    ).json()
+    assert len({item["evidence_id"] for item in evidence}) == len(evidence)
+    assert foundation_client.post(f"/api/sources/{source_id}/pdf/scope", json={}).status_code == 405
+
+
+def test_g1_uploads_multiple_pdfs_and_csvs_without_manual_gates(
+    foundation_client,
+    machine_payload,
+):
+    workspace = _workspace(foundation_client, machine_payload)
+    workspace_id = workspace["workspace_id"]
+    uploads = [
+        ("manual-a.pdf", pdf_bytes("Pump inspection procedure A"), "application/pdf"),
+        ("manual-b.pdf", pdf_bytes("Motor inspection procedure B"), "application/pdf"),
+        ("events-a.csv", b"timestamp,event\n2026-01-01,inspection-a\n", "text/csv"),
+        ("events-b.csv", b"timestamp,event\n2026-01-02,inspection-b\n", "text/csv"),
+    ]
+    registrations = []
+    for file_name, payload, media_type in uploads:
+        response = foundation_client.post(
+            f"/api/workspaces/{workspace_id}/sources",
+            data={"authority": "operational"},
+            files={"file": (file_name, payload, media_type)},
+        )
+        assert response.status_code == 200
+        registrations.append(response.json())
+
+    assert len({item["source"]["source_id"] for item in registrations}) == 4
+    pdf_preparations = [item["preparation"] for item in registrations[:2]]
+    assert all(item["mode"] == "automatic_all_pages" for item in pdf_preparations)
+    assert all(item["page_count"] == item["included_page_count"] == 1 for item in pdf_preparations)
+    assert all(item["excluded_page_count"] == 0 for item in pdf_preparations)
+    assert all(item["balanced"] is True for item in pdf_preparations)
+    assert all(item["preparation"] is None for item in registrations[2:])
+    inventory = foundation_client.get(f"/api/workspaces/{workspace_id}/sources").json()
+    assert len([item for item in inventory if item["source_kind"] != "operator_input"]) == 4
+
+
+def test_g1_repeated_pdf_upload_is_concurrent_and_idempotent(
+    foundation_client,
+    machine_payload,
+):
+    workspace = _workspace(foundation_client, machine_payload)
+    workspace_id = workspace["workspace_id"]
+    payload = pdf_bytes("Concurrent automatic preparation")
+
+    def upload_once():
+        return foundation_client.post(
+            f"/api/workspaces/{workspace_id}/sources",
+            data={"authority": "operational"},
+            files={"file": ("same.pdf", payload, "application/pdf")},
+        )
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        responses = list(executor.map(lambda _: upload_once(), range(2)))
+
+    assert sorted(response.status_code for response in responses) == [200, 409]
+    registration = next(response.json() for response in responses if response.status_code == 200)
+    duplicate = next(response.json() for response in responses if response.status_code == 409)
+    assert registration["preparation"]["scope_version"] == 1
+    assert duplicate["detail"]["title"] == "Documento già caricato"
+    inventory = foundation_client.get(f"/api/workspaces/{workspace_id}/sources").json()
+    assert len([item for item in inventory if item["source_kind"] != "operator_input"]) == 1
+
+
+def test_g1_restore_reuses_legacy_pdf_inventory_without_reparsing(
+    foundation_client,
+    machine_payload,
+    monkeypatch,
+):
+    workspace_payload = _workspace(foundation_client, machine_payload)
+    workspace_id = workspace_payload["workspace_id"]
+    payload = pdf_bytes("Legacy persisted PDF inventory")
+    original_prepare = PdfAutoPreparationService.prepare
+    monkeypatch.setattr(PdfAutoPreparationService, "prepare", lambda self, **kwargs: None)
+    uploaded = foundation_client.post(
+        f"/api/workspaces/{workspace_id}/sources",
+        data={"authority": "normative"},
+        files={"file": ("legacy.pdf", payload, "application/pdf")},
     )
-    second_scope = foundation_client.post(
-        f"/api/sources/{source_id}/pdf/scope",
-        json={"included_pages": [1], "excluded_pages": {}, "operator": "FD"},
+    assert uploaded.status_code == 200
+    source_id = uploaded.json()["source"]["source_id"]
+
+    workspace = WorkspaceRepository().get()
+    source = SourceRepository().get(source_id)
+    adapter_result = PdfAdapter().inspect(
+        path=RawStore().resolve(source.raw_relpath or ""),
+        workspace=workspace,
+        source=source,
+        scope_version=1,
     )
-    first_ids = {item["evidence_id"] for item in first_scope.json()["evidence_units"]}
-    second_ids = {item["evidence_id"] for item in second_scope.json()["evidence_units"]}
-    assert first_ids == second_ids
-    assert len(second_ids) == len(second_scope.json()["evidence_units"])
+    RawUnitRepository().register_inventory(adapter_result.raw_units)
+    EvidenceRepository().save_scope(
+        workspace_id=workspace_id,
+        source_id=source_id,
+        included_pages=[1],
+        excluded_pages={},
+        operator="legacy-operator",
+        evidence_units=adapter_result.evidence_units,
+    )
+    assert foundation_client.delete(f"/api/sources/{source_id}").status_code == 204
+
+    monkeypatch.setattr(PdfAutoPreparationService, "prepare", original_prepare)
+
+    def unexpected_reparse(*args, **kwargs):
+        raise AssertionError("Persisted PDF inventory must be reused on restore")
+
+    monkeypatch.setattr(PdfAdapter, "inspect", unexpected_reparse)
+    restored = foundation_client.post(
+        f"/api/workspaces/{workspace_id}/sources",
+        data={"authority": "normative"},
+        files={"file": ("legacy.pdf", payload, "application/pdf")},
+    )
+    assert restored.status_code == 200
+    assert restored.json()["source"]["source_id"] == source_id
+    assert restored.json()["preparation"]["page_count"] == 1
+    assert restored.json()["preparation"]["scope_version"] == 2
+    assert restored.json()["preparation"]["balanced"] is True
 
 
 def test_ac_ws_005(foundation_client, machine_payload):
     workspace = _workspace(foundation_client, machine_payload)
     workspace_id = workspace["workspace_id"]
-    compatible = upload_pdf(
-        foundation_client,
-        workspace_id,
-        "compatible.pdf",
-        "SERIAL: HP7-000042\nBRAND: ExampleWorks\nMODEL: HP-700",
-    ).json()["source"]
-    uncertain = upload_pdf(
-        foundation_client,
-        workspace_id,
-        "uncertain.pdf",
-        "BRAND: ExampleWorks\nMODEL: HP-700\nApplicable to the HP family.",
-    ).json()["source"]
-    incompatible = upload_pdf(
-        foundation_client,
-        workspace_id,
-        "incompatible.pdf",
-        "SERIAL: HP9-999999\nBRAND: ExampleWorks\nMODEL: HP-900",
-    ).json()["source"]
+    uploads = [
+        ("manual.pdf", pdf_bytes("Any maintenance document"), "application/pdf"),
+        ("events.csv", b"timestamp,event\n2026-01-01,inspection\n", "text/csv"),
+        ("notes.json", b'{"note":"bearing replaced"}', "application/json"),
+    ]
+    sources = []
+    for file_name, payload, media_type in uploads:
+        response = foundation_client.post(
+            f"/api/workspaces/{workspace_id}/sources",
+            data={"authority": "operational"},
+            files={"file": (file_name, payload, media_type)},
+        )
+        assert response.status_code == 200
+        sources.append(response.json()["source"])
 
-    assert compatible["active_assessment"]["outcome"] == "compatible"
-    assert compatible["status"] == "accepted"
-    assert uncertain["active_assessment"]["outcome"] == "uncertain"
-    assert uncertain["status"] == "quarantined"
-    assert incompatible["active_assessment"]["outcome"] == "incompatible"
-    assert incompatible["status"] == "quarantined"
-    assert all(
-        claim["locator"]["quote"]
-        for source in (compatible, uncertain, incompatible)
-        for claim in source["active_assessment"]["observed_claims"]
-    )
+    assert {source["status"] for source in sources} == {"accepted"}
+    assert {
+        source["active_assessment"]["reason_codes"][0]
+        for source in sources
+    } == {"OPERATOR_SELECTED_SUPPORTED_FILE"}
 
-    blocked = foundation_client.post(
-        f"/api/sources/{incompatible['source_id']}/assessment/resolve",
-        json={
-            "action": "confirm",
-            "reason": "Operator wants to force this incompatible machine.",
-            "observation_basis": "direct_observation",
-            "operator": "FD",
-            "evidence_seen": [incompatible["asset_assessment_id"]],
-        },
-    )
-    assert blocked.status_code == 409
-
-    resolved = foundation_client.post(
-        f"/api/sources/{uncertain['source_id']}/assessment/resolve",
-        json={
-            "action": "confirm",
-            "reason": "Applicability confirmed against the inspected machine nameplate.",
-            "observation_basis": "nameplate",
-            "operator": "FD",
-            "evidence_seen": [uncertain["asset_assessment_id"]],
-        },
-    )
-    assert resolved.status_code == 200
-    assert resolved.json()["status"] == "accepted"
-    assert resolved.json()["active_assessment"]["decided_by"]["operator_assertion_id"]
-
-    reopened = foundation_client.post(
-        f"/api/sources/{uncertain['source_id']}/assessment/reopen"
-    )
-    assert reopened.status_code == 200
-    assert reopened.json()["status"] == "quarantined"
-    assert reopened.json()["active_assessment"]["outcome"] == "uncertain"
-
+    removed = foundation_client.delete(f"/api/sources/{sources[1]['source_id']}")
+    assert removed.status_code == 204
     inventory = foundation_client.get(f"/api/workspaces/{workspace_id}/sources").json()
-    uploaded_inventory = [item for item in inventory if item["source_kind"] != "operator_input"]
-    assert len(uploaded_inventory) == 3
-    assert {item["status"] for item in uploaded_inventory} == {"accepted", "quarantined"}
+    assert {item["file_name"] for item in inventory if item["source_kind"] != "operator_input"} == {
+        "manual.pdf",
+        "notes.json",
+    }
+    assert foundation_client.get(f"/api/sources/{sources[1]['source_id']}/content").status_code == 404
+
+    restored = foundation_client.post(
+        f"/api/workspaces/{workspace_id}/sources",
+        data={"authority": "operational"},
+        files={"file": uploads[1]},
+    )
+    assert restored.status_code == 200
+    assert restored.json()["source"]["status"] == "accepted"
+    assert restored.json()["source"]["source_id"] == sources[1]["source_id"]
+    inventory = foundation_client.get(f"/api/workspaces/{workspace_id}/sources").json()
+    assert len([item for item in inventory if item["source_kind"] != "operator_input"]) == 3
