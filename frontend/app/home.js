@@ -2,70 +2,75 @@
   "use strict";
   const root = window.KGFoundation = window.KGFoundation || {};
   const app = document.getElementById("app");
-  const escapeHtml = (value) => String(value == null ? "" : value).replace(/[&<>"']/g, (character) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
-  })[character]);
-  const statusLabels = {
-    sources_required: "Documenti da caricare",
-    preparation_required: "Preparazione in corso",
-    ready: "Pronto",
-    processing: "In elaborazione",
-    paused: "In pausa",
-    failed_resumable: "Da riprendere",
-    failed_terminal: "Errore",
-    awaiting_review: "In revisione",
-    ready_to_publish: "Pronto da pubblicare",
+  const escapeHtml = root.escapeHtml;
+
+  /** Internal workspace states, said in the operator's words. */
+  const STATUS = {
+    sources_required: { label: "Documenti da caricare", tone: "warning" },
+    preparation_required: { label: "Lettura in corso", tone: "warning" },
+    ready: { label: "Pronta", tone: "success" },
+    processing: { label: "Elaborazione in corso", tone: "warning" },
+    paused: { label: "In pausa", tone: "" },
+    failed_resumable: { label: "Da riprendere", tone: "warning" },
+    failed_terminal: { label: "Errore", tone: "danger" },
+    awaiting_review: { label: "Da verificare", tone: "warning" },
+    ready_to_publish: { label: "Verificata", tone: "success" },
   };
 
-  const render = (workspaces, error = "", loading = false) => {
-    const cards = workspaces.map((workspace) => {
-      const href = `/console.html?foundation=1&workspace_id=${encodeURIComponent(workspace.workspace_id)}`;
-      const documents = workspace.document_count === 1
-        ? "1 documento caricato"
-        : `${workspace.document_count} documenti caricati`;
+  const render = (machines, error = "", loading = false) => {
+    const cards = machines.map((machine) => {
+      const status = STATUS[machine.status] || { label: machine.status, tone: "" };
+      const documents = root.plural(machine.document_count, "documento", "documenti");
+      const updated = new Date(machine.updated_at).toLocaleString("it-IT", {
+        day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
+      });
       return `
-        <article class="workspace-home-card">
-          <div class="workspace-home-card-top">
-            <span class="pill workspace-home-status">${escapeHtml(statusLabels[workspace.status] || workspace.status)}</span>
-            <span class="workspace-home-updated">Aggiornato ${escapeHtml(new Date(workspace.updated_at).toLocaleString("it-IT"))}</span>
-          </div>
-          <h2>${escapeHtml(workspace.asset_name)}</h2>
-          <p>${escapeHtml(workspace.brand)} · ${escapeHtml(workspace.model)}</p>
-          <div class="workspace-home-meta">
-            <strong>${escapeHtml(documents)}</strong>
-            <code>${escapeHtml(workspace.workspace_id)}</code>
-          </div>
-          <a class="btn-primary workspace-home-open" href="${escapeHtml(href)}">Apri workspace</a>
-        </article>`;
+        <a class="kg-home-card" href="/console.html?foundation=1&workspace_id=${encodeURIComponent(machine.workspace_id)}">
+          <span class="kg-home-card-main">
+            <strong>${escapeHtml(machine.asset_name)}</strong>
+            <span class="kg-secondary">${escapeHtml(machine.brand)} · ${escapeHtml(machine.model)} · ${escapeHtml(documents)}</span>
+          </span>
+          <span class="kg-home-card-side">
+            <span class="kg-caption">${escapeHtml(updated)}</span>
+            <span class="kg-badge ${status.tone ? `kg-badge-${status.tone}` : ""}">
+              <span class="kg-badge-dot" aria-hidden="true"></span>${escapeHtml(status.label)}</span>
+          </span>
+        </a>`;
     }).join("");
 
     app.innerHTML = `
-      <header class="c-header">
-        <strong>Maintenance KG Builder</strong>
-        <span class="pill foundation-pill">Workspace</span>
+      <header class="kg-topbar kg-floating" style="grid-template-columns: minmax(0, 1fr)">
+        <span class="kg-label">Maintenance KG Builder</span>
       </header>
-      <main class="workspace-home-main">
-        <section class="workspace-home-heading">
-          <div class="workspace-home-heading-top">
-            <div><p class="kicker">Home</p><h1>I tuoi workspace</h1></div>
-            <a class="btn-primary workspace-home-open" href="/console.html?foundation=1&new=1">+ Nuovo workspace</a>
+      <main class="kg-home">
+        <div class="kg-home-inner">
+          <div class="kg-home-head">
+            <div>
+              <h1>Macchine</h1>
+              <p>Apri una macchina per continuare dal punto in cui l'hai lasciata.</p>
+            </div>
+            <a class="kg-btn kg-btn-primary" href="/console.html?foundation=1&new=1">Nuova macchina</a>
           </div>
-          <p>Apri un workspace per continuare dal suo stato aggiornato.</p>
-        </section>
-        ${error ? `<div class="foundation-error" role="alert"><strong>Impossibile caricare i workspace</strong><p>${escapeHtml(error)}</p></div>` : ""}
-        <section class="workspace-home-list">
-          ${loading ? '<div class="workspace-home-empty"><p>Carico i workspace…</p></div>' : cards || `
-            <div class="workspace-home-empty">
-              <h2>Nessun workspace disponibile</h2>
-              <p>Configura la prima macchina per iniziare.</p>
-              <a class="btn-primary workspace-home-open" href="/console.html?foundation=1">Configura workspace</a>
-            </div>`}
-        </section>
+          ${error ? `
+            <div class="kg-note kg-note-danger" role="alert">
+              <span class="kg-note-mark" aria-hidden="true">!</span>
+              <strong>Non riesco a caricare l'elenco</strong>
+              <span>${escapeHtml(error)}</span>
+            </div>` : ""}
+          <div class="kg-home-list">
+            ${loading ? `<p class="kg-secondary">Carico l'elenco…</p>` : cards || `
+              <div class="kg-empty">
+                <strong>Nessuna macchina</strong>
+                <p>Configura la prima macchina per iniziare a costruirne il grafo.</p>
+                <a class="kg-btn kg-btn-primary" href="/console.html?foundation=1&new=1">Configura la prima macchina</a>
+              </div>`}
+          </div>
+        </div>
       </main>`;
   };
 
   render([], "", true);
   root.api("/api/workspaces")
-    .then((workspaces) => render(workspaces))
+    .then((machines) => render(machines))
     .catch((error) => render([], error.message));
 })();

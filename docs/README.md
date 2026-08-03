@@ -15,6 +15,8 @@ not work that is still pending.
   contracts, codebase implications, and acceptance criteria.
 - [UX Specification](specs/UX_SPECIFICATION.md) — unified multi-format
   frontend flow and controlled HITL interaction.
+- [Design System](design/README.md) — normative visual and interaction
+  direction, where the tokens live, and which tokens were added beyond it.
 - [Project README](../README.md) — target pointer plus imported-baseline setup
   and behavior.
 - [Architecture](ARCHITECTURE.md) — imported baseline runtime flow and module

@@ -84,19 +84,30 @@ Scoping is recall-oriented for component coverage:
 ### Runtime Model
 
 - Backend: FastAPI
-- Frontend: the G1 Product Owner preparation flow, served by the backend at `/`
-  (canonical target `/console.html?foundation=1`). The retained PDF-baseline
-  console remains directly reachable at `/console.html` during migration.
+- Frontend: the workspace application, served by the backend at `/` (canonical
+  target `/console.html?foundation=1`). It is a persistent three-pane frame —
+  source rail, work pane, contextual inspector — over four phases named after
+  the object of work: `Macchina → Documenti → Struttura → Grafo`
+  (`?fase=macchina|documenti|struttura|grafo`; the previous `stage=g2|g3` links
+  still resolve). The internal development checkpoints are not part of the
+  product vocabulary and appear neither on screen nor in the address bar. The
+  visual and interaction direction is normative and documented in
+  [Design System](docs/design/README.md); every colour, radius and spacing value
+  resolves to a token in `frontend/design.css`. The retained PDF-baseline
+  console remains directly reachable at `/console.html` during migration and
+  keeps its own palette.
 - G1 upload: multiple PDF, CSV, XLSX, JSON and JSONL files per operation;
   client-side duplicate rejection and removed-source restoration; automatic
   all-pages PDF preparation; compact inventory with confirmed red × removal.
 - G2 preparation: deterministic CSV/XLSX/JSON/JSONL adapters, versioned
   profiling and mapping, separate semantic texts, explicit n:1 joins,
   complete RawUnit accounting and una conferma finale per fonte.
-- G3 review candidate: sottografo per fonte, validazione strict del payload,
-  provenienza navigabile, consolidamento deterministico e barriera di
-  approvazione; maturity semantica, merge multilingua e UX finale non sono
-  ancora accettati.
+- Fase `Grafo`: un grafo per fonte, validazione strict del payload, provenienza
+  navigabile fino alla riga di origine, consolidamento deterministico e
+  barriera di approvazione. L'explorer è al centro della schermata; lacune di
+  conoscenza e difetti tecnici sono presentati come due classi distinte e
+  l'impossibilità di verificare è dichiarata come protezione, non come errore
+  opaco. Maturity semantica e merge multilingua non sono ancora accettati.
 - Input source: PDFs placed locally in `manuals/`
 - Runtime workspace: `data/`
 - Export destination: `output/latest/` and `output/<manual_slug>/`

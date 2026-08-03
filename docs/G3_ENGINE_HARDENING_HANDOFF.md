@@ -45,8 +45,13 @@ Il report operativo e i risultati riproducibili della campagna sono in
    chiamato durante parsing, mapping, pairing o deduplica.
 3. L'assenza di un campo lingua esplicito può lasciare la qualifica linguistica
    a `unknown`; il testo originale resta comunque integro e navigabile.
-4. La UI G3 è funzionale per revisione e provenienza, ma non è la UI finale:
-   le card attuali non sono il modello visivo approvato per un grafo denso.
+4. L'interfaccia è stata ridisegnata attorno al graph explorer (vedi
+   [Design System](design/README.md)) e non usa più il vocabolario dei gate di
+   sviluppo. Il layout regge grafi densi tramite filtri, intorno della
+   selezione e canvas navigabile, ma non è ancora stato provato su un grafo da
+   centinaia di nodi con un operatore reale: oltre ~140 elementi visibili la UI
+   dichiara la densità invece di nasconderla, e questa soglia è una scelta da
+   validare sul campo.
 
 ## Prossima sequenza, senza aggirare il gate
 
@@ -56,9 +61,10 @@ Il report operativo e i risultati riproducibili della campagna sono in
 3. Valutare un LLM soltanto come generatore di **candidate merge** o di
    diagnostica di qualità: non può mutare il grafo, unire nodi o chiudere gap
    senza evidenza, spiegazione e decisione umana tracciata.
-4. Ridisegnare `Elaborazione` come explorer del grafo: canvas centrale,
-   pannello dettaglio/evidenza su richiesta, filtri per tipo e gap, densità
-   controllata e nessuna cascata di card decorative.
+4. ~~Ridisegnare `Elaborazione` come explorer del grafo~~ — fatto: la fase si
+   chiama `Grafo`, ha canvas centrale, pannello dettaglio/evidenza su richiesta,
+   filtri per tipo, collegamento, lacune e intorno, e nessuna cascata di card.
+   Lacune di conoscenza e difetti tecnici sono ora due classi distinte.
 5. Ripetere gli stessi contratti e controlli sul percorso PDF condiviso.
 
 ## Condizioni per un nuovo gate Product Owner

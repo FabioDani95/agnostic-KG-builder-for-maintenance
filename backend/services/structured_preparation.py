@@ -209,7 +209,7 @@ class StructuredPreparationService:
             raise LookupError(profile_id)
         if current.state != "prepared":
             raise StructuredPreparationError(
-                "Questa fonte non è ancora pronta: risolvi prima la scelta mostrata nella sua card."
+                "Questa fonte non è ancora pronta: rispondi prima alla scelta aperta su di essa."
             )
         if any(
             item.status in {"open", "queued"} and item.profile_id == profile_id
@@ -256,7 +256,7 @@ class StructuredPreparationService:
         snapshot = self.ensure_workspace(workspace_id)
         if not snapshot.completed:
             raise StructuredPreparationError(
-                "Conferma ogni fonte nella rispettiva card prima di continuare."
+                "Conferma ogni fonte prima di continuare."
             )
         return snapshot
 

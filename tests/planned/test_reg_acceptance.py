@@ -44,7 +44,7 @@ def test_ac_reg_002(tmp_path, monkeypatch):
     assert report["golden_mock"]["average_triplet_recall"] == 1.0
 
 
-def test_root_opens_the_workspace_home(foundation_client):
+def test_root_opens_the_machines_home(foundation_client):
     redirect = foundation_client.get("/", follow_redirects=False)
     response = foundation_client.get("/")
 
@@ -53,4 +53,4 @@ def test_root_opens_the_workspace_home(foundation_client):
     assert redirect.headers["cache-control"] == "no-store"
     assert response.status_code == 200
     assert str(response.url).endswith("/home.html")
-    assert "Workspace · Maintenance KG Builder" in response.text
+    assert "Macchine · Maintenance KG Builder" in response.text

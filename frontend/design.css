@@ -1,0 +1,372 @@
+/* ============================================================================
+   Design system — "Compact Apple-Inspired Interface" v1.0
+   Token values come from docs/design/DESIGN.md. Nothing below is a one-off:
+   every colour, radius, space and size in the application layer resolves here.
+
+   Sizes are expressed in rem against a 16px root so the browser text-size
+   setting scales the layout with the text (SKILL.md §15), while matching the
+   px values the design system specifies.
+   ========================================================================= */
+
+:root {
+  color-scheme: light dark;
+
+  /* — Surfaces ——————————————————————————————————————————————— */
+  --background: #F5F5F7;
+  --background-subtle: #FAFAFC;
+  --surface: #FFFFFF;
+  --surface-muted: #F0F0F3;
+
+  /* — Text ——————————————————————————————————————————————————— */
+  --text-primary: #1D1D1F;
+  --text-secondary: #6E6E73;
+  --text-tertiary: #98989D;
+
+  /* — Accent ————————————————————————————————————————————————— */
+  --accent: #4776C5;
+  --accent-hover: #3E69B0;
+  --accent-soft: #E8EFFA;
+  --on-accent: #FFFFFF;
+
+  /* — Status ————————————————————————————————————————————————— */
+  --success: #4D9460;
+  --success-soft: #E8F3EB;
+  --warning: #B5823D;
+  --warning-soft: #F8F0E3;
+  --danger: #C65A5A;
+  --danger-soft: #FAEAEA;
+
+  /* — Lines ——————————————————————————————————————————————————— */
+  --border: #D9D9DE;
+  --separator: #E5E5EA;
+  --focus: #4776C5;
+
+  /* — Radius ————————————————————————————————————————————————— */
+  --radius-small: 8px;
+  --radius-medium: 10px;
+  --radius-large: 14px;
+  --radius-panel: 18px;
+  --radius-pill: 999px;
+
+  /* — Spacing ———————————————————————————————————————————————— */
+  --space-1: 0.25rem;  /*  4px */
+  --space-2: 0.5rem;   /*  8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+
+  /* — Sizing ————————————————————————————————————————————————— */
+  --control-small: 1.75rem;   /* 28px */
+  --control-default: 2.125rem;/* 34px */
+  --control-large: 2.5rem;    /* 40px */
+  --sidebar: 15rem;           /* 240px */
+  --content-max: 90rem;       /* 1440px */
+  --reading-max: 45rem;       /* 720px — long-form reading only */
+  --row-height: 2.5rem;       /* 40px, inside the 36–44px table band */
+
+  /* — Type scale ————————————————————————————————————————————— */
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --text-display: 2.25rem;    /* 36 / 1.08 / 600 / -0.025em */
+  --text-title: 1.75rem;      /* 28 / 1.15 / 600 / -0.02em  */
+  --text-section: 1.25rem;    /* 20 / 1.25 / 600 / -0.01em  */
+  --text-body: 0.9375rem;     /* 15 / 1.5  / 400 /  0       */
+  --text-label: 0.875rem;     /* 14 / 1.35 / 500 /  0       */
+  --text-secondary-size: 0.8125rem; /* 13 / 1.4 / 400 / .005em */
+  --text-caption: 0.75rem;    /* 12 / 1.35 / 500 / .01em    */
+
+  /* — New tokens (not in DESIGN.md; declared here so they are never one-offs) —
+
+     --shadow-*  : DESIGN.md asks for "subtle shadows and separators over heavy
+                   borders" but fixes no values. Three steps only: resting
+                   surface, raised surface, floating surface.
+     --node-*    : one hue per ontological node type. Deliberately low-chroma
+                   and outside the status hues so a type is never mistaken for
+                   a status. Type is always spelled out in text as well, so the
+                   hue is redundant reinforcement, never the sole channel.
+     --motion-*  : the interaction timings SKILL.md prescribes, named once.
+     --scrim     : the dimming layer behind a focused, blocking task.
+     ——————————————————————————————————————————————————————————— */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-3: 0 12px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.07);
+
+  --node-asset: #6E7A8A;
+  --node-component: #5F7D6E;
+  --node-symptom: #A97A4B;
+  --node-failure: #A65F63;
+  --node-action: #5E7FA3;
+  --node-error: #7E6C9B;
+
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-slow: 320ms;
+  /* Critically damped feel (damping 1.0, response ~0.35) as a CSS curve. */
+  --ease-out: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --scrim: rgba(0, 0, 0, 0.32);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #101012;
+    --background-subtle: #161618;
+    --surface: #1C1C1E;
+    --surface-muted: #242426;
+
+    --text-primary: #F5F5F7;
+    --text-secondary: #A1A1A6;
+    --text-tertiary: #7D7D83;
+
+    --accent: #6E9FE8;
+    --accent-hover: #83ADF0;
+    --accent-soft: #1D2B42;
+    --on-accent: #0B1220;
+
+    /* DESIGN.md omits dark status colours: these are the light hues lifted to
+       readable luminance on a near-black surface, with soft fills rebuilt as
+       low-alpha tints of the same hue rather than pale pastels. */
+    --success: #6FBF87;
+    --success-soft: #16281C;
+    --warning: #D9A45F;
+    --warning-soft: #2B2113;
+    --danger: #E88585;
+    --danger-soft: #2E1919;
+
+    --border: #38383D;
+    --separator: #2C2C2E;
+    --focus: #6E9FE8;
+
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-3: 0 12px 32px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+
+    --node-asset: #98A4B4;
+    --node-component: #86A895;
+    --node-symptom: #CFA277;
+    --node-failure: #CE8B8F;
+    --node-action: #8AA8CC;
+    --node-error: #A797C4;
+
+    --scrim: rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* prefers-contrast: near-solid backgrounds with a defined, contrasting border. */
+@media (prefers-contrast: more) {
+  :root {
+    --border: #6E6E73;
+    --separator: #6E6E73;
+    --text-secondary: #3A3A3C;
+    --text-tertiary: #4A4A4F;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --border: #A1A1A6;
+      --separator: #A1A1A6;
+      --text-secondary: #D8D8DC;
+      --text-tertiary: #C0C0C6;
+    }
+  }
+}
+
+/* ============================================================================
+   Primitives. Scoped to .kg-app so the retained baseline console keeps its own
+   styling untouched.
+   ========================================================================= */
+
+.kg-app {
+  --node-Asset: var(--node-asset);
+  --node-Component: var(--node-component);
+  --node-Symptom: var(--node-symptom);
+  --node-FailureMode: var(--node-failure);
+  --node-CorrectiveAction: var(--node-action);
+  --node-ErrorCode: var(--node-error);
+
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--background);
+  -webkit-font-smoothing: antialiased;
+}
+
+.kg-app *,
+.kg-app *::before,
+.kg-app *::after { box-sizing: border-box; }
+
+.kg-app :focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-small);
+}
+
+/* — Text roles ————————————————————————————————————————————————— */
+.kg-display { font-size: var(--text-display); line-height: 1.08; font-weight: 600; letter-spacing: -0.025em; margin: 0; }
+.kg-title { font-size: var(--text-title); line-height: 1.15; font-weight: 600; letter-spacing: -0.02em; margin: 0; }
+.kg-section-title { font-size: var(--text-section); line-height: 1.25; font-weight: 600; letter-spacing: -0.01em; margin: 0; }
+.kg-body { font-size: var(--text-body); line-height: 1.5; font-weight: 400; margin: 0; }
+.kg-label { font-size: var(--text-label); line-height: 1.35; font-weight: 500; }
+.kg-secondary { font-size: var(--text-secondary-size); line-height: 1.4; font-weight: 400; letter-spacing: 0.005em; color: var(--text-secondary); }
+.kg-caption { font-size: var(--text-caption); line-height: 1.35; font-weight: 500; letter-spacing: 0.01em; color: var(--text-secondary); }
+.kg-mono { font-family: var(--font-mono); font-size: var(--text-caption); }
+.kg-tnum { font-variant-numeric: tabular-nums; }
+
+.kg-visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+/* — Buttons ———————————————————————————————————————————————————
+   Feedback lives on pointer-down, not on release (SKILL.md §1).        */
+.kg-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  height: var(--control-default); padding: 0 var(--space-4);
+  border: 1px solid transparent; border-radius: var(--radius-medium);
+  font: inherit; font-size: var(--text-label); font-weight: 500;
+  white-space: nowrap; text-decoration: none; cursor: pointer;
+  transition: background-color var(--motion-fast) var(--ease-out),
+              transform var(--motion-fast) var(--ease-out),
+              border-color var(--motion-fast) var(--ease-out);
+}
+.kg-btn:active:not(:disabled) { transform: scale(0.97); }
+.kg-btn:disabled { cursor: not-allowed; opacity: 0.45; }
+
+.kg-btn-primary { background: var(--accent); color: var(--on-accent); }
+.kg-btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+
+.kg-btn-secondary { background: var(--surface); color: var(--text-primary); border-color: var(--border); }
+.kg-btn-secondary:hover:not(:disabled) { background: var(--surface-muted); }
+
+.kg-btn-quiet { background: transparent; color: var(--text-secondary); }
+.kg-btn-quiet:hover:not(:disabled) { background: var(--surface-muted); color: var(--text-primary); }
+
+.kg-btn-danger { background: transparent; color: var(--danger); border-color: var(--border); }
+.kg-btn-danger:hover:not(:disabled) { background: var(--danger-soft); border-color: var(--danger); }
+
+.kg-btn-small { height: var(--control-small); padding: 0 var(--space-3); font-size: var(--text-caption); }
+.kg-btn-large { height: var(--control-large); padding: 0 var(--space-5); }
+.kg-btn-icon { width: var(--control-small); height: var(--control-small); padding: 0; }
+
+/* — Inputs ————————————————————————————————————————————————————— */
+.kg-field { display: grid; gap: var(--space-1); min-width: 0; }
+.kg-field > span { font-size: var(--text-caption); font-weight: 500; color: var(--text-secondary); }
+.kg-input, .kg-select, .kg-textarea {
+  width: 100%; min-height: var(--control-default);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border); border-radius: var(--radius-medium);
+  background: var(--surface); color: var(--text-primary);
+  font: inherit; font-size: var(--text-label);
+  transition: border-color var(--motion-fast) var(--ease-out), box-shadow var(--motion-fast) var(--ease-out);
+}
+.kg-textarea { min-height: 4.5rem; resize: vertical; line-height: 1.5; }
+.kg-input:focus, .kg-select:focus, .kg-textarea:focus {
+  outline: none; border-color: var(--focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 22%, transparent);
+}
+.kg-input::placeholder, .kg-textarea::placeholder { color: var(--text-tertiary); }
+.kg-field-hint { font-size: var(--text-caption); color: var(--text-secondary); }
+.kg-field-error { font-size: var(--text-caption); color: var(--danger); }
+
+/* — Panels ————————————————————————————————————————————————————
+   A panel exists only to group, select or elevate. Never nested.      */
+.kg-panel {
+  padding: var(--space-4);
+  border-radius: var(--radius-large);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+.kg-panel-flat { padding: var(--space-4); border-radius: var(--radius-large); background: var(--surface-muted); }
+
+/* — Status notes: colour is never the only channel ————————————— */
+.kg-note {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-1) var(--space-3);
+  padding: var(--space-3) var(--space-4); border-radius: var(--radius-medium);
+  background: var(--surface-muted); color: var(--text-primary);
+  font-size: var(--text-secondary-size); line-height: 1.45;
+}
+.kg-note > .kg-note-mark {
+  grid-row: 1 / -1; align-self: start;
+  width: 1.125rem; height: 1.125rem; margin-top: 0.0625rem;
+  display: grid; place-items: center;
+  border-radius: var(--radius-pill);
+  font-size: 0.6875rem; font-weight: 700; line-height: 1;
+}
+.kg-note > strong { font-size: var(--text-label); font-weight: 600; }
+.kg-note-info { background: var(--accent-soft); }
+.kg-note-info > .kg-note-mark { background: var(--accent); color: var(--on-accent); }
+.kg-note-success { background: var(--success-soft); }
+.kg-note-success > .kg-note-mark { background: var(--success); color: var(--surface); }
+.kg-note-warning { background: var(--warning-soft); }
+.kg-note-warning > .kg-note-mark { background: var(--warning); color: var(--surface); }
+.kg-note-danger { background: var(--danger-soft); }
+.kg-note-danger > .kg-note-mark { background: var(--danger); color: var(--surface); }
+
+/* — Badges: always carry their own text ————————————————————————— */
+.kg-badge {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  height: 1.375rem; padding: 0 var(--space-2);
+  border-radius: var(--radius-small);
+  background: var(--surface-muted); color: var(--text-secondary);
+  font-size: var(--text-caption); font-weight: 500; white-space: nowrap;
+}
+.kg-badge-accent { background: var(--accent-soft); color: var(--accent); }
+.kg-badge-success { background: var(--success-soft); color: var(--success); }
+.kg-badge-warning { background: var(--warning-soft); color: var(--warning); }
+.kg-badge-danger { background: var(--danger-soft); color: var(--danger); }
+.kg-badge-dot { width: 0.5rem; height: 0.5rem; border-radius: var(--radius-pill); background: currentColor; flex: none; }
+
+/* — Tables ————————————————————————————————————————————————————— */
+.kg-table { width: 100%; border-collapse: collapse; font-size: var(--text-secondary-size); }
+.kg-table th, .kg-table td {
+  padding: var(--space-2) var(--space-3); text-align: left; vertical-align: middle;
+  border-bottom: 1px solid var(--separator);
+}
+.kg-table th {
+  position: sticky; top: 0; z-index: 1;
+  height: var(--control-default);
+  background: var(--background-subtle); color: var(--text-secondary);
+  font-size: var(--text-caption); font-weight: 500;
+}
+.kg-table td { height: var(--row-height); }
+.kg-table tbody tr { transition: background-color var(--motion-fast) var(--ease-out); }
+.kg-table tbody tr[data-selectable] { cursor: pointer; }
+.kg-table tbody tr[data-selectable]:hover { background: var(--surface-muted); }
+.kg-table tbody tr[aria-selected="true"] { background: var(--accent-soft); }
+.kg-table .kg-num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* — Disclosure ————————————————————————————————————————————————— */
+.kg-disclosure { border-top: 1px solid var(--separator); padding-top: var(--space-3); }
+.kg-disclosure > summary {
+  width: max-content; cursor: pointer; list-style: none;
+  font-size: var(--text-caption); font-weight: 500; color: var(--text-secondary);
+}
+.kg-disclosure > summary::-webkit-details-marker { display: none; }
+.kg-disclosure > summary::before { content: "▸ "; }
+.kg-disclosure[open] > summary::before { content: "▾ "; }
+.kg-disclosure > summary:hover { color: var(--text-primary); }
+
+/* — Floating chrome. Never stacked on another translucent surface. —— */
+.kg-floating {
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .kg-floating { background: var(--surface); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kg-app *, .kg-app *::before, .kg-app *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .kg-btn:active:not(:disabled) { transform: none; }
+}
