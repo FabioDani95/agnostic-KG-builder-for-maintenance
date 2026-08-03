@@ -2,17 +2,17 @@
    without the workspace application). The workspace application has its own
    token layer in design.css and its own component layer in app.css; nothing
    here may leak into it, so every global rule below is scoped away from
-   .kg-app. */
+   the application root (#app.app). */
 html, body { margin: 0; padding: 0; height: 100%; }
-body {
+body:has(#app:not(.app)) {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   background: #F4F3EF;
   color: #22211D;
 }
 * { box-sizing: border-box; }
-#app:not(.kg-app) ::selection { background: rgba(201, 100, 66, 0.18); }
-#app:not(.kg-app) input:focus {
+#app:not(.app) ::selection { background: rgba(201, 100, 66, 0.18); }
+#app:not(.app) input:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(201, 100, 66, 0.12);
   border-color: rgba(201, 100, 66, 0.4) !important;
@@ -33,7 +33,7 @@ body {
 @keyframes progress-slide { from { transform: translateX(-110%); } to { transform: translateX(320%); } }
 @keyframes check-sweep { from { background-position: -160% 0; } to { background-position: 160% 0; } }
 
-#app:not(.kg-app) { height: 100vh; display: flex; flex-direction: column; overflow: hidden; min-width: 1024px; }
+#app:not(.app) { height: 100vh; display: flex; flex-direction: column; overflow: hidden; min-width: 1024px; }
 
 .c-header {
   height: 54px; flex: none; display: flex; align-items: center; gap: 14px;
@@ -88,9 +88,9 @@ button:disabled { cursor: not-allowed; }
 
 .row-hover:hover { background: #FBFAF7 !important; }
 
-#app:not(.kg-app) input[type="text"],
-#app:not(.kg-app) input[type="number"],
-#app:not(.kg-app) input:not([type]) {
+#app:not(.app) input[type="text"],
+#app:not(.app) input[type="number"],
+#app:not(.app) input:not([type]) {
   font-family: inherit; color: #22211D;
 }
 

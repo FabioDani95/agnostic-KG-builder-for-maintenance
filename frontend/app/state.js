@@ -31,8 +31,8 @@
     activeSourceId: "",
     /** The single selection model shared by every surface. */
     selection: { kind: "", id: "" },
-    /** Which representation of the active source fills the work pane. */
-    view: "graph",
+    /** Quale rappresentazione della fonte attiva riempie l'area di lavoro. */
+    view: "mappa",
     /** Density and meaning filters; they apply to every view at once. */
     filters: {
       query: "",

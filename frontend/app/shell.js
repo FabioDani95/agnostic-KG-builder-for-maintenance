@@ -2,191 +2,260 @@
   "use strict";
   const root = window.KGFoundation = window.KGFoundation || {};
   const state = root.state;
-  const escapeHtml = root.escapeHtml;
+  const esc = root.escapeHtml;
+  const t = root.t;
 
-  /**
-   * The four phases are named after the object the operator works on. The
-   * internal development checkpoints are not part of this vocabulary and never
-   * reach the screen or the address bar.
-   */
-  const PHASE_ORDER = ["machine", "documents", "structure", "graph"];
-  const PHASE_SLUGS = { machine: "macchina", documents: "documenti", structure: "struttura", graph: "grafo" };
-  const PHASE_BY_SLUG = Object.fromEntries(Object.entries(PHASE_SLUGS).map(([id, slug]) => [slug, id]));
-  /* Links made before the phases were renamed keep working. */
-  const LEGACY_STAGES = { g2: "structure", g3: "graph", documents: "documents" };
+  /* Le quattro fasi hanno il nome dell'oggetto su cui si lavora. I checkpoint
+     interni di sviluppo non fanno parte di questo vocabolario e non compaiono
+     né a schermo né nella barra degli indirizzi. */
+  const FASI = ["machine", "documents", "structure", "graph"];
+  const SIGLE = { machine: "macchina", documents: "documenti", structure: "struttura", graph: "grafo" };
+  const DA_SIGLA = Object.fromEntries(Object.entries(SIGLE).map(([id, sigla]) => [sigla, id]));
+  /* I collegamenti creati prima della rinomina continuano a funzionare. */
+  const VECCHIE = { g2: "structure", g3: "graph", documents: "documents" };
+
+  const ICONE = {
+    machine: "M4 7h16M4 12h16M4 17h16",
+    documents: "M6 3h8l4 4v14H6zM14 3v4h4",
+    structure: "M4 5h16M4 12h16M4 19h16M9 5v14M15 5v14",
+    graph: "M5 6a2 2 0 104 0 2 2 0 10-4 0M15 5a2 2 0 104 0 2 2 0 10-4 0M9 18a2 2 0 104 0 2 2 0 10-4 0M8.6 7.6l5.8-1.2M8.2 8.7l2.6 7.6",
+  };
 
   root.phases = root.phases || {};
-  root.PHASE_ORDER = PHASE_ORDER;
+  root.FASI = FASI;
 
-  const wideScreen = window.matchMedia("(min-width: 1181px)");
+  const largo = window.matchMedia("(min-width: 1181px)");
 
-  root.phaseSlug = (id) => PHASE_SLUGS[id] || PHASE_SLUGS.machine;
+  root.siglaFase = (id) => SIGLE[id] || SIGLE.machine;
 
-  root.phaseHref = function phaseHref(id, workspaceId) {
-    const target = workspaceId || (state.workspace && state.workspace.workspace.workspace_id) || "";
+  root.indirizzoFase = function indirizzoFase(id, workspaceId) {
+    const bersaglio = workspaceId || (state.workspace && state.workspace.workspace.workspace_id) || "";
     const query = new URLSearchParams({ foundation: "1" });
-    if (target) query.set("workspace_id", target);
-    if (id && id !== "machine") query.set("fase", root.phaseSlug(id));
+    if (bersaglio) query.set("workspace_id", bersaglio);
+    if (id && id !== "machine") query.set("fase", root.siglaFase(id));
     return `/console.html?${query.toString()}`;
   };
 
-  root.readPhaseFromUrl = function readPhaseFromUrl() {
-    const parameters = new URL(window.location.href).searchParams;
-    const slug = parameters.get("fase");
-    if (slug && PHASE_BY_SLUG[slug]) return PHASE_BY_SLUG[slug];
-    const legacy = parameters.get("stage");
-    if (legacy && LEGACY_STAGES[legacy]) return LEGACY_STAGES[legacy];
+  root.faseDaUrl = function faseDaUrl() {
+    const parametri = new URL(window.location.href).searchParams;
+    const sigla = parametri.get("fase");
+    if (sigla && DA_SIGLA[sigla]) return DA_SIGLA[sigla];
+    const vecchia = parametri.get("stage");
+    if (vecchia && VECCHIE[vecchia]) return VECCHIE[vecchia];
     return "machine";
   };
 
-  /* ── Phase availability ────────────────────────────────────────────── */
-  const fileSources = () => (state.sources || []).filter((source) => source.source_kind !== "operator_input");
+  const fileSorgenti = () => (state.sources || []).filter((s) => s.source_kind !== "operator_input");
 
-  root.phaseStatus = function phaseStatus(id) {
-    const hasWorkspace = Boolean(state.workspace);
-    const hasDocuments = fileSources().length > 0;
-    /* When the structure phase has not been opened this session, the graph
-       snapshot still says whether every source got past it. */
-    const structureDone = state.structure
+  root.statoFase = function statoFase(id) {
+    const conWorkspace = Boolean(state.workspace);
+    const conDocumenti = fileSorgenti().length > 0;
+    const strutturaFatta = state.structure
       ? Boolean(state.structure.completed)
       : Boolean(state.graph && state.graph.sources.length
-        && state.graph.sources.every((item) => item.state !== "waiting"));
-    if (id === "machine") return { available: true, done: hasWorkspace };
-    if (id === "documents") return { available: hasWorkspace, done: hasDocuments };
-    if (id === "structure") return { available: hasWorkspace && hasDocuments, done: structureDone };
+        && state.graph.sources.every((v) => v.state !== "waiting"));
+    if (id === "machine") return { disponibile: true, fatta: conWorkspace };
+    if (id === "documents") return { disponibile: conWorkspace, fatta: conDocumenti };
+    if (id === "structure") return { disponibile: conWorkspace && conDocumenti, fatta: strutturaFatta };
     if (id === "graph") {
-      const built = Boolean(state.graph && state.graph.sources.some((item) => item.subgraph));
-      return { available: hasWorkspace && (structureDone || state.phase === "graph"), done: built };
+      const costruito = Boolean(state.graph && state.graph.sources.some((v) => v.subgraph));
+      return { disponibile: conWorkspace && (strutturaFatta || state.phase === "graph"), fatta: costruito };
     }
-    return { available: false, done: false };
+    return { disponibile: false, fatta: false };
   };
 
-  /* ── Frame ─────────────────────────────────────────────────────────── */
-  const FRAME = `
-    <a class="kg-visually-hidden" href="#kg-work">Vai al contenuto</a>
-    <header class="kg-topbar kg-floating" data-region="topbar"></header>
-    <div class="kg-body" data-region="body">
-      <aside class="kg-rail" data-region="rail" aria-label="Fonti della macchina"></aside>
-      <main class="kg-work" id="kg-work" data-region="work" tabindex="-1"></main>
-      <aside class="kg-inspector" data-region="inspector" aria-label="Dettaglio"></aside>
-    </div>
-    <footer class="kg-decision kg-floating" data-region="decision"></footer>`;
+  /* ------------------------------------------------------------- telaio -- */
+  const TELAIO = `
+    <a class="solo-lettori" href="#lavoro" data-salta></a>
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">KG</div>
+        <div class="brand-text" data-marchio></div>
+        <button class="collapse" type="button" data-comprimi>«</button>
+      </div>
+      <nav class="nav" data-regione="nav"></nav>
+      <div class="sidebar-controls">
+        <div class="sidebar-toggles">
+          <button class="toggle-btn lingua" type="button" data-lingua>IT</button>
+          <button class="toggle-btn tema" type="button" data-tema>☀</button>
+        </div>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <h1 data-regione="titolo"></h1>
+        <span class="spacer"></span>
+        <span data-regione="chips" style="display:flex;gap:8px;align-items:center"></span>
+      </header>
+      <div class="contenuto" data-regione="contenuto">
+        <div class="lavoro" id="lavoro" data-regione="lavoro" tabindex="-1"></div>
+        <aside class="ispettore" data-regione="ispettore" aria-label="Dettaglio"></aside>
+      </div>
+      <footer class="decisione" data-regione="decisione"></footer>
+    </main>`;
 
-  const region = (name) => root.appElement.querySelector(`[data-region="${name}"]`);
+  const regione = (nome) => root.appElement.querySelector(`[data-regione="${nome}"]`);
+  const faseAttiva = () => root.phases[state.phase] || root.phases.machine;
 
-  const renderTopbar = () => {
+  const marchio = () => {
     const workspace = state.workspace && state.workspace.workspace;
     const asset = workspace && workspace.asset;
-    const identity = asset
-      ? `<strong>${escapeHtml(asset.name)}</strong><span>${escapeHtml(asset.brand)} · ${escapeHtml(asset.model)}</span>`
-      : `<strong>Nuova macchina</strong><span>Non ancora salvata</span>`;
-    const steps = PHASE_ORDER.map((id, index) => {
-      const status = root.phaseStatus(id);
-      const current = state.phase === id;
-      const label = root.phases[id] ? root.phases[id].label : id;
-      const mark = status.done && !current ? "✓" : String(index + 1);
-      const classes = ["kg-phase", status.done ? "kg-phase-done" : ""].filter(Boolean).join(" ");
-      return `<button type="button" class="${classes}" data-kg-phase="${id}"
-        ${current ? 'aria-current="step"' : ""}
-        ${status.available ? "" : 'aria-disabled="true"'}>
-        <span class="kg-phase-mark" aria-hidden="true">${mark}</span>${escapeHtml(label)}</button>`;
-    }).join("");
-    return `
-      <a class="kg-topbar-back" href="/home.html">← Macchine</a>
-      <div class="kg-topbar-identity">${identity}</div>
-      <nav class="kg-phases" aria-label="Fasi di lavoro">${steps}</nav>`;
+    if (!asset) return `${esc(t("home.nuova"))}<small>${esc(t("brand.sub"))}</small>`;
+    return `${esc(asset.name)}<small>${esc(`${asset.brand} · ${asset.model}`)}</small>`;
   };
 
-  const activePhase = () => root.phases[state.phase] || root.phases.machine;
+  const navigazione = () => {
+    const fasi = FASI.map((id) => {
+      const stato = root.statoFase(id);
+      const attiva = state.phase === id;
+      return `<button type="button" class="nav-item ${attiva ? "active" : ""}" data-fase="${id}"
+        ${stato.disponibile ? "" : "disabled"} ${attiva ? 'aria-current="page"' : ""}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${ICONE[id]}"/></svg>
+        <span class="nav-label">${esc(t(`fase.${id}`))}</span>
+        ${stato.fatta && !attiva ? '<span class="nav-meta" aria-hidden="true">✓</span>' : ""}
+      </button>`;
+    }).join("");
+
+    const fase = faseAttiva();
+    if (!fase.mostraFonti || !state.workspace) return `<div class="nav-group">${esc(t("nav.fasi"))}</div>${fasi}`;
+
+    const fonti = fileSorgenti().map((sorgente) => {
+      const attiva = root.fonteAttiva() && root.fonteAttiva().source_id === sorgente.source_id;
+      const meta = fase.metaFonte ? fase.metaFonte(sorgente) : "";
+      return `<button type="button" class="nav-item ${attiva ? "active" : ""}" data-fonte="${esc(sorgente.source_id)}"
+        title="${esc(sorgente.file_name)}">
+        <span class="nav-punto" style="--tipo:${sorgente.source_kind === "pdf" ? "var(--violet)" : "var(--cyan)"}"></span>
+        <span class="nav-label">${esc(sorgente.file_name)}</span>
+        ${meta ? `<span class="nav-meta">${meta}</span>` : ""}
+      </button>`;
+    }).join("");
+
+    const extra = fase.navExtra ? fase.navExtra() : "";
+    return `
+      <div class="nav-group">${esc(t("nav.fasi"))}</div>${fasi}
+      <div class="nav-group">${esc(t("nav.fonti"))}</div>
+      ${fonti || `<div class="nav-item" style="cursor:default"><span class="nav-label">—</span></div>`}
+      ${extra}`;
+  };
 
   /**
-   * Repaint only the regions that changed. Selecting a node repaints the
-   * inspector and the decision bar, never the graph the operator is looking at.
+   * Ridisegna solo le regioni cambiate. Selezionare un nodo tocca l'ispettore
+   * e la barra della decisione, mai il grafo che l'operatore sta guardando.
    */
-  root.render = function render(options) {
-    const settings = options || {};
-    const regions = settings.regions || ["topbar", "rail", "work", "inspector", "decision"];
-    const phase = activePhase();
-    const body = region("body");
+  root.render = function render(opzioni) {
+    const impostazioni = opzioni || {};
+    const regioni = impostazioni.regioni || ["nav", "titolo", "lavoro", "ispettore", "decisione"];
+    const fase = faseAttiva();
+    const contenuto = regione("contenuto");
 
-    if (regions.includes("topbar")) {
-      root.paint(region("topbar"), renderTopbar());
-      root.delegate(region("topbar"), "click", "[data-kg-phase]", (element) => {
-        const id = element.dataset.kgPhase;
-        if (element.getAttribute("aria-disabled") === "true" || id === state.phase) return;
-        root.goToPhase(id);
+    root.appElement.querySelector("[data-marchio]").innerHTML = marchio();
+
+    if (regioni.includes("nav")) {
+      root.paint(regione("nav"), navigazione());
+      root.delegate(regione("nav"), "click", "[data-fase]", (elemento) => {
+        if (elemento.disabled || elemento.dataset.fase === state.phase) return;
+        root.vaiAllaFase(elemento.dataset.fase);
       });
+      root.delegate(regione("nav"), "click", "[data-fonte]", (elemento) => {
+        root.scegliFonte(elemento.dataset.fonte);
+      });
+      if (fase.bindNav) fase.bindNav(regione("nav"));
     }
 
-    const showRail = Boolean(phase.showRail) && Boolean(state.workspace);
-    const wantsInspector = Boolean(phase.showInspector) && Boolean(state.workspace);
-    const showInspector = wantsInspector && (wideScreen.matches || Boolean(state.selection.id));
-    body.dataset.rail = showRail ? "visible" : "hidden";
-    body.dataset.inspector = showInspector ? "visible" : "hidden";
-
-    if (regions.includes("rail") && showRail) {
-      root.paint(region("rail"), root.renderRail());
-      root.bindRail(region("rail"));
-    } else if (!showRail) {
-      root.paint(region("rail"), "");
+    if (regioni.includes("titolo")) {
+      const testa = fase.titolo ? fase.titolo() : { titolo: t(`fase.${state.phase}`), chips: "" };
+      regione("titolo").textContent = testa.titolo;
+      root.paint(regione("chips"), testa.chips || "");
+      if (fase.bindChips) fase.bindChips(regione("chips"));
     }
 
-    if (regions.includes("work")) {
-      const container = region("work");
-      root.paint(container, phase.renderWork());
-      if (phase.bindWork) phase.bindWork(container);
-      if (phase.afterWork) phase.afterWork(container);
+    const vuoleIspettore = Boolean(fase.mostraIspettore) && Boolean(state.workspace);
+    const mostraIspettore = vuoleIspettore && (largo.matches || Boolean(state.selection.id));
+    contenuto.dataset.ispettore = mostraIspettore ? "aperto" : "chiuso";
+    regione("ispettore").hidden = !mostraIspettore;
+
+    if (regioni.includes("lavoro")) {
+      const contenitore = regione("lavoro");
+      root.paint(contenitore, fase.renderLavoro());
+      if (fase.bindLavoro) fase.bindLavoro(contenitore);
+      if (fase.dopoLavoro) fase.dopoLavoro(contenitore);
     }
 
-    if (regions.includes("inspector")) {
-      const container = region("inspector");
-      if (!showInspector) {
-        root.paint(container, "");
-      } else {
-        root.paint(container, phase.renderInspector ? phase.renderInspector() : root.renderInspector());
-        root.delegate(container, "click", "[data-kg-inspector-close]", () => {
+    if (regioni.includes("ispettore")) {
+      const contenitore = regione("ispettore");
+      if (!mostraIspettore) root.paint(contenitore, "");
+      else {
+        root.paint(contenitore, fase.renderIspettore ? fase.renderIspettore() : "");
+        root.delegate(contenitore, "click", "[data-chiudi-ispettore]", () => {
           root.clearSelection();
-          root.render({ regions: ["work", "inspector", "decision"] });
+          root.render({ regioni: ["lavoro", "ispettore", "decisione"] });
         });
-        if (phase.bindInspector) phase.bindInspector(container);
-        else root.bindInspector(container);
+        if (fase.bindIspettore) fase.bindIspettore(contenitore);
       }
     }
 
-    if (regions.includes("decision")) {
-      const container = region("decision");
-      const markup = phase.renderDecision ? phase.renderDecision() : "";
-      container.hidden = !markup;
-      root.paint(container, markup);
-      if (markup && phase.bindDecision) phase.bindDecision(container);
+    if (regioni.includes("decisione")) {
+      const contenitore = regione("decisione");
+      const markup = fase.renderDecisione ? fase.renderDecisione() : "";
+      contenitore.hidden = !markup;
+      root.paint(contenitore, markup);
+      if (markup && fase.bindDecisione) fase.bindDecisione(contenitore);
     }
   };
 
-  /**
-   * Selecting is the most frequent action. A phase that can repaint just its
-   * content does so, which keeps search boxes, scroll position and keyboard
-   * focus exactly where the operator left them.
-   */
-  root.applySelection = function applySelection(kind, id) {
-    root.select(kind, id);
-    const phase = activePhase();
-    if (phase.onSelectionChange) phase.onSelectionChange();
-    else root.render({ regions: ["work"] });
-    root.render({ regions: ["inspector", "decision"] });
+  /** Selezionare è l'azione più frequente: deve costare il meno possibile. */
+  root.applicaSelezione = function applicaSelezione(genere, id) {
+    const generi = { nodo: "node", arco: "relation", evidenza: "evidence", "": "" };
+    root.select(generi[genere] != null ? generi[genere] : genere, id);
+    const fase = faseAttiva();
+    if (fase.suSelezione) fase.suSelezione();
+    else root.render({ regioni: ["lavoro"] });
+    root.render({ regioni: ["ispettore", "decisione"] });
   };
 
-  root.goToPhase = async function goToPhase(id) {
+  root.vaiAllaFase = async function vaiAllaFase(id) {
     if (!root.phases[id]) return;
     state.phase = id;
     root.clearSelection();
+    state.view = id === "structure" ? "colonne" : "mappa";
     const workspaceId = state.workspace ? state.workspace.workspace.workspace_id : "";
-    window.history.pushState({ phase: id }, "", root.phaseHref(id, workspaceId));
+    window.history.pushState({ fase: id }, "", root.indirizzoFase(id, workspaceId));
     root.render();
-    if (root.phases[id].load) {
-      await root.phases[id].load();
+    if (root.phases[id].carica) {
+      await root.phases[id].carica();
       root.render();
     }
   };
+
+  /* ------------------------------------------------------- lingua e tema -- */
+  const applicaLingua = () => {
+    const bottone = root.appElement.querySelector("[data-lingua]");
+    bottone.textContent = root.siglaLingua();
+    bottone.title = t("ui.lingua");
+    bottone.setAttribute("aria-label", bottone.title);
+    root.appElement.querySelector("[data-salta]").textContent = t("ui.vaiContenuto");
+    applicaCompressa(root.appElement.classList.contains("collapsed"));
+    applicaTema(document.documentElement.dataset.theme);
+  };
+
+  function applicaTema(modo) {
+    document.documentElement.dataset.theme = modo;
+    const bottone = root.appElement.querySelector("[data-tema]");
+    bottone.textContent = modo === "dark" ? "☾" : "☀";
+    bottone.title = t(modo === "dark" ? "ui.temaChiaro" : "ui.temaScuro");
+    bottone.setAttribute("aria-label", bottone.title);
+    localStorage.setItem("kg.theme", modo);
+  }
+
+  function applicaCompressa(compressa) {
+    root.appElement.classList.toggle("collapsed", compressa);
+    const bottone = root.appElement.querySelector("[data-comprimi]");
+    bottone.textContent = compressa ? "»" : "«";
+    bottone.title = t(compressa ? "ui.apriMenu" : "ui.chiudiMenu");
+    bottone.setAttribute("aria-label", bottone.title);
+    localStorage.setItem("kg.collapsed", compressa ? "1" : "0");
+  }
 
   root.shouldMount = function shouldMount() {
     return new URL(window.location.href).searchParams.get("foundation") === "1";
@@ -194,34 +263,50 @@
 
   root.mount = async function mount(app) {
     root.appElement = app;
-    app.className = "kg-app";
-    app.innerHTML = FRAME;
-    state.phase = root.readPhaseFromUrl();
+    app.className = "app";
+    app.innerHTML = TELAIO;
+    state.phase = root.faseDaUrl();
+    state.view = state.phase === "structure" ? "colonne" : "mappa";
 
-    wideScreen.addEventListener("change", () => root.render({ regions: ["inspector"] }));
+    app.querySelector("[data-lingua]").onclick = () => {
+      root.cambiaLingua();
+      applicaLingua();
+      root.render();
+    };
+    app.querySelector("[data-tema]").onclick = () =>
+      applicaTema(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+    app.querySelector("[data-comprimi]").onclick = () =>
+      applicaCompressa(!app.classList.contains("collapsed"));
+
+    applicaTema(localStorage.getItem("kg.theme")
+      || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+    applicaCompressa(localStorage.getItem("kg.collapsed") === "1");
+    applicaLingua();
+
+    largo.addEventListener("change", () => root.render({ regioni: ["ispettore"] }));
     window.addEventListener("popstate", () => {
-      state.phase = root.readPhaseFromUrl();
+      state.phase = root.faseDaUrl();
       root.clearSelection();
       root.render();
-      const phase = root.phases[state.phase];
-      if (phase && phase.load) phase.load().then(() => root.render());
+      const fase = root.phases[state.phase];
+      if (fase && fase.carica) fase.carica().then(() => root.render());
     });
 
     root.render();
 
     try {
-      const parameters = new URL(window.location.href).searchParams;
-      const workspaceId = parameters.get("workspace_id");
-      state.creatingWorkspace = parameters.get("new") === "1";
+      const parametri = new URL(window.location.href).searchParams;
+      const workspaceId = parametri.get("workspace_id");
+      state.creatingWorkspace = parametri.get("new") === "1";
       state.workspace = state.creatingWorkspace
         ? null
         : await root.api(workspaceId ? `/api/workspaces/${encodeURIComponent(workspaceId)}` : "/api/workspace");
-      if (state.workspace) await root.loadSources();
+      if (state.workspace) await root.caricaFonti();
       if (!state.workspace) state.phase = "machine";
-      const phase = activePhase();
-      if (phase.load) await phase.load();
-    } catch (error) {
-      state.error = error.message;
+      const fase = faseAttiva();
+      if (fase.carica) await fase.carica();
+    } catch (errore) {
+      state.error = errore.message;
     } finally {
       state.loading = false;
       root.render();

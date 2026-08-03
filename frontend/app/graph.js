@@ -2,616 +2,638 @@
   "use strict";
   const root = window.KGFoundation = window.KGFoundation || {};
   const state = root.state;
-  const escapeHtml = root.escapeHtml;
+  const esc = root.escapeHtml;
+  const t = root.t;
+  const n = root.n;
 
-  let searchTimer = 0;
+  let cercaTimer = 0;
+  let explorer = null;
 
-  const workspaceId = () => state.workspace.workspace.workspace_id;
-  const sourceView = () => {
+  const wsId = () => state.workspace.workspace.workspace_id;
+  const vistaFonte = () => {
     if (!state.graph) return null;
-    const active = root.activeSource();
-    if (!active) return null;
-    return state.graph.sources.find((item) => item.source_id === active.source_id) || null;
+    const attiva = root.fonteAttiva();
+    if (!attiva) return null;
+    return state.graph.sources.find((v) => v.source_id === attiva.source_id) || null;
   };
 
-  const modelFor = (view) => (
-    view && view.subgraph ? root.buildGraphModel(view.subgraph, state.filters, state.selection) : null
-  );
+  /* ------------------------------------------------------------- modello -- */
+  const costruisciModello = (grafo) => {
+    const nodiPerId = new Map(grafo.nodes.map((nodo) => [nodo.node_id, nodo]));
+    const evidenzePerId = new Map(grafo.evidence.map((voce) => [voce.evidence_id, voce]));
+    const grado = new Map();
+    const legamiPerNodo = new Map();
+    grafo.relations.forEach((legame) => {
+      [legame.from_id, legame.to_id].forEach((id) => {
+        grado.set(id, (grado.get(id) || 0) + 1);
+        if (!legamiPerNodo.has(id)) legamiPerNodo.set(id, []);
+        legamiPerNodo.get(id).push(legame);
+      });
+    });
 
-  const load = async () => {
+    /* Una lacuna è attaccata a un'evidenza; un nodo eredita le lacune delle
+       righe che l'hanno prodotto, così "cosa blocca questo nodo" ha risposta. */
+    const lacunePerEvidenza = new Map();
+    (grafo.knowledge_gaps || []).forEach((lacuna) => {
+      (lacuna.evidence_ids || []).forEach((id) => {
+        if (!lacunePerEvidenza.has(id)) lacunePerEvidenza.set(id, []);
+        lacunePerEvidenza.get(id).push(lacuna);
+      });
+    });
+    const lacunePerNodo = new Map();
+    grafo.nodes.forEach((nodo) => {
+      const lacune = [];
+      nodo.evidence_ids.forEach((id) => (lacunePerEvidenza.get(id) || []).forEach((lacuna) => {
+        if (!lacune.includes(lacuna)) lacune.push(lacuna);
+      }));
+      if (lacune.length) lacunePerNodo.set(nodo.node_id, lacune);
+    });
+    const difettiPerNodo = new Map();
+    ((grafo.validation || {}).issues || []).forEach((difetto) => {
+      if (!difetto.node_id) return;
+      if (!difettiPerNodo.has(difetto.node_id)) difettiPerNodo.set(difetto.node_id, []);
+      difettiPerNodo.get(difetto.node_id).push(difetto);
+    });
+
+    /* — filtri: valgono su tutte le viste insieme, mappa e tabelle — */
+    const cerca = String(state.filters.query || "").trim().toLocaleLowerCase();
+    let visibili = grafo.nodes.filter((nodo) => {
+      if (state.filters.nodeType !== "all" && nodo.node_type !== state.filters.nodeType) return false;
+      if (state.filters.onlyGaps && !lacunePerNodo.has(nodo.node_id) && !difettiPerNodo.has(nodo.node_id)) return false;
+      if (cerca && !nodo.label.toLocaleLowerCase().includes(cerca)) return false;
+      return true;
+    });
+    if (state.filters.relationType !== "all") {
+      const estremi = new Set();
+      grafo.relations.filter((l) => l.relation_type === state.filters.relationType)
+        .forEach((l) => { estremi.add(l.from_id); estremi.add(l.to_id); });
+      visibili = visibili.filter((nodo) => estremi.has(nodo.node_id));
+    }
+    if (state.filters.focus && state.selection.kind === "node" && nodiPerId.has(state.selection.id)) {
+      const tieni = new Set([state.selection.id]);
+      (legamiPerNodo.get(state.selection.id) || []).forEach((l) => { tieni.add(l.from_id); tieni.add(l.to_id); });
+      visibili = visibili.filter((nodo) => tieni.has(nodo.node_id));
+    }
+
+    const idVisibili = new Set(visibili.map((nodo) => nodo.node_id));
+    const legami = grafo.relations.filter((l) => (
+      idVisibili.has(l.from_id) && idVisibili.has(l.to_id)
+      && (state.filters.relationType === "all" || l.relation_type === state.filters.relationType)
+    ));
+
+    return {
+      grafo, nodi: visibili, legami, nodiPerId, evidenzePerId, legamiPerNodo, grado,
+      lacunePerNodo, lacunePerEvidenza, difettiPerNodo,
+      nascosti: grafo.nodes.length - visibili.length,
+    };
+  };
+
+  const modelloDi = (vista) => (vista && vista.subgraph ? costruisciModello(vista.subgraph) : null);
+
+  /* --------------------------------------------------------------- rete -- */
+  const carica = async () => {
     if (!state.workspace) return;
     state.graphLoading = true;
     state.graphError = "";
     try {
-      state.graph = await root.api(`/api/workspaces/${encodeURIComponent(workspaceId())}/g3/subgraphs`);
-    } catch (error) {
-      state.graphError = error.message;
+      state.graph = await root.api(`/api/workspaces/${encodeURIComponent(wsId())}/g3/subgraphs`);
+    } catch (errore) {
+      state.graphError = errore.message;
     } finally {
       state.graphLoading = false;
     }
   };
 
-  const run = async (action) => {
+  const esegui = async (azione) => {
     state.graphBusy = true;
     state.graphError = "";
-    root.render({ regions: ["decision"] });
-    try {
-      state.graph = await action();
-    } catch (error) {
-      state.graphError = error.message;
-    } finally {
-      state.graphBusy = false;
-      root.render();
-    }
+    root.render({ regioni: ["decisione"] });
+    try { state.graph = await azione(); } catch (errore) { state.graphError = errore.message; }
+    finally { state.graphBusy = false; root.render(); }
   };
 
-  /* ── Views ─────────────────────────────────────────────────────────── */
-
-  const VIEWS = [
-    { id: "graph", label: "Mappa" },
-    { id: "chains", label: "Catene diagnostiche" },
-    { id: "nodes", label: "Elementi" },
-    { id: "relations", label: "Collegamenti" },
-    { id: "evidence", label: "Righe di origine" },
-    { id: "blockers", label: "Cosa manca" },
+  /* -------------------------------------------------------------- viste -- */
+  const VISTE = [
+    { id: "mappa", chiave: "gr.vista.mappa" },
+    { id: "catene", chiave: "gr.vista.catene" },
+    { id: "elementi", chiave: "gr.vista.elementi" },
+    { id: "collegamenti", chiave: "gr.vista.collegamenti" },
+    { id: "righe", chiave: "gr.vista.righe" },
+    { id: "manca", chiave: "gr.vista.manca" },
   ];
 
-  const toolbar = (model) => {
-    const relationTypes = [...new Set(model.subgraph.relations.map((item) => item.relation_type))];
-    const counts = {
-      graph: null,
-      chains: null,
-      nodes: model.subgraph.nodes.length,
-      relations: model.subgraph.relations.length,
-      evidence: model.subgraph.evidence.length,
-      blockers: (model.subgraph.knowledge_gaps || []).length + (((model.subgraph.validation || {}).issues) || []).length,
+  const barra = (modello) => {
+    const tipiRel = [...new Set(modello.grafo.relations.map((l) => l.relation_type))];
+    const conteggi = {
+      elementi: modello.grafo.nodes.length,
+      collegamenti: modello.grafo.relations.length,
+      righe: modello.grafo.evidence.length,
+      manca: (modello.grafo.knowledge_gaps || []).length
+        + (((modello.grafo.validation || {}).issues) || []).length,
     };
-    const tabs = VIEWS.map((view) => `
-      <button type="button" data-kg-view="${view.id}" role="tab"
-        aria-selected="${state.view === view.id}">${escapeHtml(view.label)}${counts[view.id] == null ? "" : ` ${counts[view.id]}`}</button>`).join("");
-
     return `
-      <div class="kg-toolbar">
-        <div class="kg-segment" role="tablist" aria-label="Come guardare questa fonte">${tabs}</div>
-        <span class="kg-toolbar-spacer"></span>
-        <div class="kg-toolbar-group">
-          <label class="kg-visually-hidden" for="kg-search">Cerca un elemento</label>
-          <input id="kg-search" class="kg-input kg-toolbar-search" type="search" data-kg-search
-            placeholder="Cerca un elemento" value="${escapeHtml(state.filters.query)}">
-          <label class="kg-visually-hidden" for="kg-type">Tipo di elemento</label>
-          <select id="kg-type" class="kg-select kg-toolbar-select" data-kg-filter="nodeType">
-            <option value="all">Tutti i tipi</option>
-            ${root.nodeTypeOrder.map((type) => `<option value="${type}" ${state.filters.nodeType === type ? "selected" : ""}>${escapeHtml(root.nodeTypePlural[type])}</option>`).join("")}
+      <div class="barra">
+        <div class="segmento" role="tablist">
+          ${VISTE.map((vista) => `<button type="button" class="tab" role="tab" data-vista="${vista.id}"
+            aria-selected="${state.view === vista.id}">${esc(t(vista.chiave))}${conteggi[vista.id] == null ? "" : ` ${conteggi[vista.id]}`}</button>`).join("")}
+        </div>
+        <span class="barra-spazio"></span>
+        <div class="barra-gruppo">
+          <label class="solo-lettori" for="kg-cerca">${esc(t("gr.cerca"))}</label>
+          <input id="kg-cerca" type="search" data-cerca placeholder="${esc(t("gr.cerca"))}"
+            value="${esc(state.filters.query)}">
+          <label class="solo-lettori" for="kg-tipo">${esc(t("gr.tipoElemento"))}</label>
+          <select id="kg-tipo" data-filtro="nodeType">
+            <option value="all">${esc(t("gr.tuttiTipi"))}</option>
+            ${root.ordineTipi.map((tipo) => `<option value="${tipo}" ${state.filters.nodeType === tipo ? "selected" : ""}>${esc(root.etichettaTipoPl(tipo))}</option>`).join("")}
           </select>
-          <label class="kg-visually-hidden" for="kg-relation">Tipo di collegamento</label>
-          <select id="kg-relation" class="kg-select kg-toolbar-select" data-kg-filter="relationType">
-            <option value="all">Tutti i collegamenti</option>
-            ${relationTypes.map((type) => `<option value="${type}" ${state.filters.relationType === type ? "selected" : ""}>${escapeHtml(root.relationTypeLabels[type] || type)}</option>`).join("")}
+          <label class="solo-lettori" for="kg-rel">${esc(t("gr.tipoCollegamento"))}</label>
+          <select id="kg-rel" data-filtro="relationType">
+            <option value="all">${esc(t("gr.tuttiCollegamenti"))}</option>
+            ${tipiRel.map((tipo) => `<option value="${tipo}" ${state.filters.relationType === tipo ? "selected" : ""}>${esc(root.etichettaRelazione(tipo))}</option>`).join("")}
           </select>
-          <label class="kg-toolbar-check">
-            <input type="checkbox" data-kg-filter="onlyGaps" ${state.filters.onlyGaps ? "checked" : ""}>
-            Solo con lacune
-          </label>
-          <label class="kg-toolbar-check">
-            <input type="checkbox" data-kg-filter="focus" ${state.filters.focus ? "checked" : ""}>
-            Solo l’intorno
-          </label>
+          <label class="spunta"><input type="checkbox" data-filtro="onlyGaps" ${state.filters.onlyGaps ? "checked" : ""}>${esc(t("gr.soloLacune"))}</label>
+          <label class="spunta"><input type="checkbox" data-filtro="focus" ${state.filters.focus ? "checked" : ""}>${esc(t("gr.soloIntorno"))}</label>
         </div>
       </div>`;
   };
 
-  const filterSummary = (model) => (
-    model.hiddenNodes || model.hiddenRelations
-      ? `<p class="kg-secondary">${escapeHtml(`${root.plural(model.hiddenNodes, "elemento nascosto", "elementi nascosti")} dai filtri attivi.`)}
-          <button type="button" class="kg-btn kg-btn-quiet kg-btn-small" data-kg-clear-filters>Azzera i filtri</button></p>`
-      : ""
-  );
+  const riassuntoFiltri = (modello) => (modello.nascosti
+    ? `<p class="voce-meta" style="margin-bottom:12px">${esc(t("gr.nascosti", { n: modello.nascosti }))}
+        <button type="button" class="btn quieto piccolo" data-azzera>${esc(t("gr.azzera"))}</button></p>`
+    : "");
 
-  const nodesTable = (model) => `
-    <div class="kg-work-pad">
-      ${filterSummary(model)}
-      <div class="kg-table-wrap">
-        <table class="kg-table">
-          <thead><tr>
-            <th scope="col">Tipo</th><th scope="col">Elemento</th>
-            <th scope="col" class="kg-num">Collegamenti</th>
-            <th scope="col" class="kg-num">Righe di origine</th>
-            <th scope="col">Stato</th>
-          </tr></thead>
-          <tbody>
-            ${model.nodes.length ? model.nodes.map((node) => {
-              const blocked = model.gapsByNode.has(node.node_id);
-              const broken = model.defectsByNode.has(node.node_id);
-              return `<tr data-selectable data-kg-select="node" data-kg-id="${escapeHtml(node.node_id)}"
-                aria-selected="${state.selection.kind === "node" && state.selection.id === node.node_id}">
-                <td><span class="kg-role" style="--node-type: var(--node-${escapeHtml(node.node_type)})"><i aria-hidden="true"></i>${escapeHtml(root.nodeTypeLabels[node.node_type])}</span></td>
-                <td>${escapeHtml(node.label)}</td>
-                <td class="kg-num">${model.degree.get(node.node_id) || 0}</td>
-                <td class="kg-num">${node.evidence_ids.length}</td>
-                <td>${broken
-                  ? '<span class="kg-badge kg-badge-danger">Difetto tecnico</span>'
-                  : blocked
-                    ? '<span class="kg-badge kg-badge-warning">Lacuna</span>'
-                    : '<span class="kg-badge">Completo</span>'}</td>
-              </tr>`;
-            }).join("") : `<tr><td colspan="5">Nessun elemento con questi filtri.</td></tr>`}
-          </tbody>
-        </table>
-      </div>
+  const mappa = (modello) => {
+    if (!modello.nodi.length) {
+      return `<div class="lavoro-pad"><div class="vuoto">
+        <strong>${esc(t("gr.nienteFiltri"))}</strong>
+        <p>${esc(modello.grafo.nodes.length ? t("gr.nienteFiltriTesto") : t("gr.nienteElementi"))}</p>
+        ${modello.grafo.nodes.length ? `<button type="button" class="btn secondario" data-azzera>${esc(t("gr.azzera"))}</button>` : ""}
+      </div></div>`;
+    }
+    const legenda = root.ordineTipi
+      .filter((tipo) => modello.nodi.some((nodo) => nodo.node_type === tipo))
+      .map((tipo) => `<span class="tipo-${tipo}"><i aria-hidden="true"></i>${esc(root.etichettaTipoPl(tipo))}</span>`)
+      .join("");
+    return `
+      <div class="grafo" data-grafo>
+        <div class="grafo-suggerimento floating">${esc(t("gr.aiuto"))}</div>
+        ${legenda ? `<div class="grafo-legenda floating">${legenda}</div>` : ""}
+        <div class="grafo-comandi floating">
+          <button type="button" class="btn quieto tondo" data-zoom="meno" aria-label="${esc(t("gr.riduci"))}">−</button>
+          <span class="grafo-zoom" data-zoom-valore>100%</span>
+          <button type="button" class="btn quieto tondo" data-zoom="piu" aria-label="${esc(t("gr.ingrandisci"))}">+</button>
+          <button type="button" class="btn quieto piccolo" data-zoom="adatta">${esc(t("gr.adatta"))}</button>
+          <button type="button" class="btn quieto piccolo" data-ridisponi title="${esc(t("gr.ridisponiTitolo"))}">${esc(t("gr.ridisponi"))}</button>
+        </div>
+      </div>`;
+  };
+
+  const tabellaElementi = (modello) => `
+    <div class="lavoro-pad">
+      ${riassuntoFiltri(modello)}
+      <div class="tabella-wrap"><table class="tabella"><thead><tr>
+        <th>${esc(t("gr.tipo"))}</th><th>${esc(t("gr.elemento"))}</th>
+        <th class="num">${esc(t("gr.collegamentiCol"))}</th>
+        <th class="num">${esc(t("gr.righeOrigineCol"))}</th>
+        <th>${esc(t("gr.statoCol"))}</th>
+      </tr></thead><tbody>
+        ${modello.nodi.length ? modello.nodi.map((nodo) => {
+          const lacuna = modello.lacunePerNodo.has(nodo.node_id);
+          const difetto = modello.difettiPerNodo.has(nodo.node_id);
+          return `<tr data-clic data-scegli="nodo" data-id="${esc(nodo.node_id)}"
+            aria-selected="${state.selection.kind === "node" && state.selection.id === nodo.node_id}">
+            <td><span class="ruolo tipo-${esc(nodo.node_type)}"><i aria-hidden="true"></i>${esc(root.etichettaTipo(nodo.node_type))}</span></td>
+            <td>${esc(nodo.label)}</td>
+            <td class="num">${modello.grado.get(nodo.node_id) || 0}</td>
+            <td class="num">${nodo.evidence_ids.length}</td>
+            <td>${difetto ? `<span class="badge errore">${esc(t("gr.difetto"))}</span>`
+              : lacuna ? `<span class="badge attesa">${esc(t("gr.lacuna"))}</span>`
+              : `<span class="badge">${esc(t("gr.completo"))}</span>`}</td>
+          </tr>`;
+        }).join("") : `<tr><td colspan="5">${esc(t("gr.nienteElementiFiltri"))}</td></tr>`}
+      </tbody></table></div>
     </div>`;
 
-  const relationsTable = (model) => `
-    <div class="kg-work-pad">
-      ${filterSummary(model)}
-      <div class="kg-table-wrap">
-        <table class="kg-table">
-          <thead><tr>
-            <th scope="col">Da</th><th scope="col">Collegamento</th><th scope="col">A</th>
-            <th scope="col" class="kg-num">Righe di origine</th>
-          </tr></thead>
-          <tbody>
-            ${model.relations.length ? model.relations.map((relation) => {
-              const from = model.nodesById.get(relation.from_id);
-              const to = model.nodesById.get(relation.to_id);
-              return `<tr data-selectable data-kg-select="relation" data-kg-id="${escapeHtml(relation.relation_id)}"
-                aria-selected="${state.selection.kind === "relation" && state.selection.id === relation.relation_id}">
-                <td>${escapeHtml(from ? from.label : "—")}</td>
-                <td><span class="kg-badge">${escapeHtml(root.relationTypeLabels[relation.relation_type] || relation.relation_type)}</span></td>
-                <td>${escapeHtml(to ? to.label : "—")}</td>
-                <td class="kg-num">${relation.evidence_ids.length}</td>
-              </tr>`;
-            }).join("") : `<tr><td colspan="4">Nessun collegamento con questi filtri.</td></tr>`}
-          </tbody>
-        </table>
-      </div>
+  const tabellaCollegamenti = (modello) => `
+    <div class="lavoro-pad">
+      ${riassuntoFiltri(modello)}
+      <div class="tabella-wrap"><table class="tabella"><thead><tr>
+        <th>${esc(t("gr.da"))}</th><th>${esc(t("gr.collegamento"))}</th><th>${esc(t("gr.a"))}</th>
+        <th class="num">${esc(t("gr.righeOrigineCol"))}</th>
+      </tr></thead><tbody>
+        ${modello.legami.length ? modello.legami.map((legame) => {
+          const da = modello.nodiPerId.get(legame.from_id);
+          const a = modello.nodiPerId.get(legame.to_id);
+          return `<tr data-clic data-scegli="arco" data-id="${esc(legame.relation_id)}"
+            aria-selected="${state.selection.kind === "relation" && state.selection.id === legame.relation_id}">
+            <td>${esc(da ? da.label : "—")}</td>
+            <td><span class="badge">${esc(root.etichettaRelazione(legame.relation_type))}</span></td>
+            <td>${esc(a ? a.label : "—")}</td>
+            <td class="num">${legame.evidence_ids.length}</td>
+          </tr>`;
+        }).join("") : `<tr><td colspan="4">${esc(t("gr.nienteCollegamentiFiltri"))}</td></tr>`}
+      </tbody></table></div>
     </div>`;
 
-  const evidenceList = (model) => `
-    <div class="kg-work-pad">
-      <div class="kg-group-head">
-        <h2>Ogni riga letta da questo file</h2>
-        <p>Il grafo non contiene niente che non venga da una di queste righe. Selezionane una per vedere che cosa ha prodotto.</p>
-      </div>
-      <div class="kg-list" style="margin-top: var(--space-3)">
-        ${model.subgraph.evidence.map((item) => {
-          const gaps = model.gapsByEvidence.get(item.evidence_id) || [];
-          return `<button type="button" class="kg-item" data-kg-select="evidence" data-kg-id="${escapeHtml(item.evidence_id)}"
-            aria-selected="${state.selection.kind === "evidence" && state.selection.id === item.evidence_id}">
-            <span class="kg-item-head">
-              <strong>${escapeHtml(root.locatorSummary(item.locator))}</strong>
-              ${gaps.length ? `<span class="kg-badge kg-badge-warning">${escapeHtml(root.plural(gaps.length, "lacuna", "lacune"))}</span>` : ""}
-            </span>
-            <span class="kg-item-text">${escapeHtml(item.excerpt || "Riga senza testo leggibile")}</span>
+  const listaRighe = (modello) => `
+    <div class="lavoro-pad">
+      <div class="gruppo-capo"><h3>${esc(t("gr.righeTitolo"))}</h3><p>${esc(t("gr.righeTesto"))}</p></div>
+      <div class="lista" style="margin-top:12px">
+        ${modello.grafo.evidence.map((voce) => {
+          const lacune = modello.lacunePerEvidenza.get(voce.evidence_id) || [];
+          return `<button type="button" class="voce" data-scegli="evidenza" data-id="${esc(voce.evidence_id)}"
+            aria-selected="${state.selection.kind === "evidence" && state.selection.id === voce.evidence_id}">
+            <span class="voce-capo"><strong>${esc(root.descriviLocator(voce.locator))}</strong>
+              ${lacune.length ? `<span class="badge attesa">${esc(n(lacune.length, "isp.lacune"))}</span>` : ""}</span>
+            <span class="voce-testo">${esc(voce.excerpt || t("gr.rigaSenzaTesto"))}</span>
           </button>`;
         }).join("")}
       </div>
     </div>`;
 
-  /** Diagnostic chains: one entry per cause, with everything the rows proved. */
-  const chainsView = (model) => {
-    const causes = model.subgraph.nodes.filter((node) => node.node_type === "FailureMode");
-    if (!causes.length) {
-      return `<div class="kg-work-pad"><div class="kg-empty">
-        <strong>Nessuna catena diagnostica</strong>
-        <p>Questa fonte non ha dichiarato nessuna causa, quindi non esiste ancora un percorso da un sintomo a un'azione.</p>
-      </div></div>`;
+  /** Catene diagnostiche: una voce per causa, con quello che le righe provano. */
+  const catene = (modello) => {
+    const cause = modello.grafo.nodes.filter((nodo) => nodo.node_type === "FailureMode");
+    if (!cause.length) {
+      return `<div class="lavoro-pad"><div class="vuoto">
+        <strong>${esc(t("gr.nienteCatene"))}</strong><p>${esc(t("gr.nienteCateneTesto"))}</p></div></div>`;
     }
-    const chip = (node, direction) => `
-      <button type="button" class="kg-chain-step" data-kg-select="node" data-kg-id="${escapeHtml(node.node_id)}"
-        style="--node-type: var(--node-${escapeHtml(node.node_type)})">
-        <i aria-hidden="true"></i>${escapeHtml(node.label)}
-      </button>${direction || ""}`;
+    const passo = (nodo) => `<button type="button" class="catena-passo tipo-${esc(nodo.node_type)}"
+      data-scegli="nodo" data-id="${esc(nodo.node_id)}"><i aria-hidden="true"></i><span>${esc(nodo.label)}</span></button>`;
+    const freccia = '<span class="catena-freccia" aria-hidden="true">→</span>';
 
-    const entries = causes.map((cause) => {
-      const related = model.relationsByNode.get(cause.node_id) || [];
-      const pick = (type, side) => related
-        .filter((relation) => relation.relation_type === type)
-        .map((relation) => model.nodesById.get(side === "from" ? relation.from_id : relation.to_id))
-        .filter(Boolean);
-      const indicators = [...pick("MAY_INDICATE", "from"), ...pick("INDICATES", "from")];
-      const actions = pick("RESOLVED_BY", "to");
-      const components = pick("AFFECTS", "to");
-      const missing = [];
-      if (!indicators.length) missing.push("nessun sintomo o codice errore collegato");
-      if (!actions.length) missing.push("nessuna azione correttiva collegata");
+    const voci = cause.map((causa) => {
+      const legami = modello.legamiPerNodo.get(causa.node_id) || [];
+      const prendi = (tipo, lato) => legami.filter((l) => l.relation_type === tipo)
+        .map((l) => modello.nodiPerId.get(lato === "from" ? l.from_id : l.to_id)).filter(Boolean);
+      const indizi = [...prendi("MAY_INDICATE", "from"), ...prendi("INDICATES", "from")];
+      const azioni = prendi("RESOLVED_BY", "to");
+      const componenti = prendi("AFFECTS", "to");
+      const manca = [];
+      if (!indizi.length) manca.push(t("gr.senzaSintomo"));
+      if (!azioni.length) manca.push(t("gr.senzaAzione"));
       return `
-        <div class="kg-item" aria-selected="${state.selection.kind === "node" && state.selection.id === cause.node_id}">
-          <div class="kg-chain">
-            ${indicators.length ? indicators.map((node) => chip(node)).join('<span class="kg-chain-arrow" aria-hidden="true">→</span>') : '<span class="kg-chain-step">Origine non dichiarata</span>'}
-            <span class="kg-chain-arrow" aria-hidden="true">→</span>
-            ${chip(cause)}
-            <span class="kg-chain-arrow" aria-hidden="true">→</span>
-            ${actions.length ? actions.map((node) => chip(node)).join('<span class="kg-chain-arrow" aria-hidden="true">·</span>') : '<span class="kg-chain-step">Azione non dichiarata</span>'}
+        <div class="voce">
+          <div class="catena">
+            ${indizi.length ? indizi.map(passo).join(freccia) : `<span class="catena-passo">${esc(t("gr.origineNonDichiarata"))}</span>`}
+            ${freccia}${passo(causa)}${freccia}
+            ${azioni.length ? azioni.map(passo).join('<span class="catena-freccia" aria-hidden="true">·</span>') : `<span class="catena-passo">${esc(t("gr.azioneNonDichiarata"))}</span>`}
           </div>
-          ${components.length ? `<span class="kg-item-meta">Interessa: ${components.map((node) => escapeHtml(node.label)).join(" · ")}</span>` : ""}
-          ${missing.length ? `<span class="kg-item-meta">Catena incompleta: ${escapeHtml(missing.join(" e "))}.</span>` : ""}
+          ${componenti.length ? `<span class="voce-meta">${esc(t("gr.interessa", { n: componenti.map((c) => c.label).join(" · ") }))}</span>` : ""}
+          ${manca.length ? `<span class="voce-meta">${esc(t("gr.catenaIncompleta", { n: manca.join(" · ") }))}</span>` : ""}
         </div>`;
     }).join("");
 
-    return `
-      <div class="kg-work-pad">
-        <div class="kg-group-head">
-          <h2>Dal sintomo all'azione</h2>
-          <p>Una catena per ogni causa dichiarata dai dati. Le catene incomplete non sono errori: i dati non dichiarano quel passaggio.</p>
-        </div>
-        <div class="kg-list" style="margin-top: var(--space-3)">${entries}</div>
-      </div>`;
+    return `<div class="lavoro-pad">
+      <div class="gruppo-capo"><h3>${esc(t("gr.catenaTitolo"))}</h3><p>${esc(t("gr.catenaTesto"))}</p></div>
+      <div class="lista" style="margin-top:12px">${voci}</div></div>`;
   };
 
-  /** The two blocking classes, side by side but never mixed. */
-  const blockersView = (model) => {
-    const gaps = model.subgraph.knowledge_gaps || [];
-    const defects = ((model.subgraph.validation || {}).issues) || [];
-    if (!gaps.length && !defects.length) {
-      return `<div class="kg-work-pad"><div class="kg-empty">
-        <strong>Niente blocca questa fonte</strong>
-        <p>Tutti i controlli tecnici sono superati e i dati non hanno lasciato informazioni indispensabili non dichiarate.</p>
-      </div></div>`;
+  /** Le due classi che bloccano, affiancate ma mai mescolate. */
+  const cosaManca = (modello) => {
+    const lacune = modello.grafo.knowledge_gaps || [];
+    const difetti = ((modello.grafo.validation || {}).issues) || [];
+    if (!lacune.length && !difetti.length) {
+      return `<div class="lavoro-pad"><div class="vuoto">
+        <strong>${esc(t("gr.nienteBlocca"))}</strong><p>${esc(t("gr.nienteBloccaTesto"))}</p></div></div>`;
     }
-    const gapGroup = gaps.length ? `
-      <section class="kg-group">
-        <div class="kg-group-head">
-          <h2>Lacune nei dati · ${gaps.length}</h2>
-          <p>I dati letti sono validi, ma non dichiarano queste informazioni. Il sistema non le inventa: restano lacune finché una fonte non le dichiara.</p>
-        </div>
-        <div class="kg-list">
-          ${gaps.map((gap) => {
-            const evidenceId = (gap.evidence_ids || [])[0];
-            const evidence = evidenceId ? model.evidenceById.get(evidenceId) : null;
-            return `<button type="button" class="kg-item" ${evidence ? `data-kg-select="evidence" data-kg-id="${escapeHtml(evidenceId)}"` : ""}>
-              <span class="kg-item-head">
-                <span class="kg-badge kg-badge-warning"><span class="kg-badge-dot" aria-hidden="true"></span>Lacuna</span>
-                <strong>${escapeHtml(root.gapTitle(gap.code))}</strong>
-              </span>
-              <span class="kg-item-text">${escapeHtml(gap.message)}</span>
-              ${evidence ? `<span class="kg-item-meta">${escapeHtml(root.locatorSummary(evidence.locator))}</span>` : ""}
-            </button>`;
-          }).join("")}
-        </div>
-      </section>` : "";
-
-    const defectGroup = defects.length ? `
-      <section class="kg-group">
-        <div class="kg-group-head">
-          <h2>Difetti tecnici · ${defects.length}</h2>
-          <p>Il grafo costruito non rispetta la struttura dati concordata. Non è una lacuna dei dati: va corretto prima di procedere.</p>
-        </div>
-        <div class="kg-list">
-          ${defects.map((issue) => `
-            <button type="button" class="kg-item" ${issue.node_id ? `data-kg-select="node" data-kg-id="${escapeHtml(issue.node_id)}"` : ""}>
-              <span class="kg-item-head">
-                <span class="kg-badge kg-badge-danger"><span class="kg-badge-dot" aria-hidden="true"></span>Difetto tecnico</span>
-                <strong>${escapeHtml(root.defectTitle(issue.code))}</strong>
-              </span>
-              <span class="kg-item-text">${escapeHtml(issue.message)}</span>
-            </button>`).join("")}
-        </div>
-      </section>` : "";
-
-    return `<div class="kg-work-pad">${gapGroup}${defectGroup}</div>`;
+    return `<div class="lavoro-pad">
+      ${lacune.length ? `<section class="gruppo">
+        <div class="gruppo-capo"><h3>${esc(t("gr.lacuneTitolo", { n: lacune.length }))}</h3>
+          <p>${esc(t("gr.lacuneTesto"))}</p></div>
+        <div class="lista">${lacune.map((lacuna) => {
+          const id = (lacuna.evidence_ids || [])[0];
+          const evidenza = id ? modello.evidenzePerId.get(id) : null;
+          return `<button type="button" class="voce" ${evidenza ? `data-scegli="evidenza" data-id="${esc(id)}"` : ""}>
+            <span class="voce-capo"><span class="badge attesa"><span class="punto" aria-hidden="true"></span>${esc(t("gr.lacuna"))}</span>
+              <strong>${esc(root.titoloLacuna(lacuna.code))}</strong></span>
+            <span class="voce-testo">${esc(lacuna.message)}</span>
+            ${evidenza ? `<span class="voce-meta">${esc(root.descriviLocator(evidenza.locator))}</span>` : ""}
+          </button>`;
+        }).join("")}</div></section>` : ""}
+      ${difetti.length ? `<section class="gruppo">
+        <div class="gruppo-capo"><h3>${esc(t("gr.difettiTitolo", { n: difetti.length }))}</h3>
+          <p>${esc(t("gr.difettiTesto"))}</p></div>
+        <div class="lista">${difetti.map((difetto) => `
+          <button type="button" class="voce" ${difetto.node_id ? `data-scegli="nodo" data-id="${esc(difetto.node_id)}"` : ""}>
+            <span class="voce-capo"><span class="badge errore"><span class="punto" aria-hidden="true"></span>${esc(t("gr.difetto"))}</span>
+              <strong>${esc(root.titoloDifetto(difetto.code))}</strong></span>
+            <span class="voce-testo">${esc(difetto.message)}</span>
+          </button>`).join("")}</div></section>` : ""}
+    </div>`;
   };
 
-  const comparisonView = () => {
-    const barrier = state.graph.merge_barrier;
-    const matches = barrier.exact_matches || [];
-    const ready = barrier.state === "ready";
-    return `
-      <div class="kg-work-pad">
-        <div class="kg-group-head">
-          <h2>Confronto tra fonti</h2>
-          <p>Niente viene unito automaticamente. Qui vedi soltanto dove due fonti usano esattamente la stessa parola: l'unione è una decisione umana successiva, e oggi non è ancora disponibile.</p>
-        </div>
-        <div class="kg-note ${ready ? "kg-note-info" : "kg-note-warning"}" style="margin-top: var(--space-3)">
-          <span class="kg-note-mark" aria-hidden="true">${ready ? "i" : "?"}</span>
-          <strong>${ready ? "Tutte le fonti incluse sono state verificate" : "Confronto non ancora disponibile"}</strong>
-          <span>${ready
-            ? escapeHtml(`${root.plural(matches.length, "corrispondenza esatta trovata", "corrispondenze esatte trovate")}. Nessun elemento è stato unito.`)
-            : escapeHtml(`${root.plural(barrier.pending_source_ids.length, "fonte deve", "fonti devono")} ancora essere costruita e verificata.`)}</span>
-        </div>
-        ${matches.length ? `
-          <div class="kg-list" style="margin-top: var(--space-4)">
-            ${matches.map((match) => `
-              <div class="kg-item">
-                <span class="kg-item-head">
-                  <span class="kg-role" style="--node-type: var(--node-${escapeHtml(match.node_type)})"><i aria-hidden="true"></i>${escapeHtml(root.nodeTypeLabels[match.node_type])}</span>
-                  <strong>${escapeHtml(match.label)}</strong>
-                </span>
-                <span class="kg-item-meta">Presente in: ${match.occurrences.map((item) => escapeHtml(item.source_name)).join(" · ")}</span>
-              </div>`).join("")}
-          </div>` : ""}
-        <p class="kg-secondary" style="margin-top: var(--space-4)">Le formulazioni equivalenti in lingue diverse restano elementi distinti: il sistema non traduce e non applica sinonimi.</p>
-      </div>`;
+  const confronto = () => {
+    const barriera = state.graph.merge_barrier;
+    const trovate = barriera.exact_matches || [];
+    const pronto = barriera.state === "ready";
+    return `<div class="lavoro-pad">
+      <div class="gruppo-capo"><h3>${esc(t("gr.confronto"))}</h3><p>${esc(t("gr.confrontoTesto"))}</p></div>
+      <div class="nota ${pronto ? "info" : "attesa"}" style="margin-top:12px">
+        <span class="segno" aria-hidden="true">${pronto ? "i" : "?"}</span>
+        <strong>${esc(pronto ? t("gr.confrontoPronto") : t("gr.confrontoNonPronto"))}</strong>
+        <span>${esc(pronto ? n(trovate.length, "gr.corrispondenze")
+          : t("gr.daVerificareAncora", { n: barriera.pending_source_ids.length }))}</span>
+      </div>
+      ${trovate.length ? `<div class="lista" style="margin-top:16px">
+        ${trovate.map((voce) => `<div class="voce">
+          <span class="voce-capo">
+            <span class="ruolo tipo-${esc(voce.node_type)}"><i aria-hidden="true"></i>${esc(root.etichettaTipo(voce.node_type))}</span>
+            <strong>${esc(voce.label)}</strong></span>
+          <span class="voce-meta">${esc(t("gr.presenteIn", { n: voce.occurrences.map((o) => o.source_name).join(" · ") }))}</span>
+        </div>`).join("")}</div>` : ""}
+      <p class="voce-meta" style="margin-top:16px">${esc(t("gr.multilingua"))}</p>
+    </div>`;
   };
 
-  const content = (view, model) => {
-    if (state.view === "comparison") return comparisonView();
-    if (!model) {
-      return `<div class="kg-work-pad"><div class="kg-empty">
-        <strong>Il grafo di questa fonte non è ancora stato costruito</strong>
-        <p>Costruiscilo dalla barra in basso: il sistema legge le righe già preparate e propone elementi e collegamenti, senza inventarne.</p>
-      </div></div>`;
+  const contenuto = (vista, modello) => {
+    if (state.view === "confronto") return confronto();
+    if (!modello) {
+      return `<div class="lavoro-pad"><div class="vuoto">
+        <strong>${esc(t("gr.nonCostruito"))}</strong><p>${esc(t("gr.nonCostruitoTesto"))}</p></div></div>`;
     }
-    if (state.view === "nodes") return nodesTable(model);
-    if (state.view === "relations") return relationsTable(model);
-    if (state.view === "evidence") return evidenceList(model);
-    if (state.view === "blockers") return blockersView(model);
-    if (state.view === "chains") return chainsView(model);
-    return root.renderCanvas(model, state.selection);
+    if (state.view === "elementi") return tabellaElementi(modello);
+    if (state.view === "collegamenti") return tabellaCollegamenti(modello);
+    if (state.view === "righe") return listaRighe(modello);
+    if (state.view === "manca") return cosaManca(modello);
+    if (state.view === "catene") return catene(modello);
+    return mappa(modello);
   };
 
-  /* ── Phase controller ──────────────────────────────────────────────── */
+  /* ------------------------------------------------------ montaggio mappa */
+  const smonta = () => { if (explorer) { explorer.distruggi(); explorer = null; } };
 
-  const repaintContent = () => {
-    const container = root.appElement.querySelector('[data-region="work-content"]');
-    if (!container) { root.render({ regions: ["work"] }); return; }
-    const view = sourceView();
-    const model = modelFor(view);
-    root.paint(container, content(view, model));
-    if (model && state.view === "graph") {
-      root.bindCanvas(container, model, (kind, id) => root.applySelection(kind, id));
-      root.revealSelection(container);
-    }
+  const montaMappa = (contenitore, vista, modello) => {
+    smonta();
+    const ospite = contenitore.querySelector("[data-grafo]");
+    if (!ospite || !modello) return;
+    explorer = root.creaExplorer(ospite, {
+      chiaveFonte: vista.source_id,
+      nodi: modello.nodi.map((nodo) => ({
+        id: nodo.node_id, tipo: nodo.node_type, etichetta: nodo.label,
+        occorrenze: nodo.evidence_ids.length,
+        lacuna: modello.lacunePerNodo.has(nodo.node_id),
+        difetto: modello.difettiPerNodo.has(nodo.node_id),
+      })),
+      archi: modello.legami.map((legame) => ({
+        id: legame.relation_id, da: legame.from_id, a: legame.to_id,
+        etichettaTipo: root.etichettaRelazione(legame.relation_type),
+      })),
+    }, {
+      descrizione: t("gr.mappaDi", { n: modello.nodi.length, c: modello.legami.length }),
+      etichettaTipo: root.etichettaTipo,
+      testoOccorrenze: (quante) => n(quante, "isp.righeLette"),
+      selezione: () => state.selection,
+      onSelezione: (genere, id) => root.applicaSelezione(genere, id),
+      onZoom: (k) => {
+        const etichetta = contenitore.querySelector("[data-zoom-valore]");
+        if (etichetta) etichetta.textContent = `${Math.round(k * 100)}%`;
+      },
+    });
+    explorer.evidenzia(state.selection);
   };
 
+  const ridisegnaContenuto = () => {
+    const contenitore = root.appElement.querySelector('[data-regione="lavoro"] .lavoro-scorri');
+    if (!contenitore) { root.render({ regioni: ["lavoro"] }); return; }
+    const vista = vistaFonte();
+    const modello = modelloDi(vista);
+    smonta();
+    root.paint(contenitore, contenuto(vista, modello));
+    if (state.view === "mappa") montaMappa(contenitore, vista, modello);
+  };
+
+  /* ---------------------------------------------------------------- fase */
   root.phases.graph = {
-    label: "Grafo",
-    showRail: true,
-    showInspector: true,
-    load,
+    mostraFonti: true,
+    mostraIspettore: true,
+    carica,
 
-    railFacts(source) {
-      const view = state.graph && state.graph.sources.find((item) => item.source_id === source.source_id);
-      if (!view) return root.railFacts([], root.railBadge("In preparazione", "warning"));
-      const subgraph = view.subgraph;
-      const parts = subgraph ? [
-        { text: root.plural(subgraph.nodes.length, "elemento", "elementi") },
-        { text: root.plural(subgraph.relations.length, "collegamento", "collegamenti") },
-        (subgraph.knowledge_gaps || []).length
-          ? { text: root.plural(subgraph.knowledge_gaps.length, "lacuna", "lacune"), tone: "blocking" } : null,
-        (((subgraph.validation || {}).issues) || []).length
-          ? { text: root.plural(subgraph.validation.issues.length, "difetto tecnico", "difetti tecnici"), tone: "broken" } : null,
-      ] : [];
-      const tone = view.state === "approved" ? "success" : view.state === "rejected" ? "danger" : "warning";
-      return root.railFacts(parts, root.railBadge(root.sourceStateLabels[view.state] || view.state, tone));
+    titolo() {
+      const vista = vistaFonte();
+      if (state.view === "confronto") return { titolo: t("gr.confronto"), chips: "" };
+      if (!vista) return { titolo: t("fase.graph"), chips: "" };
+      const grafo = vista.subgraph;
+      const tono = vista.state === "approved" ? "ok" : vista.state === "rejected" ? "errore" : "attesa";
+      const chips = [
+        `<span class="chip ${tono}"><span class="punto"></span>${esc(root.etichettaStato(vista.state))}</span>`,
+        grafo ? `<span class="chip"><b>${grafo.nodes.length}</b> ${esc(t("gr.vista.elementi").toLocaleLowerCase())}</span>` : "",
+        grafo ? `<span class="chip"><b>${grafo.relations.length}</b> ${esc(t("gr.vista.collegamenti").toLocaleLowerCase())}</span>` : "",
+      ].filter(Boolean).join("");
+      return { titolo: vista.source_name, chips };
     },
 
-    railFoot() {
+    metaFonte(sorgente) {
+      const vista = state.graph && state.graph.sources.find((v) => v.source_id === sorgente.source_id);
+      if (!vista || !vista.subgraph) return "";
+      const lacune = (vista.subgraph.knowledge_gaps || []).length;
+      if (lacune) return `<span style="color:var(--amber)">${lacune}</span>`;
+      if (vista.state === "approved") return "✓";
+      return String(vista.subgraph.nodes.length);
+    },
+
+    navExtra() {
       if (!state.graph) return "";
-      const barrier = state.graph.merge_barrier;
-      const ready = barrier.state === "ready";
-      return `
-        <button type="button" class="kg-source" data-kg-comparison aria-current="${state.view === "comparison"}">
-          <span class="kg-source-name"><span>Confronto tra fonti</span></span>
-          <span class="kg-source-facts"><span>${ready
-            ? escapeHtml(root.plural((barrier.exact_matches || []).length, "corrispondenza proposta", "corrispondenze proposte"))
-            : "Non ancora disponibile"}</span></span>
-        </button>`;
+      const barriera = state.graph.merge_barrier;
+      const pronto = barriera.state === "ready";
+      return `<button type="button" class="nav-item ${state.view === "confronto" ? "active" : ""}" data-confronto>
+        <span class="nav-punto" style="--tipo:var(--muted-2)"></span>
+        <span class="nav-label">${esc(t("gr.confronto"))}</span>
+        <span class="nav-meta">${pronto ? (barriera.exact_matches || []).length : "—"}</span>
+      </button>`;
     },
 
-    renderWork() {
+    bindNav(contenitore) {
+      root.delegate(contenitore, "click", "[data-confronto]", () => {
+        state.view = "confronto";
+        root.clearSelection();
+        root.render();
+      });
+    },
+
+    renderLavoro() {
       if (!state.workspace || state.graphLoading) {
-        return `<div class="kg-state"><strong>Carico i grafi…</strong><p>Ogni fonte resta separata dalle altre.</p></div>`;
+        return `<div class="stato-pagina"><strong>${esc(t("gr.carico"))}</strong><p>${esc(t("gr.caricoTesto"))}</p></div>`;
       }
       if (state.graphError && !state.graph) {
-        return `
-          <div class="kg-state">
-            <strong>Non riesco a caricare i grafi</strong>
-            <p role="alert">${escapeHtml(state.graphError)}</p>
-            <button type="button" class="kg-btn kg-btn-primary" data-kg-retry>Riprova</button>
-          </div>`;
+        return `<div class="stato-pagina"><strong>${esc(t("gr.erroreTitolo"))}</strong>
+          <p role="alert">${esc(state.graphError)}</p>
+          <button type="button" class="btn primario" data-riprova>${esc(t("ui.riprova"))}</button></div>`;
       }
       if (!state.graph || !state.graph.sources.length) {
-        return `<div class="kg-state"><strong>Nessuna fonte da elaborare</strong><p>Carica almeno un file e confermane la struttura.</p></div>`;
+        return `<div class="stato-pagina"><strong>${esc(t("gr.nessunaFonte"))}</strong><p>${esc(t("gr.nessunaFonteTesto"))}</p></div>`;
       }
-      const view = sourceView();
-      const model = modelFor(view);
-      const heading = state.view === "comparison"
-        ? { title: "Confronto tra fonti", text: "Nessuna unione automatica: qui vedi solo le coincidenze proposte." }
-        : {
-          title: view ? view.source_name : "Grafo",
-          text: view && view.subgraph
-            ? "Ogni elemento e ogni collegamento risale alle righe che lo dichiarano. Selezionane uno per vederle."
-            : "Il grafo di questa fonte non è ancora stato costruito.",
-        };
-      return `
-        <div class="kg-work-head">
-          <div class="kg-work-head-row"><h1>${escapeHtml(heading.title)}</h1></div>
-          <p>${escapeHtml(heading.text)}</p>
-        </div>
-        ${model && state.view !== "comparison" ? toolbar(model) : ""}
-        <div class="kg-work-scroll" data-region="work-content">${content(view, model)}</div>`;
+      const vista = vistaFonte();
+      const modello = modelloDi(vista);
+      const testa = state.view === "confronto" ? "" : `
+        <div class="intestazione-lavoro"><p>${esc(vista && vista.subgraph ? t("gr.sotto") : t("gr.nonCostruito"))}</p></div>`;
+      return `${testa}
+        ${modello && state.view !== "confronto" ? barra(modello) : ""}
+        <div class="lavoro-scorri">${contenuto(vista, modello)}</div>`;
     },
 
-    bindWork(container) {
-      root.delegate(container, "click", "[data-kg-retry]", () => run(async () => {
-        await load();
-        if (!state.graph) throw new Error(state.graphError || "Elaborazione non disponibile");
+    bindLavoro(contenitore) {
+      root.delegate(contenitore, "click", "[data-riprova]", () => esegui(async () => {
+        await carica();
+        if (!state.graph) throw new Error(state.graphError || t("gr.erroreTitolo"));
         return state.graph;
       }));
-      root.delegate(container, "click", "[data-kg-view]", (element) => {
-        state.view = element.dataset.kgView;
-        root.render({ regions: ["work"] });
+      root.delegate(contenitore, "click", "[data-vista]", (elemento) => {
+        state.view = elemento.dataset.vista;
+        root.render({ regioni: ["lavoro"] });
       });
-      root.delegate(container, "click", "[data-kg-select]", (element) => {
-        root.applySelection(element.dataset.kgSelect, element.dataset.kgId);
+      root.delegate(contenitore, "click", "[data-scegli]", (elemento) => {
+        root.applicaSelezione(elemento.dataset.scegli, elemento.dataset.id);
       });
-      root.delegate(container, "click", "[data-kg-clear-filters]", () => {
+      root.delegate(contenitore, "click", "[data-azzera]", () => {
         state.filters = { query: "", nodeType: "all", relationType: "all", onlyGaps: false, focus: false };
-        root.render({ regions: ["work"] });
+        root.render({ regioni: ["lavoro"] });
       });
-      root.delegate(container, "change", "[data-kg-filter]", (element) => {
-        const key = element.dataset.kgFilter;
-        state.filters[key] = element.type === "checkbox" ? element.checked : element.value;
-        repaintContent();
+      root.delegate(contenitore, "change", "[data-filtro]", (elemento) => {
+        const chiave = elemento.dataset.filtro;
+        state.filters[chiave] = elemento.type === "checkbox" ? elemento.checked : elemento.value;
+        ridisegnaContenuto();
       });
-      const search = container.querySelector("[data-kg-search]");
-      if (search) {
-        search.addEventListener("input", () => {
-          window.clearTimeout(searchTimer);
-          searchTimer = window.setTimeout(() => {
-            state.filters.query = search.value;
-            repaintContent();
-          }, 160);
+      root.delegate(contenitore, "click", "[data-zoom]", (elemento) => {
+        if (!explorer) return;
+        const azione = elemento.dataset.zoom;
+        if (azione === "adatta") explorer.inquadra();
+        else explorer.zoom(azione === "piu" ? 1.25 : 1 / 1.25);
+      });
+      root.delegate(contenitore, "click", "[data-ridisponi]", () => { if (explorer) explorer.ridisponi(); });
+      const cerca = contenitore.querySelector("[data-cerca]");
+      if (cerca) {
+        cerca.addEventListener("input", () => {
+          window.clearTimeout(cercaTimer);
+          cercaTimer = window.setTimeout(() => {
+            state.filters.query = cerca.value;
+            ridisegnaContenuto();
+          }, 180);
         });
       }
     },
 
-    afterWork(container) {
-      const view = sourceView();
-      const model = modelFor(view);
-      const scroll = container.querySelector('[data-region="work-content"]');
-      if (model && state.view === "graph" && scroll) {
-        root.bindCanvas(scroll, model, (kind, id) => root.applySelection(kind, id));
-        root.revealSelection(scroll);
-      }
+    dopoLavoro(contenitore) {
+      const scorri = contenitore.querySelector(".lavoro-scorri");
+      if (state.view !== "mappa" || !scorri) { smonta(); return; }
+      const vista = vistaFonte();
+      montaMappa(scorri, vista, modelloDi(vista));
     },
 
-    onSelectionChange: repaintContent,
+    /* Selezionare non ricostruisce la mappa: cambia solo le classi. */
+    suSelezione() {
+      if (state.view === "mappa" && explorer) explorer.evidenzia(state.selection);
+      else ridisegnaContenuto();
+    },
 
-    renderInspector() {
-      if (state.view === "comparison") {
-        return `<div class="kg-inspector-empty"><strong>Confronto tra fonti</strong><p>Le corrispondenze proposte non modificano nessun grafo.</p></div>`;
+    renderIspettore() {
+      if (state.view === "confronto") {
+        return `<div class="ispettore-vuoto"><strong>${esc(t("gr.confronto"))}</strong>
+          <p>${esc(t("gr.confrontoNonModifica"))}</p></div>`;
       }
-      const view = sourceView();
-      return root.renderGraphInspector(view, modelFor(view) || {
-        nodesById: new Map(), evidenceById: new Map(), relationsByNode: new Map(),
-        gapsByNode: new Map(), gapsByEvidence: new Map(), defectsByNode: new Map(),
+      const vista = vistaFonte();
+      return root.renderIspettoreGrafo(vista, modelloDi(vista) || {
+        nodiPerId: new Map(), evidenzePerId: new Map(), legamiPerNodo: new Map(),
+        lacunePerNodo: new Map(), lacunePerEvidenza: new Map(), difettiPerNodo: new Map(),
       });
     },
 
-    bindInspector(container) { root.bindGraphInspector(container); },
+    bindIspettore(contenitore) { root.bindIspettoreGrafo(contenitore); },
 
-    renderDecision() {
-      if (!state.graph || state.view === "comparison") return "";
-      const view = sourceView();
-      if (!view) return "";
-      const subgraph = view.subgraph;
-      const busy = state.graphBusy ? "disabled" : "";
-      const guarantee = "Vale solo per questa fonte: non unisce le fonti e non pubblica niente.";
-      const error = state.graphError
-        ? `<p class="kg-field-error" role="alert">${escapeHtml(state.graphError)}</p>` : "";
+    renderDecisione() {
+      if (!state.graph || state.view === "confronto") return "";
+      const vista = vistaFonte();
+      if (!vista) return "";
+      const grafo = vista.subgraph;
+      const occupato = state.graphBusy ? "disabled" : "";
+      const errore = state.graphError ? `<p class="campo-errore" role="alert">${esc(state.graphError)}</p>` : "";
 
-      if (state.rejectingSourceId === view.source_id) {
-        return `
-          <form class="kg-decision-note" data-kg-reject-form>
-            <label class="kg-field">
-              <span>Che cosa deve essere corretto in questa fonte?</span>
-              <textarea class="kg-textarea" name="note" required minlength="3"
-                placeholder="Esempio: la colonna delle azioni contiene note libere, non azioni"></textarea>
-            </label>
-            <div class="kg-decision-note-actions">
-              <button type="submit" class="kg-btn kg-btn-primary" ${busy}>Registra la segnalazione</button>
-              <button type="button" class="kg-btn kg-btn-quiet" data-kg-reject-cancel>Annulla</button>
-            </div>
-            ${error}
-          </form>`;
+      if (state.rejectingSourceId === vista.source_id) {
+        return `<form class="decisione-nota" data-nota>
+          <label class="campo"><span>${esc(t("dec.cosaCorreggere"))}</span>
+            <textarea name="note" required minlength="3" placeholder="${esc(t("dec.notaP"))}"></textarea></label>
+          <div class="decisione-nota-azioni">
+            <button type="submit" class="btn primario" ${occupato}>${esc(t("dec.registra"))}</button>
+            <button type="button" class="btn quieto" data-annulla-nota>${esc(t("ui.annulla"))}</button>
+          </div>${errore}</form>`;
       }
 
-      if (view.state === "waiting") {
-        return `<div class="kg-decision-row"><div class="kg-decision-text">
-          <strong>Struttura dei dati non ancora confermata</strong>
-          <span>${escapeHtml(view.message)}</span>
-        </div>
-        <div class="kg-decision-actions"><button type="button" class="kg-btn kg-btn-secondary" data-kg-goto="structure">Vai alla struttura</button></div></div>`;
+      const riga = (titolo, testo, azioni, ostacoli) => `
+        <div class="decisione-riga">
+          <div class="decisione-testo" aria-live="polite"><strong>${esc(titolo)}</strong><span>${esc(testo)}</span></div>
+          ${ostacoli || ""}${azioni ? `<div class="decisione-azioni">${azioni}</div>` : ""}
+        </div>${errore}`;
+
+      if (vista.state === "waiting") {
+        return riga(t("dec.strutturaNonConfermata"), vista.message,
+          `<button type="button" class="btn secondario" data-vai="structure">${esc(t("dec.vaiStruttura"))}</button>`);
+      }
+      if (!grafo) {
+        return riga(t("gr.nonCostruitoTitolo"), t("gr.nonCostruitoTesto"),
+          `<button type="button" class="btn primario" data-costruisci ${occupato}>${esc(state.graphBusy ? t("gr.costruendo") : t("gr.costruisci"))}</button>`);
+      }
+      if (vista.state === "approved") return riga(t("dec.verificata"), t("dec.garanzia"), "");
+      if (vista.state === "rejected") {
+        return riga(t("dec.segnalata"), grafo.decision_note || t("dec.segnalazioneRegistrata"), "");
       }
 
-      if (!subgraph) {
-        return `<div class="kg-decision-row"><div class="kg-decision-text">
-          <strong>Grafo non ancora costruito</strong>
-          <span>Il sistema userà solo le righe già preparate di questa fonte.</span>
-        </div>
-        <div class="kg-decision-actions">
-          <button type="button" class="kg-btn kg-btn-primary" data-kg-build ${busy}>${state.graphBusy ? "Costruisco…" : "Costruisci il grafo"}</button>
-        </div></div>${error}`;
-      }
-
-      if (view.state === "approved") {
-        return `<div class="kg-decision-row"><div class="kg-decision-text">
-          <strong>Fonte verificata</strong><span>${escapeHtml(guarantee)}</span>
-        </div></div>`;
-      }
-      if (view.state === "rejected") {
-        return `<div class="kg-decision-row"><div class="kg-decision-text">
-          <strong>Segnalata da correggere</strong>
-          <span>${escapeHtml(subgraph.decision_note || "Segnalazione registrata.")}</span>
-        </div></div>`;
-      }
-
-      const gaps = (subgraph.knowledge_gaps || []).length;
-      const defects = (((subgraph.validation || {}).issues) || []).length;
-      const blockers = `
-        <div class="kg-decision-blockers">
-          ${gaps ? `<button type="button" class="kg-decision-blocker kg-blocker-gap" data-kg-view="blockers">${escapeHtml(root.plural(gaps, "lacuna nei dati", "lacune nei dati"))}</button>` : ""}
-          ${defects ? `<button type="button" class="kg-decision-blocker kg-blocker-defect" data-kg-view="blockers">${escapeHtml(root.plural(defects, "difetto tecnico", "difetti tecnici"))}</button>` : ""}
-        </div>`;
-
-      return `
-        <div class="kg-decision-row">
-          <div class="kg-decision-text" aria-live="polite">
-            <strong>${subgraph.approval_eligible
-              ? "Questo grafo rappresenta correttamente la fonte?"
-              : "Non ancora verificabile"}</strong>
-            <span>${subgraph.approval_eligible
-              ? escapeHtml(guarantee)
-              : "La verifica resta bloccata finché queste voci non sono risolte. È una protezione: nessun collegamento è stato inventato per riempirle."}</span>
-          </div>
-          ${subgraph.approval_eligible ? "" : blockers}
-          <div class="kg-decision-actions">
-            <button type="button" class="kg-btn kg-btn-danger" data-kg-reject ${busy}>Segnala da correggere</button>
-            <button type="button" class="kg-btn kg-btn-primary" data-kg-approve
-              ${subgraph.approval_eligible ? busy : "disabled"}>Conferma la verifica</button>
-          </div>
-        </div>
-        ${error}`;
+      const lacune = (grafo.knowledge_gaps || []).length;
+      const difetti = (((grafo.validation || {}).issues) || []).length;
+      const ostacoli = `<div class="ostacoli">
+        ${lacune ? `<button type="button" class="ostacolo lacuna" data-vista="manca">${esc(n(lacune, "dec.lacuneNeiDati"))}</button>` : ""}
+        ${difetti ? `<button type="button" class="ostacolo difetto" data-vista="manca">${esc(n(difetti, "dec.difettiTecnici"))}</button>` : ""}
+      </div>`;
+      const azioni = `
+        <button type="button" class="btn pericolo" data-segnala ${occupato}>${esc(t("dec.segnala"))}</button>
+        <button type="button" class="btn primario" data-approva ${grafo.approval_eligible ? occupato : "disabled"}>${esc(t("dec.conferma"))}</button>`;
+      return riga(
+        grafo.approval_eligible ? t("dec.domanda") : t("dec.nonVerificabile"),
+        grafo.approval_eligible ? t("dec.garanzia") : t("dec.nonVerificabileTesto"),
+        azioni,
+        grafo.approval_eligible ? "" : ostacoli
+      );
     },
 
-    bindDecision(container) {
-      root.delegate(container, "click", "[data-kg-build]", () => {
-        const view = sourceView();
-        run(() => root.api(
-          `/api/workspaces/${encodeURIComponent(workspaceId())}/g3/sources/${encodeURIComponent(view.source_id)}/generate`,
+    bindDecisione(contenitore) {
+      root.delegate(contenitore, "click", "[data-costruisci]", () => {
+        const vista = vistaFonte();
+        esegui(() => root.api(
+          `/api/workspaces/${encodeURIComponent(wsId())}/g3/sources/${encodeURIComponent(vista.source_id)}/generate`,
           { method: "POST" }
         ));
       });
-      root.delegate(container, "click", "[data-kg-approve]", () => {
-        const view = sourceView();
-        run(() => root.api(
-          `/api/g3/subgraphs/${encodeURIComponent(view.subgraph.source_subgraph_revision_id)}/decision`,
+      root.delegate(contenitore, "click", "[data-approva]", () => {
+        const vista = vistaFonte();
+        esegui(() => root.api(
+          `/api/g3/subgraphs/${encodeURIComponent(vista.subgraph.source_subgraph_revision_id)}/decision`,
           { method: "POST", body: { action: "approve", note: null } }
         ));
       });
-      root.delegate(container, "click", "[data-kg-reject]", () => {
-        state.rejectingSourceId = (sourceView() || {}).source_id || "";
-        root.render({ regions: ["decision"] });
-        container.querySelector("textarea")?.focus();
+      root.delegate(contenitore, "click", "[data-segnala]", () => {
+        state.rejectingSourceId = (vistaFonte() || {}).source_id || "";
+        root.render({ regioni: ["decisione"] });
+        contenitore.querySelector("textarea")?.focus();
       });
-      root.delegate(container, "click", "[data-kg-reject-cancel]", () => {
+      root.delegate(contenitore, "click", "[data-annulla-nota]", () => {
         state.rejectingSourceId = "";
-        root.render({ regions: ["decision"] });
+        root.render({ regioni: ["decisione"] });
       });
-      root.delegate(container, "click", "[data-kg-view]", (element) => {
-        state.view = element.dataset.kgView;
-        root.render({ regions: ["work"] });
+      root.delegate(contenitore, "click", "[data-vista]", (elemento) => {
+        state.view = elemento.dataset.vista;
+        root.render({ regioni: ["lavoro"] });
       });
-      root.delegate(container, "click", "[data-kg-goto]", (element) => root.goToPhase(element.dataset.kgGoto));
-      root.delegate(container, "submit", "[data-kg-reject-form]", (form, event) => {
-        event.preventDefault();
-        const note = String(new FormData(form).get("note") || "").trim();
-        if (!note) return;
-        const view = sourceView();
+      root.delegate(contenitore, "click", "[data-vai]", (elemento) => root.vaiAllaFase(elemento.dataset.vai));
+      root.delegate(contenitore, "submit", "[data-nota]", (modulo, evento) => {
+        evento.preventDefault();
+        const nota = String(new FormData(modulo).get("note") || "").trim();
+        if (!nota) return;
+        const vista = vistaFonte();
         state.rejectingSourceId = "";
-        run(() => root.api(
-          `/api/g3/subgraphs/${encodeURIComponent(view.subgraph.source_subgraph_revision_id)}/decision`,
-          { method: "POST", body: { action: "reject", note } }
+        esegui(() => root.api(
+          `/api/g3/subgraphs/${encodeURIComponent(vista.subgraph.source_subgraph_revision_id)}/decision`,
+          { method: "POST", body: { action: "reject", note: nota } }
         ));
-      });
-    },
-
-    bindRail(container) {
-      root.delegate(container, "click", "[data-kg-comparison]", () => {
-        state.view = "comparison";
-        root.clearSelection();
-        root.render({ regions: ["rail", "work", "inspector", "decision"] });
       });
     },
   };

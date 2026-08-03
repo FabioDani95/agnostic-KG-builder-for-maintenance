@@ -2,131 +2,134 @@
   "use strict";
   const root = window.KGFoundation = window.KGFoundation || {};
   const state = root.state;
-  const escapeHtml = root.escapeHtml;
+  const esc = root.escapeHtml;
+  const t = root.t;
 
-  const identified = () => {
+  const identificata = () => {
     const workspace = state.workspace.workspace;
     const asset = workspace.asset;
-    const identifiers = workspace.identifiers || [];
-    const find = (kind) => identifiers.find((item) => item.kind === kind);
-    const serial = find("serial");
-    const tag = find("equipment_tag");
+    const trova = (genere) => (workspace.identifiers || []).find((i) => i.kind === genere);
+    const seriale = trova("serial");
+    const targa = trova("equipment_tag");
+    const voce = (etichetta, valore) => (valore
+      ? `<div><dt>${esc(etichetta)}</dt><dd>${esc(valore)}</dd></div>` : "");
     return `
-      <div class="kg-work-head">
-        <div class="kg-work-head-row"><h1>${escapeHtml(asset.name)}</h1></div>
-        <p>Questa è la macchina su cui stai lavorando. Tutti i documenti e tutto il grafo appartengono solo a lei.</p>
-      </div>
-      <div class="kg-work-scroll"><div class="kg-work-pad">
-        <dl class="kg-summary">
-          <div><dt>Marca</dt><dd>${escapeHtml(asset.brand)}</dd></div>
-          <div><dt>Modello</dt><dd>${escapeHtml(asset.model)}</dd></div>
-          ${serial ? `<div><dt>Numero seriale</dt><dd>${escapeHtml(serial.value)}</dd></div>` : ""}
-          ${tag ? `<div><dt>Codice macchina</dt><dd>${escapeHtml(tag.value)}</dd></div>` : ""}
-          ${asset.asset_type ? `<div><dt>Tipo di macchina</dt><dd>${escapeHtml(asset.asset_type)}</dd></div>` : ""}
+      <div class="intestazione-lavoro"><p>${esc(t("mac.suQuesta"))}</p></div>
+      <div class="lavoro-scorri"><div class="lavoro-pad">
+        <dl class="riepilogo entra">
+          ${voce(t("mac.marcaL"), asset.brand)}
+          ${voce(t("mac.modelloL"), asset.model)}
+          ${voce(t("mac.serialeL"), seriale && seriale.value)}
+          ${voce(t("mac.codiceL"), targa && targa.value)}
+          ${voce(t("mac.tipoL"), asset.asset_type)}
         </dl>
-        <p class="kg-body kg-work-reading" style="margin-top: var(--space-4)">${escapeHtml(asset.description)}</p>
-        <details class="kg-disclosure" style="margin-top: var(--space-5)">
-          <summary>Dati tecnici interni</summary>
-          <p class="kg-secondary">Codice della macchina nel sistema</p>
-          <pre class="kg-evidence-raw">${escapeHtml(asset.asset_id)}</pre>
-          <p class="kg-secondary">Codice della pratica</p>
-          <pre class="kg-evidence-raw">${escapeHtml(workspace.workspace_id)}</pre>
+        <p class="lavoro-lettura entra" style="margin-top:18px">${esc(asset.description)}</p>
+        <details class="disclosure entra" style="margin-top:22px">
+          <summary>${esc(t("mac.tecnici"))}</summary>
+          <p class="blocco-vuoto">${esc(t("mac.codiceMacchina"))}</p>
+          <pre class="grezzo">${esc(asset.asset_id)}</pre>
+          <p class="blocco-vuoto">${esc(t("mac.codicePratica"))}</p>
+          <pre class="grezzo">${esc(workspace.workspace_id)}</pre>
         </details>
       </div></div>`;
   };
 
-  const onboarding = () => `
-    <div class="kg-work-head">
-      <div class="kg-work-head-row"><h1>Identifica la macchina</h1></div>
-      <p>Inserisci i dati della targhetta e conferma l'identità. Solo dopo potrai caricare i documenti che la riguardano.</p>
-    </div>
-    <div class="kg-work-scroll"><div class="kg-work-pad">
-      <form id="machine-onboarding" class="kg-form">
-        <div class="kg-form-legend"><strong>1. Dati identificativi</strong><span>Copiali dalla targhetta o dal registro ufficiale della macchina.</span></div>
-        <div class="kg-form-grid">
-          <label class="kg-field"><span class="kg-label-with-info">Nome macchina ${root.infoTip("nome-macchina", "Nome macchina", "Usa il nome con cui riconosci la macchina nello stabilimento, per esempio “Pressa idraulica linea 7”.")}</span>
-            <input class="kg-input" name="name" required autocomplete="off" placeholder="Esempio: Pressa idraulica linea 7"></label>
-          <label class="kg-field"><span>Marca o costruttore</span>
-            <input class="kg-input" name="brand" required autocomplete="off" placeholder="Esempio: ExampleWorks"></label>
-          <label class="kg-field"><span>Modello</span>
-            <input class="kg-input" name="model" required autocomplete="off" placeholder="Esempio: HP-700"></label>
-          <label class="kg-field"><span class="kg-label-with-info">Tipo di macchina (facoltativo) ${root.infoTip("tipo-macchina", "Tipo di macchina", "Descrivi la famiglia della macchina, per esempio pressa idraulica, tornio CNC o compressore.")}</span>
-            <input class="kg-input" name="asset_type" autocomplete="off" placeholder="Esempio: pressa idraulica"></label>
-          <label class="kg-field"><span class="kg-label-with-info">Numero seriale ${root.infoTip("numero-seriale", "Numero seriale", "Inserisci il numero assegnato dal costruttore. Di solito lo trovi sulla targhetta accanto a “Serial”, “S/N” o “Matricola”.")}</span>
-            <input class="kg-input" name="serial" autocomplete="off" placeholder="Esempio: HP7-000042"></label>
-          <label class="kg-field"><span class="kg-label-with-info">Codice macchina (facoltativo) ${root.infoTip("codice-macchina", "Codice macchina", "Inserisci il codice interno usato nel tuo impianto, chiamato anche equipment tag o asset tag.")}</span>
-            <input class="kg-input" name="equipment_tag" autocomplete="off" placeholder="Esempio: PRESS-07"></label>
-          <label class="kg-field kg-wide"><span>Descrizione breve</span>
-            <textarea class="kg-textarea" name="description" required rows="3" placeholder="Dove si trova e a cosa serve questa macchina?"></textarea></label>
+  const campo = (nome, chiave, opzioni) => {
+    const config = opzioni || {};
+    /* L'identificativo del riquadro informativo è stabile e semantico: è un
+       aggancio documentato, non il nome del campo del modulo. */
+    const info = config.info ? ` ${root.info(config.id || nome, t(chiave), t(config.info))}` : "";
+    const etichetta = `<span class="${config.info ? "con-info" : ""}">${esc(t(chiave))}${info}</span>`;
+    const controllo = config.area
+      ? `<textarea name="${nome}" ${config.required ? "required" : ""} ${config.min ? `minlength="${config.min}"` : ""}
+          rows="${config.rows || 3}" placeholder="${esc(t(config.p))}"></textarea>`
+      : `<input name="${nome}" ${config.required ? "required" : ""} autocomplete="off" placeholder="${esc(t(config.p))}">`;
+    return `<label class="campo ${config.largo ? "largo" : ""}">${etichetta}${controllo}</label>`;
+  };
+
+  const modulo = () => `
+    <div class="intestazione-lavoro"><p>${esc(t("mac.sotto"))}</p></div>
+    <div class="lavoro-scorri"><div class="lavoro-pad">
+      <form id="machine-onboarding" class="modulo entra">
+        <div class="modulo-legenda"><strong>${esc(t("mac.sezione1"))}</strong><span>${esc(t("mac.sezione1d"))}</span></div>
+        <div class="modulo-griglia">
+          ${campo("name", "mac.nome", { required: true, p: "mac.nomeP", info: "mac.nomeI", id: "nome-macchina" })}
+          ${campo("brand", "mac.marca", { required: true, p: "mac.marcaP" })}
+          ${campo("model", "mac.modello", { required: true, p: "mac.modelloP" })}
+          ${campo("asset_type", "mac.tipo", { p: "mac.tipoP", info: "mac.tipoI", id: "tipo-macchina" })}
+          ${campo("serial", "mac.seriale", { p: "mac.serialeP", info: "mac.serialeI", id: "numero-seriale" })}
+          ${campo("equipment_tag", "mac.codice", { p: "mac.codiceP", info: "mac.codiceI", id: "codice-macchina" })}
+          ${campo("description", "mac.descrizione", { required: true, area: true, p: "mac.descrizioneP", largo: true })}
         </div>
-        <div class="kg-form-legend"><strong>2. Conferma dei dati</strong><span>Indica come hai verificato l'identità della macchina e chi lo ha fatto.</span></div>
-        <div class="kg-form-grid">
-          <label class="kg-field kg-wide"><span>Come hai verificato questi dati?</span>
-            <textarea class="kg-textarea" name="reason" required minlength="10" rows="2" placeholder="Esempio: dati letti direttamente dalla targhetta della macchina"></textarea></label>
-          <label class="kg-field"><span class="kg-label-with-info">Dove hai verificato i dati? ${root.infoTip("fonte-verifica", "Fonte della verifica", "Scegli la fonte che hai effettivamente controllato: targhetta, macchina osservata direttamente oppure registro dell’operatore.")}</span>
-            <select class="kg-select" name="observation_basis">
-              <option value="nameplate">Targhetta macchina</option>
-              <option value="direct_observation">Osservazione diretta</option>
-              <option value="operator_record">Registro operatore</option>
+        <div class="modulo-legenda"><strong>${esc(t("mac.sezione2"))}</strong><span>${esc(t("mac.sezione2d"))}</span></div>
+        <div class="modulo-griglia">
+          ${campo("reason", "mac.verifica", { required: true, area: true, rows: 2, min: 10, p: "mac.verificaP", largo: true })}
+          <label class="campo"><span class="con-info">${esc(t("mac.dove"))} ${root.info("fonte-verifica", t("mac.dove"), t("mac.doveI"))}</span>
+            <select name="observation_basis">
+              <option value="nameplate">${esc(t("mac.dove.nameplate"))}</option>
+              <option value="direct_observation">${esc(t("mac.dove.direct_observation"))}</option>
+              <option value="operator_record">${esc(t("mac.dove.operator_record"))}</option>
             </select></label>
-          <label class="kg-field"><span class="kg-label-with-info">Chi conferma ${root.infoTip("operatore-conferma", "Chi conferma", "Scrivi il tuo nome o le tue iniziali. Servono a rendere tracciabile la conferma.")}</span>
-            <input class="kg-input" name="operator" required autocomplete="off" placeholder="Nome o iniziali"></label>
+          ${campo("operator", "mac.chi", { required: true, p: "mac.chiP", info: "mac.chiI", id: "operatore-conferma" })}
         </div>
-        ${state.error ? `<div class="kg-note kg-note-danger" role="alert"><span class="kg-note-mark" aria-hidden="true">!</span><strong>Non riesco a salvare</strong><span>${escapeHtml(state.error)}</span></div>` : ""}
+        ${state.error ? `<div class="nota errore" role="alert"><span class="segno" aria-hidden="true">!</span>
+          <strong>${esc(t("mac.erroreSalva"))}</strong><span>${esc(state.error)}</span></div>` : ""}
       </form>
     </div></div>`;
 
   root.phases.machine = {
-    label: "Macchina",
-    showRail: false,
-    showInspector: false,
+    mostraFonti: false,
+    mostraIspettore: false,
 
-    renderWork() {
-      if (state.loading) return `<div class="kg-state"><strong>Carico i dati salvati…</strong></div>`;
-      return state.workspace ? identified() : onboarding();
+    titolo: () => ({
+      titolo: state.workspace ? state.workspace.workspace.asset.name : t("mac.titolo"),
+      chips: state.workspace ? `<span class="chip ok"><span class="punto"></span>${esc(t("mac.confermata"))}</span>` : "",
+    }),
+
+    renderLavoro() {
+      if (state.loading) return `<div class="stato-pagina"><strong>${esc(t("ui.caricamento"))}</strong></div>`;
+      return state.workspace ? identificata() : modulo();
     },
 
-    bindWork(container) {
-      const form = container.querySelector("#machine-onboarding");
+    bindLavoro(contenitore) {
+      const form = contenitore.querySelector("#machine-onboarding");
       if (!form) return;
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const values = new FormData(form);
-        const identifiers = [];
-        const push = (name, namespace, kind) => {
-          const value = String(values.get(name) || "").trim();
-          if (value) identifiers.push({ namespace, value, kind });
+      form.addEventListener("submit", async (evento) => {
+        evento.preventDefault();
+        const valori = new FormData(form);
+        const identificativi = [];
+        const aggiungi = (nome, spazio, genere) => {
+          const valore = String(valori.get(nome) || "").trim();
+          if (valore) identificativi.push({ namespace: spazio, value: valore, kind: genere });
         };
-        push("serial", "manufacturer_serial", "serial");
-        push("equipment_tag", "equipment_tag", "equipment_tag");
+        aggiungi("serial", "manufacturer_serial", "serial");
+        aggiungi("equipment_tag", "equipment_tag", "equipment_tag");
 
         state.busy = true;
         state.error = "";
-        root.render({ regions: ["decision"] });
+        root.render({ regioni: ["decisione"] });
         try {
           state.workspace = await root.api(state.creatingWorkspace ? "/api/workspaces" : "/api/workspace", {
             method: "POST",
             body: {
               asset: {
-                name: values.get("name"),
-                description: values.get("description"),
-                brand: values.get("brand"),
-                model: values.get("model"),
-                asset_type: values.get("asset_type") || null,
+                name: valori.get("name"), description: valori.get("description"),
+                brand: valori.get("brand"), model: valori.get("model"),
+                asset_type: valori.get("asset_type") || null,
               },
-              identifiers,
+              identifiers: identificativi,
               assertion: {
-                reason: values.get("reason"),
-                observation_basis: values.get("observation_basis"),
-                operator: values.get("operator"),
+                reason: valori.get("reason"),
+                observation_basis: valori.get("observation_basis"),
+                operator: valori.get("operator"),
               },
             },
           });
           state.creatingWorkspace = false;
-          window.history.replaceState(null, "", root.phaseHref("machine", state.workspace.workspace.workspace_id));
-          await root.loadSources();
-        } catch (error) {
-          state.error = error.message;
+          window.history.replaceState(null, "", root.indirizzoFase("machine", state.workspace.workspace.workspace_id));
+          await root.caricaFonti();
+        } catch (errore) {
+          state.error = errore.message;
         } finally {
           state.busy = false;
           root.render();
@@ -134,29 +137,24 @@
       });
     },
 
-    renderDecision() {
+    renderDecisione() {
       if (state.loading) return "";
       if (state.workspace) {
-        return `<div class="kg-decision-row"><div class="kg-decision-text">
-          <strong>Macchina confermata</strong>
-          <span>Ora puoi caricare i documenti che la riguardano.</span>
-        </div>
-        <div class="kg-decision-actions">
-          <button type="button" class="kg-btn kg-btn-primary" data-kg-goto="documents">Continua ai documenti</button>
-        </div></div>`;
+        return `<div class="decisione-riga">
+          <div class="decisione-testo"><strong>${esc(t("mac.confermata"))}</strong><span>${esc(t("mac.confermataTesto"))}</span></div>
+          <div class="decisione-azioni"><button type="button" class="btn primario" data-vai="documents">${esc(t("mac.continua"))}</button></div>
+        </div>`;
       }
-      return `<div class="kg-decision-row"><div class="kg-decision-text">
-        <strong>Dopo il salvataggio</strong>
-        <span>Passerai ai documenti, dove potrai caricare e classificare i file della macchina.</span>
-      </div>
-      <div class="kg-decision-actions">
-        <button type="submit" form="machine-onboarding" class="kg-btn kg-btn-primary"
-          ${state.busy ? "disabled" : ""}>${state.busy ? "Salvataggio…" : "Salva macchina e continua"}</button>
-      </div></div>`;
+      return `<div class="decisione-riga">
+        <div class="decisione-testo"><strong>${esc(t("mac.dopo"))}</strong><span>${esc(t("mac.dopoTesto"))}</span></div>
+        <div class="decisione-azioni">
+          <button type="submit" form="machine-onboarding" class="btn primario"
+            ${state.busy ? "disabled" : ""}>${esc(state.busy ? t("mac.salvataggio") : t("mac.salva"))}</button>
+        </div></div>`;
     },
 
-    bindDecision(container) {
-      root.delegate(container, "click", "[data-kg-goto]", (element) => root.goToPhase(element.dataset.kgGoto));
+    bindDecisione(contenitore) {
+      root.delegate(contenitore, "click", "[data-vai]", (elemento) => root.vaiAllaFase(elemento.dataset.vai));
     },
   };
 })();

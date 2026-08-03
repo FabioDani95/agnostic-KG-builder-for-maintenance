@@ -31,21 +31,26 @@ rationale inline in `frontend/design.css`:
 | dark `--success/--warning/--danger` and their `-soft` fills | `dark_colors` in `DESIGN.md` omits the status colours. These are the light hues lifted to readable luminance on a near-black surface, with the soft fills rebuilt as low-alpha tints rather than pale pastels. |
 
 The retained PDF-baseline console keeps its own palette in
-`frontend/console.css`; its global rules are scoped away from `.kg-app` so the
-two cannot bleed into each other.
+`frontend/console.css`; its global rules are scoped away from the application
+root (`#app.app`) so the two cannot bleed into each other.
 
 ## Where the motion rules are applied
 
 `SKILL.md` is written for gesture-driven interfaces. The place it genuinely
-applies here is the graph canvas, in
-[`frontend/app/motion.js`](../../frontend/app/motion.js): drag-to-pan tracks the
-pointer 1:1 from the exact grab point using pointer capture, keeps a short
-velocity history, and hands the release velocity to a glide whose resting point
-comes from the exponential momentum projection. A new press cancels the glide on
-the next frame, so the motion is always interruptible. Everything is skipped
-under `prefers-reduced-motion`.
+applies here is the graph map, in
+[`frontend/app/explorer.js`](../../frontend/app/explorer.js): a node and the
+canvas are both dragged 1:1 from the exact point they were grabbed, using
+pointer capture, and the wheel zooms around the pointer rather than the centre.
+The force simulation in [`frontend/app/force.js`](../../frontend/app/force.js)
+keeps running while a node is held, so the rest of the graph reacts continuously
+instead of snapping when the drag ends — the interaction is never a
+before/after, it is one continuous motion. Everything animates `transform` only,
+and settles on its own once the simulation cools.
 
-Panning writes to the container's own scroll offsets rather than to a transform,
-so the wheel, the trackpad, the scrollbars and keyboard scrolling keep working
-unchanged. The trade-off is that boundary resistance is the browser's native
-overscroll rather than the rubber-band curve in `SKILL.md` §9.
+A node dropped by the operator stays where it was put: the arrangement is their
+decision, not an outcome of the physics. Double-click returns one node to the
+simulation, "Ridisponi" returns all of them. Positions survive a filter change
+and a view change.
+
+Known trade-off: boundary resistance is the browser's native overscroll on the
+canvas, not the rubber-band curve in `SKILL.md` §9.

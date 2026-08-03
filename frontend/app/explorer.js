@@ -1,423 +1,395 @@
 (function () {
   "use strict";
   const root = window.KGFoundation = window.KGFoundation || {};
-  const state = root.state;
-  const escapeHtml = root.escapeHtml;
+  const esc = root.escapeHtml;
+  const SVGNS = "http://www.w3.org/2000/svg";
 
-  const NODE_WIDTH = 176;
-  const NODE_HEIGHT = 40;
-  const COLUMN_STRIDE = 268;
-  const ROW_STRIDE = 56;
-  const PADDING = 32;
-  /* Above this many visible elements a layout stops being readable; we say so
-     instead of drawing an unusable hairball and calling it a graph. */
-  const CROWDED_AT = 140;
-
-  const COLUMNS = {
-    Asset: 0,
-    Symptom: 1, ErrorCode: 1,
-    FailureMode: 2,
-    Component: 3, CorrectiveAction: 3,
+  /* Le posizioni sopravvivono a un cambio di filtro o di vista: il grafo che
+     l'operatore ha disposto resta dove l'ha messo. */
+  const posizioni = new Map();
+  root.dimenticaPosizioni = (prefisso) => {
+    [...posizioni.keys()].forEach((chiave) => {
+      if (!prefisso || chiave.startsWith(prefisso)) posizioni.delete(chiave);
+    });
   };
-  const COLUMN_TITLES = ["Macchina", "Sintomi e codici errore", "Cause", "Componenti e azioni"];
 
-  state.zoom = 1;
+  const elemento = (nome, attributi) => {
+    const nodo = document.createElementNS(SVGNS, nome);
+    Object.entries(attributi || {}).forEach(([chiave, valore]) => nodo.setAttribute(chiave, valore));
+    return nodo;
+  };
 
-  /* ── Derived model ─────────────────────────────────────────────────── */
+  /** Punto in cui il segmento verso (dx,dy) esce dalla pillola. */
+  const bordo = (nodo, dx, dy) => {
+    const mezzaL = nodo.w / 2 + 3;
+    const mezzaH = nodo.h / 2 + 3;
+    const scalaX = dx === 0 ? Infinity : mezzaL / Math.abs(dx);
+    const scalaY = dy === 0 ? Infinity : mezzaH / Math.abs(dy);
+    const scala = Math.min(scalaX, scalaY);
+    return { x: nodo.x + dx * scala, y: nodo.y + dy * scala };
+  };
+
+  const tronca = (testo, limite) => (testo.length > limite ? `${testo.slice(0, limite - 1)}…` : testo);
 
   /**
-   * Build everything the three panes need from one subgraph, once per repaint:
-   * the filtered element set, the indexes that make navigation instant, and the
-   * gap/defect attributions that decide what blocks approval.
+   * Costruisce il grafo una volta sola e poi tocca solo gli attributi: una
+   * selezione non ricostruisce niente, quindi non si perde né lo zoom, né la
+   * posizione, né il fuoco da tastiera.
    */
-  root.buildGraphModel = function buildGraphModel(subgraph, filters, selection) {
-    const nodesById = new Map(subgraph.nodes.map((node) => [node.node_id, node]));
-    const evidenceById = new Map(subgraph.evidence.map((item) => [item.evidence_id, item]));
+  root.creaExplorer = function creaExplorer(contenitore, dati, api) {
+    const chiave = (id) => `${dati.chiaveFonte}::${id}`;
 
-    const degree = new Map();
-    const relationsByNode = new Map();
-    subgraph.relations.forEach((relation) => {
-      [relation.from_id, relation.to_id].forEach((id) => {
-        degree.set(id, (degree.get(id) || 0) + 1);
-        if (!relationsByNode.has(id)) relationsByNode.set(id, []);
-        relationsByNode.get(id).push(relation);
+    const nodi = dati.nodi.map((voce) => {
+      const dimensione = root.dimensioniNodo(tronca(voce.etichetta, 24));
+      const memoria = posizioni.get(chiave(voce.id));
+      return {
+        ...voce, ...dimensione,
+        x: memoria ? memoria.x : null,
+        y: memoria ? memoria.y : null,
+        fx: memoria && memoria.fissato ? memoria.x : null,
+        fy: memoria && memoria.fissato ? memoria.y : null,
+        vx: 0, vy: 0,
+      };
+    });
+    const perId = new Map(nodi.map((nodo) => [nodo.id, nodo]));
+
+    const svg = elemento("svg", { class: "grafo-svg", tabindex: "0", role: "application" });
+    svg.setAttribute("aria-label", api.descrizione);
+    const definizioni = elemento("defs");
+    ["freccia", "freccia-viva"].forEach((nome) => {
+      const marcatore = elemento("marker", {
+        id: nome, markerWidth: "9", markerHeight: "9", refX: "8", refY: "3", orient: "auto",
       });
+      marcatore.appendChild(elemento("path", { d: "M0,0 L8,3 L0,6 z", class: nome }));
+      definizioni.appendChild(marcatore);
     });
+    svg.appendChild(definizioni);
 
-    /* A gap is attached to evidence; a node inherits the gaps of the rows that
-       produced it, so "what blocks this node" is answerable from the node. */
-    const gapsByNode = new Map();
-    const gapsByEvidence = new Map();
-    (subgraph.knowledge_gaps || []).forEach((gap) => {
-      (gap.evidence_ids || []).forEach((evidenceId) => {
-        if (!gapsByEvidence.has(evidenceId)) gapsByEvidence.set(evidenceId, []);
-        gapsByEvidence.get(evidenceId).push(gap);
+    const scena = elemento("g", { class: "grafo-scena" });
+    const stratoArchi = elemento("g", { class: "grafo-archi" });
+    const stratoNodi = elemento("g", { class: "grafo-nodi" });
+    scena.appendChild(stratoArchi);
+    scena.appendChild(stratoNodi);
+    svg.appendChild(scena);
+    contenitore.appendChild(svg);
+
+    const simulazione = root.creaSimulazione(nodi, dati.archi, { centroX: 0, centroY: 0 });
+
+    /* — archi — */
+    const archi = simulazione.legami.map((legame, indice) => {
+      const originale = dati.archi[indice] || {};
+      const gruppo = elemento("g", { class: "arco" });
+      const linea = elemento("line", { class: "arco-linea", "marker-end": "url(#freccia)" });
+      const presa = elemento("line", {
+        class: "arco-presa", role: "button", tabindex: "-1",
+        "data-arco": originale.id || "",
       });
+      presa.appendChild(elemento("title")).textContent =
+        `${legame.da.etichetta} — ${originale.etichettaTipo || ""} — ${legame.a.etichetta}`;
+      gruppo.appendChild(linea);
+      gruppo.appendChild(presa);
+      stratoArchi.appendChild(gruppo);
+      return { gruppo, linea, presa, da: legame.da, a: legame.a, id: originale.id };
     });
-    subgraph.nodes.forEach((node) => {
-      const gaps = [];
-      node.evidence_ids.forEach((evidenceId) => {
-        (gapsByEvidence.get(evidenceId) || []).forEach((gap) => {
-          if (!gaps.includes(gap)) gaps.push(gap);
-        });
+
+    /* — nodi — */
+    const disegni = nodi.map((nodo) => {
+      const gruppo = elemento("g", {
+        class: `nodo tipo-${nodo.tipo}`, role: "button", tabindex: "-1",
+        "data-nodo": nodo.id,
+        "aria-label": `${api.etichettaTipo(nodo.tipo)}: ${nodo.etichetta}. ${api.testoOccorrenze(nodo.occorrenze)}`,
       });
-      if (gaps.length) gapsByNode.set(node.node_id, gaps);
+      gruppo.appendChild(elemento("rect", {
+        class: "nodo-corpo", x: -nodo.w / 2, y: -nodo.h / 2,
+        width: nodo.w, height: nodo.h, rx: nodo.h / 2,
+      }));
+      const testo = elemento("text", { class: "nodo-testo", x: 0, y: 4, "text-anchor": "middle" });
+      testo.textContent = tronca(nodo.etichetta, 24);
+      gruppo.appendChild(testo);
+      if (nodo.lacuna || nodo.difetto) {
+        gruppo.appendChild(elemento("circle", {
+          class: nodo.difetto ? "nodo-segno difetto" : "nodo-segno lacuna",
+          cx: nodo.w / 2 - 3, cy: -nodo.h / 2 + 3, r: 5,
+        }));
+      }
+      const titolo = elemento("title");
+      titolo.textContent = `${api.etichettaTipo(nodo.tipo)}: ${nodo.etichetta}`;
+      gruppo.appendChild(titolo);
+      stratoNodi.appendChild(gruppo);
+      return { gruppo, nodo };
     });
 
-    const defectsByNode = new Map();
-    ((subgraph.validation || {}).issues || []).forEach((issue) => {
-      if (!issue.node_id) return;
-      if (!defectsByNode.has(issue.node_id)) defectsByNode.set(issue.node_id, []);
-      defectsByNode.get(issue.node_id).push(issue);
-    });
+    /* — inquadratura — */
+    let k = 1; let tx = 0; let ty = 0;
+    const misure = () => contenitore.getBoundingClientRect();
 
-    /* — Filters. They apply to every view at once, graph and tables alike. — */
-    const query = String(filters.query || "").trim().toLocaleLowerCase();
-    let visible = subgraph.nodes.filter((node) => {
-      if (filters.nodeType !== "all" && node.node_type !== filters.nodeType) return false;
-      if (filters.onlyGaps && !gapsByNode.has(node.node_id) && !defectsByNode.has(node.node_id)) return false;
-      if (query && !node.label.toLocaleLowerCase().includes(query)) return false;
-      return true;
-    });
-
-    if (filters.relationType !== "all") {
-      const endpoints = new Set();
-      subgraph.relations
-        .filter((relation) => relation.relation_type === filters.relationType)
-        .forEach((relation) => { endpoints.add(relation.from_id); endpoints.add(relation.to_id); });
-      visible = visible.filter((node) => endpoints.has(node.node_id));
-    }
-
-    /* Focus keeps the selection and everything one step away from it. */
-    if (filters.focus && selection.kind === "node" && nodesById.has(selection.id)) {
-      const keep = new Set([selection.id]);
-      (relationsByNode.get(selection.id) || []).forEach((relation) => {
-        keep.add(relation.from_id); keep.add(relation.to_id);
-      });
-      visible = visible.filter((node) => keep.has(node.node_id));
-    }
-
-    const visibleIds = new Set(visible.map((node) => node.node_id));
-    const relations = subgraph.relations.filter((relation) => (
-      visibleIds.has(relation.from_id)
-      && visibleIds.has(relation.to_id)
-      && (filters.relationType === "all" || relation.relation_type === filters.relationType)
-    ));
-
-    return {
-      subgraph,
-      nodes: visible,
-      relations,
-      nodesById,
-      evidenceById,
-      relationsByNode,
-      degree,
-      gapsByNode,
-      gapsByEvidence,
-      defectsByNode,
-      hiddenNodes: subgraph.nodes.length - visible.length,
-      hiddenRelations: subgraph.relations.length - relations.length,
-      crowded: visible.length + relations.length > CROWDED_AT,
-    };
-  };
-
-  /* ── Layout ────────────────────────────────────────────────────────── */
-
-  /**
-   * Layered layout by ontological role, then two barycentre sweeps so edges
-   * cross as little as the role order allows. Coordinates are independent of
-   * the viewport: the canvas scrolls and zooms instead of squeezing rows.
-   */
-  const layout = (model) => {
-    const columns = [[], [], [], []];
-    model.nodes.forEach((node) => columns[COLUMNS[node.node_type] ?? 3].push(node));
-    columns.forEach((column) => column.sort((a, b) => a.label.localeCompare(b.label, "it")));
-
-    const order = new Map();
-    const reindex = () => columns.forEach((column) => column.forEach((node, index) => order.set(node.node_id, index)));
-    reindex();
-
-    const barycentre = (node, direction) => {
-      const neighbours = (model.relationsByNode.get(node.node_id) || [])
-        .map((relation) => (relation.from_id === node.node_id ? relation.to_id : relation.from_id))
-        .filter((id) => order.has(id))
-        .filter((id) => {
-          const other = model.nodesById.get(id);
-          if (!other) return false;
-          const delta = (COLUMNS[other.node_type] ?? 3) - (COLUMNS[node.node_type] ?? 3);
-          return direction > 0 ? delta < 0 : delta > 0;
-        });
-      if (!neighbours.length) return order.get(node.node_id);
-      return neighbours.reduce((total, id) => total + order.get(id), 0) / neighbours.length;
+    const applicaVista = () => {
+      scena.setAttribute("transform", `translate(${tx} ${ty}) scale(${k})`);
+      if (api.onZoom) api.onZoom(k);
     };
 
-    [1, -1, 1].forEach((direction) => {
-      const sequence = direction > 0 ? [1, 2, 3] : [2, 1, 0];
-      sequence.forEach((index) => {
-        columns[index] = columns[index]
-          .map((node) => ({ node, key: barycentre(node, direction) }))
-          .sort((a, b) => a.key - b.key)
-          .map((entry) => entry.node);
-        reindex();
-      });
-    });
+    const inquadra = () => {
+      const riquadro = simulazione.riquadro();
+      const area = misure();
+      if (!area.width || !area.height) return;
+      const larghezza = Math.max(1, riquadro.maxX - riquadro.minX);
+      const altezza = Math.max(1, riquadro.maxY - riquadro.minY);
+      /* Sotto una certa scala le etichette non si leggono più: meglio aprire
+         un po' più vicini e lasciare che sia l'operatore a spostare la vista. */
+      k = Math.min(1.15, Math.max(0.34, Math.min((area.width - 80) / larghezza, (area.height - 80) / altezza)));
+      tx = area.width / 2 - ((riquadro.minX + riquadro.maxX) / 2) * k;
+      ty = area.height / 2 - ((riquadro.minY + riquadro.maxY) / 2) * k;
+      applicaVista();
+    };
 
-    const rows = Math.max(1, ...columns.map((column) => column.length));
-    const positions = new Map();
-    columns.forEach((column, columnIndex) => {
-      const offset = (rows - column.length) / 2;
-      column.forEach((node, index) => {
-        positions.set(node.node_id, {
-          x: PADDING + columnIndex * COLUMN_STRIDE,
-          y: PADDING + 28 + (offset + index) * ROW_STRIDE,
-          column: columnIndex,
+    const versoScena = (clientX, clientY) => {
+      const area = misure();
+      return { x: (clientX - area.left - tx) / k, y: (clientY - area.top - ty) / k };
+    };
+
+    /* — disegno di un fotogramma — */
+    const dipingi = () => {
+      disegni.forEach(({ gruppo, nodo }) => {
+        gruppo.setAttribute("transform", `translate(${nodo.x.toFixed(1)} ${nodo.y.toFixed(1)})`);
+      });
+      archi.forEach(({ linea, presa, da, a }) => {
+        const dx = a.x - da.x;
+        const dy = a.y - da.y;
+        const partenza = bordo(da, dx, dy);
+        const arrivo = bordo(a, -dx, -dy);
+        [linea, presa].forEach((segmento) => {
+          segmento.setAttribute("x1", partenza.x.toFixed(1));
+          segmento.setAttribute("y1", partenza.y.toFixed(1));
+          segmento.setAttribute("x2", arrivo.x.toFixed(1));
+          segmento.setAttribute("y2", arrivo.y.toFixed(1));
         });
       });
-    });
-
-    return {
-      positions,
-      columns,
-      width: PADDING * 2 + 3 * COLUMN_STRIDE + NODE_WIDTH,
-      height: PADDING * 2 + 28 + rows * ROW_STRIDE,
     };
-  };
 
-  /* ── Rendering ─────────────────────────────────────────────────────── */
+    const ricorda = () => nodi.forEach((nodo) => posizioni.set(chiave(nodo.id), {
+      x: nodo.x, y: nodo.y, fissato: nodo.fx != null,
+    }));
 
-  const truncate = (label, limit) => (label.length > limit ? `${label.slice(0, limit - 1)}…` : label);
+    let animazione = 0;
+    let vivo = true;
+    const ciclo = () => {
+      if (!vivo) return;
+      const inMoto = simulazione.passo();
+      dipingi();
+      if (inMoto) animazione = window.requestAnimationFrame(ciclo);
+      else { animazione = 0; ricorda(); }
+    };
+    const anima = () => { if (!animazione && vivo) animazione = window.requestAnimationFrame(ciclo); };
 
-  const edgePath = (from, to) => {
-    const x1 = from.x + NODE_WIDTH;
-    const y1 = from.y + NODE_HEIGHT / 2;
-    const x2 = to.x - 8;
-    const y2 = to.y + NODE_HEIGHT / 2;
-    const middle = (x1 + x2) / 2;
-    return `M ${x1} ${y1} C ${middle} ${y1}, ${middle} ${y2}, ${x2} ${y2}`;
-  };
+    /* Alla prima apertura il grafo si presenta già sedimentato: nessuno deve
+       guardare i fotogrammi in cui i nodi si respingono. */
+    const nuovi = nodi.filter((nodo) => !posizioni.has(chiave(nodo.id))).length;
+    simulazione.stabilizza(nuovi ? 260 : 40);
+    dipingi();
+    inquadra();
+    ricorda();
 
-  root.renderCanvas = function renderCanvas(model, selection) {
-    if (!model.nodes.length) {
-      return `
-        <div class="kg-explorer">
-          <div class="kg-work-pad">
-            <div class="kg-empty">
-              <strong>Nessun elemento con questi filtri</strong>
-              <p>${model.subgraph.nodes.length
-                ? "Il grafo contiene elementi, ma nessuno corrisponde ai filtri attivi."
-                : "Questa fonte non ha prodotto nessun elemento."}</p>
-              ${model.subgraph.nodes.length ? '<button type="button" class="kg-btn kg-btn-secondary" data-kg-clear-filters>Azzera i filtri</button>' : ""}
-            </div>
-          </div>
-        </div>`;
-    }
-
-    const placed = layout(model);
-    const zoom = state.zoom;
-
-    const neighbourhood = new Set();
-    if (selection.kind === "node") {
-      neighbourhood.add(selection.id);
-      (model.relationsByNode.get(selection.id) || []).forEach((relation) => {
-        neighbourhood.add(relation.from_id); neighbourhood.add(relation.to_id);
-      });
-    } else if (selection.kind === "relation") {
-      const relation = model.subgraph.relations.find((item) => item.relation_id === selection.id);
-      if (relation) { neighbourhood.add(relation.from_id); neighbourhood.add(relation.to_id); }
-    }
-    const dimming = neighbourhood.size > 0;
-
-    const edges = model.relations.map((relation) => {
-      const from = placed.positions.get(relation.from_id);
-      const to = placed.positions.get(relation.to_id);
-      if (!from || !to) return "";
-      const active = selection.kind === "relation"
-        ? relation.relation_id === selection.id
-        : dimming && neighbourhood.has(relation.from_id) && neighbourhood.has(relation.to_id);
-      const dim = dimming && !active;
-      const path = edgePath(from, to);
-      const label = root.relationTypeLabels[relation.relation_type] || relation.relation_type;
-      const fromLabel = (model.nodesById.get(relation.from_id) || {}).label || "";
-      const toLabel = (model.nodesById.get(relation.to_id) || {}).label || "";
-      return `<g class="${dim ? "kg-edge-dim" : ""}">
-        <path class="kg-edge ${active ? "kg-edge-active" : ""}" d="${path}"
-          marker-end="url(#kg-arrow${active ? "-active" : ""})"></path>
-        <path class="kg-edge-hit" d="${path}" data-kg-relation="${escapeHtml(relation.relation_id)}" role="button"
-          tabindex="-1" aria-label="${escapeHtml(`${fromLabel} ${label} ${toLabel}`)}"><title>${escapeHtml(`${fromLabel} — ${label} — ${toLabel}`)}</title></path>
-      </g>`;
-    }).join("");
-
-    const focusableId = selection.kind === "node" && placed.positions.has(selection.id)
-      ? selection.id
-      : (placed.columns.flat()[0] || {}).node_id;
-
-    const nodes = placed.columns.flat().map((node) => {
-      const position = placed.positions.get(node.node_id);
-      const selected = selection.kind === "node" && node.node_id === selection.id;
-      const dim = dimming && !neighbourhood.has(node.node_id);
-      const typeLabel = root.nodeTypeLabels[node.node_type] || node.node_type;
-      const blocked = model.gapsByNode.has(node.node_id) || model.defectsByNode.has(node.node_id);
-      const occurrences = node.evidence_ids.length;
-      const description = `${typeLabel}: ${node.label}. ${root.plural(occurrences, "riga di origine", "righe di origine")}.`;
-      return `
-        <g class="kg-node ${selected ? "kg-node-selected" : ""} ${dim ? "kg-node-dim" : ""}"
-          style="--node-type: var(--node-${escapeHtml(node.node_type)})"
-          transform="translate(${position.x} ${position.y})"
-          data-kg-node="${escapeHtml(node.node_id)}" role="button"
-          tabindex="${node.node_id === focusableId ? "0" : "-1"}"
-          aria-label="${escapeHtml(description)}" aria-pressed="${selected}">
-          <rect class="kg-node-box" width="${NODE_WIDTH}" height="${NODE_HEIGHT}" rx="8"></rect>
-          <rect class="kg-node-bar" x="1" y="1" width="3" height="${NODE_HEIGHT - 2}" rx="1.5"></rect>
-          <text class="kg-node-label" x="14" y="18">${escapeHtml(truncate(node.label, 21))}</text>
-          <text class="kg-node-type" x="14" y="31">${escapeHtml(typeLabel)}</text>
-          ${blocked ? `<text class="kg-node-flag" x="${NODE_WIDTH - 12}" y="18" text-anchor="middle">!</text>` : ""}
-          <title>${escapeHtml(node.label)}</title>
-        </g>`;
-    }).join("");
-
-    const headers = COLUMN_TITLES.map((title, index) => (
-      placed.columns[index].length
-        ? `<text class="kg-node-type" x="${PADDING + index * COLUMN_STRIDE}" y="${PADDING - 6}">${escapeHtml(title)}</text>`
-        : ""
-    )).join("");
-
-    const legend = root.nodeTypeOrder
-      .filter((type) => model.nodes.some((node) => node.node_type === type))
-      .map((type) => `<span style="--node-type: var(--node-${type})"><i aria-hidden="true"></i>${escapeHtml(root.nodeTypePlural[type])}</span>`)
-      .join("");
-
-    const notice = model.crowded
-      ? `<div class="kg-canvas-overlay kg-note kg-note-info kg-floating" role="status">
-          <span class="kg-note-mark" aria-hidden="true">i</span>
-          <strong>Molti elementi in vista</strong>
-          <span>${root.plural(model.nodes.length, "elemento", "elementi")} e ${root.plural(model.relations.length, "collegamento", "collegamenti")} insieme sono difficili da leggere. Seleziona un elemento e attiva “Solo l’intorno”, oppure filtra per tipo.</span>
-        </div>`
-      : "";
-
-    return `
-      <div class="kg-explorer">
-        <div class="kg-canvas" data-kg-canvas tabindex="0" role="group"
-          aria-label="Mappa del grafo: ${escapeHtml(`${model.nodes.length} elementi, ${model.relations.length} collegamenti`)}">
-          <div class="kg-canvas-inner" style="width: ${placed.width * zoom}px; height: ${placed.height * zoom}px;">
-            <svg width="${placed.width * zoom}" height="${placed.height * zoom}"
-              viewBox="0 0 ${placed.width} ${placed.height}" aria-hidden="true" focusable="false">
-              <defs>
-                <marker id="kg-arrow" markerWidth="7" markerHeight="7" refX="6.5" refY="3.5" orient="auto">
-                  <path class="kg-arrow" d="M0,0 L7,3.5 L0,7 z"></path>
-                </marker>
-                <marker id="kg-arrow-active" markerWidth="7" markerHeight="7" refX="6.5" refY="3.5" orient="auto">
-                  <path class="kg-arrow kg-arrow-active" d="M0,0 L7,3.5 L0,7 z"></path>
-                </marker>
-              </defs>
-              ${headers}${edges}${nodes}
-            </svg>
-          </div>
-        </div>
-        ${notice}
-        ${legend ? `<div class="kg-legend kg-floating">${legend}</div>` : ""}
-        <div class="kg-canvas-controls kg-floating">
-          <button type="button" class="kg-btn kg-btn-quiet kg-btn-icon" data-kg-zoom="out" aria-label="Riduci">−</button>
-          <span class="kg-canvas-zoom" aria-live="off">${Math.round(zoom * 100)}%</span>
-          <button type="button" class="kg-btn kg-btn-quiet kg-btn-icon" data-kg-zoom="in" aria-label="Ingrandisci">+</button>
-          <button type="button" class="kg-btn kg-btn-quiet kg-btn-small" data-kg-zoom="reset">Adatta</button>
-        </div>
-      </div>`;
-  };
-
-  /* ── Interaction ───────────────────────────────────────────────────── */
-
-  /* Selecting repaints the canvas, which destroys the focused element. Remember
-     that the operator was driving from the keyboard so focus can be handed back
-     to the same node afterwards instead of falling to the document. */
-  let keyboardDriven = false;
-
-  root.bindCanvas = function bindCanvas(container, model, onSelect) {
-    const canvas = container.querySelector("[data-kg-canvas]");
-    if (!canvas) return;
-    root.attachPan(canvas);
-
-    canvas.addEventListener("pointerdown", () => { keyboardDriven = false; });
-    canvas.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        keyboardDriven = true;
-        onSelect("", "");
+    /* — trascinamento di un nodo, pan della scena — */
+    let presa = null;
+    svg.addEventListener("pointerdown", (evento) => {
+      if (evento.button !== 0) return;
+      const bersaglio = evento.target.closest("[data-nodo]");
+      svg.setPointerCapture(evento.pointerId);
+      if (bersaglio) {
+        const nodo = perId.get(bersaglio.dataset.nodo);
+        const punto = versoScena(evento.clientX, evento.clientY);
+        presa = { tipo: "nodo", nodo, scartoX: nodo.x - punto.x, scartoY: nodo.y - punto.y, mosso: false };
+        nodo.fx = nodo.x; nodo.fy = nodo.y;
+        bersaglio.classList.add("in-mano");
+      } else {
+        presa = { tipo: "scena", x: evento.clientX, y: evento.clientY, tx, ty, mosso: false };
+        svg.classList.add("in-pan");
       }
     });
 
-    canvas.addEventListener("click", (event) => {
-      const node = event.target.closest("[data-kg-node]");
-      if (node) { onSelect("node", node.dataset.kgNode); return; }
-      const relation = event.target.closest("[data-kg-relation]");
-      if (relation) onSelect("relation", relation.dataset.kgRelation);
+    svg.addEventListener("pointermove", (evento) => {
+      if (!presa) return;
+      presa.mosso = true;
+      if (presa.tipo === "nodo") {
+        const punto = versoScena(evento.clientX, evento.clientY);
+        presa.nodo.fx = punto.x + presa.scartoX;
+        presa.nodo.fy = punto.y + presa.scartoY;
+        simulazione.riscalda(0.22);
+        anima();
+      } else {
+        tx = presa.tx + (evento.clientX - presa.x);
+        ty = presa.ty + (evento.clientY - presa.y);
+        applicaVista();
+      }
     });
 
-    /* Reading order for the keyboard: column by column, top to bottom. */
-    const ordered = Array.from(canvas.querySelectorAll("[data-kg-node]"));
-    const positionOf = (element) => {
-      const transform = element.getAttribute("transform") || "";
-      const match = transform.match(/translate\(([-\d.]+) ([-\d.]+)\)/);
-      return match ? { x: Number(match[1]), y: Number(match[2]) } : { x: 0, y: 0 };
+    const rilascia = (evento) => {
+      if (!presa) return;
+      svg.releasePointerCapture?.(evento.pointerId);
+      if (presa.tipo === "nodo") {
+        svg.querySelector(".in-mano")?.classList.remove("in-mano");
+        /* Il nodo trascinato resta dove l'operatore l'ha messo: la disposizione
+           è una sua decisione, non un effetto della fisica. Doppio clic o
+           "Ridisponi" lo restituiscono alla simulazione. */
+        if (!presa.mosso) { presa.nodo.fx = null; presa.nodo.fy = null; }
+      } else {
+        svg.classList.remove("in-pan");
+      }
+      const eraNodo = presa.tipo === "nodo" && !presa.mosso;
+      const nodoPremuto = presa.nodo;
+      presa = null;
+      ricorda();
+      if (eraNodo) api.onSelezione("nodo", nodoPremuto.id);
+    };
+    svg.addEventListener("pointerup", rilascia);
+    svg.addEventListener("pointercancel", rilascia);
+
+    svg.addEventListener("click", (evento) => {
+      const arco = evento.target.closest("[data-arco]");
+      if (arco && arco.dataset.arco) api.onSelezione("arco", arco.dataset.arco);
+    });
+
+    /* Doppio clic: il nodo torna alla simulazione. */
+    svg.addEventListener("dblclick", (evento) => {
+      const bersaglio = evento.target.closest("[data-nodo]");
+      if (!bersaglio) return;
+      const nodo = perId.get(bersaglio.dataset.nodo);
+      nodo.fx = null; nodo.fy = null;
+      simulazione.riscalda(0.4);
+      anima();
+    });
+
+    svg.addEventListener("wheel", (evento) => {
+      evento.preventDefault();
+      const area = misure();
+      const puntoX = evento.clientX - area.left;
+      const puntoY = evento.clientY - area.top;
+      const fattore = Math.exp(-evento.deltaY * 0.0016);
+      const nuovo = Math.min(2.6, Math.max(0.12, k * fattore));
+      tx = puntoX - ((puntoX - tx) / k) * nuovo;
+      ty = puntoY - ((puntoY - ty) / k) * nuovo;
+      k = nuovo;
+      applicaVista();
+    }, { passive: false });
+
+    /* — tastiera: si passa da un nodo all'altro nella direzione della freccia — */
+    const vicinoNellaDirezione = (partenza, dirX, dirY) => {
+      let migliore = null;
+      let punteggio = Infinity;
+      nodi.forEach((nodo) => {
+        if (nodo === partenza) return;
+        const dx = nodo.x - partenza.x;
+        const dy = nodo.y - partenza.y;
+        const avanti = dx * dirX + dy * dirY;
+        if (avanti <= 12) return;
+        const laterale = Math.abs(dx * dirY - dy * dirX);
+        const costo = avanti + laterale * 2.2;
+        if (costo < punteggio) { punteggio = costo; migliore = nodo; }
+      });
+      return migliore;
     };
 
-    const move = (current, key) => {
-      const here = positionOf(current);
-      const candidates = ordered.filter((element) => element !== current).map((element) => ({
-        element, ...positionOf(element),
-      }));
-      const pick = (filter, score) => candidates.filter(filter).sort((a, b) => score(a) - score(b))[0];
-      if (key === "ArrowDown") return pick((item) => item.x === here.x && item.y > here.y, (item) => item.y);
-      if (key === "ArrowUp") return pick((item) => item.x === here.x && item.y < here.y, (item) => -item.y);
-      if (key === "ArrowRight") return pick((item) => item.x > here.x, (item) => (item.x - here.x) * 1000 + Math.abs(item.y - here.y));
-      if (key === "ArrowLeft") return pick((item) => item.x < here.x, (item) => (here.x - item.x) * 1000 + Math.abs(item.y - here.y));
-      if (key === "Home") return candidates.concat([{ element: current, ...here }]).sort((a, b) => a.x - b.x || a.y - b.y)[0];
-      if (key === "End") return candidates.concat([{ element: current, ...here }]).sort((a, b) => b.x - a.x || b.y - a.y)[0];
-      return null;
+    const daFuoco = (nodo) => {
+      const disegno = disegni.find((voce) => voce.nodo === nodo);
+      if (!disegno) return;
+      disegni.forEach((voce) => voce.gruppo.setAttribute("tabindex", "-1"));
+      disegno.gruppo.setAttribute("tabindex", "0");
+      disegno.gruppo.focus();
+      /* Se il nodo è fuori dall'inquadratura la vista lo raggiunge. */
+      const area = misure();
+      const schermoX = nodo.x * k + tx;
+      const schermoY = nodo.y * k + ty;
+      const margine = 70;
+      if (schermoX < margine) tx += margine - schermoX;
+      if (schermoX > area.width - margine) tx -= schermoX - (area.width - margine);
+      if (schermoY < margine) ty += margine - schermoY;
+      if (schermoY > area.height - margine) ty -= schermoY - (area.height - margine);
+      applicaVista();
     };
 
-    canvas.addEventListener("keydown", (event) => {
-      const current = event.target.closest("[data-kg-node]");
-      if (!current) return;
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        keyboardDriven = true;
-        onSelect("node", current.dataset.kgNode);
+    svg.addEventListener("keydown", (evento) => {
+      const DIREZIONI = {
+        ArrowRight: [1, 0], ArrowLeft: [-1, 0], ArrowDown: [0, 1], ArrowUp: [0, -1],
+      };
+      const corrente = perId.get(
+        (evento.target.closest("[data-nodo]") || {}).dataset?.nodo || api.selezione().id
+      ) || nodi[0];
+      if (evento.key === "Escape") { evento.preventDefault(); api.onSelezione("", ""); return; }
+      if (evento.key === "Enter" || evento.key === " ") {
+        if (!corrente) return;
+        evento.preventDefault();
+        api.onSelezione("nodo", corrente.id);
         return;
       }
-      if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
-      event.preventDefault();
-      keyboardDriven = true;
-      const next = move(current, event.key);
-      if (!next) return;
-      current.setAttribute("tabindex", "-1");
-      next.element.setAttribute("tabindex", "0");
-      next.element.focus();
-      next.element.scrollIntoView({ block: "nearest", inline: "nearest" });
+      if (!DIREZIONI[evento.key] || !corrente) return;
+      evento.preventDefault();
+      const prossimo = vicinoNellaDirezione(corrente, ...DIREZIONI[evento.key]);
+      if (prossimo) daFuoco(prossimo);
     });
 
-    root.delegate(container, "click", "[data-kg-zoom]", (element) => {
-      const action = element.dataset.kgZoom;
-      const next = action === "in" ? state.zoom * 1.25 : action === "out" ? state.zoom / 1.25 : 1;
-      state.zoom = Math.min(2, Math.max(0.4, Number(next.toFixed(3))));
-      root.render({ regions: ["work"] });
+    svg.addEventListener("focus", () => {
+      if (!svg.querySelector('[data-nodo][tabindex="0"]')) {
+        const scelto = perId.get(api.selezione().id) || nodi[0];
+        if (scelto) daFuoco(scelto);
+      }
     });
-  };
 
-  /**
-   * Bring the selected element into view, and give focus back to it when the
-   * operator is navigating by keyboard: a repaint must never drop them out of
-   * the canvas.
-   */
-  root.revealSelection = function revealSelection(container) {
-    if (!state.selection.id) {
-      if (keyboardDriven) container.querySelector('[data-kg-node][tabindex="0"]')?.focus();
-      return;
-    }
-    const target = container.querySelector(
-      `[data-kg-node="${CSS.escape(state.selection.id)}"], [data-kg-relation="${CSS.escape(state.selection.id)}"]`
-    );
-    if (!target) return;
-    if (target.scrollIntoView) target.scrollIntoView({ block: "nearest", inline: "nearest" });
-    if (keyboardDriven && target.hasAttribute("data-kg-node")) target.focus();
+    /* — evidenziazione: solo classi, nessuna ricostruzione — */
+    const evidenzia = (selezione) => {
+      const intorno = new Set();
+      if (selezione.kind === "node") {
+        intorno.add(selezione.id);
+        simulazione.legami.forEach((legame) => {
+          if (legame.da.id === selezione.id) intorno.add(legame.a.id);
+          if (legame.a.id === selezione.id) intorno.add(legame.da.id);
+        });
+      } else if (selezione.kind === "relation") {
+        const arco = archi.find((voce) => voce.id === selezione.id);
+        if (arco) { intorno.add(arco.da.id); intorno.add(arco.a.id); }
+      }
+      const attivo = intorno.size > 0;
+      disegni.forEach(({ gruppo, nodo }) => {
+        gruppo.classList.toggle("scelto", selezione.kind === "node" && nodo.id === selezione.id);
+        gruppo.classList.toggle("spento", attivo && !intorno.has(nodo.id));
+      });
+      archi.forEach(({ gruppo, linea, da, a, id }) => {
+        const vivoArco = selezione.kind === "relation"
+          ? id === selezione.id
+          : attivo && intorno.has(da.id) && intorno.has(a.id);
+        gruppo.classList.toggle("vivo", Boolean(vivoArco));
+        gruppo.classList.toggle("spento", attivo && !vivoArco);
+        linea.setAttribute("marker-end", vivoArco ? "url(#freccia-viva)" : "url(#freccia)");
+      });
+    };
+
+    const osservatore = new ResizeObserver(() => applicaVista());
+    osservatore.observe(contenitore);
+
+    return {
+      evidenzia,
+      inquadra,
+      zoom(passoZoom) {
+        const area = misure();
+        const nuovo = Math.min(2.6, Math.max(0.12, k * passoZoom));
+        tx = area.width / 2 - ((area.width / 2 - tx) / k) * nuovo;
+        ty = area.height / 2 - ((area.height / 2 - ty) / k) * nuovo;
+        k = nuovo;
+        applicaVista();
+      },
+      ridisponi() {
+        nodi.forEach((nodo) => { nodo.fx = null; nodo.fy = null; });
+        root.dimenticaPosizioni(dati.chiaveFonte);
+        simulazione.riscalda(1);
+        anima();
+        window.setTimeout(inquadra, 700);
+      },
+      distruggi() {
+        vivo = false;
+        if (animazione) window.cancelAnimationFrame(animazione);
+        osservatore.disconnect();
+        ricorda();
+        svg.remove();
+      },
+    };
   };
 })();

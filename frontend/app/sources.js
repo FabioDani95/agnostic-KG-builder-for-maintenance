@@ -2,269 +2,251 @@
   "use strict";
   const root = window.KGFoundation = window.KGFoundation || {};
   const state = root.state;
-  const escapeHtml = root.escapeHtml;
+  const esc = root.escapeHtml;
+  const t = root.t;
+  const n = root.n;
 
   state.sourceBusy = false;
   state.sourceError = "";
   state.sourceErrorDetail = null;
   state.sourceSelectionValid = false;
 
-  const supportedExtensions = new Set(["pdf", "csv", "xlsx", "json", "jsonl"]);
-  const fileDigests = new WeakMap();
+  const ESTENSIONI = new Set(["pdf", "csv", "xlsx", "json", "jsonl"]);
+  const AUTORITA = ["normative", "observational", "operational", "informal"];
+  const impronte = new WeakMap();
 
-  const AUTHORITY_LABELS = {
-    normative: "Normativa",
-    observational: "Osservazionale",
-    operational: "Operativa",
-    informal: "Informale",
+  /* --------------------------------------------------------- fonti attive */
+  root.fileSorgenti = () => (state.sources || []).filter((s) => s.source_kind !== "operator_input");
+
+  root.fonteAttiva = function fonteAttiva() {
+    const fonti = root.fileSorgenti();
+    if (!fonti.length) return null;
+    return fonti.find((f) => f.source_id === state.activeSourceId) || fonti[0];
   };
 
-  /* ── Client-side checks: a file the operator cannot use never leaves the
-        browser, and the error says what is still intact. ───────────────── */
-
-  const selectionError = (title, cause, action, technicalDetail) => ({
-    title,
-    detail: {
-      cause,
-      preserved: "Il file non è stato inviato e i documenti già caricati non sono stati modificati.",
-      action,
-      technical_detail: technicalDetail,
-      retryability: "Puoi scegliere subito un altro file.",
-    },
-  });
-
-  const extensionOf = (fileName) => {
-    const parts = String(fileName || "").toLowerCase().split(".");
-    return parts.length > 1 ? parts.pop() : "";
+  root.scegliFonte = function scegliFonte(sourceId) {
+    if (state.activeSourceId === sourceId) return;
+    state.activeSourceId = sourceId;
+    root.clearSelection();
+    state.rejectingSourceId = "";
+    if (state.view === "confronto") state.view = "mappa";
+    root.render();
   };
 
-  const digestFile = async (file) => {
-    if (!fileDigests.has(file)) {
-      fileDigests.set(file, window.crypto.subtle.digest("SHA-256", await file.arrayBuffer()).then((buffer) => (
-        Array.from(new Uint8Array(buffer), (byte) => byte.toString(16).padStart(2, "0")).join("")
-      )));
-    }
-    return fileDigests.get(file);
-  };
-
-  const validateSelection = async (files) => {
-    const unsupported = files.find((file) => !supportedExtensions.has(extensionOf(file.name)));
-    if (unsupported) {
-      return selectionError(
-        "Formato non supportato",
-        `“${unsupported.name}” non è un file ammesso.`,
-        "Scegli un file PDF, CSV, XLSX, JSON o JSONL.",
-        `UNSUPPORTED_SOURCE_SUFFIX .${extensionOf(unsupported.name) || "missing"}`
-      );
-    }
-    const activeByDigest = new Map(
-      root.fileSources().filter((source) => source.sha256).map((source) => [source.sha256, source])
-    );
-    const selectedByDigest = new Map();
-    for (const file of files) {
-      const digest = await digestFile(file);
-      const activeSource = activeByDigest.get(digest);
-      if (activeSource) {
-        return selectionError(
-          "Documento già caricato",
-          `“${file.name}” coincide con “${activeSource.file_name}”, già presente nell’elenco.`,
-          "Non serve caricarlo di nuovo. Se vuoi sostituirlo, rimuovi prima il documento presente.",
-          `DUPLICATE_SOURCE_SHA256 ${digest}`
-        );
-      }
-      if (selectedByDigest.has(digest)) {
-        return selectionError(
-          "Documento selezionato due volte",
-          `“${file.name}” e “${selectedByDigest.get(digest)}” hanno lo stesso contenuto.`,
-          "Mantieni una sola copia nella selezione e riprova.",
-          `DUPLICATE_SELECTION_SHA256 ${digest}`
-        );
-      }
-      selectedByDigest.set(digest, file.name);
-    }
-    return null;
-  };
-
-  root.loadSources = async function loadSources() {
+  root.caricaFonti = async function caricaFonti() {
     if (!state.workspace) return;
     state.sources = await root.api(`/api/workspaces/${state.workspace.workspace.workspace_id}/sources`);
   };
 
-  /* ── Phase controller ──────────────────────────────────────────────── */
+  /* ------ controlli lato browser: un file inutilizzabile non parte mai ---- */
+  const problema = (titolo, causa, azione, dettaglio) => ({
+    titolo,
+    dettaglio: { causa, invariato: t("err.invariato"), azione, tecnico: dettaglio, ritenta: t("err.ritenta") },
+  });
 
-  const errorBlock = () => (state.sourceError ? `
-    <div class="kg-note kg-note-danger" role="alert">
-      <span class="kg-note-mark" aria-hidden="true">!</span>
-      <strong>${escapeHtml(state.sourceError)}</strong>
-      ${state.sourceErrorDetail ? `
-        <span>${escapeHtml(state.sourceErrorDetail.cause)}</span>
-        <span><b>Cosa è rimasto invariato:</b> ${escapeHtml(state.sourceErrorDetail.preserved)}</span>
-        <span><b>Cosa puoi fare:</b> ${escapeHtml(state.sourceErrorDetail.action)}</span>
-        <span>${escapeHtml(state.sourceErrorDetail.retryability)}</span>
-        <details class="kg-disclosure"><summary>Dettaglio tecnico</summary>
-          <pre class="kg-evidence-raw">${escapeHtml(state.sourceErrorDetail.technical_detail)}</pre></details>` : ""}
+  const estensione = (nome) => {
+    const parti = String(nome || "").toLowerCase().split(".");
+    return parti.length > 1 ? parti.pop() : "";
+  };
+
+  const impronta = async (file) => {
+    if (!impronte.has(file)) {
+      impronte.set(file, window.crypto.subtle.digest("SHA-256", await file.arrayBuffer()).then((buffer) => (
+        Array.from(new Uint8Array(buffer), (byte) => byte.toString(16).padStart(2, "0")).join("")
+      )));
+    }
+    return impronte.get(file);
+  };
+
+  const controlla = async (files) => {
+    const rifiutato = files.find((file) => !ESTENSIONI.has(estensione(file.name)));
+    if (rifiutato) {
+      return problema(t("err.formato"), t("err.formatoCausa", { f: rifiutato.name }), t("err.formatoAzione"),
+        `UNSUPPORTED_SOURCE_SUFFIX .${estensione(rifiutato.name) || "missing"}`);
+    }
+    const attive = new Map(root.fileSorgenti().filter((s) => s.sha256).map((s) => [s.sha256, s]));
+    const scelte = new Map();
+    for (const file of files) {
+      const digest = await impronta(file);
+      const gia = attive.get(digest);
+      if (gia) {
+        return problema(t("err.duplicato"), t("err.duplicatoCausa", { f: file.name, g: gia.file_name }),
+          t("err.duplicatoAzione"), `DUPLICATE_SOURCE_SHA256 ${digest}`);
+      }
+      if (scelte.has(digest)) {
+        return problema(t("err.dueVolte"), t("err.dueVolteCausa", { f: file.name, g: scelte.get(digest) }),
+          t("err.dueVolteAzione"), `DUPLICATE_SELECTION_SHA256 ${digest}`);
+      }
+      scelte.set(digest, file.name);
+    }
+    return null;
+  };
+
+  const bloccoErrore = () => (state.sourceError ? `
+    <div class="nota errore" role="alert" style="margin-top:14px">
+      <span class="segno" aria-hidden="true">!</span>
+      <strong>${esc(state.sourceError)}</strong>
+      ${state.sourceErrorDetail ? `<span>
+        ${esc(state.sourceErrorDetail.causa)}<br>
+        <b>${esc(t("err.etichettaInvariato"))}</b> ${esc(state.sourceErrorDetail.invariato)}<br>
+        <b>${esc(t("err.etichettaAzione"))}</b> ${esc(state.sourceErrorDetail.azione)}<br>
+        ${esc(state.sourceErrorDetail.ritenta)}
+        <details class="disclosure"><summary>${esc(t("err.dettaglio"))}</summary>
+          <pre class="grezzo">${esc(state.sourceErrorDetail.tecnico)}</pre></details>
+      </span>` : ""}
     </div>` : "");
 
+  /* --------------------------------------------------------------- fase -- */
   root.phases.documents = {
-    label: "Documenti",
-    showRail: true,
-    showInspector: true,
+    mostraFonti: true,
+    mostraIspettore: true,
 
-    railFacts(source) {
-      return root.railFacts(
-        [{ text: AUTHORITY_LABELS[source.authority] || "Documento" }],
-        root.railBadge("Caricato", "success")
-      );
-    },
+    titolo: () => ({
+      titolo: t("doc.titolo"),
+      chips: `<span class="chip"><b>${root.fileSorgenti().length}</b> ${esc(t("nav.fonti").toLocaleLowerCase())}</span>`,
+    }),
 
-    renderWork() {
+    metaFonte: () => "",
+
+    renderLavoro() {
       if (!state.workspace) {
-        return `<div class="kg-state"><strong>Prima identifica la macchina</strong>
-          <p>I documenti appartengono a una macchina: salvala per poterli caricare.</p>
-          <button type="button" class="kg-btn kg-btn-primary" data-kg-goto="machine">Vai alla macchina</button></div>`;
+        return `<div class="stato-pagina"><strong>${esc(t("doc.primaMacchina"))}</strong>
+          <p>${esc(t("doc.primaMacchinaTesto"))}</p>
+          <button type="button" class="btn primario" data-vai="machine">${esc(t("doc.vaiMacchina"))}</button></div>`;
       }
-      const sources = root.fileSources();
+      const fonti = root.fileSorgenti();
       return `
-        <div class="kg-work-head">
-          <div class="kg-work-head-row"><h1>Documenti della macchina</h1></div>
-          <p>Carica i manuali e i registri che riguardano questa macchina. Un documento già presente viene bloccato prima dell'invio.</p>
-        </div>
-        <div class="kg-work-scroll"><div class="kg-work-pad">
-          <form class="kg-upload" id="source-upload">
-            <label class="kg-file-picker">
-              <span class="kg-label-with-info">File da caricare ${root.infoTip("formati-documento", "Formati accettati", "Puoi scegliere uno o più file PDF, CSV, XLSX, JSON o JSONL.")}</span>
+        <div class="intestazione-lavoro"><p>${esc(t("doc.sotto"))}</p></div>
+        <div class="lavoro-scorri"><div class="lavoro-pad">
+          <form class="caricamento card entra" id="source-upload">
+            <label class="selettore-file">
+              <span class="con-info">${esc(t("doc.file"))} ${root.info("formati-documento", t("doc.file"), t("doc.fileI"))}</span>
               <input type="file" name="file" required multiple accept=".pdf,.csv,.xlsx,.json,.jsonl">
-              <span class="kg-file-control">
-                <b>Scegli file</b>
-                <small data-source-file-name>Nessun file selezionato</small>
-              </span>
+              <span class="controllo-file"><b>${esc(t("doc.scegli"))}</b>
+                <small data-nome-file>${esc(t("doc.nessunFile"))}</small></span>
             </label>
-            <label class="kg-field">
-              <span class="kg-label-with-info">Che tipo di documento è? ${root.infoTip("tipo-documento", "Tipo di documento", "Normativa: prescrive regole. Osservazionale: registra misure o controlli. Operativa: descrive attività da eseguire. Informale: contiene appunti o indicazioni non ufficiali.")}</span>
-              <select class="kg-select" name="authority">
-                ${Object.entries(AUTHORITY_LABELS).map(([value, label]) => `<option value="${value}">${escapeHtml(label)}</option>`).join("")}
+            <label class="campo">
+              <span class="con-info">${esc(t("doc.tipo"))} ${root.info("tipo-documento", t("doc.tipo"), t("doc.tipoI"))}</span>
+              <select name="authority">
+                ${AUTORITA.map((valore) => `<option value="${valore}">${esc(t(`aut.${valore}`))}</option>`).join("")}
               </select>
             </label>
-            <button type="submit" class="kg-btn kg-btn-primary"
-              ${(state.sourceBusy || !state.sourceSelectionValid) ? "disabled" : ""}>${state.sourceBusy ? "Caricamento…" : "Carica documento"}</button>
+            <button type="submit" class="btn primario"
+              ${(state.sourceBusy || !state.sourceSelectionValid) ? "disabled" : ""}>${esc(state.sourceBusy ? t("doc.caricando") : t("doc.carica"))}</button>
           </form>
-          ${errorBlock()}
-          <div class="kg-list" style="margin-top: var(--space-4)">
-            ${sources.length ? sources.map((source) => `
-              <div class="kg-doc" data-source-id="${escapeHtml(source.source_id)}">
-                <div class="kg-doc-identity">
-                  <strong>${escapeHtml(source.file_name)}</strong>
-                  <span class="kg-caption">${escapeHtml(String(source.source_kind).toUpperCase())} · ${escapeHtml(AUTHORITY_LABELS[source.authority] || source.authority)}</span>
+          ${bloccoErrore()}
+          <div class="lista" style="margin-top:16px">
+            ${fonti.length ? fonti.map((fonte) => `
+              <div class="documento entra">
+                <div class="documento-identita">
+                  <strong>${esc(fonte.file_name)}</strong>
+                  <small>${esc(String(fonte.source_kind).toUpperCase())} · ${esc(t(`aut.${fonte.authority}`))}</small>
                 </div>
-                <div class="kg-doc-actions">
-                  <button type="button" class="kg-btn kg-btn-quiet kg-btn-small" data-kg-inspect="${escapeHtml(source.source_id)}"
-                    aria-label="Dettagli di ${escapeHtml(source.file_name)}">Dettagli</button>
-                  <button type="button" class="kg-btn kg-btn-danger kg-btn-small source-remove" data-source-id="${escapeHtml(source.source_id)}"
-                    aria-label="Rimuovi file ${escapeHtml(source.file_name)}"
-                    ${state.sourceBusy ? "disabled" : ""}>Rimuovi</button>
+                <div class="documento-azioni">
+                  <button type="button" class="btn quieto piccolo" data-ispeziona="${esc(fonte.source_id)}"
+                    aria-label="${esc(t("doc.dettagliFile", { f: fonte.file_name }))}">${esc(t("ui.dettagli"))}</button>
+                  <button type="button" class="btn pericolo piccolo togli" data-source-id="${esc(fonte.source_id)}"
+                    aria-label="${esc(t("doc.rimuoviFile", { f: fonte.file_name }))}"
+                    ${state.sourceBusy ? "disabled" : ""}>${esc(t("ui.rimuovi"))}</button>
                 </div>
               </div>`).join("")
-              : `<div class="kg-empty"><strong>Nessun documento</strong><p>Scegli un file qui sopra per iniziare.</p></div>`}
+              : `<div class="vuoto"><strong>${esc(t("doc.vuoto"))}</strong><p>${esc(t("doc.vuotoTesto"))}</p></div>`}
           </div>
         </div></div>`;
     },
 
-    bindWork(container) {
-      root.delegate(container, "click", "[data-kg-goto]", (element) => root.goToPhase(element.dataset.kgGoto));
-      root.delegate(container, "click", "[data-kg-inspect]", (element) => {
-        root.setActiveSource(element.dataset.kgInspect);
-        root.applySelection("source", element.dataset.kgInspect);
+    bindLavoro(contenitore) {
+      root.delegate(contenitore, "click", "[data-vai]", (elemento) => root.vaiAllaFase(elemento.dataset.vai));
+      root.delegate(contenitore, "click", "[data-ispeziona]", (elemento) => {
+        root.scegliFonte(elemento.dataset.ispeziona);
+        root.applicaSelezione("source", elemento.dataset.ispeziona);
       });
 
-      const upload = container.querySelector("#source-upload");
-      if (!upload) return;
-      const fileInput = upload.querySelector('input[type="file"]');
-      const fileName = upload.querySelector("[data-source-file-name]");
-      const submitButton = upload.querySelector('button[type="submit"]');
+      const modulo = contenitore.querySelector("#source-upload");
+      if (!modulo) return;
+      const input = modulo.querySelector('input[type="file"]');
+      const nome = modulo.querySelector("[data-nome-file]");
+      const invia = modulo.querySelector('button[type="submit"]');
 
-      fileInput.addEventListener("change", async () => {
-        const files = Array.from(fileInput.files || []);
+      input.addEventListener("change", async () => {
+        const files = Array.from(input.files || []);
         state.sourceSelectionValid = false;
-        submitButton.disabled = true;
-        if (!files.length) { fileName.textContent = "Nessun file selezionato"; return; }
-        fileName.textContent = "Controllo dei file…";
-        let issue;
-        try {
-          issue = await validateSelection(files);
-        } catch (error) {
-          issue = selectionError(
-            "Impossibile controllare il file",
-            "Il browser non è riuscito a calcolare l’impronta del documento.",
-            "Seleziona nuovamente il file e riprova.",
-            `CLIENT_FILE_DIGEST_FAILED ${error.message}`
-          );
+        invia.disabled = true;
+        if (!files.length) { nome.textContent = t("doc.nessunFile"); return; }
+        nome.textContent = t("doc.controllo");
+        let guaio;
+        try { guaio = await controlla(files); } catch (errore) {
+          guaio = problema(t("err.impronta"), t("err.improntaCausa"), t("err.improntaAzione"),
+            `CLIENT_FILE_DIGEST_FAILED ${errore.message}`);
         }
-        if (issue) {
-          state.sourceError = issue.title;
-          state.sourceErrorDetail = issue.detail;
-          fileInput.value = "";
-          root.render({ regions: ["work"] });
+        if (guaio) {
+          state.sourceError = guaio.titolo;
+          state.sourceErrorDetail = guaio.dettaglio;
+          input.value = "";
+          root.render({ regioni: ["lavoro"] });
           return;
         }
         state.sourceError = "";
         state.sourceErrorDetail = null;
-        container.querySelector(".kg-note-danger")?.remove();
+        contenitore.querySelector(".nota.errore")?.remove();
         state.sourceSelectionValid = true;
-        submitButton.disabled = false;
-        fileName.textContent = files.length > 1 ? `${files.length} file selezionati` : files[0].name;
+        invia.disabled = false;
+        nome.textContent = files.length > 1 ? t("doc.nFile", { n: files.length }) : files[0].name;
       });
 
-      upload.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const files = Array.from(fileInput.files || []);
-        const authority = upload.querySelector('[name="authority"]').value;
+      modulo.addEventListener("submit", async (evento) => {
+        evento.preventDefault();
+        const files = Array.from(input.files || []);
+        const authority = modulo.querySelector('[name="authority"]').value;
         if (!files.length) return;
-        const issue = await validateSelection(files);
-        if (issue) {
+        const guaio = await controlla(files);
+        if (guaio) {
           state.sourceSelectionValid = false;
-          state.sourceError = issue.title;
-          state.sourceErrorDetail = issue.detail;
-          fileInput.value = "";
-          root.render({ regions: ["work"] });
+          state.sourceError = guaio.titolo;
+          state.sourceErrorDetail = guaio.dettaglio;
+          input.value = "";
+          root.render({ regioni: ["lavoro"] });
           return;
         }
         state.sourceBusy = true;
         state.sourceSelectionValid = false;
         state.sourceError = "";
         state.sourceErrorDetail = null;
-        root.render({ regions: ["work"] });
+        root.render({ regioni: ["lavoro"] });
         try {
           for (const file of files) {
-            const body = new FormData();
-            body.append("file", file);
-            body.append("authority", authority);
-            await root.api(`/api/workspaces/${state.workspace.workspace.workspace_id}/sources`, { method: "POST", body });
+            const corpo = new FormData();
+            corpo.append("file", file);
+            corpo.append("authority", authority);
+            await root.api(`/api/workspaces/${state.workspace.workspace.workspace_id}/sources`, { method: "POST", body: corpo });
           }
-          await root.loadSources();
-        } catch (error) {
-          state.sourceError = error.message;
-          state.sourceErrorDetail = error.detail || null;
+          await root.caricaFonti();
+        } catch (errore) {
+          state.sourceError = errore.message;
+          state.sourceErrorDetail = errore.detail ? {
+            causa: errore.detail.cause, invariato: errore.detail.preserved,
+            azione: errore.detail.action, tecnico: errore.detail.technical_detail,
+            ritenta: errore.detail.retryability,
+          } : null;
         } finally {
           state.sourceBusy = false;
           root.render();
         }
       });
 
-      root.delegate(container, "click", ".source-remove", async (element) => {
-        const sourceId = element.dataset.sourceId;
-        const source = state.sources.find((item) => item.source_id === sourceId);
-        const label = source && source.file_name ? source.file_name : "questo file";
-        if (!window.confirm(`Rimuovere “${label}”? Potrai ricaricarlo in seguito.`)) return;
+      root.delegate(contenitore, "click", ".togli", async (elemento) => {
+        const sourceId = elemento.dataset.sourceId;
+        const fonte = state.sources.find((s) => s.source_id === sourceId);
+        if (!window.confirm(t("doc.confermaRimozione", { f: fonte ? fonte.file_name : "" }))) return;
         state.sourceBusy = true;
         state.sourceError = "";
         state.sourceErrorDetail = null;
-        element.disabled = true;
+        elemento.disabled = true;
         try {
           await root.api(`/api/sources/${sourceId}`, { method: "DELETE" });
-          await root.loadSources();
-        } catch (error) {
-          state.sourceError = error.message;
-          state.sourceErrorDetail = error.detail || null;
+          await root.caricaFonti();
+        } catch (errore) {
+          state.sourceError = errore.message;
         } finally {
           state.sourceBusy = false;
           root.render();
@@ -272,59 +254,46 @@
       });
     },
 
-    renderInspector() {
-      const source = root.activeSource();
-      if (!source) {
-        return `<div class="kg-inspector-empty"><strong>Nessun documento</strong><p>Carica un file per vederne i dettagli.</p></div>`;
+    renderIspettore() {
+      const fonte = root.fonteAttiva();
+      if (!fonte) {
+        return `<div class="ispettore-vuoto"><strong>${esc(t("doc.nessunDettaglio"))}</strong>
+          <p>${esc(t("doc.nessunDettaglioTesto"))}</p></div>`;
       }
       return `
-        <div class="kg-inspector-inner">
-          <button type="button" class="kg-btn kg-btn-quiet kg-btn-small kg-inspector-close" data-kg-inspector-close>Chiudi dettaglio</button>
-          <div class="kg-inspector-identity">
-            <span class="kg-inspector-kind">Documento</span>
-            <h2>${escapeHtml(source.file_name)}</h2>
+        <div class="ispettore-dentro">
+          <button type="button" class="btn quieto piccolo chiudi-ispettore" data-chiudi-ispettore>${esc(t("ui.chiudiDettaglio"))}</button>
+          <div class="ispettore-identita">
+            <span class="ispettore-tipo">${esc(t("isp.documento"))}</span>
+            <h3>${esc(fonte.file_name)}</h3>
           </div>
-          <section class="kg-block">
-            <h3>Come sarà usato</h3>
-            <p class="kg-secondary">${escapeHtml({
-              normative: "Documento normativo: prescrive regole e prevale sulle osservazioni.",
-              observational: "Documento osservazionale: registra misure e controlli reali.",
-              operational: "Documento operativo: descrive attività da eseguire.",
-              informal: "Documento informale: contiene appunti non ufficiali.",
-            }[source.authority] || "Documento della macchina.")}</p>
-          </section>
-          <section class="kg-block">
-            <h3>Dimensione</h3>
-            <p class="kg-secondary">${escapeHtml(`${(Number(source.size_bytes || 0) / 1024).toFixed(1)} kB`)}</p>
-          </section>
-          <details class="kg-disclosure">
-            <summary>Dati tecnici del file</summary>
-            <p class="kg-secondary">Impronta digitale del contenuto</p>
-            <pre class="kg-evidence-raw">${escapeHtml(source.sha256)}</pre>
-          </details>
+          <section class="blocco"><h4>${esc(t("doc.comeUsato"))}</h4>
+            <p>${esc(t(`aut.${fonte.authority}.d`))}</p></section>
+          <section class="blocco"><h4>${esc(t("doc.dimensione"))}</h4>
+            <p>${esc(`${(Number(fonte.size_bytes || 0) / 1024).toFixed(1)} kB`)}</p></section>
+          <details class="disclosure"><summary>${esc(t("doc.tecnici"))}</summary>
+            <p class="blocco-vuoto">${esc(t("doc.impronta"))}</p>
+            <pre class="grezzo">${esc(fonte.sha256)}</pre></details>
         </div>`;
     },
 
-    renderDecision() {
+    renderDecisione() {
       if (!state.workspace) return "";
-      const total = root.fileSources().length;
-      if (!total) {
-        return `<div class="kg-decision-row"><div class="kg-decision-text">
-          <strong>Nessun documento caricato</strong>
-          <span>Serve almeno un file per costruire il grafo di questa macchina.</span>
-        </div></div>`;
+      const totale = root.fileSorgenti().length;
+      if (!totale) {
+        return `<div class="decisione-riga"><div class="decisione-testo">
+          <strong>${esc(t("doc.nessunCaricato"))}</strong><span>${esc(t("doc.nessunCaricatoTesto"))}</span></div></div>`;
       }
-      return `<div class="kg-decision-row"><div class="kg-decision-text">
-        <strong>${escapeHtml(root.plural(total, "documento caricato", "documenti caricati"))}</strong>
-        <span>Il passo successivo mostra come tabelle e colonne sono state interpretate, prima di costruire qualsiasi grafo.</span>
-      </div>
-      <div class="kg-decision-actions">
-        <button type="button" class="kg-btn kg-btn-primary" data-kg-goto="structure">Continua alla struttura</button>
-      </div></div>`;
+      return `<div class="decisione-riga">
+        <div class="decisione-testo"><strong>${esc(n(totale, "doc.caricati"))}</strong>
+          <span>${esc(t("doc.prossimo"))}</span></div>
+        <div class="decisione-azioni">
+          <button type="button" class="btn primario" data-vai="structure">${esc(t("doc.continua"))}</button>
+        </div></div>`;
     },
 
-    bindDecision(container) {
-      root.delegate(container, "click", "[data-kg-goto]", (element) => root.goToPhase(element.dataset.kgGoto));
+    bindDecisione(contenitore) {
+      root.delegate(contenitore, "click", "[data-vai]", (elemento) => root.vaiAllaFase(elemento.dataset.vai));
     },
   };
 })();

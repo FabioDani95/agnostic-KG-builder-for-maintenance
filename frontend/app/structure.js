@@ -2,462 +2,376 @@
   "use strict";
   const root = window.KGFoundation = window.KGFoundation || {};
   const state = root.state;
-  const escapeHtml = root.escapeHtml;
+  const esc = root.escapeHtml;
+  const t = root.t;
+  const n = root.n;
 
-  const workspaceId = () => state.workspace.workspace.workspace_id;
-  const profiles = () => (state.structure && state.structure.profiles) || [];
-  const profileFor = (sourceId) => profiles().find((item) => item.source_id === sourceId) || null;
-  const activeProfile = () => {
-    const source = root.activeSource();
-    return source ? profileFor(source.source_id) : null;
+  const wsId = () => state.workspace.workspace.workspace_id;
+  const profili = () => (state.structure && state.structure.profiles) || [];
+  const profiloDi = (sourceId) => profili().find((p) => p.source_id === sourceId) || null;
+  const profiloAttivo = () => {
+    const fonte = root.fonteAttiva();
+    return fonte ? profiloDi(fonte.source_id) : null;
   };
-  const openException = () => ((state.structure && state.structure.exceptions) || [])
-    .find((item) => item.status === "open") || null;
-  const proposedJoin = () => ((state.structure && state.structure.joins) || [])
-    .find((item) => item.status === "proposed") || null;
+  const eccezioneAperta = () => ((state.structure && state.structure.exceptions) || [])
+    .find((e) => e.status === "open") || null;
+  const joinProposto = () => ((state.structure && state.structure.joins) || [])
+    .find((j) => j.status === "proposed") || null;
 
-  const load = async (start) => {
+  const carica = async () => {
     if (!state.workspace) return;
     state.structureLoading = true;
     state.structureError = "";
     try {
       state.structure = await root.api(
-        `/api/workspaces/${encodeURIComponent(workspaceId())}/g2/preparation`,
-        { method: start === false ? "GET" : "POST" }
+        `/api/workspaces/${encodeURIComponent(wsId())}/g2/preparation`, { method: "POST" }
       );
-    } catch (error) {
-      state.structureError = error.message;
+    } catch (errore) {
+      state.structureError = errore.message;
     } finally {
       state.structureLoading = false;
     }
   };
 
-  const run = async (action) => {
+  const esegui = async (azione) => {
     state.structureBusy = true;
     state.structureError = "";
-    root.render({ regions: ["decision"] });
-    try {
-      state.structure = await action();
-    } catch (error) {
-      state.structureError = error.message;
-    } finally {
-      state.structureBusy = false;
-      root.render();
-    }
+    root.render({ regioni: ["decisione"] });
+    try { state.structure = await azione(); } catch (errore) { state.structureError = errore.message; }
+    finally { state.structureBusy = false; root.render(); }
   };
 
-  /* ── The one decision that needs a human, at the top of the pane ───── */
+  /* ------- l'unica decisione che richiede un umano, in cima al pannello --- */
+  const cartaEccezione = (problema) => {
+    const carico = problema.payload || {};
+    const testa = `
+      <h3 style="margin:0;font-size:17px;font-weight:640;letter-spacing:-.02em">${esc(problema.title)}</h3>
+      <p>${esc(problema.explanation)}</p>
+      <p class="voce-meta">${esc(t("str.riguarda", { f: problema.source_name }))}</p>`;
 
-  const exceptionCard = (issue) => {
-    const payload = issue.payload || {};
-    const heading = `
-      <h2>${escapeHtml(issue.title)}</h2>
-      <p>${escapeHtml(issue.explanation)}</p>
-      <p class="kg-secondary">Riguarda il file “${escapeHtml(issue.source_name)}”. È l'unica scelta aperta in questo momento.</p>`;
-
-    if (issue.exception_kind === "mapping_ambiguous") {
-      const choices = payload.choices || Object.keys(root.roleLabels);
-      return `
-        <form class="kg-decision-card" data-kg-exception="${escapeHtml(issue.exception_id)}">
-          ${heading}
-          ${(payload.examples || []).length
-            ? `<div><p class="kg-caption">Valori trovati nella colonna</p><div class="kg-examples">${payload.examples.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div></div>`
-            : ""}
-          <label class="kg-field" style="max-width: 24rem">
-            <span>Che informazione contiene questa colonna?</span>
-            <select class="kg-select" name="role" required>
-              <option value="">Scegli…</option>
-              ${choices.map((role) => `<option value="${escapeHtml(role)}">${escapeHtml(root.roleLabels[role] || role)}</option>`).join("")}
-            </select>
-          </label>
-          <div class="kg-decision-card-actions">
-            <button type="submit" class="kg-btn kg-btn-primary" ${state.structureBusy ? "disabled" : ""}>Salva e continua</button>
-          </div>
-        </form>`;
+    if (problema.exception_kind === "mapping_ambiguous") {
+      const scelte = carico.choices || [];
+      return `<form class="card entra" data-eccezione="${esc(problema.exception_id)}" style="display:grid;gap:12px">
+        ${testa}
+        ${(carico.examples || []).length ? `<div>
+          <p class="voce-meta">${esc(t("str.valoriTrovati"))}</p>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:6px">
+            ${carico.examples.map((v) => `<span class="codice">${esc(v)}</span>`).join("")}</div></div>` : ""}
+        <label class="campo" style="max-width:24rem"><span>${esc(t("str.cheContiene"))}</span>
+          <select name="role" required>
+            <option value="">${esc(t("str.scegli"))}</option>
+            ${scelte.map((r) => `<option value="${esc(r)}">${esc(root.etichettaRuolo(r))}</option>`).join("")}
+          </select></label>
+        <div><button type="submit" class="btn primario" ${state.structureBusy ? "disabled" : ""}>${esc(t("str.salvaContinua"))}</button></div>
+      </form>`;
     }
-
-    if (issue.exception_kind === "hidden_sheet") {
-      return `
-        <section class="kg-decision-card" data-kg-exception="${escapeHtml(issue.exception_id)}">
-          ${heading}
-          <div class="kg-decision-card-actions">
-            <button type="button" class="kg-btn kg-btn-primary" data-kg-include="false" ${state.structureBusy ? "disabled" : ""}>Lascialo escluso</button>
-            <button type="button" class="kg-btn kg-btn-secondary" data-kg-include="true" ${state.structureBusy ? "disabled" : ""}>Includi il foglio</button>
-          </div>
-        </section>`;
+    if (problema.exception_kind === "hidden_sheet") {
+      return `<section class="card entra" data-eccezione="${esc(problema.exception_id)}" style="display:grid;gap:12px">
+        ${testa}
+        <div style="display:flex;gap:9px;flex-wrap:wrap">
+          <button type="button" class="btn primario" data-includi="false" ${state.structureBusy ? "disabled" : ""}>${esc(t("str.lasciaEscluso"))}</button>
+          <button type="button" class="btn secondario" data-includi="true" ${state.structureBusy ? "disabled" : ""}>${esc(t("str.includiFoglio"))}</button>
+        </div></section>`;
     }
-
-    if (issue.severity === "warning") {
-      return `
-        <section class="kg-decision-card" data-kg-exception="${escapeHtml(issue.exception_id)}">
-          ${heading}
-          <div class="kg-decision-card-actions">
-            <button type="button" class="kg-btn kg-btn-primary" data-kg-acknowledge ${state.structureBusy ? "disabled" : ""}>Ho capito, continua</button>
-          </div>
-        </section>`;
-    }
-
-    return `
-      <section class="kg-decision-card">
-        ${heading}
-        <div class="kg-note kg-note-danger">
-          <span class="kg-note-mark" aria-hidden="true">!</span>
-          <strong>Questo file va sostituito</strong>
-          <span>Non può essere letto in modo affidabile. Torna ai documenti, rimuovilo e caricane una versione corretta.</span>
-        </div>
-        <div class="kg-decision-card-actions">
-          <button type="button" class="kg-btn kg-btn-secondary" data-kg-goto="documents">Vai ai documenti</button>
-        </div>
+    if (problema.severity === "warning") {
+      return `<section class="card entra" data-eccezione="${esc(problema.exception_id)}" style="display:grid;gap:12px">
+        ${testa}
+        <div><button type="button" class="btn primario" data-preso ${state.structureBusy ? "disabled" : ""}>${esc(t("str.hoCapito"))}</button></div>
       </section>`;
+    }
+    return `<section class="card entra" style="display:grid;gap:12px">
+      ${testa}
+      <div class="nota errore"><span class="segno" aria-hidden="true">!</span>
+        <strong>${esc(t("str.daSostituire"))}</strong><span>${esc(t("str.daSostituireTesto"))}</span></div>
+      <div><button type="button" class="btn secondario" data-vai="documents">${esc(t("str.vaiDocumenti"))}</button></div>
+    </section>`;
   };
 
-  const joinCard = (join) => {
-    const primary = profiles().find((item) => item.profile_id === join.primary_profile_id);
-    const lookup = profiles().find((item) => item.profile_id === join.lookup_profile_id);
-    return `
-      <section class="kg-decision-card" data-kg-join="${escapeHtml(join.join_spec_id)}">
-        <h2>Collegare questi due file?</h2>
-        <p>“${escapeHtml(primary ? primary.source_name : "")}” contiene il codice <b>${escapeHtml(join.spec.primary_key)}</b>, presente anche in “${escapeHtml(lookup ? lookup.source_name : "")}”.</p>
-        <div class="kg-examples">
-          <span>${escapeHtml(root.plural(join.preview.matched_records, "record collegato", "record collegati"))}</span>
-          <span>${escapeHtml(root.plural(join.preview.unmatched_records, "record senza corrispondenza", "record senza corrispondenza"))}</span>
-        </div>
-        <p class="kg-secondary">I record senza corrispondenza restano disponibili e non vengono duplicati.</p>
-        <div class="kg-decision-card-actions">
-          <button type="button" class="kg-btn kg-btn-primary" data-kg-join-action="approve" ${state.structureBusy ? "disabled" : ""}>Collega i file</button>
-          <button type="button" class="kg-btn kg-btn-secondary" data-kg-join-action="reject" ${state.structureBusy ? "disabled" : ""}>Tienili separati</button>
-        </div>
-      </section>`;
+  const cartaJoin = (join) => {
+    const primo = profili().find((p) => p.profile_id === join.primary_profile_id);
+    const secondo = profili().find((p) => p.profile_id === join.lookup_profile_id);
+    return `<section class="card entra" data-join="${esc(join.join_spec_id)}" style="display:grid;gap:12px">
+      <h3 style="margin:0;font-size:17px;font-weight:640;letter-spacing:-.02em">${esc(t("str.collegare"))}</h3>
+      <p>${esc(t("str.collegareTesto", {
+        a: primo ? primo.source_name : "", k: join.spec.primary_key, b: secondo ? secondo.source_name : "",
+      }))}</p>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <span class="badge">${esc(t("str.collegati", { n: join.preview.matched_records }))}</span>
+        <span class="badge">${esc(t("str.nonCollegati", { n: join.preview.unmatched_records }))}</span>
+      </div>
+      <p class="voce-meta">${esc(t("str.collegareNota"))}</p>
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
+        <button type="button" class="btn primario" data-join-azione="approve" ${state.structureBusy ? "disabled" : ""}>${esc(t("str.collega"))}</button>
+        <button type="button" class="btn secondario" data-join-azione="reject" ${state.structureBusy ? "disabled" : ""}>${esc(t("str.separati"))}</button>
+      </div></section>`;
   };
 
-  /* ── Views on the active source ────────────────────────────────────── */
+  /* ------------------------------------------------------------- viste -- */
+  const mappaturaDi = (profilo, structureId) => (((profilo.mapping || {}).structures || {})[structureId]) || {};
 
-  const effectiveMapping = (profile, structureId) => (
-    (((profile.mapping || {}).structures || {})[structureId]) || {}
-  );
-
-  const columnsView = (profile) => {
-    const structures = (profile.structures || []).filter((item) => item.included);
-    if (!structures.length) return `<div class="kg-work-pad"><div class="kg-empty"><strong>Nessuna tabella inclusa</strong><p>Questo file non contiene tabelle utilizzabili.</p></div></div>`;
+  const vistaColonne = (profilo) => {
+    const strutture = (profilo.structures || []).filter((s) => s.included);
+    if (!strutture.length) {
+      return `<div class="vuoto"><strong>${esc(t("str.nienteTabelle"))}</strong><p>${esc(t("str.nienteTabelleTesto"))}</p></div>`;
+    }
     return `
-      <div class="kg-work-pad">
-        <div class="kg-group-head">
-          <h2>Che cosa significa ogni colonna</h2>
-          <p>Il significato decide che cosa entra nel grafo. Le colonne non usate restano nel file e restano consultabili, ma non generano elementi.</p>
-        </div>
-        ${structures.map((structure) => {
-          const mapping = effectiveMapping(profile, structure.structure_id);
-          return `
-            <div style="margin-top: var(--space-4)">
-              ${structures.length > 1 ? `<p class="kg-caption">${escapeHtml(structure.name)} · ${escapeHtml(root.plural(structure.row_count, "riga", "righe"))}</p>` : ""}
-              <div class="kg-table-wrap">
-                <table class="kg-table">
-                  <thead><tr>
-                    <th scope="col">Colonna nel file</th>
-                    <th scope="col">Significato</th>
-                    <th scope="col">Esempi</th>
-                    <th scope="col" class="kg-num">Valori vuoti</th>
-                  </tr></thead>
-                  <tbody>
-                    ${(structure.columns || []).map((column) => {
-                      const configured = mapping[column.name];
-                      const role = configured ? configured.role : column.proposed_role;
-                      const used = configured ? configured.included : true;
-                      const nodeType = root.roleNodeType[role];
-                      return `<tr>
-                        <td>${escapeHtml(column.name)}</td>
-                        <td><span class="kg-role ${used && role !== "excluded" ? "" : "kg-role-excluded"}"
-                          ${nodeType ? `style="--node-type: var(--node-${nodeType})"` : ""}>
-                          ${nodeType ? '<i aria-hidden="true"></i>' : ""}${escapeHtml(used ? (root.roleLabels[role] || role) : "Non usata")}</span></td>
-                        <td>${escapeHtml((column.examples || []).slice(0, 2).join(" · ") || "—")}</td>
-                        <td class="kg-num">${Math.round(Number(column.null_rate || 0) * 100)}%</td>
-                      </tr>`;
-                    }).join("")}
-                  </tbody>
-                </table>
-              </div>
-            </div>`;
+      <div class="gruppo-capo"><h3>${esc(t("str.colonneTitolo"))}</h3><p>${esc(t("str.colonneTesto"))}</p></div>
+      ${strutture.map((struttura) => {
+        const mappa = mappaturaDi(profilo, struttura.structure_id);
+        return `<div style="margin-top:14px">
+          ${strutture.length > 1 ? `<p class="voce-meta">${esc(struttura.name)} · ${esc(n(struttura.row_count, "str.righeLette"))}</p>` : ""}
+          <div class="tabella-wrap"><table class="tabella"><thead><tr>
+            <th>${esc(t("str.colonnaNel"))}</th><th>${esc(t("str.significato"))}</th>
+            <th>${esc(t("str.esempi"))}</th><th class="num">${esc(t("str.vuoti"))}</th>
+          </tr></thead><tbody>
+            ${(struttura.columns || []).map((colonna) => {
+              const config = mappa[colonna.name];
+              const ruolo = config ? config.role : colonna.proposed_role;
+              const usata = config ? config.included : true;
+              const tipo = root.tipoDaRuolo[ruolo];
+              return `<tr>
+                <td>${esc(colonna.name)}</td>
+                <td><span class="ruolo ${usata && ruolo !== "excluded" ? "" : "escluso"} ${tipo ? `tipo-${tipo}` : ""}">
+                  ${tipo ? '<i aria-hidden="true"></i>' : ""}${esc(usata ? root.etichettaRuolo(ruolo) : t("ruolo.nonUsata"))}</span></td>
+                <td>${esc((colonna.examples || []).slice(0, 2).join(" · ") || "—")}</td>
+                <td class="num">${Math.round(Number(colonna.null_rate || 0) * 100)}%</td>
+              </tr>`;
+            }).join("")}
+          </tbody></table></div></div>`;
+      }).join("")}`;
+  };
+
+  const vistaRighe = (profilo) => {
+    const struttura = (profilo.structures || []).find((s) => s.included && (s.preview || []).length);
+    if (!struttura) {
+      return `<div class="vuoto"><strong>${esc(t("str.nienteAnteprima"))}</strong><p>${esc(t("str.nienteAnteprimaTesto"))}</p></div>`;
+    }
+    const mappa = mappaturaDi(profilo, struttura.structure_id);
+    const colonne = (struttura.columns || []).map((c) => c.name);
+    const righe = struttura.preview.slice(0, 10);
+    return `
+      <div class="gruppo-capo"><h3>${esc(t("str.righeTitolo"))}</h3>
+        <p>${esc(t("str.righeTesto", { n: righe.length, t: struttura.row_count }))}</p></div>
+      <div class="tabella-wrap" style="margin-top:12px"><table class="tabella"><thead><tr>
+        ${colonne.map((nome) => {
+          const config = mappa[nome];
+          const ruolo = config ? config.role : "attribute";
+          const usata = config ? config.included : true;
+          return `<th>${esc(nome)}<br><span style="font-weight:400;text-transform:none;letter-spacing:0">${esc(usata ? root.etichettaRuolo(ruolo) : t("ruolo.nonUsata"))}</span></th>`;
         }).join("")}
-      </div>`;
+      </tr></thead><tbody>
+        ${righe.map((riga) => `<tr>${colonne.map((nome) => {
+          const valore = riga[nome];
+          const testo = valore == null || String(valore).trim() === "" ? "—" : String(valore);
+          return `<td title="${esc(testo)}">${esc(testo.length > 52 ? `${testo.slice(0, 51)}…` : testo)}</td>`;
+        }).join("")}</tr>`).join("")}
+      </tbody></table></div>`;
   };
 
-  const previewView = (profile) => {
-    const structure = (profile.structures || []).find((item) => item.included && (item.preview || []).length);
-    if (!structure) return `<div class="kg-work-pad"><div class="kg-empty"><strong>Nessuna anteprima</strong><p>Non ci sono righe leggibili da mostrare per questo file.</p></div></div>`;
-    const mapping = effectiveMapping(profile, structure.structure_id);
-    const columns = (structure.columns || []).map((column) => column.name);
-    const rows = structure.preview.slice(0, 8);
-    return `
-      <div class="kg-work-pad">
-        <div class="kg-group-head">
-          <h2>Le righe come sono nel file</h2>
-          <p>${escapeHtml(`Prime ${rows.length} righe di ${structure.row_count}. Nessun valore è stato modificato.`)}</p>
-        </div>
-        <div class="kg-table-wrap" style="margin-top: var(--space-3)">
-          <table class="kg-table">
-            <thead><tr>${columns.map((name) => {
-              const configured = mapping[name];
-              const role = configured ? configured.role : "attribute";
-              const used = configured ? configured.included : true;
-              return `<th scope="col">${escapeHtml(name)}<br><span class="kg-caption">${escapeHtml(used ? (root.roleLabels[role] || role) : "Non usata")}</span></th>`;
-            }).join("")}</tr></thead>
-            <tbody>${rows.map((row) => `<tr>${columns.map((name) => {
-              const value = row[name];
-              const text = value == null || String(value).trim() === "" ? "—" : String(value);
-              return `<td title="${escapeHtml(text)}">${escapeHtml(text.length > 48 ? `${text.slice(0, 47)}…` : text)}</td>`;
-            }).join("")}</tr>`).join("")}</tbody>
-          </table>
-        </div>
-      </div>`;
-  };
-
-  const noticesView = (profile) => {
-    const notices = ((state.structure.exceptions) || [])
-      .filter((item) => item.profile_id === profile.profile_id && item.severity === "warning");
-    const isolated = Number(profile.summary.isolated_record_count || 0);
-    if (!notices.length && !isolated) {
-      return `<div class="kg-work-pad"><div class="kg-empty"><strong>Nessun avviso</strong><p>Ogni riga di questo file è stata letta senza problemi.</p></div></div>`;
+  const vistaAvvisi = (profilo) => {
+    const avvisi = ((state.structure.exceptions) || [])
+      .filter((e) => e.profile_id === profilo.profile_id && e.severity === "warning");
+    const isolate = Number(profilo.summary.isolated_record_count || 0);
+    if (!avvisi.length && !isolate) {
+      return `<div class="vuoto"><strong>${esc(t("str.nienteAvvisi"))}</strong><p>${esc(t("str.nienteAvvisiTesto"))}</p></div>`;
     }
     return `
-      <div class="kg-work-pad">
-        <div class="kg-group-head">
-          <h2>Righe messe da parte</h2>
-          <p>Queste righe non sono state cancellate: sono state isolate perché non erano leggibili in modo affidabile. Tutte le altre proseguono normalmente.</p>
-        </div>
-        <div class="kg-list" style="margin-top: var(--space-3)">
-          ${notices.map((item) => `
-            <div class="kg-note kg-note-warning">
-              <span class="kg-note-mark" aria-hidden="true">?</span>
-              <strong>${escapeHtml(item.title)}</strong>
-              <span>${escapeHtml(item.explanation)}</span>
-            </div>`).join("")}
-        </div>
+      <div class="gruppo-capo"><h3>${esc(t("str.messeDaParte"))}</h3><p>${esc(t("str.messeDaParteTesto"))}</p></div>
+      <div class="lista" style="margin-top:12px">
+        ${avvisi.map((avviso) => `<div class="nota attesa">
+          <span class="segno" aria-hidden="true">?</span>
+          <strong>${esc(avviso.title)}</strong><span>${esc(avviso.explanation)}</span></div>`).join("")}
       </div>`;
   };
 
-  const VIEWS = [
-    { id: "columns", label: "Colonne" },
-    { id: "preview", label: "Righe" },
-    { id: "notices", label: "Avvisi" },
+  const VISTE = [
+    { id: "colonne", chiave: "str.vista.colonne" },
+    { id: "righe", chiave: "str.vista.righe" },
+    { id: "avvisi", chiave: "str.vista.avvisi" },
   ];
+  const vistaCorrente = () => (VISTE.some((v) => v.id === state.view) ? state.view : "colonne");
 
-  const structureView = () => (VIEWS.some((item) => item.id === state.view) ? state.view : "columns");
-
-  /* ── Phase controller ──────────────────────────────────────────────── */
-
+  /* ---------------------------------------------------------------- fase */
   root.phases.structure = {
-    label: "Struttura",
-    showRail: true,
-    showInspector: true,
-    load: () => load(true),
+    mostraFonti: true,
+    mostraIspettore: true,
+    carica,
 
-    railFacts(source) {
-      if (source.source_kind === "pdf") {
-        return root.railFacts([{ text: "Documento pronto" }], root.railBadge("Pronta", "success"));
-      }
-      const profile = profileFor(source.source_id);
-      if (!profile) return root.railFacts([], root.railBadge("In lettura", "warning"));
-      const records = Number(profile.summary.record_count || 0);
-      const isolated = Number(profile.summary.isolated_record_count || 0);
-      const needsChoice = ((state.structure.exceptions) || [])
-        .some((item) => item.profile_id === profile.profile_id && item.status === "open");
-      const parts = [
-        { text: root.plural(records, "riga letta", "righe lette") },
-        isolated ? { text: root.plural(isolated, "riga isolata", "righe isolate"), tone: "blocking" } : null,
-      ];
-      const badge = needsChoice
-        ? root.railBadge("Serve una scelta", "warning")
-        : profile.confirmed
-          ? root.railBadge("Confermata", "success")
-          : root.railBadge(profile.state === "prepared" ? "Da confermare" : "In lettura", "warning");
-      return root.railFacts(parts, badge);
+    titolo() {
+      const fonte = root.fonteAttiva();
+      const profilo = profiloAttivo();
+      const chips = profilo
+        ? `<span class="chip ${profilo.confirmed ? "ok" : "attesa"}"><span class="punto"></span>${esc(profilo.confirmed ? t("stato.confermata") : t("stato.daConfermare"))}</span>
+           <span class="chip"><b>${Number(profilo.summary.record_count || 0)}</b> ${esc(t("str.vista.righe").toLocaleLowerCase())}</span>`
+        : "";
+      return { titolo: fonte ? fonte.file_name : t("str.titoloVuoto"), chips };
     },
 
-    renderWork() {
+    metaFonte(sorgente) {
+      if (sorgente.source_kind === "pdf") return "✓";
+      const profilo = profiloDi(sorgente.source_id);
+      if (!profilo) return "";
+      const serve = ((state.structure.exceptions) || [])
+        .some((e) => e.profile_id === profilo.profile_id && e.status === "open");
+      if (serve) return `<span style="color:var(--amber)">!</span>`;
+      return profilo.confirmed ? "✓" : String(Number(profilo.summary.record_count || 0));
+    },
+
+    renderLavoro() {
       if (!state.workspace || state.structureLoading) {
-        return `<div class="kg-state"><strong>Leggo i file…</strong><p>Conto righe e colonne senza modificare gli originali.</p></div>`;
+        return `<div class="stato-pagina"><strong>${esc(t("str.leggo"))}</strong><p>${esc(t("str.leggoTesto"))}</p></div>`;
       }
       if (state.structureError && !state.structure) {
-        return `
-          <div class="kg-state">
-            <strong>Non riesco a leggere i file</strong>
-            <p role="alert">${escapeHtml(state.structureError)}</p>
-            <button type="button" class="kg-btn kg-btn-primary" data-kg-retry>Riprova</button>
-          </div>`;
+        return `<div class="stato-pagina"><strong>${esc(t("str.erroreTitolo"))}</strong>
+          <p role="alert">${esc(state.structureError)}</p>
+          <button type="button" class="btn primario" data-riprova>${esc(t("ui.riprova"))}</button></div>`;
       }
-      if (!state.structure) return `<div class="kg-state"><strong>Nessun dato da leggere</strong><p>Carica almeno un file nella fase Documenti.</p></div>`;
+      if (!state.structure) {
+        return `<div class="stato-pagina"><strong>${esc(t("str.nienteDati"))}</strong><p>${esc(t("str.nienteDatiTesto"))}</p></div>`;
+      }
 
-      const issue = openException();
-      const join = issue ? null : proposedJoin();
-      const source = root.activeSource();
-      const profile = activeProfile();
-      const view = structureView();
+      const problema = eccezioneAperta();
+      const join = problema ? null : joinProposto();
+      const fonte = root.fonteAttiva();
+      const profilo = profiloAttivo();
+      const vista = vistaCorrente();
 
-      const focused = issue || join;
-      const body = profile
-        ? (view === "preview" ? previewView(profile) : view === "notices" ? noticesView(profile) : columnsView(profile))
-        : `<div class="kg-work-pad"><div class="kg-empty">
-            <strong>${escapeHtml(source && source.source_kind === "pdf" ? "Documento di testo" : "In lettura")}</strong>
-            <p>${escapeHtml(source && source.source_kind === "pdf"
-              ? "I documenti di testo non hanno colonne: ogni pagina è già stata preparata."
-              : "Questo file non è ancora stato letto.")}</p>
-          </div></div>`;
+      const corpo = profilo
+        ? (vista === "righe" ? vistaRighe(profilo) : vista === "avvisi" ? vistaAvvisi(profilo) : vistaColonne(profilo))
+        : `<div class="vuoto">
+            <strong>${esc(fonte && fonte.source_kind === "pdf" ? t("str.pdfTitolo") : t("stato.inLettura"))}</strong>
+            <p>${esc(fonte && fonte.source_kind === "pdf" ? t("str.pdfTesto") : t("str.inLetturaTesto"))}</p></div>`;
 
       return `
-        <div class="kg-work-head">
-          <div class="kg-work-head-row"><h1>${escapeHtml(source ? source.file_name : "Struttura dei dati")}</h1></div>
-          <p>Controlla come sono state interpretate le colonne prima di costruire il grafo. Il sistema decide da solo quello che può decidere in modo affidabile e ti chiede solo il resto.</p>
-        </div>
-        ${profile ? `<div class="kg-toolbar"><div class="kg-segment" role="tablist" aria-label="Come guardare questo file">
-          ${VIEWS.map((item) => `<button type="button" role="tab" data-kg-view="${item.id}" aria-selected="${view === item.id}">${escapeHtml(item.label)}</button>`).join("")}
+        <div class="intestazione-lavoro"><p>${esc(t("str.sotto"))}</p></div>
+        ${profilo ? `<div class="barra"><div class="segmento" role="tablist">
+          ${VISTE.map((v) => `<button type="button" class="tab" role="tab" data-vista="${v.id}"
+            aria-selected="${vista === v.id}">${esc(t(v.chiave))}</button>`).join("")}
         </div></div>` : ""}
-        <div class="kg-work-scroll">
-          ${focused ? `<div class="kg-work-pad" style="padding-bottom: 0">${issue ? exceptionCard(issue) : joinCard(join)}</div>` : ""}
-          ${body}
-        </div>`;
+        <div class="lavoro-scorri"><div class="lavoro-pad">
+          ${problema ? cartaEccezione(problema) : join ? cartaJoin(join) : ""}
+          ${problema || join ? '<div style="height:18px"></div>' : ""}
+          ${corpo}
+        </div></div>`;
     },
 
-    bindWork(container) {
-      root.delegate(container, "click", "[data-kg-retry]", () => run(async () => {
-        await load(true);
-        if (!state.structure) throw new Error(state.structureError || "Preparazione non disponibile");
+    bindLavoro(contenitore) {
+      root.delegate(contenitore, "click", "[data-riprova]", () => esegui(async () => {
+        await carica();
+        if (!state.structure) throw new Error(state.structureError || t("str.erroreTitolo"));
         return state.structure;
       }));
-      root.delegate(container, "click", "[data-kg-view]", (element) => {
-        state.view = element.dataset.kgView;
-        root.render({ regions: ["work"] });
+      root.delegate(contenitore, "click", "[data-vista]", (elemento) => {
+        state.view = elemento.dataset.vista;
+        root.render({ regioni: ["lavoro"] });
       });
-      root.delegate(container, "click", "[data-kg-goto]", (element) => root.goToPhase(element.dataset.kgGoto));
-      root.delegate(container, "submit", "[data-kg-exception]", (form, event) => {
-        event.preventDefault();
-        const role = new FormData(form).get("role");
-        run(() => root.api(`/api/g2/exceptions/${encodeURIComponent(form.dataset.kgException)}/resolve`, {
-          method: "POST", body: { role },
-        }));
+      root.delegate(contenitore, "click", "[data-vai]", (elemento) => root.vaiAllaFase(elemento.dataset.vai));
+      root.delegate(contenitore, "submit", "[data-eccezione]", (modulo, evento) => {
+        evento.preventDefault();
+        const role = new FormData(modulo).get("role");
+        esegui(() => root.api(`/api/g2/exceptions/${encodeURIComponent(modulo.dataset.eccezione)}/resolve`,
+          { method: "POST", body: { role } }));
       });
-      root.delegate(container, "click", "[data-kg-include]", (element) => {
-        const panel = element.closest("[data-kg-exception]");
-        run(() => root.api(`/api/g2/exceptions/${encodeURIComponent(panel.dataset.kgException)}/resolve`, {
-          method: "POST", body: { included: element.dataset.kgInclude === "true", acknowledge: true },
-        }));
+      root.delegate(contenitore, "click", "[data-includi]", (elemento) => {
+        const pannello = elemento.closest("[data-eccezione]");
+        esegui(() => root.api(`/api/g2/exceptions/${encodeURIComponent(pannello.dataset.eccezione)}/resolve`,
+          { method: "POST", body: { included: elemento.dataset.includi === "true", acknowledge: true } }));
       });
-      root.delegate(container, "click", "[data-kg-acknowledge]", (element) => {
-        const panel = element.closest("[data-kg-exception]");
-        run(() => root.api(`/api/g2/exceptions/${encodeURIComponent(panel.dataset.kgException)}/resolve`, {
-          method: "POST", body: { acknowledge: true },
-        }));
+      root.delegate(contenitore, "click", "[data-preso]", (elemento) => {
+        const pannello = elemento.closest("[data-eccezione]");
+        esegui(() => root.api(`/api/g2/exceptions/${encodeURIComponent(pannello.dataset.eccezione)}/resolve`,
+          { method: "POST", body: { acknowledge: true } }));
       });
-      root.delegate(container, "click", "[data-kg-join-action]", (element) => {
-        const panel = element.closest("[data-kg-join]");
-        run(() => root.api(`/api/g2/joins/${encodeURIComponent(panel.dataset.kgJoin)}/decision`, {
-          method: "POST", body: { action: element.dataset.kgJoinAction },
-        }));
+      root.delegate(contenitore, "click", "[data-join-azione]", (elemento) => {
+        const pannello = elemento.closest("[data-join]");
+        esegui(() => root.api(`/api/g2/joins/${encodeURIComponent(pannello.dataset.join)}/decision`,
+          { method: "POST", body: { action: elemento.dataset.joinAzione } }));
       });
     },
 
-    renderInspector() {
-      const source = root.activeSource();
-      const profile = activeProfile();
-      if (!source) return `<div class="kg-inspector-empty"><strong>Nessuna fonte</strong><p>Carica un file per vederne la struttura.</p></div>`;
-      if (!profile) {
-        return `
-          <div class="kg-inspector-inner">
-            <div class="kg-inspector-identity">
-              <span class="kg-inspector-kind">Fonte</span>
-              <h2>${escapeHtml(source.file_name)}</h2>
-            </div>
-            <p class="kg-secondary">${escapeHtml(source.source_kind === "pdf"
-              ? "Documento di testo: tutte le pagine sono già state preparate."
-              : "In lettura.")}</p>
-          </div>`;
+    renderIspettore() {
+      const fonte = root.fonteAttiva();
+      const profilo = profiloAttivo();
+      if (!fonte) {
+        return `<div class="ispettore-vuoto"><strong>${esc(t("doc.nessunDettaglio"))}</strong>
+          <p>${esc(t("doc.nessunDettaglioTesto"))}</p></div>`;
       }
-      const counts = profile.summary || {};
-      const languages = counts.language_counts || {};
-      const languageLabels = {
-        qualified_en: "in inglese", unqualified_it: "in italiano", unqualified_de: "in tedesco",
-        mixed: "in più lingue", unknown: "in lingua non riconosciuta",
-      };
-      const languageItems = Object.entries(languages).filter(([, total]) => Number(total) > 0);
-      const roles = new Map();
-      (profile.structures || []).filter((item) => item.included).forEach((structure) => {
-        const mapping = effectiveMapping(profile, structure.structure_id);
-        Object.entries(mapping).forEach(([column, config]) => {
-          if (!config.included || !root.roleNodeType[config.role]) return;
-          if (!roles.has(config.role)) roles.set(config.role, []);
-          roles.get(config.role).push(column);
+      if (!profilo) {
+        return `<div class="ispettore-dentro">
+          <div class="ispettore-identita"><span class="ispettore-tipo">${esc(t("isp.fonte"))}</span>
+            <h3>${esc(fonte.file_name)}</h3></div>
+          <p class="blocco-vuoto">${esc(fonte.source_kind === "pdf" ? t("str.pdfTesto") : t("str.inLetturaTesto"))}</p>
+        </div>`;
+      }
+      const conti = profilo.summary || {};
+      const lingue = Object.entries(conti.language_counts || {}).filter(([, v]) => Number(v) > 0);
+      const ruoli = new Map();
+      (profilo.structures || []).filter((s) => s.included).forEach((struttura) => {
+        Object.entries(mappaturaDi(profilo, struttura.structure_id)).forEach(([colonna, config]) => {
+          if (!config.included || !root.tipoDaRuolo[config.role]) return;
+          if (!ruoli.has(config.role)) ruoli.set(config.role, []);
+          ruoli.get(config.role).push(colonna);
         });
       });
       return `
-        <div class="kg-inspector-inner">
-          <button type="button" class="kg-btn kg-btn-quiet kg-btn-small kg-inspector-close" data-kg-inspector-close>Chiudi dettaglio</button>
-          <div class="kg-inspector-identity">
-            <span class="kg-inspector-kind">Fonte</span>
-            <h2>${escapeHtml(profile.source_name)}</h2>
-          </div>
-          <section class="kg-block">
-            <h3>Cosa è stato letto</h3>
-            <p class="kg-occurrences"><strong>${Number(counts.record_count || 0)}</strong> <span>${escapeHtml(Number(counts.record_count) === 1 ? "riga letta" : "righe lette")}</span></p>
-            <p class="kg-secondary">${escapeHtml(`${root.plural(Number(counts.evidence_count || 0), "riga preparata", "righe preparate")}${Number(counts.isolated_record_count || 0) ? ` · ${root.plural(Number(counts.isolated_record_count), "riga isolata", "righe isolate")}` : ""}`)}</p>
-          </section>
-          ${languageItems.length ? `
-            <section class="kg-block">
-              <h3>Lingue trovate</h3>
-              <p class="kg-secondary">${languageItems.map(([key, total]) => escapeHtml(`${total} ${languageLabels[key] || key}`)).join(" · ")}</p>
-              ${languages.unknown ? `<p class="kg-secondary">Il testo originale resta comunque integro e consultabile.</p>` : ""}
-            </section>` : ""}
-          <section class="kg-block">
-            <h3>Che cosa alimenterà il grafo</h3>
-            ${roles.size ? [...roles.entries()].map(([role, columns]) => `
-              <div class="kg-relation" style="--node-type: var(--node-${root.roleNodeType[role]})">
-                <i aria-hidden="true"></i>
-                <span>${escapeHtml(root.roleLabels[role])}</span>
-                <span class="kg-relation-direction">${escapeHtml(columns.join(" + "))}</span>
-              </div>`).join("") : `<p class="kg-block-empty">Nessuna colonna alimenta ancora il grafo.</p>`}
-            <p class="kg-secondary">I collegamenti fra questi elementi vengono proposti nella fase successiva, solo dove le righe li dimostrano.</p>
-          </section>
+        <div class="ispettore-dentro">
+          <button type="button" class="btn quieto piccolo chiudi-ispettore" data-chiudi-ispettore>${esc(t("ui.chiudiDettaglio"))}</button>
+          <div class="ispettore-identita"><span class="ispettore-tipo">${esc(t("isp.fonte"))}</span>
+            <h3>${esc(profilo.source_name)}</h3></div>
+          <section class="blocco"><h4>${esc(t("str.cosaLetto"))}</h4>
+            <p class="occorrenze"><strong>${Number(conti.record_count || 0)}</strong>
+              <span>${esc(t(Number(conti.record_count) === 1 ? "str.righeLette1" : "str.righeLette", { n: "" }).replace(/^\s*\d*\s*/, ""))}</span></p>
+            <p>${esc(n(Number(conti.evidence_count || 0), "str.righePreparate"))}${Number(conti.isolated_record_count || 0)
+              ? ` · ${esc(n(Number(conti.isolated_record_count), "str.righeIsolate"))}` : ""}</p></section>
+          ${lingue.length ? `<section class="blocco"><h4>${esc(t("str.lingue"))}</h4>
+            <p>${lingue.map(([chiave, quante]) => esc(`${quante} ${t(`str.lingua.${chiave}`)}`)).join(" · ")}</p>
+            ${(conti.language_counts || {}).unknown ? `<p>${esc(t("str.testoIntegro"))}</p>` : ""}</section>` : ""}
+          <section class="blocco"><h4>${esc(t("str.alimenta"))}</h4>
+            ${ruoli.size ? [...ruoli.entries()].map(([ruolo, colonne]) => `
+              <div class="riga-legame tipo-${root.tipoDaRuolo[ruolo]}">
+                <i aria-hidden="true"></i><span class="nome">${esc(root.etichettaRuolo(ruolo))}</span>
+                <span class="coda">${esc(colonne.join(" + "))}</span></div>`).join("")
+              : `<p class="blocco-vuoto">${esc(t("str.alimentaVuoto"))}</p>`}
+            <p>${esc(t("str.alimentaNota"))}</p></section>
         </div>`;
     },
 
-    renderDecision() {
+    renderDecisione() {
       if (!state.structure) return "";
-      const issue = openException();
-      const error = state.structureError ? `<p class="kg-field-error" role="alert">${escapeHtml(state.structureError)}</p>` : "";
-      if (issue) {
-        return `<div class="kg-decision-row"><div class="kg-decision-text" aria-live="polite">
-          <strong>Serve una tua scelta</strong>
-          <span>${escapeHtml(`Una colonna di “${issue.source_name}” non può essere interpretata in modo affidabile. È l'unica domanda aperta.`)}</span>
-        </div></div>${error}`;
+      const problema = eccezioneAperta();
+      const errore = state.structureError ? `<p class="campo-errore" role="alert">${esc(state.structureError)}</p>` : "";
+      if (problema) {
+        return `<div class="decisione-riga"><div class="decisione-testo" aria-live="polite">
+          <strong>${esc(t("str.serveScelta"))}</strong>
+          <span>${esc(t("str.serveSceltaTesto", { f: problema.source_name }))}</span></div></div>${errore}`;
       }
-      const profile = activeProfile();
-      const pending = profiles().filter((item) => !item.confirmed).length;
+      const profilo = profiloAttivo();
+      const mancanti = profili().filter((p) => !p.confirmed).length;
       if (state.structure.completed) {
-        return `<div class="kg-decision-row"><div class="kg-decision-text">
-          <strong>Struttura confermata</strong>
-          <span>Nella fase successiva controllerai un grafo separato per ogni fonte.</span>
-        </div>
-        <div class="kg-decision-actions"><button type="button" class="kg-btn kg-btn-primary" data-kg-goto="graph">Vai al grafo</button></div></div>`;
+        return `<div class="decisione-riga">
+          <div class="decisione-testo"><strong>${esc(t("str.confermata"))}</strong><span>${esc(t("str.confermataTesto"))}</span></div>
+          <div class="decisione-azioni"><button type="button" class="btn primario" data-vai="graph">${esc(t("str.vaiGrafo"))}</button></div>
+        </div>`;
       }
-      if (profile && !profile.confirmed && profile.state === "prepared") {
-        return `<div class="kg-decision-row"><div class="kg-decision-text">
-          <strong>${escapeHtml(`Le colonne di “${profile.source_name}” sono interpretate correttamente?`)}</strong>
-          <span>${escapeHtml(`La conferma vale solo per questo file. ${root.plural(pending, "file resta", "file restano")} da confermare.`)}</span>
-        </div>
-        <div class="kg-decision-actions">
-          <button type="button" class="kg-btn kg-btn-primary" data-kg-confirm="${escapeHtml(profile.profile_id)}"
-            ${state.structureBusy ? "disabled" : ""}>Conferma questo file</button>
-        </div></div>${error}`;
+      if (profilo && !profilo.confirmed && profilo.state === "prepared") {
+        return `<div class="decisione-riga">
+          <div class="decisione-testo"><strong>${esc(t("str.domandaConferma", { f: profilo.source_name }))}</strong>
+            <span>${esc(t("str.confermaTesto", { n: t("str.daConfermare", { n: mancanti }) }))}</span></div>
+          <div class="decisione-azioni">
+            <button type="button" class="btn primario" data-conferma="${esc(profilo.profile_id)}"
+              ${state.structureBusy ? "disabled" : ""}>${esc(t("str.confermaFile"))}</button>
+          </div></div>${errore}`;
       }
-      return `<div class="kg-decision-row"><div class="kg-decision-text">
-        <strong>${pending ? escapeHtml(`${root.plural(pending, "file da confermare", "file da confermare")}`) : "Tutti i file sono confermati"}</strong>
-        <span>Seleziona un file nell'elenco a sinistra per controllarne le colonne.</span>
-      </div></div>${error}`;
+      return `<div class="decisione-riga"><div class="decisione-testo">
+        <strong>${esc(mancanti ? t("str.daConfermare", { n: mancanti }) : t("str.tuttiConfermati"))}</strong>
+        <span>${esc(t("str.selezionaFonte"))}</span></div></div>${errore}`;
     },
 
-    bindDecision(container) {
-      root.delegate(container, "click", "[data-kg-confirm]", (element) => {
-        run(() => root.api(`/api/g2/profiles/${encodeURIComponent(element.dataset.kgConfirm)}/confirm`, { method: "POST" }));
+    bindDecisione(contenitore) {
+      root.delegate(contenitore, "click", "[data-conferma]", (elemento) => {
+        esegui(() => root.api(`/api/g2/profiles/${encodeURIComponent(elemento.dataset.conferma)}/confirm`, { method: "POST" }));
       });
-      root.delegate(container, "click", "[data-kg-goto]", (element) => root.goToPhase(element.dataset.kgGoto));
+      root.delegate(contenitore, "click", "[data-vai]", (elemento) => root.vaiAllaFase(elemento.dataset.vai));
     },
   };
 })();
