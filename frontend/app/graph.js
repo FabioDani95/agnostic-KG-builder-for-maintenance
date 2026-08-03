@@ -177,7 +177,6 @@
       .join("");
     return `
       <div class="grafo" data-grafo>
-        <div class="grafo-suggerimento floating">${esc(t("gr.aiuto"))}</div>
         ${legenda ? `<div class="grafo-legenda floating">${legenda}</div>` : ""}
         <div class="grafo-comandi floating">
           <button type="button" class="btn quieto tondo" data-zoom="meno" aria-label="${esc(t("gr.riduci"))}">−</button>
