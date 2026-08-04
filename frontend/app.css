@@ -3,6 +3,12 @@
    area di lavoro, ispettore a destra, barra della decisione in basso. */
 
 /* ------------------------------------------------------------------ shell */
+/* L'applicativo occupa esattamente la finestra e ogni riquadro scorre per
+   conto suo. Senza questo la pagina resta scrollabile di suo: basta che il
+   browser porti in vista un elemento a fuoco perché la barra superiore esca
+   dallo schermo e non ci sia modo di riportarla indietro. */
+html:has(.app), body:has(.app){overflow:hidden}
+
 .contenuto{flex:1;min-height:0;display:flex;min-width:0}
 .lavoro{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
 .lavoro-scorri{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column}

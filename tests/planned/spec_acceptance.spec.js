@@ -235,6 +235,24 @@ test("AC-UX-014: the structure phase is automatic and asks one question at a tim
   await page.locator('.lavoro .card select[name="role"]').selectOption("observation");
   await page.getByRole("button", { name: "Salva e continua" }).click();
 
+  // Answering must not scroll the frame away. The app fills the window and its
+  // panes scroll on their own; when the document itself could scroll, bringing
+  // a control into view pushed the top bar off screen with no way back.
+  const topbar = await page.locator(".topbar").boundingBox();
+  expect(topbar.y).toBe(0);
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+
+  // The question card is a surface of the app, not of the retained console:
+  // both call it a card, and the wrong one made it white under the dark theme,
+  // where the title is near-white too.
+  await page.evaluate(() => { document.documentElement.dataset.theme = "dark"; });
+  const contrasto = await page.evaluate(() => {
+    const carta = document.querySelector(".lavoro .card") || document.querySelector(".tabella-wrap");
+    return getComputedStyle(carta).backgroundColor;
+  });
+  expect(contrasto).not.toBe("rgb(255, 255, 255)");
+  await page.evaluate(() => { document.documentElement.dataset.theme = "light"; });
+
   // With no question open the pane explains the mapping instead.
   await expect(page.locator(".lavoro .card")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Che cosa significa ogni colonna" })).toBeVisible();

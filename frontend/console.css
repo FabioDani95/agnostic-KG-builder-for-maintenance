@@ -56,7 +56,11 @@ body:has(#app:not(.app)) {
 .mono { font-family: ui-monospace, Menlo, monospace; }
 .tnum { font-variant-numeric: tabular-nums; }
 
-.card {
+/* `.card` è l'unico nome condiviso con l'applicativo, che ne ha una propria
+   in design.css. Senza questo ancoraggio la regola qui — caricata dopo —
+   dipingeva di bianco le schede dell'applicativo anche in tema scuro, e il
+   testo chiaro spariva sul bianco. */
+#app:not(.app) .card {
   border-radius: 14px; background: #FFFFFF;
   box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.04);
 }

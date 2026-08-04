@@ -386,7 +386,7 @@
       if (profilo && !profilo.confirmed && profilo.state === "prepared") {
         return `<div class="decisione-riga">
           <div class="decisione-testo"><strong>${esc(t("str.domandaConferma", { f: profilo.source_name }))}</strong>
-            <span>${esc(t("str.confermaTesto", { n: t("str.daConfermare", { n: mancanti }) }))}</span></div>
+            <span>${esc(t("str.confermaTesto", { r: n(mancanti, "str.restano") }))}</span></div>
           <div class="decisione-azioni">
             <button type="button" class="btn primario" data-conferma="${esc(profilo.profile_id)}"
               ${state.structureBusy ? "disabled" : ""}>${esc(t("str.confermaFile"))}</button>
