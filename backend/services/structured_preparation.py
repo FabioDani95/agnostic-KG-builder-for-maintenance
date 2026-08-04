@@ -71,19 +71,30 @@ def _hash(value: Any) -> str:
     return hashlib.sha256(_canonical_json(value).encode("utf-8")).hexdigest()
 
 
+#: How meaning is derived from an already-parsed row: which cells become
+#: claims, and how a role maps onto an evidence field. It belongs to the
+#: fingerprint of a reading, so evidence and subgraphs built by an earlier
+#: derivation invalidate instead of being reused.
+#:
+#: Deliberately separate from ADAPTER_VERSION, which identifies the parse and is
+#: stamped into immutable RawUnits: bumping that one to express a change of
+#: meaning made every existing row impossible to re-register, and the whole
+#: preparation failed.
+EVIDENCE_DERIVATION_VERSION = "cell-per-claim-v1"
+
+
 def mapping_fingerprint(profile: StructuredProfileView) -> str:
     """Fingerprint the effective reading of a source.
 
-    A reading is the operator-resolved mapping *and* the code that applies it.
-    Leaving the adapter version out made the fingerprint blind to a change in
-    how evidence is derived: the evidence changed, the fingerprint did not, and
-    a subgraph built from the previous derivation was reused as if current.
+    A reading is the operator-resolved mapping *and* the derivation that applies
+    it. Leaving the derivation out made the fingerprint blind to a change in how
+    evidence is built: the evidence changed, the fingerprint did not, and a
+    subgraph built from the previous derivation was reused as if current.
     """
     return _hash({
         "mapping_profile_id": profile.profile_id,
         "mapping": profile.mapping.model_dump(mode="json"),
-        "adapter_version": ADAPTER_VERSION,
-        "role_alias_config_version": ROLE_ALIAS_CONFIG_VERSION,
+        "evidence_derivation_version": EVIDENCE_DERIVATION_VERSION,
     })
 
 

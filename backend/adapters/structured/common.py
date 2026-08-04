@@ -14,10 +14,12 @@ from backend.domain.evidence import QualityFlag, RawUnitDraft
 from backend.domain.sources import Source, SourceKind
 from backend.domain.structured import ColumnProfile, MappingColumn, StructureProfile
 
-# v3: a mapped cell is one claim, and one column holds a role. The version
-# is part of the mapping fingerprint, so evidence and subgraphs derived by
-# the previous reading invalidate instead of being reused.
-ADAPTER_VERSION = "structured-v3-cell-per-claim"
+# Identifies the byte-level parse: encoding, delimiter, rows and columns. It is
+# stamped into every immutable RawUnit, so bumping it makes existing rows
+# impossible to re-register. Change it only when the parse itself changes —
+# never for a change in how meaning is derived from it (see
+# EVIDENCE_DERIVATION_VERSION in services/structured_preparation.py).
+ADAPTER_VERSION = "structured-v2"
 _ROLE_CONFIG_PATH = Path(__file__).with_name("role_aliases.v2.json")
 
 

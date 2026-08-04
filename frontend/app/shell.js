@@ -47,21 +47,50 @@
 
   const fileSorgenti = () => (state.sources || []).filter((s) => s.source_kind !== "operator_input");
 
+  /**
+   * Stato di una fase, e che cosa mostrarne accanto al nome.
+   *
+   * Non una spunta: una spunta dice "fatto" e si legge come "chiuso", mentre
+   * ogni fase resta modificabile — si aggiungono documenti, si cambia il
+   * significato di una colonna, si ricostruisce un grafo. Il numero dice invece
+   * che cosa c'è dentro, ed è l'informazione che serve davvero passando da una
+   * fase all'altra.
+   */
   root.statoFase = function statoFase(id) {
     const conWorkspace = Boolean(state.workspace);
-    const conDocumenti = fileSorgenti().length > 0;
+    const documenti = fileSorgenti().length;
     const strutturaFatta = state.structure
       ? Boolean(state.structure.completed)
       : Boolean(state.graph && state.graph.sources.length
         && state.graph.sources.every((v) => v.state !== "waiting"));
-    if (id === "machine") return { disponibile: true, fatta: conWorkspace };
-    if (id === "documents") return { disponibile: conWorkspace, fatta: conDocumenti };
-    if (id === "structure") return { disponibile: conWorkspace && conDocumenti, fatta: strutturaFatta };
-    if (id === "graph") {
-      const costruito = Boolean(state.graph && state.graph.sources.some((v) => v.subgraph));
-      return { disponibile: conWorkspace && (strutturaFatta || state.phase === "graph"), fatta: costruito };
+
+    if (id === "machine") return { disponibile: true, fatta: conWorkspace, meta: "" };
+    if (id === "documents") {
+      return { disponibile: conWorkspace, fatta: documenti > 0, meta: documenti ? String(documenti) : "" };
     }
-    return { disponibile: false, fatta: false };
+    if (id === "structure") {
+      const righe = state.structure
+        ? (state.structure.counts || {}).records || 0
+        : 0;
+      const daFare = state.structure
+        ? (state.structure.exceptions || []).filter((e) => e.status === "open" || e.status === "queued").length
+        : 0;
+      return {
+        disponibile: conWorkspace && documenti > 0,
+        fatta: strutturaFatta,
+        meta: daFare ? `<span style="color:var(--amber)">${daFare}</span>` : (righe ? String(righe) : ""),
+      };
+    }
+    if (id === "graph") {
+      const costruiti = state.graph ? state.graph.sources.filter((v) => v.subgraph) : [];
+      const elementi = costruiti.reduce((totale, v) => totale + v.subgraph.nodes.length, 0);
+      return {
+        disponibile: conWorkspace && (strutturaFatta || state.phase === "graph"),
+        fatta: costruiti.length > 0,
+        meta: elementi ? String(elementi) : "",
+      };
+    }
+    return { disponibile: false, fatta: false, meta: "" };
   };
 
   /* ------------------------------------------------------------- telaio -- */
@@ -113,7 +142,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${ICONE[id]}"/></svg>
         <span class="nav-label">${esc(t(`fase.${id}`))}</span>
-        ${stato.fatta && !attiva ? '<span class="nav-meta" aria-hidden="true">✓</span>' : ""}
+        ${stato.meta ? `<span class="nav-meta">${stato.meta}</span>` : ""}
       </button>`;
     }).join("");
 

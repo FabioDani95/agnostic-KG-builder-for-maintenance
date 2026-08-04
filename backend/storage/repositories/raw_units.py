@@ -47,6 +47,14 @@ class RawUnitRepository:
                     (raw_unit.raw_unit_id,),
                 ).fetchone()
                 if existing is not None:
+                    # What must not change is the content: where the unit is,
+                    # what bytes it holds, how it was flagged. `adapter_version`
+                    # is not content — it records which reader first registered
+                    # it. Comparing it made every upgrade of the reader fatal:
+                    # a source ingested by an older version could never be read
+                    # again, and the whole preparation failed on it. The stored
+                    # row keeps the original version, because that is the true
+                    # provenance of those bytes.
                     expected = {
                         "parent_raw_unit_id": raw_unit.parent_raw_unit_id,
                         "source_id": raw_unit.source_id,
@@ -55,7 +63,6 @@ class RawUnitRepository:
                         "locator_json": locator_json,
                         "locator_hash": locator_hash,
                         "raw_hash": raw_unit.raw_hash,
-                        "adapter_version": raw_unit.adapter_version,
                         "quality_flags_json": _canonical_json(
                             [flag.value for flag in raw_unit.quality_flags]
                         ),

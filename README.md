@@ -114,7 +114,53 @@ Scoping is recall-oriented for component coverage:
 
 The current default execution mode is `multi_agent`, configured in `config.yaml`. In practice, the operator still follows the same staged UI flow while backend execution is routed through the current agent wrappers and state tracking.
 
-### HITL Console
+### Workspace Application
+
+The workspace application (served at `/`, one workspace per machine) is the
+operator-facing product for building a graph from structured maintenance logs.
+It is organised in four phases named after the object being worked on —
+**Macchina, Documenti, Struttura, Grafo** — reachable from a persistent sidebar
+that also lists the sources of the machine. The internal development
+checkpoints are not part of this vocabulary and appear neither on screen nor in
+the address bar; links that used the old `?stage=` form are still honoured.
+
+Each phase fills the same frame: a work pane, an inspector that describes
+whatever is selected, and a decision bar stating the human decision that is due
+and what it will and will not do.
+
+**Struttura** shows what each column of the file was understood to mean. The
+system decides whatever it can decide reliably and asks the operator only for
+the rest, one question at a time, with the values found in that column as
+evidence for the choice. The meaning of a column is a control, not a label: it
+can be corrected at any time, and a role belongs to one column only — handing it
+over releases the previous holder to plain data, whose content stays readable
+but produces no graph element.
+
+**Grafo** is a force-directed 2D map, the page itself rather than a widget.
+Nodes are draggable and stay where they are put; the background pans, the wheel
+zooms, arrow keys walk the graph from node to node. The same filters apply to
+the map and to every table beside it: element type, link type, only-with-gaps,
+and a neighbourhood focus for dense graphs. Selecting an element opens its
+detail — ontological type, links, consolidated occurrences, the source rows that
+state it with their locator, and whatever blocks it.
+
+Reading rules the interface makes visible:
+
+- a filled cell of a mapped column is exactly one claim; the generator does not
+  split on punctuation
+- a subgraph stays `reviewing` until a human decides; nothing is merged across
+  sources and nothing is published
+- **gaps in the data** (the rows are valid but do not state something) are kept
+  distinct from **technical defects** (the payload violates the data structure);
+  both block verification, and neither is silently filled
+- correcting a mapping invalidates what was derived from it: the evidence is
+  rebuilt, the confirmation is withdrawn — appended as a counter-event, since
+  the audit ledger is append-only — and the subgraph rebuilds
+
+The interface follows the system theme with an explicit light/dark toggle, and
+switches between Italian and English; both choices are remembered.
+
+### HITL Console (retained PDF baseline)
 
 The console (served at `/`) is the operator-facing UI. It lists every persisted run (from `data/runs/`, exposed via `/api/runs`), reopens archived sessions with their review decisions intact, and drives a live run end to end: start a new session (manual + models + language + operator initials), approve the scoping page selection, start extraction, inspect the extracted graph and diagnostic chains, work through the review queue (confidence signals, evidence quotes, suggested relations, multi-cause ambiguities), fill the fields the extraction could not complete, and export once the pipeline reaches the export phase. Review verdicts are appended to each run's `events.jsonl` audit trail via `/api/runs/{id}/review-decisions`, so a session can be closed and resumed later. Export stays locked until extraction and validation are complete; open gaps are declared in the exported file rather than hidden.
 
@@ -185,7 +231,7 @@ evidence-backed HITL decision before a new version is published.
 
 ```text
 backend/          FastAPI routes, pipeline services, agents, schemas, and run persistence
-frontend/         HITL console
+frontend/         Workspace application (design.css, app.css, app/) and the retained console
 scripts/          Evaluation, replay, benchmark, and batch utilities
 tests/            Python, contract, golden-evaluation, and browser tests
 docs/             Current technical docs plus clearly labelled historical records

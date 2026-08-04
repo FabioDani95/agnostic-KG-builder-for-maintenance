@@ -8,7 +8,7 @@ Questa campagna verifica il percorso deterministico:
 CSV → RawUnit per riga → EvidenceUnit → sottografo source-scoped → validazione → review umana
 ```
 
-Non approva un grafo e non effettua merge tra fonti. Il gate G3 rimane aperto.
+Non approva un grafo e non effettua merge tra fonti. La revisione umana resta aperta.
 
 ## Regole di costruzione del grafo
 
@@ -28,6 +28,12 @@ di file e mapping profile.
 6. Il consolidamento unisce claim, non evidenze: un nodo è identificato da
    `tipo + label normalizzata`; un arco da `tipo + endpoint`. Ogni oggetto
    contiene tutti gli evidence ID che lo sostengono.
+7. Una cella piena di una colonna mappata è un solo claim. Il `|` che compare
+   dentro una cella è testo, non un separatore: spezzarlo trasformava in
+   silenzio una nota libera in due elementi che il file non dichiarava.
+8. Un ruolo semantico appartiene a una sola colonna. Due colonne sullo stesso
+   ruolo venivano concatenate in un unico campo di evidenza, e un elemento
+   finiva per portare due affermazioni diverse incollate insieme.
 
 La normalizzazione corregge case, spazi e punteggiatura ordinaria. Non traduce
 e non applica sinonimi: `BL-101` e `BL101`, oppure `Low pressure` e
@@ -35,10 +41,15 @@ e non applica sinonimi: `BL-101` e `BL101`, oppure `Low pressure` e
 
 ## Casi reali eseguiti
 
-| Dataset | Parsing / mapping | Risultato G3 | Stato |
+| Dataset | Parsing / mapping | Risultato | Stato |
 |---|---|---|---|
-| `log_manutenzione_linea_packaging_farmaceutico_simulato.csv` | 120 record, mapping confermato; due campi liberi mantenuti come attributi | 217 nodi, 358 relazioni, 120 evidenze; validazione strict verde; nessun gap | `reviewing`, non approvato |
-| `log_manutenzione_ro_multilingua.csv` | 120 record, 35 colonne, UTF-8 e `;`; quote escape corrette; mapping operativo EN aggiunto | 115 nodi, 160 relazioni, 120 evidenze; validazione strict verde; 11 gap intenzionali | `reviewing`, non approvato |
+| `log_manutenzione_linea_packaging_farmaceutico_simulato.csv` | 120 record, mapping confermato; campi liberi mantenuti come attributi | 175 nodi, 120 evidenze; validazione strict verde; nessun gap | `reviewing`, non approvato |
+| `log_manutenzione_ro_multilingua.csv` | 120 record, 35 colonne, UTF-8 e `;`; quote escape corrette; tre domande sulle colonne | 98 nodi, 133 relazioni, 120 evidenze; validazione strict verde; 8 gap intenzionali | `reviewing`, non approvato |
+
+I conteggi sono cambiati rispetto alla prima campagna perché è cambiata la
+regola di lettura, non i file: una cella è un claim e un ruolo appartiene a una
+colonna. Gli elementi calano perché non vengono più creati da uno spezzamento
+del testo, e le etichette non sono più incollate fra due colonne.
 
 ### Packaging farmaceutico
 
@@ -54,15 +65,25 @@ Il caso RO ha scoperto e fissato due aspetti importanti:
   CSV valide. La correzione mantiene il delimitatore rilevato, ma applica
   `doublequote=True` quando il sample contiene escape standard; 120/120 righe
   sono ora lette correttamente.
+- Due colonne — la descrizione libera dell'evento e il sintomo riportato —
+  ricevevano entrambe il ruolo `observation` e venivano concatenate. I sintomi
+  distinti risultavano 37 invece di 22, metà dei quali lo stesso evento scritto
+  in un'altra lingua. Con un ruolo per colonna scendono a 23.
 - Le stringhe semanticamente equivalenti in lingue diverse restano nodi
   distinti. Per esempio, una formulazione italiana e la sua resa inglese di
   una conducibilità fuori soglia non vengono fuse automaticamente. Il grafo è
   corretto e provato, ma meno compatto finché non esiste un layer canonico
   revisionabile.
 
-Gli 11 gap RO sono attesi dal dataset: cinque cause assenti, tre azioni assenti
-e tre pairing sintomo-causa many-to-many ambigui. Bloccano l'approvazione anche
-se il payload ontologico è valido.
+Gli 8 gap RO sono attesi dal dataset: cinque cause assenti e tre azioni
+assenti. Bloccano l'approvazione anche se il payload ontologico è valido, e su
+tutte e otto le righe il manutentore aveva scritto lui stesso che la causa non
+era confermata.
+
+I tre pairing sintomo-causa ambigui della prima campagna non esistono più:
+nascevano dallo spezzamento della cella, non dai dati. La rete di sicurezza sui
+prodotti cartesiani resta nel generatore per il caso in cui un ruolo porti
+comunque più valori.
 
 ## Test automatici eseguiti
 

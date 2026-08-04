@@ -41,10 +41,22 @@
     finally { state.structureBusy = false; root.render(); }
   };
 
+  /* Quante domande restano su questo file. Il conto è sul profilo a cui la
+     domanda appartiene, non sulla fonte a schermo: sono la stessa cosa quando
+     l'operatore risponde, ma la formula resta vera anche se non lo fossero. */
+  const contaDomande = (problema) => {
+    const tutte = ((state.structure && state.structure.exceptions) || [])
+      .filter((e) => e.profile_id === problema.profile_id);
+    const risposte = tutte.filter((e) => e.status !== "open" && e.status !== "queued").length;
+    return { indice: risposte + 1, totale: tutte.length };
+  };
+
   /* ------- l'unica decisione che richiede un umano, in cima al pannello --- */
   const cartaEccezione = (problema) => {
     const carico = problema.payload || {};
+    const conto = contaDomande(problema);
     const testa = `
+      <p class="voce-meta">${esc(t("str.domandaDi", { i: conto.indice, t: conto.totale }))}</p>
       <h3 style="margin:0;font-size:17px;font-weight:640;letter-spacing:-.02em">${esc(problema.title)}</h3>
       <p>${esc(problema.explanation)}</p>
       <p class="voce-meta">${esc(t("str.riguarda", { f: problema.source_name }))}</p>`;
@@ -115,6 +127,10 @@
     "observation", "cause", "action", "component", "error_code",
     "occurred_at", "measurement", "outcome", "attribute", "excluded",
   ];
+  /* Ruoli assegnati che non producono un elemento proprio: viaggiano con gli
+     elementi come dettaglio. Vanno mostrati lo stesso, altrimenti l'operatore
+     non sa che fine ha fatto la colonna della data. */
+  const CONTORNO = ["occurred_at", "measurement", "outcome"];
 
   const vistaColonne = (profilo) => {
     const strutture = (profilo.structures || []).filter((s) => s.included);
@@ -239,9 +255,14 @@
       if (!state.workspace || state.structureLoading) {
         return `<div class="stato-pagina"><strong>${esc(t("str.leggo"))}</strong><p>${esc(t("str.leggoTesto"))}</p></div>`;
       }
-      if (state.structureError && !state.structure) {
+      /* Una rilettura fallita rende bugiardo tutto quello che c'è a schermo: i
+         dati mostrati sono quelli di prima, e rispondere alla domanda non ha
+         effetto. Va detto, non nascosto dietro l'ultima istantanea riuscita —
+         era questo a sembrare un ciclo infinito. */
+      if (state.structureError) {
         return `<div class="stato-pagina"><strong>${esc(t("str.erroreTitolo"))}</strong>
           <p role="alert">${esc(state.structureError)}</p>
+          <p>${esc(t("str.erroreTesto"))}</p>
           <button type="button" class="btn primario" data-riprova>${esc(t("ui.riprova"))}</button></div>`;
       }
       if (!state.structure) {
@@ -336,11 +357,15 @@
       const conti = profilo.summary || {};
       const lingue = Object.entries(conti.language_counts || {}).filter(([, v]) => Number(v) > 0);
       const ruoli = new Map();
+      const contorno = new Map();
       (profilo.structures || []).filter((s) => s.included).forEach((struttura) => {
         Object.entries(mappaturaDi(profilo, struttura.structure_id)).forEach(([colonna, config]) => {
-          if (!config.included || !root.tipoDaRuolo[config.role]) return;
-          if (!ruoli.has(config.role)) ruoli.set(config.role, []);
-          ruoli.get(config.role).push(colonna);
+          if (!config.included) return;
+          const dove = root.tipoDaRuolo[config.role] ? ruoli
+            : CONTORNO.includes(config.role) ? contorno : null;
+          if (!dove) return;
+          if (!dove.has(config.role)) dove.set(config.role, []);
+          dove.get(config.role).push(colonna);
         });
       });
       return `
@@ -363,6 +388,13 @@
                 <span class="coda">${esc(colonne.join(" + "))}</span></div>`).join("")
               : `<p class="blocco-vuoto">${esc(t("str.alimentaVuoto"))}</p>`}
             <p>${esc(t("str.alimentaNota"))}</p></section>
+          ${contorno.size ? `<section class="blocco"><h4>${esc(t("str.contorno"))}</h4>
+            ${[...contorno.entries()].map(([ruolo, colonne]) => `
+              <div class="riga-legame">
+                <i aria-hidden="true" style="background:var(--muted-2)"></i>
+                <span class="nome">${esc(root.etichettaRuolo(ruolo))}</span>
+                <span class="coda">${esc(colonne.join(" + "))}</span></div>`).join("")}
+            <p>${esc(t("str.contornoNota"))}</p></section>` : ""}
         </div>`;
     },
 
@@ -371,8 +403,9 @@
       const problema = eccezioneAperta();
       const errore = state.structureError ? `<p class="campo-errore" role="alert">${esc(state.structureError)}</p>` : "";
       if (problema) {
+        const conto = contaDomande(problema);
         return `<div class="decisione-riga"><div class="decisione-testo" aria-live="polite">
-          <strong>${esc(t("str.serveScelta"))}</strong>
+          <strong>${esc(`${t("str.serveScelta")} · ${t("str.domandaDi", { i: conto.indice, t: conto.totale })}`)}</strong>
           <span>${esc(t("str.serveSceltaTesto", { f: problema.source_name }))}</span></div></div>${errore}`;
       }
       const profilo = profiloAttivo();
