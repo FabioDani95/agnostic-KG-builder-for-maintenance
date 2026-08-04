@@ -168,7 +168,15 @@ def test_g3_classifies_missing_cause_and_blocks_approval(foundation_client, mach
     assert "lacune dichiarate" in approval.json()["detail"]
 
 
-def test_g3_refuses_cartesian_links_for_multi_value_rows(foundation_client, machine_payload):
+def test_g3_reads_one_mapped_cell_as_one_claim(foundation_client, machine_payload):
+    """A pipe inside a cell is text, not a separator.
+
+    The generator used to split on ``|`` and turn one cell into several graph
+    elements — an assumption about a character that nothing declared and that
+    silently multiplied a free-text note into claims the file never made. A
+    filled cell of a mapped column is now exactly one claim, punctuation and
+    all; cleaning that text is a data problem and stays visible as one.
+    """
     workspace_id = _workspace(foundation_client, machine_payload)
     fixture = HARDENING_FIXTURES / "ambiguous_relationship_pairs.csv"
     source = _upload_csv(foundation_client, workspace_id, fixture)
@@ -179,13 +187,52 @@ def test_g3_refuses_cartesian_links_for_multi_value_rows(foundation_client, mach
     )
     assert generated.status_code == 200, generated.text
     graph = generated.json()["sources"][0]["subgraph"]
+
+    by_type: dict[str, list[str]] = {}
+    for node in graph["nodes"]:
+        by_type.setdefault(node["node_type"], []).append(node["label"])
+    # One row, one cell per role: one element each, keeping the pipe as text.
+    assert by_type["Symptom"] == ["Noise | Leak"]
+    assert by_type["FailureMode"] == ["Bearing wear | Seal damage"]
+    assert by_type["Component"] == ["Pump | Valve"]
+
+    # Every pairing is one-to-one, so each is proven and none is ambiguous.
     assert {relation["relation_type"] for relation in graph["relations"]} == {
-        "HAS_COMPONENT", "GENERATES_ERROR",
+        "HAS_COMPONENT", "GENERATES_ERROR", "MAY_INDICATE",
+        "AFFECTS", "RESOLVED_BY", "INDICATES",
     }
-    assert {item["code"] for item in graph["knowledge_gaps"]} == {
-        "ambiguous_symptom_cause_pairing",
-        "ambiguous_cause_component_pairing",
-        "ambiguous_cause_action_pairing",
-        "ambiguous_error_cause_pairing",
-    }
-    assert graph["approval_eligible"] is False
+    assert graph["knowledge_gaps"] == []
+
+
+def test_g3_gives_a_semantic_role_to_one_column_only(foundation_client, machine_payload):
+    """Two columns proposing the same role do not become one glued element.
+
+    Aliases read both ``symptom_observation`` and ``symptom_reported`` as
+    observations. Their texts would be concatenated into one evidence field and
+    surface as a single symptom holding two different statements. The first
+    column keeps the role; the second stays as plain data — still readable,
+    producing no element of its own.
+    """
+    workspace_id = _workspace(foundation_client, machine_payload)
+    fixture = HARDENING_FIXTURES / "shared_role_columns.csv"
+    source = _upload_csv(foundation_client, workspace_id, fixture)
+    _prepare_and_confirm_all(foundation_client, workspace_id)
+
+    preparation = foundation_client.get(
+        f"/api/workspaces/{workspace_id}/g2/preparation"
+    ).json()
+    profile = next(item for item in preparation["profiles"] if item["source_id"] == source["source_id"])
+    mapping = next(iter(profile["mapping"]["structures"].values()))
+    assert mapping["symptom_observation"]["role"] == "observation"
+    assert mapping["symptom_reported"]["role"] == "attribute"
+    assert mapping["diagnosis"]["role"] == "cause"
+    assert mapping["root_cause"]["role"] == "attribute"
+
+    generated = foundation_client.post(
+        f"/api/workspaces/{workspace_id}/g3/sources/{source['source_id']}/generate"
+    )
+    assert generated.status_code == 200, generated.text
+    graph = generated.json()["sources"][0]["subgraph"]
+    labels = {node["node_type"]: node["label"] for node in graph["nodes"]}
+    assert labels["Symptom"] == "Noise"
+    assert labels["FailureMode"] == "Bearing wear"

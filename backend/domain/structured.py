@@ -133,3 +133,13 @@ class ExceptionResolution(BaseModel):
 
 class JoinDecision(BaseModel):
     action: Literal["approve", "reject"]
+
+
+class ColumnRoleAssignment(BaseModel):
+    """Operator correction of how one column of a table was read."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    structure_id: str = Field(min_length=1)
+    column: str = Field(min_length=1)
+    role: SemanticRole

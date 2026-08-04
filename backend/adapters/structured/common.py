@@ -14,7 +14,10 @@ from backend.domain.evidence import QualityFlag, RawUnitDraft
 from backend.domain.sources import Source, SourceKind
 from backend.domain.structured import ColumnProfile, MappingColumn, StructureProfile
 
-ADAPTER_VERSION = "structured-v2"
+# v3: a mapped cell is one claim, and one column holds a role. The version
+# is part of the mapping fingerprint, so evidence and subgraphs derived by
+# the previous reading invalidate instead of being reused.
+ADAPTER_VERSION = "structured-v3-cell-per-claim"
 _ROLE_CONFIG_PATH = Path(__file__).with_name("role_aliases.v2.json")
 
 

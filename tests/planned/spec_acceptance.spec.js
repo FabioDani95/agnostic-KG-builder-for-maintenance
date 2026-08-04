@@ -239,8 +239,23 @@ test("AC-UX-014: the structure phase is automatic and asks one question at a tim
   await expect(page.locator(".lavoro .card")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Che cosa significa ogni colonna" })).toBeVisible();
   await expect(page.getByRole("columnheader", { name: "Significato" })).toBeVisible();
-  await expect(page.locator(".tabella tbody").getByText("Sintomo o osservazione").first()).toBeVisible();
+  const ruoloDescription = page.locator('.tabella tbody select[data-colonna="description"]');
+  await expect(ruoloDescription).toHaveValue("observation");
   await expect(page.locator("#app")).not.toContainText(/\bGate\b/);
+
+  // The meaning of a column is a control, not a label: it stays correctable,
+  // and a role belongs to one column, so handing it over releases the previous
+  // holder to plain data instead of gluing the two together.
+  await page.locator('.tabella tbody select[data-colonna="action_taken"]').selectOption("observation");
+  await expect(page.locator('.tabella tbody select[data-colonna="action_taken"]')).toHaveValue("observation");
+  await expect(ruoloDescription).toHaveValue("attribute");
+
+  // Re-reading the file withdraws a confirmation given for the previous reading.
+  await expect(page.locator(".decisione")).toContainText("Conferma questo file");
+  await page.locator('.tabella tbody select[data-colonna="action_taken"]').selectOption("action");
+  await expect(ruoloDescription).toHaveValue("attribute");
+  await page.locator('.tabella tbody select[data-colonna="description"]').selectOption("observation");
+  await expect(ruoloDescription).toHaveValue("observation");
 
   // A confirmation applies to one file only.
   await page.getByRole("button", { name: "Conferma questo file" }).click();

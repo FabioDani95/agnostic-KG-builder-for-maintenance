@@ -204,6 +204,12 @@ button.catena-passo:hover{background:var(--fill)}
 .ruolo{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500}
 .ruolo i{width:8px;height:8px;border-radius:50%;background:var(--tipo,var(--muted-2));flex:0 0 8px}
 .ruolo.escluso{color:var(--muted-2);font-weight:400}
+/* Il significato di una colonna è un comando, non un'etichetta: il selettore
+   sta nella cella, con il pallino del tipo che cambia insieme. */
+.ruolo-cella{display:flex;align-items:center;gap:8px;min-width:0}
+.ruolo-cella>i{width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:var(--tipo,var(--muted-2))}
+.ruolo-cella>i.spento{background:none;box-shadow:inset 0 0 0 1px var(--muted-2)}
+.ruolo-cella select{min-width:11rem;padding:5px 26px 5px 9px;font-size:12.5px}
 
 /* documenti */
 .caricamento{display:grid;grid-template-columns:minmax(0,1fr) 12rem auto;align-items:end;gap:12px}

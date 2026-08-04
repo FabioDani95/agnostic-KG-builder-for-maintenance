@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException
 
 from backend.domain.evidence import EvidenceUnit
 from backend.domain.structured import (
+    ColumnRoleAssignment,
     ExceptionResolution,
     G2PreparationView,
     JoinDecision,
@@ -108,6 +109,25 @@ def decide_g2_join(join_id: str, decision: JoinDecision):
     except LookupError as exc:
         raise HTTPException(status_code=404, detail="Proposta di collegamento non trovata") from exc
     except StructuredPreparationError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+
+@router.post(
+    "/g2/profiles/{profile_id}/columns",
+    response_model=G2PreparationView,
+)
+def set_g2_column_role(profile_id: str, assignment: ColumnRoleAssignment):
+    """Correct the meaning of one column and re-read the file with it."""
+    try:
+        return StructuredPreparationService().set_column_role(
+            profile_id,
+            structure_id=assignment.structure_id,
+            column=assignment.column,
+            role=assignment.role,
+        )
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail="Fonte strutturata non trovata") from exc
+    except (ValueError, StructuredPreparationError) as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
 
 

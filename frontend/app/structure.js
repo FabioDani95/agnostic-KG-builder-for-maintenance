@@ -109,13 +109,21 @@
   /* ------------------------------------------------------------- viste -- */
   const mappaturaDi = (profilo, structureId) => (((profilo.mapping || {}).structures || {})[structureId]) || {};
 
+  /* L'ordine è quello con cui l'operatore ragiona: prima i ruoli che
+     alimentano il grafo, poi i contorni, infine le due uscite. */
+  const RUOLI = [
+    "observation", "cause", "action", "component", "error_code",
+    "occurred_at", "measurement", "outcome", "attribute", "excluded",
+  ];
+
   const vistaColonne = (profilo) => {
     const strutture = (profilo.structures || []).filter((s) => s.included);
     if (!strutture.length) {
       return `<div class="vuoto"><strong>${esc(t("str.nienteTabelle"))}</strong><p>${esc(t("str.nienteTabelleTesto"))}</p></div>`;
     }
     return `
-      <div class="gruppo-capo"><h3>${esc(t("str.colonneTitolo"))}</h3><p>${esc(t("str.colonneTesto"))}</p></div>
+      <div class="gruppo-capo"><h3>${esc(t("str.colonneTitolo"))}</h3><p>${esc(t("str.colonneTesto"))}</p>
+        <p>${esc(t("str.unRuoloUnaColonna"))}</p></div>
       ${strutture.map((struttura) => {
         const mappa = mappaturaDi(profilo, struttura.structure_id);
         return `<div style="margin-top:14px">
@@ -128,11 +136,21 @@
               const config = mappa[colonna.name];
               const ruolo = config ? config.role : colonna.proposed_role;
               const usata = config ? config.included : true;
-              const tipo = root.tipoDaRuolo[ruolo];
+              const effettivo = usata ? ruolo : "excluded";
+              const tipo = root.tipoDaRuolo[effettivo];
               return `<tr>
                 <td>${esc(colonna.name)}</td>
-                <td><span class="ruolo ${usata && ruolo !== "excluded" ? "" : "escluso"} ${tipo ? `tipo-${tipo}` : ""}">
-                  ${tipo ? '<i aria-hidden="true"></i>' : ""}${esc(usata ? root.etichettaRuolo(ruolo) : t("ruolo.nonUsata"))}</span></td>
+                <td>
+                  <span class="ruolo-cella ${tipo ? `tipo-${tipo}` : ""}">
+                    <i aria-hidden="true" class="${tipo ? "" : "spento"}"></i>
+                    <label class="solo-lettori" for="ruolo-${esc(struttura.structure_id)}-${esc(colonna.name)}">${esc(t("str.ruoloDi", { c: colonna.name }))}</label>
+                    <select id="ruolo-${esc(struttura.structure_id)}-${esc(colonna.name)}"
+                      data-ruolo data-struttura="${esc(struttura.structure_id)}" data-colonna="${esc(colonna.name)}"
+                      ${state.structureBusy ? "disabled" : ""}>
+                      ${RUOLI.map((r) => `<option value="${r}" ${effettivo === r ? "selected" : ""}>${esc(root.etichettaRuolo(r))}</option>`).join("")}
+                    </select>
+                  </span>
+                </td>
                 <td>${esc((colonna.examples || []).slice(0, 2).join(" · ") || "—")}</td>
                 <td class="num">${Math.round(Number(colonna.null_rate || 0) * 100)}%</td>
               </tr>`;
@@ -281,6 +299,18 @@
         const pannello = elemento.closest("[data-eccezione]");
         esegui(() => root.api(`/api/g2/exceptions/${encodeURIComponent(pannello.dataset.eccezione)}/resolve`,
           { method: "POST", body: { acknowledge: true } }));
+      });
+      root.delegate(contenitore, "change", "[data-ruolo]", (elemento) => {
+        const profilo = profiloAttivo();
+        if (!profilo) return;
+        esegui(() => root.api(`/api/g2/profiles/${encodeURIComponent(profilo.profile_id)}/columns`, {
+          method: "POST",
+          body: {
+            structure_id: elemento.dataset.struttura,
+            column: elemento.dataset.colonna,
+            role: elemento.value,
+          },
+        }));
       });
       root.delegate(contenitore, "click", "[data-join-azione]", (elemento) => {
         const pannello = elemento.closest("[data-join]");

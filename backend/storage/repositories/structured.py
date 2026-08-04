@@ -22,6 +22,43 @@ def _json(value: Any) -> str:
     return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
 
 
+#: Roles that feed one field of the evidence record, and therefore one claim.
+#: ``attribute`` and ``excluded`` are not among them: any number of columns may
+#: be kept as plain data or left out.
+_EXCLUSIVE_ROLES = frozenset({
+    "observation", "cause", "action", "component",
+    "error_code", "occurred_at", "outcome", "measurement",
+})
+
+
+def _one_column_per_role(columns: dict[str, Any]) -> dict[str, Any]:
+    """Let at most one column hold each semantic role.
+
+    Aliases can propose the same role for several columns — a free-text event
+    description and a reported symptom both look like observations. Their texts
+    would then be concatenated into a single evidence field, and the graph would
+    show one element carrying two different statements glued together.
+
+    The first column in file order keeps the role; the others start as plain
+    attributes, so their content stays readable and searchable but produces no
+    graph element. The operator can hand the role to a different column at any
+    time (see :meth:`StructuredPreparationRepository.set_column_role`).
+    """
+    taken: set[str] = set()
+    resolved: dict[str, Any] = {}
+    for column, config in columns.items():
+        payload = config.model_dump(mode="json")
+        role = payload.get("role")
+        if role in _EXCLUSIVE_ROLES:
+            if role in taken:
+                payload["role"] = "attribute"
+                payload["included"] = True
+            else:
+                taken.add(role)
+        resolved[column] = payload
+    return resolved
+
+
 class StructuredPreparationRepository:
     def __init__(self, database: Database | None = None):
         self.database = database or get_database()
@@ -75,10 +112,7 @@ class StructuredPreparationRepository:
         }
         mapping_payload = {
             "structures": {
-                structure_id: {
-                    column: config.model_dump(mode="json")
-                    for column, config in columns.items()
-                }
+                structure_id: _one_column_per_role(columns)
                 for structure_id, columns in inspection.mapping.items()
             }
         }
@@ -332,6 +366,117 @@ class StructuredPreparationRepository:
                 (exception_id,),
             ).fetchone()
         return self._exception(result)
+
+    def set_column_role(
+        self,
+        profile_id: str,
+        *,
+        structure_id: str,
+        column: str,
+        role: str,
+    ) -> str:
+        """Reassign one column's semantic role.
+
+        A semantic role is held by at most one column: two columns feeding the
+        same role would have to be concatenated into a single evidence field,
+        and the graph generator would then read one claim where the file states
+        two.  Taking a role therefore releases it from whoever held it, and the
+        previous holder keeps its content as a plain attribute — nothing is
+        dropped, it simply stops producing graph elements.
+
+        Editing the mapping invalidates the work downstream of it: the profile
+        goes back to being re-read, and the operator's confirmation is withdrawn
+        because it was given for a different reading of the file.  The source
+        subgraph invalidates itself, since its identity includes the mapping
+        fingerprint that just changed.
+        """
+        now = utc_now()
+        with self.database.transaction() as connection:
+            profile = connection.execute(
+                "SELECT * FROM structured_profiles WHERE profile_id = ?", (profile_id,)
+            ).fetchone()
+            if profile is None:
+                raise LookupError(profile_id)
+            mapping = json.loads(profile["mapping_json"])
+            structures = mapping.get("structures", {})
+            if structure_id not in structures:
+                raise ValueError("La tabella indicata non esiste in questa fonte")
+            if column not in structures[structure_id]:
+                raise ValueError("La colonna indicata non esiste in questa tabella")
+
+            released: list[str] = []
+            if role not in {"attribute", "excluded"}:
+                for other, config in structures[structure_id].items():
+                    if other != column and config.get("role") == role:
+                        config["role"] = "attribute"
+                        config["included"] = True
+                        released.append(other)
+
+            structures[structure_id][column]["role"] = role
+            structures[structure_id][column]["included"] = role != "excluded"
+
+            connection.execute(
+                """
+                UPDATE structured_profiles
+                SET mapping_json = ?, state = 'analyzing', run_id = NULL, updated_at = ?
+                WHERE profile_id = ?
+                """,
+                (_json(mapping), now, profile_id),
+            )
+            # The ledger already models this: a preparation that is no longer
+            # valid passes through `invalidated` before being redone. Jumping
+            # straight back to profiling would skip the record of why.
+            preparation = connection.execute(
+                "SELECT state FROM preparations WHERE source_id = ?", (profile["source_id"],)
+            ).fetchone()
+            if preparation is not None and preparation["state"] == "ready":
+                connection.execute(
+                    "UPDATE preparations SET state = 'invalidated', updated_at = ? WHERE source_id = ?",
+                    (now, profile["source_id"]),
+                )
+            if preparation is not None and preparation["state"] != "profiling_or_scoping":
+                # `active_config_id` keeps pointing at this profile: the mapping
+                # is still the current one, it simply has to be applied again.
+                # Clearing it would detach the profile and the next pass would
+                # build a fresh one, throwing the correction away.
+                connection.execute(
+                    "UPDATE preparations SET state = 'profiling_or_scoping', updated_at = ? WHERE source_id = ?",
+                    (now, profile["source_id"]),
+                )
+            # The confirmation applied to the previous reading of the file, so
+            # it no longer holds. The ledger is append-only and must stay that
+            # way: the confirmation is not erased, it is countered by a later
+            # event, and both remain readable.
+            connection.execute(
+                """
+                INSERT INTO audit_events(workspace_id, event_kind, subject_id, payload_json, created_at)
+                VALUES (?, 'structured_source_confirmation_withdrawn', ?, ?, ?)
+                """,
+                (
+                    profile["workspace_id"],
+                    profile_id,
+                    _json({"reason": "mapping_edited", "column": column, "role": role}),
+                    now,
+                ),
+            )
+            connection.execute(
+                """
+                INSERT INTO audit_events(workspace_id, event_kind, subject_id, payload_json, created_at)
+                VALUES (?, 'structured_mapping_edited', ?, ?, ?)
+                """,
+                (
+                    profile["workspace_id"],
+                    profile_id,
+                    _json({
+                        "structure_id": structure_id,
+                        "column": column,
+                        "role": role,
+                        "released_columns": released,
+                    }),
+                    now,
+                ),
+            )
+            return profile["workspace_id"]
 
     def mark_prepared(self, profile_id: str, *, run_id: str, summary_updates: dict[str, Any]) -> None:
         profile = self.get_profile(profile_id)

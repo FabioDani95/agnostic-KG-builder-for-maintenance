@@ -513,7 +513,11 @@ def test_g2_csv_maps_common_multilingual_operational_headers(foundation_client, 
     assert mapping["symptom_reported"]["role"] == "observation"
     assert mapping["process_measurement"]["role"] == "measurement"
     assert mapping["work_outcome"]["role"] == "outcome"
-    assert mapping["restart_test"]["role"] == "outcome"
+    # Aliases read restart_test as an outcome too, but a role belongs to one
+    # column: the second holder keeps its content as plain data instead of
+    # being concatenated into the first one's field.
+    assert mapping["restart_test"]["role"] == "attribute"
+    assert mapping["restart_test"]["included"] is True
 
 
 def test_g2_csv_queues_multiple_ambiguous_diagnostic_columns(foundation_client, machine_payload):

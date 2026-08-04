@@ -387,6 +387,13 @@ class EvidenceRepository:
     ) -> list[EvidenceUnit]:
         now = utc_now()
         with self.database.transaction() as connection:
+            # Evidence units are immutable and stay on the record. What this
+            # rewrites is which of them is the profile's current reading: after
+            # a mapping correction the previous set must stop being served,
+            # otherwise the graph would be built from two readings at once.
+            connection.execute(
+                "DELETE FROM structured_evidence WHERE profile_id = ?", (profile_id,)
+            )
             for evidence in evidence_units:
                 existing = connection.execute(
                     "SELECT payload_json FROM evidence_units WHERE evidence_id = ?",

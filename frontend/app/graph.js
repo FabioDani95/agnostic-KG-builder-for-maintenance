@@ -17,6 +17,31 @@
     return state.graph.sources.find((v) => v.source_id === attiva.source_id) || null;
   };
 
+  /**
+   * Quale elemento una lacuna riguarda davvero.
+   *
+   * Il motore attacca le lacune alle righe, non ai nodi. Far ereditare la
+   * lacuna a ogni nodo nato da quella riga marcava anche la macchina — che
+   * compare in tutte le righe — e il sintomo, quando a mancare era l'azione
+   * della causa. Qui una lacuna tocca solo i tipi che ne sono l'oggetto:
+   * quello che resta senza controparte.
+   *
+   * Macchina e componente non compaiono mai: sono sempre dichiarati, non sono
+   * mai il pezzo mancante di una catena diagnostica.
+   */
+  const TIPI_TOCCATI = {
+    missing_failure_mode: ["Symptom", "ErrorCode"],
+    missing_diagnostic_indicator: ["FailureMode"],
+    missing_corrective_action: ["FailureMode"],
+    /* Gli abbinamenti ambigui non possono più nascere con una colonna per
+       ruolo, ma la rete di sicurezza del motore resta: se ricompaiono, a
+       restare senza collegamento sono i due estremi. */
+    ambiguous_symptom_cause_pairing: ["Symptom", "FailureMode"],
+    ambiguous_cause_component_pairing: ["FailureMode", "Component"],
+    ambiguous_cause_action_pairing: ["FailureMode", "CorrectiveAction"],
+    ambiguous_error_cause_pairing: ["ErrorCode", "FailureMode"],
+  };
+
   /* ------------------------------------------------------------- modello -- */
   const costruisciModello = (grafo) => {
     const nodiPerId = new Map(grafo.nodes.map((nodo) => [nodo.node_id, nodo]));
@@ -44,6 +69,8 @@
     grafo.nodes.forEach((nodo) => {
       const lacune = [];
       nodo.evidence_ids.forEach((id) => (lacunePerEvidenza.get(id) || []).forEach((lacuna) => {
+        if (!TIPI_TOCCATI[lacuna.code]) return;
+        if (!TIPI_TOCCATI[lacuna.code].includes(nodo.node_type)) return;
         if (!lacune.includes(lacuna)) lacune.push(lacuna);
       }));
       if (lacune.length) lacunePerNodo.set(nodo.node_id, lacune);

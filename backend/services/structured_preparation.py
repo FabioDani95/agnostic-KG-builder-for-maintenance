@@ -39,6 +39,25 @@ from backend.storage.repositories.workspaces import WorkspaceRepository
 
 STRUCTURED_KINDS = {SourceKind.CSV, SourceKind.XLSX, SourceKind.JSON, SourceKind.JSONL}
 
+#: Which mapping profiles the operator has confirmed, right now.
+#:
+#: The audit ledger is append-only, so a confirmation is never removed: editing
+#: the mapping appends a withdrawal instead, because the confirmation was given
+#: for a different reading of the file. A profile counts as confirmed when no
+#: withdrawal follows its latest confirmation — both events stay on the record.
+CONFIRMED_PROFILES_SQL = """
+    SELECT DISTINCT a.subject_id FROM audit_events a
+    WHERE a.workspace_id = ? AND a.event_kind = 'structured_source_confirmed'
+      AND NOT EXISTS (
+        SELECT 1 FROM audit_events b
+        WHERE b.workspace_id = a.workspace_id
+          AND b.subject_id = a.subject_id
+          AND b.event_kind = 'structured_source_confirmation_withdrawn'
+          AND (b.created_at > a.created_at
+               OR (b.created_at = a.created_at AND b.rowid > a.rowid))
+      )
+"""
+
 
 class StructuredPreparationError(RuntimeError):
     pass
@@ -53,10 +72,18 @@ def _hash(value: Any) -> str:
 
 
 def mapping_fingerprint(profile: StructuredProfileView) -> str:
-    """Fingerprint the effective, operator-resolved mapping used for evidence."""
+    """Fingerprint the effective reading of a source.
+
+    A reading is the operator-resolved mapping *and* the code that applies it.
+    Leaving the adapter version out made the fingerprint blind to a change in
+    how evidence is derived: the evidence changed, the fingerprint did not, and
+    a subgraph built from the previous derivation was reused as if current.
+    """
     return _hash({
         "mapping_profile_id": profile.profile_id,
         "mapping": profile.mapping.model_dump(mode="json"),
+        "adapter_version": ADAPTER_VERSION,
+        "role_alias_config_version": ROLE_ALIAS_CONFIG_VERSION,
     })
 
 
@@ -128,11 +155,7 @@ class StructuredPreparationService:
             confirmed_profile_ids = {
                 row["subject_id"]
                 for row in connection.execute(
-                    """
-                    SELECT DISTINCT subject_id FROM audit_events
-                    WHERE workspace_id = ? AND event_kind = 'structured_source_confirmed'
-                    """,
-                    (workspace_id,),
+                    CONFIRMED_PROFILES_SQL, (workspace_id,)
                 ).fetchall()
             }
         enriched_profiles = []
@@ -197,6 +220,20 @@ class StructuredPreparationService:
         exception = self.profiles.resolve_exception(exception_id, resolution)
         return self.ensure_workspace(self.profiles.get_profile(exception.profile_id).workspace_id)
 
+    def set_column_role(
+        self,
+        profile_id: str,
+        *,
+        structure_id: str,
+        column: str,
+        role: str,
+    ) -> G2PreparationView:
+        """Correct how one column was read, then re-read the file with it."""
+        workspace_id = self.profiles.set_column_role(
+            profile_id, structure_id=structure_id, column=column, role=role
+        )
+        return self.ensure_workspace(workspace_id)
+
     def decide_join(self, join_id: str, action: str) -> G2PreparationView:
         join = self.profiles.decide_join(join_id, action)
         return self.ensure_workspace(join.workspace_id)
@@ -228,16 +265,15 @@ class StructuredPreparationService:
         from backend.storage.database import get_database
 
         with get_database().transaction() as connection:
-            exists = connection.execute(
-                """
-                SELECT 1 FROM audit_events
-                WHERE workspace_id = ? AND event_kind = 'structured_source_confirmed'
-                  AND subject_id = ?
-                LIMIT 1
-                """,
+            # Confirming twice must not append twice — but a confirmation that
+            # was withdrawn, because the mapping changed underneath it, has to
+            # be given again. The guard therefore asks whether the profile is
+            # confirmed *now*, not whether it ever was.
+            already_confirmed = connection.execute(
+                f"SELECT 1 FROM ({CONFIRMED_PROFILES_SQL}) WHERE subject_id = ? LIMIT 1",
                 (profile.workspace_id, profile_id),
             ).fetchone()
-            if exists is None:
+            if already_confirmed is None:
                 connection.execute(
                     """
                     INSERT INTO audit_events(workspace_id, event_kind, subject_id, payload_json, created_at)
@@ -580,7 +616,16 @@ class StructuredPreparationService:
                 )
             )
         locator_hash = _hash(record.raw_unit.locator.model_dump(mode="json"))
-        evidence_id = f"ev_{_hash({'profile_id': profile.profile_id, 'raw_unit_id': record.raw_unit.raw_unit_id})[:28]}"
+        # The mapping is part of what an evidence unit *is*: the same row read
+        # with a different column meaning is a different reading, and evidence
+        # is immutable. Leaving the fingerprint out gave a stable id, so a
+        # corrected mapping kept the old payload and the graph was rebuilt from
+        # a reading nobody had confirmed.
+        evidence_id = f"ev_{_hash({
+            'profile_id': profile.profile_id,
+            'mapping_fingerprint': effective_mapping_fingerprint,
+            'raw_unit_id': record.raw_unit.raw_unit_id,
+        })[:28]}"
         occurred_at = joined("occurred_at") or None
         return EvidenceUnit(
             evidence_id=evidence_id,

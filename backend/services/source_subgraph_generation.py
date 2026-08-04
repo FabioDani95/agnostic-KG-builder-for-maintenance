@@ -27,7 +27,7 @@ from backend.domain.subgraphs import (
     SourceSubgraphStatus,
 )
 from backend.services.ontology_schema_service import load_ontology_schema, ontology_contract
-from backend.services.structured_preparation import mapping_fingerprint
+from backend.services.structured_preparation import CONFIRMED_PROFILES_SQL, mapping_fingerprint
 from backend.storage.database import get_database
 from backend.storage.repositories.evidence import EvidenceRepository
 from backend.storage.repositories.sources import SourceNotFoundError, SourceRepository
@@ -35,7 +35,10 @@ from backend.storage.repositories.structured import StructuredPreparationReposit
 from backend.storage.repositories.subgraphs import SourceSubgraphRepository
 from backend.storage.repositories.workspaces import WorkspaceRepository
 
-GENERATOR_VERSION = "structured-direct-graph-v3-strict"
+# v4: a mapped cell is one claim; the generator no longer splits on "|".
+# The version is part of input_config_hash, so subgraphs built under v3 no
+# longer match and are rebuilt instead of silently reused.
+GENERATOR_VERSION = "structured-direct-graph-v4-cell-per-claim"
 STRUCTURED_GRAPH_KINDS = {SourceKind.CSV, SourceKind.XLSX, SourceKind.JSON, SourceKind.JSONL}
 
 
@@ -55,7 +58,20 @@ def _normalized_label(value: str) -> str:
 
 
 def _values(value: str) -> list[str]:
-    return [item.strip() for item in str(value or "").split("|") if item.strip()]
+    """One filled cell of a mapped column is one claim.
+
+    The generator used to split on ``|``, treating it as a multi-value
+    separator.  That was an assumption about a character, not a reading of the
+    data: a pipe written inside a free-text cell was silently turned into two
+    graph elements, and nothing said so.  A cell is now taken whole — if its
+    text needs cleaning, that is a data problem, and it stays visible as one.
+
+    A role is held by at most one column (see
+    ``StructuredProfileRepository.set_column_role``), so the joined evidence
+    field this reads carries a single cell.
+    """
+    text = str(value or "").strip()
+    return [text] if text else []
 
 
 def _stable_id(prefix: str, *parts: str) -> str:
@@ -688,11 +704,5 @@ class SourceSubgraphGenerationService:
     @staticmethod
     def _confirmed_profiles(workspace_id: str) -> set[str]:
         with get_database().read() as connection:
-            rows = connection.execute(
-                """
-                SELECT subject_id FROM audit_events
-                WHERE workspace_id = ? AND event_kind = 'structured_source_confirmed'
-                """,
-                (workspace_id,),
-            ).fetchall()
+            rows = connection.execute(CONFIRMED_PROFILES_SQL, (workspace_id,)).fetchall()
         return {row["subject_id"] for row in rows}
