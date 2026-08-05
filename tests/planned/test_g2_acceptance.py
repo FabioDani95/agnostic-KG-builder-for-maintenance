@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import io
 import sqlite3
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from openpyxl import Workbook
@@ -82,6 +83,47 @@ def test_g2_csv_is_automatic_idempotent_and_balanced(foundation_client, machine_
     assert foundation_client.get(
         f"/api/workspaces/{workspace_id}/g2/preparation"
     ).json()["completed"] is True
+
+
+def test_g2_concurrent_mapping_edits_are_serialized(foundation_client, machine_payload):
+    workspace_id = _workspace(foundation_client, machine_payload)
+    _upload(
+        foundation_client,
+        workspace_id,
+        "concurrent-mapping.csv",
+        b"symptom_observation,action_taken\nnoise,inspect bearing\n",
+        "text/csv",
+    )
+    started = _start(foundation_client, workspace_id)
+    profile = started["profiles"][0]
+    profile_id = profile["profile_id"]
+    structure_id = next(iter(profile["mapping"]["structures"]))
+    assignments = [
+        {"structure_id": structure_id, "column": "action_taken", "role": "observation"},
+        {"structure_id": structure_id, "column": "action_taken", "role": "action"},
+        {"structure_id": structure_id, "column": "symptom_observation", "role": "observation"},
+    ]
+
+    def assign(payload):
+        return foundation_client.post(f"/api/g2/profiles/{profile_id}/columns", json=payload)
+
+    with ThreadPoolExecutor(max_workers=len(assignments)) as executor:
+        responses = list(executor.map(assign, assignments))
+
+    assert all(response.status_code == 200 for response in responses), [
+        response.text for response in responses
+    ]
+    current = foundation_client.get(
+        f"/api/workspaces/{workspace_id}/g2/preparation"
+    ).json()["profiles"][0]
+    mapping = current["mapping"]["structures"][structure_id]
+    claimed_roles = [
+        config["role"] for config in mapping.values()
+        if config["role"] not in {"attribute", "excluded"}
+    ]
+    assert len(claimed_roles) == len(set(claimed_roles))
+    assert current["state"] == "prepared"
+    assert current["run_id"]
 
 
 def test_g2_csv_detects_semicolon_and_preserves_latin1(foundation_client, machine_payload):

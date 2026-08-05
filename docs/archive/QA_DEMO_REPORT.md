@@ -5,8 +5,7 @@
 > `6303abb` del 15 luglio 2026. I test di regressione aggiunti in seguito sono
 > verdi; D-06…D-08 restano osservazioni da riesercitare in una nuova sessione
 > manuale con modello reale. Il verdetto sotto vale esclusivamente per il build
-> e il run indicati. Vedi [Cleanup Audit](../CLEANUP_AUDIT.md) per la verifica
-> automatica corrente.
+> e il run indicati.
 
 **Data esecuzione:** 15 luglio 2026  
 **Verdetto:** **NON PRONTA per una demo enterprise end-to-end**  

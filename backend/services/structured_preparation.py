@@ -6,6 +6,7 @@ import hashlib
 import json
 from collections import Counter, defaultdict
 from pathlib import Path
+from threading import Lock, RLock
 from typing import Any
 
 from backend.adapters.structured import ParsedRecord, StructuredInspection, inspect_structured_source
@@ -38,6 +39,15 @@ from backend.storage.repositories.structured import StructuredPreparationReposit
 from backend.storage.repositories.workspaces import WorkspaceRepository
 
 STRUCTURED_KINDS = {SourceKind.CSV, SourceKind.XLSX, SourceKind.JSON, SourceKind.JSONL}
+
+_locks_guard = Lock()
+_workspace_locks: dict[str, RLock] = {}
+
+
+def _workspace_lock(workspace_id: str) -> RLock:
+    """Serialize one workspace's profile mutation and materialization span."""
+    with _locks_guard:
+        return _workspace_locks.setdefault(workspace_id, RLock())
 
 #: Which mapping profiles the operator has confirmed, right now.
 #:
@@ -115,6 +125,10 @@ class StructuredPreparationService:
         self.evidence = EvidenceRepository()
 
     def ensure_workspace(self, workspace_id: str) -> G2PreparationView:
+        with _workspace_lock(workspace_id):
+            return self._ensure_workspace(workspace_id)
+
+    def _ensure_workspace(self, workspace_id: str) -> G2PreparationView:
         workspace = WorkspaceRepository().get_by_id(workspace_id)
         if workspace is None:
             raise LookupError(workspace_id)
@@ -228,8 +242,11 @@ class StructuredPreparationService:
         )
 
     def resolve_exception(self, exception_id: str, resolution: dict[str, Any]) -> G2PreparationView:
-        exception = self.profiles.resolve_exception(exception_id, resolution)
-        return self.ensure_workspace(self.profiles.get_profile(exception.profile_id).workspace_id)
+        exception = self.profiles.get_exception(exception_id)
+        workspace_id = self.profiles.get_profile(exception.profile_id).workspace_id
+        with _workspace_lock(workspace_id):
+            self.profiles.resolve_exception(exception_id, resolution)
+            return self._ensure_workspace(workspace_id)
 
     def set_column_role(
         self,
@@ -240,18 +257,27 @@ class StructuredPreparationService:
         role: str,
     ) -> G2PreparationView:
         """Correct how one column was read, then re-read the file with it."""
-        workspace_id = self.profiles.set_column_role(
-            profile_id, structure_id=structure_id, column=column, role=role
-        )
-        return self.ensure_workspace(workspace_id)
+        workspace_id = self.profiles.get_profile(profile_id).workspace_id
+        with _workspace_lock(workspace_id):
+            self.profiles.set_column_role(
+                profile_id, structure_id=structure_id, column=column, role=role
+            )
+            return self._ensure_workspace(workspace_id)
 
     def decide_join(self, join_id: str, action: str) -> G2PreparationView:
-        join = self.profiles.decide_join(join_id, action)
-        return self.ensure_workspace(join.workspace_id)
+        workspace_id = self.profiles.get_join(join_id).workspace_id
+        with _workspace_lock(workspace_id):
+            self.profiles.decide_join(join_id, action)
+            return self._ensure_workspace(workspace_id)
 
     def confirm_profile(self, profile_id: str) -> G2PreparationView:
         profile = self.profiles.get_profile(profile_id)
-        snapshot = self.ensure_workspace(profile.workspace_id)
+        with _workspace_lock(profile.workspace_id):
+            return self._confirm_profile(profile_id)
+
+    def _confirm_profile(self, profile_id: str) -> G2PreparationView:
+        profile = self.profiles.get_profile(profile_id)
+        snapshot = self._ensure_workspace(profile.workspace_id)
         current = next((item for item in snapshot.profiles if item.profile_id == profile_id), None)
         if current is None:
             raise LookupError(profile_id)
@@ -300,12 +326,13 @@ class StructuredPreparationService:
         return self.snapshot(profile.workspace_id)
 
     def complete(self, workspace_id: str) -> G2PreparationView:
-        snapshot = self.ensure_workspace(workspace_id)
-        if not snapshot.completed:
-            raise StructuredPreparationError(
-                "Conferma ogni fonte prima di continuare."
-            )
-        return snapshot
+        with _workspace_lock(workspace_id):
+            snapshot = self._ensure_workspace(workspace_id)
+            if not snapshot.completed:
+                raise StructuredPreparationError(
+                    "Conferma ogni fonte prima di continuare."
+                )
+            return snapshot
 
     def _structured_sources(self, workspace_id: str) -> list[Source]:
         return [

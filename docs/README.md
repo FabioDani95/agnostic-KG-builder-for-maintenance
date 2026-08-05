@@ -15,18 +15,15 @@ not work that is still pending.
   contracts, codebase implications, and acceptance criteria.
 - [UX Specification](specs/UX_SPECIFICATION.md) — unified multi-format
   frontend flow and controlled HITL interaction.
-- [Design System](design/README.md) — normative visual and interaction
-  direction, where the tokens live, and which tokens were added beyond it.
-- [Project README](../README.md) — target pointer plus imported-baseline setup
-  and behavior.
-- [Architecture](ARCHITECTURE.md) — imported baseline runtime flow and module
-  boundaries; it is not the target architecture specification.
+- [Frontend Design References](design/README.md) — supplied design inputs,
+  executable CSS ownership and the boundary with the retained console.
+- [Project README](../README.md) — current status, runtime surfaces, setup and
+  verification commands.
+- [Architecture](ARCHITECTURE.md) — current workspace and retained-PDF runtime
+  paths, persistence, module boundaries and verification layers.
 - [Evaluation Protocol](EVALUATION_PROTOCOL.md) — normative golden-fixture and
   model-comparison procedure.
 - [Test Suite Map](../tests/README.md) — correctness-test layers and commands.
-- [Cleanup Audit](CLEANUP_AUDIT.md) — cleanup actions, retained items, and
-  remaining release work as of 2026-07-28.
-
 ## Frozen evaluation records
 
 These reports explain the annotations and gates for individual real-manual

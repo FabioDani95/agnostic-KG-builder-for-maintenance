@@ -2,8 +2,8 @@
 
 > **Documento storico — implementazione completata il 15 luglio 2026 nel
 > commit `6303abb`.** Conservato come razionale del redesign, non come backlog
-> corrente. Per stato del repository e debito residuo vedi
-> [Cleanup Audit](../CLEANUP_AUDIT.md).
+> corrente. Per lo stato attuale del repository vedi
+> [Architecture](../ARCHITECTURE.md).
 
 **Data analisi:** 15 luglio 2026  
 **Perimetro:** `frontend/console.html`, `frontend/console.js`, `frontend/console.css`, verifica mirata di `frontend/editor/`  

@@ -20,7 +20,7 @@ from backend.domain.structured import ColumnProfile, MappingColumn, StructurePro
 # never for a change in how meaning is derived from it (see
 # EVIDENCE_DERIVATION_VERSION in services/structured_preparation.py).
 ADAPTER_VERSION = "structured-v2"
-_ROLE_CONFIG_PATH = Path(__file__).with_name("role_aliases.v2.json")
+_ROLE_CONFIG_PATH = Path(__file__).with_name("role_aliases.v4.json")
 
 
 def _normalized_token(value: Any) -> str:

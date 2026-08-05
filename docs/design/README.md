@@ -1,56 +1,54 @@
-# Design system
+# Frontend design references
 
-The operator interface follows one visual direction, defined by two documents
-supplied by the Product Owner. They are normative for the frontend.
+The workspace application follows the compact, restrained interaction
+direction recorded in:
 
-- [DESIGN.md](DESIGN.md) — "Compact Apple-Inspired Interface": the token values
-  (colours light and dark, radii, spacing, sizing), the type scale, density
-  rules, and the component rules for buttons, inputs, panels, tables and
-  navigation.
-- [SKILL.md](SKILL.md) — interaction and motion: response on pointer-down, 1:1
-  direct manipulation, interruptible spring motion, velocity hand-off, momentum
-  projection, translucent materials, typography, and the reduced-motion,
-  reduced-transparency and increased-contrast requirements.
+- [DESIGN.md](DESIGN.md): supplied visual reference, density, typography,
+  surface and component guidance;
+- [SKILL.md](SKILL.md): direct-manipulation, motion and accessibility guidance.
 
-## Where the tokens live
+These files are design inputs. The shipped token implementation is
+[frontend/design.css](../../frontend/design.css), and layout/component rules
+are in [frontend/app.css](../../frontend/app.css). The CSS is the executable
+source of truth for current token names and values; this repository does not
+claim that every value in the DESIGN.md front matter is copied byte-for-byte.
 
-Every value from the `DESIGN.md` front matter is declared once, in
-[`frontend/design.css`](../../frontend/design.css), as a CSS custom property on
-`:root`, with a dark-mode block and a `prefers-contrast: more` block. The
-application layer, [`frontend/app.css`](../../frontend/app.css), never contains
-a raw colour, radius or spacing value: it only references tokens.
+## Styling boundary
 
-Four token families are **not** in `DESIGN.md` and are declared with their
-rationale inline in `frontend/design.css`:
+design.css owns the workspace application's semantic palette, type colours,
+surface materials, theme behavior, shared controls and motion primitives.
+app.css owns phase-specific layout and component geometry. Raw layout
+measurements in app.css are intentional when they express a local size rather
+than a reusable semantic token.
 
-| Token family | Why it exists |
-|---|---|
-| `--shadow-1/2/3` | `DESIGN.md` asks for subtle shadows over heavy borders but fixes no values. Three steps only: resting, raised, floating. |
-| `--node-*` | One low-chroma hue per ontological node type, deliberately outside the status hues so a type is never read as a status. The type name is always spelled out in text as well, so the hue is redundant reinforcement and never the sole channel. |
-| `--motion-*`, `--ease-*` | The interaction timings `SKILL.md` prescribes, named once instead of repeated. |
-| dark `--success/--warning/--danger` and their `-soft` fills | `dark_colors` in `DESIGN.md` omits the status colours. These are the light hues lifted to readable luminance on a near-black surface, with the soft fills rebuilt as low-alpha tints rather than pale pastels. |
+The retained PDF console keeps its established palette in console.css. Its
+rules are scoped away from #app.app so they cannot override the workspace
+application when console.html loads both style sheets.
 
-The retained PDF-baseline console keeps its own palette in
-`frontend/console.css`; its global rules are scoped away from the application
-root (`#app.app`) so the two cannot bleed into each other.
+## Theme and accessibility
 
-## Where the motion rules are applied
+The workspace UI provides explicit light/dark and Italian/English controls,
+persisted locally. CSS honors reduced motion and reduced transparency. Status
+is always paired with text or shape, never encoded by colour alone.
 
-`SKILL.md` is written for gesture-driven interfaces. The place it genuinely
-applies here is the graph map, in
-[`frontend/app/explorer.js`](../../frontend/app/explorer.js): a node and the
-canvas are both dragged 1:1 from the exact point they were grabbed, using
-pointer capture, and the wheel zooms around the pointer rather than the centre.
-The force simulation in [`frontend/app/force.js`](../../frontend/app/force.js)
-keeps running while a node is held, so the rest of the graph reacts continuously
-instead of snapping when the drag ends — the interaction is never a
-before/after, it is one continuous motion. Everything animates `transform` only,
-and settles on its own once the simulation cools.
+## Graph interaction
 
-A node dropped by the operator stays where it was put: the arrangement is their
-decision, not an outcome of the physics. Double-click returns one node to the
-simulation, "Ridisponi" returns all of them. Positions survive a filter change
-and a view change.
+The graph map in frontend/app/explorer.js is the main direct-manipulation
+surface:
 
-Known trade-off: boundary resistance is the browser's native overscroll on the
-canvas, not the rubber-band curve in `SKILL.md` §9.
+- node and canvas drag use pointer capture and preserve the grab point;
+- wheel zoom is centered on the pointer;
+- keyboard arrows traverse neighbouring graph nodes;
+- a dropped node stays pinned until explicitly released;
+- filter changes preserve positions and selection where valid;
+- frontend/app/force.js keeps the surrounding graph responsive during drag.
+
+The current deliberate trade-off is that canvas boundary resistance uses
+native browser overscroll rather than a custom rubber-band curve.
+
+## Change rule
+
+Visual changes must preserve the separation between shared tokens and
+phase-specific geometry, keep both themes readable, and pass the Playwright
+workspace scenarios. If the supplied design references and the shipped CSS
+are intentionally realigned, update this note in the same change.

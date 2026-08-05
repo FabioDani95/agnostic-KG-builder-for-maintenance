@@ -289,6 +289,21 @@ class StructuredPreparationRepository:
             rows = connection.execute(query, values).fetchall()
         return [self._exception(row) for row in rows]
 
+    def get_exception(self, exception_id: str) -> PreparationException:
+        with self.database.read() as connection:
+            row = connection.execute(
+                """
+                SELECT e.*, s.file_name
+                FROM structured_exceptions e
+                JOIN sources s ON s.source_id = e.source_id
+                WHERE e.exception_id = ?
+                """,
+                (exception_id,),
+            ).fetchone()
+        if row is None:
+            raise LookupError(exception_id)
+        return self._exception(row)
+
     def resolve_exception(self, exception_id: str, resolution: dict[str, Any]) -> PreparationException:
         now = utc_now()
         with self.database.transaction() as connection:

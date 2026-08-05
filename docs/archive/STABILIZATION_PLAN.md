@@ -5,8 +5,7 @@
 > proposti (schemi, RunStore, replay, gateway mock, harness golden, split dei
 > tool, trace e rimozione del frontend legacy) sono ora presenti; diversi file
 > e conteggi citati sotto non esistono più. Non usare questo documento come
-> descrizione corrente o backlog. Vedi [Architecture](../ARCHITECTURE.md) e
-> [Cleanup Audit](../CLEANUP_AUDIT.md).
+> descrizione corrente o backlog. Vedi [Architecture](../ARCHITECTURE.md).
 
 ## 1. Executive summary
 

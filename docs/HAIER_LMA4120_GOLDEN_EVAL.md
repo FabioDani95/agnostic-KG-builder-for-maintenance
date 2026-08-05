@@ -3,7 +3,7 @@
 ## Scope
 
 This document records the first real-manual golden evaluation created from
-`/Users/fabio.daniele/Downloads/Manual-de-usuario-LMA4120WBAB0.pdf`.
+`Manual-de-usuario-LMA4120WBAB0.pdf` from the evaluator's local manual store.
 
 The source PDF is a 24-page English service manual for Haier/MABE automatic
 washing machine models including `LMA4120WBAB0`. The golden fixture is a compact
