@@ -44,6 +44,19 @@ class SourceRepository:
             ).fetchall()
             return [self._source_from_row(connection, row) for row in rows]
 
+    def list_archived_for_workspace(self, workspace_id: str) -> list[Source]:
+        with self.database.read() as connection:
+            rows = connection.execute(
+                """
+                SELECT * FROM sources
+                WHERE workspace_id = ? AND status = 'excluded'
+                  AND source_kind != 'operator_input'
+                ORDER BY created_at, source_id
+                """,
+                (workspace_id,),
+            ).fetchall()
+            return [self._source_from_row(connection, row) for row in rows]
+
     def get(self, source_id: str) -> Source:
         with self.database.read() as connection:
             row = connection.execute(
@@ -228,6 +241,32 @@ class SourceRepository:
                     now,
                 ),
             )
+
+    def restore(self, source_id: str) -> Source:
+        source = self.get(source_id)
+        if source.source_kind is SourceKind.OPERATOR_INPUT:
+            raise SourceNotFoundError(source_id)
+        if source.status is not SourceState.EXCLUDED:
+            return source
+        now = utc_now()
+        with self.database.transaction() as connection:
+            connection.execute(
+                "UPDATE sources SET status = 'accepted' WHERE source_id = ?",
+                (source_id,),
+            )
+            connection.execute(
+                """
+                INSERT INTO audit_events(workspace_id, event_kind, subject_id, payload_json, created_at)
+                VALUES (?, 'source_restored', ?, ?, ?)
+                """,
+                (
+                    source.workspace_id,
+                    source_id,
+                    json.dumps({"file_name": source.file_name}, sort_keys=True),
+                    now,
+                ),
+            )
+        return self.get(source_id)
 
     def raw_reference(self, source_id: str) -> str:
         source = self.get(source_id)

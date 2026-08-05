@@ -141,6 +141,14 @@ def remove_source(source_id: str):
     return Response(status_code=204)
 
 
+@router.post("/sources/{source_id}/restore", response_model=Source)
+def restore_source(source_id: str):
+    try:
+        return SourceRepository().restore(source_id)
+    except SourceNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Source not found") from exc
+
+
 @router.get("/sources/{source_id}/content")
 def download_source(source_id: str):
     try:

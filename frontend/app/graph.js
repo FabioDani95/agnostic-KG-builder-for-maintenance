@@ -135,7 +135,10 @@
     state.graphBusy = true;
     state.graphError = "";
     root.render({ regioni: ["decisione"] });
-    try { state.graph = await azione(); } catch (errore) { state.graphError = errore.message; }
+    try {
+      state.graph = await azione();
+      if (root.loadJourney) await root.loadJourney();
+    } catch (errore) { state.graphError = errore.message; }
     finally { state.graphBusy = false; root.render(); }
   };
 
@@ -492,6 +495,12 @@
       }
       const vista = vistaFonte();
       const modello = modelloDi(vista);
+      if (vista && vista.state === "deferred") {
+        return `<div class="lavoro-pad"><section class="deferred-card">
+          <span class="deferred-icon" aria-hidden="true">PDF</span>
+          <div><strong>${esc(t("gr.pdfDifferito"))}</strong><p>${esc(t("gr.pdfDifferitoTesto"))}</p></div>
+        </section></div>`;
+      }
       const testa = state.view === "confronto" ? "" : `
         <div class="intestazione-lavoro"><p>${esc(vista && vista.subgraph ? t("gr.sotto") : t("gr.nonCostruito"))}</p></div>`;
       return `${testa}
@@ -595,13 +604,20 @@
         return riga(t("dec.strutturaNonConfermata"), vista.message,
           `<button type="button" class="btn secondario" data-vai="structure">${esc(t("dec.vaiStruttura"))}</button>`);
       }
+      if (vista.state === "deferred") {
+        return riga(t("gr.pdfNessunaAzione"), t("gr.pdfNessunaAzioneTesto"), "");
+      }
       if (!grafo) {
         return riga(t("gr.nonCostruitoTitolo"), t("gr.nonCostruitoTesto"),
           `<button type="button" class="btn primario" data-costruisci ${occupato}>${esc(state.graphBusy ? t("gr.costruendo") : t("gr.costruisci"))}</button>`);
       }
       if (vista.state === "approved") return riga(t("dec.verificata"), t("dec.garanzia"), "");
       if (vista.state === "rejected") {
-        return riga(t("dec.segnalata"), grafo.decision_note || t("dec.segnalazioneRegistrata"), "");
+        return riga(
+          t("dec.segnalata"),
+          grafo.decision_note || t("dec.segnalazioneRegistrata"),
+          `<button type="button" class="btn primario" data-vai="structure">${esc(t("dec.rivediStruttura"))}</button>`
+        );
       }
 
       const lacune = (grafo.knowledge_gaps || []).length;

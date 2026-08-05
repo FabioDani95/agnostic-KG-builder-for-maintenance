@@ -9,6 +9,77 @@
    dallo schermo e non ci sia modo di riportarla indietro. */
 html:has(.app), body:has(.app){overflow:hidden}
 
+/* ------------------------------------------------------ percorso guidato */
+[data-regione="journey"]:empty{display:none}
+.journey-context{
+  flex:none;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:9px 24px;border-bottom:1px solid var(--line-soft);
+  background:color-mix(in srgb,var(--panel) 72%,transparent);font-size:12px;
+}
+.journey-path,.journey-next{display:flex;align-items:center;gap:8px;min-width:0}
+.journey-path{color:var(--muted);flex:1 1 auto}
+.journey-path i{color:var(--muted-2);font-style:normal}
+.journey-path strong{color:var(--text);font-weight:640}
+.journey-source{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.journey-next{justify-content:flex-end;flex:0 1 auto;color:var(--muted)}
+.journey-next-copy{min-width:0;line-height:1.35}
+.journey-next-copy b{color:var(--text);font-weight:640}
+.journey-state{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;
+  background:var(--panel-2);color:var(--muted);font-weight:620;white-space:nowrap}
+.journey-state i,.phase-state{width:7px;height:7px;border-radius:50%;background:var(--muted-2);flex:0 0 7px}
+.journey-state.state-complete i,.phase-state.state-complete{background:var(--green)}
+.journey-state.state-needs_attention i,.phase-state.state-needs_attention{background:var(--amber)}
+.journey-state.state-in_progress i,.phase-state.state-in_progress{background:var(--cyan)}
+.journey-state.state-deferred i,.phase-state.state-deferred{background:var(--violet)}
+.journey-state.state-locked i,.phase-state.state-locked{background:var(--muted-2)}
+.phase-state{margin-left:-3px}
+.nav-attention{display:grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:999px;
+  background:color-mix(in srgb,var(--amber) 17%,transparent);color:var(--amber);font-weight:700}
+
+/* Consequential actions use one consistent, accessible modal. */
+.modale-azione{border:0;padding:0;background:transparent;color:var(--text);max-width:min(31rem,calc(100vw - 32px))}
+.modale-azione::backdrop{background:rgba(0,0,0,.52);backdrop-filter:blur(5px)}
+.modale-card{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:20px;border-radius:18px;
+  background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow-lg)}
+.modale-icona{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;
+  background:color-mix(in srgb,var(--amber) 16%,transparent);color:var(--amber);font-weight:750}
+.modale-icona.danger{background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red)}
+.modale-testo{display:grid;gap:7px;min-width:0}
+.modale-testo h2{margin:0;font-size:17px;font-weight:660;letter-spacing:-.02em;overflow-wrap:anywhere}
+.modale-testo p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+.modale-testo .modale-dettaglio{padding:10px 12px;border-radius:10px;background:var(--panel-2);font-size:12px}
+.modale-azioni{grid-column:1/-1;display:flex;justify-content:flex-end;gap:9px;margin-top:4px}
+
+.notice-success{display:flex;align-items:center;gap:11px;margin-bottom:14px;padding:11px 13px;
+  border:1px solid color-mix(in srgb,var(--green) 28%,var(--line));border-radius:var(--radius-sm);
+  background:color-mix(in srgb,var(--green) 8%,var(--panel));box-shadow:var(--shadow)}
+.notice-icon{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:var(--green);color:white;font-weight:700}
+.notice-success>span:nth-child(2){display:grid;gap:2px;min-width:0;flex:1}
+.notice-success strong{font-size:13px;font-weight:650}.notice-success small{color:var(--muted);font-size:12px}
+.notice-close{width:26px;height:26px;border-radius:8px;color:var(--muted);font-size:18px}.notice-close:hover{background:var(--fill)}
+
+.archivio-fonti{display:grid;gap:8px;margin-top:22px;padding-top:16px;border-top:1px solid var(--line-soft)}
+.archivio-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:7px 2px;
+  color:var(--muted);font-size:12.5px;font-weight:620;text-align:left}
+.archivio-toggle:hover{color:var(--text)}
+.archivio-lista{display:grid;gap:8px}.archivio-lista[hidden]{display:none}
+.documento.archiviato{opacity:.82;background:var(--panel-2);box-shadow:none}
+
+.deferred-card{display:flex;align-items:flex-start;gap:15px;max-width:42rem;padding:20px;
+  border:1px solid color-mix(in srgb,var(--violet) 24%,var(--line));border-radius:var(--radius);
+  background:linear-gradient(135deg,color-mix(in srgb,var(--violet) 9%,var(--panel)),var(--panel));box-shadow:var(--shadow)}
+.deferred-icon{display:grid;place-items:center;width:46px;height:46px;border-radius:13px;
+  background:color-mix(in srgb,var(--violet) 18%,transparent);color:var(--violet);font-size:11px;font-weight:750}
+.deferred-card div{display:grid;gap:6px}.deferred-card strong{font-size:15px;font-weight:650}
+.deferred-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+.version-note{padding:8px 10px;border-left:2px solid var(--cyan);background:color-mix(in srgb,var(--cyan) 6%,transparent)}
+
+.nav-item[data-fonte]{align-items:flex-start;white-space:normal}
+.nav-item[data-fonte] .nav-label{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+  white-space:normal;line-height:1.25;overflow:hidden}
+.home-next{display:block;margin-top:7px;color:var(--muted);font-size:12px;line-height:1.4}
+.home-next b{color:var(--text);font-weight:620}
+
 .contenuto{flex:1;min-height:0;display:flex;min-width:0}
 .lavoro{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
 .lavoro-scorri{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column}
@@ -246,6 +317,9 @@ button.catena-passo:hover{background:var(--fill)}
 .modulo-legenda{display:grid;gap:2px;padding-bottom:9px;border-bottom:1px solid var(--line-soft)}
 .modulo-legenda strong{font-size:13.5px;font-weight:640;letter-spacing:-.01em}
 .modulo-legenda span{color:var(--muted);font-size:12px}
+.campo-obbligatorio{margin-left:6px;padding:2px 6px;border-radius:999px;
+  color:var(--cyan-ink);background:color-mix(in srgb,var(--cyan) 11%,transparent);
+  font-size:9.5px;font-style:normal;font-weight:650;letter-spacing:.025em;text-transform:uppercase}
 .riepilogo{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:12px}
 .riepilogo div{display:grid;gap:2px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--panel-2)}
 .riepilogo dt{color:var(--muted);font-size:11.5px}
@@ -312,4 +386,6 @@ button.catena-passo:hover{background:var(--fill)}
   .collapse{display:none}
   .caricamento,.modulo-griglia{grid-template-columns:minmax(0,1fr)}
   .grafo{min-height:26rem}
+  .journey-context{align-items:flex-start;flex-direction:column;padding:9px 16px;gap:7px}
+  .journey-next{justify-content:flex-start;flex-wrap:wrap}
 }

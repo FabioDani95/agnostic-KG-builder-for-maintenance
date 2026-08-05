@@ -114,28 +114,30 @@ test("AC-UX-002/003/009: multi-upload and automatic PDF preparation", async ({ p
   expect(sourcePostRequests).toBe(requestsBeforeDuplicate);
   await expect(page.locator(".documento")).toHaveCount(4, { timeout: 60000 });
 
-  // Removal is confirmed, reversible and never silent.
-  const removeCsv = page.getByRole("button", { name: "Rimuovi file hydraulic_press_logs_a.csv" });
-  await expect(removeCsv).toBeVisible();
-  page.once("dialog", async (dialog) => {
-    expect(dialog.message()).toContain("Rimuovere “hydraulic_press_logs_a.csv”?");
-    await dialog.dismiss();
-  });
-  await removeCsv.click();
+  // Archiving is explained, reversible and never silent.
+  const archiveCsv = page.getByRole("button", { name: "Archivia documento hydraulic_press_logs_a.csv" });
+  await expect(archiveCsv).toBeVisible();
+  await archiveCsv.click();
+  await expect(page.getByRole("dialog")).toContainText("Archiviare “hydraulic_press_logs_a.csv”?");
+  await page.getByRole("dialog").getByRole("button", { name: "Annulla" }).click();
   await expect(page.locator(".documento")).toHaveCount(4);
-  page.once("dialog", async (dialog) => {
-    expect(dialog.message()).toContain("Potrai ricaricarlo in seguito");
-    await dialog.accept();
-  });
-  await removeCsv.click();
-  await expect(page.locator(".documento")).toHaveCount(3);
+  await archiveCsv.click();
+  await expect(page.getByRole("dialog")).toContainText("Le revisioni restano conservate");
+  await page.getByRole("dialog").getByRole("button", { name: "Archivia documento" }).click();
+  await expect(page.locator(".lista > .documento")).toHaveCount(3);
 
+  await page.getByRole("button", { name: "Documenti archiviati" }).click();
+  await expect(page.getByRole("button", { name: "Ripristina" })).toBeVisible();
+  await page.getByRole("button", { name: "Ripristina" }).click();
+  await expect(page.locator(".documento")).toHaveCount(4);
+  await expect(page.getByRole("status")).toContainText("Documento ripristinato");
+
+  // Re-uploading the now-active source is still blocked as a duplicate.
   await uploadFiles(page, {
     name: "hydraulic_press_logs_a.csv", mimeType: "text/csv",
     buffer: Buffer.from("machine_serial,event_timestamp,action_taken\nHP7-000042,2026-07-26T13:44:00+02:00,Backup battery replaced\n"),
   });
-  await page.getByRole("button", { name: "Carica documento" }).click();
-  await expect(page.locator(".documento")).toHaveCount(4);
+  await expect(page.getByRole("alert")).toContainText("Documento già caricato");
 
   await page.reload();
   await expect(page.locator(".documento")).toHaveCount(4);
@@ -170,6 +172,13 @@ test("AC-UX-011: the interface switches language and theme without losing its pl
     description: "Workspace for the language and theme test.",
   });
 
+  // A direct link cannot strand the operator inside a locked phase.
+  const lockedGraphUrl = new URL(page.url());
+  lockedGraphUrl.searchParams.set("fase", "grafo");
+  await page.goto(lockedGraphUrl.toString());
+  await expect(page).toHaveURL(/fase=documenti/);
+  await expect(page.locator(".topbar h1")).toHaveText("Documenti della macchina");
+
   // The switch shows the language in force and moves to the other one.
   const language = page.locator("[data-lingua]");
   await expect(language).toHaveText("IT");
@@ -196,6 +205,27 @@ test("AC-UX-011: the interface switches language and theme without losing its pl
   expect(after).not.toBe(before);
   await page.reload();
   expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe(after);
+});
+
+test("AC-UX-017: a PDF-only workspace never offers an unavailable graph action", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/console.html?foundation=1&new=1");
+  await identifyMachine(page, {
+    name: "PDF Manual Press", model: "PDF-100", serial: "PDF-0001",
+    description: "Workspace used to verify honest PDF graph guidance.",
+  });
+
+  await uploadFiles(page, fixture);
+  await page.getByRole("button", { name: "Carica documento" }).click();
+  await expect(page.locator(".documento")).toHaveCount(1, { timeout: 60000 });
+  await page.getByRole("button", { name: "Continua alla struttura" }).click();
+  await page.getByRole("button", { name: "Vai al grafo" }).click();
+
+  await expect(page.getByText("Grafo PDF non ancora disponibile").first()).toBeVisible();
+  await expect(page.locator(".ispettore")).toContainText("Grafo PDF non ancora disponibile");
+  await expect(page.locator(".decisione")).toContainText("Nessuna azione richiesta su questo PDF");
+  await expect(page.getByRole("button", { name: "Costruisci il grafo" })).toHaveCount(0);
+  await expect(page.locator("#app")).not.toContainText("Costruisci il grafo di questa fonte per esplorarlo");
 });
 
 test("AC-UX-014: the structure phase is automatic and asks one question at a time", async ({ page }) => {
@@ -439,6 +469,72 @@ test("AC-HITL-002/AC-UX-005: the graph is a navigable 2D map down to its source 
   await expect(work).toContainText("2 corrispondenze esatte trovate");
   await expect(work).toContainText("E-PUMP-17");
   await expect(work).toContainText("E-VALVE-04");
+});
+
+test("AC-UX-016: reopening a workspace guides the next source without losing existing graphs", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/console.html?foundation=1&new=1");
+  await identifyMachine(page, {
+    name: "Journey Press", model: "JY-400", serial: "JY-0001",
+    description: "Workspace used to verify the complete guided journey.",
+  });
+
+  await uploadFiles(page, path.resolve(__dirname, "../fixtures/g3/synthetic_press_events_it.csv"));
+  await page.getByRole("button", { name: "Carica documento" }).click();
+  await page.getByRole("button", { name: "Continua alla struttura" }).click();
+  await page.getByRole("button", { name: "Conferma questo file" }).click();
+  await page.getByRole("button", { name: "Vai al grafo" }).click();
+  await page.getByRole("button", { name: "Costruisci il grafo" }).click();
+  await page.getByRole("button", { name: "Conferma la verifica" }).click();
+  await expect(page.locator(".journey-next")).toContainText("tutti i grafi disponibili sono aggiornati");
+
+  // The home reopens the stable workspace directly where work last completed.
+  await page.goto("/home.html");
+  await expect(page.getByRole("link", { name: /Journey Press/ })).toContainText("tutti i grafi disponibili sono aggiornati");
+  await page.getByRole("link", { name: /Journey Press/ }).click();
+  await expect(page).toHaveURL(/fase=grafo/);
+  await expect(page.locator(".nodo")).toHaveCount(11);
+
+  // A new document becomes the explicit context and the journey points to it.
+  await page.locator('.nav-item[data-fase="documents"]').click();
+  await uploadFiles(page, {
+    name: "journey_new_events.csv", mimeType: "text/csv",
+    buffer: Buffer.from(
+      "component,symptom_observation,diagnosis,action_taken\n"
+      + "cooling fan,high temperature,bearing friction,replace bearing\n"
+    ),
+  });
+  await page.getByRole("button", { name: "Carica documento" }).click();
+  await expect(page.getByRole("status")).toContainText("Documento caricato");
+  await expect(page.locator(".journey-context")).toContainText("journey_new_events.csv");
+  await expect(page.locator(".journey-next")).toContainText("controlla la struttura");
+  await expect(page).toHaveURL(/source_id=src_/);
+
+  // Refreshing preserves both the source and the point in the journey.
+  await page.reload();
+  await expect(page.locator(".journey-context")).toContainText("journey_new_events.csv");
+  await page.locator("[data-follow-journey]").click();
+  await expect(page).toHaveURL(/fase=struttura/);
+  await expect(page.locator(".journey-context")).toContainText("journey_new_events.csv");
+  await page.getByRole("button", { name: "Conferma questo file" }).click();
+  await expect(page.locator(".journey-next")).toContainText("costruisci il grafo");
+  await page.locator("[data-follow-journey]").click();
+  await page.getByRole("button", { name: "Costruisci il grafo" }).click();
+  await expect(page.locator(".nodo")).toHaveCount(5);
+
+  // Archiving hides this source graph but preserves its immutable revision.
+  await page.locator('.nav-item[data-fase="documents"]').click();
+  await page.getByRole("button", { name: "Archivia documento journey_new_events.csv" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Archivia documento" }).click();
+  await expect(page.getByRole("status")).toContainText("Documento archiviato");
+  await page.getByRole("button", { name: "Documenti archiviati" }).click();
+  const archived = page.locator(".documento.archiviato").filter({ hasText: "journey_new_events.csv" });
+  await expect(archived).toContainText(/grafo conservato/i);
+  await archived.getByRole("button", { name: "Ripristina" }).click();
+  await expect(page.getByRole("status")).toContainText("Documento ripristinato");
+  await page.locator('.nav-item[data-fase="graph"]').click();
+  await expect(page.locator(".nodo")).toHaveCount(5);
+  await expect(page.locator(".ispettore")).toContainText("1 versione");
 });
 
 test("AC-UX-005: the map is operable by keyboard and survives a narrow viewport", async ({ page }) => {

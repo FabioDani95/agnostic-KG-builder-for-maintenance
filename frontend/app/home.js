@@ -12,6 +12,7 @@
     sources_required: "attesa", preparation_required: "attesa", processing: "attesa",
     failed_resumable: "attesa", awaiting_review: "attesa",
   };
+  const PHASE_SLUG = { machine: "macchina", documents: "documenti", structure: "struttura", graph: "grafo" };
 
   const applicaTema = (modo) => {
     document.documentElement.dataset.theme = modo;
@@ -31,11 +32,18 @@
         root.lingua() === "en" ? "en-GB" : "it-IT",
         { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }
       );
+      const query = new URLSearchParams({ foundation: "1", workspace_id: macchina.workspace_id });
+      if (macchina.recommended_phase && macchina.recommended_phase !== "machine") {
+        query.set("fase", PHASE_SLUG[macchina.recommended_phase]);
+      }
+      if (macchina.recommended_source_id) query.set("source_id", macchina.recommended_source_id);
+      const prossimo = t(`journey.action.${macchina.next_action}`, { f: macchina.recommended_source_name || "" });
       return `
-        <a class="macchina-card entra" href="/console.html?foundation=1&workspace_id=${encodeURIComponent(macchina.workspace_id)}">
+        <a class="macchina-card entra" href="/console.html?${esc(query.toString())}">
           <div>
             <strong>${esc(macchina.asset_name)}</strong>
             <small>${esc(`${macchina.brand} · ${macchina.model} · ${n(macchina.document_count, "home.doc")}`)}</small>
+            <span class="home-next"><b>${esc(t("journey.next"))}</b> ${esc(prossimo)}</span>
           </div>
           <span class="macchina-lato">
             <span class="chip">${esc(aggiornato)}</span>

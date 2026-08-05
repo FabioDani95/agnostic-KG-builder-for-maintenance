@@ -39,11 +39,14 @@
     /* L'identificativo del riquadro informativo è stabile e semantico: è un
        aggancio documentato, non il nome del campo del modulo. */
     const info = config.info ? ` ${root.info(config.id || nome, t(chiave), t(config.info))}` : "";
-    const etichetta = `<span class="${config.info ? "con-info" : ""}">${esc(t(chiave))}${info}</span>`;
+    const obbligatorio = config.required
+      ? ` <small class="campo-obbligatorio">${esc(t("ui.obbligatorio"))}</small>`
+      : "";
+    const etichetta = `<span class="${config.info ? "con-info" : ""}">${esc(t(chiave))}${info}${obbligatorio}</span>`;
     const controllo = config.area
-      ? `<textarea name="${nome}" ${config.required ? "required" : ""} ${config.min ? `minlength="${config.min}"` : ""}
+      ? `<textarea name="${nome}" ${config.required ? 'required aria-required="true"' : ""} ${config.min ? `minlength="${config.min}"` : ""}
           rows="${config.rows || 3}" placeholder="${esc(t(config.p))}"></textarea>`
-      : `<input name="${nome}" ${config.required ? "required" : ""} autocomplete="off" placeholder="${esc(t(config.p))}">`;
+      : `<input name="${nome}" ${config.required ? 'required aria-required="true"' : ""} autocomplete="off" placeholder="${esc(t(config.p))}">`;
     return `<label class="campo ${config.largo ? "largo" : ""}">${etichetta}${controllo}</label>`;
   };
 

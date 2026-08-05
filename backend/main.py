@@ -17,6 +17,7 @@ from backend.app_config import (
 from backend.routers import (
     chat,
     generate,
+    journey,
     multi_agent,
     preparation,
     runs,
@@ -59,6 +60,7 @@ def create_app() -> FastAPI:
     app.include_router(workspaces.router)
     app.include_router(workspaces.inventory_router)
     app.include_router(sources.router)
+    app.include_router(journey.router)
     app.include_router(preparation.router)
     app.include_router(subgraphs.router)
 

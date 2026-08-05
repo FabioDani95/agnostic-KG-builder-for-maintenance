@@ -30,6 +30,8 @@
     root.clearSelection();
     state.rejectingSourceId = "";
     if (state.view === "confronto") state.view = "mappa";
+    if (root.rememberWorkspaceContext) root.rememberWorkspaceContext();
+    if (root.syncWorkspaceUrl) root.syncWorkspaceUrl();
     root.render();
   };
 
@@ -115,13 +117,23 @@
           <button type="button" class="btn primario" data-vai="machine">${esc(t("doc.vaiMacchina"))}</button></div>`;
       }
       const fonti = root.fileSorgenti();
+      const archiviate = ((state.journey && state.journey.sources) || [])
+        .filter((item) => item.lifecycle === "archived");
+      const notice = state.notice ? `
+        <div class="notice-success" role="status">
+          <span class="notice-icon" aria-hidden="true">✓</span>
+          <span><strong>${esc(state.notice.title)}</strong><small>${esc(state.notice.body || "")}</small></span>
+          <button type="button" class="notice-close" data-close-notice aria-label="${esc(t("ui.chiudi"))}">×</button>
+        </div>` : "";
       return `
         <div class="intestazione-lavoro"><p>${esc(t("doc.sotto"))}</p></div>
         <div class="lavoro-scorri"><div class="lavoro-pad">
+          ${notice}
           <form class="caricamento card entra" id="source-upload">
             <label class="selettore-file">
               <span class="con-info">${esc(t("doc.file"))} ${root.info("formati-documento", t("doc.file"), t("doc.fileI"))}</span>
-              <input type="file" name="file" required multiple accept=".pdf,.csv,.xlsx,.json,.jsonl">
+              <input type="file" name="file" required multiple accept=".pdf,.csv,.xlsx,.json,.jsonl"
+                ${state.sourceBusy ? "disabled" : ""}>
               <span class="controllo-file"><b>${esc(t("doc.scegli"))}</b>
                 <small data-nome-file>${esc(t("doc.nessunFile"))}</small></span>
             </label>
@@ -146,12 +158,26 @@
                   <button type="button" class="btn quieto piccolo" data-ispeziona="${esc(fonte.source_id)}"
                     aria-label="${esc(t("doc.dettagliFile", { f: fonte.file_name }))}">${esc(t("ui.dettagli"))}</button>
                   <button type="button" class="btn pericolo piccolo togli" data-source-id="${esc(fonte.source_id)}"
-                    aria-label="${esc(t("doc.rimuoviFile", { f: fonte.file_name }))}"
-                    ${state.sourceBusy ? "disabled" : ""}>${esc(t("ui.rimuovi"))}</button>
+                    aria-label="${esc(t("doc.archiviaFile", { f: fonte.file_name }))}"
+                    ${state.sourceBusy ? "disabled" : ""}>${esc(t("ui.archivia"))}</button>
                 </div>
               </div>`).join("")
               : `<div class="vuoto"><strong>${esc(t("doc.vuoto"))}</strong><p>${esc(t("doc.vuotoTesto"))}</p></div>`}
           </div>
+          ${archiviate.length ? `<section class="archivio-fonti">
+            <button type="button" class="archivio-toggle" data-archivio-toggle aria-expanded="false">
+              <span>${esc(t("doc.archiviate"))}</span><span>${archiviate.length}</span>
+            </button>
+            <div class="archivio-lista" hidden>
+              ${archiviate.map((fonte) => `<div class="documento archiviato">
+                <div class="documento-identita">
+                  <strong title="${esc(fonte.source_name)}">${esc(fonte.source_name)}</strong>
+                  <small>${esc(String(fonte.source_kind).toUpperCase())} · ${fonte.graph_revision_count ? esc(t("doc.grafoConservato")) : esc(t("doc.nessunGrafoConservato"))}</small>
+                </div>
+                <button type="button" class="btn secondario piccolo" data-restore-source="${esc(fonte.source_id)}" ${state.sourceBusy ? "disabled" : ""}>${esc(t("ui.ripristina"))}</button>
+              </div>`).join("")}
+            </div>
+          </section>` : ""}
         </div></div>`;
     },
 
@@ -160,6 +186,16 @@
       root.delegate(contenitore, "click", "[data-ispeziona]", (elemento) => {
         root.scegliFonte(elemento.dataset.ispeziona);
         root.applicaSelezione("source", elemento.dataset.ispeziona);
+      });
+      root.delegate(contenitore, "click", "[data-close-notice]", () => {
+        state.notice = null;
+        root.render({ regioni: ["lavoro"] });
+      });
+      root.delegate(contenitore, "click", "[data-archivio-toggle]", (elemento) => {
+        const lista = contenitore.querySelector(".archivio-lista");
+        const aperto = elemento.getAttribute("aria-expanded") === "true";
+        elemento.setAttribute("aria-expanded", String(!aperto));
+        if (lista) lista.hidden = aperto;
       });
 
       const modulo = contenitore.querySelector("#source-upload");
@@ -214,13 +250,21 @@
         state.sourceErrorDetail = null;
         root.render({ regioni: ["lavoro"] });
         try {
+          const caricate = [];
           for (const file of files) {
             const corpo = new FormData();
             corpo.append("file", file);
             corpo.append("authority", authority);
-            await root.api(`/api/workspaces/${state.workspace.workspace.workspace_id}/sources`, { method: "POST", body: corpo });
+            const registration = await root.api(`/api/workspaces/${state.workspace.workspace.workspace_id}/sources`, { method: "POST", body: corpo });
+            caricate.push(registration.source.source_id);
           }
-          await root.caricaFonti();
+          state.structure = null;
+          await root.refreshWorkspaceContext({ preferredSourceId: caricate[0] });
+          const nuova = state.sources.find((item) => item.source_id === caricate[0]);
+          state.notice = {
+            title: t(caricate.length === 1 ? "doc.caricatoOk" : "doc.caricatiOk", { n: caricate.length }),
+            body: nuova ? t("doc.oraStruttura", { f: nuova.file_name }) : t("doc.oraStrutturaGenerico"),
+          };
         } catch (errore) {
           state.sourceError = errore.message;
           state.sourceErrorDetail = errore.detail ? {
@@ -237,14 +281,40 @@
       root.delegate(contenitore, "click", ".togli", async (elemento) => {
         const sourceId = elemento.dataset.sourceId;
         const fonte = state.sources.find((s) => s.source_id === sourceId);
-        if (!window.confirm(t("doc.confermaRimozione", { f: fonte ? fonte.file_name : "" }))) return;
+        const confirmed = await root.confirmAction({
+          title: t("doc.archiviaTitolo", { f: fonte ? fonte.file_name : "" }),
+          body: t("doc.archiviaCorpo"),
+          detail: t("doc.archiviaDettaglio"),
+          confirmLabel: t("doc.archiviaConferma"),
+          cancelLabel: t("ui.annulla"),
+          tone: "danger",
+        });
+        if (!confirmed) return;
         state.sourceBusy = true;
         state.sourceError = "";
         state.sourceErrorDetail = null;
         elemento.disabled = true;
         try {
           await root.api(`/api/sources/${sourceId}`, { method: "DELETE" });
-          await root.caricaFonti();
+          state.structure = null;
+          await root.refreshWorkspaceContext();
+          state.notice = { title: t("doc.archiviatoOk"), body: t("doc.archiviatoOkTesto") };
+        } catch (errore) {
+          state.sourceError = errore.message;
+        } finally {
+          state.sourceBusy = false;
+          root.render();
+        }
+      });
+      root.delegate(contenitore, "click", "[data-restore-source]", async (elemento) => {
+        state.sourceBusy = true;
+        state.sourceError = "";
+        root.render({ regioni: ["lavoro"] });
+        try {
+          const source = await root.api(`/api/sources/${encodeURIComponent(elemento.dataset.restoreSource)}/restore`, { method: "POST" });
+          state.structure = null;
+          await root.refreshWorkspaceContext({ preferredSourceId: source.source_id });
+          state.notice = { title: t("doc.ripristinatoOk"), body: t("doc.ripristinatoOkTesto", { f: source.file_name }) };
         } catch (errore) {
           state.sourceError = errore.message;
         } finally {

@@ -15,6 +15,11 @@
     creatingWorkspace: false,
     phase: "machine",
 
+    journey: null,
+    journeyLoading: false,
+    journeyError: "",
+    notice: null,
+
     sources: [],
 
     structure: null,

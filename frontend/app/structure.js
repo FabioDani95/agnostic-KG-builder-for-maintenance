@@ -40,7 +40,10 @@
     // while the server invalidates and rebuilds evidence. Leaving the old DOM
     // active allowed several changes to race and supersede each other's run.
     root.render({ regioni: ["lavoro", "decisione"] });
-    try { state.structure = await azione(); } catch (errore) { state.structureError = errore.message; }
+    try {
+      state.structure = await azione();
+      if (root.loadJourney) await root.loadJourney();
+    } catch (errore) { state.structureError = errore.message; }
     finally { state.structureBusy = false; root.render(); }
   };
 

@@ -117,11 +117,16 @@ def test_g1_workspace_home_lists_and_reopens_the_current_workspace(
             "asset_name": "Hydraulic Press 7",
             "brand": "ExampleWorks",
             "model": "HP-700",
-            "status": "awaiting_review",
-            "document_count": 1,
-            "updated_at": uploaded.json()["source"]["created_at"],
-        }
-    ]
+                "status": "awaiting_review",
+                "document_count": 1,
+                "updated_at": uploaded.json()["source"]["created_at"],
+                "recommended_phase": "documents",
+                "recommended_source_id": None,
+                "recommended_source_name": None,
+                "next_action": "workspace_ready",
+                "attention_count": 0,
+            }
+        ]
 
     reopened = foundation_client.get(f"/api/workspaces/{workspace['workspace_id']}")
     assert reopened.status_code == 200

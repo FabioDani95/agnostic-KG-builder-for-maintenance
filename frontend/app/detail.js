@@ -17,11 +17,14 @@
   /** Blocco 2 — la revisione non sparisce mai dalla vista: niente è definitivo. */
   const blocoRevisione = (fonte) => {
     const tono = fonte.state === "approved" ? "ok" : fonte.state === "rejected" ? "errore" : "attesa";
+    const journey = root.journeySource ? root.journeySource(fonte.source_id) : null;
+    const versioni = journey && journey.graph_revision_count;
     return `
       <section class="blocco">
-        <h4>${esc(t("isp.statoVerifica"))}</h4>
+        <h4>${esc(t("isp.statoVerifica"))}${versioni ? `<span>${esc(t(versioni === 1 ? "isp.versione1" : "isp.versioni", { n: versioni }))}</span>` : ""}</h4>
         <span class="badge ${tono}"><span class="punto" aria-hidden="true"></span>${esc(root.etichettaStato(fonte.state))}</span>
         <p>${esc(t(`isp.stato.${fonte.state}`))}</p>
+        ${fonte.subgraph.supersedes ? `<p class="version-note">${esc(t("isp.sostituisce"))}</p>` : ""}
       </section>`;
   };
 
@@ -140,6 +143,9 @@
   };
 
   root.renderIspettoreGrafo = function renderIspettoreGrafo(fonte, modello) {
+    if (fonte && fonte.state === "deferred") {
+      return vuoto(t("gr.pdfDifferito"), t("gr.pdfDifferitoTesto"));
+    }
     if (!fonte || !fonte.subgraph) return vuoto(t("isp.nessunGrafo"), t("isp.nessunGrafoTesto"));
     const scelta = state.selection;
 

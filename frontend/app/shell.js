@@ -33,7 +33,15 @@
     const query = new URLSearchParams({ foundation: "1" });
     if (bersaglio) query.set("workspace_id", bersaglio);
     if (id && id !== "machine") query.set("fase", root.siglaFase(id));
+    if (state.activeSourceId && id !== "machine") query.set("source_id", state.activeSourceId);
     return `/console.html?${query.toString()}`;
+  };
+
+  root.syncWorkspaceUrl = function syncWorkspaceUrl() {
+    if (!state.workspace) return;
+    window.history.replaceState(
+      null, "", root.indirizzoFase(state.phase, state.workspace.workspace.workspace_id)
+    );
   };
 
   root.faseDaUrl = function faseDaUrl() {
@@ -57,6 +65,18 @@
    * fase all'altra.
    */
   root.statoFase = function statoFase(id) {
+    const projected = root.journeyPhase && root.journeyPhase(id);
+    if (projected) {
+      const attention = projected.attention_count || 0;
+      return {
+        disponibile: projected.available,
+        fatta: projected.state === "complete",
+        stato: projected.state,
+        meta: attention
+          ? `<span class="nav-attention">${attention}</span>`
+          : (projected.count ? String(projected.count) : ""),
+      };
+    }
     const conWorkspace = Boolean(state.workspace);
     const documenti = fileSorgenti().length;
     const strutturaFatta = state.structure
@@ -90,7 +110,7 @@
         meta: elementi ? String(elementi) : "",
       };
     }
-    return { disponibile: false, fatta: false, meta: "" };
+    return { disponibile: false, fatta: false, stato: "locked", meta: "" };
   };
 
   /* ------------------------------------------------------------- telaio -- */
@@ -116,6 +136,7 @@
         <span class="spacer"></span>
         <span data-regione="chips" style="display:flex;gap:8px;align-items:center"></span>
       </header>
+      <section data-regione="journey"></section>
       <div class="contenuto" data-regione="contenuto">
         <div class="lavoro" id="lavoro" data-regione="lavoro" tabindex="-1"></div>
         <aside class="ispettore" data-regione="ispettore" aria-label="Dettaglio"></aside>
@@ -138,9 +159,10 @@
       const stato = root.statoFase(id);
       const attiva = state.phase === id;
       return `<button type="button" class="nav-item ${attiva ? "active" : ""}" data-fase="${id}"
-        ${stato.disponibile ? "" : "disabled"} ${attiva ? 'aria-current="page"' : ""}>
+        ${stato.disponibile ? "" : `disabled title="${esc(t("journey.locked"))}"`} ${attiva ? 'aria-current="page"' : ""}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${ICONE[id]}"/></svg>
+        <span class="phase-state state-${esc(stato.stato || (stato.fatta ? "complete" : "available"))}" aria-hidden="true"></span>
         <span class="nav-label">${esc(t(`fase.${id}`))}</span>
         ${stato.meta ? `<span class="nav-meta">${stato.meta}</span>` : ""}
       </button>`;
@@ -174,7 +196,7 @@
    */
   root.render = function render(opzioni) {
     const impostazioni = opzioni || {};
-    const regioni = impostazioni.regioni || ["nav", "titolo", "lavoro", "ispettore", "decisione"];
+    const regioni = impostazioni.regioni || ["nav", "titolo", "journey", "lavoro", "ispettore", "decisione"];
     const fase = faseAttiva();
     const contenuto = regione("contenuto");
 
@@ -197,6 +219,12 @@
       regione("titolo").textContent = testa.titolo;
       root.paint(regione("chips"), testa.chips || "");
       if (fase.bindChips) fase.bindChips(regione("chips"));
+    }
+
+    if (regioni.includes("journey")) {
+      const contenitore = regione("journey");
+      root.paint(contenitore, root.renderJourney ? root.renderJourney() : "");
+      root.delegate(contenitore, "click", "[data-follow-journey]", () => root.followJourneyAction());
     }
 
     const vuoleIspettore = Boolean(fase.mostraIspettore) && Boolean(state.workspace);
@@ -245,14 +273,18 @@
 
   root.vaiAllaFase = async function vaiAllaFase(id) {
     if (!root.phases[id]) return;
+    const projected = root.journeyPhase && root.journeyPhase(id);
+    if (projected && !projected.available) return;
     state.phase = id;
     root.clearSelection();
     state.view = id === "structure" ? "colonne" : "mappa";
     const workspaceId = state.workspace ? state.workspace.workspace.workspace_id : "";
     window.history.pushState({ fase: id }, "", root.indirizzoFase(id, workspaceId));
+    if (root.rememberWorkspaceContext) root.rememberWorkspaceContext();
     root.render();
     if (root.phases[id].carica) {
       await root.phases[id].carica();
+      if (root.loadJourney) await root.loadJourney();
       root.render();
     }
   };
@@ -332,8 +364,20 @@
         : await root.api(workspaceId ? `/api/workspaces/${encodeURIComponent(workspaceId)}` : "/api/workspace");
       if (state.workspace) await root.caricaFonti();
       if (!state.workspace) state.phase = "machine";
+      if (state.workspace && root.loadJourney) {
+        await root.loadJourney();
+        root.resolveWorkspaceContext({
+          explicitPhase: parametri.has("fase") || parametri.has("stage"),
+          sourceId: parametri.get("source_id") || "",
+        });
+        state.view = state.phase === "structure" ? "colonne" : "mappa";
+        window.history.replaceState(null, "", root.indirizzoFase(
+          state.phase, state.workspace.workspace.workspace_id
+        ));
+      }
       const fase = faseAttiva();
       if (fase.carica) await fase.carica();
+      if (state.workspace && root.loadJourney) await root.loadJourney();
     } catch (errore) {
       state.error = errore.message;
     } finally {

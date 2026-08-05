@@ -7,6 +7,7 @@ from typing import Literal
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from backend.domain.journey import JourneyActionCode, JourneyPhaseId
 from backend.domain.workspace import (
     AssetIdentifier,
     OperatorAssertion,
@@ -14,6 +15,7 @@ from backend.domain.workspace import (
     WorkspaceState,
     attested_text,
 )
+from backend.services.workspace_journey import WorkspaceJourneyService
 from backend.storage.repositories.evidence import EvidenceRepository
 from backend.storage.repositories.sources import SourceRepository
 from backend.storage.repositories.workspaces import WorkspaceConflictError, WorkspaceRepository
@@ -79,6 +81,11 @@ class WorkspaceHomeItem(BaseModel):
     status: WorkspaceState
     document_count: int = Field(ge=0)
     updated_at: str
+    recommended_phase: JourneyPhaseId
+    recommended_source_id: str | None = None
+    recommended_source_name: str | None = None
+    next_action: JourneyActionCode
+    attention_count: int = Field(default=0, ge=0)
 
 
 def _workspace_response(workspace: Workspace) -> WorkspaceResponse:
@@ -106,6 +113,7 @@ def list_workspaces():
         sources = source_repository.list_for_workspace(workspace.workspace_id)
         documents = [source for source in sources if source.source_kind.value != "operator_input"]
         updated_at = max([workspace.updated_at, *(source.created_at for source in documents)])
+        journey = WorkspaceJourneyService().snapshot(workspace.workspace_id)
         items.append(
             WorkspaceHomeItem(
                 workspace_id=workspace.workspace_id,
@@ -115,6 +123,11 @@ def list_workspaces():
                 status=workspace.status,
                 document_count=len(documents),
                 updated_at=updated_at,
+                recommended_phase=journey.next_action.phase,
+                recommended_source_id=journey.next_action.source_id,
+                recommended_source_name=journey.next_action.source_name,
+                next_action=journey.next_action.code,
+                attention_count=sum(item.attention_count for item in journey.phases),
             )
         )
     return items

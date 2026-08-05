@@ -83,6 +83,19 @@ class SourceSubgraphRepository:
             ).fetchall()
         return {row["source_id"]: self._revision(row) for row in rows}
 
+    def revision_counts_for_workspace(self, workspace_id: str) -> dict[str, int]:
+        with self.database.read() as connection:
+            rows = connection.execute(
+                """
+                SELECT source_id, COUNT(*) AS revision_count
+                FROM source_subgraph_revisions
+                WHERE workspace_id = ?
+                GROUP BY source_id
+                """,
+                (workspace_id,),
+            ).fetchall()
+        return {row["source_id"]: int(row["revision_count"]) for row in rows}
+
     def create(self, revision: SourceSubgraphRevision) -> SourceSubgraphRevision:
         payload = revision.model_dump(mode="json", exclude={"status", "approval_decision_id", "decision_note"})
         with self.database.transaction() as connection:
