@@ -112,10 +112,27 @@
       grafo, nodi: visibili, legami, nodiPerId, evidenzePerId, legamiPerNodo, grado,
       lacunePerNodo, lacunePerEvidenza, difettiPerNodo,
       nascosti: grafo.nodes.length - visibili.length,
+      /* Un filtro che non può togliere niente non è un filtro: chi lo offre
+         promette una selezione che non esiste. Si calcola qui, una volta, e
+         lo leggono tutte le strisce che mostrano quella spunta. */
+      conLacune: grafo.nodes.some((nodo) => (
+        lacunePerNodo.has(nodo.node_id) || difettiPerNodo.has(nodo.node_id)
+      )),
     };
   };
 
   const modelloDi = (vista) => (vista && vista.subgraph ? costruisciModello(vista.subgraph) : null);
+
+  /* La spunta delle lacune, uguale nelle due strisce che la offrono. Resta
+     attivabile solo se qualcosa può togliere, e resta togliibile sempre: chi
+     l'ha accesa deve poterla spegnere anche dopo aver corretto l'ultima. */
+  root.spuntaLacune = function spuntaLacune(modello) {
+    const spenta = !modello.conLacune && !state.filters.onlyGaps;
+    return `<label class="spunta ${spenta ? "spenta" : ""}"
+      ${spenta ? `title="${esc(t("gr.nienteLacune"))}"` : ""}>
+      <input type="checkbox" data-filtro="onlyGaps" ${state.filters.onlyGaps ? "checked" : ""}
+        ${spenta ? "disabled" : ""}>${esc(t("gr.soloLacune"))}</label>`;
+  };
 
   /* --------------------------------------------------------------- rete -- */
   const carica = async () => {
@@ -129,6 +146,11 @@
     } finally {
       state.graphLoading = false;
     }
+    /* Il numero accanto a una fonte nel menu è lo stesso in ogni fase, e viene
+       dalla preparazione: qui va letta anche se questa fase non la usa, o
+       arrivando dritti al grafo quel numero mancherebbe. È una lettura, non
+       una preparazione: non cambia niente. */
+    if (!state.structure && root.leggiPreparazione) await root.leggiPreparazione();
   };
 
   const esegui = async (azione) => {
@@ -182,7 +204,7 @@
             <option value="all">${esc(t("gr.tuttiCollegamenti"))}</option>
             ${tipiRel.map((tipo) => `<option value="${tipo}" ${state.filters.relationType === tipo ? "selected" : ""}>${esc(root.etichettaRelazione(tipo))}</option>`).join("")}
           </select>
-          <label class="spunta"><input type="checkbox" data-filtro="onlyGaps" ${state.filters.onlyGaps ? "checked" : ""}>${esc(t("gr.soloLacune"))}</label>
+          ${root.spuntaLacune(modello)}
           <label class="spunta"><input type="checkbox" data-filtro="focus" ${state.filters.focus ? "checked" : ""}>${esc(t("gr.soloIntorno"))}</label>
         </div>
       </div>`;
@@ -193,11 +215,20 @@
         <button type="button" class="btn quieto piccolo" data-azzera>${esc(t("gr.azzera"))}</button></p>`
     : "");
 
+  /* Perché la mappa è vuota. «Nessun elemento corrisponde ai filtri» è vero
+     anche quando l'unico filtro acceso non poteva corrispondere a niente: in
+     quel caso la frase da dire è che lacune non ce ne sono. */
+  const motivoVuoto = (modello) => {
+    if (!modello.grafo.nodes.length) return t("gr.nienteElementi");
+    if (state.filters.onlyGaps && !modello.conLacune) return t("gr.nienteLacune");
+    return t("gr.nienteFiltriTesto");
+  };
+
   const mappa = (modello) => {
     if (!modello.nodi.length) {
       return `<div class="lavoro-pad"><div class="vuoto">
         <strong>${esc(t("gr.nienteFiltri"))}</strong>
-        <p>${esc(modello.grafo.nodes.length ? t("gr.nienteFiltriTesto") : t("gr.nienteElementi"))}</p>
+        <p>${esc(motivoVuoto(modello))}</p>
         ${modello.grafo.nodes.length ? `<button type="button" class="btn secondario" data-azzera>${esc(t("gr.azzera"))}</button>` : ""}
       </div></div>`;
     }
@@ -207,11 +238,15 @@
       .join("");
     return `
       <div class="grafo" data-grafo>
+        ${modello.nascosti ? `<div class="grafo-nascosti floating">
+          <span>${esc(t("gr.nascosti", { n: modello.nascosti }))}</span>
+          <button type="button" class="btn quieto piccolo" data-azzera>${esc(t("gr.azzera"))}</button>
+        </div>` : ""}
         ${legenda ? `<div class="grafo-legenda floating">${legenda}</div>` : ""}
         <div class="grafo-comandi floating">
-          <button type="button" class="btn quieto tondo" data-zoom="meno" aria-label="${esc(t("gr.riduci"))}">−</button>
+          <button type="button" class="btn quieto segno" data-zoom="meno" aria-label="${esc(t("gr.riduci"))}">−</button>
           <span class="grafo-zoom" data-zoom-valore>100%</span>
-          <button type="button" class="btn quieto tondo" data-zoom="piu" aria-label="${esc(t("gr.ingrandisci"))}">+</button>
+          <button type="button" class="btn quieto segno" data-zoom="piu" aria-label="${esc(t("gr.ingrandisci"))}">+</button>
           <button type="button" class="btn quieto piccolo" data-zoom="adatta">${esc(t("gr.adatta"))}</button>
           <button type="button" class="btn quieto piccolo" data-ridisponi title="${esc(t("gr.ridisponiTitolo"))}">${esc(t("gr.ridisponi"))}</button>
         </div>
@@ -435,7 +470,6 @@
 
   /* ---------------------------------------------------------------- fase */
   root.phases.graph = {
-    mostraFonti: true,
     mostraIspettore: true,
     carica,
 
@@ -446,20 +480,11 @@
       const grafo = vista.subgraph;
       const tono = vista.state === "approved" ? "ok" : vista.state === "rejected" ? "errore" : "attesa";
       const chips = [
-        `<span class="chip ${tono}"><span class="punto"></span>${esc(root.etichettaStato(vista.state))}</span>`,
+        `<span class="chip ${tono}">${esc(root.etichettaStato(vista.state))}</span>`,
         grafo ? `<span class="chip"><b>${grafo.nodes.length}</b> ${esc(t("gr.vista.elementi").toLocaleLowerCase())}</span>` : "",
         grafo ? `<span class="chip"><b>${grafo.relations.length}</b> ${esc(t("gr.vista.collegamenti").toLocaleLowerCase())}</span>` : "",
       ].filter(Boolean).join("");
       return { titolo: vista.source_name, chips };
-    },
-
-    metaFonte(sorgente) {
-      const vista = state.graph && state.graph.sources.find((v) => v.source_id === sorgente.source_id);
-      if (!vista || !vista.subgraph) return "";
-      const lacune = (vista.subgraph.knowledge_gaps || []).length;
-      if (lacune) return `<span style="color:var(--amber)">${lacune}</span>`;
-      if (vista.state === "approved") return "✓";
-      return String(vista.subgraph.nodes.length);
     },
 
     navExtra() {
@@ -467,7 +492,7 @@
       const barriera = state.graph.merge_barrier;
       const pronto = barriera.state === "ready";
       return `<button type="button" class="nav-item ${state.view === "confronto" ? "active" : ""}" data-confronto>
-        <span class="nav-punto" style="--tipo:var(--muted-2)"></span>
+        <span class="nav-sigla" aria-hidden="true">⋈</span>
         <span class="nav-label">${esc(t("gr.confronto"))}</span>
         <span class="nav-meta">${pronto ? (barriera.exact_matches || []).length : "—"}</span>
       </button>`;
@@ -673,6 +698,196 @@
         const vista = vistaFonte();
         state.rejectingSourceId = "";
         esegui(() => root.api(
+          `/api/g3/subgraphs/${encodeURIComponent(vista.subgraph.source_subgraph_revision_id)}/decision`,
+          { method: "POST", body: { action: "reject", note: nota } }
+        ));
+      });
+    },
+  };
+
+  /* ==========================================================================
+     Il sottografo di una fonte, come superficie riusabile.
+
+     Lo stesso grafo si guarda da due posti: il secondo passo dentro la fonte,
+     dove il lavoro su quel file si chiude, e la fase del grafo, finché resta.
+     Una sola implementazione — modello, mappa, decisione — esposta qui; chi
+     la usa decide solo dove metterla e con quali parole.
+     ====================================================================== */
+  root.sottografo = {
+    carica,
+    smonta,
+    vista: (sourceId) => (state.graph
+      ? state.graph.sources.find((v) => v.source_id === sourceId) || null : null),
+    modello: modelloDi,
+    mappa,
+    monta: montaMappa,
+
+    /** Vero se la mappa è a schermo e ha assorbito la selezione da sola. */
+    evidenzia(selezione) {
+      if (!explorer) return false;
+      explorer.evidenzia(selezione);
+      return true;
+    },
+
+    /**
+     * Ridisegna solo la mappa, non la pagina.
+     *
+     * I filtri stanno nella striscia sopra l'area che scorre: rifare tutto
+     * significherebbe rifare anche loro, e chi sta scrivendo nella casella di
+     * ricerca perderebbe il fuoco a ogni lettera.
+     */
+    ridisegna(contenitore) {
+      const scorri = (contenitore || root.appElement).querySelector(".lavoro-scorri");
+      const fonte = root.fonteAttiva();
+      const vista = fonte ? root.sottografo.vista(fonte.source_id) : null;
+      if (!scorri || !vista || !vista.subgraph) { root.render({ regioni: ["lavoro"] }); return; }
+      const modello = modelloDi(vista);
+      smonta();
+      root.paint(scorri, mappa(modello));
+      montaMappa(scorri, vista, modello);
+    },
+
+    /** I comandi che vivono sopra e dentro la mappa. */
+    bindMappa(contenitore) {
+      const ridisegna = () => root.sottografo.ridisegna(contenitore);
+      root.delegate(contenitore, "click", "[data-scegli]", (elemento) => {
+        root.applicaSelezione(elemento.dataset.scegli, elemento.dataset.id);
+      });
+      root.delegate(contenitore, "click", "[data-azzera]", () => {
+        state.filters = { query: "", nodeType: "all", relationType: "all", onlyGaps: false, focus: false };
+        root.render({ regioni: ["lavoro"] });
+      });
+      root.delegate(contenitore, "change", "[data-filtro]", (elemento) => {
+        const chiave = elemento.dataset.filtro;
+        state.filters[chiave] = elemento.type === "checkbox" ? elemento.checked : elemento.value;
+        ridisegna();
+      });
+      root.delegate(contenitore, "click", "[data-zoom]", (elemento) => {
+        if (!explorer) return;
+        const azione = elemento.dataset.zoom;
+        if (azione === "adatta") explorer.inquadra();
+        else explorer.zoom(azione === "piu" ? 1.25 : 1 / 1.25);
+      });
+      root.delegate(contenitore, "click", "[data-ridisponi]", () => { if (explorer) explorer.ridisponi(); });
+      const cerca = contenitore.querySelector("[data-cerca]");
+      if (cerca && !cerca.dataset.legato) {
+        cerca.dataset.legato = "1";
+        cerca.addEventListener("input", () => {
+          window.clearTimeout(cercaTimer);
+          cercaTimer = window.setTimeout(() => {
+            state.filters.query = cerca.value;
+            ridisegna();
+          }, 180);
+        });
+      }
+    },
+
+    /**
+     * Che cosa deve fare l'operatore, dentro la fonte, su questo grafo.
+     *
+     * Una riga sola, in fondo alla pagina, dove sta ogni decisione di questo
+     * applicativo: a sinistra perché, a destra il tasto. Mai più di un tasto
+     * principale per volta.
+     */
+    decisione(vista, fonte) {
+      const occupato = state.graphBusy ? "disabled" : "";
+      const errore = state.graphError ? `<p class="campo-errore" role="alert">${esc(state.graphError)}</p>` : "";
+      const riga = (titolo, testo, azioni, ostacoli) => `
+        <div class="decisione-riga">
+          <div class="decisione-testo" aria-live="polite"><strong>${esc(titolo)}</strong><span>${esc(testo)}</span></div>
+          ${ostacoli || ""}${azioni ? `<div class="decisione-azioni">${azioni}</div>` : ""}
+        </div>${errore}`;
+
+      if (fonte.source_kind === "pdf" || (vista && vista.state === "deferred")) {
+        return riga(t("gr.pdfNessunaAzione"), t("gr.pdfNessunaAzioneTesto"), "");
+      }
+      if (!vista || vista.state === "waiting") {
+        return riga(t("fon.nonConfermata"), t("fon.nonConfermataTesto"),
+          `<button type="button" class="btn primario" data-passo="lettura">${esc(t("fon.tornaLettura"))}</button>`);
+      }
+      const grafo = vista.subgraph;
+      if (!grafo) {
+        const voce = root.journeySource ? root.journeySource(vista.source_id) : null;
+        const rifatto = voce && voce.graph_revision_count > 0;
+        return riga(
+          t(rifatto ? "fon.rifare" : "fon.daCostruire"),
+          t(rifatto ? "fon.rifareTesto" : "fon.daCostruireTesto"),
+          `<button type="button" class="btn primario" data-costruisci ${occupato}>${
+            esc(state.graphBusy ? t("gr.costruendo") : t("gr.costruisci"))}</button>`
+        );
+      }
+      if (state.rejectingSourceId === vista.source_id) {
+        return `<form class="decisione-nota" data-nota>
+          <label class="campo"><span>${esc(t("dec.cosaCorreggere"))}</span>
+            <textarea name="note" required minlength="3" placeholder="${esc(t("dec.notaP"))}"></textarea></label>
+          <div class="decisione-nota-azioni">
+            <button type="submit" class="btn primario" ${occupato}>${esc(t("dec.registra"))}</button>
+            <button type="button" class="btn quieto" data-annulla-nota>${esc(t("ui.annulla"))}</button>
+          </div>${errore}</form>`;
+      }
+      if (vista.state === "approved") return riga(t("dec.verificata"), t("dec.garanzia"), "");
+      if (vista.state === "rejected") {
+        return riga(t("dec.segnalata"), grafo.decision_note || t("dec.segnalazioneRegistrata"),
+          `<button type="button" class="btn primario" data-passo="lettura">${esc(t("fon.tornaLettura"))}</button>`);
+      }
+      const lacune = (grafo.knowledge_gaps || []).length;
+      const difetti = (((grafo.validation || {}).issues) || []).length;
+      /* Toccarli non porta altrove: riporta la colonna di destra alla
+         panoramica, dove quegli stessi ostacoli sono elencati per esteso. */
+      const ostacoli = `<div class="ostacoli">
+        ${lacune ? `<button type="button" class="ostacolo lacuna" data-panoramica>${esc(n(lacune, "dec.lacuneNeiDati"))}</button>` : ""}
+        ${difetti ? `<button type="button" class="ostacolo difetto" data-panoramica>${esc(n(difetti, "dec.difettiTecnici"))}</button>` : ""}
+      </div>`;
+      return riga(
+        grafo.approval_eligible ? t("dec.domanda") : t("dec.nonVerificabile"),
+        grafo.approval_eligible ? t("dec.garanzia") : t("dec.nonVerificabileTesto"),
+        `<button type="button" class="btn pericolo" data-segnala ${occupato}>${esc(t("dec.segnala"))}</button>
+         <button type="button" class="btn primario" data-approva ${grafo.approval_eligible ? occupato : "disabled"}>${esc(t("dec.conferma"))}</button>`,
+        grafo.approval_eligible ? "" : ostacoli
+      );
+    },
+
+    bindDecisione(contenitore, esecutore) {
+      const corrente = () => {
+        const fonte = root.fonteAttiva();
+        return fonte ? root.sottografo.vista(fonte.source_id) : null;
+      };
+      root.delegate(contenitore, "click", "[data-costruisci]", () => {
+        const vista = corrente();
+        if (!vista) return;
+        esecutore(() => root.api(
+          `/api/workspaces/${encodeURIComponent(wsId())}/g3/sources/${encodeURIComponent(vista.source_id)}/generate`,
+          { method: "POST" }
+        ));
+      });
+      root.delegate(contenitore, "click", "[data-approva]", () => {
+        const vista = corrente();
+        if (!vista || !vista.subgraph) return;
+        esecutore(() => root.api(
+          `/api/g3/subgraphs/${encodeURIComponent(vista.subgraph.source_subgraph_revision_id)}/decision`,
+          { method: "POST", body: { action: "approve", note: null } }
+        ));
+      });
+      root.delegate(contenitore, "click", "[data-segnala]", () => {
+        state.rejectingSourceId = (corrente() || {}).source_id || "";
+        root.render({ regioni: ["decisione"] });
+        contenitore.querySelector("textarea")?.focus();
+      });
+      root.delegate(contenitore, "click", "[data-annulla-nota]", () => {
+        state.rejectingSourceId = "";
+        root.render({ regioni: ["decisione"] });
+      });
+      root.delegate(contenitore, "click", "[data-panoramica]", () => {
+        root.clearSelection();
+        root.render({ regioni: ["ispettore"] });
+      });
+      root.delegate(contenitore, "submit", "[data-nota]", (modulo, evento) => {
+        evento.preventDefault();
+        const nota = String(new FormData(modulo).get("note") || "").trim();
+        const vista = corrente();
+        if (!nota || !vista || !vista.subgraph) return;
+        state.rejectingSourceId = "";
+        esecutore(() => root.api(
           `/api/g3/subgraphs/${encodeURIComponent(vista.subgraph.source_subgraph_revision_id)}/decision`,
           { method: "POST", body: { action: "reject", note: nota } }
         ));

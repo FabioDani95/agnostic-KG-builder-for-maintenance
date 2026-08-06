@@ -49,6 +49,55 @@
       </span>`;
   };
 
+  /**
+   * La bolla è ancorata alla finestra, non all'etichetta: appesa al riquadro
+   * la tagliava il primo contenitore che scorre. Qui la si misura e la si
+   * mette dove ci sta — sopra il segno se c'è spazio, sotto se no — e dentro
+   * i margini della finestra sui lati.
+   */
+  const MARGINE = 12;
+  const piazzaBolla = (segno) => {
+    const bolla = segno.querySelector(".info-bolla");
+    if (!bolla) return;
+    const ancora = segno.getBoundingClientRect();
+    const larghezza = bolla.offsetWidth;
+    const altezza = bolla.offsetHeight;
+    const x = Math.min(
+      Math.max(MARGINE, ancora.left + ancora.width / 2 - larghezza / 2),
+      Math.max(MARGINE, window.innerWidth - larghezza - MARGINE)
+    );
+    const sopra = ancora.top - altezza - 9 >= MARGINE;
+    /* Se il segno è a filo del bordo — o fuori, perché il tasto di tabulazione
+       ci è appena arrivato — la bolla rientra comunque nella finestra. */
+    const y = Math.min(
+      Math.max(MARGINE, sopra ? ancora.top - altezza - 9 : ancora.bottom + 9),
+      Math.max(MARGINE, window.innerHeight - altezza - MARGINE)
+    );
+    bolla.dataset.verso = sopra ? "sopra" : "sotto";
+    bolla.style.left = `${Math.round(x)}px`;
+    bolla.style.top = `${Math.round(y)}px`;
+  };
+
+  const segnoInVista = (evento) => {
+    const bersaglio = evento.target;
+    return bersaglio && bersaglio.closest ? bersaglio.closest(".info") : null;
+  };
+  document.addEventListener("pointerover", (evento) => {
+    const segno = segnoInVista(evento);
+    if (segno) piazzaBolla(segno);
+  });
+  /* Col fuoco da tastiera il browser prima porta il segno in vista e poi
+     lascia la parola a noi: si misura al giro dopo, a scorrimento finito. */
+  document.addEventListener("focusin", (evento) => {
+    const segno = segnoInVista(evento);
+    if (segno) requestAnimationFrame(() => piazzaBolla(segno));
+  });
+  /* Se sotto la bolla scorre qualcosa, l'ancora si sposta e la bolla la segue. */
+  document.addEventListener("scroll", () => {
+    const segno = document.querySelector(".info:hover, .info:focus-within");
+    if (segno) piazzaBolla(segno);
+  }, true);
+
   root.etichettaTipo = (tipo) => t(`tipo.${tipo}`);
   root.etichettaTipoPl = (tipo) => t(`tipoPl.${tipo}`);
   root.etichettaRelazione = (tipo) => t(`rel.${tipo}`);

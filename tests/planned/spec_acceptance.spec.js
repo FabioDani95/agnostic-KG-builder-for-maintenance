@@ -19,7 +19,6 @@ async function identifyMachine(page, { name, model, serial, description }) {
   await page.locator('[name="model"]').fill(model);
   await page.locator('[name="description"]').fill(description);
   await page.locator('[name="serial"]').fill(serial);
-  await page.locator('[name="reason"]').fill("Dati letti direttamente dalla targhetta della macchina.");
   await page.locator('[name="operator"]').fill("PO");
   await page.getByRole("button", { name: "Salva macchina e continua" }).click();
   await expect(page.locator(".topbar h1")).toHaveText(name);
@@ -144,9 +143,13 @@ test("AC-UX-002/003/009: multi-upload and automatic PDF preparation", async ({ p
 
   // The machines home summarises each machine and reopens it by its stable id.
   await page.goto("/home.html");
-  await expect(page.locator(".topbar h1")).toHaveText("Macchine");
-  await expect(page.getByRole("link", { name: /Hydraulic Press 7/ })).toBeVisible();
-  await expect(page.getByText(/HP-700 · 4 documenti/)).toBeVisible();
+  await expect(page.locator(".topbar .marchio-nome")).toContainText("Nexus");
+  await expect(page.locator(".elenco-capo h2")).toContainText("Area di lavoro");
+  const rigaPressa = page.getByRole("link", { name: /Hydraulic Press 7/ });
+  await expect(rigaPressa).toBeVisible();
+  // Every fact has its own column, so two machines can be compared by eye.
+  await expect(rigaPressa.locator(".cella").nth(2)).toHaveText("HP-700");
+  await expect(rigaPressa.locator(".cella").nth(3)).toHaveText("4");
   await page.getByRole("link", { name: /Hydraulic Press 7/ }).click();
   await expect(page).toHaveURL(/console\.html\?foundation=1&workspace_id=ws_/);
   await expect(page.locator(".brand-text")).toContainText("Hydraulic Press 7");
@@ -160,8 +163,10 @@ test("AC-UX-002/003/009: multi-upload and automatic PDF preparation", async ({ p
     description: "Packaging conveyor in production line two.",
   });
   await page.goto("/home.html");
-  await expect(page.locator(".macchina-card")).toHaveCount(2);
-  await expect(page.getByText(/CV-200 · 0 documenti/)).toBeVisible();
+  await expect(page.locator(".riga-macchina")).toHaveCount(2);
+  const rigaNastro = page.getByRole("link", { name: /Conveyor 2/ });
+  await expect(rigaNastro.locator(".cella").nth(2)).toHaveText("CV-200");
+  await expect(rigaNastro.locator(".cella").nth(3)).toHaveText("0");
 });
 
 test("AC-UX-011: the interface switches language and theme without losing its place", async ({ page }) => {
@@ -490,7 +495,10 @@ test("AC-UX-016: reopening a workspace guides the next source without losing exi
 
   // The home reopens the stable workspace directly where work last completed.
   await page.goto("/home.html");
-  await expect(page.getByRole("link", { name: /Journey Press/ })).toContainText("tutti i grafi disponibili sono aggiornati");
+  // The row does not spell the next step out, but it still carries it: the link
+  // opens the phase the journey points to.
+  const rigaJourney = page.getByRole("link", { name: /Journey Press/ });
+  await expect(rigaJourney).toHaveAttribute("href", /fase=grafo/);
   await page.getByRole("link", { name: /Journey Press/ }).click();
   await expect(page).toHaveURL(/fase=grafo/);
   await expect(page.locator(".nodo")).toHaveCount(11);

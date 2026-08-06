@@ -19,15 +19,24 @@
     return nodo;
   };
 
-  /** Punto in cui il segmento verso (dx,dy) esce dalla pillola. */
+  /** Punto in cui il segmento verso (dx,dy) esce dal pallino. */
   const bordo = (nodo, dx, dy) => {
-    const mezzaL = nodo.w / 2 + 3;
-    const mezzaH = nodo.h / 2 + 3;
-    const scalaX = dx === 0 ? Infinity : mezzaL / Math.abs(dx);
-    const scalaY = dy === 0 ? Infinity : mezzaH / Math.abs(dy);
-    const scala = Math.min(scalaX, scalaY);
-    return { x: nodo.x + dx * scala, y: nodo.y + dy * scala };
+    const distanza = Math.hypot(dx, dy) || 1;
+    const raggio = nodo.r + 3;
+    return { x: nodo.x + (dx / distanza) * raggio, y: nodo.y + (dy / distanza) * raggio };
   };
+
+  /* Quante etichette restano accese senza selezione: i pochi nodi più
+     collegati, quelli che danno il senso della forma. Tutte insieme sono
+     illeggibili già a quaranta elementi. */
+  const ETICHETTE_FISSE = 6;
+  /* Sopra questo ingrandimento c'è posto per leggere tutti i nomi. */
+  const ZOOM_ETICHETTE = 0.95;
+  /* Sotto questa scala un pallino acceso in mezzo a duecento resta da cercare
+     anche se è dentro l'inquadratura: scegliendo, la vista ci va sopra. */
+  const ZOOM_VICINO = 0.5;
+  /* Quanto ci si avvicina scegliendo: oltre, si perde il contesto attorno. */
+  const ZOOM_SCELTA = 1.4;
 
   const tronca = (testo, limite) => (testo.length > limite ? `${testo.slice(0, limite - 1)}…` : testo);
 
@@ -39,11 +48,26 @@
   root.creaExplorer = function creaExplorer(contenitore, dati, api) {
     const chiave = (id) => `${dati.chiaveFonte}::${id}`;
 
+    /* Quanto un elemento è collegato decide quanto è grande: i mozzi si vedono
+       da soli, senza legenda e senza leggere un solo nome. */
+    const grado = new Map();
+    dati.archi.forEach((arco) => {
+      grado.set(arco.da, (grado.get(arco.da) || 0) + 1);
+      grado.set(arco.a, (grado.get(arco.a) || 0) + 1);
+    });
+
     const nodi = dati.nodi.map((voce) => {
-      const dimensione = root.dimensioniNodo(tronca(voce.etichetta, 24));
       const memoria = posizioni.get(chiave(voce.id));
+      const raggio = root.raggioNodo(grado.get(voce.id) || 0);
       return {
-        ...voce, ...dimensione,
+        ...voce,
+        r: raggio,
+        /* La simulazione separa riquadri: per un pallino il riquadro è il
+           pallino stesso, con un margine. Il nome, che si accende solo quando
+           serve, non partecipa alla separazione — altrimenti il grafo si
+           dilaterebbe per etichette che quasi sempre sono spente. */
+        w: raggio * 2 + 13,
+        h: raggio * 2 + 13,
         x: memoria ? memoria.x : null,
         y: memoria ? memoria.y : null,
         fx: memoria && memoria.fissato ? memoria.x : null,
@@ -52,6 +76,11 @@
       };
     });
     const perId = new Map(nodi.map((nodo) => [nodo.id, nodo]));
+    const fisse = new Set([...nodi]
+      .sort((a, b) => (grado.get(b.id) || 0) - (grado.get(a.id) || 0))
+      .slice(0, ETICHETTE_FISSE)
+      .filter((nodo) => (grado.get(nodo.id) || 0) > 0)
+      .map((nodo) => nodo.id));
 
     const svg = elemento("svg", { class: "grafo-svg", tabindex: "0", role: "application" });
     svg.setAttribute("aria-label", api.descrizione);
@@ -79,7 +108,10 @@
     const archi = simulazione.legami.map((legame, indice) => {
       const originale = dati.archi[indice] || {};
       const gruppo = elemento("g", { class: "arco" });
-      const linea = elemento("line", { class: "arco-linea", "marker-end": "url(#freccia)" });
+      /* Nessuna freccia finché il filo non è quello che stai guardando: a
+         ottanta collegamenti le punte diventano un brulichio, e il verso lo si
+         legge comunque a parole nella colonna di destra. */
+      const linea = elemento("line", { class: "arco-linea" });
       const presa = elemento("line", {
         class: "arco-presa", role: "button", tabindex: "-1",
         "data-arco": originale.id || "",
@@ -95,43 +127,92 @@
     /* — nodi — */
     const disegni = nodi.map((nodo) => {
       const gruppo = elemento("g", {
-        class: `nodo tipo-${nodo.tipo}`, role: "button", tabindex: "-1",
+        class: `nodo tipo-${nodo.tipo}${fisse.has(nodo.id) ? " nome-fisso" : ""}`,
+        role: "button", tabindex: "-1",
         "data-nodo": nodo.id,
         "aria-label": `${api.etichettaTipo(nodo.tipo)}: ${nodo.etichetta}. ${api.testoOccorrenze(nodo.occorrenze)}`,
       });
-      gruppo.appendChild(elemento("rect", {
-        class: "nodo-corpo", x: -nodo.w / 2, y: -nodo.h / 2,
-        width: nodo.w, height: nodo.h, rx: nodo.h / 2,
+      /* Un bersaglio più largo del pallino: un elemento poco collegato è un
+         disco di dodici pixel, e nessuno deve inseguirlo col puntatore. */
+      gruppo.appendChild(elemento("circle", {
+        class: "nodo-presa", cx: 0, cy: 0, r: Math.max(nodo.r + 9, 15),
       }));
-      const testo = elemento("text", { class: "nodo-testo", x: 0, y: 4, "text-anchor": "middle" });
-      testo.textContent = tronca(nodo.etichetta, 24);
-      gruppo.appendChild(testo);
       if (nodo.lacuna || nodo.difetto) {
         gruppo.appendChild(elemento("circle", {
-          class: nodo.difetto ? "nodo-segno difetto" : "nodo-segno lacuna",
-          cx: nodo.w / 2 - 3, cy: -nodo.h / 2 + 3, r: 5,
+          class: `nodo-alone ${nodo.difetto ? "difetto" : "lacuna"}`,
+          cx: 0, cy: 0, r: nodo.r + 4,
         }));
       }
+      gruppo.appendChild(elemento("circle", { class: "nodo-corpo", cx: 0, cy: 0, r: nodo.r }));
+      /* Il nome vive in un gruppo suo, contro-scalato: disegnato nelle
+         coordinate della scena rimpiccioliva con lo zoom, e da lontano — che è
+         il modo in cui si guarda un grafo di duecento elementi — non si
+         leggeva più. Così resta della stessa misura a schermo sempre. */
+      const nome = elemento("g", { class: "nodo-nome" });
+      const testo = elemento("text", { class: "nodo-testo", x: 0, y: 0, "text-anchor": "middle" });
+      testo.textContent = tronca(nodo.etichetta, 26);
+      nome.appendChild(testo);
+      gruppo.appendChild(nome);
       const titolo = elemento("title");
       titolo.textContent = `${api.etichettaTipo(nodo.tipo)}: ${nodo.etichetta}`;
       gruppo.appendChild(titolo);
       stratoNodi.appendChild(gruppo);
-      return { gruppo, nodo };
+      return { gruppo, nome, nodo };
     });
 
     /* — inquadratura — */
     let k = 1; let tx = 0; let ty = 0;
+    let voloTimer = 0;
     const misure = () => contenitore.getBoundingClientRect();
 
-    const applicaVista = () => {
+    /* Il nome sta sotto il pallino a distanza costante sullo schermo: il
+       pallino cresce con lo zoom, la scritta no. La distanza si ricalcola
+       solo quando la scala cambia davvero. */
+    let scalaNomi = 0;
+    const disponiNomi = () => {
+      if (scalaNomi === k) return;
+      scalaNomi = k;
+      disegni.forEach(({ nome, nodo }) => nome.setAttribute(
+        "transform", `translate(0 ${(nodo.r + 13 / k).toFixed(2)}) scale(${(1 / k).toFixed(4)})`
+      ));
+    };
+
+    const applicaVista = (morbido) => {
+      /* Un salto di inquadratura deciso dall'applicativo si accompagna, o
+         nessuno capisce da dove a dove è andata la vista. Trascinare e
+         ingrandire restano invece immediati: lì la mano è dell'operatore. */
+      if (morbido) {
+        scena.classList.add("in-volo");
+        window.clearTimeout(voloTimer);
+        voloTimer = window.setTimeout(() => scena.classList.remove("in-volo"), 380);
+      }
       scena.setAttribute("transform", `translate(${tx} ${ty}) scale(${k})`);
+      disponiNomi();
+      /* Da vicino c'è posto per tutti i nomi; da lontano sarebbero una macchia
+         di testo sovrapposto, e la forma del grafo — l'unica cosa che si legge
+         da lontano — sparirebbe sotto. */
+      svg.classList.toggle("con-nomi", k >= ZOOM_ETICHETTE);
       if (api.onZoom) api.onZoom(k);
     };
+
+    /* La prima inquadratura può cadere prima che il riquadro esista davvero:
+       chi monta la mappa lo fa nello stesso giro in cui la disegna, e lì la
+       misura è ancora zero. Finché non riesce, la si ritenta — altrimenti il
+       grafo resta a cavallo dell'origine, mezzo fuori campo. */
+    let inquadrato = false;
+    /* Finché la vista non l'ha mossa l'operatore, l'inquadratura segue il
+       riquadro. La prima misura cade quasi sempre prima che la pagina abbia
+       l'altezza definitiva: fermandosi lì, il grafo restava rimpicciolito per
+       una finestra che nel frattempo si era aperta — ed è così che duecento
+       elementi diventavano una palla. */
+    let mossaDaMano = false;
 
     const inquadra = () => {
       const riquadro = simulazione.riquadro();
       const area = misure();
       if (!area.width || !area.height) return;
+      inquadrato = true;
+      mossaDaMano = false;
       const larghezza = Math.max(1, riquadro.maxX - riquadro.minX);
       const altezza = Math.max(1, riquadro.maxY - riquadro.minY);
       /* Sotto una certa scala le etichette non si leggono più: meglio aprire
@@ -140,6 +221,43 @@
       tx = area.width / 2 - ((riquadro.minX + riquadro.maxX) / 2) * k;
       ty = area.height / 2 - ((riquadro.minY + riquadro.maxY) / 2) * k;
       applicaVista();
+    };
+
+    /**
+     * Porta la vista sulla scelta e su quello che le sta attorno.
+     *
+     * Con duecento pallini a un terzo di scala «si illumina» non basta: il
+     * puntino acceso resta da cercare. Non si allontana mai — chi era già
+     * vicino resta vicino — e non si muove affatto se quello che serve è già
+     * inquadrato e abbastanza grande.
+     */
+    const inquadraSu = (ids) => {
+      const scelti = [...ids].map((id) => perId.get(id)).filter(Boolean);
+      const area = misure();
+      if (!scelti.length || !area.width || !area.height) return;
+      const dentro = scelti.every((nodo) => {
+        const schermoX = nodo.x * k + tx;
+        const schermoY = nodo.y * k + ty;
+        return schermoX > 80 && schermoX < area.width - 80
+          && schermoY > 60 && schermoY < area.height - 60;
+      });
+      if (dentro && k >= ZOOM_VICINO) return;
+      mossaDaMano = true;
+      let minX = Infinity; let minY = Infinity; let maxX = -Infinity; let maxY = -Infinity;
+      scelti.forEach((nodo) => {
+        minX = Math.min(minX, nodo.x - nodo.w / 2);
+        maxX = Math.max(maxX, nodo.x + nodo.w / 2);
+        minY = Math.min(minY, nodo.y - nodo.h / 2);
+        maxY = Math.max(maxY, nodo.y + nodo.h / 2);
+      });
+      const larghezza = Math.max(1, maxX - minX);
+      const altezza = Math.max(1, maxY - minY);
+      k = Math.min(ZOOM_SCELTA, Math.max(k, Math.min(
+        (area.width - 170) / larghezza, (area.height - 130) / altezza
+      )));
+      tx = area.width / 2 - ((minX + maxX) / 2) * k;
+      ty = area.height / 2 - ((minY + maxY) / 2) * k;
+      applicaVista(true);
     };
 
     const versoScena = (clientX, clientY) => {
@@ -186,6 +304,7 @@
     const nuovi = nodi.filter((nodo) => !posizioni.has(chiave(nodo.id))).length;
     simulazione.stabilizza(nuovi ? 260 : 40);
     dipingi();
+    disponiNomi();
     inquadra();
     ricorda();
 
@@ -193,6 +312,9 @@
     let presa = null;
     svg.addEventListener("pointerdown", (evento) => {
       if (evento.button !== 0) return;
+      /* La mano vince su qualunque spostamento in corso: se si trascina mentre
+         la vista sta ancora andando, si trascina subito. */
+      scena.classList.remove("in-volo");
       const bersaglio = evento.target.closest("[data-nodo]");
       svg.setPointerCapture(evento.pointerId);
       if (bersaglio) {
@@ -219,6 +341,7 @@
       } else {
         tx = presa.tx + (evento.clientX - presa.x);
         ty = presa.ty + (evento.clientY - presa.y);
+        mossaDaMano = true;
         applicaVista();
       }
     });
@@ -269,6 +392,7 @@
       tx = puntoX - ((puntoX - tx) / k) * nuovo;
       ty = puntoY - ((puntoY - ty) / k) * nuovo;
       k = nuovo;
+      mossaDaMano = true;
       applicaVista();
     }, { passive: false });
 
@@ -351,6 +475,9 @@
       disegni.forEach(({ gruppo, nodo }) => {
         gruppo.classList.toggle("scelto", selezione.kind === "node" && nodo.id === selezione.id);
         gruppo.classList.toggle("spento", attivo && !intorno.has(nodo.id));
+        /* Chi sta attorno alla scelta dice il proprio nome: è quello il modo
+           di leggere un collegamento, non di indovinarlo dalla direzione. */
+        gruppo.classList.toggle("vicino", attivo && intorno.has(nodo.id));
       });
       archi.forEach(({ gruppo, linea, da, a, id }) => {
         const vivoArco = selezione.kind === "relation"
@@ -358,11 +485,15 @@
           : attivo && intorno.has(da.id) && intorno.has(a.id);
         gruppo.classList.toggle("vivo", Boolean(vivoArco));
         gruppo.classList.toggle("spento", attivo && !vivoArco);
-        linea.setAttribute("marker-end", vivoArco ? "url(#freccia-viva)" : "url(#freccia)");
+        if (vivoArco) linea.setAttribute("marker-end", "url(#freccia-viva)");
+        else linea.removeAttribute("marker-end");
       });
+      if (attivo) inquadraSu(intorno);
     };
 
-    const osservatore = new ResizeObserver(() => applicaVista());
+    const osservatore = new ResizeObserver(() => (
+      inquadrato && mossaDaMano ? applicaVista() : inquadra()
+    ));
     osservatore.observe(contenitore);
 
     return {
@@ -374,6 +505,7 @@
         tx = area.width / 2 - ((area.width / 2 - tx) / k) * nuovo;
         ty = area.height / 2 - ((area.height / 2 - ty) / k) * nuovo;
         k = nuovo;
+        mossaDaMano = true;
         applicaVista();
       },
       ridisponi() {

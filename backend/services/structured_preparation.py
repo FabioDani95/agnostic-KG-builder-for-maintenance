@@ -30,6 +30,7 @@ from backend.domain.runs import (
 from backend.domain.sources import Source, SourceKind, SourceState
 from backend.domain.structured import G2PreparationView, StructuredProfileView
 from backend.domain.workspace import Workspace
+from backend.services.language_utils import detect_language
 from backend.storage.raw_store import RawStore
 from backend.storage.repositories.evidence import EvidenceRepository
 from backend.storage.repositories.operational_runs import OperationalRunRepository
@@ -711,17 +712,12 @@ class StructuredPreparationService:
         sample = " ".join(
             value for value in (content.observation, content.cause, content.action, content.outcome) if value
         )
-        if len(sample) >= 24:
-            try:
-                from langdetect import detect
-
-                detected = detect(sample)
-                qualification = {
-                    "en": LanguageQualification.QUALIFIED_EN,
-                    "it": LanguageQualification.UNQUALIFIED_IT,
-                    "de": LanguageQualification.UNQUALIFIED_DE,
-                }.get(detected, LanguageQualification.UNKNOWN)
-                return LanguageInfo(detected=detected, qualification=qualification)
-            except Exception:
-                pass
+        detected = detect_language(sample)
+        if detected is not None:
+            qualification = {
+                "en": LanguageQualification.QUALIFIED_EN,
+                "it": LanguageQualification.UNQUALIFIED_IT,
+                "de": LanguageQualification.UNQUALIFIED_DE,
+            }[detected]
+            return LanguageInfo(detected=detected, confidence=0.75, qualification=qualification)
         return LanguageInfo(detected="unknown", qualification=LanguageQualification.UNKNOWN)

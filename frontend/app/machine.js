@@ -39,10 +39,10 @@
     /* L'identificativo del riquadro informativo è stabile e semantico: è un
        aggancio documentato, non il nome del campo del modulo. */
     const info = config.info ? ` ${root.info(config.id || nome, t(chiave), t(config.info))}` : "";
-    const obbligatorio = config.required
-      ? ` <small class="campo-obbligatorio">${esc(t("ui.obbligatorio"))}</small>`
-      : "";
-    const etichetta = `<span class="${config.info ? "con-info" : ""}">${esc(t(chiave))}${info}${obbligatorio}</span>`;
+    /* Che un campo sia obbligatorio lo dice il riquadro stesso, con un filo
+       rosso interno finché è vuoto: una parola in più accanto a ogni etichetta
+       raddoppiava il testo da leggere e non aggiungeva niente. */
+    const etichetta = `<span class="${config.info ? "con-info" : ""}">${esc(t(chiave))}${info}</span>`;
     const controllo = config.area
       ? `<textarea name="${nome}" ${config.required ? 'required aria-required="true"' : ""} ${config.min ? `minlength="${config.min}"` : ""}
           rows="${config.rows || 3}" placeholder="${esc(t(config.p))}"></textarea>`
@@ -63,16 +63,6 @@
           ${campo("serial", "mac.seriale", { p: "mac.serialeP", info: "mac.serialeI", id: "numero-seriale" })}
           ${campo("equipment_tag", "mac.codice", { p: "mac.codiceP", info: "mac.codiceI", id: "codice-macchina" })}
           ${campo("description", "mac.descrizione", { required: true, area: true, p: "mac.descrizioneP", largo: true })}
-        </div>
-        <div class="modulo-legenda"><strong>${esc(t("mac.sezione2"))}</strong><span>${esc(t("mac.sezione2d"))}</span></div>
-        <div class="modulo-griglia">
-          ${campo("reason", "mac.verifica", { required: true, area: true, rows: 2, min: 10, p: "mac.verificaP", largo: true })}
-          <label class="campo"><span class="con-info">${esc(t("mac.dove"))} ${root.info("fonte-verifica", t("mac.dove"), t("mac.doveI"))}</span>
-            <select name="observation_basis">
-              <option value="nameplate">${esc(t("mac.dove.nameplate"))}</option>
-              <option value="direct_observation">${esc(t("mac.dove.direct_observation"))}</option>
-              <option value="operator_record">${esc(t("mac.dove.operator_record"))}</option>
-            </select></label>
           ${campo("operator", "mac.chi", { required: true, p: "mac.chiP", info: "mac.chiI", id: "operatore-conferma" })}
         </div>
         ${state.error ? `<div class="nota errore" role="alert"><span class="segno" aria-hidden="true">!</span>
@@ -81,12 +71,13 @@
     </div></div>`;
 
   root.phases.machine = {
-    mostraFonti: false,
     mostraIspettore: false,
 
+    /* Nessuna targhetta accanto al titolo: che la macchina sia confermata lo
+       dice già la barra della decisione in fondo, con le stesse parole. */
     titolo: () => ({
       titolo: state.workspace ? state.workspace.workspace.asset.name : t("mac.titolo"),
-      chips: state.workspace ? `<span class="chip ok"><span class="punto"></span>${esc(t("mac.confermata"))}</span>` : "",
+      chips: "",
     }),
 
     renderLavoro() {
@@ -121,9 +112,12 @@
                 asset_type: valori.get("asset_type") || null,
               },
               identifiers: identificativi,
+              /* L'operatore firma la dichiarazione; il modulo non gli chiede
+                 più di raccontarla. Quello che resta agli atti è ciò che è
+                 davvero successo: l'identità è stata dichiarata qui. */
               assertion: {
-                reason: valori.get("reason"),
-                observation_basis: valori.get("observation_basis"),
+                reason: t("mac.motivoStandard"),
+                observation_basis: "operator_record",
                 operator: valori.get("operator"),
               },
             },

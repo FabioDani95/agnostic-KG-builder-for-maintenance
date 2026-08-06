@@ -115,18 +115,30 @@
     const action = state.journey.next_action;
     const actionIsHere = action.phase === state.phase
       && (!action.source_id || action.source_id === (source && source.source_id));
-    const stateLabel = t(`journey.state.${(phase && phase.state) || "available"}`);
+    const condizione = (phase && phase.state) || "available";
+    const stateLabel = t(`journey.state.${condizione}`);
+    /* Una riga di campi etichettati, come la testata di un quadro: dove sono,
+       a che punto è, che cosa tocca fare. Ogni informazione ha la sua colonna
+       e il suo nome sopra, così non serve nessun segno da decifrare. */
+    const campo = (etichetta, valore, classe = "", titolo = "") => `
+      <div class="journey-campo ${classe}">
+        <span>${esc(etichetta)}</span>
+        <b${titolo ? ` title="${esc(titolo)}"` : ""}>${esc(valore)}</b>
+      </div>`;
     return `
       <div class="journey-context" aria-label="${esc(t("journey.position"))}">
-        <div class="journey-path">
-          <span>${esc(workspace.asset.name)}</span><i aria-hidden="true">›</i>
-          <strong>${esc(t(`fase.${state.phase}`))}</strong>
-          ${source && state.phase !== "machine" ? `<i aria-hidden="true">›</i><span class="journey-source" title="${esc(source.file_name)}">${esc(source.file_name)}</span>` : ""}
-        </div>
-        <div class="journey-next">
-          <span class="journey-state state-${esc((phase && phase.state) || "available")}"><i aria-hidden="true"></i>${esc(stateLabel)}</span>
-          <span class="journey-next-copy"><b>${esc(actionIsHere ? t("journey.here") : t("journey.next"))}</b> ${esc(root.journeyActionText(action))}</span>
-          ${action.code !== "workspace_ready" && !actionIsHere ? `<button type="button" class="btn quieto piccolo" data-follow-journey>${esc(t("journey.go"))}</button>` : ""}
+        <div class="journey-campi">
+          ${campo(t("journey.campo.macchina"), workspace.asset.name, "", workspace.asset.name)}
+          ${campo(t("journey.campo.fase"), t(`fase.${state.phase}`))}
+          ${source && state.phase !== "machine"
+            ? campo(t("journey.campo.fonte"), source.file_name, "journey-fonte", source.file_name) : ""}
+          ${campo(t("journey.campo.stato"), stateLabel, `journey-stato state-${esc(condizione)}`)}
+          ${campo(
+            actionIsHere ? t("journey.here") : t("journey.next"),
+            root.journeyActionText(action), "journey-next"
+          )}
+          ${action.code !== "workspace_ready" && !actionIsHere
+            ? `<button type="button" class="btn secondario piccolo" data-follow-journey>${esc(t("journey.go"))}</button>` : ""}
         </div>
       </div>`;
   };

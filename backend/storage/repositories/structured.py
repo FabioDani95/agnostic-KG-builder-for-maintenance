@@ -326,14 +326,27 @@ class StructuredPreparationRepository:
             ).fetchone()
             mapping = json.loads(profile["mapping_json"])
             payload = json.loads(row["payload_json"])
+            released: list[str] = []
             if row["exception_kind"] == "mapping_ambiguous":
                 role = resolution.get("role")
                 if not role:
                     raise ValueError("Scegli il ruolo della colonna prima di continuare")
                 if role not in payload.get("choices", []):
                     raise ValueError("Il ruolo scelto non è disponibile per questa colonna")
-                mapping["structures"][payload["structure_id"]][payload["column"]]["role"] = role
-                mapping["structures"][payload["structure_id"]][payload["column"]]["included"] = role != "excluded"
+                columns = mapping["structures"][payload["structure_id"]]
+                # Answering a question assigns a role exactly like editing the
+                # mapping table does, so it must obey the same rule: a role
+                # belongs to one column only.  The previous holder keeps its
+                # content as a plain attribute — nothing is dropped, it simply
+                # stops producing graph elements.  See `set_column_role`.
+                if role not in {"attribute", "excluded"}:
+                    for other, config in columns.items():
+                        if other != payload["column"] and config.get("role") == role:
+                            config["role"] = "attribute"
+                            config["included"] = True
+                            released.append(other)
+                columns[payload["column"]]["role"] = role
+                columns[payload["column"]]["included"] = role != "excluded"
             elif row["exception_kind"] == "hidden_sheet" and resolution.get("included") is not None:
                 for config in mapping["structures"].get(payload["structure_id"], {}).values():
                     config["included"] = bool(resolution["included"])
@@ -370,7 +383,12 @@ class StructuredPreparationRepository:
                 INSERT INTO audit_events(workspace_id, event_kind, subject_id, payload_json, created_at)
                 VALUES (?, 'structured_exception_resolved', ?, ?, ?)
                 """,
-                (profile["workspace_id"], exception_id, _json(resolution), now),
+                (
+                    profile["workspace_id"],
+                    exception_id,
+                    _json({**resolution, "released_columns": released}),
+                    now,
+                ),
             )
         with self.database.read() as connection:
             result = connection.execute(

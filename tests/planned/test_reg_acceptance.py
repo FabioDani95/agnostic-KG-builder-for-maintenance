@@ -53,4 +53,4 @@ def test_root_opens_the_machines_home(foundation_client):
     assert redirect.headers["cache-control"] == "no-store"
     assert response.status_code == 200
     assert str(response.url).endswith("/home.html")
-    assert "Macchine · Maintenance KG Builder" in response.text
+    assert "Area di lavoro · Nexus" in response.text

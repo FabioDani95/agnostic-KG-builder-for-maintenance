@@ -150,11 +150,77 @@ def restore_source(source_id: str):
 
 
 @router.get("/sources/{source_id}/content")
-def download_source(source_id: str):
+def download_source(source_id: str, disposition: str = "attachment"):
+    """Serve the stored bytes.
+
+    The operator reads a document in the browser before deciding what it means,
+    so the caller chooses whether the bytes arrive as a download or are shown
+    in place. Anything other than an explicit ``inline`` stays a download.
+    """
     try:
         relative_path = SourceRepository().raw_reference(source_id)
         path = RawStore().resolve(relative_path)
     except (SourceNotFoundError, FileNotFoundError) as exc:
         raise HTTPException(status_code=404, detail="Source content not found") from exc
     source = SourceRepository().get(source_id)
-    return FileResponse(path, media_type=source.media_type, filename=source.file_name)
+    return FileResponse(
+        path,
+        media_type=source.media_type,
+        filename=source.file_name,
+        content_disposition_type="inline" if disposition == "inline" else "attachment",
+    )
+
+
+@router.get("/sources/{source_id}/rows")
+def read_source_rows(source_id: str, limit: int = 500):
+    """Read a structured source the way the engine reads it.
+
+    The viewer must not invent a second parser: what it puts on screen is what
+    the adapters produced, sheet by sheet, so a cell the operator inspects is
+    the same cell a claim will be built from.
+    """
+    from backend.adapters.structured.common import inspect_structured_source
+
+    limite = max(1, min(int(limit), 5000))
+    try:
+        source = SourceRepository().get(source_id)
+        path = RawStore().resolve(SourceRepository().raw_reference(source_id))
+    except (SourceNotFoundError, FileNotFoundError) as exc:
+        raise HTTPException(status_code=404, detail="Source content not found") from exc
+    if source.source_kind is SourceKind.PDF:
+        raise HTTPException(status_code=409, detail="A PDF has no rows to read")
+
+    try:
+        inspection = inspect_structured_source(path, source)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+    tabelle = []
+    for structure in inspection.structures:
+        colonne = [column.name for column in structure.columns]
+        righe = [
+            record.values
+            for record in inspection.records
+            if record.raw_unit.structure_id == structure.structure_id
+        ]
+        tabelle.append(
+            {
+                "structure_id": structure.structure_id,
+                "name": structure.name,
+                "kind": structure.kind,
+                "included": structure.included,
+                "row_count": structure.row_count,
+                "columns": colonne,
+                "rows": [
+                    ["" if riga.get(nome) is None else str(riga.get(nome)) for nome in colonne]
+                    for riga in righe[:limite]
+                ],
+                "truncated": len(righe) > limite,
+            }
+        )
+    return {
+        "source_id": source.source_id,
+        "file_name": source.file_name,
+        "source_kind": source.source_kind.value,
+        "tables": tabelle,
+    }

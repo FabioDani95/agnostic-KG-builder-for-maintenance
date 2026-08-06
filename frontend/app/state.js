@@ -49,6 +49,10 @@
     /** Inline rejection note, so a decision never goes through window.prompt. */
     rejectingSourceId: "",
     rejectionNote: "",
+    /** Vero subito dopo una risposta: il fuoco segue la domanda successiva. */
+    seguiDomanda: false,
+    /** Quale colonna ha appena perso un significato, per dirlo dov'è. */
+    ruoloCeduto: null,
   };
 
   root.select = function select(kind, id) {

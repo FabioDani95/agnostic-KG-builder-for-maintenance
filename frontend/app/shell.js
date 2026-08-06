@@ -9,17 +9,14 @@
      interni di sviluppo non fanno parte di questo vocabolario e non compaiono
      né a schermo né nella barra degli indirizzi. */
   const FASI = ["machine", "documents", "structure", "graph"];
-  const SIGLE = { machine: "macchina", documents: "documenti", structure: "struttura", graph: "grafo" };
+  /* La terza fase si chiama come quello che ci sta dentro: una fonte per
+     volta, da come si legge fino al grafo che ne nasce. «Struttura» diceva
+     solo il primo dei due passi. */
+  const SIGLE = { machine: "macchina", documents: "documenti", structure: "fonti", graph: "grafo" };
   const DA_SIGLA = Object.fromEntries(Object.entries(SIGLE).map(([id, sigla]) => [sigla, id]));
-  /* I collegamenti creati prima della rinomina continuano a funzionare. */
+  /* I collegamenti creati prima delle rinomine continuano a funzionare. */
+  const SIGLE_VECCHIE = { struttura: "structure" };
   const VECCHIE = { g2: "structure", g3: "graph", documents: "documents" };
-
-  const ICONE = {
-    machine: "M4 7h16M4 12h16M4 17h16",
-    documents: "M6 3h8l4 4v14H6zM14 3v4h4",
-    structure: "M4 5h16M4 12h16M4 19h16M9 5v14M15 5v14",
-    graph: "M5 6a2 2 0 104 0 2 2 0 10-4 0M15 5a2 2 0 104 0 2 2 0 10-4 0M9 18a2 2 0 104 0 2 2 0 10-4 0M8.6 7.6l5.8-1.2M8.2 8.7l2.6 7.6",
-  };
 
   root.phases = root.phases || {};
   root.FASI = FASI;
@@ -47,7 +44,7 @@
   root.faseDaUrl = function faseDaUrl() {
     const parametri = new URL(window.location.href).searchParams;
     const sigla = parametri.get("fase");
-    if (sigla && DA_SIGLA[sigla]) return DA_SIGLA[sigla];
+    if (sigla && (DA_SIGLA[sigla] || SIGLE_VECCHIE[sigla])) return DA_SIGLA[sigla] || SIGLE_VECCHIE[sigla];
     const vecchia = parametri.get("stage");
     if (vecchia && VECCHIE[vecchia]) return VECCHIE[vecchia];
     return "machine";
@@ -118,23 +115,24 @@
     <a class="solo-lettori" href="#lavoro" data-salta></a>
     <aside class="sidebar">
       <div class="brand">
-        <div class="logo" aria-hidden="true">KG</div>
-        <div class="brand-text" data-marchio></div>
+        <a class="brand-home" href="/home.html" data-casa>
+          <span class="logo" aria-hidden="true">N</span>
+          <span class="brand-text" data-marchio></span>
+        </a>
         <button class="collapse" type="button" data-comprimi>«</button>
       </div>
       <nav class="nav" data-regione="nav"></nav>
-      <div class="sidebar-controls">
-        <div class="sidebar-toggles">
-          <button class="toggle-btn lingua" type="button" data-lingua>IT</button>
-          <button class="toggle-btn tema" type="button" data-tema>☀</button>
-        </div>
-      </div>
     </aside>
     <main class="main">
       <header class="topbar">
         <h1 data-regione="titolo"></h1>
         <span class="spacer"></span>
         <span data-regione="chips" style="display:flex;gap:8px;align-items:center"></span>
+        <div class="comandi">
+          <span class="cmd-separa" aria-hidden="true"></span>
+          <button class="cmd lingua" type="button" data-lingua>IT</button>
+          <button class="cmd tema" type="button" data-tema>☀</button>
+        </div>
       </header>
       <section data-regione="journey"></section>
       <div class="contenuto" data-regione="contenuto">
@@ -147,47 +145,115 @@
   const regione = (nome) => root.appElement.querySelector(`[data-regione="${nome}"]`);
   const faseAttiva = () => root.phases[state.phase] || root.phases.machine;
 
+  /* Che cosa stava descrivendo la colonna di destra all'ultimo disegno. */
+  let ultimoIspettore = "";
+
+  /* Il nome dell'applicativo sta in alto a sinistra e riporta al menu
+     principale: da qualunque fase, un solo clic per tornare all'elenco delle
+     macchine. La riga sotto dice su quale macchina si sta lavorando. */
   const marchio = () => {
     const workspace = state.workspace && state.workspace.workspace;
     const asset = workspace && workspace.asset;
-    if (!asset) return `${esc(t("home.nuova"))}<small>${esc(t("brand.sub"))}</small>`;
-    return `${esc(asset.name)}<small>${esc(`${asset.brand} · ${asset.model}`)}</small>`;
+    const sotto = asset ? asset.name : t("brand.sub");
+    const casa = root.appElement.querySelector("[data-casa]");
+    if (casa) {
+      const titolo = asset ? `${t("brand.home")} — ${asset.name} · ${asset.brand} · ${asset.model}` : t("brand.home");
+      casa.title = titolo;
+      casa.setAttribute("aria-label", titolo);
+    }
+    return `${esc(t("brand.nome"))}<small>${esc(sotto)}</small>`;
+  };
+
+  /* Il formato del file dice più di un pallino colorato, e non chiede una
+     legenda per essere capito. */
+  const siglaFile = (sorgente) => {
+    const punto = String(sorgente.file_name || "").lastIndexOf(".");
+    const estensione = punto > 0 ? sorgente.file_name.slice(punto + 1) : "";
+    return (estensione || sorgente.source_kind || "").slice(0, 4).toUpperCase();
+  };
+
+  /**
+   * Come sta una fonte, nel vocabolario di colori delle fasi.
+   *
+   * Il dato viene dal percorso e non dalla fase aperta: la stessa fonte si
+   * legge allo stesso modo da qualunque punto del menu. Verde vuol dire
+   * finita — struttura risolta e sottografo verificato — e non compare prima,
+   * perché è quella la sola condizione che chiude il lavoro su un documento.
+   */
+  const statoFonte = (sorgente) => {
+    const voce = root.journeySource ? root.journeySource(sorgente.source_id) : null;
+    if (!voce) return "";
+    if (voce.graph_state === "approved") return "complete";
+    if (voce.structure_state === "needs_attention" || voce.graph_state === "rejected") return "needs_attention";
+    if (voce.structure_state === "not_applicable") return "deferred";
+    if (voce.structure_state === "ready" || voce.structure_state === "confirmed") return "in_progress";
+    return "";
+  };
+
+  /**
+   * Il numero accanto a una fonte, uguale in ogni fase.
+   *
+   * Dice quante domande restano finché ce ne sono, e quante righe ha il file
+   * quando non ne restano: è una proprietà del documento, non della fase da
+   * cui lo si guarda. Cambiandolo da una fase all'altra, lo stesso file
+   * mostrava due numeri diversi nello stesso posto del menu.
+   */
+  const metaFonte = (sorgente) => {
+    if (sorgente.source_kind === "pdf") return "";
+    const dati = state.structure || {};
+    const profilo = (dati.profiles || []).find((p) => p.source_id === sorgente.source_id);
+    if (!profilo) return "";
+    const aperte = (dati.exceptions || []).filter((e) => (
+      e.profile_id === profilo.profile_id && (e.status === "open" || e.status === "queued")
+    )).length;
+    if (aperte) return `<span class="nav-attention">${aperte}</span>`;
+    return String(Number(profilo.summary.record_count || 0));
   };
 
   const navigazione = () => {
-    const fasi = FASI.map((id) => {
-      const stato = root.statoFase(id);
-      const attiva = state.phase === id;
-      return `<button type="button" class="nav-item ${attiva ? "active" : ""}" data-fase="${id}"
-        ${stato.disponibile ? "" : `disabled title="${esc(t("journey.locked"))}"`} ${attiva ? 'aria-current="page"' : ""}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${ICONE[id]}"/></svg>
-        <span class="phase-state state-${esc(stato.stato || (stato.fatta ? "complete" : "available"))}" aria-hidden="true"></span>
-        <span class="nav-label">${esc(t(`fase.${id}`))}</span>
-        ${stato.meta ? `<span class="nav-meta">${stato.meta}</span>` : ""}
-      </button>`;
-    }).join("");
-
     const fase = faseAttiva();
-    if (!fase.mostraFonti || !state.workspace) return `<div class="nav-group">${esc(t("nav.fasi"))}</div>${fasi}`;
+    const fonti = state.workspace ? fileSorgenti() : [];
+    const inCorso = root.fonteAttiva && root.fonteAttiva();
 
-    const fonti = fileSorgenti().map((sorgente) => {
-      const attiva = root.fonteAttiva() && root.fonteAttiva().source_id === sorgente.source_id;
-      const meta = fase.metaFonte ? fase.metaFonte(sorgente) : "";
+    /* Le fonti non sono una sezione a parte: la struttura è fatta di quelle, e
+       dentro ognuna sta tutto il lavoro che la riguarda. Stanno perciò
+       annidate sotto il passo che le lavora, e a dirlo basta il rientro —
+       un'intestazione «Fonti» le rimetterebbe fuori. */
+    const figli = fonti.map((sorgente) => {
+      const attiva = inCorso && inCorso.source_id === sorgente.source_id;
+      const meta = metaFonte(sorgente);
+      const condizione = statoFonte(sorgente);
+      const titolo = condizione
+        ? `${sorgente.file_name} — ${t(`journey.state.${condizione}`)}`
+        : sorgente.file_name;
       return `<button type="button" class="nav-item ${attiva ? "active" : ""}" data-fonte="${esc(sorgente.source_id)}"
-        title="${esc(sorgente.file_name)}">
-        <span class="nav-punto" style="--tipo:${sorgente.source_kind === "pdf" ? "var(--violet)" : "var(--cyan)"}"></span>
+        title="${esc(titolo)}" ${attiva ? 'aria-current="true"' : ""}>
+        <span class="nav-sigla ${sorgente.source_kind === "pdf" ? "sigla-pdf" : "sigla-dati"}${condizione ? ` state-${esc(condizione)}` : ""}"
+          aria-hidden="true">${esc(siglaFile(sorgente))}</span>
         <span class="nav-label">${esc(sorgente.file_name)}</span>
         ${meta ? `<span class="nav-meta">${meta}</span>` : ""}
       </button>`;
-    }).join("");
+    }).join("") + (fase.navExtra ? fase.navExtra() : "");
 
-    const extra = fase.navExtra ? fase.navExtra() : "";
-    return `
-      <div class="nav-group">${esc(t("nav.fasi"))}</div>${fasi}
-      <div class="nav-group">${esc(t("nav.fonti"))}</div>
-      ${fonti || `<div class="nav-item" style="cursor:default"><span class="nav-label">—</span></div>`}
-      ${extra}`;
+    /* Finché il sottografo si costruisce nella fase del grafo, è lì che le
+       fonti vanno mentre ci si lavora: un solo elenco, mai lo stesso file due
+       volte nella barra. */
+    const ancora = state.phase === "graph" ? "graph" : "structure";
+
+    /* Le fasi sono un ordine, non un elenco: il numero del passo lo dice, e
+       si tinge dello stato in cui quel passo si trova. Un numero riquadrato
+       resta leggibile anche col menu ridotto alla sola colonna dei segni. */
+    return FASI.map((id, indice) => {
+      const stato = root.statoFase(id);
+      const attiva = state.phase === id;
+      const condizione = esc(stato.stato || (stato.fatta ? "complete" : "available"));
+      return `<button type="button" class="nav-item ${attiva ? "active" : ""}" data-fase="${id}"
+        ${stato.disponibile ? "" : `disabled title="${esc(t("journey.locked"))}"`} ${attiva ? 'aria-current="page"' : ""}>
+        <span class="nav-passo state-${condizione}" aria-hidden="true">${String(indice + 1).padStart(2, "0")}</span>
+        <span class="nav-label">${esc(t(`fase.${id}`))}</span>
+        ${stato.meta ? `<span class="nav-meta">${stato.meta}</span>` : ""}
+      </button>${id === ancora && figli ? `<div class="nav-figli">${figli}</div>` : ""}`;
+    }).join("");
   };
 
   /**
@@ -208,8 +274,19 @@
         if (elemento.disabled || elemento.dataset.fase === state.phase) return;
         root.vaiAllaFase(elemento.dataset.fase);
       });
+      /* Una fonte è una destinazione, non un filtro della fase aperta: dalla
+         macchina o dai documenti aprirla vuol dire andarci a lavorare, e il
+         lavoro su una fonte comincia dalla struttura. Dove le fonti sono già
+         il contenuto della fase — struttura e grafo — il clic cambia solo
+         quella su cui si sta lavorando. */
       root.delegate(regione("nav"), "click", "[data-fonte]", (elemento) => {
-        root.scegliFonte(elemento.dataset.fonte);
+        const sourceId = elemento.dataset.fonte;
+        if (state.phase === "structure" || state.phase === "graph") {
+          root.scegliFonte(sourceId);
+          return;
+        }
+        state.activeSourceId = sourceId;
+        root.vaiAllaFase("structure");
       });
       if (fase.bindNav) fase.bindNav(regione("nav"));
     }
@@ -244,6 +321,16 @@
       if (!mostraIspettore) root.paint(contenitore, "");
       else {
         root.paint(contenitore, fase.renderIspettore ? fase.renderIspettore() : "");
+        /* Cambiando elemento cambia tutto il contenuto della colonna: lasciarla
+           dove stava faceva aprire un elemento nuovo a metà di un blocco che
+           parlava del precedente. Si torna in cima solo quando la selezione è
+           davvero un'altra — un ridisegno qualunque non deve far perdere il
+           punto a chi sta leggendo. */
+        const chiave = `${state.phase}|${state.view}|${state.activeSourceId}|${state.selection.kind}|${state.selection.id}`;
+        if (chiave !== ultimoIspettore) {
+          ultimoIspettore = chiave;
+          contenitore.scrollTop = 0;
+        }
         root.delegate(contenitore, "click", "[data-chiudi-ispettore]", () => {
           root.clearSelection();
           root.render({ regioni: ["lavoro", "ispettore", "decisione"] });
@@ -277,7 +364,7 @@
     if (projected && !projected.available) return;
     state.phase = id;
     root.clearSelection();
-    state.view = id === "structure" ? "colonne" : "mappa";
+    state.view = id === "structure" ? "lettura" : "mappa";
     const workspaceId = state.workspace ? state.workspace.workspace.workspace_id : "";
     window.history.pushState({ fase: id }, "", root.indirizzoFase(id, workspaceId));
     if (root.rememberWorkspaceContext) root.rememberWorkspaceContext();
@@ -327,7 +414,7 @@
     app.className = "app";
     app.innerHTML = TELAIO;
     state.phase = root.faseDaUrl();
-    state.view = state.phase === "structure" ? "colonne" : "mappa";
+    state.view = state.phase === "structure" ? "lettura" : "mappa";
 
     app.querySelector("[data-lingua]").onclick = () => {
       root.cambiaLingua();
@@ -370,7 +457,7 @@
           explicitPhase: parametri.has("fase") || parametri.has("stage"),
           sourceId: parametri.get("source_id") || "",
         });
-        state.view = state.phase === "structure" ? "colonne" : "mappa";
+        state.view = state.phase === "structure" ? "lettura" : "mappa";
         window.history.replaceState(null, "", root.indirizzoFase(
           state.phase, state.workspace.workspace.workspace_id
         ));

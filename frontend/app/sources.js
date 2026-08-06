@@ -84,6 +84,37 @@
     return null;
   };
 
+  /* Un foglio in miniatura invece di un'icona generica: righe di testo per un
+     manuale, un reticolo di celle per una tabella. Dice che cosa si sta per
+     aprire prima di aprirlo. */
+  const FOGLIO = {
+    testo: `<path d="M9 15h18M9 21h18M9 27h13"/>`,
+    tabella: `<path d="M7 15h22M7 22h22M7 29h22M15 11v24M23 11v24"/>`,
+  };
+
+  const anteprima = (fonte) => {
+    const tabellare = fonte.source_kind !== "pdf";
+    const indirizzo = `/visore.html?workspace_id=${encodeURIComponent(state.workspace.workspace.workspace_id)}`
+      + `&source_id=${encodeURIComponent(fonte.source_id)}`;
+    return `
+      <a class="anteprima-doc ${tabellare ? "sigla-dati" : "sigla-pdf"}" href="${esc(indirizzo)}"
+        target="_blank" rel="noopener">
+        <span class="anteprima-foglio" aria-hidden="true">
+          <svg viewBox="0 0 44 56" fill="none" stroke="currentColor" stroke-width="1.6"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h24l12 12v36H4z" opacity=".55"/>
+            <path d="M28 4v12h12" opacity=".55"/>
+            ${tabellare ? FOGLIO.tabella : FOGLIO.testo}
+          </svg>
+        </span>
+        <span class="anteprima-testo">
+          <b>${esc(t("doc.apri"))}</b>
+          <small>${esc(t("doc.apriNota"))}</small>
+        </span>
+        <span class="anteprima-freccia" aria-hidden="true">↗</span>
+      </a>`;
+  };
+
   const bloccoErrore = () => (state.sourceError ? `
     <div class="nota errore" role="alert" style="margin-top:14px">
       <span class="segno" aria-hidden="true">!</span>
@@ -100,15 +131,12 @@
 
   /* --------------------------------------------------------------- fase -- */
   root.phases.documents = {
-    mostraFonti: true,
     mostraIspettore: true,
 
     titolo: () => ({
       titolo: t("doc.titolo"),
       chips: `<span class="chip"><b>${root.fileSorgenti().length}</b> ${esc(t("nav.fonti").toLocaleLowerCase())}</span>`,
     }),
-
-    metaFonte: () => "",
 
     renderLavoro() {
       if (!state.workspace) {
@@ -125,11 +153,12 @@
           <span><strong>${esc(state.notice.title)}</strong><small>${esc(state.notice.body || "")}</small></span>
           <button type="button" class="notice-close" data-close-notice aria-label="${esc(t("ui.chiudi"))}">×</button>
         </div>` : "";
+      /* Caricare è l'azione della fase: il modulo è la prima cosa che si vede
+         e la più grande, non una riga di controlli sopra un elenco. */
       return `
-        <div class="intestazione-lavoro"><p>${esc(t("doc.sotto"))}</p></div>
         <div class="lavoro-scorri"><div class="lavoro-pad">
           ${notice}
-          <form class="caricamento card entra" id="source-upload">
+          <form class="caricamento zona entra" id="source-upload">
             <label class="selettore-file">
               <span class="con-info">${esc(t("doc.file"))} ${root.info("formati-documento", t("doc.file"), t("doc.fileI"))}</span>
               <input type="file" name="file" required multiple accept=".pdf,.csv,.xlsx,.json,.jsonl"
@@ -144,8 +173,14 @@
               </select>
             </label>
             <button type="submit" class="btn primario"
-              ${(state.sourceBusy || !state.sourceSelectionValid) ? "disabled" : ""}>${esc(state.sourceBusy ? t("doc.caricando") : t("doc.carica"))}</button>
+              ${(state.sourceBusy || !state.sourceSelectionValid) ? "disabled" : ""}>${
+              state.sourceBusy ? `<span class="rotella" aria-hidden="true"></span>` : ""
+            }${esc(state.sourceBusy ? t("doc.caricando") : t("doc.carica"))}</button>
           </form>
+          ${/* aria-live e non role="status": la regione di stato della fase è
+                una sola, quella delle notifiche, e due si contendono la voce. */
+            state.sourceBusy
+              ? `<p class="lavorazione" aria-live="polite">${esc(t("doc.lavorazione"))}</p>` : ""}
           ${bloccoErrore()}
           <div class="lista" style="margin-top:16px">
             ${fonti.length ? fonti.map((fonte) => `
@@ -337,6 +372,7 @@
             <span class="ispettore-tipo">${esc(t("isp.documento"))}</span>
             <h3>${esc(fonte.file_name)}</h3>
           </div>
+          ${anteprima(fonte)}
           <section class="blocco"><h4>${esc(t("doc.comeUsato"))}</h4>
             <p>${esc(t(`aut.${fonte.authority}.d`))}</p></section>
           <section class="blocco"><h4>${esc(t("doc.dimensione"))}</h4>

@@ -10,30 +10,83 @@
 html:has(.app), body:has(.app){overflow:hidden}
 
 /* ------------------------------------------------------ percorso guidato */
+/* La riga del percorso è la testata di un quadro: campi affiancati, ognuno col
+   proprio nome sopra e il proprio valore sotto, divisi da un filo. Nessun
+   segno da interpretare — dove sono, a che punto è, che cosa tocca fare. */
 [data-regione="journey"]:empty{display:none}
 .journey-context{
-  flex:none;display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:9px 24px;border-bottom:1px solid var(--line-soft);
-  background:color-mix(in srgb,var(--panel) 72%,transparent);font-size:12px;
+  flex:none;display:flex;align-items:stretch;
+  border-bottom:1px solid var(--line);
+  background:color-mix(in srgb,var(--panel) 72%,transparent);
 }
-.journey-path,.journey-next{display:flex;align-items:center;gap:8px;min-width:0}
-.journey-path{color:var(--muted);flex:1 1 auto}
-.journey-path i{color:var(--muted-2);font-style:normal}
-.journey-path strong{color:var(--text);font-weight:640}
-.journey-source{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.journey-next{justify-content:flex-end;flex:0 1 auto;color:var(--muted)}
-.journey-next-copy{min-width:0;line-height:1.35}
-.journey-next-copy b{color:var(--text);font-weight:640}
-.journey-state{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;
-  background:var(--panel-2);color:var(--muted);font-weight:620;white-space:nowrap}
-.journey-state i,.phase-state{width:7px;height:7px;border-radius:50%;background:var(--muted-2);flex:0 0 7px}
-.journey-state.state-complete i,.phase-state.state-complete{background:var(--green)}
-.journey-state.state-needs_attention i,.phase-state.state-needs_attention{background:var(--amber)}
-.journey-state.state-in_progress i,.phase-state.state-in_progress{background:var(--cyan)}
-.journey-state.state-deferred i,.phase-state.state-deferred{background:var(--violet)}
-.journey-state.state-locked i,.phase-state.state-locked{background:var(--muted-2)}
-.phase-state{margin-left:-3px}
-.nav-attention{display:grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:999px;
+.journey-campi{display:flex;align-items:stretch;flex:1;min-width:0}
+/* I campi corti tengono la loro misura: a stringersi è solo quello che si può
+   leggere anche a metà, cioè il nome del file e la frase del passo. */
+.journey-campo{
+  display:grid;align-content:center;gap:3px;min-width:0;flex:0 0 auto;
+  padding:9px 18px;border-right:1px solid var(--line-soft);
+}
+.journey-campo:first-child{padding-left:24px}
+.journey-campo>span{
+  color:var(--muted-2);font-size:9.5px;font-weight:650;letter-spacing:.09em;
+  text-transform:uppercase;white-space:nowrap;
+}
+.journey-campo>b{
+  min-width:0;color:var(--text);font-size:12.5px;font-weight:560;line-height:1.3;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.journey-campo:first-child>b{max-width:13rem}
+.journey-fonte{flex:0 1 15rem;min-width:6rem}
+/* Lo stato è una parola, tinta di quello che significa. */
+.journey-stato>b{font-weight:640}
+.journey-stato.state-complete>b{color:var(--green)}
+.journey-stato.state-needs_attention>b{color:var(--amber)}
+.journey-stato.state-in_progress>b{color:var(--cyan)}
+.journey-stato.state-deferred>b{color:var(--violet)}
+.journey-stato.state-locked>b{color:var(--muted-2)}
+.journey-next{flex:1 1 10rem;min-width:0;border-right:0}
+.journey-next>b{color:var(--muted);font-weight:500}
+.journey-campi>.btn{align-self:center;flex:0 0 auto;margin:0 24px 0 4px}
+
+/* Quando i campi non stanno più in riga vanno a capo, ognuno con la sua
+   etichetta: si perde l'allineamento, non l'informazione. */
+@media (max-width:1080px){
+  .journey-campi{flex-wrap:wrap}
+  .journey-campo{flex:1 0 9rem;padding:8px 14px;border-bottom:1px solid var(--line-soft)}
+  .journey-campo:first-child{padding-left:24px}
+  .journey-campo:first-child>b{max-width:none}
+  .journey-fonte{flex:1 0 100%}
+  .journey-next{flex:1 1 8rem;border-bottom:1px solid var(--line-soft)}
+  .journey-campi>.btn{margin:0 24px 0 8px}
+}
+
+/* Le fasi sono un ordine: il numero del passo prende il posto del pallino e
+   si tinge dello stato. */
+.nav-passo{
+  flex:0 0 22px;display:grid;place-items:center;width:22px;height:19px;border-radius:5px;
+  background:var(--panel-2);color:var(--muted-2);
+  font-size:10px;font-weight:700;letter-spacing:.02em;font-variant-numeric:tabular-nums;
+}
+.nav-passo.state-complete{background:color-mix(in srgb,var(--green) 15%,transparent);color:var(--green)}
+.nav-passo.state-needs_attention{background:color-mix(in srgb,var(--amber) 16%,transparent);color:var(--amber)}
+.nav-passo.state-in_progress{background:color-mix(in srgb,var(--cyan) 15%,transparent);color:var(--cyan)}
+.nav-passo.state-deferred{background:color-mix(in srgb,var(--violet) 15%,transparent);color:var(--violet)}
+/* Il formato del file al posto del pallino colorato: si legge senza legenda. */
+.nav-sigla{
+  flex:0 0 30px;display:grid;place-items:center;width:30px;height:17px;border-radius:4px;
+  background:var(--panel-2);color:var(--muted-2);
+  font-size:8.5px;font-weight:700;letter-spacing:.06em;
+}
+.nav-sigla.sigla-pdf{color:var(--violet)}
+.nav-sigla.sigla-dati{color:var(--cyan)}
+/* Una fonte porta lo stesso vocabolario di colori delle fasi, sulla sigla che
+   ne dice già il formato: verde solo quando il suo sottografo è verificato,
+   ambra quando aspetta una risposta, viola quando è rimandata. */
+.nav-sigla.state-complete{background:color-mix(in srgb,var(--green) 15%,transparent);color:var(--green)}
+.nav-sigla.state-needs_attention{background:color-mix(in srgb,var(--amber) 16%,transparent);color:var(--amber)}
+.nav-sigla.state-in_progress{background:color-mix(in srgb,var(--cyan) 15%,transparent);color:var(--cyan)}
+.nav-sigla.state-deferred{background:color-mix(in srgb,var(--violet) 15%,transparent);color:var(--violet)}
+.nav-attention{display:grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:5px;
   background:color-mix(in srgb,var(--amber) 17%,transparent);color:var(--amber);font-weight:700}
 
 /* Consequential actions use one consistent, accessible modal. */
@@ -77,8 +130,21 @@ html:has(.app), body:has(.app){overflow:hidden}
 .nav-item[data-fonte]{align-items:flex-start;white-space:normal}
 .nav-item[data-fonte] .nav-label{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
   white-space:normal;line-height:1.25;overflow:hidden}
-.home-next{display:block;margin-top:7px;color:var(--muted);font-size:12px;line-height:1.4}
-.home-next b{color:var(--text);font-weight:620}
+/* Col menu ridotto resta la sola colonna dei segni: il nome del file va via
+   come tutte le altre etichette. Serve dirlo qui perché la regola che manda a
+   capo il nome è più specifica di quella che nasconde le etichette. */
+.app.collapsed .nav-item[data-fonte] .nav-label{display:none}
+/* Le fonti stanno dentro il passo che le lavora. Il filo scende dal centro del
+   numero del passo e tiene insieme i suoi figli: dice «la struttura è fatta di
+   questi» senza bisogno di scriverlo. Col menu ridotto il rientro sparisce,
+   perché resterebbe solo una colonna di sigle da centrare. */
+/* La colonna è vincolata alla larghezza della barra: un nome di file lungo è
+   una parola sola e senza questo dilaterebbe il riquadro, spingendo il numero
+   fuori dalla barra invece di far accorciare il nome. */
+.nav-figli{display:grid;grid-template-columns:minmax(0,1fr);gap:1px;
+  margin:2px 0 8px 21px;padding-left:11px;
+  border-left:1px solid color-mix(in srgb,var(--muted-2) 42%,transparent)}
+.app.collapsed .nav-figli{margin:2px 0 8px;padding-left:0;border-left:0}
 
 .contenuto{flex:1;min-height:0;display:flex;min-width:0}
 .lavoro{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
@@ -110,6 +176,8 @@ html:has(.app), body:has(.app){overflow:hidden}
 .spunta{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
   font-size:12.5px;color:var(--muted);cursor:pointer}
 .spunta input{width:15px;height:15px;margin:0;accent-color:var(--cyan);flex:0 0 15px}
+/* Un filtro che non può togliere niente si vede che non si può accendere. */
+.spunta.spenta{color:var(--muted-2);cursor:default}
 
 /* --------------------------------------------------------------- il grafo */
 /* Il grafo è la pagina: prende tutta l'altezza rimasta e non sta dentro una
@@ -119,6 +187,10 @@ html:has(.app), body:has(.app){overflow:hidden}
   cursor:grab;touch-action:none;outline:none}
 .grafo-svg.in-pan{cursor:grabbing}
 .grafo-scena{will-change:transform}
+/* Solo gli spostamenti decisi dall'applicativo si accompagnano: trascinare e
+   ingrandire restano immediati, lì la mano è dell'operatore. */
+.grafo-scena.in-volo{transition:transform .36s cubic-bezier(.22,.61,.36,1)}
+@media (prefers-reduced-motion:reduce){.grafo-scena.in-volo{transition:none}}
 
 .arco-linea{stroke:var(--muted-2);stroke-width:1.1;opacity:.5;fill:none}
 .arco-presa{stroke:transparent;stroke-width:14;fill:none;cursor:pointer}
@@ -127,26 +199,38 @@ html:has(.app), body:has(.app){overflow:hidden}
 .freccia{fill:var(--muted-2)}
 .freccia-viva{fill:var(--cyan)}
 
+/* Un elemento è un pallino pieno del colore del suo tipo: la forma del grafo si
+   legge prima dei nomi, e i nomi si accendono quando servono. */
 .nodo{cursor:pointer}
+.nodo-presa{fill:transparent}
 .nodo-corpo{
-  fill:var(--panel);stroke:color-mix(in srgb,var(--tipo,var(--muted-2)) 55%,transparent);
-  stroke-width:1.4;
-  transition:fill .18s ease,stroke-width .18s ease;
+  fill:var(--tipo,var(--muted-2));stroke:var(--canvas);stroke-width:1.6;
+  transition:stroke-width .18s ease;
 }
-.nodo-testo{fill:var(--text);font:500 12.5px -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",sans-serif;
-  pointer-events:none;letter-spacing:-.005em}
-.nodo-segno{stroke:var(--panel);stroke-width:1.5}
-.nodo-segno.lacuna{fill:var(--amber)}
-.nodo-segno.difetto{fill:var(--red)}
-.nodo:hover .nodo-corpo{fill:color-mix(in srgb,var(--tipo,var(--cyan)) 10%,var(--panel))}
-.nodo.in-mano .nodo-corpo{stroke-width:2}
-.nodo:focus-visible .nodo-corpo{stroke:var(--cyan);stroke-width:2.4}
+.nodo-alone{fill:none;stroke-width:2.2}
+.nodo-alone.lacuna{stroke:var(--amber)}
+.nodo-alone.difetto{stroke:var(--red)}
+/* Il nome sta sotto il pallino, spento finché non serve: acceso sui pochi nodi
+   più collegati, su quello che tocchi, sulla scelta e sul suo intorno, e su
+   tutti quando lo zoom fa spazio. */
+.nodo-testo{
+  fill:var(--text);font:500 11.5px -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",sans-serif;
+  pointer-events:none;letter-spacing:-.005em;opacity:0;
+  paint-order:stroke;stroke:var(--canvas);stroke-width:3.5;stroke-linejoin:round;
+  transition:opacity .16s ease;
+}
+.nodo.nome-fisso .nodo-testo{opacity:.72}
+.grafo-svg.con-nomi .nodo-testo{opacity:.85}
+.nodo:hover .nodo-testo,.nodo.vicino .nodo-testo,.nodo.scelto .nodo-testo{opacity:1}
+.nodo:hover .nodo-corpo{stroke-width:3}
+.nodo.in-mano .nodo-corpo{stroke-width:3}
+.nodo:focus-visible .nodo-corpo{stroke:var(--cyan);stroke-width:3}
+.nodo:focus-visible .nodo-testo{opacity:1}
 .nodo:focus{outline:none}
-.nodo.scelto .nodo-corpo{
-  fill:color-mix(in srgb,var(--tipo,var(--cyan)) 16%,var(--panel));
-  stroke:var(--tipo,var(--cyan));stroke-width:2.4;
-}
-.nodo.spento{opacity:.2}
+.nodo.scelto .nodo-corpo{stroke:var(--text);stroke-width:3}
+.nodo.scelto .nodo-testo{font-weight:640}
+.nodo.spento{opacity:.16}
+.nodo.spento .nodo-testo{opacity:0}
 /* Il colore del tipo arriva dal token, una regola per tipo e basta. */
 .tipo-Asset{--tipo:var(--tipo-Asset)}
 .tipo-Component{--tipo:var(--tipo-Component)}
@@ -167,6 +251,13 @@ html:has(.app), body:has(.app){overflow:hidden}
 }
 .grafo-legenda span{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted)}
 .grafo-legenda i{width:8px;height:8px;border-radius:50%;background:var(--tipo);flex:0 0 8px}
+/* Quanto la mappa sta nascondendo: nelle tabelle si legge, qui mancava e la
+   mappa filtrata sembrava il grafo intero. */
+.grafo-nascosti{
+  position:absolute;right:16px;top:16px;z-index:4;
+  display:flex;align-items:center;gap:9px;padding:7px 9px 7px 12px;
+  font-size:11.5px;color:var(--muted);
+}
 
 /* ------------------------------------------------------------- ispettore */
 /* Colonna sua, larghezza sua, scorrimento suo: non si sovrappone a niente e
@@ -268,6 +359,75 @@ button.voce[aria-selected="true"]{border-color:color-mix(in srgb,var(--cyan) 45%
 .stato-pagina strong{font-size:17px;font-weight:640;letter-spacing:-.02em}
 .stato-pagina p{margin:0;color:var(--muted)}
 
+/* ------------------------------------------------ i due passi di una fonte */
+/* Il passo porta il proprio stato accanto al nome: quante domande restano,
+   quanti elementi sono nati, oppure che è ancora chiuso. */
+.segmento.passi .tab{display:inline-flex;align-items:center;gap:7px}
+.segmento.passi .nav-attention{min-width:17px;height:17px;font-size:10.5px}
+.passo-conto{color:var(--muted-2);font-size:11px;font-variant-numeric:tabular-nums}
+.tab[aria-selected="true"] .passo-conto{color:var(--muted)}
+.passo-fatto{color:var(--green);font-size:12px;font-weight:700}
+.passo-chiuso{color:var(--muted-2);font-size:15px;line-height:1}
+
+/* La domanda è la riga della tabella, accesa: la colonna di cui si parla resta
+   in mezzo alle altre, e la risposta si dà una volta sola. */
+.tabella-lettura tr.riga-domanda>td{
+  background:color-mix(in srgb,var(--amber) 10%,transparent);
+  border-bottom-color:transparent;
+}
+.tabella-lettura tr.riga-domanda>td:first-child{box-shadow:inset 2px 0 0 var(--amber);font-weight:600}
+.tabella-lettura tr.riga-in-coda>td:first-child{box-shadow:inset 2px 0 0 color-mix(in srgb,var(--amber) 40%,transparent)}
+.segna-domanda{
+  display:inline-flex;align-items:center;height:26px;padding:0 9px;border-radius:7px;
+  background:color-mix(in srgb,var(--amber) 16%,transparent);color:var(--amber);
+  font-size:11.5px;font-weight:640;white-space:nowrap;
+}
+.segna-domanda.in-coda{background:var(--panel-2);color:var(--muted-2);font-weight:560}
+.tabella-lettura tr.domanda-corpo>td{
+  padding:0 0 14px;
+  background:color-mix(in srgb,var(--amber) 10%,transparent);
+  box-shadow:inset 2px 0 0 var(--amber);
+}
+.domanda{display:grid;gap:10px;max-width:44rem;margin:0 16px;padding:15px 17px;
+  border:1px solid color-mix(in srgb,var(--amber) 32%,var(--line));border-radius:var(--radius-sm);
+  background:var(--panel);box-shadow:var(--shadow)}
+.domanda h4{margin:0;font-size:15.5px;font-weight:650;letter-spacing:-.015em}
+.domanda p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+.domanda-valori>div{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
+.domanda-azione{display:flex;align-items:flex-end;gap:11px;flex-wrap:wrap}
+.domanda-azione .campo{flex:1 1 15rem;max-width:22rem}
+
+/* I tipi di elemento e la colonna che li produce: una riga per tipo, sempre
+   tutti. La riga senza colonna dice «libero», ed è quella che risponde alla
+   domanda vera — che cosa vedrò nel grafo e che cosa no. */
+.tabella-elementi{width:100%;border-collapse:collapse;font-size:12.5px}
+.tabella-elementi th{
+  padding:0 0 6px;text-align:left;font-size:11px;font-weight:640;
+  letter-spacing:.03em;text-transform:uppercase;color:var(--muted-2);
+}
+.tabella-elementi td{padding:6px 0;border-top:1px solid var(--line-soft);
+  vertical-align:middle;overflow-wrap:anywhere}
+.tabella-elementi td:last-child{width:48%;color:var(--text);font-weight:560}
+.tabella-elementi .ruolo{color:var(--muted)}
+.tabella-elementi tr.libero .ruolo{color:var(--muted-2)}
+.tabella-elementi tr.libero .ruolo i{background:transparent;
+  box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--tipo,var(--muted-2)) 55%,transparent)}
+.tabella-elementi tr.libero td:last-child{color:var(--muted-2);font-weight:500;font-style:italic}
+
+/* Chi ha appena perso un significato lo dice dalla propria riga. */
+.nota-ceduta{display:grid;gap:2px;margin:0 16px;padding:11px 14px;
+  border-radius:var(--radius-sm);background:var(--panel);
+  border:1px solid color-mix(in srgb,var(--amber) 30%,var(--line));font-size:13px}
+.nota-ceduta strong{font-weight:640;letter-spacing:-.01em}
+.nota-ceduta span{color:var(--muted);line-height:1.5}
+
+/* Che cosa resta fuori: si legge prima di confermare, non dopo. */
+.resta-fuori{display:grid;gap:9px;margin-top:24px;padding-top:17px;border-top:1px solid var(--line)}
+.resta-fuori h4{margin:0;font-size:13px;font-weight:650;letter-spacing:-.01em}
+.resta-fuori .voce-meta{margin:0}
+.resta-fuori-niente{margin-top:22px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted-2);font-size:12.5px}
+
 /* catena diagnostica */
 .catena{display:flex;align-items:center;gap:7px;flex-wrap:wrap;min-width:0}
 .catena-passo{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;
@@ -276,6 +436,33 @@ button.catena-passo:hover{background:var(--fill)}
 .catena-passo i{width:7px;height:7px;border-radius:50%;background:var(--tipo,var(--muted-2));flex:0 0 7px}
 .catena-passo span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .catena-freccia{color:var(--muted-2);font-size:12px;flex:0 0 auto}
+/* Nella colonna di destra non c'è larghezza per una catena in riga: i passi
+   scendono. Ogni catena è una scheda con un capo — la causa — e sotto i due
+   lati del racconto, ciascuno col suo nome: impilate senza capo, e con la
+   causa uguale agli altri passi, si leggevano come un elenco unico. */
+.catena-scheda{
+  display:grid;grid-template-columns:minmax(0,1fr);gap:9px;padding:11px 12px;
+  border-radius:var(--radius-sm);background:var(--panel-2);
+  box-shadow:inset 0 0 0 1px var(--line-soft);
+}
+.catena-scheda+.catena-scheda{margin-top:10px}
+.catena-scheda .catena-passo{
+  display:flex;justify-content:flex-start;width:100%;max-width:100%;font-size:12px;padding:5px 10px;
+}
+.catena-capo{display:grid;grid-template-columns:minmax(0,1fr)}
+.catena-capo .catena-passo{
+  font-size:12.5px;font-weight:650;padding:6px 11px;
+  background:color-mix(in srgb,var(--tipo,var(--muted-2)) 14%,transparent);
+}
+.catena-lato{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;padding-left:11px;
+  border-left:1px solid color-mix(in srgb,var(--muted-2) 32%,transparent)}
+.catena-etichetta{color:var(--muted-2);font-size:11px;font-weight:640;
+  letter-spacing:.03em;text-transform:uppercase}
+.catena-passi{display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
+.catena-scheda .catena-passo.qui{box-shadow:inset 0 0 0 1.4px var(--tipo,var(--muted-2))}
+.catena-scheda .catena-passo.vuoto{color:var(--muted-2);font-weight:500;background:transparent;
+  box-shadow:inset 0 0 0 1px var(--line);font-style:italic}
+.catena-scheda .voce-meta{margin:0}
 
 /* ruoli delle colonne */
 .ruolo{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500}
@@ -290,6 +477,32 @@ button.catena-passo:hover{background:var(--fill)}
 
 /* documenti */
 .caricamento{display:grid;grid-template-columns:minmax(0,1fr) 12rem auto;align-items:end;gap:12px}
+/* Caricare è l'azione della fase, quindi il modulo è il blocco più grande
+   della pagina e il selettore del file ne è il centro: un bersaglio alto,
+   tratteggiato, che si legge come "posa qui il documento". */
+.zona{
+  padding:20px;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--panel);box-shadow:var(--shadow),inset 0 1px 0 var(--highlight);
+}
+.zona .controllo-file{height:52px;border:1px dashed var(--muted-2);background:transparent}
+.zona .controllo-file:hover{border-color:var(--text);background:var(--panel-2)}
+.zona .controllo-file b{font-size:12.5px}
+.zona .selettore-file>span,.zona .campo>span{font-size:12px;font-weight:620}
+.zona .btn{height:52px;padding:0 20px}
+/* Preparare un manuale lungo può durare minuti: finché dura, la rotella dice
+   che il lavoro è in corso e la riga sotto dice quale. */
+.rotella{
+  display:inline-block;flex:0 0 14px;width:14px;height:14px;border-radius:50%;
+  border:2px solid currentColor;border-top-color:transparent;
+  animation:gira .7s linear infinite;
+}
+@keyframes gira{to{transform:rotate(360deg)}}
+/* La regola generale accorcia ogni animazione a un istante: su un ciclo
+   infinito la farebbe girare all'impazzata. Qui si rallenta, non si azzera. */
+@media (prefers-reduced-motion: reduce){.rotella{animation-duration:1.6s !important}}
+.lavorazione{
+  margin:12px 0 0;color:var(--muted);font-size:12.5px;line-height:1.5;
+}
 .selettore-file{position:relative;display:grid;gap:6px;min-width:0}
 .selettore-file>span{font-size:12px;font-weight:600;color:var(--muted)}
 .selettore-file input[type=file]{position:absolute;width:1px;height:1px;overflow:hidden;
@@ -310,6 +523,49 @@ button.catena-passo:hover{background:var(--fill)}
 .documento-identita small{color:var(--muted);font-size:12px}
 .documento-azioni{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 
+/* Il documento, in piccolo: si vede che cosa si sta per aprire — righe di
+   testo o celle — prima di aprirlo in una scheda a parte. */
+.anteprima-doc{
+  display:flex;align-items:center;gap:14px;padding:12px 14px;
+  border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:var(--panel-2);color:inherit;
+  transition:background-color .2s ease,border-color .2s ease,transform .12s ease-out;
+}
+.anteprima-doc:hover{background:var(--fill);border-color:var(--muted-2)}
+.anteprima-doc:active{transform:scale(.99)}
+.anteprima-doc:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.anteprima-foglio{flex:0 0 40px;width:40px;color:var(--muted-2)}
+.anteprima-doc.sigla-pdf .anteprima-foglio{color:var(--violet)}
+.anteprima-doc.sigla-dati .anteprima-foglio{color:var(--cyan)}
+.anteprima-foglio svg{display:block;width:100%;height:auto}
+.anteprima-testo{display:grid;gap:2px;min-width:0;flex:1}
+.anteprima-testo b{font-size:13px;font-weight:620;letter-spacing:-.01em}
+.anteprima-testo small{color:var(--muted-2);font-size:11.5px}
+.anteprima-freccia{flex:0 0 auto;color:var(--muted-2);font-size:14px}
+.anteprima-doc:hover .anteprima-freccia{color:var(--text)}
+
+/* ------------------------------------------------------------- il visore */
+/* Una finestra sola per un documento solo: intestazione, contenuto, niente
+   altro. Il PDF lo mostra il lettore del browser, la tabella una griglia con
+   la testata ferma in cima. */
+.visore-corpo{flex:1;min-height:0;display:flex;flex-direction:column}
+.visore-titolo{display:flex;align-items:center;gap:10px;min-width:0}
+.visore-nome{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:15px;font-weight:600;letter-spacing:-.01em}
+.visore-peso{color:var(--muted-2);font-size:11.5px;font-variant-numeric:tabular-nums}
+.visore-pdf{flex:1;width:100%;border:0;background:var(--canvas)}
+.visore-scorri{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px;padding:18px 24px 22px}
+.visore-tabella{flex:1;min-height:0}
+.visore-tabella .tabella td{white-space:nowrap;font-variant-numeric:tabular-nums}
+.visore-tabella .tabella th{background:var(--panel-2)}
+.visore-riga-numero{
+  position:sticky;left:0;z-index:2;width:3.5rem;
+  background:var(--panel-2);color:var(--muted-2);
+  text-align:right;font-size:11px;font-variant-numeric:tabular-nums;
+}
+.visore-tabella .tabella thead .visore-riga-numero{z-index:3}
+.visore-conto{margin:0;color:var(--muted-2);font-size:11.5px}
+
 /* modulo macchina */
 .modulo{display:grid;gap:18px;max-width:46rem}
 .modulo-griglia{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
@@ -317,31 +573,110 @@ button.catena-passo:hover{background:var(--fill)}
 .modulo-legenda{display:grid;gap:2px;padding-bottom:9px;border-bottom:1px solid var(--line-soft)}
 .modulo-legenda strong{font-size:13.5px;font-weight:640;letter-spacing:-.01em}
 .modulo-legenda span{color:var(--muted);font-size:12px}
-.campo-obbligatorio{margin-left:6px;padding:2px 6px;border-radius:999px;
-  color:var(--cyan-ink);background:color-mix(in srgb,var(--cyan) 11%,transparent);
-  font-size:9.5px;font-style:normal;font-weight:650;letter-spacing:.025em;text-transform:uppercase}
+/* Un campo obbligatorio ancora vuoto porta un filo rosso dentro il riquadro,
+   e lo perde appena è compilato: l'informazione sta dove si scrive, non in
+   un'etichetta accanto. */
+/* Il filo è il bordo del riquadro, non un'ombra interna: l'ombra si stendeva
+   sopra il fondo translucido e sugli angoli tondi, e sui campi bassi diventava
+   una macchia. Il bordo trasparente c'è già, quindi non si sposta niente. */
+.modulo :is(input,textarea,select):required:invalid{
+  border-color:color-mix(in srgb,var(--red) 42%,transparent)}
+/* Mentre ci si scrive dentro comanda l'anello del fuoco, non il promemoria. */
+.modulo :is(input,textarea,select):required:invalid:focus{border-color:transparent}
 .riepilogo{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:12px}
 .riepilogo div{display:grid;gap:2px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--panel-2)}
 .riepilogo dt{color:var(--muted);font-size:11.5px}
 .riepilogo dd{margin:0;font-size:13.5px;overflow-wrap:anywhere}
 
-/* elenco macchine */
-.elenco-macchine{max-width:56rem;margin:0 auto;padding:32px 24px;display:grid;gap:18px}
-.elenco-capo{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.elenco-capo h2{margin:0;font-size:26px;font-weight:640;letter-spacing:-.03em}
-.elenco-capo p{margin:4px 0 0;color:var(--muted);font-size:13px}
-.macchina-card{
-  display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:14px 18px;border-radius:var(--radius);background:var(--panel);
-  border:1px solid var(--line);box-shadow:var(--shadow),inset 0 1px 0 var(--highlight);
-  transition:transform .12s ease-out,box-shadow .2s ease;
+/* ------------------------------------------------------- menu principale */
+/* Il nome dell'applicativo è il ritorno al menu principale: stessa forma nella
+   barra laterale delle fasi e nella testata dell'elenco macchine. */
+.marchio-app,.brand-home{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-home{flex:1;padding:6px;margin:-6px;border-radius:11px;color:inherit;text-decoration:none;
+  transition:transform .12s ease-out,background-color .2s ease}
+.brand-home:hover{background:var(--fill)}
+.brand-home:active{transform:scale(.98)}
+.brand-home:focus-visible{outline:2px solid var(--cyan);outline-offset:1px}
+.app.collapsed .brand-home{flex:none;justify-content:center}
+.topbar h1.marchio-app{font-size:16px;font-weight:640;line-height:1.15}
+.marchio-nome{display:grid;min-width:0;letter-spacing:-.02em}
+.marchio-nome small{font-size:11.5px;font-weight:400;color:var(--muted-2);letter-spacing:0}
+
+/* --------------------------------------------------------- pagina d'ingresso */
+.home-lavoro{position:relative;overflow:hidden}
+.home-scorri{position:relative;z-index:1;flex:1;min-height:0;overflow:auto}
+/* Reticolo tecnico su tutta la superficie: la pagina d'ingresso è un piano di
+   lavoro, non uno spazio vuoto in attesa di righe. Sfuma verso l'alto per non
+   entrare in concorrenza con la tabella. */
+.home-lavoro::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
+  background-size:48px 48px;
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 34%);
+  mask-image:linear-gradient(180deg,transparent,#000 34%);
 }
-.macchina-card:hover{box-shadow:var(--shadow-lg)}
-.macchina-card:active{transform:scale(.995)}
-.macchina-card>div{display:grid;gap:2px;min-width:0}
-.macchina-card strong{font-size:14.5px;font-weight:640;letter-spacing:-.01em}
-.macchina-card small{color:var(--muted);font-size:12.5px}
-.macchina-lato{display:flex;align-items:center;gap:12px;flex:0 0 auto}
+/* Il fondale sta sotto al contenuto e non intercetta niente: nessun clic,
+   nessun fuoco, nessuna lettura da parte di uno screen reader. */
+.home-scena{
+  position:absolute;left:0;right:0;bottom:0;z-index:0;height:min(60%,400px);
+  pointer-events:none;color:var(--muted-2);opacity:.45;
+}
+.home-scena svg{display:block;width:100%;height:100%}
+.home-scena .nodi-vivi{color:var(--cyan)}
+.home-scena .aloni{color:var(--cyan);opacity:.35}
+.home-scena .aloni circle{transform-origin:center;animation:respiro 6s ease-in-out infinite}
+@keyframes respiro{0%,100%{opacity:.25}50%{opacity:.85}}
+/* La regola generale accorcia le animazioni: a un ciclo infinito servirebbe
+   spegnerlo, non affrettarlo. */
+@media (prefers-reduced-motion: reduce){.home-scena .aloni circle{animation:none}}
+
+/* elenco macchine */
+.elenco-macchine{max-width:70rem;margin:0 auto;padding:26px 24px 40px;display:grid;gap:14px}
+.elenco-capo{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.elenco-capo h2{margin:0;font-size:26px;font-weight:640;letter-spacing:-.03em}
+
+/* Una macchina è una riga di tabella: colonne fisse, cifre incolonnate,
+   niente riquadri per riga. Denso e leggibile come un quadro di reparto. */
+.tabella-macchine{
+  --colonne:minmax(12rem,2.8fr) minmax(6rem,1fr) minmax(6rem,1fr)
+    5.5rem 9.5rem 7.5rem 1.25rem;
+  border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--panel);
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.testa-tabella,.riga-macchina{
+  display:grid;grid-template-columns:var(--colonne);align-items:center;gap:14px;
+  padding:0 16px;min-width:0;
+}
+.testa-tabella{
+  height:34px;border-bottom:1px solid var(--line);background:var(--panel-2);
+  color:var(--muted-2);font-size:10.5px;font-weight:650;letter-spacing:.07em;text-transform:uppercase;
+}
+.riga-macchina{
+  height:46px;color:inherit;text-decoration:none;
+  border-bottom:1px solid var(--line-soft);
+  transition:background-color .16s ease;
+}
+.riga-macchina:last-child{border-bottom:0}
+.riga-macchina:hover{background:var(--fill)}
+.riga-macchina:focus-visible{outline:2px solid var(--cyan);outline-offset:-2px}
+.cella{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px;color:var(--muted)}
+.cella.nome{color:var(--text);font-size:13.5px;font-weight:620;letter-spacing:-.01em}
+.cella.modello{font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.cella.numero,.testa-tabella .cella:nth-child(4){text-align:right;font-variant-numeric:tabular-nums}
+.cella.numero{color:var(--text);font-size:13px}
+.cella.quando{color:var(--muted-2);font-size:11.5px;font-variant-numeric:tabular-nums}
+.cella.freccia{color:var(--muted-2);font-size:17px;line-height:1;text-align:center;transition:color .2s ease}
+.riga-macchina:hover .cella.freccia{color:var(--cyan)}
+/* Lo stato non è un'etichetta appiccicata alla riga: è una tacca di colore in
+   testa alla cella, come su un quadro di reparto. La parola resta parola. */
+.cella.stato{display:flex;align-items:center;gap:9px}
+.cella.stato i{flex:0 0 2px;width:2px;height:15px;border-radius:1px;background:var(--muted-2)}
+.cella.stato.ok i{background:var(--green)}
+.cella.stato.attesa i{background:var(--amber)}
+.cella.stato.errore i{background:var(--red)}
+.cella.stato b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:var(--text);font-weight:560}
 
 /* riquadro informativo accanto a un'etichetta */
 .con-info{display:inline-flex;align-items:center;gap:6px}
@@ -349,19 +684,22 @@ button.catena-passo:hover{background:var(--fill)}
   width:16px;height:16px;border-radius:50%;background:var(--fill);color:var(--muted);
   font-size:10.5px;font-weight:700;line-height:1;cursor:help}
 .info:hover,.info:focus{background:color-mix(in srgb,var(--cyan) 16%,transparent);color:var(--cyan)}
+/* Ancorata alla finestra e collocata da dom.js: così nessun riquadro che
+   scorre può tagliarla. Qui restano solo l'aspetto e l'entrata. */
 .info-bolla{
-  position:absolute;z-index:40;left:50%;bottom:calc(100% + 9px);
+  position:fixed;z-index:80;left:0;top:0;
   display:grid;gap:4px;width:17rem;max-width:calc(100vw - 3rem);padding:11px 13px;
   border-radius:var(--radius-sm);background:var(--text);color:var(--bg);
   box-shadow:var(--shadow-lg);font-size:12px;font-weight:400;line-height:1.5;
   text-align:left;white-space:normal;
   opacity:0;visibility:hidden;pointer-events:none;
-  transform:translate(-50%,4px) scale(.98);transform-origin:50% 100%;
+  transform:translateY(4px) scale(.98);transform-origin:50% 100%;
   transition:opacity .14s var(--spring),transform .14s var(--spring),visibility .14s;
 }
+.info-bolla[data-verso="sotto"]{transform:translateY(-4px) scale(.98);transform-origin:50% 0}
 .info-bolla strong{font-weight:640}
 .info:hover>.info-bolla,.info:focus>.info-bolla,.info:focus-within>.info-bolla{
-  opacity:1;visibility:visible;transform:translate(-50%,0) scale(1)}
+  opacity:1;visibility:visible;transform:none}
 
 /* ------------------------------------------------------------- responsive */
 @media (max-width:1180px){
@@ -386,6 +724,29 @@ button.catena-passo:hover{background:var(--fill)}
   .collapse{display:none}
   .caricamento,.modulo-griglia{grid-template-columns:minmax(0,1fr)}
   .grafo{min-height:26rem}
-  .journey-context{align-items:flex-start;flex-direction:column;padding:9px 16px;gap:7px}
-  .journey-next{justify-content:flex-start;flex-wrap:wrap}
+  .journey-campo:first-child{padding-left:16px}
+  .journey-campi>.btn{margin:0 16px 0 8px}
+}
+
+/* Prima si stringono le colonne, poi si toglie la marca — che il modello
+   ripete quasi sempre — e solo alla fine la tabella diventa un elenco di
+   schede, con il nome della colonna accanto a ogni valore. */
+@media (max-width:1060px){
+  .tabella-macchine{--colonne:minmax(10rem,2.6fr) minmax(6rem,1fr) 5rem 9rem 6.5rem 1.25rem}
+  .testa-tabella .cella:nth-child(2),.riga-macchina .cella:nth-child(2){display:none}
+}
+@media (max-width:820px){
+  .elenco-macchine{padding:20px 16px 32px}
+  .testa-tabella{display:none}
+  .riga-macchina{grid-template-columns:repeat(2,minmax(0,1fr));height:auto;gap:7px 14px;padding:12px 14px}
+  .riga-macchina .cella:nth-child(2){display:block}
+  .cella.nome{grid-column:1/-1;font-size:14px}
+  .cella:not(.nome):not(.freccia){display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .cella:not(.nome):not(.freccia)::before{
+    content:attr(data-col);flex:0 0 auto;color:var(--muted-2);
+    font-size:10.5px;font-weight:650;letter-spacing:.06em;text-transform:uppercase}
+  /* Con l'etichetta a sinistra, tacca e parola restano appaiate a destra. */
+  .cella.stato{align-items:center}
+  .cella.stato i{margin-left:auto}
+  .cella.freccia{display:none}
 }

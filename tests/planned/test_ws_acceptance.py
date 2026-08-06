@@ -371,3 +371,43 @@ def test_ac_ws_005(foundation_client, machine_payload):
     assert restored.json()["source"]["source_id"] == sources[1]["source_id"]
     inventory = foundation_client.get(f"/api/workspaces/{workspace_id}/sources").json()
     assert len([item for item in inventory if item["source_kind"] != "operator_input"]) == 3
+
+
+def test_a_document_can_be_read_in_the_browser(foundation_client, machine_payload):
+    """The operator can look at what was uploaded before deciding what it means.
+
+    Two things must hold: the bytes can be shown in place instead of being
+    downloaded, and a table is read by the same adapters that will turn it into
+    claims — the viewer must never become a second, disagreeing parser.
+    """
+    workspace_id = _workspace(foundation_client, machine_payload)["workspace_id"]
+    uploads = [
+        ("manual.pdf", pdf_bytes("Any maintenance document"), "application/pdf"),
+        ("events.csv", b"timestamp,event\n2026-01-01,inspection\n2026-01-02,repair\n", "text/csv"),
+    ]
+    sources = {}
+    for file_name, payload, media_type in uploads:
+        response = foundation_client.post(
+            f"/api/workspaces/{workspace_id}/sources",
+            data={"authority": "operational"},
+            files={"file": (file_name, payload, media_type)},
+        )
+        assert response.status_code == 200
+        sources[file_name] = response.json()["source"]["source_id"]
+
+    shown = foundation_client.get(f"/api/sources/{sources['manual.pdf']}/content?disposition=inline")
+    assert shown.status_code == 200
+    assert shown.headers["content-disposition"].startswith("inline")
+
+    downloaded = foundation_client.get(f"/api/sources/{sources['manual.pdf']}/content")
+    assert downloaded.headers["content-disposition"].startswith("attachment")
+
+    rows = foundation_client.get(f"/api/sources/{sources['events.csv']}/rows")
+    assert rows.status_code == 200
+    table = rows.json()["tables"][0]
+    assert table["columns"] == ["timestamp", "event"]
+    assert table["rows"] == [["2026-01-01", "inspection"], ["2026-01-02", "repair"]]
+    assert table["truncated"] is False
+
+    # A PDF has no rows: the viewer is told so instead of being handed an empty table.
+    assert foundation_client.get(f"/api/sources/{sources['manual.pdf']}/rows").status_code == 409

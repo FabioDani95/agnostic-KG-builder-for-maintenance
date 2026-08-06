@@ -3,15 +3,13 @@
   const root = window.KGFoundation = window.KGFoundation || {};
 
   /* ==========================================================================
-     Simulazione a forze per un grafo di conoscenza etichettato.
+     Simulazione a forze per un grafo di conoscenza.
 
-     I nodi non sono pallini: sono pillole con dentro il testo, perché su questo
-     grafo la parola è l'informazione. Da qui due conseguenze:
-
-     - la separazione è rettangolare, non circolare — due pillole larghe non
-       devono sovrapporsi anche quando i centri sono lontani;
-     - la lunghezza dei legami tiene conto della larghezza dei due estremi, così
-       un nodo con un'etichetta lunga non finisce addosso ai vicini.
+     I nodi sono pallini, e la loro grandezza dice quanto sono collegati: a
+     colpo d'occhio si vedono i mozzi, i grappoli e i solitari — la forma del
+     sapere che c'è in un file, prima ancora di leggere un solo nome. Il nome
+     si accende quando serve, e non partecipa alla separazione: se ne tenesse
+     conto, il grafo si dilaterebbe per etichette quasi sempre spente.
 
      Nessuna libreria esterna: l'applicativo non ha dipendenze nel browser.
      ====================================================================== */
@@ -20,27 +18,24 @@
   const ALPHA_DECAY = 0.022;
   const VELOCITY_DECAY = 0.62;
 
-  const misura = (() => {
-    const context = document.createElement("canvas").getContext("2d");
-    context.font = '500 12.5px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif';
-    return (testo) => context.measureText(testo).width;
-  })();
-
-  /** Larghezza della pillola: il testo, entro una misura leggibile. */
-  root.dimensioniNodo = function dimensioniNodo(etichetta) {
-    const larghezza = Math.min(196, Math.max(88, Math.ceil(misura(etichetta)) + 30));
-    return { w: larghezza, h: 32 };
+  /** Raggio del pallino a partire da quanti collegamenti ha. */
+  root.raggioNodo = function raggioNodo(collegamenti) {
+    return Math.min(17, 5.5 + Math.sqrt(Math.max(0, Number(collegamenti) || 0)) * 2.6);
   };
 
   root.creaSimulazione = function creaSimulazione(nodi, archi, opzioni) {
     const config = opzioni || {};
     const centroX = config.centroX || 0;
     const centroY = config.centroY || 0;
-    /* Con molti nodi la stessa repulsione produrrebbe una nuvola enorme: la
-       scala con la radice del numero tiene la densità costante. */
+    /* Quanto si respingono. La taratura di prima era fatta sulle pillole
+       larghe: con i pallini, che occupano un quinto dello spazio, la stessa
+       forza impacchettava duecento elementi in una palla unica. Il termine di
+       scala corregge solo i grafi piccoli, dove pochi nodi lontanissimi
+       sarebbero altrettanto illeggibili; sopra la quarantina la repulsione è
+       quella piena. */
     const scala = Math.sqrt(Math.max(1, nodi.length));
-    const repulsione = (config.repulsione || 2600) * Math.max(1, 16 / scala);
-    const gravita = config.gravita || 0.028;
+    const repulsione = (config.repulsione || 6400) * Math.max(1, 6.5 / scala);
+    const gravita = config.gravita || 0.022;
 
     const indice = new Map(nodi.map((nodo) => [nodo.id, nodo]));
     const legami = archi
@@ -65,7 +60,7 @@
     tipi.forEach((tipo, indiceTipo) => {
       const gruppo = perTipo.get(tipo);
       const angoloTipo = (indiceTipo / tipi.length) * Math.PI * 2;
-      const raggio = 90 + Math.sqrt(nodi.length) * 46;
+      const raggio = 110 + Math.sqrt(nodi.length) * 58;
       gruppo.forEach((nodo, posizione) => {
         if (nodo.x != null) return;
         const sfasamento = ((posizione / Math.max(1, gruppo.length)) - 0.5) * 1.1;
@@ -104,7 +99,9 @@
       legami.forEach((legame) => {
         const a = legame.da;
         const b = legame.a;
-        const riposo = 74 + (a.w + b.w) / 2.6;
+        /* La lunghezza di riposo non dipende quasi più dalla grandezza dei
+           pallini: erano le pillole a doverla allungare per non toccarsi. */
+        const riposo = 108 + (a.w + b.w) / 2.4;
         const dx = b.x - a.x;
         const dy = b.y - a.y;
         const d = Math.hypot(dx, dy) || 0.01;
@@ -139,8 +136,8 @@
           const a = nodi[i];
           for (let j = i + 1; j < nodi.length; j += 1) {
             const b = nodi[j];
-            const minimaX = (a.w + b.w) / 2 + 14;
-            const minimaY = (a.h + b.h) / 2 + 12;
+            const minimaX = (a.w + b.w) / 2 + 20;
+            const minimaY = (a.h + b.h) / 2 + 18;
             const dx = b.x - a.x;
             const dy = b.y - a.y;
             const sovrapX = minimaX - Math.abs(dx);
