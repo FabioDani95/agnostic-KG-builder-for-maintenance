@@ -25,9 +25,9 @@ def get_source_subgraphs(workspace_id: str):
     "/workspaces/{workspace_id}/g3/sources/{source_id}/generate",
     response_model=G3WorkspaceView,
 )
-def generate_source_subgraph(workspace_id: str, source_id: str):
+async def generate_source_subgraph(workspace_id: str, source_id: str):
     try:
-        return SourceSubgraphGenerationService().generate(workspace_id, source_id)
+        return await SourceSubgraphGenerationService().generate(workspace_id, source_id)
     except LookupError as exc:
         raise HTTPException(status_code=404, detail="Fonte non trovata") from exc
     except SourceSubgraphGenerationError as exc:

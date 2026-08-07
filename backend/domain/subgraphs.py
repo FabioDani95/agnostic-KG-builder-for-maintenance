@@ -5,7 +5,7 @@ from __future__ import annotations
 from enum import StrEnum
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from backend.domain.ids import OpaqueId, UtcTimestamp
 from backend.domain.sources import SourceKind
@@ -103,6 +103,58 @@ class KnowledgeGap(BaseModel):
     evidence_ids: list[OpaqueId] = Field(default_factory=list)
 
 
+class PdfExtractionSection(BaseModel):
+    """One diagnostic section selected from the immutable PDF inventory."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    name: str = Field(min_length=1)
+    start_page: int = Field(ge=1)
+    end_page: int = Field(ge=1)
+    source: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_range(self) -> "PdfExtractionSection":
+        if self.end_page < self.start_page:
+            raise ValueError("PDF extraction section end_page must not precede start_page")
+        return self
+
+
+class PdfExtractionScope(BaseModel):
+    """Derived semantic selection; it never replaces the all-pages G1 scope."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    method: Literal["retained_cut_plan"] = "retained_cut_plan"
+    total_pages: int = Field(ge=1)
+    selected_pages: list[int] = Field(min_length=1)
+    unselected_pages: list[int]
+    sections: list[PdfExtractionSection] = Field(default_factory=list)
+    page_offset: int = 0
+    skipped: bool = False
+
+    @model_validator(mode="after")
+    def validate_partition(self) -> "PdfExtractionScope":
+        selected = self.selected_pages
+        unselected = self.unselected_pages
+        if selected != sorted(set(selected)) or unselected != sorted(set(unselected)):
+            raise ValueError("PDF extraction pages must be unique and sorted")
+        if selected[0] < 1 or (unselected and unselected[0] < 1):
+            raise ValueError("PDF extraction pages must be positive")
+        if set(selected) & set(unselected):
+            raise ValueError("PDF extraction selected and unselected pages must be disjoint")
+        physical_pages = set(selected) | set(unselected)
+        if len(physical_pages) != self.total_pages:
+            raise ValueError("PDF extraction pages must partition total_pages")
+        if any(
+            section.start_page not in physical_pages
+            or section.end_page not in physical_pages
+            for section in self.sections
+        ):
+            raise ValueError("PDF extraction section ranges must reference physical pages")
+        return self
+
+
 class SourceSubgraphRevision(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -124,6 +176,7 @@ class SourceSubgraphRevision(BaseModel):
     duplicate_relations_consolidated: int = Field(default=0, ge=0)
     validation: GraphValidationReport = Field(default_factory=GraphValidationReport)
     knowledge_gaps: list[KnowledgeGap] = Field(default_factory=list)
+    pdf_extraction_scope: PdfExtractionScope | None = None
     approval_eligible: bool = False
     supersedes: OpaqueId | None = None
     created_at: UtcTimestamp

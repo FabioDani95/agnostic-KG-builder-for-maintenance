@@ -11,7 +11,7 @@ from backend.domain.journey import (
     WorkspaceJourney,
 )
 from backend.domain.sources import SourceKind
-from backend.services.source_subgraph_generation import SourceSubgraphGenerationService
+from backend.services.source_subgraph_generation import GRAPH_KINDS, SourceSubgraphGenerationService
 from backend.services.structured_preparation import STRUCTURED_KINDS, StructuredPreparationService
 from backend.storage.repositories.sources import SourceRepository
 from backend.storage.repositories.subgraphs import SourceSubgraphRepository
@@ -78,10 +78,11 @@ class WorkspaceJourneyService:
         next_action = self._next_action(sources)
         active_sources = [item for item in sources if item.lifecycle == "active"]
         structured_sources = [item for item in active_sources if item.source_kind in STRUCTURED_KINDS]
+        graph_sources = [item for item in active_sources if item.source_kind in GRAPH_KINDS]
         incomplete_structure = [item for item in structured_sources if item.structure_state != "confirmed"]
-        graph_built = [item for item in active_sources if item.graph_revision_id]
+        graph_built = [item for item in graph_sources if item.graph_revision_id]
         graph_attention = [
-            item for item in active_sources
+            item for item in graph_sources
             if item.graph_state in {"ready", "reviewing", "rejected"}
         ]
 
@@ -102,19 +103,19 @@ class WorkspaceJourneyService:
             else:
                 structure_state = JourneyState.COMPLETE
 
-            if not structured_sources:
+            if not graph_sources:
                 graph_state = JourneyState.DEFERRED
             elif graph_attention:
                 graph_state = JourneyState.NEEDS_ATTENTION
             elif incomplete_structure:
                 graph_state = JourneyState.IN_PROGRESS if graph_built else JourneyState.LOCKED
-            elif all(item.graph_state == "approved" for item in structured_sources):
+            elif all(item.graph_state == "approved" for item in graph_sources):
                 graph_state = JourneyState.COMPLETE
             else:
                 graph_state = JourneyState.AVAILABLE
 
-        graph_available = bool(active_sources) and (
-            not structured_sources
+        graph_available = bool(graph_sources) and (
+            any(item.source_kind not in STRUCTURED_KINDS for item in graph_sources)
             or bool(graph_built)
             or not incomplete_structure
         )

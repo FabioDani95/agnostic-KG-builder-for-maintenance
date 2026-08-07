@@ -455,6 +455,52 @@ def _build_section_header(sections: list[dict]) -> str:
     return "\n".join(lines)
 
 
+def _is_transient_chunk_error(exc: Exception) -> bool:
+    """Recognize transport/capacity failures that are safe to retry per chunk."""
+    message = str(exc).casefold()
+    transient_markers = (
+        "connection error",
+        "api connection",
+        "timed out",
+        "timeout",
+        "rate limit",
+        "temporarily unavailable",
+        "server error",
+        "status code: 429",
+        "status code: 500",
+        "status code: 502",
+        "status code: 503",
+        "status code: 504",
+    )
+    return any(marker in message for marker in transient_markers)
+
+
+async def _run_chunk_with_retry(
+    operation,
+    *,
+    attempts: int,
+    base_delay_seconds: float,
+):
+    """Retry only the failed chunk; completed sibling chunks stay in memory."""
+    total_attempts = max(1, int(attempts))
+    for attempt in range(1, total_attempts + 1):
+        try:
+            return await asyncio.to_thread(operation)
+        except Exception as exc:
+            if attempt >= total_attempts or not _is_transient_chunk_error(exc):
+                raise
+            delay = max(0.0, float(base_delay_seconds)) * (2 ** (attempt - 1))
+            logger.warning(
+                "[ontology] Transient chunk failure; retrying attempt %d/%d in %.1fs: %s",
+                attempt + 1,
+                total_attempts,
+                delay,
+                exc,
+            )
+            if delay:
+                await asyncio.sleep(delay)
+
+
 def _finalize_run_level_quality(
     result: OntologyPipelineResponse,
     pages: list[dict],
@@ -721,7 +767,10 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
         len(page_chunks),
     )
 
-    chunk_semaphore = asyncio.Semaphore(5)
+    chunk_concurrency = max(1, int(ontology_cfg.get("chunk_concurrency", 3)))
+    chunk_retry_attempts = max(1, int(ontology_cfg.get("chunk_retry_attempts", 3)))
+    chunk_retry_base_seconds = max(0.0, float(ontology_cfg.get("chunk_retry_base_seconds", 2)))
+    chunk_semaphore = asyncio.Semaphore(chunk_concurrency)
 
     async def _process_chunk(index, chunk_pages, chunk_sections):
         # Only describe the sections these pages actually belong to: listing the
@@ -743,15 +792,18 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
             len(chunk_text),
         )
         async with chunk_semaphore:
-            result, metrics = await asyncio.to_thread(
-                build_initial_ontology,
-                text_with_pages=chunk_text,
-                source_type=req.source_type,
-                source_title=req.source_title,
-                target_language=req.target_language,
-                model_name=req.model_name,
-                asset_identity=asset_identity,
-                on_event=on_event,
+            result, metrics = await _run_chunk_with_retry(
+                lambda: build_initial_ontology(
+                    text_with_pages=chunk_text,
+                    source_type=req.source_type,
+                    source_title=req.source_title,
+                    target_language=req.target_language,
+                    model_name=req.model_name,
+                    asset_identity=asset_identity,
+                    on_event=on_event,
+                ),
+                attempts=chunk_retry_attempts,
+                base_delay_seconds=chunk_retry_base_seconds,
             )
         metrics["chunk_index"] = index
         metrics["chunk_pages"] = len(chunk_pages)

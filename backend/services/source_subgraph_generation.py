@@ -1,7 +1,8 @@
-"""Deterministic source-scoped graph generation for structured evidence."""
+"""Source-scoped graph generation for structured and PDF evidence."""
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import re
@@ -27,6 +28,11 @@ from backend.domain.subgraphs import (
     SourceSubgraphStatus,
 )
 from backend.services.ontology_schema_service import load_ontology_schema, ontology_contract
+from backend.services.pdf_source_subgraph_generation import (
+    PdfSourceSubgraphBuilder,
+    pdf_input_config_hash,
+    pdf_preparation_fingerprint,
+)
 from backend.services.structured_preparation import CONFIRMED_PROFILES_SQL, mapping_fingerprint
 from backend.storage.database import get_database
 from backend.storage.repositories.evidence import EvidenceRepository
@@ -40,6 +46,8 @@ from backend.storage.repositories.workspaces import WorkspaceRepository
 # longer match and are rebuilt instead of silently reused.
 GENERATOR_VERSION = "structured-direct-graph-v4-cell-per-claim"
 STRUCTURED_GRAPH_KINDS = {SourceKind.CSV, SourceKind.XLSX, SourceKind.JSON, SourceKind.JSONL}
+GRAPH_KINDS = STRUCTURED_GRAPH_KINDS | {SourceKind.PDF}
+_PDF_GENERATION_LOCKS: dict[str, asyncio.Lock] = {}
 
 
 class SourceSubgraphGenerationError(RuntimeError):
@@ -277,12 +285,53 @@ class SourceSubgraphGenerationService:
         for source in sources:
             name = source.file_name or "Fonte"
             if source.source_kind is SourceKind.PDF:
+                eligible_ids.append(source.source_id)
+                scope = self.evidence.current_scope(source.source_id)
+                source_evidence = [
+                    item for item in self.evidence.list_evidence(
+                        workspace_id=workspace_id, source_id=source.source_id,
+                    )
+                    if item.eligible_for_semantic_processing
+                ]
+                if scope is None or not source_evidence:
+                    views.append(G3SourceView(
+                        source_id=source.source_id,
+                        source_name=name,
+                        source_kind=source.source_kind,
+                        state="waiting",
+                        message="Attendi che la preparazione del PDF produca evidenze utilizzabili.",
+                    ))
+                    continue
+                revision = revisions.get(source.source_id)
+                expected_config_hash = pdf_input_config_hash()
+                expected_fingerprint = pdf_preparation_fingerprint(
+                    source=source, scope=scope, evidence=source_evidence,
+                )
+                if revision is not None and (
+                    revision.preparation_fingerprint != expected_fingerprint
+                    or revision.input_config_hash != expected_config_hash
+                ):
+                    revision = None
+                if revision is None:
+                    views.append(G3SourceView(
+                        source_id=source.source_id,
+                        source_name=name,
+                        source_kind=source.source_kind,
+                        state="ready",
+                        message="Il PDF è pronto per generare il proprio sottografo.",
+                    ))
+                    continue
                 views.append(G3SourceView(
                     source_id=source.source_id,
                     source_name=name,
                     source_kind=source.source_kind,
-                    state="deferred",
-                    message="Il PDF è pronto, ma sarà verificato nella seconda fase.",
+                    state=revision.status.value,
+                    message={
+                        SourceSubgraphStatus.REVIEWING: "Controlla il grafo e approvalo fonte per fonte.",
+                        SourceSubgraphStatus.APPROVED: "Sottografo controllato e approvato.",
+                        SourceSubgraphStatus.REJECTED: "Sottografo segnalato per correzione.",
+                    }[revision.status],
+                    subgraph=revision,
                 ))
                 continue
             if source.source_kind not in STRUCTURED_GRAPH_KINDS:
@@ -375,7 +424,7 @@ class SourceSubgraphGenerationService:
             ),
         )
 
-    def generate(self, workspace_id: str, source_id: str) -> G3WorkspaceView:
+    async def generate(self, workspace_id: str, source_id: str) -> G3WorkspaceView:
         workspace = self.workspaces.get_by_id(workspace_id)
         if workspace is None:
             raise LookupError(workspace_id)
@@ -385,10 +434,49 @@ class SourceSubgraphGenerationService:
             raise LookupError(source_id) from exc
         if source.workspace_id != workspace_id:
             raise LookupError(source_id)
-        if source.source_kind not in STRUCTURED_GRAPH_KINDS:
+        if source.source_kind not in GRAPH_KINDS:
             raise SourceSubgraphGenerationError(
-                "In questa prima verifica la generazione è disponibile per le fonti strutturate; i PDF restano preparati."
+                "La generazione del grafo non è disponibile per questo formato."
             )
+        if source.source_kind is SourceKind.PDF:
+            scope = self.evidence.current_scope(source_id)
+            evidence = [
+                item for item in self.evidence.list_evidence(
+                    workspace_id=workspace_id, source_id=source_id,
+                )
+                if item.eligible_for_semantic_processing
+            ]
+            if scope is None or not evidence:
+                raise SourceSubgraphGenerationError(
+                    "Attendi che la preparazione del PDF produca evidenze utilizzabili"
+                )
+            fingerprint = pdf_preparation_fingerprint(
+                source=source, scope=scope, evidence=evidence,
+            )
+            config_hash = pdf_input_config_hash()
+            lock = _PDF_GENERATION_LOCKS.setdefault(source_id, asyncio.Lock())
+            async with lock:
+                existing = self.subgraphs.find_matching(
+                    source_id=source_id,
+                    preparation_fingerprint=fingerprint,
+                    input_config_hash=config_hash,
+                )
+                if existing is None:
+                    previous = self.subgraphs.current_for_workspace(workspace_id).get(source_id)
+                    try:
+                        revision = await PdfSourceSubgraphBuilder().build_revision(
+                            workspace=workspace,
+                            source=source,
+                            scope=scope,
+                            evidence=evidence,
+                            fingerprint=fingerprint,
+                            config_hash=config_hash,
+                            supersedes=(previous.source_subgraph_revision_id if previous else None),
+                        )
+                    except ValueError as exc:
+                        raise SourceSubgraphGenerationError(str(exc)) from exc
+                    self.subgraphs.create(revision)
+            return self.snapshot(workspace_id)
         profile = self.profiles.current_profile(source_id)
         if profile is None or profile.state != "prepared":
             raise SourceSubgraphGenerationError("Completa prima la struttura dei dati di questa fonte")

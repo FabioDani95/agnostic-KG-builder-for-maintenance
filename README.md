@@ -16,8 +16,11 @@ The repository is in active MVP development against
 | G3 | Human review open | source-scoped graph generation, strict validation, evidence drill-down and the graph explorer are implemented; no subgraph is approved, merged or published automatically |
 
 The automated G3 hardening suite is green, but it is not a Product Owner
-acceptance. Multilingual canonicalization, broader real-data coverage and the
-PDF campaign on the shared evidence-to-subgraph contract remain open. See
+acceptance. PDF sources now use the retained scoping and ontology workflow to
+produce the same immutable, source-scoped review contract as structured
+sources; the UI also shows the exact semantic page selection. Multilingual
+canonicalization, broader real-data coverage and the qualitative PDF campaign
+remain open. See
 [G3 Engine Hardening Handoff](docs/G3_ENGINE_HARDENING_HANDOFF.md) and
 [CSV Hardening Campaign](docs/CSV_HARDENING_CAMPAIGN.md).
 
@@ -37,6 +40,8 @@ Important invariants:
 - a populated mapped cell is one claim; punctuation never creates hidden claims;
 - one semantic role belongs to one source column at a time;
 - changing a mapping invalidates downstream evidence and graph revisions;
+- PDF semantic extraction preserves the all-pages G1 inventory and records its
+  derived selected/unselected page partition on the graph revision;
 - knowledge gaps and malformed graph payloads are different blocker classes;
 - cross-source merge and publication stay closed until their later checkpoints.
 

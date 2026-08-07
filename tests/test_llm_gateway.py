@@ -7,9 +7,10 @@ import subprocess
 import sys
 
 from backend.services.conversation.orchestrator import handle_message
-from backend.services.llm_gateway import get_client
+from backend.services.llm_gateway import chat_temperature_kwargs, get_client
 from backend.services.llm_service import call_openai, call_openai_scoping, parse_extraction
 from backend.services.ontology_pipeline import build_initial_ontology
+from backend.services.run_metrics import estimate_cost_usd, pricing_for_model
 from backend.services.style_cleanup_service import _rewrite_fields_with_llm
 
 
@@ -25,6 +26,20 @@ def test_gateway_defaults_to_real_mode_and_uses_real_factory(monkeypatch):
 
     assert isinstance(client, FakeRealClient)
     assert calls == [{"api_key": "key-real", "timeout": 3}]
+
+
+def test_gpt_56_models_use_their_supported_default_temperature():
+    assert chat_temperature_kwargs("gpt-5.6-terra", 0.0) == {}
+    assert chat_temperature_kwargs("gpt-5.6-sol-2026-08-01", 0.0) == {}
+    assert chat_temperature_kwargs("gpt-5.4", 0.0) == {"temperature": 0.0}
+
+
+def test_gpt_56_terra_usage_keeps_its_model_identity_and_current_rates():
+    pricing = pricing_for_model("gpt-5.6-terra")
+
+    assert pricing["model_key"] == "gpt-5.6-terra"
+    assert pricing["label"] == "GPT-5.6 Terra"
+    assert estimate_cost_usd(1_000_000, 1_000_000, model_name="gpt-5.6-terra") == 17.5
 
 
 def test_mock_mode_works_without_openai_api_key_in_fresh_process():

@@ -2,7 +2,7 @@
 
 ## Stato attuale
 
-Data: `2026-08-04`
+Data: `2026-08-07`
 
 Decisione Product Owner: **revisione umana ancora aperta**
 Stato: **nessun sottografo è stato approvato o unito**
@@ -14,6 +14,34 @@ fino a una decisione esplicita del Product Owner.
 
 Il report operativo e i risultati riproducibili della campagna sono in
 [CSV Hardening Campaign](CSV_HARDENING_CAMPAIGN.md).
+
+## Stato del percorso PDF source-scoped
+
+La costruzione da PDF è ora collegata al percorso workspace senza chiamare
+un'altra repository o un servizio applicativo parallelo. Il bridge locale:
+
+- parte dall'inventario `EvidenceUnit` all-pages persistito da G1;
+- riusa `create_cut_plan_workflow` per la segmentazione e
+  `draft_ontology_workflow` per il solo cuore semantico;
+- conserva sulla revisione le pagine selezionate, quelle escluse, le sezioni,
+  l'offset e l'eventuale skip;
+- presenta in UI il rapporto pagine usate/totali e gli intervalli selezionati;
+- risolve ogni nodo e relazione su locator PDF canonici, oppure dichiara un
+  `KnowledgeGap` che impedisce l'approvazione;
+- usa lo stesso stato `reviewing/approved/rejected`, audit append-only e
+  barriera pre-merge delle fonti strutturate;
+- rende idempotente la generazione rispetto a fingerprint della preparazione,
+  configurazione, modello e versione del bridge.
+
+Il cut plan è ibrido: i documenti piccoli mantengono tutte le pagine; un indice
+abilita selezione LLM più regole e keyword; senza indice il taglio delle
+sezioni è guidato dalle keyword. L'identificazione del prodotto può comunque
+usare l'LLM, e un errore nello scoping LLM ricade sul percorso a keyword.
+
+La suite automatica copre cache, segmentazione, provenance fail-closed,
+invalidation, retry dei chunk, OCR low-confidence e flusso browser PDF-only.
+Questo chiude l'integrazione funzionale, non la campagna qualitativa Product
+Owner su manuali reali.
 
 ## Cosa è ora garantito per CSV/XLSX/JSON/JSONL
 
@@ -78,6 +106,18 @@ chi l'ha prodotta come provenienza.
 5. Le celle che contengono `|` restano un solo elemento con il carattere dentro
    l'etichetta. È un problema del dato, ed è giusto che si veda: la pulizia
    avanzata del testo è fuori dal perimetro attuale.
+6. Il bridge PDF G3 usa soltanto evidenze già canoniche. L'OCR bootstrap di G1
+   resta attivo, ma il testo recuperato da un OCR selettivo successivo al cut
+   plan non viene ancora reinventariato atomicamente nel ledger; non può quindi
+   sostenere claim approvabili.
+7. Il target semantico PDF corrente è inglese. Manuali multilingua possono
+   essere letti dal modello configurato, ma canonicalizzazione e valutazione
+   per lingua non hanno ancora una policy verificata.
+8. PDF destrutturati (thread e-mail, export di conversazioni o collezioni senza
+   indice) non hanno ancora un classificatore di profilo documento né una
+   strategia di chunking temporale/conversazionale. L'eventuale riuso di
+   librerie esterne va pianificato come codice importato e adattato localmente:
+   l'applicazione deve restare self-standing.
 
 ## Prossima sequenza, senza aggirare la revisione
 
@@ -89,7 +129,10 @@ chi l'ha prodotta come provenienza.
 4. Valutare un LLM soltanto come generatore di **candidate merge** o di
    diagnostica di qualità: non può mutare il grafo, unire nodi o chiudere gap
    senza evidenza, spiegazione e decisione umana tracciata.
-5. Ripetere gli stessi contratti e controlli sul percorso PDF condiviso.
+5. Eseguire la campagna qualitativa PDF sul percorso condiviso già integrato,
+   includendo manuali nativi, scansionati e multilingua.
+6. Pianificare separatamente profili documento destrutturati e reinventario OCR
+   post-scoping, senza introdurre chiamate runtime a repository esterne.
 
 ## Condizioni per una nuova revisione Product Owner
 

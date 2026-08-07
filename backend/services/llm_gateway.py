@@ -29,7 +29,7 @@ def is_mock_mode() -> bool:
 def chat_temperature_kwargs(model_name: str | None, temperature: float) -> dict[str, float]:
     """Return temperature kwargs only for models that support custom values."""
     raw = str(model_name or settings.MODEL_NAME or "").strip().lower()
-    if raw == "gpt-5.5" or raw.startswith("gpt-5.5-"):
+    if raw in {"gpt-5.5", "gpt-5.6"} or raw.startswith(("gpt-5.5-", "gpt-5.6-")):
         return {}
     return {"temperature": temperature}
 

@@ -10,7 +10,7 @@
 | Readiness verificata | `READY_FOR_PLANNING` |
 | Checker | `python3 scripts/check_spec_consistency.py --format json --require-status READY_FOR_PLANNING` |
 | Esito checker al momento del piano | `valid=true`, `issues=[]`, digest invariato |
-| Stato del presente documento | G1 accettato; G2 completato; prima campagna CSV G3 implementata e verificata; G3 non accettato, gate umano aperto e campagna PDF bloccata |
+| Stato del presente documento | G1 accettato; G2 completato; slice CSV e costruzione source-scoped da PDF implementate e verificate; G3 non accettato, gate umano e campagna di qualità PDF aperti |
 
 Questo piano usa come fonti normative `SPECIFICHE_MVP.md`,
 `docs/specs/SPEC_INDEX.json`, `docs/specs/TRACEABILITY_MATRIX.md`,
@@ -433,6 +433,37 @@ egress preview; interrompere, riavviare l'app e riprendere senza chiamate
 duplicate; cambiare mapping/modello e vedere `Avvia nuovo run`; provare
 modalità manuale, automatica ed exceptions-only. Il differimento del collaudo
 PDF non autorizza una seconda pipeline né riduce i requisiti di provenance.
+
+**Stato implementazione della costruzione PDF:** il PDF preparato invoca il
+cut plan e il workflow ontology già inclusi nella repository tramite la
+proiezione locale `EvidenceUnit→pages`. L'inventario G1 resta all-pages; la
+selezione diagnostica derivata viene invece persistita nella revisione e solo
+le pagine scelte raggiungono l'estrazione semantica. Il flusso produce lo stesso
+`SourceSubgraphRevision` delle fonti strutturate, risolve nodi e relazioni sui
+locator PDF canonici e fallisce chiuso su scoping fallito, citazioni assenti,
+non risolvibili o OCR a bassa confidenza. Journey, UI, approvazione
+source-scoped e barriera di merge includono ora i PDF. Restano separatamente
+aperti gli altri requisiti G3 della slice (run durabile, pause/resume,
+preflight/egress e campagna qualitativa sul corpus PDF reale).
+
+Il cut plan riusato è **ibrido**, non sempre LLM e non sempre deterministico:
+su documenti piccoli mantiene tutte le pagine; con un indice combina selezione
+LLM, regole e keyword; senza indice la selezione delle sezioni ricade sullo
+scan a keyword (l'LLM può ancora identificare il prodotto, ma non guida il
+taglio). Se le chiamate LLM dello scoping falliscono, il fallback a keyword
+resta operativo. La revisione mostra ora il partizionamento esatto
+`selected/unselected`, così il fallback non è invisibile all'operatore.
+
+**Limite corrente da non confondere con il supporto a PDF destrutturati:** la
+costruzione G3 consuma soltanto le `EvidenceUnit` canoniche già persistite da
+G1. L'OCR bootstrap presente in G1 resta disponibile, ma l'OCR selettivo
+recuperato dopo il cut plan non viene ancora reinventariato atomicamente nel
+ledger canonico; non può quindi diventare un claim approvabile in G3. PDF di
+thread e-mail, export destrutturati e classificazione per profilo documento
+richiedono l'incremento architetturale separato appena rimandato: non sono
+stati inseriti implicitamente in questa slice e non introducono dipendenze da
+repository o servizi esterni.
+
 **Decisione richiesta:** `correggere G3` oppure `proseguire a G4`.
 
 Definition of Done:

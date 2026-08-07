@@ -29,6 +29,18 @@ async function identifyMachine(page, { name, model, serial, description }) {
 const uploadFiles = (page, files) =>
   page.locator('#source-upload input[type="file"]').setInputFiles(files);
 
+/**
+ * Enter the workspace-wide graph surface through the current four-phase
+ * navigation. Graph generation also lives inside each source's “Che cosa ne
+ * nasce” step, but cross-source comparison belongs to the graph phase.
+ */
+async function openGraphPhase(page) {
+  const graphPhase = page.locator('.nav-item[data-fase="graph"]');
+  await expect(graphPhase).toBeEnabled();
+  await graphPhase.click();
+  await expect(page).toHaveURL(/fase=grafo/);
+}
+
 test("AC-UX-002/003/009: multi-upload and automatic PDF preparation", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/console.html?foundation=1");
@@ -56,7 +68,7 @@ test("AC-UX-002/003/009: multi-upload and automatic PDF preparation", async ({ p
   await expect(page).not.toHaveURL(/stage=g[123]/);
   await expect(page.locator(".nav-item[data-fase]")).toHaveCount(4);
   await expect(page.locator(".nav-item[data-fase]")).toHaveText([
-    /Macchina/, /Documenti/, /Struttura/, /Grafo/,
+    /Macchina/, /Documenti/, /Fonti/, /Grafo/,
   ]);
 
   // An isolated source error stays actionable and hides nothing else.
@@ -190,7 +202,7 @@ test("AC-UX-011: the interface switches language and theme without losing its pl
   await language.click();
   await expect(language).toHaveText("ENG");
   await expect(page.locator(".nav-item[data-fase]")).toHaveText([
-    /Machine/, /Documents/, /Structure/, /Graph/,
+    /Machine/, /Documents/, /Sources/, /Graph/,
   ]);
   await expect(page.locator(".topbar h1")).toHaveText("Machine documents");
   await expect(page.getByRole("button", { name: "Upload document" })).toBeVisible();
@@ -212,7 +224,7 @@ test("AC-UX-011: the interface switches language and theme without losing its pl
   expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe(after);
 });
 
-test("AC-UX-017: a PDF-only workspace never offers an unavailable graph action", async ({ page }) => {
+test("AC-UX-017/AC-HITL-002: a PDF-only workspace builds a reviewable graph", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/console.html?foundation=1&new=1");
   await identifyMachine(page, {
@@ -223,14 +235,29 @@ test("AC-UX-017: a PDF-only workspace never offers an unavailable graph action",
   await uploadFiles(page, fixture);
   await page.getByRole("button", { name: "Carica documento" }).click();
   await expect(page.locator(".documento")).toHaveCount(1, { timeout: 60000 });
-  await page.getByRole("button", { name: "Continua alla struttura" }).click();
-  await page.getByRole("button", { name: "Vai al grafo" }).click();
+  await page.getByRole("button", { name: "Continua alla fonte" }).click();
+  await page.getByRole("button", { name: "Che cosa ne nasce" }).last().click();
 
-  await expect(page.getByText("Grafo PDF non ancora disponibile").first()).toBeVisible();
-  await expect(page.locator(".ispettore")).toContainText("Grafo PDF non ancora disponibile");
-  await expect(page.locator(".decisione")).toContainText("Nessuna azione richiesta su questo PDF");
-  await expect(page.getByRole("button", { name: "Costruisci il grafo" })).toHaveCount(0);
-  await expect(page.locator("#app")).not.toContainText("Costruisci il grafo di questa fonte per esplorarlo");
+  await expect(page.locator(".decisione")).toContainText("Il grafo di questa fonte non è ancora stato costruito");
+  await page.getByRole("button", { name: "Costruisci il grafo" }).click();
+
+  await expect(page.locator(".grafo-svg")).toBeVisible();
+  await expect.poll(() => page.locator(".nodo").count()).toBeGreaterThan(0);
+  await expect(page.locator("[data-pdf-scope]")).toContainText("Pagine usate dal grafo: 5 su 5 (1–5)");
+  await expect(page.locator("[data-pdf-scope]")).toContainText("Pagine escluse dall’estrazione semantica: 0");
+  await expect(page.locator(".decisione")).toContainText("Non ancora verificabile");
+  await page.locator(".nodo").first().click();
+  await expect(page.locator(".ispettore")).toContainText(/Pagina \d+/);
+
+  // A rejected PDF never sends the operator to a nonexistent column-mapping
+  // action: remediation starts from the document inventory.
+  await page.getByRole("button", { name: "Segnala da correggere" }).click();
+  await page.getByRole("textbox", { name: "Che cosa deve essere corretto in questa fonte?" })
+    .fill("La segmentazione include pagine non diagnostiche.");
+  await page.getByRole("button", { name: "Registra la segnalazione" }).click();
+  await expect(page.locator(".decisione")).toContainText("La segmentazione include pagine non diagnostiche.");
+  await page.getByRole("button", { name: "Gestisci il documento" }).click();
+  await expect(page.locator(".topbar h1")).toHaveText("Documenti della macchina");
 });
 
 test("AC-UX-014: the structure phase is automatic and asks one question at a time", async ({ page }) => {
@@ -260,14 +287,15 @@ test("AC-UX-014: the structure phase is automatic and asks one question at a tim
   await page.getByRole("button", { name: "Continua alla struttura" }).click();
 
   // The phase is addressed by what it is about, not by a checkpoint number.
-  await expect(page).toHaveURL(/fase=struttura/);
+  await expect(page).toHaveURL(/fase=fonti/);
   await expect(page).not.toHaveURL(/stage=g2/);
 
-  // Exactly one open question, and it is at the top of the work pane.
-  await expect(page.locator(".lavoro .card")).toHaveCount(1);
+  // Exactly one open question, attached to the column it concerns.
+  await expect(page.locator(".lavoro tr.riga-domanda")).toHaveCount(1);
+  await expect(page.locator(".lavoro .domanda")).toHaveCount(1);
   await expect(page.locator(".decisione")).toContainText("Serve una tua scelta");
   await expect(page.getByText("Dove va usata la colonna “description”?")).toBeVisible();
-  await page.locator('.lavoro .card select[name="role"]').selectOption("observation");
+  await page.locator('.lavoro .domanda select[name="role"]').selectOption("observation");
   await page.getByRole("button", { name: "Salva e continua" }).click();
 
   // Answering must not scroll the frame away. The app fills the window and its
@@ -289,7 +317,7 @@ test("AC-UX-014: the structure phase is automatic and asks one question at a tim
   await page.evaluate(() => { document.documentElement.dataset.theme = "light"; });
 
   // With no question open the pane explains the mapping instead.
-  await expect(page.locator(".lavoro .card")).toHaveCount(0);
+  await expect(page.locator(".lavoro .domanda")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Che cosa significa ogni colonna" })).toBeVisible();
   await expect(page.getByRole("columnheader", { name: "Significato" })).toBeVisible();
   const ruoloDescription = page.locator('.tabella tbody select[data-colonna="description"]');
@@ -368,16 +396,13 @@ test("AC-UX-014/AC-TAB-001/AC-LANG-002: CSV variants stay understandable", async
 
   // Malformed rows are isolated, counted and explained — never deleted.
   await page.locator(".nav-item[data-fonte]").filter({ hasText: "righe-irregolari.csv" }).click();
-  await expect(inspector).toContainText("righe lette");
-  await expect(inspector).toContainText("1 riga preparata");
+  await expect(inspector).toContainText("3 righe lette da questo file");
   await expect(inspector).toContainText("2 righe isolate");
-  await page.getByRole("tab", { name: "Avvisi" }).click();
-  await expect(page.getByRole("heading", { name: "Righe messe da parte" })).toBeVisible();
-  await expect(page.getByText("Alcune righe hanno un numero errato di colonne")).toBeVisible();
-
-  // Every value stays visible exactly as it is in the file.
-  await page.getByRole("tab", { name: "Righe" }).click();
-  await expect(page.getByRole("heading", { name: "Le righe come sono nel file" })).toBeVisible();
+  const work = page.locator(".lavoro");
+  await expect(work.getByRole("heading", { name: "Che cosa resta fuori" })).toBeVisible();
+  await expect(work).toContainText("Righe messe da parte");
+  await expect(work).toContainText("Alcune righe hanno un numero errato di colonne");
+  await expect(work).toContainText("Niente viene cancellato dal file");
 });
 
 test("AC-HITL-002/AC-UX-005: the graph is a navigable 2D map down to its source rows", async ({ page }) => {
@@ -400,9 +425,8 @@ test("AC-HITL-002/AC-UX-005: the graph is a navigable 2D map down to its source 
   await page.locator(".nav-item[data-fonte]").filter({ hasText: "synthetic_press_events_en.csv" }).click();
   await page.getByRole("button", { name: "Conferma questo file" }).click();
   await expect(page.locator(".decisione")).toContainText("Struttura confermata");
-  await page.getByRole("button", { name: "Vai al grafo" }).click();
+  await openGraphPhase(page);
 
-  await expect(page).toHaveURL(/fase=grafo/);
   await expect(page).not.toHaveURL(/stage=g3/);
   await expect(page.locator("#app")).not.toContainText(/\bGate\b/);
   await expect(page.locator(".nav-item[data-fonte]")).toHaveCount(2);
@@ -452,7 +476,7 @@ test("AC-HITL-002/AC-UX-005: the graph is a navigable 2D map down to its source 
 
   // Diagnostic chains read from the observation to the corrective action.
   await page.getByRole("tab", { name: "Catene" }).click();
-  await expect(page.getByRole("heading", { name: "Dal sintomo all'azione" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Dal sintomo all'azione", exact: true })).toBeVisible();
 
   // The decision states its own limits before it is taken.
   await expect(page.locator(".decisione")).toContainText("non unisce le fonti e non pubblica niente");
@@ -488,7 +512,7 @@ test("AC-UX-016: reopening a workspace guides the next source without losing exi
   await page.getByRole("button", { name: "Carica documento" }).click();
   await page.getByRole("button", { name: "Continua alla struttura" }).click();
   await page.getByRole("button", { name: "Conferma questo file" }).click();
-  await page.getByRole("button", { name: "Vai al grafo" }).click();
+  await openGraphPhase(page);
   await page.getByRole("button", { name: "Costruisci il grafo" }).click();
   await page.getByRole("button", { name: "Conferma la verifica" }).click();
   await expect(page.locator(".journey-next")).toContainText("tutti i grafi disponibili sono aggiornati");
@@ -522,7 +546,7 @@ test("AC-UX-016: reopening a workspace guides the next source without losing exi
   await page.reload();
   await expect(page.locator(".journey-context")).toContainText("journey_new_events.csv");
   await page.locator("[data-follow-journey]").click();
-  await expect(page).toHaveURL(/fase=struttura/);
+  await expect(page).toHaveURL(/fase=fonti/);
   await expect(page.locator(".journey-context")).toContainText("journey_new_events.csv");
   await page.getByRole("button", { name: "Conferma questo file" }).click();
   await expect(page.locator(".journey-next")).toContainText("costruisci il grafo");
@@ -556,7 +580,7 @@ test("AC-UX-005: the map is operable by keyboard and survives a narrow viewport"
   await page.getByRole("button", { name: "Carica documento" }).click();
   await page.getByRole("button", { name: "Continua alla struttura" }).click();
   await page.getByRole("button", { name: "Conferma questo file" }).click();
-  await page.getByRole("button", { name: "Vai al grafo" }).click();
+  await openGraphPhase(page);
   await page.getByRole("button", { name: "Costruisci il grafo" }).click();
   await expect(page.locator(".nodo")).toHaveCount(11);
 
@@ -604,7 +628,7 @@ test("AC-UX-005: a graph with knowledge gaps cannot be verified, and says why", 
   await page.getByRole("button", { name: "Carica documento" }).click();
   await page.getByRole("button", { name: "Continua alla struttura" }).click();
   await page.getByRole("button", { name: "Conferma questo file" }).click();
-  await page.getByRole("button", { name: "Vai al grafo" }).click();
+  await openGraphPhase(page);
   await page.getByRole("button", { name: "Costruisci il grafo" }).click();
 
   // Not verifiable is a protection, stated as such, with the action disabled

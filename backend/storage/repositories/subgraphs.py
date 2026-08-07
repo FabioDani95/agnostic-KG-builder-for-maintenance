@@ -98,6 +98,20 @@ class SourceSubgraphRepository:
 
     def create(self, revision: SourceSubgraphRevision) -> SourceSubgraphRevision:
         payload = revision.model_dump(mode="json", exclude={"status", "approval_decision_id", "decision_note"})
+        audit_payload = {
+            "source_id": revision.source_id,
+            "node_count": len(revision.nodes),
+            "relation_count": len(revision.relations),
+            "evidence_count": len(revision.evidence_ids),
+        }
+        if revision.pdf_extraction_scope is not None:
+            audit_payload["pdf_extraction_scope"] = {
+                "method": revision.pdf_extraction_scope.method,
+                "total_pages": revision.pdf_extraction_scope.total_pages,
+                "selected_page_count": len(revision.pdf_extraction_scope.selected_pages),
+                "section_count": len(revision.pdf_extraction_scope.sections),
+                "skipped": revision.pdf_extraction_scope.skipped,
+            }
         with self.database.transaction() as connection:
             connection.execute(
                 "INSERT INTO entity_ids(entity_id, entity_type, created_at) VALUES (?, 'source_subgraph', ?)",
@@ -130,12 +144,7 @@ class SourceSubgraphRepository:
                 (
                     revision.workspace_id,
                     revision.source_subgraph_revision_id,
-                    _json({
-                        "source_id": revision.source_id,
-                        "node_count": len(revision.nodes),
-                        "relation_count": len(revision.relations),
-                        "evidence_count": len(revision.evidence_ids),
-                    }),
+                    _json(audit_payload),
                     revision.created_at,
                 ),
             )

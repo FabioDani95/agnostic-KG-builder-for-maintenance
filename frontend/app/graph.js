@@ -123,6 +123,43 @@
 
   const modelloDi = (vista) => (vista && vista.subgraph ? costruisciModello(vista.subgraph) : null);
 
+  const intervalliPagine = (pagine) => {
+    const ordinate = [...new Set((pagine || []).map(Number).filter(Number.isInteger))].sort((a, b) => a - b);
+    const intervalli = [];
+    let inizio = null;
+    let fine = null;
+    ordinate.forEach((pagina) => {
+      if (inizio === null) { inizio = pagina; fine = pagina; return; }
+      if (pagina === fine + 1) { fine = pagina; return; }
+      intervalli.push(inizio === fine ? `${inizio}` : `${inizio}–${fine}`);
+      inizio = pagina;
+      fine = pagina;
+    });
+    if (inizio !== null) intervalli.push(inizio === fine ? `${inizio}` : `${inizio}–${fine}`);
+    return intervalli.join(", ");
+  };
+
+  const ambitoPdf = (grafo) => {
+    const ambito = grafo && grafo.pdf_extraction_scope;
+    if (!ambito) return "";
+    const selezionate = (ambito.selected_pages || []).length;
+    const escluse = (ambito.unselected_pages || []).length;
+    return `<div class="intestazione-lavoro" data-pdf-scope>
+      <p><strong>${esc(t("gr.pdfAmbitoTitolo"))}</strong> ${esc(t("gr.pdfAmbitoTesto", {
+        n: selezionate,
+        t: ambito.total_pages,
+        r: intervalliPagine(ambito.selected_pages),
+        e: escluse,
+      }))}</p>
+    </div>`;
+  };
+
+  const chipAmbitoPdf = (grafo) => {
+    const ambito = grafo && grafo.pdf_extraction_scope;
+    if (!ambito) return "";
+    return `<span class="chip"><b>${(ambito.selected_pages || []).length}/${ambito.total_pages}</b> ${esc(t("gr.pagine"))}</span>`;
+  };
+
   /* La spunta delle lacune, uguale nelle due strisce che la offrono. Resta
      attivabile solo se qualcosa può togliere, e resta togliibile sempre: chi
      l'ha accesa deve poterla spegnere anche dopo aver corretto l'ultima. */
@@ -175,6 +212,7 @@
   ];
 
   const barra = (modello) => {
+    const pdf = modello.grafo.source_kind === "pdf";
     const tipiRel = [...new Set(modello.grafo.relations.map((l) => l.relation_type))];
     const conteggi = {
       elementi: modello.grafo.nodes.length,
@@ -187,7 +225,7 @@
       <div class="barra">
         <div class="segmento" role="tablist">
           ${VISTE.map((vista) => `<button type="button" class="tab" role="tab" data-vista="${vista.id}"
-            aria-selected="${state.view === vista.id}">${esc(t(vista.chiave))}${conteggi[vista.id] == null ? "" : ` ${conteggi[vista.id]}`}</button>`).join("")}
+            aria-selected="${state.view === vista.id}">${esc(t(pdf && vista.id === "righe" ? "gr.vista.evidenze" : vista.chiave))}${conteggi[vista.id] == null ? "" : ` ${conteggi[vista.id]}`}</button>`).join("")}
         </div>
         <span class="barra-spazio"></span>
         <div class="barra-gruppo">
@@ -259,7 +297,7 @@
       <div class="tabella-wrap"><table class="tabella"><thead><tr>
         <th>${esc(t("gr.tipo"))}</th><th>${esc(t("gr.elemento"))}</th>
         <th class="num">${esc(t("gr.collegamentiCol"))}</th>
-        <th class="num">${esc(t("gr.righeOrigineCol"))}</th>
+        <th class="num">${esc(t(modello.grafo.source_kind === "pdf" ? "gr.evidenzeOrigineCol" : "gr.righeOrigineCol"))}</th>
         <th>${esc(t("gr.statoCol"))}</th>
       </tr></thead><tbody>
         ${modello.nodi.length ? modello.nodi.map((nodo) => {
@@ -284,7 +322,7 @@
       ${riassuntoFiltri(modello)}
       <div class="tabella-wrap"><table class="tabella"><thead><tr>
         <th>${esc(t("gr.da"))}</th><th>${esc(t("gr.collegamento"))}</th><th>${esc(t("gr.a"))}</th>
-        <th class="num">${esc(t("gr.righeOrigineCol"))}</th>
+        <th class="num">${esc(t(modello.grafo.source_kind === "pdf" ? "gr.evidenzeOrigineCol" : "gr.righeOrigineCol"))}</th>
       </tr></thead><tbody>
         ${modello.legami.length ? modello.legami.map((legame) => {
           const da = modello.nodiPerId.get(legame.from_id);
@@ -300,9 +338,11 @@
       </tbody></table></div>
     </div>`;
 
-  const listaRighe = (modello) => `
+  const listaRighe = (modello) => {
+    const pdf = modello.grafo.source_kind === "pdf";
+    return `
     <div class="lavoro-pad">
-      <div class="gruppo-capo"><h3>${esc(t("gr.righeTitolo"))}</h3><p>${esc(t("gr.righeTesto"))}</p></div>
+      <div class="gruppo-capo"><h3>${esc(t(pdf ? "gr.evidenzeTitolo" : "gr.righeTitolo"))}</h3><p>${esc(t(pdf ? "gr.evidenzeTesto" : "gr.righeTesto"))}</p></div>
       <div class="lista" style="margin-top:12px">
         ${modello.grafo.evidence.map((voce) => {
           const lacune = modello.lacunePerEvidenza.get(voce.evidence_id) || [];
@@ -310,11 +350,12 @@
             aria-selected="${state.selection.kind === "evidence" && state.selection.id === voce.evidence_id}">
             <span class="voce-capo"><strong>${esc(root.descriviLocator(voce.locator))}</strong>
               ${lacune.length ? `<span class="badge attesa">${esc(n(lacune.length, "isp.lacune"))}</span>` : ""}</span>
-            <span class="voce-testo">${esc(voce.excerpt || t("gr.rigaSenzaTesto"))}</span>
+            <span class="voce-testo">${esc(voce.excerpt || t(pdf ? "gr.evidenzaSenzaTesto" : "gr.rigaSenzaTesto"))}</span>
           </button>`;
         }).join("")}
       </div>
     </div>`;
+  };
 
   /** Catene diagnostiche: una voce per causa, con quello che le righe provano. */
   const catene = (modello) => {
@@ -447,7 +488,10 @@
     }, {
       descrizione: t("gr.mappaDi", { n: modello.nodi.length, c: modello.legami.length }),
       etichettaTipo: root.etichettaTipo,
-      testoOccorrenze: (quante) => n(quante, "isp.righeLette"),
+      testoOccorrenze: (quante) => n(
+        quante,
+        modello.grafo.source_kind === "pdf" ? "isp.evidenzeLette" : "isp.righeLette",
+      ),
       selezione: () => state.selection,
       onSelezione: (genere, id) => root.applicaSelezione(genere, id),
       onZoom: (k) => {
@@ -483,6 +527,7 @@
         `<span class="chip ${tono}">${esc(root.etichettaStato(vista.state))}</span>`,
         grafo ? `<span class="chip"><b>${grafo.nodes.length}</b> ${esc(t("gr.vista.elementi").toLocaleLowerCase())}</span>` : "",
         grafo ? `<span class="chip"><b>${grafo.relations.length}</b> ${esc(t("gr.vista.collegamenti").toLocaleLowerCase())}</span>` : "",
+        chipAmbitoPdf(grafo),
       ].filter(Boolean).join("");
       return { titolo: vista.source_name, chips };
     },
@@ -527,8 +572,11 @@
         </section></div>`;
       }
       const testa = state.view === "confronto" ? "" : `
-        <div class="intestazione-lavoro"><p>${esc(vista && vista.subgraph ? t("gr.sotto") : t("gr.nonCostruito"))}</p></div>`;
+        <div class="intestazione-lavoro"><p>${esc(vista && vista.subgraph
+          ? t(vista.source_kind === "pdf" ? "gr.sottoPdf" : "gr.sotto")
+          : t("gr.nonCostruito"))}</p></div>`;
       return `${testa}
+        ${vista && state.view !== "confronto" ? ambitoPdf(vista.subgraph) : ""}
         ${modello && state.view !== "confronto" ? barra(modello) : ""}
         <div class="lavoro-scorri">${contenuto(vista, modello)}</div>`;
     },
@@ -626,6 +674,9 @@
         </div>${errore}`;
 
       if (vista.state === "waiting") {
+        if (vista.source_kind === "pdf") {
+          return riga(t("gr.pdfPreparazione"), vista.message, "");
+        }
         return riga(t("dec.strutturaNonConfermata"), vista.message,
           `<button type="button" class="btn secondario" data-vai="structure">${esc(t("dec.vaiStruttura"))}</button>`);
       }
@@ -633,15 +684,18 @@
         return riga(t("gr.pdfNessunaAzione"), t("gr.pdfNessunaAzioneTesto"), "");
       }
       if (!grafo) {
-        return riga(t("gr.nonCostruitoTitolo"), t("gr.nonCostruitoTesto"),
+        return riga(t("gr.nonCostruitoTitolo"), t(vista.source_kind === "pdf" ? "gr.pdfNonCostruitoTesto" : "gr.nonCostruitoTesto"),
           `<button type="button" class="btn primario" data-costruisci ${occupato}>${esc(state.graphBusy ? t("gr.costruendo") : t("gr.costruisci"))}</button>`);
       }
       if (vista.state === "approved") return riga(t("dec.verificata"), t("dec.garanzia"), "");
       if (vista.state === "rejected") {
+        const azione = vista.source_kind === "pdf"
+          ? `<button type="button" class="btn primario" data-vai="documents">${esc(t("dec.gestisciDocumento"))}</button>`
+          : `<button type="button" class="btn primario" data-vai="structure">${esc(t("dec.rivediStruttura"))}</button>`;
         return riga(
           t("dec.segnalata"),
           grafo.decision_note || t("dec.segnalazioneRegistrata"),
-          `<button type="button" class="btn primario" data-vai="structure">${esc(t("dec.rivediStruttura"))}</button>`
+          azione
         );
       }
 
@@ -720,6 +774,8 @@
       ? state.graph.sources.find((v) => v.source_id === sourceId) || null : null),
     modello: modelloDi,
     mappa,
+    ambito: (vista) => ambitoPdf(vista && vista.subgraph),
+    chipAmbito: chipAmbitoPdf,
     monta: montaMappa,
 
     /** Vero se la mappa è a schermo e ha assorbito la selezione da sola. */
@@ -798,10 +854,13 @@
           ${ostacoli || ""}${azioni ? `<div class="decisione-azioni">${azioni}</div>` : ""}
         </div>${errore}`;
 
-      if (fonte.source_kind === "pdf" || (vista && vista.state === "deferred")) {
+      if (vista && vista.state === "deferred") {
         return riga(t("gr.pdfNessunaAzione"), t("gr.pdfNessunaAzioneTesto"), "");
       }
       if (!vista || vista.state === "waiting") {
+        if (fonte.source_kind === "pdf") {
+          return riga(t("gr.pdfPreparazione"), t("gr.pdfPreparazioneTesto"), "");
+        }
         return riga(t("fon.nonConfermata"), t("fon.nonConfermataTesto"),
           `<button type="button" class="btn primario" data-passo="lettura">${esc(t("fon.tornaLettura"))}</button>`);
       }
@@ -809,9 +868,12 @@
       if (!grafo) {
         const voce = root.journeySource ? root.journeySource(vista.source_id) : null;
         const rifatto = voce && voce.graph_revision_count > 0;
+        const testo = rifatto
+          ? (fonte.source_kind === "pdf" ? "fon.pdfRifareTesto" : "fon.rifareTesto")
+          : (fonte.source_kind === "pdf" ? "fon.pdfDaCostruireTesto" : "fon.daCostruireTesto");
         return riga(
           t(rifatto ? "fon.rifare" : "fon.daCostruire"),
-          t(rifatto ? "fon.rifareTesto" : "fon.daCostruireTesto"),
+          t(testo),
           `<button type="button" class="btn primario" data-costruisci ${occupato}>${
             esc(state.graphBusy ? t("gr.costruendo") : t("gr.costruisci"))}</button>`
         );
@@ -827,8 +889,11 @@
       }
       if (vista.state === "approved") return riga(t("dec.verificata"), t("dec.garanzia"), "");
       if (vista.state === "rejected") {
+        const azione = fonte.source_kind === "pdf"
+          ? `<button type="button" class="btn primario" data-vai="documents">${esc(t("dec.gestisciDocumento"))}</button>`
+          : `<button type="button" class="btn primario" data-passo="lettura">${esc(t("fon.tornaLettura"))}</button>`;
         return riga(t("dec.segnalata"), grafo.decision_note || t("dec.segnalazioneRegistrata"),
-          `<button type="button" class="btn primario" data-passo="lettura">${esc(t("fon.tornaLettura"))}</button>`);
+          azione);
       }
       const lacune = (grafo.knowledge_gaps || []).length;
       const difetti = (((grafo.validation || {}).issues) || []).length;
@@ -880,6 +945,9 @@
       root.delegate(contenitore, "click", "[data-panoramica]", () => {
         root.clearSelection();
         root.render({ regioni: ["ispettore"] });
+      });
+      root.delegate(contenitore, "click", "[data-vai]", (elemento) => {
+        root.vaiAllaFase(elemento.dataset.vai);
       });
       root.delegate(contenitore, "submit", "[data-nota]", (modulo, evento) => {
         evento.preventDefault();

@@ -8,6 +8,12 @@ from backend.observability.trace import compact_digest, compact_summary
 from backend.runstore import append_trace_step
 
 MODEL_PRICING = {
+    "gpt-5.6-terra": {
+        "label": "GPT-5.6 Terra",
+        "input_per_million": 2.50,
+        "cached_input_per_million": 0.25,
+        "output_per_million": 15.00,
+    },
     "gpt-5.4": {
         "label": "GPT-5.4",
         "input_per_million": 2.50,
@@ -49,7 +55,7 @@ AGENT_STAGE_MAP = {
 
 def normalize_model_pricing_key(model_name: str | None) -> str:
     raw = str(model_name or "").strip().lower()
-    for candidate in ("gpt-5.4-pro", "gpt-5.4-mini", "gpt-5.4-nano", "gpt-5.4"):
+    for candidate in ("gpt-5.6-terra", "gpt-5.4-pro", "gpt-5.4-mini", "gpt-5.4-nano", "gpt-5.4"):
         if raw == candidate or raw.startswith(f"{candidate}-"):
             return candidate
     return "gpt-5.4"

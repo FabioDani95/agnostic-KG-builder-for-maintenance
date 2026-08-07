@@ -164,6 +164,12 @@ ontology:
 
   timeout_seconds: 600
 
+  # Keep long-document extraction below connection/capacity pressure and retry
+  # only the failed chunk when the provider has a transient transport error.
+  chunk_concurrency: 3
+  chunk_retry_attempts: 3
+  chunk_retry_base_seconds: 2
+
   max_input_chars: 600000
   estimated_max_input_tokens: 150000
   extraction_max_output_tokens: 16000

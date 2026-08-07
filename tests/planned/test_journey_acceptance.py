@@ -141,7 +141,7 @@ def test_archiving_and_restoring_preserves_the_graph_revision(
     assert restored_source["graph_revision_count"] == 1
 
 
-def test_pdf_only_workspace_marks_graph_generation_as_deferred(
+def test_pdf_only_workspace_offers_graph_generation(
     foundation_client,
     machine_payload,
 ):
@@ -157,9 +157,14 @@ def test_pdf_only_workspace_marks_graph_generation_as_deferred(
     ).json()
     phases = _phases(journey)
     assert phases["structure"]["state"] == "complete"
-    assert phases["graph"]["state"] == "deferred"
+    assert phases["graph"]["state"] == "needs_attention"
     assert phases["graph"]["available"] is True
     pdf_source = next(item for item in journey["sources"] if item["source_id"] == source["source_id"])
     assert pdf_source["structure_state"] == "not_applicable"
-    assert pdf_source["graph_state"] == "deferred"
-    assert journey["next_action"]["code"] == "workspace_ready"
+    assert pdf_source["graph_state"] == "ready"
+    assert journey["next_action"] == {
+        "code": "generate_graph",
+        "phase": "graph",
+        "source_id": source["source_id"],
+        "source_name": pdf_path.name,
+    }

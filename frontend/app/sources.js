@@ -295,10 +295,20 @@
           }
           state.structure = null;
           await root.refreshWorkspaceContext({ preferredSourceId: caricate[0] });
-          const nuova = state.sources.find((item) => item.source_id === caricate[0]);
+          const nuove = state.sources.filter((item) => caricate.includes(item.source_id));
+          const nuova = nuove[0];
+          const soloPdf = nuove.length > 0 && nuove.every((item) => item.source_kind === "pdf");
+          const conPdf = nuove.some((item) => item.source_kind === "pdf");
+          let corpoNotice;
+          if (nuove.length === 1 && soloPdf) corpoNotice = t("doc.oraPdf", { f: nuova.file_name });
+          else if (soloPdf) corpoNotice = t("doc.oraPdfGenerico");
+          else if (conPdf) corpoNotice = t("doc.oraFontiMiste");
+          else corpoNotice = nuova
+            ? t("doc.oraStruttura", { f: nuova.file_name })
+            : t("doc.oraStrutturaGenerico");
           state.notice = {
             title: t(caricate.length === 1 ? "doc.caricatoOk" : "doc.caricatiOk", { n: caricate.length }),
-            body: nuova ? t("doc.oraStruttura", { f: nuova.file_name }) : t("doc.oraStrutturaGenerico"),
+            body: corpoNotice,
           };
         } catch (errore) {
           state.sourceError = errore.message;
@@ -385,16 +395,20 @@
 
     renderDecisione() {
       if (!state.workspace) return "";
-      const totale = root.fileSorgenti().length;
+      const fonti = root.fileSorgenti();
+      const totale = fonti.length;
       if (!totale) {
         return `<div class="decisione-riga"><div class="decisione-testo">
           <strong>${esc(t("doc.nessunCaricato"))}</strong><span>${esc(t("doc.nessunCaricatoTesto"))}</span></div></div>`;
       }
+      const soloPdf = fonti.every((fonte) => fonte.source_kind === "pdf");
+      const conPdf = fonti.some((fonte) => fonte.source_kind === "pdf");
+      const prossimo = soloPdf ? t("doc.prossimoPdf") : conPdf ? t("doc.prossimoMisto") : t("doc.prossimo");
       return `<div class="decisione-riga">
         <div class="decisione-testo"><strong>${esc(n(totale, "doc.caricati"))}</strong>
-          <span>${esc(t("doc.prossimo"))}</span></div>
+          <span>${esc(prossimo)}</span></div>
         <div class="decisione-azioni">
-          <button type="button" class="btn primario" data-vai="structure">${esc(t("doc.continua"))}</button>
+          <button type="button" class="btn primario" data-vai="structure">${esc(t(soloPdf ? "doc.continuaPdf" : "doc.continua"))}</button>
         </div></div>`;
     },
 

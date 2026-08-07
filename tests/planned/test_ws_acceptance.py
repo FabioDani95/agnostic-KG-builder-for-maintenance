@@ -120,11 +120,11 @@ def test_g1_workspace_home_lists_and_reopens_the_current_workspace(
                 "status": "awaiting_review",
                 "document_count": 1,
                 "updated_at": uploaded.json()["source"]["created_at"],
-                "recommended_phase": "documents",
-                "recommended_source_id": None,
-                "recommended_source_name": None,
-                "next_action": "workspace_ready",
-                "attention_count": 0,
+                "recommended_phase": "graph",
+                "recommended_source_id": uploaded.json()["source"]["source_id"],
+                "recommended_source_name": "home-manual.pdf",
+                "next_action": "generate_graph",
+                "attention_count": 1,
             }
         ]
 

@@ -421,8 +421,8 @@
   </div></div>`;
 
   const esitoRimandato = () => `<div class="lavoro-pad"><section class="deferred-card">
-    <span class="deferred-icon" aria-hidden="true">PDF</span>
-    <div><strong>${esc(t("fon.pdfEsito"))}</strong><p>${esc(t("fon.pdfEsitoTesto"))}</p></div>
+    <span class="deferred-icon" aria-hidden="true">…</span>
+    <div><strong>${esc(t("gr.pdfDifferito"))}</strong><p>${esc(t("gr.pdfDifferitoTesto"))}</p></div>
   </section></div>`;
 
   const corpoEsito = (fonte) => {
@@ -435,19 +435,29 @@
         <button type="button" class="btn primario" data-riprova>${esc(t("ui.riprova"))}</button></div></div>`;
     }
     const vista = vistaGrafo();
-    if (!vista || vista.state === "waiting") return nonConfermata();
+    if (!vista || vista.state === "waiting") {
+      if (fonte.source_kind === "pdf") {
+        return `<div class="lavoro-pad"><div class="vuoto">
+          <strong>${esc(t("gr.pdfPreparazione"))}</strong><p>${esc(t("gr.pdfPreparazioneTesto"))}</p>
+        </div></div>`;
+      }
+      return nonConfermata();
+    }
     if (vista.state === "deferred") return esitoRimandato();
     if (!vista.subgraph) {
       /* Se un grafo c'era già ed è sparito, è stata una scelta dell'operatore
          a farlo sparire: va detto, non lasciato indovinare. */
       const voce = root.journeySource ? root.journeySource(fonte.source_id) : null;
       const rifatto = voce && voce.graph_revision_count > 0;
+      const testo = rifatto
+        ? (fonte.source_kind === "pdf" ? "fon.pdfRifareTesto" : "fon.rifareTesto")
+        : (fonte.source_kind === "pdf" ? "fon.pdfDaCostruireTesto" : "fon.daCostruireTesto");
       return `<div class="lavoro-pad"><div class="vuoto">
         <strong>${esc(t(rifatto ? "fon.rifare" : "fon.daCostruire"))}</strong>
-        <p>${esc(t(rifatto ? "fon.rifareTesto" : "fon.daCostruireTesto"))}</p>
+        <p>${esc(t(testo))}</p>
       </div></div>`;
     }
-    return root.sottografo.mappa(root.sottografo.modello(vista));
+    return `${root.sottografo.ambito(vista)}${root.sottografo.mappa(root.sottografo.modello(vista))}`;
   };
 
   /**
@@ -464,7 +474,7 @@
 
   const CONTENUTO = {
     dati: { lettura: corpoLettura, esito: corpoEsito },
-    pdf: { lettura: letturaPdf, esito: esitoRimandato },
+    pdf: { lettura: letturaPdf, esito: corpoEsito },
   };
   const contenutoDi = (fonte) => CONTENUTO[fonte.source_kind === "pdf" ? "pdf" : "dati"];
 
@@ -476,7 +486,6 @@
       return profilo && profilo.confirmed ? `<span class="passo-fatto" aria-hidden="true">✓</span>` : "";
     }
     const vista = vistaGrafo();
-    if (fonte.source_kind === "pdf") return "";
     if (!vista || vista.state === "waiting") return `<span class="passo-chiuso" aria-hidden="true">·</span>`;
     if (!vista.subgraph) return "";
     return `<span class="passo-conto">${vista.subgraph.nodes.length}</span>`;
@@ -527,6 +536,7 @@
             vista ? `<span class="chip ${tono}">${esc(root.etichettaStato(vista.state))}</span>` : "",
             grafo ? `<span class="chip"><b>${grafo.nodes.length}</b> ${esc(t("gr.vista.elementi").toLocaleLowerCase())}</span>` : "",
             grafo ? `<span class="chip"><b>${grafo.relations.length}</b> ${esc(t("gr.vista.collegamenti").toLocaleLowerCase())}</span>` : "",
+            root.sottografo ? root.sottografo.chipAmbito(grafo) : "",
           ].filter(Boolean).join(""),
         };
       }
@@ -589,7 +599,7 @@
         : mia ? "" : (mioJoin ? cartaJoin(join) : "");
 
       return `
-        <div class="intestazione-lavoro"><p>${esc(t("str.sotto"))}</p></div>
+        <div class="intestazione-lavoro"><p>${esc(t(fonte.source_kind === "pdf" ? "str.sottoPdf" : "str.sotto"))}</p></div>
         ${striscia(fonte, profilo)}
         <div class="lavoro-scorri"><div class="lavoro-pad">
           ${carta}${carta ? '<div style="height:18px"></div>' : ""}
@@ -786,7 +796,10 @@
         const pdf = fonte.source_kind === "pdf";
         return `<div class="decisione-riga"><div class="decisione-testo">
           <strong>${esc(pdf ? t("str.pdfPronto") : t("stato.inLettura"))}</strong>
-          <span>${esc(pdf ? t("fon.pdfProntoTesto") : t("str.inLetturaTesto"))}</span></div></div>${errore}`;
+          <span>${esc(pdf ? t("fon.pdfProntoTesto") : t("str.inLetturaTesto"))}</span></div>
+          ${pdf ? `<div class="decisione-azioni">
+            <button type="button" class="btn primario" data-passo="esito">${esc(t("fon.passo.esito"))}</button>
+          </div>` : ""}</div>${errore}`;
       }
       const mancanti = profili().filter((p) => !p.confirmed).length;
       if (profilo && !profilo.confirmed && profilo.state === "prepared") {
