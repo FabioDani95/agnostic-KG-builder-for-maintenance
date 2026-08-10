@@ -1,0 +1,38 @@
+{
+  "measurement_status": "offline_deterministic_preflight_on_same_selected_pages_after_v6_role_partition",
+  "model": "gpt-5.6-luna",
+  "selected_pages": 30,
+  "diagnostic_pages": [37, 38, 39],
+  "structural_pages_count": 27,
+  "retrieval_pages_count": 54,
+  "chunk_count": 9,
+  "chunk_ranges": [
+    [37, 39],
+    [8, 8],
+    [13, 13],
+    [15, 15],
+    [17, 25],
+    [28, 28],
+    [32, 33],
+    [35, 35],
+    [40, 50]
+  ],
+  "central_estimated_cost_usd": 0.10117,
+  "conservative_max_cost_usd": 0.292889,
+  "post_scoping_maximum_call_count": 16,
+  "by_stage_max_usd": {
+    "scoping_already_spent": 0.004452,
+    "draft": 0.241037,
+    "coverage_completion": 0.0144,
+    "resolution_completion": 0.033
+  },
+  "assumptions": {
+    "sdk_retries": 0,
+    "manual_retries": 0,
+    "draft_parse_retries": 0,
+    "cached_input_credit": 0,
+    "ceiling_prompt_tokens_per_character": 1,
+    "fixed_prompt_overhead_characters_per_chunk": 30000
+  },
+  "note": "This estimates spend only. It does not establish semantic acceptance; the v6 real micro-benchmark remained 0/8 because causal relations were absent."
+}

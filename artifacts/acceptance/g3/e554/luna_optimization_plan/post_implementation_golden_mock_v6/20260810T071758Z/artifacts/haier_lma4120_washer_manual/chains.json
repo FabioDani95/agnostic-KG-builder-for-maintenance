@@ -1,0 +1,58 @@
+[
+  {
+    "triplet_index": 0,
+    "symptom_id": "SYM-001",
+    "symptom": "Machine does not drain or drains slowly The washing machine does not drain or drains slowly and displays E1.",
+    "failure_mode": "Drain hose blocked The drain hose is blocked.",
+    "failure_mode_name": "Drain hose blocked",
+    "failure_mode_id": "FM-001",
+    "error_code": "E1",
+    "source": "projection",
+    "corrective_action": "Remove the blockage Remove the drain blockage and push Start/Pause once. Remove the blockage. Push the Start/Pause button once.",
+    "corrective_action_name": "Remove the blockage",
+    "action_id": "CA-001",
+    "status": "matched"
+  },
+  {
+    "triplet_index": 1,
+    "symptom_id": "SYM-002",
+    "symptom": "Display shows E4 The washing machine display shows E4.",
+    "failure_mode": "Water inlet valve blocked The water inlet valve is blocked.",
+    "failure_mode_name": "Water inlet valve blocked",
+    "failure_mode_id": "FM-002",
+    "error_code": "E4",
+    "source": "projection",
+    "corrective_action": "Clean the water inlet valve Clean the water inlet valve and restart operation. Clean the water inlet valve. Push the Start/Pause button once.",
+    "corrective_action_name": "Clean the water inlet valve",
+    "action_id": "CA-002",
+    "status": "matched"
+  },
+  {
+    "triplet_index": 2,
+    "symptom_id": "SYM-003",
+    "symptom": "No draining The washer does not drain during rinse or spin.",
+    "failure_mode": "Drain motor does not act when voltage exists The drain motor does not act even though voltage exists at its terminals.",
+    "failure_mode_name": "Drain motor does not act when voltage exists",
+    "failure_mode_id": "FM-003",
+    "error_code": "",
+    "source": "projection",
+    "corrective_action": "Replace the drain motor Replace the drain motor. Replace the drain motor.",
+    "corrective_action_name": "Replace the drain motor",
+    "action_id": "CA-003",
+    "status": "matched"
+  },
+  {
+    "triplet_index": 3,
+    "symptom_id": "SYM-004",
+    "symptom": "Keep filling water Water continues filling when it should not.",
+    "failure_mode": "Water can fill into the water inlet valve without power Water enters the water inlet valve with power off.",
+    "failure_mode_name": "Water can fill into the water inlet valve without power",
+    "failure_mode_id": "FM-004",
+    "error_code": "",
+    "source": "projection",
+    "corrective_action": "Replace the water inlet valve Replace the water inlet valve. Replace the water inlet valve.",
+    "corrective_action_name": "Replace the water inlet valve",
+    "action_id": "CA-004",
+    "status": "matched"
+  }
+]

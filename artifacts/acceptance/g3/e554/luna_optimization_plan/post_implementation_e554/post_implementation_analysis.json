@@ -1,0 +1,2370 @@
+{
+  "integrity": {
+    "baseline_after": {
+      "approval_decision_id": null,
+      "input_config_hash": "a56332c883f2ab0f6372aabad39c2e49c568bd0d8efc9a58bcff695af3b871e6",
+      "revision_id": "sgrev_OR8HyabEt7ntt0Z00LZEoA",
+      "status": "reviewing",
+      "workspace_id": "ws_ebXgqKWDDgsjKdrGbFDiQQ"
+    },
+    "baseline_before": {
+      "approval_decision_id": null,
+      "input_config_hash": "a56332c883f2ab0f6372aabad39c2e49c568bd0d8efc9a58bcff695af3b871e6",
+      "revision_id": "sgrev_OR8HyabEt7ntt0Z00LZEoA",
+      "status": "reviewing",
+      "workspace_id": "ws_ebXgqKWDDgsjKdrGbFDiQQ"
+    },
+    "baseline_unchanged": true,
+    "csv_processed": false,
+    "experimental_decision_id": null,
+    "experimental_revision_id": "sgrev_SFIdPe_n3ITEJyqxUkFPrw",
+    "experimental_status": "reviewing",
+    "experimental_workspace_id": "ws_PFJFoXKzA2TjEW4pUS8Yqg",
+    "merge_started": false,
+    "review_decision_taken": false
+  },
+  "measurement_status": {
+    "v5_full_generation": "measured_real_persisted_revision",
+    "v6_microbenchmark": "measured_real_single_call_not_a_full_generation",
+    "v6_page_roles": "simulated_deterministically_on_same_persisted_scope_and_pdf_text"
+  },
+  "real_api_budget": {
+    "authorized_usd": 0.5,
+    "calls": 20,
+    "cumulative_spend_usd": 0.090817,
+    "full_generation_cost_usd": 0.079794,
+    "full_generations_completed": 1,
+    "full_generations_started": 1,
+    "ledger_matches_call_sum": true,
+    "microbenchmark_cost_usd": 0.011023,
+    "microbenchmarks_completed": 1,
+    "per_call_cost_sum_usd": 0.090817,
+    "remaining_usd": 0.409183
+  },
+  "v5_full_generation": {
+    "acceptance": {
+      "forbidden_pairings": [
+        {
+          "failure_mode": "Focusing lens damaged or dirty",
+          "found": false,
+          "symptom": "Touch Screen Buttons Are Out of Alignment"
+        },
+        {
+          "failure_mode": "Stop-disc pause circuit intermittently activates",
+          "found": false,
+          "symptom": "Laser Fume Extractor Has Reduced or No Vacuum"
+        },
+        {
+          "failure_mode": "Touch Screen Calibration Out of Adjustment",
+          "found": false,
+          "symptom": "Laser cutting path is too wide"
+        }
+      ],
+      "forbidden_pairings_found": 0,
+      "forbidden_pairings_total": 3,
+      "gold_chains_present": 0,
+      "gold_chains_total": 8,
+      "matches": [
+        {
+          "gold": "Machine stops / pause circuit",
+          "present": false
+        },
+        {
+          "gold": "Touch screen alignment",
+          "present": false
+        },
+        {
+          "gold": "Tool/layer mapping",
+          "present": false
+        },
+        {
+          "gold": "Fume extractor filters",
+          "present": false
+        },
+        {
+          "gold": "Wide laser path / nozzle",
+          "present": false
+        },
+        {
+          "gold": "Power loss / focusing lens",
+          "present": false
+        },
+        {
+          "gold": "Power loss / mirrors",
+          "present": false
+        },
+        {
+          "gold": "Power loss / nozzle debris",
+          "present": false
+        }
+      ],
+      "method": "exact normalized frozen witnesses; acceptance-only"
+    },
+    "baseline_delta": {
+      "cost_usd": -0.240672,
+      "duration_seconds": -165.879,
+      "gold_chains": -8,
+      "llm_calls": -77,
+      "nodes": -219,
+      "relations": -194,
+      "review_queue_items": -168,
+      "total_tokens": -647517
+    },
+    "canonicalization": {
+      "ambiguous_group_count": 50,
+      "ambiguous_groups": [
+        {
+          "node_ids": [
+            "comp_24vdc_power_supply",
+            "comp_24vdc_power_supply_fuse"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_24vdc_power_supply_fuse",
+            "comp_fuse"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_ac_power_cables",
+            "comp_cable"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_ac_power_cables",
+            "comp_cables"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_bearing",
+            "comp_large_pulley_bearing"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_bearing",
+            "comp_x_axis_linear_bearing"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_blower",
+            "comp_vacuum_blower"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_brass_laser_beam_nozzle",
+            "comp_laser_nozzle"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_brass_laser_beam_nozzle",
+            "comp_nozzle"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_cable",
+            "comp_cable_connection"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_cable",
+            "comp_cables"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_cable",
+            "comp_e_chain_cable"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_cable",
+            "comp_y_e_chain_cable"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_cable_connection",
+            "comp_cables"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_cables",
+            "comp_e_chain_cable"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_cables",
+            "comp_y_e_chain_cable"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_chiller",
+            "comp_laser_chiller"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_coolant_line",
+            "comp_coolant_lines"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_cover",
+            "comp_covers"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_cover",
+            "comp_gantry_side_cover"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_cover",
+            "comp_non_operator_side_gantry_cover"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_covers",
+            "comp_gantry_side_cover"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_covers",
+            "comp_non_operator_side_gantry_cover"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_diagnostic_cabinet",
+            "comp_diagnostic_cabinet_fans"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_diagnostic_cabinet",
+            "comp_diagnostic_control_cabinet"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_drag_knife",
+            "comp_drag_knife_foot"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_e_chain_cable",
+            "comp_y_e_chain_cable"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_filter",
+            "comp_vacuum_filters"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_fume_extractor",
+            "comp_fume_extractor_control_panel"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_fume_extractor",
+            "comp_fume_extractor_funnel"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_fume_extractor",
+            "comp_laser_fume_extractor"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_fume_extractor_control_panel",
+            "comp_panel"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_fume_extractor_funnel",
+            "comp_funnel"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_fuse",
+            "comp_fuse_f3_f4"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_gantry",
+            "comp_gantry_drive_gears"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_gantry",
+            "comp_gantry_limit_switches"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_gantry",
+            "comp_gantry_motor"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_gantry",
+            "comp_gantry_side_cover"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_gantry",
+            "comp_gantry_tools_switch"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_gantry",
+            "comp_non_operator_side_gantry_cover"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_gantry_drive_gears",
+            "comp_gear"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_gantry_limit_switches",
+            "comp_limit_switch"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_gantry_motor",
+            "comp_motor"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_gantry_side_cover",
+            "comp_non_operator_side_gantry_cover"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_gear",
+            "comp_gear_rack"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_gear",
+            "comp_gear_racks"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_gear",
+            "comp_spur_gear_screw"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_gear_rack",
+            "comp_gear_racks"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_head",
+            "comp_tool_head"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        },
+        {
+          "node_ids": [
+            "comp_ink",
+            "comp_ink_reservoir"
+          ],
+          "node_type": "Component",
+          "reason": "semantic similarity requires human or selective-model decision"
+        }
+      ],
+      "ambiguous_groups_truncated": true,
+      "auto_merged_count": 1,
+      "auto_merged_groups": [
+        {
+          "canonical_id": "comp_stop_disc",
+          "node_type": "Component",
+          "reason": "normalized identity plus compatible type semantics",
+          "source_ids": [
+            "comp_stop_disc",
+            "comp_stop_discs"
+          ]
+        }
+      ],
+      "policy": "deterministic_conservative_v1"
+    },
+    "exact_normalized_duplicates": 0,
+    "generation_metrics": {
+      "by_model": {
+        "gpt-5.6-luna": {
+          "cached_prompt_tokens": 0,
+          "completion_tokens": 42784,
+          "estimated_cost_usd": 0.079794,
+          "llm_calls": 19,
+          "non_cached_prompt_tokens": 142261,
+          "prompt_tokens": 142261,
+          "total_tokens": 185045
+        }
+      },
+      "cached_prompt_tokens": 0,
+      "completion_tokens": 42784,
+      "duration_seconds": 278.811,
+      "estimated_cost_usd": 0.079794,
+      "execution_mode": "real",
+      "llm_calls": 19,
+      "models": [
+        "gpt-5.6-luna"
+      ],
+      "non_cached_prompt_tokens": 142261,
+      "pricing_currency": "USD",
+      "pricing_kind": "estimated_list_price",
+      "prompt_tokens": 142261,
+      "stages": {
+        "ontology": {
+          "cached_prompt_tokens": 0,
+          "completion_tokens": 40441,
+          "details": {
+            "call_ledger": [
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 1,
+                "chunk_index": 1,
+                "completion": 1199,
+                "estimated_cost_usd": 0.002545,
+                "extraction_role": "diagnostic",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 5529,
+                "operation": "ontology_draft",
+                "prompt": 5529,
+                "reasoning_effort": "medium",
+                "total": 6728
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 2,
+                "chunk_index": 2,
+                "completion": 5460,
+                "estimated_cost_usd": 0.007677,
+                "extraction_role": "diagnostic",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 5624,
+                "operation": "ontology_draft",
+                "prompt": 5624,
+                "reasoning_effort": "medium",
+                "total": 11084
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 3,
+                "chunk_index": 3,
+                "completion": 2689,
+                "estimated_cost_usd": 0.00413,
+                "extraction_role": "diagnostic",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 4514,
+                "operation": "ontology_draft",
+                "prompt": 4514,
+                "reasoning_effort": "medium",
+                "total": 7203
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 4,
+                "chunk_index": 4,
+                "completion": 6553,
+                "estimated_cost_usd": 0.010484,
+                "extraction_role": "diagnostic",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 13102,
+                "operation": "ontology_draft",
+                "prompt": 13102,
+                "reasoning_effort": "medium",
+                "total": 19655
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 5,
+                "chunk_index": 5,
+                "completion": 2498,
+                "estimated_cost_usd": 0.004047,
+                "extraction_role": "diagnostic",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 5247,
+                "operation": "ontology_draft",
+                "prompt": 5247,
+                "reasoning_effort": "medium",
+                "total": 7745
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 6,
+                "chunk_index": 6,
+                "completion": 3245,
+                "estimated_cost_usd": 0.005,
+                "extraction_role": "diagnostic",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 5530,
+                "operation": "ontology_draft",
+                "prompt": 5530,
+                "reasoning_effort": "medium",
+                "total": 8775
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 7,
+                "chunk_index": 7,
+                "completion": 2588,
+                "estimated_cost_usd": 0.004231,
+                "extraction_role": "diagnostic",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 5625,
+                "operation": "ontology_draft",
+                "prompt": 5625,
+                "reasoning_effort": "medium",
+                "total": 8213
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 8,
+                "chunk_index": 8,
+                "completion": 1389,
+                "estimated_cost_usd": 0.002597,
+                "extraction_role": "diagnostic",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 4651,
+                "operation": "ontology_draft",
+                "prompt": 4651,
+                "reasoning_effort": "medium",
+                "total": 6040
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 9,
+                "chunk_index": 9,
+                "completion": 7609,
+                "estimated_cost_usd": 0.01046,
+                "extraction_role": "diagnostic",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 6647,
+                "operation": "ontology_draft",
+                "prompt": 6647,
+                "reasoning_effort": "medium",
+                "total": 14256
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 10,
+                "chunk_index": 10,
+                "completion": 1550,
+                "estimated_cost_usd": 0.003064,
+                "extraction_role": "structural",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 6018,
+                "operation": "ontology_draft",
+                "prompt": 6018,
+                "reasoning_effort": "medium",
+                "total": 7568
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 11,
+                "chunk_index": 0,
+                "completion": 4500,
+                "estimated_cost_usd": 0.009571,
+                "extraction_role": "finalization",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 20854,
+                "operation": "coverage_completion",
+                "pricing_model": "gpt-5.6-luna",
+                "prompt": 20854,
+                "reasoning_effort": "medium",
+                "total": 25354
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 12,
+                "chunk_index": 0,
+                "completion": 177,
+                "estimated_cost_usd": 0.001773,
+                "extraction_role": "finalization",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 7805,
+                "operation": "resolution_completion",
+                "pricing_model": "gpt-5.6-luna",
+                "prompt": 7805,
+                "reasoning_effort": "medium",
+                "total": 7982
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 13,
+                "chunk_index": 0,
+                "completion": 155,
+                "estimated_cost_usd": 0.001943,
+                "extraction_role": "finalization",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 8787,
+                "operation": "resolution_completion",
+                "pricing_model": "gpt-5.6-luna",
+                "prompt": 8787,
+                "reasoning_effort": "medium",
+                "total": 8942
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 14,
+                "chunk_index": 0,
+                "completion": 123,
+                "estimated_cost_usd": 0.001652,
+                "extraction_role": "finalization",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 7521,
+                "operation": "resolution_completion",
+                "pricing_model": "gpt-5.6-luna",
+                "prompt": 7521,
+                "reasoning_effort": "medium",
+                "total": 7644
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 15,
+                "chunk_index": 0,
+                "completion": 274,
+                "estimated_cost_usd": 0.001968,
+                "extraction_role": "finalization",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 8195,
+                "operation": "resolution_completion",
+                "pricing_model": "gpt-5.6-luna",
+                "prompt": 8195,
+                "reasoning_effort": "medium",
+                "total": 8469
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 16,
+                "chunk_index": 0,
+                "completion": 231,
+                "estimated_cost_usd": 0.002255,
+                "extraction_role": "finalization",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 9890,
+                "operation": "resolution_completion",
+                "pricing_model": "gpt-5.6-luna",
+                "prompt": 9890,
+                "reasoning_effort": "medium",
+                "total": 10121
+              },
+              {
+                "aggregate_call_count": 1,
+                "cached_prompt": 0,
+                "call_index": 17,
+                "chunk_index": 0,
+                "completion": 201,
+                "estimated_cost_usd": 0.001945,
+                "extraction_role": "finalization",
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 8521,
+                "operation": "resolution_completion",
+                "pricing_model": "gpt-5.6-luna",
+                "prompt": 8521,
+                "reasoning_effort": "medium",
+                "total": 8722
+              }
+            ],
+            "chunk_count": 10,
+            "cost_preflight": {
+              "assumptions": {
+                "cached_input_credit": 0,
+                "ceiling_prompt_tokens_per_character": 1,
+                "draft_parse_retries": 0,
+                "fixed_prompt_overhead_characters_per_chunk": 30000,
+                "manual_retries": 0,
+                "sdk_retries": 0
+              },
+              "by_stage_max_usd": {
+                "coverage_completion": 0.0114,
+                "draft": 0.26629,
+                "resolution_completion": 0.033,
+                "scoping_already_spent": 0.004452
+              },
+              "central_estimated_cost_usd": 0.109314,
+              "chunk_count": 10,
+              "conservative_max_cost_usd": 0.315142,
+              "hard_ceiling_usd": 0.49,
+              "maximum_call_count": 17,
+              "model": "gpt-5.6-luna",
+              "passed": true,
+              "policy": "pdf_relation_first_bounded_v1",
+              "preferred_cost_usd": 0.35
+            },
+            "coverage_completion": {
+              "applied": 0,
+              "dropped_duplicate": 0,
+              "dropped_no_quote": 0,
+              "returned": 0
+            },
+            "diagnostic_chunks": 9,
+            "diagnostic_pages": 18,
+            "evidence_grounding": {
+              "causal_grounding_ratio": 1.0,
+              "causal_relations_total": 36,
+              "causal_relations_without_quote": 0,
+              "nodes_flagged": 0,
+              "relations_checked": 52,
+              "relations_grounded": 52,
+              "relations_ungrounded": 0
+            },
+            "graph_closure": {
+              "applied": 0,
+              "considered": 141,
+              "skipped": "relation_first_requires_direct_evidence"
+            },
+            "graph_issue_count": 69,
+            "parse_repair_count": 0,
+            "parse_repair_events": [],
+            "reasoning_effort": "medium",
+            "resolution_completion": {
+              "attempted": 6,
+              "completed": 0,
+              "reports": [
+                {
+                  "attempted": 6,
+                  "attempts": [
+                    {
+                      "pages": [
+                        2,
+                        3,
+                        4,
+                        7,
+                        8,
+                        9
+                      ],
+                      "status": "not_found",
+                      "target_id": "fm_temperature_outside_operating_range",
+                      "target_type": "failure_mode"
+                    },
+                    {
+                      "pages": [
+                        2,
+                        3,
+                        4,
+                        7,
+                        53,
+                        54
+                      ],
+                      "status": "not_found",
+                      "target_id": "fm_humidity_outside_operating_range",
+                      "target_type": "failure_mode"
+                    },
+                    {
+                      "pages": [
+                        7,
+                        8,
+                        11,
+                        12,
+                        13,
+                        14
+                      ],
+                      "status": "not_found",
+                      "target_id": "fm_low_blower_pressure_at_high_altitude",
+                      "target_type": "failure_mode"
+                    },
+                    {
+                      "pages": [
+                        12,
+                        13,
+                        14,
+                        38,
+                        39,
+                        40
+                      ],
+                      "status": "not_found",
+                      "target_id": "fm_electrical_power_disturbance",
+                      "target_type": "failure_mode"
+                    },
+                    {
+                      "pages": [
+                        12,
+                        13,
+                        14,
+                        23,
+                        24,
+                        25
+                      ],
+                      "status": "not_found",
+                      "target_id": "fm_unclean_shop_environment",
+                      "target_type": "failure_mode"
+                    },
+                    {
+                      "pages": [
+                        16,
+                        17,
+                        18,
+                        23,
+                        24,
+                        25
+                      ],
+                      "status": "not_found",
+                      "target_id": "fm_unclean_shop_air",
+                      "target_type": "failure_mode"
+                    }
+                  ],
+                  "completed": 0,
+                  "search_scope": "full_manual",
+                  "target_count": 6
+                }
+              ],
+              "target_count": 6
+            },
+            "retry_count": 0,
+            "schema_issue_count": 10,
+            "selected_pages": 30,
+            "selected_sections": 32,
+            "semantic_issue_count": 0,
+            "status": "ready",
+            "structural_chunks": 1,
+            "structural_pages": 12,
+            "suggested_relation_count": 0
+          },
+          "duration_seconds": 262.377,
+          "estimated_cost_usd": 0.075342,
+          "llm_calls": 17,
+          "models": [
+            "gpt-5.6-luna"
+          ],
+          "non_cached_prompt_tokens": 134060,
+          "operations": [
+            "coverage_completion",
+            "ontology_draft",
+            "resolution_completion"
+          ],
+          "prompt_tokens": 134060,
+          "total_tokens": 174501
+        },
+        "scoping": {
+          "cached_prompt_tokens": 0,
+          "completion_tokens": 2343,
+          "details": {
+            "asset_identity_source": "workspace",
+            "call_ledger": [
+              {
+                "cached_prompt": 0,
+                "call_index": 1,
+                "completion": 748,
+                "estimated_cost_usd": 0.002155,
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 6285,
+                "operation": "scoping",
+                "pricing_model": "gpt-5.6-luna",
+                "prompt": 6285,
+                "reasoning_effort": "low",
+                "total": 7033
+              },
+              {
+                "cached_prompt": 0,
+                "call_index": 2,
+                "completion": 1595,
+                "estimated_cost_usd": 0.002297,
+                "model": "gpt-5.6-luna",
+                "non_cached_prompt": 1916,
+                "operation": "scoping",
+                "pricing_model": "gpt-5.6-luna",
+                "prompt": 1916,
+                "reasoning_effort": "low",
+                "total": 3511
+              }
+            ],
+            "ocr": {
+              "attempted": 0,
+              "candidate_pages": [],
+              "empty": 0,
+              "enabled": true,
+              "failed": 0,
+              "kept_native": 0,
+              "skipped_budget": 0,
+              "succeeded": 0,
+              "unavailable": false
+            },
+            "page_offset": 0,
+            "reasoning_effort": "low",
+            "selected_pages": 30,
+            "selected_sections": 32,
+            "skipped": false,
+            "total_pages": 54
+          },
+          "duration_seconds": 15.764,
+          "estimated_cost_usd": 0.004452,
+          "llm_calls": 2,
+          "models": [
+            "gpt-5.6-luna"
+          ],
+          "non_cached_prompt_tokens": 8201,
+          "operations": [
+            "scoping"
+          ],
+          "prompt_tokens": 8201,
+          "total_tokens": 10544
+        }
+      },
+      "total_tokens": 185045
+    },
+    "knowledge_gaps_by_code": {
+      "canonicalization_ambiguous": 50,
+      "diagnostic_failure_without_action": 9,
+      "diagnostic_failure_without_component": 8,
+      "diagnostic_missing_corrective_action": 6,
+      "diagnostic_missing_failure_mode": 2,
+      "diagnostic_unlinked_or_noncorrective_action": 3,
+      "pdf_evidence_quote_unresolved": 1,
+      "pdf_node_provenance_unresolved": 1,
+      "pdf_prepublication_graph_issue_summary": 1,
+      "pdf_relation_endpoint_omitted": 1,
+      "pdf_relation_provenance_unresolved": 1,
+      "pdf_schema_instruction_not_actionable": 1,
+      "pdf_schema_material_context_not_linked": 1
+    },
+    "pipeline_version": "pdf-g3-relation-first-publication-v5",
+    "preflight": {
+      "assumptions": {
+        "cached_input_credit": 0,
+        "ceiling_prompt_tokens_per_character": 1,
+        "draft_parse_retries": 0,
+        "fixed_prompt_overhead_characters_per_chunk": 30000,
+        "manual_retries": 0,
+        "sdk_retries": 0
+      },
+      "by_stage_max_usd": {
+        "coverage_completion": 0.0114,
+        "draft": 0.26629,
+        "resolution_completion": 0.033,
+        "scoping_already_spent": 0.004452
+      },
+      "central_estimated_cost_usd": 0.109314,
+      "chunk_count": 10,
+      "conservative_max_cost_usd": 0.315142,
+      "hard_ceiling_usd": 0.49,
+      "maximum_call_count": 17,
+      "model": "gpt-5.6-luna",
+      "passed": true,
+      "policy": "pdf_relation_first_bounded_v1",
+      "preferred_cost_usd": 0.35
+    },
+    "projections": {
+      "canonical": {
+        "components": 144,
+        "corrective_actions": 13,
+        "corrective_actions_without_failure": 0,
+        "diagnostically_involved_components": 7,
+        "failure_modes": 11,
+        "failure_modes_without_action": 0,
+        "failure_modes_without_component": 4,
+        "failure_modes_without_symptom": 0,
+        "isolated_nodes": 0,
+        "nodes": 180,
+        "nodes_by_type": {
+          "Asset": 1,
+          "Component": 144,
+          "CorrectiveAction": 13,
+          "FailureMode": 11,
+          "Symptom": 11
+        },
+        "relations": 175,
+        "relations_by_type": {
+          "AFFECTS": 7,
+          "HAS_COMPONENT": 144,
+          "MAY_INDICATE": 11,
+          "RESOLVED_BY": 13
+        },
+        "symptoms": 11,
+        "symptoms_with_complete_path": 11
+      },
+      "diagnostic": {
+        "components": 7,
+        "corrective_actions": 13,
+        "corrective_actions_without_failure": 0,
+        "diagnostically_involved_components": 7,
+        "failure_modes": 11,
+        "failure_modes_without_action": 0,
+        "failure_modes_without_component": 4,
+        "failure_modes_without_symptom": 0,
+        "isolated_nodes": 0,
+        "nodes": 42,
+        "nodes_by_type": {
+          "Component": 7,
+          "CorrectiveAction": 13,
+          "FailureMode": 11,
+          "Symptom": 11
+        },
+        "relations": 31,
+        "relations_by_type": {
+          "AFFECTS": 7,
+          "MAY_INDICATE": 11,
+          "RESOLVED_BY": 13
+        },
+        "symptoms": 11,
+        "symptoms_with_complete_path": 11
+      },
+      "structural": {
+        "components": 144,
+        "corrective_actions": 0,
+        "corrective_actions_without_failure": 0,
+        "diagnostically_involved_components": 0,
+        "failure_modes": 0,
+        "failure_modes_without_action": 0,
+        "failure_modes_without_component": 0,
+        "failure_modes_without_symptom": 0,
+        "isolated_nodes": 0,
+        "nodes": 145,
+        "nodes_by_type": {
+          "Asset": 1,
+          "Component": 144
+        },
+        "relations": 144,
+        "relations_by_type": {
+          "HAS_COMPONENT": 144
+        },
+        "symptoms": 0,
+        "symptoms_with_complete_path": 0
+      }
+    },
+    "publication_metrics": {
+      "ambiguous_near_duplicates": 50,
+      "auto_merged_duplicates": 1,
+      "candidate_corrective_actions": 16,
+      "candidate_nodes": 200,
+      "candidate_relations": 191,
+      "diagnostic_components": 7,
+      "excluded_ungrounded_relations": 0,
+      "grounded_relations": 175,
+      "isolated_nodes": 0,
+      "knowledge_gaps": 85,
+      "nodes_by_type": {
+        "Asset": 1,
+        "Component": 144,
+        "CorrectiveAction": 13,
+        "FailureMode": 11,
+        "Symptom": 11
+      },
+      "published_corrective_actions": 13,
+      "published_corrective_actions_without_failure": 0,
+      "published_failure_modes": 11,
+      "published_failure_modes_without_action": 0,
+      "published_failure_modes_without_component": 4,
+      "published_failure_modes_without_indicator": 0,
+      "published_nodes": 180,
+      "published_relations": 175,
+      "published_symptoms": 11,
+      "published_symptoms_with_complete_path": 11,
+      "relations_by_type": {
+        "AFFECTS": 7,
+        "HAS_COMPONENT": 144,
+        "MAY_INDICATE": 11,
+        "RESOLVED_BY": 13
+      },
+      "review_queue_items": 82,
+      "structural_components": 144,
+      "ungrounded_relations": 0
+    },
+    "review_summary": {
+      "blocking": 0,
+      "by_code": {
+        "canonicalization_ambiguous": 50,
+        "diagnostic_failure_without_action": 9,
+        "diagnostic_failure_without_component": 8,
+        "diagnostic_missing_corrective_action": 6,
+        "diagnostic_missing_failure_mode": 2,
+        "pdf_evidence_quote_unresolved": 1,
+        "pdf_node_provenance_unresolved": 1,
+        "pdf_prepublication_graph_issue_summary": 1,
+        "pdf_relation_endpoint_omitted": 1,
+        "pdf_relation_provenance_unresolved": 1,
+        "pdf_schema_instruction_not_actionable": 1,
+        "pdf_schema_material_context_not_linked": 1
+      },
+      "total": 82
+    },
+    "scope": {
+      "diagnostic_pages": [
+        8,
+        13,
+        15,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        28,
+        32,
+        33,
+        35,
+        37,
+        38
+      ],
+      "method": "retained_cut_plan",
+      "page_offset": 0,
+      "retrieval_pages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54
+      ],
+      "sections": [
+        {
+          "end_page": 8,
+          "name": "INSTALLATION",
+          "source": "rule",
+          "start_page": 8
+        },
+        {
+          "end_page": 12,
+          "name": "Chiller Installation",
+          "source": "rule",
+          "start_page": 12
+        },
+        {
+          "end_page": 12,
+          "name": "Co2 Tank Installation",
+          "source": "rule",
+          "start_page": 12
+        },
+        {
+          "end_page": 12,
+          "name": "Fume extractor hose and Festoon installation",
+          "source": "rule",
+          "start_page": 12
+        },
+        {
+          "end_page": 12,
+          "name": "Gantry Installation",
+          "source": "rule",
+          "start_page": 12
+        },
+        {
+          "end_page": 12,
+          "name": "Vacuum Assembly Installation",
+          "source": "rule",
+          "start_page": 12
+        },
+        {
+          "end_page": 13,
+          "name": "Aligning, Cleaning and Replacing Consumables",
+          "source": "rule",
+          "start_page": 13
+        },
+        {
+          "end_page": 13,
+          "name": "SERVICE and MAINTENANCE",
+          "source": "rule",
+          "start_page": 13
+        },
+        {
+          "end_page": 14,
+          "name": "Round Knife Replacement",
+          "source": "rule",
+          "start_page": 14
+        },
+        {
+          "end_page": 15,
+          "name": "Drag Knife Replacement",
+          "source": "rule",
+          "start_page": 15
+        },
+        {
+          "end_page": 16,
+          "name": "Pen Replacement",
+          "source": "rule",
+          "start_page": 16
+        },
+        {
+          "end_page": 16,
+          "name": "Punch Replacement",
+          "source": "rule",
+          "start_page": 16
+        },
+        {
+          "end_page": 18,
+          "name": "Cleaning of Airbrush",
+          "source": "rule",
+          "start_page": 17
+        },
+        {
+          "end_page": 18,
+          "name": "Needle Removal",
+          "source": "rule",
+          "start_page": 17
+        },
+        {
+          "end_page": 19,
+          "name": "Theta-Motor Belt Replacement",
+          "source": "rule",
+          "start_page": 19
+        },
+        {
+          "end_page": 19,
+          "name": "X-Axis Linear Bearing Replacement",
+          "source": "rule",
+          "start_page": 19
+        },
+        {
+          "end_page": 20,
+          "name": "Y-Axis Top Linear Bearing Replacement",
+          "source": "rule",
+          "start_page": 20
+        },
+        {
+          "end_page": 21,
+          "name": "Y-Axis Front Linear Bearing Replacement",
+          "source": "rule",
+          "start_page": 21
+        },
+        {
+          "end_page": 22,
+          "name": "Laser Mirror Replacement",
+          "source": "rule",
+          "start_page": 22
+        },
+        {
+          "end_page": 23,
+          "name": "Laser Focus Lens Replacement",
+          "source": "rule",
+          "start_page": 23
+        },
+        {
+          "end_page": 24,
+          "name": "Fume Extractor Filter Replacement",
+          "source": "rule",
+          "start_page": 24
+        },
+        {
+          "end_page": 24,
+          "name": "Laser Optics Cleaning",
+          "source": "rule",
+          "start_page": 24
+        },
+        {
+          "end_page": 25,
+          "name": "CALIBRATION & ADJUSTMENTS",
+          "source": "rule",
+          "start_page": 25
+        },
+        {
+          "end_page": 25,
+          "name": "Pressure Transducer Calibration",
+          "source": "rule",
+          "start_page": 25
+        },
+        {
+          "end_page": 28,
+          "name": "Daily Maintenance (Start of each shift)",
+          "source": "rule",
+          "start_page": 28
+        },
+        {
+          "end_page": 28,
+          "name": "Gantry Calibration Procedure",
+          "source": "rule",
+          "start_page": 28
+        },
+        {
+          "end_page": 28,
+          "name": "Laser Mirror Alignment/Adjustment",
+          "source": "rule",
+          "start_page": 28
+        },
+        {
+          "end_page": 28,
+          "name": "SCHEDULES MAINTENANCE PROCEDURES",
+          "source": "rule",
+          "start_page": 28
+        },
+        {
+          "end_page": 36,
+          "name": "Yearly Maintenance Checklist",
+          "source": "rule",
+          "start_page": 31
+        },
+        {
+          "end_page": 38,
+          "name": "TROUBLE SHOOTING GUIDE",
+          "source": "rule",
+          "start_page": 37
+        },
+        {
+          "end_page": 39,
+          "name": "ELECTRICAL & PNEUMATIC DIAGRAMS",
+          "source": "rule",
+          "start_page": 39
+        },
+        {
+          "end_page": 50,
+          "name": "Pneumatic Diagram Blue Print No. (31-9000-41)",
+          "source": "rule",
+          "start_page": 40
+        }
+      ],
+      "selected_pages": [
+        8,
+        13,
+        15,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        28,
+        32,
+        33,
+        35,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50
+      ],
+      "skipped": false,
+      "structural_pages": [
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50
+      ],
+      "total_pages": 54,
+      "unselected_pages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        11,
+        12,
+        14,
+        16,
+        26,
+        27,
+        29,
+        30,
+        31,
+        34,
+        36,
+        51,
+        52,
+        53,
+        54
+      ]
+    },
+    "validation": {
+      "domain_range_errors": 0,
+      "duplicate_ids": 0,
+      "endpoint_errors": 0,
+      "extra_properties": 0,
+      "graph_invariant_errors": 0,
+      "issues": [],
+      "passed": true,
+      "provenance_resolvable": 358,
+      "provenance_total": 358,
+      "relation_grounding_passed": 175,
+      "relation_grounding_total": 175,
+      "required_properties_present": 760,
+      "required_properties_total": 760,
+      "unresolved_mapping_diagnostics": 0
+    }
+  },
+  "v6_post_fix": {
+    "interpretation": "The role boundary fix recovers the correct diagnostic pages and the model extracted most, but not all, expected symptom/failure/action concepts; the generic relation contract/coercion still yielded only derived HAS_COMPONENT relations. This is a pipeline contract failure, not evidence that a stronger model is required.",
+    "microbenchmark": {
+      "acceptance": {
+        "forbidden_pairings": [
+          {
+            "actual": null,
+            "failure_mode": "dirty focusing lens",
+            "found": false,
+            "symptom": "Touch Screen buttons are out of alignment"
+          },
+          {
+            "actual": null,
+            "failure_mode": "intermittent pause circuit",
+            "found": false,
+            "symptom": "Laser Fume Extractor has reduced vacuum or no vacuum"
+          },
+          {
+            "actual": null,
+            "failure_mode": "touch screen calibration is required",
+            "found": false,
+            "symptom": "Laser cutting path is too wide"
+          }
+        ],
+        "forbidden_pairings_found": 0,
+        "forbidden_pairings_total": 3,
+        "gold_chains_present": 0,
+        "gold_chains_total": 8,
+        "matches": [
+          {
+            "actual": {
+              "corrective_action": "",
+              "failure_mode": "",
+              "symptom": ""
+            },
+            "average_similarity": 0.0,
+            "field_similarity": {},
+            "gold": "Machine stops / pause circuit",
+            "minimum_similarity": 0.0,
+            "present": false
+          },
+          {
+            "actual": {
+              "corrective_action": "",
+              "failure_mode": "",
+              "symptom": ""
+            },
+            "average_similarity": 0.0,
+            "field_similarity": {},
+            "gold": "Touch screen alignment",
+            "minimum_similarity": 0.0,
+            "present": false
+          },
+          {
+            "actual": {
+              "corrective_action": "",
+              "failure_mode": "",
+              "symptom": ""
+            },
+            "average_similarity": 0.0,
+            "field_similarity": {},
+            "gold": "Tool/layer mapping",
+            "minimum_similarity": 0.0,
+            "present": false
+          },
+          {
+            "actual": {
+              "corrective_action": "",
+              "failure_mode": "",
+              "symptom": ""
+            },
+            "average_similarity": 0.0,
+            "field_similarity": {},
+            "gold": "Fume extractor filters",
+            "minimum_similarity": 0.0,
+            "present": false
+          },
+          {
+            "actual": {
+              "corrective_action": "",
+              "failure_mode": "",
+              "symptom": ""
+            },
+            "average_similarity": 0.0,
+            "field_similarity": {},
+            "gold": "Wide laser path / nozzle",
+            "minimum_similarity": 0.0,
+            "present": false
+          },
+          {
+            "actual": {
+              "corrective_action": "",
+              "failure_mode": "",
+              "symptom": ""
+            },
+            "average_similarity": 0.0,
+            "field_similarity": {},
+            "gold": "Power loss / focusing lens",
+            "minimum_similarity": 0.0,
+            "present": false
+          },
+          {
+            "actual": {
+              "corrective_action": "",
+              "failure_mode": "",
+              "symptom": ""
+            },
+            "average_similarity": 0.0,
+            "field_similarity": {},
+            "gold": "Power loss / mirrors",
+            "minimum_similarity": 0.0,
+            "present": false
+          },
+          {
+            "actual": {
+              "corrective_action": "",
+              "failure_mode": "",
+              "symptom": ""
+            },
+            "average_similarity": 0.0,
+            "field_similarity": {},
+            "gold": "Power loss / nozzle debris",
+            "minimum_similarity": 0.0,
+            "present": false
+          }
+        ],
+        "method": "acceptance-only semantic witness over explicit MAY_INDICATE/RESOLVED_BY paths; thresholds fixed before inspecting output: each field >=0.55 and mean >=0.65"
+      },
+      "canonicalization": {
+        "ambiguous_candidate_pair_count": 3,
+        "ambiguous_group_count": 3,
+        "ambiguous_groups": [
+          {
+            "node_ids": [
+              "comp_24vdc_power_supply",
+              "comp_24vdc_power_supply_fuse"
+            ],
+            "node_type": "Component",
+            "reason": "semantic similarity requires human or selective-model decision"
+          },
+          {
+            "node_ids": [
+              "comp_solenoid",
+              "comp_solenoid_block"
+            ],
+            "node_type": "Component",
+            "reason": "semantic similarity requires human or selective-model decision"
+          },
+          {
+            "node_ids": [
+              "ca_clean_or_replace_focusing_lens",
+              "ca_clean_or_replace_mirrors"
+            ],
+            "node_type": "CorrectiveAction",
+            "reason": "semantic similarity requires human or selective-model decision"
+          }
+        ],
+        "ambiguous_groups_truncated": false,
+        "auto_merged_count": 0,
+        "auto_merged_groups": [],
+        "policy": "deterministic_conservative_v1"
+      },
+      "gold_used_in_prompt": false,
+      "graph_issues": [
+        {
+          "affected_nodes": [
+            "sym_uit_does_not_power_up"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'UIT does not power up' has no MAY_INDICATE relation to a FailureMode.",
+          "issue_type": "broken_chain",
+          "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+        },
+        {
+          "affected_nodes": [
+            "sym_machine_pauses_during_cut"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'Machine pauses during cutting' has no MAY_INDICATE relation to a FailureMode.",
+          "issue_type": "broken_chain",
+          "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+        },
+        {
+          "affected_nodes": [
+            "sym_touch_screen_buttons_misaligned"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'Touch screen buttons are out of alignment' has no MAY_INDICATE relation to a FailureMode.",
+          "issue_type": "broken_chain",
+          "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+        },
+        {
+          "affected_nodes": [
+            "sym_cutting_tool_or_pen_does_not_move_down"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'Cutting tool or pen does not move down' has no MAY_INDICATE relation to a FailureMode.",
+          "issue_type": "broken_chain",
+          "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+        },
+        {
+          "affected_nodes": [
+            "sym_laser_fume_extractor_reduced_vacuum"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'Laser fume extractor has reduced or no vacuum' has no MAY_INDICATE relation to a FailureMode.",
+          "issue_type": "broken_chain",
+          "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+        },
+        {
+          "affected_nodes": [
+            "sym_laser_cutting_path_too_wide"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'Laser cutting path is too wide' has no MAY_INDICATE relation to a FailureMode.",
+          "issue_type": "broken_chain",
+          "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+        },
+        {
+          "affected_nodes": [
+            "sym_loss_of_laser_cutting_power"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'Loss of laser cutting power' has no MAY_INDICATE relation to a FailureMode.",
+          "issue_type": "broken_chain",
+          "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+        },
+        {
+          "affected_nodes": [
+            "sym_machine_computer_problems_from_rf_emi"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'Machine or computer problems from RF/EMI' has no MAY_INDICATE relation to a FailureMode.",
+          "issue_type": "broken_chain",
+          "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+        },
+        {
+          "affected_nodes": [
+            "fm_touch_screen_sleep_mode"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Touch screen in sleep mode' has no RESOLVED_BY relation to a CorrectiveAction.",
+          "issue_type": "missing_relation",
+          "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+        },
+        {
+          "affected_nodes": [
+            "fm_cutting_software_closed"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Cutting software closed' has no RESOLVED_BY relation to a CorrectiveAction.",
+          "issue_type": "missing_relation",
+          "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+        },
+        {
+          "affected_nodes": [
+            "fm_poe_power_supply_unpowered"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'PoE power supply unpowered' has no RESOLVED_BY relation to a CorrectiveAction.",
+          "issue_type": "missing_relation",
+          "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+        },
+        {
+          "affected_nodes": [
+            "fm_pause_circuit_intermittent_at_stop_discs"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Intermittent pause circuit at stop discs' has no RESOLVED_BY relation to a CorrectiveAction.",
+          "issue_type": "missing_relation",
+          "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+        },
+        {
+          "affected_nodes": [
+            "fm_touch_screen_out_of_calibration"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Touch screen out of calibration' has no RESOLVED_BY relation to a CorrectiveAction.",
+          "issue_type": "missing_relation",
+          "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+        },
+        {
+          "affected_nodes": [
+            "fm_tool_layer_mapping_not_assigned"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Tool and layer mapping not assigned' has no RESOLVED_BY relation to a CorrectiveAction.",
+          "issue_type": "missing_relation",
+          "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+        },
+        {
+          "affected_nodes": [
+            "fm_laser_nozzle_damaged"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Laser nozzle damaged' has no RESOLVED_BY relation to a CorrectiveAction.",
+          "issue_type": "missing_relation",
+          "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+        },
+        {
+          "affected_nodes": [
+            "fm_laser_nozzle_or_tube_bent"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Laser nozzle or tube bent' has no RESOLVED_BY relation to a CorrectiveAction.",
+          "issue_type": "missing_relation",
+          "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+        },
+        {
+          "affected_nodes": [
+            "fm_focusing_lens_dirty_or_damaged"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Focusing lens dirty or damaged' has no RESOLVED_BY relation to a CorrectiveAction.",
+          "issue_type": "missing_relation",
+          "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+        },
+        {
+          "affected_nodes": [
+            "fm_beam_deflecting_mirror_dirty_or_damaged"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Beam-deflecting mirror dirty or damaged' has no RESOLVED_BY relation to a CorrectiveAction.",
+          "issue_type": "missing_relation",
+          "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+        },
+        {
+          "affected_nodes": [
+            "fm_laser_nozzle_dirty_or_debris_obstructed"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Laser nozzle dirty or obstructed by debris' has no RESOLVED_BY relation to a CorrectiveAction.",
+          "issue_type": "missing_relation",
+          "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+        },
+        {
+          "affected_nodes": [
+            "fm_rf_emi_electrical_noise"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'RF/EMI electrical noise affecting computer controls' has no RESOLVED_BY relation to a CorrectiveAction.",
+          "issue_type": "missing_relation",
+          "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+        },
+        {
+          "affected_nodes": [
+            "sym_uit_does_not_power_up"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'UIT does not power up' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "sym_machine_pauses_during_cut"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'Machine pauses during cutting' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "sym_touch_screen_buttons_misaligned"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'Touch screen buttons are out of alignment' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "sym_cutting_tool_or_pen_does_not_move_down"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'Cutting tool or pen does not move down' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "sym_laser_fume_extractor_reduced_vacuum"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'Laser fume extractor has reduced or no vacuum' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "sym_laser_cutting_path_too_wide"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'Laser cutting path is too wide' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "sym_loss_of_laser_cutting_power"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'Loss of laser cutting power' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "sym_machine_computer_problems_from_rf_emi"
+          ],
+          "auto_fixable": false,
+          "description": "Symptom 'Machine or computer problems from RF/EMI' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "fm_touch_screen_sleep_mode"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Touch screen in sleep mode' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "fm_cutting_software_closed"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Cutting software closed' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "fm_poe_power_supply_unpowered"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'PoE power supply unpowered' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "fm_pause_circuit_intermittent_at_stop_discs"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Intermittent pause circuit at stop discs' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "fm_touch_screen_out_of_calibration"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Touch screen out of calibration' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "fm_tool_layer_mapping_not_assigned"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Tool and layer mapping not assigned' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "fm_laser_nozzle_damaged"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Laser nozzle damaged' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "fm_laser_nozzle_or_tube_bent"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Laser nozzle or tube bent' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "fm_focusing_lens_dirty_or_damaged"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Focusing lens dirty or damaged' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "fm_beam_deflecting_mirror_dirty_or_damaged"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Beam-deflecting mirror dirty or damaged' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "fm_laser_nozzle_dirty_or_debris_obstructed"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'Laser nozzle dirty or obstructed by debris' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "fm_rf_emi_electrical_noise"
+          ],
+          "auto_fixable": false,
+          "description": "FailureMode 'RF/EMI electrical noise affecting computer controls' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "ca_wake_touch_screen"
+          ],
+          "auto_fixable": false,
+          "description": "CorrectiveAction 'Wake the touch screen' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "ca_open_cutting_software"
+          ],
+          "auto_fixable": false,
+          "description": "CorrectiveAction 'Open cutting software' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "ca_adjust_pause_plunger"
+          ],
+          "auto_fixable": false,
+          "description": "CorrectiveAction 'Adjust pause plunger activation pressure' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "ca_calibrate_touch_screen"
+          ],
+          "auto_fixable": false,
+          "description": "CorrectiveAction 'Calibrate touch screen' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "ca_map_tool_and_layer"
+          ],
+          "auto_fixable": false,
+          "description": "CorrectiveAction 'Map tool and layer' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "ca_replace_damaged_laser_nozzle"
+          ],
+          "auto_fixable": false,
+          "description": "CorrectiveAction 'Replace damaged laser nozzle' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "ca_clean_or_replace_focusing_lens"
+          ],
+          "auto_fixable": false,
+          "description": "CorrectiveAction 'Clean or replace focusing lens' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "ca_clean_or_replace_mirrors"
+          ],
+          "auto_fixable": false,
+          "description": "CorrectiveAction 'Clean or replace beam-deflecting mirrors' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "ca_clean_or_replace_laser_nozzle"
+          ],
+          "auto_fixable": false,
+          "description": "CorrectiveAction 'Clean or replace laser nozzle' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "ca_install_earth_ground"
+          ],
+          "auto_fixable": false,
+          "description": "CorrectiveAction 'Install earth ground' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        },
+        {
+          "affected_nodes": [
+            "ca_install_rf_or_power_line_filters"
+          ],
+          "auto_fixable": false,
+          "description": "CorrectiveAction 'Install RF or power line filters' is not connected to any Asset in the graph.",
+          "issue_type": "orphan",
+          "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+        }
+      ],
+      "input_pages": [
+        37,
+        38,
+        39
+      ],
+      "is_ready_for_human_review": true,
+      "is_schema_compliant": false,
+      "kind": "measured_real_single_call_post_fix_microbenchmark",
+      "metrics": {
+        "by_model": {
+          "gpt-5.6-luna": {
+            "cached_prompt_tokens": 0,
+            "completion_tokens": 7915,
+            "estimated_cost_usd": 0.011023,
+            "label": "GPT-5.6 Luna",
+            "llm_calls": 1,
+            "non_cached_prompt_tokens": 7623,
+            "prompt_tokens": 7623,
+            "total_tokens": 15538
+          }
+        },
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 7915,
+        "estimated_cost_usd": 0.011023,
+        "llm_calls": 1,
+        "mining_summary": {
+          "component_count": 12,
+          "component_terms": [
+            "nozzle",
+            "led",
+            "power supply",
+            "solenoid",
+            "board",
+            "cable",
+            "cover",
+            "fuse",
+            "hand",
+            "panel",
+            "spindle",
+            "window"
+          ],
+          "error_code_count": 0,
+          "error_code_tokens": []
+        },
+        "models": [
+          "gpt-5.6-luna"
+        ],
+        "non_cached_prompt_tokens": 7623,
+        "operations": [
+          "ontology_draft"
+        ],
+        "parse_repair_events": [],
+        "pricing_models": [
+          "gpt-5.6-luna"
+        ],
+        "prompt_tokens": 7623,
+        "resolution_completion": {},
+        "retry_count": 0,
+        "total_tokens": 15538
+      },
+      "node_counts": {
+        "Asset": 1,
+        "Component": 34,
+        "CorrectiveAction": 11,
+        "ErrorCode": 0,
+        "FailureMode": 12,
+        "Symptom": 8
+      },
+      "production_pipeline_version": "pdf-g3-relation-first-publication-v6",
+      "relation_counts": {
+        "HAS_COMPONENT": 34
+      },
+      "relation_grounding": {
+        "ratio": null,
+        "resolved": 0,
+        "status": "not_available_no_direct_relations",
+        "total": 0
+      },
+      "schema_issues": [
+        {
+          "code": "instruction_not_actionable",
+          "fix_hint": "Rewrite instruction_text as numbered restorative steps (replace, reconnect, tighten, clean, adjust, calibrate, reset, ...) supported by the source page, or remove the action if the manual provides no repair procedure.",
+          "message": "CorrectiveAction 'Wake the touch screen' has instruction_text without any restorative action step (it reads like a cause, observation, or inspection note).",
+          "property_name": "instruction_text",
+          "severity": "warning",
+          "target_id": "ca_wake_touch_screen",
+          "target_type": "CorrectiveAction"
+        },
+        {
+          "code": "instruction_not_actionable",
+          "fix_hint": "Rewrite instruction_text as numbered restorative steps (replace, reconnect, tighten, clean, adjust, calibrate, reset, ...) supported by the source page, or remove the action if the manual provides no repair procedure.",
+          "message": "CorrectiveAction 'Open cutting software' has instruction_text without any restorative action step (it reads like a cause, observation, or inspection note).",
+          "property_name": "instruction_text",
+          "severity": "warning",
+          "target_id": "ca_open_cutting_software",
+          "target_type": "CorrectiveAction"
+        },
+        {
+          "code": "instruction_not_actionable",
+          "fix_hint": "Rewrite instruction_text as numbered restorative steps (replace, reconnect, tighten, clean, adjust, calibrate, reset, ...) supported by the source page, or remove the action if the manual provides no repair procedure.",
+          "message": "CorrectiveAction 'Calibrate touch screen' has instruction_text without any restorative action step (it reads like a cause, observation, or inspection note).",
+          "property_name": "instruction_text",
+          "severity": "warning",
+          "target_id": "ca_calibrate_touch_screen",
+          "target_type": "CorrectiveAction"
+        },
+        {
+          "code": "instruction_not_actionable",
+          "fix_hint": "Rewrite instruction_text as numbered restorative steps (replace, reconnect, tighten, clean, adjust, calibrate, reset, ...) supported by the source page, or remove the action if the manual provides no repair procedure.",
+          "message": "CorrectiveAction 'Map tool and layer' has instruction_text without any restorative action step (it reads like a cause, observation, or inspection note).",
+          "property_name": "instruction_text",
+          "severity": "warning",
+          "target_id": "ca_map_tool_and_layer",
+          "target_type": "CorrectiveAction"
+        },
+        {
+          "code": "instruction_not_actionable",
+          "fix_hint": "Rewrite instruction_text as numbered restorative steps (replace, reconnect, tighten, clean, adjust, calibrate, reset, ...) supported by the source page, or remove the action if the manual provides no repair procedure.",
+          "message": "CorrectiveAction 'Install RF or power line filters' has instruction_text without any restorative action step (it reads like a cause, observation, or inspection note).",
+          "property_name": "instruction_text",
+          "severity": "warning",
+          "target_id": "ca_install_rf_or_power_line_filters",
+          "target_type": "CorrectiveAction"
+        }
+      ],
+      "status": "ready"
+    },
+    "offline_page_roles": {
+      "diagnostic_pages": [
+        37,
+        38,
+        39
+      ],
+      "page_39_promoted_by_content_guard": true,
+      "retrieval_pages_count": 54,
+      "structural_pages_count": 27
+    }
+  },
+  "verdict": {
+    "reason": "Publication invariants, cost and grounding pass, but the retained full run lost all 8 acceptance chains. The post-fix one-call micro-benchmark extracted the expected entities but emitted no causal relations after coercion, so v6 is not yet proven.",
+    "status": "no_go"
+  }
+}

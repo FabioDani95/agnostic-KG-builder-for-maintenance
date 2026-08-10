@@ -65,10 +65,17 @@ def get_client(
     timeout: Timeout | float | int | None = None,
     api_key: str | None = None,
     client_factory: Any = OpenAI,
+    max_retries: int | None = None,
 ) -> Any:
     if is_mock_mode():
         return MockOpenAI()
-    return client_factory(api_key=api_key if api_key is not None else settings.OPENAI_API_KEY, timeout=timeout)
+    kwargs: dict[str, Any] = {
+        "api_key": api_key if api_key is not None else settings.OPENAI_API_KEY,
+        "timeout": timeout,
+    }
+    if max_retries is not None:
+        kwargs["max_retries"] = max(0, int(max_retries))
+    return client_factory(**kwargs)
 
 
 def get_async_client(
@@ -76,10 +83,17 @@ def get_async_client(
     timeout: Timeout | float | int | None = None,
     api_key: str | None = None,
     client_factory: Any = AsyncOpenAI,
+    max_retries: int | None = None,
 ) -> Any:
     if is_mock_mode():
         return MockAsyncOpenAI()
-    return client_factory(api_key=api_key if api_key is not None else settings.OPENAI_API_KEY, timeout=timeout)
+    kwargs: dict[str, Any] = {
+        "api_key": api_key if api_key is not None else settings.OPENAI_API_KEY,
+        "timeout": timeout,
+    }
+    if max_retries is not None:
+        kwargs["max_retries"] = max(0, int(max_retries))
+    return client_factory(**kwargs)
 
 
 class _MockUsage:

@@ -131,6 +131,36 @@ _LLM_SECTION_INCLUDE_RE = re.compile(
     r")\b"
 )
 
+# The diagnostic extraction role is intentionally narrower than broad
+# scoping. Maintenance, inspection, calibration, installation and generic
+# service chapters remain useful retrieval/structural context, but procedures
+# alone are not diagnostic chains. These patterns are multilingual record
+# semantics, not vendor, machine, manual, page or acceptance vocabulary.
+_DIAGNOSTIC_SECTION_RE = re.compile(
+    r"(?i)\b("
+    r"trouble\s*shoot(?:ing)?|diagnostic(?:s|a)?|fault\s*(?:finding|codes?)?|"
+    r"error\s*(?:messages?|codes?)?|alarm\s*(?:messages?|codes?)?|failure\s*modes?|"
+    r"problem[ -]?solving|malfunctions?|symptoms?|remed(?:y|ies)|corrective\s+actions?|"
+    r"recovery|fehler(?:suche|codes?)?|st(?:ö|o)rung(?:ssuche)?|diagnose|"
+    r"codici?\s+(?:errore|allarme)|ricerca\s+guasti?|anomal(?:ia|ie)"
+    r")\b"
+)
+
+_DIAGNOSTIC_RECORD_PATTERNS = (
+    re.compile(r"(?im)^\s*(?:problem|problema|problemstellung)\s*[:\-]"),
+    re.compile(r"(?im)^\s*(?:symptom|sintomo|symptomatik)\s*[:\-]"),
+    re.compile(r"(?im)^\s*(?:cause|causa|ursache)\s*[:\-]"),
+    re.compile(r"(?im)^\s*(?:remed(?:y|ies)|rimedio|soluzione|abhilfe|l(?:ö|o)sung)\s*[:\-]"),
+    re.compile(
+        r"(?im)^\s*(?:trouble\s*shoot(?:ing)?|diagnostic(?:s|a)?|"
+        r"fault\s*finding|ricerca\s+guasti?|fehler(?:suche)?|st(?:ö|o)rungssuche)\s*[:\-]?\s*$"
+    ),
+    re.compile(
+        r"(?im)^\s*(?:error|alarm|fault|errore|allarme|fehler|st(?:ö|o)rung)\s+"
+        r"(?:code|message|description|codice|meldung)\b"
+    ),
+)
+
 _COMPONENT_SECTION_INCLUDE_RE = re.compile(
     r"(?i)\b("
     r"parts?\s+lists?|spare\s+parts?|exploded(?:\s+views?)?|bill\s+of\s+materials|bom|"
@@ -366,6 +396,29 @@ def filter_pages_by_language(
 def is_component_inventory_section(title: str) -> bool:
     """Return True when a section title is likely to enumerate physical components."""
     return bool(_COMPONENT_SECTION_INCLUDE_RE.search(_normalize_label(title)))
+
+
+def is_diagnostic_section(title: str) -> bool:
+    """Return whether a section title explicitly denotes diagnostic records."""
+    value = str(title or "")
+    if is_component_inventory_section(value) or re.search(
+        r"(?i)\b(?:schematics?|diagrams?|drawings?|blue\s*prints?)\b", value
+    ):
+        return False
+    return bool(_DIAGNOSTIC_SECTION_RE.search(value))
+
+
+def page_has_diagnostic_record(text: str) -> bool:
+    """Detect explicit diagnostic record structure in page content.
+
+    This is a boundary guard for inaccurate ToC ranges, not an extractor. A
+    page is promoted from structural/retrieval context only when it contains a
+    strong diagnostic heading or at least two distinct record fields.
+    """
+    value = str(text or "")
+    matches = sum(bool(pattern.search(value)) for pattern in _DIAGNOSTIC_RECORD_PATTERNS)
+    has_strong_heading = bool(_DIAGNOSTIC_RECORD_PATTERNS[4].search(value))
+    return has_strong_heading or matches >= 2
 
 
 def normalize_product_info(raw_product_info: dict, filename: str = "") -> dict[str, str]:

@@ -1,0 +1,78 @@
+[
+  {
+    "symptom": {
+      "symptom_id": "SYM-001",
+      "name": "Arm jerks then stops",
+      "description": "The arm jerks and then stops during motion.",
+      "severity": "High",
+      "evidence_page": 0
+    },
+    "failure_modes": [
+      {
+        "failure_mode_id": "FM-001",
+        "name": "Loose encoder cable at joint J2",
+        "description": "The encoder cable at joint J2 is loose.",
+        "material_context": "CMP-001",
+        "linked_symptom_id": "SYM-001",
+        "evidence_page": 2,
+        "error_codes": [
+          "E17"
+        ]
+      }
+    ],
+    "corrective_actions": [
+      {
+        "action_id": "CA-001",
+        "name": "Re-seat J2 encoder cable and tighten both connector screws",
+        "description": "Re-seat the J2 encoder cable and tighten the connector screws.",
+        "instruction_text": "Re-seat J2 encoder cable and tighten both connector screws.",
+        "source_type": "service bulletin",
+        "source_title": "RoboLift RL-5 Field Notes",
+        "source_page": 2,
+        "linked_failure_mode_id": "FM-001",
+        "action_kind": "procedure"
+      }
+    ],
+    "error_codes": [
+      "E17"
+    ]
+  },
+  {
+    "symptom": {
+      "symptom_id": "SYM-002",
+      "name": "Gripper will not close",
+      "description": "The gripper will not close on command.",
+      "severity": "Medium",
+      "evidence_page": 0
+    },
+    "failure_modes": [
+      {
+        "failure_mode_id": "FM-002",
+        "name": "Low pneumatic pressure below 5 bar",
+        "description": "Pneumatic supply pressure is below 5 bar.",
+        "material_context": "CMP-002",
+        "linked_symptom_id": "SYM-002",
+        "evidence_page": 2,
+        "error_codes": [
+          "E22"
+        ]
+      }
+    ],
+    "corrective_actions": [
+      {
+        "action_id": "CA-002",
+        "name": "Restore air supply to 6 bar and repeat grip test",
+        "description": "Restore the pneumatic supply and repeat the grip test.",
+        "instruction_text": "Restore air supply to 6 bar and repeat grip test.",
+        "source_type": "service bulletin",
+        "source_title": "RoboLift RL-5 Field Notes",
+        "source_page": 2,
+        "linked_failure_mode_id": "FM-002",
+        "action_kind": "procedure"
+      }
+    ],
+    "error_codes": [
+      "E22"
+    ]
+  }
+]

@@ -50,10 +50,10 @@ _ID_FIELD_BY_TYPE: dict[str, str] = {
     "ErrorCode": "error_code_id",
 }
 
-# Relations safe to auto-apply from similarity + grounding alone. Causal
-# relations (MAY_INDICATE, RESOLVED_BY) are never auto-closed: co-occurrence
-# grounding cannot distinguish "same page" from "same diagnostic chain".
-_AUTO_CLOSE_RELATIONS = {"AFFECTS"}
+# Legacy callers can still opt into the association closure helper. The PDF G3
+# relation-first workflow does not invoke it: that publication path requires
+# direct AFFECTS evidence.
+_AUTO_CLOSE_RELATIONS: set[str] = {"AFFECTS"}
 
 # Minimum similarity confidence before a grounded candidate is auto-applied.
 # Kept above the suggestion floor (0.20) so weak token coincidences stay in the

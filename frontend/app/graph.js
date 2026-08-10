@@ -66,8 +66,13 @@
       });
     });
     const lacunePerNodo = new Map();
+    (grafo.knowledge_gaps || []).forEach((lacuna) => {
+      if (!lacuna.target_id || !nodiPerId.has(lacuna.target_id)) return;
+      if (!lacunePerNodo.has(lacuna.target_id)) lacunePerNodo.set(lacuna.target_id, []);
+      lacunePerNodo.get(lacuna.target_id).push(lacuna);
+    });
     grafo.nodes.forEach((nodo) => {
-      const lacune = [];
+      const lacune = [...(lacunePerNodo.get(nodo.node_id) || [])];
       nodo.evidence_ids.forEach((id) => (lacunePerEvidenza.get(id) || []).forEach((lacuna) => {
         if (!TIPI_TOCCATI[lacuna.code]) return;
         if (!TIPI_TOCCATI[lacuna.code].includes(nodo.node_type)) return;
@@ -121,7 +126,22 @@
     };
   };
 
-  const modelloDi = (vista) => (vista && vista.subgraph ? costruisciModello(vista.subgraph) : null);
+  const proiettaGrafo = (grafo) => {
+    const proiezioni = grafo.projections || {};
+    const scelta = proiezioni[state.graphProjection]
+      || proiezioni.diagnostic || proiezioni.canonical;
+    if (!scelta) return grafo;
+    const nodi = new Set(scelta.node_ids || []);
+    const relazioni = new Set(scelta.relation_ids || []);
+    return {
+      ...grafo,
+      nodes: grafo.nodes.filter((nodo) => nodi.has(nodo.node_id)),
+      relations: grafo.relations.filter((relazione) => relazioni.has(relazione.relation_id)),
+    };
+  };
+
+  const modelloDi = (vista) => (vista && vista.subgraph
+    ? costruisciModello(proiettaGrafo(vista.subgraph)) : null);
 
   const intervalliPagine = (pagine) => {
     const ordinate = [...new Set((pagine || []).map(Number).filter(Number.isInteger))].sort((a, b) => a - b);
@@ -144,13 +164,15 @@
     if (!ambito) return "";
     const selezionate = (ambito.selected_pages || []).length;
     const escluse = (ambito.unselected_pages || []).length;
+    const diagnostiche = (ambito.diagnostic_pages || []).length;
+    const strutturali = (ambito.structural_pages || []).length;
     return `<div class="intestazione-lavoro" data-pdf-scope>
       <p><strong>${esc(t("gr.pdfAmbitoTitolo"))}</strong> ${esc(t("gr.pdfAmbitoTesto", {
         n: selezionate,
         t: ambito.total_pages,
         r: intervalliPagine(ambito.selected_pages),
         e: escluse,
-      }))}</p>
+      }))} ${diagnostiche || strutturali ? esc(t("gr.pdfRuoli", { d: diagnostiche, s: strutturali })) : ""}</p>
     </div>`;
   };
 
@@ -272,6 +294,12 @@
         </div>
         <span class="barra-spazio"></span>
         <div class="barra-gruppo">
+          ${Object.keys(modello.grafo.projections || {}).length ? `
+          <label class="solo-lettori" for="kg-proiezione">${esc(t("gr.proiezione"))}</label>
+          <select id="kg-proiezione" data-proiezione>
+            ${["diagnostic", "structural", "canonical"].filter((id) => modello.grafo.projections[id])
+              .map((id) => `<option value="${id}" ${state.graphProjection === id ? "selected" : ""}>${esc(t(`gr.proiezione.${id}`))}</option>`).join("")}
+          </select>` : ""}
           <label class="solo-lettori" for="kg-cerca">${esc(t("gr.cerca"))}</label>
           <input id="kg-cerca" type="search" data-cerca placeholder="${esc(t("gr.cerca"))}"
             value="${esc(state.filters.query)}">
@@ -447,13 +475,17 @@
         <strong>${esc(t("gr.nienteBlocca"))}</strong><p>${esc(t("gr.nienteBloccaTesto"))}</p></div></div>`;
     }
     return `<div class="lavoro-pad">
-      ${lacune.length ? `<section class="gruppo">
+        ${lacune.length ? `<section class="gruppo">
         <div class="gruppo-capo"><h3>${esc(t("gr.lacuneTitolo", { n: lacune.length }))}</h3>
           <p>${esc(t("gr.lacuneTesto"))}</p></div>
         <div class="lista">${lacune.map((lacuna) => {
           const id = (lacuna.evidence_ids || [])[0];
           const evidenza = id ? modello.evidenzePerId.get(id) : null;
-          return `<button type="button" class="voce" ${evidenza ? `data-scegli="evidenza" data-id="${esc(id)}"` : ""}>
+          const bersaglio = lacuna.target_id && modello.nodiPerId.get(lacuna.target_id);
+          const scelta = bersaglio
+            ? `data-scegli="nodo" data-id="${esc(lacuna.target_id)}"`
+            : (evidenza ? `data-scegli="evidenza" data-id="${esc(id)}"` : "");
+          return `<button type="button" class="voce" ${scelta}>
             <span class="voce-capo"><span class="badge attesa"><span class="punto" aria-hidden="true"></span>${esc(t("gr.lacuna"))}</span>
               <strong>${esc(root.titoloLacuna(lacuna.code))}</strong></span>
             <span class="voce-testo">${esc(lacuna.message)}</span>
@@ -645,6 +677,13 @@
         const chiave = elemento.dataset.filtro;
         state.filters[chiave] = elemento.type === "checkbox" ? elemento.checked : elemento.value;
         ridisegnaContenuto();
+      });
+      root.delegate(contenitore, "change", "[data-proiezione]", (elemento) => {
+        state.graphProjection = elemento.value;
+        root.clearSelection();
+        state.filters.nodeType = "all";
+        state.filters.relationType = "all";
+        root.render({ regioni: ["lavoro", "ispettore"] });
       });
       root.delegate(contenitore, "click", "[data-zoom]", (elemento) => {
         if (!explorer) return;

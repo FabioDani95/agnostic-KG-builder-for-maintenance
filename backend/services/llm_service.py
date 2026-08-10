@@ -53,7 +53,7 @@ def call_openai_scoping(
         system_text=prompt_text,
     )
 
-    client = get_client(timeout=Timeout(cfg["timeout_seconds"], connect=10.0))
+    client = get_client(timeout=Timeout(cfg["timeout_seconds"], connect=10.0), max_retries=0)
     try:
         resolved_model = model_name or settings.MODEL_NAME
         response = client.chat.completions.create(

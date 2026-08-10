@@ -10,7 +10,12 @@ from copy import deepcopy
 
 from fastapi import HTTPException
 
-from backend.app_config import get_ontology_config
+from backend.app_config import (
+    get_coverage_completion_config,
+    get_ontology_config,
+    get_pdf_generation_cost_guard_config,
+    get_resolution_completion_config,
+)
 from backend.models import OntologyDraftRequest, OntologyPipelineResponse, OntologyRelationInstance
 from backend.services.cutplan_service import extract_asset_identity
 from backend.services.ontology_pipeline import _normalize_ontology_instance, build_initial_ontology
@@ -322,11 +327,12 @@ def _split_pages_by_section(
     max_chars: int,
     max_pages: int = 30,
 ) -> list[tuple[list[dict], list[dict]]]:
-    """Partition selected physical pages once while retaining all section labels.
+    """Pack selected physical pages once and retain intersecting section labels.
 
-    Sections may overlap (for example a troubleshooting chapter nested inside a
-    service chapter).  They are contextual labels, not independent page copies:
-    one physical page must therefore occur in exactly one ontology chunk.
+    A change in nested section signature is context, not a chunk boundary.  The
+    former behaviour fragmented 30 pages into 19 calls; packing only on page or
+    character limits preserves every page while making cost independent of ToC
+    granularity.
     """
     if not pages:
         return []
@@ -335,57 +341,50 @@ def _split_pages_by_section(
     page_map = {int(page["page_number"]): page for page in pages}
     ordered_pages = [page_map[number] for number in sorted(page_map)]
 
-    def section_signature(page_number: int) -> tuple[tuple[str, int, int, str], ...]:
-        matching = []
+    chunks: list[tuple[list[dict], list[dict]]] = []
+    chunk_pages: list[dict] = []
+    chunk_chars = 0
+
+    def flush() -> None:
+        nonlocal chunk_pages, chunk_chars
+        if not chunk_pages:
+            return
+        page_numbers = {int(page["page_number"]) for page in chunk_pages}
+        context = []
+        seen = set()
         for section in sections or []:
             start = int(section.get("start", 0) or 0)
             end = int(section.get("end", 0) or 0)
-            if start <= page_number <= end:
-                matching.append((
-                    str(section.get("name") or ""),
-                    start,
-                    end,
-                    str(section.get("source") or ""),
-                ))
-        return tuple(sorted(set(matching), key=lambda value: (value[1], value[2], value[0], value[3])))
-
-    runs: list[tuple[list[dict], tuple[tuple[str, int, int, str], ...]]] = []
-    current_pages: list[dict] = []
-    current_signature: tuple[tuple[str, int, int, str], ...] | None = None
-    for page in ordered_pages:
-        signature = section_signature(int(page["page_number"]))
-        contiguous = (
-            not current_pages
-            or int(page["page_number"]) == int(current_pages[-1]["page_number"]) + 1
-        )
-        if current_pages and (not contiguous or signature != current_signature):
-            runs.append((current_pages, current_signature or ()))
-            current_pages = []
-        current_pages.append(page)
-        current_signature = signature
-    if current_pages:
-        runs.append((current_pages, current_signature or ()))
-
-    chunks: list[tuple[list[dict], list[dict]]] = []
-    for run_pages, signature in runs:
-        context = [
-            {"name": name, "start": start, "end": end, "source": source}
-            for name, start, end, source in signature
-        ]
-        chunk_pages: list[dict] = []
+            if not any(start <= page_number <= end for page_number in page_numbers):
+                continue
+            signature = (
+                str(section.get("name") or ""), start, end, str(section.get("source") or ""),
+            )
+            if signature in seen:
+                continue
+            seen.add(signature)
+            context.append({
+                "name": signature[0], "start": start, "end": end, "source": signature[3],
+            })
+        chunks.append((chunk_pages, sorted(context, key=lambda value: (value["start"], value["end"], value["name"]))))
+        chunk_pages = []
         chunk_chars = 0
-        for page in run_pages:
-            page_chars = len(f"--- PAGE {page['page_number']} ---\n{page['text']}\n\n")
-            if chunk_pages and (
-                len(chunk_pages) >= max_pages or chunk_chars + page_chars > max_chars
-            ):
-                chunks.append((chunk_pages, context))
-                chunk_pages = []
-                chunk_chars = 0
-            chunk_pages.append(page)
-            chunk_chars += page_chars
-        if chunk_pages:
-            chunks.append((chunk_pages, context))
+
+    for page in ordered_pages:
+        page_chars = len(f"--- PAGE {page['page_number']} ---\n{page['text']}\n\n")
+        contiguous = (
+            not chunk_pages
+            or int(page["page_number"]) == int(chunk_pages[-1]["page_number"]) + 1
+        )
+        if chunk_pages and (
+            not contiguous
+            or len(chunk_pages) >= max_pages
+            or chunk_chars + page_chars > max_chars
+        ):
+            flush()
+        chunk_pages.append(page)
+        chunk_chars += page_chars
+    flush()
 
     return chunks
 
@@ -466,6 +465,7 @@ def _finalize_run_level_quality(
     all_pages: list[dict] | None = None,
     *,
     reasoning_effort: str | None = None,
+    relation_first: bool = False,
 ) -> tuple[OntologyPipelineResponse, list[dict], dict, dict]:
     """Run-level quality passes executed once on the merged ontology.
 
@@ -487,6 +487,7 @@ def _finalize_run_level_quality(
     from backend.services.evidence_grounding_service import ground_relation_evidence
     from backend.services.graph_closure_service import close_grounded_gaps
     from backend.services.graph_reasoning import run_graph_analysis
+    from backend.services.ontology_canonicalization_service import canonicalize_ontology_instance
     from backend.services.ontology_pipeline import _extract_json_object, _validate_schema
     from backend.services.resolution_completion_service import complete_resolution_gaps
 
@@ -538,6 +539,7 @@ def _finalize_run_level_quality(
             parse_json=_extract_json_object,
             search_text_with_pages=search_text_with_pages,
             reasoning_effort=reasoning_effort,
+            require_observed_indicator=relation_first,
         )
         usage_entries = [*usage_entries, *resolution_usage]
     except Exception:
@@ -559,6 +561,11 @@ def _finalize_run_level_quality(
             int(resolution_report.get("attempted", 0) or 0),
         )
 
+    # One global pass after every additive completion step handles duplicates
+    # across chunk boundaries.  Only deterministic identity equivalents merge;
+    # uncertain semantic neighbours remain distinct and enter the review report.
+    ontology, canonicalization_report = canonicalize_ontology_instance(ontology)
+
     page_text_by_page = {
         int(page["page_number"]): str(page.get("text", "") or "")
         for page in pages
@@ -569,15 +576,25 @@ def _finalize_run_level_quality(
     # operator.
     _, pre_suggestions = run_graph_analysis(ontology, schema)
     closure_stats: dict = {"considered": 0, "applied": 0}
-    try:
-        ontology, remaining_suggestions, closure_stats = close_grounded_gaps(
-            ontology,
-            pre_suggestions,
-            page_text_by_page,
-        )
-    except Exception:
-        logger.exception("[ontology] Graph closure pass failed; keeping ontology unchanged")
-        remaining_suggestions = pre_suggestions
+    if relation_first:
+        # Similarity suggestions are useful as diagnostics but not as claims and
+        # would recreate the oversized legacy review queue.
+        remaining_suggestions = []
+        closure_stats = {
+            "considered": len(pre_suggestions),
+            "applied": 0,
+            "skipped": "relation_first_requires_direct_evidence",
+        }
+    else:
+        try:
+            ontology, remaining_suggestions, closure_stats = close_grounded_gaps(
+                ontology,
+                pre_suggestions,
+                page_text_by_page,
+            )
+        except Exception:
+            logger.exception("[ontology] Graph closure pass failed; keeping ontology unchanged")
+            remaining_suggestions = pre_suggestions
     if closure_stats.get("applied"):
         ontology = _normalize_ontology_instance(
             ontology=ontology,
@@ -657,6 +674,7 @@ def _finalize_run_level_quality(
         suggested_relations=suggested_relations,
         confidence_report=confidence_report,
         resolution_completion_report=resolution_report,
+        canonicalization_report=canonicalization_report,
         review_queue=review_queue,
         review_summary=review_summary,
     )
@@ -664,6 +682,7 @@ def _finalize_run_level_quality(
         "grounding": grounding_stats,
         "closure": closure_stats,
         "coverage_completion": coverage_report,
+        "canonicalization": canonicalization_report,
     }
     return updated, usage_entries, resolution_report, quality_stats
 
@@ -714,16 +733,96 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
     sections = (store.get("cut_plan") or {}).get("sections", [])
     max_chars = int(ontology_cfg.get("max_input_chars", 600000))
     max_pages_per_chunk = int(ontology_cfg.get("max_pages_per_chunk", 30))
+    role_config = store.get("pdf_extraction_roles") or {}
+    diagnostic_page_numbers = {
+        int(value) for value in role_config.get("diagnostic_pages", [])
+    }
+    structural_page_numbers = {
+        int(value) for value in role_config.get("structural_pages", [])
+    }
+    has_role_partition = bool(diagnostic_page_numbers or structural_page_numbers)
+    if has_role_partition:
+        diagnostic_pages = [
+            page for page in filtered_pages
+            if int(page["page_number"]) in diagnostic_page_numbers
+        ]
+        structural_pages = [
+            page for page in filtered_pages
+            if int(page["page_number"]) in structural_page_numbers
+        ]
+    else:
+        diagnostic_pages = filtered_pages
+        structural_pages = []
 
-    page_chunks = _split_pages_by_section(
-        filtered_pages,
+    diagnostic_chunks = _split_pages_by_section(
+        diagnostic_pages, sections, max_chars, max_pages_per_chunk,
+    )
+    structural_chunks = _split_pages_by_section(
+        structural_pages,
         sections,
         max_chars,
-        max_pages_per_chunk,
+        int(ontology_cfg.get("structural_max_pages_per_chunk", max_pages_per_chunk)),
     )
+    diagnostic_role = "diagnostic" if has_role_partition else "legacy"
+    page_chunks = [
+        (diagnostic_role, pages, context) for pages, context in diagnostic_chunks
+    ] + [
+        ("structural", pages, context) for pages, context in structural_chunks
+    ]
+    cost_preflight: dict = {}
+    cost_guard_cfg = get_pdf_generation_cost_guard_config()
+    relation_first_run = bool(ontology_cfg.get("relation_first", False)) and has_role_partition
+    if relation_first_run and cost_guard_cfg.get("enabled", True):
+        from backend.services.pdf_cost_guard import estimate_pdf_generation_envelope
+
+        coverage_cfg = get_coverage_completion_config()
+        resolution_cfg = get_resolution_completion_config()
+        scoping_metrics = (
+            ((store.get("run_metrics") or {}).get("stages") or {}).get("scoping") or {}
+        )
+        chunk_characters = []
+        for _role, chunk_pages, chunk_sections in page_chunks:
+            header = _build_section_header(chunk_sections)
+            text = format_text_with_pages(chunk_pages)
+            chunk_characters.append(len(text) + len(header))
+        cost_preflight = estimate_pdf_generation_envelope(
+            model_name=req.model_name,
+            chunk_input_characters=chunk_characters,
+            extraction_max_output_tokens=int(ontology_cfg.get("extraction_max_output_tokens", 16000)),
+            coverage_enabled=bool(coverage_cfg.get("enabled", True)) and bool(diagnostic_pages),
+            coverage_max_input_tokens=int(coverage_cfg.get("estimated_max_input_tokens", 30000)),
+            coverage_max_output_tokens=int(coverage_cfg.get("max_output_tokens", 4500)),
+            resolution_enabled=bool(resolution_cfg.get("enabled", True)) and bool(diagnostic_pages),
+            resolution_max_targets=int(resolution_cfg.get("max_targets", 0)),
+            resolution_max_input_tokens=int(resolution_cfg.get("estimated_max_input_tokens", 12500)),
+            resolution_max_output_tokens=int(resolution_cfg.get("max_output_tokens", 2500)),
+            scoping_actual_cost_usd=float(scoping_metrics.get("estimated_cost_usd", 0) or 0),
+            scoping_actual_call_count=int(scoping_metrics.get("llm_calls", 0) or 0),
+            fixed_prompt_overhead_characters=int(
+                cost_guard_cfg.get("fixed_prompt_overhead_characters", 30000)
+            ),
+        )
+        hard_ceiling = float(cost_guard_cfg.get("hard_ceiling_usd", 0.49))
+        cost_preflight["preferred_cost_usd"] = float(
+            cost_guard_cfg.get("preferred_cost_usd", 0.35)
+        )
+        cost_preflight["hard_ceiling_usd"] = hard_ceiling
+        cost_preflight["passed"] = cost_preflight["conservative_max_cost_usd"] <= hard_ceiling
+        store["pdf_generation_cost_preflight"] = cost_preflight
+        if not cost_preflight["passed"]:
+            raise HTTPException(
+                status_code=409,
+                detail=(
+                    "PDF generation cost preflight failed: conservative maximum "
+                    f"${cost_preflight['conservative_max_cost_usd']:.6f} exceeds "
+                    f"the ${hard_ceiling:.2f} ceiling."
+                ),
+            )
     logger.info(
-        "[ontology] Drafting from %d pages, %d sections → %d chunk(s)",
+        "[ontology] Drafting from %d pages (%d diagnostic, %d structural), %d sections → %d chunk(s)",
         len(filtered_pages),
+        len(diagnostic_pages),
+        len(structural_pages),
         len(sections),
         len(page_chunks),
     )
@@ -733,7 +832,7 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
     chunk_retry_base_seconds = max(0.0, float(ontology_cfg.get("chunk_retry_base_seconds", 2)))
     chunk_semaphore = asyncio.Semaphore(chunk_concurrency)
 
-    async def _process_chunk(index, chunk_pages, chunk_sections):
+    async def _process_chunk(index, extraction_role, chunk_pages, chunk_sections):
         # Only describe the sections these pages actually belong to: listing the
         # whole manual's sections on an uncovered-pages chunk is prompt noise
         # that invites wrong section attributions.
@@ -744,9 +843,10 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
 
         page_numbers = [page["page_number"] for page in chunk_pages]
         logger.info(
-            "[ontology] Chunk %d/%d — %d sections, pages %d-%d (%d chars)",
+            "[ontology] Chunk %d/%d [%s] — %d sections, pages %d-%d (%d chars)",
             index,
             len(page_chunks),
+            extraction_role,
             len(chunk_sections),
             min(page_numbers),
             max(page_numbers),
@@ -762,6 +862,11 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                     model_name=req.model_name,
                     reasoning_effort=req.reasoning_effort,
                     asset_identity=asset_identity,
+                    extraction_role=extraction_role,
+                    relation_first=(
+                        bool(ontology_cfg.get("relation_first", False))
+                        and extraction_role != "legacy"
+                    ),
                     on_event=on_event,
                 ),
                 attempts=chunk_retry_attempts,
@@ -770,11 +875,12 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
         metrics["chunk_index"] = index
         metrics["chunk_pages"] = len(chunk_pages)
         metrics["section_count"] = len(chunk_sections)
+        metrics["extraction_role"] = extraction_role
         return result, metrics
 
     tasks = [
-        _process_chunk(index, chunk_pages, chunk_sections)
-        for index, (chunk_pages, chunk_sections) in enumerate(page_chunks, start=1)
+        _process_chunk(index, extraction_role, chunk_pages, chunk_sections)
+        for index, (extraction_role, chunk_pages, chunk_sections) in enumerate(page_chunks, start=1)
     ]
     gathered = await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -789,15 +895,43 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
         chunk_results.append(result)
         chunk_metrics.append(metrics)
 
+    # Relation-first chunks are deliberately bounded to one model call. Keep
+    # the exact per-call accounting in the persisted revision so a real-run
+    # budget can be audited without reconstructing it from stage aggregates.
+    ontology_call_ledger: list[dict] = []
+    for metrics in chunk_metrics:
+        call_count = int(metrics.get("llm_calls", 0) or 0)
+        if not call_count:
+            continue
+        models_for_chunk = list(metrics.get("models") or [])
+        operations_for_chunk = list(metrics.get("operations") or [])
+        ontology_call_ledger.append({
+            "operation": operations_for_chunk[0] if len(operations_for_chunk) == 1 else "ontology_chunk",
+            "model": models_for_chunk[0] if len(models_for_chunk) == 1 else "",
+            "prompt": int(metrics.get("prompt_tokens", 0) or 0),
+            "cached_prompt": int(metrics.get("cached_prompt_tokens", 0) or 0),
+            "non_cached_prompt": int(metrics.get("non_cached_prompt_tokens", 0) or 0),
+            "completion": int(metrics.get("completion_tokens", 0) or 0),
+            "total": int(metrics.get("total_tokens", 0) or 0),
+            "estimated_cost_usd": float(metrics.get("estimated_cost_usd", 0) or 0),
+            "reasoning_effort": req.reasoning_effort or "default",
+            "extraction_role": str(metrics.get("extraction_role") or "legacy"),
+            "chunk_index": int(metrics.get("chunk_index", 0) or 0),
+            "aggregate_call_count": call_count,
+        })
+
     result = _merge_pipeline_results(chunk_results, asset_identity=asset_identity)
     result, finalize_usage_entries, run_resolution_report, quality_stats = await asyncio.to_thread(
         _finalize_run_level_quality,
         result,
-        filtered_pages,
+        diagnostic_pages,
         req.model_name,
         asset_identity,
         all_pages,
         reasoning_effort=req.reasoning_effort,
+        relation_first=(
+            bool(ontology_cfg.get("relation_first", False)) and has_role_partition
+        ),
     )
     grounding_stats = quality_stats.get("grounding", {})
     closure_stats = quality_stats.get("closure", {})
@@ -811,6 +945,17 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
             "chunk_pages": 0,
             "section_count": 0,
         })
+        ontology_call_ledger.extend({
+            **entry,
+            "reasoning_effort": req.reasoning_effort or "default",
+            "extraction_role": "finalization",
+            "chunk_index": 0,
+            "aggregate_call_count": 1,
+        } for entry in finalize_usage_entries)
+    ontology_call_ledger = [
+        {**entry, "call_index": index}
+        for index, entry in enumerate(ontology_call_ledger, start=1)
+    ]
     usage_summary = merge_usage_summaries(chunk_metrics)
     total_prompt_tokens = int(usage_summary["prompt_tokens"])
     total_cached_prompt_tokens = int(usage_summary["cached_prompt_tokens"])
@@ -851,6 +996,10 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                 "selected_pages": len(filtered_pages),
                 "selected_sections": len(sections),
                 "chunk_count": len(page_chunks),
+                "diagnostic_pages": len(diagnostic_pages),
+                "structural_pages": len(structural_pages),
+                "diagnostic_chunks": len(diagnostic_chunks),
+                "structural_chunks": len(structural_chunks),
                 "reasoning_effort": req.reasoning_effort or "default",
                 "retry_count": total_retries,
                 "status": result.status,
@@ -869,6 +1018,8 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                 "evidence_grounding": grounding_stats,
                 "graph_closure": closure_stats,
                 "coverage_completion": quality_stats.get("coverage_completion", {}),
+                "cost_preflight": cost_preflight,
+                "call_ledger": ontology_call_ledger,
             },
         },
     )

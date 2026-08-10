@@ -38,7 +38,11 @@ _ID_SAFE_RE = re.compile(r"[^a-z0-9_]+")
 
 
 def _get_client(timeout_seconds: int) -> OpenAI:
-    return get_client(timeout=Timeout(timeout_seconds, connect=10.0), client_factory=OpenAI)
+    return get_client(
+        timeout=Timeout(timeout_seconds, connect=10.0),
+        client_factory=OpenAI,
+        max_retries=0,
+    )
 
 
 def _node_id(node_type: str, item: dict[str, Any]) -> str:
@@ -103,8 +107,25 @@ def _existing_resolution_indexes(ontology: OntologyInstance) -> tuple[set[str], 
     return resolved_failure_ids, indicated_by_error
 
 
-def build_resolution_targets(ontology: OntologyInstance, *, max_targets: int) -> list[ResolutionTarget]:
+def build_resolution_targets(
+    ontology: OntologyInstance,
+    *,
+    max_targets: int,
+    require_observed_indicator: bool = False,
+) -> list[ResolutionTarget]:
     resolved_failure_ids, indicated_by_error = _existing_resolution_indexes(ontology)
+    # Completion is reserved for an otherwise grounded diagnostic branch.  A
+    # standalone FailureMode has no observed indicator and is more likely a
+    # preventive/installation statement misclassified as a cause; spending one
+    # retrieval call on every such node inflated both noise and cost.
+    indicated_failure_ids = {
+        relation.to_id
+        for relation in ontology.relations or []
+        if (
+            relation.to_type == "FailureMode"
+            and relation.from_type in {"Symptom", "ErrorCode"}
+        )
+    }
     failure_targets: list[ResolutionTarget] = []
     error_targets: list[ResolutionTarget] = []
     seen: set[tuple[str, str]] = set()
@@ -113,7 +134,11 @@ def build_resolution_targets(ontology: OntologyInstance, *, max_targets: int) ->
         if not isinstance(failure_mode, dict):
             continue
         failure_id = _node_id("FailureMode", failure_mode)
-        if not failure_id or failure_id in resolved_failure_ids:
+        if (
+            not failure_id
+            or failure_id in resolved_failure_ids
+            or (require_observed_indicator and failure_id not in indicated_failure_ids)
+        ):
             continue
         label = str(failure_mode.get("name") or failure_id)
         query = " ".join(
@@ -566,6 +591,7 @@ def complete_resolution_gaps(
     parse_json: Callable[[str], dict[str, Any]],
     search_text_with_pages: str | None = None,
     reasoning_effort: str | None = None,
+    require_observed_indicator: bool = False,
 ) -> tuple[OntologyInstance, list[dict[str, Any]], dict[str, Any]]:
     cfg = get_resolution_completion_config()
     if not cfg.get("enabled", True):
@@ -578,7 +604,11 @@ def complete_resolution_gaps(
     # "no verified quote, no chain" guarantee.
     use_full = bool(cfg.get("search_full_manual", True)) and bool(search_text_with_pages)
     pages = _parse_pages(search_text_with_pages if use_full else text_with_pages)
-    targets = build_resolution_targets(ontology, max_targets=int(cfg.get("max_targets", 0)))
+    targets = build_resolution_targets(
+        ontology,
+        max_targets=int(cfg.get("max_targets", 0)),
+        require_observed_indicator=require_observed_indicator,
+    )
     if not pages or not targets:
         return ontology, [], {"attempted": 0, "completed": 0, "target_count": len(targets)}
 

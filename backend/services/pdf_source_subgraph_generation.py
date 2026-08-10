@@ -22,6 +22,7 @@ from backend.app_config import (
     get_confidence_config,
     get_coverage_completion_config,
     get_ontology_config,
+    get_pdf_generation_cost_guard_config,
     get_pdf_ingestion_config,
     get_resolution_completion_config,
     get_scoping_config,
@@ -35,6 +36,7 @@ from backend.domain.subgraphs import (
     GraphEvidenceRef,
     KnowledgeGap,
     PdfExtractionScope,
+    RelationEvidenceRef,
     SourceGenerationMetrics,
     SourceGenerationStageMetrics,
     SourceGraphNode,
@@ -44,13 +46,15 @@ from backend.domain.subgraphs import (
     TokenCostMetrics,
 )
 from backend.models import CutPlanRequest, OntologyDraftRequest, OntologyPipelineResponse
+from backend.services.cutplan_service import is_diagnostic_section, page_has_diagnostic_record
+from backend.services.diagnostic_publication_service import build_publication_graph
 from backend.services.llm_gateway import llm_mode
 from backend.services.ontology_schema_service import load_ontology_schema, ontology_contract
 from backend.services.ontology_workflow import draft_ontology_workflow
 from backend.services.run_metrics import build_metrics_payload
 from backend.services.scoping_workflow import create_cut_plan_workflow
 
-PDF_SUBGRAPH_GENERATOR_VERSION = "retained-pdf-ontology-adapter-v4-canonical-asset"
+PDF_SUBGRAPH_GENERATOR_VERSION = "pdf-g3-relation-first-publication-v6"
 
 _ID_PROPERTIES = {
     "Asset": "asset_id",
@@ -115,6 +119,7 @@ def pdf_input_config_hash() -> str:
         "confidence": get_confidence_config(),
         "coverage_completion": get_coverage_completion_config(),
         "resolution_completion": get_resolution_completion_config(),
+        "pdf_generation_cost_guard": get_pdf_generation_cost_guard_config(),
     })
 
 
@@ -138,6 +143,10 @@ def _tokens(value: str) -> set[str]:
 
 
 def _excerpt(evidence: EvidenceUnit) -> str:
+    if isinstance(evidence.locator, PdfLocator):
+        # Relation quotes are resolved against this canonical display excerpt,
+        # so do not replace it with a lossy union of semantic fields.
+        return evidence.locator.quote[:2000]
     values = (
         evidence.content.observation,
         evidence.content.cause,
@@ -146,6 +155,14 @@ def _excerpt(evidence: EvidenceUnit) -> str:
         evidence.content.measurement,
     )
     return " · ".join(value for value in values if value)[:280]
+
+
+def _evidence_label(evidence: EvidenceUnit) -> str:
+    if isinstance(evidence.locator, PdfLocator):
+        return f"Pagina {evidence.locator.page}"
+    if evidence.locator.kind == "operator_input":
+        return "Identità Asset confermata dall'operatore"
+    return "Evidenza canonica"
 
 
 _TOKEN_COST_FIELDS = (
@@ -210,6 +227,7 @@ class PdfSourceSubgraphBuilder:
         fingerprint: str,
         config_hash: str,
         supersedes: str | None,
+        operator_evidence: list[EvidenceUnit] | None = None,
     ) -> SourceSubgraphRevision:
         build_started_at = time.perf_counter()
         evidence_pages = evidence_units_to_legacy_pages(evidence)
@@ -268,12 +286,43 @@ class PdfSourceSubgraphBuilder:
                 "La segmentazione diagnostica non ha selezionato pagine elaborabili"
             )
 
+        diagnostic_section_pages: set[int] = set()
+        for section in cut_plan.sections:
+            covered = set(range(section.page_range.start, section.page_range.end + 1))
+            if is_diagnostic_section(section.name):
+                diagnostic_section_pages.update(covered)
+        content_diagnostic_pages = {
+            page_number
+            for page_number in selected_pages
+            if page_has_diagnostic_record(
+                str(evidence_by_page.get(page_number, {}).get("text", ""))
+            )
+        }
+        # A small document with no section plan is kept whole, preserving the
+        # legacy fail-safe. For scoped manuals, procedural pages remain useful
+        # Component/retrieval context but cannot create diagnostic nodes merely
+        # because they describe maintenance, inspection or installation.
+        if cut_plan.skipped and not cut_plan.sections:
+            diagnostic_pages = selected_pages
+        else:
+            diagnostic_pages = sorted(
+                set(selected_pages) & (diagnostic_section_pages | content_diagnostic_pages)
+            )
+        structural_pages = sorted(set(selected_pages) - set(diagnostic_pages))
+        if not diagnostic_pages and not structural_pages:
+            diagnostic_pages = selected_pages
+
         # Scoping may infer document metadata from the manual, but never the
         # workspace-owned Asset used by graph generation.
         store["asset_identity"] = asset
         store["asset_identity_is_canonical"] = True
         store["source_type"] = "technical PDF"
         store["source_title"] = source_title
+        store["pdf_extraction_roles"] = {
+            "diagnostic_pages": diagnostic_pages,
+            "structural_pages": structural_pages,
+            "retrieval_pages": physical_pages,
+        }
         semantic_scope = PdfExtractionScope(
             total_pages=len(physical_pages),
             selected_pages=selected_pages,
@@ -287,6 +336,9 @@ class PdfSourceSubgraphBuilder:
                 }
                 for section in cut_plan.sections
             ],
+            diagnostic_pages=diagnostic_pages,
+            structural_pages=structural_pages,
+            retrieval_pages=physical_pages,
             page_offset=cut_plan.page_offset,
             skipped=cut_plan.skipped,
         )
@@ -313,7 +365,7 @@ class PdfSourceSubgraphBuilder:
             workspace=workspace,
             source=source,
             result=result,
-            evidence=evidence,
+            evidence=[*evidence, *(operator_evidence or [])],
             fingerprint=fingerprint,
             config_hash=config_hash,
             supersedes=supersedes,
@@ -357,13 +409,27 @@ class PdfSourceSubgraphBuilder:
         gaps: list[KnowledgeGap] = []
         gap_keys: set[tuple[str, tuple[str, ...]]] = set()
 
-        def add_gap(code: str, message: str, evidence_ids: list[str] | None = None) -> None:
+        def add_gap(
+            code: str,
+            message: str,
+            evidence_ids: list[str] | None = None,
+            *,
+            blocking: bool = False,
+            disposition: str = "gap",
+        ) -> None:
             ids = tuple(sorted(set(evidence_ids or [])))
             key = (code, ids)
             if key in gap_keys:
                 return
             gap_keys.add(key)
-            gaps.append(KnowledgeGap(code=code[:120], message=message[:1000], evidence_ids=list(ids)))
+            gaps.append(KnowledgeGap(
+                code=code[:120],
+                message=message[:1000],
+                evidence_ids=list(ids),
+                stage="pdf_adapter",
+                blocking=blocking,
+                disposition=disposition,
+            ))
 
         def resolve(
             page: int,
@@ -371,7 +437,7 @@ class PdfSourceSubgraphBuilder:
             *,
             target: str,
             source_anchor: str = "",
-        ) -> list[str]:
+        ) -> list[EvidenceUnit]:
             candidates = by_page.get(page, [])
             if not candidates:
                 add_gap(
@@ -387,17 +453,11 @@ class PdfSourceSubgraphBuilder:
                 and anchored.locator.page == page
             ):
                 anchored_text = _normalized_text(anchored.locator.quote)
-                anchor_tokens = _tokens(quote)
-                anchor_score = (
-                    len(anchor_tokens & _tokens(anchored.locator.quote))
-                    / max(1, len(anchor_tokens))
-                )
                 if normalized_quote and (
                     normalized_quote in anchored_text
                     or anchored_text in normalized_quote
-                    or anchor_score >= 0.8
                 ):
-                    return [anchored.evidence_id]
+                    return [anchored]
             if not normalized_quote:
                 add_gap(
                     "pdf_evidence_anchor_unresolved" if anchor else "pdf_evidence_quote_missing",
@@ -414,26 +474,21 @@ class PdfSourceSubgraphBuilder:
                 if normalized_quote in _normalized_text(item.locator.quote)
                 or _normalized_text(item.locator.quote) in normalized_quote
             ]
-            matches = exact
-            if not matches:
-                quote_tokens = _tokens(quote)
-                scored: list[tuple[float, EvidenceUnit]] = []
-                for item in candidates:
-                    candidate_tokens = _tokens(item.locator.quote)
-                    denominator = max(1, len(quote_tokens))
-                    score = len(quote_tokens & candidate_tokens) / denominator
-                    if score >= 0.8:
-                        scored.append((score, item))
-                if scored:
-                    best = max(score for score, _ in scored)
-                    matches = [item for score, item in scored if score == best]
-            if not matches:
+            if len(exact) != 1:
                 add_gap(
-                    "pdf_evidence_quote_unresolved",
-                    f"{target}: la citazione a pagina {page} non coincide con alcuna evidenza canonica.",
+                    (
+                        "pdf_evidence_quote_ambiguous"
+                        if len(exact) > 1
+                        else "pdf_evidence_quote_unresolved"
+                    ),
+                    (
+                        f"{target}: la citazione a pagina {page} coincide con più evidenze e l'anchor non la disambigua."
+                        if len(exact) > 1
+                        else f"{target}: la citazione a pagina {page} non coincide con alcuna evidenza canonica."
+                    ),
                 )
                 return []
-            return sorted({item.evidence_id for item in matches})
+            return exact
 
         relation_drafts: list[dict[str, Any]] = []
         incident_evidence: dict[str, set[str]] = defaultdict(set)
@@ -448,15 +503,23 @@ class PdfSourceSubgraphBuilder:
                     f"Relazione non prevista dall'ontologia: {relation_key}.",
                 )
                 continue
-            resolved: set[str] = set()
+            resolved: dict[str, RelationEvidenceRef] = {}
             for provenance in relation.evidence:
                 if provenance.source_page > 0:
-                    resolved.update(resolve(
+                    matches = resolve(
                         provenance.source_page,
                         provenance.quote,
                         target=relation_key,
                         source_anchor=provenance.source_anchor,
-                    ))
+                    )
+                    for matched in matches:
+                        resolved[matched.evidence_id] = RelationEvidenceRef(
+                            evidence_id=matched.evidence_id,
+                            quote=provenance.quote.strip(),
+                            source_anchor=matched.evidence_id,
+                            locator=matched.locator.model_dump(mode="json"),
+                            support_role="direct",
+                        )
                 else:
                     add_gap(
                         "pdf_evidence_page_missing",
@@ -465,7 +528,7 @@ class PdfSourceSubgraphBuilder:
             relation_drafts.append({
                 "index": index,
                 "relation": relation,
-                "evidence_ids": resolved,
+                "evidence_refs": resolved,
             })
             incident_evidence[relation.from_id].update(resolved)
             incident_evidence[relation.to_id].update(resolved)
@@ -475,17 +538,16 @@ class PdfSourceSubgraphBuilder:
         )
         semantic_evidence = [
             item for item in evidence
-            if semantic_pages is None
-            or (
-                isinstance(item.locator, PdfLocator)
-                and item.locator.page in semantic_pages
-            )
+            if isinstance(item.locator, PdfLocator)
+            and (semantic_pages is None or item.locator.page in semantic_pages)
         ]
-        clean_ids = {
-            item.evidence_id for item in semantic_evidence
-            if QualityFlag.OCR_LOW_CONFIDENCE not in item.quality_flags
-        }
         all_ids = {item.evidence_id for item in semantic_evidence}
+        operator_asset_ids = {
+            item.evidence_id
+            for item in evidence
+            if item.locator.kind == "operator_input"
+            and item.asset_id == workspace.asset.asset_id
+        }
 
         def resolve_node_claim(raw: dict[str, Any]) -> set[str]:
             """Ground standalone nodes by label/content, never by page alone."""
@@ -512,28 +574,15 @@ class PdfSourceSubgraphBuilder:
                 for key in ("name", "code", "instruction_text", "description")
                 if str(raw.get(key) or "").strip()
             ]
-            scored: list[tuple[float, EvidenceUnit]] = []
+            matches: list[EvidenceUnit] = []
             for item in candidates:
                 candidate_text = _normalized_text(item.locator.quote)
-                candidate_tokens = _tokens(item.locator.quote)
-                best_score = 0.0
                 for value in query_values:
                     normalized_value = _normalized_text(value)
                     if len(normalized_value) >= 3 and normalized_value in candidate_text:
-                        best_score = 1.0
+                        matches.append(item)
                         break
-                    value_tokens = _tokens(value)
-                    if value_tokens:
-                        best_score = max(
-                            best_score,
-                            len(value_tokens & candidate_tokens) / len(value_tokens),
-                        )
-                if best_score >= 0.75:
-                    scored.append((best_score, item))
-            if not scored:
-                return set()
-            best = max(score for score, _ in scored)
-            return {item.evidence_id for score, item in scored if score == best}
+            return {item.evidence_id for item in matches}
 
         ontology_nodes: dict[str, dict[str, Any]] = {}
         node_types: dict[str, str] = {}
@@ -567,17 +616,16 @@ class PdfSourceSubgraphBuilder:
                         )
                         continue
                     raw = workspace.asset.model_dump(mode="json")
-                resolved = set(incident_evidence.get(node_id, set()))
+                resolved = resolve_node_claim(raw)
+                if node_type == "Asset":
+                    resolved = set(operator_asset_ids)
+                    if not resolved:
+                        add_gap(
+                            "pdf_asset_operator_evidence_missing",
+                            "L'Asset canonico non dispone dell'asserzione operatore risolvibile.",
+                        )
                 if not resolved:
-                    resolved.update(resolve_node_claim(raw))
-                if node_type == "Asset" and not resolved:
-                    ordered_semantic = sorted(semantic_evidence, key=pdf_evidence_sort_key)
-                    fallback = next(
-                        (item for item in ordered_semantic if item.evidence_id in clean_ids),
-                        ordered_semantic[0] if ordered_semantic else None,
-                    )
-                    if fallback is not None:
-                        resolved.add(fallback.evidence_id)
+                    resolved.update(incident_evidence.get(node_id, set()))
                 ontology_nodes[node_id] = {
                     "node_type": node_type,
                     "raw": raw,
@@ -586,15 +634,32 @@ class PdfSourceSubgraphBuilder:
                 node_types[node_id] = node_type
                 node_evidence[node_id] = resolved
 
-        # Structural relations are deterministically added by the retained
-        # core. They inherit endpoint provenance, never a fabricated quote.
+        # Structural root relations are ontology-derived, but their endpoint
+        # assertion still supplies exact claim evidence.  Use the Component or
+        # ErrorCode evidence—not an arbitrary union of both endpoints.
         for draft in relation_drafts:
             relation = draft["relation"]
-            if not draft["evidence_ids"] and relation.name in _DERIVED_RELATIONS:
-                draft["evidence_ids"].update(node_evidence.get(relation.from_id, set()))
-                draft["evidence_ids"].update(node_evidence.get(relation.to_id, set()))
-                incident_evidence[relation.from_id].update(draft["evidence_ids"])
-                incident_evidence[relation.to_id].update(draft["evidence_ids"])
+            if not draft["evidence_refs"] and relation.name in _DERIVED_RELATIONS:
+                for evidence_id in sorted(node_evidence.get(relation.to_id, set())):
+                    item = by_id.get(evidence_id)
+                    if item is None:
+                        continue
+                    quote = (
+                        item.locator.quote
+                        if isinstance(item.locator, PdfLocator)
+                        else _excerpt(item)
+                    )
+                    if not quote.strip():
+                        continue
+                    draft["evidence_refs"][evidence_id] = RelationEvidenceRef(
+                        evidence_id=evidence_id,
+                        quote=quote.strip(),
+                        source_anchor=evidence_id,
+                        locator=item.locator.model_dump(mode="json"),
+                        support_role="derived_structural",
+                    )
+                incident_evidence[relation.from_id].update(draft["evidence_refs"])
+                incident_evidence[relation.to_id].update(draft["evidence_refs"])
 
         # A node may only enter the target graph when at least one canonical
         # EvidenceUnit can be shown to the reviewer.
@@ -634,13 +699,14 @@ class PdfSourceSubgraphBuilder:
                     f"{relation_key} esclusa perché almeno un estremo non ha provenienza risolvibile.",
                 )
                 continue
-            resolved = sorted(draft["evidence_ids"])
-            if not resolved:
+            relation_evidence_refs = list(draft["evidence_refs"].values())
+            if not relation_evidence_refs:
                 add_gap(
                     "pdf_relation_provenance_unresolved",
                     f"{relation_key} non è collegabile a un'evidenza PDF canonica.",
                 )
                 continue
+            resolved = sorted({item.evidence_id for item in relation_evidence_refs})
             relations.append(SourceGraphRelation(
                 relation_id=(
                     f"pdfrel_{_canonical_hash([source.source_id, relation_key, draft['index']])[:20]}"
@@ -649,6 +715,7 @@ class PdfSourceSubgraphBuilder:
                 from_id=relation.from_id,
                 to_id=relation.to_id,
                 evidence_ids=resolved,
+                evidence_refs=relation_evidence_refs,
             ))
 
         used_ids = {
@@ -664,6 +731,7 @@ class PdfSourceSubgraphBuilder:
                     "Una o più asserzioni dipendono da OCR a bassa confidenza "
                     "e richiedono una fonte verificabile.",
                     [evidence_id],
+                    blocking=True,
                 )
 
         for issue in result.schema_issues:
@@ -677,14 +745,19 @@ class PdfSourceSubgraphBuilder:
             code = str(issue.code or "semantic_issue")
             if any(token in code.casefold() for token in ("ground", "evidence", "unresolved")):
                 add_gap(f"pdf_semantic_{code}", issue.message)
-        for issue in result.graph_issues:
-            add_gap(f"pdf_graph_{issue.issue_type}", issue.description)
-        for suggestion in result.suggested_relations:
+        if result.graph_issues:
+            issue_counts: dict[str, int] = defaultdict(int)
+            for issue in result.graph_issues:
+                issue_counts[issue.issue_type] += 1
             add_gap(
-                "pdf_suggested_relation",
-                f"Relazione da verificare: {suggestion.relation_name} "
-                f"{suggestion.from_type}:{suggestion.from_id} → "
-                f"{suggestion.to_type}:{suggestion.to_id}.",
+                "pdf_prepublication_graph_issue_summary",
+                "Problemi topologici pre-gate (aggregati): "
+                + ", ".join(f"{key}={value}" for key, value in sorted(issue_counts.items())),
+            )
+        if result.suggested_relations:
+            add_gap(
+                "pdf_prepublication_suggestion_summary",
+                f"{len(result.suggested_relations)} relazioni lessicalmente possibili restano escluse perché prive di evidenza diretta.",
             )
         if (
             not result.is_schema_compliant
@@ -708,13 +781,38 @@ class PdfSourceSubgraphBuilder:
         evidence_refs = [
             GraphEvidenceRef(
                 evidence_id=evidence_id,
-                label=f"Pagina {by_id[evidence_id].locator.page}",
+                label=_evidence_label(by_id[evidence_id]),
                 excerpt=_excerpt(by_id[evidence_id]),
                 locator=by_id[evidence_id].locator.model_dump(mode="json"),
             )
             for evidence_id in sorted(used_ids)
         ]
-        validation = _strict_validation(nodes=nodes, relations=relations, evidence=evidence_refs)
+        publication = build_publication_graph(
+            candidate_nodes=nodes,
+            candidate_relations=relations,
+            evidence=evidence_refs,
+            prior_gaps=gaps,
+            canonicalization_report=result.canonicalization_report,
+        )
+        nodes = publication.nodes
+        relations = publication.relations
+        gaps = publication.knowledge_gaps
+        used_ids = {
+            evidence_id for node in nodes for evidence_id in node.evidence_ids
+        } | {
+            evidence_id for relation in relations for evidence_id in relation.evidence_ids
+        }
+        evidence_refs = [
+            evidence_ref for evidence_ref in evidence_refs
+            if evidence_ref.evidence_id in used_ids
+        ]
+        validation = _strict_validation(
+            nodes=nodes,
+            relations=relations,
+            evidence=evidence_refs,
+            require_relation_grounding=True,
+        )
+        blocking_gaps = [gap for gap in gaps if gap.blocking]
         return SourceSubgraphRevision(
             source_subgraph_revision_id=new_id("source_subgraph"),
             workspace_id=workspace.workspace_id,
@@ -732,9 +830,15 @@ class PdfSourceSubgraphBuilder:
             knowledge_gaps=gaps,
             pdf_extraction_scope=semantic_scope,
             generation_metrics=generation_metrics,
+            pipeline_version=PDF_SUBGRAPH_GENERATOR_VERSION,
+            projections=publication.projections,
+            review_queue=publication.review_queue,
+            review_summary=publication.review_summary,
+            publication_metrics=publication.metrics,
+            canonicalization_report=result.canonicalization_report,
             approval_eligible=(
                 validation.passed
-                and not gaps
+                and not blocking_gaps
                 and result.is_schema_compliant
                 and result.is_ready_for_human_review
             ),

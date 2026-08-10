@@ -132,6 +132,7 @@ def _strict_validation(
     relations: list[SourceGraphRelation],
     evidence: list[GraphEvidenceRef],
     unresolved_mapping_diagnostics: int = 0,
+    require_relation_grounding: bool = False,
 ) -> GraphValidationReport:
     """Validate the exact source-subgraph payload, not a parallel export draft."""
     schema = load_ontology_schema()
@@ -243,6 +244,7 @@ def _strict_validation(
             ))
 
     evidence_ids = {item.evidence_id for item in evidence}
+    evidence_by_id = {str(item.evidence_id): item for item in evidence}
     referenced_evidence_ids = {
         evidence_id for node in nodes for evidence_id in node.evidence_ids
     } | {
@@ -263,6 +265,123 @@ def _strict_validation(
                 message=f"Evidence {evidence_ref.evidence_id} has no source locator.",
                 node_type="provenance",
             ))
+
+    relation_grounding_total = len(relations) if require_relation_grounding else 0
+    relation_grounding_passed = 0
+    if require_relation_grounding:
+        for relation in relations:
+            valid_refs = 0
+            for relation_ref in relation.evidence_refs:
+                evidence_ref = evidence_by_id.get(str(relation_ref.evidence_id))
+                if evidence_ref is None:
+                    continue
+                quote = _normalized_label(relation_ref.quote)
+                excerpt = _normalized_label(evidence_ref.excerpt)
+                if not quote or not excerpt or (quote not in excerpt and excerpt not in quote):
+                    continue
+                anchor = _normalized_label(relation_ref.source_anchor)
+                locator_anchor = _normalized_label(
+                    str(
+                        evidence_ref.locator.get("source_anchor")
+                        or evidence_ref.locator.get("anchor")
+                        or ""
+                    )
+                )
+                page = evidence_ref.locator.get("page")
+                valid_anchor = anchor == _normalized_label(str(evidence_ref.evidence_id))
+                valid_anchor = valid_anchor or bool(locator_anchor and anchor == locator_anchor)
+                valid_anchor = valid_anchor or bool(
+                    page is not None
+                    and anchor in {
+                        _normalized_label(f"page:{page}"),
+                        _normalized_label(f"page {page}"),
+                    }
+                )
+                if valid_anchor:
+                    valid_refs += 1
+            if valid_refs:
+                relation_grounding_passed += 1
+            else:
+                issues.append(GraphValidationIssue(
+                    code="relation_grounding_unresolved",
+                    message=(
+                        f"{relation.relation_type} {relation.from_id} → {relation.to_id} "
+                        "has no quote and anchor resolvable to canonical evidence."
+                    ),
+                    node_type="relation",
+                    node_id=relation.relation_id,
+                ))
+
+        relation_names = {
+            (definition.domain, definition.range): definition.name
+            for definition in schema.relations
+        }
+        symptom_failure = relation_names.get(("Symptom", "FailureMode"), "")
+        error_failure = relation_names.get(("ErrorCode", "FailureMode"), "")
+        failure_action = relation_names.get(("FailureMode", "CorrectiveAction"), "")
+        incoming_by_target: dict[str, list[SourceGraphRelation]] = defaultdict(list)
+        outgoing_by_source: dict[str, list[SourceGraphRelation]] = defaultdict(list)
+        incident: set[str] = set()
+        for relation in relations:
+            incoming_by_target[relation.to_id].append(relation)
+            outgoing_by_source[relation.from_id].append(relation)
+            incident.update((relation.from_id, relation.to_id))
+
+        for node in nodes:
+            if node.node_id not in incident:
+                graph_invariant_errors += 1
+                issues.append(GraphValidationIssue(
+                    code="isolated_published_node",
+                    message=f"Published {node.node_type} {node.node_id} is isolated.",
+                    node_type=node.node_type,
+                    node_id=node.node_id,
+                ))
+            if node.node_type == "CorrectiveAction" and not any(
+                relation.relation_type == failure_action
+                for relation in incoming_by_target[node.node_id]
+            ):
+                graph_invariant_errors += 1
+                issues.append(GraphValidationIssue(
+                    code="published_action_without_failure",
+                    message=f"CorrectiveAction {node.node_id} has no incoming {failure_action} relation.",
+                    node_type="CorrectiveAction",
+                    node_id=node.node_id,
+                ))
+            if node.node_type == "Symptom":
+                failures = {
+                    relation.to_id
+                    for relation in outgoing_by_source[node.node_id]
+                    if relation.relation_type == symptom_failure
+                }
+                if not any(
+                    relation.relation_type == failure_action
+                    for failure_id in failures
+                    for relation in outgoing_by_source[failure_id]
+                ):
+                    graph_invariant_errors += 1
+                    issues.append(GraphValidationIssue(
+                        code="published_symptom_without_complete_path",
+                        message=f"Symptom {node.node_id} has no complete path to a CorrectiveAction.",
+                        node_type="Symptom",
+                        node_id=node.node_id,
+                    ))
+            if node.node_type == "FailureMode":
+                has_indicator = any(
+                    relation.relation_type in {symptom_failure, error_failure}
+                    for relation in incoming_by_target[node.node_id]
+                )
+                has_action = any(
+                    relation.relation_type == failure_action
+                    for relation in outgoing_by_source[node.node_id]
+                )
+                if not (has_indicator and has_action):
+                    graph_invariant_errors += 1
+                    issues.append(GraphValidationIssue(
+                        code="published_failure_incomplete",
+                        message=f"FailureMode {node.node_id} lacks a grounded indicator or action.",
+                        node_type="FailureMode",
+                        node_id=node.node_id,
+                    ))
     if unresolved_mapping_diagnostics:
         issues.append(GraphValidationIssue(
             code="unresolved_mapping_diagnostics",
@@ -277,6 +396,10 @@ def _strict_validation(
         and graph_invariant_errors == 0
         and duplicate_ids == 0
         and provenance_total == provenance_resolvable
+        and (
+            not require_relation_grounding
+            or relation_grounding_total == relation_grounding_passed
+        )
         and all(item.locator for item in evidence)
         and unresolved_mapping_diagnostics == 0
     )
@@ -290,6 +413,8 @@ def _strict_validation(
         duplicate_ids=duplicate_ids,
         provenance_total=provenance_total,
         provenance_resolvable=provenance_resolvable,
+        relation_grounding_total=relation_grounding_total,
+        relation_grounding_passed=relation_grounding_passed,
         unresolved_mapping_diagnostics=unresolved_mapping_diagnostics,
         passed=passed,
         issues=issues,
@@ -499,6 +624,12 @@ class SourceSubgraphGenerationService:
                 )
                 if existing is None:
                     previous = self.subgraphs.current_for_workspace(workspace_id).get(source_id)
+                    operator_evidence = [
+                        item
+                        for item in self.evidence.list_evidence(workspace_id=workspace_id)
+                        if item.source_kind is SourceKind.OPERATOR_INPUT
+                        and item.asset_id == workspace.asset.asset_id
+                    ]
                     try:
                         revision = await PdfSourceSubgraphBuilder().build_revision(
                             workspace=workspace,
@@ -508,6 +639,7 @@ class SourceSubgraphGenerationService:
                             fingerprint=fingerprint,
                             config_hash=config_hash,
                             supersedes=(previous.source_subgraph_revision_id if previous else None),
+                            operator_evidence=operator_evidence,
                         )
                     except ValueError as exc:
                         raise SourceSubgraphGenerationError(str(exc)) from exc

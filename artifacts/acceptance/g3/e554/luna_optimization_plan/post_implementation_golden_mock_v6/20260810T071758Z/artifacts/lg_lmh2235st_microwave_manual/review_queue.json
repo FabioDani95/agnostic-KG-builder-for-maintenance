@@ -1,0 +1,217 @@
+[
+  {
+    "kind": "failure_mode_without_action",
+    "severity": "open",
+    "target_type": "FailureMode",
+    "target_id": "FM-008",
+    "label": "PCB thermistor short",
+    "reason": "FailureMode has no RESOLVED_BY link to a CorrectiveAction.",
+    "suggested_fix": "Attach the remediation procedure from the manual, or mark as unresolved."
+  },
+  {
+    "kind": "failure_mode_without_action",
+    "severity": "open",
+    "target_type": "FailureMode",
+    "target_id": "FM-009",
+    "label": "PCB thermistor open",
+    "reason": "FailureMode has no RESOLVED_BY link to a CorrectiveAction.",
+    "suggested_fix": "Attach the remediation procedure from the manual, or mark as unresolved."
+  },
+  {
+    "kind": "failure_mode_without_action",
+    "severity": "open",
+    "target_type": "FailureMode",
+    "target_id": "FM-010",
+    "label": "Humidity sensor open or short",
+    "reason": "FailureMode has no RESOLVED_BY link to a CorrectiveAction.",
+    "suggested_fix": "Attach the remediation procedure from the manual, or mark as unresolved."
+  },
+  {
+    "kind": "ambiguous_multi_cause_symptom",
+    "severity": "review",
+    "target_type": "Symptom",
+    "target_id": "SYM-001",
+    "label": "No Display or Dead",
+    "reason": "Symptom has multiple MAY_INDICATE links to possible FailureModes.",
+    "suggested_fix": "Confirm that all listed failure modes are valid parallel causes, or remove the incorrect link.",
+    "candidate_count": 2,
+    "candidate_failure_mode_ids": [
+      "FM-001",
+      "FM-002"
+    ],
+    "candidate_failure_mode_labels": [
+      "Fuse has no continuity (open fuse)",
+      "Noise filter has no continuity"
+    ]
+  },
+  {
+    "kind": "ambiguous_multi_cause_symptom",
+    "severity": "review",
+    "target_type": "Symptom",
+    "target_id": "SYM-003",
+    "label": "No Heat / No Cook",
+    "reason": "Symptom has multiple MAY_INDICATE links to possible FailureModes.",
+    "suggested_fix": "Confirm that all listed failure modes are valid parallel causes, or remove the incorrect link.",
+    "candidate_count": 3,
+    "candidate_failure_mode_ids": [
+      "FM-004",
+      "FM-005",
+      "FM-006"
+    ],
+    "candidate_failure_mode_labels": [
+      "Resistance of the high voltage transformer out of range",
+      "Resistance of the high voltage capacitor out of range",
+      "Resistance of the high voltage diode out of range"
+    ]
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-002",
+    "label": "CMP-002",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-003",
+    "label": "CMP-003",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-004",
+    "label": "CMP-004",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-005",
+    "label": "CMP-005",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-006",
+    "label": "CMP-006",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-007",
+    "label": "CMP-007",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-008",
+    "label": "CMP-008",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-002",
+    "label": "FM-002",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5505
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-003",
+    "label": "FM-003",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5505
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-004",
+    "label": "FM-004",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5505
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-005",
+    "label": "FM-005",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5755
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-006",
+    "label": "FM-006",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5755
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-007",
+    "label": "FM-007",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5755
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-008",
+    "label": "FM-008",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-009",
+    "label": "FM-009",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5005
+  }
+]

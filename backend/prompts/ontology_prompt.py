@@ -34,7 +34,7 @@ You must follow the ontology definition exactly.
    Copy source_anchor exactly from the nearest "[[EVIDENCE_ID: ...]]" marker that contains the quote.
    The quote should be a short verbatim excerpt (10-20 words) from that page that supports the relation.
 8. {asset_node_instruction}
-9. You MUST attempt to extract {source_node_scope}, not only diagnostic triplets.
+9. {extraction_scope_instruction}
    For each node type, use its schema description as your extraction guide:
 {asset_node_guide}
    - **Component**: "A physical or software component or subsystem of the asset involved in troubleshooting."
@@ -65,9 +65,7 @@ You must follow the ontology definition exactly.
       AFFECTS relation.)
     - RESOLVED_BY: FailureMode → CorrectiveAction
     - INDICATES: ErrorCode → FailureMode (link error codes to the failure they signal)
-11. Component and ErrorCode nodes are valuable STANDALONE — extract them even when they are
-    not part of a complete Symptom → FailureMode → CorrectiveAction chain.
-    A parts list should produce Component nodes. An alarm table should produce ErrorCode nodes.
+11. {standalone_scope_instruction}
 12. Deduplicate repeated entities.
 13. Set the top-level "language" field to the detected language of the source document (e.g. "en", "it", "de").
 14. Write all human-readable field values in the same language as the source document.
@@ -88,9 +86,8 @@ You must follow the ontology definition exactly.
       misconfigured after control reload." (NOT "A fault occurs")
     - Symptom "Window damaged or severely scratched." → FailureMode "Impact from flying chip
       cracked the polycarbonate window pane." (NOT "Damaged or scratched window panel")
-    - Symptom "The cutting tool does not move down." → FailureMode "Cutting layer not mapped
-      to a tool in the cutting software." (NOT "Tool mapping problem", NOT "Tool does not
-      come down")
+    - Symptom "A commanded actuator does not move." → FailureMode "Actuator supply fuse is
+      open." (NOT "Actuator problem", NOT "Actuator does not move")
     Still NOT valid FailureModes: outcomes of checks ("Verification of tool mapping failed"),
     and operator or context faults that name no system state ("operator error", "wrong usage").
     If the only FailureMode you can find is a lexical restatement of the Symptom, OMIT it —
@@ -123,6 +120,7 @@ You must follow the ontology definition exactly.
     row or another section (e.g. a troubleshooting flowchart). When the same underlying failure
     appears both in an alarm table and in a flowchart, extract BOTH views and connect them by
     reusing the same FailureMode node — never by collapsing one view into the other.
+23. {role_specific_instruction}
 
 ## IMPORTANT: ID Uniqueness
 - All IDs must be globally unique and descriptive, not just sequential numbers.
@@ -180,6 +178,7 @@ def build_ontology_extraction_prompt(
     source_title: str,
     candidate_candidates_block: str = "",
     extract_asset: bool = True,
+    extraction_role: str = "legacy",
 ) -> str:
     if extract_asset:
         asset_node_instruction = (
@@ -213,6 +212,55 @@ def build_ontology_extraction_prompt(
             "Treat the supplied Asset only as graph context. Product, brand, model, and compatible-machine "
             "mentions in the manual must never create or alter an Asset node."
         )
+    if extraction_role == "diagnostic":
+        extraction_scope_instruction = (
+            "Extract diagnostic claims relation-first. Create a Symptom or ErrorCode only as part of a "
+            "source-supported path to an explicit FailureMode; create a CorrectiveAction only when the same "
+            "diagnostic record or branch explicitly states that it resolves that FailureMode. A record may span "
+            "multiple contiguous EvidenceUnits or a page boundary: independently ground every relation on the "
+            "exact EvidenceUnit that states it. AFFECTS is optional and may "
+            "only be emitted when the source explicitly identifies the affected Component."
+        )
+        standalone_scope_instruction = (
+            "Do not emit standalone diagnostic nodes. If a supported bundle is incomplete, omit the unsupported "
+            "node or relation; the deterministic completion/gap stage will handle it."
+        )
+        role_specific_instruction = (
+            "DIAGNOSTIC ROLE: extract every explicit diagnostic record and every distinct source-stated cause/remedy "
+            "branch. A coherent bundle may span contiguous table cells, paragraphs, EvidenceUnits, or a page break; "
+            "do not require one quote to express the entire chain, and do not pair branches from different records. "
+            "For CorrectiveAction.instruction_text copy the actual restorative step, never the cause statement. "
+            "Safety instructions, preventive maintenance, "
+            "routine inspections, commissioning, and installation procedures are NOT CorrectiveAction nodes unless "
+            "the source explicitly links them as remedies for a stated FailureMode. Never turn a heading or generic "
+            "procedure into a symptom/cause/action chain."
+        )
+    elif extraction_role == "structural":
+        source_node_scope = "Component only"
+        extraction_scope_instruction = (
+            "Extract only Component nodes permitted by the configured schema. Leave Asset, Symptom, FailureMode, "
+            "CorrectiveAction, and ErrorCode arrays empty and emit no relations."
+        )
+        standalone_scope_instruction = (
+            "A structural Component may stand alone at extraction time because the system creates its grounded "
+            "HAS_COMPONENT ownership relation from the component's own source evidence."
+        )
+        role_specific_instruction = (
+            "STRUCTURAL ROLE: retain named physical or software subsystems and service-relevant components. Omit "
+            "drawing callout numbers, fasteners, consumables, and undifferentiated labels unless the text describes "
+            "their troubleshooting, maintenance, or operational role. Emit no diagnostic node or causal relation."
+        )
+    else:
+        extraction_scope_instruction = (
+            f"You MUST attempt to extract {source_node_scope}, not only diagnostic triplets."
+        )
+        standalone_scope_instruction = (
+            "Component and ErrorCode nodes are valuable STANDALONE — extract them even when they are not part of "
+            "a complete Symptom → FailureMode → CorrectiveAction chain. A parts list should produce Component "
+            "nodes. An alarm table should produce ErrorCode nodes."
+        )
+        role_specific_instruction = "Apply the general extraction rules above."
+
     return EXTRACTION_PROMPT_TEMPLATE.format(
         schema_json=schema_json,
         source_type=source_type,
@@ -222,6 +270,9 @@ def build_ontology_extraction_prompt(
         source_node_scope=source_node_scope,
         asset_node_guide=asset_node_guide,
         asset_scope_instruction=asset_scope_instruction,
+        extraction_scope_instruction=extraction_scope_instruction,
+        standalone_scope_instruction=standalone_scope_instruction,
+        role_specific_instruction=role_specific_instruction,
     )
 
 

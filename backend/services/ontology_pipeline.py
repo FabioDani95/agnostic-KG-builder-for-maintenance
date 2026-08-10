@@ -84,6 +84,8 @@ class PipelineState(TypedDict, total=False):
     text_with_pages: str
     model_name: str
     reasoning_effort: str | None
+    extraction_role: str
+    relation_first: bool
     schema: OntologySchemaDefinition
     schema_json: str
     candidates_block: str
@@ -105,7 +107,7 @@ class PipelineState(TypedDict, total=False):
 
 
 def _get_client(timeout_seconds: int = 300):
-    return get_client(timeout=Timeout(timeout_seconds, connect=10.0))
+    return get_client(timeout=Timeout(timeout_seconds, connect=10.0), max_retries=0)
 
 
 def _ontology_cfg(max_output_tokens: int) -> dict[str, int]:
@@ -161,6 +163,7 @@ def _call_extractor_llm(state: PipelineState) -> PipelineState:
         source_title=state["source_title"],
         candidate_candidates_block="\n\n".join(block for block in prompt_blocks if block),
         extract_asset=not has_canonical_asset,
+        extraction_role=state.get("extraction_role", "legacy"),
     )
     cfg = _ontology_cfg(get_ontology_config().get("extraction_max_output_tokens", 8000))
     enforce_llm_limits(
@@ -179,6 +182,11 @@ def _call_extractor_llm(state: PipelineState) -> PipelineState:
         int(get_ontology_config().get("extraction_retry_max_output_tokens", 20000)),
         cfg["max_output_tokens"] + 4000,
     )
+    if state.get("relation_first"):
+        # Keep the spend envelope bounded to one call per role chunk. A
+        # truncated candidate draft becomes an explicit gap, not a second
+        # full-size completion.
+        retry_tokens = cfg["max_output_tokens"]
 
     def _run_completion(max_output_tokens: int):
         try:
@@ -254,6 +262,9 @@ def _normalize_node(state: PipelineState) -> PipelineState:
 
 def _relation_extract_node(state: PipelineState) -> PipelineState:
     """Second pass: infer only ontology relations from the already-extracted nodes."""
+    if state.get("relation_first"):
+        logger.info("[ontology] Relation pass skipped (relation-first extraction contract)")
+        return {}
     ontology = state["ontology"]
     if not _should_run_relation_pass(ontology):
         logger.info("[ontology] Relation pass skipped (insufficient candidate node types)")
@@ -365,6 +376,9 @@ def _relation_extract_node(state: PipelineState) -> PipelineState:
 
 
 def _semantic_validate_node(state: PipelineState) -> PipelineState:
+    if state.get("relation_first"):
+        logger.info("[ontology] LLM semantic validation skipped (deterministic publication policy)")
+        return {"semantic_issues": []}
     loop_cfg = get_reflective_loop_config()
     max_retries = int(loop_cfg.get("max_retries", 0))
     if max_retries == 0:
@@ -754,6 +768,8 @@ def build_initial_ontology(
     model_name: str,
     reasoning_effort: str | None = None,
     asset_identity: dict[str, Any] | None = None,
+    extraction_role: str = "legacy",
+    relation_first: bool = False,
     on_event=None,
 ) -> tuple[OntologyPipelineResponse, dict[str, Any]]:
     schema = load_ontology_schema()
@@ -783,6 +799,8 @@ def build_initial_ontology(
         "target_language": normalized_target_language,
         "model_name": model_name,
         "reasoning_effort": reasoning_effort,
+        "extraction_role": extraction_role,
+        "relation_first": relation_first,
         "schema": schema,
         "schema_json": dump_ontology_schema_json(),
         "candidates_block": candidates_block,

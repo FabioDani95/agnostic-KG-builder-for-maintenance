@@ -264,6 +264,10 @@ class OntologyPipelineResponse(BaseModel):
     suggested_relations: list[SuggestedRelation] = Field(default_factory=list)
     confidence_report: ConfidenceReport | None = None
     resolution_completion_report: dict[str, Any] = Field(default_factory=dict)
+    # Run-level, deterministic cross-chunk consolidation metadata.  This is
+    # intentionally outside OntologyInstance so the configured ontology stays
+    # unchanged.
+    canonicalization_report: dict[str, Any] = Field(default_factory=dict)
     # Fase A4 — the unified "red zone" the operator must review: open structural
     # gaps + low-confidence nodes + advisory issues, priority-ordered.
     review_queue: list[dict[str, Any]] = Field(default_factory=list)

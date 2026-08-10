@@ -135,6 +135,15 @@ def get_coverage_completion_config() -> dict:
     return cfg
 
 
+def get_pdf_generation_cost_guard_config() -> dict:
+    cfg = deepcopy(load_config().get("pdf_generation_cost_guard", {}) or {})
+    cfg.setdefault("enabled", True)
+    cfg.setdefault("preferred_cost_usd", 0.35)
+    cfg.setdefault("hard_ceiling_usd", 0.49)
+    cfg.setdefault("fixed_prompt_overhead_characters", 30000)
+    return cfg
+
+
 def get_chat_config() -> dict:
     cfg = deepcopy(load_config().get("chat", {}) or {})
     cfg.setdefault("model", "gpt-4o-mini")

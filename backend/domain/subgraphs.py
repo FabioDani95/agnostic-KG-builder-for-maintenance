@@ -35,6 +35,23 @@ class GraphEvidenceRef(BaseModel):
     locator: dict[str, Any]
 
 
+class RelationEvidenceRef(BaseModel):
+    """Claim-specific support retained on one published graph relation.
+
+    This is revision/provenance metadata, not an ontology property.  Keeping it
+    separate from ``GraphEvidenceRef`` prevents the adapter from replacing a
+    relation's exact support with the union of its endpoint evidence.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    evidence_id: OpaqueId
+    quote: str = Field(min_length=1)
+    source_anchor: str = Field(min_length=1)
+    locator: dict[str, Any]
+    support_role: Literal["direct", "derived_structural"] = "direct"
+
+
 class SourceGraphNode(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -61,6 +78,7 @@ class SourceGraphRelation(BaseModel):
     from_id: str = Field(min_length=1)
     to_id: str = Field(min_length=1)
     evidence_ids: list[OpaqueId] = Field(min_length=1)
+    evidence_refs: list[RelationEvidenceRef] = Field(default_factory=list)
 
 
 class GraphValidationIssue(BaseModel):
@@ -89,6 +107,8 @@ class GraphValidationReport(BaseModel):
     duplicate_ids: int = Field(default=0, ge=0)
     provenance_total: int = Field(default=0, ge=0)
     provenance_resolvable: int = Field(default=0, ge=0)
+    relation_grounding_total: int = Field(default=0, ge=0)
+    relation_grounding_passed: int = Field(default=0, ge=0)
     unresolved_mapping_diagnostics: int = Field(default=0, ge=0)
     passed: bool = False
     issues: list[GraphValidationIssue] = Field(default_factory=list)
@@ -139,6 +159,20 @@ class KnowledgeGap(BaseModel):
     code: str
     message: str
     evidence_ids: list[OpaqueId] = Field(default_factory=list)
+    target_kind: str = ""
+    target_id: str = ""
+    stage: str = ""
+    blocking: bool = False
+    disposition: Literal["gap", "exclude", "review"] = "gap"
+
+
+class GraphProjection(BaseModel):
+    """An ID-only view over the same canonical graph payload."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    node_ids: list[str] = Field(default_factory=list)
+    relation_ids: list[str] = Field(default_factory=list)
 
 
 class PdfExtractionSection(BaseModel):
@@ -168,6 +202,9 @@ class PdfExtractionScope(BaseModel):
     selected_pages: list[int] = Field(min_length=1)
     unselected_pages: list[int]
     sections: list[PdfExtractionSection] = Field(default_factory=list)
+    diagnostic_pages: list[int] = Field(default_factory=list)
+    structural_pages: list[int] = Field(default_factory=list)
+    retrieval_pages: list[int] = Field(default_factory=list)
     page_offset: int = 0
     skipped: bool = False
 
@@ -190,6 +227,15 @@ class PdfExtractionScope(BaseModel):
             for section in self.sections
         ):
             raise ValueError("PDF extraction section ranges must reference physical pages")
+        for role_name, role_pages in (
+            ("diagnostic_pages", self.diagnostic_pages),
+            ("structural_pages", self.structural_pages),
+            ("retrieval_pages", self.retrieval_pages),
+        ):
+            if role_pages != sorted(set(role_pages)):
+                raise ValueError(f"PDF extraction {role_name} must be unique and sorted")
+            if not set(role_pages).issubset(physical_pages):
+                raise ValueError(f"PDF extraction {role_name} must reference physical pages")
         return self
 
 
@@ -216,6 +262,12 @@ class SourceSubgraphRevision(BaseModel):
     knowledge_gaps: list[KnowledgeGap] = Field(default_factory=list)
     pdf_extraction_scope: PdfExtractionScope | None = None
     generation_metrics: SourceGenerationMetrics | None = None
+    pipeline_version: str = "legacy"
+    projections: dict[str, GraphProjection] = Field(default_factory=dict)
+    review_queue: list[dict[str, Any]] = Field(default_factory=list)
+    review_summary: dict[str, Any] = Field(default_factory=dict)
+    publication_metrics: dict[str, Any] = Field(default_factory=dict)
+    canonicalization_report: dict[str, Any] = Field(default_factory=dict)
     approval_eligible: bool = False
     supersedes: OpaqueId | None = None
     created_at: UtcTimestamp

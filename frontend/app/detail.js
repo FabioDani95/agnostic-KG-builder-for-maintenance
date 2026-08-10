@@ -259,6 +259,7 @@
       if (!legame) return panoramica(fonte, modello);
       const da = modello.nodiPerId.get(legame.from_id);
       const a = modello.nodiPerId.get(legame.to_id);
+      const supporti = legame.evidence_refs || [];
       return `
         <div class="ispettore-dentro">
           ${chiudi}
@@ -277,6 +278,14 @@
                 <span class="coda">${esc(t(indice === 0 ? "isp.daL" : "isp.aL"))}</span>
               </button>`).join("")}
           </section>
+          ${supporti.length ? `<section class="blocco">
+            <h4>${esc(t("isp.supportoRelazione"))} <span>${supporti.length}</span></h4>
+            ${supporti.map((supporto) => `<button type="button" class="evidenza"
+              data-scegli="evidenza" data-id="${esc(supporto.evidence_id)}">
+              <span class="dove">${esc(supporto.source_anchor)}</span>
+              <span class="testo">${esc(supporto.quote)}</span>
+            </button>`).join("")}
+          </section>` : ""}
           ${bloccoOccorrenze(legame.evidence_ids.length, "isp.occorrenzeArco")}
           ${bloccoEvidenze(modello, legame.evidence_ids, t("isp.righeOrigine"))}
         </div>`;

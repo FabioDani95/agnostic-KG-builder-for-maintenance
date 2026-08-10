@@ -188,8 +188,9 @@ def test_ontology_draft_agent_uses_workflow_and_keeps_shape(monkeypatch):
         "graph_issues",
         "suggested_relations",
         "confidence_report",
-        "resolution_completion_report",
-        "review_queue",
+            "resolution_completion_report",
+            "canonicalization_report",
+            "review_queue",
         "review_summary",
     }
     assert store["graph_state"]["current_phase"] == "ontology_draft"

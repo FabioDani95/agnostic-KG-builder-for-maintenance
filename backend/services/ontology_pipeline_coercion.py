@@ -18,7 +18,6 @@ from backend.models import (
 )
 from backend.services.ontology_semantics import (
     infer_asset_type,
-    infer_component_match_for_failure_mode,
     is_workspace_canonical_asset_identity,
     normalize_asset_node,
     normalize_severity,
@@ -287,34 +286,9 @@ def _normalize_ontology_instance(
             if not _relation_exists(relations, relation):
                 relations.append(relation)
 
-    if components:
-        affected_failure_mode_ids = {
-            rel.from_id
-            for rel in relations
-            if rel.name == "AFFECTS" and rel.from_type == "FailureMode" and rel.to_type == "Component"
-        }
-        for failure_mode in nodes.get("FailureMode", []):
-            failure_mode_id = str(failure_mode.get("failure_mode_id", "")).strip()
-            if not failure_mode_id or failure_mode_id in affected_failure_mode_ids:
-                continue
-            component_id = infer_component_match_for_failure_mode(
-                failure_mode_name=str(failure_mode.get("name", "")),
-                failure_mode_description=str(failure_mode.get("description", "")),
-                failure_mode_material_context=str(failure_mode.get("material_context", "")),
-                components=components,
-            )
-            if not component_id:
-                continue
-            relation = OntologyRelationInstance(
-                name="AFFECTS",
-                from_type="FailureMode",
-                from_id=failure_mode_id,
-                to_type="Component",
-                to_id=component_id,
-                evidence=[],
-            )
-            if not _relation_exists(relations, relation):
-                relations.append(relation)
+    # AFFECTS is not derivable from lexical similarity.  Unlike the root
+    # ownership links above, it is a diagnostic claim and therefore remains
+    # absent unless extraction or targeted completion supplies direct evidence.
 
     normalized["source_type"] = source_type
     normalized["source_title"] = source_title

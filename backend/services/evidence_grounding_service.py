@@ -26,8 +26,9 @@ _ID_FIELD_BY_TYPE: dict[str, str] = {
     "ErrorCode": "error_code_id",
 }
 
-# Structurally derived relations are exempt. Causal relations without a quote
-# are explicitly ungrounded; non-causal association edges remain advisory.
+# Structurally derived relations receive claim evidence later from their target
+# assertion in the PDF adapter.  Every source-extracted relation, including
+# AFFECTS, must carry a quote here; page co-occurrence is never grounding.
 _DERIVED_RELATIONS = {"HAS_COMPONENT", "GENERATES_ERROR"}
 _CAUSAL_RELATIONS = {"MAY_INDICATE", "RESOLVED_BY", "INDICATES"}
 
@@ -76,10 +77,10 @@ def ground_relation_evidence(
         ]
         quotes = [(page, quote) for page, quote in quotes if quote]
         if not quotes:
+            checked += 1
             if relation.name in _CAUSAL_RELATIONS:
-                checked += 1
                 causal_without_quote += 1
-                ungrounded_relations.append(relation)
+            ungrounded_relations.append(relation)
             continue
         checked += 1
         supported = False

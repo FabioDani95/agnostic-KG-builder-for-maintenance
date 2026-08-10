@@ -77,7 +77,7 @@ def _pipeline_result(
                     "failure_mode_id": "FM-PDF-1",
                     "name": "Loose coupling",
                     "description": "The coupling is loose.",
-                    "material_context": "Drive train",
+                    "material_context": "COMP-PDF-1",
                 }],
                 "CorrectiveAction": [{
                     "action_id": "CA-PDF-1",
@@ -88,16 +88,37 @@ def _pipeline_result(
                     "source_title": store["source_title"],
                     "source_reference": f"PAGE {source_page}",
                 }],
-                "Component": [],
+                "Component": [{
+                    "component_id": "COMP-PDF-1",
+                    "name": "Pump coupling",
+                    "description": "Coupling in the pump drive train.",
+                    "category": "Drive train",
+                }],
                 "ErrorCode": [],
             },
             relations=[
+                OntologyRelationInstance(
+                    name="HAS_COMPONENT",
+                    from_type="Asset",
+                    from_id=asset["asset_id"],
+                    to_type="Component",
+                    to_id="COMP-PDF-1",
+                    evidence=evidence,
+                ),
                 OntologyRelationInstance(
                     name="MAY_INDICATE",
                     from_type="Symptom",
                     from_id="SYM-PDF-1",
                     to_type="FailureMode",
                     to_id="FM-PDF-1",
+                    evidence=evidence,
+                ),
+                OntologyRelationInstance(
+                    name="AFFECTS",
+                    from_type="FailureMode",
+                    from_id="FM-PDF-1",
+                    to_type="Component",
+                    to_id="COMP-PDF-1",
                     evidence=evidence,
                 ),
                 OntologyRelationInstance(
@@ -192,18 +213,21 @@ def test_pdf_builds_the_same_reviewable_source_subgraph_contract(
         "total_pages": 1,
         "selected_pages": [1],
         "unselected_pages": [],
+        "diagnostic_pages": [1],
+        "structural_pages": [],
+        "retrieval_pages": [1],
         "sections": [],
         "page_offset": 0,
         "skipped": True,
     }
     assert {node["node_type"] for node in graph["nodes"]} == {
-        "Asset", "Symptom", "FailureMode", "CorrectiveAction",
+        "Asset", "Component", "Symptom", "FailureMode", "CorrectiveAction",
     }
     assert {relation["relation_type"] for relation in graph["relations"]} == {
-        "MAY_INDICATE", "RESOLVED_BY",
+        "HAS_COMPONENT", "MAY_INDICATE", "AFFECTS", "RESOLVED_BY",
     }
     assert graph["evidence"]
-    assert all(item["locator"]["kind"] == "pdf" for item in graph["evidence"])
+    assert {item["locator"]["kind"] for item in graph["evidence"]} == {"pdf", "operator_input"}
     assert all(node["evidence_ids"] for node in graph["nodes"])
     assert all(relation["evidence_ids"] for relation in graph["relations"])
 
@@ -304,7 +328,7 @@ def test_pdf_exact_evidence_anchor_resolves_without_fuzzy_page_fallback(
 
     assert graph["approval_eligible"] is True
     assert graph["knowledge_gaps"] == []
-    assert len(graph["evidence"]) == 1
+    assert len(graph["evidence"]) == 2
 
 
 def test_pdf_generation_metrics_are_persisted_with_revision(
@@ -445,6 +469,9 @@ def test_pdf_cut_plan_segments_diagnostics_before_ontology(
         "total_pages": 3,
         "selected_pages": [2],
         "unselected_pages": [1, 3],
+        "diagnostic_pages": [2],
+        "structural_pages": [],
+        "retrieval_pages": [1, 2, 3],
         "sections": [{
             "name": "Troubleshooting",
             "start_page": 2,
@@ -454,7 +481,11 @@ def test_pdf_cut_plan_segments_diagnostics_before_ontology(
         "page_offset": 0,
         "skipped": False,
     }
-    assert {item["locator"]["page"] for item in graph["evidence"]} == {2}
+    assert {
+        item["locator"]["page"]
+        for item in graph["evidence"]
+        if item["locator"]["kind"] == "pdf"
+    } == {2}
 
 
 def test_pdf_generation_fails_closed_when_cut_plan_fails(
@@ -599,6 +630,11 @@ def test_pdf_claims_backed_only_by_low_confidence_ocr_cannot_be_approved(
         })
         for item in evidence
     ]
+    operator_evidence = [
+        item
+        for item in EvidenceRepository().list_evidence(workspace_id=workspace.workspace_id)
+        if item.locator.kind == "operator_input"
+    ]
     quote = low_confidence[0].locator.quote
     result = _pipeline_result(
         {
@@ -606,13 +642,14 @@ def test_pdf_claims_backed_only_by_low_confidence_ocr_cannot_be_approved(
             "source_title": source.file_name,
         },
         quote=quote,
+        source_anchor=low_confidence[0].evidence_id,
     )
 
     revision = PdfSourceSubgraphBuilder()._to_revision(
         workspace=workspace,
         source=source,
         result=result,
-        evidence=low_confidence,
+        evidence=[*low_confidence, *operator_evidence],
         fingerprint="0" * 64,
         config_hash="1" * 64,
         supersedes=None,

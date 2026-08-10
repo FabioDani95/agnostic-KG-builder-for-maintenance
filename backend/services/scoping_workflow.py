@@ -323,6 +323,14 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
                     ),
                     "page_offset": page_offset,
                     "ocr": ocr_report,
+                    "call_ledger": [
+                        {
+                            **entry,
+                            "call_index": index,
+                            "reasoning_effort": req.reasoning_effort or "default",
+                        }
+                        for index, entry in enumerate(scoping_usage_entries, start=1)
+                    ],
                 },
             ),
         )
@@ -599,6 +607,14 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
                 ),
                 "page_offset": page_offset,
                 "ocr": ocr_report,
+                "call_ledger": [
+                    {
+                        **entry,
+                        "call_index": index,
+                        "reasoning_effort": req.reasoning_effort or "default",
+                    }
+                    for index, entry in enumerate(scoping_usage_entries, start=1)
+                ],
             },
         ),
     )

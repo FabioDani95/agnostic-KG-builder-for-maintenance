@@ -1,0 +1,1498 @@
+{
+  "acceptance": {
+    "forbidden_pairings": [
+      {
+        "actual": null,
+        "failure_mode": "dirty focusing lens",
+        "found": false,
+        "symptom": "Touch Screen buttons are out of alignment"
+      },
+      {
+        "actual": null,
+        "failure_mode": "intermittent pause circuit",
+        "found": false,
+        "symptom": "Laser Fume Extractor has reduced vacuum or no vacuum"
+      },
+      {
+        "actual": null,
+        "failure_mode": "touch screen calibration is required",
+        "found": false,
+        "symptom": "Laser cutting path is too wide"
+      }
+    ],
+    "forbidden_pairings_found": 0,
+    "forbidden_pairings_total": 3,
+    "gold_chains_present": 0,
+    "gold_chains_total": 8,
+    "matches": [
+      {
+        "actual": {
+          "corrective_action": "",
+          "failure_mode": "",
+          "symptom": ""
+        },
+        "average_similarity": 0.0,
+        "field_similarity": {},
+        "gold": "Machine stops / pause circuit",
+        "minimum_similarity": 0.0,
+        "present": false
+      },
+      {
+        "actual": {
+          "corrective_action": "",
+          "failure_mode": "",
+          "symptom": ""
+        },
+        "average_similarity": 0.0,
+        "field_similarity": {},
+        "gold": "Touch screen alignment",
+        "minimum_similarity": 0.0,
+        "present": false
+      },
+      {
+        "actual": {
+          "corrective_action": "",
+          "failure_mode": "",
+          "symptom": ""
+        },
+        "average_similarity": 0.0,
+        "field_similarity": {},
+        "gold": "Tool/layer mapping",
+        "minimum_similarity": 0.0,
+        "present": false
+      },
+      {
+        "actual": {
+          "corrective_action": "",
+          "failure_mode": "",
+          "symptom": ""
+        },
+        "average_similarity": 0.0,
+        "field_similarity": {},
+        "gold": "Fume extractor filters",
+        "minimum_similarity": 0.0,
+        "present": false
+      },
+      {
+        "actual": {
+          "corrective_action": "",
+          "failure_mode": "",
+          "symptom": ""
+        },
+        "average_similarity": 0.0,
+        "field_similarity": {},
+        "gold": "Wide laser path / nozzle",
+        "minimum_similarity": 0.0,
+        "present": false
+      },
+      {
+        "actual": {
+          "corrective_action": "",
+          "failure_mode": "",
+          "symptom": ""
+        },
+        "average_similarity": 0.0,
+        "field_similarity": {},
+        "gold": "Power loss / focusing lens",
+        "minimum_similarity": 0.0,
+        "present": false
+      },
+      {
+        "actual": {
+          "corrective_action": "",
+          "failure_mode": "",
+          "symptom": ""
+        },
+        "average_similarity": 0.0,
+        "field_similarity": {},
+        "gold": "Power loss / mirrors",
+        "minimum_similarity": 0.0,
+        "present": false
+      },
+      {
+        "actual": {
+          "corrective_action": "",
+          "failure_mode": "",
+          "symptom": ""
+        },
+        "average_similarity": 0.0,
+        "field_similarity": {},
+        "gold": "Power loss / nozzle debris",
+        "minimum_similarity": 0.0,
+        "present": false
+      }
+    ],
+    "method": "acceptance-only semantic witness over explicit MAY_INDICATE/RESOLVED_BY paths; thresholds fixed before inspecting output: each field >=0.55 and mean >=0.65"
+  },
+  "canonicalization": {
+    "ambiguous_candidate_pair_count": 3,
+    "ambiguous_group_count": 3,
+    "ambiguous_groups": [
+      {
+        "node_ids": [
+          "comp_24vdc_power_supply",
+          "comp_24vdc_power_supply_fuse"
+        ],
+        "node_type": "Component",
+        "reason": "semantic similarity requires human or selective-model decision"
+      },
+      {
+        "node_ids": [
+          "comp_solenoid",
+          "comp_solenoid_block"
+        ],
+        "node_type": "Component",
+        "reason": "semantic similarity requires human or selective-model decision"
+      },
+      {
+        "node_ids": [
+          "ca_clean_or_replace_focusing_lens",
+          "ca_clean_or_replace_mirrors"
+        ],
+        "node_type": "CorrectiveAction",
+        "reason": "semantic similarity requires human or selective-model decision"
+      }
+    ],
+    "ambiguous_groups_truncated": false,
+    "auto_merged_count": 0,
+    "auto_merged_groups": [],
+    "policy": "deterministic_conservative_v1"
+  },
+  "gold_used_in_prompt": false,
+  "graph_issues": [
+    {
+      "affected_nodes": [
+        "sym_uit_does_not_power_up"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'UIT does not power up' has no MAY_INDICATE relation to a FailureMode.",
+      "issue_type": "broken_chain",
+      "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+    },
+    {
+      "affected_nodes": [
+        "sym_machine_pauses_during_cut"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'Machine pauses during cutting' has no MAY_INDICATE relation to a FailureMode.",
+      "issue_type": "broken_chain",
+      "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+    },
+    {
+      "affected_nodes": [
+        "sym_touch_screen_buttons_misaligned"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'Touch screen buttons are out of alignment' has no MAY_INDICATE relation to a FailureMode.",
+      "issue_type": "broken_chain",
+      "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+    },
+    {
+      "affected_nodes": [
+        "sym_cutting_tool_or_pen_does_not_move_down"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'Cutting tool or pen does not move down' has no MAY_INDICATE relation to a FailureMode.",
+      "issue_type": "broken_chain",
+      "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+    },
+    {
+      "affected_nodes": [
+        "sym_laser_fume_extractor_reduced_vacuum"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'Laser fume extractor has reduced or no vacuum' has no MAY_INDICATE relation to a FailureMode.",
+      "issue_type": "broken_chain",
+      "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+    },
+    {
+      "affected_nodes": [
+        "sym_laser_cutting_path_too_wide"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'Laser cutting path is too wide' has no MAY_INDICATE relation to a FailureMode.",
+      "issue_type": "broken_chain",
+      "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+    },
+    {
+      "affected_nodes": [
+        "sym_loss_of_laser_cutting_power"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'Loss of laser cutting power' has no MAY_INDICATE relation to a FailureMode.",
+      "issue_type": "broken_chain",
+      "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+    },
+    {
+      "affected_nodes": [
+        "sym_machine_computer_problems_from_rf_emi"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'Machine or computer problems from RF/EMI' has no MAY_INDICATE relation to a FailureMode.",
+      "issue_type": "broken_chain",
+      "suggested_fix": "Link this symptom to the most semantically similar FailureMode via MAY_INDICATE."
+    },
+    {
+      "affected_nodes": [
+        "fm_touch_screen_sleep_mode"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Touch screen in sleep mode' has no RESOLVED_BY relation to a CorrectiveAction.",
+      "issue_type": "missing_relation",
+      "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+    },
+    {
+      "affected_nodes": [
+        "fm_cutting_software_closed"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Cutting software closed' has no RESOLVED_BY relation to a CorrectiveAction.",
+      "issue_type": "missing_relation",
+      "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+    },
+    {
+      "affected_nodes": [
+        "fm_poe_power_supply_unpowered"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'PoE power supply unpowered' has no RESOLVED_BY relation to a CorrectiveAction.",
+      "issue_type": "missing_relation",
+      "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+    },
+    {
+      "affected_nodes": [
+        "fm_pause_circuit_intermittent_at_stop_discs"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Intermittent pause circuit at stop discs' has no RESOLVED_BY relation to a CorrectiveAction.",
+      "issue_type": "missing_relation",
+      "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+    },
+    {
+      "affected_nodes": [
+        "fm_touch_screen_out_of_calibration"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Touch screen out of calibration' has no RESOLVED_BY relation to a CorrectiveAction.",
+      "issue_type": "missing_relation",
+      "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+    },
+    {
+      "affected_nodes": [
+        "fm_tool_layer_mapping_not_assigned"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Tool and layer mapping not assigned' has no RESOLVED_BY relation to a CorrectiveAction.",
+      "issue_type": "missing_relation",
+      "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+    },
+    {
+      "affected_nodes": [
+        "fm_laser_nozzle_damaged"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Laser nozzle damaged' has no RESOLVED_BY relation to a CorrectiveAction.",
+      "issue_type": "missing_relation",
+      "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+    },
+    {
+      "affected_nodes": [
+        "fm_laser_nozzle_or_tube_bent"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Laser nozzle or tube bent' has no RESOLVED_BY relation to a CorrectiveAction.",
+      "issue_type": "missing_relation",
+      "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+    },
+    {
+      "affected_nodes": [
+        "fm_focusing_lens_dirty_or_damaged"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Focusing lens dirty or damaged' has no RESOLVED_BY relation to a CorrectiveAction.",
+      "issue_type": "missing_relation",
+      "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+    },
+    {
+      "affected_nodes": [
+        "fm_beam_deflecting_mirror_dirty_or_damaged"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Beam-deflecting mirror dirty or damaged' has no RESOLVED_BY relation to a CorrectiveAction.",
+      "issue_type": "missing_relation",
+      "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+    },
+    {
+      "affected_nodes": [
+        "fm_laser_nozzle_dirty_or_debris_obstructed"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Laser nozzle dirty or obstructed by debris' has no RESOLVED_BY relation to a CorrectiveAction.",
+      "issue_type": "missing_relation",
+      "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+    },
+    {
+      "affected_nodes": [
+        "fm_rf_emi_electrical_noise"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'RF/EMI electrical noise affecting computer controls' has no RESOLVED_BY relation to a CorrectiveAction.",
+      "issue_type": "missing_relation",
+      "suggested_fix": "Link this failure mode to the appropriate CorrectiveAction via RESOLVED_BY."
+    },
+    {
+      "affected_nodes": [
+        "sym_uit_does_not_power_up"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'UIT does not power up' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "sym_machine_pauses_during_cut"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'Machine pauses during cutting' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "sym_touch_screen_buttons_misaligned"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'Touch screen buttons are out of alignment' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "sym_cutting_tool_or_pen_does_not_move_down"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'Cutting tool or pen does not move down' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "sym_laser_fume_extractor_reduced_vacuum"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'Laser fume extractor has reduced or no vacuum' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "sym_laser_cutting_path_too_wide"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'Laser cutting path is too wide' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "sym_loss_of_laser_cutting_power"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'Loss of laser cutting power' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "sym_machine_computer_problems_from_rf_emi"
+      ],
+      "auto_fixable": false,
+      "description": "Symptom 'Machine or computer problems from RF/EMI' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "fm_touch_screen_sleep_mode"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Touch screen in sleep mode' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "fm_cutting_software_closed"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Cutting software closed' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "fm_poe_power_supply_unpowered"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'PoE power supply unpowered' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "fm_pause_circuit_intermittent_at_stop_discs"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Intermittent pause circuit at stop discs' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "fm_touch_screen_out_of_calibration"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Touch screen out of calibration' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "fm_tool_layer_mapping_not_assigned"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Tool and layer mapping not assigned' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "fm_laser_nozzle_damaged"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Laser nozzle damaged' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "fm_laser_nozzle_or_tube_bent"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Laser nozzle or tube bent' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "fm_focusing_lens_dirty_or_damaged"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Focusing lens dirty or damaged' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "fm_beam_deflecting_mirror_dirty_or_damaged"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Beam-deflecting mirror dirty or damaged' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "fm_laser_nozzle_dirty_or_debris_obstructed"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'Laser nozzle dirty or obstructed by debris' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "fm_rf_emi_electrical_noise"
+      ],
+      "auto_fixable": false,
+      "description": "FailureMode 'RF/EMI electrical noise affecting computer controls' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "ca_wake_touch_screen"
+      ],
+      "auto_fixable": false,
+      "description": "CorrectiveAction 'Wake the touch screen' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "ca_open_cutting_software"
+      ],
+      "auto_fixable": false,
+      "description": "CorrectiveAction 'Open cutting software' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "ca_adjust_pause_plunger"
+      ],
+      "auto_fixable": false,
+      "description": "CorrectiveAction 'Adjust pause plunger activation pressure' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "ca_calibrate_touch_screen"
+      ],
+      "auto_fixable": false,
+      "description": "CorrectiveAction 'Calibrate touch screen' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "ca_map_tool_and_layer"
+      ],
+      "auto_fixable": false,
+      "description": "CorrectiveAction 'Map tool and layer' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "ca_replace_damaged_laser_nozzle"
+      ],
+      "auto_fixable": false,
+      "description": "CorrectiveAction 'Replace damaged laser nozzle' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "ca_clean_or_replace_focusing_lens"
+      ],
+      "auto_fixable": false,
+      "description": "CorrectiveAction 'Clean or replace focusing lens' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "ca_clean_or_replace_mirrors"
+      ],
+      "auto_fixable": false,
+      "description": "CorrectiveAction 'Clean or replace beam-deflecting mirrors' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "ca_clean_or_replace_laser_nozzle"
+      ],
+      "auto_fixable": false,
+      "description": "CorrectiveAction 'Clean or replace laser nozzle' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "ca_install_earth_ground"
+      ],
+      "auto_fixable": false,
+      "description": "CorrectiveAction 'Install earth ground' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    },
+    {
+      "affected_nodes": [
+        "ca_install_rf_or_power_line_filters"
+      ],
+      "auto_fixable": false,
+      "description": "CorrectiveAction 'Install RF or power line filters' is not connected to any Asset in the graph.",
+      "issue_type": "orphan",
+      "suggested_fix": "Connect this node to the asset graph via the appropriate relation, or remove it if spurious."
+    }
+  ],
+  "input_pages": [
+    37,
+    38,
+    39
+  ],
+  "is_ready_for_human_review": true,
+  "is_schema_compliant": false,
+  "kind": "measured_real_single_call_post_fix_microbenchmark",
+  "metrics": {
+    "by_model": {
+      "gpt-5.6-luna": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 7915,
+        "estimated_cost_usd": 0.011023,
+        "label": "GPT-5.6 Luna",
+        "llm_calls": 1,
+        "non_cached_prompt_tokens": 7623,
+        "prompt_tokens": 7623,
+        "total_tokens": 15538
+      }
+    },
+    "cached_prompt_tokens": 0,
+    "completion_tokens": 7915,
+    "estimated_cost_usd": 0.011023,
+    "llm_calls": 1,
+    "mining_summary": {
+      "component_count": 12,
+      "component_terms": [
+        "nozzle",
+        "led",
+        "power supply",
+        "solenoid",
+        "board",
+        "cable",
+        "cover",
+        "fuse",
+        "hand",
+        "panel",
+        "spindle",
+        "window"
+      ],
+      "error_code_count": 0,
+      "error_code_tokens": []
+    },
+    "models": [
+      "gpt-5.6-luna"
+    ],
+    "non_cached_prompt_tokens": 7623,
+    "operations": [
+      "ontology_draft"
+    ],
+    "parse_repair_events": [],
+    "pricing_models": [
+      "gpt-5.6-luna"
+    ],
+    "prompt_tokens": 7623,
+    "resolution_completion": {},
+    "retry_count": 0,
+    "total_tokens": 15538
+  },
+  "node_counts": {
+    "Asset": 1,
+    "Component": 34,
+    "CorrectiveAction": 11,
+    "ErrorCode": 0,
+    "FailureMode": 12,
+    "Symptom": 8
+  },
+  "ontology": {
+    "language": "en",
+    "nodes": {
+      "Asset": [
+        {
+          "asset_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+          "asset_type": "automated cutting machine",
+          "brand": "Eastman",
+          "description": "Eastman cutting system documented in the E-554 troubleshooting guide.",
+          "model": "Eagle S3L",
+          "name": "Eastman Eagle S3L"
+        }
+      ],
+      "Component": [
+        {
+          "category": "power supply",
+          "component_id": "comp_24vdc_power_supply",
+          "description": "24 VDC supply located in the diagnostic cabinet.",
+          "name": "24 VDC power supply"
+        },
+        {
+          "category": "protection",
+          "component_id": "comp_24vdc_power_supply_fuse",
+          "description": "Fuse associated with the 24 VDC power supply.",
+          "name": "24 VDC power supply fuse"
+        },
+        {
+          "category": "power",
+          "component_id": "comp_ac_power_cables",
+          "description": "Power cables supplying the computer controls and cutting system.",
+          "name": "AC power cables"
+        },
+        {
+          "category": "power",
+          "component_id": "comp_ac_power_cord",
+          "description": "Power cord supplying the diagnostic cabinet.",
+          "name": "AC power cord"
+        },
+        {
+          "category": "power",
+          "component_id": "comp_ac_power_outlets",
+          "description": "AC outlets located on the back of the diagnostic cabinet.",
+          "name": "AC power outlets"
+        },
+        {
+          "category": "pneumatic system",
+          "component_id": "comp_air_manifold",
+          "description": "Pneumatic manifold with cable connections for the tools.",
+          "name": "Air manifold"
+        },
+        {
+          "category": "laser optics",
+          "component_id": "comp_beam_deflecting_mirrors",
+          "description": "Mirrors that direct the laser beam.",
+          "name": "Beam-deflecting mirrors"
+        },
+        {
+          "category": "laser optics",
+          "component_id": "comp_brass_laser_nozzle",
+          "description": "Nozzle directing the laser beam during cutting.",
+          "name": "Brass laser nozzle"
+        },
+        {
+          "category": "control",
+          "component_id": "comp_computer_controls",
+          "description": "Computer control equipment associated with the cutting system.",
+          "name": "Computer controls"
+        },
+        {
+          "category": "software",
+          "component_id": "comp_cutting_software",
+          "description": "Software running on the cutting system computer.",
+          "name": "Cutting software"
+        },
+        {
+          "category": "computer",
+          "component_id": "comp_cutting_system_computer",
+          "description": "Computer running the cutting software.",
+          "name": "Cutting system computer"
+        },
+        {
+          "category": "pneumatic control",
+          "component_id": "comp_flow_control_valves",
+          "description": "Valves controlling flow on the pen air cylinder.",
+          "name": "Flow control valves"
+        },
+        {
+          "category": "control",
+          "component_id": "comp_fume_extractor_control_panel",
+          "description": "Panel used to adjust fume extractor vacuum pressure.",
+          "name": "Fume extractor control panel"
+        },
+        {
+          "category": "protection",
+          "component_id": "comp_fuse_f3_f4",
+          "description": "Fuses located in the diagnostic cabinet.",
+          "name": "Fuses F3 and F4"
+        },
+        {
+          "category": "enclosure",
+          "component_id": "comp_gantry_side_cover",
+          "description": "Cover removed to access the pause plunger.",
+          "name": "Gantry side cover"
+        },
+        {
+          "category": "indicator",
+          "component_id": "comp_green_led",
+          "description": "Power-status indicator on the PoE and 24 VDC power supplies.",
+          "name": "Green LED"
+        },
+        {
+          "category": "laser optics",
+          "component_id": "comp_laser_focusing_lens",
+          "description": "Lens used to focus the laser beam.",
+          "name": "Focusing lens"
+        },
+        {
+          "category": "fume extraction",
+          "component_id": "comp_laser_fume_extractor",
+          "description": "Extractor providing vacuum during laser cutting.",
+          "name": "Laser fume extractor"
+        },
+        {
+          "category": "laser",
+          "component_id": "comp_laser_tube",
+          "description": "Tube associated with the brass laser nozzle alignment.",
+          "name": "Laser tube"
+        },
+        {
+          "category": "mechanical control",
+          "component_id": "comp_pause_plunger",
+          "description": "Adjustable plunger used to set stop-disc activation pressure.",
+          "name": "Pause plunger"
+        },
+        {
+          "category": "pneumatic actuator",
+          "component_id": "comp_pen_air_cylinder",
+          "description": "Pneumatic cylinder controlling pen movement.",
+          "name": "Pen air cylinder"
+        },
+        {
+          "category": "power supply",
+          "component_id": "comp_poe_power_supply",
+          "description": "Power-over-Ethernet supply located next to the computer.",
+          "name": "Black Ethernet power supply (PoE)"
+        },
+        {
+          "category": "electrical interference control",
+          "component_id": "comp_rf_filters",
+          "description": "Filters used to reduce RF and EMI effects.",
+          "name": "RF filters and power line filters"
+        },
+        {
+          "category": "electrical installation",
+          "component_id": "comp_rigid_conduit",
+          "description": "Conduit enclosing AC power cables.",
+          "name": "Rigid conduit"
+        },
+        {
+          "category": "pneumatic control",
+          "component_id": "comp_solenoid",
+          "description": "Solenoid that can be manually fired to actuate a tool.",
+          "name": "Solenoid"
+        },
+        {
+          "category": "pneumatic control",
+          "component_id": "comp_solenoid_block",
+          "description": "Block containing individually operable tool solenoids.",
+          "name": "Solenoid block"
+        },
+        {
+          "category": "actuator",
+          "component_id": "comp_spindle",
+          "description": "Machine component receiving the tool or pen.",
+          "name": "Spindle"
+        },
+        {
+          "category": "safety control",
+          "component_id": "comp_stop_discs",
+          "description": "Stop-disc controls associated with the pause circuit.",
+          "name": "Stop discs"
+        },
+        {
+          "category": "tooling",
+          "component_id": "comp_tool_holder",
+          "description": "Holder for the cutting tool or pen on the spindle.",
+          "name": "Tool holder"
+        },
+        {
+          "category": "software configuration",
+          "component_id": "comp_tools_and_layers_mapping",
+          "description": "Software mapping of tools and layers under each tool.",
+          "name": "Tool and layer mapping"
+        },
+        {
+          "category": "user interface",
+          "component_id": "comp_touch_screen",
+          "description": "Touch-sensitive display used for machine commands and calibration.",
+          "name": "Touch screen"
+        },
+        {
+          "category": "user interface",
+          "component_id": "comp_uit",
+          "description": "User interface terminal with a touch screen used to operate the cutting system.",
+          "name": "UIT"
+        },
+        {
+          "category": "filtration",
+          "component_id": "comp_vacuum_filters",
+          "description": "Filters used by the laser fume extractor.",
+          "name": "Vacuum filters"
+        },
+        {
+          "category": "fume extraction",
+          "component_id": "comp_vacuum_hose_and_funnel",
+          "description": "Air path components of the laser fume extractor.",
+          "name": "Vacuum hose and funnel"
+        }
+      ],
+      "CorrectiveAction": [
+        {
+          "action_id": "ca_adjust_pause_plunger",
+          "action_kind": "procedure",
+          "description": "Adjust the pause plunger so stop discs do not activate from slight touch or vibration.",
+          "instruction_text": "Tighten the plunger to increase activation pressure and loosen to decrease activation pressure.",
+          "name": "Adjust pause plunger activation pressure",
+          "source_reference": "PAGE 37",
+          "source_title": "E-554.pdf",
+          "source_type": "technical PDF"
+        },
+        {
+          "action_id": "ca_calibrate_touch_screen",
+          "action_kind": "procedure",
+          "description": "Run the touch screen calibration procedure and save the calibration.",
+          "instruction_text": "Power down the cutting system, enter the Calibration Screen, press Touch screen, press the calibration cross targets, then select save and exit.",
+          "name": "Calibrate touch screen",
+          "source_reference": "PAGE 37",
+          "source_title": "E-554.pdf",
+          "source_type": "technical PDF"
+        },
+        {
+          "action_id": "ca_clean_or_replace_focusing_lens",
+          "action_kind": "procedure",
+          "description": "Restore the focusing lens condition by cleaning or replacing it.",
+          "instruction_text": "Clean or replace lens as required.",
+          "name": "Clean or replace focusing lens",
+          "source_reference": "PAGE 39",
+          "source_title": "E-554.pdf",
+          "source_type": "technical PDF"
+        },
+        {
+          "action_id": "ca_clean_or_replace_laser_nozzle",
+          "action_kind": "procedure",
+          "description": "Remove debris from or replace the laser nozzle.",
+          "instruction_text": "Clean or replace laser nozzle as required.",
+          "name": "Clean or replace laser nozzle",
+          "source_reference": "PAGE 39",
+          "source_title": "E-554.pdf",
+          "source_type": "technical PDF"
+        },
+        {
+          "action_id": "ca_clean_or_replace_mirrors",
+          "action_kind": "procedure",
+          "description": "Restore the beam-deflecting mirrors by cleaning or replacing them.",
+          "instruction_text": "Clean or replace mirrors as required.",
+          "name": "Clean or replace beam-deflecting mirrors",
+          "source_reference": "PAGE 39",
+          "source_title": "E-554.pdf",
+          "source_type": "technical PDF"
+        },
+        {
+          "action_id": "ca_install_earth_ground",
+          "action_kind": "procedure",
+          "description": "Ground the AC supply near the transformer feeding the cutting system.",
+          "instruction_text": "Install an earth ground as close as possible to the transformer feeding AC power to the cutting system.",
+          "name": "Install earth ground",
+          "source_reference": "PAGE 39",
+          "source_title": "E-554.pdf",
+          "source_type": "technical PDF"
+        },
+        {
+          "action_id": "ca_install_rf_or_power_line_filters",
+          "action_kind": "procedure",
+          "description": "Install filters when RF interference remains an issue.",
+          "instruction_text": "If RF is still determined an issue, installation of RF filters and/or power line filters may be required.",
+          "name": "Install RF or power line filters",
+          "source_reference": "PAGE 39",
+          "source_title": "E-554.pdf",
+          "source_type": "technical PDF"
+        },
+        {
+          "action_id": "ca_map_tool_and_layer",
+          "action_kind": "procedure",
+          "description": "Assign the tool to the spindle or assign the layer to the tool before cutting.",
+          "instruction_text": "Click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+          "name": "Map tool and layer",
+          "source_reference": "PAGE 38",
+          "source_title": "E-554.pdf",
+          "source_type": "technical PDF"
+        },
+        {
+          "action_id": "ca_open_cutting_software",
+          "action_kind": "procedure",
+          "description": "Open the cutting software on the cutting system computer.",
+          "instruction_text": "Make sure your cutting software is open on the cutting system computer.",
+          "name": "Open cutting software",
+          "source_reference": "PAGE 37",
+          "source_title": "E-554.pdf",
+          "source_type": "technical PDF"
+        },
+        {
+          "action_id": "ca_replace_damaged_laser_nozzle",
+          "action_kind": "procedure",
+          "description": "Replace the brass laser nozzle when damage is present.",
+          "instruction_text": "Replace nozzle if any damage is present.",
+          "name": "Replace damaged laser nozzle",
+          "source_reference": "PAGE 39",
+          "source_title": "E-554.pdf",
+          "source_type": "technical PDF"
+        },
+        {
+          "action_id": "ca_wake_touch_screen",
+          "action_kind": "procedure",
+          "description": "Touch the screen to exit sleep mode.",
+          "instruction_text": "Touch the screen to see if it turns on.",
+          "name": "Wake the touch screen",
+          "source_reference": "PAGE 37",
+          "source_title": "E-554.pdf",
+          "source_type": "technical PDF"
+        }
+      ],
+      "ErrorCode": [],
+      "FailureMode": [
+        {
+          "description": "A beam-deflecting mirror is dirty, damaged, or has a burn mark.",
+          "failure_mode_id": "fm_beam_deflecting_mirror_dirty_or_damaged",
+          "material_context": "comp_beam_deflecting_mirrors",
+          "name": "Beam-deflecting mirror dirty or damaged",
+          "related_measurements": []
+        },
+        {
+          "description": "The cutting software is not open on the cutting system computer.",
+          "failure_mode_id": "fm_cutting_software_closed",
+          "material_context": "comp_cutting_software",
+          "name": "Cutting software closed",
+          "related_measurements": []
+        },
+        {
+          "description": "The focusing lens is dirty or damaged, reducing laser cutting power.",
+          "failure_mode_id": "fm_focusing_lens_dirty_or_damaged",
+          "material_context": "comp_laser_focusing_lens",
+          "name": "Focusing lens dirty or damaged",
+          "related_measurements": []
+        },
+        {
+          "description": "The brass laser nozzle is damaged, producing an excessively wide laser path.",
+          "failure_mode_id": "fm_laser_nozzle_damaged",
+          "material_context": "comp_brass_laser_nozzle",
+          "name": "Laser nozzle damaged",
+          "related_measurements": []
+        },
+        {
+          "description": "The laser nozzle contains dirt or debris that reduces cutting power.",
+          "failure_mode_id": "fm_laser_nozzle_dirty_or_debris_obstructed",
+          "material_context": "comp_brass_laser_nozzle",
+          "name": "Laser nozzle dirty or obstructed by debris",
+          "related_measurements": []
+        },
+        {
+          "description": "A bent tube or nozzle causes the laser beam to reflect from the nozzle wall.",
+          "failure_mode_id": "fm_laser_nozzle_or_tube_bent",
+          "material_context": "comp_brass_laser_nozzle",
+          "name": "Laser nozzle or tube bent",
+          "related_measurements": []
+        },
+        {
+          "description": "The stop-disc pause circuit activates intermittently from slight touch or vibration.",
+          "failure_mode_id": "fm_pause_circuit_intermittent_at_stop_discs",
+          "material_context": "comp_stop_discs",
+          "name": "Intermittent pause circuit at stop discs",
+          "related_measurements": []
+        },
+        {
+          "description": "The Ethernet power supply has no illuminated power-status LED.",
+          "failure_mode_id": "fm_poe_power_supply_unpowered",
+          "material_context": "comp_poe_power_supply",
+          "name": "PoE power supply unpowered",
+          "related_measurements": []
+        },
+        {
+          "description": "Radio-frequency or electromagnetic interference generates electrical noise in the computer controls.",
+          "failure_mode_id": "fm_rf_emi_electrical_noise",
+          "material_context": "comp_computer_controls",
+          "name": "RF/EMI electrical noise affecting computer controls",
+          "related_measurements": []
+        },
+        {
+          "description": "A layer is not mapped to a tool or the tool is not assigned to the tool holder.",
+          "failure_mode_id": "fm_tool_layer_mapping_not_assigned",
+          "material_context": "comp_tools_and_layers_mapping",
+          "name": "Tool and layer mapping not assigned",
+          "related_measurements": []
+        },
+        {
+          "description": "The touch screen coordinate calibration does not match the displayed button locations.",
+          "failure_mode_id": "fm_touch_screen_out_of_calibration",
+          "material_context": "comp_touch_screen",
+          "name": "Touch screen out of calibration",
+          "related_measurements": []
+        },
+        {
+          "description": "The touch screen is in its protective sleep mode after prolonged inactivity.",
+          "failure_mode_id": "fm_touch_screen_sleep_mode",
+          "material_context": "comp_touch_screen",
+          "name": "Touch screen in sleep mode",
+          "related_measurements": []
+        }
+      ],
+      "Symptom": [
+        {
+          "description": "The tool or pen does not move down or is delayed at the beginning of a cut.",
+          "name": "Cutting tool or pen does not move down",
+          "severity": "High",
+          "symptom_id": "sym_cutting_tool_or_pen_does_not_move_down"
+        },
+        {
+          "description": "The laser cutting path increases to an undesirable width.",
+          "name": "Laser cutting path is too wide",
+          "severity": "Medium",
+          "symptom_id": "sym_laser_cutting_path_too_wide"
+        },
+        {
+          "description": "Odor is present during laser cutting or the laser cutting path is wider than normal.",
+          "name": "Laser fume extractor has reduced or no vacuum",
+          "severity": "High",
+          "symptom_id": "sym_laser_fume_extractor_reduced_vacuum"
+        },
+        {
+          "description": "Laser cutting power decreases and produces non-cut edges.",
+          "name": "Loss of laser cutting power",
+          "severity": "High",
+          "symptom_id": "sym_loss_of_laser_cutting_power"
+        },
+        {
+          "description": "RF or EMI generates electrical noise and causes problems for the machine and computer.",
+          "name": "Machine or computer problems from RF/EMI",
+          "severity": "Medium",
+          "symptom_id": "sym_machine_computer_problems_from_rf_emi"
+        },
+        {
+          "description": "The machine stops in the middle of a cut and displays a machine-paused message.",
+          "name": "Machine pauses during cutting",
+          "severity": "High",
+          "symptom_id": "sym_machine_pauses_during_cut"
+        },
+        {
+          "description": "The screen must be touched above, below, right, or left of the displayed button.",
+          "name": "Touch screen buttons are out of alignment",
+          "severity": "Medium",
+          "symptom_id": "sym_touch_screen_buttons_misaligned"
+        },
+        {
+          "description": "The UIT screen is blank and not lit up.",
+          "name": "UIT does not power up",
+          "severity": "High",
+          "symptom_id": "sym_uit_does_not_power_up"
+        }
+      ]
+    },
+    "ontology_name": "Core_Ontology",
+    "relations": [
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_uit",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_touch_screen",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_cutting_software",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_cutting_system_computer",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_poe_power_supply",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_green_led",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_ac_power_outlets",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_ac_power_cord",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_fuse_f3_f4",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_stop_discs",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_pause_plunger",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_gantry_side_cover",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_tools_and_layers_mapping",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_tool_holder",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_spindle",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_solenoid_block",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_solenoid",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_air_manifold",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_24vdc_power_supply",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_24vdc_power_supply_fuse",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_pen_air_cylinder",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_flow_control_valves",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_laser_fume_extractor",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_fume_extractor_control_panel",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_vacuum_filters",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_vacuum_hose_and_funnel",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_brass_laser_nozzle",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_laser_tube",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_laser_focusing_lens",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_beam_deflecting_mirrors",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_computer_controls",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_ac_power_cables",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_rigid_conduit",
+        "to_type": "Component"
+      },
+      {
+        "evidence": [],
+        "from_id": "asset_YiMCHERIQOrqEpGaAWSJtA",
+        "from_type": "Asset",
+        "name": "HAS_COMPONENT",
+        "to_id": "comp_rf_filters",
+        "to_type": "Component"
+      }
+    ],
+    "source_title": "E-554.pdf",
+    "source_type": "technical PDF",
+    "version": "2.0"
+  },
+  "production_pipeline_version": "pdf-g3-relation-first-publication-v6",
+  "relation_counts": {
+    "HAS_COMPONENT": 34
+  },
+  "relation_grounding": {
+    "ratio": null,
+    "resolved": 0,
+    "status": "not_available_no_direct_relations",
+    "total": 0
+  },
+  "schema_issues": [
+    {
+      "code": "instruction_not_actionable",
+      "fix_hint": "Rewrite instruction_text as numbered restorative steps (replace, reconnect, tighten, clean, adjust, calibrate, reset, ...) supported by the source page, or remove the action if the manual provides no repair procedure.",
+      "message": "CorrectiveAction 'Wake the touch screen' has instruction_text without any restorative action step (it reads like a cause, observation, or inspection note).",
+      "property_name": "instruction_text",
+      "severity": "warning",
+      "target_id": "ca_wake_touch_screen",
+      "target_type": "CorrectiveAction"
+    },
+    {
+      "code": "instruction_not_actionable",
+      "fix_hint": "Rewrite instruction_text as numbered restorative steps (replace, reconnect, tighten, clean, adjust, calibrate, reset, ...) supported by the source page, or remove the action if the manual provides no repair procedure.",
+      "message": "CorrectiveAction 'Open cutting software' has instruction_text without any restorative action step (it reads like a cause, observation, or inspection note).",
+      "property_name": "instruction_text",
+      "severity": "warning",
+      "target_id": "ca_open_cutting_software",
+      "target_type": "CorrectiveAction"
+    },
+    {
+      "code": "instruction_not_actionable",
+      "fix_hint": "Rewrite instruction_text as numbered restorative steps (replace, reconnect, tighten, clean, adjust, calibrate, reset, ...) supported by the source page, or remove the action if the manual provides no repair procedure.",
+      "message": "CorrectiveAction 'Calibrate touch screen' has instruction_text without any restorative action step (it reads like a cause, observation, or inspection note).",
+      "property_name": "instruction_text",
+      "severity": "warning",
+      "target_id": "ca_calibrate_touch_screen",
+      "target_type": "CorrectiveAction"
+    },
+    {
+      "code": "instruction_not_actionable",
+      "fix_hint": "Rewrite instruction_text as numbered restorative steps (replace, reconnect, tighten, clean, adjust, calibrate, reset, ...) supported by the source page, or remove the action if the manual provides no repair procedure.",
+      "message": "CorrectiveAction 'Map tool and layer' has instruction_text without any restorative action step (it reads like a cause, observation, or inspection note).",
+      "property_name": "instruction_text",
+      "severity": "warning",
+      "target_id": "ca_map_tool_and_layer",
+      "target_type": "CorrectiveAction"
+    },
+    {
+      "code": "instruction_not_actionable",
+      "fix_hint": "Rewrite instruction_text as numbered restorative steps (replace, reconnect, tighten, clean, adjust, calibrate, reset, ...) supported by the source page, or remove the action if the manual provides no repair procedure.",
+      "message": "CorrectiveAction 'Install RF or power line filters' has instruction_text without any restorative action step (it reads like a cause, observation, or inspection note).",
+      "property_name": "instruction_text",
+      "severity": "warning",
+      "target_id": "ca_install_rf_or_power_line_filters",
+      "target_type": "CorrectiveAction"
+    }
+  ],
+  "semantic_issues": [],
+  "status": "ready"
+}

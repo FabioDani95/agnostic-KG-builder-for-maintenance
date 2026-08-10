@@ -1,0 +1,455 @@
+[
+  {
+    "kind": "failure_mode_without_action",
+    "severity": "open",
+    "target_type": "FailureMode",
+    "target_id": "FM-001",
+    "label": "Main fuse (Q1) might have tripped",
+    "reason": "FailureMode has no RESOLVED_BY link to a CorrectiveAction.",
+    "suggested_fix": "Attach the remediation procedure from the manual, or mark as unresolved."
+  },
+  {
+    "kind": "failure_mode_without_action",
+    "severity": "open",
+    "target_type": "FailureMode",
+    "target_id": "FM-002",
+    "label": "Circuit breaker F6 is malfunctioning or open",
+    "reason": "FailureMode has no RESOLVED_BY link to a CorrectiveAction.",
+    "suggested_fix": "Attach the remediation procedure from the manual, or mark as unresolved."
+  },
+  {
+    "kind": "failure_mode_without_action",
+    "severity": "open",
+    "target_type": "FailureMode",
+    "target_id": "FM-004",
+    "label": "Tripped circuit breaker (F5)",
+    "reason": "FailureMode has no RESOLVED_BY link to a CorrectiveAction.",
+    "suggested_fix": "Attach the remediation procedure from the manual, or mark as unresolved."
+  },
+  {
+    "kind": "failure_mode_without_action",
+    "severity": "open",
+    "target_type": "FailureMode",
+    "target_id": "FM-005",
+    "label": "Tripped earth fault protection (F4)",
+    "reason": "FailureMode has no RESOLVED_BY link to a CorrectiveAction.",
+    "suggested_fix": "Attach the remediation procedure from the manual, or mark as unresolved."
+  },
+  {
+    "kind": "failure_mode_without_action",
+    "severity": "open",
+    "target_type": "FailureMode",
+    "target_id": "FM-006",
+    "label": "The joystick is malfunctioning",
+    "reason": "FailureMode has no RESOLVED_BY link to a CorrectiveAction.",
+    "suggested_fix": "Attach the remediation procedure from the manual, or mark as unresolved."
+  },
+  {
+    "kind": "failure_mode_without_action",
+    "severity": "open",
+    "target_type": "FailureMode",
+    "target_id": "FM-008",
+    "label": "Gearbox overfilled with oil",
+    "reason": "FailureMode has no RESOLVED_BY link to a CorrectiveAction.",
+    "suggested_fix": "Confirm one of the proposed corrective actions (candidate_actions), attach the remediation procedure from the manual, or mark as unresolved.",
+    "candidate_actions": [
+      {
+        "action_id": "CA-006",
+        "action_label": "Replace seals and gaskets as specified",
+        "confidence": 0.2
+      }
+    ]
+  },
+  {
+    "kind": "failure_mode_without_action",
+    "severity": "open",
+    "target_type": "FailureMode",
+    "target_id": "FM-010",
+    "label": "Faulty power supply to the brake",
+    "reason": "FailureMode has no RESOLVED_BY link to a CorrectiveAction.",
+    "suggested_fix": "Confirm one of the proposed corrective actions (candidate_actions), attach the remediation procedure from the manual, or mark as unresolved.",
+    "candidate_actions": [
+      {
+        "action_id": "CA-004",
+        "action_label": "Replace the motor as a complete unit",
+        "confidence": 0.5
+      },
+      {
+        "action_id": "CA-003",
+        "action_label": "Switch on the main switch and supply the system with power",
+        "confidence": 0.286
+      },
+      {
+        "action_id": "CA-001",
+        "action_label": "Replace the Drive Module power supply",
+        "confidence": 0.25
+      }
+    ]
+  },
+  {
+    "kind": "failure_mode_without_action",
+    "severity": "open",
+    "target_type": "FailureMode",
+    "target_id": "FM-011",
+    "label": "Brake contactor (K44) does not work correctly",
+    "reason": "FailureMode has no RESOLVED_BY link to a CorrectiveAction.",
+    "suggested_fix": "Confirm one of the proposed corrective actions (candidate_actions), attach the remediation procedure from the manual, or mark as unresolved.",
+    "candidate_actions": [
+      {
+        "action_id": "CA-001",
+        "action_label": "Replace the Drive Module power supply",
+        "confidence": 0.222
+      }
+    ]
+  },
+  {
+    "kind": "failure_mode_without_action",
+    "severity": "open",
+    "target_type": "FailureMode",
+    "target_id": "FM-012",
+    "label": "Supply voltage 24V BRAKE missing",
+    "reason": "FailureMode has no RESOLVED_BY link to a CorrectiveAction.",
+    "suggested_fix": "Confirm one of the proposed corrective actions (candidate_actions), attach the remediation procedure from the manual, or mark as unresolved.",
+    "candidate_actions": [
+      {
+        "action_id": "CA-001",
+        "action_label": "Replace the Drive Module power supply",
+        "confidence": 0.286
+      }
+    ]
+  },
+  {
+    "kind": "ambiguous_multi_cause_symptom",
+    "severity": "review",
+    "target_type": "Symptom",
+    "target_id": "SYM-002",
+    "label": "All LEDs are OFF at Controller",
+    "reason": "Symptom has multiple MAY_INDICATE links to possible FailureModes.",
+    "suggested_fix": "Confirm that all listed failure modes are valid parallel causes, or remove the incorrect link.",
+    "candidate_count": 3,
+    "candidate_failure_mode_ids": [
+      "FM-002",
+      "FM-003",
+      "FM-013"
+    ],
+    "candidate_failure_mode_labels": [
+      "Circuit breaker F6 is malfunctioning or open",
+      "The system is not supplied with power",
+      "Drive Module power supply failure"
+    ]
+  },
+  {
+    "kind": "ambiguous_multi_cause_symptom",
+    "severity": "review",
+    "target_type": "Symptom",
+    "target_id": "SYM-003",
+    "label": "No voltage in service outlet",
+    "reason": "Symptom has multiple MAY_INDICATE links to possible FailureModes.",
+    "suggested_fix": "Confirm that all listed failure modes are valid parallel causes, or remove the incorrect link.",
+    "candidate_count": 2,
+    "candidate_failure_mode_ids": [
+      "FM-004",
+      "FM-005"
+    ],
+    "candidate_failure_mode_labels": [
+      "Tripped circuit breaker (F5)",
+      "Tripped earth fault protection (F4)"
+    ]
+  },
+  {
+    "kind": "ambiguous_multi_cause_symptom",
+    "severity": "review",
+    "target_type": "Symptom",
+    "target_id": "SYM-005",
+    "label": "Oil and grease stains on motors and gearboxes",
+    "reason": "Symptom has multiple MAY_INDICATE links to possible FailureModes.",
+    "suggested_fix": "Confirm that all listed failure modes are valid parallel causes, or remove the incorrect link.",
+    "candidate_count": 2,
+    "candidate_failure_mode_ids": [
+      "FM-007",
+      "FM-008"
+    ],
+    "candidate_failure_mode_labels": [
+      "Leaking seal between gearbox and motor",
+      "Gearbox overfilled with oil"
+    ]
+  },
+  {
+    "kind": "ambiguous_multi_cause_symptom",
+    "severity": "review",
+    "target_type": "Symptom",
+    "target_id": "SYM-007",
+    "label": "Manipulator crashes on power down",
+    "reason": "Symptom has multiple MAY_INDICATE links to possible FailureModes.",
+    "suggested_fix": "Confirm that all listed failure modes are valid parallel causes, or remove the incorrect link.",
+    "candidate_count": 2,
+    "candidate_failure_mode_ids": [
+      "FM-010",
+      "FM-014"
+    ],
+    "candidate_failure_mode_labels": [
+      "Faulty power supply to the brake",
+      "Faulty motor holding brake"
+    ]
+  },
+  {
+    "kind": "ambiguous_multi_cause_symptom",
+    "severity": "review",
+    "target_type": "Symptom",
+    "target_id": "SYM-008",
+    "label": "Problem releasing Robot brakes",
+    "reason": "Symptom has multiple MAY_INDICATE links to possible FailureModes.",
+    "suggested_fix": "Confirm that all listed failure modes are valid parallel causes, or remove the incorrect link.",
+    "candidate_count": 3,
+    "candidate_failure_mode_ids": [
+      "FM-011",
+      "FM-012",
+      "FM-015"
+    ],
+    "candidate_failure_mode_labels": [
+      "Brake contactor (K44) does not work correctly",
+      "Supply voltage 24V BRAKE missing",
+      "Faulty brake on the robot axis"
+    ]
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-001",
+    "label": "CMP-001",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-002",
+    "label": "CMP-002",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6255
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-003",
+    "label": "CMP-003",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6255
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-004",
+    "label": "CMP-004",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-005",
+    "label": "CMP-005",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-006",
+    "label": "CMP-006",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-007",
+    "label": "CMP-007",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-008",
+    "label": "CMP-008",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-010",
+    "label": "CMP-010",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-011",
+    "label": "CMP-011",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6255
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "Component",
+    "target_id": "CMP-012",
+    "label": "CMP-012",
+    "reason": "evidence inferred from relations only; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6255
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-001",
+    "label": "FM-001",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-002",
+    "label": "FM-002",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-004",
+    "label": "FM-004",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-005",
+    "label": "FM-005",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5255
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-006",
+    "label": "FM-006",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-007",
+    "label": "FM-007",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5505
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-008",
+    "label": "FM-008",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-010",
+    "label": "FM-010",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5255
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-011",
+    "label": "FM-011",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-012",
+    "label": "FM-012",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5255
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-013",
+    "label": "FM-013",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-014",
+    "label": "FM-014",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.5505
+  },
+  {
+    "kind": "low_confidence",
+    "severity": "review",
+    "target_type": "FailureMode",
+    "target_id": "FM-015",
+    "label": "FM-015",
+    "reason": "evidence inferred from relations only; incomplete schema-expected relations; validation issues or retries; evidence quote not found on cited page",
+    "suggested_fix": "Verify this node against the manual before accepting.",
+    "score": 0.6005
+  }
+]

@@ -141,7 +141,7 @@ class OntologyPipelineValidationTests(unittest.TestCase):
         # so the operator can provide node-specific values.
         self.assertTrue(any(field.field_key == "Component::CMP-001::category" for field in human_fields))
 
-    def test_normalize_ontology_instance_infers_affects_relation(self):
+    def test_normalize_ontology_instance_does_not_infer_affects_from_lexical_similarity(self):
         ontology = OntologyInstance(
             ontology_name="diagnostic",
             version="V1",
@@ -189,7 +189,7 @@ class OntologyPipelineValidationTests(unittest.TestCase):
             source_title=ontology.source_title,
         )
 
-        self.assertTrue(any(
+        self.assertFalse(any(
             rel.name == "AFFECTS" and rel.from_id == "FM-001" and rel.to_id == "CMP-PUMP"
             for rel in normalized.relations
         ))

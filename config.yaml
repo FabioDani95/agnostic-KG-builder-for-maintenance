@@ -95,11 +95,9 @@ resolution_completion:
   max_input_chars: 50000
   estimated_max_input_tokens: 12500
   max_output_tokens: 2500
-  # 0 = no cap: attempt every unresolved FailureMode and every unlinked
-  # ErrorCode. Each target is an independent, page-scoped call whose prompt does
-  # not grow with the target count, so the only cost of lifting the cap is one
-  # more call per orphan — the price of not leaving recoverable remedies behind.
-  max_targets: 0
+  # Only incomplete branches with an observed Symptom/ErrorCode are targets.
+  # The cap makes worst-case cost independent of a noisy draft.
+  max_targets: 6
   top_pages_per_target: 6
   context_window_pages: 1
   # Retrieve candidate pages from the FULL manual, not only the pages the cut
@@ -117,8 +115,17 @@ coverage_completion:
   timeout_seconds: 120
   max_input_chars: 120000
   estimated_max_input_tokens: 30000
-  max_output_tokens: 6000
-  max_chains: 12
+  # Medium-reasoning models can consume part of the completion budget before
+  # emitting the bounded JSON. Keep enough room for the final response.
+  max_output_tokens: 7000
+  max_chains: 8
+
+pdf_generation_cost_guard:
+  enabled: true
+  preferred_cost_usd: 0.35
+  # Leaves one cent of headroom below the activity's absolute $0.50 budget.
+  hard_ceiling_usd: 0.49
+  fixed_prompt_overhead_characters: 30000
 
 style_cleanup:
   enabled: true
@@ -168,8 +175,9 @@ ontology:
 
   # Keep long-document extraction below connection/capacity pressure and retry
   # only the failed chunk when the provider has a transient transport error.
-  chunk_concurrency: 3
-  chunk_retry_attempts: 3
+  # Serial execution makes the spend ledger deterministic and avoids bursts.
+  chunk_concurrency: 1
+  chunk_retry_attempts: 1
   chunk_retry_base_seconds: 2
 
   max_input_chars: 600000
@@ -181,12 +189,16 @@ ontology:
   relation_extraction_max_output_tokens: 6000
   validation_max_output_tokens: 4000
 
-  # Cap unsectioned manuals as well: dense troubleshooting tables otherwise
-  # become a single oversized ontology-draft completion.
-  max_pages_per_chunk: 5
+  # ToC signature changes are context only. Pages are packed by bounded size.
+  max_pages_per_chunk: 8
+  structural_max_pages_per_chunk: 12
+
+  # Nodes and relations are extracted as evidence bundles in one call. The
+  # separate relation/validator passes are skipped for role-partitioned PDFs.
+  relation_first: true
 
 reflective_loop:
-  max_retries: 1
+  max_retries: 0
 
   retry_on_severity: "error"
 

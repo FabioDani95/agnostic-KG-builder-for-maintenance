@@ -31,6 +31,8 @@
     graphLoading: false,
     graphBusy: false,
     graphError: "",
+    /** ID-only view over the same canonical ontology graph. */
+    graphProjection: "diagnostic",
 
     /** Which source the three panes are currently describing. */
     activeSourceId: "",
