@@ -1,0 +1,543 @@
+{
+  "schema_version": "1.0",
+  "analysis_kind": "read_only_offline_pipeline_optimization",
+  "generated_on": "2026-08-10",
+  "measurement_legend": {
+    "measured": "Read from the immutable Luna revision, its persisted metrics, or a completed offline test.",
+    "simulated": "Computed deterministically from persisted Luna nodes and relations without changing them.",
+    "estimated": "Sensitivity calculation based on measured stage usage and explicit assumptions.",
+    "unavailable": "Cannot be known honestly before the proposed implementation and an end-to-end replay."
+  },
+  "safety_invariants": {
+    "repository_application_code_modified": false,
+    "database_open_mode": "read_only",
+    "revision_id": "sgrev_OR8HyabEt7ntt0Z00LZEoA",
+    "revision_decision_count": 0,
+    "revision_derived_status": "reviewing",
+    "revision_regenerated": false,
+    "csv_started": false,
+    "merge_started": false,
+    "workspace_id": "ws_ebXgqKWDDgsjKdrGbFDiQQ",
+    "config_hash": "a56332c883f2ab0f6372aabad39c2e49c568bd0d8efc9a58bcff695af3b871e6",
+    "canonical_asset": {
+      "asset_id": "asset_mF-1RBkvmra24woUH3T6iQ",
+      "name": "Eastman Eagle S3L",
+      "brand": "Eastman",
+      "model": "Eagle S3L",
+      "asset_type": "automated cutting machine"
+    }
+  },
+  "real_api_budget_ledger": {
+    "authorized_budget_usd": 0.5,
+    "opening_balance_usd": 0.5,
+    "calls": [],
+    "actual_spend_usd": 0.0,
+    "remaining_budget_usd": 0.5,
+    "reason_no_calls": "Offline graph analysis, deterministic projections, synthetic invariants, fixture replay, and cost sensitivity were sufficient."
+  },
+  "ontology_contract": {
+    "source": "ontology_schema.JSON",
+    "node_types": [
+      "Asset",
+      "Component",
+      "Symptom",
+      "FailureMode",
+      "CorrectiveAction",
+      "ErrorCode"
+    ],
+    "relations": {
+      "HAS_COMPONENT": {"domain": "Asset", "range": "Component"},
+      "MAY_INDICATE": {"domain": "Symptom", "range": "FailureMode"},
+      "AFFECTS": {"domain": "FailureMode", "range": "Component"},
+      "RESOLVED_BY": {"domain": "FailureMode", "range": "CorrectiveAction"},
+      "GENERATES_ERROR": {"domain": "Asset", "range": "ErrorCode"},
+      "INDICATES": {"domain": "ErrorCode", "range": "FailureMode"}
+    },
+    "proposed_new_ontology_types": [],
+    "proposed_new_ontology_relations": [],
+    "affects_required_for_complete_diagnostic_chain": false
+  },
+  "experiments": [
+    {
+      "id": "E01",
+      "name": "Immutable Luna graph audit",
+      "kind": "measured",
+      "input": "Persisted payload of sgrev_OR8HyabEt7ntt0Z00LZEoA",
+      "result": {
+        "scope": {
+          "pages_total": 54,
+          "pages_selected": 30,
+          "sections": 32,
+          "chunks": 19
+        },
+        "nodes": {
+          "total": 399,
+          "by_type": {
+            "Asset": 1,
+            "Component": 195,
+            "CorrectiveAction": 89,
+            "FailureMode": 68,
+            "Symptom": 46,
+            "ErrorCode": 0
+          }
+        },
+        "relations": {
+          "total": 369,
+          "by_type": {
+            "HAS_COMPONENT": 195,
+            "MAY_INDICATE": 59,
+            "AFFECTS": 44,
+            "RESOLVED_BY": 71,
+            "GENERATES_ERROR": 0,
+            "INDICATES": 0
+          }
+        },
+        "topology": {
+          "isolated_nodes": 33,
+          "isolated_by_type": {"CorrectiveAction": 28, "Symptom": 5},
+          "symptoms_with_complete_path": 39,
+          "symptoms_total": 46,
+          "failure_modes_without_symptom": 11,
+          "failure_modes_without_action": 5,
+          "failure_modes_with_complete_path": 52,
+          "failure_modes_total": 68,
+          "failure_modes_with_any_component": 35,
+          "complete_failure_modes_with_component": 26,
+          "actions_without_failure_mode": 28,
+          "actions_total": 89,
+          "components_diagnostic_in_complete_paths": 29,
+          "components_structural_only_or_non_complete": 166,
+          "components_total": 195,
+          "complete_path_combinations": 64,
+          "unique_topology_problem_targets": 51
+        },
+        "grounding": {
+          "pre_adapter_core_relations_grounded": 172,
+          "pre_adapter_core_relations_total": 174,
+          "persisted_referenced_evidence_ids_resolvable": 346,
+          "persisted_referenced_evidence_ids_total": 346,
+          "persisted_claim_quote_and_anchor_available": false,
+          "reason": "SourceGraphRelation persists evidence_ids but not the relation-specific quote and anchor."
+        },
+        "duplicates": {
+          "exact_normalized_groups": 0,
+          "offline_lexical_candidate_pairs": 40,
+          "manually_evident_near_duplicate_groups_minimum": 8,
+          "automatic_merge_decisions": 0,
+          "manual_audit_artifact": "near_duplicate_audit.md"
+        },
+        "knowledge_gap_records": {
+          "total": 14,
+          "by_code": {
+            "pdf_evidence_quote_missing": 1,
+            "pdf_node_provenance_unresolved": 1,
+            "pdf_relation_provenance_unresolved": 1,
+            "pdf_relation_endpoint_omitted": 1,
+            "pdf_schema_instruction_not_actionable": 1,
+            "pdf_schema_material_context_not_linked": 1,
+            "pdf_semantic_relation_evidence_mismatch": 1,
+            "pdf_semantic_EVIDENCE_MISMATCH": 1,
+            "pdf_semantic_WEAK_ESCALATION_LINK_EVIDENCE": 1,
+            "pdf_semantic_ungrounded_evidence": 1,
+            "pdf_graph_broken_chain": 1,
+            "pdf_graph_missing_relation": 1,
+            "pdf_graph_orphan": 1,
+            "pdf_suggested_relation": 1
+          },
+          "aggregation_warning": "Counts are records after aggregation by code and evidence_ids; pdf_graph_orphan:1 does not mean one orphan node."
+        },
+        "review_queue": {
+          "total": 250,
+          "by_severity": {"open": 48, "review": 165, "advisory": 37},
+          "persisted": false,
+          "built_before_final_adapter": true
+        },
+        "acceptance_only": {
+          "gold_chains_present": 8,
+          "gold_chains_total": 8,
+          "forbidden_pairings_found": 0,
+          "forbidden_pairings_total": 3
+        },
+        "execution": {
+          "llm_calls": 96,
+          "prompt_tokens": 668862,
+          "cached_prompt_tokens": 54119,
+          "output_tokens": 163700,
+          "total_tokens": 832562,
+          "duration_seconds": 444.69,
+          "persisted_cost_usd": 0.320466,
+          "model": "gpt-5.6-luna"
+        }
+      },
+      "artifact": "offline_graph_analysis.json"
+    },
+    {
+      "id": "E02",
+      "name": "Remove only completely isolated nodes",
+      "kind": "simulated",
+      "result": {
+        "nodes": {
+          "total": 366,
+          "by_type": {
+            "Asset": 1,
+            "Component": 195,
+            "CorrectiveAction": 61,
+            "FailureMode": 68,
+            "Symptom": 41,
+            "ErrorCode": 0
+          }
+        },
+        "relations": {
+          "total": 369,
+          "by_type": {"HAS_COMPONENT": 195, "MAY_INDICATE": 59, "AFFECTS": 44, "RESOLVED_BY": 71}
+        },
+        "isolated_nodes": 0,
+        "symptoms_with_complete_path": 39,
+        "symptoms_total": 41,
+        "failure_modes_without_symptom": 11,
+        "failure_modes_without_action": 5,
+        "actions_without_failure_mode": 0,
+        "components_diagnostic_in_complete_paths": 29,
+        "components_structural_only_or_non_complete": 166,
+        "grounding": {"evidence_id_resolvable": "339/339", "claim_grounding": "unavailable"},
+        "near_duplicates": "unchanged",
+        "knowledge_gaps": "unchanged persisted records; not recomputed",
+        "review_queue": "unavailable; not recomputed",
+        "gold": "8/8",
+        "forbidden": "0/3",
+        "cost_and_duration": "same upstream run plus negligible deterministic filtering; filtering not timed"
+      },
+      "decision": "reject",
+      "reason": "It hides 33 orphans but leaves incomplete symptoms, incomplete FailureModes and 166 structurally noisy components in the diagnostic surface."
+    },
+    {
+      "id": "E03",
+      "name": "Complete diagnostic projection over existing Luna claims",
+      "kind": "simulated",
+      "result": {
+        "nodes": {
+          "total": 174,
+          "by_type": {
+            "Asset": 1,
+            "Component": 29,
+            "CorrectiveAction": 53,
+            "FailureMode": 52,
+            "Symptom": 39,
+            "ErrorCode": 0
+          }
+        },
+        "relations": {
+          "total": 175,
+          "by_type": {"HAS_COMPONENT": 29, "MAY_INDICATE": 54, "AFFECTS": 32, "RESOLVED_BY": 60}
+        },
+        "isolated_nodes": 0,
+        "symptoms_with_complete_path": 39,
+        "symptoms_total": 39,
+        "failure_modes_without_symptom": 0,
+        "failure_modes_without_action": 0,
+        "failure_modes_with_complete_path": 52,
+        "failure_modes_total": 52,
+        "actions_without_failure_mode": 0,
+        "actions_total": 53,
+        "components_diagnostic_in_complete_paths": 29,
+        "components_structural_only_or_non_complete": 0,
+        "grounding": {
+          "evidence_id_resolvable": "334/334",
+          "claim_grounding": "unavailable",
+          "reason": "The current persisted relation contract has already lost exact quotes and anchors."
+        },
+        "exact_normalized_duplicate_groups": 0,
+        "near_duplicate_outcome": "unchanged; canonicalization was not simulated as a merge",
+        "knowledge_gaps": "not recomputed; incomplete candidates would require target-specific dispositions",
+        "review_queue": "not available end-to-end; 51 unique baseline topology targets are the measured upper input to a topology gate",
+        "gold": "8/8",
+        "forbidden": "0/3",
+        "cost_and_duration": "same upstream run plus deterministic projection; projection not separately timed"
+      },
+      "decision": "accept_as_proof_of_projection_not_as_final_pipeline"
+    },
+    {
+      "id": "E04",
+      "name": "Structural component projection over existing Luna claims",
+      "kind": "simulated",
+      "result": {
+        "nodes": {"total": 196, "by_type": {"Asset": 1, "Component": 195}},
+        "relations": {"total": 195, "by_type": {"HAS_COMPONENT": 195}},
+        "isolated_nodes": 0,
+        "diagnostic_chain_metrics": "not_applicable",
+        "components_total": 195,
+        "components_diagnostic_in_complete_paths": 0,
+        "components_structural": 195,
+        "grounding": {"evidence_id_resolvable": "319/319", "claim_grounding": "unavailable"},
+        "duplicates": "unchanged",
+        "knowledge_gaps": "not recomputed",
+        "review_queue": "not recomputed",
+        "gold_and_forbidden": "not_applicable",
+        "cost_and_duration": "same upstream run plus deterministic projection; projection not separately timed"
+      },
+      "decision": "accept_as_separate_view"
+    },
+    {
+      "id": "E05",
+      "name": "Canonical publishable union of structural and complete diagnostic projections",
+      "kind": "simulated",
+      "result": {
+        "nodes": {
+          "total": 340,
+          "by_type": {
+            "Asset": 1,
+            "Component": 195,
+            "CorrectiveAction": 53,
+            "FailureMode": 52,
+            "Symptom": 39,
+            "ErrorCode": 0
+          }
+        },
+        "relations": {
+          "total": 341,
+          "by_type": {"HAS_COMPONENT": 195, "MAY_INDICATE": 54, "AFFECTS": 32, "RESOLVED_BY": 60}
+        },
+        "isolated_nodes": 0,
+        "symptoms_with_complete_path": 39,
+        "symptoms_total": 39,
+        "failure_modes_without_symptom": 0,
+        "failure_modes_without_action": 0,
+        "failure_modes_with_complete_path": 52,
+        "failure_modes_total": 52,
+        "actions_without_failure_mode": 0,
+        "actions_total": 53,
+        "components_diagnostic_in_complete_paths": 29,
+        "components_structural_only_or_non_complete": 166,
+        "components_total": 195,
+        "grounding": {"evidence_id_resolvable": "334/334", "claim_grounding": "unavailable"},
+        "duplicates": "unchanged",
+        "knowledge_gaps": "not recomputed",
+        "review_queue": "not available end-to-end",
+        "gold": "8/8",
+        "forbidden": "0/3",
+        "cost_and_duration": "same upstream run plus deterministic projection; projection not separately timed"
+      },
+      "decision": "accept_as_topological_proxy_for_the_recommended_gate"
+    },
+    {
+      "id": "E06",
+      "name": "Manual-agnostic synthetic publication gate",
+      "kind": "measured",
+      "result": {
+        "cases": 5,
+        "assertions_passed": 5,
+        "assertions_failed": 0,
+        "covered_behaviors": [
+          "grounded symptom-failure-action chain",
+          "preventive, safety, installation and inspection instructions are not published as standalone CorrectiveAction",
+          "incomplete symptom becomes a target-specific gap",
+          "ErrorCode-INDICATES-FailureMode-RESOLVED_BY-CorrectiveAction is a valid diagnostic chain",
+          "AFFECTS is optional"
+        ],
+        "ontology_node_types_added": 0,
+        "ontology_relation_types_added": 0
+      },
+      "artifact": "synthetic_publication_gate_results.json"
+    },
+    {
+      "id": "E07",
+      "name": "Targeted offline pytest regression",
+      "kind": "measured",
+      "result": {
+        "tests": 79,
+        "passed": 79,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "duration_seconds": 4.33,
+        "coverage_scope": [
+          "cut plan and scoping",
+          "ontology contracts, coercion, validation and semantics",
+          "ontology workflow and resilience",
+          "coverage completion",
+          "canonical asset",
+          "strict source validation",
+          "PDF adapter",
+          "golden evaluation harness"
+        ]
+      },
+      "artifact": "pytest_offline.xml"
+    },
+    {
+      "id": "E08",
+      "name": "Golden fixture mock replay",
+      "kind": "measured",
+      "result": {
+        "fixture_count": 9,
+        "schema_compliant": 9,
+        "average_triplet_recall": 1.0,
+        "duration_seconds": 3.442,
+        "execution_mode": "mock",
+        "real_api_calls": 0
+      },
+      "artifact": "golden_mock_replay/20260809T232400Z/report.json"
+    },
+    {
+      "id": "E09",
+      "name": "Cost and duration sensitivity for the recommended combined pipeline",
+      "kind": "estimated",
+      "assumption": "Scoping remains at measured usage. Relation-first removes routine separate relation/semantic-validator/re-extraction passes. Remaining ontology usage is modeled at 40%, 55%, or 70% of the measured ontology stage. Terra is at most one batch.",
+      "result": {
+        "low_no_escalation": {
+          "calls": 21,
+          "total_tokens": 339458,
+          "cost_usd": 0.130977,
+          "duration_seconds": 187.276
+        },
+        "central_one_batched_escalation": {
+          "calls": 25,
+          "total_tokens": 476734,
+          "cost_usd": 0.22635,
+          "duration_seconds": 281.334,
+          "terra_increment_usd": 0.048
+        },
+        "conservative_one_larger_escalation": {
+          "calls": 28,
+          "total_tokens": 609010,
+          "cost_usd": 0.301724,
+          "duration_seconds": 360.392,
+          "terra_increment_usd": 0.076
+        }
+      },
+      "limitations": "Operation-level token buckets were not persisted, so these are sensitivity scenarios, not measured forecasts.",
+      "artifact": "cost_sensitivity.json"
+    }
+  ],
+  "candidate_strategy_metrics": [
+    {
+      "strategy": "S1_chain_or_relation_first",
+      "role": "Upstream extraction alternative",
+      "graph_metrics": {
+        "status": "unavailable_before_implementation",
+        "existing_claim_topological_proxy": "E03 for diagnostic view and E05 for canonical union",
+        "reason": "A deterministic projection cannot predict which newly grounded bundles a changed extractor will create."
+      },
+      "grounding": "Designed to require quote and anchor per relation; outcome unavailable before replay.",
+      "duplicates": "Reduced by global canonicalization, exact outcome unavailable.",
+      "knowledge_gaps": "Target-specific gaps by design; counts unavailable.",
+      "review_queue": "Post-gate queue expected to shrink; no numeric result claimed.",
+      "gold_and_forbidden": "Must meet 8/8 and 0/3 as acceptance, not used during extraction.",
+      "calls_tokens_cost_duration": "Only available for the recommended combined design as E09 sensitivity.",
+      "information_loss_risk": "Medium alone; low when paired with full-manual targeted retrieval and explicit gaps.",
+      "ontology": "Conformant; it instantiates only configured domain/range-valid relations.",
+      "agnosticism": "Driven by runtime schema and evidence structure, not labels or page numbers."
+    },
+    {
+      "strategy": "S2_current_extraction_plus_deterministic_gate",
+      "role": "Downstream safety net",
+      "graph_metrics": {
+        "status": "simulated",
+        "diagnostic": "E03",
+        "canonical_union": "E05"
+      },
+      "grounding": "334/334 evidence IDs resolve in the proxy; claim-specific rate unavailable until relation quotes and anchors are persisted.",
+      "duplicates": "Unchanged unless S4 is also used.",
+      "knowledge_gaps": "51 unique topology problem targets measured as gate input; final codes/counts not simulated.",
+      "review_queue": "Current 250 is not comparable because it is pre-adapter; post-gate size unavailable.",
+      "gold_and_forbidden": "8/8 and 0/3 in the proxy.",
+      "calls_tokens_cost_duration": "If used alone it preserves the measured 96 calls, 832562 tokens, $0.320466 and 444.69 s, plus unmeasured local gate time.",
+      "information_loss_risk": "Low if excluded incomplete candidates are persisted as target-specific gaps and remain retrievable.",
+      "ontology": "Conformant projection over configured types/relations.",
+      "agnosticism": "Topology and provenance only."
+    },
+    {
+      "strategy": "S3_separate_canonical_diagnostic_structural_projections",
+      "role": "Presentation and publication architecture",
+      "graph_metrics": {
+        "status": "simulated",
+        "diagnostic": "E03",
+        "structural": "E04",
+        "canonical_union": "E05"
+      },
+      "grounding": "Same limitation as S2 on the current payload.",
+      "duplicates": "Same entity IDs are reused; projections do not duplicate entities.",
+      "knowledge_gaps": "Displayed separately; counts not recomputed.",
+      "review_queue": "No numeric effect by itself.",
+      "gold_and_forbidden": "Diagnostic and canonical proxy retain 8/8 and 0/3.",
+      "calls_tokens_cost_duration": "No additional LLM calls; local projection time not measured.",
+      "information_loss_risk": "Very low because structural nodes remain in the same canonical graph.",
+      "ontology": "Conformant; projections are ID sets, not ontology extensions.",
+      "agnosticism": "Selection follows relation roles, not manual vocabulary."
+    },
+    {
+      "strategy": "S4_global_cross_chunk_canonicalization",
+      "role": "Post-merge normalization before completion",
+      "graph_metrics": {
+        "status": "unavailable_without_merge_decisions",
+        "exact_normalized_duplicate_groups_measured": 0,
+        "lexical_candidate_pairs_measured": 40,
+        "manually_evident_groups_minimum": 8
+      },
+      "grounding": "Must union claim evidence only after a type-safe merge; not simulated.",
+      "duplicates": "Primary target; no automatic merge count is claimed because parent/child and specificity pairs are present.",
+      "knowledge_gaps": "Ambiguous pairs become adjudication items; count unavailable.",
+      "review_queue": "At most the unresolved candidate subset, not all 40 lexical candidates; exact size unavailable.",
+      "gold_and_forbidden": "Must remain 8/8 and 0/3 after canonical-ID remapping.",
+      "calls_tokens_cost_duration": "Local candidate generation; optional adjudication cost is included in E09, $0.048 central or $0.076 conservative.",
+      "information_loss_risk": "High for token-containment auto-merge; low with type, semantics, context, neighborhood and evidence checks.",
+      "ontology": "Conformant; identity normalization only.",
+      "agnosticism": "Type-specific semantics and graph neighborhood, not domain terms."
+    },
+    {
+      "strategy": "S5_selective_scoping_with_targeted_retrieval",
+      "role": "Input control",
+      "graph_metrics": {
+        "status": "unavailable_before_role_aware_replay",
+        "baseline_selected_pages": 30,
+        "baseline_blueprint_page_span_present": 11,
+        "note": "The 11-page observation is diagnostic evidence, not a proposed page-number rule."
+      },
+      "grounding": "Expected to improve by retrieving small causal units; outcome unavailable.",
+      "duplicates": "Expected to reduce structural variants in diagnostic extraction; outcome unavailable.",
+      "knowledge_gaps": "Full-manual retrieval protects incomplete chains; counts unavailable.",
+      "review_queue": "Expected to shrink; no numeric result claimed.",
+      "gold_and_forbidden": "Must remain 8/8 and 0/3.",
+      "calls_tokens_cost_duration": "Included only in combined E09 sensitivity; no standalone figure invented.",
+      "information_loss_risk": "Medium if pages are dropped globally; low with multi-role scope and full-manual retrieval index.",
+      "ontology": "Neutral to ontology.",
+      "agnosticism": "Roles are inferred from discourse/evidence purpose, never producer, machine, gold terms or fixed pages."
+    },
+    {
+      "strategy": "S6_selective_model_escalation",
+      "role": "Fallback for unresolved ambiguity only",
+      "graph_metrics": {
+        "status": "unavailable_no_real_calls",
+        "scope": "gap, ambiguous grounding, uncertain deduplication, or unresolved completion batch"
+      },
+      "grounding": "A stronger model may adjudicate but may not create a relation without source quote and anchor.",
+      "duplicates": "Only uncertain candidate batch.",
+      "knowledge_gaps": "Unresolved outcomes stay gaps.",
+      "review_queue": "Potential reduction unavailable.",
+      "gold_and_forbidden": "No direct claim; must satisfy acceptance after final gate.",
+      "calls_tokens_cost_duration": "Estimated one batch: $0.048 central (12000 input, 2000 output) or $0.076 conservative (20000 input, 3000 output), with 30-45 s allowance. No real call was made.",
+      "information_loss_risk": "Low if output is advisory and deterministically grounded.",
+      "ontology": "Constrained by the same schema and gate.",
+      "agnosticism": "Receives generic unresolved records and source evidence only."
+    }
+  ],
+  "recommended_combination": {
+    "strategies": [
+      "S1_chain_or_relation_first",
+      "S2_current_extraction_plus_deterministic_gate",
+      "S3_separate_canonical_diagnostic_structural_projections",
+      "S4_global_cross_chunk_canonicalization",
+      "S5_selective_scoping_with_targeted_retrieval",
+      "S6_selective_model_escalation"
+    ],
+    "note": "S2 remains a mandatory safety net even after S1; S6 is optional and budget-gated.",
+    "topology_proxy": "E03 and E05",
+    "expected_cost_usd": 0.22635,
+    "estimated_cost_range_usd": [0.130977, 0.301724],
+    "preflight_stop_usd": 0.35,
+    "expected_duration_seconds": 281.334,
+    "estimated_duration_range_seconds": [187.276, 360.392],
+    "expected_calls": 25,
+    "estimated_calls_range": [21, 28],
+    "status": "estimated_sensitivity_not_measured_forecast"
+  }
+}

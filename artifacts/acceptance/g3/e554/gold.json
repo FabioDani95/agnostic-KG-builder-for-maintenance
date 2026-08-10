@@ -1,0 +1,105 @@
+{
+  "campaign_id": "g3-e554-real-manual-csv-pdf",
+  "status": "prepared_before_model_run",
+  "asset": {
+    "name": "Eastman Eagle S3L",
+    "brand": "Eastman",
+    "model": "Eagle S3L",
+    "asset_type": "automated laser cutting system"
+  },
+  "manual": {
+    "path": "/Users/fabiodaniele/Downloads/E-554.pdf",
+    "sha256": "a7467316234f2d84550e7c267bf709fda55e1023055d9569dc27348f192641d0",
+    "language": "en",
+    "page_count": 54,
+    "must_keep_pdf_pages": [37, 38, 39],
+    "diagnostic_section": "TROUBLE SHOOTING GUIDE"
+  },
+  "structured_source": {
+    "path": "artifacts/acceptance/g3/e554/synthetic_eagle_s3l_logs.csv",
+    "synthetic": true,
+    "row_count": 11,
+    "expected_valid_rows": 11,
+    "expected_isolated_rows": 0,
+    "expected_duplicate_claims": [
+      {
+        "event_ids": ["E554-SYN-001", "E554-SYN-002"],
+        "symptom": "UIT screen is blank and not lit up",
+        "failure_mode": "No AC power at the PoE power supply",
+        "corrective_action": "Restore AC power and replace failed fuses F3 and F4"
+      }
+    ]
+  },
+  "minimum_expected_manual_chains": [
+    {
+      "pdf_page": 37,
+      "symptom": "Machine stops in middle of cut and displays Machine Paused",
+      "failure_mode": "intermittent pause circuit, usually in the stop discs",
+      "corrective_action": "adjust the pause plunger activation pressure"
+    },
+    {
+      "pdf_pages": [37, 38],
+      "symptom": "Touch Screen buttons are out of alignment",
+      "failure_mode": "Touch screen calibration is required",
+      "corrective_action": "complete touch screen calibration and save and exit"
+    },
+    {
+      "pdf_page": 38,
+      "symptom": "Cutting Tool or Pen does not move down",
+      "failure_mode": "tool or layer is not mapped properly",
+      "corrective_action": "map the tool to the spindle or the layer to the tool"
+    },
+    {
+      "pdf_page": 38,
+      "symptom": "Laser Fume Extractor has reduced vacuum or no vacuum",
+      "failure_mode": "vacuum filters require replacement",
+      "corrective_action": "replace vacuum filters"
+    },
+    {
+      "pdf_page": 39,
+      "symptom": "Laser cutting path is too wide",
+      "failure_mode": "brass laser nozzle is damaged or bent",
+      "corrective_action": "replace the damaged nozzle"
+    },
+    {
+      "pdf_page": 39,
+      "symptom": "Loss of laser cutting power causing non-cut edges",
+      "failure_mode": "focusing lens is damaged or dirty",
+      "corrective_action": "clean or replace the focusing lens"
+    },
+    {
+      "pdf_page": 39,
+      "symptom": "Loss of laser cutting power causing non-cut edges",
+      "failure_mode": "beam deflecting mirror is damaged or dirty",
+      "corrective_action": "clean or replace the mirrors"
+    },
+    {
+      "pdf_page": 39,
+      "symptom": "Loss of laser cutting power causing non-cut edges",
+      "failure_mode": "laser nozzle contains damage or debris",
+      "corrective_action": "clean or replace the laser nozzle"
+    }
+  ],
+  "forbidden_cross_pairings": [
+    {
+      "symptom": "Touch Screen buttons are out of alignment",
+      "failure_mode": "dirty focusing lens"
+    },
+    {
+      "symptom": "Laser Fume Extractor has reduced vacuum or no vacuum",
+      "failure_mode": "intermittent pause circuit"
+    },
+    {
+      "symptom": "Laser cutting path is too wide",
+      "failure_mode": "touch screen calibration is required"
+    }
+  ],
+  "quality_checks": {
+    "strict_validation_passed": true,
+    "resolvable_evidence_ratio": 1.0,
+    "unsupported_causal_or_resolution_relations": 0,
+    "forbidden_cross_pairings": 0,
+    "csv_approval_eligible": true,
+    "merge_barrier_before_source_approvals": "waiting_for_approval"
+  }
+}

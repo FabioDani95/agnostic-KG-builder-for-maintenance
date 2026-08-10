@@ -39,11 +39,52 @@ Return a JSON object:
 Return ONLY the JSON object. No markdown fences, no commentary.\
 """
 
+
+TOC_EXTRACTION_WITH_CANONICAL_ASSET_PROMPT_TEMPLATE = """\
+You are a technical document analyst. Extract the Table of Contents from the following pages.
+
+## CONTEXT
+- These are pages {toc_start_page} to {toc_end_page} (absolute PDF page numbers) of a technical manual.
+- The manual has {total_pages} total pages.
+- The Asset has already been identified and confirmed by the workspace operator.
+
+## FIRST PAGES (for document metadata only)
+{first_pages_text}
+
+## TABLE OF CONTENTS TEXT
+{toc_text}
+
+## TASK
+
+### Part 1: Document Info
+Identify only:
+- document_type: the type of document (e.g. "Operation Manual", "Service Manual")
+- language: the primary language of the document (e.g. "English", "Italian", "Multilingual")
+
+Do NOT identify, infer, correct, or return the product, Asset, brand, model, or Asset ID.
+
+### Part 2: Structured Table of Contents
+Extract every chapter/section entry from the Table of Contents as a JSON array.
+- "title": the chapter or section title exactly as written in the ToC
+- "page": the page number AS PRINTED IN THE MANUAL (not the absolute PDF page number)
+
+Include all entries you can find, preserving the order as they appear in the ToC.
+
+## OUTPUT FORMAT
+Return a JSON object:
+
+{{"document_info": {{"document_type": "...", "language": "..."}}, \
+"toc_entries": [{{"title": "Chapter 1 - Introduction", "page": 1}}, \
+{{"title": "Chapter 2 - Safety", "page": 5}}, ...]}}
+
+Return ONLY the JSON object. No markdown fences, no commentary.\
+"""
+
 SECTION_SELECTION_PROMPT_TEMPLATE = """\
 You are a technical document analyst. From the structured Table of Contents below, \
 select which sections are relevant for extracting the maintenance ontology, \
 including diagnostic knowledge (Symptom / FailureMode / CorrectiveAction) and \
-component coverage (Asset / Component / ErrorCode).
+component and alarm coverage (Component / ErrorCode). The Asset is workspace context, not an extraction target.
 
 ## STRUCTURED TABLE OF CONTENTS
 {toc_json}
@@ -126,8 +167,14 @@ def build_toc_extraction_prompt(
     total_pages: int,
     toc_text: str,
     first_pages_text: str,
+    discover_asset_identity: bool = True,
 ) -> str:
-    return TOC_EXTRACTION_PROMPT_TEMPLATE.format(
+    template = (
+        TOC_EXTRACTION_PROMPT_TEMPLATE
+        if discover_asset_identity
+        else TOC_EXTRACTION_WITH_CANONICAL_ASSET_PROMPT_TEMPLATE
+    )
+    return template.format(
         toc_start_page=toc_start_page,
         toc_end_page=toc_end_page,
         total_pages=total_pages,

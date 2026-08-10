@@ -208,6 +208,40 @@ def _strict_validation(
                 node_type="relation",
             ))
 
+    graph_invariant_errors = 0
+    asset_ids = sorted(
+        node.node_id for node in nodes if node.node_type == "Asset"
+    )
+    if len(asset_ids) != 1:
+        graph_invariant_errors += 1
+        issues.append(GraphValidationIssue(
+            code="asset_cardinality",
+            message=f"The source graph must contain exactly one Asset; found {len(asset_ids)}.",
+            node_type="Asset",
+        ))
+
+    has_component_pairs = {
+        (relation.from_id, relation.to_id)
+        for relation in relations
+        if relation.relation_type == "HAS_COMPONENT"
+    }
+    canonical_asset_id = asset_ids[0] if len(asset_ids) == 1 else None
+    for component in (node for node in nodes if node.node_type == "Component"):
+        if canonical_asset_id is None or (
+            canonical_asset_id,
+            component.node_id,
+        ) not in has_component_pairs:
+            graph_invariant_errors += 1
+            issues.append(GraphValidationIssue(
+                code="component_not_owned_by_asset",
+                message=(
+                    f"Component {component.node_id} must be connected to the canonical "
+                    "Asset by HAS_COMPONENT."
+                ),
+                node_type="Component",
+                node_id=component.node_id,
+            ))
+
     evidence_ids = {item.evidence_id for item in evidence}
     referenced_evidence_ids = {
         evidence_id for node in nodes for evidence_id in node.evidence_ids
@@ -240,6 +274,7 @@ def _strict_validation(
         and extra_properties == 0
         and domain_range_errors == 0
         and endpoint_errors == 0
+        and graph_invariant_errors == 0
         and duplicate_ids == 0
         and provenance_total == provenance_resolvable
         and all(item.locator for item in evidence)
@@ -251,6 +286,7 @@ def _strict_validation(
         extra_properties=extra_properties,
         domain_range_errors=domain_range_errors,
         endpoint_errors=endpoint_errors,
+        graph_invariant_errors=graph_invariant_errors,
         duplicate_ids=duplicate_ids,
         provenance_total=provenance_total,
         provenance_resolvable=provenance_resolvable,

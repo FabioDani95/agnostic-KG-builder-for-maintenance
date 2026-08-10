@@ -1,0 +1,36 @@
+E-554 Luna validation — curated server log excerpt
+Run trigger: exactly once from the UI at 2026-08-09T19:33:10Z
+No secret values are included.
+
+21:33:10 [scoping] Start — 54 pages, offset=0, timeout=120s
+21:33:14 [llm] Scoping call — model=gpt-5.6-luna, prompt=6303, completion=769, total=7072, cost=$0.002183
+21:33:26 [llm] Scoping call — model=gpt-5.6-luna, prompt=1916, completion=1734, total=3650, cost=$0.002464
+21:33:26 [scoping] Reliable section plan retained without keyword expansion — 32 sections
+21:33:26 [scoping] Done — 32 sections, 30 pages to keep out of 54 (16.5s)
+21:33:26 [ontology] Drafting from 30 pages, 32 sections -> 19 chunks
+21:33:26 [ontology] Chunk 15/19 — pages 37-38
+21:33:26 [ontology] Chunk 16/19 — page 39
+21:33:26 [ontology] Chunk 17/19 — pages 40-44
+21:33:26 [ontology] Chunk 18/19 — pages 45-49
+21:33:26 [ontology] Chunk 19/19 — page 50
+
+Observed during chunk processing:
+- 10 semantic re-extraction attempts (the configured reflective retry), all inside this one run.
+- 0 transport/chunk retry warnings and 0 non-200 OpenAI responses.
+- 0 parse repairs.
+
+21:39:11 [coverage_completion] Applied 6 missing chains (6 returned, 0 dropped without quote)
+21:40:28 [ontology] Run-level resolution completion: 11/17 targets completed
+21:40:32 [graph_closure] Auto-applied 52/188 grounded AFFECTS relations
+21:40:33 [grounding] 2/174 relation evidence quotes not found on cited pages; 4 nodes flagged
+21:40:33 [ontology] Review queue: 250 items (open=48, review=165, advisory=37)
+21:40:34 POST /api/workspaces/ws_ebXgqKWDDgsjKdrGbFDiQQ/g3/sources/src_S0wngbguWAy0g87w9MhKkQ/generate — 200 OK
+
+Persisted totals:
+- duration_seconds: 444.69
+- llm_calls: 96
+- prompt/cached/completion/total: 668862 / 54119 / 163700 / 832562
+- estimated_cost_usd: 0.320466
+- model: gpt-5.6-luna
+- scoping reasoning: low
+- ontology/finalization reasoning: medium

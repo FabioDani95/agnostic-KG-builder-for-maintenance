@@ -11,7 +11,7 @@ Usage:
 
     --url     Base URL (default: http://localhost:8000)
     --manual  Filename from manuals/ (default: first available)
-    --model   LLM model for scoping+extraction (default: gpt-5.4)
+    --model   LLM model for scoping+extraction (default: gpt-5.6-terra)
     --max-triplets  Max triplets to review before stopping (default: 3)
     --timeout-phase  Seconds to wait per phase (default: 180)
     --save-dir  Directory for result JSON (default: benchmark_runs/)
@@ -38,7 +38,7 @@ import httpx
 # ─── Configuration ────────────────────────────────────────────────────────────
 
 DEFAULT_URL = "http://localhost:8000"
-DEFAULT_MODEL = "gpt-5.4"
+DEFAULT_MODEL = "gpt-5.6-terra"
 DEFAULT_MAX_TRIPLETS = 3
 DEFAULT_PHASE_TIMEOUT = 180  # seconds per phase
 SSE_RECONNECT_DELAY = 1.0

@@ -56,7 +56,7 @@ def _clean_json(raw: str) -> str:
 
 
 def _parse_toc_response(raw: str) -> tuple[list[TocEntry], dict]:
-    """Parse LLM ToC extraction response into (toc_entries, product_info_raw).
+    """Parse LLM ToC extraction response into (toc_entries, metadata_raw).
 
     Uses the pipeline's JSON repair ladder: a response truncated at the
     completion limit (long ToCs) still yields every complete entry instead of
@@ -73,7 +73,7 @@ def _parse_toc_response(raw: str) -> tuple[list[TocEntry], dict]:
     if not isinstance(data, dict):
         return [], {}
 
-    product_info = data.get("product_info", {})
+    metadata = data.get("product_info") or data.get("document_info") or {}
 
     entries: list[TocEntry] = []
     for item in data.get("toc_entries", []):
@@ -85,7 +85,40 @@ def _parse_toc_response(raw: str) -> tuple[list[TocEntry], dict]:
         except (KeyError, ValueError, TypeError):
             continue
 
-    return entries, product_info
+    return entries, metadata
+
+
+def _confirmed_asset_identity(store: dict) -> dict[str, str] | None:
+    """Return the operator-confirmed Asset identity expected by workspace runs."""
+    identity = store.get("asset_identity")
+    if not isinstance(identity, dict):
+        return None
+    asset_id = str(identity.get("asset_id", "") or "").strip()
+    name = str(identity.get("name", "") or "").strip()
+    if not (asset_id and name):
+        return None
+    return dict(identity)
+
+
+def _product_info_from_confirmed_asset(
+    identity: dict[str, str],
+    *,
+    total_pages: int,
+    document_metadata: dict | None = None,
+) -> ProductInfo:
+    """Project workspace identity into the legacy CutPlan metadata contract."""
+    metadata = document_metadata or {}
+    return ProductInfo(
+        product_name=str(identity.get("name", "") or "").strip(),
+        product_short_name=str(identity.get("name", "") or "").strip(),
+        brand=str(identity.get("brand", "") or "").strip(),
+        model=str(identity.get("model", "") or "").strip(),
+        asset_id=str(identity.get("asset_id", "") or "").strip(),
+        asset_type=str(identity.get("asset_type", "") or "").strip(),
+        document_type=str(metadata.get("document_type", "") or "").strip(),
+        language=str(metadata.get("language", "") or "").strip(),
+        page_count=total_pages,
+    )
 
 
 def _parse_section_response(
@@ -146,6 +179,7 @@ def _identify_product_from_first_pages(
             product_id_prompt,
             model_name=req.model_name,
             timeout=timeout_seconds,
+            reasoning_effort=req.reasoning_effort,
         )
         scoping_usage_entries.append(usage_pid)
         try:
@@ -200,6 +234,13 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
 
     pages = store["pages"]
     total_pages = len(pages)
+    confirmed_asset = None
+    if not req.discover_asset_identity:
+        confirmed_asset = _confirmed_asset_identity(store)
+        if confirmed_asset is None:
+            raise ValueError(
+                "discover_asset_identity=False requires a canonical Asset identity"
+            )
     ocr_cfg = dict((get_pdf_ingestion_config().get("ocr") or {}))
 
     def _ocr_selected(candidate_pages: list[int]) -> dict:
@@ -252,11 +293,17 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
             small_doc_threshold,
             time.perf_counter() - t0,
         )
-        # Small docs skip section scoping, not identity: without this the Asset
-        # node falls back to the filename and the whole run loses its canonical
-        # product identity.
-        small_doc_product_info = _identify_product_from_first_pages(
-            store, req, timeout_seconds, scoping_usage_entries,
+        # Workspace runs already carry the operator-confirmed Asset and must not
+        # spend an LLM call trying to rediscover or redefine it from the PDF.
+        small_doc_product_info = (
+            _identify_product_from_first_pages(
+                store, req, timeout_seconds, scoping_usage_entries,
+            )
+            if req.discover_asset_identity
+            else _product_info_from_confirmed_asset(
+                confirmed_asset,
+                total_pages=total_pages,
+            )
         )
         record_stage_metrics(
             store,
@@ -270,6 +317,10 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
                     "selected_pages": total_pages,
                     "selected_sections": 0,
                     "skipped": True,
+                    "reasoning_effort": req.reasoning_effort or "default",
+                    "asset_identity_source": (
+                        "pdf_discovery" if req.discover_asset_identity else "workspace"
+                    ),
                     "page_offset": page_offset,
                     "ocr": ocr_report,
                 },
@@ -323,6 +374,7 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
             total_pages=total_pages,
             toc_text=toc_text,
             first_pages_text=first_pages_text,
+            discover_asset_identity=req.discover_asset_identity,
         )
 
         try:
@@ -330,6 +382,7 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
                 toc_prompt,
                 model_name=req.model_name,
                 timeout=timeout_seconds,
+                reasoning_effort=req.reasoning_effort,
             )
             scoping_usage_entries.append(usage1)
             toc_entries, product_info_raw = _parse_toc_response(raw_toc)
@@ -367,7 +420,7 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
                     toc_end_page=toc_end,
                 )
 
-                if product_info_raw:
+                if product_info_raw and req.discover_asset_identity:
                     normalized_product_info = normalize_product_info(
                         product_info_raw,
                         filename=store.get("filename", ""),
@@ -391,6 +444,14 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
                         source_type=product_info.document_type,
                         filename=store.get("filename", ""),
                     )
+                elif not req.discover_asset_identity:
+                    product_info = _product_info_from_confirmed_asset(
+                        confirmed_asset,
+                        total_pages=total_pages,
+                        document_metadata=product_info_raw,
+                    )
+                    if product_info.document_type:
+                        store["source_type"] = product_info.document_type
 
                 rule_sections = select_toc_sections(
                     toc_entries=toc_entries,
@@ -405,6 +466,7 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
                     selection_prompt,
                     model_name=req.model_name,
                     timeout=timeout_seconds,
+                    reasoning_effort=req.reasoning_effort,
                 )
                 scoping_usage_entries.append(usage2)
                 llm_sections = filter_llm_sections(_parse_section_response(
@@ -439,29 +501,21 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
                 time.perf_counter() - t0,
             )
 
-    if not product_info:
+    if not product_info and req.discover_asset_identity:
         product_info = _identify_product_from_first_pages(
             store, req, timeout_seconds, scoping_usage_entries,
         )
-
-    kw_sections = keyword_scan(pages)
-    logger.info(
-        "[scoping] Keyword scan — %d sections found across %d pages",
-        len(kw_sections),
-        total_pages,
-    )
-    if on_event:
-        on_event({"type": "progress", "phase": "scoping",
-                  "message": f"Keyword scan complete — {len(kw_sections)} section(s) identified."})
-    for section in kw_sections:
-        logger.info(
-            "[scoping]   keyword: %s pp.%d-%d",
-            section.name,
-            section.page_range.start,
-            section.page_range.end,
+    elif not product_info:
+        product_info = _product_info_from_confirmed_asset(
+            confirmed_asset,
+            total_pages=total_pages,
         )
 
     if not llm_sections and not rule_sections:
+        # Keywords are a fail-safe when structured ToC/rule/LLM scoping found
+        # nothing.  Unioning their broad one-page-gap spans with reliable
+        # sections used to expand a precise cut plan into most of the manual.
+        kw_sections = keyword_scan(pages)
         merged = merge_sections([], [], kw_sections)
         logger.info(
             "[scoping] Fallback keyword scan — %d sections (%.1fs)",
@@ -475,8 +529,15 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
                 section.page_range.start,
                 section.page_range.end,
             )
+        if on_event:
+            on_event({"type": "progress", "phase": "scoping",
+                      "message": f"Fallback keyword scan — {len(kw_sections)} section(s) identified."})
     else:
-        merged = merge_sections(rule_sections, llm_sections, kw_sections)
+        merged = merge_sections(rule_sections, llm_sections, [])
+        logger.info(
+            "[scoping] Reliable section plan retained without keyword expansion — %d sections",
+            len(merged),
+        )
 
     all_pages = sections_to_page_list(merged)
     ocr_candidate_pages = all_pages or [page["page_number"] for page in pages]
@@ -532,6 +593,10 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
                 "selected_pages": len(filtered_pages),
                 "selected_sections": len(merged),
                 "skipped": False,
+                "reasoning_effort": req.reasoning_effort or "default",
+                "asset_identity_source": (
+                    "pdf_discovery" if req.discover_asset_identity else "workspace"
+                ),
                 "page_offset": page_offset,
                 "ocr": ocr_report,
             },
@@ -568,7 +633,7 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
         "skipped": False,
         "product_info": product_info.model_dump() if product_info else None,
     }
-    if product_info:
+    if product_info and req.discover_asset_identity:
         store["asset_identity"] = extract_asset_identity(
             product_info.model_dump(),
             fallback_name=product_info.product_name,

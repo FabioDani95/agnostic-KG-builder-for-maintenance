@@ -15,6 +15,7 @@ from backend.models import (
 )
 from backend.services.pdf_source_subgraph_generation import (
     PdfSourceSubgraphBuilder,
+    pdf_input_config_hash,
     pdf_preparation_fingerprint,
 )
 from backend.storage.repositories.evidence import EvidenceRepository
@@ -29,17 +30,32 @@ def _workspace(client, machine_payload) -> dict:
     return response.json()["workspace"]
 
 
+def test_pdf_generation_cache_key_includes_reasoning_effort(monkeypatch):
+    efforts = {"scoping": "low", "ontology_draft": "medium"}
+
+    monkeypatch.setattr(
+        "backend.services.pdf_source_subgraph_generation.get_agent_config",
+        lambda name: {"model": "gpt-5.6-luna", "reasoning_effort": efforts[name]},
+    )
+    medium_hash = pdf_input_config_hash()
+    efforts["ontology_draft"] = "low"
+
+    assert pdf_input_config_hash() != medium_hash
+
+
 def _pipeline_result(
     store: dict,
     *,
     quote: str,
     source_page: int = 1,
+    source_anchor: str = "",
 ) -> OntologyPipelineResponse:
     asset = store["asset_identity"]
     evidence = [OntologyEvidence(
         source_page=source_page,
         source_reference=f"PAGE {source_page}",
         quote=quote,
+        source_anchor=source_anchor,
     )]
     return OntologyPipelineResponse(
         status="ready",
@@ -136,6 +152,7 @@ def test_pdf_builds_the_same_reviewable_source_subgraph_contract(
     calls = 0
 
     def fake_cut_plan(store, request, on_event=None):
+        assert request.discover_asset_identity is False
         return _cut_plan_for(store, request.pdf_id, [1])
 
     async def fake_retained_pipeline(store, request, on_event=None):
@@ -249,6 +266,110 @@ def test_pdf_unresolvable_quote_is_visible_and_fails_closed(
         json={"action": "approve"},
     )
     assert approval.status_code == 409
+
+
+def test_pdf_exact_evidence_anchor_resolves_without_fuzzy_page_fallback(
+    foundation_client,
+    machine_payload,
+    monkeypatch,
+):
+    workspace = _workspace(foundation_client, machine_payload)
+    source = upload_pdf(
+        foundation_client,
+        workspace["workspace_id"],
+        "anchored-manual.pdf",
+        "SERIAL: HP7-000042\nPump vibration indicates a loose coupling. Tighten the coupling.",
+    ).json()["source"]
+
+    monkeypatch.setattr(
+        "backend.services.pdf_source_subgraph_generation.create_cut_plan_workflow",
+        lambda store, request, on_event=None: _cut_plan_for(store, request.pdf_id, [1]),
+    )
+
+    async def fake_retained_pipeline(store, request, on_event=None):
+        anchor = store["pages"][0]["evidence_anchors"][0]
+        return _pipeline_result(
+            store,
+            quote="Pump vibration indicates a loose coupling.",
+            source_anchor=anchor,
+        )
+
+    monkeypatch.setattr(
+        "backend.services.pdf_source_subgraph_generation.draft_ontology_workflow",
+        fake_retained_pipeline,
+    )
+    graph = foundation_client.post(
+        f"/api/workspaces/{workspace['workspace_id']}/g3/sources/{source['source_id']}/generate"
+    ).json()["sources"][0]["subgraph"]
+
+    assert graph["approval_eligible"] is True
+    assert graph["knowledge_gaps"] == []
+    assert len(graph["evidence"]) == 1
+
+
+def test_pdf_generation_metrics_are_persisted_with_revision(
+    foundation_client,
+    machine_payload,
+    monkeypatch,
+):
+    workspace = _workspace(foundation_client, machine_payload)
+    source = upload_pdf(
+        foundation_client,
+        workspace["workspace_id"],
+        "metered-manual.pdf",
+        "SERIAL: HP7-000042\nPump vibration indicates a loose coupling. Tighten the coupling.",
+    ).json()["source"]
+
+    monkeypatch.setattr(
+        "backend.services.pdf_source_subgraph_generation.create_cut_plan_workflow",
+        lambda store, request, on_event=None: _cut_plan_for(store, request.pdf_id, [1]),
+    )
+
+    async def fake_retained_pipeline(store, request, on_event=None):
+        model_metrics = {
+            "label": "GPT-5.6 Terra",
+            "llm_calls": 2,
+            "prompt_tokens": 1_000,
+            "cached_prompt_tokens": 200,
+            "non_cached_prompt_tokens": 800,
+            "completion_tokens": 100,
+            "total_tokens": 1_100,
+            "estimated_cost_usd": 0.0028,
+        }
+        store["run_metrics"] = {
+            "stages": {
+                "ontology": {
+                    "stage": "ontology",
+                    "duration_seconds": 1.25,
+                    **{key: value for key, value in model_metrics.items() if key != "label"},
+                    "models": ["gpt-5.6-terra"],
+                    "operations": ["ontology_extract"],
+                    "by_model": {"gpt-5.6-terra": model_metrics},
+                    "details": {"selected_pages": 1, "chunk_count": 1},
+                },
+            },
+        }
+        return _pipeline_result(store, quote="Pump vibration indicates a loose coupling.")
+
+    monkeypatch.setattr(
+        "backend.services.pdf_source_subgraph_generation.draft_ontology_workflow",
+        fake_retained_pipeline,
+    )
+    generated = foundation_client.post(
+        f"/api/workspaces/{workspace['workspace_id']}/g3/sources/{source['source_id']}/generate"
+    ).json()
+    metrics = generated["sources"][0]["subgraph"]["generation_metrics"]
+
+    assert metrics["llm_calls"] == 2
+    assert metrics["total_tokens"] == 1_100
+    assert metrics["estimated_cost_usd"] == 0.0028
+    assert metrics["stages"]["ontology"]["details"]["chunk_count"] == 1
+    assert metrics["by_model"]["gpt-5.6-terra"]["prompt_tokens"] == 1_000
+
+    persisted = foundation_client.get(
+        f"/api/workspaces/{workspace['workspace_id']}/g3/subgraphs"
+    ).json()["sources"][0]["subgraph"]["generation_metrics"]
+    assert persisted == metrics
 
 
 def test_pdf_cut_plan_segments_diagnostics_before_ontology(

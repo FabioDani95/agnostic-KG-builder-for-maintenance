@@ -2,7 +2,7 @@
 
 ## Stato attuale
 
-Data: `2026-08-07`
+Data: `2026-08-09`
 
 Decisione Product Owner: **revisione umana ancora aperta**
 Stato: **nessun sottografo è stato approvato o unito**
@@ -34,14 +34,42 @@ un'altra repository o un servizio applicativo parallelo. Il bridge locale:
   configurazione, modello e versione del bridge.
 
 Il cut plan è ibrido: i documenti piccoli mantengono tutte le pagine; un indice
-abilita selezione LLM più regole e keyword; senza indice il taglio delle
-sezioni è guidato dalle keyword. L'identificazione del prodotto può comunque
-usare l'LLM, e un errore nello scoping LLM ricade sul percorso a keyword.
+abilita selezione LLM più regole; senza una selezione affidabile il taglio delle
+sezioni ricade sulle keyword. Le keyword non vengono più unite a sezioni
+affidabili, perché i loro span larghi degradavano un cut plan preciso.
 
 La suite automatica copre cache, segmentazione, provenance fail-closed,
 invalidation, retry dei chunk, OCR low-confidence e flusso browser PDF-only.
 Questo chiude l'integrazione funzionale, non la campagna qualitativa Product
 Owner su manuali reali.
+
+## Hardening PDF successivo all'analisi E-554
+
+L'esecuzione E-554 ha evidenziato difetti nel bridge di integrazione, non una
+semplice differenza di capacità del modello. Sono ora implementate e coperte da
+test offline le seguenti correzioni:
+
+- ricostruzione del testo in ordine fisico (`block_index`, tabella/riga, OCR),
+  indipendente dall'ordine hash degli `evidence_id`;
+- anchor `EVIDENCE_ID` end-to-end per risolvere direttamente la provenance,
+  con citazione fuzzy conservata soltanto come fallback compatibile;
+- deduplica delle pagine prima del chunking: sezioni sovrapposte aggiungono
+  contesto ma non moltiplicano token e chiamate;
+- keyword scan usato solo in fallback;
+- Asset del workspace trattato come contesto canonico: nessuna product
+  discovery nello scoping G3, nessuna estrazione Asset nel draft ontologico e
+  scarto deterministico di eventuali varianti emesse dal modello;
+- conservazione byte-per-byte dell'Asset ID canonico del workspace e
+  derivazione sistemica di `HAS_COMPONENT`/`GENERATES_ERROR`;
+- validazione strict di cardinalità Asset e ownership dei Component;
+- routing distinto per `scoping` e `ontology_draft` da `config.yaml`;
+- persistenza nella revisione dei KPI di durata, token, chiamate e costo
+  stimato per stage e modello, mostrati nella UI.
+
+L'implementazione non ha rilanciato E-554 con API reali. La qualità del nuovo
+output sul manuale deve ancora essere misurata con un run esplicitamente
+autorizzato dal Product Owner. Dettagli del contratto e della verifica sono in
+[Pipeline PDF G3 e KPI di esecuzione](PDF_PIPELINE_AND_RUN_KPIS.md).
 
 ## Cosa è ora garantito per CSV/XLSX/JSON/JSONL
 
@@ -129,8 +157,9 @@ chi l'ha prodotta come provenienza.
 4. Valutare un LLM soltanto come generatore di **candidate merge** o di
    diagnostica di qualità: non può mutare il grafo, unire nodi o chiudere gap
    senza evidenza, spiegazione e decisione umana tracciata.
-5. Eseguire la campagna qualitativa PDF sul percorso condiviso già integrato,
-   includendo manuali nativi, scansionati e multilingua.
+5. Eseguire, solo dopo autorizzazione esplicita, la campagna qualitativa PDF sul
+   percorso corretto, includendo manuali nativi, scansionati e multilingua e
+   confrontando qualità, tempo, token e costo per revisione.
 6. Pianificare separatamente profili documento destrutturati e reinventario OCR
    post-scoping, senza introdurre chiamate runtime a repository esterne.
 

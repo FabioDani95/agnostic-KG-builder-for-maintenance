@@ -34,6 +34,32 @@ def chat_temperature_kwargs(model_name: str | None, temperature: float) -> dict[
     return {"temperature": temperature}
 
 
+_REASONING_EFFORTS = {"none", "minimal", "low", "medium", "high", "xhigh", "max"}
+
+
+def chat_reasoning_kwargs(
+    model_name: str | None,
+    reasoning_effort: str | None,
+) -> dict[str, str]:
+    """Return a validated Chat Completions reasoning setting when requested.
+
+    Keeping this opt-in prevents legacy/non-reasoning models from receiving an
+    unsupported parameter.  Current GPT-5.6 pipeline models accept all values
+    below through the installed OpenAI SDK.
+    """
+    effort = str(reasoning_effort or "").strip().lower()
+    if not effort:
+        return {}
+    if effort not in _REASONING_EFFORTS:
+        allowed = ", ".join(sorted(_REASONING_EFFORTS))
+        raise ValueError(f"Unsupported reasoning_effort '{reasoning_effort}'. Expected one of: {allowed}")
+
+    model = str(model_name or settings.MODEL_NAME or "").strip().lower()
+    if not (model in {"gpt-5.5", "gpt-5.6"} or model.startswith(("gpt-5.5-", "gpt-5.6-"))):
+        return {}
+    return {"reasoning_effort": effort}
+
+
 def get_client(
     *,
     timeout: Timeout | float | int | None = None,

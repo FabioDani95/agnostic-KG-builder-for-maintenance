@@ -8,11 +8,23 @@ from backend.observability.trace import compact_digest, compact_summary
 from backend.runstore import append_trace_step
 
 MODEL_PRICING = {
+    "gpt-5.6-sol": {
+        "label": "GPT-5.6 Sol",
+        "input_per_million": 5.00,
+        "cached_input_per_million": 0.50,
+        "output_per_million": 30.00,
+    },
     "gpt-5.6-terra": {
         "label": "GPT-5.6 Terra",
-        "input_per_million": 2.50,
-        "cached_input_per_million": 0.25,
-        "output_per_million": 15.00,
+        "input_per_million": 2.00,
+        "cached_input_per_million": 0.20,
+        "output_per_million": 12.00,
+    },
+    "gpt-5.6-luna": {
+        "label": "GPT-5.6 Luna",
+        "input_per_million": 0.20,
+        "cached_input_per_million": 0.02,
+        "output_per_million": 1.20,
     },
     "gpt-5.4": {
         "label": "GPT-5.4",
@@ -55,10 +67,19 @@ AGENT_STAGE_MAP = {
 
 def normalize_model_pricing_key(model_name: str | None) -> str:
     raw = str(model_name or "").strip().lower()
-    for candidate in ("gpt-5.6-terra", "gpt-5.4-pro", "gpt-5.4-mini", "gpt-5.4-nano", "gpt-5.4"):
+    if raw in {"gpt-5.6", "gpt-5.6-sol"} or raw.startswith("gpt-5.6-sol-"):
+        return "gpt-5.6-sol"
+    for candidate in (
+        "gpt-5.6-terra",
+        "gpt-5.6-luna",
+        "gpt-5.4-pro",
+        "gpt-5.4-mini",
+        "gpt-5.4-nano",
+        "gpt-5.4",
+    ):
         if raw == candidate or raw.startswith(f"{candidate}-"):
             return candidate
-    return "gpt-5.4"
+    return "gpt-5.6-terra"
 
 
 def pricing_for_model(model_name: str | None) -> dict[str, Any]:
@@ -167,6 +188,48 @@ def aggregate_usage(entries: list[dict[str, Any]] | None) -> dict[str, Any]:
         "operations": operations,
         "by_model": by_model,
     }
+
+
+def merge_usage_summaries(entries: list[dict[str, Any]] | None) -> dict[str, Any]:
+    """Combine already-aggregated call/chunk summaries without losing model cost."""
+    items = entries or []
+    merged = {
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "cached_prompt_tokens": 0,
+        "non_cached_prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": 0.0,
+        "models": sorted({model for item in items for model in (item.get("models") or []) if model}),
+        "operations": sorted({operation for item in items for operation in (item.get("operations") or []) if operation}),
+        "by_model": {},
+    }
+    integer_fields = (
+        "llm_calls",
+        "prompt_tokens",
+        "cached_prompt_tokens",
+        "non_cached_prompt_tokens",
+        "completion_tokens",
+        "total_tokens",
+    )
+    for item in items:
+        for field in integer_fields:
+            merged[field] += int(item.get(field, 0) or 0)
+        merged["estimated_cost_usd"] += float(item.get("estimated_cost_usd", 0) or 0)
+        for model_key, model_data in (item.get("by_model") or {}).items():
+            bucket = merged["by_model"].setdefault(model_key, {
+                "label": str(model_data.get("label") or pricing_for_model(model_key)["label"]),
+                **{field: 0 for field in integer_fields},
+                "estimated_cost_usd": 0.0,
+            })
+            for field in integer_fields:
+                bucket[field] += int(model_data.get(field, 0) or 0)
+            bucket["estimated_cost_usd"] += float(model_data.get("estimated_cost_usd", 0) or 0)
+    merged["estimated_cost_usd"] = round(merged["estimated_cost_usd"], 6)
+    for bucket in merged["by_model"].values():
+        bucket["estimated_cost_usd"] = round(bucket["estimated_cost_usd"], 6)
+    return merged
 
 
 def summarize_stage(

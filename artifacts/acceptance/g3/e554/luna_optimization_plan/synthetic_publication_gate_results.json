@@ -1,0 +1,238 @@
+{
+  "all_assertions_passed": true,
+  "analysis_kind": "manual_agnostic_synthetic_publication_gate_spec",
+  "case_count": 5,
+  "cases": [
+    {
+      "case_id": "grounded_pump_chain_with_structural_component",
+      "gaps": [],
+      "metrics": {
+        "canonical_isolated_nodes": 0,
+        "canonical_nodes": 5,
+        "canonical_relations": 4,
+        "diagnostic_nodes_by_type": {
+          "Asset": 1,
+          "Component": 1,
+          "CorrectiveAction": 1,
+          "FailureMode": 1,
+          "Symptom": 1
+        },
+        "gaps": 0,
+        "grounded_relations_published": 4,
+        "published_actions": 1,
+        "published_actions_without_failure_mode": 0,
+        "published_complete_failure_modes": 1,
+        "published_symptoms": 1,
+        "rejected_relations": 0,
+        "structural_nodes_by_type": {
+          "Asset": 1,
+          "Component": 1
+        },
+        "ungrounded_relations_published": 0
+      },
+      "published_node_ids": [
+        "asset_pump",
+        "ca_clean_filter",
+        "comp_filter",
+        "fm_clogged_filter",
+        "sym_low_flow"
+      ],
+      "rejected_relations": []
+    },
+    {
+      "case_id": "preventive_safety_install_actions_do_not_publish",
+      "gaps": [
+        {
+          "code": "incomplete_symptom_chain",
+          "target_id": "sym_hot"
+        },
+        {
+          "code": "incomplete_failure_chain",
+          "target_id": "fm_blocked_fan"
+        },
+        {
+          "code": "unlinked_or_noncorrective_action",
+          "target_id": "ca_inspect"
+        },
+        {
+          "code": "unlinked_or_noncorrective_action",
+          "target_id": "ca_ppe"
+        },
+        {
+          "code": "unlinked_or_noncorrective_action",
+          "target_id": "ca_level"
+        },
+        {
+          "code": "unlinked_or_noncorrective_action",
+          "target_id": "ca_preventive"
+        }
+      ],
+      "metrics": {
+        "canonical_isolated_nodes": 0,
+        "canonical_nodes": 2,
+        "canonical_relations": 1,
+        "diagnostic_nodes_by_type": {},
+        "gaps": 6,
+        "grounded_relations_published": 1,
+        "published_actions": 0,
+        "published_actions_without_failure_mode": 0,
+        "published_complete_failure_modes": 0,
+        "published_symptoms": 0,
+        "rejected_relations": 1,
+        "structural_nodes_by_type": {
+          "Asset": 1,
+          "Component": 1
+        },
+        "ungrounded_relations_published": 0
+      },
+      "published_node_ids": [
+        "asset_machine",
+        "comp_fan"
+      ],
+      "rejected_relations": [
+        {
+          "reasons": [
+            "claim_evidence_unresolved"
+          ],
+          "relation_id": "r2"
+        }
+      ]
+    },
+    {
+      "case_id": "incomplete_conveyor_symptom_becomes_gap",
+      "gaps": [
+        {
+          "code": "incomplete_symptom_chain",
+          "target_id": "sym_drift"
+        },
+        {
+          "code": "incomplete_failure_chain",
+          "target_id": "fm_misaligned"
+        }
+      ],
+      "metrics": {
+        "canonical_isolated_nodes": 0,
+        "canonical_nodes": 2,
+        "canonical_relations": 1,
+        "diagnostic_nodes_by_type": {},
+        "gaps": 2,
+        "grounded_relations_published": 1,
+        "published_actions": 0,
+        "published_actions_without_failure_mode": 0,
+        "published_complete_failure_modes": 0,
+        "published_symptoms": 0,
+        "rejected_relations": 0,
+        "structural_nodes_by_type": {
+          "Asset": 1,
+          "Component": 1
+        },
+        "ungrounded_relations_published": 0
+      },
+      "published_node_ids": [
+        "asset_conveyor",
+        "comp_roller"
+      ],
+      "rejected_relations": []
+    },
+    {
+      "case_id": "error_code_chain_without_symptom_is_valid",
+      "gaps": [],
+      "metrics": {
+        "canonical_isolated_nodes": 0,
+        "canonical_nodes": 4,
+        "canonical_relations": 3,
+        "diagnostic_nodes_by_type": {
+          "Asset": 1,
+          "CorrectiveAction": 1,
+          "ErrorCode": 1,
+          "FailureMode": 1
+        },
+        "gaps": 0,
+        "grounded_relations_published": 3,
+        "published_actions": 1,
+        "published_actions_without_failure_mode": 0,
+        "published_complete_failure_modes": 1,
+        "published_symptoms": 0,
+        "rejected_relations": 0,
+        "structural_nodes_by_type": {},
+        "ungrounded_relations_published": 0
+      },
+      "published_node_ids": [
+        "asset_controller",
+        "ca_reconnect",
+        "err_e42",
+        "fm_feedback"
+      ],
+      "rejected_relations": []
+    },
+    {
+      "case_id": "affects_optional_but_asset_remains_structurally_owned",
+      "gaps": [],
+      "metrics": {
+        "canonical_isolated_nodes": 0,
+        "canonical_nodes": 5,
+        "canonical_relations": 3,
+        "diagnostic_nodes_by_type": {
+          "CorrectiveAction": 1,
+          "FailureMode": 1,
+          "Symptom": 1
+        },
+        "gaps": 0,
+        "grounded_relations_published": 3,
+        "published_actions": 1,
+        "published_actions_without_failure_mode": 0,
+        "published_complete_failure_modes": 1,
+        "published_symptoms": 1,
+        "rejected_relations": 0,
+        "structural_nodes_by_type": {
+          "Asset": 1,
+          "Component": 1
+        },
+        "ungrounded_relations_published": 0
+      },
+      "published_node_ids": [
+        "asset_thermal",
+        "ca_restore",
+        "comp_controller",
+        "fm_parameter",
+        "sym_unstable"
+      ],
+      "rejected_relations": []
+    }
+  ],
+  "ontology_node_types": [
+    "Asset",
+    "Component",
+    "CorrectiveAction",
+    "ErrorCode",
+    "FailureMode",
+    "Symptom"
+  ],
+  "ontology_relation_contract": {
+    "AFFECTS": {
+      "domain": "FailureMode",
+      "range": "Component"
+    },
+    "GENERATES_ERROR": {
+      "domain": "Asset",
+      "range": "ErrorCode"
+    },
+    "HAS_COMPONENT": {
+      "domain": "Asset",
+      "range": "Component"
+    },
+    "INDICATES": {
+      "domain": "ErrorCode",
+      "range": "FailureMode"
+    },
+    "MAY_INDICATE": {
+      "domain": "Symptom",
+      "range": "FailureMode"
+    },
+    "RESOLVED_BY": {
+      "domain": "FailureMode",
+      "range": "CorrectiveAction"
+    }
+  },
+  "ontology_source": "ontology_schema.JSON"
+}

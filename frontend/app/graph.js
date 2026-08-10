@@ -160,6 +160,49 @@
     return `<span class="chip"><b>${(ambito.selected_pages || []).length}/${ambito.total_pages}</b> ${esc(t("gr.pagine"))}</span>`;
   };
 
+  const numeroKpi = (valore, cifre = 0) => new Intl.NumberFormat(
+    root.lingua() === "en" ? "en-GB" : "it-IT",
+    { maximumFractionDigits: cifre, minimumFractionDigits: cifre }
+  ).format(Number(valore || 0));
+
+  const durataKpi = (secondi) => {
+    const valore = Math.max(0, Number(secondi || 0));
+    if (valore < 60) return `${numeroKpi(valore, valore < 10 ? 1 : 0)} s`;
+    const minuti = Math.floor(valore / 60);
+    const resto = Math.round(valore % 60);
+    return `${minuti} min ${resto} s`;
+  };
+
+  const costoKpi = (valore) => {
+    const costo = Math.max(0, Number(valore || 0));
+    const cifre = costo > 0 && costo < 0.01 ? 4 : 2;
+    return new Intl.NumberFormat(
+      root.lingua() === "en" ? "en-US" : "it-IT",
+      { style: "currency", currency: "USD", minimumFractionDigits: cifre, maximumFractionDigits: cifre }
+    ).format(costo);
+  };
+
+  const kpiPdf = (grafo) => {
+    const metriche = grafo && grafo.generation_metrics;
+    if (!metriche) return "";
+    const modelli = (metriche.models || []).join(", ") || "—";
+    const ontology = (metriche.stages || {}).ontology || {};
+    const chunks = Number((ontology.details || {}).chunk_count || 0);
+    const modalita = metriche.execution_mode === "mock" ? t("gr.kpiMock") : t("gr.kpiReale");
+    return `<section class="pdf-kpi" data-pdf-kpi aria-label="${esc(t("gr.kpiTitolo"))}">
+      <div class="pdf-kpi-testa"><strong>${esc(t("gr.kpiTitolo"))}</strong><span>${esc(modalita)}</span></div>
+      <div class="pdf-kpi-griglia">
+        <div><span>${esc(t("gr.kpiTempo"))}</span><b>${esc(durataKpi(metriche.duration_seconds))}</b></div>
+        <div><span>${esc(t("gr.kpiCosto"))}</span><b>${esc(costoKpi(metriche.estimated_cost_usd))}</b></div>
+        <div><span>${esc(t("gr.kpiToken"))}</span><b>${esc(numeroKpi(metriche.total_tokens))}</b></div>
+        <div><span>${esc(t("gr.kpiChiamate"))}</span><b>${esc(numeroKpi(metriche.llm_calls))}</b></div>
+      </div>
+      <p>${esc(t("gr.kpiNota", { modelli, chunks }))}</p>
+    </section>`;
+  };
+
+  const riepilogoPdf = (grafo) => `${ambitoPdf(grafo)}${kpiPdf(grafo)}`;
+
   /* La spunta delle lacune, uguale nelle due strisce che la offrono. Resta
      attivabile solo se qualcosa può togliere, e resta togliibile sempre: chi
      l'ha accesa deve poterla spegnere anche dopo aver corretto l'ultima. */
@@ -576,7 +619,7 @@
           ? t(vista.source_kind === "pdf" ? "gr.sottoPdf" : "gr.sotto")
           : t("gr.nonCostruito"))}</p></div>`;
       return `${testa}
-        ${vista && state.view !== "confronto" ? ambitoPdf(vista.subgraph) : ""}
+        ${vista && state.view !== "confronto" ? riepilogoPdf(vista.subgraph) : ""}
         ${modello && state.view !== "confronto" ? barra(modello) : ""}
         <div class="lavoro-scorri">${contenuto(vista, modello)}</div>`;
     },
@@ -774,7 +817,7 @@
       ? state.graph.sources.find((v) => v.source_id === sourceId) || null : null),
     modello: modelloDi,
     mappa,
-    ambito: (vista) => ambitoPdf(vista && vista.subgraph),
+    ambito: (vista) => riepilogoPdf(vista && vista.subgraph),
     chipAmbito: chipAmbitoPdf,
     monta: montaMappa,
 

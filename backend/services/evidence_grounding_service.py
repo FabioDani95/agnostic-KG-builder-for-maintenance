@@ -28,7 +28,7 @@ _ID_FIELD_BY_TYPE: dict[str, str] = {
 
 # Structurally derived relations are exempt. Causal relations without a quote
 # are explicitly ungrounded; non-causal association edges remain advisory.
-_DERIVED_RELATIONS = {"HAS_COMPONENT"}
+_DERIVED_RELATIONS = {"HAS_COMPONENT", "GENERATES_ERROR"}
 _CAUSAL_RELATIONS = {"MAY_INDICATE", "RESOLVED_BY", "INDICATES"}
 
 

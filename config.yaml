@@ -1,21 +1,19 @@
 
 chat:
-  model: gpt-5.4-nano
+  model: gpt-5.6-terra
   timeout: 30
   max_output_tokens: 1500
-  critic_model: gpt-5.4-nano
+  critic_model: gpt-5.6-terra
   critic_enabled: true
   idle_reminder_seconds: 60
 
 shared_models: &strong_models
-  - id: gpt-5.4
-    label: GPT-5.4
-  - id: gpt-5.4-mini
-    label: GPT-5.4 Mini
-  - id: gpt-5.4-nano
-    label: GPT-5.4 Nano
-  - id: gpt-5.4-pro
-    label: GPT-5.4 Pro
+  - id: gpt-5.6-sol
+    label: GPT-5.6 Sol
+  - id: gpt-5.6-terra
+    label: GPT-5.6 Terra
+  - id: gpt-5.6-luna
+    label: GPT-5.6 Luna
 
 pipeline:
   mode: multi_agent
@@ -38,42 +36,46 @@ pdf_ingestion:
 agents:
   scoping:
     enabled: true
-    model: gpt-5.4-nano
+    model: gpt-5.6-luna
+    reasoning_effort: low
     timeout: 60
   ontology_draft:
     enabled: true
-    model: gpt-5.4
+    # Low-cost acceptance profile: Luna is used end-to-end, with medium
+    # reasoning reserved for semantic extraction and run-level completion.
+    model: gpt-5.6-luna
+    reasoning_effort: medium
     timeout: 120
   extraction:
     enabled: true
-    model: gpt-5.4
+    model: gpt-5.6-terra
     timeout: 120
   validation:
     enabled: true
-    model: gpt-5.4
+    model: gpt-5.6-terra
     timeout: 90
   refiner:
     enabled: false
-    model: gpt-5.4
+    model: gpt-5.6-terra
     timeout: 90
     max_retries_per_entity: 2
     escalate_after_exhaustion: true
   coverage:
     enabled: false
-    model: gpt-5.4-nano
+    model: gpt-5.6-luna
     timeout: 60
   grounding:
     enabled: false
-    model: gpt-5.4
+    model: gpt-5.6-terra
     timeout: 90
   conflict_resolution:
     enabled: false
-    model: gpt-5.4
+    model: gpt-5.6-terra
     timeout: 60
 
 supervisor:
   mode: deterministic
-  llm_model: gpt-5.4-nano
+  llm_model: gpt-5.6-luna
   llm_timeout: 15
 
 checkpointing:

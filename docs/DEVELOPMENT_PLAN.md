@@ -446,12 +446,25 @@ source-scoped e barriera di merge includono ora i PDF. Restano separatamente
 aperti gli altri requisiti G3 della slice (run durabile, pause/resume,
 preflight/egress e campagna qualitativa sul corpus PDF reale).
 
+**Hardening del bridge dopo E-554 (2026-08-09):** la proiezione
+`EvidenceUnit→pages` ricostruisce ora l'ordine dai locator e inserisce anchor
+stabili; le pagine fisiche sono partizionate una sola volta anche con sezioni
+sovrapposte; keyword è solo fallback; nel percorso G3 l'Asset confermato del
+workspace è contesto canonico e non viene cercato nel PDF né richiesto al
+modello ontologico; eventuali Asset LLM vengono scartati e
+`HAS_COMPONENT`/`GENERATES_ERROR` sono derivati deterministicamente; l'Asset ID
+esplicito non viene normalizzato; il validatore impone un solo Asset e `HAS_COMPONENT` per ogni
+Component. Ogni nuova revisione PDF persiste inoltre `generation_metrics`
+(tempo, chiamate, token e costo USD stimato per stage/modello) e la UI li rende
+visibili. Implementazione e test sono stati eseguiti in modalità mock, senza
+un nuovo run reale su E-554. Vedere `docs/PDF_PIPELINE_AND_RUN_KPIS.md`.
+
 Il cut plan riusato è **ibrido**, non sempre LLM e non sempre deterministico:
 su documenti piccoli mantiene tutte le pagine; con un indice combina selezione
-LLM, regole e keyword; senza indice la selezione delle sezioni ricade sullo
-scan a keyword (l'LLM può ancora identificare il prodotto, ma non guida il
-taglio). Se le chiamate LLM dello scoping falliscono, il fallback a keyword
-resta operativo. La revisione mostra ora il partizionamento esatto
+LLM e regole senza espanderle con span keyword; quando nessuna sezione
+affidabile è disponibile la selezione ricade sullo scan a keyword (l'LLM può
+ancora identificare il prodotto, ma non guida il taglio). Se le chiamate LLM
+dello scoping falliscono, il fallback a keyword resta operativo. La revisione mostra ora il partizionamento esatto
 `selected/unselected`, così il fallback non è invisibile all'operatore.
 
 **Limite corrente da non confondere con il supporto a PDF destrutturati:** la

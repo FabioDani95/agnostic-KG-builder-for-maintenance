@@ -124,6 +124,7 @@ class OntologyEvidence(BaseModel):
     source_page: int = 0
     source_reference: str = ""
     quote: str = ""
+    source_anchor: str = ""
 
 
 class OntologyRelationInstance(BaseModel):
@@ -201,6 +202,7 @@ class OntologyDraftRequest(BaseModel):
     source_type: str
     source_title: str
     model_name: str = DEFAULT_MODEL_NAME
+    reasoning_effort: str | None = None
     pages_to_keep: list[int] | None = None
     target_language: str = "en"
 
@@ -325,6 +327,11 @@ class CutPlan(BaseModel):
 class CutPlanRequest(BaseModel):
     pdf_id: str
     model_name: str = DEFAULT_MODEL_NAME
+    reasoning_effort: str | None = None
+    # Workspace/G3 runs already have an operator-confirmed Asset.  Keep legacy
+    # standalone callers on discovery by default, but let workspace callers
+    # explicitly prevent the PDF from redefining that canonical identity.
+    discover_asset_identity: bool = True
     # None (default) → the printed-page offset is autodetected from the
     # document; an explicit integer (including 0) is a manual override.
     page_offset: int | None = None

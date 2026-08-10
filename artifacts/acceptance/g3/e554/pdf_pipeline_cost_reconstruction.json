@@ -1,0 +1,85 @@
+{
+  "campaign_id": "g3-e554-real-manual-csv-pdf",
+  "source_revision_id": "sgrev_7LZ055k1Xf7rISyDNyE8kw",
+  "model": "gpt-5.6-terra",
+  "official_pricing_checked_at": "2026-08-09",
+  "official_pricing_usd_per_million_tokens": {
+    "input": 2.0,
+    "cached_input": 0.2,
+    "output": 12.0
+  },
+  "official_pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
+  "wall_clock_seconds_approx": 713,
+  "trace": {
+    "guardrailed_llm_calls": 97,
+    "successful_http_posts_visible_in_terminal_trace": 92,
+    "note": "The terminal trace is the only surviving aggregate call ledger. Five guardrailed calls do not have a distinct HTTP line in the captured terminal chunks."
+  },
+  "exact_scoping_usage": {
+    "calls": 2,
+    "prompt_tokens": 9840,
+    "completion_tokens": 2936,
+    "total_tokens": 12776,
+    "cost_usd": 0.054912
+  },
+  "guardrail_input_estimates_by_operation": {
+    "Scoping": {
+      "calls": 2,
+      "estimated_input_tokens": 11460,
+      "configured_max_output_tokens": 12000
+    },
+    "Ontology draft": {
+      "calls": 17,
+      "estimated_input_tokens": 110420,
+      "configured_max_output_tokens": 272000
+    },
+    "Ontology relation pass": {
+      "calls": 22,
+      "estimated_input_tokens": 149477,
+      "configured_max_output_tokens": 132000
+    },
+    "Ontology semantic validation": {
+      "calls": 29,
+      "estimated_input_tokens": 297054,
+      "configured_max_output_tokens": 116000
+    },
+    "Ontology re-extraction": {
+      "calls": 12,
+      "estimated_input_tokens": 153351,
+      "configured_max_output_tokens": 168000
+    },
+    "Coverage completion": {
+      "calls": 1,
+      "estimated_input_tokens": 20100,
+      "configured_max_output_tokens": 6000
+    },
+    "Resolution completion": {
+      "calls": 14,
+      "estimated_input_tokens": 129739,
+      "configured_max_output_tokens": 35000
+    }
+  },
+  "reconstruction": {
+    "guardrail_estimated_input_tokens_total": 871601,
+    "adjusted_prompt_token_estimate_using_exact_scoping": 869981,
+    "uncached_input_cost_equivalent_usd": 1.739962,
+    "configured_completion_token_ceiling": 741000,
+    "theoretical_total_cost_ceiling_usd": 10.631962,
+    "historical_completion_to_prompt_ratio_range_from_prior_real_repo_runs": [
+      0.139,
+      0.448
+    ],
+    "heuristic_total_cost_range_usd": [
+      3.19,
+      6.42
+    ],
+    "heuristic_central_total_cost_usd": 4.92,
+    "confidence": "low-to-medium",
+    "warning": "The heuristic range is not a provider invoice. Exact completion and cached-input usage were recorded in the ephemeral workflow store but not persisted by the G3 PDF bridge."
+  },
+  "exact_total_unavailable_reasons": [
+    "PdfSourceSubgraphBuilder creates a local store and discards its run_metrics after adapting the ontology to a SourceSubgraphRevision.",
+    "The persisted G3 revision contains graph/provenance/decision data but no token or cost ledger.",
+    "The configured project API key cannot read the organization usage endpoint because it lacks api.usage.read."
+  ]
+}

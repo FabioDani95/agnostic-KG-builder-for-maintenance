@@ -19,6 +19,7 @@ from backend.models import (
 from backend.services.ontology_semantics import (
     infer_asset_type,
     infer_component_match_for_failure_mode,
+    is_workspace_canonical_asset_identity,
     normalize_asset_node,
     normalize_severity,
     resolve_material_context,
@@ -92,7 +93,10 @@ def _default_asset_node(
         "asset_id": str(identity.get("asset_id") or "ASSET-001"),
         "name": str(identity.get("name") or source_title or "Unknown Asset"),
         "description": str(
-            identity.get("name") or source_title or "Technical asset extracted from manual context"
+            identity.get("description")
+            or identity.get("name")
+            or source_title
+            or "Technical asset extracted from manual context"
         ),
         "brand": str(identity.get("brand") or ""),
         "model": str(identity.get("model") or ""),
@@ -130,8 +134,28 @@ def _normalize_ontology_instance(
     normalized = deepcopy(ontology.model_dump())
     nodes = normalized.setdefault("nodes", {})
     id_remap: dict[str, str] = {}
+    identity = asset_identity or {}
+    canonical_asset_id = str(identity.get("asset_id", "") or "").strip()
+    has_canonical_asset = is_workspace_canonical_asset_identity(identity)
     for node_def in schema.nodes:
         node_list = nodes.setdefault(node_def.name, [])
+        if node_def.name == "Asset" and has_canonical_asset:
+            for node in node_list:
+                if not isinstance(node, dict):
+                    continue
+                extracted_id = str(node.get("asset_id", "") or "").strip()
+                if extracted_id and extracted_id != canonical_asset_id:
+                    id_remap[extracted_id] = canonical_asset_id
+            # The Asset is workspace-owned context, never PDF-extracted output.
+            # Ignore model variants and inject exactly the confirmed node.
+            nodes[node_def.name] = [
+                _default_asset_node(
+                    source_title,
+                    source_type,
+                    asset_identity=asset_identity,
+                )
+            ]
+            continue
         seen_ids: dict[str, int] = {}
         id_prop = _node_id_property(node_def)
         deduped: list[dict[str, Any]] = []
@@ -453,6 +477,7 @@ def _coerce_evidence(raw_evidence: Any) -> list[OntologyEvidence]:
             source_page=page,
             source_reference=source_reference,
             quote=str(item.get("quote", "")).strip(),
+            source_anchor=str(item.get("source_anchor", "")).strip(),
         ))
     return evidence
 

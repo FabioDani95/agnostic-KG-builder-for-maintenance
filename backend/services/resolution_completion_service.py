@@ -12,7 +12,7 @@ from openai import OpenAI
 from backend.app_config import get_resolution_completion_config
 from backend.config import settings
 from backend.models import OntologyEvidence, OntologyInstance, OntologyRelationInstance
-from backend.services.llm_gateway import chat_temperature_kwargs, get_client
+from backend.services.llm_gateway import chat_reasoning_kwargs, chat_temperature_kwargs, get_client
 from backend.services.llm_guardrails import enforce_llm_limits, llm_timeout_message
 from backend.services.ontology_semantics import (
     build_semantic_key,
@@ -285,7 +285,8 @@ Return valid JSON only with this exact shape:
       "action_kind": "procedure|escalation",
       "source_page": 12,
       "source_reference": "PAGE 12",
-      "evidence_quote": "short verbatim quote supporting the action"
+      "evidence_quote": "short verbatim quote supporting the action",
+      "source_anchor": "ev_exact_id_from_marker"
     }
   ]
 }
@@ -296,6 +297,7 @@ Rules:
 - action_kind="procedure" for an on-site operational remedy (replace, clean, adjust, reset, reconnect, ...).
 - action_kind="escalation" when the manual's only prescribed remedy is to contact the manufacturer / factory outlet / dealer / authorized service. This IS a valid corrective action — capture it, with the instruction_text stating whom to contact and what data to provide, and the verbatim quote supporting it.
 - Inspection-only or verification-only steps are not corrective actions unless the text says they resolve the fault.
+- Copy source_anchor exactly from the nearest "[[EVIDENCE_ID: ...]]" marker containing the evidence quote.
 - If the selected pages contain neither an operational remedy nor a prescribed escalation, return {"status":"not_found","corrective_actions":[]}.
 """
     user = (
@@ -332,7 +334,12 @@ def _evidence_from_action(action: dict[str, Any]) -> list[OntologyEvidence]:
     quote = str(action.get("evidence_quote") or action.get("quote") or "").strip()
     if not (page or source_reference or quote):
         return []
-    return [OntologyEvidence(source_page=page, source_reference=source_reference, quote=quote)]
+    return [OntologyEvidence(
+        source_page=page,
+        source_reference=source_reference,
+        quote=quote,
+        source_anchor=str(action.get("source_anchor") or "").strip(),
+    )]
 
 
 def _find_supporting_page(
@@ -558,6 +565,7 @@ def complete_resolution_gaps(
     model_name: str,
     parse_json: Callable[[str], dict[str, Any]],
     search_text_with_pages: str | None = None,
+    reasoning_effort: str | None = None,
 ) -> tuple[OntologyInstance, list[dict[str, Any]], dict[str, Any]]:
     cfg = get_resolution_completion_config()
     if not cfg.get("enabled", True):
@@ -635,6 +643,7 @@ def complete_resolution_gaps(
             resolved_model = model_name or settings.MODEL_NAME
             response = client.chat.completions.create(
                 model=resolved_model,
+                **chat_reasoning_kwargs(resolved_model, reasoning_effort),
                 **chat_temperature_kwargs(resolved_model, 0.0),
                 max_completion_tokens=int(cfg.get("max_output_tokens", 2500)),
                 messages=[

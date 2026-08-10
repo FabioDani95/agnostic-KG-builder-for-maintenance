@@ -22,7 +22,11 @@ sources; the UI also shows the exact semantic page selection. Multilingual
 canonicalization, broader real-data coverage and the qualitative PDF campaign
 remain open. See
 [G3 Engine Hardening Handoff](docs/G3_ENGINE_HARDENING_HANDOFF.md) and
-[CSV Hardening Campaign](docs/CSV_HARDENING_CAMPAIGN.md).
+[CSV Hardening Campaign](docs/CSV_HARDENING_CAMPAIGN.md). The corrected PDF
+bridge and its persisted time/token/cost ledger are documented in
+[PDF Pipeline and Run KPIs](docs/PDF_PIPELINE_AND_RUN_KPIS.md). The authorized
+single-run validation procedure is in
+[E-554 Luna Validation Handoff](docs/E554_LUNA_VALIDATION_HANDOFF.md).
 
 ## Product flow
 
@@ -42,6 +46,8 @@ Important invariants:
 - changing a mapping invalidates downstream evidence and graph revisions;
 - PDF semantic extraction preserves the all-pages G1 inventory and records its
   derived selected/unselected page partition on the graph revision;
+- new PDF revisions persist wall time, API-reported token usage and an estimated
+  USD list-price cost, displayed in the graph review UI;
 - knowledge gaps and malformed graph payloads are different blocker classes;
 - cross-source merge and publication stay closed until their later checkpoints.
 
@@ -75,8 +81,9 @@ The application is a local operator tool, not an installable Python library.
    cp .env.example .env
    ~~~
 
-2. Add OPENAI_API_KEY to .env for real-model PDF runs. Deterministic mock tests
-   do not require a key.
+2. Add OPENAI_API_KEY to .env for real-model PDF runs. Models are selected per
+   role under `agents` in `config.yaml`; `KG_GENERATION_MODEL` is only the
+   fallback. Deterministic mock tests do not require a key.
 
 3. Put local PDF manuals under manuals/ if you want to use the retained PDF
    workflow.

@@ -388,7 +388,10 @@ def normalize_product_info(raw_product_info: dict, filename: str = "") -> dict[s
     if not product_short_name:
         product_short_name = _build_product_short_name(product_name, brand, model)
 
-    asset_id = _normalize_asset_id(str(raw_product_info.get("asset_id", "") or ""))
+    # An explicit ID is an external identity contract (for example the opaque
+    # workspace Asset ID).  Never case-fold or rewrite it; normalization is
+    # only for IDs inferred locally from human-readable labels.
+    asset_id = str(raw_product_info.get("asset_id", "") or "").strip()
     if not asset_id:
         asset_id = _build_asset_id(product_short_name or model or product_name)
 
@@ -433,7 +436,7 @@ def extract_asset_identity(
     ) or normalized.get("product_short_name")
     document_type = normalized.get("document_type") or _normalize_label(source_type)
     asset_type = normalized.get("asset_type") or infer_asset_type(product_name or product_short_name, document_type)
-    raw_asset_id = _normalize_asset_id(str(raw.get("asset_id") or ""))
+    raw_asset_id = str(raw.get("asset_id") or "").strip()
     asset_id = raw_asset_id or _build_asset_id(product_short_name or product_name) or normalized.get("asset_id")
     return {
         "asset_id": asset_id,

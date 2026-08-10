@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
+import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -28,6 +30,7 @@ from backend.domain.workspace import Workspace
 from backend.services.pdf_service import extract_text_by_page
 
 ADAPTER_VERSION = "pdf-v2"
+EVIDENCE_ANCHOR_PREFIX = "EVIDENCE_ID"
 
 
 def _stable_id(prefix: str, *parts: str) -> str:
@@ -392,22 +395,105 @@ class PdfAdapter:
         )
 
 
+def _semantic_text_key(value: str) -> str:
+    normalized = unicodedata.normalize("NFKC", str(value or "")).casefold()
+    normalized = re.sub(r"[^\w]+", " ", normalized, flags=re.UNICODE)
+    return re.sub(r"\s+", " ", normalized).strip()
+
+
+def pdf_evidence_sort_key(evidence: EvidenceUnit) -> tuple[int, int, int, int, str]:
+    """Return physical reading order without depending on hash-based evidence IDs."""
+    locator = evidence.locator
+    if not isinstance(locator, PdfLocator):
+        return (0, 9, 0, 0, evidence.evidence_id)
+    if locator.block_index is not None:
+        kind_rank, primary, secondary = 0, locator.block_index, 0
+    elif locator.table_index is not None:
+        kind_rank, primary, secondary = 1, locator.table_index, locator.row_index or 0
+    elif locator.ocr_region_index is not None:
+        kind_rank, primary, secondary = 2, locator.ocr_region_index, 0
+    else:
+        kind_rank, primary, secondary = 3, 0, 0
+    return (locator.page, kind_rank, primary, secondary, evidence.evidence_id)
+
+
+def evidence_anchor(evidence: EvidenceUnit) -> str:
+    """Stable anchor exposed to the semantic core and returned in provenance."""
+    return evidence.evidence_id
+
+
+def _render_evidence(evidence: EvidenceUnit) -> str:
+    return (
+        f"[[{EVIDENCE_ANCHOR_PREFIX}: {evidence_anchor(evidence)}]]\n"
+        f"{evidence.locator.quote.strip()}"
+    )
+
+
+def _semantic_page_units(items: list[EvidenceUnit]) -> tuple[list[EvidenceUnit], str]:
+    """Choose one coherent reading plus non-duplicated structured table rows."""
+    ordered = sorted(items, key=pdf_evidence_sort_key)
+    blocks = [item for item in ordered if item.locator.block_index is not None]
+    ocr_regions = [item for item in ordered if item.locator.ocr_region_index is not None]
+    table_rows = [
+        item for item in ordered
+        if item.locator.table_index is not None and item.locator.row_index is not None
+    ]
+
+    block_text = _semantic_text_key(" ".join(item.locator.quote for item in blocks))
+    ocr_text = _semantic_text_key(" ".join(item.locator.quote for item in ocr_regions))
+    if ocr_regions and len(ocr_text) > len(block_text):
+        selected = list(ocr_regions)
+        text_source = "ocr"
+    else:
+        selected = list(blocks or ocr_regions)
+        text_source = "native" if blocks else "ocr"
+
+    covered = _semantic_text_key(" ".join(item.locator.quote for item in selected))
+    for row in table_rows:
+        row_text = _semantic_text_key(row.locator.quote)
+        if not row_text or row_text in covered:
+            continue
+        selected.append(row)
+        covered = f"{covered} {row_text}".strip()
+
+    # Defensive fallback for legacy/custom evidence that has no positional subtype.
+    if not selected:
+        selected = ordered
+        text_source = "ocr" if any(
+            item.locator.extraction_method == "ocr" for item in ordered
+        ) else "native"
+
+    unique: list[EvidenceUnit] = []
+    seen_quotes: set[str] = set()
+    for item in selected:
+        quote_key = _semantic_text_key(item.locator.quote)
+        if quote_key and quote_key not in seen_quotes:
+            seen_quotes.add(quote_key)
+            unique.append(item)
+    return unique, text_source
+
+
 def evidence_units_to_legacy_pages(evidence_units: list[EvidenceUnit]) -> list[dict]:
-    """Temporary PDF-only projection for the characterized semantic core."""
-    by_page: dict[int, list[str]] = {}
-    methods: dict[int, str] = {}
+    """Project canonical PDF evidence into ordered, anchored semantic pages.
+
+    The evidence repository deliberately uses opaque hash IDs.  Those IDs are
+    stable identities, not reading-order keys, so this bridge reconstructs the
+    physical locator order before text reaches scoping or ontology extraction.
+    """
+    by_page: dict[int, list[EvidenceUnit]] = {}
     for evidence in evidence_units:
         if not isinstance(evidence.locator, PdfLocator):
             raise ValueError("The PDF compatibility projection accepts only PDF evidence")
-        if not evidence.eligible_for_semantic_processing:
-            continue
-        by_page.setdefault(evidence.locator.page, []).append(evidence.locator.quote)
-        methods[evidence.locator.page] = evidence.locator.extraction_method
-    return [
-        {
-            "page_number": page,
-            "text": "\n\n".join(dict.fromkeys(by_page[page])),
-            "text_source": "ocr" if methods[page] == "ocr" else "native",
-        }
-        for page in sorted(by_page)
-    ]
+        if evidence.eligible_for_semantic_processing:
+            by_page.setdefault(evidence.locator.page, []).append(evidence)
+
+    pages: list[dict] = []
+    for page_number in sorted(by_page):
+        units, text_source = _semantic_page_units(by_page[page_number])
+        pages.append({
+            "page_number": page_number,
+            "text": "\n\n".join(_render_evidence(item) for item in units),
+            "text_source": text_source,
+            "evidence_anchors": [evidence_anchor(item) for item in units],
+        })
+    return pages

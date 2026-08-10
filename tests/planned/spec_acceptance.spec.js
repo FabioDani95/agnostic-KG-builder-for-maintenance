@@ -245,6 +245,11 @@ test("AC-UX-017/AC-HITL-002: a PDF-only workspace builds a reviewable graph", as
   await expect.poll(() => page.locator(".nodo").count()).toBeGreaterThan(0);
   await expect(page.locator("[data-pdf-scope]")).toContainText("Pagine usate dal grafo: 5 su 5 (1–5)");
   await expect(page.locator("[data-pdf-scope]")).toContainText("Pagine escluse dall’estrazione semantica: 0");
+  await expect(page.locator("[data-pdf-kpi]")).toBeVisible();
+  await expect(page.locator("[data-pdf-kpi]")).toContainText("Costo e prestazioni dell’estrazione PDF");
+  await expect(page.locator("[data-pdf-kpi]")).toContainText("Esecuzione offline/mock");
+  await expect(page.locator("[data-pdf-kpi]")).toContainText("Costo stimato");
+  await expect(page.locator("[data-pdf-kpi]")).toContainText("Token");
   await expect(page.locator(".decisione")).toContainText("Non ancora verificabile");
   await page.locator(".nodo").first().click();
   await expect(page.locator(".ispettore")).toContainText(/Pagina \d+/);

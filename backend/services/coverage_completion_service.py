@@ -29,7 +29,7 @@ from typing import Any, Callable
 from backend.app_config import get_coverage_completion_config
 from backend.config import settings
 from backend.models import OntologyEvidence, OntologyInstance, OntologyRelationInstance
-from backend.services.llm_gateway import chat_temperature_kwargs
+from backend.services.llm_gateway import chat_reasoning_kwargs, chat_temperature_kwargs
 from backend.services.llm_guardrails import enforce_llm_limits, llm_timeout_message
 from backend.services.ontology_semantics import build_semantic_key
 from backend.services.resolution_completion_service import (
@@ -88,7 +88,7 @@ Return valid JSON only:
       "symptom": {"symptom_id": "sym_descriptive_id", "name": "...", "description": "...", "severity": "Low|Medium|High|Critical"},
       "failure_mode": {"failure_mode_id": "fm_descriptive_id", "name": "technical cause", "description": "...", "material_context": "component_id_or_asset_level"},
       "corrective_action": {"action_id": "ca_descriptive_id", "name": "...", "description": "...", "instruction_text": "...", "source_page": 12},
-      "evidence": {"source_page": 12, "source_reference": "PAGE 12", "quote": "short verbatim text stating this chain"}
+      "evidence": {"source_page": 12, "source_reference": "PAGE 12", "quote": "short verbatim text stating this chain", "source_anchor": "ev_exact_id_from_marker"}
     }
   ]
 }
@@ -108,6 +108,7 @@ Rules:
 - The evidence quote must be a short verbatim excerpt (10-20 words) from the SAME text
   unit (table row, flowchart branch, sentence) that states the chain, with the integer
   page number from the "--- PAGE N ---" markers.
+- Copy source_anchor exactly from the nearest "[[EVIDENCE_ID: ...]]" marker containing the quote.
 - If the summary already covers everything the text states, return {"missing_chains": []}.
 - Never invent content that is not in the pages. JSON only, no commentary.
 """
@@ -299,6 +300,7 @@ def apply_missing_chains(
             source_page=source_page,
             source_reference=f"PAGE {source_page}",
             quote=quote,
+            source_anchor=str(raw_evidence.get("source_anchor") or "").strip(),
         )]
 
         symptom_id, _ = _resolve_or_create(
@@ -376,6 +378,7 @@ def complete_coverage_gaps(
     text_with_pages: str,
     model_name: str,
     parse_json: Callable[[str], dict[str, Any]],
+    reasoning_effort: str | None = None,
 ) -> tuple[OntologyInstance, list[dict[str, Any]], dict[str, Any]]:
     cfg = get_coverage_completion_config()
     if not cfg.get("enabled", True):
@@ -427,6 +430,7 @@ def complete_coverage_gaps(
         resolved_model = model_name or settings.MODEL_NAME
         response = client.chat.completions.create(
             model=resolved_model,
+            **chat_reasoning_kwargs(resolved_model, reasoning_effort),
             **chat_temperature_kwargs(resolved_model, 0.0),
             max_completion_tokens=int(cfg.get("max_output_tokens", 6000)),
             messages=[

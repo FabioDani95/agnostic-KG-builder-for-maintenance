@@ -22,7 +22,7 @@ from backend.services.extraction_merge import (
     _promote_misclassified_failure_modes,
 )
 from backend.services.extraction_parsing import parse_extraction
-from backend.services.llm_gateway import chat_temperature_kwargs, get_client
+from backend.services.llm_gateway import chat_reasoning_kwargs, chat_temperature_kwargs, get_client
 from backend.services.llm_guardrails import (
     enforce_llm_limits,
     llm_timeout_message,
@@ -37,6 +37,7 @@ def call_openai_scoping(
     prompt_text: str,
     model_name: str | None = None,
     timeout: int | None = None,
+    reasoning_effort: str | None = None,
 ) -> tuple[str, dict]:
     """Send scoping/cut-plan request to OpenAI and return (raw_response, token_usage)."""
     cfg = resolve_guardrails(
@@ -57,6 +58,7 @@ def call_openai_scoping(
         resolved_model = model_name or settings.MODEL_NAME
         response = client.chat.completions.create(
             model=resolved_model,
+            **chat_reasoning_kwargs(resolved_model, reasoning_effort),
             messages=[
                 {"role": "system", "content": prompt_text},
             ],

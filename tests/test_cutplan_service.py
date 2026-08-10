@@ -57,6 +57,16 @@ class CutPlanServiceTests(unittest.TestCase):
         self.assertEqual(identity["model"], "RL-5")
         self.assertEqual(identity["product_short_name"], "RoboLift RL-5")
 
+    def test_extract_asset_identity_preserves_explicit_opaque_workspace_id(self):
+        identity = extract_asset_identity(
+            {
+                "asset_id": "asset_sp-MAerxQGspR0owUlNh-A",
+                "product_name": "E-554 Test Asset",
+            },
+        )
+
+        self.assertEqual(identity["asset_id"], "asset_sp-MAerxQGspR0owUlNh-A")
+
     def test_normalize_product_info_preserves_brand_and_model_when_available(self):
         normalized = normalize_product_info(
             {

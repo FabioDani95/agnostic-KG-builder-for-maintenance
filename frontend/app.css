@@ -156,6 +156,18 @@ html:has(.app), body:has(.app){overflow:hidden}
 .intestazione-lavoro h2{margin:0;font-size:17px;font-weight:640;letter-spacing:-.02em}
 .intestazione-lavoro p{margin:0;color:var(--muted);font-size:13px;max-width:46rem}
 
+.pdf-kpi{margin:0 24px 14px;padding:14px 16px;border:1px solid var(--line);
+  border-radius:14px;background:var(--panel);box-shadow:inset 0 1px 0 var(--highlight)}
+.pdf-kpi-testa{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+.pdf-kpi-testa strong{font-size:13px;font-weight:650}
+.pdf-kpi-testa span,.pdf-kpi p{color:var(--muted);font-size:11.5px}
+.pdf-kpi-griglia{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.pdf-kpi-griglia div{display:grid;gap:3px;padding:9px 10px;border-radius:10px;background:var(--panel-2)}
+.pdf-kpi-griglia span{color:var(--muted);font-size:11.5px}
+.pdf-kpi-griglia b{font-size:15px;font-weight:650;font-variant-numeric:tabular-nums}
+.pdf-kpi p{margin:10px 0 0;line-height:1.45}
+@media (max-width:760px){.pdf-kpi-griglia{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 /* Barra compatta: viste a sinistra, filtri a destra, tutto su una riga sola
    finché lo spazio basta. */
 .barra{

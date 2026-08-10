@@ -38,7 +38,7 @@ from backend.services.candidate_mining_service import (
     render_candidates_prompt_block,
 )
 from backend.services.language_utils import normalize_language_code
-from backend.services.llm_gateway import chat_temperature_kwargs, get_client
+from backend.services.llm_gateway import chat_reasoning_kwargs, chat_temperature_kwargs, get_client
 from backend.services.llm_guardrails import (
     enforce_llm_limits,
     llm_timeout_message,
@@ -69,6 +69,7 @@ from backend.services.ontology_schema_service import (
     dump_ontology_schema_json,
     load_ontology_schema,
 )
+from backend.services.ontology_semantics import is_workspace_canonical_asset_identity
 from backend.services.run_metrics import aggregate_usage, usage_from_response
 from backend.services.type_consistency_service import evaluate_type_consistency
 
@@ -82,6 +83,7 @@ class PipelineState(TypedDict, total=False):
     target_language: str
     text_with_pages: str
     model_name: str
+    reasoning_effort: str | None
     schema: OntologySchemaDefinition
     schema_json: str
     candidates_block: str
@@ -125,7 +127,7 @@ def _asset_identity_prompt_block(asset_identity: dict[str, Any] | None) -> str:
 
     lines = [
         "## Canonical Asset Identity",
-        "Use this exact asset identity across the whole ontology draft.",
+        "This identity is operator-confirmed context owned by the system.",
         f"- asset_id: {asset_id}",
         f"- name: {asset_name}",
     ]
@@ -135,21 +137,30 @@ def _asset_identity_prompt_block(asset_identity: dict[str, Any] | None) -> str:
             lines.append(f"- {key}: {value}")
     lines.extend([
         "Rules:",
-        "- Emit exactly one Asset node for the document.",
-        "- Reuse the exact asset_id above for every Asset relation anchor.",
-        "- Do not invent alternative Asset IDs or alternative root-asset names for the same manual.",
+        "- Do not extract or emit an Asset node; the system injects it deterministically.",
+        "- Do not emit HAS_COMPONENT or GENERATES_ERROR; the system derives those root relations.",
+        "- Product, brand, and model mentions in the manual must not alter this identity.",
     ])
     return "\n".join(lines)
 
 
+def _has_canonical_asset_identity(asset_identity: dict[str, Any] | None) -> bool:
+    return is_workspace_canonical_asset_identity(asset_identity)
+
+
 def _call_extractor_llm(state: PipelineState) -> PipelineState:
     started = time.perf_counter()
-    prompt_blocks = [state.get("candidates_block", ""), _asset_identity_prompt_block(state.get("asset_identity"))]
+    has_canonical_asset = _has_canonical_asset_identity(state.get("asset_identity"))
+    prompt_blocks = [
+        state.get("candidates_block", ""),
+        _asset_identity_prompt_block(state.get("asset_identity")) if has_canonical_asset else "",
+    ]
     system_prompt = build_ontology_extraction_prompt(
         schema_json=state["schema_json"],
         source_type=state["source_type"],
         source_title=state["source_title"],
         candidate_candidates_block="\n\n".join(block for block in prompt_blocks if block),
+        extract_asset=not has_canonical_asset,
     )
     cfg = _ontology_cfg(get_ontology_config().get("extraction_max_output_tokens", 8000))
     enforce_llm_limits(
@@ -174,6 +185,7 @@ def _call_extractor_llm(state: PipelineState) -> PipelineState:
             model_name = state["model_name"] or settings.MODEL_NAME
             response = client.chat.completions.create(
                 model=model_name,
+                **chat_reasoning_kwargs(model_name, state.get("reasoning_effort")),
                 **chat_temperature_kwargs(model_name, 0.0),
                 max_completion_tokens=max_output_tokens,
                 messages=messages,
@@ -275,6 +287,7 @@ def _relation_extract_node(state: PipelineState) -> PipelineState:
         model_name = state["model_name"] or settings.MODEL_NAME
         response = client.chat.completions.create(
             model=model_name,
+            **chat_reasoning_kwargs(model_name, state.get("reasoning_effort")),
             **chat_temperature_kwargs(model_name, 0.0),
             max_completion_tokens=cfg["max_output_tokens"],
             messages=[
@@ -378,6 +391,7 @@ def _semantic_validate_node(state: PipelineState) -> PipelineState:
         model_name = state["model_name"] or settings.MODEL_NAME
         response = client.chat.completions.create(
             model=model_name,
+            **chat_reasoning_kwargs(model_name, state.get("reasoning_effort")),
             **chat_temperature_kwargs(model_name, 0.0),
             max_completion_tokens=cfg["max_output_tokens"],
             messages=[
@@ -506,7 +520,11 @@ def _re_extract_node(state: PipelineState) -> PipelineState:
     previous_ontology_json = json.dumps(
         state["ontology"].model_dump(), ensure_ascii=False, indent=2
     )
-    prompt_blocks = [state.get("candidates_block", ""), _asset_identity_prompt_block(state.get("asset_identity"))]
+    has_canonical_asset = _has_canonical_asset_identity(state.get("asset_identity"))
+    prompt_blocks = [
+        state.get("candidates_block", ""),
+        _asset_identity_prompt_block(state.get("asset_identity")) if has_canonical_asset else "",
+    ]
     system_prompt = build_ontology_re_extraction_prompt(
         schema_json=state["schema_json"],
         source_type=state["source_type"],
@@ -514,6 +532,7 @@ def _re_extract_node(state: PipelineState) -> PipelineState:
         issues_summary=issues_summary,
         previous_ontology_json=previous_ontology_json,
         candidate_candidates_block="\n\n".join(block for block in prompt_blocks if block),
+        extract_asset=not has_canonical_asset,
     )
     cfg = _ontology_cfg(re_extract_max_tokens)
     enforce_llm_limits(
@@ -541,6 +560,7 @@ def _re_extract_node(state: PipelineState) -> PipelineState:
             model_name = state["model_name"] or settings.MODEL_NAME
             response = client.chat.completions.create(
                 model=model_name,
+                **chat_reasoning_kwargs(model_name, state.get("reasoning_effort")),
                 **chat_temperature_kwargs(model_name, 0.0),
                 max_completion_tokens=max_output_tokens,
                 messages=messages,
@@ -732,6 +752,7 @@ def build_initial_ontology(
     source_title: str,
     target_language: str,
     model_name: str,
+    reasoning_effort: str | None = None,
     asset_identity: dict[str, Any] | None = None,
     on_event=None,
 ) -> tuple[OntologyPipelineResponse, dict[str, Any]]:
@@ -761,6 +782,7 @@ def build_initial_ontology(
         "asset_identity": asset_identity or {},
         "target_language": normalized_target_language,
         "model_name": model_name,
+        "reasoning_effort": reasoning_effort,
         "schema": schema,
         "schema_json": dump_ontology_schema_json(),
         "candidates_block": candidates_block,

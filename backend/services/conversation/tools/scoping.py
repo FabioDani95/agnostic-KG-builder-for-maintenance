@@ -14,6 +14,7 @@ from backend.services.conversation.tools.common import (
 
 
 async def _propose_cut_plan(args, store, on_event):
+    from backend.app_config import get_agent_config
     from backend.models import CutPlanRequest
     from backend.services.scoping_workflow import create_cut_plan_workflow
 
@@ -28,6 +29,7 @@ async def _propose_cut_plan(args, store, on_event):
             pdf_id=store["pdf_id"],
             page_offset=store.get("page_offset"),
             model_name=(store.get("selected_models") or {}).get("scoping") or None,
+            reasoning_effort=get_agent_config("scoping").get("reasoning_effort"),
         )
         result = await asyncio.to_thread(create_cut_plan_workflow, store, req, on_event)
         # Persist cut plan in store

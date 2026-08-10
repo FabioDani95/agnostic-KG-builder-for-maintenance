@@ -16,7 +16,7 @@ from backend.domain.evidence import (
     RecordRole,
 )
 from backend.domain.ids import new_id, utc_now
-from backend.domain.locators import OperatorInputLocator
+from backend.domain.locators import OperatorInputLocator, PdfLocator
 from backend.domain.sources import SourceAuthority, SourceKind
 from backend.domain.workspace import OperatorAssertion, Workspace
 from backend.storage.database import Database, get_database
@@ -377,7 +377,23 @@ class EvidenceRepository:
         query += " ORDER BY e.source_id, e.evidence_id"
         with self.database.read() as connection:
             rows = connection.execute(query, values).fetchall()
-        return [EvidenceUnit.model_validate_json(row["payload_json"]) for row in rows]
+        evidence = [EvidenceUnit.model_validate_json(row["payload_json"]) for row in rows]
+
+        def semantic_order(item: EvidenceUnit) -> tuple:
+            locator = item.locator
+            if not isinstance(locator, PdfLocator):
+                return (item.source_id, 0, 0, 0, 0, item.evidence_id)
+            if locator.block_index is not None:
+                position = (0, locator.block_index, 0)
+            elif locator.table_index is not None:
+                position = (1, locator.table_index, locator.row_index or 0)
+            elif locator.ocr_region_index is not None:
+                position = (2, locator.ocr_region_index, 0)
+            else:
+                position = (3, 0, 0)
+            return (item.source_id, locator.page, *position, item.evidence_id)
+
+        return sorted(evidence, key=semantic_order)
 
     def save_structured_evidence(
         self,

@@ -113,6 +113,54 @@ def test_i03_evidence_bridge_keeps_pdf_dependency_inside_adapter(
     assert "source_page" not in evidence_payload[0]
 
 
+def test_i03_evidence_bridge_reconstructs_block_order_and_emits_stable_anchors(
+    foundation_client,
+    machine_payload,
+):
+    workspace, source = _prepared_source(foundation_client, machine_payload)
+    payload = foundation_client.get(
+        f"/api/workspaces/{workspace['workspace_id']}/evidence",
+        params={"source_id": source["source_id"]},
+    ).json()
+    from backend.domain.evidence import EvidenceUnit
+
+    base = EvidenceUnit.model_validate(payload[0])
+
+    def block(evidence_id: str, block_index: int, text: str):
+        locator = base.locator.model_copy(update={
+            "quote": text,
+            "block_index": block_index,
+            "table_index": None,
+            "row_index": None,
+            "ocr_region_index": None,
+        })
+        content = base.content.model_copy(update={
+            "observation": text,
+            "semantic_texts": {"observation": text},
+        })
+        return base.model_copy(update={
+            "evidence_id": evidence_id,
+            "locator": locator,
+            "content": content,
+        })
+
+    projected = evidence_units_to_legacy_pages([
+        block("ev_cccccccccccc", 2, "Third physical block"),
+        block("ev_aaaaaaaaaaaa", 0, "First physical block"),
+        block("ev_bbbbbbbbbbbb", 1, "Second physical block"),
+    ])
+    text = projected[0]["text"]
+
+    assert text.index("First physical block") < text.index("Second physical block")
+    assert text.index("Second physical block") < text.index("Third physical block")
+    assert projected[0]["evidence_anchors"] == [
+        "ev_aaaaaaaaaaaa",
+        "ev_bbbbbbbbbbbb",
+        "ev_cccccccccccc",
+    ]
+    assert "[[EVIDENCE_ID: ev_aaaaaaaaaaaa]]" in text
+
+
 def test_i03_evidence_ids_are_cross_type_registered(foundation_client, machine_payload):
     workspace, source = _prepared_source(foundation_client, machine_payload)
     evidence = foundation_client.get(

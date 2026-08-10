@@ -56,6 +56,35 @@ class OntologyPipelineValidationTests(unittest.TestCase):
 
         self.assertEqual(chunk_pages, [[1, 2], [10, 11]])
 
+    def test_split_pages_by_overlapping_sections_never_duplicates_physical_pages(self):
+        pages = [
+            {"page_number": page, "text": f"diagnostic page {page}"}
+            for page in range(10, 16)
+        ]
+        sections = [
+            {"name": "Service", "start": 10, "end": 15, "source": "rule"},
+            {"name": "Troubleshooting", "start": 12, "end": 14, "source": "llm"},
+            {"name": "Alarm table", "start": 13, "end": 13, "source": "llm"},
+        ]
+
+        chunks = _split_pages_by_section(pages, sections, max_chars=10_000, max_pages=30)
+        occurrences = [
+            page["page_number"]
+            for chunk, _ in chunks
+            for page in chunk
+        ]
+        page_13_context = next(
+            context
+            for chunk, context in chunks
+            if any(page["page_number"] == 13 for page in chunk)
+        )
+
+        self.assertEqual(occurrences, [10, 11, 12, 13, 14, 15])
+        self.assertEqual(
+            {section["name"] for section in page_13_context},
+            {"Service", "Troubleshooting", "Alarm table"},
+        )
+
     def test_validate_ontology_instance_rejects_asset_only_draft(self):
         schema_issues, human_fields = validate_ontology_instance(_asset_only_ontology())
 

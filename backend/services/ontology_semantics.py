@@ -2,6 +2,18 @@ from __future__ import annotations
 
 import re
 from difflib import SequenceMatcher
+from typing import Any, Mapping
+
+WORKSPACE_CANONICAL_ASSET_MARKER = "_confirmed_by_workspace"
+
+
+def is_workspace_canonical_asset_identity(identity: Mapping[str, Any] | None) -> bool:
+    value = identity or {}
+    return bool(
+        value.get(WORKSPACE_CANONICAL_ASSET_MARKER) is True
+        and str(value.get("asset_id", "") or "").strip()
+        and str(value.get("name", "") or "").strip()
+    )
 
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
 _WHITESPACE_RE = re.compile(r"\s+")

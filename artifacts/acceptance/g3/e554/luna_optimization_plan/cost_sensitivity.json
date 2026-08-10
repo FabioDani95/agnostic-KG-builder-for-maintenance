@@ -1,0 +1,126 @@
+{
+  "analysis_kind": "offline_cost_sensitivity",
+  "assumptions": [
+    "Scoping usage is held at the exact measured Luna value.",
+    "The relation-first contract removes the separate relation pass and routine per-chunk semantic-validator/re-extraction passes; the remaining ontology usage is represented as 40%, 55%, or 70% of measured ontology-stage tokens and duration.",
+    "The structural component pass is included in those ontology factors.",
+    "Terra is optional and limited to one batched ambiguity adjudication; it may not create a claim without a quote and resolvable anchor.",
+    "Operation-level token buckets were not persisted, so factors cannot be measured before implementation. These scenarios are sensitivity bounds, not claimed outcomes."
+  ],
+  "baseline": {
+    "aggregate_token_reconstruction_usd": 0.320471,
+    "cached_prompt_tokens": 54119,
+    "completion_tokens": 163700,
+    "duration_seconds": 444.69,
+    "estimated_cost_usd": 0.320466,
+    "llm_calls": 96,
+    "measurement_status": "measured_persisted_luna_run",
+    "prompt_tokens": 668862,
+    "total_tokens": 832562
+  },
+  "pricing_usd_per_million_tokens": {
+    "gpt-5.6-luna": {
+      "cached_input": 0.02,
+      "input": 0.2,
+      "output": 1.2
+    },
+    "gpt-5.6-terra": {
+      "cached_input": 0.2,
+      "input": 2.0,
+      "output": 12.0
+    }
+  },
+  "recommended_budget_policy": {
+    "expected_cost_usd": 0.22635,
+    "expected_range_usd": [
+      0.130977,
+      0.301724
+    ],
+    "expected_scenario": "central_one_batched_escalation",
+    "preflight_stop_usd": 0.35,
+    "rule": "Skip optional escalation before a call when its conservative token ceiling would make the run forecast exceed $0.35; preserve the unresolved item as a gap."
+  },
+  "scenarios": [
+    {
+      "estimated_calls": 21,
+      "estimated_duration_seconds": 187.276,
+      "estimated_total_cost_usd": 0.130977,
+      "estimated_total_tokens": 339458,
+      "luna_usage": {
+        "cached_prompt_tokens": 21648,
+        "completion_tokens": 66982,
+        "estimated_cost_usd": 0.130977,
+        "prompt_tokens": 272476,
+        "total_tokens": 339458
+      },
+      "measurement_status": "estimated_sensitivity_from_measured_stage_usage",
+      "name": "low_no_escalation",
+      "ontology_usage_factor_vs_measured": 0.4,
+      "terra_cached_prompt_tokens": 0,
+      "terra_latency_allowance_seconds": 0,
+      "terra_output_tokens": 0,
+      "terra_prompt_tokens": 0,
+      "terra_usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 0,
+        "estimated_cost_usd": 0.0,
+        "prompt_tokens": 0,
+        "total_tokens": 0
+      }
+    },
+    {
+      "estimated_calls": 25,
+      "estimated_duration_seconds": 281.334,
+      "estimated_total_cost_usd": 0.22635,
+      "estimated_total_tokens": 476734,
+      "luna_usage": {
+        "cached_prompt_tokens": 29765,
+        "completion_tokens": 91161,
+        "estimated_cost_usd": 0.17835,
+        "prompt_tokens": 371573,
+        "total_tokens": 462734
+      },
+      "measurement_status": "estimated_sensitivity_from_measured_stage_usage",
+      "name": "central_one_batched_escalation",
+      "ontology_usage_factor_vs_measured": 0.55,
+      "terra_cached_prompt_tokens": 0,
+      "terra_latency_allowance_seconds": 30,
+      "terra_output_tokens": 2000,
+      "terra_prompt_tokens": 12000,
+      "terra_usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 2000,
+        "estimated_cost_usd": 0.048,
+        "prompt_tokens": 12000,
+        "total_tokens": 14000
+      }
+    },
+    {
+      "estimated_calls": 28,
+      "estimated_duration_seconds": 360.392,
+      "estimated_total_cost_usd": 0.301724,
+      "estimated_total_tokens": 609010,
+      "luna_usage": {
+        "cached_prompt_tokens": 37883,
+        "completion_tokens": 115341,
+        "estimated_cost_usd": 0.225724,
+        "prompt_tokens": 470669,
+        "total_tokens": 586010
+      },
+      "measurement_status": "estimated_sensitivity_from_measured_stage_usage",
+      "name": "conservative_one_larger_escalation",
+      "ontology_usage_factor_vs_measured": 0.7,
+      "terra_cached_prompt_tokens": 0,
+      "terra_latency_allowance_seconds": 45,
+      "terra_output_tokens": 3000,
+      "terra_prompt_tokens": 20000,
+      "terra_usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 3000,
+        "estimated_cost_usd": 0.076,
+        "prompt_tokens": 20000,
+        "total_tokens": 23000
+      }
+    }
+  ]
+}

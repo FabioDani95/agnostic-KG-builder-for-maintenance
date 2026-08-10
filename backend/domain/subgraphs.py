@@ -85,12 +85,50 @@ class GraphValidationReport(BaseModel):
     extra_properties: int = Field(default=0, ge=0)
     domain_range_errors: int = Field(default=0, ge=0)
     endpoint_errors: int = Field(default=0, ge=0)
+    graph_invariant_errors: int = Field(default=0, ge=0)
     duplicate_ids: int = Field(default=0, ge=0)
     provenance_total: int = Field(default=0, ge=0)
     provenance_resolvable: int = Field(default=0, ge=0)
     unresolved_mapping_diagnostics: int = Field(default=0, ge=0)
     passed: bool = False
     issues: list[GraphValidationIssue] = Field(default_factory=list)
+
+
+class TokenCostMetrics(BaseModel):
+    """Measured token usage with a list-price cost estimate."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    llm_calls: int = Field(default=0, ge=0)
+    prompt_tokens: int = Field(default=0, ge=0)
+    cached_prompt_tokens: int = Field(default=0, ge=0)
+    non_cached_prompt_tokens: int = Field(default=0, ge=0)
+    completion_tokens: int = Field(default=0, ge=0)
+    total_tokens: int = Field(default=0, ge=0)
+    estimated_cost_usd: float = Field(default=0.0, ge=0)
+
+
+class SourceGenerationStageMetrics(TokenCostMetrics):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    duration_seconds: float = Field(default=0.0, ge=0)
+    models: list[str] = Field(default_factory=list)
+    operations: list[str] = Field(default_factory=list)
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class SourceGenerationMetrics(TokenCostMetrics):
+    """Immutable KPI ledger persisted with the generated source revision."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    duration_seconds: float = Field(default=0.0, ge=0)
+    models: list[str] = Field(default_factory=list)
+    by_model: dict[str, TokenCostMetrics] = Field(default_factory=dict)
+    stages: dict[str, SourceGenerationStageMetrics] = Field(default_factory=dict)
+    execution_mode: str = ""
+    pricing_currency: Literal["USD"] = "USD"
+    pricing_kind: Literal["estimated_list_price"] = "estimated_list_price"
 
 
 class KnowledgeGap(BaseModel):
@@ -177,6 +215,7 @@ class SourceSubgraphRevision(BaseModel):
     validation: GraphValidationReport = Field(default_factory=GraphValidationReport)
     knowledge_gaps: list[KnowledgeGap] = Field(default_factory=list)
     pdf_extraction_scope: PdfExtractionScope | None = None
+    generation_metrics: SourceGenerationMetrics | None = None
     approval_eligible: bool = False
     supersedes: OpaqueId | None = None
     created_at: UtcTimestamp

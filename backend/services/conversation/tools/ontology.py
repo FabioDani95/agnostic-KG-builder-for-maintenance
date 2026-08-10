@@ -11,6 +11,7 @@ from backend.services.conversation.tools.common import (
 
 
 async def _draft_ontology(args, store, on_event):
+    from backend.app_config import get_agent_config
     from backend.graph.store import update_ontology_state
     from backend.models import OntologyDraftRequest
     from backend.services.ontology_workflow import draft_ontology_workflow
@@ -20,6 +21,7 @@ async def _draft_ontology(args, store, on_event):
         source_type=store.get("source_type", ""),
         source_title=store.get("source_title", ""),
         model_name=(store.get("selected_models") or {}).get("ontology_draft") or None,
+        reasoning_effort=get_agent_config("ontology_draft").get("reasoning_effort"),
         pages_to_keep=(store.get("cut_plan") or {}).get("pages_to_keep"),
         target_language=store.get("target_language", "en"),
     )

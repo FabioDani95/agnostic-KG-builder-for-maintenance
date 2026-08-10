@@ -15,9 +15,9 @@ from backend.models import OntologyDraftRequest, OntologyPipelineResponse, Ontol
 from backend.services.cutplan_service import extract_asset_identity
 from backend.services.ontology_pipeline import _normalize_ontology_instance, build_initial_ontology
 from backend.services.ontology_schema_service import load_ontology_schema
-from backend.services.ontology_semantics import normalize_asset_node
+from backend.services.ontology_semantics import WORKSPACE_CANONICAL_ASSET_MARKER, normalize_asset_node
 from backend.services.pdf_service import format_text_with_pages
-from backend.services.run_metrics import record_stage_metrics
+from backend.services.run_metrics import merge_usage_summaries, record_stage_metrics
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ def _normalize_node_name(name: str) -> str:
     return _re.sub(r"\s+", " ", value).strip()
 
 
-def _canonical_asset_identity(store: dict) -> dict[str, str]:
+def _canonical_asset_identity(store: dict) -> dict[str, object]:
     graph_state = store.get("graph_state") or {}
     source_type = str(store.get("source_type") or graph_state.get("source_type") or "").strip()
     source_title = str(store.get("source_title") or graph_state.get("source_title") or "").strip()
@@ -50,6 +50,11 @@ def _canonical_asset_identity(store: dict) -> dict[str, str]:
                 filename=filename,
             )
             if identity.get("name"):
+                if store.get("asset_identity_is_canonical") is True:
+                    identity[WORKSPACE_CANONICAL_ASSET_MARKER] = True
+                    description = str(candidate.get("description", "") or "").strip()
+                    if description:
+                        identity["description"] = description
                 return identity
 
     if source_title or filename:
@@ -203,10 +208,14 @@ def _merge_pipeline_results(
                 )
                 continue
             seen_evidence = {
-                (ev.source_page, ev.quote) for ev in existing.evidence or []
+                (ev.source_page, ev.quote, ev.source_anchor) for ev in existing.evidence or []
             }
             for evidence_item in relation.evidence or []:
-                signature = (evidence_item.source_page, evidence_item.quote)
+                signature = (
+                    evidence_item.source_page,
+                    evidence_item.quote,
+                    evidence_item.source_anchor,
+                )
                 if signature in seen_evidence:
                     continue
                 existing.evidence.append(evidence_item)
@@ -313,123 +322,71 @@ def _split_pages_by_section(
     max_chars: int,
     max_pages: int = 30,
 ) -> list[tuple[list[dict], list[dict]]]:
-    """Split selected pages into chunk-sized groups while preserving section context."""
-    if not sections or not pages:
-        sorted_pages = sorted(pages, key=lambda page: page["page_number"])
-        return [
-            (sorted_pages[index:index + max_pages], [])
-            for index in range(0, len(sorted_pages), max_pages)
-        ] or [(pages, [])]
+    """Partition selected physical pages once while retaining all section labels.
 
-    page_map = {page["page_number"]: page for page in pages}
-    covered_page_numbers: set[int] = set()
-    ordered_groups: list[tuple[int, list[dict], list[dict]]] = []
-    for section in sections:
-        section_pages = [
-            page_map[page_number]
-            for page_number in range(section["start"], section["end"] + 1)
-            if page_number in page_map
-        ]
-        if section_pages:
-            covered_page_numbers.update(page["page_number"] for page in section_pages)
-            ordered_groups.append((section_pages[0]["page_number"], section_pages, [section]))
+    Sections may overlap (for example a troubleshooting chapter nested inside a
+    service chapter).  They are contextual labels, not independent page copies:
+    one physical page must therefore occur in exactly one ontology chunk.
+    """
+    if not pages:
+        return []
+    max_pages = max(1, int(max_pages or 1))
+    max_chars = max(1, int(max_chars or 1))
+    page_map = {int(page["page_number"]): page for page in pages}
+    ordered_pages = [page_map[number] for number in sorted(page_map)]
 
-    uncovered_pages = [
-        page for page in sorted(pages, key=lambda page: page["page_number"])
-        if page["page_number"] not in covered_page_numbers
-    ]
-    current_uncovered_run: list[dict] = []
-    for page in uncovered_pages:
-        if (
-            current_uncovered_run
-            and page["page_number"] != current_uncovered_run[-1]["page_number"] + 1
-        ):
-            ordered_groups.append(
-                (current_uncovered_run[0]["page_number"], current_uncovered_run, []),
-            )
-            current_uncovered_run = []
-        current_uncovered_run.append(page)
-    if current_uncovered_run:
-        ordered_groups.append(
-            (current_uncovered_run[0]["page_number"], current_uncovered_run, []),
+    def section_signature(page_number: int) -> tuple[tuple[str, int, int, str], ...]:
+        matching = []
+        for section in sections or []:
+            start = int(section.get("start", 0) or 0)
+            end = int(section.get("end", 0) or 0)
+            if start <= page_number <= end:
+                matching.append((
+                    str(section.get("name") or ""),
+                    start,
+                    end,
+                    str(section.get("source") or ""),
+                ))
+        return tuple(sorted(set(matching), key=lambda value: (value[1], value[2], value[0], value[3])))
+
+    runs: list[tuple[list[dict], tuple[tuple[str, int, int, str], ...]]] = []
+    current_pages: list[dict] = []
+    current_signature: tuple[tuple[str, int, int, str], ...] | None = None
+    for page in ordered_pages:
+        signature = section_signature(int(page["page_number"]))
+        contiguous = (
+            not current_pages
+            or int(page["page_number"]) == int(current_pages[-1]["page_number"]) + 1
         )
-
-    if not ordered_groups:
-        sorted_pages = sorted(pages, key=lambda page: page["page_number"])
-        return [
-            (sorted_pages[index:index + max_pages], [])
-            for index in range(0, len(sorted_pages), max_pages)
-        ] or [(pages, [])]
-
-    def _flush(current_pages, current_sections, target):
-        if not current_pages:
-            return
-        for index in range(0, len(current_pages), max_pages):
-            target.append((current_pages[index:index + max_pages], current_sections))
+        if current_pages and (not contiguous or signature != current_signature):
+            runs.append((current_pages, current_signature or ()))
+            current_pages = []
+        current_pages.append(page)
+        current_signature = signature
+    if current_pages:
+        runs.append((current_pages, current_signature or ()))
 
     chunks: list[tuple[list[dict], list[dict]]] = []
-    current_pages: list[dict] = []
-    current_sections: list[dict] = []
-    current_chars = 0
+    for run_pages, signature in runs:
+        context = [
+            {"name": name, "start": start, "end": end, "source": source}
+            for name, start, end, source in signature
+        ]
+        chunk_pages: list[dict] = []
+        chunk_chars = 0
+        for page in run_pages:
+            page_chars = len(f"--- PAGE {page['page_number']} ---\n{page['text']}\n\n")
+            if chunk_pages and (
+                len(chunk_pages) >= max_pages or chunk_chars + page_chars > max_chars
+            ):
+                chunks.append((chunk_pages, context))
+                chunk_pages = []
+                chunk_chars = 0
+            chunk_pages.append(page)
+            chunk_chars += page_chars
+        if chunk_pages:
+            chunks.append((chunk_pages, context))
 
-    def _append_chunk_group(group_pages: list[dict], group_sections: list[dict]) -> None:
-        if not group_pages:
-            return
-        group_chars = sum(
-            len(f"--- PAGE {page['page_number']} ---\n{page['text']}\n\n")
-            for page in group_pages
-        )
-        if group_chars > max_chars or len(group_pages) > max_pages:
-            subset: list[dict] = []
-            subset_chars = 0
-            for page in group_pages:
-                page_chars = len(f"--- PAGE {page['page_number']} ---\n{page['text']}\n\n")
-                if subset and (subset_chars + page_chars > max_chars or len(subset) >= max_pages):
-                    chunks.append((subset, group_sections))
-                    subset = []
-                    subset_chars = 0
-                subset.append(page)
-                subset_chars += page_chars
-            if subset:
-                chunks.append((subset, group_sections))
-            return
-
-        chunks.append((group_pages, group_sections))
-
-    for _, group_pages, group_sections in sorted(ordered_groups, key=lambda item: item[0]):
-        if not group_sections:
-            _flush(current_pages, current_sections, chunks)
-            current_pages = []
-            current_sections = []
-            current_chars = 0
-            _append_chunk_group(group_pages, [])
-            continue
-
-        section_chars = sum(
-            len(f"--- PAGE {page['page_number']} ---\n{page['text']}\n\n")
-            for page in group_pages
-        )
-        would_exceed_chars = current_pages and (current_chars + section_chars > max_chars)
-        would_exceed_pages = current_pages and (len(current_pages) + len(group_pages) > max_pages)
-        if would_exceed_chars or would_exceed_pages:
-            _flush(current_pages, current_sections, chunks)
-            current_pages = []
-            current_sections = []
-            current_chars = 0
-
-        if section_chars > max_chars or len(group_pages) > max_pages:
-            _flush(current_pages, current_sections, chunks)
-            current_pages = []
-            current_sections = []
-            current_chars = 0
-            _append_chunk_group(group_pages, group_sections)
-            continue
-
-        current_pages.extend(group_pages)
-        current_sections.extend(group_sections)
-        current_chars += section_chars
-
-    _flush(current_pages, current_sections, chunks)
     return chunks
 
 
@@ -507,6 +464,8 @@ def _finalize_run_level_quality(
     model_name: str | None,
     asset_identity: dict[str, str] | None,
     all_pages: list[dict] | None = None,
+    *,
+    reasoning_effort: str | None = None,
 ) -> tuple[OntologyPipelineResponse, list[dict], dict, dict]:
     """Run-level quality passes executed once on the merged ontology.
 
@@ -556,6 +515,7 @@ def _finalize_run_level_quality(
             text_with_pages=text_with_pages,
             model_name=model_name or settings.MODEL_NAME,
             parse_json=_extract_json_object,
+            reasoning_effort=reasoning_effort,
         )
         usage_entries = [*usage_entries, *coverage_usage]
     except Exception:
@@ -577,6 +537,7 @@ def _finalize_run_level_quality(
             model_name=model_name or settings.MODEL_NAME,
             parse_json=_extract_json_object,
             search_text_with_pages=search_text_with_pages,
+            reasoning_effort=reasoning_effort,
         )
         usage_entries = [*usage_entries, *resolution_usage]
     except Exception:
@@ -799,6 +760,7 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                     source_title=req.source_title,
                     target_language=req.target_language,
                     model_name=req.model_name,
+                    reasoning_effort=req.reasoning_effort,
                     asset_identity=asset_identity,
                     on_event=on_event,
                 ),
@@ -835,6 +797,7 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
         req.model_name,
         asset_identity,
         all_pages,
+        reasoning_effort=req.reasoning_effort,
     )
     grounding_stats = quality_stats.get("grounding", {})
     closure_stats = quality_stats.get("closure", {})
@@ -848,29 +811,17 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
             "chunk_pages": 0,
             "section_count": 0,
         })
-    total_prompt_tokens = sum(int(item.get("prompt_tokens", 0) or 0) for item in chunk_metrics)
-    total_cached_prompt_tokens = sum(int(item.get("cached_prompt_tokens", 0) or 0) for item in chunk_metrics)
-    total_non_cached_prompt_tokens = sum(int(item.get("non_cached_prompt_tokens", 0) or 0) for item in chunk_metrics)
-    total_completion_tokens = sum(int(item.get("completion_tokens", 0) or 0) for item in chunk_metrics)
-    total_tokens = sum(int(item.get("total_tokens", 0) or 0) for item in chunk_metrics)
-    total_llm_calls = sum(int(item.get("llm_calls", 0) or 0) for item in chunk_metrics)
+    usage_summary = merge_usage_summaries(chunk_metrics)
+    total_prompt_tokens = int(usage_summary["prompt_tokens"])
+    total_cached_prompt_tokens = int(usage_summary["cached_prompt_tokens"])
+    total_non_cached_prompt_tokens = int(usage_summary["non_cached_prompt_tokens"])
+    total_completion_tokens = int(usage_summary["completion_tokens"])
+    total_tokens = int(usage_summary["total_tokens"])
+    total_llm_calls = int(usage_summary["llm_calls"])
     total_retries = sum(int(item.get("retry_count", 0) or 0) for item in chunk_metrics)
-    total_cost_usd = round(
-        sum(float(item.get("estimated_cost_usd", 0) or 0) for item in chunk_metrics),
-        6,
-    )
-    models = sorted({
-        model
-        for item in chunk_metrics
-        for model in item.get("models", [])
-        if model
-    })
-    operations = sorted({
-        operation
-        for item in chunk_metrics
-        for operation in item.get("operations", [])
-        if operation
-    })
+    total_cost_usd = float(usage_summary["estimated_cost_usd"])
+    models = list(usage_summary["models"])
+    operations = list(usage_summary["operations"])
     parse_repair_events: list[dict] = [
         event
         for item in chunk_metrics
@@ -895,10 +846,12 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
             "estimated_cost_usd": total_cost_usd,
             "models": models,
             "operations": operations,
+            "by_model": usage_summary["by_model"],
             "details": {
                 "selected_pages": len(filtered_pages),
                 "selected_sections": len(sections),
                 "chunk_count": len(page_chunks),
+                "reasoning_effort": req.reasoning_effort or "default",
                 "retry_count": total_retries,
                 "status": result.status,
                 "schema_issue_count": len(result.schema_issues),

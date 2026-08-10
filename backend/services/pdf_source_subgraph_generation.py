@@ -11,12 +11,14 @@ import asyncio
 import hashlib
 import json
 import re
+import time
 import unicodedata
 from collections import defaultdict
 from typing import Any
 
-from backend.adapters.pdf import ADAPTER_VERSION, evidence_units_to_legacy_pages
+from backend.adapters.pdf import ADAPTER_VERSION, evidence_units_to_legacy_pages, pdf_evidence_sort_key
 from backend.app_config import (
+    get_agent_config,
     get_confidence_config,
     get_coverage_completion_config,
     get_ontology_config,
@@ -33,18 +35,22 @@ from backend.domain.subgraphs import (
     GraphEvidenceRef,
     KnowledgeGap,
     PdfExtractionScope,
+    SourceGenerationMetrics,
+    SourceGenerationStageMetrics,
     SourceGraphNode,
     SourceGraphRelation,
     SourceSubgraphRevision,
     SourceSubgraphStatus,
+    TokenCostMetrics,
 )
 from backend.models import CutPlanRequest, OntologyDraftRequest, OntologyPipelineResponse
 from backend.services.llm_gateway import llm_mode
 from backend.services.ontology_schema_service import load_ontology_schema, ontology_contract
 from backend.services.ontology_workflow import draft_ontology_workflow
+from backend.services.run_metrics import build_metrics_payload
 from backend.services.scoping_workflow import create_cut_plan_workflow
 
-PDF_SUBGRAPH_GENERATOR_VERSION = "retained-pdf-ontology-adapter-v2-scoped"
+PDF_SUBGRAPH_GENERATOR_VERSION = "retained-pdf-ontology-adapter-v4-canonical-asset"
 
 _ID_PROPERTIES = {
     "Asset": "asset_id",
@@ -90,7 +96,17 @@ def pdf_input_config_hash() -> str:
         "generator_version": PDF_SUBGRAPH_GENERATOR_VERSION,
         "pdf_adapter_version": ADAPTER_VERSION,
         "ontology_sha256": ontology_contract().sha256,
-        "model": settings.MODEL_NAME,
+        "models": {
+            "fallback": settings.MODEL_NAME,
+            "scoping": {
+                "model": _agent_model("scoping"),
+                "reasoning_effort": _agent_reasoning_effort("scoping"),
+            },
+            "ontology": {
+                "model": _agent_model("ontology_draft"),
+                "reasoning_effort": _agent_reasoning_effort("ontology_draft"),
+            },
+        },
         "llm_mode": llm_mode(),
         "pdf_ingestion": get_pdf_ingestion_config(),
         "scoping": get_scoping_config(),
@@ -100,6 +116,15 @@ def pdf_input_config_hash() -> str:
         "coverage_completion": get_coverage_completion_config(),
         "resolution_completion": get_resolution_completion_config(),
     })
+
+
+def _agent_model(agent_name: str) -> str:
+    return str(get_agent_config(agent_name).get("model") or settings.MODEL_NAME).strip()
+
+
+def _agent_reasoning_effort(agent_name: str) -> str | None:
+    value = str(get_agent_config(agent_name).get("reasoning_effort") or "").strip().lower()
+    return value or None
 
 
 def _normalized_text(value: str) -> str:
@@ -123,6 +148,55 @@ def _excerpt(evidence: EvidenceUnit) -> str:
     return " · ".join(value for value in values if value)[:280]
 
 
+_TOKEN_COST_FIELDS = (
+    "llm_calls",
+    "prompt_tokens",
+    "cached_prompt_tokens",
+    "non_cached_prompt_tokens",
+    "completion_tokens",
+    "total_tokens",
+    "estimated_cost_usd",
+)
+
+
+def _token_cost_payload(raw: dict[str, Any] | None) -> dict[str, Any]:
+    source = raw or {}
+    return {field: source.get(field, 0) or 0 for field in _TOKEN_COST_FIELDS}
+
+
+def _generation_metrics(store: dict[str, Any], *, duration_seconds: float) -> SourceGenerationMetrics:
+    payload = build_metrics_payload(store)
+    totals = payload.get("totals") or {}
+    stages = {
+        name: SourceGenerationStageMetrics(
+            **_token_cost_payload(stage),
+            duration_seconds=float(stage.get("duration_seconds", 0) or 0),
+            models=list(stage.get("models") or []),
+            operations=list(stage.get("operations") or []),
+            details=dict(stage.get("details") or {}),
+        )
+        for name, stage in (payload.get("stages") or {}).items()
+    }
+    by_model = {
+        name: TokenCostMetrics(**_token_cost_payload(model_metrics))
+        for name, model_metrics in (totals.get("by_model") or {}).items()
+    }
+    models = sorted({
+        model
+        for stage in stages.values()
+        for model in stage.models
+        if model
+    })
+    return SourceGenerationMetrics(
+        **_token_cost_payload(totals),
+        duration_seconds=round(max(0.0, duration_seconds), 3),
+        models=models,
+        by_model=by_model,
+        stages=stages,
+        execution_mode=llm_mode(),
+    )
+
+
 class PdfSourceSubgraphBuilder:
     """Run the local PDF core and produce one immutable target revision."""
 
@@ -137,6 +211,7 @@ class PdfSourceSubgraphBuilder:
         config_hash: str,
         supersedes: str | None,
     ) -> SourceSubgraphRevision:
+        build_started_at = time.perf_counter()
         evidence_pages = evidence_units_to_legacy_pages(evidence)
         included_pages = sorted({int(page) for page in scope.get("included_pages") or []})
         if not evidence_pages:
@@ -164,6 +239,7 @@ class PdfSourceSubgraphBuilder:
             "source_type": "technical PDF",
             "source_title": source_title,
             "asset_identity": asset,
+            "asset_identity_is_canonical": True,
         }
 
         try:
@@ -172,7 +248,9 @@ class PdfSourceSubgraphBuilder:
                 store,
                 CutPlanRequest(
                     pdf_id=source.source_id,
-                    model_name=settings.MODEL_NAME,
+                    model_name=_agent_model("scoping"),
+                    reasoning_effort=_agent_reasoning_effort("scoping"),
+                    discover_asset_identity=False,
                 ),
             )
         except Exception as exc:
@@ -190,9 +268,10 @@ class PdfSourceSubgraphBuilder:
                 "La segmentazione diagnostica non ha selezionato pagine elaborabili"
             )
 
-        # Scoping may infer product metadata from the manual, but the workspace
-        # Asset remains the sole canonical identity used by graph generation.
+        # Scoping may infer document metadata from the manual, but never the
+        # workspace-owned Asset used by graph generation.
         store["asset_identity"] = asset
+        store["asset_identity_is_canonical"] = True
         store["source_type"] = "technical PDF"
         store["source_title"] = source_title
         semantic_scope = PdfExtractionScope(
@@ -218,7 +297,8 @@ class PdfSourceSubgraphBuilder:
                     pdf_id=source.source_id,
                     source_type="technical PDF",
                     source_title=source_title,
-                    model_name=settings.MODEL_NAME,
+                    model_name=_agent_model("ontology_draft"),
+                    reasoning_effort=_agent_reasoning_effort("ontology_draft"),
                     pages_to_keep=selected_pages,
                     target_language="en",
                 ),
@@ -229,7 +309,7 @@ class PdfSourceSubgraphBuilder:
             raise ValueError(
                 f"La costruzione semantica del PDF non è riuscita{suffix}"
             ) from exc
-        return self._to_revision(
+        revision = self._to_revision(
             workspace=workspace,
             source=source,
             result=result,
@@ -239,6 +319,11 @@ class PdfSourceSubgraphBuilder:
             supersedes=supersedes,
             semantic_scope=semantic_scope,
         )
+        generation_metrics = _generation_metrics(
+            store,
+            duration_seconds=time.perf_counter() - build_started_at,
+        )
+        return revision.model_copy(update={"generation_metrics": generation_metrics})
 
     def _to_revision(
         self,
@@ -251,6 +336,7 @@ class PdfSourceSubgraphBuilder:
         config_hash: str,
         supersedes: str | None,
         semantic_scope: PdfExtractionScope | None = None,
+        generation_metrics: SourceGenerationMetrics | None = None,
     ) -> SourceSubgraphRevision:
         # Imported lazily to keep this adapter independent from orchestration
         # while sharing the exact strict validator used by structured sources.
@@ -260,10 +346,13 @@ class PdfSourceSubgraphBuilder:
         node_defs = {item.name: item for item in schema.nodes}
         relation_defs = {item.name: item for item in schema.relations}
         by_id = {item.evidence_id: item for item in evidence}
+        by_anchor = dict(by_id)
         by_page: dict[int, list[EvidenceUnit]] = defaultdict(list)
         for item in evidence:
             if isinstance(item.locator, PdfLocator):
                 by_page[item.locator.page].append(item)
+        for page_items in by_page.values():
+            page_items.sort(key=pdf_evidence_sort_key)
 
         gaps: list[KnowledgeGap] = []
         gap_keys: set[tuple[str, tuple[str, ...]]] = set()
@@ -276,7 +365,13 @@ class PdfSourceSubgraphBuilder:
             gap_keys.add(key)
             gaps.append(KnowledgeGap(code=code[:120], message=message[:1000], evidence_ids=list(ids)))
 
-        def resolve(page: int, quote: str, *, target: str) -> list[str]:
+        def resolve(
+            page: int,
+            quote: str,
+            *,
+            target: str,
+            source_anchor: str = "",
+        ) -> list[str]:
             candidates = by_page.get(page, [])
             if not candidates:
                 add_gap(
@@ -284,15 +379,35 @@ class PdfSourceSubgraphBuilder:
                     f"{target}: pagina {page} non presente nello scope PDF attivo.",
                 )
                 return []
+            anchor = str(source_anchor or "").strip()
+            anchored = by_anchor.get(anchor) if anchor else None
             normalized_quote = _normalized_text(quote)
-            if not normalized_quote:
-                ids = [item.evidence_id for item in candidates]
-                add_gap(
-                    "pdf_evidence_quote_missing",
-                    f"{target}: la pipeline ha indicato pagina {page} senza una citazione verificabile.",
-                    ids,
+            if anchored is not None and (
+                isinstance(anchored.locator, PdfLocator)
+                and anchored.locator.page == page
+            ):
+                anchored_text = _normalized_text(anchored.locator.quote)
+                anchor_tokens = _tokens(quote)
+                anchor_score = (
+                    len(anchor_tokens & _tokens(anchored.locator.quote))
+                    / max(1, len(anchor_tokens))
                 )
-                return ids
+                if normalized_quote and (
+                    normalized_quote in anchored_text
+                    or anchored_text in normalized_quote
+                    or anchor_score >= 0.8
+                ):
+                    return [anchored.evidence_id]
+            if not normalized_quote:
+                add_gap(
+                    "pdf_evidence_anchor_unresolved" if anchor else "pdf_evidence_quote_missing",
+                    (
+                        f"{target}: l'anchor {anchor} non identifica un'evidenza della pagina {page}."
+                        if anchor
+                        else f"{target}: la pipeline ha indicato pagina {page} senza una citazione verificabile."
+                    ),
+                )
+                return []
 
             exact = [
                 item for item in candidates
@@ -340,6 +455,7 @@ class PdfSourceSubgraphBuilder:
                         provenance.source_page,
                         provenance.quote,
                         target=relation_key,
+                        source_anchor=provenance.source_anchor,
                     ))
                 else:
                     add_gap(
@@ -370,6 +486,55 @@ class PdfSourceSubgraphBuilder:
             if QualityFlag.OCR_LOW_CONFIDENCE not in item.quality_flags
         }
         all_ids = {item.evidence_id for item in semantic_evidence}
+
+        def resolve_node_claim(raw: dict[str, Any]) -> set[str]:
+            """Ground standalone nodes by label/content, never by page alone."""
+            page = 0
+            for key in ("evidence_page", "source_page"):
+                try:
+                    page = int(raw.get(key) or 0)
+                except (TypeError, ValueError):
+                    page = 0
+                if page > 0:
+                    break
+            if page <= 0:
+                match = re.search(
+                    r"\b(?:page|pagina|p\.?)\s*[:#-]*\s*(\d+)\b",
+                    str(raw.get("source_reference") or ""),
+                    re.I,
+                )
+                page = int(match.group(1)) if match else 0
+
+            candidates = by_page.get(page, []) if page > 0 else semantic_evidence
+            candidates = [item for item in candidates if item.evidence_id in all_ids]
+            query_values = [
+                str(raw.get(key) or "").strip()
+                for key in ("name", "code", "instruction_text", "description")
+                if str(raw.get(key) or "").strip()
+            ]
+            scored: list[tuple[float, EvidenceUnit]] = []
+            for item in candidates:
+                candidate_text = _normalized_text(item.locator.quote)
+                candidate_tokens = _tokens(item.locator.quote)
+                best_score = 0.0
+                for value in query_values:
+                    normalized_value = _normalized_text(value)
+                    if len(normalized_value) >= 3 and normalized_value in candidate_text:
+                        best_score = 1.0
+                        break
+                    value_tokens = _tokens(value)
+                    if value_tokens:
+                        best_score = max(
+                            best_score,
+                            len(value_tokens & candidate_tokens) / len(value_tokens),
+                        )
+                if best_score >= 0.75:
+                    scored.append((best_score, item))
+            if not scored:
+                return set()
+            best = max(score for score, _ in scored)
+            return {item.evidence_id for score, item in scored if score == best}
+
         ontology_nodes: dict[str, dict[str, Any]] = {}
         node_types: dict[str, str] = {}
         node_evidence: dict[str, set[str]] = {}
@@ -404,25 +569,15 @@ class PdfSourceSubgraphBuilder:
                     raw = workspace.asset.model_dump(mode="json")
                 resolved = set(incident_evidence.get(node_id, set()))
                 if not resolved:
-                    for key in ("evidence_page", "source_page"):
-                        try:
-                            page = int(raw.get(key) or 0)
-                        except (TypeError, ValueError):
-                            page = 0
-                        if page > 0:
-                            resolved.update(resolve(page, "", target=f"{node_type}:{node_id}"))
-                if node_type == "CorrectiveAction" and not resolved:
-                    match = re.search(
-                        r"\b(?:page|pagina|p\.?)[\s:#-]*(\d+)\b",
-                        str(raw.get("source_reference") or ""),
-                        re.I,
-                    )
-                    if match:
-                        resolved.update(resolve(
-                            int(match.group(1)), "", target=f"{node_type}:{node_id}"
-                        ))
+                    resolved.update(resolve_node_claim(raw))
                 if node_type == "Asset" and not resolved:
-                    resolved.update(clean_ids or all_ids)
+                    ordered_semantic = sorted(semantic_evidence, key=pdf_evidence_sort_key)
+                    fallback = next(
+                        (item for item in ordered_semantic if item.evidence_id in clean_ids),
+                        ordered_semantic[0] if ordered_semantic else None,
+                    )
+                    if fallback is not None:
+                        resolved.add(fallback.evidence_id)
                 ontology_nodes[node_id] = {
                     "node_type": node_type,
                     "raw": raw,
@@ -576,6 +731,7 @@ class PdfSourceSubgraphBuilder:
             validation=validation,
             knowledge_gaps=gaps,
             pdf_extraction_scope=semantic_scope,
+            generation_metrics=generation_metrics,
             approval_eligible=(
                 validation.passed
                 and not gaps

@@ -112,6 +112,15 @@ class SourceSubgraphRepository:
                 "section_count": len(revision.pdf_extraction_scope.sections),
                 "skipped": revision.pdf_extraction_scope.skipped,
             }
+        if revision.generation_metrics is not None:
+            audit_payload["generation_metrics"] = {
+                "duration_seconds": revision.generation_metrics.duration_seconds,
+                "llm_calls": revision.generation_metrics.llm_calls,
+                "total_tokens": revision.generation_metrics.total_tokens,
+                "estimated_cost_usd": revision.generation_metrics.estimated_cost_usd,
+                "models": revision.generation_metrics.models,
+                "execution_mode": revision.generation_metrics.execution_mode,
+            }
         with self.database.transaction() as connection:
             connection.execute(
                 "INSERT INTO entity_ids(entity_id, entity_type, created_at) VALUES (?, 'source_subgraph', ?)",

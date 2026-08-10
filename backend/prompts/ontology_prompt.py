@@ -28,16 +28,15 @@ You must follow the ontology definition exactly.
 5. If a required property is missing from the document, leave it as an empty string rather than inventing it.
 6. For CorrectiveAction, set source_reference from page markers using the form "PAGE N".
 7. Every relation MUST include an "evidence" array with at least one entry.
-   Each evidence entry must use this exact shape (all three fields required):
-     {{"source_page": 14, "source_reference": "PAGE 14", "quote": "short verbatim text from that page"}}
+   Each evidence entry must use this exact shape (all four fields required):
+     {{"source_page": 14, "source_reference": "PAGE 14", "quote": "short verbatim text from that page", "source_anchor": "ev_exact_id_from_marker"}}
    Use the integer page number from the "--- PAGE N ---" markers in the text as source_page.
+   Copy source_anchor exactly from the nearest "[[EVIDENCE_ID: ...]]" marker that contains the quote.
    The quote should be a short verbatim excerpt (10-20 words) from that page that supports the relation.
-8. If the primary asset is clearly identifiable, include one Asset node.
-   Fill brand, model, asset_type from the manual title page or product description.
-9. You MUST attempt to extract ALL 6 node types defined in the schema, not only diagnostic triplets.
+8. {asset_node_instruction}
+9. You MUST attempt to extract {source_node_scope}, not only diagnostic triplets.
    For each node type, use its schema description as your extraction guide:
-   - **Asset**: "The product, machine, robot, cobot, controller, or other technical asset that is the subject of troubleshooting knowledge."
-     Extract exactly one Asset node per document.
+{asset_node_guide}
    - **Component**: "A physical or software component or subsystem of the asset involved in troubleshooting."
      Look for: parts lists, exploded diagrams, subsystem descriptions, installation instructions naming hardware,
      maintenance sections referencing serviceable parts. Extract a Component node for each distinct physical part
@@ -56,8 +55,8 @@ You must follow the ontology definition exactly.
    - **ErrorCode**: "A machine-generated error code or alert code produced by the asset."
      Look for: alarm code tables, fault code lists, diagnostic display codes, PID alarm values.
      Extract each distinct code. Fill the "code" property with the exact alphanumeric code from the text.
-10. You MUST also create ALL 6 relation types defined in the schema when supported by the text:
-    - HAS_COMPONENT: Asset → Component (for every Component extracted)
+10. Create the source-supported causal relation types below. The system derives
+    HAS_COMPONENT and GENERATES_ERROR deterministically from the canonical Asset:
     - MAY_INDICATE: Symptom → FailureMode
     - AFFECTS: FailureMode → Component (link failure modes to the MOST SPECIFIC Component
       named in the failure context — never fall back to the root asset or the highest-level
@@ -65,7 +64,6 @@ You must follow the ontology definition exactly.
       is not yet in the Component list, ADD it as a new Component BEFORE emitting the
       AFFECTS relation.)
     - RESOLVED_BY: FailureMode → CorrectiveAction
-    - GENERATES_ERROR: Asset → ErrorCode (for every ErrorCode extracted)
     - INDICATES: ErrorCode → FailureMode (link error codes to the failure they signal)
 11. Component and ErrorCode nodes are valuable STANDALONE — extract them even when they are
     not part of a complete Symptom → FailureMode → CorrectiveAction chain.
@@ -75,7 +73,7 @@ You must follow the ontology definition exactly.
 14. Write all human-readable field values in the same language as the source document.
 15. Keep JSON keys, node type names, relation names, IDs, and the source_reference format "PAGE N" unchanged.
 16. Return JSON only. No markdown. No commentary.
-17. Keep the Asset scope aligned with source_title. Do NOT broaden a "control box" or "controller" manual into a whole "robot system" unless the manual text explicitly requires that broader scope.
+17. {asset_scope_instruction}
 18. A FailureMode must be a technical cause, not a failed test, verification result, inspection result, or procedural step.
     A valid FailureMode MUST name (a) a component or subsystem — physical OR software/control
     (a software application, a configuration set, a parameter, a calibration, a mapping) —
@@ -109,8 +107,8 @@ You must follow the ontology definition exactly.
     "<adjective> alarm is set", "alarm '<text>' is displayed", "error <code>
     occurs", "timeout in <subsystem>", you MUST produce an ErrorCode node AND a
     corresponding INDICATES relation (ErrorCode → FailureMode) whenever the text
-    links the code to a specific failure. A GENERATES_ERROR relation (Asset →
-    ErrorCode) MUST also be emitted for each ErrorCode.
+    links the code to a specific failure. The system adds GENERATES_ERROR from
+    the canonical Asset; do not emit that structural relation yourself.
     HOWEVER, an ErrorCode is ONLY valid when the text presents it as an alarm,
     error, or fault indication produced by the asset. Do NOT emit ErrorCode nodes for:
     - part numbers or position codes from parts lists, exploded views, or assembly drawings
@@ -181,12 +179,49 @@ def build_ontology_extraction_prompt(
     source_type: str,
     source_title: str,
     candidate_candidates_block: str = "",
+    extract_asset: bool = True,
 ) -> str:
+    if extract_asset:
+        asset_node_instruction = (
+            "If the primary asset is clearly identifiable, include one Asset node. "
+            "Fill brand, model, asset_type from the manual title page or product description."
+        )
+        source_node_scope = "ALL 6 node types defined in the schema"
+        asset_node_guide = (
+            '   - **Asset**: "The product, machine, robot, cobot, controller, or other '
+            'technical asset that is the subject of troubleshooting knowledge."\n'
+            "     Extract exactly one Asset node per document."
+        )
+        asset_scope_instruction = (
+            'Keep the Asset scope aligned with source_title. Do NOT broaden a "control box" '
+            'or "controller" manual into a whole "robot system" unless the manual text '
+            "explicitly requires that broader scope."
+        )
+    else:
+        asset_node_instruction = (
+            "The Asset is supplied and injected by the system. Do NOT extract, infer, rename, "
+            "or emit any Asset node, even when the manual mentions a product or model."
+        )
+        source_node_scope = (
+            "ALL 5 source-derived node types (Component, Symptom, FailureMode, "
+            "CorrectiveAction, ErrorCode)"
+        )
+        asset_node_guide = (
+            "   - **Asset**: OMIT this node type from your output. The system owns the canonical Asset."
+        )
+        asset_scope_instruction = (
+            "Treat the supplied Asset only as graph context. Product, brand, model, and compatible-machine "
+            "mentions in the manual must never create or alter an Asset node."
+        )
     return EXTRACTION_PROMPT_TEMPLATE.format(
         schema_json=schema_json,
         source_type=source_type,
         source_title=source_title,
         candidate_candidates_block=candidate_candidates_block,
+        asset_node_instruction=asset_node_instruction,
+        source_node_scope=source_node_scope,
+        asset_node_guide=asset_node_guide,
+        asset_scope_instruction=asset_scope_instruction,
     )
 
 
@@ -198,7 +233,6 @@ Your task is to add only ontology relations between already-extracted nodes.
 - MAY_INDICATE: Symptom -> FailureMode
 - AFFECTS: FailureMode -> Component
 - RESOLVED_BY: FailureMode -> CorrectiveAction
-- GENERATES_ERROR: Asset -> ErrorCode
 - INDICATES: ErrorCode -> FailureMode
 
 ## Candidate Nodes
@@ -210,7 +244,7 @@ Your task is to add only ontology relations between already-extracted nodes.
 ## Instructions
 1. Do NOT create, rename, or delete nodes.
 2. Use only the node IDs listed in Candidate Nodes.
-3. Do NOT emit HAS_COMPONENT. The system derives it deterministically.
+3. Do NOT emit HAS_COMPONENT or GENERATES_ERROR. The system derives both deterministically.
 4. Do NOT repeat any relation already present in Existing Relations.
 5. Return only relations strongly supported by the text. Prefer precision, but do not omit clear links.
    For causal relations (MAY_INDICATE, RESOLVED_BY, INDICATES) the evidence must come from the
@@ -218,9 +252,10 @@ Your task is to add only ontology relations between already-extracted nodes.
    same sentence. Two entities merely appearing on the same page is NOT evidence of causation.
 6. Every returned relation MUST include an "evidence" array with at least one entry.
    Each evidence entry must use this exact shape:
-     {{"source_page": 14, "source_reference": "PAGE 14", "quote": "short verbatim text from that page"}}
+     {{"source_page": 14, "source_reference": "PAGE 14", "quote": "short verbatim text from that page", "source_anchor": "ev_exact_id_from_marker"}}
 7. Use the integer page number from the "--- PAGE N ---" markers in the text as source_page.
 8. The quote must be a short verbatim excerpt from the supporting page.
+   Copy source_anchor exactly from the nearest "[[EVIDENCE_ID: ...]]" marker that contains the quote.
 9. Return JSON only with this exact shape:
 {{
   "relations": [
@@ -231,7 +266,7 @@ Your task is to add only ontology relations between already-extracted nodes.
       "to_type": "NodeType",
       "to_id": "node_id",
       "evidence": [
-        {{"source_page": 14, "source_reference": "PAGE 14", "quote": "supporting excerpt"}}
+        {{"source_page": 14, "source_reference": "PAGE 14", "quote": "supporting excerpt", "source_anchor": "ev_exact_id_from_marker"}}
       ]
     }}
   ]
@@ -302,15 +337,16 @@ identified the following issues that must be resolved:
      configuration (not mapped, misconfigured, out of calibration, ...). Never a
      test/verification/inspection result, and never operator error without a system state.
    - CorrectiveAction must be a restorative action, not inspection-only.
-   - Asset scope must remain aligned with source_title.
+   - {asset_reextraction_instruction}
    - AFFECTS must point to the MOST SPECIFIC Component in the failure context;
      add a Component node BEFORE emitting AFFECTS when the specific part is missing.
    - FailureMode.material_context should reference an existing Component.component_id
      when the text names a specific part/subsystem, or "asset_level" when the failure
      is general to the whole asset.
    - ErrorCode nodes MUST be produced whenever the text shows alphanumeric alarm
-     tokens or natural-language alarm phrases, with GENERATES_ERROR and (when
-     linked to a failure) INDICATES relations. Do NOT emit ErrorCode nodes for
+     tokens or natural-language alarm phrases, with (when linked to a failure)
+     INDICATES relations. The system derives GENERATES_ERROR deterministically.
+     Do NOT emit ErrorCode nodes for
      part numbers from parts lists/exploded views, referenced standards
      (e.g. ANSI Z136), or fuse/connector designators not shown as displayed codes.
    - Preserve alarm/fault table granularity: one distinct diagnostic chain per table
@@ -319,9 +355,10 @@ identified the following issues that must be resolved:
      node, never by collapsing one into the other.
    - Symptom.severity must be exactly one of: "Low", "Medium", "High", "Critical".
 9. Every relation in "add_relations" MUST include an "evidence" array with at least one entry.
-   Each evidence entry must use this exact shape (all three fields required):
-     {{"source_page": 14, "source_reference": "PAGE 14", "quote": "short verbatim text from that page"}}
+   Each evidence entry must use this exact shape (all four fields required):
+     {{"source_page": 14, "source_reference": "PAGE 14", "quote": "short verbatim text from that page", "source_anchor": "ev_exact_id_from_marker"}}
    Use the integer page number from the "--- PAGE N ---" markers in the text as source_page.
+   Copy source_anchor exactly from the nearest "[[EVIDENCE_ID: ...]]" marker that contains the quote.
    The quote should be a short verbatim excerpt (10-20 words) from the SAME text unit
    (table row, flowchart branch, or sentence) that states the relation.
 10. Return JSON only — the patch object, nothing else. No markdown. No commentary.
@@ -335,7 +372,16 @@ def build_ontology_re_extraction_prompt(
     issues_summary: str,
     previous_ontology_json: str,
     candidate_candidates_block: str = "",
+    extract_asset: bool = True,
 ) -> str:
+    asset_reextraction_instruction = (
+        "Asset scope must remain aligned with source_title."
+        if extract_asset
+        else (
+            "Never upsert, remove, rename, or otherwise modify the canonical Asset; "
+            "the system owns and injects it."
+        )
+    )
     return RE_EXTRACTION_PROMPT_TEMPLATE.format(
         schema_json=schema_json,
         source_type=source_type,
@@ -343,6 +389,7 @@ def build_ontology_re_extraction_prompt(
         issues_summary=issues_summary,
         previous_ontology_json=previous_ontology_json,
         candidate_candidates_block=candidate_candidates_block,
+        asset_reextraction_instruction=asset_reextraction_instruction,
     )
 
 

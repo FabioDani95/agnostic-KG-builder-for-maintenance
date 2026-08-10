@@ -1,0 +1,99 @@
+{
+  "campaign_id": "g3-e554-real-manual-csv-pdf",
+  "executed_at": "2026-08-09T15:30:32Z",
+  "execution_mode": "real_ui_real_openai_model",
+  "model": "gpt-5.6-terra",
+  "workspace": {
+    "workspace_id": "ws_KDXOoS3tgJcUSGP-NfuzSA",
+    "url": "http://127.0.0.1:8000/console.html?foundation=1&workspace_id=ws_KDXOoS3tgJcUSGP-NfuzSA"
+  },
+  "manual": {
+    "path": "/Users/fabiodaniele/Downloads/E-554.pdf",
+    "sha256": "a7467316234f2d84550e7c267bf709fda55e1023055d9569dc27348f192641d0",
+    "pages": 54,
+    "source_id": "src_eb-0hWvRq8kQtczqm8oRkQ",
+    "revision_id": "sgrev_7LZ055k1Xf7rISyDNyE8kw"
+  },
+  "structured_source": {
+    "path": "artifacts/acceptance/g3/e554/synthetic_eagle_s3l_logs.csv",
+    "rows": 11,
+    "source_id": "src_lAFqYYqE9C8Nq3HWKrfdLA",
+    "revision_id": "sgrev_s_7_joyZyAOL69pJ8VRBHw"
+  },
+  "results": {
+    "csv": {
+      "nodes": 39,
+      "relations": 40,
+      "evidence": 11,
+      "knowledge_gaps": 0,
+      "strict_validation_passed": true,
+      "approval_eligible": true,
+      "duplicate_input_preserved_as_evidence": true,
+      "decision": "approved"
+    },
+    "pdf": {
+      "selected_pages": 39,
+      "total_pages": 54,
+      "selected_ratio": 0.7222,
+      "required_troubleshooting_pages_kept": [37, 38, 39],
+      "nodes": 345,
+      "node_types": {
+        "Asset": 0,
+        "Component": 167,
+        "CorrectiveAction": 76,
+        "ErrorCode": 1,
+        "FailureMode": 74,
+        "Symptom": 27
+      },
+      "relations": 288,
+      "evidence": 518,
+      "knowledge_gaps": 30,
+      "knowledge_gap_counts": {
+        "pdf_evidence_quote_missing": 19,
+        "pdf_evidence_quote_unresolved": 1,
+        "pdf_asset_identity_mismatch": 1,
+        "pdf_node_provenance_unresolved": 1,
+        "pdf_relation_endpoint_omitted": 1,
+        "pdf_relation_provenance_unresolved": 1,
+        "pdf_schema_instruction_not_actionable": 1,
+        "pdf_schema_material_context_not_linked": 1,
+        "pdf_graph_broken_chain": 1,
+        "pdf_graph_missing_relation": 1,
+        "pdf_graph_orphan": 1,
+        "pdf_suggested_relation": 1
+      },
+      "strict_validation_passed": true,
+      "provenance_resolvable": 518,
+      "provenance_total": 518,
+      "approval_eligible": false,
+      "minimum_manual_chains_found": 8,
+      "minimum_manual_chains_total": 8,
+      "forbidden_cross_pairings_found": 0,
+      "forbidden_cross_pairings_total": 3,
+      "exact_normalized_duplicate_groups": 2,
+      "clear_near_duplicate_examples": [
+        ["Touch screen calibration out of alignment", "Touch screen calibration out of calibration"],
+        ["Pause circuit intermittent", "Pause circuit intermittent at stop discs"],
+        ["Tool-control electrical circuit short", "Tool actuation electrical circuit shorted"],
+        ["24 VDC power supply problem", "24 VDC power supply malfunctioning"],
+        ["Fume extractor filter replacement indicated", "Fume extractor filter due for replacement"]
+      ],
+      "decision": "rejected",
+      "decision_note": "Sovraestrazione: 39/54 pagine, 345 elementi e 30 lacune. Asset canonico assente, duplicazioni semantiche cross-chunk e provenance imprecisa rendono la revisione non approvabile."
+    },
+    "projected_exact_cross_source_matches_if_both_approved": 7,
+    "merge_barrier": {
+      "state": "waiting_for_approval",
+      "approved_sources": 1,
+      "pending_source_ids": ["src_eb-0hWvRq8kQtczqm8oRkQ"],
+      "exact_matches_exposed": 0
+    }
+  },
+  "observability": {
+    "pdf_generation_duration": "about 12 minutes",
+    "full_g3_token_and_cost_aggregate_persisted": false,
+    "note": "The source-subgraph revision and audit trail persist graph counts and decisions, but not the aggregate token/cost ledger for this retained PDF bridge run."
+  },
+  "verdict": "reject_g3_do_not_merge",
+  "recommendation": "fix_pdf_g3_and_rerun_same_frozen_fixture"
+}
