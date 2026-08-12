@@ -188,6 +188,7 @@ def test_ontology_draft_agent_uses_workflow_and_keeps_shape(monkeypatch):
         "graph_issues",
         "suggested_relations",
         "confidence_report",
+            "diagnostic_contract_report",
             "resolution_completion_report",
             "canonicalization_report",
             "review_queue",

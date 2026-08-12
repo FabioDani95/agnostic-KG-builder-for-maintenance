@@ -19,8 +19,8 @@ pipeline:
   mode: multi_agent
 
 # Preserve the physical PDF page map and invoke OCR only when native text is
-# too sparse to be useful. The first pages bootstrap ToC discovery; after
-# scoping, only low-text pages inside selected sections are considered.
+# too sparse to be useful. OCR is decided before the immutable evidence
+# inventory; budget-skipped low-text pages retain an explicit disposition.
 pdf_ingestion:
   preserve_all_pages: true
   ocr:
@@ -32,6 +32,7 @@ pdf_ingestion:
     bootstrap_pages: 15
     bootstrap_max_pages: 5
     selected_max_pages: 24
+    inventory_max_pages: 24
 
 agents:
   scoping:
@@ -44,7 +45,7 @@ agents:
     # Low-cost acceptance profile: Luna is used end-to-end, with medium
     # reasoning reserved for semantic extraction and run-level completion.
     model: gpt-5.6-luna
-    reasoning_effort: medium
+    reasoning_effort: low
     timeout: 120
   extraction:
     enabled: true
@@ -122,8 +123,9 @@ coverage_completion:
 
 pdf_generation_cost_guard:
   enabled: true
+  # Safe production default. Explicit acceptance runs may temporarily raise
+  # this envelope, but the checked-in policy remains fail-closed.
   preferred_cost_usd: 0.35
-  # Leaves one cent of headroom below the activity's absolute $0.50 budget.
   hard_ceiling_usd: 0.49
   fixed_prompt_overhead_characters: 30000
 
@@ -183,6 +185,8 @@ ontology:
   max_input_chars: 600000
   estimated_max_input_tokens: 150000
   extraction_max_output_tokens: 16000
+  # Compact strict schema used only by the diagnostic record-first path.
+  diagnostic_bundle_max_output_tokens: 8000
   # Dense troubleshooting tables can exhaust the initial 16k response budget.
   # Keep ordinary drafts at 16k; only a detected truncation retries with headroom.
   extraction_retry_max_output_tokens: 24000
@@ -191,11 +195,30 @@ ontology:
 
   # ToC signature changes are context only. Pages are packed by bounded size.
   max_pages_per_chunk: 8
+  diagnostic_chunk_overlap_pages: 1
   structural_max_pages_per_chunk: 12
 
   # Nodes and relations are extracted as evidence bundles in one call. The
   # separate relation/validator passes are skipped for role-partitioned PDFs.
   relation_first: true
+
+  # Optional selective recovery for diagnostic chunks that fail the typed
+  # Luna contract. Disabled with a zero cap by default: enabling it reserves
+  # the full bounded Terra envelope in the PDF cost preflight before any call.
+  diagnostic_escalation:
+    enabled: false
+    primary_model: gpt-5.6-luna
+    model: gpt-5.6-terra
+    reasoning_effort: medium
+    # Terra is opt-in per authorized run and never a whole-manual replacement.
+    max_chunks_per_run: 0
+    timeout_seconds: 180
+    # Keep the retry materially smaller than the ordinary ontology guardrails.
+    max_input_chars: 60000
+    estimated_max_input_tokens: 15000
+    # Structured Output JSON schema/envelope is billed prompt context too.
+    schema_overhead_characters: 10000
+    max_output_tokens: 4000
 
 reflective_loop:
   max_retries: 0

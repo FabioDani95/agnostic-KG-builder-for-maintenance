@@ -35,6 +35,7 @@ def chat_temperature_kwargs(model_name: str | None, temperature: float) -> dict[
 
 
 _REASONING_EFFORTS = {"none", "minimal", "low", "medium", "high", "xhigh", "max"}
+_GPT_56_REASONING_EFFORTS = {"none", "low", "medium", "high", "xhigh", "max"}
 
 
 def chat_reasoning_kwargs(
@@ -50,13 +51,17 @@ def chat_reasoning_kwargs(
     effort = str(reasoning_effort or "").strip().lower()
     if not effort:
         return {}
-    if effort not in _REASONING_EFFORTS:
-        allowed = ", ".join(sorted(_REASONING_EFFORTS))
-        raise ValueError(f"Unsupported reasoning_effort '{reasoning_effort}'. Expected one of: {allowed}")
-
     model = str(model_name or settings.MODEL_NAME or "").strip().lower()
     if not (model in {"gpt-5.5", "gpt-5.6"} or model.startswith(("gpt-5.5-", "gpt-5.6-"))):
         return {}
+    allowed_efforts = (
+        _GPT_56_REASONING_EFFORTS
+        if model == "gpt-5.6" or model.startswith("gpt-5.6-")
+        else _REASONING_EFFORTS
+    )
+    if effort not in allowed_efforts:
+        allowed = ", ".join(sorted(allowed_efforts))
+        raise ValueError(f"Unsupported reasoning_effort '{reasoning_effort}'. Expected one of: {allowed}")
     return {"reasoning_effort": effort}
 
 
@@ -100,26 +105,86 @@ class _MockUsage:
     prompt_tokens = 0
     completion_tokens = 0
     total_tokens = 0
-    prompt_tokens_details = SimpleNamespace(cached_tokens=0)
+    prompt_tokens_details = SimpleNamespace(
+        cached_tokens=0,
+        cache_write_tokens=0,
+    )
 
 
 class _MockMessage:
-    def __init__(self, content: str, tool_calls: list[Any] | None = None):
+    def __init__(
+        self,
+        content: str,
+        tool_calls: list[Any] | None = None,
+        *,
+        parsed: Any = None,
+        refusal: str | None = None,
+    ):
         self.content = content
         self.tool_calls = tool_calls or []
+        self.parsed = parsed
+        self.refusal = refusal
 
 
 class _MockChoice:
-    def __init__(self, content: str, *, finish_reason: str = "stop", tool_calls: list[Any] | None = None):
+    def __init__(
+        self,
+        content: str,
+        *,
+        finish_reason: str = "stop",
+        tool_calls: list[Any] | None = None,
+        parsed: Any = None,
+        refusal: str | None = None,
+    ):
         self.finish_reason = finish_reason
-        self.message = _MockMessage(content, tool_calls=tool_calls)
+        self.message = _MockMessage(
+            content,
+            tool_calls=tool_calls,
+            parsed=parsed,
+            refusal=refusal,
+        )
 
 
 class _MockResponse:
-    def __init__(self, content: str, *, model: str):
+    def __init__(self, content: str, *, model: str, parsed: Any = None):
+        self.id = "chatcmpl-mock"
         self.model = model
         self.usage = _MockUsage()
-        self.choices = [_MockChoice(content)]
+        self.choices = [_MockChoice(content, parsed=parsed, refusal=None)]
+
+
+def _structured_mock_stage(response_format: Any) -> str | None:
+    """Resolve a fixture stage from a Pydantic response model without importing it."""
+    format_name = str(getattr(response_format, "__name__", "") or "").strip().lower()
+    return {
+        "diagnosticchunkoutput": "diagnostic_bundles",
+        "coveragecompletionoutput": "coverage",
+        "resolutioncompletionoutput": "resolution",
+    }.get(format_name)
+
+
+def _mock_parsed_response(kwargs: dict[str, Any]) -> _MockResponse:
+    response_format = kwargs.get("response_format")
+    validator = getattr(response_format, "model_validate_json", None)
+    if not callable(validator):
+        raise TypeError(
+            "Mock chat.completions.parse requires a Pydantic response_format "
+            "with model_validate_json()."
+        )
+
+    stage = _structured_mock_stage(response_format)
+    content = _fixture_mock_content(stage) if stage else None
+    if content is None and stage == "diagnostic_bundles":
+        content = json.dumps({
+            "schema_version": "1.0",
+            "source_language": "en",
+            "records": [],
+        })
+    if content is None:
+        content = _mock_content(kwargs)
+    parsed = validator(content)
+    model = str(kwargs.get("model") or settings.MODEL_NAME)
+    return _MockResponse(content, model=model, parsed=parsed)
 
 
 class _MockCompletions:
@@ -127,11 +192,17 @@ class _MockCompletions:
         model = str(kwargs.get("model") or settings.MODEL_NAME)
         return _MockResponse(_mock_content(kwargs), model=model)
 
+    def parse(self, **kwargs: Any) -> _MockResponse:
+        return _mock_parsed_response(kwargs)
+
 
 class _MockAsyncCompletions:
     async def create(self, **kwargs: Any) -> _MockResponse:
         model = str(kwargs.get("model") or settings.MODEL_NAME)
         return _MockResponse(_mock_content(kwargs), model=model)
+
+    async def parse(self, **kwargs: Any) -> _MockResponse:
+        return _mock_parsed_response(kwargs)
 
 
 class MockOpenAI:
@@ -243,12 +314,18 @@ def _stage_mock_content(lower: str, text: str) -> tuple[str | None, str]:
         # The deterministic mock baseline declares full coverage; a fixture can
         # override via mock_responses/<fixture>/coverage.json.
         return "coverage", json.dumps({"missing_chains": []})
+    if "complete missing troubleshooting resolution links" in lower:
+        # Resolution completion prompts contain both "ontology" and "nodes",
+        # so this specific stage must win over the generic ontology branch.
+        return "resolution", json.dumps({
+            "status": "not_found",
+            "failure_mode": {},
+            "corrective_actions": [],
+        })
     if "ontology" in lower or "nodes" in lower:
         return "ontology", json.dumps(_mock_ontology())
     if "relations" in lower and ("relation" in lower or "candidate" in lower):
         return "relations", json.dumps({"relations": []})
-    if "resolution" in lower or "failure_mode" in lower:
-        return "resolution", json.dumps({"matches": [], "relations": []})
     return None, "Mock assistant response."
 
 

@@ -1,0 +1,572 @@
+{
+  "schema_version": "1.0",
+  "source_language": "en",
+  "records": [
+    {
+      "record_anchor": "ev_5fa4407211c9df4841df2ca82ef8",
+      "branch_anchor": "ev_4952380b6b8da2dc8d7eadae3240",
+      "indicators": [
+        {
+          "kind": "symptom",
+          "name": "Machine stops in middle of cut and displays Machine Paused",
+          "description": "The machine stops mid-cut and displays the Machine Paused message.",
+          "severity": "Medium",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_5fa4407211c9df4841df2ca82ef8",
+              "source_page": 37,
+              "quote": "The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen."
+            }
+          ],
+          "failure_link_evidence": [
+            {
+              "source_anchor": "ev_5fa4407211c9df4841df2ca82ef8",
+              "source_page": 37,
+              "quote": "This is typically caused by an intermittent pause circuit, usually in thestop discs."
+            }
+          ]
+        }
+      ],
+      "failure": {
+        "name": "intermittent pause circuit, usually in the stop discs",
+        "description": "An intermittent pause circuit in the stop discs triggers the unintentional pause.",
+        "material_context": "asset_level",
+        "claim_evidence": [
+          {
+            "source_anchor": "ev_5fa4407211c9df4841df2ca82ef8",
+            "source_page": 37,
+            "quote": "This is typically caused by an intermittent pause circuit, usually in thestop discs."
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "adjust the pause plunger activation pressure",
+          "description": "Adjust the pause plunger to set the required activation pressure.",
+          "instruction_text": "Tighten the plunger to increase activation pressure or loosen it to decrease activation pressure.",
+          "action_kind": "adjustment",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_4952380b6b8da2dc8d7eadae3240",
+              "source_page": 37,
+              "quote": "Check the pause plunger. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure."
+            }
+          ],
+          "resolution_link_evidence": [
+            {
+              "source_anchor": "ev_4952380b6b8da2dc8d7eadae3240",
+              "source_page": 37,
+              "quote": "Check the pause plunger. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure."
+            }
+          ]
+        }
+      ],
+      "affected_component": null,
+      "resolution_status": "action_stated"
+    },
+    {
+      "record_anchor": "ev_c5dafafbae7ba44bc13b7ff60b4c",
+      "branch_anchor": "ev_51136da6cd06c40d33edccf9ee68",
+      "indicators": [
+        {
+          "kind": "symptom",
+          "name": "Touch Screen buttons are out of alignment",
+          "description": "Touch-screen commands activate only when the operator presses away from the displayed button.",
+          "severity": "Medium",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_a596c965e1b57357e53bccceaadd",
+              "source_page": 37,
+              "quote": "Problem: The buttons on the Touch Screen are out of"
+            },
+            {
+              "source_anchor": "ev_c5dafafbae7ba44bc13b7ff60b4c",
+              "source_page": 37,
+              "quote": "alignment Description of Problem: The touch screen buttons do not match where the screen needs to be touched to activate the command."
+            }
+          ],
+          "failure_link_evidence": [
+            {
+              "source_anchor": "ev_c5dafafbae7ba44bc13b7ff60b4c",
+              "source_page": 37,
+              "quote": "The touch screen buttons do not match where the screen needs to be touched to activate the command."
+            },
+            {
+              "source_anchor": "ev_4d3f51bd32555dd173c6bc392de2",
+              "source_page": 37,
+              "quote": "Touch screen calibration in required."
+            }
+          ]
+        }
+      ],
+      "failure": {
+        "name": "Touch screen calibration is required",
+        "description": "The touch screen requires calibration before its controls align with touch positions.",
+        "material_context": "asset_level",
+        "claim_evidence": [
+          {
+            "source_anchor": "ev_4d3f51bd32555dd173c6bc392de2",
+            "source_page": 37,
+            "quote": "Touch screen calibration in required."
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "complete touch screen calibration and save and exit",
+          "description": "Complete the touch-screen calibration procedure and save the calibration.",
+          "instruction_text": "Open the calibration screen, press the calibration cross targets, then select save and exit to complete calibration.",
+          "action_kind": "calibration",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_474fc377c1b45e4b47b90b350c0e",
+              "source_page": 37,
+              "quote": "Using the left and right arrows to navigate, go to the Calibration Screen (screen page 2). Press Touch screen to begin calibrating."
+            },
+            {
+              "source_anchor": "ev_8c0667df8ad97a2e1460be2bbb04",
+              "source_page": 38,
+              "quote": "Using a paper clip or fine tip object, press the center of the cross as shown. The cross will reappear in the lower right corner. Press the center of the cross."
+            },
+            {
+              "source_anchor": "ev_51136da6cd06c40d33edccf9ee68",
+              "source_page": 38,
+              "quote": "Navigate to screen page 3. Select save and exit to complete calibration."
+            }
+          ],
+          "resolution_link_evidence": [
+            {
+              "source_anchor": "ev_4d3f51bd32555dd173c6bc392de2",
+              "source_page": 37,
+              "quote": "Touch screen calibration in required. Proceed as follows."
+            },
+            {
+              "source_anchor": "ev_51136da6cd06c40d33edccf9ee68",
+              "source_page": 38,
+              "quote": "Navigate to screen page 3. Select save and exit to complete calibration."
+            }
+          ]
+        }
+      ],
+      "affected_component": null,
+      "resolution_status": "action_stated"
+    },
+    {
+      "record_anchor": "ev_11950209cdf5bc7a3bd369126708",
+      "branch_anchor": "ev_af380f5ae400011ca43b5ff49625",
+      "indicators": [
+        {
+          "kind": "symptom",
+          "name": "Cutting Tool or Pen does not move down",
+          "description": "The cutting tool or pen does not move down or is delayed at the beginning of a cut.",
+          "severity": "Medium",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_11950209cdf5bc7a3bd369126708",
+              "source_page": 38,
+              "quote": "Problem: The Cutting Tool or Pen does not move down Description of Problem: The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut."
+            }
+          ],
+          "failure_link_evidence": [
+            {
+              "source_anchor": "ev_11950209cdf5bc7a3bd369126708",
+              "source_page": 38,
+              "quote": "This can be caused by an electrical short, tool mapping in software or a problem with the power supply."
+            }
+          ]
+        }
+      ],
+      "failure": {
+        "name": "tool or layer is not mapped properly",
+        "description": "The software tool or layer mapping does not assign the tool to the required spindle or layer.",
+        "material_context": "asset_level",
+        "claim_evidence": [
+          {
+            "source_anchor": "ev_61988d56bacb20afde8fe7d535ec",
+            "source_page": 38,
+            "quote": "Verify the mapping of your tools and layers are mapped properly under each tool."
+          },
+          {
+            "source_anchor": "ev_af380f5ae400011ca43b5ff49625",
+            "source_page": 38,
+            "quote": "tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter."
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "map the tool to the spindle or the layer to the tool",
+          "description": "Correct the E-Suite tool and layer assignment before sending the cutting file.",
+          "instruction_text": "Click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+          "action_kind": "configuration",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_af380f5ae400011ca43b5ff49625",
+              "source_page": 38,
+              "quote": "just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter."
+            }
+          ],
+          "resolution_link_evidence": [
+            {
+              "source_anchor": "ev_8633860825b02e70ac4b91f16257",
+              "source_page": 38,
+              "quote": "If the layer is not mapped to a tool or the tool is not on the"
+            },
+            {
+              "source_anchor": "ev_af380f5ae400011ca43b5ff49625",
+              "source_page": 38,
+              "quote": "tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter."
+            }
+          ]
+        }
+      ],
+      "affected_component": null,
+      "resolution_status": "action_stated"
+    },
+    {
+      "record_anchor": "ev_95d75e4737b62cd08e683a1d2d4e",
+      "branch_anchor": "ev_20d878a0454603b543cfde15de47",
+      "indicators": [
+        {
+          "kind": "symptom",
+          "name": "Laser Fume Extractor has reduced vacuum or no vacuum",
+          "description": "The laser fume extractor has reduced vacuum or no vacuum.",
+          "severity": "Medium",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_95d75e4737b62cd08e683a1d2d4e",
+              "source_page": 38,
+              "quote": "Problem: Laser Fume Extractor has reduced vacuum"
+            },
+            {
+              "source_anchor": "ev_17e7df4233b2522e07ba13e1e6d7",
+              "source_page": 38,
+              "quote": "or no vacuum."
+            }
+          ],
+          "failure_link_evidence": [
+            {
+              "source_anchor": "ev_95d75e4737b62cd08e683a1d2d4e",
+              "source_page": 38,
+              "quote": "Problem: Laser Fume Extractor has reduced vacuum"
+            },
+            {
+              "source_anchor": "ev_17e7df4233b2522e07ba13e1e6d7",
+              "source_page": 38,
+              "quote": "or no vacuum."
+            },
+            {
+              "source_anchor": "ev_20d878a0454603b543cfde15de47",
+              "source_page": 38,
+              "quote": "Replace vacuum filters."
+            }
+          ]
+        }
+      ],
+      "failure": {
+        "name": "vacuum filters require replacement",
+        "description": "The troubleshooting record identifies replacement of the vacuum filters for the reduced-vacuum problem.",
+        "material_context": "asset_level",
+        "claim_evidence": [
+          {
+            "source_anchor": "ev_20d878a0454603b543cfde15de47",
+            "source_page": 38,
+            "quote": "Replace vacuum filters."
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "replace vacuum filters",
+          "description": "Replace the laser fume extractor vacuum filters.",
+          "instruction_text": "Replace the vacuum filters.",
+          "action_kind": "replacement",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_20d878a0454603b543cfde15de47",
+              "source_page": 38,
+              "quote": "Replace vacuum filters."
+            }
+          ],
+          "resolution_link_evidence": [
+            {
+              "source_anchor": "ev_20d878a0454603b543cfde15de47",
+              "source_page": 38,
+              "quote": "Replace vacuum filters."
+            }
+          ]
+        }
+      ],
+      "affected_component": null,
+      "resolution_status": "action_stated"
+    },
+    {
+      "record_anchor": "ev_383a817fdb5c2a578a2db4409c61",
+      "branch_anchor": "ev_36d57f36775ae8a92535cc0dddaa",
+      "indicators": [
+        {
+          "kind": "symptom",
+          "name": "Laser cutting path is too wide",
+          "description": "The laser cutting path increases to an undesirable width.",
+          "severity": "Medium",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_383a817fdb5c2a578a2db4409c61",
+              "source_page": 39,
+              "quote": "Problem: Laser cutting path is too wide Description of Problem: The laser cutting path increases to an undesirable width."
+            }
+          ],
+          "failure_link_evidence": [
+            {
+              "source_anchor": "ev_e3b09a5c895114e035dc8f45526c",
+              "source_page": 39,
+              "quote": "If the tube or nozzle is bent, the laser beam will reflect off the inside wall of the nozzle causing a wide path."
+            }
+          ]
+        }
+      ],
+      "failure": {
+        "name": "brass laser nozzle is damaged or bent",
+        "description": "The brass laser nozzle is damaged or bent and can reflect the beam into a wide path.",
+        "material_context": "asset_level",
+        "claim_evidence": [
+          {
+            "source_anchor": "ev_36d57f36775ae8a92535cc0dddaa",
+            "source_page": 39,
+            "quote": "Check for damage to brass laser nozzle."
+          },
+          {
+            "source_anchor": "ev_e3b09a5c895114e035dc8f45526c",
+            "source_page": 39,
+            "quote": "If the tube or nozzle is bent, the laser beam will reflect off the inside wall of the nozzle causing a wide path."
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "replace the damaged nozzle",
+          "description": "Replace the brass laser nozzle when damage is present.",
+          "instruction_text": "Replace the nozzle if any damage is present.",
+          "action_kind": "replacement",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_36d57f36775ae8a92535cc0dddaa",
+              "source_page": 39,
+              "quote": "Replace nozzle if any damage is present."
+            }
+          ],
+          "resolution_link_evidence": [
+            {
+              "source_anchor": "ev_36d57f36775ae8a92535cc0dddaa",
+              "source_page": 39,
+              "quote": "Check for damage to brass laser nozzle. Replace nozzle if any damage is present."
+            }
+          ]
+        }
+      ],
+      "affected_component": null,
+      "resolution_status": "action_stated"
+    },
+    {
+      "record_anchor": "ev_e8e960ca54497467bd95389dfa87",
+      "branch_anchor": "ev_e1b5a62ec16f3f840ff5fdf25bad",
+      "indicators": [
+        {
+          "kind": "symptom",
+          "name": "Loss of laser cutting power causing non-cut edges",
+          "description": "Laser cutting power decreases and causes non-cut edges.",
+          "severity": "Medium",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_e8e960ca54497467bd95389dfa87",
+              "source_page": 39,
+              "quote": "Problem: Loss of laser cutting power Description of Problem: The laser cutting power decreases causing non-cut edges."
+            }
+          ],
+          "failure_link_evidence": [
+            {
+              "source_anchor": "ev_e8e960ca54497467bd95389dfa87",
+              "source_page": 39,
+              "quote": "Problem: Loss of laser cutting power Description of Problem: The laser cutting power decreases causing non-cut edges."
+            },
+            {
+              "source_anchor": "ev_e1b5a62ec16f3f840ff5fdf25bad",
+              "source_page": 39,
+              "quote": "Damaged or dirty lens. Check for damage or dirt on the focusing lens."
+            }
+          ]
+        }
+      ],
+      "failure": {
+        "name": "focusing lens is damaged or dirty",
+        "description": "The focusing lens is damaged or dirty.",
+        "material_context": "asset_level",
+        "claim_evidence": [
+          {
+            "source_anchor": "ev_e1b5a62ec16f3f840ff5fdf25bad",
+            "source_page": 39,
+            "quote": "Damaged or dirty lens. Check for damage or dirt on the focusing lens."
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "clean or replace the focusing lens",
+          "description": "Clean the focusing lens or replace it when required.",
+          "instruction_text": "Clean or replace the focusing lens as required.",
+          "action_kind": "clean_or_replace",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_e1b5a62ec16f3f840ff5fdf25bad",
+              "source_page": 39,
+              "quote": "Clean or replace lens as required."
+            }
+          ],
+          "resolution_link_evidence": [
+            {
+              "source_anchor": "ev_e1b5a62ec16f3f840ff5fdf25bad",
+              "source_page": 39,
+              "quote": "Damaged or dirty lens. Check for damage or dirt on the focusing lens. Clean or replace lens as required."
+            }
+          ]
+        }
+      ],
+      "affected_component": null,
+      "resolution_status": "action_stated"
+    },
+    {
+      "record_anchor": "ev_e8e960ca54497467bd95389dfa87",
+      "branch_anchor": "ev_9caa5c83bfc88301c9f929c019eb",
+      "indicators": [
+        {
+          "kind": "symptom",
+          "name": "Loss of laser cutting power causing non-cut edges",
+          "description": "Laser cutting power decreases and causes non-cut edges.",
+          "severity": "Medium",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_e8e960ca54497467bd95389dfa87",
+              "source_page": 39,
+              "quote": "Problem: Loss of laser cutting power Description of Problem: The laser cutting power decreases causing non-cut edges."
+            }
+          ],
+          "failure_link_evidence": [
+            {
+              "source_anchor": "ev_e8e960ca54497467bd95389dfa87",
+              "source_page": 39,
+              "quote": "Problem: Loss of laser cutting power Description of Problem: The laser cutting power decreases causing non-cut edges."
+            },
+            {
+              "source_anchor": "ev_9caa5c83bfc88301c9f929c019eb",
+              "source_page": 39,
+              "quote": "Damaged or dirty Mirror. Check for damage, burn mark or dirt on the beam deflecting mirrors."
+            }
+          ]
+        }
+      ],
+      "failure": {
+        "name": "beam deflecting mirror is damaged or dirty",
+        "description": "A beam-deflecting mirror is damaged, burned, or dirty.",
+        "material_context": "asset_level",
+        "claim_evidence": [
+          {
+            "source_anchor": "ev_9caa5c83bfc88301c9f929c019eb",
+            "source_page": 39,
+            "quote": "Damaged or dirty Mirror. Check for damage, burn mark or dirt on the beam deflecting mirrors."
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "clean or replace the mirrors",
+          "description": "Clean the beam-deflecting mirrors or replace them as required.",
+          "instruction_text": "Clean or replace the mirrors as required.",
+          "action_kind": "clean_or_replace",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_9caa5c83bfc88301c9f929c019eb",
+              "source_page": 39,
+              "quote": "Clean or replace mirrors as required."
+            }
+          ],
+          "resolution_link_evidence": [
+            {
+              "source_anchor": "ev_9caa5c83bfc88301c9f929c019eb",
+              "source_page": 39,
+              "quote": "Damaged or dirty Mirror. Check for damage, burn mark or dirt on the beam deflecting mirrors. Clean or replace mirrors as required."
+            }
+          ]
+        }
+      ],
+      "affected_component": null,
+      "resolution_status": "action_stated"
+    },
+    {
+      "record_anchor": "ev_e8e960ca54497467bd95389dfa87",
+      "branch_anchor": "ev_c59eba8389045975e1415de2c789",
+      "indicators": [
+        {
+          "kind": "symptom",
+          "name": "Loss of laser cutting power causing non-cut edges",
+          "description": "Laser cutting power decreases and causes non-cut edges.",
+          "severity": "Medium",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_e8e960ca54497467bd95389dfa87",
+              "source_page": 39,
+              "quote": "Problem: Loss of laser cutting power Description of Problem: The laser cutting power decreases causing non-cut edges."
+            }
+          ],
+          "failure_link_evidence": [
+            {
+              "source_anchor": "ev_e8e960ca54497467bd95389dfa87",
+              "source_page": 39,
+              "quote": "Problem: Loss of laser cutting power Description of Problem: The laser cutting power decreases causing non-cut edges."
+            },
+            {
+              "source_anchor": "ev_c59eba8389045975e1415de2c789",
+              "source_page": 39,
+              "quote": "Damage or debris in laser nozzle. Check for damage or debris in laser nozzle."
+            }
+          ]
+        }
+      ],
+      "failure": {
+        "name": "laser nozzle contains damage or debris",
+        "description": "The laser nozzle contains damage or debris.",
+        "material_context": "asset_level",
+        "claim_evidence": [
+          {
+            "source_anchor": "ev_c59eba8389045975e1415de2c789",
+            "source_page": 39,
+            "quote": "Damage or debris in laser nozzle. Check for damage or debris in laser nozzle."
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "clean or replace the laser nozzle",
+          "description": "Clean the laser nozzle or replace it as required.",
+          "instruction_text": "Clean or replace the laser nozzle as required.",
+          "action_kind": "clean_or_replace",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_c59eba8389045975e1415de2c789",
+              "source_page": 39,
+              "quote": "Clean or replace laser nozzle as required."
+            }
+          ],
+          "resolution_link_evidence": [
+            {
+              "source_anchor": "ev_c59eba8389045975e1415de2c789",
+              "source_page": 39,
+              "quote": "Damage or debris in laser nozzle. Check for damage or debris in laser nozzle. Clean or replace laser nozzle as required."
+            }
+          ]
+        }
+      ],
+      "affected_component": null,
+      "resolution_status": "action_stated"
+    }
+  ]
+}

@@ -17,6 +17,8 @@ class PdfLocator(BaseModel):
     extraction_method: Literal["native_text", "table", "ocr"]
     printed_page: str | None = None
     block_index: int | None = Field(default=None, ge=0)
+    source_block_index: int | None = Field(default=None, ge=0)
+    bbox: tuple[float, float, float, float] | None = None
     table_index: int | None = Field(default=None, ge=1)
     row_index: int | None = Field(default=None, ge=1)
     ocr_region_index: int | None = Field(default=None, ge=1)
@@ -70,4 +72,3 @@ SourceLocator = Annotated[
     PdfLocator | TableRowLocator | XlsxRowLocator | JsonPathLocator | OperatorInputLocator,
     Field(discriminator="kind"),
 ]
-

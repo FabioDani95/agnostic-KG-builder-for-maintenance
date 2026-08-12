@@ -52,6 +52,17 @@ def _anchor_resolves(anchor: str, evidence: GraphEvidenceRef) -> bool:
     }
 
 
+def _canonical_evidence_text(evidence: GraphEvidenceRef) -> str:
+    """Return the complete claim span; ``excerpt`` is display-only for PDFs."""
+    if evidence.locator.get("kind") == "pdf":
+        return str(
+            evidence.locator.get("canonical_text")
+            or evidence.locator.get("quote")
+            or ""
+        )
+    return evidence.excerpt
+
+
 def _grounded_copy(
     relation: SourceGraphRelation,
     evidence_by_id: dict[str, GraphEvidenceRef],
@@ -62,8 +73,8 @@ def _grounded_copy(
         if evidence is None:
             continue
         quote = normalize_semantic_text(ref.quote)
-        excerpt = normalize_semantic_text(evidence.excerpt)
-        if not quote or not excerpt or (quote not in excerpt and excerpt not in quote):
+        canonical_text = normalize_semantic_text(_canonical_evidence_text(evidence))
+        if not quote or not canonical_text or quote not in canonical_text:
             continue
         if not _anchor_resolves(ref.source_anchor, evidence):
             continue
@@ -87,6 +98,39 @@ def _ids_by_type(nodes: list[SourceGraphNode]) -> dict[str, set[str]]:
 
 def _relation_ids(relations: list[SourceGraphRelation]) -> list[str]:
     return sorted(relation.relation_id for relation in relations)
+
+
+def _weak_component_sizes(
+    node_ids: set[str],
+    relations: list[SourceGraphRelation],
+) -> list[int]:
+    """Return deterministic undirected component sizes for observability.
+
+    The ontology does not define an Asset-to-Symptom root edge, so literal
+    single-component connectivity is a policy decision rather than a safe
+    publication invariant. Persisting the exact count keeps that distinction
+    visible instead of overloading the existing zero-isolate check.
+    """
+    adjacency = {node_id: set() for node_id in node_ids}
+    for relation in relations:
+        if relation.from_id not in adjacency or relation.to_id not in adjacency:
+            continue
+        adjacency[relation.from_id].add(relation.to_id)
+        adjacency[relation.to_id].add(relation.from_id)
+    sizes: list[int] = []
+    remaining = set(node_ids)
+    while remaining:
+        frontier = [min(remaining)]
+        visited: set[str] = set()
+        while frontier:
+            node_id = frontier.pop()
+            if node_id in visited:
+                continue
+            visited.add(node_id)
+            frontier.extend(sorted(adjacency[node_id] - visited, reverse=True))
+        remaining -= visited
+        sizes.append(len(visited))
+    return sorted(sizes, reverse=True)
 
 
 def build_publication_graph(
@@ -333,6 +377,23 @@ def build_publication_graph(
     diagnostic_component_ids = {
         node_id for node_id in diagnostic_node_ids if node_id in node_ids_by_type.get("Component", set())
     }
+    canonical_component_sizes = _weak_component_sizes(
+        canonical_node_ids,
+        canonical_relations,
+    )
+    published_diagnostic_node_ids = diagnostic_node_ids & canonical_node_ids
+    diagnostic_relation_ids = {
+        relation.relation_id for relation in diagnostic_relation_candidates
+    }
+    published_diagnostic_relations = [
+        relation
+        for relation in canonical_relations
+        if relation.relation_id in diagnostic_relation_ids
+    ]
+    diagnostic_component_sizes = _weak_component_sizes(
+        published_diagnostic_node_ids,
+        published_diagnostic_relations,
+    )
     metrics = {
         "candidate_nodes": len(candidate_nodes),
         "candidate_relations": len(candidate_relations),
@@ -341,6 +402,10 @@ def build_publication_graph(
         "nodes_by_type": dict(sorted(node_counts.items())),
         "relations_by_type": dict(sorted(relation_counts.items())),
         "isolated_nodes": 0,
+        "weakly_connected_components": len(canonical_component_sizes),
+        "weak_component_sizes": canonical_component_sizes,
+        "diagnostic_weakly_connected_components": len(diagnostic_component_sizes),
+        "diagnostic_weak_component_sizes": diagnostic_component_sizes,
         "published_symptoms": len(complete_symptom_ids),
         "published_symptoms_with_complete_path": len(complete_symptom_ids),
         "published_failure_modes": len(complete_failures),

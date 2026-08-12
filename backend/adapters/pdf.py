@@ -29,8 +29,119 @@ from backend.domain.sources import Source
 from backend.domain.workspace import Workspace
 from backend.services.pdf_service import extract_text_by_page
 
-ADAPTER_VERSION = "pdf-v2"
+ADAPTER_VERSION = "pdf-v3"
 EVIDENCE_ANCHOR_PREFIX = "EVIDENCE_ID"
+
+
+def _top_left_order(
+    indexed_blocks: list[tuple[int, tuple]],
+) -> list[tuple[int, tuple]]:
+    return sorted(
+        indexed_blocks,
+        key=lambda item: (
+            round(float(item[1][1] or 0), 1),
+            round(float(item[1][0] or 0), 1),
+            round(float(item[1][3] or 0), 1),
+            round(float(item[1][2] or 0), 1),
+            item[0],
+        ),
+    )
+
+
+def _layout_reading_order(
+    blocks: list[tuple],
+    *,
+    page_width: float,
+    page_height: float | None = None,
+) -> list[tuple[int, tuple]]:
+    """Return deterministic block order, using column-major order when supported.
+
+    PyMuPDF's native block order and a simple y/x sort both interleave two-column
+    troubleshooting records.  This conservative detector switches to column-major
+    order only when each side has multiple narrow blocks, a real gutter, and
+    vertically overlapping content.  Full-width headings and footers split the
+    page into bands and retain their physical position.
+    """
+    all_indexed = [
+        (index, block)
+        for index, block in enumerate(blocks)
+        if len(block) >= 5 and str(block[4] or "").strip()
+    ]
+    header: list[tuple[int, tuple]] = []
+    footer: list[tuple[int, tuple]] = []
+    indexed = list(all_indexed)
+    if page_height and page_height > 0:
+        header = [item for item in indexed if float(item[1][3]) <= page_height * 0.06]
+        footer = [item for item in indexed if float(item[1][1]) >= page_height * 0.92]
+        marginal_ids = {item[0] for item in header + footer}
+        indexed = [item for item in indexed if item[0] not in marginal_ids]
+    fallback = _top_left_order(header) + _top_left_order(indexed) + _top_left_order(footer)
+    if len(indexed) < 4 or page_width <= 0:
+        return fallback
+
+    midpoint = page_width / 2.0
+    edge_tolerance = page_width * 0.02
+    narrow_limit = page_width * 0.55
+    narrow = [
+        item
+        for item in indexed
+        if float(item[1][2]) - float(item[1][0]) <= narrow_limit
+    ]
+    left_seed = [
+        item for item in narrow if float(item[1][2]) <= midpoint + edge_tolerance
+    ]
+    right_seed = [
+        item for item in narrow if float(item[1][0]) >= midpoint - edge_tolerance
+    ]
+    if len(left_seed) < 2 or len(right_seed) < 2:
+        return fallback
+
+    left_edge = max(float(item[1][2]) for item in left_seed)
+    right_edge = min(float(item[1][0]) for item in right_seed)
+    if right_edge - left_edge < max(8.0, page_width * 0.015):
+        return fallback
+
+    left_top = min(float(item[1][1]) for item in left_seed)
+    left_bottom = max(float(item[1][3]) for item in left_seed)
+    right_top = min(float(item[1][1]) for item in right_seed)
+    right_bottom = max(float(item[1][3]) for item in right_seed)
+    vertical_overlap = max(0.0, min(left_bottom, right_bottom) - max(left_top, right_top))
+    shorter_column = max(1.0, min(left_bottom - left_top, right_bottom - right_top))
+    if vertical_overlap / shorter_column < 0.25:
+        return fallback
+
+    split = (left_edge + right_edge) / 2.0
+    assignment_tolerance = max(2.0, page_width * 0.004)
+    left: list[tuple[int, tuple]] = []
+    right: list[tuple[int, tuple]] = []
+    spanning: list[tuple[int, tuple]] = []
+    for item in indexed:
+        block = item[1]
+        if float(block[2]) <= split + assignment_tolerance:
+            left.append(item)
+        elif float(block[0]) >= split - assignment_tolerance:
+            right.append(item)
+        else:
+            spanning.append(item)
+    if len(left) < 2 or len(right) < 2:
+        return fallback
+
+    left = _top_left_order(left)
+    right = _top_left_order(right)
+    spanning = _top_left_order(spanning)
+    ordered: list[tuple[int, tuple]] = []
+    for span in spanning:
+        span_y = float(span[1][1])
+        before_left = [item for item in left if float(item[1][1]) < span_y]
+        before_right = [item for item in right if float(item[1][1]) < span_y]
+        ordered.extend(before_left)
+        ordered.extend(before_right)
+        left = [item for item in left if item not in before_left]
+        right = [item for item in right if item not in before_right]
+        ordered.append(span)
+    ordered.extend(left)
+    ordered.extend(right)
+    return _top_left_order(header) + ordered + _top_left_order(footer)
 
 
 def _stable_id(prefix: str, *parts: str) -> str:
@@ -88,10 +199,21 @@ class PdfAdapter:
                     extraction_method=method,
                 )
                 page_raw_hash = hashlib.sha256(page_text.encode("utf-8")).hexdigest()
-                page_raw_id = _stable_id("raw", source.source_id, "page", str(page_number), page_raw_hash)
+                page_raw_id = _stable_id(
+                    "raw",
+                    source.source_id,
+                    ADAPTER_VERSION,
+                    "page",
+                    str(page_number),
+                    page_raw_hash,
+                )
                 flags = []
                 ocr_confidence = page_record.get("ocr_confidence")
-                if page_record.get("ocr_status") in {"failed", "empty", "unavailable"}:
+                if page_record.get("ocr_status") in {
+                    "failed", "empty", "unavailable", "skipped_budget",
+                }:
+                    flags.append(QualityFlag.OCR_LOW_CONFIDENCE)
+                if not page_text.strip() and QualityFlag.OCR_LOW_CONFIDENCE not in flags:
                     flags.append(QualityFlag.OCR_LOW_CONFIDENCE)
                 if ocr_confidence is not None and float(ocr_confidence) < minimum_ocr_confidence:
                     flags.append(QualityFlag.OCR_LOW_CONFIDENCE)
@@ -118,20 +240,29 @@ class PdfAdapter:
                     }
                 )
                 blocks = list(page.get_text("blocks") or [])
-                for block_index, block in enumerate(blocks):
+                ordered_blocks = _layout_reading_order(
+                    blocks,
+                    page_width=float(page.rect.width),
+                    page_height=float(page.rect.height),
+                )
+                for block_index, (source_block_index, block) in enumerate(ordered_blocks):
                     block_text = str(block[4] or "").strip()
                     if not block_text:
                         continue
+                    bbox = tuple(round(float(value), 3) for value in block[:4])
                     locator = PdfLocator(
                         page=page_number,
-                        quote=block_text[:2000],
+                        quote=block_text,
                         extraction_method=method,
                         block_index=block_index,
+                        source_block_index=source_block_index,
+                        bbox=bbox,
                     )
                     raw_hash = hashlib.sha256(block_text.encode("utf-8")).hexdigest()
                     raw_unit_id = _stable_id(
                         "raw",
                         source.source_id,
+                        ADAPTER_VERSION,
                         "block",
                         str(page_number),
                         str(block_index),
@@ -195,6 +326,7 @@ class PdfAdapter:
                     table_raw_id = _stable_id(
                         "raw",
                         source.source_id,
+                        ADAPTER_VERSION,
                         "table",
                         str(page_number),
                         str(table_index),
@@ -229,6 +361,7 @@ class PdfAdapter:
                         row_raw_id = _stable_id(
                             "raw",
                             source.source_id,
+                            ADAPTER_VERSION,
                             "table_row",
                             str(page_number),
                             str(table_index),
@@ -268,7 +401,7 @@ class PdfAdapter:
                 if not ocr_regions and (
                     page_record.get("text_source") == "ocr"
                     or page_record.get("ocr_status")
-                    in {"applied", "failed", "empty", "unavailable"}
+                    in {"applied", "failed", "empty", "unavailable", "skipped_budget"}
                 ):
                     ocr_regions = [
                         {
@@ -300,6 +433,7 @@ class PdfAdapter:
                     region_raw_id = _stable_id(
                         "raw",
                         source.source_id,
+                        ADAPTER_VERSION,
                         "ocr_region",
                         str(page_number),
                         str(region_index),
@@ -352,7 +486,13 @@ class PdfAdapter:
         flags: list[QualityFlag],
     ) -> EvidenceUnit:
         locator_hash = _canonical_hash(locator.model_dump(mode="json"))
-        evidence_id = _stable_id("ev", source.source_id, raw_unit_id, locator_hash)
+        evidence_id = _stable_id(
+            "ev",
+            source.source_id,
+            ADAPTER_VERSION,
+            raw_unit_id,
+            locator_hash,
+        )
         return EvidenceUnit(
             evidence_id=evidence_id,
             workspace_id=workspace.workspace_id,

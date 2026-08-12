@@ -140,10 +140,25 @@ def _strict_validation(
     relation_defs = {item.name: item for item in schema.relations}
     issues: list[GraphValidationIssue] = []
     required_total = required_present = extra_properties = duplicate_ids = 0
-    ids_by_type: dict[str, set[str]] = defaultdict(set)
+    unique_id_owner: dict[str, tuple[str, str]] = {}
+    node_id_owner: dict[str, str] = {}
     node_type_by_id = {node.node_id: node.node_type for node in nodes}
 
     for node in nodes:
+        previous_node_type = node_id_owner.get(node.node_id)
+        if previous_node_type is not None:
+            duplicate_ids += 1
+            issues.append(GraphValidationIssue(
+                code="duplicate_node_id",
+                message=(
+                    f"Graph node_id {node.node_id} is used by both "
+                    f"{previous_node_type} and {node.node_type}."
+                ),
+                node_type=node.node_type,
+                node_id=node.node_id,
+            ))
+        else:
+            node_id_owner[node.node_id] = node.node_type
         definition = node_defs[node.node_type]
         allowed = {property_def.name for property_def in definition.properties}
         for property_name in sorted(set(node.attributes) - allowed):
@@ -171,16 +186,21 @@ def _strict_validation(
                     ))
             if property_def.unique and _is_populated(value):
                 identifier = str(value).strip()
-                if identifier in ids_by_type[node.node_type]:
+                owner = unique_id_owner.get(identifier)
+                if owner is not None:
                     duplicate_ids += 1
                     issues.append(GraphValidationIssue(
                         code="duplicate_id",
-                        message=f"Duplicate {node.node_type} identifier {identifier}.",
+                        message=(
+                            f"Duplicate global identifier {identifier}; already used by "
+                            f"{owner[0]} {owner[1]}."
+                        ),
                         node_type=node.node_type,
                         node_id=node.node_id,
                         property_name=property_def.name,
                     ))
-                ids_by_type[node.node_type].add(identifier)
+                else:
+                    unique_id_owner[identifier] = (node.node_type, node.node_id)
 
     domain_range_errors = endpoint_errors = 0
     for relation in relations:
@@ -276,8 +296,17 @@ def _strict_validation(
                 if evidence_ref is None:
                     continue
                 quote = _normalized_label(relation_ref.quote)
-                excerpt = _normalized_label(evidence_ref.excerpt)
-                if not quote or not excerpt or (quote not in excerpt and excerpt not in quote):
+                canonical_text = (
+                    str(
+                        evidence_ref.locator.get("canonical_text")
+                        or evidence_ref.locator.get("quote")
+                        or ""
+                    )
+                    if evidence_ref.locator.get("kind") == "pdf"
+                    else evidence_ref.excerpt
+                )
+                canonical_text = _normalized_label(canonical_text)
+                if not quote or not canonical_text or quote not in canonical_text:
                     continue
                 anchor = _normalized_label(relation_ref.source_anchor)
                 locator_anchor = _normalized_label(

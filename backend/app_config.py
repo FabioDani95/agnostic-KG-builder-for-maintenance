@@ -36,6 +36,22 @@ def get_ontology_config() -> dict:
     return load_config().get("ontology", {})
 
 
+def get_diagnostic_escalation_config() -> dict:
+    """Return the bounded Luna -> Terra diagnostic escalation policy."""
+    cfg = deepcopy((get_ontology_config().get("diagnostic_escalation", {}) or {}))
+    cfg.setdefault("enabled", False)
+    cfg.setdefault("primary_model", "gpt-5.6-luna")
+    cfg.setdefault("model", "gpt-5.6-terra")
+    cfg.setdefault("reasoning_effort", "medium")
+    cfg.setdefault("max_chunks_per_run", 0)
+    cfg.setdefault("timeout_seconds", 180)
+    cfg.setdefault("max_input_chars", 60000)
+    cfg.setdefault("estimated_max_input_tokens", 15000)
+    cfg.setdefault("schema_overhead_characters", 10000)
+    cfg.setdefault("max_output_tokens", 4000)
+    return cfg
+
+
 def get_reflective_loop_config() -> dict:
     return load_config().get("reflective_loop", {})
 
@@ -81,6 +97,7 @@ def get_pdf_ingestion_config() -> dict:
     ocr.setdefault("bootstrap_pages", 15)
     ocr.setdefault("bootstrap_max_pages", 5)
     ocr.setdefault("selected_max_pages", 24)
+    ocr.setdefault("inventory_max_pages", ocr["selected_max_pages"])
     ocr.setdefault("min_confidence", 0.80)
     return cfg
 

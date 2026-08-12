@@ -85,6 +85,24 @@ class OntologyPipelineValidationTests(unittest.TestCase):
             {"Service", "Troubleshooting", "Alarm table"},
         )
 
+    def test_diagnostic_chunk_overlap_preserves_cross_page_record(self):
+        pages = [
+            {"page_number": page, "text": f"page {page}"}
+            for page in range(1, 11)
+        ]
+        chunks = _split_pages_by_section(
+            pages,
+            [],
+            max_chars=10_000,
+            max_pages=8,
+            overlap_pages=1,
+        )
+
+        self.assertEqual(
+            [[page["page_number"] for page in chunk] for chunk, _ in chunks],
+            [list(range(1, 9)), [8, 9, 10]],
+        )
+
     def test_validate_ontology_instance_rejects_asset_only_draft(self):
         schema_issues, human_fields = validate_ontology_instance(_asset_only_ontology())
 

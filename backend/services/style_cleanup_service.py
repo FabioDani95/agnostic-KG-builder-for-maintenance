@@ -182,7 +182,14 @@ def _sum_usage(usages: list[dict[str, Any]]) -> dict[str, Any]:
         return entries[0]
     total = dict(entries[0])
     for usage in entries[1:]:
-        for key in ("prompt", "completion", "total", "cached_prompt", "non_cached_prompt"):
+        for key in (
+            "prompt",
+            "completion",
+            "total",
+            "cached_prompt",
+            "cache_write_prompt",
+            "non_cached_prompt",
+        ):
             total[key] = int(total.get(key, 0) or 0) + int(usage.get(key, 0) or 0)
         total["estimated_cost_usd"] = round(
             float(total.get("estimated_cost_usd", 0) or 0)

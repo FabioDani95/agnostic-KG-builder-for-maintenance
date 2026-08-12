@@ -1,0 +1,300 @@
+{
+  "kind": "offline_e554_typed_replay_evidence_audit",
+  "status": "blocked_missing_persisted_source_evidence",
+  "scope": {
+    "fixture_type": "test_artifact_only",
+    "manual": "E-554.pdf",
+    "pages": [
+      37,
+      38,
+      39
+    ],
+    "production_rules_changed": false,
+    "api_calls": 0
+  },
+  "sources": {
+    "gold": {
+      "path": "artifacts/acceptance/g3/e554/gold.json",
+      "sha256": "0854d8c5b5f2e647e67da958805176d76874638099c1d3a8091223b17ccc6f24"
+    },
+    "v5_generation_response": {
+      "path": "artifacts/acceptance/g3/e554/luna_optimization_plan/post_implementation_e554/generation_response.json",
+      "sha256": "fd4637543ddb28378b1dce46984b61a49c44114df102f11ac153de5bbdd6ede9"
+    },
+    "v5_run_state": {
+      "path": "artifacts/acceptance/g3/e554/luna_optimization_plan/post_implementation_e554/run_state.json",
+      "sha256": "25c28fd493f3df27ade9aaecb85fd7d439042997c929b0f3f9983b8d70507d7b"
+    },
+    "v6_microbenchmark": {
+      "path": "artifacts/acceptance/g3/e554/luna_optimization_plan/post_implementation_e554/v6_diagnostic_microbenchmark.json",
+      "sha256": "b15fee91e95f49130dd9b51ccfaf9df8084cf21b53a61d9a0a43bdbd074b1f09"
+    },
+    "v6_runner": {
+      "path": "artifacts/acceptance/g3/e554/luna_optimization_plan/post_implementation_e554/run_v6_microbenchmark_once.py",
+      "sha256": "d606a462d76c61ffa98dc5537c83e1e86cffb94a24422bec3995ad81c24096b5"
+    }
+  },
+  "persisted_inventory": {
+    "v5_prepared_evidence_count_reported": 895,
+    "v5_published_revision_evidence_count": 358,
+    "v5_published_revision_evidence_pages_37_39": 39,
+    "v5_diagnostic_relations_with_evidence_on_pages_37_39": 0,
+    "v6_input_pages": [
+      37,
+      38,
+      39
+    ],
+    "v6_raw_input_evidence_units_persisted": false,
+    "v6_canonical_page_text_persisted": false,
+    "v6_observation": "The runner loaded canonical EvidenceUnits from EvidenceRepository and formatted them in memory, but the v6 result artifact persisted only input page numbers and the generated ontology. Generated ontology labels and instruction_text are not source evidence."
+  },
+  "decision": {
+    "diagnostic_chunk_output_fixture_created": false,
+    "deterministic_compiler_replay_executed": false,
+    "gold_chains_total": 8,
+    "gold_chains_certified_replayable_from_persisted_v5_v6_source_evidence": 2,
+    "gold_chains_verified_by_compiler": null,
+    "forbidden_cross_pairings_total": 3,
+    "forbidden_cross_pairings_verified_by_compiler": null,
+    "schema_invariants_verified": false,
+    "topology_invariants_verified": false,
+    "reason": "Six gold chains lack at least one exact, source-owned claim or edge span in the persisted v5/v6 inputs. Constructing all eight DiagnosticChunkOutput records would require copying unanchored text from another fixture or treating v6 model output as evidence. Both would create a synthetic gold replay and are intentionally refused."
+  },
+  "chains": [
+    {
+      "gold_index": 1,
+      "evidence_status": "sufficient_for_source_grounded_candidate",
+      "available_evidence": [
+        {
+          "evidence_id": "ev_8ea3b78cfc3600e9ae8815fbc4e2",
+          "page": 37,
+          "supports": [
+            "symptom_claim",
+            "failure_claim",
+            "indicator_failure_edge"
+          ]
+        },
+        {
+          "evidence_id": "ev_16f2f71dcc21f094db05bc9c6849",
+          "page": 37,
+          "supports": [
+            "action_claim",
+            "failure_action_edge"
+          ]
+        }
+      ],
+      "missing_requirements": []
+    },
+    {
+      "gold_index": 2,
+      "evidence_status": "blocked",
+      "available_evidence": [
+        {
+          "evidence_id": "ev_f717a6d3dfee0abe23fb667e2fad",
+          "page": 37,
+          "supports": [
+            "partial_symptom_heading"
+          ]
+        },
+        {
+          "evidence_id": "ev_509e538d672bd20c870d63992169",
+          "page": 37,
+          "supports": [
+            "symptom_claim"
+          ]
+        },
+        {
+          "evidence_id": "ev_d73b7dbe6956a1cc8ae0f3c56ce6",
+          "page": 37,
+          "supports": [
+            "failure_claim",
+            "indicator_failure_edge",
+            "partial_action_claim"
+          ]
+        },
+        {
+          "evidence_id": "ev_4ca65aea738b4a81ef6c585767f8",
+          "page": 37,
+          "supports": [
+            "partial_action_claim"
+          ]
+        },
+        {
+          "evidence_id": "ev_aae78c705830f4dd672f8879f305",
+          "page": 37,
+          "supports": [
+            "partial_action_claim"
+          ]
+        },
+        {
+          "evidence_id": "ev_7766273a33cda3ae5f529bad7f70",
+          "page": 38,
+          "supports": [
+            "post_action_outcome_only"
+          ]
+        }
+      ],
+      "missing_requirements": [
+        "A persisted page-38 EvidenceUnit containing the final calibration steps, including the exact save-and-exit instruction required by the gold action.",
+        "A source-owned failure-to-action span covering completion of calibration across the page 37/38 boundary."
+      ]
+    },
+    {
+      "gold_index": 3,
+      "evidence_status": "blocked",
+      "available_evidence": [
+        {
+          "evidence_id": "ev_31ec9ac0f7e12e18bd0e96fbdfa7",
+          "page": 38,
+          "supports": [
+            "symptom_claim",
+            "failure_claim",
+            "indicator_failure_edge"
+          ]
+        },
+        {
+          "evidence_id": "ev_d6759923777f1e5c375a848f3b79",
+          "page": 38,
+          "supports": [
+            "mapping_check_only"
+          ]
+        }
+      ],
+      "missing_requirements": [
+        "A persisted EvidenceUnit containing the actual mapping operation (map/click-and-drag the tool to the spindle or the layer to the tool).",
+        "A source-owned failure-to-action span for the mapping correction rather than only menu navigation or verification."
+      ]
+    },
+    {
+      "gold_index": 4,
+      "evidence_status": "blocked",
+      "available_evidence": [
+        {
+          "evidence_id": "ev_e5876b33ae4a7f965e062a0d1118",
+          "page": 38,
+          "supports": [
+            "partial_symptom_heading"
+          ]
+        },
+        {
+          "evidence_id": "ev_5266e6f6f5ad23d03c4122a28cef",
+          "page": 38,
+          "supports": [
+            "action_claim"
+          ]
+        }
+      ],
+      "missing_requirements": [
+        "A persisted EvidenceUnit containing the complete reduced-or-no-vacuum symptom statement.",
+        "A direct source-owned indicator-to-failure span establishing that filters requiring replacement explain the vacuum symptom; the isolated instruction 'Replace vacuum filters' is not that causal evidence."
+      ]
+    },
+    {
+      "gold_index": 5,
+      "evidence_status": "sufficient_for_source_grounded_candidate",
+      "available_evidence": [
+        {
+          "evidence_id": "ev_eeaaa9f5405e05b56f12877e7a61",
+          "page": 39,
+          "supports": [
+            "symptom_claim",
+            "failure_claim",
+            "indicator_failure_edge"
+          ]
+        },
+        {
+          "evidence_id": "ev_e51a4b453fcdc57d694aaf182d4b",
+          "page": 39,
+          "supports": [
+            "failure_claim",
+            "action_claim",
+            "failure_action_edge"
+          ]
+        }
+      ],
+      "missing_requirements": []
+    },
+    {
+      "gold_index": 6,
+      "evidence_status": "blocked",
+      "available_evidence": [
+        {
+          "evidence_id": "ev_41c55053bd1cb89b7cc475422db1",
+          "page": 39,
+          "supports": [
+            "failure_claim",
+            "action_claim",
+            "failure_action_edge"
+          ]
+        }
+      ],
+      "missing_requirements": [
+        "A persisted EvidenceUnit containing the loss-of-laser-power/non-cut-edges symptom claim.",
+        "A source-owned indicator-to-failure span connecting that symptom to the damaged or dirty focusing lens."
+      ]
+    },
+    {
+      "gold_index": 7,
+      "evidence_status": "blocked",
+      "available_evidence": [
+        {
+          "evidence_id": "ev_3cf2e2b6ffb3a068482926e0b5ff",
+          "page": 39,
+          "supports": [
+            "failure_claim",
+            "action_claim",
+            "failure_action_edge"
+          ]
+        }
+      ],
+      "missing_requirements": [
+        "A persisted EvidenceUnit containing the loss-of-laser-power/non-cut-edges symptom claim.",
+        "A source-owned indicator-to-failure span connecting that symptom to damaged or dirty beam-deflecting mirrors."
+      ]
+    },
+    {
+      "gold_index": 8,
+      "evidence_status": "blocked",
+      "available_evidence": [
+        {
+          "evidence_id": "ev_cb2f8631284a1d270297533cc8bf",
+          "page": 39,
+          "supports": [
+            "failure_claim",
+            "action_claim",
+            "failure_action_edge"
+          ]
+        }
+      ],
+      "missing_requirements": [
+        "A persisted EvidenceUnit containing the loss-of-laser-power/non-cut-edges symptom claim.",
+        "A source-owned indicator-to-failure span connecting that symptom to laser-nozzle damage or debris."
+      ]
+    }
+  ],
+  "forbidden_cross_pairings": {
+    "count": 3,
+    "evaluation_status": "not_run_without_complete_compiled_replay",
+    "found": null
+  },
+  "excluded_non_evidence": [
+    {
+      "path": "artifacts/acceptance/g3/e554/luna_optimization_plan/post_implementation_e554/v6_diagnostic_microbenchmark.json",
+      "reason": "Its symptom labels and corrective-action instruction_text are model-generated ontology output and have no source EvidenceUnit/anchor attached."
+    },
+    {
+      "path": "tests/golden/manuals/eagle_s3l_laser_cutter_manual.md",
+      "reason": "It contains the omitted manual lines but is not a persisted v5/v6 EvidenceUnit inventory and supplies no stable source anchors for this replay."
+    }
+  ],
+  "minimum_artifact_needed_to_unblock": [
+    "Persist the complete canonical EvidenceUnit inventory used by v6 for pages 37-39, including evidence_id, page, full canonical text/locator quote, block ordering, and extraction metadata.",
+    "Preserve the page-37/page-38 calibration record boundary so the cross-page save-and-exit action remains source-owned.",
+    "After that inventory exists, construct all eight typed records, compile them deterministically, and assert 8/8 gold paths, 0/3 forbidden pairings, exact evidence per MAY_INDICATE and RESOLVED_BY edge, schema validity, and topology connectivity."
+  ],
+  "follow_up_with_recovered_pdf": {
+    "status": "completed",
+    "artifact": "artifacts/acceptance/g3/e554/luna_optimization_plan/post_implementation_e554/offline_typed_replay_real_pdf_result.json",
+    "note": "This v5/v6-only audit remains historically accurate. The follow-up replay was unblocked by recovering the original PDF blob from Git and generating a fresh canonical pdf-v3 inventory."
+  }
+}

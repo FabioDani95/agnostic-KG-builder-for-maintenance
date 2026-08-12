@@ -7,7 +7,12 @@ from backend.domain.subgraphs import (
     SourceGraphRelation,
 )
 from backend.models import OntologyInstance, OntologyRelationInstance
-from backend.services.cutplan_service import is_diagnostic_section, page_has_diagnostic_record
+from backend.services.cutplan_service import (
+    evidence_has_diagnostic_candidate,
+    is_diagnostic_section,
+    page_has_diagnostic_candidate,
+    page_has_diagnostic_record,
+)
 from backend.services.diagnostic_publication_service import build_publication_graph
 from backend.services.ontology_canonicalization_service import canonicalize_ontology_instance
 from backend.services.pdf_cost_guard import estimate_pdf_generation_envelope
@@ -179,6 +184,63 @@ def test_publication_gate_rejects_relation_when_anchor_is_not_resolvable():
     assert any(gap.code == "publication_relation_ungrounded" for gap in result.knowledge_gaps)
 
 
+def test_publication_reports_literal_components_separately_from_zero_isolates():
+    quote = "Alarm A indicates a loose cable. Reconnect the cable."
+    evidence = [_evidence("ev_components0001", 1, quote)]
+    nodes = [
+        _node(
+            "asset_machine", "Asset", "ev_components0001",
+            asset_id="asset_machine", name="Machine", description="Machine",
+            brand="Generic", model="M", asset_type="machine",
+        ),
+        _node(
+            "comp_drive", "Component", "ev_components0001",
+            component_id="comp_drive", name="Drive", description="Drive", category="drive",
+        ),
+        _node(
+            "sym_alarm", "Symptom", "ev_components0001",
+            symptom_id="sym_alarm", name="Alarm A", description="Alarm A", severity="Medium",
+        ),
+        _node(
+            "fm_cable", "FailureMode", "ev_components0001",
+            failure_mode_id="fm_cable", name="Loose cable", description="Cable is loose",
+            material_context="asset_level",
+        ),
+        _node(
+            "ca_reconnect", "CorrectiveAction", "ev_components0001",
+            action_id="ca_reconnect", name="Reconnect cable", description="Reconnect it",
+            instruction_text="Reconnect the cable.", source_type="manual",
+            source_title="Generic", source_reference="ev_components0001",
+        ),
+    ]
+    relations = [
+        _relation(
+            "rel_struct", "HAS_COMPONENT", "asset_machine", "comp_drive",
+            "ev_components0001", quote, 1, support_role="derived_structural",
+        ),
+        _relation(
+            "rel_cause", "MAY_INDICATE", "sym_alarm", "fm_cable",
+            "ev_components0001", "Alarm A indicates a loose cable", 1,
+        ),
+        _relation(
+            "rel_action", "RESOLVED_BY", "fm_cable", "ca_reconnect",
+            "ev_components0001", "Reconnect the cable", 1,
+        ),
+    ]
+
+    result = build_publication_graph(
+        candidate_nodes=nodes,
+        candidate_relations=relations,
+        evidence=evidence,
+    )
+
+    assert result.metrics["isolated_nodes"] == 0
+    assert result.metrics["weakly_connected_components"] == 2
+    assert result.metrics["weak_component_sizes"] == [3, 2]
+    assert result.metrics["diagnostic_weakly_connected_components"] == 1
+    assert result.metrics["diagnostic_weak_component_sizes"] == [3]
+
+
 def test_global_canonicalization_merges_safe_plural_variant_but_not_distinct_procedures():
     ontology = OntologyInstance(
         ontology_name="Core_Ontology",
@@ -230,6 +292,29 @@ def test_page_role_detection_uses_diagnostic_semantics_not_procedural_sections()
     )
     assert not page_has_diagnostic_record(
         "Preventive maintenance: inspect guards every shift and record the result."
+    )
+    assert is_diagnostic_section("Troubleshooting flow diagram")
+    assert page_has_diagnostic_candidate(
+        "Condition | Probable cause | Recommended action\n"
+        "Motor does not start | Supply fuse is open | Replace the supply fuse"
+    )
+    assert page_has_diagnostic_candidate(
+        "Fehlerbild: Antrieb läuft nicht\n"
+        "Ursache: Sicherung offen\nAbhilfe: Sicherung ersetzen"
+    )
+    assert evidence_has_diagnostic_candidate("Cause: drive coupling is loose")
+    assert evidence_has_diagnostic_candidate("Remedy: tighten the drive coupling")
+    assert evidence_has_diagnostic_candidate(
+        "2. Damaged or dirty mirror. Clean or replace mirrors as required."
+    )
+    assert not page_has_diagnostic_candidate(
+        "Preventive maintenance checklist: check worn belts and replace as required."
+    )
+    assert not evidence_has_diagnostic_candidate(
+        "Check all cables for wear, cracks or loose connections."
+    )
+    assert not evidence_has_diagnostic_candidate(
+        "Preventive lubrication interval: every 500 operating hours."
     )
 
 

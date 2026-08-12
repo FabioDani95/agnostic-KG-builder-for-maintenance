@@ -1,0 +1,113 @@
+{
+  "kind": "offline_e554_real_pdf_typed_replay_result",
+  "status": "passed_with_asset_boundary_limit",
+  "execution": {
+    "api_calls": 0,
+    "llm_calls": 0,
+    "production_rules_changed": false,
+    "pdf_added_to_worktree": false,
+    "fixture_type": "test_only_gold_oracle"
+  },
+  "source_pdf": {
+    "removal_commit": "d0d91ebbee3345f7663f10e1694b75bf94758d37",
+    "recovered_from_revision": "d0d91ebbee3345f7663f10e1694b75bf94758d37^",
+    "historical_path": "manuals/batch_manuals/eagle_s3l_laser_cutting_system_service_manual.pdf",
+    "git_blob": "a9671a82beba279a423db0f1ed9b1d9d678da204",
+    "sha256": "a7467316234f2d84550e7c267bf709fda55e1023055d9569dc27348f192641d0",
+    "physical_pages": 54,
+    "replay_pages": [
+      37,
+      38,
+      39
+    ],
+    "temporary_extraction_only": true
+  },
+  "adapter": {
+    "version": "pdf-v3",
+    "canonical_evidence_units_on_replay_pages": 67,
+    "evidence_pages": [
+      37,
+      38,
+      39
+    ],
+    "critical_spans_preserved": [
+      "select save and exit",
+      "click and drag the tool to the spindle",
+      "loss of laser cutting power",
+      "non-cut edges"
+    ],
+    "cross_page_record_preserved": {
+      "gold_chain": 2,
+      "claim_pages": [
+        37,
+        38
+      ]
+    }
+  },
+  "typed_fixture": {
+    "path": "tests/fixtures/e554_offline_replay/diagnostic_chunk_output.json",
+    "sha256": "36293bacfa152fe22c00ab37d52478d4c89c4694cb42c06b51a75fb70c604c98",
+    "schema_version": "1.0",
+    "records": 8,
+    "anchor_policy": "The fixture stores exact page/quote spans. Test setup resolves each anchor from one and only one current pdf-v3 EvidenceUnit before constructing DiagnosticChunkOutput; the production compiler still receives and validates concrete evidence IDs."
+  },
+  "compiler": {
+    "input_candidates": 8,
+    "unique_candidates": 8,
+    "published_candidates": 8,
+    "gap_candidates": 0,
+    "review_candidates": 0,
+    "excluded_candidates": 0,
+    "nodes": {
+      "Symptom": 6,
+      "FailureMode": 8,
+      "CorrectiveAction": 8,
+      "total": 22
+    },
+    "relations": {
+      "MAY_INDICATE": 8,
+      "RESOLVED_BY": 8,
+      "total": 16
+    },
+    "relation_evidence_refs": 24,
+    "relation_evidence_exact_grounding": {
+      "passed": 24,
+      "total": 24,
+      "rule": "normalized relation quote is contained in the canonical EvidenceUnit locator quote with identical evidence ID and page"
+    }
+  },
+  "acceptance": {
+    "gold_chains_present": 8,
+    "gold_chains_total": 8,
+    "forbidden_cross_pairings_found": 0,
+    "forbidden_cross_pairings_total": 3,
+    "schema_error_count": 0,
+    "diagnostic_nodes_without_complete_indicator_failure_action_path": 0,
+    "isolated_diagnostic_nodes": 0
+  },
+  "topology_boundary": {
+    "diagnostic_paths_closed": true,
+    "standalone_compiler_output_globally_connected": false,
+    "standalone_weakly_connected_components": 6,
+    "asset_nodes_emitted_by_typed_compiler": 0,
+    "remaining_human_fields_after_standalone_schema_normalization": [
+      "Asset.brand",
+      "Asset.model"
+    ],
+    "interpretation": "The typed compiler produces six symptom-rooted diagnostic components with no isolated diagnostic node. Canonical Asset injection and structural HAS_COMPONENT ownership belong to the outer workspace/publication merge, so this replay does not claim that the compiler result alone is one Asset-connected graph."
+  },
+  "semantic_review": {
+    "recommended_gold_chains": [
+      4,
+      6,
+      7,
+      8
+    ],
+    "reason": "These chains are grounded by exact Problem/Troubleshooting record structure, but the manual does not restate the indicator-to-failure relationship as a single explicit causal sentence. The deterministic compiler verifies provenance and topology, not that semantic interpretation."
+  },
+  "test": {
+    "command": ".venv/bin/python -m pytest -q tests/test_e554_offline_typed_replay.py tests/test_e554_offline_typed_replay_audit.py",
+    "result": "9 passed",
+    "network_used": false
+  }
+}

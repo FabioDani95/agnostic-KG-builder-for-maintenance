@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "source_language": "en",
+  "records": [
+    {
+      "record_anchor": "ev_typed_page_8",
+      "branch_anchor": "ev_typed_page_8",
+      "indicators": [
+        {
+          "kind": "symptom",
+          "name": "Pump vibration",
+          "description": "The pump vibrates during operation.",
+          "severity": "High",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_typed_page_8",
+              "source_page": 8,
+              "quote": "Problem: Pump vibration"
+            }
+          ],
+          "failure_link_evidence": [
+            {
+              "source_anchor": "ev_typed_page_8",
+              "source_page": 8,
+              "quote": "Pump vibration is caused by a loose coupling"
+            }
+          ]
+        }
+      ],
+      "failure": {
+        "name": "Loose coupling",
+        "description": "The pump coupling is loose.",
+        "material_context": "asset_level",
+        "claim_evidence": [
+          {
+            "source_anchor": "ev_typed_page_8",
+            "source_page": 8,
+            "quote": "loose coupling"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "Tighten coupling",
+          "description": "Restore the specified coupling tightness.",
+          "instruction_text": "Tighten the coupling to specification.",
+          "action_kind": "adjustment",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_typed_page_9",
+              "source_page": 9,
+              "quote": "Tighten the coupling to specification."
+            }
+          ],
+          "resolution_link_evidence": [
+            {
+              "source_anchor": "ev_typed_page_9",
+              "source_page": 9,
+              "quote": "To resolve the loose coupling, tighten the coupling to specification"
+            }
+          ]
+        }
+      ],
+      "affected_component": null,
+      "resolution_status": "action_stated"
+    }
+  ]
+}

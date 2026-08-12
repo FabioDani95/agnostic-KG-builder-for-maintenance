@@ -161,6 +161,48 @@ _DIAGNOSTIC_RECORD_PATTERNS = (
     ),
 )
 
+# Broad, vendor-neutral candidate discovery. This is intentionally a recall
+# layer, not an extractor: false positives receive a typed disposition later,
+# while a false negative here could make a manual branch unrecoverable.
+_DIAGNOSTIC_FIELD_RE = re.compile(
+    r"(?im)^\s*(?:"
+    r"problem|problem description|symptom|observation|condition|indication|"
+    r"fault|alarm|error|possible cause|probable cause|root cause|cause|"
+    r"remed(?:y|ies)|corrective action|recommended action|countermeasure|solution|"
+    r"problema|sintomo|anomalia|indicazione|guasto|allarme|errore|"
+    r"causa(?: possibile| probabile)?|rimedio|soluzione|azione correttiva|"
+    r"problemstellung|fehlerbild|symptomatik|st(?:ö|o)rung|fehler|meldung|"
+    r"(?:m(?:ö|o)gliche |wahrscheinliche )?ursache|abhilfe|ma(?:ß|ss)nahme|l(?:ö|o)sung"
+    r")\s*(?:[:\-|]|\t)"
+)
+_DIAGNOSTIC_CONDITION_RE = re.compile(
+    r"(?i)\b(?:"
+    r"does not|do not|cannot|can(?:')?t|fails? to|not working|out of (?:alignment|calibration)|"
+    r"won(?:')?t|intermittent|stuck|jammed|blocked|loose|worn|damaged|overheat(?:ed|ing)?|"
+    r"non (?:si |pu(?:ò|o) |funziona)|impossibile|blocc(?:ato|ata)|allentat(?:o|a)|usurat(?:o|a)|"
+    r"funktioniert nicht|kann nicht|l(?:ä|a)sst sich nicht|blockiert|locker|verschlissen"
+    r")\b"
+)
+_DIAGNOSTIC_REMEDY_RE = re.compile(
+    r"(?i)\b(?:"
+    r"check|tighten|replace|repair|reset|recalibrat(?:e|ion)|align|clean|reconnect|restart|"
+    r"controllare|verificare|serrare|sostituire|riparare|resettare|ricalibrare|allineare|pulire|"
+    r"pr(?:ü|u)fen|festziehen|ersetzen|reparieren|zur(?:ü|u)cksetzen|kalibrieren|ausrichten|reinigen"
+    r")\b"
+)
+_DIAGNOSTIC_CODE_RE = re.compile(
+    r"(?i)\b(?:alarm|error|fault|allarme|errore|guasto|fehler|st(?:ö|o)rung)"
+    r"\s*(?:code|codice|meldung)?\s*[:#-]?\s*[a-z]{0,4}\d{2,6}[a-z0-9.-]*\b"
+)
+_DIAGNOSTIC_CAUSAL_LINK_RE = re.compile(
+    r"(?i)\b(?:indicat(?:e|es|ed|ing)|because|caused?\s+by|due\s+to|"
+    r"indica(?:no)?|causat[oa]\s+da|dovut[oa]\s+a|weist\s+auf|verursacht\s+durch)\b"
+)
+_DIAGNOSTIC_TABLE_HEADER_RE = re.compile(
+    r"(?i)(?:condition|symptom|problem|fault|error|alarm).{0,120}\|.{0,120}"
+    r"(?:cause|reason).{0,120}\|.{0,120}(?:action|remedy|solution|countermeasure)"
+)
+
 _COMPONENT_SECTION_INCLUDE_RE = re.compile(
     r"(?i)\b("
     r"parts?\s+lists?|spare\s+parts?|exploded(?:\s+views?)?|bill\s+of\s+materials|bom|"
@@ -401,11 +443,13 @@ def is_component_inventory_section(title: str) -> bool:
 def is_diagnostic_section(title: str) -> bool:
     """Return whether a section title explicitly denotes diagnostic records."""
     value = str(title or "")
-    if is_component_inventory_section(value) or re.search(
-        r"(?i)\b(?:schematics?|diagrams?|drawings?|blue\s*prints?)\b", value
+    diagnostic = bool(_DIAGNOSTIC_SECTION_RE.search(value))
+    if not diagnostic and (
+        is_component_inventory_section(value)
+        or re.search(r"(?i)\b(?:schematics?|diagrams?|drawings?|blue\s*prints?)\b", value)
     ):
         return False
-    return bool(_DIAGNOSTIC_SECTION_RE.search(value))
+    return diagnostic
 
 
 def page_has_diagnostic_record(text: str) -> bool:
@@ -419,6 +463,51 @@ def page_has_diagnostic_record(text: str) -> bool:
     matches = sum(bool(pattern.search(value)) for pattern in _DIAGNOSTIC_RECORD_PATTERNS)
     has_strong_heading = bool(_DIAGNOSTIC_RECORD_PATTERNS[4].search(value))
     return has_strong_heading or matches >= 2
+
+
+def page_has_diagnostic_candidate(text: str) -> bool:
+    """High-recall discovery for records that deserve typed adjudication."""
+    value = str(text or "")
+    if page_has_diagnostic_record(value):
+        return True
+    if len(_DIAGNOSTIC_FIELD_RE.findall(value)) >= 2:
+        return True
+    if _DIAGNOSTIC_TABLE_HEADER_RE.search(value):
+        return True
+    if _DIAGNOSTIC_CODE_RE.search(value) and (
+        _DIAGNOSTIC_REMEDY_RE.search(value) or _DIAGNOSTIC_FIELD_RE.search(value)
+    ):
+        return True
+    if _DIAGNOSTIC_CAUSAL_LINK_RE.search(value) and _DIAGNOSTIC_REMEDY_RE.search(value):
+        return True
+    # A bare worn/damaged + check/replace pair is common in preventive
+    # maintenance checklists. Promote it only with explicit diagnostic context;
+    # otherwise keep the page available as structural/retrieval evidence.
+    return False
+
+
+def evidence_has_diagnostic_candidate(text: str) -> bool:
+    """Flag one canonical evidence span that needs record-level disposition.
+
+    This deliberately accepts a single explicit diagnostic field. A cause or
+    remedy may live in its own PDF block, so requiring the whole record inside
+    one EvidenceUnit would recreate the coverage loss this inventory prevents.
+    """
+    value = str(text or "")
+    if _DIAGNOSTIC_FIELD_RE.search(value):
+        return True
+    if _DIAGNOSTIC_CODE_RE.search(value):
+        return True
+    if _DIAGNOSTIC_CAUSAL_LINK_RE.search(value) and _DIAGNOSTIC_REMEDY_RE.search(value):
+        return True
+    # Enumerated troubleshooting branches often omit a "Cause:" label but do
+    # state a condition and remedy in the same item. Require an item marker so
+    # ordinary maintenance prose is not turned into an accounting root.
+    return bool(
+        re.match(r"(?m)^\s*(?:\d+[.)]|[-*])\s+", value)
+        and _DIAGNOSTIC_CONDITION_RE.search(value)
+        and _DIAGNOSTIC_REMEDY_RE.search(value)
+    )
 
 
 def normalize_product_info(raw_product_info: dict, filename: str = "") -> dict[str, str]:

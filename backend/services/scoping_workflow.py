@@ -244,13 +244,27 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
     ocr_cfg = dict((get_pdf_ingestion_config().get("ocr") or {}))
 
     def _ocr_selected(candidate_pages: list[int]) -> dict:
-        report = apply_selective_ocr(
-            str(store.get("pdf_path") or ""),
-            pages,
-            candidate_pages,
-            config=ocr_cfg,
-            max_pages=int(ocr_cfg.get("selected_max_pages", 24) or 24),
-        )
+        pdf_path = str(store.get("pdf_path") or "")
+        if pdf_path:
+            report = apply_selective_ocr(
+                pdf_path,
+                pages,
+                candidate_pages,
+                config=ocr_cfg,
+                max_pages=int(ocr_cfg.get("selected_max_pages", 24) or 24),
+            )
+        else:
+            # G3 supplies immutable canonical EvidenceUnits. OCR has already
+            # run across the physical-page inventory before evidence was
+            # frozen; mutating this legacy page projection would be both
+            # ineffective and misleading.
+            report = {
+                "enabled": bool(ocr_cfg.get("enabled", True)),
+                "candidate_pages": sorted({int(page) for page in candidate_pages}),
+                "attempted": 0,
+                "succeeded": 0,
+                "skipped": "canonical_inventory_preprocessed",
+            }
         store["ingestion"] = {
             **summarize_page_ingestion(pages),
             "selective_ocr": report,

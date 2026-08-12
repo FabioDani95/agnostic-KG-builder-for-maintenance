@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import Any
 
 import fitz  # PyMuPDF
@@ -30,6 +31,38 @@ def _ocr_page_text(page, *, language: str, dpi: int) -> str:
     return str(page.get_text("text", textpage=text_page) or "")
 
 
+def _ocr_quality_score(text: str) -> float:
+    """Return a conservative, format-agnostic OCR quality proxy.
+
+    PyMuPDF's page-level OCR API does not expose Tesseract word confidences.
+    Treating every successful call as trustworthy was therefore a fail-open
+    signal.  This proxy does not pretend to be an engine confidence: it only
+    detects obviously sparse or corrupted output and routes it to review.
+    """
+    value = str(text or "").strip()
+    if not value:
+        return 0.0
+    printable = sum(character.isprintable() for character in value) / len(value)
+    alphanumeric = sum(character.isalnum() for character in value) / len(value)
+    tokens = re.findall(r"[^\W_]{2,}", value, flags=re.UNICODE)
+    replacement_ratio = value.count("\ufffd") / len(value)
+    control_ratio = sum(
+        not character.isprintable() and character not in "\n\r\t"
+        for character in value
+    ) / len(value)
+    length_signal = min(1.0, len(value) / 160.0)
+    token_signal = min(1.0, len(tokens) / 18.0)
+    score = (
+        0.30 * printable
+        + 0.25 * alphanumeric
+        + 0.20 * length_signal
+        + 0.25 * token_signal
+        - 0.60 * replacement_ratio
+        - 0.60 * control_ratio
+    )
+    return round(max(0.0, min(1.0, score)), 4)
+
+
 def _ocr_settings(config: dict[str, Any] | None = None) -> dict[str, Any]:
     if config is not None:
         return dict(config)
@@ -56,8 +89,11 @@ def apply_selective_ocr(
         "kept_native": 0,
         "empty": 0,
         "failed": 0,
+        "low_quality": 0,
         "unavailable": False,
+        "unavailable_pages": [],
         "skipped_budget": 0,
+        "skipped_pages": [],
     }
     if not report["enabled"] or not pdf_path:
         return report
@@ -71,7 +107,11 @@ def apply_selective_ocr(
     ]
     candidates.sort(key=lambda page: int(page.get("page_number", 0) or 0))
     limit = len(candidates) if max_pages is None else max(0, int(max_pages))
-    report["skipped_budget"] = max(0, len(candidates) - limit)
+    skipped = candidates[limit:]
+    report["skipped_budget"] = len(skipped)
+    report["skipped_pages"] = [int(page["page_number"]) for page in skipped]
+    for record in skipped:
+        record["ocr_status"] = "skipped_budget"
     candidates = candidates[:limit]
     report["candidate_pages"] = [int(page["page_number"]) for page in candidates]
     if not candidates:
@@ -87,7 +127,7 @@ def apply_selective_ocr(
         return report
 
     try:
-        for record in candidates:
+        for candidate_index, record in enumerate(candidates):
             page_number = int(record["page_number"])
             report["attempted"] += 1
             try:
@@ -98,7 +138,13 @@ def apply_selective_ocr(
                 if "tesseract" in lowered or "tessdata" in lowered or "ocr initialisation" in lowered:
                     report["unavailable"] = True
                     report["error"] = message
-                    record["ocr_status"] = "unavailable"
+                    unavailable = candidates[candidate_index:]
+                    report["unavailable_pages"] = [
+                        int(item["page_number"]) for item in unavailable
+                    ]
+                    for item in unavailable:
+                        item["ocr_status"] = "unavailable"
+                        item["ocr_error"] = message
                     break
                 report["failed"] += 1
                 record["ocr_status"] = "failed"
@@ -108,6 +154,15 @@ def apply_selective_ocr(
             cleaned = ocr_text.strip()
             native = str(record.get("text", "") or "").strip()
             record["ocr_text_chars"] = len(cleaned)
+            quality_score = _ocr_quality_score(cleaned)
+            record["ocr_quality_score"] = quality_score
+            # Backwards-compatible field consumed by PdfAdapter.  The source
+            # marker makes clear this is a deterministic quality proxy rather
+            # than a probability reported by Tesseract.
+            record["ocr_confidence"] = quality_score
+            record["ocr_confidence_source"] = "quality_proxy"
+            if cleaned and quality_score < float(cfg.get("min_confidence", 0.80) or 0.80):
+                report["low_quality"] += 1
             if not cleaned:
                 report["empty"] += 1
                 record["ocr_status"] = "empty"
@@ -246,14 +301,26 @@ def extract_text_by_page(
             len(pages),
         )
     cfg = _ocr_settings(ocr_config)
-    bootstrap_pages = max(0, int(cfg.get("bootstrap_pages", 15) or 0))
-    bootstrap_max_pages = max(0, int(cfg.get("bootstrap_max_pages", 5) or 0))
+    # OCR must run before PdfAdapter freezes RawUnits/EvidenceUnits.  A later
+    # scoping-time mutation cannot update that canonical inventory.  Inspect
+    # every physical page here, within an explicit bounded budget; skipped
+    # low-text pages retain a disposition that downstream review can surface.
+    inventory_max_pages = max(
+        0,
+        int(
+            cfg.get(
+                "inventory_max_pages",
+                cfg.get("selected_max_pages", cfg.get("bootstrap_max_pages", 24)),
+            )
+            or 0
+        ),
+    )
     apply_selective_ocr(
         pdf_path,
         pages,
-        set(range(1, min(len(pages), bootstrap_pages) + 1)),
+        set(range(1, len(pages) + 1)),
         config=cfg,
-        max_pages=bootstrap_max_pages,
+        max_pages=inventory_max_pages,
     )
     return pages
 

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
+import re
 import time
 from typing import Any, TypedDict
 
@@ -27,6 +29,7 @@ from backend.models import (
     PipelineIssue,
     SuggestedRelation,
 )
+from backend.prompts.diagnostic_bundle_prompt import build_diagnostic_bundle_prompt
 from backend.prompts.ontology_prompt import (
     build_ontology_extraction_prompt,
     build_ontology_re_extraction_prompt,
@@ -37,6 +40,7 @@ from backend.services.candidate_mining_service import (
     mine_candidates,
     render_candidates_prompt_block,
 )
+from backend.services.cutplan_service import evidence_has_diagnostic_candidate
 from backend.services.language_utils import normalize_language_code
 from backend.services.llm_gateway import chat_reasoning_kwargs, chat_temperature_kwargs, get_client
 from backend.services.llm_guardrails import (
@@ -75,6 +79,12 @@ from backend.services.type_consistency_service import evaluate_type_consistency
 
 logger = logging.getLogger(__name__)
 
+_DIAGNOSTIC_PAGE_RE = re.compile(r"(?m)^--- PAGE\s+(\d+)\s+---\s*$")
+_DIAGNOSTIC_ANCHOR_RE = re.compile(
+    r"\[\[EVIDENCE_ID:\s*([^\]]+)\]\]\s*(.*?)(?=\n\s*\[\[EVIDENCE_ID:|\Z)",
+    flags=re.DOTALL,
+)
+
 
 class PipelineState(TypedDict, total=False):
     source_type: str
@@ -86,6 +96,7 @@ class PipelineState(TypedDict, total=False):
     reasoning_effort: str | None
     extraction_role: str
     relation_first: bool
+    diagnostic_call_options: dict[str, Any]
     schema: OntologySchemaDefinition
     schema_json: str
     candidates_block: str
@@ -103,6 +114,7 @@ class PipelineState(TypedDict, total=False):
     # Confidence scoring state (Step 3)
     confidence_report: ConfidenceReport | None
     resolution_completion_report: dict[str, Any]
+    diagnostic_contract_report: dict[str, Any]
     llm_usage: list[dict[str, Any]]
 
 
@@ -150,7 +162,270 @@ def _has_canonical_asset_identity(asset_identity: dict[str, Any] | None) -> bool
     return is_workspace_canonical_asset_identity(asset_identity)
 
 
+def _diagnostic_input_inventory(text_with_pages: str) -> dict[str, Any]:
+    pages = [int(value) for value in _DIAGNOSTIC_PAGE_RE.findall(text_with_pages)]
+    candidate_anchors = [
+        match.group(1).strip()
+        for match in _DIAGNOSTIC_ANCHOR_RE.finditer(text_with_pages)
+        if evidence_has_diagnostic_candidate(match.group(2).strip())
+    ]
+    return {
+        "input_pages": sorted(set(pages)),
+        "candidate_input_anchors": sorted(set(candidate_anchors)),
+    }
+
+
+def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
+    """Extract typed records, validate evidence, then compile ontology claims."""
+    from backend.domain.diagnostic_bundles import DiagnosticChunkOutput
+    from backend.services.diagnostic_bundle_compiler import compile_diagnostic_bundles
+
+    started = time.perf_counter()
+    system_prompt = build_diagnostic_bundle_prompt(
+        source_type=state["source_type"],
+        source_title=state["source_title"],
+    )
+    call_options = dict(state.get("diagnostic_call_options") or {})
+    max_output_tokens = int(call_options.get("max_output_tokens") or (
+        get_ontology_config().get("diagnostic_bundle_max_output_tokens", 8000)
+    ))
+    cfg = _ontology_cfg(max_output_tokens)
+    for key in (
+        "timeout_seconds",
+        "max_input_chars",
+        "estimated_max_input_tokens",
+    ):
+        if int(call_options.get(key, 0) or 0) > 0:
+            cfg[key] = int(call_options[key])
+    operation = str(
+        call_options.get("operation") or "diagnostic_bundle_extraction"
+    ).strip()
+    escalation_reason = str(call_options.get("escalation_reason") or "").strip()
+    call_role = "escalation" if escalation_reason else "primary"
+    input_inventory = _diagnostic_input_inventory(state["text_with_pages"])
+    enforce_llm_limits(
+        phase="Typed diagnostic bundle extraction",
+        cfg=cfg,
+        system_text=system_prompt,
+        user_text=state["text_with_pages"],
+    )
+    client = _get_client(cfg["timeout_seconds"])
+    model_name = state["model_name"] or settings.MODEL_NAME
+    try:
+        response = client.chat.completions.parse(
+            model=model_name,
+            **chat_reasoning_kwargs(model_name, state.get("reasoning_effort")),
+            **chat_temperature_kwargs(model_name, 0.0),
+            max_completion_tokens=cfg["max_output_tokens"],
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": state["text_with_pages"]},
+            ],
+            response_format=DiagnosticChunkOutput,
+        )
+    except Exception as exc:
+        logger.warning("[ontology] Typed diagnostic response failed closed: %s", exc)
+        completion = getattr(exc, "completion", None)
+        usage_entries: list[dict[str, Any]] = []
+        if completion is not None:
+            failed_usage = usage_from_response(completion, operation)
+            failed_usage.update({
+                "reasoning_effort": state.get("reasoning_effort") or "default",
+                "call_role": call_role,
+                "escalation_reason": escalation_reason,
+            })
+            usage_entries.append(failed_usage)
+        error_text = str(exc).casefold()
+        finish_reason = (
+            "length"
+            if "length limit" in error_text or "finish_reason='length'" in error_text
+            else "error"
+        )
+        report = {
+            **input_inventory,
+            "schema_version": "1.0",
+            "provider_model": model_name,
+            "provider_reasoning_effort": state.get("reasoning_effort") or "default",
+            "call_role": call_role,
+            "escalation_reason": escalation_reason,
+            "provider_response_id": "",
+            "finish_reason": finish_reason,
+            "parsed": False,
+            "refusal": False,
+            "raw_sha256": "",
+            "records": [],
+            "candidate_count": 0,
+            "publish_count": 0,
+            "unresolved_count": 1,
+            "drop_reasons": {"structured_response_error": 1},
+            "error_type": type(exc).__name__,
+            "escalation_recommended": True,
+        }
+        result = {
+            "ontology": _empty_instance(
+                state["schema"], state["source_type"], state["source_title"],
+            ),
+            "diagnostic_contract_report": report,
+        }
+        if usage_entries:
+            result["llm_usage"] = [*state.get("llm_usage", []), *usage_entries]
+        return result
+
+    choice = response.choices[0]
+    message = choice.message
+    usage = usage_from_response(response, operation)
+    usage.update({
+        "reasoning_effort": state.get("reasoning_effort") or "default",
+        "call_role": call_role,
+        "escalation_reason": escalation_reason,
+    })
+    raw = str(message.content or "")
+    parsed = getattr(message, "parsed", None)
+    refusal = str(getattr(message, "refusal", "") or "").strip()
+    finish_reason = str(getattr(choice, "finish_reason", "") or "")
+    if parsed is None or refusal:
+        report = {
+            **input_inventory,
+            "schema_version": "1.0",
+            "provider_model": getattr(response, "model", model_name) or model_name,
+            "provider_reasoning_effort": state.get("reasoning_effort") or "default",
+            "call_role": call_role,
+            "escalation_reason": escalation_reason,
+            "provider_response_id": str(getattr(response, "id", "") or ""),
+            "finish_reason": finish_reason,
+            "parsed": False,
+            "refusal": bool(refusal),
+            "refusal_text": refusal[:500],
+            "raw_sha256": hashlib.sha256(raw.encode("utf-8")).hexdigest() if raw else "",
+            "records": [],
+            "candidate_count": 0,
+            "publish_count": 0,
+            "unresolved_count": 1,
+            "drop_reasons": {"provider_refusal_or_missing_parse": 1},
+            "escalation_recommended": not bool(refusal),
+        }
+        return {
+            "ontology": _empty_instance(
+                state["schema"], state["source_type"], state["source_title"],
+            ),
+            "diagnostic_contract_report": report,
+            "llm_usage": [*state.get("llm_usage", []), usage],
+        }
+
+    canonical_raw = raw or parsed.model_dump_json()
+    provider_model = getattr(response, "model", model_name) or model_name
+    try:
+        compilation = compile_diagnostic_bundles(
+            parsed,
+            source_type=state["source_type"],
+            source_title=state["source_title"],
+            text_with_pages=state["text_with_pages"],
+            schema=state["schema"],
+            language=parsed.source_language,
+        )
+        ontology = _normalize_ontology_instance(
+            ontology=compilation.ontology,
+            schema=state["schema"],
+            source_type=state["source_type"],
+            source_title=state["source_title"],
+            asset_identity=state.get("asset_identity"),
+        )
+    except Exception as exc:
+        # A provider-valid payload can still fail the deterministic evidence
+        # compiler or ontology normalization. Preserve the paid call in usage,
+        # emit no claims, and expose a bounded Terra-recovery signal instead of
+        # aborting the complete multi-chunk PDF run.
+        candidate_count = len(parsed.records)
+        logger.warning(
+            "[ontology] Typed diagnostic compiler failed closed: %s",
+            exc,
+        )
+        report = {
+            **input_inventory,
+            "schema_version": parsed.schema_version,
+            "source_language": parsed.source_language,
+            "provider_model": provider_model,
+            "provider_reasoning_effort": state.get("reasoning_effort") or "default",
+            "call_role": call_role,
+            "escalation_reason": escalation_reason,
+            "provider_response_id": str(getattr(response, "id", "") or ""),
+            "finish_reason": finish_reason,
+            "parsed": True,
+            "refusal": False,
+            "raw_sha256": hashlib.sha256(canonical_raw.encode("utf-8")).hexdigest(),
+            "records": [],
+            "candidate_count": candidate_count,
+            "publish_count": 0,
+            "unresolved_count": max(1, candidate_count),
+            "drop_reasons": {
+                "diagnostic_compiler_error": max(1, candidate_count),
+            },
+            "error_type": type(exc).__name__,
+            "escalation_recommended": True,
+        }
+        return {
+            "ontology": _empty_instance(
+                state["schema"], state["source_type"], state["source_title"],
+            ),
+            "diagnostic_contract_report": report,
+            "llm_usage": [*state.get("llm_usage", []), usage],
+        }
+
+    compilation_report = compilation.report.model_dump(mode="json")
+    entries = compilation_report.get("entries", [])
+    publish_count = int(
+        compilation_report.get("disposition_counts", {}).get("publish", 0) or 0
+    )
+    unresolved_count = sum(
+        int(compilation_report.get("disposition_counts", {}).get(key, 0) or 0)
+        for key in ("gap", "review")
+    )
+    report = {
+        **input_inventory,
+        "schema_version": parsed.schema_version,
+        "source_language": parsed.source_language,
+        "provider_model": provider_model,
+        "provider_reasoning_effort": state.get("reasoning_effort") or "default",
+        "call_role": call_role,
+        "escalation_reason": escalation_reason,
+        "provider_response_id": str(getattr(response, "id", "") or ""),
+        "finish_reason": finish_reason,
+        "parsed": True,
+        "refusal": False,
+        "raw_sha256": hashlib.sha256(canonical_raw.encode("utf-8")).hexdigest(),
+        "records": entries,
+        "candidate_count": int(compilation_report.get("unique_candidates", 0) or 0),
+        "duplicate_candidate_count": int(
+            compilation_report.get("duplicate_candidates", 0) or 0
+        ),
+        "publish_count": publish_count,
+        "unresolved_count": unresolved_count,
+        "disposition_counts": compilation_report.get("disposition_counts", {}),
+        "drop_reasons": compilation_report.get("dropped_items_by_reason", {}),
+        "escalation_recommended": bool(
+            finish_reason == "length"
+            or unresolved_count
+            or (not parsed.records)
+            or (parsed.records and publish_count == 0)
+        ),
+    }
+    logger.info(
+        "[ontology] Typed diagnostic extraction: %d candidate(s), %d publishable, %d unresolved (%.1fs)",
+        len(parsed.records),
+        publish_count,
+        unresolved_count,
+        time.perf_counter() - started,
+    )
+    return {
+        "ontology": ontology,
+        "diagnostic_contract_report": report,
+        "llm_usage": [*state.get("llm_usage", []), usage],
+    }
+
+
 def _call_extractor_llm(state: PipelineState) -> PipelineState:
+    if state.get("relation_first") and state.get("extraction_role") == "diagnostic":
+        return _call_diagnostic_bundle_llm(state)
     started = time.perf_counter()
     has_canonical_asset = _has_canonical_asset_identity(state.get("asset_identity"))
     prompt_blocks = [
@@ -771,6 +1046,7 @@ def build_initial_ontology(
     extraction_role: str = "legacy",
     relation_first: bool = False,
     on_event=None,
+    diagnostic_call_options: dict[str, Any] | None = None,
 ) -> tuple[OntologyPipelineResponse, dict[str, Any]]:
     schema = load_ontology_schema()
     normalized_target_language = normalize_language_code(target_language)
@@ -801,6 +1077,7 @@ def build_initial_ontology(
         "reasoning_effort": reasoning_effort,
         "extraction_role": extraction_role,
         "relation_first": relation_first,
+        "diagnostic_call_options": diagnostic_call_options or {},
         "schema": schema,
         "schema_json": dump_ontology_schema_json(),
         "candidates_block": candidates_block,
@@ -817,6 +1094,7 @@ def build_initial_ontology(
         "suggested_relations": [],
         # Confidence scoring initial state
         "confidence_report": None,
+        "diagnostic_contract_report": {},
         "resolution_completion_report": {},
         "llm_usage": [],
     })
@@ -829,6 +1107,7 @@ def build_initial_ontology(
     graph_issues = result.get("graph_issues", [])
     suggested_relations = result.get("suggested_relations", [])
     confidence_report = result.get("confidence_report")
+    diagnostic_contract_report = result.get("diagnostic_contract_report", {})
     resolution_completion_report = result.get("resolution_completion_report", {})
     llm_usage = result.get("llm_usage", [])
     is_schema_compliant = not schema_issues and not human_fields
@@ -880,15 +1159,25 @@ def build_initial_ontology(
         graph_issues=graph_issues,
         suggested_relations=suggested_relations,
         confidence_report=confidence_report,
+        diagnostic_contract_report=diagnostic_contract_report,
         resolution_completion_report=resolution_completion_report,
     )
     parse_repair_events = consume_parse_repair_events()
+    llm_call_entries = []
+    for raw_entry in llm_usage:
+        entry = dict(raw_entry)
+        entry.setdefault("reasoning_effort", reasoning_effort or "default")
+        entry.setdefault("call_role", "primary")
+        entry.setdefault("escalation_reason", "")
+        llm_call_entries.append(entry)
     return response, {
         **aggregate_usage(llm_usage),
         "retry_count": retry_count,
         "parse_repair_events": parse_repair_events,
         "mining_summary": mining_result.to_summary(),
         "resolution_completion": resolution_completion_report,
+        "diagnostic_contract": diagnostic_contract_report,
+        "llm_call_entries": llm_call_entries,
     }
 
 

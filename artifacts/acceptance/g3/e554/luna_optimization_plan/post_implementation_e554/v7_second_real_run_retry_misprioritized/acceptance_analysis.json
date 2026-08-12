@@ -1,0 +1,1077 @@
+{
+  "acceptance": {
+    "forbidden": [
+      {
+        "failure_mode": "dirty focusing lens",
+        "found": false,
+        "matches": [],
+        "symptom": "Touch Screen buttons are out of alignment"
+      },
+      {
+        "failure_mode": "intermittent pause circuit",
+        "found": false,
+        "matches": [],
+        "symptom": "Laser Fume Extractor has reduced vacuum or no vacuum"
+      },
+      {
+        "failure_mode": "touch screen calibration is required",
+        "found": false,
+        "matches": [],
+        "symptom": "Laser cutting path is too wide"
+      }
+    ],
+    "forbidden_pairings_found": 0,
+    "forbidden_pairings_total": 3,
+    "gold_chains_present": 0,
+    "gold_chains_total": 8,
+    "method": "post-run fuzzy witness matching; gold was never available to production",
+    "minimum_field_score": 0.55,
+    "witnesses": [
+      {
+        "best_min_field_score": 0.0,
+        "expected": {
+          "corrective_action": "adjust the pause plunger activation pressure",
+          "failure_mode": "intermittent pause circuit, usually in the stop discs",
+          "pdf_page": 37,
+          "symptom": "Machine stops in middle of cut and displays Machine Paused"
+        },
+        "field_scores": {
+          "corrective_action": 0.155556,
+          "failure_mode": 0.116667,
+          "symptom": 0.0
+        },
+        "gold_chain": 1,
+        "matched_path": {
+          "action": "Adjust stop disc resistance",
+          "action_id": "ca_adjust_stop_disc_resistance_5cafcfd57d3abce9cde677db3f98a01adc2c3ecea345f6190f04dd1dccceac44",
+          "failure": "Incorrect stop disc activation pressure",
+          "failure_id": "fm_incorrect_stop_disc_activation_pressure_8d75c8ccb095964a0a9233eca8807e4bff36339f468d49b473ed8eb977486e0b",
+          "indicator": "Incorrect stop disc activation pressure",
+          "indicator_id": "sym_incorrect_stop_disc_activation_pressure_787991fd04d14ef0b2aefabb2f8f432fc6eaca12ade8c6c81d0bfddeffb2d0c5"
+        },
+        "present": false
+      },
+      {
+        "best_min_field_score": 0.0,
+        "expected": {
+          "corrective_action": "complete touch screen calibration and save and exit",
+          "failure_mode": "Touch screen calibration is required",
+          "pdf_pages": [
+            37,
+            38
+          ],
+          "symptom": "Touch Screen buttons are out of alignment"
+        },
+        "field_scores": {
+          "corrective_action": 0.134286,
+          "failure_mode": 0.0,
+          "symptom": 0.0
+        },
+        "gold_chain": 2,
+        "matched_path": {
+          "action": "Secure pen and holder",
+          "action_id": "ca_secure_pen_and_holder_36e5822d53b7992b63f4f83577782589267af8f8575cf40e20e71b21c2494b41",
+          "failure": "Pen lift or mounting fault",
+          "failure_id": "fm_pen_lift_or_mounting_fault_683447b178a8dd9249f168c36b476d358c46be15a436087b4b29d5c53563364b",
+          "indicator": "Pen movement or seating problem",
+          "indicator_id": "sym_pen_movement_or_seating_problem_2da62c2d17fc3afddf2a23e65cb6dafaaddd45b03408ece6b9c510fd0f319b8f"
+        },
+        "present": false
+      },
+      {
+        "best_min_field_score": 0.0,
+        "expected": {
+          "corrective_action": "map the tool to the spindle or the layer to the tool",
+          "failure_mode": "tool or layer is not mapped properly",
+          "pdf_page": 38,
+          "symptom": "Cutting Tool or Pen does not move down"
+        },
+        "field_scores": {
+          "corrective_action": 0.0,
+          "failure_mode": 0.132468,
+          "symptom": 0.236364
+        },
+        "gold_chain": 3,
+        "matched_path": {
+          "action": "Secure pen and holder",
+          "action_id": "ca_secure_pen_and_holder_36e5822d53b7992b63f4f83577782589267af8f8575cf40e20e71b21c2494b41",
+          "failure": "Pen lift or mounting fault",
+          "failure_id": "fm_pen_lift_or_mounting_fault_683447b178a8dd9249f168c36b476d358c46be15a436087b4b29d5c53563364b",
+          "indicator": "Pen movement or seating problem",
+          "indicator_id": "sym_pen_movement_or_seating_problem_2da62c2d17fc3afddf2a23e65cb6dafaaddd45b03408ece6b9c510fd0f319b8f"
+        },
+        "present": false
+      },
+      {
+        "best_min_field_score": 0.0,
+        "expected": {
+          "corrective_action": "replace vacuum filters",
+          "failure_mode": "vacuum filters require replacement",
+          "pdf_page": 38,
+          "symptom": "Laser Fume Extractor has reduced vacuum or no vacuum"
+        },
+        "field_scores": {
+          "corrective_action": 0.3,
+          "failure_mode": 0.225,
+          "symptom": 0.0
+        },
+        "gold_chain": 4,
+        "matched_path": {
+          "action": "Replace fume extractor filter",
+          "action_id": "ca_replace_fume_extractor_filter_36691cbafb3d668eab42b45613e5d145a2c5a4e6d3d8b1f65b33cebb9f0c4a06",
+          "failure": "Fume extractor filter requires replacement",
+          "failure_id": "fm_fume_extractor_filter_requires_replacement_74e1aeb987866d085bb409871f077e2b9aee7f980b928e6d61a7d5de0ee32771",
+          "indicator": "Filter replacement condition",
+          "indicator_id": "sym_filter_replacement_condition_ec869268c6feb9e2ed70243f44163309458fa184252e92100855fa8033f3d573"
+        },
+        "present": false
+      },
+      {
+        "best_min_field_score": 0.0,
+        "expected": {
+          "corrective_action": "replace the damaged nozzle",
+          "failure_mode": "brass laser nozzle is damaged or bent",
+          "pdf_page": 39,
+          "symptom": "Laser cutting path is too wide"
+        },
+        "field_scores": {
+          "corrective_action": 0.228571,
+          "failure_mode": 0.268571,
+          "symptom": 0.0
+        },
+        "gold_chain": 5,
+        "matched_path": {
+          "action": "Replace worn drive belt",
+          "action_id": "ca_replace_worn_drive_belt_6d25bf352d29b91436b543ad27bea2cf8ffd552e23cd16375dba0ea64d9b8712",
+          "failure": "Worn or damaged drive belt",
+          "failure_id": "fm_worn_or_damaged_drive_belt_2e4fd000f32d6da7b5064db6a9593db62e2274f3fbe3a84131375911aedb5c29",
+          "indicator": "Drive belt wear",
+          "indicator_id": "sym_drive_belt_wear_4017886aa8f05154291fa6fbee973b97f95663cfe6fde7a5de03768c93a650c7"
+        },
+        "present": false
+      },
+      {
+        "best_min_field_score": 0.0,
+        "expected": {
+          "corrective_action": "clean or replace the focusing lens",
+          "failure_mode": "focusing lens is damaged or dirty",
+          "pdf_page": 39,
+          "symptom": "Loss of laser cutting power causing non-cut edges"
+        },
+        "field_scores": {
+          "corrective_action": 0.155556,
+          "failure_mode": 0.311111,
+          "symptom": 0.0
+        },
+        "gold_chain": 6,
+        "matched_path": {
+          "action": "Replace worn drive belt",
+          "action_id": "ca_replace_worn_drive_belt_6d25bf352d29b91436b543ad27bea2cf8ffd552e23cd16375dba0ea64d9b8712",
+          "failure": "Worn or damaged drive belt",
+          "failure_id": "fm_worn_or_damaged_drive_belt_2e4fd000f32d6da7b5064db6a9593db62e2274f3fbe3a84131375911aedb5c29",
+          "indicator": "Drive belt wear",
+          "indicator_id": "sym_drive_belt_wear_4017886aa8f05154291fa6fbee973b97f95663cfe6fde7a5de03768c93a650c7"
+        },
+        "present": false
+      },
+      {
+        "best_min_field_score": 0.0,
+        "expected": {
+          "corrective_action": "clean or replace the mirrors",
+          "failure_mode": "beam deflecting mirror is damaged or dirty",
+          "pdf_page": 39,
+          "symptom": "Loss of laser cutting power causing non-cut edges"
+        },
+        "field_scores": {
+          "corrective_action": 0.185,
+          "failure_mode": 0.268571,
+          "symptom": 0.0
+        },
+        "gold_chain": 7,
+        "matched_path": {
+          "action": "Replace worn drive belt",
+          "action_id": "ca_replace_worn_drive_belt_6d25bf352d29b91436b543ad27bea2cf8ffd552e23cd16375dba0ea64d9b8712",
+          "failure": "Worn or damaged drive belt",
+          "failure_id": "fm_worn_or_damaged_drive_belt_2e4fd000f32d6da7b5064db6a9593db62e2274f3fbe3a84131375911aedb5c29",
+          "indicator": "Drive belt wear",
+          "indicator_id": "sym_drive_belt_wear_4017886aa8f05154291fa6fbee973b97f95663cfe6fde7a5de03768c93a650c7"
+        },
+        "present": false
+      },
+      {
+        "best_min_field_score": 0.12,
+        "expected": {
+          "corrective_action": "clean or replace the laser nozzle",
+          "failure_mode": "laser nozzle contains damage or debris",
+          "pdf_page": 39,
+          "symptom": "Loss of laser cutting power causing non-cut edges"
+        },
+        "field_scores": {
+          "corrective_action": 0.155556,
+          "failure_mode": 0.153333,
+          "symptom": 0.12
+        },
+        "gold_chain": 8,
+        "matched_path": {
+          "action": "Adjust laser mirror alignment",
+          "action_id": "ca_adjust_laser_mirror_alignment_33d9958c7bbb1636029a4f129da1110c8b00a1443bc15b69892e5baf6d51bcaa",
+          "failure": "Laser mirror alignment requires adjustment",
+          "failure_id": "fm_laser_mirror_alignment_requires_adjustment_31528236db92e25ed123159e8171aba65f9b744d2c5faa3f572630038d44d9e5",
+          "indicator": "Laser beam misalignment",
+          "indicator_id": "sym_laser_beam_misalignment_cbd25e79e91488bbc3aab999e3d0cb979aaf0107d95ccba634f055ef9fcf138c"
+        },
+        "present": false
+      }
+    ]
+  },
+  "budget": {
+    "authorized_ceiling_usd": 1.0,
+    "call_count": 18,
+    "cumulative_maximum_usd": 1.0,
+    "models": {
+      "gpt-5.6-luna": 17,
+      "gpt-5.6-terra": 1
+    },
+    "prior_attempt_reserved_usd": 0.0,
+    "run_hard_ceiling_usd": 1.0,
+    "run_measured_cost_usd": 0.092457,
+    "run_preflight_ceiling_usd": 0.718369,
+    "terra_escalations": 1
+  },
+  "graph": {
+    "diagnostic_weak_component_sizes": [
+      4,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "diagnostic_weakly_connected_components": 11,
+    "isolated_nodes": 0,
+    "nodes": 197,
+    "nodes_by_type": {
+      "Asset": 1,
+      "Component": 162,
+      "CorrectiveAction": 12,
+      "FailureMode": 11,
+      "Symptom": 11
+    },
+    "published_complete_paths": 12,
+    "published_paths": [
+      {
+        "action": "Move RF-emitting equipment at least 70 feet away",
+        "action_id": "ca_move_rf_emitting_equipment_at_least_70_feet_away_f6ff64bbb07182fccba1980911989d9b9e0610c885fe45ab17c61b931932eb04",
+        "failure": "High radio-frequency interference",
+        "failure_id": "fm_high_radio_frequency_interference_54f02246b417032d318fcec2b87745094230b9133f5f0f8e30ec6a5ae5ce2a5c",
+        "indicator": "Cutter may not operate correctly",
+        "indicator_id": "sym_cutter_may_not_operate_correctly_f3af8ed9abe593781124ebad58e28daa734aaaead55daf8927dbb8110b1acd55"
+      },
+      {
+        "action": "Install and use earth grounds",
+        "action_id": "ca_install_and_use_earth_grounds_42fa444a61395ae0360bec71beef6efaf628549ae69dafd68f581f75a2cf6b23",
+        "failure": "High radio-frequency interference",
+        "failure_id": "fm_high_radio_frequency_interference_54f02246b417032d318fcec2b87745094230b9133f5f0f8e30ec6a5ae5ce2a5c",
+        "indicator": "Cutter may not operate correctly",
+        "indicator_id": "sym_cutter_may_not_operate_correctly_f3af8ed9abe593781124ebad58e28daa734aaaead55daf8927dbb8110b1acd55"
+      },
+      {
+        "action": "Clear cutting-area obstructions",
+        "action_id": "ca_clear_cutting_area_obstructions_57cc9de1e637d8fe9643a445fe33e045966f1be7fedc9ddea10a99ef64c56aa2",
+        "failure": "Cutting-area obstruction",
+        "failure_id": "fm_cutting_area_obstruction_0b5fa0abff3cf42c5a3b28eb1e5d939416594ffd76cebe594c325d0b452c0cf5",
+        "indicator": "Debris or obstruction in cutting area",
+        "indicator_id": "sym_debris_or_obstruction_in_cutting_area_80a21a10a80ea76177ac7c7e7b4dad4e52054bd33a1c5ee4d421acccc652607b"
+      },
+      {
+        "action": "Replace worn drive belt",
+        "action_id": "ca_replace_worn_drive_belt_6d25bf352d29b91436b543ad27bea2cf8ffd552e23cd16375dba0ea64d9b8712",
+        "failure": "Worn or damaged drive belt",
+        "failure_id": "fm_worn_or_damaged_drive_belt_2e4fd000f32d6da7b5064db6a9593db62e2274f3fbe3a84131375911aedb5c29",
+        "indicator": "Drive belt wear",
+        "indicator_id": "sym_drive_belt_wear_4017886aa8f05154291fa6fbee973b97f95663cfe6fde7a5de03768c93a650c7"
+      },
+      {
+        "action": "Adjust excessive axis backlash",
+        "action_id": "ca_adjust_excessive_axis_backlash_5ad2cbe914d76a1bbc227c651c8d487d84f4fbbcab2563b6bc10555f30467427",
+        "failure": "Excessive axis backlash",
+        "failure_id": "fm_excessive_axis_backlash_4bd7a79ae512cc647eca9762655615673e693899984fa690ad522bd142406c3f",
+        "indicator": "Excessive X/Y-axis backlash",
+        "indicator_id": "sym_excessive_x_y_axis_backlash_cb210aea9520dbe30b8190a6f5a5a15341ad6b51901d9e3422f382572a66c704"
+      },
+      {
+        "action": "Replace fume extractor filter",
+        "action_id": "ca_replace_fume_extractor_filter_36691cbafb3d668eab42b45613e5d145a2c5a4e6d3d8b1f65b33cebb9f0c4a06",
+        "failure": "Fume extractor filter requires replacement",
+        "failure_id": "fm_fume_extractor_filter_requires_replacement_74e1aeb987866d085bb409871f077e2b9aee7f980b928e6d61a7d5de0ee32771",
+        "indicator": "Filter replacement condition",
+        "indicator_id": "sym_filter_replacement_condition_ec869268c6feb9e2ed70243f44163309458fa184252e92100855fa8033f3d573"
+      },
+      {
+        "action": "Adjust stop disc resistance",
+        "action_id": "ca_adjust_stop_disc_resistance_5cafcfd57d3abce9cde677db3f98a01adc2c3ecea345f6190f04dd1dccceac44",
+        "failure": "Incorrect stop disc activation pressure",
+        "failure_id": "fm_incorrect_stop_disc_activation_pressure_8d75c8ccb095964a0a9233eca8807e4bff36339f468d49b473ed8eb977486e0b",
+        "indicator": "Incorrect stop disc activation pressure",
+        "indicator_id": "sym_incorrect_stop_disc_activation_pressure_787991fd04d14ef0b2aefabb2f8f432fc6eaca12ade8c6c81d0bfddeffb2d0c5"
+      },
+      {
+        "action": "Adjust laser mirror alignment",
+        "action_id": "ca_adjust_laser_mirror_alignment_33d9958c7bbb1636029a4f129da1110c8b00a1443bc15b69892e5baf6d51bcaa",
+        "failure": "Laser mirror alignment requires adjustment",
+        "failure_id": "fm_laser_mirror_alignment_requires_adjustment_31528236db92e25ed123159e8171aba65f9b744d2c5faa3f572630038d44d9e5",
+        "indicator": "Laser beam misalignment",
+        "indicator_id": "sym_laser_beam_misalignment_cbd25e79e91488bbc3aab999e3d0cb979aaf0107d95ccba634f055ef9fcf138c"
+      },
+      {
+        "action": "Tighten Y-car fasteners",
+        "action_id": "ca_tighten_y_car_fasteners_604622c7585010072d635bc6eeef2704cf9fa76e3a795d2c5a5ed94e10cfd013",
+        "failure": "Loose Y-car fasteners",
+        "failure_id": "fm_loose_y_car_fasteners_0a2e7643dc1a02fdc292bb628270c2c3c8e3832383f2683b3f381f7dee1f907b",
+        "indicator": "Loose Y-car fasteners",
+        "indicator_id": "sym_loose_y_car_fasteners_6be5c0c3de60a54667a260488e737bcf5e007a0546f496af7a87fc74ed6e373d"
+      },
+      {
+        "action": "Fill chiller coolant",
+        "action_id": "ca_fill_chiller_coolant_29fb0d582dfd4f806648de00ad34f66fbfbf6b4f9047010499b7502adeb86b77",
+        "failure": "Low chiller coolant level",
+        "failure_id": "fm_low_chiller_coolant_level_93b7341997697a25f5c60c608738ff7014236257ca104a4dbd8b2b4ebd72b12c",
+        "indicator": "Low coolant level",
+        "indicator_id": "sym_low_coolant_level_53b98de0e1b6af291144e0fe518cd9c5aec37604fd28278344b32b27575cc0a6"
+      },
+      {
+        "action": "Secure pen and holder",
+        "action_id": "ca_secure_pen_and_holder_36e5822d53b7992b63f4f83577782589267af8f8575cf40e20e71b21c2494b41",
+        "failure": "Pen lift or mounting fault",
+        "failure_id": "fm_pen_lift_or_mounting_fault_683447b178a8dd9249f168c36b476d358c46be15a436087b4b29d5c53563364b",
+        "indicator": "Pen movement or seating problem",
+        "indicator_id": "sym_pen_movement_or_seating_problem_2da62c2d17fc3afddf2a23e65cb6dafaaddd45b03408ece6b9c510fd0f319b8f"
+      },
+      {
+        "action": "Adjust Y-car backlash",
+        "action_id": "ca_adjust_y_car_backlash_9913f9f4a0a9918fc9af3a967d08548ce6e13ade7f249bc63c600058ee5d4386",
+        "failure": "Y-car backlash",
+        "failure_id": "fm_y_car_backlash_fb59078ef71281fb843b5a577ed798c877ac207feb57a04f2bca745c81db7146",
+        "indicator": "Y-car free movement or clicking noise",
+        "indicator_id": "sym_y_car_free_movement_or_clicking_noise_0042c54b727dab9dd6c3ba79119c7733ad892809aae329f745eb06f0686fe1be"
+      }
+    ],
+    "relations": 196,
+    "relations_by_type": {
+      "AFFECTS": 11,
+      "HAS_COMPONENT": 162,
+      "MAY_INDICATE": 11,
+      "RESOLVED_BY": 12
+    },
+    "weak_component_sizes": [
+      197
+    ],
+    "weakly_connected_components": 1
+  },
+  "grounding_audit": {
+    "relation_evidence_refs_exact": 845,
+    "relation_evidence_refs_total": 845,
+    "unresolved": []
+  },
+  "integrity": {
+    "approval_decision_taken": false,
+    "csv_processed": false,
+    "manual_sha256": "a7467316234f2d84550e7c267bf709fda55e1023055d9569dc27348f192641d0",
+    "merge_started": false,
+    "pipeline_version": "pdf-g3-typed-diagnostic-publication-v7",
+    "revision_id": "sgrev_6xDSWV-9CuFZhWP8cgPFLg",
+    "revision_status": "reviewing",
+    "source_id": "src_tVc8egA3tfmrGJlV2jLQSQ",
+    "workspace_id": "ws_zM9nuxCtVthb0Llki6rJKg"
+  },
+  "publication_metrics": {
+    "ambiguous_near_duplicates": 18,
+    "auto_merged_duplicates": 3,
+    "candidate_corrective_actions": 12,
+    "candidate_nodes": 197,
+    "candidate_relations": 196,
+    "diagnostic_accounting_complete": false,
+    "diagnostic_candidate_evidence_anchors": 12,
+    "diagnostic_candidate_pages": 11,
+    "diagnostic_candidate_records": 43,
+    "diagnostic_components": 11,
+    "diagnostic_published_records": 11,
+    "diagnostic_unaccounted_candidate_evidence": 11,
+    "diagnostic_unaccounted_candidate_pages": 6,
+    "diagnostic_unresolved_records": 11,
+    "diagnostic_weak_component_sizes": [
+      5,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4
+    ],
+    "diagnostic_weakly_connected_components": 11,
+    "excluded_ungrounded_relations": 0,
+    "grounded_relations": 196,
+    "isolated_nodes": 0,
+    "knowledge_gaps": 38,
+    "low_confidence_ocr_pages": 6,
+    "nodes_by_type": {
+      "Asset": 1,
+      "Component": 162,
+      "CorrectiveAction": 12,
+      "FailureMode": 11,
+      "Symptom": 11
+    },
+    "published_corrective_actions": 12,
+    "published_corrective_actions_without_failure": 0,
+    "published_failure_modes": 11,
+    "published_failure_modes_without_action": 0,
+    "published_failure_modes_without_component": 0,
+    "published_failure_modes_without_indicator": 0,
+    "published_nodes": 197,
+    "published_relations": 196,
+    "published_symptoms": 11,
+    "published_symptoms_with_complete_path": 11,
+    "relations_by_type": {
+      "AFFECTS": 11,
+      "HAS_COMPONENT": 162,
+      "MAY_INDICATE": 11,
+      "RESOLVED_BY": 12
+    },
+    "review_queue_items": 38,
+    "structural_components": 162,
+    "ungrounded_relations": 0,
+    "unreadable_pages": 0,
+    "weak_component_sizes": [
+      197
+    ],
+    "weakly_connected_components": 1
+  },
+  "review": {
+    "approval_eligible": false,
+    "blocking_gaps": [
+      {
+        "blocking": true,
+        "code": "pdf_ocr_low_confidence",
+        "disposition": "review",
+        "evidence_ids": [
+          "ev_07591bb5d55bd843f680277f4c50",
+          "ev_1c67fa35bc8d2d9bd8f9c693ba84",
+          "ev_20a66ea0e3f839b567b726f7769a",
+          "ev_3a52ff7aaabb37e375852f9583e0",
+          "ev_5f4f5808c155e96a1f01664dc700",
+          "ev_6dfb99e8538d82b6b0820bb647bc"
+        ],
+        "message": "OCR a bassa confidenza sulle pagine 7, 40, 46, 49, 50, 52; la copertura non può essere dichiarata completa senza revisione.",
+        "stage": "pdf_adapter",
+        "target_id": "7,40,46,49,50,52",
+        "target_kind": "pdf_pages"
+      },
+      {
+        "blocking": true,
+        "code": "pdf_diagnostic_contract_incomplete",
+        "disposition": "review",
+        "evidence_ids": [],
+        "message": "L'estrazione tipizzata non ha prodotto una risposta completa e validabile (parsed=False, refusal=False, finish_reason=incomplete).",
+        "stage": "pdf_adapter",
+        "target_id": "",
+        "target_kind": ""
+      },
+      {
+        "blocking": true,
+        "code": "pdf_diagnostic_record_gap",
+        "disposition": "review",
+        "evidence_ids": [
+          "ev_d418042e239b8a31bb15e5cfcb12"
+        ],
+        "message": "Record diagnostico non pubblicabile senza decisione umana (missing_actions, no_action_stated)",
+        "stage": "pdf_adapter",
+        "target_id": "dbranch_1569aa36c9a1224731fbb2a05d362a0261f889dac54a6647c16e7c196333374e",
+        "target_kind": "diagnostic_record"
+      },
+      {
+        "blocking": true,
+        "code": "pdf_diagnostic_record_gap",
+        "disposition": "review",
+        "evidence_ids": [
+          "ev_383061d678d88b6ba1787aa990be"
+        ],
+        "message": "Record diagnostico non pubblicabile senza decisione umana (missing_actions, no_action_stated)",
+        "stage": "pdf_adapter",
+        "target_id": "dbranch_1714d33920ca69105a2317395fdb101334d151b4b1897fda81f76a3d7618dab9",
+        "target_kind": "diagnostic_record"
+      },
+      {
+        "blocking": true,
+        "code": "pdf_diagnostic_record_review",
+        "disposition": "review",
+        "evidence_ids": [
+          "ev_035067ef1b47950cfd3ad00718d9"
+        ],
+        "message": "Record diagnostico non pubblicabile senza decisione umana (quote_not_in_anchored_evidence)",
+        "stage": "pdf_adapter",
+        "target_id": "dbranch_18471b7ba40afb3c8f5f0472570b8a7e5753b78fe5b50bb9952cf045212e6a2e",
+        "target_kind": "diagnostic_record"
+      },
+      {
+        "blocking": true,
+        "code": "pdf_diagnostic_record_gap",
+        "disposition": "review",
+        "evidence_ids": [
+          "ev_e338fc2d91fa04033d55aa084656"
+        ],
+        "message": "Record diagnostico non pubblicabile senza decisione umana (missing_actions, no_action_stated)",
+        "stage": "pdf_adapter",
+        "target_id": "dbranch_2bb7f1bab9c1c21d15207030170f78fadb99ccefe58aa70f5686b84e7a7a1cf5",
+        "target_kind": "diagnostic_record"
+      },
+      {
+        "blocking": true,
+        "code": "pdf_diagnostic_record_gap",
+        "disposition": "review",
+        "evidence_ids": [
+          "ev_806450aa047f3a77d16976fd52a8"
+        ],
+        "message": "Record diagnostico non pubblicabile senza decisione umana (missing_actions, no_action_stated)",
+        "stage": "pdf_adapter",
+        "target_id": "dbranch_354c07b871642073145872f63b03fc670f998a0ac6308832700ea60dded1485a",
+        "target_kind": "diagnostic_record"
+      },
+      {
+        "blocking": true,
+        "code": "pdf_diagnostic_record_review",
+        "disposition": "review",
+        "evidence_ids": [
+          "ev_43f47925f9f0e304d0ad4d3aa5a7"
+        ],
+        "message": "Record diagnostico non pubblicabile senza decisione umana (quote_not_in_anchored_evidence)",
+        "stage": "pdf_adapter",
+        "target_id": "dbranch_4246e015c4b0de337b522ea8fa23415068cb08c8e756d9426e12a5b1ad1125c2",
+        "target_kind": "diagnostic_record"
+      },
+      {
+        "blocking": true,
+        "code": "pdf_diagnostic_record_gap",
+        "disposition": "review",
+        "evidence_ids": [
+          "ev_96ac2615a153428fc97ecaba7d95",
+          "ev_ca15dcbf9360036ea10347a7518e"
+        ],
+        "message": "Record diagnostico non pubblicabile senza decisione umana (missing_actions, no_action_stated)",
+        "stage": "pdf_adapter",
+        "target_id": "dbranch_44024d57b71b4062dca28631997050893f78265123a906bddcb9c0d1203212b6",
+        "target_kind": "diagnostic_record"
+      },
+      {
+        "blocking": true,
+        "code": "pdf_diagnostic_record_review",
+        "disposition": "review",
+        "evidence_ids": [
+          "ev_35a74508df3f54d971c0cf5c3c21"
+        ],
+        "message": "Record diagnostico non pubblicabile senza decisione umana (lineage_anchor_outside_bundle, missing_actions, quote_not_in_anchored_evidence)",
+        "stage": "pdf_adapter",
+        "target_id": "dbranch_5d3a532d17f2551e70f9251d8be21bb789b448f5a03eac2fc555da52d2501bd9",
+        "target_kind": "diagnostic_record"
+      },
+      {
+        "blocking": true,
+        "code": "pdf_diagnostic_record_review",
+        "disposition": "review",
+        "evidence_ids": [
+          "ev_53d409f13779de9a9f170ae6689e"
+        ],
+        "message": "Record diagnostico non pubblicabile senza decisione umana (action_without_failure, missing_failure)",
+        "stage": "pdf_adapter",
+        "target_id": "dbranch_6426da90bef298fc76569d845fef754915c61d40c579e0c061e0af1b4e7dd350",
+        "target_kind": "diagnostic_record"
+      },
+      {
+        "blocking": true,
+        "code": "pdf_diagnostic_record_review",
+        "disposition": "review",
+        "evidence_ids": [
+          "ev_4cb617ef81267784b7f3fcdc5895"
+        ],
+        "message": "Record diagnostico non pubblicabile senza decisione umana (lineage_anchor_outside_bundle, quote_not_in_anchored_evidence)",
+        "stage": "pdf_adapter",
+        "target_id": "dbranch_6fcf0dabb1e015f976ec418c8e165208d961b77851fb2ca18cc9351fd416c558",
+        "target_kind": "diagnostic_record"
+      },
+      {
+        "blocking": true,
+        "code": "pdf_diagnostic_record_review",
+        "disposition": "review",
+        "evidence_ids": [
+          "ev_4cb617ef81267784b7f3fcdc5895"
+        ],
+        "message": "Record diagnostico non pubblicabile senza decisione umana (lineage_anchor_outside_bundle, quote_not_in_anchored_evidence)",
+        "stage": "pdf_adapter",
+        "target_id": "dbranch_da70920af0d78d4b7a83489e7856d9852bd543a3ca23e66f9cabf73444914b1f",
+        "target_kind": "diagnostic_record"
+      },
+      {
+        "blocking": true,
+        "code": "pdf_diagnostic_candidate_pages_unaccounted",
+        "disposition": "review",
+        "evidence_ids": [],
+        "message": "Pagine candidate senza record o disposizione esplicita: 17, 18, 37, 38, 39, 54",
+        "stage": "pdf_adapter",
+        "target_id": "17,18,37,38,39,54",
+        "target_kind": "diagnostic_candidate_pages"
+      },
+      {
+        "blocking": true,
+        "code": "pdf_diagnostic_candidate_evidence_unaccounted",
+        "disposition": "review",
+        "evidence_ids": [
+          "ev_03a7a5e7ce15978c79b5ae484c95",
+          "ev_123ba29ca48fc9c754e7ce337084",
+          "ev_132319b34b892fc7de8044417b45",
+          "ev_4edf283ff40abdccfd9139c51880",
+          "ev_57fac894c5fec2c53d79c47b4f56",
+          "ev_629fad4debdc0cd6282e477fa36f",
+          "ev_69d12b1e9493a5b6e2975b3f316c",
+          "ev_90d7a74e940cfe75f7a2c4920a09",
+          "ev_a1fc4c4b94f71e4fd7e5008ad5ba",
+          "ev_b5c4b499baa12790aaf275041a81",
+          "ev_ba9c39ef6033a49617fd962014b7"
+        ],
+        "message": "Passaggi diagnostici candidati senza record o disposizione esplicita.",
+        "stage": "pdf_adapter",
+        "target_id": "ev_03a7a5e7ce15978c79b5ae484c95,ev_123ba29ca48fc9c754e7ce337084,ev_132319b34b892fc7de8044417b45,ev_4edf283ff40abdccfd9139c51880,ev_57fac894c5fec2c53d79c47b4f56,ev_629fad4debdc0cd6282e477fa36f,ev_69d12b1e9493a5b6e2975b3f316c,ev_90d7a74e940cfe75f7a2c4920a09,ev_a1fc4c4b94f71e4fd7e5008ad5ba,ev_b5c4b499baa12790aaf275041a81,ev_ba9c39ef6033a49617fd962014b7",
+        "target_kind": "diagnostic_candidate_evidence"
+      }
+    ],
+    "review_summary": {
+      "blocking": 15,
+      "by_code": {
+        "canonicalization_ambiguous": 18,
+        "pdf_diagnostic_candidate_evidence_unaccounted": 1,
+        "pdf_diagnostic_candidate_pages_unaccounted": 1,
+        "pdf_diagnostic_contract_incomplete": 1,
+        "pdf_diagnostic_record_gap": 5,
+        "pdf_diagnostic_record_review": 6,
+        "pdf_node_provenance_unresolved": 1,
+        "pdf_ocr_low_confidence": 1,
+        "pdf_pipeline_blocked": 1,
+        "pdf_pipeline_not_reviewable": 1,
+        "pdf_relation_endpoint_omitted": 1,
+        "pdf_schema_instruction_not_actionable": 1
+      },
+      "total": 38
+    }
+  },
+  "scope": {
+    "diagnostic_pages": [
+      2,
+      3,
+      4,
+      12,
+      13,
+      14,
+      16,
+      17,
+      18,
+      19,
+      26,
+      27,
+      28,
+      29,
+      30,
+      36,
+      37,
+      38,
+      39,
+      40,
+      53,
+      54
+    ],
+    "method": "retained_cut_plan",
+    "page_offset": 0,
+    "retrieval_pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54
+    ],
+    "sections": [
+      {
+        "end_page": 8,
+        "name": "INSTALLATION",
+        "source": "rule",
+        "start_page": 8
+      },
+      {
+        "end_page": 12,
+        "name": "Chiller Installation",
+        "source": "rule",
+        "start_page": 12
+      },
+      {
+        "end_page": 12,
+        "name": "Co2 Tank Installation",
+        "source": "rule",
+        "start_page": 12
+      },
+      {
+        "end_page": 12,
+        "name": "Fume extractor hose and Festoon installation",
+        "source": "rule",
+        "start_page": 12
+      },
+      {
+        "end_page": 12,
+        "name": "Gantry Installation",
+        "source": "rule",
+        "start_page": 12
+      },
+      {
+        "end_page": 12,
+        "name": "Vacuum Assembly Installation",
+        "source": "rule",
+        "start_page": 12
+      },
+      {
+        "end_page": 13,
+        "name": "Aligning, Cleaning and Replacing Consumables",
+        "source": "rule",
+        "start_page": 13
+      },
+      {
+        "end_page": 13,
+        "name": "SERVICE and MAINTENANCE",
+        "source": "rule",
+        "start_page": 13
+      },
+      {
+        "end_page": 14,
+        "name": "Round Knife Replacement",
+        "source": "rule",
+        "start_page": 14
+      },
+      {
+        "end_page": 15,
+        "name": "Drag Knife Replacement",
+        "source": "rule",
+        "start_page": 15
+      },
+      {
+        "end_page": 16,
+        "name": "Pen Replacement",
+        "source": "rule",
+        "start_page": 16
+      },
+      {
+        "end_page": 16,
+        "name": "Punch Replacement",
+        "source": "rule",
+        "start_page": 16
+      },
+      {
+        "end_page": 17,
+        "name": "Cleaning of Airbrush",
+        "source": "rule",
+        "start_page": 17
+      },
+      {
+        "end_page": 17,
+        "name": "Needle Removal",
+        "source": "rule",
+        "start_page": 17
+      },
+      {
+        "end_page": 18,
+        "name": "X-Motor Belt Replacement",
+        "source": "rule",
+        "start_page": 18
+      },
+      {
+        "end_page": 18,
+        "name": "Y-Motor Belt Replacement",
+        "source": "rule",
+        "start_page": 18
+      },
+      {
+        "end_page": 19,
+        "name": "Theta-Motor Belt Replacement",
+        "source": "rule",
+        "start_page": 19
+      },
+      {
+        "end_page": 19,
+        "name": "X-Axis Linear Bearing Replacement",
+        "source": "rule",
+        "start_page": 19
+      },
+      {
+        "end_page": 20,
+        "name": "Y-Axis Top Linear Bearing Replacement",
+        "source": "rule",
+        "start_page": 20
+      },
+      {
+        "end_page": 21,
+        "name": "Y-Axis Front Linear Bearing Replacement",
+        "source": "rule",
+        "start_page": 21
+      },
+      {
+        "end_page": 22,
+        "name": "Laser Mirror Replacement",
+        "source": "rule",
+        "start_page": 22
+      },
+      {
+        "end_page": 23,
+        "name": "Laser Focus Lens Replacement",
+        "source": "rule",
+        "start_page": 23
+      },
+      {
+        "end_page": 24,
+        "name": "Fume Extractor Filter Replacement",
+        "source": "rule",
+        "start_page": 24
+      },
+      {
+        "end_page": 24,
+        "name": "Laser Optics Cleaning",
+        "source": "rule",
+        "start_page": 24
+      },
+      {
+        "end_page": 25,
+        "name": "CALIBRATION & ADJUSTMENTS",
+        "source": "rule",
+        "start_page": 25
+      },
+      {
+        "end_page": 25,
+        "name": "Pressure Transducer Calibration",
+        "source": "rule",
+        "start_page": 25
+      },
+      {
+        "end_page": 28,
+        "name": "Daily Maintenance (Start of each shift)",
+        "source": "rule",
+        "start_page": 28
+      },
+      {
+        "end_page": 28,
+        "name": "Gantry Calibration Procedure",
+        "source": "rule",
+        "start_page": 28
+      },
+      {
+        "end_page": 28,
+        "name": "Laser Mirror Alignment/Adjustment",
+        "source": "rule",
+        "start_page": 28
+      },
+      {
+        "end_page": 28,
+        "name": "SCHEDULES MAINTENANCE PROCEDURES",
+        "source": "rule",
+        "start_page": 28
+      },
+      {
+        "end_page": 36,
+        "name": "Yearly Maintenance Checklist",
+        "source": "rule",
+        "start_page": 31
+      },
+      {
+        "end_page": 38,
+        "name": "TROUBLE SHOOTING GUIDE",
+        "source": "rule",
+        "start_page": 37
+      },
+      {
+        "end_page": 39,
+        "name": "ELECTRICAL & PNEUMATIC DIAGRAMS",
+        "source": "rule",
+        "start_page": 39
+      },
+      {
+        "end_page": 50,
+        "name": "Pneumatic Diagram Blue Print No. (31-9000-41)",
+        "source": "rule",
+        "start_page": 40
+      }
+    ],
+    "selected_pages": [
+      2,
+      3,
+      4,
+      8,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      32,
+      33,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      53,
+      54
+    ],
+    "skipped": false,
+    "structural_pages": [
+      2,
+      4,
+      8,
+      12,
+      14,
+      15,
+      16,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      30,
+      32,
+      33,
+      35,
+      36,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      53
+    ],
+    "total_pages": 54,
+    "unselected_pages": [
+      1,
+      5,
+      6,
+      7,
+      9,
+      10,
+      11,
+      31,
+      34,
+      51,
+      52
+    ]
+  },
+  "validation": {
+    "domain_range_errors": 0,
+    "duplicate_ids": 0,
+    "endpoint_errors": 0,
+    "extra_properties": 0,
+    "graph_invariant_errors": 0,
+    "issues": [],
+    "passed": true,
+    "provenance_resolvable": 383,
+    "provenance_total": 383,
+    "relation_grounding_passed": 196,
+    "relation_grounding_total": 196,
+    "required_properties_present": 825,
+    "required_properties_total": 825,
+    "unresolved_mapping_diagnostics": 0
+  },
+  "verdict": {
+    "reason": "Frozen E-554 coverage is 0/8 with 0/3 forbidden cross-pairings; schema/topology/grounding results are reported independently below.",
+    "status": "no_go"
+  }
+}

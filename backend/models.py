@@ -263,6 +263,10 @@ class OntologyPipelineResponse(BaseModel):
     graph_issues: list[GraphIssue] = Field(default_factory=list)
     suggested_relations: list[SuggestedRelation] = Field(default_factory=list)
     confidence_report: ConfidenceReport | None = None
+    # Record-level accounting for the typed diagnostic extraction contract.
+    # Kept outside OntologyInstance so lineage, incomplete candidates and model
+    # diagnostics never become part of the configured domain ontology.
+    diagnostic_contract_report: dict[str, Any] = Field(default_factory=dict)
     resolution_completion_report: dict[str, Any] = Field(default_factory=dict)
     # Run-level, deterministic cross-chunk consolidation metadata.  This is
     # intentionally outside OntologyInstance so the configured ontology stays

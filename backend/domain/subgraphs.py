@@ -122,6 +122,7 @@ class TokenCostMetrics(BaseModel):
     llm_calls: int = Field(default=0, ge=0)
     prompt_tokens: int = Field(default=0, ge=0)
     cached_prompt_tokens: int = Field(default=0, ge=0)
+    cache_write_prompt_tokens: int = Field(default=0, ge=0)
     non_cached_prompt_tokens: int = Field(default=0, ge=0)
     completion_tokens: int = Field(default=0, ge=0)
     total_tokens: int = Field(default=0, ge=0)

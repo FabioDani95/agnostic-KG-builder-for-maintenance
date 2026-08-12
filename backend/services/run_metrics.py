@@ -13,18 +13,30 @@ MODEL_PRICING = {
         "input_per_million": 5.00,
         "cached_input_per_million": 0.50,
         "output_per_million": 30.00,
+        "cache_write_multiplier": 1.25,
+        "long_context_threshold_tokens": 272000,
+        "long_context_input_multiplier": 2.0,
+        "long_context_output_multiplier": 1.5,
     },
     "gpt-5.6-terra": {
         "label": "GPT-5.6 Terra",
         "input_per_million": 2.00,
         "cached_input_per_million": 0.20,
         "output_per_million": 12.00,
+        "cache_write_multiplier": 1.25,
+        "long_context_threshold_tokens": 272000,
+        "long_context_input_multiplier": 2.0,
+        "long_context_output_multiplier": 1.5,
     },
     "gpt-5.6-luna": {
         "label": "GPT-5.6 Luna",
         "input_per_million": 0.20,
         "cached_input_per_million": 0.02,
         "output_per_million": 1.20,
+        "cache_write_multiplier": 1.25,
+        "long_context_threshold_tokens": 272000,
+        "long_context_input_multiplier": 2.0,
+        "long_context_output_multiplier": 1.5,
     },
     "gpt-5.4": {
         "label": "GPT-5.4",
@@ -94,20 +106,56 @@ def estimate_cost_usd(
     completion_tokens: int,
     cached_prompt_tokens: int = 0,
     model_name: str | None = None,
+    cache_write_prompt_tokens: int = 0,
 ) -> float:
     pricing = pricing_for_model(model_name)
-    cached_prompt_tokens = max(0, int(cached_prompt_tokens or 0))
     prompt_tokens = max(0, int(prompt_tokens or 0))
     completion_tokens = max(0, int(completion_tokens or 0))
+    cached_prompt_tokens = min(
+        prompt_tokens,
+        max(0, int(cached_prompt_tokens or 0)),
+    )
+    cache_write_prompt_tokens = min(
+        max(0, prompt_tokens - cached_prompt_tokens),
+        max(0, int(cache_write_prompt_tokens or 0)),
+    )
     cached_input_rate = pricing["cached_input_per_million"]
     # Models without a cached tier fall back to standard input pricing for estimation.
     effective_cached_rate = pricing["input_per_million"] if cached_input_rate is None else cached_input_rate
-    non_cached_prompt_tokens = max(0, prompt_tokens - cached_prompt_tokens)
-    return (
-        (non_cached_prompt_tokens / 1_000_000) * pricing["input_per_million"]
-        + (cached_prompt_tokens / 1_000_000) * effective_cached_rate
-        + (completion_tokens / 1_000_000) * pricing["output_per_million"]
+    ordinary_prompt_tokens = max(
+        0,
+        prompt_tokens - cached_prompt_tokens - cache_write_prompt_tokens,
     )
+    cache_write_rate = pricing["input_per_million"] * float(
+        pricing.get("cache_write_multiplier", 1.0) or 1.0
+    )
+    long_context = prompt_tokens > int(
+        pricing.get("long_context_threshold_tokens", 0) or 0
+    ) > 0
+    input_multiplier = (
+        float(pricing.get("long_context_input_multiplier", 1.0) or 1.0)
+        if long_context
+        else 1.0
+    )
+    output_multiplier = (
+        float(pricing.get("long_context_output_multiplier", 1.0) or 1.0)
+        if long_context
+        else 1.0
+    )
+    estimated_cost = (
+        (
+            (ordinary_prompt_tokens / 1_000_000) * pricing["input_per_million"]
+            + (cached_prompt_tokens / 1_000_000) * effective_cached_rate
+            + (cache_write_prompt_tokens / 1_000_000) * cache_write_rate
+        )
+        * input_multiplier
+        + (completion_tokens / 1_000_000)
+        * pricing["output_per_million"]
+        * output_multiplier
+    )
+    # Keep monetary estimates stable across platforms and exact-comparison
+    # call sites while retaining substantially more precision than the ledger.
+    return round(estimated_cost, 12)
 
 
 def usage_from_response(response: Any, operation: str) -> dict[str, Any]:
@@ -117,6 +165,9 @@ def usage_from_response(response: Any, operation: str) -> dict[str, Any]:
     total_tokens = int(getattr(usage, "total_tokens", prompt_tokens + completion_tokens) or (prompt_tokens + completion_tokens))
     prompt_details = getattr(usage, "prompt_tokens_details", None)
     cached_prompt_tokens = int(getattr(prompt_details, "cached_tokens", 0) or 0)
+    cache_write_prompt_tokens = int(
+        getattr(prompt_details, "cache_write_tokens", 0) or 0
+    )
     model_name = getattr(response, "model", "") or ""
     pricing = pricing_for_model(model_name)
     return {
@@ -127,6 +178,7 @@ def usage_from_response(response: Any, operation: str) -> dict[str, Any]:
         "completion": completion_tokens,
         "total": total_tokens,
         "cached_prompt": cached_prompt_tokens,
+        "cache_write_prompt": cache_write_prompt_tokens,
         "non_cached_prompt": max(0, prompt_tokens - cached_prompt_tokens),
         "estimated_cost_usd": round(
             estimate_cost_usd(
@@ -134,6 +186,7 @@ def usage_from_response(response: Any, operation: str) -> dict[str, Any]:
                 completion_tokens=completion_tokens,
                 cached_prompt_tokens=cached_prompt_tokens,
                 model_name=model_name,
+                cache_write_prompt_tokens=cache_write_prompt_tokens,
             ),
             6,
         ),
@@ -145,6 +198,9 @@ def aggregate_usage(entries: list[dict[str, Any]] | None) -> dict[str, Any]:
     prompt_tokens = sum(int(item.get("prompt", 0) or 0) for item in items)
     completion_tokens = sum(int(item.get("completion", 0) or 0) for item in items)
     cached_prompt_tokens = sum(int(item.get("cached_prompt", 0) or 0) for item in items)
+    cache_write_prompt_tokens = sum(
+        int(item.get("cache_write_prompt", 0) or 0) for item in items
+    )
     total_tokens = sum(int(item.get("total", 0) or 0) for item in items)
     models = sorted({str(item.get("model", "") or "") for item in items if item.get("model")})
     pricing_models = sorted({str(item.get("pricing_model", "") or "") for item in items if item.get("pricing_model")})
@@ -159,6 +215,7 @@ def aggregate_usage(entries: list[dict[str, Any]] | None) -> dict[str, Any]:
             "llm_calls": 0,
             "prompt_tokens": 0,
             "cached_prompt_tokens": 0,
+            "cache_write_prompt_tokens": 0,
             "non_cached_prompt_tokens": 0,
             "completion_tokens": 0,
             "total_tokens": 0,
@@ -167,6 +224,9 @@ def aggregate_usage(entries: list[dict[str, Any]] | None) -> dict[str, Any]:
         bucket["llm_calls"] += 1
         bucket["prompt_tokens"] += int(item.get("prompt", 0) or 0)
         bucket["cached_prompt_tokens"] += int(item.get("cached_prompt", 0) or 0)
+        bucket["cache_write_prompt_tokens"] += int(
+            item.get("cache_write_prompt", 0) or 0
+        )
         bucket["non_cached_prompt_tokens"] += int(item.get("non_cached_prompt", 0) or 0)
         bucket["completion_tokens"] += int(item.get("completion", 0) or 0)
         bucket["total_tokens"] += int(item.get("total", 0) or 0)
@@ -179,6 +239,7 @@ def aggregate_usage(entries: list[dict[str, Any]] | None) -> dict[str, Any]:
         "llm_calls": len(items),
         "prompt_tokens": prompt_tokens,
         "cached_prompt_tokens": cached_prompt_tokens,
+        "cache_write_prompt_tokens": cache_write_prompt_tokens,
         "non_cached_prompt_tokens": max(0, prompt_tokens - cached_prompt_tokens),
         "completion_tokens": completion_tokens,
         "total_tokens": total_tokens,
@@ -197,6 +258,7 @@ def merge_usage_summaries(entries: list[dict[str, Any]] | None) -> dict[str, Any
         "llm_calls": 0,
         "prompt_tokens": 0,
         "cached_prompt_tokens": 0,
+        "cache_write_prompt_tokens": 0,
         "non_cached_prompt_tokens": 0,
         "completion_tokens": 0,
         "total_tokens": 0,
@@ -209,6 +271,7 @@ def merge_usage_summaries(entries: list[dict[str, Any]] | None) -> dict[str, Any
         "llm_calls",
         "prompt_tokens",
         "cached_prompt_tokens",
+        "cache_write_prompt_tokens",
         "non_cached_prompt_tokens",
         "completion_tokens",
         "total_tokens",
@@ -293,12 +356,21 @@ def build_metrics_payload(store: dict[str, Any]) -> dict[str, Any]:
                 "llm_calls": 0,
                 "prompt_tokens": 0,
                 "cached_prompt_tokens": 0,
+                "cache_write_prompt_tokens": 0,
                 "non_cached_prompt_tokens": 0,
                 "completion_tokens": 0,
                 "total_tokens": 0,
                 "estimated_cost_usd": 0.0,
             })
-            for field in ("llm_calls", "prompt_tokens", "cached_prompt_tokens", "non_cached_prompt_tokens", "completion_tokens", "total_tokens"):
+            for field in (
+                "llm_calls",
+                "prompt_tokens",
+                "cached_prompt_tokens",
+                "cache_write_prompt_tokens",
+                "non_cached_prompt_tokens",
+                "completion_tokens",
+                "total_tokens",
+            ):
                 bucket[field] += int(model_data.get(field, 0) or 0)
             bucket["estimated_cost_usd"] = round(
                 float(bucket["estimated_cost_usd"]) + float(model_data.get("estimated_cost_usd", 0) or 0),
@@ -310,6 +382,10 @@ def build_metrics_payload(store: dict[str, Any]) -> dict[str, Any]:
         "llm_calls": sum(int(stage.get("llm_calls", 0) or 0) for stage in stages.values()),
         "prompt_tokens": sum(int(stage.get("prompt_tokens", 0) or 0) for stage in stages.values()),
         "cached_prompt_tokens": sum(int(stage.get("cached_prompt_tokens", 0) or 0) for stage in stages.values()),
+        "cache_write_prompt_tokens": sum(
+            int(stage.get("cache_write_prompt_tokens", 0) or 0)
+            for stage in stages.values()
+        ),
         "non_cached_prompt_tokens": sum(int(stage.get("non_cached_prompt_tokens", 0) or 0) for stage in stages.values()),
         "completion_tokens": sum(int(stage.get("completion_tokens", 0) or 0) for stage in stages.values()),
         "total_tokens": sum(int(stage.get("total_tokens", 0) or 0) for stage in stages.values()),
@@ -391,6 +467,9 @@ def project_agent_token_ledger(store: dict[str, Any]) -> dict[str, Any]:
             "prompt_tokens": int(stage_data.get("prompt_tokens", 0) or 0),
             "completion_tokens": int(stage_data.get("completion_tokens", 0) or 0),
             "cached_tokens": int(stage_data.get("cached_prompt_tokens", 0) or 0),
+            "cache_write_tokens": int(
+                stage_data.get("cache_write_prompt_tokens", 0) or 0
+            ),
             "total_tokens": int(stage_data.get("total_tokens", 0) or 0),
             "estimated_cost": round(float(stage_data.get("estimated_cost_usd", 0) or 0), 6),
             "models": list(stage_data.get("models", []) or []),
