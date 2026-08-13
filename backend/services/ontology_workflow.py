@@ -308,7 +308,7 @@ def _canonical_asset_identity(store: dict) -> dict[str, object]:
 
 
 def _diagnostic_record_windows(store: dict) -> list[dict]:
-    """Validate the minimal workflow view of pre-LLM record windows."""
+    """Validate advisory pre-LLM record windows for audit telemetry only."""
 
     rendered: list[dict] = []
     for raw in store.get("diagnostic_record_windows", []) or []:
@@ -338,6 +338,21 @@ def _diagnostic_record_windows(store: dict) -> list[dict]:
             "text_with_pages": text,
         })
     return sorted(rendered, key=lambda item: item["window_id"])
+
+
+def _diagnostic_evidence_for_pages(
+    evidence_units: list,
+    pages: list[dict],
+) -> list:
+    """Limit compiler evidence to the exact physical pages shown to the model."""
+
+    allowed_pages = {int(page["page_number"]) for page in pages}
+    return [
+        unit
+        for unit in evidence_units
+        if int(getattr(getattr(unit, "locator", None), "page", 0) or 0)
+        in allowed_pages
+    ]
 
 
 def _render_diagnostic_windows(windows: list[dict]) -> str:
@@ -1325,36 +1340,28 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
         diagnostic_pages = filtered_pages
         structural_pages = []
 
-    record_windows = _diagnostic_record_windows(store)
-    pages_by_number = {int(page["page_number"]): page for page in filtered_pages}
-    if record_windows:
-        # One source-owned row/record per primary call.  This is intentional:
-        # it bounds output, makes failed recovery selective, and prevents one
-        # malformed row from erasing a dense troubleshooting table.
-        diagnostic_chunks = [
-            (
-                [
-                    pages_by_number[page]
-                    for page in window["page_numbers"]
-                    if page in pages_by_number
-                ],
-                [],
-                [window],
-            )
-            for window in record_windows
-        ]
-        diagnostic_chunks = [chunk for chunk in diagnostic_chunks if chunk[0]]
-    else:
-        diagnostic_chunks = [
-            (pages, context, [])
-            for pages, context in _split_pages_by_section(
-                diagnostic_pages,
-                sections,
-                max_chars,
-                max_pages_per_chunk,
-                int(ontology_cfg.get("diagnostic_chunk_overlap_pages", 1)),
-            )
-        ]
+    advisory_record_windows = _diagnostic_record_windows(store)
+    # The semantic scope is authoritative.  Deterministic row/prose recognizers
+    # are necessarily vocabulary- and layout-sensitive, so using their output
+    # as an admission gate can silently erase entire troubleshooting sections.
+    # Every scoped diagnostic page therefore reaches the typed extractor in a
+    # bounded section chunk.  Record windows remain audit telemetry only; the
+    # deterministic compiler still validates every returned evidence span.
+    diagnostic_chunks = [
+        (pages, context, [])
+        for pages, context in _split_pages_by_section(
+            diagnostic_pages,
+            sections,
+            max_chars,
+            int(
+                ontology_cfg.get(
+                    "diagnostic_max_pages_per_chunk",
+                    max_pages_per_chunk,
+                )
+            ),
+            int(ontology_cfg.get("diagnostic_chunk_overlap_pages", 1)),
+        )
+    ]
     structural_chunks = _split_pages_by_section(
         structural_pages,
         sections,
@@ -1549,7 +1556,10 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                         else None
                     ),
                     diagnostic_evidence_units=(
-                        list(store.get("diagnostic_evidence_units") or [])
+                        _diagnostic_evidence_for_pages(
+                            list(store.get("diagnostic_evidence_units") or []),
+                            chunk_pages,
+                        )
                         if extraction_role == "diagnostic"
                         else None
                     ),
@@ -1671,8 +1681,9 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                         ),
                         "record_windows": chunk_windows,
                     },
-                    diagnostic_evidence_units=list(
-                        store.get("diagnostic_evidence_units") or []
+                    diagnostic_evidence_units=_diagnostic_evidence_for_pages(
+                        list(store.get("diagnostic_evidence_units") or []),
+                        chunk_pages,
                     ),
                 )
             except Exception as exc:
@@ -1748,6 +1759,38 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
         )
 
     result = _merge_pipeline_results(chunk_results, asset_identity=asset_identity)
+    if result.diagnostic_contract_report:
+        expected_diagnostic_pages = sorted({
+            int(page["page_number"]) for page in diagnostic_pages
+        })
+        processed_diagnostic_pages = sorted({
+            int(page)
+            for page in (
+                result.diagnostic_contract_report.get("input_pages") or []
+            )
+            if int(page) > 0
+        })
+        unprocessed_diagnostic_pages = sorted(
+            set(expected_diagnostic_pages) - set(processed_diagnostic_pages)
+        )
+        coverage_complete = not unprocessed_diagnostic_pages
+        coverage_report = {
+            **dict(result.diagnostic_contract_report),
+            "diagnostic_input_policy": "semantic_scope_full_page_v1",
+            "expected_diagnostic_pages": expected_diagnostic_pages,
+            "processed_diagnostic_pages": processed_diagnostic_pages,
+            "unprocessed_diagnostic_pages": unprocessed_diagnostic_pages,
+            "diagnostic_page_coverage_complete": coverage_complete,
+        }
+        if not coverage_complete:
+            coverage_report.update({
+                "parsed": False,
+                "finish_reason": "incomplete",
+                "escalation_recommended": True,
+            })
+        result = result.model_copy(update={
+            "diagnostic_contract_report": coverage_report,
+        })
     result, finalize_usage_entries, run_resolution_report, quality_stats = await asyncio.to_thread(
         _finalize_run_level_quality,
         result,
@@ -1831,6 +1874,8 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                 "structural_pages": len(structural_pages),
                 "diagnostic_chunks": len(diagnostic_chunks),
                 "structural_chunks": len(structural_chunks),
+                "diagnostic_input_policy": "semantic_scope_full_page_v1",
+                "advisory_record_window_count": len(advisory_record_windows),
                 "reasoning_effort": req.reasoning_effort or "default",
                 "retry_count": total_retries,
                 "status": result.status,

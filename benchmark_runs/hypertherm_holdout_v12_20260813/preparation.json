@@ -1,0 +1,89 @@
+{
+  "approval_decision_taken": false,
+  "generation_started": false,
+  "golden_loaded": false,
+  "inventory": {
+    "evidence_units": 4482,
+    "page_units": 231,
+    "quality_flag_counts": {
+      "OCR_LOW_CONFIDENCE": 9
+    },
+    "raw_units": 4821
+  },
+  "llm_mode": "mock",
+  "merge_started": false,
+  "mode": "offline_preparation_only",
+  "openai_api_key_present": false,
+  "pdf": {
+    "path": "/Users/fabio.daniele/Coding/log-kg-builder/manuals/holdout_candidates_20260813/hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+    "sha256": "3c2b7cd62ae1b8b69f8b86fcbf9b36f4ee1fc8d35fed3f90d6271f8ef50d5c45",
+    "size_bytes": 20490190
+  },
+  "preparation": {
+    "adapter_version": "pdf-v3",
+    "balanced": true,
+    "evidence_count": 4482,
+    "excluded_page_count": 0,
+    "included_page_count": 231,
+    "mode": "automatic_all_pages",
+    "page_count": 231,
+    "run_id": "run_Siy5CNDhlTNIcmj36RWsMg",
+    "run_state": "awaiting_review",
+    "scope_id": "scope_src_uH0C5gXnpEjsE54821_Nqw_0001",
+    "scope_version": 1,
+    "source_id": "src_uH0C5gXnpEjsE54821_Nqw",
+    "unclassified_total": 0
+  },
+  "source": {
+    "active_assessment": {
+      "assessment_id": "srcassess_lJqaB779XUex3lkp7CbPwg",
+      "asset_identity_version": 1,
+      "created_at": "2026-08-13T20:50:07.673517Z",
+      "decided_by": {
+        "decision_id": null,
+        "kind": "deterministic_rule",
+        "operator_assertion_id": null
+      },
+      "observed_claims": [],
+      "outcome": "compatible",
+      "reason_codes": [
+        "OPERATOR_SELECTED_SUPPORTED_FILE"
+      ],
+      "source_id": "src_uH0C5gXnpEjsE54821_Nqw",
+      "supersedes": null,
+      "workspace_id": "ws_VcmoWwmy5I9PNnWuiZz4QQ"
+    },
+    "asset_assessment_id": "srcassess_lJqaB779XUex3lkp7CbPwg",
+    "authority": "normative",
+    "created_at": "2026-08-13T20:50:07.673517Z",
+    "file_name": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+    "language_hints": [],
+    "media_type": "application/pdf",
+    "raw_relpath": "3c/3c2b7cd62ae1b8b69f8b86fcbf9b36f4ee1fc8d35fed3f90d6271f8ef50d5c45",
+    "sha256": "3c2b7cd62ae1b8b69f8b86fcbf9b36f4ee1fc8d35fed3f90d6271f8ef50d5c45",
+    "size_bytes": 20490190,
+    "source_id": "src_uH0C5gXnpEjsE54821_Nqw",
+    "source_kind": "pdf",
+    "status": "accepted",
+    "workspace_id": "ws_VcmoWwmy5I9PNnWuiZz4QQ"
+  },
+  "workspace": {
+    "asset": {
+      "asset_id": "asset_kSeYzlPGzlbxu8oCkFdVvQ",
+      "asset_type": "plasma cutting system",
+      "brand": "Hypertherm",
+      "description": "Plasma arc cutting system with integrated air compressor",
+      "model": "Powermax30 AIR",
+      "name": "Powermax30 AIR plasma cutting system"
+    },
+    "asset_identity_version": 1,
+    "confirmed_at": "2026-08-13T20:50:07.604918Z",
+    "created_at": "2026-08-13T20:50:07.604918Z",
+    "identifiers": [],
+    "ontology_sha256": "81f2d894e8b4c3c0ba3bb2e7149941ae91b704ebd8a8b8dedef91b79bd1508db",
+    "ontology_version": "2.0",
+    "status": "sources_required",
+    "updated_at": "2026-08-13T20:50:07.604918Z",
+    "workspace_id": "ws_VcmoWwmy5I9PNnWuiZz4QQ"
+  }
+}

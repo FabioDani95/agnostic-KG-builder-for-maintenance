@@ -62,7 +62,7 @@ from backend.services.ontology_workflow import draft_ontology_workflow
 from backend.services.run_metrics import MODEL_PRICING, build_metrics_payload
 from backend.services.scoping_workflow import create_cut_plan_workflow
 
-PDF_SUBGRAPH_GENERATOR_VERSION = "pdf-g3-atomic-record-publication-v11"
+PDF_SUBGRAPH_GENERATOR_VERSION = "pdf-g3-semantic-scope-extraction-v12"
 
 _ID_PROPERTIES = {
     "Asset": "asset_id",
@@ -658,6 +658,7 @@ class PdfSourceSubgraphBuilder:
         store["diagnostic_record_windows"] = [
             window.model_dump(mode="json") for window in diagnostic_record_windows
         ]
+        store["diagnostic_record_windows_mode"] = "advisory_only"
         # The compiler resolves against canonical units, never against the
         # rendered prompt copy.  These objects stay process-local; only the
         # compilation ledger is serialized into the revision.
@@ -667,53 +668,29 @@ class PdfSourceSubgraphBuilder:
             for page_number in physical_pages
             if not str(evidence_by_page.get(page_number, {}).get("text", "")).strip()
         )
-        window_candidate_pages = sorted({
-            page
-            for window in diagnostic_record_windows
-            for page in window.page_numbers
-        })
-        window_candidate_anchors = sorted({
-            anchor
-            for window in diagnostic_record_windows
-            for anchor in window.allowed_source_anchors
-        })
-        accounted_candidate_pages = (
-            window_candidate_pages if diagnostic_record_windows else sorted(all_candidate_pages)
-        )
-        evidence_unit_by_id = {str(unit.evidence_id): unit for unit in evidence}
-        accounted_candidate_anchors = (
-            [
-                {
-                    "evidence_id": anchor,
-                    "page": int(evidence_unit_by_id[anchor].locator.page),
-                }
-                for anchor in window_candidate_anchors
-                if anchor in evidence_unit_by_id
-                and isinstance(evidence_unit_by_id[anchor].locator, PdfLocator)
-            ]
-            if diagnostic_record_windows
-            else candidate_evidence_anchors
-        )
         diagnostic_scan_report = {
             "physical_pages_scanned": len(physical_pages),
-            # The high-recall page scan controls scoping.  Accounting is tied
-            # to the stricter deterministic record-window inventory so generic
-            # maintenance/checklists are not forced into fake diagnostics.
-            "candidate_pages": accounted_candidate_pages,
+            # High-recall discovery and semantic scoping control model input.
+            # Layout/vocabulary-sensitive windows are retained as telemetry,
+            # never as the candidate inventory or an extraction admission gate.
+            "candidate_pages": sorted(all_candidate_pages),
             "candidate_context_pages": sorted(candidate_windows - all_candidate_pages),
-            "candidate_page_count": len(accounted_candidate_pages),
-            "candidate_evidence_anchors": accounted_candidate_anchors,
-            "candidate_evidence_anchor_count": len(accounted_candidate_anchors),
+            "candidate_page_count": len(all_candidate_pages),
+            "candidate_evidence_anchors": candidate_evidence_anchors,
+            "candidate_evidence_anchor_count": len(candidate_evidence_anchors),
             "high_recall_candidate_pages": sorted(all_candidate_pages),
             "high_recall_candidate_page_count": len(all_candidate_pages),
             "high_recall_candidate_evidence_anchors": candidate_evidence_anchors,
-            "record_window_inventory": [
+            "diagnostic_input_policy": "semantic_scope_full_page_v1",
+            "advisory_record_window_inventory": [
                 window.model_dump(mode="json") for window in diagnostic_record_windows
             ],
-            "candidate_window_ids": [
+            "advisory_record_window_ids": [
                 window.window_id for window in diagnostic_record_windows
             ],
-            "candidate_window_count": len(diagnostic_record_windows),
+            "advisory_record_window_count": len(diagnostic_record_windows),
+            "candidate_window_ids": [],
+            "candidate_window_count": 0,
             "unreadable_pages": unreadable_pages,
             "unreadable_page_count": len(unreadable_pages),
         }

@@ -199,6 +199,9 @@ ontology:
 
   # ToC signature changes are context only. Pages are packed by bounded size.
   max_pages_per_chunk: 8
+  # Diagnostic output grows with record density, not only input characters.
+  # Keep full semantic-scope coverage while bounding each typed response.
+  diagnostic_max_pages_per_chunk: 4
   diagnostic_chunk_overlap_pages: 1
   structural_max_pages_per_chunk: 12
 

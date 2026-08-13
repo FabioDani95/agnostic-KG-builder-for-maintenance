@@ -219,6 +219,16 @@ def test_typed_record_crosses_page_8_9_chunk_boundary_via_real_workflow_overlap(
             "diagnostic_pages": list(range(1, 11)),
             "structural_pages": [],
         },
+        # This deliberately incomplete advisory inventory must never reduce
+        # the semantic scope to page 8.
+        "diagnostic_record_windows": [{
+            "window_id": "window_only_page_8",
+            "record_anchor": "ev_typed_page_8",
+            "branch_anchor": "ev_typed_page_8",
+            "allowed_source_anchors": ["ev_typed_page_8"],
+            "page_numbers": [8],
+            "text_with_pages": f"--- PAGE 8 ---\n{PAGE_8_TEXT}",
+        }],
     }
 
     result = asyncio.run(draft_ontology_workflow(
@@ -239,11 +249,15 @@ def test_typed_record_crosses_page_8_9_chunk_boundary_via_real_workflow_overlap(
     assert result.status == "ready"
     assert not any(issue.code == "empty_draft_content" for issue in result.schema_issues)
     chunks = result.diagnostic_contract_report["chunks"]
-    assert len(chunks) == 2
-    assert chunks[0]["publish_count"] == 0
-    assert chunks[0]["unresolved_count"] == 1
-    assert chunks[1]["publish_count"] == 1
-    assert chunks[1]["unresolved_count"] == 0
+    assert len(chunks) == 3
+    assert sum(chunk["publish_count"] for chunk in chunks) == 1
+    assert any(chunk["unresolved_count"] == 0 for chunk in chunks)
+    report = result.diagnostic_contract_report
+    assert report["diagnostic_input_policy"] == "semantic_scope_full_page_v1"
+    assert report["expected_diagnostic_pages"] == list(range(1, 11))
+    assert report["processed_diagnostic_pages"] == list(range(1, 11))
+    assert report["unprocessed_diagnostic_pages"] == []
+    assert report["diagnostic_page_coverage_complete"] is True
 
 
 def test_merge_preserves_chunk_contract_failure_without_detected_anchors(monkeypatch):

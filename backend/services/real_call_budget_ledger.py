@@ -375,19 +375,83 @@ class RealCallBudgetLedger:
                     "accounting_policy": "finalized_actual_plus_unfinished_worst_case",
                 })
                 return
-            header = events[0]
-            if header.get("event") != "ledger_initialized":
-                raise LedgerCorruptionError("Ledger is missing its initialization event")
-            stored = _as_decimal(
-                header.get("absolute_budget_usd"),
-                field="stored absolute_budget_usd",
-            )
+            stored = self._authorized_budget(events)
             if stored != self.absolute_budget_usd:
                 raise BudgetConfigurationError(
                     "Existing real-call ledger has absolute budget "
                     f"${stored}, not requested ${self.absolute_budget_usd}"
                 )
             self._build_state(events)
+
+    @staticmethod
+    def _authorized_budget(events: list[dict[str, Any]]) -> Decimal:
+        """Validate and return the latest append-only operator authorization."""
+
+        if not events or events[0].get("event") != "ledger_initialized":
+            raise LedgerCorruptionError("Ledger is missing its initialization event")
+        authorized = _as_decimal(
+            events[0].get("absolute_budget_usd"),
+            field="stored absolute_budget_usd",
+        )
+        for index, event in enumerate(events[1:], start=2):
+            if event.get("event") != "budget_increased":
+                continue
+            previous = _as_decimal(
+                event.get("previous_absolute_budget_usd"),
+                field=f"previous_absolute_budget_usd at event {index}",
+            )
+            increased = _as_decimal(
+                event.get("absolute_budget_usd"),
+                field=f"absolute_budget_usd at event {index}",
+            )
+            if previous != authorized or increased <= authorized:
+                raise LedgerCorruptionError(
+                    f"Invalid budget increase at event {index}"
+                )
+            authorized = increased
+        return authorized
+
+    def increase_budget(
+        self,
+        new_absolute_budget_usd: Decimal | float | int | str,
+        *,
+        authorization_note: str,
+    ) -> "RealCallBudgetLedger":
+        """Append a monotonic budget authorization without rewriting history."""
+
+        increased = _as_decimal(
+            new_absolute_budget_usd,
+            field="new_absolute_budget_usd",
+        )
+        note = _nonempty_label(
+            authorization_note,
+            field="authorization_note",
+            maximum=1000,
+        )
+        if increased <= self.absolute_budget_usd:
+            raise ValueError("new_absolute_budget_usd must increase the current budget")
+        with self._exclusive_lock():
+            events = self._read_events_unlocked()
+            authorized = self._authorized_budget(events)
+            if authorized != self.absolute_budget_usd:
+                raise BudgetConfigurationError(
+                    "Ledger authorization changed before this increase was appended"
+                )
+            self._build_state(events)
+            self._append_event_unlocked({
+                "schema_version": _SCHEMA_VERSION,
+                "event": "budget_increased",
+                "timestamp": self._clock(),
+                "previous_absolute_budget_usd": _money_json(authorized),
+                "absolute_budget_usd": _money_json(increased),
+                "authorization_note": note,
+            })
+        return RealCallBudgetLedger(
+            self.path,
+            absolute_budget_usd=increased,
+            envelope_cost_estimator=self._envelope_cost_estimator,
+            clock=self._clock,
+        )
 
     def _read_events_unlocked(self) -> list[dict[str, Any]]:
         if not self.path.exists():
@@ -443,6 +507,8 @@ class RealCallBudgetLedger:
                 raise LedgerCorruptionError(f"Unsupported schema at event {index + 1}")
             event_type = event.get("event")
             if index == 0 and event_type == "ledger_initialized":
+                continue
+            if event_type == "budget_increased":
                 continue
             call_id = str(event.get("call_id") or "")
             if not call_id:

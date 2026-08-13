@@ -11,13 +11,16 @@ def build_diagnostic_bundle_prompt(*, source_type: str, source_title: str) -> st
 Source type: {source_type}
 Source title: {source_title}
 
-The input contains system-owned RECORD_WINDOW blocks, physical page markers and opaque
-[[EVIDENCE_ID: ...]] anchors. Echo the current window_id and its allowed_source_anchors on
-every candidate. The system overwrites and verifies both fields; never use evidence outside
-the current block. ROOT CELL context may be inherited and supports only the repeated record
-indicator; only CURRENT ATOMIC RECORD fields belong to the current cause/remedy branch.
-Each displayed FIELD value is one exact source span. Quote the value only: never include the
-"FIELD n:" label, join separate fields, or restore a sibling field omitted by the system.
+The input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be
+a complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,
+echo its window_id and allowed_source_anchors on every candidate; the system overwrites and
+verifies both fields and no evidence outside that block is allowed. For a section chunk, set
+record_window_id="" and set allowed_source_anchors to exactly the anchors referenced by that
+candidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL
+context may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields
+belong to the current cause/remedy branch. Each displayed FIELD value is one exact source
+span. Quote the value only: never include the "FIELD n:" label, join separate fields, or
+restore a sibling field omitted by the system.
 Return every explicit diagnostic record and every distinct cause/remedy branch in the input.
 The contract is an intermediate record representation, not the final graph.
 

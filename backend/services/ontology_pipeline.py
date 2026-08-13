@@ -164,16 +164,78 @@ def _has_canonical_asset_identity(asset_identity: dict[str, Any] | None) -> bool
 
 
 def _diagnostic_input_inventory(text_with_pages: str) -> dict[str, Any]:
-    pages = [int(value) for value in _DIAGNOSTIC_PAGE_RE.findall(text_with_pages)]
-    candidate_anchors = [
-        match.group(1).strip()
-        for match in _DIAGNOSTIC_ANCHOR_RE.finditer(text_with_pages)
-        if evidence_has_diagnostic_candidate(match.group(2).strip())
-    ]
+    page_matches = list(_DIAGNOSTIC_PAGE_RE.finditer(text_with_pages))
+    pages = [int(match.group(1)) for match in page_matches]
+    candidate_evidence: list[dict[str, Any]] = []
+    for position, page_match in enumerate(page_matches):
+        end = (
+            page_matches[position + 1].start()
+            if position + 1 < len(page_matches)
+            else len(text_with_pages)
+        )
+        page_text = text_with_pages[page_match.end() : end]
+        for anchor_match in _DIAGNOSTIC_ANCHOR_RE.finditer(page_text):
+            if evidence_has_diagnostic_candidate(anchor_match.group(2).strip()):
+                candidate_evidence.append({
+                    "evidence_id": anchor_match.group(1).strip(),
+                    "page": int(page_match.group(1)),
+                })
+    candidate_anchors = [item["evidence_id"] for item in candidate_evidence]
     return {
         "input_pages": sorted(set(pages)),
         "candidate_input_anchors": sorted(set(candidate_anchors)),
+        "candidate_input_evidence": sorted(
+            {(
+                str(item["evidence_id"]), int(item["page"]),
+            ) for item in candidate_evidence},
+        ),
     }
+
+
+def _synthetic_scope_entries(
+    input_inventory: dict[str, Any],
+    *,
+    existing_entries: list[dict[str, Any]],
+    code: str,
+    message: str,
+) -> list[dict[str, Any]]:
+    """Persist every scoped candidate passage omitted by typed extraction."""
+
+    covered = {
+        str(evidence_id)
+        for entry in existing_entries
+        for evidence_id in (entry.get("evidence_ids") or [])
+        if str(evidence_id)
+    }
+    entries: list[dict[str, Any]] = []
+    for raw in input_inventory.get("candidate_input_evidence", []) or []:
+        if not isinstance(raw, (list, tuple)) or len(raw) != 2:
+            continue
+        anchor, page = str(raw[0]).strip(), int(raw[1])
+        if not anchor or anchor in covered:
+            continue
+        lineage = hashlib.sha256(f"{anchor}:{page}".encode("utf-8")).hexdigest()
+        entries.append({
+            "record_lineage_id": f"drec_{lineage}",
+            "branch_lineage_id": f"dbranch_{lineage}",
+            "record_window_id": "",
+            "record_anchor": anchor,
+            "branch_anchor": anchor,
+            "evidence_ids": [anchor],
+            "resolved_evidence_ids": [anchor],
+            "candidate": None,
+            "disposition": "review",
+            "accounting_state": "record_not_observed",
+            "drop_reasons": [{
+                "code": code,
+                "path": "semantic_scope",
+                "message": message,
+            }],
+            "emitted_node_ids": [],
+            "emitted_relations": [],
+        })
+        covered.add(anchor)
+    return entries
 
 
 def _record_windows(call_options: dict[str, Any]) -> list[dict[str, Any]]:
@@ -562,6 +624,16 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
             code="structured_response_error",
             message="The provider did not return a complete typed disposition for this record window.",
         )
+        if not windows:
+            window_entries.extend(_synthetic_scope_entries(
+                input_inventory,
+                existing_entries=window_entries,
+                code="structured_response_error",
+                message=(
+                    "The provider did not return a complete typed disposition "
+                    "for this scoped candidate passage."
+                ),
+            ))
         report = {
             **input_inventory,
             "schema_version": "1.0",
@@ -611,6 +683,16 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
             code="provider_refusal_or_missing_parse",
             message="The provider returned no auditable typed disposition for this record window.",
         )
+        if not windows:
+            window_entries.extend(_synthetic_scope_entries(
+                input_inventory,
+                existing_entries=window_entries,
+                code="provider_refusal_or_missing_parse",
+                message=(
+                    "The provider returned no auditable typed disposition for "
+                    "this scoped candidate passage."
+                ),
+            ))
         report = {
             **input_inventory,
             "schema_version": "1.0",
@@ -713,6 +795,16 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
             code="diagnostic_compiler_error",
             message="No typed candidate survived compilation for this record window.",
         )]
+        if not windows:
+            window_entries.extend(_synthetic_scope_entries(
+                input_inventory,
+                existing_entries=window_entries,
+                code="diagnostic_compiler_error",
+                message=(
+                    "No typed candidate survived compilation for this scoped "
+                    "candidate passage."
+                ),
+            ))
         logger.warning(
             "[ontology] Typed diagnostic compiler failed closed: %s",
             exc,
@@ -762,13 +854,32 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
         message="The typed output omitted this candidate record window.",
     )
     entries.extend(missing_window_entries)
+    missing_scope_entries = (
+        []
+        if windows
+        else _synthetic_scope_entries(
+            input_inventory,
+            existing_entries=entries,
+            code="candidate_passage_missing_disposition",
+            message=(
+                "The typed output omitted this candidate passage from the "
+                "scoped diagnostic input."
+            ),
+        )
+    )
+    entries.extend(missing_scope_entries)
     publish_count = int(
         compilation_report.get("disposition_counts", {}).get("publish", 0) or 0
     )
-    unresolved_count = len(missing_window_entries) + sum(
+    unresolved_count = len(missing_window_entries) + len(missing_scope_entries) + sum(
         int(compilation_report.get("disposition_counts", {}).get(key, 0) or 0)
         for key in ("gap", "review")
     )
+    disposition_counts = dict(compilation_report.get("disposition_counts", {}))
+    if missing_scope_entries:
+        disposition_counts["review"] = int(disposition_counts.get("review", 0) or 0) + len(
+            missing_scope_entries
+        )
     report = {
         **input_inventory,
         "schema_version": parsed.schema_version,
@@ -783,21 +894,27 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
         "refusal": False,
         "raw_sha256": hashlib.sha256(canonical_raw.encode("utf-8")).hexdigest(),
         "records": entries,
-        "candidate_count": (
-            int(compilation_report.get("unique_candidates", 0) or 0)
-            + len(missing_window_entries)
-        ),
+        "candidate_count": len(entries),
         "duplicate_candidate_count": int(
             compilation_report.get("duplicate_candidates", 0) or 0
         ),
         "publish_count": publish_count,
         "unresolved_count": unresolved_count,
-        "disposition_counts": compilation_report.get("disposition_counts", {}),
+        "disposition_counts": disposition_counts,
         "drop_reasons": {
             **compilation_report.get("dropped_items_by_reason", {}),
             **(
                 {"record_window_missing_disposition": len(missing_window_entries)}
                 if missing_window_entries
+                else {}
+            ),
+            **(
+                {
+                    "candidate_passage_missing_disposition": len(
+                        missing_scope_entries
+                    )
+                }
+                if missing_scope_entries
                 else {}
             ),
         },

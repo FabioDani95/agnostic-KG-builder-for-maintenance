@@ -231,6 +231,35 @@ def test_existing_ledger_rejects_different_absolute_budget(tmp_path: Path) -> No
         _ledger(path, budget="0.99")
 
 
+def test_budget_can_only_be_increased_with_append_only_authorization(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "real_calls.jsonl"
+    ledger = _ledger(path, budget="1.00")
+    _reserve(ledger, "call-1")
+    ledger.finalize("call-1", status="succeeded", actual_cost_usd="0.10")
+
+    increased = ledger.increase_budget(
+        "3.00",
+        authorization_note="Operator raised the cumulative absolute cap.",
+    )
+
+    snapshot = increased.snapshot()
+    assert snapshot.absolute_budget_usd == Decimal("3.000000000000")
+    assert snapshot.committed_usd == Decimal("0.100000000000")
+    assert snapshot.remaining_usd == Decimal("2.900000000000")
+    assert increased.events()[-1] == {
+        "schema_version": 1,
+        "event": "budget_increased",
+        "timestamp": increased.events()[-1]["timestamp"],
+        "previous_absolute_budget_usd": 1.0,
+        "absolute_budget_usd": 3.0,
+        "authorization_note": "Operator raised the cumulative absolute cap.",
+    }
+    with pytest.raises(BudgetConfigurationError):
+        _ledger(path, budget="1.00")
+
+
 def test_torn_jsonl_fails_closed_instead_of_ignoring_reservation(tmp_path: Path) -> None:
     path = tmp_path / "real_calls.jsonl"
     _ledger(path)
