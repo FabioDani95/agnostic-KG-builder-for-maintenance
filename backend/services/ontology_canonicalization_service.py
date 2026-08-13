@@ -257,7 +257,10 @@ def canonicalize_ontology_instance(
             ("Component", material_context), material_context
         )
 
-    relation_by_key: dict[tuple[str, str, str, str, str], dict[str, Any]] = {}
+    # A relation occurrence belongs to one diagnostic branch.  Endpoint-only
+    # deduplication would fuse two independently evidenced branches after node
+    # canonicalization and silently discard one lineage identifier.
+    relation_by_key: dict[tuple[str, str, str, str, str, str], dict[str, Any]] = {}
     for relation in payload.get("relations", []):
         relation = deepcopy(relation)
         from_type = str(relation.get("from_type", ""))
@@ -267,6 +270,7 @@ def canonicalize_ontology_instance(
         key = (
             str(relation.get("name", "")), from_type, str(relation.get("from_id", "")),
             to_type, str(relation.get("to_id", "")),
+            str(relation.get("branch_lineage_id", "") or ""),
         )
         existing = relation_by_key.get(key)
         if existing is None:

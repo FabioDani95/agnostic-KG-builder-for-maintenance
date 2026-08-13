@@ -3,7 +3,10 @@
 fastapi<0.130
 uvicorn[standard]
 python-multipart
-pymupdf
+# Native text-block boundaries changed between recent releases and directly
+# affect deterministic EvidenceUnit/window inventories.  Pin the runtime used
+# by the v9 campaign so replay digests are reproducible.
+pymupdf==1.27.1
 openai>=2.50.0,<3
 pydantic-settings
 pyyaml

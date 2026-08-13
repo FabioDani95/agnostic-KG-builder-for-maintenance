@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 import logging
 import os
+import threading
+import uuid
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
@@ -13,6 +15,9 @@ from openai import AsyncOpenAI, OpenAI
 from backend.config import settings
 
 logger = logging.getLogger(__name__)
+
+_BUDGET_LEDGERS: dict[tuple[str, str], Any] = {}
+_BUDGET_LEDGERS_LOCK = threading.Lock()
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 DEFAULT_MOCK_RESPONSES_DIR = ROOT_DIR / "tests" / "golden" / "mock_responses"
@@ -78,9 +83,13 @@ def get_client(
         "api_key": api_key if api_key is not None else settings.OPENAI_API_KEY,
         "timeout": timeout,
     }
-    if max_retries is not None:
+    if str(os.environ.get("KG_REAL_CALL_BUDGET_LEDGER", "") or "").strip():
+        # One durable reservation represents one actual provider attempt.
+        # SDK-internal retries would otherwise escape per-attempt accounting.
+        kwargs["max_retries"] = 0
+    elif max_retries is not None:
         kwargs["max_retries"] = max(0, int(max_retries))
-    return client_factory(**kwargs)
+    return _with_real_call_budget(client_factory(**kwargs))
 
 
 def get_async_client(
@@ -96,9 +105,256 @@ def get_async_client(
         "api_key": api_key if api_key is not None else settings.OPENAI_API_KEY,
         "timeout": timeout,
     }
-    if max_retries is not None:
+    if str(os.environ.get("KG_REAL_CALL_BUDGET_LEDGER", "") or "").strip():
+        kwargs["max_retries"] = 0
+    elif max_retries is not None:
         kwargs["max_retries"] = max(0, int(max_retries))
-    return client_factory(**kwargs)
+    return _with_real_call_budget(client_factory(**kwargs), asynchronous=True)
+
+
+def _configured_budget_ledger() -> Any | None:
+    path = str(os.environ.get("KG_REAL_CALL_BUDGET_LEDGER", "") or "").strip()
+    if not path:
+        return None
+    budget = str(os.environ.get("KG_REAL_CALL_BUDGET_USD", "") or "").strip()
+    run_id = str(os.environ.get("KG_REAL_CALL_RUN_ID", "") or "").strip()
+    pdf_id = str(os.environ.get("KG_REAL_CALL_PDF_ID", "") or "").strip()
+    if not (budget and run_id and pdf_id):
+        raise RuntimeError(
+            "Real-call budget instrumentation requires BUDGET_USD, RUN_ID and PDF_ID"
+        )
+    key = (str(Path(path).resolve()), budget)
+    with _BUDGET_LEDGERS_LOCK:
+        ledger = _BUDGET_LEDGERS.get(key)
+        if ledger is None:
+            from backend.services.real_call_budget_ledger import RealCallBudgetLedger
+
+            ledger = RealCallBudgetLedger(key[0], absolute_budget_usd=budget)
+            _BUDGET_LEDGERS[key] = ledger
+    return ledger
+
+
+def _structured_schema_characters(response_format: Any) -> int:
+    schema = getattr(response_format, "model_json_schema", None)
+    if not callable(schema):
+        return 0
+    try:
+        return len(json.dumps(schema(), sort_keys=True, ensure_ascii=False))
+    except Exception:
+        return 0
+
+
+def _real_call_envelope(kwargs: dict[str, Any]) -> Any:
+    from backend.services.real_call_budget_ledger import TokenEnvelope
+
+    serializable = {
+        key: value
+        for key, value in kwargs.items()
+        if key not in {"response_format", "api_key"}
+    }
+    try:
+        request_characters = len(
+            json.dumps(serializable, ensure_ascii=False, default=str).encode("utf-8")
+        )
+    except Exception:
+        request_characters = len(str(serializable).encode("utf-8"))
+    schema_characters = _structured_schema_characters(kwargs.get("response_format"))
+    fixed_overhead = max(
+        0,
+        int(os.environ.get("KG_REAL_CALL_FIXED_OVERHEAD_TOKENS", "4096") or 4096),
+    )
+    max_completion = int(
+        kwargs.get("max_completion_tokens")
+        or kwargs.get("max_tokens")
+        or os.environ.get("KG_REAL_CALL_DEFAULT_MAX_COMPLETION_TOKENS", "16000")
+        or 16000
+    )
+    # One UTF-8 byte per prompt token is a deliberately conservative upper
+    # bound for the request plus strict response schema.  No cache credit is
+    # assumed by the durable ledger.
+    return TokenEnvelope(
+        max_prompt_tokens=request_characters + schema_characters + fixed_overhead,
+        max_completion_tokens=max(0, max_completion),
+    )
+
+
+def _real_call_stage(method: str, kwargs: dict[str, Any]) -> str:
+    response_format = kwargs.get("response_format")
+    format_name = str(getattr(response_format, "__name__", "") or "").strip()
+    if format_name:
+        return f"chat.{method}:{format_name}"
+    messages = _messages_text(kwargs).casefold()
+    if "relation extraction agent" in messages:
+        return f"chat.{method}:relation_extraction"
+    if "semantic" in messages and "validation" in messages:
+        return f"chat.{method}:semantic_validation"
+    if (
+        "ontology extraction agent" in messages
+        or "ontology instance" in messages
+        or "ontology schema" in messages
+    ):
+        return f"chat.{method}:ontology"
+    if "table of contents" in messages or "toc_entries" in messages:
+        return f"chat.{method}:scoping"
+    return f"chat.{method}:unclassified"
+
+
+def _actual_usage(response: Any) -> Any | None:
+    usage = getattr(response, "usage", None)
+    if usage is None:
+        return None
+    from backend.services.real_call_budget_ledger import ActualTokenUsage
+
+    prompt = int(getattr(usage, "prompt_tokens", 0) or 0)
+    completion = int(getattr(usage, "completion_tokens", 0) or 0)
+    details = getattr(usage, "prompt_tokens_details", None)
+    cached = int(getattr(details, "cached_tokens", 0) or 0) if details else 0
+    cache_write = int(getattr(details, "cache_write_tokens", 0) or 0) if details else 0
+    return ActualTokenUsage(
+        prompt_tokens=prompt,
+        completion_tokens=completion,
+        cached_prompt_tokens=min(prompt, cached),
+        cache_write_prompt_tokens=min(max(0, prompt - cached), cache_write),
+    )
+
+
+def _reserve_real_call(method: str, kwargs: dict[str, Any]) -> Any | None:
+    ledger = _configured_budget_ledger()
+    if ledger is None:
+        return None
+    model = str(kwargs.get("model") or settings.MODEL_NAME or "").strip()
+    reasoning = str(kwargs.get("reasoning_effort") or "default").strip()
+    run_id = str(os.environ["KG_REAL_CALL_RUN_ID"])
+    pdf_id = str(os.environ["KG_REAL_CALL_PDF_ID"])
+    return ledger.call(
+        call_id=f"{run_id}:{uuid.uuid4().hex}",
+        stage=_real_call_stage(method, kwargs),
+        run_id=run_id,
+        pdf_id=pdf_id,
+        model=model,
+        reasoning_effort=reasoning,
+        token_envelope=_real_call_envelope(kwargs),
+    )
+
+
+class _BudgetedCompletions:
+    def __init__(self, wrapped: Any):
+        self._wrapped = wrapped
+
+    def _call(self, method: str, kwargs: dict[str, Any]) -> Any:
+        reservation = _reserve_real_call(method, kwargs)
+        try:
+            response = getattr(self._wrapped, method)(**kwargs)
+        except Exception as exc:
+            if reservation is not None:
+                completion = getattr(exc, "completion", None)
+                usage = _actual_usage(completion) if completion is not None else None
+                finalization = reservation.finalize(
+                    status="failed_with_usage" if usage else "failed_unknown_cost",
+                    usage=usage,
+                )
+                # Preserve the durable accounting outcome across SDK parse
+                # exceptions.  The route-level metrics can then count the
+                # provider attempt even when no ChatCompletion object is
+                # exposed by the SDK.
+                setattr(exc, "_kg_call_accounting", {
+                    "call_id": finalization.call_id,
+                    "status": finalization.status,
+                    "model": str(kwargs.get("model") or settings.MODEL_NAME or ""),
+                    "charged_cost_usd": float(finalization.charged_cost_usd),
+                    "actual_cost_usd": (
+                        float(finalization.actual_cost_usd)
+                        if finalization.actual_cost_usd is not None
+                        else None
+                    ),
+                    "usage_observed": usage is not None,
+                })
+            raise
+        if reservation is not None:
+            usage = _actual_usage(response)
+            reservation.finalize(
+                status="succeeded" if usage is not None else "succeeded_unknown_cost",
+                usage=usage,
+            )
+        return response
+
+    def create(self, **kwargs: Any) -> Any:
+        return self._call("create", kwargs)
+
+    def parse(self, **kwargs: Any) -> Any:
+        return self._call("parse", kwargs)
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._wrapped, name)
+
+
+class _BudgetedAsyncCompletions(_BudgetedCompletions):
+    async def _async_call(self, method: str, kwargs: dict[str, Any]) -> Any:
+        reservation = _reserve_real_call(method, kwargs)
+        try:
+            response = await getattr(self._wrapped, method)(**kwargs)
+        except Exception as exc:
+            if reservation is not None:
+                completion = getattr(exc, "completion", None)
+                usage = _actual_usage(completion) if completion is not None else None
+                finalization = reservation.finalize(
+                    status="failed_with_usage" if usage else "failed_unknown_cost",
+                    usage=usage,
+                )
+                setattr(exc, "_kg_call_accounting", {
+                    "call_id": finalization.call_id,
+                    "status": finalization.status,
+                    "model": str(kwargs.get("model") or settings.MODEL_NAME or ""),
+                    "charged_cost_usd": float(finalization.charged_cost_usd),
+                    "actual_cost_usd": (
+                        float(finalization.actual_cost_usd)
+                        if finalization.actual_cost_usd is not None
+                        else None
+                    ),
+                    "usage_observed": usage is not None,
+                })
+            raise
+        if reservation is not None:
+            usage = _actual_usage(response)
+            reservation.finalize(
+                status="succeeded" if usage is not None else "succeeded_unknown_cost",
+                usage=usage,
+            )
+        return response
+
+    async def create(self, **kwargs: Any) -> Any:
+        return await self._async_call("create", kwargs)
+
+    async def parse(self, **kwargs: Any) -> Any:
+        return await self._async_call("parse", kwargs)
+
+
+class _BudgetedChat:
+    def __init__(self, wrapped: Any, *, asynchronous: bool):
+        self._wrapped = wrapped
+        wrapper = _BudgetedAsyncCompletions if asynchronous else _BudgetedCompletions
+        self.completions = wrapper(wrapped.completions)
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._wrapped, name)
+
+
+class _BudgetedClient:
+    def __init__(self, wrapped: Any, *, asynchronous: bool):
+        self._wrapped = wrapped
+        self.chat = _BudgetedChat(wrapped.chat, asynchronous=asynchronous)
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._wrapped, name)
+
+
+def _with_real_call_budget(client: Any, *, asynchronous: bool = False) -> Any:
+    if not str(os.environ.get("KG_REAL_CALL_BUDGET_LEDGER", "") or "").strip():
+        return client
+    # Validate configuration and the existing event stream before returning a
+    # client that could reach the network.
+    _configured_budget_ledger()
+    return _BudgetedClient(client, asynchronous=asynchronous)
 
 
 class _MockUsage:

@@ -1,0 +1,848 @@
+{
+  "schema_version": "diagnostic-record-window-replay-v1",
+  "manuals": {
+    "eastman_e554": {
+      "database": "/Users/fabio.daniele/Coding/log-kg-builder/artifacts/acceptance/g3/diagnostic_benchmark_20260812/runs/real/eastman_e554/operational.db",
+      "evidence_unit_count": 901,
+      "window_count": 8,
+      "window_kinds": {
+        "contiguous_blocks": 8
+      },
+      "record_root_count": 7,
+      "cross_page_window_count": 1,
+      "inherited_root_window_count": 0,
+      "max_allowed_anchors": 16,
+      "invariants": {
+        "unique_window_ids": true,
+        "unique_branch_anchors": true,
+        "all_anchors_exist": true,
+        "root_is_allowed": true,
+        "bounded_support": true,
+        "no_nonroot_support_reuse": true
+      },
+      "passed": true,
+      "windows": [
+        {
+          "window_id": "diagwin_c0abd103a056b2fea915d398",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_nue32lMpwfaw5v-uyQa7Kg",
+          "record_anchor": "ev_84470f755c00f49a5f458f2aa7d7",
+          "root_anchor": "ev_84470f755c00f49a5f458f2aa7d7",
+          "branch_anchor": "ev_b28601fee1b0bb83ed27e1ae9c38",
+          "allowed_source_anchors": [
+            "ev_84470f755c00f49a5f458f2aa7d7",
+            "ev_b28601fee1b0bb83ed27e1ae9c38",
+            "ev_f4e98d64cd5fab8e71fe3b51e6f4",
+            "ev_dfeb07cd9d651e6e8eaa9ad112eb",
+            "ev_bed799448113bdfbda7619ba217f"
+          ],
+          "evidence_ids": [
+            "ev_84470f755c00f49a5f458f2aa7d7",
+            "ev_b28601fee1b0bb83ed27e1ae9c38",
+            "ev_f4e98d64cd5fab8e71fe3b51e6f4",
+            "ev_dfeb07cd9d651e6e8eaa9ad112eb",
+            "ev_bed799448113bdfbda7619ba217f"
+          ],
+          "page_numbers": [
+            37
+          ],
+          "text_with_pages": "--- PAGE 37 ---\n\n[[EVIDENCE_ID: ev_84470f755c00f49a5f458f2aa7d7]]\n\nProblem: UIT Does Not Power Up\nDescription of Problem:\nThe UIT does not power.  Screen is blank and not lit up.\n\n[[EVIDENCE_ID: ev_b28601fee1b0bb83ed27e1ae9c38]]\n\nTroubleshooting:\n1.Touch the screen to see if it turns on.  If the machine sits\nidle for a long period of time the touch screen goes into a\nsleep mode to protect the screen.\n\n[[EVIDENCE_ID: ev_f4e98d64cd5fab8e71fe3b51e6f4]]\n\n2.Make sure your cutting software is open on the cutting\nsystem computer.\n\n[[EVIDENCE_ID: ev_dfeb07cd9d651e6e8eaa9ad112eb]]\n\n4.Find the black ethernet power supply (PoE) located next\nto the computer. Verify the green LED is illuminated.\n\n[[EVIDENCE_ID: ev_bed799448113bdfbda7619ba217f]]\n\n5.If there is no green LED lit, check the AC outlets located\non the back of the diagnostic cabinet. If there is no  AC\npower, check the AC power cord and fuses F3 and F4 in\nthe diagnostic cabinet.",
+          "table_key": null,
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_3abf2561b14a11f554113de7",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_nue32lMpwfaw5v-uyQa7Kg",
+          "record_anchor": "ev_37604bd0271749f0c3ec6e6a4897",
+          "root_anchor": "ev_37604bd0271749f0c3ec6e6a4897",
+          "branch_anchor": "ev_9aad94200ec0b351c83b7a326e8e",
+          "allowed_source_anchors": [
+            "ev_37604bd0271749f0c3ec6e6a4897",
+            "ev_9aad94200ec0b351c83b7a326e8e",
+            "ev_0d3287eac9994fcc5244519d3912"
+          ],
+          "evidence_ids": [
+            "ev_37604bd0271749f0c3ec6e6a4897",
+            "ev_9aad94200ec0b351c83b7a326e8e",
+            "ev_0d3287eac9994fcc5244519d3912"
+          ],
+          "page_numbers": [
+            37
+          ],
+          "text_with_pages": "--- PAGE 37 ---\n\n[[EVIDENCE_ID: ev_37604bd0271749f0c3ec6e6a4897]]\n\nProblem: Machine Stop during Cut Due to Uninten-\n\n[[EVIDENCE_ID: ev_9aad94200ec0b351c83b7a326e8e]]\n\ntional pause\nDescription of Problem:\nThe machine stops in middle of cut and displays message\n“Machine Paused, Press Zero, Next or Abort” on Touch\nScreen.  When pressing NEXT on the keypad, the machine\nwill continue to cut where it left off.  This is typically caused\nby an intermittent pause circuit, usually in thestop discs.\n\n[[EVIDENCE_ID: ev_0d3287eac9994fcc5244519d3912]]\n\nTroubleshooting:\n1.Check stop disc activation. The stop discs should not\nactivate by a slight touch or vibration. They should activate\nonly when moved by minimum pressure. Remove gantry\nside cover. Check the pause plunger. Tighten the plunger\nto increase activation pressure and loosen to decrease\nactivation pressure.",
+          "table_key": null,
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_805350bfca91cd588c477aad",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_nue32lMpwfaw5v-uyQa7Kg",
+          "record_anchor": "ev_f596b4ce5a934cc81902a81f2a26",
+          "root_anchor": "ev_f596b4ce5a934cc81902a81f2a26",
+          "branch_anchor": "ev_663458edb0253011738c8431bf8e",
+          "allowed_source_anchors": [
+            "ev_f596b4ce5a934cc81902a81f2a26",
+            "ev_663458edb0253011738c8431bf8e",
+            "ev_888034e240b5d190cc8b906a11fc",
+            "ev_008101c16af6c6197ef07ccc4020",
+            "ev_81fedbc9c291494844e3f4707154",
+            "ev_92dcf985125b3c8b345fa2744ff8",
+            "ev_a7aa131f19562920b6911cfe7150",
+            "ev_f1e8c1100b73354240429d554a84",
+            "ev_6fcad49b6611d0496908a2c0f12b",
+            "ev_1278e47cda7bc59adb53811dd3e9"
+          ],
+          "evidence_ids": [
+            "ev_f596b4ce5a934cc81902a81f2a26",
+            "ev_663458edb0253011738c8431bf8e",
+            "ev_888034e240b5d190cc8b906a11fc",
+            "ev_008101c16af6c6197ef07ccc4020",
+            "ev_81fedbc9c291494844e3f4707154",
+            "ev_92dcf985125b3c8b345fa2744ff8",
+            "ev_a7aa131f19562920b6911cfe7150",
+            "ev_f1e8c1100b73354240429d554a84",
+            "ev_6fcad49b6611d0496908a2c0f12b",
+            "ev_1278e47cda7bc59adb53811dd3e9"
+          ],
+          "page_numbers": [
+            37,
+            38
+          ],
+          "text_with_pages": "--- PAGE 37 ---\n\n[[EVIDENCE_ID: ev_f596b4ce5a934cc81902a81f2a26]]\n\nProblem: The buttons on the Touch Screen are out of\n\n[[EVIDENCE_ID: ev_663458edb0253011738c8431bf8e]]\n\nalignment\nDescription of Problem:\nThe touch screen buttons do not match where the screen\nneeds to be touched to activate the command.  Operator\nneeds to push above, below, right or left of the button for the\ncommand to take effect.\n\n[[EVIDENCE_ID: ev_888034e240b5d190cc8b906a11fc]]\n\nTroubleshooting:\nTouch screen calibration in required. Proceed as follows.\n1) Power down the cutting system.\n\n[[EVIDENCE_ID: ev_008101c16af6c6197ef07ccc4020]]\n\n2) Place finger on the upper left corner of the touch screen as\nShown. While holding finger on the screen, turn ON the\nmain power switch located on the back of the diagnostic\ncontrol cabinet.\n\n[[EVIDENCE_ID: ev_81fedbc9c291494844e3f4707154]]\n\n3) Remove finger after the \"Power On Setup\" screen appears.\n\n[[EVIDENCE_ID: ev_92dcf985125b3c8b345fa2744ff8]]\n\n4) Using the left and right arrows to navigate, go to the\nCalibration Screen (screen page 2). Press Touch screen\nto begin calibrating.\n\n[[EVIDENCE_ID: ev_a7aa131f19562920b6911cfe7150]]\n\n37\nForm E-554\n\n--- PAGE 38 ---\n\n[[EVIDENCE_ID: ev_f1e8c1100b73354240429d554a84]]\n\n5) Using a paper clip or fine tip object, press the center of the\ncross as shown. The cross will reappear in the lower right\ncorner. Press the center of the cross.\n\n[[EVIDENCE_ID: ev_6fcad49b6611d0496908a2c0f12b]]\n\n6) Navigate to screen page 3. Select save and exit to\ncomplete calibration.\n\n[[EVIDENCE_ID: ev_1278e47cda7bc59adb53811dd3e9]]\n\nThe touch screen will restart in normal mode. Check for\nproper screen operation and begin your normal start-up\nprocedure.",
+          "table_key": null,
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_7e424054e2b407e752e7c379",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_nue32lMpwfaw5v-uyQa7Kg",
+          "record_anchor": "ev_e1289ad6f2c6a5ac0d96efdb04c1",
+          "root_anchor": "ev_e1289ad6f2c6a5ac0d96efdb04c1",
+          "branch_anchor": "ev_2ae44f39095ebc1849d8fb2fae3e",
+          "allowed_source_anchors": [
+            "ev_e1289ad6f2c6a5ac0d96efdb04c1",
+            "ev_2ae44f39095ebc1849d8fb2fae3e",
+            "ev_6fe34312dd1f94734b3bab9d9b67",
+            "ev_77bfdd45c6a619aa38d52d16b5dc",
+            "ev_2e43ecca14b72ff81aefcffd47ba",
+            "ev_0d74086ab15d9a1b9cc34327f429",
+            "ev_57f9f18b3220319670783c0b3e21",
+            "ev_feaa816092e1a6a7ac7a03615c2e",
+            "ev_bfe3b987fc04c2548eb7630cdd3f",
+            "ev_96a268c71fb29d614d01dffc02c6",
+            "ev_4544992304ed029a0ab082c96195",
+            "ev_831eec187884f4ad24a03a5114a2",
+            "ev_bc45601f93746696e6771f3fa310",
+            "ev_b37034ed6c97c1641d573007ca08",
+            "ev_5bb7c1e295d5063c356660fd3961",
+            "ev_e89c341ccc835ef701098852f51b"
+          ],
+          "evidence_ids": [
+            "ev_e1289ad6f2c6a5ac0d96efdb04c1",
+            "ev_2ae44f39095ebc1849d8fb2fae3e",
+            "ev_6fe34312dd1f94734b3bab9d9b67",
+            "ev_77bfdd45c6a619aa38d52d16b5dc",
+            "ev_2e43ecca14b72ff81aefcffd47ba",
+            "ev_0d74086ab15d9a1b9cc34327f429",
+            "ev_57f9f18b3220319670783c0b3e21",
+            "ev_feaa816092e1a6a7ac7a03615c2e",
+            "ev_bfe3b987fc04c2548eb7630cdd3f",
+            "ev_96a268c71fb29d614d01dffc02c6",
+            "ev_4544992304ed029a0ab082c96195",
+            "ev_831eec187884f4ad24a03a5114a2",
+            "ev_bc45601f93746696e6771f3fa310",
+            "ev_b37034ed6c97c1641d573007ca08",
+            "ev_5bb7c1e295d5063c356660fd3961",
+            "ev_e89c341ccc835ef701098852f51b"
+          ],
+          "page_numbers": [
+            38
+          ],
+          "text_with_pages": "--- PAGE 38 ---\n\n[[EVIDENCE_ID: ev_e1289ad6f2c6a5ac0d96efdb04c1]]\n\nProblem: The Cutting Tool or Pen does not move down\nDescription of Problem:\nThe tool or Pen does not move down when cutting a file or\nthey are delayed coming down at the beginning of a cut.  This\ncan be caused by an electrical short, tool mapping in\nsoftware or a problem with the power supply.\n\n[[EVIDENCE_ID: ev_2ae44f39095ebc1849d8fb2fae3e]]\n\nTroubleshooting:\n1.Make sure the gantry Tools ON switch is turned on. This\ncan be verified by making sure the laser pointer is on.\n\n[[EVIDENCE_ID: ev_6fe34312dd1f94734b3bab9d9b67]]\n\n2.Verify the mapping of your tools and layers are mapped\nproperly under each tool.\n\n[[EVIDENCE_ID: ev_77bfdd45c6a619aa38d52d16b5dc]]\n\na)Look at the tool bar at the bottom of the Cut window to\n\n[[EVIDENCE_ID: ev_2e43ecca14b72ff81aefcffd47ba]]\n\nquickly verify tool and layer mapping.  If there is no Tool Bar\nas shown, then click on “View” then click on “Layers” and\n“Tools” in the main E-Suite menu.\n\n[[EVIDENCE_ID: ev_0d74086ab15d9a1b9cc34327f429]]\n\nb)If the layer is not mapped to a tool or the tool is not on the\n\n[[EVIDENCE_ID: ev_57f9f18b3220319670783c0b3e21]]\n\ntool holder then just click and drag the tool to the spindle\nor the layer to the tool before sending the file to the cutter.\n\n[[EVIDENCE_ID: ev_feaa816092e1a6a7ac7a03615c2e]]\n\n3.With E-Suite closed, check tool holder to see if it moves\nfreely and is not damaged or bent.\n\n[[EVIDENCE_ID: ev_bfe3b987fc04c2548eb7630cdd3f]]\n\n4.Make sure you have pressure at the tools. Try pulling tool\nthe holder down by hand to see if it has pressure.\n\n[[EVIDENCE_ID: ev_96a268c71fb29d614d01dffc02c6]]\n\n5.Check tool connections.\n\n[[EVIDENCE_ID: ev_4544992304ed029a0ab082c96195]]\n\na) Hit the Cut Down button on the UIT to verify the\n\n[[EVIDENCE_ID: ev_831eec187884f4ad24a03a5114a2]]\n\ncorresponding green LED light is on. Located on the slice\noutput cards (non-operator gantry side plate).\n\n[[EVIDENCE_ID: ev_bc45601f93746696e6771f3fa310]]\n\nb) Try firing the tool manually by pressing red button under\n\n[[EVIDENCE_ID: ev_b37034ed6c97c1641d573007ca08]]\n\nsolenoid block.  Each solenoid can be manually fired by\npressing the individual button.\n\n[[EVIDENCE_ID: ev_5bb7c1e295d5063c356660fd3961]]\n\nc) Check cable connection at air manifold for proper\n\n[[EVIDENCE_ID: ev_e89c341ccc835ef701098852f51b]]\n\nconnection.",
+          "table_key": null,
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_953a618d5ba5dbdac751886f",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_nue32lMpwfaw5v-uyQa7Kg",
+          "record_anchor": "ev_e1289ad6f2c6a5ac0d96efdb04c1",
+          "root_anchor": "ev_e1289ad6f2c6a5ac0d96efdb04c1",
+          "branch_anchor": "ev_3690854983a645f9c5b5dfe9e7f5",
+          "allowed_source_anchors": [
+            "ev_e1289ad6f2c6a5ac0d96efdb04c1",
+            "ev_3690854983a645f9c5b5dfe9e7f5",
+            "ev_d87c8d82d8a697cbccd71fd60fac",
+            "ev_84df1822eec291f1657bba7af73f",
+            "ev_9123c94a5f683172dea42f85c956",
+            "ev_e02be73732f8699a00da3c250060"
+          ],
+          "evidence_ids": [
+            "ev_e1289ad6f2c6a5ac0d96efdb04c1",
+            "ev_3690854983a645f9c5b5dfe9e7f5",
+            "ev_d87c8d82d8a697cbccd71fd60fac",
+            "ev_84df1822eec291f1657bba7af73f",
+            "ev_9123c94a5f683172dea42f85c956",
+            "ev_e02be73732f8699a00da3c250060"
+          ],
+          "page_numbers": [
+            38
+          ],
+          "text_with_pages": "--- PAGE 38 ---\n\n[[EVIDENCE_ID: ev_e1289ad6f2c6a5ac0d96efdb04c1]]\n\nProblem: The Cutting Tool or Pen does not move down\nDescription of Problem:\nThe tool or Pen does not move down when cutting a file or\nthey are delayed coming down at the beginning of a cut.  This\ncan be caused by an electrical short, tool mapping in\nsoftware or a problem with the power supply.\n\n[[EVIDENCE_ID: ev_3690854983a645f9c5b5dfe9e7f5]]\n\n6.The Pen or Tool delays coming down and misses the\nbeginning of marker or cut.\n\n[[EVIDENCE_ID: ev_d87c8d82d8a697cbccd71fd60fac]]\n\na) Check the 24 VDC power supply located in the diagnos-\n\n[[EVIDENCE_ID: ev_84df1822eec291f1657bba7af73f]]\n\ntic cabinet. Make sure the green led is on.\n\n[[EVIDENCE_ID: ev_9123c94a5f683172dea42f85c956]]\n\nb) Check the 24 VDC power supply fuse.\n\n[[EVIDENCE_ID: ev_e02be73732f8699a00da3c250060]]\n\nc) Check flow control valves on the pen air cylinder.",
+          "table_key": null,
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_1d5afaae25adb2978a589c21",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_nue32lMpwfaw5v-uyQa7Kg",
+          "record_anchor": "ev_6bf4fb4060f96a711539a5d68dd4",
+          "root_anchor": "ev_6bf4fb4060f96a711539a5d68dd4",
+          "branch_anchor": "ev_128d04d4b717ec6bc53d97cb6158",
+          "allowed_source_anchors": [
+            "ev_6bf4fb4060f96a711539a5d68dd4",
+            "ev_128d04d4b717ec6bc53d97cb6158",
+            "ev_971ac771684f0e9952e24970de01",
+            "ev_49cb09aa872235e877df81d9f17e",
+            "ev_acd8c56b60bcb7d5a01012d6d189",
+            "ev_ff98e04eb4e96f2dcffd6d125e2b",
+            "ev_2bb9248e90415dbe0276328a73c3"
+          ],
+          "evidence_ids": [
+            "ev_6bf4fb4060f96a711539a5d68dd4",
+            "ev_128d04d4b717ec6bc53d97cb6158",
+            "ev_971ac771684f0e9952e24970de01",
+            "ev_49cb09aa872235e877df81d9f17e",
+            "ev_acd8c56b60bcb7d5a01012d6d189",
+            "ev_ff98e04eb4e96f2dcffd6d125e2b",
+            "ev_2bb9248e90415dbe0276328a73c3"
+          ],
+          "page_numbers": [
+            38
+          ],
+          "text_with_pages": "--- PAGE 38 ---\n\n[[EVIDENCE_ID: ev_6bf4fb4060f96a711539a5d68dd4]]\n\nProblem: Laser Fume Extractor has reduced vacuum\n\n[[EVIDENCE_ID: ev_128d04d4b717ec6bc53d97cb6158]]\n\nor no vacuum.\nDescription of Problem:\nAn odor is present when cutting with the laser tool or Laser\ncutting path is wider than normal\n\n[[EVIDENCE_ID: ev_971ac771684f0e9952e24970de01]]\n\nTroubleshooting:\n1. Check the laser fume extractor for power and is turned ON.\n\n[[EVIDENCE_ID: ev_49cb09aa872235e877df81d9f17e]]\n\n2. Increase vacuum pressure using the fume extractor\ncontrol panel.\n\n[[EVIDENCE_ID: ev_acd8c56b60bcb7d5a01012d6d189]]\n\n3) Replace vacuum filters.\n\n[[EVIDENCE_ID: ev_ff98e04eb4e96f2dcffd6d125e2b]]\n\n4) Clean vacuum hose and funnel.\n\n[[EVIDENCE_ID: ev_2bb9248e90415dbe0276328a73c3]]\n\n38\nForm E-554",
+          "table_key": null,
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_3019286b762ad8f43e3f57e8",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_nue32lMpwfaw5v-uyQa7Kg",
+          "record_anchor": "ev_b238338fcaa4e50f8df6f05a1a30",
+          "root_anchor": "ev_b238338fcaa4e50f8df6f05a1a30",
+          "branch_anchor": "ev_60f45841ea75f690b0db3cc33d4e",
+          "allowed_source_anchors": [
+            "ev_b238338fcaa4e50f8df6f05a1a30",
+            "ev_60f45841ea75f690b0db3cc33d4e",
+            "ev_3b27178ed5ecfcf727144f5cf7b4",
+            "ev_e784c9d0f6bdb8f1f55103b2e481",
+            "ev_917b0c3d6587dcd79632ac967d43",
+            "ev_db5d4070b691be33a0ba93df928e",
+            "ev_34c95850953376c499823b326ead",
+            "ev_bd02539c07c2d35724e2f7a99eca",
+            "ev_1410bc7abf3f833196cb52eda90f",
+            "ev_abe6a584b57654234bf6662d9a21"
+          ],
+          "evidence_ids": [
+            "ev_b238338fcaa4e50f8df6f05a1a30",
+            "ev_60f45841ea75f690b0db3cc33d4e",
+            "ev_3b27178ed5ecfcf727144f5cf7b4",
+            "ev_e784c9d0f6bdb8f1f55103b2e481",
+            "ev_917b0c3d6587dcd79632ac967d43",
+            "ev_db5d4070b691be33a0ba93df928e",
+            "ev_34c95850953376c499823b326ead",
+            "ev_bd02539c07c2d35724e2f7a99eca",
+            "ev_1410bc7abf3f833196cb52eda90f",
+            "ev_abe6a584b57654234bf6662d9a21"
+          ],
+          "page_numbers": [
+            39
+          ],
+          "text_with_pages": "--- PAGE 39 ---\n\n[[EVIDENCE_ID: ev_b238338fcaa4e50f8df6f05a1a30]]\n\nProblem: Laser cutting path is too wide\nDescription of Problem:\nThe laser cutting path increases to an undesirable width.\n\n[[EVIDENCE_ID: ev_60f45841ea75f690b0db3cc33d4e]]\n\nTroubleshooting:\n1. Check for damage to brass laser nozzle. Replace nozzle\nif any damage is present.\n\n[[EVIDENCE_ID: ev_3b27178ed5ecfcf727144f5cf7b4]]\n\n2. Check for brass laser nozzle alignment. If the tube or\nnozzle is bent,  the laser beam will reflect off the inside wall\nof the nozzle causing a wide path. To verify, perform a test\npulse on a piece of card board.  If the dot has a ring or partial\nring around it, the nuzzle is bent or the mirrors may need\nto be adjusted.\n\n[[EVIDENCE_ID: ev_e784c9d0f6bdb8f1f55103b2e481]]\n\n3. Check laser power and cutting speed. Settings may vary\nwhen changing materials. Testing will yield best results.\n\n[[EVIDENCE_ID: ev_917b0c3d6587dcd79632ac967d43]]\n\nRF/EMI Interference\nSome factory environments may have equipment that gener-\nates Radio Frequency (RF) or Electro-Magnetic Interference\n(EMI). These signals in close proximity to the Eastman\ncutting system can generate electrical noise and cause\nproblems for the machine and computer (Eastman does offer\na shielded mouse). It is recommended that any RF Welders\nor other equipment generating RF or EMI noise be a mini-\nmum of 75 feet (23 meter) from the Eastman cutting system.\n\n[[EVIDENCE_ID: ev_db5d4070b691be33a0ba93df928e]]\n\nProblems of this nature are typically difficult to resolve and\nmust be approached in a systematic manner. To reduce the\neffects of electrical noise generated by RF, Eastman Ma-\nchine Company has the following recommendations:\n\n[[EVIDENCE_ID: ev_34c95850953376c499823b326ead]]\n\nStep 1) Install an earth ground as close as possible to the\ntransformer feeding AC power to the cutting system.\n\n[[EVIDENCE_ID: ev_bd02539c07c2d35724e2f7a99eca]]\n\nStep 2) Enclose all AC power cables in rigid conduit and\nsecure to the earth ground. Route the four power cables for\nthe computer controls around the end of the conveyor instead\nof under the unit.\n\n[[EVIDENCE_ID: ev_1410bc7abf3f833196cb52eda90f]]\n\nStep 3) Ground conduits to the table frames.\n\n[[EVIDENCE_ID: ev_abe6a584b57654234bf6662d9a21]]\n\nStep 4) Implementation of the foregoing should reduce the\nlevel of interference to a workable level. In the event that RF\nis still determined an issue, installation of RF filters and/or\npower line filters may be required.",
+          "table_key": null,
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_93a95038878228ed160722ae",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_nue32lMpwfaw5v-uyQa7Kg",
+          "record_anchor": "ev_2fd372a93a4a0644ec082f2650f9",
+          "root_anchor": "ev_2fd372a93a4a0644ec082f2650f9",
+          "branch_anchor": "ev_c2de41589499db5869b8ef19324e",
+          "allowed_source_anchors": [
+            "ev_2fd372a93a4a0644ec082f2650f9",
+            "ev_c2de41589499db5869b8ef19324e",
+            "ev_dbad028f0f290e6aec4ecc190d12",
+            "ev_9747eb8d713623f4c67c6eb3b1b0"
+          ],
+          "evidence_ids": [
+            "ev_2fd372a93a4a0644ec082f2650f9",
+            "ev_c2de41589499db5869b8ef19324e",
+            "ev_dbad028f0f290e6aec4ecc190d12",
+            "ev_9747eb8d713623f4c67c6eb3b1b0"
+          ],
+          "page_numbers": [
+            39
+          ],
+          "text_with_pages": "--- PAGE 39 ---\n\n[[EVIDENCE_ID: ev_2fd372a93a4a0644ec082f2650f9]]\n\nProblem: Loss of laser cutting power\nDescription of Problem:\nThe laser cutting power decreases causing non-cut edges.\n\n[[EVIDENCE_ID: ev_c2de41589499db5869b8ef19324e]]\n\nTroubleshooting:\n1. Damaged or dirty lens. Check for damage or dirt on the\nfocusing lens. Clean or replace lens as required.\n\n[[EVIDENCE_ID: ev_dbad028f0f290e6aec4ecc190d12]]\n\n2. Damaged or dirty Mirror. Check for damage, burn mark or\ndirt on the beam deflecting mirrors. Clean or replace\nmirrors as required.\n\n[[EVIDENCE_ID: ev_9747eb8d713623f4c67c6eb3b1b0]]\n\n3. Damage or debris in laser nozzle. Check for damage or\ndebris in laser nozzle. Clean or replace laser nozzle as\nrequired.",
+          "table_key": null,
+          "inherited_root": false
+        }
+      ]
+    },
+    "danfoss_apf": {
+      "database": "/Users/fabio.daniele/Coding/log-kg-builder/artifacts/acceptance/g3/diagnostic_benchmark_20260812/runs/real/danfoss_apf/operational.db",
+      "evidence_unit_count": 1761,
+      "window_count": 6,
+      "window_kinds": {
+        "table_row": 6
+      },
+      "record_root_count": 6,
+      "cross_page_window_count": 0,
+      "inherited_root_window_count": 0,
+      "max_allowed_anchors": 1,
+      "invariants": {
+        "unique_window_ids": true,
+        "unique_branch_anchors": true,
+        "all_anchors_exist": true,
+        "root_is_allowed": true,
+        "bounded_support": true,
+        "no_nonroot_support_reuse": true
+      },
+      "passed": true,
+      "windows": [
+        {
+          "window_id": "diagwin_8b6f62b131d3ac3101180eff",
+          "window_kind": "table_row",
+          "source_id": "src_hyQL13SHl3FbPqWGq33TWg",
+          "record_anchor": "ev_6ea6f8bf5a757b929a3a015a54d6",
+          "root_anchor": "ev_6ea6f8bf5a757b929a3a015a54d6",
+          "branch_anchor": "ev_6ea6f8bf5a757b929a3a015a54d6",
+          "allowed_source_anchors": [
+            "ev_6ea6f8bf5a757b929a3a015a54d6"
+          ],
+          "evidence_ids": [
+            "ev_6ea6f8bf5a757b929a3a015a54d6"
+          ],
+          "page_numbers": [
+            64
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): Fault number | Fault name | Possible fault | Troubleshooting\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: ev_6ea6f8bf5a757b929a3a015a54d6]]\n\nCURRENT RECORD ROW: 1 | SYS 485 comm loss | 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.",
+          "table_key": "src_hyQL13SHl3FbPqWGq33TWg:table:64",
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_81d3e987252854a7aca525b7",
+          "window_kind": "table_row",
+          "source_id": "src_hyQL13SHl3FbPqWGq33TWg",
+          "record_anchor": "ev_6f037f0f1b9fc9bd700951b3ea0a",
+          "root_anchor": "ev_6f037f0f1b9fc9bd700951b3ea0a",
+          "branch_anchor": "ev_6f037f0f1b9fc9bd700951b3ea0a",
+          "allowed_source_anchors": [
+            "ev_6f037f0f1b9fc9bd700951b3ea0a"
+          ],
+          "evidence_ids": [
+            "ev_6f037f0f1b9fc9bd700951b3ea0a"
+          ],
+          "page_numbers": [
+            64
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): Fault number | Fault name | Possible fault | Troubleshooting\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: ev_6f037f0f1b9fc9bd700951b3ea0a]]\n\nCURRENT RECORD ROW: 2 | Fuse blowout | The input fuse is broken. | Contact service personnel.",
+          "table_key": "src_hyQL13SHl3FbPqWGq33TWg:table:64",
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_b81777c8d929464c636d1f48",
+          "window_kind": "table_row",
+          "source_id": "src_hyQL13SHl3FbPqWGq33TWg",
+          "record_anchor": "ev_f55585040f18f513dccd1e2ee15f",
+          "root_anchor": "ev_f55585040f18f513dccd1e2ee15f",
+          "branch_anchor": "ev_f55585040f18f513dccd1e2ee15f",
+          "allowed_source_anchors": [
+            "ev_f55585040f18f513dccd1e2ee15f"
+          ],
+          "evidence_ids": [
+            "ev_f55585040f18f513dccd1e2ee15f"
+          ],
+          "page_numbers": [
+            64
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): Fault number | Fault name | Possible fault | Troubleshooting\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: ev_f55585040f18f513dccd1e2ee15f]]\n\nCURRENT RECORD ROW: 3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+          "table_key": "src_hyQL13SHl3FbPqWGq33TWg:table:64",
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_2c5fb844d7b1075929e18728",
+          "window_kind": "table_row",
+          "source_id": "src_hyQL13SHl3FbPqWGq33TWg",
+          "record_anchor": "ev_24060c23d42953ff15b121f5a638",
+          "root_anchor": "ev_24060c23d42953ff15b121f5a638",
+          "branch_anchor": "ev_24060c23d42953ff15b121f5a638",
+          "allowed_source_anchors": [
+            "ev_24060c23d42953ff15b121f5a638"
+          ],
+          "evidence_ids": [
+            "ev_24060c23d42953ff15b121f5a638"
+          ],
+          "page_numbers": [
+            64
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): Fault number | Fault name | Possible fault | Troubleshooting\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: ev_24060c23d42953ff15b121f5a638]]\n\nCURRENT RECORD ROW: 4 | BUS OVP/UVP | BUS capacitor failure. | Contact service personnel.",
+          "table_key": "src_hyQL13SHl3FbPqWGq33TWg:table:64",
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_4edbaf186b7b8e098b63cef3",
+          "window_kind": "table_row",
+          "source_id": "src_hyQL13SHl3FbPqWGq33TWg",
+          "record_anchor": "ev_f70287895f87194965184d1d7da4",
+          "root_anchor": "ev_f70287895f87194965184d1d7da4",
+          "branch_anchor": "ev_f70287895f87194965184d1d7da4",
+          "allowed_source_anchors": [
+            "ev_f70287895f87194965184d1d7da4"
+          ],
+          "evidence_ids": [
+            "ev_f70287895f87194965184d1d7da4"
+          ],
+          "page_numbers": [
+            64
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): Fault number | Fault name | Possible fault | Troubleshooting\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: ev_f70287895f87194965184d1d7da4]]\n\nCURRENT RECORD ROW: 5 | Fan Fail | Fan failure. | Contact service personnel.",
+          "table_key": "src_hyQL13SHl3FbPqWGq33TWg:table:64",
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_25419af72b3a0638016a1464",
+          "window_kind": "table_row",
+          "source_id": "src_hyQL13SHl3FbPqWGq33TWg",
+          "record_anchor": "ev_591f9289b8f2d47fefff74565d14",
+          "root_anchor": "ev_591f9289b8f2d47fefff74565d14",
+          "branch_anchor": "ev_591f9289b8f2d47fefff74565d14",
+          "allowed_source_anchors": [
+            "ev_591f9289b8f2d47fefff74565d14"
+          ],
+          "evidence_ids": [
+            "ev_591f9289b8f2d47fefff74565d14"
+          ],
+          "page_numbers": [
+            64
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): Fault number | Fault name | Possible fault | Troubleshooting\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: ev_591f9289b8f2d47fefff74565d14]]\n\nCURRENT RECORD ROW: 6 | No current compensation/Bad current compensation | The CT is not well connected. | Check if the CT wiring is cor- rect.",
+          "table_key": "src_hyQL13SHl3FbPqWGq33TWg:table:64",
+          "inherited_root": false
+        }
+      ]
+    },
+    "graco_check_mate_200": {
+      "database": "/Users/fabio.daniele/Coding/log-kg-builder/artifacts/acceptance/g3/diagnostic_benchmark_20260812/runs/real/graco_check_mate_200/operational.db",
+      "evidence_unit_count": 926,
+      "window_count": 18,
+      "window_kinds": {
+        "table_row": 18
+      },
+      "record_root_count": 5,
+      "cross_page_window_count": 0,
+      "inherited_root_window_count": 13,
+      "max_allowed_anchors": 2,
+      "invariants": {
+        "unique_window_ids": true,
+        "unique_branch_anchors": true,
+        "all_anchors_exist": true,
+        "root_is_allowed": true,
+        "bounded_support": true,
+        "no_nonroot_support_reuse": true
+      },
+      "passed": true,
+      "windows": [
+        {
+          "window_id": "diagwin_707c664755a3a379a5062ef8",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_67adc505873fdf74b5575c836168",
+          "root_anchor": "ev_67adc505873fdf74b5575c836168",
+          "branch_anchor": "ev_67adc505873fdf74b5575c836168",
+          "allowed_source_anchors": [
+            "ev_67adc505873fdf74b5575c836168"
+          ],
+          "evidence_ids": [
+            "ev_67adc505873fdf74b5575c836168"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_67adc505873fdf74b5575c836168]]\n\nCURRENT RECORD ROW: Pump fails to operate. | Restricted line or inadequate air supply | Clear*; see Technical Data on pages 24–27.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_7bd90e8736ae3ead371299f3",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_67adc505873fdf74b5575c836168",
+          "root_anchor": "ev_67adc505873fdf74b5575c836168",
+          "branch_anchor": "ev_ad8ad3ae1ce8402efc23fcd499da",
+          "allowed_source_anchors": [
+            "ev_67adc505873fdf74b5575c836168",
+            "ev_ad8ad3ae1ce8402efc23fcd499da"
+          ],
+          "evidence_ids": [
+            "ev_67adc505873fdf74b5575c836168",
+            "ev_ad8ad3ae1ce8402efc23fcd499da"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_67adc505873fdf74b5575c836168]]\n\nROOT CELL (CONTEXT ONLY): Pump fails to operate.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_ad8ad3ae1ce8402efc23fcd499da]]\n\nCURRENT RECORD ROW: | Obstructed fluid hose or gun/valve; fluid hose ID is too small. | Clear*; use a hose with a larger ID.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": true
+        },
+        {
+          "window_id": "diagwin_5c09f438c50e6eab33c15638",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_67adc505873fdf74b5575c836168",
+          "root_anchor": "ev_67adc505873fdf74b5575c836168",
+          "branch_anchor": "ev_9045f3f523d701b137c5d9e08594",
+          "allowed_source_anchors": [
+            "ev_67adc505873fdf74b5575c836168",
+            "ev_9045f3f523d701b137c5d9e08594"
+          ],
+          "evidence_ids": [
+            "ev_67adc505873fdf74b5575c836168",
+            "ev_9045f3f523d701b137c5d9e08594"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_67adc505873fdf74b5575c836168]]\n\nROOT CELL (CONTEXT ONLY): Pump fails to operate.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_9045f3f523d701b137c5d9e08594]]\n\nCURRENT RECORD ROW: | Fluid dried on the displacement rod. | Clean; see Service on pages 12–19.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": true
+        },
+        {
+          "window_id": "diagwin_7a98bcab929487d2d24cb1a2",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_67adc505873fdf74b5575c836168",
+          "root_anchor": "ev_67adc505873fdf74b5575c836168",
+          "branch_anchor": "ev_a8b3d335f0f45f4d44292c7b36e7",
+          "allowed_source_anchors": [
+            "ev_67adc505873fdf74b5575c836168",
+            "ev_a8b3d335f0f45f4d44292c7b36e7"
+          ],
+          "evidence_ids": [
+            "ev_67adc505873fdf74b5575c836168",
+            "ev_a8b3d335f0f45f4d44292c7b36e7"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_67adc505873fdf74b5575c836168]]\n\nROOT CELL (CONTEXT ONLY): Pump fails to operate.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_a8b3d335f0f45f4d44292c7b36e7]]\n\nCURRENT RECORD ROW: | Dirty or worn air motor parts. | Clean or repair; see separate air motor manual.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": true
+        },
+        {
+          "window_id": "diagwin_d1f6ede789d89ed753575cec",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_b0146a3a8d484bd4c428244c6e30",
+          "root_anchor": "ev_b0146a3a8d484bd4c428244c6e30",
+          "branch_anchor": "ev_b0146a3a8d484bd4c428244c6e30",
+          "allowed_source_anchors": [
+            "ev_b0146a3a8d484bd4c428244c6e30"
+          ],
+          "evidence_ids": [
+            "ev_b0146a3a8d484bd4c428244c6e30"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_b0146a3a8d484bd4c428244c6e30]]\n\nCURRENT RECORD ROW: Pump operates, but output is low on both strokes. | Restricted line or inadequate air supply. | Clear*; see Technical Data on pages 24–27.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_5f574e3778570a3794e6c583",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_b0146a3a8d484bd4c428244c6e30",
+          "root_anchor": "ev_b0146a3a8d484bd4c428244c6e30",
+          "branch_anchor": "ev_5a04ea4199dcf8b0c47bcc16eaba",
+          "allowed_source_anchors": [
+            "ev_b0146a3a8d484bd4c428244c6e30",
+            "ev_5a04ea4199dcf8b0c47bcc16eaba"
+          ],
+          "evidence_ids": [
+            "ev_b0146a3a8d484bd4c428244c6e30",
+            "ev_5a04ea4199dcf8b0c47bcc16eaba"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_b0146a3a8d484bd4c428244c6e30]]\n\nROOT CELL (CONTEXT ONLY): Pump operates, but output is low on both strokes.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_5a04ea4199dcf8b0c47bcc16eaba]]\n\nCURRENT RECORD ROW: | Obstructed fluid hose or gun/valve; fluid hose ID is too small. | Clear*; use a hose with a larger ID.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": true
+        },
+        {
+          "window_id": "diagwin_d3d824becb849783f17cf84a",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_b0146a3a8d484bd4c428244c6e30",
+          "root_anchor": "ev_b0146a3a8d484bd4c428244c6e30",
+          "branch_anchor": "ev_0b82ef4954673f017a4d4ebfdc2c",
+          "allowed_source_anchors": [
+            "ev_b0146a3a8d484bd4c428244c6e30",
+            "ev_0b82ef4954673f017a4d4ebfdc2c"
+          ],
+          "evidence_ids": [
+            "ev_b0146a3a8d484bd4c428244c6e30",
+            "ev_0b82ef4954673f017a4d4ebfdc2c"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_b0146a3a8d484bd4c428244c6e30]]\n\nROOT CELL (CONTEXT ONLY): Pump operates, but output is low on both strokes.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_0b82ef4954673f017a4d4ebfdc2c]]\n\nCURRENT RECORD ROW: | Bleeder valve is open. | Close.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": true
+        },
+        {
+          "window_id": "diagwin_1d705a34f8067bdb901392d9",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_b0146a3a8d484bd4c428244c6e30",
+          "root_anchor": "ev_b0146a3a8d484bd4c428244c6e30",
+          "branch_anchor": "ev_9828f97e7eb8ef954668774c633b",
+          "allowed_source_anchors": [
+            "ev_b0146a3a8d484bd4c428244c6e30",
+            "ev_9828f97e7eb8ef954668774c633b"
+          ],
+          "evidence_ids": [
+            "ev_b0146a3a8d484bd4c428244c6e30",
+            "ev_9828f97e7eb8ef954668774c633b"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_b0146a3a8d484bd4c428244c6e30]]\n\nROOT CELL (CONTEXT ONLY): Pump operates, but output is low on both strokes.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_9828f97e7eb8ef954668774c633b]]\n\nCURRENT RECORD ROW: | Air is leaking into the supply container. | Check wiper plate seal.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": true
+        },
+        {
+          "window_id": "diagwin_a30fad3c2e6762c5ec74f626",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_b0146a3a8d484bd4c428244c6e30",
+          "root_anchor": "ev_b0146a3a8d484bd4c428244c6e30",
+          "branch_anchor": "ev_73b24219eb434b6855b199da1ee4",
+          "allowed_source_anchors": [
+            "ev_b0146a3a8d484bd4c428244c6e30",
+            "ev_73b24219eb434b6855b199da1ee4"
+          ],
+          "evidence_ids": [
+            "ev_b0146a3a8d484bd4c428244c6e30",
+            "ev_73b24219eb434b6855b199da1ee4"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_b0146a3a8d484bd4c428244c6e30]]\n\nROOT CELL (CONTEXT ONLY): Pump operates, but output is low on both strokes.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_73b24219eb434b6855b199da1ee4]]\n\nCURRENT RECORD ROW: | Fluid is too heavy for pump priming. | Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": true
+        },
+        {
+          "window_id": "diagwin_8fa919cb0bf9822ac26b69e8",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_b0146a3a8d484bd4c428244c6e30",
+          "root_anchor": "ev_b0146a3a8d484bd4c428244c6e30",
+          "branch_anchor": "ev_764ae7a54744780ecb8c13cda6cd",
+          "allowed_source_anchors": [
+            "ev_b0146a3a8d484bd4c428244c6e30",
+            "ev_764ae7a54744780ecb8c13cda6cd"
+          ],
+          "evidence_ids": [
+            "ev_b0146a3a8d484bd4c428244c6e30",
+            "ev_764ae7a54744780ecb8c13cda6cd"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_b0146a3a8d484bd4c428244c6e30]]\n\nROOT CELL (CONTEXT ONLY): Pump operates, but output is low on both strokes.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_764ae7a54744780ecb8c13cda6cd]]\n\nCURRENT RECORD ROW: | Worn packings in displacement pump. | Replace packings.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": true
+        },
+        {
+          "window_id": "diagwin_d1134d7610e028eb9763afac",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_986b8c24f109d525d6969ccae0cd",
+          "root_anchor": "ev_986b8c24f109d525d6969ccae0cd",
+          "branch_anchor": "ev_986b8c24f109d525d6969ccae0cd",
+          "allowed_source_anchors": [
+            "ev_986b8c24f109d525d6969ccae0cd"
+          ],
+          "evidence_ids": [
+            "ev_986b8c24f109d525d6969ccae0cd"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_986b8c24f109d525d6969ccae0cd]]\n\nCURRENT RECORD ROW: Pump operates, but output is low on down- stroke. | Fluid too heavy for pump priming. | Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_6017062395c44e4c9bf05779",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_986b8c24f109d525d6969ccae0cd",
+          "root_anchor": "ev_986b8c24f109d525d6969ccae0cd",
+          "branch_anchor": "ev_e1e8ee063ea3e122d89d794bb835",
+          "allowed_source_anchors": [
+            "ev_986b8c24f109d525d6969ccae0cd",
+            "ev_e1e8ee063ea3e122d89d794bb835"
+          ],
+          "evidence_ids": [
+            "ev_986b8c24f109d525d6969ccae0cd",
+            "ev_e1e8ee063ea3e122d89d794bb835"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_986b8c24f109d525d6969ccae0cd]]\n\nROOT CELL (CONTEXT ONLY): Pump operates, but output is low on down- stroke.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_e1e8ee063ea3e122d89d794bb835]]\n\nCURRENT RECORD ROW: | Held open or worn intake valve or seals. | Clear valve; replace seals.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": true
+        },
+        {
+          "window_id": "diagwin_b3fffe721d21cc58c94c3574",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_969e6de369533019aad478d4a4ae",
+          "root_anchor": "ev_969e6de369533019aad478d4a4ae",
+          "branch_anchor": "ev_969e6de369533019aad478d4a4ae",
+          "allowed_source_anchors": [
+            "ev_969e6de369533019aad478d4a4ae"
+          ],
+          "evidence_ids": [
+            "ev_969e6de369533019aad478d4a4ae"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_969e6de369533019aad478d4a4ae]]\n\nCURRENT RECORD ROW: Pump operates, but output is low on up- stroke. | Held open or worn piston valve or seals. | Clear valve; replace seals.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_1c1faec27202a21a2ec71910",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_4ea3ec93622c642e2ba89f23fcd8",
+          "root_anchor": "ev_4ea3ec93622c642e2ba89f23fcd8",
+          "branch_anchor": "ev_4ea3ec93622c642e2ba89f23fcd8",
+          "allowed_source_anchors": [
+            "ev_4ea3ec93622c642e2ba89f23fcd8"
+          ],
+          "evidence_ids": [
+            "ev_4ea3ec93622c642e2ba89f23fcd8"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_4ea3ec93622c642e2ba89f23fcd8]]\n\nCURRENT RECORD ROW: Erratic or accelerated pump speed. | Exhausted fluid supply. | Refill and prime.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": false
+        },
+        {
+          "window_id": "diagwin_f40049c77eb60cc4bfe47a6c",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_4ea3ec93622c642e2ba89f23fcd8",
+          "root_anchor": "ev_4ea3ec93622c642e2ba89f23fcd8",
+          "branch_anchor": "ev_415f53a048134f01ea5b5a4fe80b",
+          "allowed_source_anchors": [
+            "ev_4ea3ec93622c642e2ba89f23fcd8",
+            "ev_415f53a048134f01ea5b5a4fe80b"
+          ],
+          "evidence_ids": [
+            "ev_4ea3ec93622c642e2ba89f23fcd8",
+            "ev_415f53a048134f01ea5b5a4fe80b"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_4ea3ec93622c642e2ba89f23fcd8]]\n\nROOT CELL (CONTEXT ONLY): Erratic or accelerated pump speed.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_415f53a048134f01ea5b5a4fe80b]]\n\nCURRENT RECORD ROW: | Fluid is too heavy for pump priming. | Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": true
+        },
+        {
+          "window_id": "diagwin_b7d8f1a5bb6b038c38b8e521",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_4ea3ec93622c642e2ba89f23fcd8",
+          "root_anchor": "ev_4ea3ec93622c642e2ba89f23fcd8",
+          "branch_anchor": "ev_f9684be7e7b7d5432e6ae7a677f0",
+          "allowed_source_anchors": [
+            "ev_4ea3ec93622c642e2ba89f23fcd8",
+            "ev_f9684be7e7b7d5432e6ae7a677f0"
+          ],
+          "evidence_ids": [
+            "ev_4ea3ec93622c642e2ba89f23fcd8",
+            "ev_f9684be7e7b7d5432e6ae7a677f0"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_4ea3ec93622c642e2ba89f23fcd8]]\n\nROOT CELL (CONTEXT ONLY): Erratic or accelerated pump speed.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_f9684be7e7b7d5432e6ae7a677f0]]\n\nCURRENT RECORD ROW: | Held open or worn piston valve or seals. | Clear valve; replace seals.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": true
+        },
+        {
+          "window_id": "diagwin_2c0123e972dcd570e8b7e8ef",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_4ea3ec93622c642e2ba89f23fcd8",
+          "root_anchor": "ev_4ea3ec93622c642e2ba89f23fcd8",
+          "branch_anchor": "ev_c5dc3cf30e41f8f0d1e7732072cf",
+          "allowed_source_anchors": [
+            "ev_4ea3ec93622c642e2ba89f23fcd8",
+            "ev_c5dc3cf30e41f8f0d1e7732072cf"
+          ],
+          "evidence_ids": [
+            "ev_4ea3ec93622c642e2ba89f23fcd8",
+            "ev_c5dc3cf30e41f8f0d1e7732072cf"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_4ea3ec93622c642e2ba89f23fcd8]]\n\nROOT CELL (CONTEXT ONLY): Erratic or accelerated pump speed.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_c5dc3cf30e41f8f0d1e7732072cf]]\n\nCURRENT RECORD ROW: | Held open or worn priming piston. | Clear; service.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": true
+        },
+        {
+          "window_id": "diagwin_b9ff525c3adb2215285c0f06",
+          "window_kind": "table_row",
+          "source_id": "src_m0KPAs8M1S5k4PAnv4IHSg",
+          "record_anchor": "ev_4ea3ec93622c642e2ba89f23fcd8",
+          "root_anchor": "ev_4ea3ec93622c642e2ba89f23fcd8",
+          "branch_anchor": "ev_b5081b9b35a866fc9dbabdeec818",
+          "allowed_source_anchors": [
+            "ev_4ea3ec93622c642e2ba89f23fcd8",
+            "ev_b5081b9b35a866fc9dbabdeec818"
+          ],
+          "evidence_ids": [
+            "ev_4ea3ec93622c642e2ba89f23fcd8",
+            "ev_b5081b9b35a866fc9dbabdeec818"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_4ea3ec93622c642e2ba89f23fcd8]]\n\nROOT CELL (CONTEXT ONLY): Erratic or accelerated pump speed.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_b5081b9b35a866fc9dbabdeec818]]\n\nCURRENT RECORD ROW: | Worn packings in displacement pump. | Replace packings.",
+          "table_key": "src_m0KPAs8M1S5k4PAnv4IHSg:table:4",
+          "inherited_root": true
+        }
+      ]
+    }
+  },
+  "passed": true
+}

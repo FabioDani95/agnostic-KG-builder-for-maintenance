@@ -1,0 +1,97 @@
+{
+  "manuals": {
+    "danfoss_apf": {
+      "after": {
+        "gap": 3,
+        "publish": 5
+      },
+      "before": {
+        "gap": 3,
+        "publish": 5
+      },
+      "candidate_replayed_count": 8,
+      "changed_record_count": 0,
+      "changed_records": [],
+      "disposition_delta": {},
+      "generation_response_sha256": "9bd33da05861835df79870d4153ae56a1aa53d761595780c9982baa5f52841c8",
+      "operational_db_sha256": "4c48f2e0082ed3950d8f33bebd9c839090685c1839a884ac842ec50ecdd8e1a8",
+      "record_count": 8,
+      "run_dir": "/Users/fabio.daniele/Coding/log-kg-builder/artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_20260813/runs/real/danfoss_apf"
+    },
+    "eastman_e554": {
+      "after": {
+        "exclude": 1,
+        "gap": 5,
+        "publish": 7,
+        "review": 2
+      },
+      "before": {
+        "exclude": 1,
+        "gap": 5,
+        "publish": 7,
+        "review": 2
+      },
+      "candidate_replayed_count": 15,
+      "changed_record_count": 0,
+      "changed_records": [],
+      "disposition_delta": {},
+      "generation_response_sha256": "fee7bd275fa5c51c571cb12b6cb9aa847d29aa7971e9fb023bcd36ada926c298",
+      "operational_db_sha256": "a6a3100c99a05123abb85280f2515bf2db27e21a61905eeb4deeb9e450daed8b",
+      "record_count": 15,
+      "run_dir": "/Users/fabio.daniele/Coding/log-kg-builder/artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_20260813/runs/real/eastman_e554"
+    },
+    "graco_check_mate_200": {
+      "after": {
+        "gap": 1,
+        "publish": 17
+      },
+      "before": {
+        "gap": 3,
+        "publish": 15
+      },
+      "candidate_replayed_count": 18,
+      "changed_record_count": 2,
+      "changed_records": [
+        {
+          "after": "publish",
+          "after_reasons": [],
+          "before": "gap",
+          "before_reasons": [
+            "unresolved_material_context"
+          ],
+          "candidate_replayed": true,
+          "position": 2,
+          "resolved_evidence_ids": [
+            "ev_da0b273c477a69f9c98f78442d8a"
+          ],
+          "window_id": "diagwin_e526a429172f2bb1abb236e7"
+        },
+        {
+          "after": "publish",
+          "after_reasons": [],
+          "before": "gap",
+          "before_reasons": [
+            "unresolved_material_context"
+          ],
+          "candidate_replayed": true,
+          "position": 6,
+          "resolved_evidence_ids": [
+            "ev_4178d9aa469d6c3f592feebc3c73",
+            "ev_78edea166b5b383a11dc798925a4"
+          ],
+          "window_id": "diagwin_16ec07258086da7d015b8fb4"
+        }
+      ],
+      "disposition_delta": {
+        "gap": -2,
+        "publish": 2
+      },
+      "generation_response_sha256": "de5db8637d3afb5d424db1f8067776aedaf1f7389b274f562bd4329f2e4b94a1",
+      "operational_db_sha256": "9924b261d0fe3933b5438968380951f647bbb3cac29e83952c2bec220d766bd8",
+      "record_count": 18,
+      "run_dir": "/Users/fabio.daniele/Coding/log-kg-builder/artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_20260813/runs/real/graco_check_mate_200"
+    }
+  },
+  "real_calls": 0,
+  "schema_version": "diagnostic-compiler-post-campaign-replay-v1"
+}

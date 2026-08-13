@@ -274,6 +274,50 @@ def test_global_canonicalization_merges_safe_plural_variant_but_not_distinct_pro
     assert canonical.relations[0].to_id == "comp_filter"
 
 
+def test_canonicalization_preserves_distinct_relation_branch_occurrences():
+    ontology = OntologyInstance(
+        ontology_name="Core_Ontology",
+        version="2.0",
+        language="en",
+        source_type="manual",
+        source_title="Two branch fixture",
+        nodes={
+            "Asset": [],
+            "Component": [],
+            "Symptom": [],
+            "FailureMode": [],
+            "CorrectiveAction": [],
+            "ErrorCode": [],
+        },
+        relations=[
+            OntologyRelationInstance(
+                name="RESOLVED_BY",
+                from_type="FailureMode",
+                from_id="fm_shared",
+                to_type="CorrectiveAction",
+                to_id="ca_shared",
+                branch_lineage_id="dbranch_" + "a" * 64,
+            ),
+            OntologyRelationInstance(
+                name="RESOLVED_BY",
+                from_type="FailureMode",
+                from_id="fm_shared",
+                to_type="CorrectiveAction",
+                to_id="ca_shared",
+                branch_lineage_id="dbranch_" + "b" * 64,
+            ),
+        ],
+    )
+
+    canonical, _report = canonicalize_ontology_instance(ontology)
+
+    assert len(canonical.relations) == 2
+    assert {relation.branch_lineage_id for relation in canonical.relations} == {
+        "dbranch_" + "a" * 64,
+        "dbranch_" + "b" * 64,
+    }
+
+
 def test_page_role_detection_uses_diagnostic_semantics_not_procedural_sections():
     assert is_diagnostic_section("Alarm diagnosis and fault finding")
     assert is_diagnostic_section("Ricerca guasti")

@@ -184,22 +184,33 @@ def build_publication_graph(
     for relation in grounded_relations:
         by_type[relation.relation_type].append(relation)
 
-    failures_with_action = {relation.from_id for relation in by_type[failure_action]}
+    action_branches = {
+        (relation.from_id, relation.branch_lineage_id)
+        for relation in by_type[failure_action]
+    }
     complete_symptom_relations = [
-        relation for relation in by_type[symptom_failure] if relation.to_id in failures_with_action
+        relation
+        for relation in by_type[symptom_failure]
+        if (relation.to_id, relation.branch_lineage_id) in action_branches
     ]
     complete_error_relations = [
-        relation for relation in by_type[error_failure] if relation.to_id in failures_with_action
+        relation
+        for relation in by_type[error_failure]
+        if (relation.to_id, relation.branch_lineage_id) in action_branches
     ]
-    complete_failures = {
-        relation.to_id for relation in [*complete_symptom_relations, *complete_error_relations]
+    complete_failure_branches = {
+        (relation.to_id, relation.branch_lineage_id)
+        for relation in [*complete_symptom_relations, *complete_error_relations]
     }
+    complete_failures = {failure_id for failure_id, _branch in complete_failure_branches}
 
     diagnostic_relation_candidates: list[SourceGraphRelation] = [
         *complete_symptom_relations,
         *complete_error_relations,
-        *(relation for relation in by_type[failure_action] if relation.from_id in complete_failures),
-        *(relation for relation in by_type[failure_component] if relation.from_id in complete_failures),
+        *(relation for relation in by_type[failure_action]
+          if (relation.from_id, relation.branch_lineage_id) in complete_failure_branches),
+        *(relation for relation in by_type[failure_component]
+          if (relation.from_id, relation.branch_lineage_id) in complete_failure_branches),
     ]
     complete_error_ids = {relation.from_id for relation in complete_error_relations}
     diagnostic_relation_candidates.extend(

@@ -79,6 +79,7 @@ class SourceGraphRelation(BaseModel):
     to_id: str = Field(min_length=1)
     evidence_ids: list[OpaqueId] = Field(min_length=1)
     evidence_refs: list[RelationEvidenceRef] = Field(default_factory=list)
+    branch_lineage_id: str = ""
 
 
 class GraphValidationIssue(BaseModel):
@@ -268,6 +269,11 @@ class SourceSubgraphRevision(BaseModel):
     review_queue: list[dict[str, Any]] = Field(default_factory=list)
     review_summary: dict[str, Any] = Field(default_factory=dict)
     publication_metrics: dict[str, Any] = Field(default_factory=dict)
+    # Immutable copy of the typed diagnostic compiler report.  The graph is a
+    # publication projection; this ledger deliberately also retains rejected,
+    # excluded and incomplete candidates so a reviewer can audit accounting
+    # without reconstructing model output from transient run logs.
+    diagnostic_compilation_ledger: dict[str, Any] = Field(default_factory=dict)
     canonicalization_report: dict[str, Any] = Field(default_factory=dict)
     approval_eligible: bool = False
     supersedes: OpaqueId | None = None

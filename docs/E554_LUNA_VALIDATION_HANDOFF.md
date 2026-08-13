@@ -1,5 +1,11 @@
 # Handoff — singolo rerun reale E-554 con profilo Luna
 
+> **Documento storico, non eseguire.** Questa procedura e la relativa
+> autorizzazione di spesa sono chiuse e sono state superseded dalla campagna
+> PDF G3 v11. Per lo stato corrente usare
+> [PDF G3 Second Hardening](PDF_G3_SECOND_HARDENING.md). Una nuova chiamata
+> reale richiede una nuova autorizzazione esplicita.
+
 Copia il prompt seguente in una nuova chat Codex aperta sullo stesso workspace.
 
 ---

@@ -55,13 +55,14 @@ from backend.services.cutplan_service import (
     page_has_diagnostic_record,
 )
 from backend.services.diagnostic_publication_service import build_publication_graph
+from backend.services.diagnostic_record_windowing import build_diagnostic_record_windows
 from backend.services.llm_gateway import llm_mode
 from backend.services.ontology_schema_service import load_ontology_schema, ontology_contract
 from backend.services.ontology_workflow import draft_ontology_workflow
 from backend.services.run_metrics import MODEL_PRICING, build_metrics_payload
 from backend.services.scoping_workflow import create_cut_plan_workflow
 
-PDF_SUBGRAPH_GENERATOR_VERSION = "pdf-g3-typed-diagnostic-publication-v7"
+PDF_SUBGRAPH_GENERATOR_VERSION = "pdf-g3-atomic-record-publication-v11"
 
 _ID_PROPERTIES = {
     "Asset": "asset_id",
@@ -247,6 +248,260 @@ def _generation_metrics(store: dict[str, Any], *, duration_seconds: float) -> So
     )
 
 
+_DIAGNOSTIC_DISPOSITIONS = {"publish", "gap", "review", "exclude"}
+_DIAGNOSTIC_WINDOW_INVENTORY_KEYS = (
+    "candidate_windows",
+    "record_windows",
+    "diagnostic_record_windows",
+    "record_window_inventory",
+)
+
+
+def _positive_int(value: Any) -> int:
+    try:
+        parsed = int(value or 0)
+    except (TypeError, ValueError):
+        return 0
+    return parsed if parsed > 0 else 0
+
+
+def _payload_anchor_ids(value: Any) -> set[str]:
+    """Collect provenance anchors from a persisted candidate payload.
+
+    This intentionally follows field semantics instead of harvesting every
+    string.  Candidate labels and free text can look like opaque IDs and must
+    never be mistaken for evidence accounting.
+    """
+
+    anchors: set[str] = set()
+    if isinstance(value, list):
+        for item in value:
+            anchors.update(_payload_anchor_ids(item))
+        return anchors
+    if not isinstance(value, dict):
+        return anchors
+    for key, item in value.items():
+        normalized_key = str(key).casefold()
+        if normalized_key in {
+            "source_anchor",
+            "record_anchor",
+            "branch_anchor",
+            "claim_anchor",
+        }:
+            anchor = str(item or "").strip()
+            if anchor:
+                anchors.add(anchor)
+            continue
+        if normalized_key in {
+            "allowed_source_anchors",
+            "evidence_ids",
+            "resolved_evidence_ids",
+            "candidate_input_anchors",
+        }:
+            if isinstance(item, list):
+                anchors.update(str(raw).strip() for raw in item if str(raw).strip())
+            continue
+        anchors.update(_payload_anchor_ids(item))
+    return anchors
+
+
+def _payload_pages(value: Any) -> set[int]:
+    pages: set[int] = set()
+    if isinstance(value, list):
+        for item in value:
+            pages.update(_payload_pages(item))
+        return pages
+    if not isinstance(value, dict):
+        return pages
+    for key, item in value.items():
+        normalized_key = str(key).casefold()
+        if normalized_key in {"page", "source_page", "page_number"}:
+            page = _positive_int(item)
+            if page:
+                pages.add(page)
+            continue
+        if normalized_key in {
+            "pages",
+            "input_pages",
+            "page_numbers",
+        } and isinstance(item, list):
+            pages.update(page for raw in item if (page := _positive_int(raw)))
+            continue
+        pages.update(_payload_pages(item))
+    return pages
+
+
+def _window_id(value: Any) -> str:
+    if isinstance(value, str):
+        return value.strip()
+    if not isinstance(value, dict):
+        return ""
+    for key in ("record_window_id", "window_id", "id"):
+        identifier = str(value.get(key) or "").strip()
+        if identifier:
+            return identifier
+    return ""
+
+
+def _entry_window_id(entry: dict[str, Any]) -> str:
+    identifier = _window_id(entry)
+    if identifier:
+        return identifier
+    return _window_id(entry.get("candidate"))
+
+
+def _diagnostic_accounting_summary(
+    contract_report: dict[str, Any],
+    *,
+    evidence_by_id: dict[str, EvidenceUnit],
+) -> dict[str, Any]:
+    """Return disposition accounting independently from publishability.
+
+    A review or a declared gap is unresolved for publication, but it is still
+    accounted when the original candidate/window and its disposition are
+    durably represented.  Provider truncation, missing dispositions, or an
+    inventory item with no disposed record remain fail-closed.
+    """
+
+    entries = [
+        item for item in (contract_report.get("records") or [])
+        if isinstance(item, dict)
+    ]
+    candidate_pages = {
+        page
+        for raw in (contract_report.get("candidate_pages") or [])
+        if (page := _positive_int(raw))
+    }
+    candidate_anchor_ids = {
+        str(item.get("evidence_id") or "").strip()
+        for item in (contract_report.get("candidate_evidence_anchors") or [])
+        if isinstance(item, dict) and str(item.get("evidence_id") or "").strip()
+    }
+    candidate_anchor_ids.update(
+        str(value).strip()
+        for value in (contract_report.get("candidate_input_anchors") or [])
+        if str(value).strip()
+    )
+
+    window_details: dict[str, dict[str, set[Any]]] = {}
+    malformed_window_inventory = 0
+    for key in _DIAGNOSTIC_WINDOW_INVENTORY_KEYS:
+        raw_windows = contract_report.get(key) or []
+        if not isinstance(raw_windows, list):
+            continue
+        for raw_window in raw_windows:
+            identifier = _window_id(raw_window)
+            if not identifier:
+                malformed_window_inventory += 1
+                continue
+            details = window_details.setdefault(
+                identifier,
+                {"anchors": set(), "pages": set()},
+            )
+            details["anchors"].update(_payload_anchor_ids(raw_window))
+            details["pages"].update(_payload_pages(raw_window))
+    for raw_identifier in (contract_report.get("candidate_window_ids") or []):
+        identifier = str(raw_identifier or "").strip()
+        if identifier:
+            window_details.setdefault(identifier, {"anchors": set(), "pages": set()})
+
+    for details in window_details.values():
+        candidate_anchor_ids.update(str(value) for value in details["anchors"])
+        candidate_pages.update(int(value) for value in details["pages"])
+
+    accounted_pages: set[int] = set()
+    accounted_anchor_ids: set[str] = set()
+    accounted_window_ids: set[str] = set()
+    entries_without_disposition: list[int] = []
+    disposed_entries = 0
+    accounting_states: dict[str, int] = defaultdict(int)
+    for index, entry in enumerate(entries):
+        disposition = str(entry.get("disposition") or "").strip().casefold()
+        if disposition not in _DIAGNOSTIC_DISPOSITIONS:
+            entries_without_disposition.append(index)
+            continue
+        disposed_entries += 1
+        accounting_state = str(entry.get("accounting_state") or "").strip()
+        accounting_states[accounting_state or f"legacy_{disposition}"] += 1
+        # Include lineage anchors before committing this entry to the accounted
+        # set.  The previous ordering silently omitted record/branch anchors.
+        entry_anchor_ids = _payload_anchor_ids(entry)
+        entry_pages = _payload_pages(entry)
+        identifier = _entry_window_id(entry)
+        if identifier:
+            accounted_window_ids.add(identifier)
+            details = window_details.get(identifier)
+            if details is not None:
+                entry_anchor_ids.update(str(value) for value in details["anchors"])
+                entry_pages.update(int(value) for value in details["pages"])
+        accounted_anchor_ids.update(entry_anchor_ids)
+        for evidence_id in entry_anchor_ids:
+            evidence = evidence_by_id.get(evidence_id)
+            if evidence is not None and isinstance(evidence.locator, PdfLocator):
+                entry_pages.add(evidence.locator.page)
+        accounted_pages.update(entry_pages)
+
+    candidate_count = max(0, int(contract_report.get("candidate_count", 0) or 0))
+    candidate_page_count = max(
+        0,
+        int(contract_report.get("candidate_page_count", len(candidate_pages)) or 0),
+    )
+    declared_anchor_count = max(
+        0,
+        int(
+            contract_report.get(
+                "candidate_evidence_anchor_count",
+                len(candidate_anchor_ids),
+            )
+            or 0
+        ),
+    )
+    declared_window_count = max(
+        0,
+        int(contract_report.get("candidate_window_count", len(window_details)) or 0),
+    )
+    unaccounted_pages = sorted(candidate_pages - accounted_pages)
+    unaccounted_anchor_ids = sorted(candidate_anchor_ids - accounted_anchor_ids)
+    unaccounted_window_ids = sorted(set(window_details) - accounted_window_ids)
+    complete = bool(
+        contract_report.get("schema_version")
+        and bool(contract_report.get("parsed", False))
+        and not bool(contract_report.get("refusal", False))
+        and str(contract_report.get("finish_reason") or "stop") in {"", "stop"}
+        and not entries_without_disposition
+        and candidate_count == len(entries)
+        and candidate_page_count <= len(candidate_pages)
+        and declared_anchor_count <= len(candidate_anchor_ids)
+        and declared_window_count <= len(window_details)
+        and not malformed_window_inventory
+        and not unaccounted_pages
+        and not unaccounted_anchor_ids
+        and not unaccounted_window_ids
+    )
+    return {
+        "complete": complete,
+        "candidate_count": candidate_count,
+        "entry_count": len(entries),
+        "disposed_entry_count": disposed_entries,
+        "accounting_states": dict(sorted(accounting_states.items())),
+        "entries_without_disposition": entries_without_disposition,
+        "candidate_pages": sorted(candidate_pages),
+        "accounted_candidate_pages": sorted(candidate_pages & accounted_pages),
+        "unaccounted_candidate_pages": unaccounted_pages,
+        "candidate_evidence_ids": sorted(candidate_anchor_ids),
+        "accounted_candidate_evidence_ids": sorted(
+            candidate_anchor_ids & accounted_anchor_ids
+        ),
+        "unaccounted_candidate_evidence_ids": unaccounted_anchor_ids,
+        "candidate_window_ids": sorted(window_details),
+        "accounted_candidate_window_ids": sorted(
+            set(window_details) & accounted_window_ids
+        ),
+        "unaccounted_candidate_window_ids": unaccounted_window_ids,
+        "malformed_window_inventory": malformed_window_inventory,
+    }
+
+
 class PdfSourceSubgraphBuilder:
     """Run the local PDF core and produce one immutable target revision."""
 
@@ -396,18 +651,69 @@ class PdfSourceSubgraphBuilder:
             "structural_pages": structural_pages,
             "retrieval_pages": physical_pages,
         }
+        diagnostic_record_windows = build_diagnostic_record_windows(
+            evidence,
+            included_pages=diagnostic_pages,
+        )
+        store["diagnostic_record_windows"] = [
+            window.model_dump(mode="json") for window in diagnostic_record_windows
+        ]
+        # The compiler resolves against canonical units, never against the
+        # rendered prompt copy.  These objects stay process-local; only the
+        # compilation ledger is serialized into the revision.
+        store["diagnostic_evidence_units"] = list(evidence)
         unreadable_pages = sorted(
             page_number
             for page_number in physical_pages
             if not str(evidence_by_page.get(page_number, {}).get("text", "")).strip()
         )
+        window_candidate_pages = sorted({
+            page
+            for window in diagnostic_record_windows
+            for page in window.page_numbers
+        })
+        window_candidate_anchors = sorted({
+            anchor
+            for window in diagnostic_record_windows
+            for anchor in window.allowed_source_anchors
+        })
+        accounted_candidate_pages = (
+            window_candidate_pages if diagnostic_record_windows else sorted(all_candidate_pages)
+        )
+        evidence_unit_by_id = {str(unit.evidence_id): unit for unit in evidence}
+        accounted_candidate_anchors = (
+            [
+                {
+                    "evidence_id": anchor,
+                    "page": int(evidence_unit_by_id[anchor].locator.page),
+                }
+                for anchor in window_candidate_anchors
+                if anchor in evidence_unit_by_id
+                and isinstance(evidence_unit_by_id[anchor].locator, PdfLocator)
+            ]
+            if diagnostic_record_windows
+            else candidate_evidence_anchors
+        )
         diagnostic_scan_report = {
             "physical_pages_scanned": len(physical_pages),
-            "candidate_pages": sorted(all_candidate_pages),
+            # The high-recall page scan controls scoping.  Accounting is tied
+            # to the stricter deterministic record-window inventory so generic
+            # maintenance/checklists are not forced into fake diagnostics.
+            "candidate_pages": accounted_candidate_pages,
             "candidate_context_pages": sorted(candidate_windows - all_candidate_pages),
-            "candidate_page_count": len(all_candidate_pages),
-            "candidate_evidence_anchors": candidate_evidence_anchors,
-            "candidate_evidence_anchor_count": len(candidate_evidence_anchors),
+            "candidate_page_count": len(accounted_candidate_pages),
+            "candidate_evidence_anchors": accounted_candidate_anchors,
+            "candidate_evidence_anchor_count": len(accounted_candidate_anchors),
+            "high_recall_candidate_pages": sorted(all_candidate_pages),
+            "high_recall_candidate_page_count": len(all_candidate_pages),
+            "high_recall_candidate_evidence_anchors": candidate_evidence_anchors,
+            "record_window_inventory": [
+                window.model_dump(mode="json") for window in diagnostic_record_windows
+            ],
+            "candidate_window_ids": [
+                window.window_id for window in diagnostic_record_windows
+            ],
+            "candidate_window_count": len(diagnostic_record_windows),
             "unreadable_pages": unreadable_pages,
             "unreadable_page_count": len(unreadable_pages),
         }
@@ -819,6 +1125,7 @@ class PdfSourceSubgraphBuilder:
                         relation.from_id,
                         relation.to_type,
                         relation.to_id,
+                        str(getattr(relation, "branch_lineage_id", "") or ""),
                     ])[:20]
                 ),
                 relation_type=relation.name,
@@ -826,6 +1133,9 @@ class PdfSourceSubgraphBuilder:
                 to_id=relation.to_id,
                 evidence_ids=resolved,
                 evidence_refs=relation_evidence_refs,
+                branch_lineage_id=str(
+                    getattr(relation, "branch_lineage_id", "") or ""
+                ),
             ))
 
         used_ids = {
@@ -887,6 +1197,10 @@ class PdfSourceSubgraphBuilder:
         contract_report = dict(result.diagnostic_contract_report or {})
         typed_contract = bool(contract_report.get("schema_version"))
         candidate_page_count = int(contract_report.get("candidate_page_count", 0) or 0)
+        accounting_summary = _diagnostic_accounting_summary(
+            contract_report,
+            evidence_by_id=by_id,
+        )
         unreadable_pages = sorted({
             int(page)
             for page in (contract_report.get("unreadable_pages") or [])
@@ -932,25 +1246,14 @@ class PdfSourceSubgraphBuilder:
                     disposition="review",
                 )
             entries = contract_report.get("records", []) or []
-            accounted_candidate_pages: set[int] = set()
-            accounted_evidence_ids: set[str] = set()
             for entry in entries:
                 if not isinstance(entry, dict):
                     continue
                 entry_evidence_ids = {
-                    str(value)
-                    for value in (entry.get("evidence_ids") or [])
-                    if str(value) in by_id
+                    evidence_id
+                    for evidence_id in _payload_anchor_ids(entry)
+                    if evidence_id in by_id
                 }
-                accounted_evidence_ids.update(entry_evidence_ids)
-                for anchor_key in ("record_anchor", "branch_anchor"):
-                    anchor = str(entry.get(anchor_key) or "")
-                    if anchor in by_id:
-                        entry_evidence_ids.add(anchor)
-                for evidence_id in entry_evidence_ids:
-                    locator = by_id[evidence_id].locator
-                    if isinstance(locator, PdfLocator):
-                        accounted_candidate_pages.add(locator.page)
                 disposition = str(entry.get("disposition") or "")
                 if disposition not in {"gap", "review"}:
                     continue
@@ -959,24 +1262,48 @@ class PdfSourceSubgraphBuilder:
                     for reason in (entry.get("drop_reasons") or [])
                     if isinstance(reason, dict)
                 ]
-                evidence_ids = sorted(entry_evidence_ids)
                 branch_lineage_id = str(entry.get("branch_lineage_id") or "")
                 add_gap(
                     f"pdf_diagnostic_record_{disposition}",
                     "Record diagnostico non pubblicabile senza decisione umana"
                     + (f" ({', '.join(sorted(set(reasons)))})" if reasons else "."),
-                    evidence_ids,
+                    sorted(entry_evidence_ids),
+                    blocking=True,
+                    disposition=disposition,
+                    target_kind="diagnostic_record",
+                    target_id=(
+                        str(entry.get("record_window_id") or "")
+                        or branch_lineage_id
+                    ),
+                )
+            if accounting_summary["entries_without_disposition"]:
+                add_gap(
+                    "pdf_diagnostic_disposition_missing",
+                    "Uno o più candidati diagnostici persistiti non hanno una disposizione valida.",
                     blocking=True,
                     disposition="review",
-                    target_kind="diagnostic_record",
-                    target_id=branch_lineage_id,
+                    target_kind="diagnostic_records",
+                    target_id=",".join(
+                        str(value)
+                        for value in accounting_summary["entries_without_disposition"]
+                    ),
                 )
-            candidate_pages = {
-                int(page)
-                for page in (contract_report.get("candidate_pages") or [])
-                if int(page) > 0
-            }
-            unaccounted_candidate_pages = sorted(candidate_pages - accounted_candidate_pages)
+            if accounting_summary["candidate_count"] != accounting_summary["entry_count"]:
+                add_gap(
+                    "pdf_diagnostic_record_ledger_incomplete",
+                    "Il numero di candidati dichiarato non coincide con le entry persistite "
+                    "nel ledger diagnostico.",
+                    blocking=True,
+                    disposition="review",
+                    target_kind="diagnostic_records",
+                    target_id=(
+                        f"declared={accounting_summary['candidate_count']},"
+                        f"persisted={accounting_summary['entry_count']}"
+                    ),
+                )
+            unaccounted_candidate_pages = accounting_summary[
+                "unaccounted_candidate_pages"
+            ]
             if unaccounted_candidate_pages:
                 add_gap(
                     "pdf_diagnostic_candidate_pages_unaccounted",
@@ -987,14 +1314,9 @@ class PdfSourceSubgraphBuilder:
                     target_kind="diagnostic_candidate_pages",
                     target_id=",".join(str(page) for page in unaccounted_candidate_pages),
                 )
-            candidate_anchor_ids = {
-                str(item.get("evidence_id") or "")
-                for item in (contract_report.get("candidate_evidence_anchors") or [])
-                if isinstance(item, dict) and str(item.get("evidence_id") or "") in by_id
-            }
-            unaccounted_candidate_anchors = sorted(
-                candidate_anchor_ids - accounted_evidence_ids
-            )
+            unaccounted_candidate_anchors = accounting_summary[
+                "unaccounted_candidate_evidence_ids"
+            ]
             if unaccounted_candidate_anchors:
                 add_gap(
                     "pdf_diagnostic_candidate_evidence_unaccounted",
@@ -1004,6 +1326,19 @@ class PdfSourceSubgraphBuilder:
                     disposition="review",
                     target_kind="diagnostic_candidate_evidence",
                     target_id=",".join(unaccounted_candidate_anchors),
+                )
+            unaccounted_candidate_windows = accounting_summary[
+                "unaccounted_candidate_window_ids"
+            ]
+            if unaccounted_candidate_windows:
+                add_gap(
+                    "pdf_diagnostic_candidate_windows_unaccounted",
+                    "Finestre diagnostiche candidate senza una disposizione persistita: "
+                    + ", ".join(unaccounted_candidate_windows),
+                    blocking=True,
+                    disposition="review",
+                    target_kind="diagnostic_candidate_windows",
+                    target_id=",".join(unaccounted_candidate_windows),
                 )
         if (
             not result.is_schema_compliant
@@ -1090,20 +1425,17 @@ class PdfSourceSubgraphBuilder:
                 contract_report.get("candidate_evidence_anchor_count", 0) or 0
             ),
             "diagnostic_unaccounted_candidate_evidence": len(
-                unaccounted_candidate_anchors if typed_contract else []
+                accounting_summary["unaccounted_candidate_evidence_ids"]
             ),
-            "diagnostic_accounting_complete": bool(
-                typed_contract
-                and bool(contract_report.get("parsed", False))
-                and not bool(contract_report.get("refusal", False))
-                and str(contract_report.get("finish_reason") or "stop") in {"", "stop"}
-                and (not candidate_page_count or int(contract_report.get("candidate_count", 0) or 0) > 0)
-                and not int(contract_report.get("unresolved_count", 0) or 0)
-                and not (unaccounted_candidate_pages if typed_contract else [])
-                and not (unaccounted_candidate_anchors if typed_contract else [])
-                and not unreadable_pages
-                and not low_confidence_by_page
+            "diagnostic_candidate_windows": len(
+                accounting_summary["candidate_window_ids"]
             ),
+            "diagnostic_unaccounted_candidate_windows": len(
+                accounting_summary["unaccounted_candidate_window_ids"]
+            ),
+            "diagnostic_disposed_records": accounting_summary["disposed_entry_count"],
+            "diagnostic_accounting_complete": accounting_summary["complete"],
+            "diagnostic_accounting_states": accounting_summary["accounting_states"],
         }
         return SourceSubgraphRevision(
             source_subgraph_revision_id=new_id("source_subgraph"),
@@ -1127,10 +1459,12 @@ class PdfSourceSubgraphBuilder:
             review_queue=publication.review_queue,
             review_summary=publication.review_summary,
             publication_metrics=publication_metrics,
+            diagnostic_compilation_ledger=contract_report,
             canonicalization_report=result.canonicalization_report,
             approval_eligible=(
                 validation.passed
                 and not blocking_gaps
+                and accounting_summary["complete"]
                 and result.is_schema_compliant
                 and result.is_ready_for_human_review
             ),

@@ -1,0 +1,2881 @@
+{
+  "analysis_method": {
+    "atomic_table_edge_completion": true,
+    "authenticated_real_runs": true,
+    "branch_lineage_aware_path_join": true,
+    "branch_lineage_missing_is_fail_closed": true,
+    "cell_scoped_literal_evidence": true,
+    "deterministic_atomic_record_inventory": true,
+    "durable_per_call_budget_reconciliation": true,
+    "gold_is_frozen": true,
+    "inspection_only_requires_pdf_diagnostic_record_gap": true,
+    "lexically_exact_relation_grounding": true,
+    "literal_evidence_evaluator": "NFKC plus whitespace collapse only; case and punctuation preserved",
+    "minimum_per_field_similarity": 0.55,
+    "production_had_access_to_gold": false,
+    "runtime_code_and_config_digest_verified": true,
+    "semantic_evaluator": "frozen claims and threshold; generic stopword removal and conservative morphology"
+  },
+  "campaign": {
+    "actual_spend_usd": 0.237416,
+    "authorized_budget_usd": 3.0,
+    "budget_ledger": {
+      "absolute_budget_usd": 3.0,
+      "actual_spend_usd": 0.2374162,
+      "all_actual_costs_observed": true,
+      "by_run": {
+        "v11:danfoss_apf": {
+          "actual_cost_usd": 0.05830691,
+          "calls": 21,
+          "charged_cost_usd": 0.05830691,
+          "finalizations": 21,
+          "models": {
+            "gpt-5.6-luna": 19,
+            "gpt-5.6-terra": 2
+          },
+          "reservations": 21
+        },
+        "v11:eastman_e554": {
+          "actual_cost_usd": 0.12311593,
+          "calls": 37,
+          "charged_cost_usd": 0.12311593,
+          "finalizations": 37,
+          "models": {
+            "gpt-5.6-luna": 35,
+            "gpt-5.6-terra": 2
+          },
+          "reservations": 37
+        },
+        "v11:graco_check_mate_200": {
+          "actual_cost_usd": 0.05599336,
+          "calls": 29,
+          "charged_cost_usd": 0.05599336,
+          "finalizations": 29,
+          "models": {
+            "gpt-5.6-luna": 28,
+            "gpt-5.6-terra": 1
+          },
+          "reservations": 29
+        }
+      },
+      "calls_by_run": {
+        "v11:danfoss_apf": 21,
+        "v11:eastman_e554": 37,
+        "v11:graco_check_mate_200": 29
+      },
+      "charged_spend_usd": 0.2374162,
+      "failures": [],
+      "finalized_count": 87,
+      "passed": true,
+      "path": "/Users/fabio.daniele/Coding/log-kg-builder/artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_v11_20260813/real_call_budget.jsonl",
+      "remaining_usd": 2.7625838,
+      "reservation_count": 87,
+      "unknown_actual_cost_count": 0
+    },
+    "calls": 87,
+    "conservative_preflight_usd": 2.239737,
+    "elapsed_seconds": 727.656,
+    "isolated_workspaces": {
+      "checks": {
+        "unique_operational_databases": true,
+        "unique_raw_stores": true,
+        "unique_sources": true,
+        "unique_workspaces": true
+      },
+      "passed": true
+    },
+    "macro_gold_claim_recall": 0.958333,
+    "macro_recall_floor": 0.78,
+    "reported_run_spend_usd": 0.237416,
+    "runtime_reproducibility": {
+      "checks": {
+        "all_three_profiles_present": true,
+        "expected_pipeline_version": true,
+        "gold_evaluation_only": true,
+        "pinned_pymupdf_runtime": true,
+        "single_campaign_runner_digest": true,
+        "single_code_tree_digest": true,
+        "single_effective_config_digest": true
+      },
+      "code_tree_sha256": "a393c883c1072ce5fa5b6589791dfa9bd296d7545234db5b0d3205e16df9eb95",
+      "effective_config_sha256": "6596187241ebcccc123daf143e0c76de11c9edbfd9479dc01b206e18735b61fd",
+      "passed": true,
+      "profiles": [
+        {
+          "absolute_real_budget_usd": 3.0,
+          "campaign_id": "pdf-g3-diagnostic-second-hardening-20260813-v11",
+          "campaign_runner_sha256": "b656f8a6a4da4e6a69af8147d04782de7d4dab6eda6bbf6e53f94f8322acf597",
+          "code_tree_files": [
+            "backend/domain/diagnostic_bundles.py",
+            "backend/domain/subgraphs.py",
+            "backend/models.py",
+            "backend/prompts/diagnostic_bundle_prompt.py",
+            "backend/services/diagnostic_bundle_compiler.py",
+            "backend/services/diagnostic_publication_service.py",
+            "backend/services/diagnostic_record_windowing.py",
+            "backend/services/graph_projection_service.py",
+            "backend/services/llm_gateway.py",
+            "backend/services/ontology_canonicalization_service.py",
+            "backend/services/ontology_pipeline.py",
+            "backend/services/ontology_workflow.py",
+            "backend/services/pdf_cost_guard.py",
+            "backend/services/pdf_source_subgraph_generation.py",
+            "backend/services/real_call_budget_ledger.py",
+            "config.yaml",
+            "requirements.txt",
+            "scripts/replay_diagnostic_record_windows.py",
+            "scripts/replay_persisted_diagnostic_candidates.py",
+            "tests/planned/test_g3_pdf_acceptance.py",
+            "tests/test_diagnostic_bundle_compiler.py",
+            "tests/test_diagnostic_escalation_policy.py",
+            "tests/test_diagnostic_record_windowing.py",
+            "tests/test_e554_offline_typed_replay.py",
+            "tests/test_pdf_diagnostic_accounting.py",
+            "tests/test_pdf_publication_policy.py",
+            "tests/test_real_call_budget_ledger.py",
+            "tests/test_v8_campaign_analyzer.py"
+          ],
+          "code_tree_sha256": "a393c883c1072ce5fa5b6589791dfa9bd296d7545234db5b0d3205e16df9eb95",
+          "config_restoration": "process_exit",
+          "diagnostic_atomic_table_max_output_tokens": 3000,
+          "diagnostic_bundle_max_output_tokens": 6000,
+          "durable_per_call_guard": true,
+          "effective_config_sha256": "6596187241ebcccc123daf143e0c76de11c9edbfd9479dc01b206e18735b61fd",
+          "git_head_sha": "054879670aea2dbf0dca59f5728a29a096453d11",
+          "golden_sha256": "c92ba0a8bcb1721055f6fc8c10c3d0a6a57eb3dc35134755d06574d6272a5291",
+          "golden_usage": "post_generation_evaluation_only",
+          "manual_id": "danfoss_apf",
+          "mode": "real",
+          "ontology_model": "gpt-5.6-luna",
+          "ontology_reasoning_effort": "medium",
+          "path": "runs/real/danfoss_apf/runtime_profile.json",
+          "pipeline_version": "pdf-g3-atomic-record-publication-v11",
+          "process_local_run_hard_ceiling_usd": 1.1,
+          "pymupdf_version": "1.27.1",
+          "terra_reasoning_effort": "medium",
+          "terra_selective_recovery_max_windows": 2
+        },
+        {
+          "absolute_real_budget_usd": 3.0,
+          "campaign_id": "pdf-g3-diagnostic-second-hardening-20260813-v11",
+          "campaign_runner_sha256": "b656f8a6a4da4e6a69af8147d04782de7d4dab6eda6bbf6e53f94f8322acf597",
+          "code_tree_files": [
+            "backend/domain/diagnostic_bundles.py",
+            "backend/domain/subgraphs.py",
+            "backend/models.py",
+            "backend/prompts/diagnostic_bundle_prompt.py",
+            "backend/services/diagnostic_bundle_compiler.py",
+            "backend/services/diagnostic_publication_service.py",
+            "backend/services/diagnostic_record_windowing.py",
+            "backend/services/graph_projection_service.py",
+            "backend/services/llm_gateway.py",
+            "backend/services/ontology_canonicalization_service.py",
+            "backend/services/ontology_pipeline.py",
+            "backend/services/ontology_workflow.py",
+            "backend/services/pdf_cost_guard.py",
+            "backend/services/pdf_source_subgraph_generation.py",
+            "backend/services/real_call_budget_ledger.py",
+            "config.yaml",
+            "requirements.txt",
+            "scripts/replay_diagnostic_record_windows.py",
+            "scripts/replay_persisted_diagnostic_candidates.py",
+            "tests/planned/test_g3_pdf_acceptance.py",
+            "tests/test_diagnostic_bundle_compiler.py",
+            "tests/test_diagnostic_escalation_policy.py",
+            "tests/test_diagnostic_record_windowing.py",
+            "tests/test_e554_offline_typed_replay.py",
+            "tests/test_pdf_diagnostic_accounting.py",
+            "tests/test_pdf_publication_policy.py",
+            "tests/test_real_call_budget_ledger.py",
+            "tests/test_v8_campaign_analyzer.py"
+          ],
+          "code_tree_sha256": "a393c883c1072ce5fa5b6589791dfa9bd296d7545234db5b0d3205e16df9eb95",
+          "config_restoration": "process_exit",
+          "diagnostic_atomic_table_max_output_tokens": 3000,
+          "diagnostic_bundle_max_output_tokens": 6000,
+          "durable_per_call_guard": true,
+          "effective_config_sha256": "6596187241ebcccc123daf143e0c76de11c9edbfd9479dc01b206e18735b61fd",
+          "git_head_sha": "054879670aea2dbf0dca59f5728a29a096453d11",
+          "golden_sha256": "c92ba0a8bcb1721055f6fc8c10c3d0a6a57eb3dc35134755d06574d6272a5291",
+          "golden_usage": "post_generation_evaluation_only",
+          "manual_id": "eastman_e554",
+          "mode": "real",
+          "ontology_model": "gpt-5.6-luna",
+          "ontology_reasoning_effort": "medium",
+          "path": "runs/real/eastman_e554/runtime_profile.json",
+          "pipeline_version": "pdf-g3-atomic-record-publication-v11",
+          "process_local_run_hard_ceiling_usd": 1.1,
+          "pymupdf_version": "1.27.1",
+          "terra_reasoning_effort": "medium",
+          "terra_selective_recovery_max_windows": 2
+        },
+        {
+          "absolute_real_budget_usd": 3.0,
+          "campaign_id": "pdf-g3-diagnostic-second-hardening-20260813-v11",
+          "campaign_runner_sha256": "b656f8a6a4da4e6a69af8147d04782de7d4dab6eda6bbf6e53f94f8322acf597",
+          "code_tree_files": [
+            "backend/domain/diagnostic_bundles.py",
+            "backend/domain/subgraphs.py",
+            "backend/models.py",
+            "backend/prompts/diagnostic_bundle_prompt.py",
+            "backend/services/diagnostic_bundle_compiler.py",
+            "backend/services/diagnostic_publication_service.py",
+            "backend/services/diagnostic_record_windowing.py",
+            "backend/services/graph_projection_service.py",
+            "backend/services/llm_gateway.py",
+            "backend/services/ontology_canonicalization_service.py",
+            "backend/services/ontology_pipeline.py",
+            "backend/services/ontology_workflow.py",
+            "backend/services/pdf_cost_guard.py",
+            "backend/services/pdf_source_subgraph_generation.py",
+            "backend/services/real_call_budget_ledger.py",
+            "config.yaml",
+            "requirements.txt",
+            "scripts/replay_diagnostic_record_windows.py",
+            "scripts/replay_persisted_diagnostic_candidates.py",
+            "tests/planned/test_g3_pdf_acceptance.py",
+            "tests/test_diagnostic_bundle_compiler.py",
+            "tests/test_diagnostic_escalation_policy.py",
+            "tests/test_diagnostic_record_windowing.py",
+            "tests/test_e554_offline_typed_replay.py",
+            "tests/test_pdf_diagnostic_accounting.py",
+            "tests/test_pdf_publication_policy.py",
+            "tests/test_real_call_budget_ledger.py",
+            "tests/test_v8_campaign_analyzer.py"
+          ],
+          "code_tree_sha256": "a393c883c1072ce5fa5b6589791dfa9bd296d7545234db5b0d3205e16df9eb95",
+          "config_restoration": "process_exit",
+          "diagnostic_atomic_table_max_output_tokens": 3000,
+          "diagnostic_bundle_max_output_tokens": 6000,
+          "durable_per_call_guard": true,
+          "effective_config_sha256": "6596187241ebcccc123daf143e0c76de11c9edbfd9479dc01b206e18735b61fd",
+          "git_head_sha": "054879670aea2dbf0dca59f5728a29a096453d11",
+          "golden_sha256": "c92ba0a8bcb1721055f6fc8c10c3d0a6a57eb3dc35134755d06574d6272a5291",
+          "golden_usage": "post_generation_evaluation_only",
+          "manual_id": "graco_check_mate_200",
+          "mode": "real",
+          "ontology_model": "gpt-5.6-luna",
+          "ontology_reasoning_effort": "medium",
+          "path": "runs/real/graco_check_mate_200/runtime_profile.json",
+          "pipeline_version": "pdf-g3-atomic-record-publication-v11",
+          "process_local_run_hard_ceiling_usd": 1.1,
+          "pymupdf_version": "1.27.1",
+          "terra_reasoning_effort": "medium",
+          "terra_selective_recovery_max_windows": 2
+        }
+      ]
+    },
+    "verdict": "go"
+  },
+  "campaign_id": "pdf-g3-diagnostic-second-hardening-20260813-v11",
+  "manuals": [
+    {
+      "gold_scope": "representative_frozen_sample",
+      "graph": {
+        "nodes": 172,
+        "nodes_by_type": {
+          "Asset": 1,
+          "Component": 160,
+          "CorrectiveAction": 4,
+          "FailureMode": 4,
+          "Symptom": 3
+        },
+        "published_paths": [
+          {
+            "branch_lineage_id": "dbranch_bb650f776deef888bcdfd69401c7b0d6810ae28c416d56ed45f8313ed7c4f291",
+            "corrective_action": "Adjust pause plunger activation pressure",
+            "corrective_action_context": "Adjust pause plunger activation pressure Adjust the pause plunger activation pressure. ca_adjust_pause_plunger_activation_pressure_8cd1aa8a1147cea11419b5bcb3d44fbf50d345fa2536952e0bd7c7c4595d8830 adjustment Adjust the pause plunger activation pressure. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure. Adjust pause plunger activation pressure typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Tighten the plunger to increase activation pressure and loosen to decrease activation pressure.",
+            "corrective_action_id": "ca_adjust_pause_plunger_activation_pressure_8cd1aa8a1147cea11419b5bcb3d44fbf50d345fa2536952e0bd7c7c4595d8830",
+            "failure_mode": "intermittent pause circuit",
+            "failure_mode_context": "intermittent pause circuit An intermittent pause circuit, usually in the stop discs. An intermittent pause circuit, usually in the stop discs. fm_intermittent_pause_circuit_401463f3486d82787caeeed18bda4e3affd311bbf783e5cb0dfdecd437c98bd9 comp_stop_discs_0cad1ca32592b3d4e71457c3fcd4a1f4587f72241347263c5d2e8f3b2bd0025a intermittent pause circuit This is typically caused by an intermittent pause circuit, usually in thestop discs. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure.",
+            "failure_mode_id": "fm_intermittent_pause_circuit_401463f3486d82787caeeed18bda4e3affd311bbf783e5cb0dfdecd437c98bd9",
+            "indicator": "Machine Stop during Cut Due to Unintentional pause",
+            "indicator_context": "Machine Stop during Cut Due to Unintentional pause The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. Machine Stop during Cut Due to Unintentional pause Medium sym_machine_stop_during_cut_due_to_unintentional_pau_5c6c4d2c107f1875a4b9db4c89d6e45b99bf0c5c3c50cd541db881bfc3124151 This is typically caused by an intermittent pause circuit, usually in thestop discs.",
+            "indicator_id": "sym_machine_stop_during_cut_due_to_unintentional_pau_5c6c4d2c107f1875a4b9db4c89d6e45b99bf0c5c3c50cd541db881bfc3124151",
+            "indicator_type": "Symptom",
+            "pages": [
+              37
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_82716414a22d303b8b4d2054a177124531326281d946e7286b2f784f2137acc0",
+            "corrective_action": "Correct the tool and layer mapping",
+            "corrective_action_context": "Correct the tool and layer mapping Correct the tool or layer mapping before sending the file to the cutter. ca_correct_the_tool_and_layer_mapping_0c510b9648a2f80feba202f6374b1a0713d44438d2a2fd45ac184a2e00050dc8 reconfiguration Correct the tool or layer mapping before sending the file to the cutter. click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter. Correct the tool and layer mapping typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF If the layer is not mapped to a tool or the tool is not on the tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+            "corrective_action_id": "ca_correct_the_tool_and_layer_mapping_0c510b9648a2f80feba202f6374b1a0713d44438d2a2fd45ac184a2e00050dc8",
+            "failure_mode": "Tool mapping in software",
+            "failure_mode_context": "Tool mapping in software Tool mapping in software is incorrect. Tool mapping in software is incorrect. fm_tool_mapping_in_software_e314dbf59b8f6f8b3e7c6dc7635ee7c059ff9978666ecf1f90f20e7e224e1326 comp_cutting_tool_or_pen_06731bff7b98770fd9709106a4f1fba701769c532d89d8a72c3deb0abe16eae7 Tool mapping in software This can be caused by an electrical short, tool mapping in software or a problem with the power supply. If the layer is not mapped to a tool or the tool is not on the tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+            "failure_mode_id": "fm_tool_mapping_in_software_e314dbf59b8f6f8b3e7c6dc7635ee7c059ff9978666ecf1f90f20e7e224e1326",
+            "indicator": "The Cutting Tool or Pen does not move down",
+            "indicator_context": "The Cutting Tool or Pen does not move down The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. The Cutting Tool or Pen does not move down Medium sym_the_cutting_tool_or_pen_does_not_move_down_6f439343b4c5fba287e845d73234d1971142248282ccc46f2a95817b839db3db This can be caused by an electrical short, tool mapping in software or a problem with the power supply.",
+            "indicator_id": "sym_the_cutting_tool_or_pen_does_not_move_down_6f439343b4c5fba287e845d73234d1971142248282ccc46f2a95817b839db3db",
+            "indicator_type": "Symptom",
+            "pages": [
+              38
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_ba11eb889c7a4580af2484c8b64a2d6b7cc36b82ca85713d2e7862ef84189cf2",
+            "corrective_action": "Map tool or layer",
+            "corrective_action_context": "Map tool or layer click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter ca_map_tool_or_layer_51e980fbe17d71234357385508118b852036c8e8f1a02a6dd12a142e98582931 adjustment click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter Map tool or layer typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF If the layer is not mapped to a tool or the tool is not on the tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+            "corrective_action_id": "ca_map_tool_or_layer_51e980fbe17d71234357385508118b852036c8e8f1a02a6dd12a142e98582931",
+            "failure_mode": "tool mapping in software",
+            "failure_mode_context": "tool mapping in software tool mapping in software tool mapping in software fm_tool_mapping_in_software_891d0fab591473b066a47eb838cfc26df456cea981ccc6bf587f2f6068ccd7b3 asset_level tool mapping in software This can be caused by an electrical short, tool mapping in software or a problem with the power supply. If the layer is not mapped to a tool or the tool is not on the tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+            "failure_mode_id": "fm_tool_mapping_in_software_891d0fab591473b066a47eb838cfc26df456cea981ccc6bf587f2f6068ccd7b3",
+            "indicator": "The Cutting Tool or Pen does not move down",
+            "indicator_context": "The Cutting Tool or Pen does not move down The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. The Cutting Tool or Pen does not move down Medium sym_the_cutting_tool_or_pen_does_not_move_down_6f439343b4c5fba287e845d73234d1971142248282ccc46f2a95817b839db3db This can be caused by an electrical short, tool mapping in software or a problem with the power supply.",
+            "indicator_id": "sym_the_cutting_tool_or_pen_does_not_move_down_6f439343b4c5fba287e845d73234d1971142248282ccc46f2a95817b839db3db",
+            "indicator_type": "Symptom",
+            "pages": [
+              38
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_97399f3a1ef546f672731a77325772d174821bac457f3ba209ae55e0b2458476",
+            "corrective_action": "Touch screen calibration",
+            "corrective_action_context": "Touch screen calibration Calibrate the touch screen by following the specified power-down, startup, calibration, and save-and-exit procedure. ca_touch_screen_calibration_f8d1b816541aaf89e93af39d50e69eb1b87831aab7a14cf28c2c2f9be7e854f4 calibration Calibrate the touch screen by following the specified power-down, startup, calibration, and save-and-exit procedure. 1) Power down the cutting system. 2) Place finger on the upper left corner of the touch screen as Shown. While holding finger on the screen, turn ON the main power switch located on the back of the diagnostic control cabinet. 3) Remove finger after the \"Power On Setup\" screen appears. 4) Using the left and right arrows to navigate, go to the Calibration Screen (screen page 2). Press Touch screen to begin calibrating. 5) Using a paper clip or fine tip object, press the center of the cross as shown. The cross will reappear in the lower right corner. Press the center of the cross. 6) Navigate to screen page 3. Select save and exit to complete calibration. Touch screen calibration typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Touch screen calibration in required. Proceed as follows. 6) Navigate to screen page 3. Select save and exit to complete calibration.",
+            "corrective_action_id": "ca_touch_screen_calibration_f8d1b816541aaf89e93af39d50e69eb1b87831aab7a14cf28c2c2f9be7e854f4",
+            "failure_mode": "Touch screen requires calibration",
+            "failure_mode_context": "Touch screen requires calibration The touch screen requires calibration. The touch screen requires calibration. fm_touch_screen_requires_calibration_b87c3b006f768dfe7cabc7481bb25b0f099db2b6455a723f627c89ca2e6a1155 comp_touch_screen_1c4e81c1342819a2bc6fee4ad51f838c3fb90f6af343004456b4c28bae9c1f82 Touch screen requires calibration Touch screen calibration in required. Proceed as follows. The touch screen buttons do not match where the screen needs to be touched to activate the command. Touch screen calibration in required. Proceed as follows. 6) Navigate to screen page 3. Select save and exit to complete calibration.",
+            "failure_mode_id": "fm_touch_screen_requires_calibration_b87c3b006f768dfe7cabc7481bb25b0f099db2b6455a723f627c89ca2e6a1155",
+            "indicator": "Touch screen buttons out of alignment",
+            "indicator_context": "Touch screen buttons out of alignment The touch screen buttons do not match the locations that must be touched to activate commands. The touch screen buttons do not match the locations that must be touched to activate commands. Touch screen buttons out of alignment Medium sym_touch_screen_buttons_out_of_alignment_24c1337df4fb0312a4be18452ebbd827bba20df367ce030f80a56c96333cb626 Touch screen calibration in required. Proceed as follows. The touch screen buttons do not match where the screen needs to be touched to activate the command.",
+            "indicator_id": "sym_touch_screen_buttons_out_of_alignment_24c1337df4fb0312a4be18452ebbd827bba20df367ce030f80a56c96333cb626",
+            "indicator_type": "Symptom",
+            "pages": [
+              37,
+              38
+            ]
+          }
+        ],
+        "relations": 171,
+        "relations_by_type": {
+          "AFFECTS": 3,
+          "HAS_COMPONENT": 160,
+          "MAY_INDICATE": 4,
+          "RESOLVED_BY": 4
+        }
+      },
+      "integrity": {
+        "approval_eligible": false,
+        "branch_lineage": {
+          "diagnostic_relations": 11,
+          "missing_relation_ids": [],
+          "orphan_action_branches": [],
+          "orphan_indicator_branches": [],
+          "passed": true
+        },
+        "checks": {
+          "all_corrective_actions_have_incoming_resolved_by": true,
+          "authenticated_completed_real_run": true,
+          "branch_lineage_complete_and_joinable": true,
+          "candidate_accounting_or_nonapprovable": true,
+          "exact_relation_grounding": true,
+          "no_approval_merge_or_structured_processing": true,
+          "one_original_canonical_asset": true,
+          "strict_validation": true,
+          "zero_isolated_diagnostic_nodes": true
+        },
+        "diagnostic_accounting_complete": true,
+        "grounding": {
+          "exact": 832,
+          "passed": true,
+          "relations_exact": 171,
+          "relations_total": 171,
+          "total": 832,
+          "unresolved": []
+        },
+        "passed": true,
+        "review_summary": {
+          "blocking": 21,
+          "by_code": {
+            "canonicalization_ambiguous": 23,
+            "diagnostic_failure_without_component": 1,
+            "pdf_diagnostic_record_gap": 11,
+            "pdf_diagnostic_record_review": 9,
+            "pdf_node_provenance_unresolved": 1,
+            "pdf_ocr_low_confidence": 1,
+            "pdf_relation_endpoint_omitted": 1,
+            "pdf_schema_instruction_not_actionable": 1
+          },
+          "total": 48
+        },
+        "run_authenticity": {
+          "artifact_errors": [],
+          "checks": {
+            "api_key_not_exposed": true,
+            "authorized_budget": true,
+            "campaign_identity": true,
+            "completed_without_error": true,
+            "input_pdf_matches_frozen_sha256": true,
+            "manual_identity": true,
+            "manual_sha256_matches_frozen": true,
+            "pipeline_version": true,
+            "real_mode": true,
+            "reviewing_not_decided": true,
+            "revision_identity": true,
+            "run_artifacts_parseable": true,
+            "run_call_ledger_shape": true,
+            "terminal_one_shot_state": true
+          },
+          "passed": true,
+          "terminal_error": null,
+          "terminal_status": "completed"
+        },
+        "validation": {
+          "domain_range_errors": 0,
+          "duplicate_ids": 0,
+          "endpoint_errors": 0,
+          "extra_properties": 0,
+          "graph_invariant_errors": 0,
+          "issues": [],
+          "passed": true,
+          "provenance_resolvable": 381,
+          "provenance_total": 381,
+          "relation_grounding_passed": 171,
+          "relation_grounding_total": 171,
+          "required_properties_present": 701,
+          "required_properties_total": 701,
+          "unresolved_mapping_diagnostics": 0
+        }
+      },
+      "manual_id": "eastman_e554",
+      "operations": {
+        "actual_cost_usd": 0.12311593,
+        "calls": 37,
+        "charged_cost_usd": 0.12311593,
+        "conservative_preflight_usd": 0.915361,
+        "cost_source": "durable_per_call_budget_ledger",
+        "cost_usd": 0.12311593,
+        "elapsed_seconds": 377.233,
+        "hard_ceiling_usd": 1.1,
+        "models": {
+          "gpt-5.6-luna": 35,
+          "gpt-5.6-terra": 2
+        }
+      },
+      "scope": {
+        "diagnostic_pages": [
+          2,
+          3,
+          4,
+          12,
+          13,
+          14,
+          16,
+          17,
+          18,
+          19,
+          26,
+          27,
+          28,
+          29,
+          30,
+          36,
+          37,
+          38,
+          39,
+          40,
+          53,
+          54
+        ],
+        "method": "retained_cut_plan",
+        "page_offset": 0,
+        "retrieval_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54
+        ],
+        "sections": [
+          {
+            "end_page": 8,
+            "name": "INSTALLATION",
+            "source": "rule",
+            "start_page": 8
+          },
+          {
+            "end_page": 12,
+            "name": "Chiller Installation",
+            "source": "rule",
+            "start_page": 12
+          },
+          {
+            "end_page": 12,
+            "name": "Co2 Tank Installation",
+            "source": "rule",
+            "start_page": 12
+          },
+          {
+            "end_page": 12,
+            "name": "Fume extractor hose and Festoon installation",
+            "source": "rule",
+            "start_page": 12
+          },
+          {
+            "end_page": 12,
+            "name": "Gantry Installation",
+            "source": "rule",
+            "start_page": 12
+          },
+          {
+            "end_page": 12,
+            "name": "Vacuum Assembly Installation",
+            "source": "rule",
+            "start_page": 12
+          },
+          {
+            "end_page": 13,
+            "name": "Aligning, Cleaning and Replacing Consumables",
+            "source": "rule",
+            "start_page": 13
+          },
+          {
+            "end_page": 13,
+            "name": "SERVICE and MAINTENANCE",
+            "source": "rule",
+            "start_page": 13
+          },
+          {
+            "end_page": 14,
+            "name": "Round Knife Replacement",
+            "source": "rule",
+            "start_page": 14
+          },
+          {
+            "end_page": 15,
+            "name": "Drag Knife Replacement",
+            "source": "rule",
+            "start_page": 15
+          },
+          {
+            "end_page": 16,
+            "name": "Pen Replacement",
+            "source": "rule",
+            "start_page": 16
+          },
+          {
+            "end_page": 16,
+            "name": "Punch Replacement",
+            "source": "rule",
+            "start_page": 16
+          },
+          {
+            "end_page": 17,
+            "name": "Cleaning of Airbrush",
+            "source": "rule",
+            "start_page": 17
+          },
+          {
+            "end_page": 17,
+            "name": "Needle Removal",
+            "source": "rule",
+            "start_page": 17
+          },
+          {
+            "end_page": 18,
+            "name": "X-Motor Belt Replacement",
+            "source": "rule",
+            "start_page": 18
+          },
+          {
+            "end_page": 18,
+            "name": "Y-Motor Belt Replacement",
+            "source": "rule",
+            "start_page": 18
+          },
+          {
+            "end_page": 19,
+            "name": "Theta-Motor Belt Replacement",
+            "source": "rule",
+            "start_page": 19
+          },
+          {
+            "end_page": 19,
+            "name": "X-Axis Linear Bearing Replacement",
+            "source": "rule",
+            "start_page": 19
+          },
+          {
+            "end_page": 20,
+            "name": "Y-Axis Top Linear Bearing Replacement",
+            "source": "rule",
+            "start_page": 20
+          },
+          {
+            "end_page": 21,
+            "name": "Y-Axis Front Linear Bearing Replacement",
+            "source": "rule",
+            "start_page": 21
+          },
+          {
+            "end_page": 22,
+            "name": "Laser Mirror Replacement",
+            "source": "rule",
+            "start_page": 22
+          },
+          {
+            "end_page": 23,
+            "name": "Laser Focus Lens Replacement",
+            "source": "rule",
+            "start_page": 23
+          },
+          {
+            "end_page": 24,
+            "name": "Fume Extractor Filter Replacement",
+            "source": "rule",
+            "start_page": 24
+          },
+          {
+            "end_page": 24,
+            "name": "Laser Optics Cleaning",
+            "source": "rule",
+            "start_page": 24
+          },
+          {
+            "end_page": 25,
+            "name": "CALIBRATION & ADJUSTMENTS",
+            "source": "rule",
+            "start_page": 25
+          },
+          {
+            "end_page": 25,
+            "name": "Pressure Transducer Calibration",
+            "source": "rule",
+            "start_page": 25
+          },
+          {
+            "end_page": 28,
+            "name": "Daily Maintenance (Start of each shift)",
+            "source": "rule",
+            "start_page": 28
+          },
+          {
+            "end_page": 28,
+            "name": "Gantry Calibration Procedure",
+            "source": "rule",
+            "start_page": 28
+          },
+          {
+            "end_page": 28,
+            "name": "Laser Mirror Alignment/Adjustment",
+            "source": "rule",
+            "start_page": 28
+          },
+          {
+            "end_page": 28,
+            "name": "SCHEDULES MAINTENANCE PROCEDURES",
+            "source": "rule",
+            "start_page": 28
+          },
+          {
+            "end_page": 36,
+            "name": "Yearly Maintenance Checklist",
+            "source": "rule",
+            "start_page": 31
+          },
+          {
+            "end_page": 38,
+            "name": "TROUBLE SHOOTING GUIDE",
+            "source": "rule",
+            "start_page": 37
+          },
+          {
+            "end_page": 39,
+            "name": "ELECTRICAL & PNEUMATIC DIAGRAMS",
+            "source": "rule",
+            "start_page": 39
+          },
+          {
+            "end_page": 50,
+            "name": "Pneumatic Diagram Blue Print No. (31-9000-41)",
+            "source": "rule",
+            "start_page": 40
+          }
+        ],
+        "selected_pages": [
+          2,
+          3,
+          4,
+          8,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          32,
+          33,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          53,
+          54
+        ],
+        "skipped": false,
+        "structural_pages": [
+          2,
+          4,
+          8,
+          12,
+          14,
+          15,
+          16,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          30,
+          32,
+          33,
+          35,
+          36,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          53
+        ],
+        "total_pages": 54,
+        "unselected_pages": [
+          1,
+          5,
+          6,
+          7,
+          9,
+          10,
+          11,
+          31,
+          34,
+          51,
+          52
+        ]
+      },
+      "semantic": {
+        "autonomous_expected_claims_present": 3,
+        "checks": {
+          "forbidden_pairings_zero": true,
+          "gold_page_retention": true,
+          "recall_floor": true,
+          "unsupported_published_paths_zero": true
+        },
+        "explicit_expected_gaps_present": 0,
+        "forbidden": [
+          {
+            "failure_mode": "dirty focusing lens",
+            "found": false,
+            "matches": [],
+            "symptom": "Touch Screen buttons are out of alignment"
+          },
+          {
+            "failure_mode": "intermittent pause circuit",
+            "found": false,
+            "matches": [],
+            "symptom": "Laser Fume Extractor has reduced vacuum or no vacuum"
+          },
+          {
+            "failure_mode": "touch screen calibration is required",
+            "found": false,
+            "matches": [],
+            "symptom": "Laser cutting path is too wide"
+          }
+        ],
+        "forbidden_pairings_found": 0,
+        "gold_claim_recall": 0.875,
+        "gold_claims_present": 7,
+        "gold_claims_total": 8,
+        "gold_pages_required": [
+          37,
+          38,
+          39
+        ],
+        "gold_pages_retained": [
+          37,
+          38,
+          39
+        ],
+        "paths_outside_frozen_gold": 0,
+        "published_complete_paths_total": 4,
+        "recall_floor": 0.75,
+        "traceable_review_claims_present": 4,
+        "unsupported_path_gate_scope": "manual_audit_required",
+        "unsupported_published_paths_detected": 0,
+        "witnesses": [
+          {
+            "best_min_field_score": 0.85,
+            "claim_id": "E1",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 1.0,
+              "indicator": 0.85
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_bb650f776deef888bcdfd69401c7b0d6810ae28c416d56ed45f8313ed7c4f291",
+              "corrective_action": "Adjust pause plunger activation pressure",
+              "corrective_action_context": "Adjust pause plunger activation pressure Adjust the pause plunger activation pressure. ca_adjust_pause_plunger_activation_pressure_8cd1aa8a1147cea11419b5bcb3d44fbf50d345fa2536952e0bd7c7c4595d8830 adjustment Adjust the pause plunger activation pressure. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure. Adjust pause plunger activation pressure typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Tighten the plunger to increase activation pressure and loosen to decrease activation pressure.",
+              "corrective_action_id": "ca_adjust_pause_plunger_activation_pressure_8cd1aa8a1147cea11419b5bcb3d44fbf50d345fa2536952e0bd7c7c4595d8830",
+              "failure_mode": "intermittent pause circuit",
+              "failure_mode_context": "intermittent pause circuit An intermittent pause circuit, usually in the stop discs. An intermittent pause circuit, usually in the stop discs. fm_intermittent_pause_circuit_401463f3486d82787caeeed18bda4e3affd311bbf783e5cb0dfdecd437c98bd9 comp_stop_discs_0cad1ca32592b3d4e71457c3fcd4a1f4587f72241347263c5d2e8f3b2bd0025a intermittent pause circuit This is typically caused by an intermittent pause circuit, usually in thestop discs. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure.",
+              "failure_mode_id": "fm_intermittent_pause_circuit_401463f3486d82787caeeed18bda4e3affd311bbf783e5cb0dfdecd437c98bd9",
+              "indicator": "Machine Stop during Cut Due to Unintentional pause",
+              "indicator_context": "Machine Stop during Cut Due to Unintentional pause The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. Machine Stop during Cut Due to Unintentional pause Medium sym_machine_stop_during_cut_due_to_unintentional_pau_5c6c4d2c107f1875a4b9db4c89d6e45b99bf0c5c3c50cd541db881bfc3124151 This is typically caused by an intermittent pause circuit, usually in thestop discs.",
+              "indicator_id": "sym_machine_stop_during_cut_due_to_unintentional_pau_5c6c4d2c107f1875a4b9db4c89d6e45b99bf0c5c3c50cd541db881bfc3124151",
+              "indicator_type": "Symptom",
+              "pages": [
+                37
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.819048,
+            "claim_id": "E2",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.819048,
+              "failure_mode": 0.838095,
+              "indicator": 0.85
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_97399f3a1ef546f672731a77325772d174821bac457f3ba209ae55e0b2458476",
+              "corrective_action": "Touch screen calibration",
+              "corrective_action_context": "Touch screen calibration Calibrate the touch screen by following the specified power-down, startup, calibration, and save-and-exit procedure. ca_touch_screen_calibration_f8d1b816541aaf89e93af39d50e69eb1b87831aab7a14cf28c2c2f9be7e854f4 calibration Calibrate the touch screen by following the specified power-down, startup, calibration, and save-and-exit procedure. 1) Power down the cutting system. 2) Place finger on the upper left corner of the touch screen as Shown. While holding finger on the screen, turn ON the main power switch located on the back of the diagnostic control cabinet. 3) Remove finger after the \"Power On Setup\" screen appears. 4) Using the left and right arrows to navigate, go to the Calibration Screen (screen page 2). Press Touch screen to begin calibrating. 5) Using a paper clip or fine tip object, press the center of the cross as shown. The cross will reappear in the lower right corner. Press the center of the cross. 6) Navigate to screen page 3. Select save and exit to complete calibration. Touch screen calibration typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Touch screen calibration in required. Proceed as follows. 6) Navigate to screen page 3. Select save and exit to complete calibration.",
+              "corrective_action_id": "ca_touch_screen_calibration_f8d1b816541aaf89e93af39d50e69eb1b87831aab7a14cf28c2c2f9be7e854f4",
+              "failure_mode": "Touch screen requires calibration",
+              "failure_mode_context": "Touch screen requires calibration The touch screen requires calibration. The touch screen requires calibration. fm_touch_screen_requires_calibration_b87c3b006f768dfe7cabc7481bb25b0f099db2b6455a723f627c89ca2e6a1155 comp_touch_screen_1c4e81c1342819a2bc6fee4ad51f838c3fb90f6af343004456b4c28bae9c1f82 Touch screen requires calibration Touch screen calibration in required. Proceed as follows. The touch screen buttons do not match where the screen needs to be touched to activate the command. Touch screen calibration in required. Proceed as follows. 6) Navigate to screen page 3. Select save and exit to complete calibration.",
+              "failure_mode_id": "fm_touch_screen_requires_calibration_b87c3b006f768dfe7cabc7481bb25b0f099db2b6455a723f627c89ca2e6a1155",
+              "indicator": "Touch screen buttons out of alignment",
+              "indicator_context": "Touch screen buttons out of alignment The touch screen buttons do not match the locations that must be touched to activate commands. The touch screen buttons do not match the locations that must be touched to activate commands. Touch screen buttons out of alignment Medium sym_touch_screen_buttons_out_of_alignment_24c1337df4fb0312a4be18452ebbd827bba20df367ce030f80a56c96333cb626 Touch screen calibration in required. Proceed as follows. The touch screen buttons do not match where the screen needs to be touched to activate the command.",
+              "indicator_id": "sym_touch_screen_buttons_out_of_alignment_24c1337df4fb0312a4be18452ebbd827bba20df367ce030f80a56c96333cb626",
+              "indicator_type": "Symptom",
+              "pages": [
+                37,
+                38
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.670769,
+            "claim_id": "E3",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.84,
+              "failure_mode": 0.670769,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_ba11eb889c7a4580af2484c8b64a2d6b7cc36b82ca85713d2e7862ef84189cf2",
+              "corrective_action": "Map tool or layer",
+              "corrective_action_context": "Map tool or layer click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter ca_map_tool_or_layer_51e980fbe17d71234357385508118b852036c8e8f1a02a6dd12a142e98582931 adjustment click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter Map tool or layer typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF If the layer is not mapped to a tool or the tool is not on the tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+              "corrective_action_id": "ca_map_tool_or_layer_51e980fbe17d71234357385508118b852036c8e8f1a02a6dd12a142e98582931",
+              "failure_mode": "tool mapping in software",
+              "failure_mode_context": "tool mapping in software tool mapping in software tool mapping in software fm_tool_mapping_in_software_891d0fab591473b066a47eb838cfc26df456cea981ccc6bf587f2f6068ccd7b3 asset_level tool mapping in software This can be caused by an electrical short, tool mapping in software or a problem with the power supply. If the layer is not mapped to a tool or the tool is not on the tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+              "failure_mode_id": "fm_tool_mapping_in_software_891d0fab591473b066a47eb838cfc26df456cea981ccc6bf587f2f6068ccd7b3",
+              "indicator": "The Cutting Tool or Pen does not move down",
+              "indicator_context": "The Cutting Tool or Pen does not move down The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. The Cutting Tool or Pen does not move down Medium sym_the_cutting_tool_or_pen_does_not_move_down_6f439343b4c5fba287e845d73234d1971142248282ccc46f2a95817b839db3db This can be caused by an electrical short, tool mapping in software or a problem with the power supply.",
+              "indicator_id": "sym_the_cutting_tool_or_pen_does_not_move_down_6f439343b4c5fba287e845d73234d1971142248282ccc46f2a95817b839db3db",
+              "indicator_type": "Symptom",
+              "pages": [
+                38
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.9753700000000002,
+            "claim_id": "E4",
+            "expected_outcome": "complete_published_path_or_traceable_review",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 0.62069,
+              "indicator": 1.0,
+              "specific_token_overlap": 1.0
+            },
+            "matched_outcome": "traceable_review",
+            "matched_record": {
+              "blocking": true,
+              "code": "pdf_diagnostic_record_review",
+              "disposition": "review",
+              "evidence_ids": [
+                "ev_3d34ba08fb328d7292e1128cdca3",
+                "ev_ada69aeaffdf260c28af42402f5e"
+              ],
+              "message": "Record diagnostico non pubblicabile senza decisione umana (action_without_failure, missing_failure)",
+              "stage": "pdf_adapter",
+              "target_id": "diagwin_15f5c60be08b41545192e718",
+              "target_kind": "diagnostic_record"
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "E5",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.0,
+              "failure_mode": 0.0,
+              "indicator": 0.166897
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_82716414a22d303b8b4d2054a177124531326281d946e7286b2f784f2137acc0",
+              "corrective_action": "Correct the tool and layer mapping",
+              "corrective_action_context": "Correct the tool and layer mapping Correct the tool or layer mapping before sending the file to the cutter. ca_correct_the_tool_and_layer_mapping_0c510b9648a2f80feba202f6374b1a0713d44438d2a2fd45ac184a2e00050dc8 reconfiguration Correct the tool or layer mapping before sending the file to the cutter. click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter. Correct the tool and layer mapping typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF If the layer is not mapped to a tool or the tool is not on the tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+              "corrective_action_id": "ca_correct_the_tool_and_layer_mapping_0c510b9648a2f80feba202f6374b1a0713d44438d2a2fd45ac184a2e00050dc8",
+              "failure_mode": "Tool mapping in software",
+              "failure_mode_context": "Tool mapping in software Tool mapping in software is incorrect. Tool mapping in software is incorrect. fm_tool_mapping_in_software_e314dbf59b8f6f8b3e7c6dc7635ee7c059ff9978666ecf1f90f20e7e224e1326 comp_cutting_tool_or_pen_06731bff7b98770fd9709106a4f1fba701769c532d89d8a72c3deb0abe16eae7 Tool mapping in software This can be caused by an electrical short, tool mapping in software or a problem with the power supply. If the layer is not mapped to a tool or the tool is not on the tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+              "failure_mode_id": "fm_tool_mapping_in_software_e314dbf59b8f6f8b3e7c6dc7635ee7c059ff9978666ecf1f90f20e7e224e1326",
+              "indicator": "The Cutting Tool or Pen does not move down",
+              "indicator_context": "The Cutting Tool or Pen does not move down The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. The Cutting Tool or Pen does not move down Medium sym_the_cutting_tool_or_pen_does_not_move_down_6f439343b4c5fba287e845d73234d1971142248282ccc46f2a95817b839db3db This can be caused by an electrical short, tool mapping in software or a problem with the power supply.",
+              "indicator_id": "sym_the_cutting_tool_or_pen_does_not_move_down_6f439343b4c5fba287e845d73234d1971142248282ccc46f2a95817b839db3db",
+              "indicator_type": "Symptom",
+              "pages": [
+                38
+              ]
+            },
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.827586,
+            "claim_id": "E6",
+            "expected_outcome": "complete_published_path_or_traceable_review",
+            "field_scores": {
+              "corrective_action": 0.827586,
+              "failure_mode": 0.827586,
+              "indicator": 0.848276,
+              "specific_token_overlap": 1.0
+            },
+            "matched_outcome": "traceable_review",
+            "matched_record": {
+              "blocking": true,
+              "code": "pdf_diagnostic_record_review",
+              "disposition": "review",
+              "evidence_ids": [
+                "ev_a12467d356637c6b2d593b025481",
+                "ev_dfd29760a80f9c3e64f6849ec4d5"
+              ],
+              "message": "Record diagnostico non pubblicabile senza decisione umana (declared_ambiguous)",
+              "stage": "pdf_adapter",
+              "target_id": "diagwin_f78681fe32906798d7cc80fa",
+              "target_kind": "diagnostic_record"
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.819355,
+            "claim_id": "E7",
+            "expected_outcome": "complete_published_path_or_traceable_review",
+            "field_scores": {
+              "corrective_action": 0.819355,
+              "failure_mode": 0.832258,
+              "indicator": 0.845161,
+              "specific_token_overlap": 1.0
+            },
+            "matched_outcome": "traceable_review",
+            "matched_record": {
+              "blocking": true,
+              "code": "pdf_diagnostic_record_review",
+              "disposition": "review",
+              "evidence_ids": [
+                "ev_cdf8933777ed4cf73c7e0a37f17d",
+                "ev_dfd29760a80f9c3e64f6849ec4d5"
+              ],
+              "message": "Record diagnostico non pubblicabile senza decisione umana (declared_ambiguous)",
+              "stage": "pdf_adapter",
+              "target_id": "diagwin_26241b918406abbafa67803d",
+              "target_kind": "diagnostic_record"
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.832,
+            "claim_id": "E8",
+            "expected_outcome": "complete_published_path_or_traceable_review",
+            "field_scores": {
+              "corrective_action": 0.832,
+              "failure_mode": 0.670769,
+              "indicator": 0.856,
+              "specific_token_overlap": 1.0
+            },
+            "matched_outcome": "traceable_review",
+            "matched_record": {
+              "blocking": true,
+              "code": "pdf_diagnostic_record_review",
+              "disposition": "review",
+              "evidence_ids": [
+                "ev_13132ef96a9298062ceb462bd694",
+                "ev_dfd29760a80f9c3e64f6849ec4d5"
+              ],
+              "message": "Record diagnostico non pubblicabile senza decisione umana (declared_ambiguous)",
+              "stage": "pdf_adapter",
+              "target_id": "diagwin_f4a92085b165e0cdef200807",
+              "target_kind": "diagnostic_record"
+            },
+            "present": true
+          }
+        ]
+      },
+      "verdict": {
+        "publication_integrity": "pass",
+        "semantic": "pass"
+      }
+    },
+    {
+      "gold_scope": "exhaustive_troubleshooting_table",
+      "graph": {
+        "nodes": 56,
+        "nodes_by_type": {
+          "Asset": 1,
+          "Component": 44,
+          "CorrectiveAction": 2,
+          "ErrorCode": 4,
+          "FailureMode": 5
+        },
+        "published_paths": [
+          {
+            "branch_lineage_id": "dbranch_24e7dc47004d85f7ba8a0135ce5e35f74f3de165441dfc38adddaf1aa0635a91",
+            "corrective_action": "Contact service personnel",
+            "corrective_action_context": "Contact service personnel Contact service personnel. ca_contact_service_personnel_0f1442e6ea21dbda60f8a2f528d0a890ace597450935b1f6e8a76b9e06c9e485 service Contact service personnel. Contact service personnel. Contact service personnel typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF The input fuse is broken.",
+            "corrective_action_id": "ca_contact_service_personnel_0f1442e6ea21dbda60f8a2f528d0a890ace597450935b1f6e8a76b9e06c9e485",
+            "failure_mode": "Input fuse is broken",
+            "failure_mode_context": "Input fuse is broken The input fuse is broken. The input fuse is broken. fm_input_fuse_is_broken_30bee4b59de46ea752257fbfbd0cd3917a2ea6cff7c213501c0d3441ba825dbe comp_input_fuse_0376cd205cd0cc5eb99a54d4f1057f6a1c4dccb9c0e09e03159fdda9b9877a98 Input fuse is broken The input fuse is broken. The input fuse is broken.",
+            "failure_mode_id": "fm_input_fuse_is_broken_30bee4b59de46ea752257fbfbd0cd3917a2ea6cff7c213501c0d3441ba825dbe",
+            "indicator": "Fuse blowout",
+            "indicator_context": "Fuse blowout Fuse blowout 2 Fuse blowout err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1 Fuse blowout The input fuse is broken.",
+            "indicator_id": "err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1",
+            "indicator_type": "ErrorCode",
+            "pages": [
+              64
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_efe79b097b892c71e4c3e3f02f29b5c9e3d8941bfe72dc63c4b7a7be5e2b4045",
+            "corrective_action": "Contact service personnel",
+            "corrective_action_context": "Contact service personnel Contact service personnel. ca_contact_service_personnel_0f1442e6ea21dbda60f8a2f528d0a890ace597450935b1f6e8a76b9e06c9e485 service Contact service personnel. Contact service personnel. Contact service personnel typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF Contact service personnel.",
+            "corrective_action_id": "ca_contact_service_personnel_0f1442e6ea21dbda60f8a2f528d0a890ace597450935b1f6e8a76b9e06c9e485",
+            "failure_mode": "The air vents ate blocked.",
+            "failure_mode_context": "The air vents ate blocked. The air vents ate blocked. The air vents ate blocked. fm_the_air_vents_ate_blocked_9a3c07f2eedfd018598db02181f76783d74126d143a867a8ef386f7f3c8212cb comp_air_vents_5add99cf7c20d3a236db2a9cfef075e6e27b72a3b7cc7283d13a97918329e25b The air vents ate blocked. Ambient OTP Contact service personnel.",
+            "failure_mode_id": "fm_the_air_vents_ate_blocked_9a3c07f2eedfd018598db02181f76783d74126d143a867a8ef386f7f3c8212cb",
+            "indicator": "Ambient OTP",
+            "indicator_context": "Ambient OTP Ambient OTP 3 Ambient OTP err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a Ambient OTP Ambient OTP",
+            "indicator_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+            "indicator_type": "ErrorCode",
+            "pages": [
+              64
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_47bb0d3caf62d8cd527d97f6982d0cbcab71760b62d693df8ed6f5dbd3f59d4a",
+            "corrective_action": "Contact service personnel.",
+            "corrective_action_context": "Contact service personnel. Contact service personnel. ca_contact_service_personnel_2fe6825c0a43d34a9909e9ab0a7754d40f18808be7d73a7f4460a0840db69ae4 service Contact service personnel. Contact service personnel. Contact service personnel. typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF The fans do not work.",
+            "corrective_action_id": "ca_contact_service_personnel_2fe6825c0a43d34a9909e9ab0a7754d40f18808be7d73a7f4460a0840db69ae4",
+            "failure_mode": "The fans do not work.",
+            "failure_mode_context": "The fans do not work. The fans do not work. The fans do not work. fm_the_fans_do_not_work_f2111268ad901fe0cfe6b894ec6db7c36b59204203e242c21c60ed32a0ceb168 comp_fans_604387ceb152eabf9c8e8a5de3497d7fe434db6a5b4d648b228b2464a1aaaeb4 The fans do not work. The fans do not work. The fans do not work.",
+            "failure_mode_id": "fm_the_fans_do_not_work_f2111268ad901fe0cfe6b894ec6db7c36b59204203e242c21c60ed32a0ceb168",
+            "indicator": "Ambient OTP",
+            "indicator_context": "Ambient OTP Ambient OTP 3 Ambient OTP err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a Ambient OTP The fans do not work.",
+            "indicator_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+            "indicator_type": "ErrorCode",
+            "pages": [
+              64
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_3a81d05b32f51ea96c291c31f3514f60967f8ebf87216dcc8a82a42c317a6f42",
+            "corrective_action": "Contact service personnel.",
+            "corrective_action_context": "Contact service personnel. Contact service personnel. ca_contact_service_personnel_2fe6825c0a43d34a9909e9ab0a7754d40f18808be7d73a7f4460a0840db69ae4 service Contact service personnel. Contact service personnel. Contact service personnel. typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF Contact service personnel.",
+            "corrective_action_id": "ca_contact_service_personnel_2fe6825c0a43d34a9909e9ab0a7754d40f18808be7d73a7f4460a0840db69ae4",
+            "failure_mode": "BUS capacitor failure",
+            "failure_mode_context": "BUS capacitor failure BUS capacitor failure. BUS capacitor failure. fm_bus_capacitor_failure_af222f2125c8722c12b27ede0f56b75e53a0258ed5275905a65f0dfda1e6cba1 comp_bus_capacitor_e0529a436414a99f8200f8f8e1acb86e443dcb1e0a0fe408df590ae5fc157ec1 BUS capacitor failure BUS capacitor failure. Contact service personnel.",
+            "failure_mode_id": "fm_bus_capacitor_failure_af222f2125c8722c12b27ede0f56b75e53a0258ed5275905a65f0dfda1e6cba1",
+            "indicator": "BUS OVP/UVP",
+            "indicator_context": "BUS OVP/UVP BUS OVP/UVP 4 BUS OVP/UVP err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f BUS OVP/UVP BUS capacitor failure.",
+            "indicator_id": "err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f",
+            "indicator_type": "ErrorCode",
+            "pages": [
+              64
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_15dbdf132abc0b5b724741468695890ac464ede17564d43e7a3fd33bc25b696f",
+            "corrective_action": "Contact service personnel",
+            "corrective_action_context": "Contact service personnel Contact service personnel. ca_contact_service_personnel_0f1442e6ea21dbda60f8a2f528d0a890ace597450935b1f6e8a76b9e06c9e485 service Contact service personnel. Contact service personnel. Contact service personnel typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF Fan failure.",
+            "corrective_action_id": "ca_contact_service_personnel_0f1442e6ea21dbda60f8a2f528d0a890ace597450935b1f6e8a76b9e06c9e485",
+            "failure_mode": "Fan failure",
+            "failure_mode_context": "Fan failure Fan failure. Fan failure. fm_fan_failure_64f7531ee4aa14687a89121de515a8d7060eb88a3dfea0c6c72769290207d98b asset_level Fan failure Fan failure. Fan failure.",
+            "failure_mode_id": "fm_fan_failure_64f7531ee4aa14687a89121de515a8d7060eb88a3dfea0c6c72769290207d98b",
+            "indicator": "Fan Fail",
+            "indicator_context": "Fan Fail Fan Fail 5 Fan Fail err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad Fan Fail Fan failure.",
+            "indicator_id": "err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad",
+            "indicator_type": "ErrorCode",
+            "pages": [
+              64
+            ]
+          }
+        ],
+        "relations": 62,
+        "relations_by_type": {
+          "AFFECTS": 4,
+          "GENERATES_ERROR": 4,
+          "HAS_COMPONENT": 44,
+          "INDICATES": 5,
+          "RESOLVED_BY": 5
+        }
+      },
+      "integrity": {
+        "approval_eligible": false,
+        "branch_lineage": {
+          "diagnostic_relations": 14,
+          "missing_relation_ids": [],
+          "orphan_action_branches": [],
+          "orphan_indicator_branches": [],
+          "passed": true
+        },
+        "checks": {
+          "all_corrective_actions_have_incoming_resolved_by": true,
+          "authenticated_completed_real_run": true,
+          "branch_lineage_complete_and_joinable": true,
+          "candidate_accounting_or_nonapprovable": true,
+          "exact_relation_grounding": true,
+          "no_approval_merge_or_structured_processing": true,
+          "one_original_canonical_asset": true,
+          "strict_validation": true,
+          "zero_isolated_diagnostic_nodes": true
+        },
+        "diagnostic_accounting_complete": true,
+        "grounding": {
+          "exact": 588,
+          "passed": true,
+          "relations_exact": 62,
+          "relations_total": 62,
+          "total": 588,
+          "unresolved": []
+        },
+        "passed": true,
+        "review_summary": {
+          "blocking": 5,
+          "by_code": {
+            "canonicalization_ambiguous": 10,
+            "diagnostic_failure_without_component": 1,
+            "pdf_diagnostic_record_gap": 3,
+            "pdf_node_provenance_unresolved": 1,
+            "pdf_ocr_low_confidence": 1,
+            "pdf_relation_endpoint_omitted": 1,
+            "pdf_schema_instruction_not_actionable": 1,
+            "pdf_unreadable_pages": 1
+          },
+          "total": 19
+        },
+        "run_authenticity": {
+          "artifact_errors": [],
+          "checks": {
+            "api_key_not_exposed": true,
+            "authorized_budget": true,
+            "campaign_identity": true,
+            "completed_without_error": true,
+            "input_pdf_matches_frozen_sha256": true,
+            "manual_identity": true,
+            "manual_sha256_matches_frozen": true,
+            "pipeline_version": true,
+            "real_mode": true,
+            "reviewing_not_decided": true,
+            "revision_identity": true,
+            "run_artifacts_parseable": true,
+            "run_call_ledger_shape": true,
+            "terminal_one_shot_state": true
+          },
+          "passed": true,
+          "terminal_error": null,
+          "terminal_status": "completed"
+        },
+        "validation": {
+          "domain_range_errors": 0,
+          "duplicate_ids": 0,
+          "endpoint_errors": 0,
+          "extra_properties": 0,
+          "graph_invariant_errors": 0,
+          "issues": [],
+          "passed": true,
+          "provenance_resolvable": 381,
+          "provenance_total": 381,
+          "relation_grounding_passed": 62,
+          "relation_grounding_total": 62,
+          "required_properties_present": 231,
+          "required_properties_total": 231,
+          "unresolved_mapping_diagnostics": 0
+        }
+      },
+      "manual_id": "danfoss_apf",
+      "operations": {
+        "actual_cost_usd": 0.05830691,
+        "calls": 21,
+        "charged_cost_usd": 0.05830691,
+        "conservative_preflight_usd": 0.62576,
+        "cost_source": "durable_per_call_budget_ledger",
+        "cost_usd": 0.05830691,
+        "elapsed_seconds": 146.944,
+        "hard_ceiling_usd": 1.1,
+        "models": {
+          "gpt-5.6-luna": 19,
+          "gpt-5.6-terra": 2
+        }
+      },
+      "scope": {
+        "diagnostic_pages": [
+          17,
+          18,
+          19,
+          26,
+          27,
+          28,
+          29,
+          30,
+          50,
+          51,
+          52,
+          63,
+          64,
+          65
+        ],
+        "method": "retained_cut_plan",
+        "page_offset": 2,
+        "retrieval_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66
+        ],
+        "sections": [
+          {
+            "end_page": 11,
+            "name": "2.4 Electrical Installation Precautions",
+            "source": "rule",
+            "start_page": 11
+          },
+          {
+            "end_page": 66,
+            "name": "6 Mechanical Installation Considerations",
+            "source": "rule",
+            "start_page": 31
+          },
+          {
+            "end_page": 66,
+            "name": "6.1 Pre-Installation",
+            "source": "rule",
+            "start_page": 31
+          }
+        ],
+        "selected_pages": [
+          11,
+          17,
+          18,
+          19,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66
+        ],
+        "skipped": false,
+        "structural_pages": [
+          11,
+          17,
+          19,
+          26,
+          28,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          65,
+          66
+        ],
+        "total_pages": 66,
+        "unselected_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          12,
+          13,
+          14,
+          15,
+          16,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25
+        ]
+      },
+      "semantic": {
+        "autonomous_expected_claims_present": 5,
+        "checks": {
+          "forbidden_pairings_zero": true,
+          "gold_page_retention": true,
+          "recall_floor": true,
+          "unsupported_published_paths_zero": true
+        },
+        "explicit_expected_gaps_present": 3,
+        "forbidden": [
+          {
+            "failure_mode": "input fuse is broken",
+            "found": false,
+            "matches": [],
+            "symptom": "SYS 485 comm loss"
+          },
+          {
+            "failure_mode": "CT is not well connected",
+            "found": false,
+            "matches": [],
+            "symptom": "Fuse blowout"
+          },
+          {
+            "failure_mode": "BUS capacitor failure",
+            "found": false,
+            "matches": [],
+            "symptom": "Ambient OTP"
+          },
+          {
+            "failure_mode": "fan failure",
+            "found": false,
+            "matches": [],
+            "symptom": "No current compensation or bad current compensation"
+          }
+        ],
+        "forbidden_pairings_found": 0,
+        "gold_claim_recall": 1.0,
+        "gold_claims_present": 8,
+        "gold_claims_total": 8,
+        "gold_pages_required": [
+          64
+        ],
+        "gold_pages_retained": [
+          64
+        ],
+        "paths_outside_frozen_gold": 0,
+        "published_complete_paths_total": 5,
+        "recall_floor": 0.75,
+        "traceable_review_claims_present": 0,
+        "unsupported_path_gate_scope": "exhaustive_gold",
+        "unsupported_published_paths_detected": 0,
+        "witnesses": [
+          {
+            "best_min_field_score": 1.0,
+            "claim_id": "D1",
+            "expected_outcome": "traceable_explicit_gap",
+            "field_scores": {
+              "failure_mode": 1.0,
+              "indicator": 1.0,
+              "inspection_step": 1.0
+            },
+            "matched_gap": {
+              "blocking": true,
+              "code": "pdf_diagnostic_record_gap",
+              "disposition": "gap",
+              "evidence_ids": [
+                "ev_f371e038733443956fbd948b3275"
+              ],
+              "message": "Record diagnostico non pubblicabile senza decisione umana (check_only, missing_actions)",
+              "stage": "pdf_adapter",
+              "target_id": "diagwin_a1393e028560939f29195c74",
+              "target_kind": "diagnostic_record"
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 1.0,
+            "claim_id": "D2",
+            "expected_outcome": "traceable_explicit_gap",
+            "field_scores": {
+              "failure_mode": 1.0,
+              "indicator": 1.0,
+              "inspection_step": 1.0
+            },
+            "matched_gap": {
+              "blocking": true,
+              "code": "pdf_diagnostic_record_gap",
+              "disposition": "gap",
+              "evidence_ids": [
+                "ev_f371e038733443956fbd948b3275"
+              ],
+              "message": "Record diagnostico non pubblicabile senza decisione umana (check_only, missing_actions)",
+              "stage": "pdf_adapter",
+              "target_id": "diagwin_a1393e028560939f29195c74",
+              "target_kind": "diagnostic_record"
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 1.0,
+            "claim_id": "D3",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_24e7dc47004d85f7ba8a0135ce5e35f74f3de165441dfc38adddaf1aa0635a91",
+              "corrective_action": "Contact service personnel",
+              "corrective_action_context": "Contact service personnel Contact service personnel. ca_contact_service_personnel_0f1442e6ea21dbda60f8a2f528d0a890ace597450935b1f6e8a76b9e06c9e485 service Contact service personnel. Contact service personnel. Contact service personnel typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF The input fuse is broken.",
+              "corrective_action_id": "ca_contact_service_personnel_0f1442e6ea21dbda60f8a2f528d0a890ace597450935b1f6e8a76b9e06c9e485",
+              "failure_mode": "Input fuse is broken",
+              "failure_mode_context": "Input fuse is broken The input fuse is broken. The input fuse is broken. fm_input_fuse_is_broken_30bee4b59de46ea752257fbfbd0cd3917a2ea6cff7c213501c0d3441ba825dbe comp_input_fuse_0376cd205cd0cc5eb99a54d4f1057f6a1c4dccb9c0e09e03159fdda9b9877a98 Input fuse is broken The input fuse is broken. The input fuse is broken.",
+              "failure_mode_id": "fm_input_fuse_is_broken_30bee4b59de46ea752257fbfbd0cd3917a2ea6cff7c213501c0d3441ba825dbe",
+              "indicator": "Fuse blowout",
+              "indicator_context": "Fuse blowout Fuse blowout 2 Fuse blowout err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1 Fuse blowout The input fuse is broken.",
+              "indicator_id": "err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1",
+              "indicator_type": "ErrorCode",
+              "pages": [
+                64
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.854545,
+            "claim_id": "D4",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 0.854545,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_efe79b097b892c71e4c3e3f02f29b5c9e3d8941bfe72dc63c4b7a7be5e2b4045",
+              "corrective_action": "Contact service personnel",
+              "corrective_action_context": "Contact service personnel Contact service personnel. ca_contact_service_personnel_0f1442e6ea21dbda60f8a2f528d0a890ace597450935b1f6e8a76b9e06c9e485 service Contact service personnel. Contact service personnel. Contact service personnel typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF Contact service personnel.",
+              "corrective_action_id": "ca_contact_service_personnel_0f1442e6ea21dbda60f8a2f528d0a890ace597450935b1f6e8a76b9e06c9e485",
+              "failure_mode": "The air vents ate blocked.",
+              "failure_mode_context": "The air vents ate blocked. The air vents ate blocked. The air vents ate blocked. fm_the_air_vents_ate_blocked_9a3c07f2eedfd018598db02181f76783d74126d143a867a8ef386f7f3c8212cb comp_air_vents_5add99cf7c20d3a236db2a9cfef075e6e27b72a3b7cc7283d13a97918329e25b The air vents ate blocked. Ambient OTP Contact service personnel.",
+              "failure_mode_id": "fm_the_air_vents_ate_blocked_9a3c07f2eedfd018598db02181f76783d74126d143a867a8ef386f7f3c8212cb",
+              "indicator": "Ambient OTP",
+              "indicator_context": "Ambient OTP Ambient OTP 3 Ambient OTP err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a Ambient OTP Ambient OTP",
+              "indicator_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+              "indicator_type": "ErrorCode",
+              "pages": [
+                64
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 1.0,
+            "claim_id": "D5",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_47bb0d3caf62d8cd527d97f6982d0cbcab71760b62d693df8ed6f5dbd3f59d4a",
+              "corrective_action": "Contact service personnel.",
+              "corrective_action_context": "Contact service personnel. Contact service personnel. ca_contact_service_personnel_2fe6825c0a43d34a9909e9ab0a7754d40f18808be7d73a7f4460a0840db69ae4 service Contact service personnel. Contact service personnel. Contact service personnel. typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF The fans do not work.",
+              "corrective_action_id": "ca_contact_service_personnel_2fe6825c0a43d34a9909e9ab0a7754d40f18808be7d73a7f4460a0840db69ae4",
+              "failure_mode": "The fans do not work.",
+              "failure_mode_context": "The fans do not work. The fans do not work. The fans do not work. fm_the_fans_do_not_work_f2111268ad901fe0cfe6b894ec6db7c36b59204203e242c21c60ed32a0ceb168 comp_fans_604387ceb152eabf9c8e8a5de3497d7fe434db6a5b4d648b228b2464a1aaaeb4 The fans do not work. The fans do not work. The fans do not work.",
+              "failure_mode_id": "fm_the_fans_do_not_work_f2111268ad901fe0cfe6b894ec6db7c36b59204203e242c21c60ed32a0ceb168",
+              "indicator": "Ambient OTP",
+              "indicator_context": "Ambient OTP Ambient OTP 3 Ambient OTP err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a Ambient OTP The fans do not work.",
+              "indicator_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+              "indicator_type": "ErrorCode",
+              "pages": [
+                64
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 1.0,
+            "claim_id": "D6",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_3a81d05b32f51ea96c291c31f3514f60967f8ebf87216dcc8a82a42c317a6f42",
+              "corrective_action": "Contact service personnel.",
+              "corrective_action_context": "Contact service personnel. Contact service personnel. ca_contact_service_personnel_2fe6825c0a43d34a9909e9ab0a7754d40f18808be7d73a7f4460a0840db69ae4 service Contact service personnel. Contact service personnel. Contact service personnel. typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF Contact service personnel.",
+              "corrective_action_id": "ca_contact_service_personnel_2fe6825c0a43d34a9909e9ab0a7754d40f18808be7d73a7f4460a0840db69ae4",
+              "failure_mode": "BUS capacitor failure",
+              "failure_mode_context": "BUS capacitor failure BUS capacitor failure. BUS capacitor failure. fm_bus_capacitor_failure_af222f2125c8722c12b27ede0f56b75e53a0258ed5275905a65f0dfda1e6cba1 comp_bus_capacitor_e0529a436414a99f8200f8f8e1acb86e443dcb1e0a0fe408df590ae5fc157ec1 BUS capacitor failure BUS capacitor failure. Contact service personnel.",
+              "failure_mode_id": "fm_bus_capacitor_failure_af222f2125c8722c12b27ede0f56b75e53a0258ed5275905a65f0dfda1e6cba1",
+              "indicator": "BUS OVP/UVP",
+              "indicator_context": "BUS OVP/UVP BUS OVP/UVP 4 BUS OVP/UVP err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f BUS OVP/UVP BUS capacitor failure.",
+              "indicator_id": "err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f",
+              "indicator_type": "ErrorCode",
+              "pages": [
+                64
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 1.0,
+            "claim_id": "D7",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_15dbdf132abc0b5b724741468695890ac464ede17564d43e7a3fd33bc25b696f",
+              "corrective_action": "Contact service personnel",
+              "corrective_action_context": "Contact service personnel Contact service personnel. ca_contact_service_personnel_0f1442e6ea21dbda60f8a2f528d0a890ace597450935b1f6e8a76b9e06c9e485 service Contact service personnel. Contact service personnel. Contact service personnel typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF Fan failure.",
+              "corrective_action_id": "ca_contact_service_personnel_0f1442e6ea21dbda60f8a2f528d0a890ace597450935b1f6e8a76b9e06c9e485",
+              "failure_mode": "Fan failure",
+              "failure_mode_context": "Fan failure Fan failure. Fan failure. fm_fan_failure_64f7531ee4aa14687a89121de515a8d7060eb88a3dfea0c6c72769290207d98b asset_level Fan failure Fan failure. Fan failure.",
+              "failure_mode_id": "fm_fan_failure_64f7531ee4aa14687a89121de515a8d7060eb88a3dfea0c6c72769290207d98b",
+              "indicator": "Fan Fail",
+              "indicator_context": "Fan Fail Fan Fail 5 Fan Fail err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad Fan Fail Fan failure.",
+              "indicator_id": "err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad",
+              "indicator_type": "ErrorCode",
+              "pages": [
+                64
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.838095,
+            "claim_id": "D8",
+            "expected_outcome": "traceable_explicit_gap",
+            "field_scores": {
+              "failure_mode": 1.0,
+              "indicator": 0.838095,
+              "inspection_step": 1.0
+            },
+            "matched_gap": {
+              "blocking": true,
+              "code": "pdf_diagnostic_record_gap",
+              "disposition": "gap",
+              "evidence_ids": [
+                "ev_8f4dab14f6c8e9fad1af089a657b"
+              ],
+              "message": "Record diagnostico non pubblicabile senza decisione umana (check_only, missing_actions)",
+              "stage": "pdf_adapter",
+              "target_id": "diagwin_66f5fa88a96cbff27d13b446",
+              "target_kind": "diagnostic_record"
+            },
+            "present": true
+          }
+        ]
+      },
+      "verdict": {
+        "publication_integrity": "pass",
+        "semantic": "pass"
+      }
+    },
+    {
+      "gold_scope": "exhaustive_troubleshooting_table",
+      "graph": {
+        "nodes": 99,
+        "nodes_by_type": {
+          "Asset": 1,
+          "Component": 63,
+          "CorrectiveAction": 14,
+          "FailureMode": 14,
+          "Symptom": 7
+        },
+        "published_paths": [
+          {
+            "branch_lineage_id": "dbranch_1f64e8fbd3ee322df22c9cf5e3fbe5c12d12eae7f0eaa1d43147cacedfb55a96",
+            "corrective_action": "Clear valve; replace seals.",
+            "corrective_action_context": "Clear valve; replace seals. Clear valve; replace seals. ca_clear_valve_replace_seals_234ccd46fb68a2b77a37608bd19f21544790cbdf8680b73598601a3f7b6b86ec repair_or_replace Clear valve; replace seals. Clear valve; replace seals. Clear valve; replace seals. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Held open or worn piston valve or seals.",
+            "corrective_action_id": "ca_clear_valve_replace_seals_234ccd46fb68a2b77a37608bd19f21544790cbdf8680b73598601a3f7b6b86ec",
+            "failure_mode": "Held open or worn piston valve or seals.",
+            "failure_mode_context": "Held open or worn piston valve or seals. Held open or worn piston valve or seals. Held open or worn piston valve or seals. fm_held_open_or_worn_piston_valve_or_seals_8afd2945ecbe89306ca5336a414ce436d43b5c0c393af58ce97d8ce7bae284dc comp_piston_valve_or_seals_300de0cb1c76395cf4ef8c03a76ecdc3da173b52032ac333d67e1107bd24f5bc Held open or worn piston valve or seals. Held open or worn piston valve or seals. Erratic or accelerated pump speed. Held open or worn piston valve or seals.",
+            "failure_mode_id": "fm_held_open_or_worn_piston_valve_or_seals_8afd2945ecbe89306ca5336a414ce436d43b5c0c393af58ce97d8ce7bae284dc",
+            "indicator": "Erratic or accelerated pump speed.",
+            "indicator_context": "Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Medium sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc Held open or worn piston valve or seals. Erratic or accelerated pump speed.",
+            "indicator_id": "sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_a3b8bdf8d7fd4b3d759e798e0295c9f2accde9f7385db0ffb3caad9d4e1d74ad",
+            "corrective_action": "Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+            "corrective_action_context": "Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. ca_use_the_bleeder_valve_see_page_9_use_wiper_plate_0143dfa38ac79575de38b6823df6dbc026c3d2595c9e44da964cd2fe84663bc0 remedy Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+            "corrective_action_id": "ca_use_the_bleeder_valve_see_page_9_use_wiper_plate_0143dfa38ac79575de38b6823df6dbc026c3d2595c9e44da964cd2fe84663bc0",
+            "failure_mode": "Fluid is too heavy for pump priming.",
+            "failure_mode_context": "Fluid is too heavy for pump priming. Fluid is too heavy for pump priming. Fluid is too heavy for pump priming. fm_fluid_is_too_heavy_for_pump_priming_00e51bff6c01af230a555bbc7f07d7272aaba1db400910d3e19b1c8198c2f037 asset_level Fluid is too heavy for pump priming. Fluid is too heavy for pump priming. Erratic or accelerated pump speed. Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+            "failure_mode_id": "fm_fluid_is_too_heavy_for_pump_priming_00e51bff6c01af230a555bbc7f07d7272aaba1db400910d3e19b1c8198c2f037",
+            "indicator": "Erratic or accelerated pump speed.",
+            "indicator_context": "Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Medium sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc Fluid is too heavy for pump priming. Erratic or accelerated pump speed.",
+            "indicator_id": "sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_67cf0c7448cd337f731c0d5c8a5c93816752a699a74ddfa6779e1154c83c2fda",
+            "corrective_action": "Clear; service.",
+            "corrective_action_context": "Clear; service. Clear; service. ca_clear_service_cc76d990e6fa4dbf2f76c047a3b7395299f971dfe89309f57742cca8a89b47bc service Clear; service. Clear; service. Clear; service. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Held open or worn priming piston.",
+            "corrective_action_id": "ca_clear_service_cc76d990e6fa4dbf2f76c047a3b7395299f971dfe89309f57742cca8a89b47bc",
+            "failure_mode": "Held open or worn priming piston.",
+            "failure_mode_context": "Held open or worn priming piston. Held open or worn priming piston. Held open or worn priming piston. fm_held_open_or_worn_priming_piston_621636b8c9e8433acb6879beddf7b233c0cd02266ecacaa7cf856153b1611116 comp_priming_piston_b3153f83493a2af58bb022ed9f72c9d0e5ba111f84a33e0e581747653071bc20 Held open or worn priming piston. Held open or worn priming piston. Erratic or accelerated pump speed. Held open or worn priming piston.",
+            "failure_mode_id": "fm_held_open_or_worn_priming_piston_621636b8c9e8433acb6879beddf7b233c0cd02266ecacaa7cf856153b1611116",
+            "indicator": "Erratic or accelerated pump speed.",
+            "indicator_context": "Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Medium sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc Held open or worn priming piston. Erratic or accelerated pump speed.",
+            "indicator_id": "sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_d7bc2567233cfe9469c83123f6c75906d520a10772160b6ad53d8f444c59a2f3",
+            "corrective_action": "Refill and prime",
+            "corrective_action_context": "Refill and prime Refill and prime. ca_refill_and_prime_16ffaaf0c64f2038d72b43a7b5071043374869068fa7a49cc81e85eeb585b151 refill_and_prime Refill and prime. Refill and prime. Refill and prime typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Refill and prime.",
+            "corrective_action_id": "ca_refill_and_prime_16ffaaf0c64f2038d72b43a7b5071043374869068fa7a49cc81e85eeb585b151",
+            "failure_mode": "Exhausted fluid supply",
+            "failure_mode_context": "Exhausted fluid supply Exhausted fluid supply. Exhausted fluid supply. fm_exhausted_fluid_supply_1f1d2f02b4f650343c5b46623df3265b37df353262765bb41eebabff25a4f8b9 asset_level Exhausted fluid supply Exhausted fluid supply. Refill and prime.",
+            "failure_mode_id": "fm_exhausted_fluid_supply_1f1d2f02b4f650343c5b46623df3265b37df353262765bb41eebabff25a4f8b9",
+            "indicator": "Erratic or accelerated pump speed.",
+            "indicator_context": "Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Medium sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc Exhausted fluid supply.",
+            "indicator_id": "sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_4771864f6ad9c5cdf736f8750c9cbf51cce53034f21c01789339fbaef494e4da",
+            "corrective_action": "Replace packings",
+            "corrective_action_context": "Replace packings Replace packings. ca_replace_packings_2533773df14cada86aec15173814a2d622302595c53bc1463cec6b0d88144d93 replacement Replace packings. Replace packings. Replace packings typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Worn packings in displacement pump.",
+            "corrective_action_id": "ca_replace_packings_2533773df14cada86aec15173814a2d622302595c53bc1463cec6b0d88144d93",
+            "failure_mode": "Worn packings in displacement pump",
+            "failure_mode_context": "Worn packings in displacement pump Worn packings in displacement pump. Worn packings in displacement pump. fm_worn_packings_in_displacement_pump_669ab62bd3e8004aea7e13a6aaab800b67d8b370a224d6d736d4324ff794ccd1 comp_displacement_pump_6c5bc905b2b9d8fbca42e35e4b99ad3799b425147a1c7fb3eef9635c5f78c6e9 Worn packings in displacement pump Worn packings in displacement pump. Erratic or accelerated pump speed. Worn packings in displacement pump.",
+            "failure_mode_id": "fm_worn_packings_in_displacement_pump_669ab62bd3e8004aea7e13a6aaab800b67d8b370a224d6d736d4324ff794ccd1",
+            "indicator": "Erratic or accelerated pump speed",
+            "indicator_context": "Erratic or accelerated pump speed Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed Medium sym_erratic_or_accelerated_pump_speed_9caf788c76ba6e98b7c86752852393d457655207695bbb9832c8b00fb9015f75 Worn packings in displacement pump. Erratic or accelerated pump speed.",
+            "indicator_id": "sym_erratic_or_accelerated_pump_speed_9caf788c76ba6e98b7c86752852393d457655207695bbb9832c8b00fb9015f75",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_b5396cb4d94201b026a2e1eefb9bb75ad53ddd867ecb9043f8ea735b32cb933a",
+            "corrective_action": "Clear restriction or restore air supply",
+            "corrective_action_context": "Clear restriction or restore air supply Clear the restriction or restore adequate air supply. ca_clear_restriction_or_restore_air_supply_8ca5f9f7d93de8be7e1a6fcb3376178ce1430ec623241aec9949e24fe0386d6c clear restriction or restore air supply Clear the restriction or restore adequate air supply. Clear*; see Technical Data on pages 24–27. Clear restriction or restore air supply typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Restricted line or inadequate air supply",
+            "corrective_action_id": "ca_clear_restriction_or_restore_air_supply_8ca5f9f7d93de8be7e1a6fcb3376178ce1430ec623241aec9949e24fe0386d6c",
+            "failure_mode": "Restricted line or inadequate air supply",
+            "failure_mode_context": "Restricted line or inadequate air supply Restricted line or inadequate air supply. Restricted line or inadequate air supply. fm_restricted_line_or_inadequate_air_supply_30edfe1db8ca385ece484ceb17946fcf56a1a40e1c8163a6c4bbd2f6b8dc931c asset_level Restricted line or inadequate air supply Restricted line or inadequate air supply Restricted line or inadequate air supply",
+            "failure_mode_id": "fm_restricted_line_or_inadequate_air_supply_30edfe1db8ca385ece484ceb17946fcf56a1a40e1c8163a6c4bbd2f6b8dc931c",
+            "indicator": "Pump fails to operate",
+            "indicator_context": "Pump fails to operate Pump fails to operate. Pump fails to operate. Pump fails to operate Medium sym_pump_fails_to_operate_0fa7559d8c8470cbc6d758e66e2dded468dbe29fffeb5ad25c624c92a842d2cf Restricted line or inadequate air supply",
+            "indicator_id": "sym_pump_fails_to_operate_0fa7559d8c8470cbc6d758e66e2dded468dbe29fffeb5ad25c624c92a842d2cf",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_f78b54b33943f898710531a5a1e4ba880130471f9558e1ea03647373c6d959cd",
+            "corrective_action": "Clean or repair air motor parts",
+            "corrective_action_context": "Clean or repair air motor parts Clean or repair the air motor parts; see separate air motor manual. ca_clean_or_repair_air_motor_parts_fe1790478e47d5c769379dfab75f9e831e9a9c1bed0658cd46307a58700b662d repair Clean or repair the air motor parts; see separate air motor manual. Clean or repair; see separate air motor manual. Clean or repair air motor parts typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Dirty or worn air motor parts.",
+            "corrective_action_id": "ca_clean_or_repair_air_motor_parts_fe1790478e47d5c769379dfab75f9e831e9a9c1bed0658cd46307a58700b662d",
+            "failure_mode": "Dirty or worn air motor parts",
+            "failure_mode_context": "Dirty or worn air motor parts Dirty or worn air motor parts. Dirty or worn air motor parts. fm_dirty_or_worn_air_motor_parts_b6293b24bc6de1178600836423dbdf66ac83fa6a6a75d78415636088efedb1d4 comp_air_motor_parts_0d64308587c56561c886e96d6c195451bffc0baf059a96a1b992a1157b1cd353 Dirty or worn air motor parts Dirty or worn air motor parts. Pump fails to operate. Dirty or worn air motor parts.",
+            "failure_mode_id": "fm_dirty_or_worn_air_motor_parts_b6293b24bc6de1178600836423dbdf66ac83fa6a6a75d78415636088efedb1d4",
+            "indicator": "Pump fails to operate",
+            "indicator_context": "Pump fails to operate Pump fails to operate. Pump fails to operate. Pump fails to operate Medium sym_pump_fails_to_operate_0fa7559d8c8470cbc6d758e66e2dded468dbe29fffeb5ad25c624c92a842d2cf Dirty or worn air motor parts. Pump fails to operate.",
+            "indicator_id": "sym_pump_fails_to_operate_0fa7559d8c8470cbc6d758e66e2dded468dbe29fffeb5ad25c624c92a842d2cf",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_7992e8393aa862d803b1a392b0d533a5009af5994921bbdb2e1f5846dad56169",
+            "corrective_action": "Clean",
+            "corrective_action_context": "Clean Clean; see Service on pages 12–19. ca_clean_3f018189f41c67b672a2f84f8fb2954ffd1116700363d5a59d97639fca5985d3 Clean; see Service on pages 12–19. Clean; see Service on pages 12–19. Clean typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Fluid dried on the displacement rod.",
+            "corrective_action_id": "ca_clean_3f018189f41c67b672a2f84f8fb2954ffd1116700363d5a59d97639fca5985d3",
+            "failure_mode": "Fluid dried on the displacement rod.",
+            "failure_mode_context": "Fluid dried on the displacement rod. Fluid dried on the displacement rod. Fluid dried on the displacement rod. fm_fluid_dried_on_the_displacement_rod_6c331e6d2cd1e3ce50b5eb15430ed337d5a87054eb0239257c9f92d640ad1b7d comp_displacement_rod_9f0aa5df716328b507ae8f87f5a2965afe9d1a728a4d9272d0a5491b4f4023b1 Fluid dried on the displacement rod. Pump fails to operate. Fluid dried on the displacement rod. Fluid dried on the displacement rod.",
+            "failure_mode_id": "fm_fluid_dried_on_the_displacement_rod_6c331e6d2cd1e3ce50b5eb15430ed337d5a87054eb0239257c9f92d640ad1b7d",
+            "indicator": "Pump fails to operate.",
+            "indicator_context": "Pump fails to operate. Pump fails to operate. Pump fails to operate. Pump fails to operate. High sym_pump_fails_to_operate_1f8e0255f3f6fcae1034ef918c8db33afd1a4fa45cd286051222e2873c13b16f Pump fails to operate. Fluid dried on the displacement rod.",
+            "indicator_id": "sym_pump_fails_to_operate_1f8e0255f3f6fcae1034ef918c8db33afd1a4fa45cd286051222e2873c13b16f",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_817af820f563ff92dd55fb4dd60bd25c04f60b8f3eccf252c11f767e4243a839",
+            "corrective_action": "Clear or use a hose with a larger ID.",
+            "corrective_action_context": "Clear or use a hose with a larger ID. Clear the obstruction and use a hose with a larger inside diameter. ca_clear_or_use_a_hose_with_a_larger_id_6f7fc77db5edecab725c5997463d48f9a619b40a402cc41386b4472ad4f80b23 repair Clear the obstruction and use a hose with a larger inside diameter. Clear*; use a hose with a larger ID. Clear or use a hose with a larger ID. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+            "corrective_action_id": "ca_clear_or_use_a_hose_with_a_larger_id_6f7fc77db5edecab725c5997463d48f9a619b40a402cc41386b4472ad4f80b23",
+            "failure_mode": "Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+            "failure_mode_context": "Obstructed fluid hose or gun/valve; fluid hose ID is too small. Obstructed fluid hose or gun/valve; fluid hose ID is too small. Obstructed fluid hose or gun/valve; fluid hose ID is too small. fm_obstructed_fluid_hose_or_gun_valve_fluid_hose_id_35b6ac395d08cd4f2571502775ed88aa47c3b1fdd309af9123013e4690169805 comp_fluid_hose_or_gun_valve_55a33972820caaf9081a3eca3ccb503908f6eefc0852177e8e8151ddd971886a Obstructed fluid hose or gun/valve; fluid hose ID is too small. Pump fails to operate. Obstructed fluid hose or gun/valve; fluid hose ID is too small. Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+            "failure_mode_id": "fm_obstructed_fluid_hose_or_gun_valve_fluid_hose_id_35b6ac395d08cd4f2571502775ed88aa47c3b1fdd309af9123013e4690169805",
+            "indicator": "Pump fails to operate.",
+            "indicator_context": "Pump fails to operate. Pump fails to operate. Pump fails to operate. Pump fails to operate. High sym_pump_fails_to_operate_1f8e0255f3f6fcae1034ef918c8db33afd1a4fa45cd286051222e2873c13b16f Pump fails to operate. Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+            "indicator_id": "sym_pump_fails_to_operate_1f8e0255f3f6fcae1034ef918c8db33afd1a4fa45cd286051222e2873c13b16f",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_bf94896fb5158f655ec01a4334b6c4f6fb9502524649a26e4fe60bf019624269",
+            "corrective_action": "Clear restriction or restore adequate air supply",
+            "corrective_action_context": "Clear restriction or restore adequate air supply Clear*; see Technical Data on pages 24–27. ca_clear_restriction_or_restore_adequate_air_supply_ea72148d7b8d5e37003e3432d13abaad74e406219bdda24fad58e07dec9f4c64 clear_restriction_or_restore_air_supply Clear*; see Technical Data on pages 24–27. Clear*; see Technical Data on pages 24–27. Clear restriction or restore adequate air supply typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Restricted line or inadequate air supply.",
+            "corrective_action_id": "ca_clear_restriction_or_restore_adequate_air_supply_ea72148d7b8d5e37003e3432d13abaad74e406219bdda24fad58e07dec9f4c64",
+            "failure_mode": "Restricted line or inadequate air supply",
+            "failure_mode_context": "Restricted line or inadequate air supply Restricted line or inadequate air supply. Restricted line or inadequate air supply. fm_restricted_line_or_inadequate_air_supply_30edfe1db8ca385ece484ceb17946fcf56a1a40e1c8163a6c4bbd2f6b8dc931c asset_level Restricted line or inadequate air supply Restricted line or inadequate air supply. Restricted line or inadequate air supply.",
+            "failure_mode_id": "fm_restricted_line_or_inadequate_air_supply_30edfe1db8ca385ece484ceb17946fcf56a1a40e1c8163a6c4bbd2f6b8dc931c",
+            "indicator": "Pump operates, but output is low on both strokes.",
+            "indicator_context": "Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Medium sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e Restricted line or inadequate air supply.",
+            "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_c5ead3819a74132cc0ee0f1575c23b6566224cbdc32a1317a14e7fd70609ed0b",
+            "corrective_action": "Clear",
+            "corrective_action_context": "Clear Clear the obstruction and use a hose with a larger ID. ca_clear_ab4858cc3783b62d769648dcada47f78d120c3aef135216d5bfb848f85e8127a clearance/replacement Clear the obstruction and use a hose with a larger ID. Clear*; use a hose with a larger ID. Clear typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+            "corrective_action_id": "ca_clear_ab4858cc3783b62d769648dcada47f78d120c3aef135216d5bfb848f85e8127a",
+            "failure_mode": "Obstructed fluid hose or gun/valve; fluid hose ID is too small",
+            "failure_mode_context": "Obstructed fluid hose or gun/valve; fluid hose ID is too small Obstructed fluid hose or gun/valve; fluid hose ID is too small. Obstructed fluid hose or gun/valve; fluid hose ID is too small. fm_obstructed_fluid_hose_or_gun_valve_fluid_hose_id_b7bbd4a84809fc9852609bf94651a71919860e4894b75e1904964b702eee19b5 comp_fluid_hose_or_gun_valve_55a33972820caaf9081a3eca3ccb503908f6eefc0852177e8e8151ddd971886a Obstructed fluid hose or gun/valve; fluid hose ID is too small Obstructed fluid hose or gun/valve; fluid hose ID is too small. Pump operates, but output is low on both strokes. Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+            "failure_mode_id": "fm_obstructed_fluid_hose_or_gun_valve_fluid_hose_id_b7bbd4a84809fc9852609bf94651a71919860e4894b75e1904964b702eee19b5",
+            "indicator": "Pump operates, but output is low on both strokes.",
+            "indicator_context": "Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Medium sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e Obstructed fluid hose or gun/valve; fluid hose ID is too small. Pump operates, but output is low on both strokes.",
+            "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_9c2ea19e364ab72f318bb226c71458fbe24055c0bdc9a83dd2120f79bc3a0065",
+            "corrective_action": "Replace packings",
+            "corrective_action_context": "Replace packings Replace packings. ca_replace_packings_2533773df14cada86aec15173814a2d622302595c53bc1463cec6b0d88144d93 replacement Replace packings. Replace packings. Replace packings typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Worn packings in displacement pump.",
+            "corrective_action_id": "ca_replace_packings_2533773df14cada86aec15173814a2d622302595c53bc1463cec6b0d88144d93",
+            "failure_mode": "Worn packings in displacement pump",
+            "failure_mode_context": "Worn packings in displacement pump Worn packings in displacement pump. Worn packings in displacement pump. fm_worn_packings_in_displacement_pump_669ab62bd3e8004aea7e13a6aaab800b67d8b370a224d6d736d4324ff794ccd1 comp_displacement_pump_6c5bc905b2b9d8fbca42e35e4b99ad3799b425147a1c7fb3eef9635c5f78c6e9 Worn packings in displacement pump Pump operates, but output is low on both strokes. Worn packings in displacement pump. Worn packings in displacement pump.",
+            "failure_mode_id": "fm_worn_packings_in_displacement_pump_669ab62bd3e8004aea7e13a6aaab800b67d8b370a224d6d736d4324ff794ccd1",
+            "indicator": "Pump operates, but output is low on both strokes.",
+            "indicator_context": "Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Medium sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e Pump operates, but output is low on both strokes. Worn packings in displacement pump.",
+            "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_2028e5656993a620ac21036aeec3e7cc0a75255a763f5b4923897b3b9e041185",
+            "corrective_action": "Close the bleeder valve.",
+            "corrective_action_context": "Close the bleeder valve. Close the bleeder valve. ca_close_the_bleeder_valve_15da92b66acc096eba09a8fcf11c6efbee8a5e71e4ae318bedee56ebfae1e309 close Close the bleeder valve. Close. Close the bleeder valve. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Close.",
+            "corrective_action_id": "ca_close_the_bleeder_valve_15da92b66acc096eba09a8fcf11c6efbee8a5e71e4ae318bedee56ebfae1e309",
+            "failure_mode": "Bleeder valve is open.",
+            "failure_mode_context": "Bleeder valve is open. Bleeder valve is open. Bleeder valve is open. fm_bleeder_valve_is_open_418991a58396274f66395066dd084d13aaa4e5bd0d503963f6b9d18e0fa89e25 asset_level Bleeder valve is open. Pump operates, but output is low on both strokes. Bleeder valve is open. Close.",
+            "failure_mode_id": "fm_bleeder_valve_is_open_418991a58396274f66395066dd084d13aaa4e5bd0d503963f6b9d18e0fa89e25",
+            "indicator": "Pump operates, but output is low on both strokes.",
+            "indicator_context": "Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Medium sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e Pump operates, but output is low on both strokes. Bleeder valve is open.",
+            "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_fb46addffeb01db88a53e472d8ff0a64cbeb80e53ce06919c660ca9d71872d11",
+            "corrective_action": "Use bleeder valve or wiper plate with ram or pneumatic elevator cart.",
+            "corrective_action_context": "Use bleeder valve or wiper plate with ram or pneumatic elevator cart. Use a bleeder valve, a wiper plate with ram, or a pneumatic elevator cart. ca_use_bleeder_valve_or_wiper_plate_with_ram_or_pne_3643809adef98ba7021ecce5ee45dc4ab2b27332f5ddf80b26fef559831281f0 procedure Use a bleeder valve, a wiper plate with ram, or a pneumatic elevator cart. Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. Use bleeder valve or wiper plate with ram or pneumatic elevator cart. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+            "corrective_action_id": "ca_use_bleeder_valve_or_wiper_plate_with_ram_or_pne_3643809adef98ba7021ecce5ee45dc4ab2b27332f5ddf80b26fef559831281f0",
+            "failure_mode": "Fluid is too heavy for pump priming.",
+            "failure_mode_context": "Fluid is too heavy for pump priming. Fluid is too heavy for pump priming. Fluid is too heavy for pump priming. fm_fluid_is_too_heavy_for_pump_priming_00e51bff6c01af230a555bbc7f07d7272aaba1db400910d3e19b1c8198c2f037 asset_level Fluid is too heavy for pump priming. Pump operates, but output is low on both strokes. Fluid is too heavy for pump priming. Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+            "failure_mode_id": "fm_fluid_is_too_heavy_for_pump_priming_00e51bff6c01af230a555bbc7f07d7272aaba1db400910d3e19b1c8198c2f037",
+            "indicator": "Pump operates, but output is low on both strokes.",
+            "indicator_context": "Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Medium sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e Pump operates, but output is low on both strokes. Fluid is too heavy for pump priming.",
+            "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_f27cc5159a1db13a5de3cb5d358301ae60758562acfb4f4102aab735e4b0c12c",
+            "corrective_action": "Clear valve; replace seals.",
+            "corrective_action_context": "Clear valve; replace seals. Clear valve; replace seals. ca_clear_valve_replace_seals_234ccd46fb68a2b77a37608bd19f21544790cbdf8680b73598601a3f7b6b86ec repair_or_replace Clear valve; replace seals. Clear valve; replace seals. Clear valve; replace seals. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Held open or worn intake valve or seals.",
+            "corrective_action_id": "ca_clear_valve_replace_seals_234ccd46fb68a2b77a37608bd19f21544790cbdf8680b73598601a3f7b6b86ec",
+            "failure_mode": "Held open or worn intake valve or seals.",
+            "failure_mode_context": "Held open or worn intake valve or seals. Held open or worn intake valve or seals. Held open or worn intake valve or seals. fm_held_open_or_worn_intake_valve_or_seals_3a94125f2f40fc26e8a1abc658f2e960572fbccf153361f6d05609785d2d6712 asset_level Held open or worn intake valve or seals. Held open or worn intake valve or seals. Pump operates, but output is low on down- stroke. Held open or worn intake valve or seals.",
+            "failure_mode_id": "fm_held_open_or_worn_intake_valve_or_seals_3a94125f2f40fc26e8a1abc658f2e960572fbccf153361f6d05609785d2d6712",
+            "indicator": "Pump operates, but output is low on down- stroke.",
+            "indicator_context": "Pump operates, but output is low on down- stroke. Pump operates, but output is low on down- stroke. Pump operates, but output is low on down- stroke. Pump operates, but output is low on down- stroke. Medium sym_pump_operates_but_output_is_low_on_down_stroke_c188119377e3ae373677f4b1f590b5232250cc6012340e7522fbbdcd14ab4539 Held open or worn intake valve or seals. Pump operates, but output is low on down- stroke.",
+            "indicator_id": "sym_pump_operates_but_output_is_low_on_down_stroke_c188119377e3ae373677f4b1f590b5232250cc6012340e7522fbbdcd14ab4539",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_b3a73ac6dca11bc50bb84ce426aea9d8a28a6a287eb625c9d47eeed5fd1889cb",
+            "corrective_action": "Use bleeder valve and wiper plate with ram or pneumatic elevator cart",
+            "corrective_action_context": "Use bleeder valve and wiper plate with ram or pneumatic elevator cart Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. ca_use_bleeder_valve_and_wiper_plate_with_ram_or_pn_318e6bdffa3977ebe9820a7a4eab6da77981dd9ebe4057a3c187788711417dfd use Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. Use bleeder valve and wiper plate with ram or pneumatic elevator cart typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+            "corrective_action_id": "ca_use_bleeder_valve_and_wiper_plate_with_ram_or_pn_318e6bdffa3977ebe9820a7a4eab6da77981dd9ebe4057a3c187788711417dfd",
+            "failure_mode": "Fluid too heavy for pump priming",
+            "failure_mode_context": "Fluid too heavy for pump priming Fluid too heavy for pump priming. Fluid too heavy for pump priming. fm_fluid_too_heavy_for_pump_priming_c7ff09818d04a4cdf345e93628a81585c3ff204790caa7a392413e98aa8cd50f asset_level Fluid too heavy for pump priming Pump operates, but output is low on down- stroke. Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+            "failure_mode_id": "fm_fluid_too_heavy_for_pump_priming_c7ff09818d04a4cdf345e93628a81585c3ff204790caa7a392413e98aa8cd50f",
+            "indicator": "Pump operates, but output is low on down- stroke.",
+            "indicator_context": "Pump operates, but output is low on down- stroke. Pump operates, but output is low on down- stroke. Pump operates, but output is low on down- stroke. Pump operates, but output is low on down- stroke. Medium sym_pump_operates_but_output_is_low_on_down_stroke_c188119377e3ae373677f4b1f590b5232250cc6012340e7522fbbdcd14ab4539 Pump operates, but output is low on down- stroke.",
+            "indicator_id": "sym_pump_operates_but_output_is_low_on_down_stroke_c188119377e3ae373677f4b1f590b5232250cc6012340e7522fbbdcd14ab4539",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          },
+          {
+            "branch_lineage_id": "dbranch_0384164f5c61853f6dcae52e594b0ff1285b72a5948592e2d1c8c4b4b5784160",
+            "corrective_action": "Clear valve; replace seals.",
+            "corrective_action_context": "Clear valve; replace seals. Clear valve; replace seals. ca_clear_valve_replace_seals_234ccd46fb68a2b77a37608bd19f21544790cbdf8680b73598601a3f7b6b86ec repair_or_replace Clear valve; replace seals. Clear valve; replace seals. Clear valve; replace seals. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Held open or worn piston valve or seals.",
+            "corrective_action_id": "ca_clear_valve_replace_seals_234ccd46fb68a2b77a37608bd19f21544790cbdf8680b73598601a3f7b6b86ec",
+            "failure_mode": "Held open or worn piston valve or seals",
+            "failure_mode_context": "Held open or worn piston valve or seals Held open or worn piston valve or seals. Held open or worn piston valve or seals. fm_held_open_or_worn_piston_valve_or_seals_f238f8b68a0efa7bd82dcae85f28b4a6c89908c768f2212e1afffa74975f5e71 comp_piston_valve_or_seals_300de0cb1c76395cf4ef8c03a76ecdc3da173b52032ac333d67e1107bd24f5bc Held open or worn piston valve or seals Pump operates, but output is low on up- stroke. Held open or worn piston valve or seals.",
+            "failure_mode_id": "fm_held_open_or_worn_piston_valve_or_seals_f238f8b68a0efa7bd82dcae85f28b4a6c89908c768f2212e1afffa74975f5e71",
+            "indicator": "Pump operates, but output is low on up- stroke.",
+            "indicator_context": "Pump operates, but output is low on up- stroke. Pump operates, but output is low on up- stroke. Pump operates, but output is low on up- stroke. Pump operates, but output is low on up- stroke. Medium sym_pump_operates_but_output_is_low_on_up_stroke_0aeda006a7ea3c8a410be1763fc4479391e03a12725011ac2f6693cedbbfe5ab Pump operates, but output is low on up- stroke.",
+            "indicator_id": "sym_pump_operates_but_output_is_low_on_up_stroke_0aeda006a7ea3c8a410be1763fc4479391e03a12725011ac2f6693cedbbfe5ab",
+            "indicator_type": "Symptom",
+            "pages": [
+              11
+            ]
+          }
+        ],
+        "relations": 105,
+        "relations_by_type": {
+          "AFFECTS": 8,
+          "HAS_COMPONENT": 63,
+          "MAY_INDICATE": 17,
+          "RESOLVED_BY": 17
+        }
+      },
+      "integrity": {
+        "approval_eligible": false,
+        "branch_lineage": {
+          "diagnostic_relations": 42,
+          "missing_relation_ids": [],
+          "orphan_action_branches": [],
+          "orphan_indicator_branches": [],
+          "passed": true
+        },
+        "checks": {
+          "all_corrective_actions_have_incoming_resolved_by": true,
+          "authenticated_completed_real_run": true,
+          "branch_lineage_complete_and_joinable": true,
+          "candidate_accounting_or_nonapprovable": true,
+          "exact_relation_grounding": true,
+          "no_approval_merge_or_structured_processing": true,
+          "one_original_canonical_asset": true,
+          "strict_validation": true,
+          "zero_isolated_diagnostic_nodes": true
+        },
+        "diagnostic_accounting_complete": true,
+        "grounding": {
+          "exact": 508,
+          "passed": true,
+          "relations_exact": 105,
+          "relations_total": 105,
+          "total": 508,
+          "unresolved": []
+        },
+        "passed": true,
+        "review_summary": {
+          "blocking": 1,
+          "by_code": {
+            "canonicalization_ambiguous": 13,
+            "diagnostic_failure_without_component": 6,
+            "pdf_diagnostic_record_gap": 1,
+            "pdf_node_provenance_unresolved": 1,
+            "pdf_relation_endpoint_omitted": 1,
+            "pdf_schema_instruction_not_actionable": 1
+          },
+          "total": 23
+        },
+        "run_authenticity": {
+          "artifact_errors": [],
+          "checks": {
+            "api_key_not_exposed": true,
+            "authorized_budget": true,
+            "campaign_identity": true,
+            "completed_without_error": true,
+            "input_pdf_matches_frozen_sha256": true,
+            "manual_identity": true,
+            "manual_sha256_matches_frozen": true,
+            "pipeline_version": true,
+            "real_mode": true,
+            "reviewing_not_decided": true,
+            "revision_identity": true,
+            "run_artifacts_parseable": true,
+            "run_call_ledger_shape": true,
+            "terminal_one_shot_state": true
+          },
+          "passed": true,
+          "terminal_error": null,
+          "terminal_status": "completed"
+        },
+        "validation": {
+          "domain_range_errors": 0,
+          "duplicate_ids": 0,
+          "endpoint_errors": 0,
+          "extra_properties": 0,
+          "graph_invariant_errors": 0,
+          "issues": [],
+          "passed": true,
+          "provenance_resolvable": 163,
+          "provenance_total": 163,
+          "relation_grounding_passed": 105,
+          "relation_grounding_total": 105,
+          "required_properties_present": 439,
+          "required_properties_total": 439,
+          "unresolved_mapping_diagnostics": 0
+        }
+      },
+      "manual_id": "graco_check_mate_200",
+      "operations": {
+        "actual_cost_usd": 0.05599336,
+        "calls": 29,
+        "charged_cost_usd": 0.05599336,
+        "conservative_preflight_usd": 0.698616,
+        "cost_source": "durable_per_call_budget_ledger",
+        "cost_usd": 0.05599336,
+        "elapsed_seconds": 203.479,
+        "hard_ceiling_usd": 1.1,
+        "models": {
+          "gpt-5.6-luna": 28,
+          "gpt-5.6-terra": 1
+        }
+      },
+      "scope": {
+        "diagnostic_pages": [
+          1,
+          2,
+          3,
+          4,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          17,
+          18,
+          19,
+          29,
+          30
+        ],
+        "method": "retained_cut_plan",
+        "page_offset": 0,
+        "retrieval_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30
+        ],
+        "sections": [
+          {
+            "end_page": 7,
+            "name": "Installation",
+            "source": "rule",
+            "start_page": 5
+          },
+          {
+            "end_page": 11,
+            "name": "Service Troubleshooting",
+            "source": "rule",
+            "start_page": 11
+          },
+          {
+            "end_page": 13,
+            "name": "Reconnecting the Displacement Pump",
+            "source": "rule",
+            "start_page": 13
+          },
+          {
+            "end_page": 19,
+            "name": "Displacement Pump Service",
+            "source": "rule",
+            "start_page": 14
+          }
+        ],
+        "selected_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          17,
+          18,
+          19,
+          29,
+          30
+        ],
+        "skipped": false,
+        "structural_pages": [
+          2,
+          4,
+          5,
+          6,
+          10,
+          12,
+          13,
+          15,
+          17,
+          19,
+          29
+        ],
+        "total_pages": 30,
+        "unselected_pages": [
+          7,
+          8,
+          9,
+          16,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28
+        ]
+      },
+      "semantic": {
+        "autonomous_expected_claims_present": 17,
+        "checks": {
+          "forbidden_pairings_zero": true,
+          "gold_page_retention": true,
+          "recall_floor": true,
+          "unsupported_published_paths_zero": true
+        },
+        "explicit_expected_gaps_present": 1,
+        "forbidden": [
+          {
+            "failure_mode": "held open or worn piston valve or seals",
+            "found": false,
+            "matches": [],
+            "symptom": "Pump operates but output is low on down-stroke"
+          },
+          {
+            "failure_mode": "held open or worn intake valve or seals",
+            "found": false,
+            "matches": [],
+            "symptom": "Pump operates but output is low on up-stroke"
+          },
+          {
+            "failure_mode": "worn packings in displacement pump",
+            "found": false,
+            "matches": [],
+            "symptom": "Pump fails to operate"
+          },
+          {
+            "failure_mode": "bleeder valve is open",
+            "found": false,
+            "matches": [],
+            "symptom": "Erratic or accelerated pump speed"
+          }
+        ],
+        "forbidden_pairings_found": 0,
+        "gold_claim_recall": 1.0,
+        "gold_claims_present": 18,
+        "gold_claims_total": 18,
+        "gold_pages_required": [
+          11
+        ],
+        "gold_pages_retained": [
+          11
+        ],
+        "paths_outside_frozen_gold": 0,
+        "published_complete_paths_total": 17,
+        "recall_floor": 0.8333,
+        "traceable_review_claims_present": 0,
+        "unsupported_path_gate_scope": "exhaustive_gold",
+        "unsupported_published_paths_detected": 0,
+        "witnesses": [
+          {
+            "best_min_field_score": 1.0,
+            "claim_id": "G1",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_b5396cb4d94201b026a2e1eefb9bb75ad53ddd867ecb9043f8ea735b32cb933a",
+              "corrective_action": "Clear restriction or restore air supply",
+              "corrective_action_context": "Clear restriction or restore air supply Clear the restriction or restore adequate air supply. ca_clear_restriction_or_restore_air_supply_8ca5f9f7d93de8be7e1a6fcb3376178ce1430ec623241aec9949e24fe0386d6c clear restriction or restore air supply Clear the restriction or restore adequate air supply. Clear*; see Technical Data on pages 24–27. Clear restriction or restore air supply typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Restricted line or inadequate air supply",
+              "corrective_action_id": "ca_clear_restriction_or_restore_air_supply_8ca5f9f7d93de8be7e1a6fcb3376178ce1430ec623241aec9949e24fe0386d6c",
+              "failure_mode": "Restricted line or inadequate air supply",
+              "failure_mode_context": "Restricted line or inadequate air supply Restricted line or inadequate air supply. Restricted line or inadequate air supply. fm_restricted_line_or_inadequate_air_supply_30edfe1db8ca385ece484ceb17946fcf56a1a40e1c8163a6c4bbd2f6b8dc931c asset_level Restricted line or inadequate air supply Restricted line or inadequate air supply Restricted line or inadequate air supply",
+              "failure_mode_id": "fm_restricted_line_or_inadequate_air_supply_30edfe1db8ca385ece484ceb17946fcf56a1a40e1c8163a6c4bbd2f6b8dc931c",
+              "indicator": "Pump fails to operate",
+              "indicator_context": "Pump fails to operate Pump fails to operate. Pump fails to operate. Pump fails to operate Medium sym_pump_fails_to_operate_0fa7559d8c8470cbc6d758e66e2dded468dbe29fffeb5ad25c624c92a842d2cf Restricted line or inadequate air supply",
+              "indicator_id": "sym_pump_fails_to_operate_0fa7559d8c8470cbc6d758e66e2dded468dbe29fffeb5ad25c624c92a842d2cf",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.863158,
+            "claim_id": "G2",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.863158,
+              "failure_mode": 0.923077,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_817af820f563ff92dd55fb4dd60bd25c04f60b8f3eccf252c11f767e4243a839",
+              "corrective_action": "Clear or use a hose with a larger ID.",
+              "corrective_action_context": "Clear or use a hose with a larger ID. Clear the obstruction and use a hose with a larger inside diameter. ca_clear_or_use_a_hose_with_a_larger_id_6f7fc77db5edecab725c5997463d48f9a619b40a402cc41386b4472ad4f80b23 repair Clear the obstruction and use a hose with a larger inside diameter. Clear*; use a hose with a larger ID. Clear or use a hose with a larger ID. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+              "corrective_action_id": "ca_clear_or_use_a_hose_with_a_larger_id_6f7fc77db5edecab725c5997463d48f9a619b40a402cc41386b4472ad4f80b23",
+              "failure_mode": "Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+              "failure_mode_context": "Obstructed fluid hose or gun/valve; fluid hose ID is too small. Obstructed fluid hose or gun/valve; fluid hose ID is too small. Obstructed fluid hose or gun/valve; fluid hose ID is too small. fm_obstructed_fluid_hose_or_gun_valve_fluid_hose_id_35b6ac395d08cd4f2571502775ed88aa47c3b1fdd309af9123013e4690169805 comp_fluid_hose_or_gun_valve_55a33972820caaf9081a3eca3ccb503908f6eefc0852177e8e8151ddd971886a Obstructed fluid hose or gun/valve; fluid hose ID is too small. Pump fails to operate. Obstructed fluid hose or gun/valve; fluid hose ID is too small. Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+              "failure_mode_id": "fm_obstructed_fluid_hose_or_gun_valve_fluid_hose_id_35b6ac395d08cd4f2571502775ed88aa47c3b1fdd309af9123013e4690169805",
+              "indicator": "Pump fails to operate.",
+              "indicator_context": "Pump fails to operate. Pump fails to operate. Pump fails to operate. Pump fails to operate. High sym_pump_fails_to_operate_1f8e0255f3f6fcae1034ef918c8db33afd1a4fa45cd286051222e2873c13b16f Pump fails to operate. Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+              "indicator_id": "sym_pump_fails_to_operate_1f8e0255f3f6fcae1034ef918c8db33afd1a4fa45cd286051222e2873c13b16f",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.84,
+            "claim_id": "G3",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.84,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_7992e8393aa862d803b1a392b0d533a5009af5994921bbdb2e1f5846dad56169",
+              "corrective_action": "Clean",
+              "corrective_action_context": "Clean Clean; see Service on pages 12–19. ca_clean_3f018189f41c67b672a2f84f8fb2954ffd1116700363d5a59d97639fca5985d3 Clean; see Service on pages 12–19. Clean; see Service on pages 12–19. Clean typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Fluid dried on the displacement rod.",
+              "corrective_action_id": "ca_clean_3f018189f41c67b672a2f84f8fb2954ffd1116700363d5a59d97639fca5985d3",
+              "failure_mode": "Fluid dried on the displacement rod.",
+              "failure_mode_context": "Fluid dried on the displacement rod. Fluid dried on the displacement rod. Fluid dried on the displacement rod. fm_fluid_dried_on_the_displacement_rod_6c331e6d2cd1e3ce50b5eb15430ed337d5a87054eb0239257c9f92d640ad1b7d comp_displacement_rod_9f0aa5df716328b507ae8f87f5a2965afe9d1a728a4d9272d0a5491b4f4023b1 Fluid dried on the displacement rod. Pump fails to operate. Fluid dried on the displacement rod. Fluid dried on the displacement rod.",
+              "failure_mode_id": "fm_fluid_dried_on_the_displacement_rod_6c331e6d2cd1e3ce50b5eb15430ed337d5a87054eb0239257c9f92d640ad1b7d",
+              "indicator": "Pump fails to operate.",
+              "indicator_context": "Pump fails to operate. Pump fails to operate. Pump fails to operate. Pump fails to operate. High sym_pump_fails_to_operate_1f8e0255f3f6fcae1034ef918c8db33afd1a4fa45cd286051222e2873c13b16f Pump fails to operate. Fluid dried on the displacement rod.",
+              "indicator_id": "sym_pump_fails_to_operate_1f8e0255f3f6fcae1034ef918c8db33afd1a4fa45cd286051222e2873c13b16f",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 1.0,
+            "claim_id": "G4",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_f78b54b33943f898710531a5a1e4ba880130471f9558e1ea03647373c6d959cd",
+              "corrective_action": "Clean or repair air motor parts",
+              "corrective_action_context": "Clean or repair air motor parts Clean or repair the air motor parts; see separate air motor manual. ca_clean_or_repair_air_motor_parts_fe1790478e47d5c769379dfab75f9e831e9a9c1bed0658cd46307a58700b662d repair Clean or repair the air motor parts; see separate air motor manual. Clean or repair; see separate air motor manual. Clean or repair air motor parts typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Dirty or worn air motor parts.",
+              "corrective_action_id": "ca_clean_or_repair_air_motor_parts_fe1790478e47d5c769379dfab75f9e831e9a9c1bed0658cd46307a58700b662d",
+              "failure_mode": "Dirty or worn air motor parts",
+              "failure_mode_context": "Dirty or worn air motor parts Dirty or worn air motor parts. Dirty or worn air motor parts. fm_dirty_or_worn_air_motor_parts_b6293b24bc6de1178600836423dbdf66ac83fa6a6a75d78415636088efedb1d4 comp_air_motor_parts_0d64308587c56561c886e96d6c195451bffc0baf059a96a1b992a1157b1cd353 Dirty or worn air motor parts Dirty or worn air motor parts. Pump fails to operate. Dirty or worn air motor parts.",
+              "failure_mode_id": "fm_dirty_or_worn_air_motor_parts_b6293b24bc6de1178600836423dbdf66ac83fa6a6a75d78415636088efedb1d4",
+              "indicator": "Pump fails to operate",
+              "indicator_context": "Pump fails to operate Pump fails to operate. Pump fails to operate. Pump fails to operate Medium sym_pump_fails_to_operate_0fa7559d8c8470cbc6d758e66e2dded468dbe29fffeb5ad25c624c92a842d2cf Dirty or worn air motor parts. Pump fails to operate.",
+              "indicator_id": "sym_pump_fails_to_operate_0fa7559d8c8470cbc6d758e66e2dded468dbe29fffeb5ad25c624c92a842d2cf",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.821053,
+            "claim_id": "G5",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.821053,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_bf94896fb5158f655ec01a4334b6c4f6fb9502524649a26e4fe60bf019624269",
+              "corrective_action": "Clear restriction or restore adequate air supply",
+              "corrective_action_context": "Clear restriction or restore adequate air supply Clear*; see Technical Data on pages 24–27. ca_clear_restriction_or_restore_adequate_air_supply_ea72148d7b8d5e37003e3432d13abaad74e406219bdda24fad58e07dec9f4c64 clear_restriction_or_restore_air_supply Clear*; see Technical Data on pages 24–27. Clear*; see Technical Data on pages 24–27. Clear restriction or restore adequate air supply typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Restricted line or inadequate air supply.",
+              "corrective_action_id": "ca_clear_restriction_or_restore_adequate_air_supply_ea72148d7b8d5e37003e3432d13abaad74e406219bdda24fad58e07dec9f4c64",
+              "failure_mode": "Restricted line or inadequate air supply",
+              "failure_mode_context": "Restricted line or inadequate air supply Restricted line or inadequate air supply. Restricted line or inadequate air supply. fm_restricted_line_or_inadequate_air_supply_30edfe1db8ca385ece484ceb17946fcf56a1a40e1c8163a6c4bbd2f6b8dc931c asset_level Restricted line or inadequate air supply Restricted line or inadequate air supply. Restricted line or inadequate air supply.",
+              "failure_mode_id": "fm_restricted_line_or_inadequate_air_supply_30edfe1db8ca385ece484ceb17946fcf56a1a40e1c8163a6c4bbd2f6b8dc931c",
+              "indicator": "Pump operates, but output is low on both strokes.",
+              "indicator_context": "Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Medium sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e Restricted line or inadequate air supply.",
+              "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.894118,
+            "claim_id": "G6",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 0.894118,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_c5ead3819a74132cc0ee0f1575c23b6566224cbdc32a1317a14e7fd70609ed0b",
+              "corrective_action": "Clear",
+              "corrective_action_context": "Clear Clear the obstruction and use a hose with a larger ID. ca_clear_ab4858cc3783b62d769648dcada47f78d120c3aef135216d5bfb848f85e8127a clearance/replacement Clear the obstruction and use a hose with a larger ID. Clear*; use a hose with a larger ID. Clear typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+              "corrective_action_id": "ca_clear_ab4858cc3783b62d769648dcada47f78d120c3aef135216d5bfb848f85e8127a",
+              "failure_mode": "Obstructed fluid hose or gun/valve; fluid hose ID is too small",
+              "failure_mode_context": "Obstructed fluid hose or gun/valve; fluid hose ID is too small Obstructed fluid hose or gun/valve; fluid hose ID is too small. Obstructed fluid hose or gun/valve; fluid hose ID is too small. fm_obstructed_fluid_hose_or_gun_valve_fluid_hose_id_b7bbd4a84809fc9852609bf94651a71919860e4894b75e1904964b702eee19b5 comp_fluid_hose_or_gun_valve_55a33972820caaf9081a3eca3ccb503908f6eefc0852177e8e8151ddd971886a Obstructed fluid hose or gun/valve; fluid hose ID is too small Obstructed fluid hose or gun/valve; fluid hose ID is too small. Pump operates, but output is low on both strokes. Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+              "failure_mode_id": "fm_obstructed_fluid_hose_or_gun_valve_fluid_hose_id_b7bbd4a84809fc9852609bf94651a71919860e4894b75e1904964b702eee19b5",
+              "indicator": "Pump operates, but output is low on both strokes.",
+              "indicator_context": "Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Medium sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e Obstructed fluid hose or gun/valve; fluid hose ID is too small. Pump operates, but output is low on both strokes.",
+              "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 1.0,
+            "claim_id": "G7",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_2028e5656993a620ac21036aeec3e7cc0a75255a763f5b4923897b3b9e041185",
+              "corrective_action": "Close the bleeder valve.",
+              "corrective_action_context": "Close the bleeder valve. Close the bleeder valve. ca_close_the_bleeder_valve_15da92b66acc096eba09a8fcf11c6efbee8a5e71e4ae318bedee56ebfae1e309 close Close the bleeder valve. Close. Close the bleeder valve. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Close.",
+              "corrective_action_id": "ca_close_the_bleeder_valve_15da92b66acc096eba09a8fcf11c6efbee8a5e71e4ae318bedee56ebfae1e309",
+              "failure_mode": "Bleeder valve is open.",
+              "failure_mode_context": "Bleeder valve is open. Bleeder valve is open. Bleeder valve is open. fm_bleeder_valve_is_open_418991a58396274f66395066dd084d13aaa4e5bd0d503963f6b9d18e0fa89e25 asset_level Bleeder valve is open. Pump operates, but output is low on both strokes. Bleeder valve is open. Close.",
+              "failure_mode_id": "fm_bleeder_valve_is_open_418991a58396274f66395066dd084d13aaa4e5bd0d503963f6b9d18e0fa89e25",
+              "indicator": "Pump operates, but output is low on both strokes.",
+              "indicator_context": "Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Medium sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e Pump operates, but output is low on both strokes. Bleeder valve is open.",
+              "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 1.0,
+            "claim_id": "G8",
+            "expected_outcome": "traceable_explicit_gap",
+            "field_scores": {
+              "failure_mode": 1.0,
+              "indicator": 1.0,
+              "inspection_step": 1.0
+            },
+            "matched_gap": {
+              "blocking": true,
+              "code": "pdf_diagnostic_record_gap",
+              "disposition": "gap",
+              "evidence_ids": [
+                "ev_29f4d90e4c6faf90c3a07c7d3ca9",
+                "ev_72b031fc81c89f32ff5903f8209d"
+              ],
+              "message": "Record diagnostico non pubblicabile senza decisione umana (check_only, missing_actions)",
+              "stage": "pdf_adapter",
+              "target_id": "diagwin_7a8ae976d792bd9ef8d6b889",
+              "target_kind": "diagnostic_record"
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.905882,
+            "claim_id": "G9",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.905882,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_fb46addffeb01db88a53e472d8ff0a64cbeb80e53ce06919c660ca9d71872d11",
+              "corrective_action": "Use bleeder valve or wiper plate with ram or pneumatic elevator cart.",
+              "corrective_action_context": "Use bleeder valve or wiper plate with ram or pneumatic elevator cart. Use a bleeder valve, a wiper plate with ram, or a pneumatic elevator cart. ca_use_bleeder_valve_or_wiper_plate_with_ram_or_pne_3643809adef98ba7021ecce5ee45dc4ab2b27332f5ddf80b26fef559831281f0 procedure Use a bleeder valve, a wiper plate with ram, or a pneumatic elevator cart. Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. Use bleeder valve or wiper plate with ram or pneumatic elevator cart. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "corrective_action_id": "ca_use_bleeder_valve_or_wiper_plate_with_ram_or_pne_3643809adef98ba7021ecce5ee45dc4ab2b27332f5ddf80b26fef559831281f0",
+              "failure_mode": "Fluid is too heavy for pump priming.",
+              "failure_mode_context": "Fluid is too heavy for pump priming. Fluid is too heavy for pump priming. Fluid is too heavy for pump priming. fm_fluid_is_too_heavy_for_pump_priming_00e51bff6c01af230a555bbc7f07d7272aaba1db400910d3e19b1c8198c2f037 asset_level Fluid is too heavy for pump priming. Pump operates, but output is low on both strokes. Fluid is too heavy for pump priming. Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "failure_mode_id": "fm_fluid_is_too_heavy_for_pump_priming_00e51bff6c01af230a555bbc7f07d7272aaba1db400910d3e19b1c8198c2f037",
+              "indicator": "Pump operates, but output is low on both strokes.",
+              "indicator_context": "Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Medium sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e Pump operates, but output is low on both strokes. Fluid is too heavy for pump priming.",
+              "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 1.0,
+            "claim_id": "G10",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_9c2ea19e364ab72f318bb226c71458fbe24055c0bdc9a83dd2120f79bc3a0065",
+              "corrective_action": "Replace packings",
+              "corrective_action_context": "Replace packings Replace packings. ca_replace_packings_2533773df14cada86aec15173814a2d622302595c53bc1463cec6b0d88144d93 replacement Replace packings. Replace packings. Replace packings typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Worn packings in displacement pump.",
+              "corrective_action_id": "ca_replace_packings_2533773df14cada86aec15173814a2d622302595c53bc1463cec6b0d88144d93",
+              "failure_mode": "Worn packings in displacement pump",
+              "failure_mode_context": "Worn packings in displacement pump Worn packings in displacement pump. Worn packings in displacement pump. fm_worn_packings_in_displacement_pump_669ab62bd3e8004aea7e13a6aaab800b67d8b370a224d6d736d4324ff794ccd1 comp_displacement_pump_6c5bc905b2b9d8fbca42e35e4b99ad3799b425147a1c7fb3eef9635c5f78c6e9 Worn packings in displacement pump Pump operates, but output is low on both strokes. Worn packings in displacement pump. Worn packings in displacement pump.",
+              "failure_mode_id": "fm_worn_packings_in_displacement_pump_669ab62bd3e8004aea7e13a6aaab800b67d8b370a224d6d736d4324ff794ccd1",
+              "indicator": "Pump operates, but output is low on both strokes.",
+              "indicator_context": "Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Medium sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e Pump operates, but output is low on both strokes. Worn packings in displacement pump.",
+              "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_a2c127389efbab165b949a6f6ca0be6aae25ad5a42695bfc054d528d63bd4e5e",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.843478,
+            "claim_id": "G11",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.9125,
+              "failure_mode": 0.843478,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_b3a73ac6dca11bc50bb84ce426aea9d8a28a6a287eb625c9d47eeed5fd1889cb",
+              "corrective_action": "Use bleeder valve and wiper plate with ram or pneumatic elevator cart",
+              "corrective_action_context": "Use bleeder valve and wiper plate with ram or pneumatic elevator cart Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. ca_use_bleeder_valve_and_wiper_plate_with_ram_or_pn_318e6bdffa3977ebe9820a7a4eab6da77981dd9ebe4057a3c187788711417dfd use Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. Use bleeder valve and wiper plate with ram or pneumatic elevator cart typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "corrective_action_id": "ca_use_bleeder_valve_and_wiper_plate_with_ram_or_pn_318e6bdffa3977ebe9820a7a4eab6da77981dd9ebe4057a3c187788711417dfd",
+              "failure_mode": "Fluid too heavy for pump priming",
+              "failure_mode_context": "Fluid too heavy for pump priming Fluid too heavy for pump priming. Fluid too heavy for pump priming. fm_fluid_too_heavy_for_pump_priming_c7ff09818d04a4cdf345e93628a81585c3ff204790caa7a392413e98aa8cd50f asset_level Fluid too heavy for pump priming Pump operates, but output is low on down- stroke. Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "failure_mode_id": "fm_fluid_too_heavy_for_pump_priming_c7ff09818d04a4cdf345e93628a81585c3ff204790caa7a392413e98aa8cd50f",
+              "indicator": "Pump operates, but output is low on down- stroke.",
+              "indicator_context": "Pump operates, but output is low on down- stroke. Pump operates, but output is low on down- stroke. Pump operates, but output is low on down- stroke. Pump operates, but output is low on down- stroke. Medium sym_pump_operates_but_output_is_low_on_down_stroke_c188119377e3ae373677f4b1f590b5232250cc6012340e7522fbbdcd14ab4539 Pump operates, but output is low on down- stroke.",
+              "indicator_id": "sym_pump_operates_but_output_is_low_on_down_stroke_c188119377e3ae373677f4b1f590b5232250cc6012340e7522fbbdcd14ab4539",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.857143,
+            "claim_id": "G12",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.857143,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_f27cc5159a1db13a5de3cb5d358301ae60758562acfb4f4102aab735e4b0c12c",
+              "corrective_action": "Clear valve; replace seals.",
+              "corrective_action_context": "Clear valve; replace seals. Clear valve; replace seals. ca_clear_valve_replace_seals_234ccd46fb68a2b77a37608bd19f21544790cbdf8680b73598601a3f7b6b86ec repair_or_replace Clear valve; replace seals. Clear valve; replace seals. Clear valve; replace seals. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Held open or worn intake valve or seals.",
+              "corrective_action_id": "ca_clear_valve_replace_seals_234ccd46fb68a2b77a37608bd19f21544790cbdf8680b73598601a3f7b6b86ec",
+              "failure_mode": "Held open or worn intake valve or seals.",
+              "failure_mode_context": "Held open or worn intake valve or seals. Held open or worn intake valve or seals. Held open or worn intake valve or seals. fm_held_open_or_worn_intake_valve_or_seals_3a94125f2f40fc26e8a1abc658f2e960572fbccf153361f6d05609785d2d6712 asset_level Held open or worn intake valve or seals. Held open or worn intake valve or seals. Pump operates, but output is low on down- stroke. Held open or worn intake valve or seals.",
+              "failure_mode_id": "fm_held_open_or_worn_intake_valve_or_seals_3a94125f2f40fc26e8a1abc658f2e960572fbccf153361f6d05609785d2d6712",
+              "indicator": "Pump operates, but output is low on down- stroke.",
+              "indicator_context": "Pump operates, but output is low on down- stroke. Pump operates, but output is low on down- stroke. Pump operates, but output is low on down- stroke. Pump operates, but output is low on down- stroke. Medium sym_pump_operates_but_output_is_low_on_down_stroke_c188119377e3ae373677f4b1f590b5232250cc6012340e7522fbbdcd14ab4539 Held open or worn intake valve or seals. Pump operates, but output is low on down- stroke.",
+              "indicator_id": "sym_pump_operates_but_output_is_low_on_down_stroke_c188119377e3ae373677f4b1f590b5232250cc6012340e7522fbbdcd14ab4539",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.857143,
+            "claim_id": "G13",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.857143,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_0384164f5c61853f6dcae52e594b0ff1285b72a5948592e2d1c8c4b4b5784160",
+              "corrective_action": "Clear valve; replace seals.",
+              "corrective_action_context": "Clear valve; replace seals. Clear valve; replace seals. ca_clear_valve_replace_seals_234ccd46fb68a2b77a37608bd19f21544790cbdf8680b73598601a3f7b6b86ec repair_or_replace Clear valve; replace seals. Clear valve; replace seals. Clear valve; replace seals. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Held open or worn piston valve or seals.",
+              "corrective_action_id": "ca_clear_valve_replace_seals_234ccd46fb68a2b77a37608bd19f21544790cbdf8680b73598601a3f7b6b86ec",
+              "failure_mode": "Held open or worn piston valve or seals",
+              "failure_mode_context": "Held open or worn piston valve or seals Held open or worn piston valve or seals. Held open or worn piston valve or seals. fm_held_open_or_worn_piston_valve_or_seals_f238f8b68a0efa7bd82dcae85f28b4a6c89908c768f2212e1afffa74975f5e71 comp_piston_valve_or_seals_300de0cb1c76395cf4ef8c03a76ecdc3da173b52032ac333d67e1107bd24f5bc Held open or worn piston valve or seals Pump operates, but output is low on up- stroke. Held open or worn piston valve or seals.",
+              "failure_mode_id": "fm_held_open_or_worn_piston_valve_or_seals_f238f8b68a0efa7bd82dcae85f28b4a6c89908c768f2212e1afffa74975f5e71",
+              "indicator": "Pump operates, but output is low on up- stroke.",
+              "indicator_context": "Pump operates, but output is low on up- stroke. Pump operates, but output is low on up- stroke. Pump operates, but output is low on up- stroke. Pump operates, but output is low on up- stroke. Medium sym_pump_operates_but_output_is_low_on_up_stroke_0aeda006a7ea3c8a410be1763fc4479391e03a12725011ac2f6693cedbbfe5ab Pump operates, but output is low on up- stroke.",
+              "indicator_id": "sym_pump_operates_but_output_is_low_on_up_stroke_0aeda006a7ea3c8a410be1763fc4479391e03a12725011ac2f6693cedbbfe5ab",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 1.0,
+            "claim_id": "G14",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_d7bc2567233cfe9469c83123f6c75906d520a10772160b6ad53d8f444c59a2f3",
+              "corrective_action": "Refill and prime",
+              "corrective_action_context": "Refill and prime Refill and prime. ca_refill_and_prime_16ffaaf0c64f2038d72b43a7b5071043374869068fa7a49cc81e85eeb585b151 refill_and_prime Refill and prime. Refill and prime. Refill and prime typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Refill and prime.",
+              "corrective_action_id": "ca_refill_and_prime_16ffaaf0c64f2038d72b43a7b5071043374869068fa7a49cc81e85eeb585b151",
+              "failure_mode": "Exhausted fluid supply",
+              "failure_mode_context": "Exhausted fluid supply Exhausted fluid supply. Exhausted fluid supply. fm_exhausted_fluid_supply_1f1d2f02b4f650343c5b46623df3265b37df353262765bb41eebabff25a4f8b9 asset_level Exhausted fluid supply Exhausted fluid supply. Refill and prime.",
+              "failure_mode_id": "fm_exhausted_fluid_supply_1f1d2f02b4f650343c5b46623df3265b37df353262765bb41eebabff25a4f8b9",
+              "indicator": "Erratic or accelerated pump speed.",
+              "indicator_context": "Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Medium sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc Exhausted fluid supply.",
+              "indicator_id": "sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.905882,
+            "claim_id": "G15",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.905882,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_a3b8bdf8d7fd4b3d759e798e0295c9f2accde9f7385db0ffb3caad9d4e1d74ad",
+              "corrective_action": "Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "corrective_action_context": "Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. ca_use_the_bleeder_valve_see_page_9_use_wiper_plate_0143dfa38ac79575de38b6823df6dbc026c3d2595c9e44da964cd2fe84663bc0 remedy Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "corrective_action_id": "ca_use_the_bleeder_valve_see_page_9_use_wiper_plate_0143dfa38ac79575de38b6823df6dbc026c3d2595c9e44da964cd2fe84663bc0",
+              "failure_mode": "Fluid is too heavy for pump priming.",
+              "failure_mode_context": "Fluid is too heavy for pump priming. Fluid is too heavy for pump priming. Fluid is too heavy for pump priming. fm_fluid_is_too_heavy_for_pump_priming_00e51bff6c01af230a555bbc7f07d7272aaba1db400910d3e19b1c8198c2f037 asset_level Fluid is too heavy for pump priming. Fluid is too heavy for pump priming. Erratic or accelerated pump speed. Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "failure_mode_id": "fm_fluid_is_too_heavy_for_pump_priming_00e51bff6c01af230a555bbc7f07d7272aaba1db400910d3e19b1c8198c2f037",
+              "indicator": "Erratic or accelerated pump speed.",
+              "indicator_context": "Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Medium sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc Fluid is too heavy for pump priming. Erratic or accelerated pump speed.",
+              "indicator_id": "sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.857143,
+            "claim_id": "G16",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.857143,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_1f64e8fbd3ee322df22c9cf5e3fbe5c12d12eae7f0eaa1d43147cacedfb55a96",
+              "corrective_action": "Clear valve; replace seals.",
+              "corrective_action_context": "Clear valve; replace seals. Clear valve; replace seals. ca_clear_valve_replace_seals_234ccd46fb68a2b77a37608bd19f21544790cbdf8680b73598601a3f7b6b86ec repair_or_replace Clear valve; replace seals. Clear valve; replace seals. Clear valve; replace seals. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Held open or worn piston valve or seals.",
+              "corrective_action_id": "ca_clear_valve_replace_seals_234ccd46fb68a2b77a37608bd19f21544790cbdf8680b73598601a3f7b6b86ec",
+              "failure_mode": "Held open or worn piston valve or seals.",
+              "failure_mode_context": "Held open or worn piston valve or seals. Held open or worn piston valve or seals. Held open or worn piston valve or seals. fm_held_open_or_worn_piston_valve_or_seals_8afd2945ecbe89306ca5336a414ce436d43b5c0c393af58ce97d8ce7bae284dc comp_piston_valve_or_seals_300de0cb1c76395cf4ef8c03a76ecdc3da173b52032ac333d67e1107bd24f5bc Held open or worn piston valve or seals. Held open or worn piston valve or seals. Erratic or accelerated pump speed. Held open or worn piston valve or seals.",
+              "failure_mode_id": "fm_held_open_or_worn_piston_valve_or_seals_8afd2945ecbe89306ca5336a414ce436d43b5c0c393af58ce97d8ce7bae284dc",
+              "indicator": "Erratic or accelerated pump speed.",
+              "indicator_context": "Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Medium sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc Held open or worn piston valve or seals. Erratic or accelerated pump speed.",
+              "indicator_id": "sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.866667,
+            "claim_id": "G17",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.866667,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_67cf0c7448cd337f731c0d5c8a5c93816752a699a74ddfa6779e1154c83c2fda",
+              "corrective_action": "Clear; service.",
+              "corrective_action_context": "Clear; service. Clear; service. ca_clear_service_cc76d990e6fa4dbf2f76c047a3b7395299f971dfe89309f57742cca8a89b47bc service Clear; service. Clear; service. Clear; service. typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Held open or worn priming piston.",
+              "corrective_action_id": "ca_clear_service_cc76d990e6fa4dbf2f76c047a3b7395299f971dfe89309f57742cca8a89b47bc",
+              "failure_mode": "Held open or worn priming piston.",
+              "failure_mode_context": "Held open or worn priming piston. Held open or worn priming piston. Held open or worn priming piston. fm_held_open_or_worn_priming_piston_621636b8c9e8433acb6879beddf7b233c0cd02266ecacaa7cf856153b1611116 comp_priming_piston_b3153f83493a2af58bb022ed9f72c9d0e5ba111f84a33e0e581747653071bc20 Held open or worn priming piston. Held open or worn priming piston. Erratic or accelerated pump speed. Held open or worn priming piston.",
+              "failure_mode_id": "fm_held_open_or_worn_priming_piston_621636b8c9e8433acb6879beddf7b233c0cd02266ecacaa7cf856153b1611116",
+              "indicator": "Erratic or accelerated pump speed.",
+              "indicator_context": "Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed. Medium sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc Held open or worn priming piston. Erratic or accelerated pump speed.",
+              "indicator_id": "sym_erratic_or_accelerated_pump_speed_047a31a8063ab2e0414c40337dce1af7fcab11d43ce5e05e256d9865f1e029dc",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 1.0,
+            "claim_id": "G18",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 1.0,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "branch_lineage_id": "dbranch_4771864f6ad9c5cdf736f8750c9cbf51cce53034f21c01789339fbaef494e4da",
+              "corrective_action": "Replace packings",
+              "corrective_action_context": "Replace packings Replace packings. ca_replace_packings_2533773df14cada86aec15173814a2d622302595c53bc1463cec6b0d88144d93 replacement Replace packings. Replace packings. Replace packings typed_diagnostic_edge_evidence 03_graco_check_mate_200_pumps_manual.pdf technical PDF Worn packings in displacement pump.",
+              "corrective_action_id": "ca_replace_packings_2533773df14cada86aec15173814a2d622302595c53bc1463cec6b0d88144d93",
+              "failure_mode": "Worn packings in displacement pump",
+              "failure_mode_context": "Worn packings in displacement pump Worn packings in displacement pump. Worn packings in displacement pump. fm_worn_packings_in_displacement_pump_669ab62bd3e8004aea7e13a6aaab800b67d8b370a224d6d736d4324ff794ccd1 comp_displacement_pump_6c5bc905b2b9d8fbca42e35e4b99ad3799b425147a1c7fb3eef9635c5f78c6e9 Worn packings in displacement pump Worn packings in displacement pump. Erratic or accelerated pump speed. Worn packings in displacement pump.",
+              "failure_mode_id": "fm_worn_packings_in_displacement_pump_669ab62bd3e8004aea7e13a6aaab800b67d8b370a224d6d736d4324ff794ccd1",
+              "indicator": "Erratic or accelerated pump speed",
+              "indicator_context": "Erratic or accelerated pump speed Erratic or accelerated pump speed. Erratic or accelerated pump speed. Erratic or accelerated pump speed Medium sym_erratic_or_accelerated_pump_speed_9caf788c76ba6e98b7c86752852393d457655207695bbb9832c8b00fb9015f75 Worn packings in displacement pump. Erratic or accelerated pump speed.",
+              "indicator_id": "sym_erratic_or_accelerated_pump_speed_9caf788c76ba6e98b7c86752852393d457655207695bbb9832c8b00fb9015f75",
+              "indicator_type": "Symptom",
+              "pages": [
+                11
+              ]
+            },
+            "present": true
+          }
+        ]
+      },
+      "verdict": {
+        "publication_integrity": "pass",
+        "semantic": "pass"
+      }
+    }
+  ]
+}

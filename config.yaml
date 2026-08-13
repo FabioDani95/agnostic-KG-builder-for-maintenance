@@ -187,6 +187,10 @@ ontology:
   extraction_max_output_tokens: 16000
   # Compact strict schema used only by the diagnostic record-first path.
   diagnostic_bundle_max_output_tokens: 8000
+  # One structurally atomic table branch cannot justify the same completion
+  # envelope as a multi-branch prose record.  This bound is used both by the
+  # real call and by conservative cost preflight.
+  diagnostic_atomic_table_max_output_tokens: 3000
   # Dense troubleshooting tables can exhaust the initial 16k response budget.
   # Keep ordinary drafts at 16k; only a detected truncation retries with headroom.
   extraction_retry_max_output_tokens: 24000

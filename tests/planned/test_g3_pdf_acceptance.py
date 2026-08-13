@@ -398,11 +398,14 @@ def test_pdf_high_recall_candidates_without_typed_records_fail_closed(
     graph = generated.json()["sources"][0]["subgraph"]
 
     assert graph["publication_metrics"]["diagnostic_candidate_pages"] >= 1
-    assert graph["publication_metrics"]["diagnostic_candidate_records"] == 0
-    assert graph["publication_metrics"]["diagnostic_accounting_complete"] is False
+    assert graph["publication_metrics"]["diagnostic_candidate_records"] == 1
+    assert graph["publication_metrics"]["diagnostic_unresolved_records"] == 1
+    # The source window is now durably disposed to review even when the mock
+    # provider omits it. Accounting completeness is distinct from approval.
+    assert graph["publication_metrics"]["diagnostic_accounting_complete"] is True
     gap = next(
         item for item in graph["knowledge_gaps"]
-        if item["code"] == "pdf_diagnostic_candidates_unaccounted"
+        if item["code"] == "pdf_diagnostic_record_review"
     )
     assert gap["blocking"] is True
     assert graph["approval_eligible"] is False
@@ -1034,3 +1037,85 @@ def test_pdf_incomplete_diagnostic_contract_cannot_report_complete_accounting(
     assert "pdf_diagnostic_contract_incomplete" in {
         item.code for item in revision.knowledge_gaps
     }
+
+
+def test_pdf_review_disposition_is_persisted_and_accounted_but_not_approvable(
+    foundation_client,
+    machine_payload,
+):
+    workspace_payload = _workspace(foundation_client, machine_payload)
+    source_payload = upload_pdf(
+        foundation_client,
+        workspace_payload["workspace_id"],
+        "reviewed-candidate.pdf",
+        "Pump vibration indicates a loose coupling. Tighten the coupling.",
+    ).json()["source"]
+    workspace = WorkspaceRepository().get_by_id(workspace_payload["workspace_id"])
+    source = SourceRepository().get(source_payload["source_id"])
+    all_evidence = EvidenceRepository().list_evidence(workspace_id=workspace.workspace_id)
+    pdf_evidence = next(item for item in all_evidence if item.source_id == source.source_id)
+    result = _pipeline_result(
+        {
+            "asset_identity": workspace.asset.model_dump(mode="json"),
+            "source_title": source.file_name,
+        },
+        quote=pdf_evidence.locator.quote,
+        source_anchor=pdf_evidence.evidence_id,
+    )
+    raw_candidate = {
+        "record_lineage_id": "record-review",
+        "record_anchor": pdf_evidence.evidence_id,
+        "resolution_status": "action_stated",
+        "symptom": {"label": "Pump vibration"},
+    }
+    attempt = {
+        "attempt": 2,
+        "model": "gpt-5.6-terra",
+        "reasoning_effort": "medium",
+        "recovery": True,
+    }
+    review_record = {
+        **result.diagnostic_contract_report["records"][0],
+        "disposition": "review",
+        "drop_reasons": [{
+            "code": "ambiguous_branch",
+            "path": "failure_modes.0",
+            "message": "The row pairing needs review.",
+        }],
+        "candidate": raw_candidate,
+        "attempt": attempt,
+        "resolved_evidence_ids": [pdf_evidence.evidence_id],
+    }
+    contract_report = {
+        **result.diagnostic_contract_report,
+        "publish_count": 0,
+        "unresolved_count": 1,
+        "records": [review_record],
+        "chunks": [{"chunk_index": 0, "attempts": [attempt]}],
+    }
+    result = result.model_copy(update={"diagnostic_contract_report": contract_report})
+
+    revision = PdfSourceSubgraphBuilder()._to_revision(
+        workspace=workspace,
+        source=source,
+        result=result,
+        evidence=all_evidence,
+        fingerprint="8" * 64,
+        config_hash="9" * 64,
+        supersedes=None,
+    )
+
+    assert revision.publication_metrics["diagnostic_accounting_complete"] is True
+    assert revision.approval_eligible is False
+    assert revision.diagnostic_compilation_ledger == contract_report
+    assert revision.diagnostic_compilation_ledger["records"][0]["candidate"] == raw_candidate
+    assert revision.diagnostic_compilation_ledger["chunks"][0]["attempts"] == [attempt]
+    serialized = revision.model_dump(mode="json")
+    assert serialized["diagnostic_compilation_ledger"]["records"][0]["attempt"] == attempt
+    review_gap = next(
+        item
+        for item in revision.knowledge_gaps
+        if item.code == "pdf_diagnostic_record_review"
+    )
+    assert review_gap.blocking is True
+    assert review_gap.disposition == "review"

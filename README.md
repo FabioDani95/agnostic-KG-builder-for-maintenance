@@ -16,17 +16,16 @@ The repository is in active MVP development against
 | G3 | Human review open | source-scoped graph generation, strict validation, evidence drill-down and the graph explorer are implemented; no subgraph is approved, merged or published automatically |
 
 The automated G3 hardening suite is green, but it is not a Product Owner
-acceptance. PDF sources now use the retained scoping and ontology workflow to
-produce the same immutable, source-scoped review contract as structured
-sources; the UI also shows the exact semantic page selection. Multilingual
-canonicalization, broader real-data coverage and the qualitative PDF campaign
-remain open. See
+approval. The frozen three-manual PDF diagnostic campaign now passes its
+semantic and publication-integrity gate: the final structure-first v11 pipeline
+reached 87.5%/100%/100% semantic recall with zero forbidden cross-pairings and
+complete accounting. Every resulting revision nevertheless remains
+`reviewing` and non-approvable while review items or explicit gaps exist.
+Generalization beyond those three manuals, multilingual canonicalization and
+structural-Component precision remain open. See
+[PDF G3 Second Hardening](docs/PDF_G3_SECOND_HARDENING.md),
 [G3 Engine Hardening Handoff](docs/G3_ENGINE_HARDENING_HANDOFF.md) and
-[CSV Hardening Campaign](docs/CSV_HARDENING_CAMPAIGN.md). The corrected PDF
-bridge and its persisted time/token/cost ledger are documented in
-[PDF Pipeline and Run KPIs](docs/PDF_PIPELINE_AND_RUN_KPIS.md). The authorized
-single-run validation procedure is in
-[E-554 Luna Validation Handoff](docs/E554_LUNA_VALIDATION_HANDOFF.md).
+[CSV Hardening Campaign](docs/CSV_HARDENING_CAMPAIGN.md).
 
 ## Product flow
 

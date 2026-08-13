@@ -1,0 +1,1344 @@
+{
+  "schema_version": "diagnostic-record-window-replay-v2",
+  "manuals": {
+    "eastman_e554": {
+      "database": "/Users/fabio.daniele/Coding/log-kg-builder/artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_20260813/runs/mock/eastman_e554/operational.db",
+      "evidence_unit_count": 850,
+      "window_count": 7,
+      "window_kinds": {
+        "contiguous_blocks": 7
+      },
+      "record_root_count": 7,
+      "cross_page_window_count": 1,
+      "inherited_root_window_count": 0,
+      "atomized_physical_row_count": 0,
+      "ambiguous_pairing_window_count": 0,
+      "max_allowed_anchors": 15,
+      "invariants": {
+        "unique_window_ids": true,
+        "unique_branch_occurrences": true,
+        "all_anchors_exist": true,
+        "root_is_allowed": true,
+        "bounded_support": true,
+        "scope_is_anchor_bounded": true,
+        "scope_is_literal": true,
+        "atomic_pairing_only": true
+      },
+      "passed": true,
+      "windows": [
+        {
+          "window_id": "diagwin_9a72e3512b4903695f75bb3b",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_eHXp9nIpLlb47Sur3Bi5sw",
+          "record_anchor": "ev_fb72d0df2e5f9663abcc3230894b",
+          "root_anchor": "ev_fb72d0df2e5f9663abcc3230894b",
+          "branch_anchor": "ev_b7d2ce1dff929eabfb839f3ae0f2",
+          "allowed_source_anchors": [
+            "ev_fb72d0df2e5f9663abcc3230894b",
+            "ev_b7d2ce1dff929eabfb839f3ae0f2",
+            "ev_493f8bb651f05329659ed0e6c008",
+            "ev_9f7137ec9847c720f38ae85fdc9a",
+            "ev_2f98cc84fa2c76a5f94670a27708"
+          ],
+          "allowed_evidence_spans": {
+            "ev_fb72d0df2e5f9663abcc3230894b": [
+              "Problem: UIT Does Not Power Up\nDescription of Problem:\nThe UIT does not power.  Screen is blank and not lit up."
+            ],
+            "ev_b7d2ce1dff929eabfb839f3ae0f2": [
+              "Troubleshooting:\n1.Touch the screen to see if it turns on.  If the machine sits\nidle for a long period of time the touch screen goes into a\nsleep mode to protect the screen."
+            ],
+            "ev_493f8bb651f05329659ed0e6c008": [
+              "2.Make sure your cutting software is open on the cutting\nsystem computer."
+            ],
+            "ev_9f7137ec9847c720f38ae85fdc9a": [
+              "4.Find the black ethernet power supply (PoE) located next\nto the computer. Verify the green LED is illuminated."
+            ],
+            "ev_2f98cc84fa2c76a5f94670a27708": [
+              "5.If there is no green LED lit, check the AC outlets located\non the back of the diagnostic cabinet. If there is no  AC\npower, check the AC power cord and fuses F3 and F4 in\nthe diagnostic cabinet."
+            ]
+          },
+          "evidence_ids": [
+            "ev_fb72d0df2e5f9663abcc3230894b",
+            "ev_b7d2ce1dff929eabfb839f3ae0f2",
+            "ev_493f8bb651f05329659ed0e6c008",
+            "ev_9f7137ec9847c720f38ae85fdc9a",
+            "ev_2f98cc84fa2c76a5f94670a27708"
+          ],
+          "page_numbers": [
+            37
+          ],
+          "text_with_pages": "--- PAGE 37 ---\n\n[[EVIDENCE_ID: ev_fb72d0df2e5f9663abcc3230894b]]\n\nProblem: UIT Does Not Power Up\nDescription of Problem:\nThe UIT does not power.  Screen is blank and not lit up.\n\n[[EVIDENCE_ID: ev_b7d2ce1dff929eabfb839f3ae0f2]]\n\nTroubleshooting:\n1.Touch the screen to see if it turns on.  If the machine sits\nidle for a long period of time the touch screen goes into a\nsleep mode to protect the screen.\n\n[[EVIDENCE_ID: ev_493f8bb651f05329659ed0e6c008]]\n\n2.Make sure your cutting software is open on the cutting\nsystem computer.\n\n[[EVIDENCE_ID: ev_9f7137ec9847c720f38ae85fdc9a]]\n\n4.Find the black ethernet power supply (PoE) located next\nto the computer. Verify the green LED is illuminated.\n\n[[EVIDENCE_ID: ev_2f98cc84fa2c76a5f94670a27708]]\n\n5.If there is no green LED lit, check the AC outlets located\non the back of the diagnostic cabinet. If there is no  AC\npower, check the AC power cord and fuses F3 and F4 in\nthe diagnostic cabinet.",
+          "table_key": null,
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_ac38ecf79a1df71243b4bdc6",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_eHXp9nIpLlb47Sur3Bi5sw",
+          "record_anchor": "ev_238f1c73444fbf01f50343b07fb5",
+          "root_anchor": "ev_238f1c73444fbf01f50343b07fb5",
+          "branch_anchor": "ev_f8e1ded041a07b04d63c8435fded",
+          "allowed_source_anchors": [
+            "ev_238f1c73444fbf01f50343b07fb5",
+            "ev_f8e1ded041a07b04d63c8435fded"
+          ],
+          "allowed_evidence_spans": {
+            "ev_238f1c73444fbf01f50343b07fb5": [
+              "Problem: Machine Stop during Cut Due to Uninten-\ntional pause\nDescription of Problem:\nThe machine stops in middle of cut and displays message\n“Machine Paused, Press Zero, Next or Abort” on Touch\nScreen.  When pressing NEXT on the keypad, the machine\nwill continue to cut where it left off.  This is typically caused\nby an intermittent pause circuit, usually in thestop discs."
+            ],
+            "ev_f8e1ded041a07b04d63c8435fded": [
+              "Troubleshooting:\n1.Check stop disc activation. The stop discs should not\nactivate by a slight touch or vibration. They should activate\nonly when moved by minimum pressure. Remove gantry\nside cover. Check the pause plunger. Tighten the plunger\nto increase activation pressure and loosen to decrease\nactivation pressure."
+            ]
+          },
+          "evidence_ids": [
+            "ev_238f1c73444fbf01f50343b07fb5",
+            "ev_f8e1ded041a07b04d63c8435fded"
+          ],
+          "page_numbers": [
+            37
+          ],
+          "text_with_pages": "--- PAGE 37 ---\n\n[[EVIDENCE_ID: ev_238f1c73444fbf01f50343b07fb5]]\n\nProblem: Machine Stop during Cut Due to Uninten-\ntional pause\nDescription of Problem:\nThe machine stops in middle of cut and displays message\n“Machine Paused, Press Zero, Next or Abort” on Touch\nScreen.  When pressing NEXT on the keypad, the machine\nwill continue to cut where it left off.  This is typically caused\nby an intermittent pause circuit, usually in thestop discs.\n\n[[EVIDENCE_ID: ev_f8e1ded041a07b04d63c8435fded]]\n\nTroubleshooting:\n1.Check stop disc activation. The stop discs should not\nactivate by a slight touch or vibration. They should activate\nonly when moved by minimum pressure. Remove gantry\nside cover. Check the pause plunger. Tighten the plunger\nto increase activation pressure and loosen to decrease\nactivation pressure.",
+          "table_key": null,
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_4075255f987f1a3fcabff5e5",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_eHXp9nIpLlb47Sur3Bi5sw",
+          "record_anchor": "ev_00ec356d4b5246ab703aa754edae",
+          "root_anchor": "ev_00ec356d4b5246ab703aa754edae",
+          "branch_anchor": "ev_fa91bcc91c6c219914a2f650b127",
+          "allowed_source_anchors": [
+            "ev_00ec356d4b5246ab703aa754edae",
+            "ev_fa91bcc91c6c219914a2f650b127",
+            "ev_97ef97000a3eb560e1d8c1fb1e87",
+            "ev_b84dde3f3b5dbce85c20d71c66a1",
+            "ev_5ff465bb9875f2ceba7a84ab2904",
+            "ev_419804bc9c7faee3a01515c9078d",
+            "ev_11ed3bbcd047f920b81bda5daa6c",
+            "ev_cb3ad372ee4e822447102d8bb531",
+            "ev_702f72850da420acdd97db040ea3"
+          ],
+          "allowed_evidence_spans": {
+            "ev_00ec356d4b5246ab703aa754edae": [
+              "Problem: The buttons on the Touch Screen are out of\nalignment\nDescription of Problem:\nThe touch screen buttons do not match where the screen\nneeds to be touched to activate the command.  Operator\nneeds to push above, below, right or left of the button for the\ncommand to take effect."
+            ],
+            "ev_fa91bcc91c6c219914a2f650b127": [
+              "Troubleshooting:\nTouch screen calibration in required. Proceed as follows.\n1) Power down the cutting system."
+            ],
+            "ev_97ef97000a3eb560e1d8c1fb1e87": [
+              "2) Place finger on the upper left corner of the touch screen as\nShown. While holding finger on the screen, turn ON the\nmain power switch located on the back of the diagnostic\ncontrol cabinet."
+            ],
+            "ev_b84dde3f3b5dbce85c20d71c66a1": [
+              "3) Remove finger after the \"Power On Setup\" screen appears."
+            ],
+            "ev_5ff465bb9875f2ceba7a84ab2904": [
+              "4) Using the left and right arrows to navigate, go to the\nCalibration Screen (screen page 2). Press Touch screen\nto begin calibrating."
+            ],
+            "ev_419804bc9c7faee3a01515c9078d": [
+              "37\nForm E-554"
+            ],
+            "ev_11ed3bbcd047f920b81bda5daa6c": [
+              "5) Using a paper clip or fine tip object, press the center of the\ncross as shown. The cross will reappear in the lower right\ncorner. Press the center of the cross."
+            ],
+            "ev_cb3ad372ee4e822447102d8bb531": [
+              "6) Navigate to screen page 3. Select save and exit to\ncomplete calibration."
+            ],
+            "ev_702f72850da420acdd97db040ea3": [
+              "The touch screen will restart in normal mode. Check for\nproper screen operation and begin your normal start-up\nprocedure."
+            ]
+          },
+          "evidence_ids": [
+            "ev_00ec356d4b5246ab703aa754edae",
+            "ev_fa91bcc91c6c219914a2f650b127",
+            "ev_97ef97000a3eb560e1d8c1fb1e87",
+            "ev_b84dde3f3b5dbce85c20d71c66a1",
+            "ev_5ff465bb9875f2ceba7a84ab2904",
+            "ev_419804bc9c7faee3a01515c9078d",
+            "ev_11ed3bbcd047f920b81bda5daa6c",
+            "ev_cb3ad372ee4e822447102d8bb531",
+            "ev_702f72850da420acdd97db040ea3"
+          ],
+          "page_numbers": [
+            37,
+            38
+          ],
+          "text_with_pages": "--- PAGE 37 ---\n\n[[EVIDENCE_ID: ev_00ec356d4b5246ab703aa754edae]]\n\nProblem: The buttons on the Touch Screen are out of\nalignment\nDescription of Problem:\nThe touch screen buttons do not match where the screen\nneeds to be touched to activate the command.  Operator\nneeds to push above, below, right or left of the button for the\ncommand to take effect.\n\n[[EVIDENCE_ID: ev_fa91bcc91c6c219914a2f650b127]]\n\nTroubleshooting:\nTouch screen calibration in required. Proceed as follows.\n1) Power down the cutting system.\n\n[[EVIDENCE_ID: ev_97ef97000a3eb560e1d8c1fb1e87]]\n\n2) Place finger on the upper left corner of the touch screen as\nShown. While holding finger on the screen, turn ON the\nmain power switch located on the back of the diagnostic\ncontrol cabinet.\n\n[[EVIDENCE_ID: ev_b84dde3f3b5dbce85c20d71c66a1]]\n\n3) Remove finger after the \"Power On Setup\" screen appears.\n\n[[EVIDENCE_ID: ev_5ff465bb9875f2ceba7a84ab2904]]\n\n4) Using the left and right arrows to navigate, go to the\nCalibration Screen (screen page 2). Press Touch screen\nto begin calibrating.\n\n[[EVIDENCE_ID: ev_419804bc9c7faee3a01515c9078d]]\n\n37\nForm E-554\n\n--- PAGE 38 ---\n\n[[EVIDENCE_ID: ev_11ed3bbcd047f920b81bda5daa6c]]\n\n5) Using a paper clip or fine tip object, press the center of the\ncross as shown. The cross will reappear in the lower right\ncorner. Press the center of the cross.\n\n[[EVIDENCE_ID: ev_cb3ad372ee4e822447102d8bb531]]\n\n6) Navigate to screen page 3. Select save and exit to\ncomplete calibration.\n\n[[EVIDENCE_ID: ev_702f72850da420acdd97db040ea3]]\n\nThe touch screen will restart in normal mode. Check for\nproper screen operation and begin your normal start-up\nprocedure.",
+          "table_key": null,
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_79f060ba620af7c49ab7f9e7",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_eHXp9nIpLlb47Sur3Bi5sw",
+          "record_anchor": "ev_ffab0ee65d204ec768b750d6bc7e",
+          "root_anchor": "ev_ffab0ee65d204ec768b750d6bc7e",
+          "branch_anchor": "ev_a50913a4efe11388b2de117afec1",
+          "allowed_source_anchors": [
+            "ev_ffab0ee65d204ec768b750d6bc7e",
+            "ev_a50913a4efe11388b2de117afec1",
+            "ev_613af9c0fed7804c408911d8d64f",
+            "ev_8383fe130aef775e06df8845f84f",
+            "ev_f37480c9452415bb8d1d2f448f1f",
+            "ev_ba29d0c77cff824ee4d8a1febb8e",
+            "ev_83356d212101bc269b743b540806",
+            "ev_d07640af73f06817151fb5751799",
+            "ev_1ec16ff91879d9701a034514e77c",
+            "ev_72cefd05cf05e225237b5b4e4f41",
+            "ev_2cef12f887c6e0951a03cbccb384",
+            "ev_210cc3c225dda6418b9559188275",
+            "ev_d146583e03f713ac0fc6fed8f890",
+            "ev_50440ccf04d42005779881e8c7d1",
+            "ev_78b127f063b59b970c2e8a6f5b4b"
+          ],
+          "allowed_evidence_spans": {
+            "ev_ffab0ee65d204ec768b750d6bc7e": [
+              "Problem: The Cutting Tool or Pen does not move down\nDescription of Problem:\nThe tool or Pen does not move down when cutting a file or\nthey are delayed coming down at the beginning of a cut.  This\ncan be caused by an electrical short, tool mapping in\nsoftware or a problem with the power supply."
+            ],
+            "ev_a50913a4efe11388b2de117afec1": [
+              "Troubleshooting:\n1.Make sure the gantry Tools ON switch is turned on. This\ncan be verified by making sure the laser pointer is on."
+            ],
+            "ev_613af9c0fed7804c408911d8d64f": [
+              "2.Verify the mapping of your tools and layers are mapped\nproperly under each tool."
+            ],
+            "ev_8383fe130aef775e06df8845f84f": [
+              "a)Look at the tool bar at the bottom of the Cut window to\nquickly verify tool and layer mapping.  If there is no Tool Bar\nas shown, then click on “View” then click on “Layers” and\n“Tools” in the main E-Suite menu."
+            ],
+            "ev_f37480c9452415bb8d1d2f448f1f": [
+              "b)If the layer is not mapped to a tool or the tool is not on the\ntool holder then just click and drag the tool to the spindle\nor the layer to the tool before sending the file to the cutter."
+            ],
+            "ev_ba29d0c77cff824ee4d8a1febb8e": [
+              "3.With E-Suite closed, check tool holder to see if it moves\nfreely and is not damaged or bent."
+            ],
+            "ev_83356d212101bc269b743b540806": [
+              "4.Make sure you have pressure at the tools. Try pulling tool\nthe holder down by hand to see if it has pressure."
+            ],
+            "ev_d07640af73f06817151fb5751799": [
+              "5.Check tool connections."
+            ],
+            "ev_1ec16ff91879d9701a034514e77c": [
+              "a) Hit the Cut Down button on the UIT to verify the\ncorresponding green LED light is on. Located on the slice\noutput cards (non-operator gantry side plate)."
+            ],
+            "ev_72cefd05cf05e225237b5b4e4f41": [
+              "b) Try firing the tool manually by pressing red button under\nsolenoid block.  Each solenoid can be manually fired by\npressing the individual button."
+            ],
+            "ev_2cef12f887c6e0951a03cbccb384": [
+              "c) Check cable connection at air manifold for proper\nconnection."
+            ],
+            "ev_210cc3c225dda6418b9559188275": [
+              "6.The Pen or Tool delays coming down and misses the\nbeginning of marker or cut."
+            ],
+            "ev_d146583e03f713ac0fc6fed8f890": [
+              "a) Check the 24 VDC power supply located in the diagnos-\ntic cabinet. Make sure the green led is on."
+            ],
+            "ev_50440ccf04d42005779881e8c7d1": [
+              "b) Check the 24 VDC power supply fuse."
+            ],
+            "ev_78b127f063b59b970c2e8a6f5b4b": [
+              "c) Check flow control valves on the pen air cylinder."
+            ]
+          },
+          "evidence_ids": [
+            "ev_ffab0ee65d204ec768b750d6bc7e",
+            "ev_a50913a4efe11388b2de117afec1",
+            "ev_613af9c0fed7804c408911d8d64f",
+            "ev_8383fe130aef775e06df8845f84f",
+            "ev_f37480c9452415bb8d1d2f448f1f",
+            "ev_ba29d0c77cff824ee4d8a1febb8e",
+            "ev_83356d212101bc269b743b540806",
+            "ev_d07640af73f06817151fb5751799",
+            "ev_1ec16ff91879d9701a034514e77c",
+            "ev_72cefd05cf05e225237b5b4e4f41",
+            "ev_2cef12f887c6e0951a03cbccb384",
+            "ev_210cc3c225dda6418b9559188275",
+            "ev_d146583e03f713ac0fc6fed8f890",
+            "ev_50440ccf04d42005779881e8c7d1",
+            "ev_78b127f063b59b970c2e8a6f5b4b"
+          ],
+          "page_numbers": [
+            38
+          ],
+          "text_with_pages": "--- PAGE 38 ---\n\n[[EVIDENCE_ID: ev_ffab0ee65d204ec768b750d6bc7e]]\n\nProblem: The Cutting Tool or Pen does not move down\nDescription of Problem:\nThe tool or Pen does not move down when cutting a file or\nthey are delayed coming down at the beginning of a cut.  This\ncan be caused by an electrical short, tool mapping in\nsoftware or a problem with the power supply.\n\n[[EVIDENCE_ID: ev_a50913a4efe11388b2de117afec1]]\n\nTroubleshooting:\n1.Make sure the gantry Tools ON switch is turned on. This\ncan be verified by making sure the laser pointer is on.\n\n[[EVIDENCE_ID: ev_613af9c0fed7804c408911d8d64f]]\n\n2.Verify the mapping of your tools and layers are mapped\nproperly under each tool.\n\n[[EVIDENCE_ID: ev_8383fe130aef775e06df8845f84f]]\n\na)Look at the tool bar at the bottom of the Cut window to\nquickly verify tool and layer mapping.  If there is no Tool Bar\nas shown, then click on “View” then click on “Layers” and\n“Tools” in the main E-Suite menu.\n\n[[EVIDENCE_ID: ev_f37480c9452415bb8d1d2f448f1f]]\n\nb)If the layer is not mapped to a tool or the tool is not on the\ntool holder then just click and drag the tool to the spindle\nor the layer to the tool before sending the file to the cutter.\n\n[[EVIDENCE_ID: ev_ba29d0c77cff824ee4d8a1febb8e]]\n\n3.With E-Suite closed, check tool holder to see if it moves\nfreely and is not damaged or bent.\n\n[[EVIDENCE_ID: ev_83356d212101bc269b743b540806]]\n\n4.Make sure you have pressure at the tools. Try pulling tool\nthe holder down by hand to see if it has pressure.\n\n[[EVIDENCE_ID: ev_d07640af73f06817151fb5751799]]\n\n5.Check tool connections.\n\n[[EVIDENCE_ID: ev_1ec16ff91879d9701a034514e77c]]\n\na) Hit the Cut Down button on the UIT to verify the\ncorresponding green LED light is on. Located on the slice\noutput cards (non-operator gantry side plate).\n\n[[EVIDENCE_ID: ev_72cefd05cf05e225237b5b4e4f41]]\n\nb) Try firing the tool manually by pressing red button under\nsolenoid block.  Each solenoid can be manually fired by\npressing the individual button.\n\n[[EVIDENCE_ID: ev_2cef12f887c6e0951a03cbccb384]]\n\nc) Check cable connection at air manifold for proper\nconnection.\n\n[[EVIDENCE_ID: ev_210cc3c225dda6418b9559188275]]\n\n6.The Pen or Tool delays coming down and misses the\nbeginning of marker or cut.\n\n[[EVIDENCE_ID: ev_d146583e03f713ac0fc6fed8f890]]\n\na) Check the 24 VDC power supply located in the diagnos-\ntic cabinet. Make sure the green led is on.\n\n[[EVIDENCE_ID: ev_50440ccf04d42005779881e8c7d1]]\n\nb) Check the 24 VDC power supply fuse.\n\n[[EVIDENCE_ID: ev_78b127f063b59b970c2e8a6f5b4b]]\n\nc) Check flow control valves on the pen air cylinder.",
+          "table_key": null,
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_e1a4b1e93af843c1912f319f",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_eHXp9nIpLlb47Sur3Bi5sw",
+          "record_anchor": "ev_d3186a08111e4ba5127b8271948e",
+          "root_anchor": "ev_d3186a08111e4ba5127b8271948e",
+          "branch_anchor": "ev_e497c61ac04e05aad37481f8452d",
+          "allowed_source_anchors": [
+            "ev_d3186a08111e4ba5127b8271948e",
+            "ev_e497c61ac04e05aad37481f8452d",
+            "ev_e3f05976f60aff39988067a9ef47",
+            "ev_c0fe75d148f5fabfd551f6a28521",
+            "ev_80476b76c23f6e84cec7a7a04ff9",
+            "ev_da18d133a91ad3cd62388fb2c502"
+          ],
+          "allowed_evidence_spans": {
+            "ev_d3186a08111e4ba5127b8271948e": [
+              "Problem: Laser Fume Extractor has reduced vacuum\nor no vacuum.\nDescription of Problem:\nAn odor is present when cutting with the laser tool or Laser\ncutting path is wider than normal"
+            ],
+            "ev_e497c61ac04e05aad37481f8452d": [
+              "Troubleshooting:\n1. Check the laser fume extractor for power and is turned ON."
+            ],
+            "ev_e3f05976f60aff39988067a9ef47": [
+              "2. Increase vacuum pressure using the fume extractor\ncontrol panel."
+            ],
+            "ev_c0fe75d148f5fabfd551f6a28521": [
+              "3) Replace vacuum filters."
+            ],
+            "ev_80476b76c23f6e84cec7a7a04ff9": [
+              "4) Clean vacuum hose and funnel."
+            ],
+            "ev_da18d133a91ad3cd62388fb2c502": [
+              "38\nForm E-554"
+            ]
+          },
+          "evidence_ids": [
+            "ev_d3186a08111e4ba5127b8271948e",
+            "ev_e497c61ac04e05aad37481f8452d",
+            "ev_e3f05976f60aff39988067a9ef47",
+            "ev_c0fe75d148f5fabfd551f6a28521",
+            "ev_80476b76c23f6e84cec7a7a04ff9",
+            "ev_da18d133a91ad3cd62388fb2c502"
+          ],
+          "page_numbers": [
+            38
+          ],
+          "text_with_pages": "--- PAGE 38 ---\n\n[[EVIDENCE_ID: ev_d3186a08111e4ba5127b8271948e]]\n\nProblem: Laser Fume Extractor has reduced vacuum\nor no vacuum.\nDescription of Problem:\nAn odor is present when cutting with the laser tool or Laser\ncutting path is wider than normal\n\n[[EVIDENCE_ID: ev_e497c61ac04e05aad37481f8452d]]\n\nTroubleshooting:\n1. Check the laser fume extractor for power and is turned ON.\n\n[[EVIDENCE_ID: ev_e3f05976f60aff39988067a9ef47]]\n\n2. Increase vacuum pressure using the fume extractor\ncontrol panel.\n\n[[EVIDENCE_ID: ev_c0fe75d148f5fabfd551f6a28521]]\n\n3) Replace vacuum filters.\n\n[[EVIDENCE_ID: ev_80476b76c23f6e84cec7a7a04ff9]]\n\n4) Clean vacuum hose and funnel.\n\n[[EVIDENCE_ID: ev_da18d133a91ad3cd62388fb2c502]]\n\n38\nForm E-554",
+          "table_key": null,
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_53782929f95942ccce918f19",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_eHXp9nIpLlb47Sur3Bi5sw",
+          "record_anchor": "ev_827bd72785fb1e371c05058c27f2",
+          "root_anchor": "ev_827bd72785fb1e371c05058c27f2",
+          "branch_anchor": "ev_48136526113e05b20868f5e5992f",
+          "allowed_source_anchors": [
+            "ev_827bd72785fb1e371c05058c27f2",
+            "ev_48136526113e05b20868f5e5992f",
+            "ev_d1f6fa5c78e925ac69252a12489b",
+            "ev_aebcbe27f61d93a83f038c07aff3",
+            "ev_6e9d62050bbd77d187706bfcb57d",
+            "ev_2f8b9370ce6cd526898d6cf83bad",
+            "ev_330876b729aae5667ce82e54ea07",
+            "ev_b4ef68085c0ba6dccd8af3bb5fa1",
+            "ev_2878b40c9775d97dd1342648f6f8",
+            "ev_3becb859a7b1a58ab4b7a1b6d653"
+          ],
+          "allowed_evidence_spans": {
+            "ev_827bd72785fb1e371c05058c27f2": [
+              "Problem: Laser cutting path is too wide\nDescription of Problem:\nThe laser cutting path increases to an undesirable width."
+            ],
+            "ev_48136526113e05b20868f5e5992f": [
+              "Troubleshooting:\n1. Check for damage to brass laser nozzle. Replace nozzle\nif any damage is present."
+            ],
+            "ev_d1f6fa5c78e925ac69252a12489b": [
+              "2. Check for brass laser nozzle alignment. If the tube or\nnozzle is bent,  the laser beam will reflect off the inside wall\nof the nozzle causing a wide path. To verify, perform a test\npulse on a piece of card board.  If the dot has a ring or partial\nring around it, the nuzzle is bent or the mirrors may need\nto be adjusted."
+            ],
+            "ev_aebcbe27f61d93a83f038c07aff3": [
+              "3. Check laser power and cutting speed. Settings may vary\nwhen changing materials. Testing will yield best results."
+            ],
+            "ev_6e9d62050bbd77d187706bfcb57d": [
+              "RF/EMI Interference\nSome factory environments may have equipment that gener-\nates Radio Frequency (RF) or Electro-Magnetic Interference\n(EMI). These signals in close proximity to the Eastman\ncutting system can generate electrical noise and cause\nproblems for the machine and computer (Eastman does offer\na shielded mouse). It is recommended that any RF Welders\nor other equipment generating RF or EMI noise be a mini-\nmum of 75 feet (23 meter) from the Eastman cutting system."
+            ],
+            "ev_2f8b9370ce6cd526898d6cf83bad": [
+              "Problems of this nature are typically difficult to resolve and\nmust be approached in a systematic manner. To reduce the\neffects of electrical noise generated by RF, Eastman Ma-\nchine Company has the following recommendations:"
+            ],
+            "ev_330876b729aae5667ce82e54ea07": [
+              "Step 1) Install an earth ground as close as possible to the\ntransformer feeding AC power to the cutting system."
+            ],
+            "ev_b4ef68085c0ba6dccd8af3bb5fa1": [
+              "Step 2) Enclose all AC power cables in rigid conduit and\nsecure to the earth ground. Route the four power cables for\nthe computer controls around the end of the conveyor instead\nof under the unit."
+            ],
+            "ev_2878b40c9775d97dd1342648f6f8": [
+              "Step 3) Ground conduits to the table frames."
+            ],
+            "ev_3becb859a7b1a58ab4b7a1b6d653": [
+              "Step 4) Implementation of the foregoing should reduce the\nlevel of interference to a workable level. In the event that RF\nis still determined an issue, installation of RF filters and/or\npower line filters may be required."
+            ]
+          },
+          "evidence_ids": [
+            "ev_827bd72785fb1e371c05058c27f2",
+            "ev_48136526113e05b20868f5e5992f",
+            "ev_d1f6fa5c78e925ac69252a12489b",
+            "ev_aebcbe27f61d93a83f038c07aff3",
+            "ev_6e9d62050bbd77d187706bfcb57d",
+            "ev_2f8b9370ce6cd526898d6cf83bad",
+            "ev_330876b729aae5667ce82e54ea07",
+            "ev_b4ef68085c0ba6dccd8af3bb5fa1",
+            "ev_2878b40c9775d97dd1342648f6f8",
+            "ev_3becb859a7b1a58ab4b7a1b6d653"
+          ],
+          "page_numbers": [
+            39
+          ],
+          "text_with_pages": "--- PAGE 39 ---\n\n[[EVIDENCE_ID: ev_827bd72785fb1e371c05058c27f2]]\n\nProblem: Laser cutting path is too wide\nDescription of Problem:\nThe laser cutting path increases to an undesirable width.\n\n[[EVIDENCE_ID: ev_48136526113e05b20868f5e5992f]]\n\nTroubleshooting:\n1. Check for damage to brass laser nozzle. Replace nozzle\nif any damage is present.\n\n[[EVIDENCE_ID: ev_d1f6fa5c78e925ac69252a12489b]]\n\n2. Check for brass laser nozzle alignment. If the tube or\nnozzle is bent,  the laser beam will reflect off the inside wall\nof the nozzle causing a wide path. To verify, perform a test\npulse on a piece of card board.  If the dot has a ring or partial\nring around it, the nuzzle is bent or the mirrors may need\nto be adjusted.\n\n[[EVIDENCE_ID: ev_aebcbe27f61d93a83f038c07aff3]]\n\n3. Check laser power and cutting speed. Settings may vary\nwhen changing materials. Testing will yield best results.\n\n[[EVIDENCE_ID: ev_6e9d62050bbd77d187706bfcb57d]]\n\nRF/EMI Interference\nSome factory environments may have equipment that gener-\nates Radio Frequency (RF) or Electro-Magnetic Interference\n(EMI). These signals in close proximity to the Eastman\ncutting system can generate electrical noise and cause\nproblems for the machine and computer (Eastman does offer\na shielded mouse). It is recommended that any RF Welders\nor other equipment generating RF or EMI noise be a mini-\nmum of 75 feet (23 meter) from the Eastman cutting system.\n\n[[EVIDENCE_ID: ev_2f8b9370ce6cd526898d6cf83bad]]\n\nProblems of this nature are typically difficult to resolve and\nmust be approached in a systematic manner. To reduce the\neffects of electrical noise generated by RF, Eastman Ma-\nchine Company has the following recommendations:\n\n[[EVIDENCE_ID: ev_330876b729aae5667ce82e54ea07]]\n\nStep 1) Install an earth ground as close as possible to the\ntransformer feeding AC power to the cutting system.\n\n[[EVIDENCE_ID: ev_b4ef68085c0ba6dccd8af3bb5fa1]]\n\nStep 2) Enclose all AC power cables in rigid conduit and\nsecure to the earth ground. Route the four power cables for\nthe computer controls around the end of the conveyor instead\nof under the unit.\n\n[[EVIDENCE_ID: ev_2878b40c9775d97dd1342648f6f8]]\n\nStep 3) Ground conduits to the table frames.\n\n[[EVIDENCE_ID: ev_3becb859a7b1a58ab4b7a1b6d653]]\n\nStep 4) Implementation of the foregoing should reduce the\nlevel of interference to a workable level. In the event that RF\nis still determined an issue, installation of RF filters and/or\npower line filters may be required.",
+          "table_key": null,
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_9efa913832c6a1e344fdac94",
+          "window_kind": "contiguous_blocks",
+          "source_id": "src_eHXp9nIpLlb47Sur3Bi5sw",
+          "record_anchor": "ev_a21e714cf27ddd74b24d88182ba1",
+          "root_anchor": "ev_a21e714cf27ddd74b24d88182ba1",
+          "branch_anchor": "ev_1293c8c6be724250554f9d5432a0",
+          "allowed_source_anchors": [
+            "ev_a21e714cf27ddd74b24d88182ba1",
+            "ev_1293c8c6be724250554f9d5432a0",
+            "ev_e3a44605a2fa24cbd35509b7b823",
+            "ev_11a0061a0c50b48962ab65df7d45"
+          ],
+          "allowed_evidence_spans": {
+            "ev_a21e714cf27ddd74b24d88182ba1": [
+              "Problem: Loss of laser cutting power\nDescription of Problem:\nThe laser cutting power decreases causing non-cut edges."
+            ],
+            "ev_1293c8c6be724250554f9d5432a0": [
+              "Troubleshooting:\n1. Damaged or dirty lens. Check for damage or dirt on the\nfocusing lens. Clean or replace lens as required."
+            ],
+            "ev_e3a44605a2fa24cbd35509b7b823": [
+              "2. Damaged or dirty Mirror. Check for damage, burn mark or\ndirt on the beam deflecting mirrors. Clean or replace\nmirrors as required."
+            ],
+            "ev_11a0061a0c50b48962ab65df7d45": [
+              "3. Damage or debris in laser nozzle. Check for damage or\ndebris in laser nozzle. Clean or replace laser nozzle as\nrequired."
+            ]
+          },
+          "evidence_ids": [
+            "ev_a21e714cf27ddd74b24d88182ba1",
+            "ev_1293c8c6be724250554f9d5432a0",
+            "ev_e3a44605a2fa24cbd35509b7b823",
+            "ev_11a0061a0c50b48962ab65df7d45"
+          ],
+          "page_numbers": [
+            39
+          ],
+          "text_with_pages": "--- PAGE 39 ---\n\n[[EVIDENCE_ID: ev_a21e714cf27ddd74b24d88182ba1]]\n\nProblem: Loss of laser cutting power\nDescription of Problem:\nThe laser cutting power decreases causing non-cut edges.\n\n[[EVIDENCE_ID: ev_1293c8c6be724250554f9d5432a0]]\n\nTroubleshooting:\n1. Damaged or dirty lens. Check for damage or dirt on the\nfocusing lens. Clean or replace lens as required.\n\n[[EVIDENCE_ID: ev_e3a44605a2fa24cbd35509b7b823]]\n\n2. Damaged or dirty Mirror. Check for damage, burn mark or\ndirt on the beam deflecting mirrors. Clean or replace\nmirrors as required.\n\n[[EVIDENCE_ID: ev_11a0061a0c50b48962ab65df7d45]]\n\n3. Damage or debris in laser nozzle. Check for damage or\ndebris in laser nozzle. Clean or replace laser nozzle as\nrequired.",
+          "table_key": null,
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        }
+      ]
+    },
+    "danfoss_apf": {
+      "database": "/Users/fabio.daniele/Coding/log-kg-builder/artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_20260813/runs/mock/danfoss_apf/operational.db",
+      "evidence_unit_count": 1761,
+      "window_count": 8,
+      "window_kinds": {
+        "table_row": 8
+      },
+      "record_root_count": 6,
+      "cross_page_window_count": 0,
+      "inherited_root_window_count": 0,
+      "atomized_physical_row_count": 2,
+      "ambiguous_pairing_window_count": 0,
+      "max_allowed_anchors": 1,
+      "invariants": {
+        "unique_window_ids": true,
+        "unique_branch_occurrences": true,
+        "all_anchors_exist": true,
+        "root_is_allowed": true,
+        "bounded_support": true,
+        "scope_is_anchor_bounded": true,
+        "scope_is_literal": true,
+        "atomic_pairing_only": true
+      },
+      "passed": true,
+      "windows": [
+        {
+          "window_id": "diagwin_5077883ea78607c967b420c5",
+          "window_kind": "table_row",
+          "source_id": "src_DL2HeaPdOjHaaXObrvanwQ",
+          "record_anchor": "ev_d2a76ee167a6858169a66d07e4c0",
+          "root_anchor": "ev_d2a76ee167a6858169a66d07e4c0",
+          "branch_anchor": "ev_d2a76ee167a6858169a66d07e4c0",
+          "allowed_source_anchors": [
+            "ev_d2a76ee167a6858169a66d07e4c0"
+          ],
+          "allowed_evidence_spans": {
+            "ev_d2a76ee167a6858169a66d07e4c0": [
+              "1",
+              "SYS 485 comm loss",
+              "1 The communication wire is not well connected.",
+              "1 Check if the communication wire is firmly connected."
+            ]
+          },
+          "evidence_ids": [
+            "ev_d2a76ee167a6858169a66d07e4c0"
+          ],
+          "page_numbers": [
+            64
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): Fault number | Fault name | Possible fault | Troubleshooting\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/2; status=atomic\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: ev_d2a76ee167a6858169a66d07e4c0]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 1: 1\n\nFIELD 2: SYS 485 comm loss\n\nFIELD 3: 1 The communication wire is not well connected.\n\nFIELD 4: 1 Check if the communication wire is firmly connected.",
+          "table_key": "src_DL2HeaPdOjHaaXObrvanwQ:table:64",
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 2,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_8c429ef31c1ed92bf804d523",
+          "window_kind": "table_row",
+          "source_id": "src_DL2HeaPdOjHaaXObrvanwQ",
+          "record_anchor": "ev_d2a76ee167a6858169a66d07e4c0",
+          "root_anchor": "ev_d2a76ee167a6858169a66d07e4c0",
+          "branch_anchor": "ev_d2a76ee167a6858169a66d07e4c0",
+          "allowed_source_anchors": [
+            "ev_d2a76ee167a6858169a66d07e4c0"
+          ],
+          "allowed_evidence_spans": {
+            "ev_d2a76ee167a6858169a66d07e4c0": [
+              "1",
+              "SYS 485 comm loss",
+              "2 The Active Power Filter modules have repeated IDs.",
+              "1 Check the DIP switches of the individual modules."
+            ]
+          },
+          "evidence_ids": [
+            "ev_d2a76ee167a6858169a66d07e4c0"
+          ],
+          "page_numbers": [
+            64
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): Fault number | Fault name | Possible fault | Troubleshooting\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 2/2; status=atomic\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: ev_d2a76ee167a6858169a66d07e4c0]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 1: 1\n\nFIELD 2: SYS 485 comm loss\n\nFIELD 3: 2 The Active Power Filter modules have repeated IDs.\n\nFIELD 4: 1 Check the DIP switches of the individual modules.",
+          "table_key": "src_DL2HeaPdOjHaaXObrvanwQ:table:64",
+          "inherited_root": false,
+          "branch_ordinal": 2,
+          "branch_count": 2,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_26ec2b2568ff93eb5a5ae3a4",
+          "window_kind": "table_row",
+          "source_id": "src_DL2HeaPdOjHaaXObrvanwQ",
+          "record_anchor": "ev_5c435ce05aad003437c5966a36e0",
+          "root_anchor": "ev_5c435ce05aad003437c5966a36e0",
+          "branch_anchor": "ev_5c435ce05aad003437c5966a36e0",
+          "allowed_source_anchors": [
+            "ev_5c435ce05aad003437c5966a36e0"
+          ],
+          "allowed_evidence_spans": {
+            "ev_5c435ce05aad003437c5966a36e0": [
+              "2",
+              "Fuse blowout",
+              "The input fuse is broken.",
+              "Contact service personnel."
+            ]
+          },
+          "evidence_ids": [
+            "ev_5c435ce05aad003437c5966a36e0"
+          ],
+          "page_numbers": [
+            64
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): Fault number | Fault name | Possible fault | Troubleshooting\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: ev_5c435ce05aad003437c5966a36e0]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 1: 2\n\nFIELD 2: Fuse blowout\n\nFIELD 3: The input fuse is broken.\n\nFIELD 4: Contact service personnel.",
+          "table_key": "src_DL2HeaPdOjHaaXObrvanwQ:table:64",
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_4a0ff63acbd97bfa4170d120",
+          "window_kind": "table_row",
+          "source_id": "src_DL2HeaPdOjHaaXObrvanwQ",
+          "record_anchor": "ev_054d4700d57aa43ab71d87b5abf5",
+          "root_anchor": "ev_054d4700d57aa43ab71d87b5abf5",
+          "branch_anchor": "ev_054d4700d57aa43ab71d87b5abf5",
+          "allowed_source_anchors": [
+            "ev_054d4700d57aa43ab71d87b5abf5"
+          ],
+          "allowed_evidence_spans": {
+            "ev_054d4700d57aa43ab71d87b5abf5": [
+              "3",
+              "Ambient OTP",
+              "2 The fans do not work.",
+              "Contact service personnel."
+            ]
+          },
+          "evidence_ids": [
+            "ev_054d4700d57aa43ab71d87b5abf5"
+          ],
+          "page_numbers": [
+            64
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): Fault number | Fault name | Possible fault | Troubleshooting\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 2/2; status=atomic\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: ev_054d4700d57aa43ab71d87b5abf5]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 1: 3\n\nFIELD 2: Ambient OTP\n\nFIELD 3: 2 The fans do not work.\n\nFIELD 4: Contact service personnel.",
+          "table_key": "src_DL2HeaPdOjHaaXObrvanwQ:table:64",
+          "inherited_root": false,
+          "branch_ordinal": 2,
+          "branch_count": 2,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_7063f6708716c674f222b793",
+          "window_kind": "table_row",
+          "source_id": "src_DL2HeaPdOjHaaXObrvanwQ",
+          "record_anchor": "ev_054d4700d57aa43ab71d87b5abf5",
+          "root_anchor": "ev_054d4700d57aa43ab71d87b5abf5",
+          "branch_anchor": "ev_054d4700d57aa43ab71d87b5abf5",
+          "allowed_source_anchors": [
+            "ev_054d4700d57aa43ab71d87b5abf5"
+          ],
+          "allowed_evidence_spans": {
+            "ev_054d4700d57aa43ab71d87b5abf5": [
+              "3",
+              "Ambient OTP",
+              "1 The air vents ate blocked.",
+              "Contact service personnel."
+            ]
+          },
+          "evidence_ids": [
+            "ev_054d4700d57aa43ab71d87b5abf5"
+          ],
+          "page_numbers": [
+            64
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): Fault number | Fault name | Possible fault | Troubleshooting\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/2; status=atomic\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: ev_054d4700d57aa43ab71d87b5abf5]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 1: 3\n\nFIELD 2: Ambient OTP\n\nFIELD 3: 1 The air vents ate blocked.\n\nFIELD 4: Contact service personnel.",
+          "table_key": "src_DL2HeaPdOjHaaXObrvanwQ:table:64",
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 2,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_a0dfaafd086733328c53d88c",
+          "window_kind": "table_row",
+          "source_id": "src_DL2HeaPdOjHaaXObrvanwQ",
+          "record_anchor": "ev_558a808a43d508a26f10284543e9",
+          "root_anchor": "ev_558a808a43d508a26f10284543e9",
+          "branch_anchor": "ev_558a808a43d508a26f10284543e9",
+          "allowed_source_anchors": [
+            "ev_558a808a43d508a26f10284543e9"
+          ],
+          "allowed_evidence_spans": {
+            "ev_558a808a43d508a26f10284543e9": [
+              "4",
+              "BUS OVP/UVP",
+              "BUS capacitor failure.",
+              "Contact service personnel."
+            ]
+          },
+          "evidence_ids": [
+            "ev_558a808a43d508a26f10284543e9"
+          ],
+          "page_numbers": [
+            64
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): Fault number | Fault name | Possible fault | Troubleshooting\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: ev_558a808a43d508a26f10284543e9]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 1: 4\n\nFIELD 2: BUS OVP/UVP\n\nFIELD 3: BUS capacitor failure.\n\nFIELD 4: Contact service personnel.",
+          "table_key": "src_DL2HeaPdOjHaaXObrvanwQ:table:64",
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_4d610e6ce79da458c283fccb",
+          "window_kind": "table_row",
+          "source_id": "src_DL2HeaPdOjHaaXObrvanwQ",
+          "record_anchor": "ev_71f6d71bf8735431c06bcbf44c94",
+          "root_anchor": "ev_71f6d71bf8735431c06bcbf44c94",
+          "branch_anchor": "ev_71f6d71bf8735431c06bcbf44c94",
+          "allowed_source_anchors": [
+            "ev_71f6d71bf8735431c06bcbf44c94"
+          ],
+          "allowed_evidence_spans": {
+            "ev_71f6d71bf8735431c06bcbf44c94": [
+              "5",
+              "Fan Fail",
+              "Fan failure.",
+              "Contact service personnel."
+            ]
+          },
+          "evidence_ids": [
+            "ev_71f6d71bf8735431c06bcbf44c94"
+          ],
+          "page_numbers": [
+            64
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): Fault number | Fault name | Possible fault | Troubleshooting\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: ev_71f6d71bf8735431c06bcbf44c94]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 1: 5\n\nFIELD 2: Fan Fail\n\nFIELD 3: Fan failure.\n\nFIELD 4: Contact service personnel.",
+          "table_key": "src_DL2HeaPdOjHaaXObrvanwQ:table:64",
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_dc4be3e2e814ad9402be825a",
+          "window_kind": "table_row",
+          "source_id": "src_DL2HeaPdOjHaaXObrvanwQ",
+          "record_anchor": "ev_d525e6dc95247fdd62f8a15e2fe5",
+          "root_anchor": "ev_d525e6dc95247fdd62f8a15e2fe5",
+          "branch_anchor": "ev_d525e6dc95247fdd62f8a15e2fe5",
+          "allowed_source_anchors": [
+            "ev_d525e6dc95247fdd62f8a15e2fe5"
+          ],
+          "allowed_evidence_spans": {
+            "ev_d525e6dc95247fdd62f8a15e2fe5": [
+              "6",
+              "No current compensation/Bad current compensation",
+              "The CT is not well connected.",
+              "Check if the CT wiring is cor- rect."
+            ]
+          },
+          "evidence_ids": [
+            "ev_d525e6dc95247fdd62f8a15e2fe5"
+          ],
+          "page_numbers": [
+            64
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): Fault number | Fault name | Possible fault | Troubleshooting\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: ev_d525e6dc95247fdd62f8a15e2fe5]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 1: 6\n\nFIELD 2: No current compensation/Bad current compensation\n\nFIELD 3: The CT is not well connected.\n\nFIELD 4: Check if the CT wiring is cor- rect.",
+          "table_key": "src_DL2HeaPdOjHaaXObrvanwQ:table:64",
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        }
+      ]
+    },
+    "graco_check_mate_200": {
+      "database": "/Users/fabio.daniele/Coding/log-kg-builder/artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_20260813/runs/mock/graco_check_mate_200/operational.db",
+      "evidence_unit_count": 915,
+      "window_count": 18,
+      "window_kinds": {
+        "table_row": 18
+      },
+      "record_root_count": 5,
+      "cross_page_window_count": 0,
+      "inherited_root_window_count": 13,
+      "atomized_physical_row_count": 0,
+      "ambiguous_pairing_window_count": 0,
+      "max_allowed_anchors": 2,
+      "invariants": {
+        "unique_window_ids": true,
+        "unique_branch_occurrences": true,
+        "all_anchors_exist": true,
+        "root_is_allowed": true,
+        "bounded_support": true,
+        "scope_is_anchor_bounded": true,
+        "scope_is_literal": true,
+        "atomic_pairing_only": true
+      },
+      "passed": true,
+      "windows": [
+        {
+          "window_id": "diagwin_895f43140f7f5b3852376c16",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_8e384b8c1d4ec1af1321fb34b0ea",
+          "root_anchor": "ev_8e384b8c1d4ec1af1321fb34b0ea",
+          "branch_anchor": "ev_8e384b8c1d4ec1af1321fb34b0ea",
+          "allowed_source_anchors": [
+            "ev_8e384b8c1d4ec1af1321fb34b0ea"
+          ],
+          "allowed_evidence_spans": {
+            "ev_8e384b8c1d4ec1af1321fb34b0ea": [
+              "Pump fails to operate.",
+              "Restricted line or inadequate air supply",
+              "Clear*; see Technical Data on pages 24–27."
+            ]
+          },
+          "evidence_ids": [
+            "ev_8e384b8c1d4ec1af1321fb34b0ea"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_8e384b8c1d4ec1af1321fb34b0ea]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 1: Pump fails to operate.\n\nFIELD 2: Restricted line or inadequate air supply\n\nFIELD 3: Clear*; see Technical Data on pages 24–27.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_683abae240d45d60652db888",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_8e384b8c1d4ec1af1321fb34b0ea",
+          "root_anchor": "ev_8e384b8c1d4ec1af1321fb34b0ea",
+          "branch_anchor": "ev_d782b16520db78fd81cec2984fbd",
+          "allowed_source_anchors": [
+            "ev_8e384b8c1d4ec1af1321fb34b0ea",
+            "ev_d782b16520db78fd81cec2984fbd"
+          ],
+          "allowed_evidence_spans": {
+            "ev_8e384b8c1d4ec1af1321fb34b0ea": [
+              "Pump fails to operate."
+            ],
+            "ev_d782b16520db78fd81cec2984fbd": [
+              "Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+              "Clear*; use a hose with a larger ID."
+            ]
+          },
+          "evidence_ids": [
+            "ev_8e384b8c1d4ec1af1321fb34b0ea",
+            "ev_d782b16520db78fd81cec2984fbd"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_8e384b8c1d4ec1af1321fb34b0ea]]\n\nROOT CELL (CONTEXT ONLY): Pump fails to operate.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_d782b16520db78fd81cec2984fbd]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 2: Obstructed fluid hose or gun/valve; fluid hose ID is too small.\n\nFIELD 3: Clear*; use a hose with a larger ID.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": true,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_def982328ba204a649c9fd68",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_8e384b8c1d4ec1af1321fb34b0ea",
+          "root_anchor": "ev_8e384b8c1d4ec1af1321fb34b0ea",
+          "branch_anchor": "ev_2382b543d18daa6c8c2064f30c6a",
+          "allowed_source_anchors": [
+            "ev_8e384b8c1d4ec1af1321fb34b0ea",
+            "ev_2382b543d18daa6c8c2064f30c6a"
+          ],
+          "allowed_evidence_spans": {
+            "ev_8e384b8c1d4ec1af1321fb34b0ea": [
+              "Pump fails to operate."
+            ],
+            "ev_2382b543d18daa6c8c2064f30c6a": [
+              "Fluid dried on the displacement rod.",
+              "Clean; see Service on pages 12–19."
+            ]
+          },
+          "evidence_ids": [
+            "ev_8e384b8c1d4ec1af1321fb34b0ea",
+            "ev_2382b543d18daa6c8c2064f30c6a"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_8e384b8c1d4ec1af1321fb34b0ea]]\n\nROOT CELL (CONTEXT ONLY): Pump fails to operate.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_2382b543d18daa6c8c2064f30c6a]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 2: Fluid dried on the displacement rod.\n\nFIELD 3: Clean; see Service on pages 12–19.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": true,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_d528bcde0b39bd35c68e3e26",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_8e384b8c1d4ec1af1321fb34b0ea",
+          "root_anchor": "ev_8e384b8c1d4ec1af1321fb34b0ea",
+          "branch_anchor": "ev_16ff62dcfbf5ac36afb1a74f061e",
+          "allowed_source_anchors": [
+            "ev_8e384b8c1d4ec1af1321fb34b0ea",
+            "ev_16ff62dcfbf5ac36afb1a74f061e"
+          ],
+          "allowed_evidence_spans": {
+            "ev_8e384b8c1d4ec1af1321fb34b0ea": [
+              "Pump fails to operate."
+            ],
+            "ev_16ff62dcfbf5ac36afb1a74f061e": [
+              "Dirty or worn air motor parts.",
+              "Clean or repair; see separate air motor manual."
+            ]
+          },
+          "evidence_ids": [
+            "ev_8e384b8c1d4ec1af1321fb34b0ea",
+            "ev_16ff62dcfbf5ac36afb1a74f061e"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_8e384b8c1d4ec1af1321fb34b0ea]]\n\nROOT CELL (CONTEXT ONLY): Pump fails to operate.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_16ff62dcfbf5ac36afb1a74f061e]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 2: Dirty or worn air motor parts.\n\nFIELD 3: Clean or repair; see separate air motor manual.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": true,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_64175f75abefe7ee1283a3c4",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_1d5c5273159212bdaccc79828493",
+          "root_anchor": "ev_1d5c5273159212bdaccc79828493",
+          "branch_anchor": "ev_1d5c5273159212bdaccc79828493",
+          "allowed_source_anchors": [
+            "ev_1d5c5273159212bdaccc79828493"
+          ],
+          "allowed_evidence_spans": {
+            "ev_1d5c5273159212bdaccc79828493": [
+              "Pump operates, but output is low on both strokes.",
+              "Restricted line or inadequate air supply.",
+              "Clear*; see Technical Data on pages 24–27."
+            ]
+          },
+          "evidence_ids": [
+            "ev_1d5c5273159212bdaccc79828493"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_1d5c5273159212bdaccc79828493]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 1: Pump operates, but output is low on both strokes.\n\nFIELD 2: Restricted line or inadequate air supply.\n\nFIELD 3: Clear*; see Technical Data on pages 24–27.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_9ba7e1d480966949c54bb817",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_1d5c5273159212bdaccc79828493",
+          "root_anchor": "ev_1d5c5273159212bdaccc79828493",
+          "branch_anchor": "ev_a850a6c543fbd5095f4cb7bef6a2",
+          "allowed_source_anchors": [
+            "ev_1d5c5273159212bdaccc79828493",
+            "ev_a850a6c543fbd5095f4cb7bef6a2"
+          ],
+          "allowed_evidence_spans": {
+            "ev_1d5c5273159212bdaccc79828493": [
+              "Pump operates, but output is low on both strokes."
+            ],
+            "ev_a850a6c543fbd5095f4cb7bef6a2": [
+              "Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+              "Clear*; use a hose with a larger ID."
+            ]
+          },
+          "evidence_ids": [
+            "ev_1d5c5273159212bdaccc79828493",
+            "ev_a850a6c543fbd5095f4cb7bef6a2"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_1d5c5273159212bdaccc79828493]]\n\nROOT CELL (CONTEXT ONLY): Pump operates, but output is low on both strokes.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_a850a6c543fbd5095f4cb7bef6a2]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 2: Obstructed fluid hose or gun/valve; fluid hose ID is too small.\n\nFIELD 3: Clear*; use a hose with a larger ID.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": true,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_81a44950d54fdada6213dac5",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_1d5c5273159212bdaccc79828493",
+          "root_anchor": "ev_1d5c5273159212bdaccc79828493",
+          "branch_anchor": "ev_783d617b449907ab1c49251681a4",
+          "allowed_source_anchors": [
+            "ev_1d5c5273159212bdaccc79828493",
+            "ev_783d617b449907ab1c49251681a4"
+          ],
+          "allowed_evidence_spans": {
+            "ev_1d5c5273159212bdaccc79828493": [
+              "Pump operates, but output is low on both strokes."
+            ],
+            "ev_783d617b449907ab1c49251681a4": [
+              "Bleeder valve is open.",
+              "Close."
+            ]
+          },
+          "evidence_ids": [
+            "ev_1d5c5273159212bdaccc79828493",
+            "ev_783d617b449907ab1c49251681a4"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_1d5c5273159212bdaccc79828493]]\n\nROOT CELL (CONTEXT ONLY): Pump operates, but output is low on both strokes.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_783d617b449907ab1c49251681a4]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 2: Bleeder valve is open.\n\nFIELD 3: Close.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": true,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_06d253b8f0dccd5332600dd4",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_1d5c5273159212bdaccc79828493",
+          "root_anchor": "ev_1d5c5273159212bdaccc79828493",
+          "branch_anchor": "ev_164a73c55e660e9fbb83da674f78",
+          "allowed_source_anchors": [
+            "ev_1d5c5273159212bdaccc79828493",
+            "ev_164a73c55e660e9fbb83da674f78"
+          ],
+          "allowed_evidence_spans": {
+            "ev_1d5c5273159212bdaccc79828493": [
+              "Pump operates, but output is low on both strokes."
+            ],
+            "ev_164a73c55e660e9fbb83da674f78": [
+              "Air is leaking into the supply container.",
+              "Check wiper plate seal."
+            ]
+          },
+          "evidence_ids": [
+            "ev_1d5c5273159212bdaccc79828493",
+            "ev_164a73c55e660e9fbb83da674f78"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_1d5c5273159212bdaccc79828493]]\n\nROOT CELL (CONTEXT ONLY): Pump operates, but output is low on both strokes.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_164a73c55e660e9fbb83da674f78]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 2: Air is leaking into the supply container.\n\nFIELD 3: Check wiper plate seal.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": true,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_a9d359e7bb81f014e716bcf7",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_1d5c5273159212bdaccc79828493",
+          "root_anchor": "ev_1d5c5273159212bdaccc79828493",
+          "branch_anchor": "ev_71e4ac6c039a85417bc44c28be0e",
+          "allowed_source_anchors": [
+            "ev_1d5c5273159212bdaccc79828493",
+            "ev_71e4ac6c039a85417bc44c28be0e"
+          ],
+          "allowed_evidence_spans": {
+            "ev_1d5c5273159212bdaccc79828493": [
+              "Pump operates, but output is low on both strokes."
+            ],
+            "ev_71e4ac6c039a85417bc44c28be0e": [
+              "Fluid is too heavy for pump priming.",
+              "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart."
+            ]
+          },
+          "evidence_ids": [
+            "ev_1d5c5273159212bdaccc79828493",
+            "ev_71e4ac6c039a85417bc44c28be0e"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_1d5c5273159212bdaccc79828493]]\n\nROOT CELL (CONTEXT ONLY): Pump operates, but output is low on both strokes.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_71e4ac6c039a85417bc44c28be0e]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 2: Fluid is too heavy for pump priming.\n\nFIELD 3: Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": true,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_d9fd3d22bb0d264990cd9a1f",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_1d5c5273159212bdaccc79828493",
+          "root_anchor": "ev_1d5c5273159212bdaccc79828493",
+          "branch_anchor": "ev_47102c3d57d7fa0f08a304ab96b8",
+          "allowed_source_anchors": [
+            "ev_1d5c5273159212bdaccc79828493",
+            "ev_47102c3d57d7fa0f08a304ab96b8"
+          ],
+          "allowed_evidence_spans": {
+            "ev_1d5c5273159212bdaccc79828493": [
+              "Pump operates, but output is low on both strokes."
+            ],
+            "ev_47102c3d57d7fa0f08a304ab96b8": [
+              "Worn packings in displacement pump.",
+              "Replace packings."
+            ]
+          },
+          "evidence_ids": [
+            "ev_1d5c5273159212bdaccc79828493",
+            "ev_47102c3d57d7fa0f08a304ab96b8"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_1d5c5273159212bdaccc79828493]]\n\nROOT CELL (CONTEXT ONLY): Pump operates, but output is low on both strokes.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_47102c3d57d7fa0f08a304ab96b8]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 2: Worn packings in displacement pump.\n\nFIELD 3: Replace packings.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": true,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_ef74ff3841eab9434e1d45b1",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_1a4df97f578de2921f018ad5e7e8",
+          "root_anchor": "ev_1a4df97f578de2921f018ad5e7e8",
+          "branch_anchor": "ev_1a4df97f578de2921f018ad5e7e8",
+          "allowed_source_anchors": [
+            "ev_1a4df97f578de2921f018ad5e7e8"
+          ],
+          "allowed_evidence_spans": {
+            "ev_1a4df97f578de2921f018ad5e7e8": [
+              "Pump operates, but output is low on down- stroke.",
+              "Fluid too heavy for pump priming.",
+              "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart."
+            ]
+          },
+          "evidence_ids": [
+            "ev_1a4df97f578de2921f018ad5e7e8"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_1a4df97f578de2921f018ad5e7e8]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 1: Pump operates, but output is low on down- stroke.\n\nFIELD 2: Fluid too heavy for pump priming.\n\nFIELD 3: Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_a9991e6a18d177aa1c974a90",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_1a4df97f578de2921f018ad5e7e8",
+          "root_anchor": "ev_1a4df97f578de2921f018ad5e7e8",
+          "branch_anchor": "ev_0851738f91f2126374cb23a13df1",
+          "allowed_source_anchors": [
+            "ev_1a4df97f578de2921f018ad5e7e8",
+            "ev_0851738f91f2126374cb23a13df1"
+          ],
+          "allowed_evidence_spans": {
+            "ev_1a4df97f578de2921f018ad5e7e8": [
+              "Pump operates, but output is low on down- stroke."
+            ],
+            "ev_0851738f91f2126374cb23a13df1": [
+              "Held open or worn intake valve or seals.",
+              "Clear valve; replace seals."
+            ]
+          },
+          "evidence_ids": [
+            "ev_1a4df97f578de2921f018ad5e7e8",
+            "ev_0851738f91f2126374cb23a13df1"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_1a4df97f578de2921f018ad5e7e8]]\n\nROOT CELL (CONTEXT ONLY): Pump operates, but output is low on down- stroke.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_0851738f91f2126374cb23a13df1]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 2: Held open or worn intake valve or seals.\n\nFIELD 3: Clear valve; replace seals.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": true,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_cf08a32f936646ace4e6d572",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_d4ca70f05e01a823e312298557eb",
+          "root_anchor": "ev_d4ca70f05e01a823e312298557eb",
+          "branch_anchor": "ev_d4ca70f05e01a823e312298557eb",
+          "allowed_source_anchors": [
+            "ev_d4ca70f05e01a823e312298557eb"
+          ],
+          "allowed_evidence_spans": {
+            "ev_d4ca70f05e01a823e312298557eb": [
+              "Pump operates, but output is low on up- stroke.",
+              "Held open or worn piston valve or seals.",
+              "Clear valve; replace seals."
+            ]
+          },
+          "evidence_ids": [
+            "ev_d4ca70f05e01a823e312298557eb"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_d4ca70f05e01a823e312298557eb]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 1: Pump operates, but output is low on up- stroke.\n\nFIELD 2: Held open or worn piston valve or seals.\n\nFIELD 3: Clear valve; replace seals.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_825d77d97fd0787abd8b6990",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_9e73d4e6e4d16948c65e3fcc61cb",
+          "root_anchor": "ev_9e73d4e6e4d16948c65e3fcc61cb",
+          "branch_anchor": "ev_9e73d4e6e4d16948c65e3fcc61cb",
+          "allowed_source_anchors": [
+            "ev_9e73d4e6e4d16948c65e3fcc61cb"
+          ],
+          "allowed_evidence_spans": {
+            "ev_9e73d4e6e4d16948c65e3fcc61cb": [
+              "Erratic or accelerated pump speed.",
+              "Exhausted fluid supply.",
+              "Refill and prime."
+            ]
+          },
+          "evidence_ids": [
+            "ev_9e73d4e6e4d16948c65e3fcc61cb"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_9e73d4e6e4d16948c65e3fcc61cb]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 1: Erratic or accelerated pump speed.\n\nFIELD 2: Exhausted fluid supply.\n\nFIELD 3: Refill and prime.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": false,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_5a7888ca44442a13c7e790b3",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_9e73d4e6e4d16948c65e3fcc61cb",
+          "root_anchor": "ev_9e73d4e6e4d16948c65e3fcc61cb",
+          "branch_anchor": "ev_5cfc277910d334e4364991e6ad83",
+          "allowed_source_anchors": [
+            "ev_9e73d4e6e4d16948c65e3fcc61cb",
+            "ev_5cfc277910d334e4364991e6ad83"
+          ],
+          "allowed_evidence_spans": {
+            "ev_9e73d4e6e4d16948c65e3fcc61cb": [
+              "Erratic or accelerated pump speed."
+            ],
+            "ev_5cfc277910d334e4364991e6ad83": [
+              "Fluid is too heavy for pump priming.",
+              "Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart."
+            ]
+          },
+          "evidence_ids": [
+            "ev_9e73d4e6e4d16948c65e3fcc61cb",
+            "ev_5cfc277910d334e4364991e6ad83"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_9e73d4e6e4d16948c65e3fcc61cb]]\n\nROOT CELL (CONTEXT ONLY): Erratic or accelerated pump speed.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_5cfc277910d334e4364991e6ad83]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 2: Fluid is too heavy for pump priming.\n\nFIELD 3: Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": true,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_6cc925c276817fd7731eef82",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_9e73d4e6e4d16948c65e3fcc61cb",
+          "root_anchor": "ev_9e73d4e6e4d16948c65e3fcc61cb",
+          "branch_anchor": "ev_10829e2a0c33c5f2c16dc07c72f5",
+          "allowed_source_anchors": [
+            "ev_9e73d4e6e4d16948c65e3fcc61cb",
+            "ev_10829e2a0c33c5f2c16dc07c72f5"
+          ],
+          "allowed_evidence_spans": {
+            "ev_9e73d4e6e4d16948c65e3fcc61cb": [
+              "Erratic or accelerated pump speed."
+            ],
+            "ev_10829e2a0c33c5f2c16dc07c72f5": [
+              "Held open or worn piston valve or seals.",
+              "Clear valve; replace seals."
+            ]
+          },
+          "evidence_ids": [
+            "ev_9e73d4e6e4d16948c65e3fcc61cb",
+            "ev_10829e2a0c33c5f2c16dc07c72f5"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_9e73d4e6e4d16948c65e3fcc61cb]]\n\nROOT CELL (CONTEXT ONLY): Erratic or accelerated pump speed.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_10829e2a0c33c5f2c16dc07c72f5]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 2: Held open or worn piston valve or seals.\n\nFIELD 3: Clear valve; replace seals.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": true,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_6ce03114986c30d840f217b6",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_9e73d4e6e4d16948c65e3fcc61cb",
+          "root_anchor": "ev_9e73d4e6e4d16948c65e3fcc61cb",
+          "branch_anchor": "ev_05b81a14e92f1db7d5882a38f73a",
+          "allowed_source_anchors": [
+            "ev_9e73d4e6e4d16948c65e3fcc61cb",
+            "ev_05b81a14e92f1db7d5882a38f73a"
+          ],
+          "allowed_evidence_spans": {
+            "ev_9e73d4e6e4d16948c65e3fcc61cb": [
+              "Erratic or accelerated pump speed."
+            ],
+            "ev_05b81a14e92f1db7d5882a38f73a": [
+              "Held open or worn priming piston.",
+              "Clear; service."
+            ]
+          },
+          "evidence_ids": [
+            "ev_9e73d4e6e4d16948c65e3fcc61cb",
+            "ev_05b81a14e92f1db7d5882a38f73a"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_9e73d4e6e4d16948c65e3fcc61cb]]\n\nROOT CELL (CONTEXT ONLY): Erratic or accelerated pump speed.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_05b81a14e92f1db7d5882a38f73a]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 2: Held open or worn priming piston.\n\nFIELD 3: Clear; service.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": true,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        },
+        {
+          "window_id": "diagwin_8a3b41c5b96c57e25f8fd312",
+          "window_kind": "table_row",
+          "source_id": "src_kJY_lUIGwf_staC8ZAWLGw",
+          "record_anchor": "ev_9e73d4e6e4d16948c65e3fcc61cb",
+          "root_anchor": "ev_9e73d4e6e4d16948c65e3fcc61cb",
+          "branch_anchor": "ev_e7c396ecc114ef45c832eb8c68d7",
+          "allowed_source_anchors": [
+            "ev_9e73d4e6e4d16948c65e3fcc61cb",
+            "ev_e7c396ecc114ef45c832eb8c68d7"
+          ],
+          "allowed_evidence_spans": {
+            "ev_9e73d4e6e4d16948c65e3fcc61cb": [
+              "Erratic or accelerated pump speed."
+            ],
+            "ev_e7c396ecc114ef45c832eb8c68d7": [
+              "Worn packings in displacement pump.",
+              "Replace packings."
+            ]
+          },
+          "evidence_ids": [
+            "ev_9e73d4e6e4d16948c65e3fcc61cb",
+            "ev_e7c396ecc114ef45c832eb8c68d7"
+          ],
+          "page_numbers": [
+            11
+          ],
+          "text_with_pages": "TABLE COLUMNS (CONTEXT ONLY): PROBLEM | CAUSE | SOLUTION\n\nSTRUCTURAL INVENTORY (SYSTEM OWNED): branch 1/1; status=atomic\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_9e73d4e6e4d16948c65e3fcc61cb]]\n\nROOT CELL (CONTEXT ONLY): Erratic or accelerated pump speed.\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: ev_e7c396ecc114ef45c832eb8c68d7]]\n\nCURRENT ATOMIC RECORD (each field is an exact source span):\n\nFIELD 2: Worn packings in displacement pump.\n\nFIELD 3: Replace packings.",
+          "table_key": "src_kJY_lUIGwf_staC8ZAWLGw:table:4",
+          "inherited_root": true,
+          "branch_ordinal": 1,
+          "branch_count": 1,
+          "structure_status": "atomic"
+        }
+      ]
+    }
+  },
+  "passed": true
+}

@@ -11,6 +11,9 @@ not work that is still pending.
   deterministico, risultati dei CSV reali, regressioni e prossimi casi.
 - [G3 Engine Hardening Handoff](G3_ENGINE_HARDENING_HANDOFF.md) — stato del
   gate umano, limiti dichiarati e sequenza CSV→PDF senza approvazioni implicite.
+- [PDF G3 Second Hardening](PDF_G3_SECOND_HARDENING.md) — baseline PDF
+  diagnostica v11 corrente, risultati reali sui tre manuali, riproducibilità,
+  limiti di generalizzazione e protocollo per il prossimo holdout blind.
 - [Normative Specification Package](specs/README.md) — decisions, data
   contracts, codebase implications, and acceptance criteria.
 - [UX Specification](specs/UX_SPECIFICATION.md) — unified multi-format
@@ -37,6 +40,8 @@ fixtures. Keep them next to any corresponding frozen expected output:
 
 ## Historical records
 
+- [E-554 Luna Validation Handoff](E554_LUNA_VALIDATION_HANDOFF.md) — procedura
+  storica per il precedente singolo rerun; superseded dalla campagna v11.
 - [MVP Specification 0.2 Draft](archive/SPECIFICHE_MVP_0.2_DRAFT.md) —
   superseded and non-normative.
 - [Stabilization Plan](archive/STABILIZATION_PLAN.md) — completed pre-refactor plan;

@@ -128,6 +128,15 @@ class CorrectiveActionCandidate(BaseModel):
     resolution_link_evidence: list[DiagnosticEvidenceSpan]
 
 
+class DiagnosticInspectionStepCandidate(BaseModel):
+    """A diagnostic check that is useful but does not itself restore operation."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    instruction_text: str = Field(min_length=1)
+    claim_evidence: list[DiagnosticEvidenceSpan] = Field(min_length=1)
+
+
 class AffectedComponentCandidate(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -145,13 +154,36 @@ class DiagnosticBundleCandidate(BaseModel):
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
+    # Required on the provider wire schema.  Production overwrites both values
+    # with the system-owned record window after parsing, so they are lineage
+    # constraints rather than model assertions.
+    record_window_id: str
+    allowed_source_anchors: list[str]
     record_anchor: str = Field(min_length=1)
     branch_anchor: str = Field(min_length=1)
     indicators: list[DiagnosticIndicatorCandidate]
     failure: FailureModeCandidate | None
     actions: list[CorrectiveActionCandidate]
+    inspection_steps: list[DiagnosticInspectionStepCandidate]
     affected_component: AffectedComponentCandidate | None
     resolution_status: ResolutionStatus
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_pre_window_fixtures(cls, value: Any) -> Any:
+        """Keep immutable pre-hardening fixtures readable.
+
+        No defaults are declared on the fields themselves: OpenAI strict
+        Structured Outputs therefore still sees every property as required.
+        """
+
+        if isinstance(value, dict):
+            normalized = dict(value)
+            normalized.setdefault("record_window_id", "")
+            normalized.setdefault("allowed_source_anchors", [])
+            normalized.setdefault("inspection_steps", [])
+            return normalized
+        return value
 
     @model_validator(mode="after")
     def require_indicator_except_for_explicit_exclusion(self) -> DiagnosticBundleCandidate:
@@ -161,6 +193,7 @@ class DiagnosticBundleCandidate(BaseModel):
             self.indicators
             or self.failure is not None
             or self.actions
+            or self.inspection_steps
             or self.affected_component is not None
         ):
             raise ValueError("not_diagnostic candidates cannot carry diagnostic claims")
@@ -241,6 +274,13 @@ class ValidatedCorrectiveAction(BaseModel):
     resolution_link_evidence: list[ValidatedDiagnosticEvidenceSpan] = Field(default_factory=list)
 
 
+class ValidatedDiagnosticInspectionStep(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    instruction_text: str = Field(min_length=1)
+    claim_evidence: list[ValidatedDiagnosticEvidenceSpan] = Field(min_length=1)
+
+
 class ValidatedAffectedComponent(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -258,10 +298,12 @@ class ValidatedDiagnosticBundle(BaseModel):
 
     record_lineage_id: str = Field(pattern=r"^drec_[a-f0-9]{64}$")
     branch_lineage_id: str = Field(pattern=r"^dbranch_[a-f0-9]{64}$")
+    record_window_id: str = ""
     record_anchor: str = Field(min_length=1)
     branch_anchor: str = Field(min_length=1)
     indicators: list[ValidatedDiagnosticIndicator] = Field(min_length=1)
     failure: ValidatedFailureMode | None = None
     actions: list[ValidatedCorrectiveAction] = Field(default_factory=list)
+    inspection_steps: list[ValidatedDiagnosticInspectionStep] = Field(default_factory=list)
     affected_component: ValidatedAffectedComponent | None = None
     resolution_status: ResolutionStatus

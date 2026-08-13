@@ -1,0 +1,114 @@
+{
+  "campaign_id": "pdf-g3-diagnostic-benchmark-20260812",
+  "status": "frozen_before_real_runs",
+  "authorized_budget_usd": 3.0,
+  "per_run_hard_ceiling_usd": 0.9,
+  "macro_gold_claim_recall_floor": 0.78,
+  "manuals": [
+    {
+      "manual_id": "eastman_e554",
+      "file_name": "01_eastman_e554_service_manual.pdf",
+      "sha256": "a7467316234f2d84550e7c267bf709fda55e1023055d9569dc27348f192641d0",
+      "page_count": 54,
+      "gold_scope": "representative_frozen_sample",
+      "gold_claim_recall_floor": 0.75,
+      "must_keep_pdf_pages": [37, 38, 39],
+      "asset": {
+        "name": "Eastman Eagle S3L",
+        "description": "Eastman Eagle S3L automated laser cutting system documented by service form E-554.",
+        "brand": "Eastman",
+        "model": "Eagle S3L",
+        "asset_type": "automated laser cutting system"
+      },
+      "expected_claims": [
+        {"claim_id":"E1","pages":[37],"symptom":"Machine stops in middle of cut and displays Machine Paused","failure_mode":"intermittent pause circuit, usually in the stop discs","corrective_action":"adjust the pause plunger activation pressure","expected_disposition":"publish"},
+        {"claim_id":"E2","pages":[37,38],"symptom":"Touch Screen buttons are out of alignment","failure_mode":"Touch screen calibration is required","corrective_action":"complete touch screen calibration and save and exit","expected_disposition":"publish"},
+        {"claim_id":"E3","pages":[38],"symptom":"Cutting Tool or Pen does not move down","failure_mode":"tool or layer is not mapped properly","corrective_action":"map the tool to the spindle or the layer to the tool","expected_disposition":"publish"},
+        {"claim_id":"E4","pages":[38],"symptom":"Laser Fume Extractor has reduced vacuum or no vacuum","failure_mode":"vacuum filters require replacement","corrective_action":"replace vacuum filters","expected_disposition":"review_or_publish","annotation_note":"The association is conveyed by the Problem/Troubleshooting layout rather than a standalone causal sentence."},
+        {"claim_id":"E5","pages":[39],"symptom":"Laser cutting path is too wide","failure_mode":"brass laser nozzle is damaged or bent","corrective_action":"replace the damaged nozzle","expected_disposition":"publish"},
+        {"claim_id":"E6","pages":[39],"symptom":"Loss of laser cutting power causing non-cut edges","failure_mode":"focusing lens is damaged or dirty","corrective_action":"clean or replace the focusing lens","expected_disposition":"review_or_publish"},
+        {"claim_id":"E7","pages":[39],"symptom":"Loss of laser cutting power causing non-cut edges","failure_mode":"beam deflecting mirror is damaged or dirty","corrective_action":"clean or replace the mirrors","expected_disposition":"review_or_publish"},
+        {"claim_id":"E8","pages":[39],"symptom":"Loss of laser cutting power causing non-cut edges","failure_mode":"laser nozzle contains damage or debris","corrective_action":"clean or replace the laser nozzle","expected_disposition":"review_or_publish"}
+      ],
+      "forbidden_pairings": [
+        {"symptom":"Touch Screen buttons are out of alignment","failure_mode":"dirty focusing lens"},
+        {"symptom":"Laser Fume Extractor has reduced vacuum or no vacuum","failure_mode":"intermittent pause circuit"},
+        {"symptom":"Laser cutting path is too wide","failure_mode":"touch screen calibration is required"}
+      ]
+    },
+    {
+      "manual_id": "danfoss_apf",
+      "file_name": "02_danfoss_active_power_filter_operating_guide.pdf",
+      "sha256": "33d76bc0bcad7def1cf95d82d31a0522589d02d900d3974abc753b8ce2c0ab34",
+      "page_count": 66,
+      "gold_scope": "exhaustive_troubleshooting_table",
+      "gold_claim_recall_floor": 0.75,
+      "must_keep_pdf_pages": [64],
+      "asset": {
+        "name": "Danfoss Active Power Filter",
+        "description": "Danfoss Active Power Filter documented by operating guide 130R1375.",
+        "brand": "Danfoss",
+        "model": "Active Power Filter",
+        "asset_type": "active power filter"
+      },
+      "expected_claims": [
+        {"claim_id":"D1","pages":[64],"error_code":"1","symptom":"SYS 485 comm loss","failure_mode":"communication wire is not well connected","expected_gap":"inspection_only","inspection_step":"check if the communication wire is firmly connected"},
+        {"claim_id":"D2","pages":[64],"error_code":"1","symptom":"SYS 485 comm loss","failure_mode":"Active Power Filter modules have repeated IDs","expected_gap":"inspection_only","inspection_step":"check the DIP switches of the individual modules"},
+        {"claim_id":"D3","pages":[64],"error_code":"2","symptom":"Fuse blowout","failure_mode":"input fuse is broken","corrective_action":"contact service personnel","expected_disposition":"publish"},
+        {"claim_id":"D4","pages":[64],"error_code":"3","symptom":"Ambient OTP","failure_mode":"air vents are blocked","corrective_action":"contact service personnel","expected_disposition":"publish"},
+        {"claim_id":"D5","pages":[64],"error_code":"3","symptom":"Ambient OTP","failure_mode":"fans do not work","corrective_action":"contact service personnel","expected_disposition":"publish"},
+        {"claim_id":"D6","pages":[64],"error_code":"4","symptom":"BUS OVP/UVP","failure_mode":"BUS capacitor failure","corrective_action":"contact service personnel","expected_disposition":"publish"},
+        {"claim_id":"D7","pages":[64],"error_code":"5","symptom":"Fan Fail","failure_mode":"fan failure","corrective_action":"contact service personnel","expected_disposition":"publish"},
+        {"claim_id":"D8","pages":[64],"error_code":"6","symptom":"No current compensation or bad current compensation","failure_mode":"CT is not well connected","expected_gap":"inspection_only","inspection_step":"check if the CT wiring is correct"}
+      ],
+      "forbidden_pairings": [
+        {"symptom":"SYS 485 comm loss","failure_mode":"input fuse is broken"},
+        {"symptom":"Fuse blowout","failure_mode":"CT is not well connected"},
+        {"symptom":"Ambient OTP","failure_mode":"BUS capacitor failure"},
+        {"symptom":"No current compensation or bad current compensation","failure_mode":"fan failure"}
+      ]
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "file_name": "03_graco_check_mate_200_pumps_manual.pdf",
+      "sha256": "db64c770deeac9541bd17e310dc6c18a8c10ced8172278796ea53b6947127d37",
+      "page_count": 30,
+      "gold_scope": "exhaustive_troubleshooting_table",
+      "gold_claim_recall_floor": 0.8333,
+      "must_keep_pdf_pages": [11],
+      "asset": {
+        "name": "Graco Check-Mate 200 Pump",
+        "description": "Graco stainless steel Check-Mate 200 displacement pump documented by manual 308200D.",
+        "brand": "Graco",
+        "model": "Check-Mate 200",
+        "asset_type": "industrial displacement pump"
+      },
+      "expected_claims": [
+        {"claim_id":"G1","pages":[11],"symptom":"Pump fails to operate","failure_mode":"restricted line or inadequate air supply","corrective_action":"clear the restriction","expected_disposition":"publish"},
+        {"claim_id":"G2","pages":[11],"symptom":"Pump fails to operate","failure_mode":"obstructed fluid hose or gun valve or fluid hose ID is too small","corrective_action":"clear the obstruction and use a hose with a larger ID","expected_disposition":"publish"},
+        {"claim_id":"G3","pages":[11],"symptom":"Pump fails to operate","failure_mode":"fluid dried on the displacement rod","corrective_action":"clean the displacement rod","expected_disposition":"publish"},
+        {"claim_id":"G4","pages":[11],"symptom":"Pump fails to operate","failure_mode":"dirty or worn air motor parts","corrective_action":"clean or repair the air motor parts","expected_disposition":"publish"},
+        {"claim_id":"G5","pages":[11],"symptom":"Pump operates but output is low on both strokes","failure_mode":"restricted line or inadequate air supply","corrective_action":"clear the restriction","expected_disposition":"publish"},
+        {"claim_id":"G6","pages":[11],"symptom":"Pump operates but output is low on both strokes","failure_mode":"obstructed fluid hose or gun valve or fluid hose ID is too small","corrective_action":"clear the obstruction and use a hose with a larger ID","expected_disposition":"publish"},
+        {"claim_id":"G7","pages":[11],"symptom":"Pump operates but output is low on both strokes","failure_mode":"bleeder valve is open","corrective_action":"close the bleeder valve","expected_disposition":"publish"},
+        {"claim_id":"G8","pages":[11],"symptom":"Pump operates but output is low on both strokes","failure_mode":"air is leaking into the supply container","expected_gap":"inspection_only","inspection_step":"check wiper plate seal"},
+        {"claim_id":"G9","pages":[11],"symptom":"Pump operates but output is low on both strokes","failure_mode":"fluid is too heavy for pump priming","corrective_action":"use the bleeder valve and a wiper plate with ram or pneumatic elevator cart","expected_disposition":"publish"},
+        {"claim_id":"G10","pages":[11],"symptom":"Pump operates but output is low on both strokes","failure_mode":"worn packings in displacement pump","corrective_action":"replace packings","expected_disposition":"publish"},
+        {"claim_id":"G11","pages":[11],"symptom":"Pump operates but output is low on down-stroke","failure_mode":"fluid is too heavy for pump priming","corrective_action":"use the bleeder valve and a wiper plate with ram or pneumatic elevator cart","expected_disposition":"publish"},
+        {"claim_id":"G12","pages":[11],"symptom":"Pump operates but output is low on down-stroke","failure_mode":"held open or worn intake valve or seals","corrective_action":"clear valve and replace seals","expected_disposition":"publish"},
+        {"claim_id":"G13","pages":[11],"symptom":"Pump operates but output is low on up-stroke","failure_mode":"held open or worn piston valve or seals","corrective_action":"clear valve and replace seals","expected_disposition":"publish"},
+        {"claim_id":"G14","pages":[11],"symptom":"Erratic or accelerated pump speed","failure_mode":"exhausted fluid supply","corrective_action":"refill and prime","expected_disposition":"publish"},
+        {"claim_id":"G15","pages":[11],"symptom":"Erratic or accelerated pump speed","failure_mode":"fluid is too heavy for pump priming","corrective_action":"use the bleeder valve and a wiper plate with ram or pneumatic elevator cart","expected_disposition":"publish"},
+        {"claim_id":"G16","pages":[11],"symptom":"Erratic or accelerated pump speed","failure_mode":"held open or worn piston valve or seals","corrective_action":"clear valve and replace seals","expected_disposition":"publish"},
+        {"claim_id":"G17","pages":[11],"symptom":"Erratic or accelerated pump speed","failure_mode":"held open or worn priming piston","corrective_action":"clear and service the priming piston","expected_disposition":"publish"},
+        {"claim_id":"G18","pages":[11],"symptom":"Erratic or accelerated pump speed","failure_mode":"worn packings in displacement pump","corrective_action":"replace packings","expected_disposition":"publish"}
+      ],
+      "forbidden_pairings": [
+        {"symptom":"Pump operates but output is low on down-stroke","failure_mode":"held open or worn piston valve or seals"},
+        {"symptom":"Pump operates but output is low on up-stroke","failure_mode":"held open or worn intake valve or seals"},
+        {"symptom":"Pump fails to operate","failure_mode":"worn packings in displacement pump"},
+        {"symptom":"Erratic or accelerated pump speed","failure_mode":"bleeder valve is open"}
+      ]
+    }
+  ]
+}

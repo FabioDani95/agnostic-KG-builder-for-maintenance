@@ -27,6 +27,7 @@ def estimate_pdf_generation_envelope(
     resolution_max_targets: int,
     resolution_max_input_tokens: int,
     resolution_max_output_tokens: int,
+    chunk_max_output_tokens: list[int] | None = None,
     scoping_actual_cost_usd: float = 0.0,
     scoping_actual_call_count: int = 0,
     fixed_prompt_overhead_characters: int = 30000,
@@ -51,15 +52,23 @@ def estimate_pdf_generation_envelope(
         max(0, int(characters)) + max(0, int(fixed_prompt_overhead_characters))
         for characters in chunk_input_characters
     ]
-    draft_output_per_call = max(0, int(extraction_max_output_tokens))
+    draft_output_ceilings = (
+        [max(0, int(value)) for value in chunk_max_output_tokens]
+        if chunk_max_output_tokens is not None
+        else [max(0, int(extraction_max_output_tokens))] * chunk_count
+    )
+    if len(draft_output_ceilings) != chunk_count:
+        raise ValueError("chunk_max_output_tokens must match chunk_input_characters")
     draft_ceiling = sum(
         estimate_cost_usd(
             prompt_tokens=prompt_tokens,
-            completion_tokens=draft_output_per_call,
+            completion_tokens=output_tokens,
             cache_write_prompt_tokens=prompt_tokens,
             model_name=model_name,
         )
-        for prompt_tokens in draft_prompt_ceilings
+        for prompt_tokens, output_tokens in zip(
+            draft_prompt_ceilings, draft_output_ceilings,
+        )
     )
 
     coverage_ceiling = 0.0
@@ -138,14 +147,15 @@ def estimate_pdf_generation_envelope(
         (max(0, int(characters)) + max(0, int(fixed_prompt_overhead_characters))) // 4
         for characters in chunk_input_characters
     ]
-    draft_output_central_per_call = round(draft_output_per_call * 0.40)
     central = float(scoping_actual_cost_usd) + sum(
         estimate_cost_usd(
             prompt_tokens=prompt_tokens,
-            completion_tokens=draft_output_central_per_call,
+            completion_tokens=round(output_tokens * 0.40),
             model_name=model_name,
         )
-        for prompt_tokens in draft_prompt_central_per_call
+        for prompt_tokens, output_tokens in zip(
+            draft_prompt_central_per_call, draft_output_ceilings,
+        )
     )
     if coverage_enabled:
         central += estimate_cost_usd(
@@ -194,6 +204,7 @@ def estimate_pdf_generation_envelope(
             "long_context_pricing_applied_per_call": True,
             "ceiling_prompt_tokens_per_character": 1,
             "fixed_prompt_overhead_characters_per_chunk": fixed_prompt_overhead_characters,
+            "draft_max_output_tokens_by_chunk": draft_output_ceilings,
             "diagnostic_escalation_max_calls": escalation_calls,
             "diagnostic_escalation_max_input_characters": (
                 escalation_input_ceiling if escalation_calls else 0

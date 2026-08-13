@@ -134,6 +134,10 @@ class OntologyRelationInstance(BaseModel):
     to_type: str
     to_id: str
     evidence: list[OntologyEvidence] = Field(default_factory=list)
+    # Intermediate-only occurrence identity.  The PDF adapter uses it to keep
+    # semantically shared nodes from creating a Cartesian product of branches.
+    # It is provenance metadata, not an ontology relation property.
+    branch_lineage_id: str = ""
 
 
 class OntologyInstance(BaseModel):

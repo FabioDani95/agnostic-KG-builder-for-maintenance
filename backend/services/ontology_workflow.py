@@ -30,6 +30,25 @@ from backend.services.run_metrics import merge_usage_summaries, record_stage_met
 logger = logging.getLogger(__name__)
 
 _STATUS_RANK = {"blocked": 3, "needs_human_review": 2, "needs_human": 1, "ready": 0}
+_DIAGNOSTIC_RECOVERY_CODES = {
+    "ambiguous_source_anchor",
+    "check_action_conflict",
+    "declared_ambiguous",
+    "diagnostic_compiler_error",
+    "lineage_anchor_outside_bundle",
+    "missing_actions",
+    "missing_failure",
+    "missing_indicator_failure_evidence",
+    "missing_resolution_evidence",
+    "provider_refusal_or_missing_parse",
+    "quote_not_in_anchored_evidence",
+    "record_window_missing_disposition",
+    "resolved_anchor_outside_record_window",
+    "source_anchor_outside_record_window",
+    "source_page_mismatch",
+    "structured_response_error",
+    "unknown_source_anchor",
+}
 
 
 def _canonical_report_key(value: object) -> str:
@@ -56,8 +75,14 @@ def _diagnostic_escalation_reason(report: dict | None) -> str | None:
         return "structured_parse_failed"
     if int(report.get("candidate_count", 0) or 0) == 0:
         return "zero_diagnostic_candidates"
+    recovery_codes = {
+        str(code) for code, count in (report.get("drop_reasons") or {}).items()
+        if int(count or 0) > 0
+    }
     if int(report.get("unresolved_count", 0) or 0) > 0:
-        return "invalid_or_ambiguous_candidates"
+        if recovery_codes & _DIAGNOSTIC_RECOVERY_CODES:
+            return "invalid_or_ambiguous_candidates"
+        return None
     if int(report.get("publish_count", 0) or 0) == 0:
         return "zero_publishable_candidates"
     return "contract_recovery_recommended"
@@ -84,12 +109,22 @@ def _diagnostic_escalation_priority(report: dict | None) -> int:
     return 50
 
 
-def _diagnostic_report_score(report: dict | None) -> tuple[int, int, int, int]:
+def _diagnostic_report_score(report: dict | None) -> tuple[int, int, int, int, int]:
     report = report or {}
+    dispositions = [
+        str(record.get("disposition") or "")
+        for record in (report.get("records") or [])
+        if isinstance(record, dict)
+    ]
+    # For selective recovery, a grounded publish is best, a traceable gap is
+    # safer than an unresolved review, and an exclusion never suppresses a
+    # prior diagnostic observation merely by having zero unresolved records.
+    disposition_rank = {"publish": 4, "gap": 3, "review": 2, "exclude": 1}
     return (
+        max((disposition_rank.get(value, 0) for value in dispositions), default=0),
         int(report.get("publish_count", 0) or 0),
-        -int(report.get("unresolved_count", 0) or 0),
         int(bool(report.get("parsed"))),
+        -int(report.get("unresolved_count", 0) or 0),
         int(report.get("candidate_count", 0) or 0),
     )
 
@@ -97,6 +132,16 @@ def _diagnostic_report_score(report: dict | None) -> tuple[int, int, int, int]:
 def _prefer_escalated_diagnostic_report(primary: dict, escalated: dict) -> bool:
     """Adopt Terra only when its compiled contract is strictly better."""
     return _diagnostic_report_score(escalated) > _diagnostic_report_score(primary)
+
+
+def _published_branch_ids(report: dict | None) -> set[str]:
+    return {
+        str(record.get("branch_lineage_id") or "").strip()
+        for record in ((report or {}).get("records") or [])
+        if isinstance(record, dict)
+        and str(record.get("disposition") or "") == "publish"
+        and str(record.get("branch_lineage_id") or "").strip()
+    }
 
 
 def _diagnostic_report_summary(report: dict | None) -> dict:
@@ -136,6 +181,17 @@ def _with_diagnostic_escalation_metadata(
         "primary": _diagnostic_report_summary(primary_report),
         "escalated": _diagnostic_report_summary(escalated_report) if escalated_report else {},
     }
+    # Full attempt payloads are immutable audit evidence.  The selected report
+    # controls publication, while rejected/recovered candidates remain
+    # inspectable rather than disappearing behind a digest.
+    report["attempts"] = [
+        {"role": "primary", "report": deepcopy(primary_report)},
+        *(
+            [{"role": "escalated", "report": deepcopy(escalated_report)}]
+            if escalated_report
+            else []
+        ),
+    ]
     return result.model_copy(update={"diagnostic_contract_report": report})
 
 
@@ -249,6 +305,71 @@ def _canonical_asset_identity(store: dict) -> dict[str, object]:
             filename=filename,
         )
     return {}
+
+
+def _diagnostic_record_windows(store: dict) -> list[dict]:
+    """Validate the minimal workflow view of pre-LLM record windows."""
+
+    rendered: list[dict] = []
+    for raw in store.get("diagnostic_record_windows", []) or []:
+        if not isinstance(raw, dict):
+            continue
+        window_id = str(raw.get("window_id") or "").strip()
+        record_anchor = str(raw.get("record_anchor") or "").strip()
+        text = str(raw.get("text_with_pages") or "").strip()
+        anchors = sorted({
+            str(value).strip()
+            for value in (raw.get("allowed_source_anchors") or [])
+            if str(value).strip()
+        })
+        pages = sorted({
+            int(value)
+            for value in (raw.get("page_numbers") or [])
+            if int(value) > 0
+        })
+        if not (window_id and record_anchor and text and anchors and pages):
+            continue
+        rendered.append({
+            **raw,
+            "window_id": window_id,
+            "record_anchor": record_anchor,
+            "allowed_source_anchors": anchors,
+            "page_numbers": pages,
+            "text_with_pages": text,
+        })
+    return sorted(rendered, key=lambda item: item["window_id"])
+
+
+def _render_diagnostic_windows(windows: list[dict]) -> str:
+    parts: list[str] = []
+    for window in windows:
+        metadata = {
+            "window_id": window["window_id"],
+            "record_anchor": window["record_anchor"],
+            "allowed_source_anchors": window["allowed_source_anchors"],
+            "page_numbers": window["page_numbers"],
+        }
+        parts.extend([
+            "=== RECORD_WINDOW " + window["window_id"] + " ===",
+            "SYSTEM_WINDOW_METADATA: "
+            + json.dumps(metadata, sort_keys=True, ensure_ascii=False),
+            window["text_with_pages"],
+        ])
+    return "\n\n".join(parts)
+
+
+def _diagnostic_output_token_limit(windows: list[dict], ontology_cfg: dict) -> int:
+    default = int(ontology_cfg.get("diagnostic_bundle_max_output_tokens", 8000))
+    if windows and all(
+        window.get("window_kind") == "table_row"
+        and window.get("structure_status") == "atomic"
+        for window in windows
+    ):
+        return min(
+            default,
+            int(ontology_cfg.get("diagnostic_atomic_table_max_output_tokens", 3000)),
+        )
+    return default
 
 
 def _merge_pipeline_results(
@@ -396,7 +517,12 @@ def _merge_pipeline_results(
             to_id = id_remap.get(
                 (relation.to_type, relation.to_id), relation.to_id,
             )
-            key = (relation.name, from_id, to_id)
+            key = (
+                relation.name,
+                from_id,
+                to_id,
+                str(getattr(relation, "branch_lineage_id", "") or ""),
+            )
             existing = merged_relations_by_key.get(key)
             if existing is None:
                 merged_relations_by_key[key] = OntologyRelationInstance(
@@ -406,6 +532,9 @@ def _merge_pipeline_results(
                     to_type=relation.to_type,
                     to_id=to_id,
                     evidence=list(relation.evidence or []),
+                    branch_lineage_id=str(
+                        getattr(relation, "branch_lineage_id", "") or ""
+                    ),
                 )
                 continue
             seen_evidence = {
@@ -447,14 +576,33 @@ def _merge_pipeline_results(
         return deduped
 
     all_semantic = _dedup_issues([issue for result in results for issue in result.semantic_issues])
-    typed_accounted_evidence = {
-        str(evidence_id)
-        for result in results
-        for record in ((result.diagnostic_contract_report or {}).get("records", []) or [])
-        if isinstance(record, dict)
-        for evidence_id in (record.get("evidence_ids") or [])
-        if str(evidence_id)
-    }
+    typed_accounted_evidence: set[str] = set()
+    for result in results:
+        report = dict(result.diagnostic_contract_report or {})
+        window_anchors = {
+            str(window.get("window_id") or ""): {
+                str(anchor)
+                for anchor in (window.get("allowed_source_anchors") or [])
+                if str(anchor)
+            }
+            for window in (report.get("record_window_inventory") or [])
+            if isinstance(window, dict) and str(window.get("window_id") or "")
+        }
+        for record in report.get("records", []) or []:
+            if not isinstance(record, dict):
+                continue
+            if str(record.get("disposition") or "") not in {
+                "publish", "gap", "review", "exclude",
+            }:
+                continue
+            typed_accounted_evidence.update(
+                str(evidence_id)
+                for evidence_id in (record.get("evidence_ids") or [])
+                if str(evidence_id)
+            )
+            typed_accounted_evidence.update(
+                window_anchors.get(str(record.get("record_window_id") or ""), set())
+            )
 
     def keep_schema_issue(result: OntologyPipelineResponse, issue) -> bool:
         if issue.code != "empty_draft_content":
@@ -1177,13 +1325,36 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
         diagnostic_pages = filtered_pages
         structural_pages = []
 
-    diagnostic_chunks = _split_pages_by_section(
-        diagnostic_pages,
-        sections,
-        max_chars,
-        max_pages_per_chunk,
-        int(ontology_cfg.get("diagnostic_chunk_overlap_pages", 1)),
-    )
+    record_windows = _diagnostic_record_windows(store)
+    pages_by_number = {int(page["page_number"]): page for page in filtered_pages}
+    if record_windows:
+        # One source-owned row/record per primary call.  This is intentional:
+        # it bounds output, makes failed recovery selective, and prevents one
+        # malformed row from erasing a dense troubleshooting table.
+        diagnostic_chunks = [
+            (
+                [
+                    pages_by_number[page]
+                    for page in window["page_numbers"]
+                    if page in pages_by_number
+                ],
+                [],
+                [window],
+            )
+            for window in record_windows
+        ]
+        diagnostic_chunks = [chunk for chunk in diagnostic_chunks if chunk[0]]
+    else:
+        diagnostic_chunks = [
+            (pages, context, [])
+            for pages, context in _split_pages_by_section(
+                diagnostic_pages,
+                sections,
+                max_chars,
+                max_pages_per_chunk,
+                int(ontology_cfg.get("diagnostic_chunk_overlap_pages", 1)),
+            )
+        ]
     structural_chunks = _split_pages_by_section(
         structural_pages,
         sections,
@@ -1192,9 +1363,10 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
     )
     diagnostic_role = "diagnostic" if has_role_partition else "legacy"
     page_chunks = [
-        (diagnostic_role, pages, context) for pages, context in diagnostic_chunks
+        (diagnostic_role, pages, context, windows)
+        for pages, context, windows in diagnostic_chunks
     ] + [
-        ("structural", pages, context) for pages, context in structural_chunks
+        ("structural", pages, context, []) for pages, context in structural_chunks
     ]
     cost_preflight: dict = {}
     cost_guard_cfg = get_pdf_generation_cost_guard_config()
@@ -1241,14 +1413,25 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
             ((store.get("run_metrics") or {}).get("stages") or {}).get("scoping") or {}
         )
         chunk_characters = []
-        for _role, chunk_pages, chunk_sections in page_chunks:
+        chunk_output_tokens = []
+        for _role, chunk_pages, chunk_sections, chunk_windows in page_chunks:
             header = _build_section_header(chunk_sections)
-            text = format_text_with_pages(chunk_pages)
+            text = (
+                _render_diagnostic_windows(chunk_windows)
+                if chunk_windows
+                else format_text_with_pages(chunk_pages)
+            )
             chunk_characters.append(len(text) + len(header))
+            chunk_output_tokens.append(
+                _diagnostic_output_token_limit(chunk_windows, ontology_cfg)
+                if _role == "diagnostic"
+                else int(ontology_cfg.get("extraction_max_output_tokens", 16000))
+            )
         cost_preflight = estimate_pdf_generation_envelope(
             model_name=req.model_name,
             chunk_input_characters=chunk_characters,
             extraction_max_output_tokens=int(ontology_cfg.get("extraction_max_output_tokens", 16000)),
+            chunk_max_output_tokens=chunk_output_tokens,
             coverage_enabled=(
                 not relation_first_run
                 and bool(coverage_cfg.get("enabled", True))
@@ -1312,18 +1495,22 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
     chunk_retry_base_seconds = max(0.0, float(ontology_cfg.get("chunk_retry_base_seconds", 2)))
     chunk_semaphore = asyncio.Semaphore(chunk_concurrency)
 
-    def _render_chunk_text(chunk_pages, chunk_sections) -> str:
+    def _render_chunk_text(chunk_pages, chunk_sections, chunk_windows) -> str:
+        if chunk_windows:
+            return _render_diagnostic_windows(chunk_windows)
         chunk_header = _build_section_header(chunk_sections)
         chunk_text = format_text_with_pages(chunk_pages)
         if chunk_header:
             chunk_text = chunk_header + "\n\n" + chunk_text
         return chunk_text
 
-    async def _process_chunk(index, extraction_role, chunk_pages, chunk_sections):
+    async def _process_chunk(
+        index, extraction_role, chunk_pages, chunk_sections, chunk_windows,
+    ):
         # Only describe the sections these pages actually belong to: listing the
         # whole manual's sections on an uncovered-pages chunk is prompt noise
         # that invites wrong section attributions.
-        chunk_text = _render_chunk_text(chunk_pages, chunk_sections)
+        chunk_text = _render_chunk_text(chunk_pages, chunk_sections, chunk_windows)
 
         page_numbers = [page["page_number"] for page in chunk_pages]
         logger.info(
@@ -1351,6 +1538,21 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                         bool(ontology_cfg.get("relation_first", False))
                         and extraction_role != "legacy"
                     ),
+                    diagnostic_call_options=(
+                        {
+                            "record_windows": chunk_windows,
+                            "max_output_tokens": _diagnostic_output_token_limit(
+                                chunk_windows, ontology_cfg
+                            ),
+                        }
+                        if extraction_role == "diagnostic" and chunk_windows
+                        else None
+                    ),
+                    diagnostic_evidence_units=(
+                        list(store.get("diagnostic_evidence_units") or [])
+                        if extraction_role == "diagnostic"
+                        else None
+                    ),
                     on_event=on_event,
                 ),
                 attempts=chunk_retry_attempts,
@@ -1363,8 +1565,10 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
         return result, metrics
 
     tasks = [
-        _process_chunk(index, extraction_role, chunk_pages, chunk_sections)
-        for index, (extraction_role, chunk_pages, chunk_sections) in enumerate(page_chunks, start=1)
+        _process_chunk(index, extraction_role, chunk_pages, chunk_sections, chunk_windows)
+        for index, (
+            extraction_role, chunk_pages, chunk_sections, chunk_windows,
+        ) in enumerate(page_chunks, start=1)
     ]
     gathered = await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -1385,6 +1589,7 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
         "eligible_chunks": 0,
         "attempted_chunks": 0,
         "selected_chunks": 0,
+        "composed_chunks": 0,
         "skipped_chunks": 0,
         "model": str(escalation_cfg.get("model") or "") if escalation_active else "",
         "reasoning_effort": (
@@ -1395,7 +1600,9 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
     }
     if escalation_active:
         escalation_candidates: list[tuple[int, int, int, int, str]] = []
-        for offset, (extraction_role, _chunk_pages, _chunk_sections) in enumerate(page_chunks):
+        for offset, (
+            extraction_role, _chunk_pages, _chunk_sections, _chunk_windows,
+        ) in enumerate(page_chunks):
             if extraction_role != "diagnostic":
                 continue
             primary_report = dict(chunk_results[offset].diagnostic_contract_report or {})
@@ -1413,7 +1620,7 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
         escalation_candidates.sort(key=lambda item: (-item[0], -item[1], -item[2], item[3]))
 
         for _priority, _unresolved, _candidates, offset, reason in escalation_candidates:
-            extraction_role, chunk_pages, chunk_sections = page_chunks[offset]
+            extraction_role, chunk_pages, chunk_sections, chunk_windows = page_chunks[offset]
             primary_result = chunk_results[offset]
             primary_report = dict(primary_result.diagnostic_contract_report or {})
             escalation_stats["eligible_chunks"] += 1
@@ -1430,7 +1637,9 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                 continue
 
             escalation_stats["attempted_chunks"] += 1
-            chunk_text = _render_chunk_text(chunk_pages, chunk_sections)
+            chunk_text = _render_chunk_text(
+                chunk_pages, chunk_sections, chunk_windows,
+            )
             try:
                 escalated_result, escalated_metrics = await asyncio.to_thread(
                     build_initial_ontology,
@@ -1460,7 +1669,11 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                         "max_output_tokens": int(
                             escalation_cfg.get("max_output_tokens", 4000) or 4000
                         ),
+                        "record_windows": chunk_windows,
                     },
+                    diagnostic_evidence_units=list(
+                        store.get("diagnostic_evidence_units") or []
+                    ),
                 )
             except Exception as exc:
                 logger.warning(
@@ -1486,13 +1699,32 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                 "extraction_role": "diagnostic",
             })
             escalated_report = dict(escalated_result.diagnostic_contract_report or {})
-            use_escalated = _prefer_escalated_diagnostic_report(
-                primary_report,
-                escalated_report,
+            primary_published = _published_branch_ids(primary_report)
+            escalated_published = _published_branch_ids(escalated_report)
+            published_union = primary_published | escalated_published
+            complementary_publication = (
+                len(published_union) > max(
+                    len(primary_published), len(escalated_published)
+                )
             )
-            selected_result = escalated_result if use_escalated else primary_result
-            selected_label = "escalated" if use_escalated else "primary"
-            if use_escalated:
+            if complementary_publication:
+                # Both attempts have already passed the same typed compiler and
+                # literal-evidence gate.  Preserve complementary branches as a
+                # verified union instead of replacing the entire Luna result.
+                selected_result = _merge_pipeline_results(
+                    [primary_result, escalated_result],
+                    asset_identity=asset_identity,
+                )
+                selected_label = "composed_union"
+                escalation_stats["composed_chunks"] += 1
+            else:
+                use_escalated = _prefer_escalated_diagnostic_report(
+                    primary_report,
+                    escalated_report,
+                )
+                selected_result = escalated_result if use_escalated else primary_result
+                selected_label = "escalated" if use_escalated else "primary"
+            if selected_label != "primary":
                 escalation_stats["selected_chunks"] += 1
             chunk_results[offset] = _with_diagnostic_escalation_metadata(
                 selected_result,

@@ -97,6 +97,7 @@ class PipelineState(TypedDict, total=False):
     extraction_role: str
     relation_first: bool
     diagnostic_call_options: dict[str, Any]
+    diagnostic_evidence_units: list[Any]
     schema: OntologySchemaDefinition
     schema_json: str
     candidates_block: str
@@ -175,6 +176,230 @@ def _diagnostic_input_inventory(text_with_pages: str) -> dict[str, Any]:
     }
 
 
+def _record_windows(call_options: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return a bounded, JSON-safe view of system-owned record windows."""
+
+    windows: list[dict[str, Any]] = []
+    for raw in call_options.get("record_windows", []) or []:
+        if not isinstance(raw, dict):
+            continue
+        window_id = str(raw.get("window_id") or raw.get("record_window_id") or "").strip()
+        record_anchor = str(raw.get("record_anchor") or "").strip()
+        branch_anchor = str(raw.get("branch_anchor") or "").strip()
+        anchors = sorted({
+            str(anchor).strip()
+            for anchor in (
+                raw.get("allowed_evidence_ids")
+                or raw.get("allowed_source_anchors")
+                or []
+            )
+            if str(anchor).strip()
+        })
+        if (
+            not window_id
+            or not record_anchor
+            or not branch_anchor
+            or record_anchor not in anchors
+            or branch_anchor not in anchors
+        ):
+            continue
+        windows.append({
+            "window_id": window_id,
+            "window_kind": str(raw.get("window_kind") or "").strip(),
+            "record_anchor": record_anchor,
+            "branch_anchor": branch_anchor,
+            "allowed_source_anchors": anchors,
+            "allowed_evidence_spans": {
+                str(anchor).strip(): [
+                    str(span).strip()
+                    for span in spans or []
+                    if str(span).strip()
+                ]
+                for anchor, spans in (raw.get("allowed_evidence_spans") or {}).items()
+                if str(anchor).strip() and isinstance(spans, list)
+            },
+            "branch_ordinal": int(raw.get("branch_ordinal") or 1),
+            "branch_count": int(raw.get("branch_count") or 1),
+            "structure_status": str(raw.get("structure_status") or "atomic"),
+            "edge_policy": str(
+                raw.get("edge_policy")
+                or (
+                    "table_atomic_endpoint_union"
+                    if str(raw.get("window_kind") or "") == "table_row"
+                    and str(raw.get("structure_status") or "atomic") == "atomic"
+                    else "prose_direct"
+                )
+            ),
+            "pages": sorted({
+                int(page)
+                for page in (raw.get("pages") or raw.get("page_numbers") or [])
+                if int(page) > 0
+            }),
+        })
+    return sorted(windows, key=lambda item: item["window_id"])
+
+
+def _candidate_claim_anchors(candidate: Any) -> set[str]:
+    anchors: set[str] = set()
+
+    def add(spans: Any) -> None:
+        for span in spans or []:
+            anchor = str(getattr(span, "source_anchor", "") or "").strip()
+            if anchor:
+                anchors.add(anchor)
+
+    for indicator in candidate.indicators:
+        add(indicator.claim_evidence)
+        add(indicator.failure_link_evidence)
+    if candidate.failure is not None:
+        add(candidate.failure.claim_evidence)
+    for action in candidate.actions:
+        add(action.claim_evidence)
+        add(action.resolution_link_evidence)
+    for step in candidate.inspection_steps:
+        add(step.claim_evidence)
+    if candidate.affected_component is not None:
+        add(candidate.affected_component.claim_evidence)
+        add(candidate.affected_component.affects_link_evidence)
+    return anchors
+
+
+def _dedupe_candidate_spans(spans: list[Any]) -> list[dict[str, Any]]:
+    rendered: dict[tuple[str, int, str], dict[str, Any]] = {}
+    for span in spans:
+        payload = span.model_dump(mode="json") if hasattr(span, "model_dump") else dict(span)
+        key = (
+            str(payload.get("source_anchor") or "").strip(),
+            int(payload.get("source_page") or 0),
+            str(payload.get("quote") or "").strip(),
+        )
+        if all(key):
+            rendered[key] = payload
+    return [rendered[key] for key in sorted(rendered)]
+
+
+def _complete_structural_edge_evidence(candidate: Any, window: dict[str, Any]) -> Any:
+    """Derive relation support from endpoints of a deterministic branch.
+
+    A recognized diagnostic table encodes its relations by column and row.
+    Provider-generated ellipses or re-joined row strings are not literal
+    evidence.  For structurally atomic rows the system can instead use the
+    exact endpoint claim spans as a distributed support set.  This rule is not
+    Layout-only prose branches are retained for traceable human review, never
+    silently upgraded to an autonomous causal assertion.
+    """
+
+    if (
+        window.get("edge_policy") not in {
+            "table_atomic_endpoint_union",
+            "prose_layout_endpoint_union",
+        }
+        or window.get("structure_status") != "atomic"
+        or candidate.failure is None
+        or candidate.resolution_status.value == "not_diagnostic"
+    ):
+        return candidate
+    payload = candidate.model_dump(mode="json")
+    failure_claims = list(payload["failure"]["claim_evidence"])
+    for indicator in payload["indicators"]:
+        indicator["failure_link_evidence"] = _dedupe_candidate_spans([
+            *indicator["claim_evidence"], *failure_claims,
+        ])
+    for action in payload["actions"]:
+        action["resolution_link_evidence"] = _dedupe_candidate_spans([
+            *failure_claims, *action["claim_evidence"],
+        ])
+    component = payload.get("affected_component")
+    if component is not None:
+        component["affects_link_evidence"] = _dedupe_candidate_spans([
+            *failure_claims, *component["claim_evidence"],
+        ])
+    if window.get("edge_policy") == "prose_layout_endpoint_union":
+        payload["resolution_status"] = "ambiguous"
+    return candidate.__class__.model_validate(payload)
+
+
+def _bind_candidates_to_record_windows(parsed: Any, windows: list[dict[str, Any]]) -> Any:
+    """Replace model lineage constraints with the immutable input inventory.
+
+    The model may echo a window identifier for routing, but it never controls
+    either the record root or the allowed evidence set.  Unknown/contaminated
+    records receive a deliberately empty system window and therefore fail the
+    compiler's source-window check closed.
+    """
+
+    if not windows:
+        return parsed
+    by_id = {window["window_id"]: window for window in windows}
+    rebound = []
+    for candidate in parsed.records:
+        referenced = _candidate_claim_anchors(candidate)
+        echoed = str(candidate.record_window_id or "").strip()
+        selected = by_id.get(echoed)
+        if selected is None:
+            matches = [
+                window
+                for window in windows
+                if referenced.issubset(set(window["allowed_source_anchors"]))
+            ]
+            selected = matches[0] if len(matches) == 1 else None
+        if selected is None:
+            # A non-empty id activates enforcement in the compiler; an empty
+            # allowed set then makes every model anchor explicitly out-of-window.
+            rebound.append(candidate.model_copy(update={
+                "record_window_id": "invalid_unbound_record_window",
+                "allowed_source_anchors": ["__no_source_anchor_allowed__"],
+            }))
+            continue
+        allowed = set(selected["allowed_source_anchors"])
+        record_anchor = selected["record_anchor"]
+        bound = candidate.model_copy(update={
+            "record_window_id": selected["window_id"],
+            "allowed_source_anchors": sorted(allowed),
+            "record_anchor": record_anchor,
+            "branch_anchor": selected["branch_anchor"],
+        })
+        rebound.append(_complete_structural_edge_evidence(bound, selected))
+    return parsed.model_copy(update={"records": rebound})
+
+
+def _synthetic_window_entries(
+    windows: list[dict[str, Any]],
+    *,
+    covered_window_ids: set[str],
+    code: str,
+    message: str,
+) -> list[dict[str, Any]]:
+    accounting_state = {
+        "record_window_missing_disposition": "record_not_observed",
+        "provider_refusal_or_missing_parse": "record_observed_parse_failure",
+        "structured_response_error": "record_observed_parse_failure",
+        "diagnostic_compiler_error": "extracted_not_compilable",
+        "structurally_ambiguous_pairing": "observed_structurally_incomplete",
+    }.get(code, "record_observed_unresolved")
+    entries: list[dict[str, Any]] = []
+    for window in windows:
+        if window["window_id"] in covered_window_ids:
+            continue
+        lineage = hashlib.sha256(window["window_id"].encode("utf-8")).hexdigest()
+        entries.append({
+            "record_lineage_id": f"drec_{lineage}",
+            "branch_lineage_id": f"dbranch_{lineage}",
+            "record_window_id": window["window_id"],
+            "record_anchor": window["record_anchor"],
+            "branch_anchor": window["branch_anchor"],
+            "evidence_ids": list(window["allowed_source_anchors"]),
+            "resolved_evidence_ids": [],
+            "candidate": None,
+            "disposition": "review",
+            "accounting_state": accounting_state,
+            "drop_reasons": [{"code": code, "path": "record_window", "message": message}],
+            "emitted_node_ids": [],
+            "emitted_relations": [],
+        })
+    return entries
+
+
 def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
     """Extract typed records, validate evidence, then compile ontology claims."""
     from backend.domain.diagnostic_bundles import DiagnosticChunkOutput
@@ -202,7 +427,73 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
     ).strip()
     escalation_reason = str(call_options.get("escalation_reason") or "").strip()
     call_role = "escalation" if escalation_reason else "primary"
+    windows = _record_windows(call_options)
     input_inventory = _diagnostic_input_inventory(state["text_with_pages"])
+    if windows:
+        input_inventory.update({
+            "input_window_ids": [window["window_id"] for window in windows],
+            "input_window_count": len(windows),
+            "candidate_window_ids": [window["window_id"] for window in windows],
+            "candidate_window_count": len(windows),
+            "record_window_inventory": windows,
+            "structural_edge_evidence_policy": "atomic_table_endpoint_union_v1",
+            "atomic_table_window_count": sum(
+                window.get("window_kind") == "table_row"
+                and window.get("structure_status") == "atomic"
+                for window in windows
+            ),
+            "candidate_input_anchors": sorted({
+                anchor
+                for window in windows
+                for anchor in window["allowed_source_anchors"]
+            }),
+        })
+    structurally_ambiguous = [
+        window
+        for window in windows
+        if window.get("structure_status") == "ambiguous_pairing"
+    ]
+    if windows and len(structurally_ambiguous) == len(windows):
+        # More model capacity cannot establish a pairing that the source table
+        # structure itself leaves ambiguous.  Account for the observed record
+        # without spending a call or manufacturing a Cartesian product.
+        entries = _synthetic_window_entries(
+            windows,
+            covered_window_ids=set(),
+            code="structurally_ambiguous_pairing",
+            message=(
+                "The physical row contains incompatible cause/remedy list "
+                "cardinalities; no branch pairing was inferred."
+            ),
+        )
+        report = {
+            **input_inventory,
+            "schema_version": "1.0",
+            "source_language": "",
+            "provider_model": "deterministic_structural_inventory",
+            "provider_reasoning_effort": "none",
+            "call_role": "structural_inventory",
+            "escalation_reason": "",
+            "provider_response_id": "",
+            "finish_reason": "stop",
+            "parsed": True,
+            "refusal": False,
+            "raw_sha256": "",
+            "records": entries,
+            "candidate_count": len(entries),
+            "publish_count": 0,
+            "unresolved_count": len(entries),
+            "disposition_counts": {"publish": 0, "gap": 0, "review": len(entries), "exclude": 0},
+            "drop_reasons": {"structurally_ambiguous_pairing": len(entries)},
+            "escalation_recommended": False,
+        }
+        return {
+            "ontology": _empty_instance(
+                state["schema"], state["source_type"], state["source_title"],
+            ),
+            "diagnostic_contract_report": report,
+            "llm_usage": list(state.get("llm_usage", [])),
+        }
     enforce_llm_limits(
         phase="Typed diagnostic bundle extraction",
         cfg=cfg,
@@ -235,11 +526,41 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
                 "escalation_reason": escalation_reason,
             })
             usage_entries.append(failed_usage)
+        elif isinstance(getattr(exc, "_kg_call_accounting", None), dict):
+            accounting = dict(exc._kg_call_accounting)
+            # Token usage is honestly unknown, but the durable fail-closed
+            # charge and provider attempt remain part of route accounting.
+            usage_entries.append({
+                "operation": operation,
+                "model": str(accounting.get("model") or model_name),
+                "pricing_model": str(accounting.get("model") or model_name),
+                "prompt": 0,
+                "completion": 0,
+                "total": 0,
+                "cached_prompt": 0,
+                "cache_write_prompt": 0,
+                "non_cached_prompt": 0,
+                "estimated_cost_usd": float(
+                    accounting.get("charged_cost_usd") or 0
+                ),
+                "reasoning_effort": state.get("reasoning_effort") or "default",
+                "call_role": call_role,
+                "escalation_reason": escalation_reason,
+                "call_id": str(accounting.get("call_id") or ""),
+                "accounting_status": str(accounting.get("status") or ""),
+                "usage_observed": False,
+            })
         error_text = str(exc).casefold()
         finish_reason = (
             "length"
             if "length limit" in error_text or "finish_reason='length'" in error_text
             else "error"
+        )
+        window_entries = _synthetic_window_entries(
+            windows,
+            covered_window_ids=set(),
+            code="structured_response_error",
+            message="The provider did not return a complete typed disposition for this record window.",
         )
         report = {
             **input_inventory,
@@ -253,11 +574,11 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
             "parsed": False,
             "refusal": False,
             "raw_sha256": "",
-            "records": [],
-            "candidate_count": 0,
+            "records": window_entries,
+            "candidate_count": len(window_entries),
             "publish_count": 0,
-            "unresolved_count": 1,
-            "drop_reasons": {"structured_response_error": 1},
+            "unresolved_count": max(1, len(window_entries)),
+            "drop_reasons": {"structured_response_error": max(1, len(window_entries))},
             "error_type": type(exc).__name__,
             "escalation_recommended": True,
         }
@@ -284,6 +605,12 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
     refusal = str(getattr(message, "refusal", "") or "").strip()
     finish_reason = str(getattr(choice, "finish_reason", "") or "")
     if parsed is None or refusal:
+        window_entries = _synthetic_window_entries(
+            windows,
+            covered_window_ids=set(),
+            code="provider_refusal_or_missing_parse",
+            message="The provider returned no auditable typed disposition for this record window.",
+        )
         report = {
             **input_inventory,
             "schema_version": "1.0",
@@ -297,11 +624,13 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
             "refusal": bool(refusal),
             "refusal_text": refusal[:500],
             "raw_sha256": hashlib.sha256(raw.encode("utf-8")).hexdigest() if raw else "",
-            "records": [],
-            "candidate_count": 0,
+            "records": window_entries,
+            "candidate_count": len(window_entries),
             "publish_count": 0,
-            "unresolved_count": 1,
-            "drop_reasons": {"provider_refusal_or_missing_parse": 1},
+            "unresolved_count": max(1, len(window_entries)),
+            "drop_reasons": {
+                "provider_refusal_or_missing_parse": max(1, len(window_entries))
+            },
             "escalation_recommended": not bool(refusal),
         }
         return {
@@ -313,13 +642,16 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
         }
 
     canonical_raw = raw or parsed.model_dump_json()
+    parsed = _bind_candidates_to_record_windows(parsed, windows)
     provider_model = getattr(response, "model", model_name) or model_name
     try:
         compilation = compile_diagnostic_bundles(
             parsed,
             source_type=state["source_type"],
             source_title=state["source_title"],
+            evidence_units=state.get("diagnostic_evidence_units", []),
             text_with_pages=state["text_with_pages"],
+            record_windows=windows,
             schema=state["schema"],
             language=parsed.source_language,
         )
@@ -336,6 +668,51 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
         # emit no claims, and expose a bounded Terra-recovery signal instead of
         # aborting the complete multi-chunk PDF run.
         candidate_count = len(parsed.records)
+        window_entries = _synthetic_window_entries(
+            windows,
+            covered_window_ids=set(),
+            code="diagnostic_compiler_error",
+            message=(
+                "A parsed typed candidate could not be compiled; the original "
+                "record window remains persisted for selective recovery."
+            ),
+        )
+        # Preserve the paid, typed payload even if a chunk-level invariant
+        # fails unexpectedly.  These entries are never publishable.
+        raw_candidate_entries = []
+        for position, candidate in enumerate(parsed.records):
+            window_id = str(candidate.record_window_id or "").strip()
+            lineage = hashlib.sha256(
+                f"{window_id}:{position}".encode("utf-8")
+            ).hexdigest()
+            raw_candidate_entries.append({
+                "record_lineage_id": f"drec_{lineage}",
+                "branch_lineage_id": f"dbranch_{lineage}",
+                "record_window_id": window_id,
+                "record_anchor": candidate.record_anchor,
+                "branch_anchor": candidate.branch_anchor,
+                "evidence_ids": sorted(_candidate_claim_anchors(candidate)),
+                "resolved_evidence_ids": [],
+                "candidate": candidate.model_dump(mode="json"),
+                "disposition": "review",
+                "accounting_state": "extracted_not_compilable",
+                "drop_reasons": [{
+                    "code": "diagnostic_compiler_error",
+                    "path": "compiler",
+                    "message": "The typed candidate failed deterministic compilation.",
+                }],
+                "emitted_node_ids": [],
+                "emitted_relations": [],
+            })
+        covered = {
+            str(entry.get("record_window_id") or "") for entry in raw_candidate_entries
+        }
+        window_entries = [*raw_candidate_entries, *_synthetic_window_entries(
+            windows,
+            covered_window_ids=covered,
+            code="diagnostic_compiler_error",
+            message="No typed candidate survived compilation for this record window.",
+        )]
         logger.warning(
             "[ontology] Typed diagnostic compiler failed closed: %s",
             exc,
@@ -353,10 +730,10 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
             "parsed": True,
             "refusal": False,
             "raw_sha256": hashlib.sha256(canonical_raw.encode("utf-8")).hexdigest(),
-            "records": [],
-            "candidate_count": candidate_count,
+            "records": window_entries,
+            "candidate_count": max(candidate_count, len(window_entries)),
             "publish_count": 0,
-            "unresolved_count": max(1, candidate_count),
+            "unresolved_count": max(1, len(window_entries), candidate_count),
             "drop_reasons": {
                 "diagnostic_compiler_error": max(1, candidate_count),
             },
@@ -372,11 +749,23 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
         }
 
     compilation_report = compilation.report.model_dump(mode="json")
-    entries = compilation_report.get("entries", [])
+    entries = list(compilation_report.get("entries", []))
+    covered_window_ids = {
+        str(entry.get("record_window_id") or "")
+        for entry in entries
+        if isinstance(entry, dict)
+    }
+    missing_window_entries = _synthetic_window_entries(
+        windows,
+        covered_window_ids=covered_window_ids,
+        code="record_window_missing_disposition",
+        message="The typed output omitted this candidate record window.",
+    )
+    entries.extend(missing_window_entries)
     publish_count = int(
         compilation_report.get("disposition_counts", {}).get("publish", 0) or 0
     )
-    unresolved_count = sum(
+    unresolved_count = len(missing_window_entries) + sum(
         int(compilation_report.get("disposition_counts", {}).get(key, 0) or 0)
         for key in ("gap", "review")
     )
@@ -394,14 +783,24 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
         "refusal": False,
         "raw_sha256": hashlib.sha256(canonical_raw.encode("utf-8")).hexdigest(),
         "records": entries,
-        "candidate_count": int(compilation_report.get("unique_candidates", 0) or 0),
+        "candidate_count": (
+            int(compilation_report.get("unique_candidates", 0) or 0)
+            + len(missing_window_entries)
+        ),
         "duplicate_candidate_count": int(
             compilation_report.get("duplicate_candidates", 0) or 0
         ),
         "publish_count": publish_count,
         "unresolved_count": unresolved_count,
         "disposition_counts": compilation_report.get("disposition_counts", {}),
-        "drop_reasons": compilation_report.get("dropped_items_by_reason", {}),
+        "drop_reasons": {
+            **compilation_report.get("dropped_items_by_reason", {}),
+            **(
+                {"record_window_missing_disposition": len(missing_window_entries)}
+                if missing_window_entries
+                else {}
+            ),
+        },
         "escalation_recommended": bool(
             finish_reason == "length"
             or unresolved_count
@@ -1047,6 +1446,7 @@ def build_initial_ontology(
     relation_first: bool = False,
     on_event=None,
     diagnostic_call_options: dict[str, Any] | None = None,
+    diagnostic_evidence_units: list[Any] | None = None,
 ) -> tuple[OntologyPipelineResponse, dict[str, Any]]:
     schema = load_ontology_schema()
     normalized_target_language = normalize_language_code(target_language)
@@ -1078,6 +1478,7 @@ def build_initial_ontology(
         "extraction_role": extraction_role,
         "relation_first": relation_first,
         "diagnostic_call_options": diagnostic_call_options or {},
+        "diagnostic_evidence_units": diagnostic_evidence_units or [],
         "schema": schema,
         "schema_json": dump_ontology_schema_json(),
         "candidates_block": candidates_block,

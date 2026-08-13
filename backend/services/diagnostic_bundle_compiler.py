@@ -22,6 +22,7 @@ from backend.domain.diagnostic_bundles import (
     ValidatedCorrectiveAction,
     ValidatedDiagnosticBundle,
     ValidatedDiagnosticEvidenceSpan,
+    ValidatedDiagnosticInspectionStep,
     ValidatedErrorCodeIndicator,
     ValidatedFailureMode,
     ValidatedSymptomIndicator,
@@ -77,10 +78,15 @@ class BundleCompilationEntry(BaseModel):
 
     record_lineage_id: str
     branch_lineage_id: str
+    record_window_id: str = ""
     record_anchor: str
     branch_anchor: str
     evidence_ids: list[str] = Field(default_factory=list)
+    resolved_evidence_ids: list[str] = Field(default_factory=list)
+    candidate: dict[str, Any]
     disposition: BundleDisposition
+    accounting_state: str = ""
+    compiler_recoveries: list[BundleDropReason] = Field(default_factory=list)
     drop_reasons: list[BundleDropReason] = Field(default_factory=list)
     emitted_node_ids: list[str] = Field(default_factory=list)
     emitted_relations: list[str] = Field(default_factory=list)
@@ -93,6 +99,7 @@ class DiagnosticBundleCompilationReport(BaseModel):
     unique_candidates: int = Field(ge=0)
     duplicate_candidates: int = Field(ge=0)
     disposition_counts: dict[str, int]
+    recovered_items_by_reason: dict[str, int] = Field(default_factory=dict)
     dropped_items_by_reason: dict[str, int]
     entries: list[BundleCompilationEntry]
 
@@ -128,6 +135,64 @@ class _EvidenceRecord:
     text: str
     locator: dict[str, Any]
     priority: int
+    ordinal: int
+
+
+@dataclass(frozen=True)
+class _EvidenceIndex:
+    """Canonical anchor lookup plus physical/rendered adjacency information."""
+
+    by_anchor: dict[str, tuple[_EvidenceRecord, ...]]
+    ordered: tuple[_EvidenceRecord, ...]
+
+    def get(self, anchor: str) -> tuple[_EvidenceRecord, ...] | None:
+        return self.by_anchor.get(anchor)
+
+    def __contains__(self, anchor: object) -> bool:
+        return anchor in self.by_anchor
+
+
+def _scoped_evidence_index(
+    index: _EvidenceIndex,
+    allowed_evidence_spans: Mapping[str, Sequence[str]],
+) -> _EvidenceIndex:
+    """Restrict canonical anchors to system-selected literal branch fragments.
+
+    A table row may contain several cause/remedy pairs under one EvidenceUnit.
+    Anchor-level filtering cannot prevent the compiler from accepting a hidden
+    sibling branch.  This derived index retains the canonical locator but makes
+    only exact fragments from the structural inventory resolvable.
+    """
+
+    scoped: list[_EvidenceRecord] = []
+    for anchor, fragments in sorted(allowed_evidence_spans.items()):
+        records = index.get(str(anchor).strip()) or ()
+        exact_fragments = _dedupe_display(fragments)
+        for record in records:
+            canonical = _display_text(record.text)
+            for fragment in exact_fragments:
+                if fragment and fragment in canonical:
+                    scoped.append(
+                        _EvidenceRecord(
+                            evidence_id=record.evidence_id,
+                            page=record.page,
+                            text=fragment,
+                            locator=record.locator,
+                            priority=record.priority,
+                            ordinal=record.ordinal,
+                        )
+                    )
+    by_anchor: dict[str, list[_EvidenceRecord]] = {}
+    for record in scoped:
+        by_anchor.setdefault(record.evidence_id, []).append(record)
+    return _EvidenceIndex(
+        by_anchor={anchor: tuple(records) for anchor, records in by_anchor.items()},
+        ordered=tuple(scoped),
+    )
+
+
+def _dedupe_display(values: Iterable[str]) -> list[str]:
+    return list(dict.fromkeys(_display_text(value) for value in values if _display_text(value)))
 
 
 def _display_text(value: str) -> str:
@@ -180,6 +245,7 @@ def _record_payload(
     return {
         "source_type": source_type,
         "source_title": source_title,
+        "record_window_id": candidate.record_window_id,
         "record_anchor": candidate.record_anchor,
         "indicators": indicators,
     }
@@ -208,7 +274,10 @@ def diagnostic_branch_lineage_id(
     excluded.  All claims and claim-specific edge evidence remain in the hash.
     """
 
-    payload = candidate.model_dump(mode="json", exclude={"resolution_status"})
+    payload = candidate.model_dump(
+        mode="json",
+        exclude={"resolution_status", "allowed_source_anchors"},
+    )
     return f"dbranch_{_digest({'source_type': source_type, 'source_title': source_title, 'bundle': payload})}"
 
 
@@ -222,7 +291,11 @@ def _legacy_page(mapping: Mapping[str, Any]) -> int | None:
     return None
 
 
-def _legacy_records(chunk: Mapping[str, Any]) -> list[_EvidenceRecord]:
+def _legacy_records(
+    chunk: Mapping[str, Any],
+    *,
+    start_ordinal: int = 0,
+) -> list[_EvidenceRecord]:
     page = _legacy_page(chunk)
     if page is None:
         return []
@@ -241,6 +314,7 @@ def _legacy_records(chunk: Mapping[str, Any]) -> list[_EvidenceRecord]:
                     "extraction_method": str(chunk.get("text_source") or "native_text"),
                 },
                 priority=1,
+                ordinal=start_ordinal,
             )
         ]
 
@@ -262,6 +336,7 @@ def _legacy_records(chunk: Mapping[str, Any]) -> list[_EvidenceRecord]:
                     "extraction_method": str(chunk.get("text_source") or "native_text"),
                 },
                 priority=1,
+                ordinal=start_ordinal + index,
             )
         )
     return records
@@ -288,9 +363,24 @@ def _evidence_index(
     evidence_units: Sequence[EvidenceUnit],
     legacy_chunks: Sequence[Mapping[str, Any]],
     text_with_pages: str | None = None,
-) -> dict[str, tuple[_EvidenceRecord, ...]]:
+) -> _EvidenceIndex:
     records: list[_EvidenceRecord] = []
-    for unit in evidence_units:
+
+    def evidence_order(unit: EvidenceUnit) -> tuple[int, int, int, int, str]:
+        locator = unit.locator
+        if not isinstance(locator, PdfLocator):
+            return (0, 9, 0, 0, str(unit.evidence_id))
+        if locator.block_index is not None:
+            kind_rank, primary, secondary = 0, locator.block_index, 0
+        elif locator.table_index is not None:
+            kind_rank, primary, secondary = 1, locator.table_index, locator.row_index or 0
+        elif locator.ocr_region_index is not None:
+            kind_rank, primary, secondary = 2, locator.ocr_region_index, 0
+        else:
+            kind_rank, primary, secondary = 3, 0, 0
+        return (locator.page, kind_rank, primary, secondary, str(unit.evidence_id))
+
+    for unit in sorted(evidence_units, key=evidence_order):
         if not isinstance(unit.locator, PdfLocator):
             raise ValueError("Diagnostic PDF bundles require PdfLocator evidence units")
         records.append(
@@ -300,13 +390,14 @@ def _evidence_index(
                 text=unit.locator.quote,
                 locator=unit.locator.model_dump(mode="json"),
                 priority=0,
+                ordinal=len(records),
             )
         )
     for chunk in legacy_chunks:
-        records.extend(_legacy_records(chunk))
+        records.extend(_legacy_records(chunk, start_ordinal=len(records)))
     if text_with_pages:
         for chunk in _chunks_from_text_with_pages(text_with_pages):
-            records.extend(_legacy_records(chunk))
+            records.extend(_legacy_records(chunk, start_ordinal=len(records)))
 
     unique: dict[tuple[str, int, str], _EvidenceRecord] = {}
     for record in records:
@@ -318,7 +409,7 @@ def _evidence_index(
     by_anchor: dict[str, list[_EvidenceRecord]] = {}
     for record in unique.values():
         by_anchor.setdefault(record.evidence_id, []).append(record)
-    return {
+    rendered = {
         anchor: tuple(
             sorted(
                 items,
@@ -332,80 +423,301 @@ def _evidence_index(
         )
         for anchor, items in by_anchor.items()
     }
+    return _EvidenceIndex(
+        by_anchor=rendered,
+        ordered=tuple(sorted(unique.values(), key=lambda item: (item.priority, item.ordinal))),
+    )
 
 
 def _resolve_span(
     span: DiagnosticEvidenceSpan,
     *,
     path: str,
-    index: Mapping[str, tuple[_EvidenceRecord, ...]],
-) -> tuple[ValidatedDiagnosticEvidenceSpan | None, EvidenceValidationProblem | None]:
+    index: _EvidenceIndex,
+    allowed_source_anchors: frozenset[str] | None = None,
+) -> tuple[list[ValidatedDiagnosticEvidenceSpan], EvidenceValidationProblem | None]:
     anchor = span.source_anchor.strip()
     records = index.get(anchor)
+    page_records = [record for record in (records or ()) if record.page == span.source_page]
+    quote = _display_text(span.quote)
+    anchor_is_allowed = (
+        allowed_source_anchors is None
+        or anchor in allowed_source_anchors
+    )
+    matching = [
+        record
+        for record in page_records
+        if anchor_is_allowed and quote and quote in _display_text(record.text)
+    ]
+    if matching:
+        best_priority = min(record.priority for record in matching)
+        preferred = [record for record in matching if record.priority == best_priority]
+        canonical_texts = {_display_text(record.text) for record in preferred}
+        if len(canonical_texts) > 1:
+            return [], EvidenceValidationProblem(
+                code="ambiguous_source_anchor",
+                path=path,
+                message=f"{path}: anchor {anchor!r} resolves to conflicting source evidence",
+            )
+
+        record = preferred[0]
+        return ([
+            ValidatedDiagnosticEvidenceSpan(
+                source_anchor=anchor,
+                source_page=span.source_page,
+                quote=quote,
+                evidence_id=record.evidence_id,
+                locator=record.locator,
+            ),
+        ], None)
+
+    # In a system-owned record window the model does not own anchor routing.
+    # Repair only the mechanical case where its normalized verbatim quote has
+    # one, and only one, exact home in the immutable allow-list.  Page identity
+    # remains strict; a wrong page is not silently rewritten.
+    if allowed_source_anchors:
+        relocated = _resolve_unique_window_direct_span(
+            span,
+            quote=quote,
+            index=index,
+            allowed_source_anchors=allowed_source_anchors,
+        )
+        if relocated is not None:
+            return [relocated], None
+
+    composite = _resolve_composite_span(
+        span,
+        path=path,
+        anchor_records=page_records,
+        index=index,
+        allowed_source_anchors=allowed_source_anchors,
+    )
+    if composite:
+        return composite, None
+
+    if allowed_source_anchors is not None and not anchor_is_allowed:
+        return [], EvidenceValidationProblem(
+            code="source_anchor_outside_record_window",
+            path=path,
+            message=(
+                f"{path}: source anchor {anchor!r} is outside the system-owned "
+                "record window and its quote has no unique exact relocation inside it"
+            ),
+        )
+
     if not records:
-        return None, EvidenceValidationProblem(
+        return [], EvidenceValidationProblem(
             code="unknown_source_anchor",
             path=path,
             message=f"{path}: source anchor {anchor!r} does not resolve",
         )
-
-    page_records = [record for record in records if record.page == span.source_page]
     if not page_records:
         pages = sorted({record.page for record in records})
-        return None, EvidenceValidationProblem(
+        return [], EvidenceValidationProblem(
             code="source_page_mismatch",
             path=path,
             message=(
                 f"{path}: anchor {anchor!r} is on page(s) {pages}, not page {span.source_page}"
             ),
         )
+    return [], EvidenceValidationProblem(
+        code="quote_not_in_anchored_evidence",
+        path=path,
+        message=(
+            f"{path}: quote is not an exact lexical span of anchor {anchor!r} "
+            "or a unique contiguous EvidenceUnit support set"
+        ),
+    )
 
+
+def _resolve_unique_window_direct_span(
+    span: DiagnosticEvidenceSpan,
+    *,
+    quote: str,
+    index: _EvidenceIndex,
+    allowed_source_anchors: frozenset[str],
+) -> ValidatedDiagnosticEvidenceSpan | None:
+    """Relocate one exact quote to a unique anchor in its immutable window."""
+
+    if not quote:
+        return None
+    matches: dict[tuple[str, int, str], _EvidenceRecord] = {}
+    for allowed_anchor in sorted(allowed_source_anchors):
+        records = [
+            record
+            for record in (index.get(allowed_anchor) or ())
+            if record.page == span.source_page
+            and quote in _display_text(record.text)
+        ]
+        if not records:
+            continue
+        best_priority = min(record.priority for record in records)
+        for record in records:
+            if record.priority != best_priority:
+                continue
+            signature = (
+                record.evidence_id,
+                record.page,
+                _display_text(record.text),
+            )
+            matches[signature] = record
+    if len(matches) != 1:
+        return None
+    record = next(iter(matches.values()))
+    return ValidatedDiagnosticEvidenceSpan(
+        source_anchor=record.evidence_id,
+        source_page=record.page,
+        quote=quote,
+        evidence_id=record.evidence_id,
+        locator=record.locator,
+    )
+
+
+def _records_are_contiguous(records: Sequence[_EvidenceRecord]) -> bool:
+    if not records:
+        return False
+    if len({record.priority for record in records}) != 1:
+        return False
+    if any(right.ordinal != left.ordinal + 1 for left, right in zip(records, records[1:])):
+        return False
+    return all(0 <= right.page - left.page <= 1 for left, right in zip(records, records[1:]))
+
+
+def _composite_span_parts(
+    quote: str,
+    records: Sequence[_EvidenceRecord],
+) -> list[tuple[_EvidenceRecord, str]]:
+    """Split one exact quote across its minimal contiguous canonical supports."""
+
+    texts = [_display_text(record.text) for record in records]
+    joined = " ".join(texts)
+    start = joined.find(quote)
+    if start < 0:
+        return []
+    finish = start + len(quote)
+    parts: list[tuple[_EvidenceRecord, str]] = []
+    cursor = 0
+    for record, text in zip(records, texts):
+        text_start = cursor
+        text_finish = text_start + len(text)
+        overlap_start = max(start, text_start)
+        overlap_finish = min(finish, text_finish)
+        if overlap_start < overlap_finish:
+            piece = text[overlap_start - text_start : overlap_finish - text_start].strip()
+            if piece:
+                parts.append((record, piece))
+        cursor = text_finish + 1
+    return parts if len(parts) >= 2 else []
+
+
+def _resolve_composite_span(
+    span: DiagnosticEvidenceSpan,
+    *,
+    path: str,
+    anchor_records: Sequence[_EvidenceRecord],
+    index: _EvidenceIndex,
+    allowed_source_anchors: frozenset[str] | None = None,
+) -> list[ValidatedDiagnosticEvidenceSpan]:
+    """Resolve a quote spanning adjacent EvidenceUnits without fuzzy matching.
+
+    The quote must still occur byte-for-normalized-byte in a unique contiguous
+    concatenation.  Each emitted EvidenceRef contains only the exact substring
+    contributed by its canonical unit.
+    """
+
+    del path  # Kept in the signature for debugger/log call-site context.
     quote = _display_text(span.quote)
-    matching = [record for record in page_records if quote and quote in _display_text(record.text)]
-    if not matching:
-        return None, EvidenceValidationProblem(
-            code="quote_not_in_anchored_evidence",
-            path=path,
-            message=f"{path}: quote is not an exact lexical span of anchor {anchor!r}",
-        )
+    if not quote:
+        return []
+    ordered = list(index.ordered)
+    matches: list[tuple[int, int, list[tuple[_EvidenceRecord, str]]]] = []
+    candidate_ranges: set[tuple[int, int]] = set()
+    if allowed_source_anchors:
+        # Search the complete immutable window, not around the model-selected
+        # anchor.  Every support unit must be allow-listed and physically
+        # contiguous in the canonical inventory.  At least one support keeps
+        # the model-provided page attribution exact.
+        for left, record in enumerate(ordered):
+            if record.evidence_id not in allowed_source_anchors:
+                continue
+            for right in range(left + 2, min(len(ordered), left + 6) + 1):
+                candidate_records = ordered[left:right]
+                if not all(
+                    item.evidence_id in allowed_source_anchors
+                    for item in candidate_records
+                ):
+                    continue
+                if not any(item.page == span.source_page for item in candidate_records):
+                    continue
+                candidate_ranges.add((left, right))
+    else:
+        for anchor_record in anchor_records:
+            try:
+                position = ordered.index(anchor_record)
+            except ValueError:
+                continue
+            # Diagnostic records are deliberately local.  Six canonical units
+            # are enough for split headings/problem/cause/remedy and keep
+            # adjacency from becoming an unconstrained page shortcut.
+            for left in range(max(0, position - 5), position + 1):
+                for right in range(position + 1, min(len(ordered), left + 6) + 1):
+                    candidate_ranges.add((left, right))
 
-    best_priority = min(record.priority for record in matching)
-    preferred = [record for record in matching if record.priority == best_priority]
-    canonical_texts = {_display_text(record.text) for record in preferred}
-    if len(canonical_texts) > 1:
-        return None, EvidenceValidationProblem(
-            code="ambiguous_source_anchor",
-            path=path,
-            message=f"{path}: anchor {anchor!r} resolves to conflicting source evidence",
-        )
-
-    record = preferred[0]
-    return (
+    for left, right in sorted(candidate_ranges):
+        candidate_records = ordered[left:right]
+        if len(candidate_records) < 2 or not _records_are_contiguous(candidate_records):
+            continue
+        parts = _composite_span_parts(quote, candidate_records)
+        if parts and (
+            not allowed_source_anchors
+            or any(record.page == span.source_page for record, _piece in parts)
+        ):
+            matches.append((len(candidate_records), left, parts))
+    if not matches:
+        return []
+    matches.sort(key=lambda item: (item[0], item[1]))
+    best_size = matches[0][0]
+    best = [item for item in matches if item[0] == best_size]
+    signatures = {
+        tuple((record.evidence_id, record.page, piece) for record, piece in parts)
+        for _, _, parts in best
+    }
+    if len(signatures) != 1:
+        return []
+    parts = best[0][2]
+    return [
         ValidatedDiagnosticEvidenceSpan(
-            source_anchor=anchor,
-            source_page=span.source_page,
-            quote=_display_text(span.quote),
+            source_anchor=record.evidence_id,
+            source_page=record.page,
+            quote=piece,
             evidence_id=record.evidence_id,
             locator=record.locator,
-        ),
-        None,
-    )
+        )
+        for record, piece in parts
+    ]
 
 
 def _resolve_spans(
     spans: Sequence[DiagnosticEvidenceSpan],
     *,
     path: str,
-    index: Mapping[str, tuple[_EvidenceRecord, ...]],
+    index: _EvidenceIndex,
     problems: list[EvidenceValidationProblem],
+    allowed_source_anchors: frozenset[str] | None = None,
 ) -> list[ValidatedDiagnosticEvidenceSpan]:
     resolved: dict[tuple[str, int, str], ValidatedDiagnosticEvidenceSpan] = {}
     for position, span in enumerate(spans):
-        item, problem = _resolve_span(span, path=f"{path}[{position}]", index=index)
+        items, problem = _resolve_span(
+            span,
+            path=f"{path}[{position}]",
+            index=index,
+            allowed_source_anchors=allowed_source_anchors,
+        )
         if problem is not None:
             problems.append(problem)
-        elif item is not None:
-            resolved[(item.source_anchor, item.source_page, item.quote)] = item
+        else:
+            for item in items:
+                resolved[(item.source_anchor, item.source_page, item.quote)] = item
     return [resolved[key] for key in sorted(resolved)]
 
 
@@ -413,7 +725,7 @@ def _validate_lineage_anchor(
     anchor: str,
     *,
     path: str,
-    index: Mapping[str, tuple[_EvidenceRecord, ...]],
+    index: _EvidenceIndex,
     problems: list[EvidenceValidationProblem],
 ) -> str:
     """Require a model-produced record/branch anchor to be source-owned."""
@@ -430,10 +742,38 @@ def _validate_lineage_anchor(
     return normalized
 
 
+def _validate_window_lineage_membership(
+    *,
+    record_anchor: str,
+    branch_anchor: str,
+    record_window_id: str,
+    allowed_source_anchors: frozenset[str],
+    problems: list[EvidenceValidationProblem],
+) -> None:
+    """Require system lineage to remain inside its immutable source window."""
+
+    for path, anchor in (
+        ("record_anchor", record_anchor),
+        ("branch_anchor", branch_anchor),
+    ):
+        if anchor in allowed_source_anchors:
+            continue
+        problems.append(
+            EvidenceValidationProblem(
+                code="lineage_anchor_outside_record_window",
+                path=path,
+                message=(
+                    f"{path} {anchor!r} is outside system-owned record window "
+                    f"{record_window_id!r}"
+                ),
+            )
+        )
+
+
 def _validated_bundle(
     candidate: DiagnosticBundleCandidate,
     *,
-    index: Mapping[str, tuple[_EvidenceRecord, ...]],
+    index: _EvidenceIndex,
     source_type: str,
     source_title: str,
 ) -> ValidatedDiagnosticBundle:
@@ -450,6 +790,19 @@ def _validated_bundle(
         index=index,
         problems=problems,
     )
+    allowed_source_anchors = frozenset({
+        str(anchor).strip()
+        for anchor in candidate.allowed_source_anchors
+        if str(anchor).strip()
+    })
+    if candidate.record_window_id:
+        _validate_window_lineage_membership(
+            record_anchor=record_anchor,
+            branch_anchor=branch_anchor,
+            record_window_id=candidate.record_window_id,
+            allowed_source_anchors=allowed_source_anchors,
+            problems=problems,
+        )
     indicators: list[ValidatedSymptomIndicator | ValidatedErrorCodeIndicator] = []
     for position, indicator in enumerate(candidate.indicators):
         prefix = f"indicators[{position}]"
@@ -458,12 +811,18 @@ def _validated_bundle(
             path=f"{prefix}.claim_evidence",
             index=index,
             problems=problems,
+            allowed_source_anchors=(
+                allowed_source_anchors if candidate.record_window_id else None
+            ),
         )
         links = _resolve_spans(
             indicator.failure_link_evidence,
             path=f"{prefix}.failure_link_evidence",
             index=index,
             problems=problems,
+            allowed_source_anchors=(
+                allowed_source_anchors if candidate.record_window_id else None
+            ),
         )
         if not claims:
             # Candidate claim evidence is non-empty by contract; an empty
@@ -499,6 +858,9 @@ def _validated_bundle(
             path="failure.claim_evidence",
             index=index,
             problems=problems,
+            allowed_source_anchors=(
+                allowed_source_anchors if candidate.record_window_id else None
+            ),
         )
         if failure_claims:
             failure = ValidatedFailureMode(
@@ -519,12 +881,18 @@ def _validated_bundle(
             path=f"actions[{position}].claim_evidence",
             index=index,
             problems=problems,
+            allowed_source_anchors=(
+                allowed_source_anchors if candidate.record_window_id else None
+            ),
         )
         action_links = _resolve_spans(
             action.resolution_link_evidence,
             path=f"actions[{position}].resolution_link_evidence",
             index=index,
             problems=problems,
+            allowed_source_anchors=(
+                allowed_source_anchors if candidate.record_window_id else None
+            ),
         )
         if not action_claims:
             continue
@@ -539,6 +907,25 @@ def _validated_bundle(
             )
         )
 
+    inspection_steps: list[ValidatedDiagnosticInspectionStep] = []
+    for position, step in enumerate(candidate.inspection_steps):
+        step_claims = _resolve_spans(
+            step.claim_evidence,
+            path=f"inspection_steps[{position}].claim_evidence",
+            index=index,
+            problems=problems,
+            allowed_source_anchors=(
+                allowed_source_anchors if candidate.record_window_id else None
+            ),
+        )
+        if step_claims:
+            inspection_steps.append(
+                ValidatedDiagnosticInspectionStep(
+                    instruction_text=_display_text(step.instruction_text),
+                    claim_evidence=step_claims,
+                )
+            )
+
     component: ValidatedAffectedComponent | None = None
     if candidate.affected_component is not None:
         component_claims = _resolve_spans(
@@ -546,12 +933,18 @@ def _validated_bundle(
             path="affected_component.claim_evidence",
             index=index,
             problems=problems,
+            allowed_source_anchors=(
+                allowed_source_anchors if candidate.record_window_id else None
+            ),
         )
         component_links = _resolve_spans(
             candidate.affected_component.affects_link_evidence,
             path="affected_component.affects_link_evidence",
             index=index,
             problems=problems,
+            allowed_source_anchors=(
+                allowed_source_anchors if candidate.record_window_id else None
+            ),
         )
         if component_claims:
             component = ValidatedAffectedComponent(
@@ -581,39 +974,91 @@ def _validated_bundle(
     for action in actions:
         claim_anchors.update(span.source_anchor for span in action.claim_evidence)
         edge_anchors.update(span.source_anchor for span in action.resolution_link_evidence)
+    for step in inspection_steps:
+        claim_anchors.update(span.source_anchor for span in step.claim_evidence)
     if component is not None:
         claim_anchors.update(span.source_anchor for span in component.claim_evidence)
         edge_anchors.update(span.source_anchor for span in component.affects_link_evidence)
 
-    if record_anchor not in claim_anchors:
-        problems.append(
-            EvidenceValidationProblem(
-                code="lineage_anchor_outside_bundle",
-                path="record_anchor",
-                message=(
-                    f"record_anchor {record_anchor!r} does not support any claim in this record"
-                ),
+    if candidate.record_window_id:
+        for anchor in sorted((claim_anchors | edge_anchors) - allowed_source_anchors):
+            problems.append(
+                EvidenceValidationProblem(
+                    code="resolved_anchor_outside_record_window",
+                    path="allowed_source_anchors",
+                    message=(
+                        f"Composite evidence resolved anchor {anchor!r} outside "
+                        f"system-owned record window {candidate.record_window_id!r}"
+                    ),
+                )
             )
+
+    candidate_claim_anchors = {
+        span.source_anchor
+        for indicator in candidate.indicators
+        for span in indicator.claim_evidence
+    }
+    if candidate.failure is not None:
+        candidate_claim_anchors.update(
+            span.source_anchor for span in candidate.failure.claim_evidence
         )
-    branch_support_anchors = edge_anchors if failure is not None and edge_anchors else claim_anchors
-    if branch_anchor not in branch_support_anchors:
-        support_kind = "edge" if failure is not None and edge_anchors else "claim"
-        problems.append(
-            EvidenceValidationProblem(
-                code="lineage_anchor_outside_bundle",
-                path="branch_anchor",
-                message=(
-                    f"branch_anchor {branch_anchor!r} does not support any {support_kind} "
-                    "evidence in this branch"
-                ),
+    for action in candidate.actions:
+        candidate_claim_anchors.update(span.source_anchor for span in action.claim_evidence)
+    for step in candidate.inspection_steps:
+        candidate_claim_anchors.update(span.source_anchor for span in step.claim_evidence)
+    if candidate.affected_component is not None:
+        candidate_claim_anchors.update(
+            span.source_anchor for span in candidate.affected_component.claim_evidence
+        )
+    candidate_support_anchors = set(candidate_claim_anchors)
+    candidate_support_anchors.update(
+        span.source_anchor
+        for indicator in candidate.indicators
+        for span in indicator.failure_link_evidence
+    )
+    for action in candidate.actions:
+        candidate_support_anchors.update(
+            span.source_anchor for span in action.resolution_link_evidence
+        )
+    if candidate.affected_component is not None:
+        candidate_support_anchors.update(
+            span.source_anchor for span in candidate.affected_component.affects_link_evidence
+        )
+
+    if not candidate.record_window_id:
+        # Legacy/model-owned lineage remains subject to the historical gate.
+        # A system-owned window has already validated existence + allow-list
+        # membership above; requiring the LLM to echo those locators in a
+        # particular evidence field would hand lineage ownership back to it.
+        if record_anchor not in candidate_claim_anchors:
+            problems.append(
+                EvidenceValidationProblem(
+                    code="lineage_anchor_outside_bundle",
+                    path="record_anchor",
+                    message=(
+                        f"record_anchor {record_anchor!r} does not support any claim in this record"
+                    ),
+                )
             )
-        )
+        branch_support_anchors = candidate_support_anchors
+        if branch_anchor not in branch_support_anchors:
+            problems.append(
+                EvidenceValidationProblem(
+                    code="lineage_anchor_outside_bundle",
+                    path="branch_anchor",
+                    message=(
+                        f"branch_anchor {branch_anchor!r} does not belong to this branch's "
+                        "claim/edge support set"
+                    ),
+                )
+            )
 
     if problems:
         raise DiagnosticBundleEvidenceError(problems)
 
     indicators.sort(key=_canonical_json)
     actions.sort(key=_canonical_json)
+    inspection_steps.sort(key=_canonical_json)
     return ValidatedDiagnosticBundle(
         record_lineage_id=diagnostic_record_lineage_id(
             candidate,
@@ -625,11 +1070,13 @@ def _validated_bundle(
             source_type=source_type,
             source_title=source_title,
         ),
+        record_window_id=candidate.record_window_id,
         record_anchor=record_anchor,
         branch_anchor=branch_anchor,
         indicators=indicators,
         failure=failure,
         actions=actions,
+        inspection_steps=inspection_steps,
         affected_component=component,
         resolution_status=candidate.resolution_status,
     )
@@ -683,6 +1130,19 @@ def _classify_candidate(
     ]
     contradictions = False
     missing = False
+    non_restorative_actions = [
+        position
+        for position, action in enumerate(candidate.actions)
+        if _inspection_only_instruction(action.instruction_text, action.action_kind)
+    ]
+    for position in non_restorative_actions:
+        reasons.append(
+            _reason(
+                "inspection_only_action",
+                "A check/test/inspection without an explicit restorative step cannot be a CorrectiveAction.",
+                f"actions[{position}]",
+            )
+        )
 
     if candidate.failure is None:
         missing = True
@@ -701,6 +1161,8 @@ def _classify_candidate(
                     "affected_component",
                 )
             )
+        if candidate.inspection_steps:
+            missing = True
         if any(indicator.failure_link_evidence for indicator in candidate.indicators):
             contradictions = True
             reasons.append(
@@ -746,25 +1208,21 @@ def _classify_candidate(
                     "affected_component.affects_link_evidence",
                 )
             )
-        if (
-            candidate.affected_component is None
-            and candidate.failure.material_context is not None
-            and not _is_asset_level(candidate.failure.material_context)
-        ):
-            missing = True
-            reasons.append(
-                _reason(
-                    "unresolved_material_context",
-                    "A non-asset material context requires an explicit affected Component.",
-                    "failure.material_context",
-                )
-            )
-
     if candidate.resolution_status is ResolutionStatus.AMBIGUOUS:
         reasons.append(_reason("declared_ambiguous", "The extractor marked this branch as ambiguous."))
         return BundleDisposition.REVIEW, _sorted_reasons(reasons)
     if evidence_problems or contradictions:
         return BundleDisposition.REVIEW, _sorted_reasons(reasons)
+    if non_restorative_actions:
+        # Preserve the raw misclassified action for audit, but publish no
+        # partial diagnostic nodes.  A pure inspection row is an explicit gap;
+        # a mixed remedy/check list is contradictory and needs review.
+        disposition = (
+            BundleDisposition.GAP
+            if len(non_restorative_actions) == len(candidate.actions)
+            else BundleDisposition.REVIEW
+        )
+        return disposition, _sorted_reasons(reasons)
     if candidate.resolution_status is ResolutionStatus.NO_ACTION_STATED:
         if candidate.actions:
             reasons.append(
@@ -793,6 +1251,14 @@ def _classify_candidate(
                 )
             )
             return BundleDisposition.REVIEW, _sorted_reasons(reasons)
+        if not candidate.inspection_steps:
+            reasons.append(
+                _reason(
+                    "missing_inspection_steps",
+                    "The record is check-only but no traceable inspection step was supplied.",
+                    "inspection_steps",
+                )
+            )
         reasons.append(
             _reason(
                 "check_only",
@@ -801,6 +1267,10 @@ def _classify_candidate(
             )
         )
         return BundleDisposition.GAP, _sorted_reasons(reasons)
+    # A diagnostic branch may state both a check and an explicit restorative
+    # action.  Inspection steps remain audit-only (the graph compiler never
+    # turns them into CorrectiveAction nodes); their presence does not make the
+    # separately typed restorative action ambiguous.
     if missing:
         return BundleDisposition.GAP, _sorted_reasons(reasons)
     return BundleDisposition.PUBLISH, []
@@ -814,10 +1284,95 @@ def _sorted_reasons(reasons: Iterable[BundleDropReason]) -> list[BundleDropReaso
     return [unique[key] for key in sorted(unique)]
 
 
+def _accounting_state(
+    candidate: DiagnosticBundleCandidate,
+    disposition: BundleDisposition,
+    reasons: Sequence[BundleDropReason],
+) -> str:
+    codes = {reason.code for reason in reasons}
+    if disposition is BundleDisposition.PUBLISH:
+        return "autonomously_publishable"
+    if disposition is BundleDisposition.EXCLUDE:
+        return "observed_excluded"
+    if candidate.resolution_status is ResolutionStatus.AMBIGUOUS:
+        return "compiled_semantically_ambiguous"
+    if codes & {"check_only", "inspection_only_action"}:
+        return "inspection_only_gap"
+    if codes & {
+        "missing_failure",
+        "missing_actions",
+        "missing_indicator_failure_evidence",
+        "missing_resolution_evidence",
+        "missing_affects_evidence",
+        "unresolved_material_context",
+    }:
+        return "observed_structurally_incomplete"
+    if codes:
+        return "extracted_not_compilable"
+    return "observed_unresolved"
+
+
 def _is_asset_level(value: str | None) -> bool:
     return _identity_text(value).replace("-", "_") in {
         item.replace(" ", "_") for item in _GENERAL_MATERIAL_CONTEXTS
     }
+
+
+def _recover_unlinked_optional_metadata(
+    candidate: DiagnosticBundleCandidate,
+) -> tuple[DiagnosticBundleCandidate, list[BundleDropReason]]:
+    """Discard optional metadata that cannot have a grounded graph effect.
+
+    ``material_context`` has no evidence field and the extractor is instructed
+    to return null unless an affected component is established.  When that
+    component is absent, publication already uses the asset level.  Removing
+    this unsupported field therefore cannot create a Component or AFFECTS
+    relation, while preserving the fully grounded diagnostic branch.
+    """
+
+    failure = candidate.failure
+    if (
+        failure is None
+        or candidate.affected_component is not None
+        or failure.material_context is None
+        or _is_asset_level(failure.material_context)
+    ):
+        return candidate, []
+    recovered = candidate.model_copy(
+        update={"failure": failure.model_copy(update={"material_context": None})}
+    )
+    return recovered, [
+        _reason(
+            "discarded_unlinked_material_context",
+            (
+                "Optional material_context had no affected Component or evidence-bearing "
+                "graph effect and was deterministically reset to null."
+            ),
+            "failure.material_context",
+        )
+    ]
+
+
+_RESTORATIVE_VERBS = re.compile(
+    r"\b(?:adjust|align|bleed|clean|clear|close|correct|drain|fill|flush|install|"
+    r"lubricate|open|reconnect|reduce|increase|refill|remove|repair|replace|reset|"
+    r"restart|restore|secure|set|tighten|unblock|update)\b",
+    flags=re.IGNORECASE,
+)
+_INSPECTION_VERBS = re.compile(
+    r"\b(?:check|confirm|determine|diagnose|examine|inspect|measure|monitor|observe|"
+    r"test|verify)\b",
+    flags=re.IGNORECASE,
+)
+
+
+def _inspection_only_instruction(instruction: str, action_kind: str | None) -> bool:
+    """Recognize only the conservative check-without-remedy case."""
+
+    if str(action_kind or "").strip().casefold() == "escalation":
+        return False
+    text = _display_text(instruction)
+    return bool(_INSPECTION_VERBS.search(text) and not _RESTORATIVE_VERBS.search(text))
 
 
 def _required_source_value(value: str, field: str) -> str:
@@ -825,6 +1380,28 @@ def _required_source_value(value: str, field: str) -> str:
     if not normalized:
         raise ValueError(f"{field} must not be empty")
     return normalized
+
+
+def _candidate_referenced_anchors(candidate: DiagnosticBundleCandidate) -> set[str]:
+    anchors = {candidate.record_anchor, candidate.branch_anchor}
+
+    def add(spans: Sequence[DiagnosticEvidenceSpan]) -> None:
+        anchors.update(span.source_anchor for span in spans)
+
+    for indicator in candidate.indicators:
+        add(indicator.claim_evidence)
+        add(indicator.failure_link_evidence)
+    if candidate.failure is not None:
+        add(candidate.failure.claim_evidence)
+    for action in candidate.actions:
+        add(action.claim_evidence)
+        add(action.resolution_link_evidence)
+    for step in candidate.inspection_steps:
+        add(step.claim_evidence)
+    if candidate.affected_component is not None:
+        add(candidate.affected_component.claim_evidence)
+        add(candidate.affected_component.affects_link_evidence)
+    return {str(anchor).strip() for anchor in anchors if str(anchor).strip()}
 
 
 def _slug(value: str) -> str:
@@ -925,7 +1502,7 @@ def _compile_published(
         node.name: {} for node in schema.nodes
     }
     relations: dict[
-        tuple[str, str, str, str, str],
+        tuple[str, str, str, str, str, str],
         dict[tuple[int, str, str, str], OntologyEvidence],
     ] = {}
     emissions: dict[str, tuple[set[str], set[str]]] = {}
@@ -947,7 +1524,7 @@ def _compile_published(
         branch_id: str,
     ) -> None:
         name = relation_names[(from_type, to_type)]
-        key = (name, from_type, from_id, to_type, to_id)
+        key = (name, from_type, from_id, to_type, to_id, branch_id)
         evidence = relations.setdefault(key, {})
         for item in _relation_evidence(spans):
             evidence[(item.source_page, item.source_reference, item.source_anchor, item.quote)] = item
@@ -1073,7 +1650,10 @@ def _compile_published(
                 "instruction_text": action.instruction_text,
                 "source_type": source_type,
                 "source_title": source_title,
-                "source_reference": action.claim_evidence[0].evidence_id,
+                # Provenance belongs on edge evidence.  Keeping a row-specific
+                # anchor on a reusable semantic node caused deterministic ID
+                # collisions for repeated remedies in troubleshooting tables.
+                "source_reference": "typed_diagnostic_edge_evidence",
             }
             if action.action_kind:
                 values["action_kind"] = action.action_kind
@@ -1095,6 +1675,7 @@ def _compile_published(
             to_type=key[3],
             to_id=key[4],
             evidence=[evidence[evidence_key] for evidence_key in sorted(evidence)],
+            branch_lineage_id=key[5],
         )
         for key, evidence in sorted(relations.items())
     ]
@@ -1136,10 +1717,22 @@ def _bundle_evidence_ids(bundle: ValidatedDiagnosticBundle | None) -> list[str]:
     for action in bundle.actions:
         add(action.claim_evidence)
         add(action.resolution_link_evidence)
+    for step in bundle.inspection_steps:
+        add(step.claim_evidence)
     if bundle.affected_component is not None:
         add(bundle.affected_component.claim_evidence)
         add(bundle.affected_component.affects_link_evidence)
     return sorted(ids)
+
+
+def _candidate_evidence_ids(
+    candidate: DiagnosticBundleCandidate,
+    index: _EvidenceIndex,
+) -> list[str]:
+    """Return every source-owned anchor referenced by the original candidate."""
+
+    anchors = _candidate_referenced_anchors(candidate)
+    return sorted(anchor for anchor in anchors if anchor in index)
 
 
 def compile_diagnostic_bundles(
@@ -1154,6 +1747,7 @@ def compile_diagnostic_bundles(
     evidence_units: Sequence[EvidenceUnit] = (),
     legacy_chunks: Sequence[Mapping[str, Any]] = (),
     text_with_pages: str | None = None,
+    record_windows: Sequence[Mapping[str, Any]] = (),
     schema: OntologySchemaDefinition | None = None,
     language: str | None = None,
 ) -> DiagnosticBundleCompilationResult:
@@ -1195,19 +1789,37 @@ def compile_diagnostic_bundles(
         else DiagnosticBundleCandidate.model_validate(item)
         for item in raw_candidates
     ]
-    by_branch: dict[str, DiagnosticBundleCandidate] = {}
-    for candidate in typed_candidates:
+    recovered_candidates = [
+        _recover_unlinked_optional_metadata(candidate)
+        for candidate in typed_candidates
+    ]
+    by_branch: dict[
+        str, tuple[DiagnosticBundleCandidate, list[BundleDropReason]]
+    ] = {}
+    for candidate, recoveries in recovered_candidates:
         branch_id = diagnostic_branch_lineage_id(
             candidate,
             source_type=source_type,
             source_title=source_title,
         )
         current = by_branch.get(branch_id)
-        if current is not None and _canonical_json(current) != _canonical_json(candidate):
+        if current is not None and _canonical_json(current[0]) != _canonical_json(candidate):
             raise ValueError(f"Conflicting candidates share branch lineage {branch_id}")
-        by_branch[branch_id] = candidate
+        if current is None:
+            by_branch[branch_id] = (candidate, recoveries)
 
     index = _evidence_index(evidence_units, legacy_chunks, text_with_pages)
+    window_scopes: dict[str, dict[str, list[str]]] = {}
+    for window in record_windows:
+        window_id = str(window.get("window_id") or window.get("record_window_id") or "").strip()
+        raw_scope = window.get("allowed_evidence_spans") or {}
+        if not window_id or not isinstance(raw_scope, Mapping):
+            continue
+        window_scopes[window_id] = {
+            str(anchor).strip(): [str(span) for span in spans or []]
+            for anchor, spans in raw_scope.items()
+            if str(anchor).strip() and isinstance(spans, Sequence) and not isinstance(spans, str)
+        }
     validated: list[ValidatedDiagnosticBundle] = []
     staged: list[
         tuple[
@@ -1216,10 +1828,16 @@ def compile_diagnostic_bundles(
             str,
             BundleDisposition,
             list[BundleDropReason],
+            list[BundleDropReason],
             ValidatedDiagnosticBundle | None,
         ]
     ] = []
-    for branch_id, candidate in sorted(by_branch.items()):
+    for branch_id, (candidate, recoveries) in sorted(by_branch.items()):
+        candidate_index = index
+        if candidate.record_window_id in window_scopes:
+            candidate_index = _scoped_evidence_index(
+                index, window_scopes[candidate.record_window_id]
+            )
         record_id = diagnostic_record_lineage_id(
             candidate,
             source_type=source_type,
@@ -1229,24 +1847,36 @@ def compile_diagnostic_bundles(
         resolved: ValidatedDiagnosticBundle | None = None
         if candidate.resolution_status is ResolutionStatus.NOT_DIAGNOSTIC:
             exclusion_problems: list[EvidenceValidationProblem] = []
-            _validate_lineage_anchor(
+            record_anchor = _validate_lineage_anchor(
                 candidate.record_anchor,
                 path="record_anchor",
-                index=index,
+                index=candidate_index,
                 problems=exclusion_problems,
             )
-            _validate_lineage_anchor(
+            branch_anchor = _validate_lineage_anchor(
                 candidate.branch_anchor,
                 path="branch_anchor",
-                index=index,
+                index=candidate_index,
                 problems=exclusion_problems,
             )
+            if candidate.record_window_id:
+                _validate_window_lineage_membership(
+                    record_anchor=record_anchor,
+                    branch_anchor=branch_anchor,
+                    record_window_id=candidate.record_window_id,
+                    allowed_source_anchors=frozenset(
+                        str(anchor).strip()
+                        for anchor in candidate.allowed_source_anchors
+                        if str(anchor).strip()
+                    ),
+                    problems=exclusion_problems,
+                )
             evidence_problems = exclusion_problems
         else:
             try:
                 resolved = _validated_bundle(
                     candidate,
-                    index=index,
+                    index=candidate_index,
                     source_type=source_type,
                     source_title=source_title,
                 )
@@ -1254,11 +1884,13 @@ def compile_diagnostic_bundles(
             except DiagnosticBundleEvidenceError as exc:
                 evidence_problems = exc.problems
         disposition, reasons = _classify_candidate(candidate, evidence_problems)
-        staged.append((candidate, record_id, branch_id, disposition, reasons, resolved))
+        staged.append(
+            (candidate, record_id, branch_id, disposition, reasons, recoveries, resolved)
+        )
 
     published = [
         resolved
-        for _, _, _, disposition, _, resolved in staged
+        for _, _, _, disposition, _, _, resolved in staged
         if disposition is BundleDisposition.PUBLISH and resolved is not None
     ]
     ontology, emissions = _compile_published(
@@ -1271,9 +1903,11 @@ def compile_diagnostic_bundles(
 
     entries: list[BundleCompilationEntry] = []
     drop_counts: Counter[str] = Counter()
+    recovery_counts: Counter[str] = Counter()
     disposition_counts: Counter[str] = Counter()
-    for candidate, record_id, branch_id, disposition, reasons, resolved in staged:
+    for candidate, record_id, branch_id, disposition, reasons, recoveries, resolved in staged:
         disposition_counts[disposition.value] += 1
+        recovery_counts.update(recovery.code for recovery in recoveries)
         if disposition is not BundleDisposition.PUBLISH:
             drop_counts.update(reason.code for reason in reasons)
         node_ids, relation_ids = emissions.get(branch_id, ([], []))
@@ -1281,17 +1915,15 @@ def compile_diagnostic_bundles(
             BundleCompilationEntry(
                 record_lineage_id=record_id,
                 branch_lineage_id=branch_id,
+                record_window_id=candidate.record_window_id,
                 record_anchor=candidate.record_anchor,
                 branch_anchor=candidate.branch_anchor,
-                evidence_ids=(
-                    _bundle_evidence_ids(resolved)
-                    or sorted({
-                        anchor
-                        for anchor in (candidate.record_anchor, candidate.branch_anchor)
-                        if anchor in index
-                    })
-                ),
+                evidence_ids=_candidate_evidence_ids(candidate, index),
+                resolved_evidence_ids=_bundle_evidence_ids(resolved),
+                candidate=candidate.model_dump(mode="json"),
                 disposition=disposition,
+                accounting_state=_accounting_state(candidate, disposition, reasons),
+                compiler_recoveries=recoveries,
                 drop_reasons=reasons,
                 emitted_node_ids=node_ids,
                 emitted_relations=relation_ids,
@@ -1304,6 +1936,7 @@ def compile_diagnostic_bundles(
         unique_candidates=len(by_branch),
         duplicate_candidates=len(typed_candidates) - len(by_branch),
         disposition_counts=all_dispositions,
+        recovered_items_by_reason=dict(sorted(recovery_counts.items())),
         dropped_items_by_reason=dict(sorted(drop_counts.items())),
         entries=entries,
     )

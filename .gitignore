@@ -49,3 +49,16 @@ env/
 .coverage.*
 htmlcov/
 .coverage
+
+# Acceptance campaigns version their reports, generation responses, runtime
+# profiles and JSON ledgers. Raw PDF copies, SQLite stores and lock files stay
+# local: they are duplicated per isolated run and would permanently bloat Git.
+artifacts/acceptance/**/operational.db
+artifacts/acceptance/**/operational.db-*
+artifacts/acceptance/**/raw/
+artifacts/acceptance/**/store/raw/
+artifacts/acceptance/**/*.lock
+
+# Local render/replay scratch space. Preserve it on disk without treating it as
+# source or checkpoint evidence.
+tmp/

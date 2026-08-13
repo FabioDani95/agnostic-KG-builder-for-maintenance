@@ -1,10 +1,47 @@
 # Handoff — PDF G3 diagnostic graph optimization
 
-Last updated: 2026-08-12  
-Repository: `agnostic-KG-builder-for-maintenance`  
+Last updated: 2026-08-13
+Repository: `agnostic-KG-builder-for-maintenance`
 Current branch: `main`
 
-## Current v7 continuation status — supersedes the implementation status below
+## Second-hardening v11 status — supersedes the decision below
+
+The frozen three-manual acceptance gate now passes on the exact final dirty-tree code:
+
+- campaign verdict: **GO** for the KPI/publication-integrity gate;
+- semantic recall: Eastman 7/8, Danfoss 8/8, Graco 18/18; macro 95.8333%;
+- autonomous recall: Eastman 3/8, Danfoss 5/8, Graco 17/18;
+- forbidden cross-pairings and unsupported published paths: zero;
+- exact literal EvidenceRefs: 1,928/1,928;
+- 87 calls (82 Luna, 5 selective Terra), USD 0.23741620, 727.656 seconds;
+- durable accounting: 87 reservations / 87 finalizations, zero failures or unknown costs;
+- 558/558 tests, deterministic real-EvidenceUnit replay, and persisted-candidate replay pass.
+
+The three revisions intentionally remain `reviewing` and `approval_eligible=false`.
+GO does not authorize approval or merge. Eastman still has one missing frozen claim and
+four claim-traceable review witnesses; structural Component precision remains a separate
+open benchmark.
+
+The architectural change is structure-first and record-atomic: deterministic diagnostic
+inventory and exact field spans precede typed LLM extraction; compiler recovery removes
+only unsupported optional decoration; primary/Terra results are composed only as a
+verified complementary union; relation canonicalization includes branch lineage; and
+publication/accounting remains fail-closed.
+
+Authoritative artifacts:
+
+- `artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_v11_20260813/CAMPAIGN_REPORT.md`
+- `artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_v11_20260813/ROOT_CAUSE_ANALYSIS.md`
+- `artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_v11_20260813/ABLATION_REPORT.md`
+- `artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_v11_20260813/FINAL_VERIFICATION.md`
+- `artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_v11_20260813/OFFLINE_GATE_REPORT.md`
+- `artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_v11_20260813/campaign_results.json`
+
+The final profiles record pipeline `pdf-g3-atomic-record-publication-v11`, code-tree digest
+`a393c883c1072ce5fa5b6589791dfa9bd296d7545234db5b0d3205e16df9eb95`, and config digest
+`6596187241ebcccc123daf143e0c76de11c9edbfd9479dc01b206e18735b61fd`.
+
+## Historical v7 continuation status — superseded by v11
 
 This section records the 2026-08-12 continuation from the historical v5/v6
 checkpoint documented below. The older measurements and protected-revision
@@ -18,7 +55,7 @@ deterministic ontology compilation, exact edge evidence and fail-closed
 candidate accounting are the correct path for producing clean, high-coverage,
 ontology-compliant PDF graphs without vendor-specific rules.
 
-Current production decision remains **NO-GO**. Real autonomous E-554 runs were
+The production decision at the v7 checkpoint was **NO-GO**. Real autonomous E-554 runs were
 executed under the user-authorized $1 envelope; they prove that publication is
 schema-valid, exactly grounded and topologically clean, but they do not yet
 recover the frozen troubleshooting coverage autonomously.
@@ -248,7 +285,7 @@ be read as historical context unless the v7 section explicitly refers to it.
 
 The PDF G3 pipeline hardening work has been implemented and committed as an experimental checkpoint, but it is **not ready for production enablement**.
 
-Current decision: **NO-GO**.
+Decision at that historical v5/v6 checkpoint: **NO-GO**.
 
 The new publication policy produces a substantially smaller, grounded and topologically valid graph at very low cost. The real E-554 acceptance run did not preserve the required diagnostic coverage: it scored **0/8 gold chains**, although it retained **0/3 forbidden cross-pairings**. A clean graph with missing diagnostic knowledge is not an acceptable result.
 

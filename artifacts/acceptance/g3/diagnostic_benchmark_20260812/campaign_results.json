@@ -1,0 +1,1878 @@
+{
+  "analysis_method": {
+    "gold_is_frozen": true,
+    "inspection_only_requires_pdf_diagnostic_record_gap": true,
+    "minimum_per_field_similarity": 0.55,
+    "production_had_access_to_gold": false
+  },
+  "campaign": {
+    "actual_spend_usd": 0.135558,
+    "authorized_budget_usd": 3.0,
+    "calls": 51,
+    "conservative_preflight_usd": 1.291708,
+    "elapsed_seconds": 445.407,
+    "macro_gold_claim_recall": 0.125,
+    "macro_recall_floor": 0.78,
+    "verdict": "no_go"
+  },
+  "campaign_id": "pdf-g3-diagnostic-benchmark-20260812",
+  "manuals": [
+    {
+      "gold_scope": "representative_frozen_sample",
+      "graph": {
+        "nodes": 183,
+        "nodes_by_type": {
+          "Asset": 1,
+          "Component": 146,
+          "CorrectiveAction": 12,
+          "FailureMode": 12,
+          "Symptom": 12
+        },
+        "published_paths": [
+          {
+            "corrective_action": "Clean spray cap and tip",
+            "corrective_action_id": "ca_clean_spray_cap_and_tip_6ef54fec55f3111245ec76609cfc6d4ab04a09b49c2f099d574398a87d039cdb",
+            "failure_mode": "dirty spray caps and tips",
+            "failure_mode_id": "fm_dirty_spray_caps_and_tips_e7338d2ed0635a9fc44a7a1e308b17477657d080caa103d6c379e88e45af9125",
+            "indicator": "dirty spray caps and tips",
+            "indicator_id": "sym_dirty_spray_caps_and_tips_12ccd3f14710f37a00836b807f52f85ab9ff41149bc56a8321d5439d1e26c938",
+            "indicator_type": "Symptom",
+            "pages": [
+              17
+            ]
+          },
+          {
+            "corrective_action": "Replace worn drive belt",
+            "corrective_action_id": "ca_replace_worn_drive_belt_18ce0c31fd689e434013b7d8feead2fba356e8e98aadd7586215e51544f6d807",
+            "failure_mode": "Worn or damaged drive belt",
+            "failure_mode_id": "fm_worn_or_damaged_drive_belt_442e3c81184e819ed6a7a3b411fd2b126d1db4accdf4e6f92b7471dea6855730",
+            "indicator": "Drive belt wear or damage",
+            "indicator_id": "sym_drive_belt_wear_or_damage_f80158146445eb0a009c6e3b761c918c9c6bdbe5b3192765a14a1a13ecef2c4a",
+            "indicator_type": "Symptom",
+            "pages": [
+              29
+            ]
+          },
+          {
+            "corrective_action": "Adjust axis backlash",
+            "corrective_action_id": "ca_adjust_axis_backlash_1129d84116b0603edb9ab1626f742a63781b262999101e2e5d60382dd27ad401",
+            "failure_mode": "Excessive axis backlash",
+            "failure_mode_id": "fm_excessive_axis_backlash_b81527f6712a2de805aaf1123cd11929e82c5eb40b84e677556dd9a0ec00beef",
+            "indicator": "Excessive X- or Y-axis backlash",
+            "indicator_id": "sym_excessive_x_or_y_axis_backlash_2f0ce7a29a1d2b68cabada0b62b8f258aa1ae9a4a3fefd1ab5556c185e5c1bc1",
+            "indicator_type": "Symptom",
+            "pages": [
+              28
+            ]
+          },
+          {
+            "corrective_action": "Adjust Y-car backlash",
+            "corrective_action_id": "ca_adjust_y_car_backlash_a2d62a73b3adfa60f1367850976310b4ead752aea33c068fe2bd7541d294ce7c",
+            "failure_mode": "Y-car backlash",
+            "failure_mode_id": "fm_y_car_backlash_c0ab60ed06528599d658cbc4cbd3cc967308f5f123951e712e02f638f351e7d6",
+            "indicator": "Free movement or clicking noise at Y-car pulley",
+            "indicator_id": "sym_free_movement_or_clicking_noise_at_y_car_pulley_ad7d107f3801cc775a434c78c3980f39f026324e075d1d3bc03342351b544fd6",
+            "indicator_type": "Symptom",
+            "pages": [
+              26,
+              27
+            ]
+          },
+          {
+            "corrective_action": "Tighten Y-car fasteners",
+            "corrective_action_id": "ca_tighten_y_car_fasteners_4a92f7a3054b3552c317ce4883e595081d2523077663ce0bca9b2cd8f00bab76",
+            "failure_mode": "Loose Y-car fasteners",
+            "failure_mode_id": "fm_loose_y_car_fasteners_a9389c6d306db3a43dad9478797c19299c300983c58eea1bb49574026085b33a",
+            "indicator": "Loose Y-car fasteners",
+            "indicator_id": "sym_loose_y_car_fasteners_e4d4ebb6fdb857805c036bfc5432d163177cefd2d6d025ba263b2cb20be06c12",
+            "indicator_type": "Symptom",
+            "pages": [
+              29
+            ]
+          },
+          {
+            "corrective_action": "Replace ink reservoir",
+            "corrective_action_id": "ca_replace_ink_reservoir_5496a1ce501116096b4f522bb0ab3c097524ee937fba503b4129cb757935edfa",
+            "failure_mode": "low ink supply with clogging impurities",
+            "failure_mode_id": "fm_low_ink_supply_with_clogging_impurities_71793b27fe78344aa33c936a13acb9e3c3c89cfc9a1ebd439e6d227f07e49683",
+            "indicator": "low ink supply",
+            "indicator_id": "sym_low_ink_supply_eaa97405ef8ef821a80030e06ceebb561cb1520e13c3603c5cb0ae86e6073c8d",
+            "indicator_type": "Symptom",
+            "pages": [
+              17
+            ]
+          },
+          {
+            "corrective_action": "Replace nicked blade",
+            "corrective_action_id": "ca_replace_nicked_blade_41e976f0fd8536a8abb8dcd863df2535a430325f2127e39f2a8992d8f84c24aa",
+            "failure_mode": "Nicked blade edge",
+            "failure_mode_id": "fm_nicked_blade_edge_43445537f60348bacd084ac43a05c5ecce90b22897be3bb59f984fe8d9530a99",
+            "indicator": "Nicked blade edge",
+            "indicator_id": "sym_nicked_blade_edge_0a371f93503b9ba01aa478827b8d7047e9216ef8aaef67921436f91121cfe220",
+            "indicator_type": "Symptom",
+            "pages": [
+              28
+            ]
+          },
+          {
+            "corrective_action": "Replace Theta-motor belt",
+            "corrective_action_id": "ca_replace_theta_motor_belt_f353ced21ad3ff845b7083bc5fedc675b366e94915a11395ce2ecfeac7dd1bc3",
+            "failure_mode": "old Theta-motor belt",
+            "failure_mode_id": "fm_old_theta_motor_belt_5367491ebdb8674aaf9089d9c88d4ae019d81d39cbbc41f394e1a4a87e3c56ae",
+            "indicator": "old Theta-motor belt",
+            "indicator_id": "sym_old_theta_motor_belt_119de86a015924f2ca7f2e412ea7e51a9473a5dc96d532846aea3390c02fd557",
+            "indicator_type": "Symptom",
+            "pages": [
+              19
+            ]
+          },
+          {
+            "corrective_action": "Replace X-motor belt",
+            "corrective_action_id": "ca_replace_x_motor_belt_60b08a985ca693dc31bfd625bd245617ff5fd2ee2b9f2121c4aecdc231d28926",
+            "failure_mode": "worn X-motor belt",
+            "failure_mode_id": "fm_worn_x_motor_belt_9d465de70c1a28f53679db37d4c3b70318c42246b9f28050d3292063ef5af8ba",
+            "indicator": "old worn X-motor belt",
+            "indicator_id": "sym_old_worn_x_motor_belt_88c22643dcfaab20af8b61bb8bd6e22a73791383fde8192763785a7bafc4d17e",
+            "indicator_type": "Symptom",
+            "pages": [
+              18
+            ]
+          },
+          {
+            "corrective_action": "Replace Y-motor belt",
+            "corrective_action_id": "ca_replace_y_motor_belt_f763d2b485463055a3cb6f2e9cf17b1bd0b272cb16b445ac63942367b9c5d4e0",
+            "failure_mode": "old Y-motor belt",
+            "failure_mode_id": "fm_old_y_motor_belt_0d6741bc834a9fa65c757754e7b8b3b3b60b317ed6c98d192680cb8b90605197",
+            "indicator": "old Y-motor belt",
+            "indicator_id": "sym_old_y_motor_belt_c1d41ce97825c8848a93e173a32d792553c22180a08373543126fbc2e280e5ae",
+            "indicator_type": "Symptom",
+            "pages": [
+              19
+            ]
+          },
+          {
+            "corrective_action": "Seal bottle vent hole",
+            "corrective_action_id": "ca_seal_bottle_vent_hole_fb95692e332c5aa2e79c71dcd664d578d721b1661721233611033b2c9c817ae6",
+            "failure_mode": "unsealed ink bottle vent",
+            "failure_mode_id": "fm_unsealed_ink_bottle_vent_ef8739e22107fdaac5f5af8776d8ea06ec4c8a433dcb1cdeaa4b33b79a81cd6b",
+            "indicator": "unsealed vent hole",
+            "indicator_id": "sym_unsealed_vent_hole_09b031e3d6b56bce6a2348330df3e2b5b4fef4a552f0a02609454b048973aad0",
+            "indicator_type": "Symptom",
+            "pages": [
+              17
+            ]
+          },
+          {
+            "corrective_action": "Replace punch blade",
+            "corrective_action_id": "ca_replace_punch_blade_7e8fd8852910b3ebc4c3d6a07574640d6d4873ae6ca3a60c2d9d5700353b0eca",
+            "failure_mode": "worn punch blade",
+            "failure_mode_id": "fm_worn_punch_blade_302995278518ca0f4faa0290c2765a1776165cb314ed38d525244136a527b2a5",
+            "indicator": "worn punch blade",
+            "indicator_id": "sym_worn_punch_blade_4a88ac7a99f24daedb0c6b9c0323afa2257c8efbb2c43d382eab7ad6cb23bc35",
+            "indicator_type": "Symptom",
+            "pages": [
+              16
+            ]
+          }
+        ],
+        "relations": 182,
+        "relations_by_type": {
+          "AFFECTS": 12,
+          "HAS_COMPONENT": 146,
+          "MAY_INDICATE": 12,
+          "RESOLVED_BY": 12
+        }
+      },
+      "integrity": {
+        "approval_eligible": false,
+        "checks": {
+          "all_corrective_actions_have_incoming_resolved_by": true,
+          "candidate_accounting_or_nonapprovable": true,
+          "exact_relation_grounding": true,
+          "no_approval_merge_or_structured_processing": true,
+          "one_original_canonical_asset": true,
+          "strict_validation": true,
+          "zero_isolated_diagnostic_nodes": true
+        },
+        "diagnostic_accounting_complete": false,
+        "grounding": {
+          "exact": 883,
+          "passed": true,
+          "total": 883,
+          "unresolved": []
+        },
+        "passed": true,
+        "review_summary": {
+          "blocking": 24,
+          "by_code": {
+            "canonicalization_ambiguous": 25,
+            "pdf_diagnostic_candidate_evidence_unaccounted": 1,
+            "pdf_diagnostic_candidate_pages_unaccounted": 1,
+            "pdf_diagnostic_contract_incomplete": 1,
+            "pdf_diagnostic_record_gap": 3,
+            "pdf_diagnostic_record_review": 17,
+            "pdf_node_provenance_unresolved": 1,
+            "pdf_ocr_low_confidence": 1,
+            "pdf_pipeline_blocked": 1,
+            "pdf_pipeline_not_reviewable": 1,
+            "pdf_relation_endpoint_omitted": 1,
+            "pdf_schema_instruction_not_actionable": 1
+          },
+          "total": 54
+        },
+        "validation": {
+          "domain_range_errors": 0,
+          "duplicate_ids": 0,
+          "endpoint_errors": 0,
+          "extra_properties": 0,
+          "graph_invariant_errors": 0,
+          "issues": [],
+          "passed": true,
+          "provenance_resolvable": 434,
+          "provenance_total": 434,
+          "relation_grounding_passed": 182,
+          "relation_grounding_total": 182,
+          "required_properties_present": 769,
+          "required_properties_total": 769,
+          "unresolved_mapping_diagnostics": 0
+        }
+      },
+      "manual_id": "eastman_e554",
+      "operations": {
+        "calls": 19,
+        "conservative_preflight_usd": 0.496114,
+        "cost_usd": 0.062266,
+        "elapsed_seconds": 212.468,
+        "hard_ceiling_usd": 0.9,
+        "models": {
+          "gpt-5.6-luna": 19
+        }
+      },
+      "scope": {
+        "diagnostic_pages": [
+          2,
+          3,
+          4,
+          12,
+          13,
+          14,
+          16,
+          17,
+          18,
+          19,
+          26,
+          27,
+          28,
+          29,
+          30,
+          36,
+          37,
+          38,
+          39,
+          40,
+          53,
+          54
+        ],
+        "method": "retained_cut_plan",
+        "page_offset": 0,
+        "retrieval_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54
+        ],
+        "sections": [
+          {
+            "end_page": 8,
+            "name": "INSTALLATION",
+            "source": "rule",
+            "start_page": 8
+          },
+          {
+            "end_page": 12,
+            "name": "Chiller Installation",
+            "source": "rule",
+            "start_page": 12
+          },
+          {
+            "end_page": 12,
+            "name": "Co2 Tank Installation",
+            "source": "rule",
+            "start_page": 12
+          },
+          {
+            "end_page": 12,
+            "name": "Fume extractor hose and Festoon installation",
+            "source": "rule",
+            "start_page": 12
+          },
+          {
+            "end_page": 12,
+            "name": "Gantry Installation",
+            "source": "rule",
+            "start_page": 12
+          },
+          {
+            "end_page": 12,
+            "name": "Vacuum Assembly Installation",
+            "source": "rule",
+            "start_page": 12
+          },
+          {
+            "end_page": 13,
+            "name": "Aligning, Cleaning and Replacing Consumables",
+            "source": "rule",
+            "start_page": 13
+          },
+          {
+            "end_page": 13,
+            "name": "SERVICE and MAINTENANCE",
+            "source": "rule",
+            "start_page": 13
+          },
+          {
+            "end_page": 14,
+            "name": "Round Knife Replacement",
+            "source": "rule",
+            "start_page": 14
+          },
+          {
+            "end_page": 15,
+            "name": "Drag Knife Replacement",
+            "source": "rule",
+            "start_page": 15
+          },
+          {
+            "end_page": 16,
+            "name": "Pen Replacement",
+            "source": "rule",
+            "start_page": 16
+          },
+          {
+            "end_page": 16,
+            "name": "Punch Replacement",
+            "source": "rule",
+            "start_page": 16
+          },
+          {
+            "end_page": 17,
+            "name": "Cleaning of Airbrush",
+            "source": "rule",
+            "start_page": 17
+          },
+          {
+            "end_page": 17,
+            "name": "Needle Removal",
+            "source": "rule",
+            "start_page": 17
+          },
+          {
+            "end_page": 18,
+            "name": "X-Motor Belt Replacement",
+            "source": "rule",
+            "start_page": 18
+          },
+          {
+            "end_page": 18,
+            "name": "Y-Motor Belt Replacement",
+            "source": "rule",
+            "start_page": 18
+          },
+          {
+            "end_page": 19,
+            "name": "Theta-Motor Belt Replacement",
+            "source": "rule",
+            "start_page": 19
+          },
+          {
+            "end_page": 19,
+            "name": "X-Axis Linear Bearing Replacement",
+            "source": "rule",
+            "start_page": 19
+          },
+          {
+            "end_page": 20,
+            "name": "Y-Axis Top Linear Bearing Replacement",
+            "source": "rule",
+            "start_page": 20
+          },
+          {
+            "end_page": 21,
+            "name": "Y-Axis Front Linear Bearing Replacement",
+            "source": "rule",
+            "start_page": 21
+          },
+          {
+            "end_page": 22,
+            "name": "Laser Mirror Replacement",
+            "source": "rule",
+            "start_page": 22
+          },
+          {
+            "end_page": 23,
+            "name": "Laser Focus Lens Replacement",
+            "source": "rule",
+            "start_page": 23
+          },
+          {
+            "end_page": 24,
+            "name": "Fume Extractor Filter Replacement",
+            "source": "rule",
+            "start_page": 24
+          },
+          {
+            "end_page": 24,
+            "name": "Laser Optics Cleaning",
+            "source": "rule",
+            "start_page": 24
+          },
+          {
+            "end_page": 25,
+            "name": "CALIBRATION & ADJUSTMENTS",
+            "source": "rule",
+            "start_page": 25
+          },
+          {
+            "end_page": 25,
+            "name": "Pressure Transducer Calibration",
+            "source": "rule",
+            "start_page": 25
+          },
+          {
+            "end_page": 28,
+            "name": "Daily Maintenance (Start of each shift)",
+            "source": "rule",
+            "start_page": 28
+          },
+          {
+            "end_page": 28,
+            "name": "Gantry Calibration Procedure",
+            "source": "rule",
+            "start_page": 28
+          },
+          {
+            "end_page": 28,
+            "name": "Laser Mirror Alignment/Adjustment",
+            "source": "rule",
+            "start_page": 28
+          },
+          {
+            "end_page": 28,
+            "name": "SCHEDULES MAINTENANCE PROCEDURES",
+            "source": "rule",
+            "start_page": 28
+          },
+          {
+            "end_page": 36,
+            "name": "Yearly Maintenance Checklist",
+            "source": "rule",
+            "start_page": 31
+          },
+          {
+            "end_page": 38,
+            "name": "TROUBLE SHOOTING GUIDE",
+            "source": "rule",
+            "start_page": 37
+          },
+          {
+            "end_page": 39,
+            "name": "ELECTRICAL & PNEUMATIC DIAGRAMS",
+            "source": "rule",
+            "start_page": 39
+          },
+          {
+            "end_page": 50,
+            "name": "Pneumatic Diagram Blue Print No. (31-9000-41)",
+            "source": "rule",
+            "start_page": 40
+          }
+        ],
+        "selected_pages": [
+          2,
+          3,
+          4,
+          8,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          32,
+          33,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          53,
+          54
+        ],
+        "skipped": false,
+        "structural_pages": [
+          2,
+          4,
+          8,
+          12,
+          14,
+          15,
+          16,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          30,
+          32,
+          33,
+          35,
+          36,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          53
+        ],
+        "total_pages": 54,
+        "unselected_pages": [
+          1,
+          5,
+          6,
+          7,
+          9,
+          10,
+          11,
+          31,
+          34,
+          51,
+          52
+        ]
+      },
+      "semantic": {
+        "autonomous_expected_claims_present": 0,
+        "checks": {
+          "forbidden_pairings_zero": true,
+          "gold_page_retention": true,
+          "recall_floor": false,
+          "unsupported_published_paths_zero": true
+        },
+        "explicit_expected_gaps_present": 0,
+        "forbidden": [
+          {
+            "failure_mode": "dirty focusing lens",
+            "found": false,
+            "matches": [],
+            "symptom": "Touch Screen buttons are out of alignment"
+          },
+          {
+            "failure_mode": "intermittent pause circuit",
+            "found": false,
+            "matches": [],
+            "symptom": "Laser Fume Extractor has reduced vacuum or no vacuum"
+          },
+          {
+            "failure_mode": "touch screen calibration is required",
+            "found": false,
+            "matches": [],
+            "symptom": "Laser cutting path is too wide"
+          }
+        ],
+        "forbidden_pairings_found": 0,
+        "gold_claim_recall": 0.25,
+        "gold_claims_present": 2,
+        "gold_claims_total": 8,
+        "gold_pages_required": [
+          37,
+          38,
+          39
+        ],
+        "gold_pages_retained": [
+          37,
+          38,
+          39
+        ],
+        "paths_outside_frozen_gold": 12,
+        "published_complete_paths_total": 12,
+        "recall_floor": 0.75,
+        "traceable_review_claims_present": 2,
+        "unsupported_path_gate_scope": "manual_audit_required",
+        "unsupported_published_paths_detected": 0,
+        "witnesses": [
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "E1",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.158333,
+              "failure_mode": 0.0,
+              "indicator": 0.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "corrective_action": "Adjust axis backlash",
+              "corrective_action_id": "ca_adjust_axis_backlash_1129d84116b0603edb9ab1626f742a63781b262999101e2e5d60382dd27ad401",
+              "failure_mode": "Excessive axis backlash",
+              "failure_mode_id": "fm_excessive_axis_backlash_b81527f6712a2de805aaf1123cd11929e82c5eb40b84e677556dd9a0ec00beef",
+              "indicator": "Excessive X- or Y-axis backlash",
+              "indicator_id": "sym_excessive_x_or_y_axis_backlash_2f0ce7a29a1d2b68cabada0b62b8f258aa1ae9a4a3fefd1ab5556c185e5c1bc1",
+              "indicator_type": "Symptom",
+              "pages": [
+                28
+              ]
+            },
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "E2",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.132468,
+              "failure_mode": 0.0,
+              "indicator": 0.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "corrective_action": "Clean spray cap and tip",
+              "corrective_action_id": "ca_clean_spray_cap_and_tip_6ef54fec55f3111245ec76609cfc6d4ab04a09b49c2f099d574398a87d039cdb",
+              "failure_mode": "dirty spray caps and tips",
+              "failure_mode_id": "fm_dirty_spray_caps_and_tips_e7338d2ed0635a9fc44a7a1e308b17477657d080caa103d6c379e88e45af9125",
+              "indicator": "dirty spray caps and tips",
+              "indicator_id": "sym_dirty_spray_caps_and_tips_12ccd3f14710f37a00836b807f52f85ab9ff41149bc56a8321d5439d1e26c938",
+              "indicator_type": "Symptom",
+              "pages": [
+                17
+              ]
+            },
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "E3",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.0,
+              "failure_mode": 0.132468,
+              "indicator": 0.116667
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "corrective_action": "Replace worn drive belt",
+              "corrective_action_id": "ca_replace_worn_drive_belt_18ce0c31fd689e434013b7d8feead2fba356e8e98aadd7586215e51544f6d807",
+              "failure_mode": "Worn or damaged drive belt",
+              "failure_mode_id": "fm_worn_or_damaged_drive_belt_442e3c81184e819ed6a7a3b411fd2b126d1db4accdf4e6f92b7471dea6855730",
+              "indicator": "Drive belt wear or damage",
+              "indicator_id": "sym_drive_belt_wear_or_damage_f80158146445eb0a009c6e3b761c918c9c6bdbe5b3192765a14a1a13ecef2c4a",
+              "indicator_type": "Symptom",
+              "pages": [
+                29
+              ]
+            },
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.6616547142857143,
+            "claim_id": "E4",
+            "expected_outcome": "complete_published_path_or_traceable_review",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 0.421053,
+              "indicator": 0.663158,
+              "specific_token_overlap": 1.0
+            },
+            "matched_outcome": "traceable_review",
+            "matched_record": {
+              "blocking": true,
+              "code": "pdf_diagnostic_record_review",
+              "disposition": "review",
+              "evidence_ids": [
+                "ev_6bf4fb4060f96a711539a5d68dd4",
+                "ev_acd8c56b60bcb7d5a01012d6d189"
+              ],
+              "message": "Record diagnostico non pubblicabile senza decisione umana (quote_not_in_anchored_evidence)",
+              "stage": "pdf_adapter",
+              "target_id": "dbranch_85bac152dff0dd1508f1aa00fd7bf68e645f08f2395c0b900c352f72c7e24b32",
+              "target_kind": "diagnostic_record"
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "E5",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 0.228571,
+              "failure_mode": 0.268571,
+              "indicator": 0.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "corrective_action": "Replace worn drive belt",
+              "corrective_action_id": "ca_replace_worn_drive_belt_18ce0c31fd689e434013b7d8feead2fba356e8e98aadd7586215e51544f6d807",
+              "failure_mode": "Worn or damaged drive belt",
+              "failure_mode_id": "fm_worn_or_damaged_drive_belt_442e3c81184e819ed6a7a3b411fd2b126d1db4accdf4e6f92b7471dea6855730",
+              "indicator": "Drive belt wear or damage",
+              "indicator_id": "sym_drive_belt_wear_or_damage_f80158146445eb0a009c6e3b761c918c9c6bdbe5b3192765a14a1a13ecef2c4a",
+              "indicator_type": "Symptom",
+              "pages": [
+                29
+              ]
+            },
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.834286,
+            "claim_id": "E6",
+            "expected_outcome": "complete_published_path_or_traceable_review",
+            "field_scores": {
+              "corrective_action": 0.834286,
+              "failure_mode": 0.694444,
+              "indicator": 0.845714,
+              "specific_token_overlap": 1.0
+            },
+            "matched_outcome": "traceable_review",
+            "matched_record": {
+              "blocking": true,
+              "code": "pdf_diagnostic_record_review",
+              "disposition": "review",
+              "evidence_ids": [
+                "ev_2fd372a93a4a0644ec082f2650f9",
+                "ev_c2de41589499db5869b8ef19324e"
+              ],
+              "message": "Record diagnostico non pubblicabile senza decisione umana (quote_not_in_anchored_evidence)",
+              "stage": "pdf_adapter",
+              "target_id": "dbranch_4fbf16858f8292ffeca2c4b65a2b408fccdbbb439423011972357fb8aceeaf92",
+              "target_kind": "diagnostic_record"
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "E7",
+            "expected_outcome": "complete_published_path_or_traceable_review",
+            "field_scores": {
+              "corrective_action": 0.662222,
+              "failure_mode": 0.358242,
+              "indicator": 0.845714,
+              "specific_token_overlap": 0.0
+            },
+            "matched_outcome": "traceable_review",
+            "matched_record": {
+              "blocking": true,
+              "code": "pdf_diagnostic_record_review",
+              "disposition": "review",
+              "evidence_ids": [
+                "ev_2fd372a93a4a0644ec082f2650f9",
+                "ev_c2de41589499db5869b8ef19324e"
+              ],
+              "message": "Record diagnostico non pubblicabile senza decisione umana (quote_not_in_anchored_evidence)",
+              "stage": "pdf_adapter",
+              "target_id": "dbranch_4fbf16858f8292ffeca2c4b65a2b408fccdbbb439423011972357fb8aceeaf92",
+              "target_kind": "diagnostic_record"
+            },
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.315789,
+            "claim_id": "E8",
+            "expected_outcome": "complete_published_path_or_traceable_review",
+            "field_scores": {
+              "corrective_action": 0.55619,
+              "failure_mode": 0.416667,
+              "indicator": 0.315789,
+              "specific_token_overlap": 1.0
+            },
+            "matched_outcome": "traceable_review",
+            "matched_record": {
+              "blocking": true,
+              "code": "pdf_diagnostic_record_review",
+              "disposition": "review",
+              "evidence_ids": [
+                "ev_60f45841ea75f690b0db3cc33d4e",
+                "ev_b238338fcaa4e50f8df6f05a1a30"
+              ],
+              "message": "Record diagnostico non pubblicabile senza decisione umana (quote_not_in_anchored_evidence)",
+              "stage": "pdf_adapter",
+              "target_id": "dbranch_916b9519bb2c057fed53de76d5813aa9797c84b5bdfd5f20cb2039dbc1336160",
+              "target_kind": "diagnostic_record"
+            },
+            "present": false
+          }
+        ]
+      },
+      "verdict": {
+        "publication_integrity": "pass",
+        "semantic": "fail"
+      }
+    },
+    {
+      "gold_scope": "exhaustive_troubleshooting_table",
+      "graph": {
+        "nodes": 32,
+        "nodes_by_type": {
+          "Asset": 1,
+          "Component": 28,
+          "CorrectiveAction": 1,
+          "ErrorCode": 1,
+          "FailureMode": 1
+        },
+        "published_paths": [
+          {
+            "corrective_action": "Contact service personnel",
+            "corrective_action_id": "ca_contact_service_personnel_8da64579c92ba97db0f2628178349fd2b2d19d6e41f8e01a1af01904aee3a7b0",
+            "failure_mode": "Broken input fuse",
+            "failure_mode_id": "fm_broken_input_fuse_d7e0b14dc99b4e9ac00bac49c238b0b0edb315f5df6934d5966b21182117f90d",
+            "indicator": "Fuse blowout",
+            "indicator_id": "err_fuse_blowout_78c459e22a0864cc0d38f00b3b62e59074317ff293b52379032425749aab547c",
+            "indicator_type": "ErrorCode",
+            "pages": [
+              64
+            ]
+          }
+        ],
+        "relations": 32,
+        "relations_by_type": {
+          "AFFECTS": 1,
+          "GENERATES_ERROR": 1,
+          "HAS_COMPONENT": 28,
+          "INDICATES": 1,
+          "RESOLVED_BY": 1
+        }
+      },
+      "integrity": {
+        "approval_eligible": false,
+        "checks": {
+          "all_corrective_actions_have_incoming_resolved_by": true,
+          "candidate_accounting_or_nonapprovable": true,
+          "exact_relation_grounding": true,
+          "no_approval_merge_or_structured_processing": true,
+          "one_original_canonical_asset": true,
+          "strict_validation": true,
+          "zero_isolated_diagnostic_nodes": true
+        },
+        "diagnostic_accounting_complete": false,
+        "grounding": {
+          "exact": 321,
+          "passed": true,
+          "total": 321,
+          "unresolved": []
+        },
+        "passed": true,
+        "review_summary": {
+          "blocking": 14,
+          "by_code": {
+            "canonicalization_ambiguous": 6,
+            "pdf_diagnostic_candidate_evidence_unaccounted": 1,
+            "pdf_diagnostic_candidate_pages_unaccounted": 1,
+            "pdf_diagnostic_contract_incomplete": 1,
+            "pdf_diagnostic_record_review": 9,
+            "pdf_node_provenance_unresolved": 1,
+            "pdf_ocr_low_confidence": 1,
+            "pdf_pipeline_blocked": 1,
+            "pdf_pipeline_not_reviewable": 1,
+            "pdf_relation_endpoint_omitted": 1,
+            "pdf_schema_instruction_not_actionable": 1,
+            "pdf_unreadable_pages": 1
+          },
+          "total": 25
+        },
+        "validation": {
+          "domain_range_errors": 0,
+          "duplicate_ids": 0,
+          "endpoint_errors": 0,
+          "extra_properties": 0,
+          "graph_invariant_errors": 0,
+          "issues": [],
+          "passed": true,
+          "provenance_resolvable": 226,
+          "provenance_total": 226,
+          "relation_grounding_passed": 32,
+          "relation_grounding_total": 32,
+          "required_properties_present": 132,
+          "required_properties_total": 132,
+          "unresolved_mapping_diagnostics": 0
+        }
+      },
+      "manual_id": "danfoss_apf",
+      "operations": {
+        "calls": 18,
+        "conservative_preflight_usd": 0.451681,
+        "cost_usd": 0.037005,
+        "elapsed_seconds": 120.584,
+        "hard_ceiling_usd": 0.9,
+        "models": {
+          "gpt-5.6-luna": 18
+        }
+      },
+      "scope": {
+        "diagnostic_pages": [
+          17,
+          18,
+          19,
+          26,
+          27,
+          28,
+          29,
+          30,
+          50,
+          51,
+          52,
+          63,
+          64,
+          65,
+          66
+        ],
+        "method": "retained_cut_plan",
+        "page_offset": 2,
+        "retrieval_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66
+        ],
+        "sections": [
+          {
+            "end_page": 11,
+            "name": "2.4 Electrical Installation Precautions",
+            "source": "rule",
+            "start_page": 11
+          },
+          {
+            "end_page": 31,
+            "name": "6.1 Pre-Installation",
+            "source": "rule",
+            "start_page": 31
+          },
+          {
+            "end_page": 31,
+            "name": "6.1.1 Planning the Installation Site",
+            "source": "rule",
+            "start_page": 31
+          },
+          {
+            "end_page": 31,
+            "name": "6.1.2.1 Exterior and Interior Inspection",
+            "source": "rule",
+            "start_page": 31
+          },
+          {
+            "end_page": 32,
+            "name": "6.1.4 Storage Before Installation",
+            "source": "rule",
+            "start_page": 32
+          },
+          {
+            "end_page": 38,
+            "name": "6.2 Mechanical installation",
+            "source": "rule",
+            "start_page": 38
+          },
+          {
+            "end_page": 40,
+            "name": "6.2.3 Installation Environment Requirements",
+            "source": "rule",
+            "start_page": 39
+          },
+          {
+            "end_page": 50,
+            "name": "7.4 Load Current Detection for CT Installation and Wiring",
+            "source": "rule",
+            "start_page": 49
+          },
+          {
+            "end_page": 56,
+            "name": "8.3 Wiring Basic CT and Installation",
+            "source": "rule",
+            "start_page": 55
+          },
+          {
+            "end_page": 58,
+            "name": "9.1 Inspection Before Start-up",
+            "source": "rule",
+            "start_page": 57
+          },
+          {
+            "end_page": 66,
+            "name": "10.1 Service and Maintenance",
+            "source": "rule",
+            "start_page": 64
+          },
+          {
+            "end_page": 66,
+            "name": "10.2 Fault Finding and Troubleshooting",
+            "source": "rule",
+            "start_page": 64
+          }
+        ],
+        "selected_pages": [
+          11,
+          17,
+          18,
+          19,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          38,
+          39,
+          50,
+          51,
+          52,
+          55,
+          56,
+          57,
+          58,
+          63,
+          64,
+          65,
+          66
+        ],
+        "skipped": false,
+        "structural_pages": [
+          11,
+          17,
+          19,
+          26,
+          28,
+          30,
+          31,
+          38,
+          39,
+          50,
+          52,
+          55,
+          56,
+          57,
+          58,
+          63,
+          65,
+          66
+        ],
+        "total_pages": 66,
+        "unselected_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          12,
+          13,
+          14,
+          15,
+          16,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          53,
+          54,
+          59,
+          60,
+          61,
+          62
+        ]
+      },
+      "semantic": {
+        "autonomous_expected_claims_present": 1,
+        "checks": {
+          "forbidden_pairings_zero": true,
+          "gold_page_retention": true,
+          "recall_floor": false,
+          "unsupported_published_paths_zero": true
+        },
+        "explicit_expected_gaps_present": 0,
+        "forbidden": [
+          {
+            "failure_mode": "input fuse is broken",
+            "found": false,
+            "matches": [],
+            "symptom": "SYS 485 comm loss"
+          },
+          {
+            "failure_mode": "CT is not well connected",
+            "found": false,
+            "matches": [],
+            "symptom": "Fuse blowout"
+          },
+          {
+            "failure_mode": "BUS capacitor failure",
+            "found": false,
+            "matches": [],
+            "symptom": "Ambient OTP"
+          },
+          {
+            "failure_mode": "fan failure",
+            "found": false,
+            "matches": [],
+            "symptom": "No current compensation or bad current compensation"
+          }
+        ],
+        "forbidden_pairings_found": 0,
+        "gold_claim_recall": 0.125,
+        "gold_claims_present": 1,
+        "gold_claims_total": 8,
+        "gold_pages_required": [
+          64
+        ],
+        "gold_pages_retained": [
+          64
+        ],
+        "paths_outside_frozen_gold": 0,
+        "published_complete_paths_total": 1,
+        "recall_floor": 0.75,
+        "traceable_review_claims_present": 0,
+        "unsupported_path_gate_scope": "exhaustive_gold",
+        "unsupported_published_paths_detected": 0,
+        "witnesses": [
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "D1",
+            "expected_outcome": "traceable_explicit_gap",
+            "field_scores": {},
+            "matched_gap": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "D2",
+            "expected_outcome": "traceable_explicit_gap",
+            "field_scores": {},
+            "matched_gap": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.75,
+            "claim_id": "D3",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 0.75,
+              "indicator": 1.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "corrective_action": "Contact service personnel",
+              "corrective_action_id": "ca_contact_service_personnel_8da64579c92ba97db0f2628178349fd2b2d19d6e41f8e01a1af01904aee3a7b0",
+              "failure_mode": "Broken input fuse",
+              "failure_mode_id": "fm_broken_input_fuse_d7e0b14dc99b4e9ac00bac49c238b0b0edb315f5df6934d5966b21182117f90d",
+              "indicator": "Fuse blowout",
+              "indicator_id": "err_fuse_blowout_78c459e22a0864cc0d38f00b3b62e59074317ff293b52379032425749aab547c",
+              "indicator_type": "ErrorCode",
+              "pages": [
+                64
+              ]
+            },
+            "present": true
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "D4",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 0.0,
+              "indicator": 0.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "corrective_action": "Contact service personnel",
+              "corrective_action_id": "ca_contact_service_personnel_8da64579c92ba97db0f2628178349fd2b2d19d6e41f8e01a1af01904aee3a7b0",
+              "failure_mode": "Broken input fuse",
+              "failure_mode_id": "fm_broken_input_fuse_d7e0b14dc99b4e9ac00bac49c238b0b0edb315f5df6934d5966b21182117f90d",
+              "indicator": "Fuse blowout",
+              "indicator_id": "err_fuse_blowout_78c459e22a0864cc0d38f00b3b62e59074317ff293b52379032425749aab547c",
+              "indicator_type": "ErrorCode",
+              "pages": [
+                64
+              ]
+            },
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "D5",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 0.0,
+              "indicator": 0.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "corrective_action": "Contact service personnel",
+              "corrective_action_id": "ca_contact_service_personnel_8da64579c92ba97db0f2628178349fd2b2d19d6e41f8e01a1af01904aee3a7b0",
+              "failure_mode": "Broken input fuse",
+              "failure_mode_id": "fm_broken_input_fuse_d7e0b14dc99b4e9ac00bac49c238b0b0edb315f5df6934d5966b21182117f90d",
+              "indicator": "Fuse blowout",
+              "indicator_id": "err_fuse_blowout_78c459e22a0864cc0d38f00b3b62e59074317ff293b52379032425749aab547c",
+              "indicator_type": "ErrorCode",
+              "pages": [
+                64
+              ]
+            },
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "D6",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 0.0,
+              "indicator": 0.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "corrective_action": "Contact service personnel",
+              "corrective_action_id": "ca_contact_service_personnel_8da64579c92ba97db0f2628178349fd2b2d19d6e41f8e01a1af01904aee3a7b0",
+              "failure_mode": "Broken input fuse",
+              "failure_mode_id": "fm_broken_input_fuse_d7e0b14dc99b4e9ac00bac49c238b0b0edb315f5df6934d5966b21182117f90d",
+              "indicator": "Fuse blowout",
+              "indicator_id": "err_fuse_blowout_78c459e22a0864cc0d38f00b3b62e59074317ff293b52379032425749aab547c",
+              "indicator_type": "ErrorCode",
+              "pages": [
+                64
+              ]
+            },
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "D7",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {
+              "corrective_action": 1.0,
+              "failure_mode": 0.0,
+              "indicator": 0.0
+            },
+            "matched_outcome": "published_path",
+            "matched_record": {
+              "corrective_action": "Contact service personnel",
+              "corrective_action_id": "ca_contact_service_personnel_8da64579c92ba97db0f2628178349fd2b2d19d6e41f8e01a1af01904aee3a7b0",
+              "failure_mode": "Broken input fuse",
+              "failure_mode_id": "fm_broken_input_fuse_d7e0b14dc99b4e9ac00bac49c238b0b0edb315f5df6934d5966b21182117f90d",
+              "indicator": "Fuse blowout",
+              "indicator_id": "err_fuse_blowout_78c459e22a0864cc0d38f00b3b62e59074317ff293b52379032425749aab547c",
+              "indicator_type": "ErrorCode",
+              "pages": [
+                64
+              ]
+            },
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "D8",
+            "expected_outcome": "traceable_explicit_gap",
+            "field_scores": {},
+            "matched_gap": {},
+            "present": false
+          }
+        ]
+      },
+      "verdict": {
+        "publication_integrity": "pass",
+        "semantic": "fail"
+      }
+    },
+    {
+      "gold_scope": "exhaustive_troubleshooting_table",
+      "graph": {
+        "nodes": 57,
+        "nodes_by_type": {
+          "Asset": 1,
+          "Component": 56
+        },
+        "published_paths": [],
+        "relations": 56,
+        "relations_by_type": {
+          "HAS_COMPONENT": 56
+        }
+      },
+      "integrity": {
+        "approval_eligible": false,
+        "checks": {
+          "all_corrective_actions_have_incoming_resolved_by": true,
+          "candidate_accounting_or_nonapprovable": true,
+          "exact_relation_grounding": true,
+          "no_approval_merge_or_structured_processing": true,
+          "one_original_canonical_asset": true,
+          "strict_validation": true,
+          "zero_isolated_diagnostic_nodes": true
+        },
+        "diagnostic_accounting_complete": false,
+        "grounding": {
+          "exact": 376,
+          "passed": true,
+          "total": 376,
+          "unresolved": []
+        },
+        "passed": true,
+        "review_summary": {
+          "blocking": 3,
+          "by_code": {
+            "canonicalization_ambiguous": 4,
+            "pdf_diagnostic_candidate_evidence_unaccounted": 1,
+            "pdf_diagnostic_candidate_pages_unaccounted": 1,
+            "pdf_diagnostic_contract_incomplete": 1,
+            "pdf_pipeline_blocked": 1,
+            "pdf_pipeline_not_reviewable": 1,
+            "pdf_pipeline_schema_noncompliant": 1
+          },
+          "total": 10
+        },
+        "validation": {
+          "domain_range_errors": 0,
+          "duplicate_ids": 0,
+          "endpoint_errors": 0,
+          "extra_properties": 0,
+          "graph_invariant_errors": 0,
+          "issues": [],
+          "passed": true,
+          "provenance_resolvable": 156,
+          "provenance_total": 156,
+          "relation_grounding_passed": 56,
+          "relation_grounding_total": 56,
+          "required_properties_present": 229,
+          "required_properties_total": 229,
+          "unresolved_mapping_diagnostics": 0
+        }
+      },
+      "manual_id": "graco_check_mate_200",
+      "operations": {
+        "calls": 14,
+        "conservative_preflight_usd": 0.343913,
+        "cost_usd": 0.036287,
+        "elapsed_seconds": 112.355,
+        "hard_ceiling_usd": 0.9,
+        "models": {
+          "gpt-5.6-luna": 14
+        }
+      },
+      "scope": {
+        "diagnostic_pages": [
+          1,
+          2,
+          3,
+          4,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          17,
+          18,
+          19,
+          29,
+          30
+        ],
+        "method": "retained_cut_plan",
+        "page_offset": 0,
+        "retrieval_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30
+        ],
+        "sections": [
+          {
+            "end_page": 7,
+            "name": "Installation",
+            "source": "rule",
+            "start_page": 5
+          },
+          {
+            "end_page": 11,
+            "name": "Service",
+            "source": "rule",
+            "start_page": 11
+          },
+          {
+            "end_page": 11,
+            "name": "Troubleshooting",
+            "source": "rule",
+            "start_page": 11
+          },
+          {
+            "end_page": 13,
+            "name": "Reconnecting the Displacement Pump",
+            "source": "rule",
+            "start_page": 13
+          },
+          {
+            "end_page": 19,
+            "name": "Displacement Pump Service",
+            "source": "rule",
+            "start_page": 14
+          }
+        ],
+        "selected_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          17,
+          18,
+          19,
+          29,
+          30
+        ],
+        "skipped": false,
+        "structural_pages": [
+          2,
+          4,
+          5,
+          6,
+          10,
+          12,
+          13,
+          15,
+          17,
+          19,
+          29
+        ],
+        "total_pages": 30,
+        "unselected_pages": [
+          7,
+          8,
+          9,
+          16,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28
+        ]
+      },
+      "semantic": {
+        "autonomous_expected_claims_present": 0,
+        "checks": {
+          "forbidden_pairings_zero": true,
+          "gold_page_retention": true,
+          "recall_floor": false,
+          "unsupported_published_paths_zero": true
+        },
+        "explicit_expected_gaps_present": 0,
+        "forbidden": [
+          {
+            "failure_mode": "held open or worn piston valve or seals",
+            "found": false,
+            "matches": [],
+            "symptom": "Pump operates but output is low on down-stroke"
+          },
+          {
+            "failure_mode": "held open or worn intake valve or seals",
+            "found": false,
+            "matches": [],
+            "symptom": "Pump operates but output is low on up-stroke"
+          },
+          {
+            "failure_mode": "worn packings in displacement pump",
+            "found": false,
+            "matches": [],
+            "symptom": "Pump fails to operate"
+          },
+          {
+            "failure_mode": "bleeder valve is open",
+            "found": false,
+            "matches": [],
+            "symptom": "Erratic or accelerated pump speed"
+          }
+        ],
+        "forbidden_pairings_found": 0,
+        "gold_claim_recall": 0.0,
+        "gold_claims_present": 0,
+        "gold_claims_total": 18,
+        "gold_pages_required": [
+          11
+        ],
+        "gold_pages_retained": [
+          11
+        ],
+        "paths_outside_frozen_gold": 0,
+        "published_complete_paths_total": 0,
+        "recall_floor": 0.8333,
+        "traceable_review_claims_present": 0,
+        "unsupported_path_gate_scope": "exhaustive_gold",
+        "unsupported_published_paths_detected": 0,
+        "witnesses": [
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G1",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G2",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G3",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G4",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G5",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G6",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G7",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G8",
+            "expected_outcome": "traceable_explicit_gap",
+            "field_scores": {},
+            "matched_gap": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G9",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G10",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G11",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G12",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G13",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G14",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G15",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G16",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G17",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          },
+          {
+            "best_min_field_score": 0.0,
+            "claim_id": "G18",
+            "expected_outcome": "complete_published_path",
+            "field_scores": {},
+            "matched_outcome": "none",
+            "matched_record": {},
+            "present": false
+          }
+        ]
+      },
+      "verdict": {
+        "publication_integrity": "pass",
+        "semantic": "fail"
+      }
+    }
+  ]
+}

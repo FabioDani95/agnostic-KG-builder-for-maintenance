@@ -108,40 +108,47 @@ def project_graph_to_triplets(
         if isinstance(n, dict) and str(n.get("action_id", "")).strip()
     }
 
-    # symptom -> [failure_mode_id], failure_mode -> [action_id], with evidence pages
-    may_indicate: dict[str, list[str]] = {}
-    resolved_by: dict[str, list[str]] = {}
-    fm_evidence: dict[str, int] = {}
-    ca_link_page: dict[str, int] = {}
+    # Typed diagnostics may intentionally reuse one semantic FailureMode node
+    # across independent source rows.  Keep the system-owned branch lineage on
+    # both causal edges so projection cannot manufacture their Cartesian
+    # product.  Legacy relations use the empty branch and retain old behavior.
+    may_indicate: dict[str, list[tuple[str, str]]] = {}
+    resolved_by: dict[tuple[str, str], list[str]] = {}
+    fm_evidence: dict[tuple[str, str], int] = {}
+    ca_link_page: dict[tuple[str, str], int] = {}
     # failure_mode -> [error code text], via ErrorCode -INDICATES-> FailureMode.
     # Alarm-code chains are first-class diagnostic knowledge (the user reports
     # the displayed code, not the symptom), so the projection must not drop them.
-    fm_error_codes: dict[str, list[str]] = {}
+    fm_error_codes: dict[tuple[str, str], list[str]] = {}
     for rel in relations:
         name = str(rel.get("name") or rel.get("type") or "").strip()
         from_id = str(rel.get("from_id") or "").strip()
         to_id = str(rel.get("to_id") or "").strip()
+        branch_id = str(rel.get("branch_lineage_id") or "").strip()
         if name == "MAY_INDICATE" and from_id in symptoms and to_id in failure_modes:
             may_indicate.setdefault(from_id, [])
-            if to_id not in may_indicate[from_id]:
-                may_indicate[from_id].append(to_id)
-            fm_evidence.setdefault(to_id, _first_evidence_page(rel))
+            occurrence = (to_id, branch_id)
+            if occurrence not in may_indicate[from_id]:
+                may_indicate[from_id].append(occurrence)
+            fm_evidence.setdefault(occurrence, _first_evidence_page(rel))
         elif name == "RESOLVED_BY" and from_id in failure_modes and to_id in actions:
-            resolved_by.setdefault(from_id, [])
-            if to_id not in resolved_by[from_id]:
-                resolved_by[from_id].append(to_id)
-            ca_link_page.setdefault(to_id, _first_evidence_page(rel))
+            occurrence = (from_id, branch_id)
+            resolved_by.setdefault(occurrence, [])
+            if to_id not in resolved_by[occurrence]:
+                resolved_by[occurrence].append(to_id)
+            ca_link_page.setdefault((to_id, branch_id), _first_evidence_page(rel))
         elif name == "INDICATES" and from_id in error_codes and to_id in failure_modes:
             code = error_codes[from_id]
             if code:
-                fm_error_codes.setdefault(to_id, [])
-                if code not in fm_error_codes[to_id]:
-                    fm_error_codes[to_id].append(code)
+                occurrence = (to_id, branch_id)
+                fm_error_codes.setdefault(occurrence, [])
+                if code not in fm_error_codes[occurrence]:
+                    fm_error_codes[occurrence].append(code)
 
     triplets: list[Triplet] = []
     for symptom_id, sym_node in symptoms.items():
-        linked_fm_ids = may_indicate.get(symptom_id, [])
-        if not linked_fm_ids:
+        linked_fm_occurrences = may_indicate.get(symptom_id, [])
+        if not linked_fm_occurrences:
             continue  # orphan symptoms surface via the review queue, not as triplets
         symptom = Symptom(
             symptom_id=symptom_id,
@@ -151,18 +158,21 @@ def project_graph_to_triplets(
         )
         fm_models: list[FailureMode] = []
         ca_models: list[CorrectiveAction] = []
-        for fm_id in linked_fm_ids:
+        seen_failure_models: set[str] = set()
+        for fm_id, branch_id in linked_fm_occurrences:
             fm_node = failure_modes[fm_id]
-            fm_models.append(FailureMode(
-                failure_mode_id=fm_id,
-                name=str(fm_node.get("name", "")),
-                description=str(fm_node.get("description", "")),
-                material_context=str(fm_node.get("material_context", "")),
-                linked_symptom_id=symptom_id,
-                evidence_page=fm_evidence.get(fm_id, 0),
-                error_codes=list(fm_error_codes.get(fm_id, [])),
-            ))
-            for action_id in resolved_by.get(fm_id, []):
+            if fm_id not in seen_failure_models:
+                fm_models.append(FailureMode(
+                    failure_mode_id=fm_id,
+                    name=str(fm_node.get("name", "")),
+                    description=str(fm_node.get("description", "")),
+                    material_context=str(fm_node.get("material_context", "")),
+                    linked_symptom_id=symptom_id,
+                    evidence_page=fm_evidence.get((fm_id, branch_id), 0),
+                    error_codes=list(fm_error_codes.get((fm_id, branch_id), [])),
+                ))
+                seen_failure_models.add(fm_id)
+            for action_id in resolved_by.get((fm_id, branch_id), []):
                 ca_node = actions[action_id]
                 try:
                     source_page = int(ca_node.get("source_page") or 0)
@@ -176,7 +186,7 @@ def project_graph_to_triplets(
                     instruction_text=str(ca_node.get("instruction_text", "")),
                     source_type=str(ca_node.get("source_type", "") or source_type),
                     source_title=str(ca_node.get("source_title", "") or source_title),
-                    source_page=source_page or ca_link_page.get(action_id, 0),
+                    source_page=source_page or ca_link_page.get((action_id, branch_id), 0),
                     linked_failure_mode_id=fm_id,
                     action_kind=action_kind if action_kind in ("procedure", "escalation") else "procedure",
                 ))

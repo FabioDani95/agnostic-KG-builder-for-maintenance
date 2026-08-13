@@ -10,6 +10,7 @@ from backend.services.ontology_workflow import (
     _chunk_call_ledger_entries,
     _diagnostic_escalation_priority,
     _diagnostic_escalation_reason,
+    _diagnostic_output_token_limit,
     _merge_escalated_chunk_metrics,
     _prefer_escalated_diagnostic_report,
 )
@@ -165,11 +166,48 @@ def test_cost_envelope_applies_long_context_pricing_per_call() -> None:
     )
 
 
+def test_cost_envelope_prices_typed_and_structural_output_caps_separately() -> None:
+    envelope = _envelope(
+        chunk_input_characters=[1000, 1000],
+        chunk_max_output_tokens=[4000, 16000],
+        fixed_prompt_overhead_characters=0,
+        coverage_enabled=False,
+        resolution_enabled=False,
+    )
+    expected = sum(
+        estimate_cost_usd(
+            prompt_tokens=1000,
+            completion_tokens=output,
+            cache_write_prompt_tokens=1000,
+            model_name="gpt-5.6-luna",
+        )
+        for output in (4000, 16000)
+    )
+    assert envelope["by_stage_max_usd"]["draft"] == round(expected, 6)
+
+
 def test_escalation_is_selective_and_never_retries_refusals() -> None:
     assert _diagnostic_escalation_reason({
         "refusal": True,
         "escalation_recommended": True,
     }) is None
+
+    assert _diagnostic_escalation_reason({
+        "parsed": True,
+        "candidate_count": 1,
+        "publish_count": 0,
+        "unresolved_count": 1,
+        "drop_reasons": {"check_only": 1},
+        "escalation_recommended": True,
+    }) is None
+    assert _diagnostic_escalation_reason({
+        "parsed": True,
+        "candidate_count": 1,
+        "publish_count": 0,
+        "unresolved_count": 1,
+        "drop_reasons": {"record_window_missing_disposition": 1},
+        "escalation_recommended": True,
+    }) == "invalid_or_ambiguous_candidates"
 
 
 def test_escalation_priority_preserves_the_cap_for_hard_contract_failures() -> None:
@@ -240,6 +278,18 @@ def test_escalated_result_only_wins_when_contract_score_improves() -> None:
 
     assert _prefer_escalated_diagnostic_report(primary, better) is True
     assert _prefer_escalated_diagnostic_report(primary, lower_coverage) is False
+
+
+def test_atomic_table_output_bound_is_smaller_than_multibranch_prose_bound() -> None:
+    cfg = {
+        "diagnostic_bundle_max_output_tokens": 8000,
+        "diagnostic_atomic_table_max_output_tokens": 3000,
+    }
+    atomic = [{"window_kind": "table_row", "structure_status": "atomic"}]
+    prose = [{"window_kind": "contiguous_blocks", "structure_status": "atomic"}]
+
+    assert _diagnostic_output_token_limit(atomic, cfg) == 3000
+    assert _diagnostic_output_token_limit(prose, cfg) == 8000
 
 
 def test_escalated_chunk_ledger_preserves_each_model_and_effort() -> None:
