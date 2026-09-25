@@ -1,7 +1,7 @@
 from pydantic import model_validator
 from pydantic_settings import BaseSettings
 
-DEFAULT_MODEL_NAME = "gpt-5.6-terra"
+DEFAULT_MODEL_NAME = "gpt-6-luna"
 
 
 class Settings(BaseSettings):

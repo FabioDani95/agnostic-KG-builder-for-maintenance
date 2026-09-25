@@ -34,7 +34,7 @@ def is_mock_mode() -> bool:
 def chat_temperature_kwargs(model_name: str | None, temperature: float) -> dict[str, float]:
     """Return temperature kwargs only for models that support custom values."""
     raw = str(model_name or settings.MODEL_NAME or "").strip().lower()
-    if raw in {"gpt-5.5", "gpt-5.6"} or raw.startswith(("gpt-5.5-", "gpt-5.6-")):
+    if raw in {"gpt-5.5", "gpt-5.6", "gpt-6-luna"} or raw.startswith(("gpt-5.5-", "gpt-5.6-", "gpt-6-luna-")):
         return {}
     return {"temperature": temperature}
 
@@ -50,18 +50,18 @@ def chat_reasoning_kwargs(
     """Return a validated Chat Completions reasoning setting when requested.
 
     Keeping this opt-in prevents legacy/non-reasoning models from receiving an
-    unsupported parameter.  Current GPT-5.6 pipeline models accept all values
+    unsupported parameter.  Current GPT-5.6 and GPT-6 Luna pipeline models accept the values
     below through the installed OpenAI SDK.
     """
     effort = str(reasoning_effort or "").strip().lower()
     if not effort:
         return {}
     model = str(model_name or settings.MODEL_NAME or "").strip().lower()
-    if not (model in {"gpt-5.5", "gpt-5.6"} or model.startswith(("gpt-5.5-", "gpt-5.6-"))):
+    if not (model in {"gpt-5.5", "gpt-5.6", "gpt-6-luna"} or model.startswith(("gpt-5.5-", "gpt-5.6-", "gpt-6-luna-"))):
         return {}
     allowed_efforts = (
         _GPT_56_REASONING_EFFORTS
-        if model == "gpt-5.6" or model.startswith("gpt-5.6-")
+        if model in {"gpt-5.6", "gpt-6-luna"} or model.startswith(("gpt-5.6-", "gpt-6-luna-"))
         else _REASONING_EFFORTS
     )
     if effort not in allowed_efforts:

@@ -40,7 +40,7 @@ def get_diagnostic_escalation_config() -> dict:
     """Return the bounded Luna -> Terra diagnostic escalation policy."""
     cfg = deepcopy((get_ontology_config().get("diagnostic_escalation", {}) or {}))
     cfg.setdefault("enabled", False)
-    cfg.setdefault("primary_model", "gpt-5.6-luna")
+    cfg.setdefault("primary_model", "gpt-6-luna")
     cfg.setdefault("model", "gpt-5.6-terra")
     cfg.setdefault("reasoning_effort", "medium")
     cfg.setdefault("max_chunks_per_run", 0)

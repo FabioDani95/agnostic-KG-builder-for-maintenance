@@ -58,7 +58,7 @@ def test_diagnostic_escalation_defaults_fail_closed() -> None:
 
     assert cfg["enabled"] is False
     assert cfg["max_chunks_per_run"] == 0
-    assert cfg["primary_model"] == "gpt-5.6-luna"
+    assert cfg["primary_model"] == "gpt-6-luna"
     assert cfg["model"] == "gpt-5.6-terra"
     schema_characters = len(json.dumps(
         DiagnosticChunkOutput.model_json_schema(),

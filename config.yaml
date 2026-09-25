@@ -8,6 +8,8 @@ chat:
   idle_reminder_seconds: 60
 
 shared_models: &strong_models
+  - id: gpt-6-luna
+    label: GPT-6 Luna
   - id: gpt-5.6-sol
     label: GPT-5.6 Sol
   - id: gpt-5.6-terra
@@ -37,19 +39,19 @@ pdf_ingestion:
 agents:
   scoping:
     enabled: true
-    model: gpt-5.6-luna
+    model: gpt-6-luna
     reasoning_effort: low
     timeout: 60
   ontology_draft:
     enabled: true
-    # Low-cost acceptance profile: Luna is used end-to-end, with medium
-    # reasoning reserved for semantic extraction and run-level completion.
-    model: gpt-5.6-luna
+    # Research candidate: validate GPT-6 Luna against frozen gold before
+    # attributing historical GPT-5.6 results to this configuration.
+    model: gpt-6-luna
     reasoning_effort: low
     timeout: 120
   extraction:
     enabled: true
-    model: gpt-5.6-terra
+    model: gpt-6-luna
     timeout: 120
   validation:
     enabled: true
@@ -63,7 +65,7 @@ agents:
     escalate_after_exhaustion: true
   coverage:
     enabled: false
-    model: gpt-5.6-luna
+    model: gpt-6-luna
     timeout: 60
   grounding:
     enabled: false
@@ -76,7 +78,7 @@ agents:
 
 supervisor:
   mode: deterministic
-  llm_model: gpt-5.6-luna
+  llm_model: gpt-6-luna
   llm_timeout: 15
 
 checkpointing:
@@ -214,7 +216,7 @@ ontology:
   # the full bounded Terra envelope in the PDF cost preflight before any call.
   diagnostic_escalation:
     enabled: false
-    primary_model: gpt-5.6-luna
+    primary_model: gpt-6-luna
     model: gpt-5.6-terra
     reasoning_effort: medium
     # Terra is opt-in per authorized run and never a whole-manual replacement.
