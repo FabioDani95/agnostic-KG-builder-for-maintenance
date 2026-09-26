@@ -239,6 +239,20 @@ Misura rivista per posizione e significato (giudice LLM a tre voti, gold storico
 riscritto come segmenti e controllato dall'agente, non da tecnici): v22 contro V3
 con codice corretto (r3, r4) Eastman 6 contro 7/8, Danfoss 5 contro 8/8, Graco 17
 contro 18/18. Corretto un bug di fusione dei nodi che in r2 faceva perdere azioni.
-Preparata la revisione cieca della precisione in `evaluation/v3_precision_review/`,
-da compilare da parte di un tecnico. Questa analisi non modifica codice del generatore, gold o
+Preparata la revisione cieca della precisione in `evaluation/v3_precision_review/`
+e il foglio di conferma dei 34 casi in `evaluation/gold_segments_v1/CONFERMA_GOLD.md`,
+entrambi da compilare da parte di un tecnico. Questa analisi non modifica codice del generatore, gold o
 ledger e non effettua chiamate API.
+
+
+## Revisione delle 96 affermazioni: annotazione AI
+
+Compilata [REVISIONE_PRECISIONE.md](evaluation/v3_precision_review/REVISIONE_PRECISIONE.md)
+con giudizi sul singolo fatto e controllo dei PDF dove gli estratti erano
+insufficienti. Revisore dichiarato: Codex, assistente AI; la chiave di provenienza
+non è stata consultata. L’assistente era già esposto allo sviluppo della pipeline:
+questa annotazione non completa la revisione indipendente da parte di un tecnico.
+Testi delle affermazioni, estratti, condizioni, ordine e numero delle voci sono
+invariati. Il tempo riportato è tempo trascorso della revisione AI, non una misura
+del lavoro umano. Nessuna attribuzione dei giudizi ai sistemi, modifica del gold,
+del generatore o del ledger è stata effettuata.

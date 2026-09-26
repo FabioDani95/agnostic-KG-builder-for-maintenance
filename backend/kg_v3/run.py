@@ -9,6 +9,7 @@ doubt questions, the most important first.
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import time
 from collections import Counter
@@ -63,6 +64,8 @@ class RunConfig(BaseModel):
     # Stop before extraction until the map is confirmed; otherwise the model's
     # map is used and its question stays open.
     wait_for_map: bool = False
+    # Stop with a clear error instead of spending on an unexpectedly large reading.
+    max_units: int = 150
 
 
 class GateRecord(BaseModel):
@@ -210,28 +213,33 @@ class Pipeline:
         if map_record.pending and self.config.wait_for_map:
             return self._result("waiting_for_map", page_map, [], [], MergedGraph(), {"map": map_record}, started, [])
         units = build_units(self.doc, page_map, max_chars=self.config.unit_max_chars)
+        if len(units) > self.config.max_units:
+            raise ValueError(f"{len(units)} reading units exceed max_units={self.config.max_units}; "
+                             "check the page map or raise the limit explicitly")
         self._save("units", [unit.model_dump(mode="json") for unit in units])
+        # Later steps depend on exactly these units: their saved state is keyed by them.
+        stamp = hashlib.sha256("|".join(unit.unit_id for unit in units).encode("utf-8")).hexdigest()[:10]
 
         extractor = Extractor(self.llm, self.spec, asset_name=self.asset_name, reads=self.config.reads,
                               concurrency=self.config.concurrency)
         extractions = await self._extract(units, extractor)
         proposals = [proposal for item in extractions for proposal in item.proposals]
 
-        saved = self._load("checked")
+        saved = self._load(f"checked_{stamp}")
         if saved is not None:
             relations = [CheckedRelation.model_validate(item) for item in saved]
         else:
             checker = Checker(self.llm, self.spec, extractor_id=f"{self.config.model}:{extractor.prompt_id}",
                               concurrency=self.config.concurrency)
             relations = await self._timed("check", checker.check(self.doc, proposals))
-            self._save("checked", [item.model_dump(mode="json") for item in relations])
+            self._save(f"checked_{stamp}", [item.model_dump(mode="json") for item in relations])
 
-        saved = self._load("merge_plan")
+        saved = self._load(f"merge_plan_{stamp}")
         if saved is not None:
             plan = MergePlan.model_validate(saved)
         else:
             plan = await self._timed("merge", judge_pairs(self.llm, merge_candidates(relations)))
-            self._save("merge_plan", plan)
+            self._save(f"merge_plan_{stamp}", plan)
 
         doubts = [
             *relation_questions(self.doc, self.spec, relations),

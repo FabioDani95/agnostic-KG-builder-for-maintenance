@@ -7,6 +7,7 @@ all statements, reject removes them, correct keeps only the listed numbers.
 
 from __future__ import annotations
 
+import hashlib
 from collections import defaultdict
 
 from backend.kg_v3.checker import CheckedRelation, statement
@@ -126,8 +127,10 @@ def unreadable_questions(page_map: DocumentMap) -> list[Question]:
 
 
 def approval_question(summary: list[str]) -> Question:
+    # A changed graph needs a new approval: the ID follows the summary.
+    digest = hashlib.sha256("\n".join(summary).encode("utf-8")).hexdigest()[:8]
     return Question(
-        question_id="approval",
+        question_id=f"approval:{digest}",
         kind=QuestionKind.GRAPH_APPROVAL,
         title="May this graph be used by the maintenance agent?",
         proposal=summary,

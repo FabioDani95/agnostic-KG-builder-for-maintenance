@@ -1,4 +1,7 @@
-# Current PDF diagnostic status
+# v22 PDF diagnostic status
+
+> Superseded as default by the V3 pipeline ([plan](PIANO_V3.md), [results](V3_RISULTATI_SVILUPPO.md)).
+> This page documents the v22 generator, still selectable as `legacy_v22`.
 
 Generator: `pdf-g3-structured-recovery-v22`. Evidence checkpoint: C9–C12,
 2026-09-26. This page describes the implemented workspace PDF path and its

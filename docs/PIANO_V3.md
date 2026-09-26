@@ -183,8 +183,13 @@ kg_v3:
     doubts: [agent, human]
     approval: [human]         # [agent] per test ed estrazioni in serie
   human_question_budget: 15
-  agent_reviewer: {model: gpt-6-luna, reasoning_effort: medium}
+  agent_model: gpt-6-luna
+  agent_reasoning_effort: medium
+  wait_for_map: false         # true: fermarsi finché la mappa non è confermata
+  max_units: 150              # oltre, l'esecuzione si ferma con un messaggio chiaro
 ```
+
+Nell'applicazione `approval: []`: l'approvazione resta al pulsante del workspace.
 
 Con `[agent]` o `[auto]` su tutti i cancelli l'intero percorso gira senza persone:
 `scripts/kg_v3.py --pdf <file> --gates agent` produce grafo e rapporto.
@@ -192,7 +197,11 @@ Con `[agent]` o `[auto]` su tutti i cancelli l'intero percorso gira senza person
 ## 6. Robustezza
 
 - Stato dell'esecuzione salvato dopo ogni stazione e ogni cancello: dopo un crash si
-  riprende dal punto giusto senza ripetere le chiamate già fatte.
+  riprende dal punto giusto senza ripetere le chiamate già fatte. Gli ID delle unità e
+  i salvataggi successivi dipendono dal contenuto: se la mappa cambia, nulla di vecchio
+  viene riusato per sbaglio. Un grafo cambiato richiede una nuova approvazione.
+- Tetto esplicito di unità per esecuzione (`max_units`); nuovi tentativi automatici
+  sugli errori di rete del fornitore.
 - Ogni chiamata al modello è archiviata ([llm_response_archive.py](../backend/services/llm_response_archive.py))
   e contabilizzata ([real_call_budget_ledger.py](../backend/services/real_call_budget_ledger.py));
   i test rigiocano le risposte archiviate senza rete.
@@ -215,8 +224,15 @@ Nuovo pacchetto `backend/kg_v3/`, moduli piccoli e senza framework di orchestraz
 | `export.py` | export JSON per l'agente a valle |
 | `app_builder.py` | `SourceSubgraphRevision` per il workspace, stesso contratto della v22 |
 
-Strumenti: [scripts/kg_v3.py](../scripts/kg_v3.py) esegue un PDF da riga di comando;
-[scripts/kg_v3_compare.py](../scripts/kg_v3_compare.py) confronta V3 e v22 sugli stessi manuali.
+Strumenti:
+
+- [scripts/kg_v3.py](../scripts/kg_v3.py) esegue un PDF da riga di comando;
+- [scripts/kg_v3_compare.py](../scripts/kg_v3_compare.py) confronta V3 e v22 con il gold lessicale;
+- [scripts/kg_v3_evaluate.py](../scripts/kg_v3_evaluate.py) confronta per posizione e significato;
+- [scripts/kg_v3_precision_sheet.py](../scripts/kg_v3_precision_sheet.py) prepara e valuta la
+  revisione cieca della precisione;
+- [scripts/kg_v3_gold_sheet.py](../scripts/kg_v3_gold_sheet.py) prepara e applica la conferma
+  tecnica dei 34 casi di riferimento.
 
 Un router minimo espone esecuzioni, domande aperte e risposte; una CLI esegue il
 percorso da riga di comando. Il builder si sceglie in [source_subgraph_generation.py](../backend/services/source_subgraph_generation.py)

@@ -281,6 +281,10 @@ kg_v3:
   human_question_budget: 15
   agent_model: gpt-6-luna
   agent_reasoning_effort: medium
+  # Stop before extraction until someone confirms the map (otherwise the model's
+  # map is used and its question stays open), and refuse unexpectedly large runs.
+  wait_for_map: false
+  max_units: 150
   gates:
     map: [agent]
     doubts: [agent, human]

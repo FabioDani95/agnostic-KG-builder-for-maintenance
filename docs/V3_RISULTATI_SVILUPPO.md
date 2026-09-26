@@ -46,6 +46,10 @@ coperto da un test. r3 e r4 usano il codice corretto.
 Eastman E4 manca sempre alla V3: il manuale non nomina la causa e la V3 scrive
 "causa non specificata", mentre il gold la deduce dal rimedio.
 
+Il gold riscritto come segmenti va confermato da un tecnico con
+[CONFERMA_GOLD.md](../paper/evaluation/gold_segments_v1/CONFERMA_GOLD.md);
+`scripts/kg_v3_gold_sheet.py apply` riporta le decisioni nel gold.
+
 La **precisione**, cioè quante relazioni del grafo sono giuste, richiede un tecnico:
 [revisione cieca](../paper/evaluation/v3_precision_review/README.md) di 96
 affermazioni, 12 per sistema e per manuale, campionate da V3 r3 e dalla v22.

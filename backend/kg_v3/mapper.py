@@ -9,6 +9,7 @@ segment is owned by exactly one unit.
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import logging
 from typing import Any
 
@@ -234,8 +235,10 @@ def build_units(
                 if doc.segment(header) and header not in context:
                     context.insert(0, header)
             owned = [item.segment_id for item in chunk]
+            # The ID follows the content: a different map never reuses another unit's saved reads.
+            digest = hashlib.sha256("|".join(owned).encode("utf-8")).hexdigest()[:6]
             units.append(ReadingUnit(
-                unit_id=f"u{len(units) + 1:03d}",
+                unit_id=f"u{len(units) + 1:03d}-{digest}",
                 section=sections.get(chunk[0].page, ""),
                 pages=sorted({item.page for item in chunk}),
                 segment_ids=owned,

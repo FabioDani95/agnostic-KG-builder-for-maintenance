@@ -15,20 +15,24 @@ The repository is in active MVP development against
 | G2 | Product Owner accepted | deterministic CSV/XLSX/JSON/JSONL profiling, mapping, evidence creation and exception handling |
 | G3 | Human review open | source-scoped graph generation, strict validation, evidence drill-down and the graph explorer are implemented; no subgraph is approved, merged or published automatically |
 
-The current PDF generator is `pdf-g3-structured-recovery-v22`. The C9–C12
-continuation adds bounded recovery after compiler errors, multipage procedure
-context and correction of individual records with evidence, revision history
-and recompilation. The final technical suite passed 612 Python tests, and four
-exact offline replays reproduced the diagnostic records and graph relations.
-These checks do not establish semantic quality or Product Owner acceptance.
+The default PDF generator is **V3 "Cite, Check, Ask"** (`backend/kg_v3`,
+[plan](docs/PIANO_V3.md)). The model cites short segment IDs instead of copying
+text; each relation gets a certificate of independent witnesses and a
+green/yellow/red tier; doubts become grouped questions that an agent reviewer
+answers first, so a person sees only what it cannot settle. On the four
+development manuals V3 recovers as many or more reference cases than v22
+(by meaning: Eastman 7 vs 6 of 8, Danfoss 8 vs 5 of 8, Graco 18 vs 17 of 18),
+leaves 0–2 questions per manual for a person instead of 26–157 review items, and
+runs 2–13 times faster at lower API cost. These are development measurements on
+the manuals used to build the system, with a reference not yet validated by
+technicians; blind precision review and gold confirmation sheets are prepared.
+See [V3 development results](docs/V3_RISULTATI_SVILUPPO.md) and
+[scientific status](paper/STATUS.md).
 
-All four final development graphs remain non-approvable. Hypertherm gained four
-source-supported terminal diagnostic branches, but complete operational paths
-remain unverified; its review notifications increased from 111 to 157 against
-C8. Global semantic precision/recall and reduced human effort are not established.
-See the [current PDF status](docs/PDF_DIAGNOSTIC_STATUS.md),
-[C9–C12 report](paper/experiments/robustness_continuation_20260926/REPORT.md)
-and [scientific status](paper/STATUS.md).
+The previous generator `pdf-g3-structured-recovery-v22` remains selectable with
+`kg_v3.pdf_generator: legacy_v22` or `KG_PDF_GENERATOR=legacy_v22` until it is
+removed; its C9–C12 evidence is in the [v22 PDF status](docs/PDF_DIAGNOSTIC_STATUS.md)
+and the [C9–C12 report](paper/experiments/robustness_continuation_20260926/REPORT.md).
 
 The v11 campaign remains a historical development result.
 Its accounting and lexical scores must not be interpreted as validated semantic

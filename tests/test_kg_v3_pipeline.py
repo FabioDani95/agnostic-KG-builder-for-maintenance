@@ -146,8 +146,8 @@ def test_full_run_is_complete_clean_and_resumable(doc, tmp_path):
     symptom = next(node for node in result.graph.nodes.values() if node.name == "Pump fails to operate")
     assert symptom.aliases == ["Pump does not operate"]
 
-    by_record = {item.assertion.record_key: item.assertion.certificate for item in result.relations}
-    assert set(by_record["u001:A.R1"].witnesses) == {Witness.STRUCTURE, Witness.AGREEMENT}
+    by_record = {item.assertion.record_key.split(":", 1)[1]: item.assertion.certificate for item in result.relations}
+    assert set(by_record["A.R1"].witnesses) == {Witness.STRUCTURE, Witness.AGREEMENT}
     reviewed = [item.assertion.certificate for item in result.relations
                 if Witness.REVIEWER in item.assertion.certificate.witnesses]
     assert len(reviewed) == 4 and all(item.confirmed_by.kind is ReviewerKind.AGENT for item in reviewed)
@@ -161,6 +161,7 @@ def test_full_run_is_complete_clean_and_resumable(doc, tmp_path):
     occurrence = next(edge for edge in exported["edges"] if edge["type"] == "RESOLVED_BY")["occurrences"][0]
     assert occurrence["evidence"][0]["segment_id"].startswith("p1.t1.r")
 
+    assert all(unit.unit_id.startswith("u001-") for unit in result.units[:1])
     resumed, _ = pipeline(doc, FailingProvider(), tmp_path / "run")
     again = asyncio.run(resumed.run())
     assert len(again.graph.edges) == len(result.graph.edges) and again.status == "approved"
@@ -256,3 +257,16 @@ def test_application_builder_emits_a_valid_revision(tmp_path, monkeypatch):
     assert resolved[0].attributes["certificates"][0]["segment_ids"]
     asset = next(node for node in revision.nodes if node.node_type == "Asset")
     assert asset.node_id == workspace.asset.asset_id and asset.evidence_ids == ["ev_operator_asset"]
+
+
+def test_oversized_readings_stop_before_spending(doc, tmp_path):
+    run, _ = pipeline(doc, ScriptedProvider(), tmp_path / "run", max_units=0)
+    with pytest.raises(ValueError, match="max_units"):
+        asyncio.run(run.run())
+
+
+def test_a_changed_graph_asks_for_approval_again():
+    from backend.kg_v3.questions import approval_question
+
+    first, second = approval_question(["10 relations"]), approval_question(["11 relations"])
+    assert first.question_id != second.question_id and first.question_id.startswith("approval:")

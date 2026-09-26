@@ -1,4 +1,8 @@
-# Come funziona la pipeline diagnostica
+# Come funziona la pipeline diagnostica v22
+
+> Dal 2026-09-26 il generatore predefinito è la V3: si veda il [Piano V3](PIANO_V3.md),
+> che la spiega in parole semplici, e i [risultati](V3_RISULTATI_SVILUPPO.md).
+> Questa guida descrive la v22, ancora selezionabile come `legacy_v22`.
 
 Questa guida descrive il generatore `pdf-g3-structured-recovery-v22`, verificato
 nella campagna C9–C12. La [guida precedente](PIPELINE_SPIEGAZIONE_IT_20260728.md)
