@@ -161,9 +161,9 @@ def wilson(successes: int, total: int) -> tuple[float, float]:
     return (round(centre - margin, 3), round(centre + margin, 3))
 
 
-def score() -> None:
+def score(sheet: Path = SHEET) -> None:
     key = json.loads(KEY.read_text())["items"]
-    judgements = {item: value.strip().upper() for item, value in JUDGEMENT.findall(SHEET.read_text())}
+    judgements = {item: value.strip().upper() for item, value in JUDGEMENT.findall(sheet.read_text())}
     counts: dict[tuple[str, str], Counter] = defaultdict(Counter)
     for item_id, value in judgements.items():
         entry = key[item_id]
@@ -182,11 +182,12 @@ def main() -> int:
     parser.add_argument("action", choices=["generate", "score"])
     parser.add_argument("--v3", help="V3 run directory holding one folder per manual")
     parser.add_argument("--per-system", type=int, default=PER_SYSTEM)
+    parser.add_argument("--sheet", default=str(SHEET), help="filled sheet to score")
     args = parser.parse_args()
     if args.action == "generate":
         generate(Path(args.v3).resolve(), args.per_system)
     else:
-        score()
+        score(Path(args.sheet))
     return 0
 
 

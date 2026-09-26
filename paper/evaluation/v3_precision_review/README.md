@@ -9,6 +9,10 @@ manuale, senza sapere quale sistema le ha prodotte.
 - [REVISIONE_PRECISIONE.md](REVISIONE_PRECISIONE.md): il foglio da compilare, con
   affermazioni in ordine casuale. Metà vengono dalla nuova pipeline V3, metà
   dalla v22 congelata, 12 per sistema e per manuale.
+- [REVISIONE_PRECISIONE_revisione_AI.md](REVISIONE_PRECISIONE_revisione_AI.md): lo stesso
+  foglio compilato da un assistente AI (Codex) il 2026-09-27. È una revisione preliminare,
+  non cieca in senso pieno (l'assistente conosce lo sviluppo della pipeline) e non vale
+  come giudizio tecnico. Il tecnico deve usare il foglio pulito.
 - `chiave_non_aprire.json`: collega ogni voce al sistema che l'ha prodotta. Il
   revisore non deve aprirlo, altrimenti la revisione non è più cieca.
 - I PDF dei manuali sono in `paper/manuals/files/`, e servono se il testo mostrato
@@ -33,6 +37,7 @@ del revisore, la data e il tempo totale impiegato.
 
 ```bash
 .venv/bin/python scripts/kg_v3_precision_sheet.py score
+.venv/bin/python scripts/kg_v3_precision_sheet.py score --sheet paper/evaluation/v3_precision_review/REVISIONE_PRECISIONE_revisione_AI.md
 ```
 
 Il comando stampa, per sistema e per manuale, i conteggi C/P/S/N e la precisione

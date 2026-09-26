@@ -54,6 +54,23 @@ La **precisione**, cioè quante relazioni del grafo sono giuste, richiede un tec
 [revisione cieca](../paper/evaluation/v3_precision_review/README.md) di 96
 affermazioni, 12 per sistema e per manuale, campionate da V3 r3 e dalla v22.
 
+### Revisione preliminare della precisione (AI, non tecnica)
+
+Il foglio cieco è stato compilato anche da un assistente AI (Codex), in un'altra
+sessione ([file](../paper/evaluation/v3_precision_review/REVISIONE_PRECISIONE_revisione_AI.md)).
+Non sostituisce il tecnico: l'assistente conosce lo sviluppo della pipeline. Su 48
+affermazioni per sistema: V3 43 corrette, 3 parziali, 2 sbagliate (precisione 0,90,
+intervallo 0,78–0,96); v22 41, 5, 2 (0,85, intervallo 0,73–0,93). La differenza non
+è significativa con questo campione. Entrambi i sistemi sono precisi su ciò che
+pubblicano; la differenza principale resta quanto recuperano e quanto chiedono.
+
+I suoi rilievi sulla V3 indicano cosa migliorare:
+
+- un controllo prescritto trasformato in causa ("le valvole vanno controllate");
+- un passo di una procedura numerata collegato alla causa sbagliata (Eastman p. 38);
+- un'azione di riparazione etichettata come controllo;
+- un test presentato come rimedio di una causa non ancora accertata.
+
 ## In breve (prima misura, lessicale)
 
 | Manuale | Casi gold recuperati v22 → V3 (r1, r2) | Cose per una persona v22 → V3 | Tempo v22 → V3 | Costo API v22 → V3 (USD) |
