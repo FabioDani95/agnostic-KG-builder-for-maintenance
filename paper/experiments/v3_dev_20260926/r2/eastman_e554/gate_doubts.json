@@ -1,0 +1,589 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u001:B.R5",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p38.b25",
+     "page": 38,
+     "text": "Problem: Laser Fume Extractor has reduced vacuum"
+    },
+    {
+     "segment_id": "p38.b26",
+     "page": 38,
+     "text": "or no vacuum. Description of Problem: An odor is present when cutting with the laser tool or Laser cutting path is wider than normal"
+    },
+    {
+     "segment_id": "p38.b27",
+     "page": 38,
+     "text": "Troubleshooting: 1. Check the laser fume extractor for power and is turned ON."
+    },
+    {
+     "segment_id": "p38.b28",
+     "page": 38,
+     "text": "2. Increase vacuum pressure using the fume extractor control panel."
+    },
+    {
+     "segment_id": "p38.b29",
+     "page": 38,
+     "text": "3) Replace vacuum filters."
+    },
+    {
+     "segment_id": "p38.b30",
+     "page": 38,
+     "text": "4) Clean vacuum hose and funnel."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Unspecified cause of reduced or no laser fume extractor vacuum' -> AFFECTS -> Component 'Vacuum filters'. Meaning: The failure mode affects the specified component.",
+    "2. FailureMode 'Unspecified cause of reduced or no laser fume extractor vacuum' -> AFFECTS -> Component 'Vacuum hose and funnel'. Meaning: The failure mode affects the specified component.",
+    "3. FailureMode 'Unspecified cause of odor during laser cutting' -> RESOLVED_BY -> CorrectiveAction 'Increase vacuum pressure on the fume extractor control panel' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.",
+    "4. FailureMode 'Unspecified cause of odor during laser cutting' -> RESOLVED_BY -> CorrectiveAction 'Replace the vacuum filters' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.",
+    "5. FailureMode 'Unspecified cause of odor during laser cutting' -> RESOLVED_BY -> CorrectiveAction 'Clean the vacuum hose and funnel' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.",
+    "6. FailureMode 'Unspecified cause of wider-than-normal laser cutting path' -> RESOLVED_BY -> CorrectiveAction 'Increase vacuum pressure on the fume extractor control panel' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.",
+    "7. FailureMode 'Unspecified cause of wider-than-normal laser cutting path' -> RESOLVED_BY -> CorrectiveAction 'Replace the vacuum filters' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.",
+    "8. FailureMode 'Unspecified cause of wider-than-normal laser cutting path' -> RESOLVED_BY -> CorrectiveAction 'Clean the vacuum hose and funnel' [repair]. Meaning: The failure mode may be resolved by the specified corrective action."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 38,
+   "target": {
+    "assertion_ids": [
+     "u001.c101",
+     "u001.c102",
+     "u001.c104",
+     "u001.c105",
+     "u001.c106",
+     "u001.c108",
+     "u001.c109",
+     "u001.c110"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:A.R4",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p38.b4",
+     "page": 38,
+     "text": "Problem: The Cutting Tool or Pen does not move down Description of Problem: The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. This can be caused by an electrical short, tool mapping in software or a problem with the power supply."
+    },
+    {
+     "segment_id": "p38.b5",
+     "page": 38,
+     "text": "Troubleshooting: 1.Make sure the gantry Tools ON switch is turned on. This can be verified by making sure the laser pointer is on."
+    },
+    {
+     "segment_id": "p38.b12",
+     "page": 38,
+     "text": "4.Make sure you have pressure at the tools. Try pulling tool the holder down by hand to see if it has pressure."
+    },
+    {
+     "segment_id": "p38.b13",
+     "page": 38,
+     "text": "5.Check tool connections."
+    },
+    {
+     "segment_id": "p38.b15",
+     "page": 38,
+     "text": "corresponding green LED light is on. Located on the slice output cards (non-operator gantry side plate)."
+    },
+    {
+     "segment_id": "p38.b17",
+     "page": 38,
+     "text": "solenoid block. Each solenoid can be manually fired by pressing the individual button."
+    },
+    {
+     "segment_id": "p38.b18",
+     "page": 38,
+     "text": "c) Check cable connection at air manifold for proper"
+    },
+    {
+     "segment_id": "p38.b20",
+     "page": 38,
+     "text": "6.The Pen or Tool delays coming down and misses the beginning of marker or cut."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Power supply problem in the tool-down system' -> RESOLVED_BY -> CorrectiveAction 'Verify the gantry Tools ON switch using the laser pointer' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything).",
+    "2. FailureMode 'Insufficient pressure at the tools' -> AFFECTS -> Component 'Tool air supply'. Meaning: The failure mode affects the specified component.",
+    "3. FailureMode 'Tool connections are faulty or improperly connected' -> AFFECTS -> Component 'Slice output cards'. Meaning: The failure mode affects the specified component.",
+    "4. FailureMode 'Tool connections are faulty or improperly connected' -> AFFECTS -> Component 'Solenoid block'. Meaning: The failure mode affects the specified component.",
+    "5. Symptom 'Cutting tool or pen does not move down or is delayed' -> MAY_INDICATE -> FailureMode 'Pen air-cylinder flow control valves need checking'. Meaning: The symptom may indicate the specified failure mode. Conditions: When the pen or tool delays coming down and misses the beginning of marker or cut."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 35,
+   "target": {
+    "assertion_ids": [
+     "u001.c26",
+     "u001.c31",
+     "u001.c34",
+     "u001.c35",
+     "u001.c42"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:B.R4",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p38.b4",
+     "page": 38,
+     "text": "Problem: The Cutting Tool or Pen does not move down Description of Problem: The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. This can be caused by an electrical short, tool mapping in software or a problem with the power supply."
+    },
+    {
+     "segment_id": "p38.b14",
+     "page": 38,
+     "text": "a) Hit the Cut Down button on the UIT to verify the"
+    },
+    {
+     "segment_id": "p38.b15",
+     "page": 38,
+     "text": "corresponding green LED light is on. Located on the slice output cards (non-operator gantry side plate)."
+    },
+    {
+     "segment_id": "p38.b16",
+     "page": 38,
+     "text": "b) Try firing the tool manually by pressing red button under"
+    },
+    {
+     "segment_id": "p38.b17",
+     "page": 38,
+     "text": "solenoid block. Each solenoid can be manually fired by pressing the individual button."
+    },
+    {
+     "segment_id": "p38.b20",
+     "page": 38,
+     "text": "6.The Pen or Tool delays coming down and misses the beginning of marker or cut."
+    },
+    {
+     "segment_id": "p38.b23",
+     "page": 38,
+     "text": "b) Check the 24 VDC power supply fuse."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Cutting tool or pen does not move down, or is delayed at the beginning of a cut' -> MAY_INDICATE -> FailureMode 'Corresponding slice output card green LED does not illuminate'. Meaning: The symptom may indicate the specified failure mode.",
+    "2. Symptom 'Cutting tool or pen does not move down, or is delayed at the beginning of a cut' -> MAY_INDICATE -> FailureMode 'Tool solenoid does not fire'. Meaning: The symptom may indicate the specified failure mode.",
+    "3. Symptom 'Cutting tool or pen does not move down, or is delayed at the beginning of a cut' -> MAY_INDICATE -> FailureMode '24 VDC power supply fuse fault'. Meaning: The symptom may indicate the specified failure mode. Conditions: When the pen or tool is delayed and misses the beginning of a marker or cut.",
+    "4. FailureMode '24 VDC power supply fuse fault' -> RESOLVED_BY -> CorrectiveAction 'Check the 24 VDC power supply fuse' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: When the pen or tool is delayed and misses the beginning of a marker or cut."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 34,
+   "target": {
+    "assertion_ids": [
+     "u001.c91",
+     "u001.c94",
+     "u001.c99",
+     "u001.c100"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3,
+     4
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:B.R2",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p37.b11",
+     "page": 37,
+     "text": "tional pause Description of Problem: The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. When pressing NEXT on the keypad, the machine will continue to cut where it left off. This is typically caused by an intermittent pause circuit, usually in thestop discs."
+    },
+    {
+     "segment_id": "p37.b12",
+     "page": 37,
+     "text": "Troubleshooting: 1.Check stop disc activation. The stop discs should not activate by a slight touch or vibration. They should activate only when moved by minimum pressure. Remove gantry side cover. Check the pause plunger. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Intermittent pause circuit, usually in the stop discs' -> RESOLVED_BY -> CorrectiveAction 'Tighten or loosen the pause plunger to adjust activation pressure' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: Tighten to increase activation pressure; loosen to decrease it.",
+    "2. FailureMode 'Intermittent pause circuit, usually in the stop discs' -> RESOLVED_BY -> CorrectiveAction 'Press NEXT on the keypad to continue the cut where it stopped' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: When continuing the cut from where it stopped."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u001.c82",
+     "u001.c83"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:A.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p37.b5",
+     "page": 37,
+     "text": "Problem: UIT Does Not Power Up Description of Problem: The UIT does not power. Screen is blank and not lit up."
+    },
+    {
+     "segment_id": "p37.b7",
+     "page": 37,
+     "text": "2.Make sure your cutting software is open on the cutting system computer."
+    },
+    {
+     "segment_id": "p37.b8",
+     "page": 37,
+     "text": "4.Find the black ethernet power supply (PoE) located next to the computer. Verify the green LED is illuminated."
+    },
+    {
+     "segment_id": "p37.b9",
+     "page": 37,
+     "text": "5.If there is no green LED lit, check the AC outlets located on the back of the diagnostic cabinet. If there is no AC power, check the AC power cord and fuses F3 and F4 in the diagnostic cabinet."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'UIT does not power up; screen is blank and unlit' -> MAY_INDICATE -> FailureMode 'Cutting software is not open on the cutting system computer'. Meaning: The symptom may indicate the specified failure mode.",
+    "2. Symptom 'UIT does not power up; screen is blank and unlit' -> MAY_INDICATE -> FailureMode 'PoE power supply has no green LED indication'. Meaning: The symptom may indicate the specified failure mode.",
+    "3. Symptom 'UIT does not power up; screen is blank and unlit' -> MAY_INDICATE -> FailureMode 'Diagnostic cabinet AC outlet has no power'. Meaning: The symptom may indicate the specified failure mode. Conditions: If no green LED is lit.",
+    "4. Symptom 'UIT does not power up; screen is blank and unlit' -> MAY_INDICATE -> FailureMode 'AC power cord or fuse F3 or F4 fault'. Meaning: The symptom may indicate the specified failure mode. Conditions: If there is no AC power.",
+    "5. FailureMode 'AC power cord or fuse F3 or F4 fault' -> AFFECTS -> Component 'AC power cord'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 25,
+   "target": {
+    "assertion_ids": [
+     "u001.c3",
+     "u001.c5",
+     "u001.c8",
+     "u001.c11",
+     "u001.c12"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:A.R5",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p38.b25",
+     "page": 38,
+     "text": "Problem: Laser Fume Extractor has reduced vacuum"
+    },
+    {
+     "segment_id": "p38.b27",
+     "page": 38,
+     "text": "Troubleshooting: 1. Check the laser fume extractor for power and is turned ON."
+    },
+    {
+     "segment_id": "p38.b28",
+     "page": 38,
+     "text": "2. Increase vacuum pressure using the fume extractor control panel."
+    },
+    {
+     "segment_id": "p38.b29",
+     "page": 38,
+     "text": "3) Replace vacuum filters."
+    },
+    {
+     "segment_id": "p38.b30",
+     "page": 38,
+     "text": "4) Clean vacuum hose and funnel."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Laser fume extractor has reduced or no vacuum' -> MAY_INDICATE -> FailureMode 'Unspecified cause of reduced or no laser fume extractor vacuum'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u001.c45"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u001:B.R5",
+   "option_id": "correct",
+   "text": "Keep statements 3–8: the manual lists the associated actions in troubleshooting for the problem described as reduced or no vacuum, which includes odor and a wider-than-normal cutting path. Reject statements 1–2 because the manual does not state that the failure mode affects those components.",
+   "edits": {
+    "keep": [
+     3,
+     4,
+     5,
+     6,
+     7,
+     8
+    ]
+   },
+   "rationale": "The troubleshooting remedies belong to the same problem entry that lists odor and a wider cutting path as descriptions, but the excerpt does not assert AFFECTS relations to the filters or hose and funnel.",
+   "cited_segment_ids": [
+    "p38.b25",
+    "p38.b26",
+    "p38.b28",
+    "p38.b29",
+    "p38.b30"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:33:18.498354Z"
+  },
+  {
+   "question_id": "rel:u001:A.R4",
+   "option_id": "correct",
+   "text": "Only statement 1 is supported; statements 2–5 are not established by the excerpts.",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "The troubleshooting list prescribes checking the gantry Tools ON switch, but the other excerpts do not establish the proposed component-effect or failure-mode relationships.",
+   "cited_segment_ids": [
+    "p38.b4",
+    "p38.b5",
+    "p38.b12",
+    "p38.b13",
+    "p38.b15",
+    "p38.b17",
+    "p38.b18",
+    "p38.b20"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:33:20.582184Z"
+  },
+  {
+   "question_id": "rel:u001:B.R4",
+   "option_id": "correct",
+   "text": "Keep only statement 4. The manual prescribes checking the 24 VDC power supply fuse for the delayed-tool symptom, but does not state that a fuse fault causes it.",
+   "edits": {
+    "keep": [
+     4
+    ]
+   },
+   "rationale": "For the symptom of a pen or tool missing the beginning of a marker or cut, the manual directs checking the 24 VDC power supply fuse; it does not identify the fuse as a cause or establish the other proposed failure modes.",
+   "cited_segment_ids": [
+    "p38.b20",
+    "p38.b23"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:33:20.817125Z"
+  },
+  {
+   "question_id": "rel:u001:B.R2",
+   "option_id": "correct",
+   "text": "Keep statement 1 only. The pause-plunger adjustment is prescribed in troubleshooting; pressing NEXT continues the cut but is not stated as resolving the intermittent pause circuit.",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "The manual links the intermittent pause circuit to the stop discs and directs adjusting the pause plunger’s activation pressure, while NEXT only resumes cutting where it stopped.",
+   "cited_segment_ids": [
+    "p37.b11",
+    "p37.b12"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:33:15.616617Z"
+  },
+  {
+   "question_id": "rel:u001:A.R1",
+   "option_id": "reject",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual lists software, PoE LED, AC outlet, cord, and fuse checks under the symptom, but it does not state that these are failure modes causing the symptom or that the proposed failure mode affects the AC power cord.",
+   "cited_segment_ids": [
+    "p37.b5",
+    "p37.b7",
+    "p37.b8",
+    "p37.b9"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:33:19.218244Z"
+  },
+  {
+   "question_id": "rel:u001:A.R5",
+   "option_id": "reject",
+   "text": "The manual lists checks and remedies for reduced vacuum but does not state that the symptom indicates an unspecified failure mode.",
+   "edits": {},
+   "rationale": "The excerpt gives troubleshooting actions for reduced vacuum, not a cause or failure mode that the symptom may indicate.",
+   "cited_segment_ids": [
+    "p38.b25",
+    "p38.b27",
+    "p38.b28",
+    "p38.b29",
+    "p38.b30"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:33:20.547589Z"
+  }
+ ],
+ "pending": []
+}

@@ -213,3 +213,25 @@ storici. Questo aggiornamento documentale successivo al freeze non modifica
 risultati, gold, codice del generatore o ledger. I controlli di conservazione
 negli artifact descrivono lo stato alla chiusura della campagna, prima di questo
 aggiornamento esplicitamente richiesto ai documenti generali.
+
+## Diagnosi architetturale e proposta V3
+
+Analisi offline in sola lettura dei quattro grafi finali C12
+([script](analysis/record_block_causes_20260926.py), [dati](analysis/record_block_causes_20260926.json)),
+commit `a699f6f`. Dei 304 record non esclusi del ledger, duplicati inclusi,
+57 sono pubblicati; 156 sono bloccati da motivi meccanici del compilatore
+(citazione non identica, anchor, regole lessicali, accounting ridondante, schema),
+67 da catene parziali dichiarate dalla fonte e 24 da contenuto dubbio. Sono i
+motivi dichiarati dal compilatore, non un giudizio semantico. Graco p. 11 è letta
+da 7 chiamate di estrazione. Da B1 a C12 le review crescono su tutti i manuali.
+
+La nuova architettura V3 ([docs/PIANO_V3.md](../docs/PIANO_V3.md)) è implementata
+in `backend/kg_v3/` ed è il generatore PDF predefinito. Due esecuzioni per manuale
+sui quattro manuali di sviluppo ([risultati](../docs/V3_RISULTATI_SVILUPPO.md),
+[artifact](experiments/v3_dev_20260926/)): gold storico lessicale Eastman 4 e 5/8
+contro 4/8 della v22, Danfoss 8/8 contro 5/8, Graco 16/18 contro 16/18; domande
+rimaste per una persona 0–1 per manuale contro 26–157 segnalazioni; tempi da 5 a
+13 volte inferiori. Sono misure di sviluppo sui manuali usati per costruire il
+sistema, con gold non validato da tecnici: non sono risultati per il paper. Costo
+cumulativo del registro: 2,0138 USD su 20. Questa analisi non modifica codice del generatore, gold o
+ledger e non effettua chiamate API.

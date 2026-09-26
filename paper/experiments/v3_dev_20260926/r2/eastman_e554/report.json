@@ -1,0 +1,123 @@
+{
+ "status": "approved",
+ "pages": 54,
+ "page_labels": {
+  "other": 11,
+  "procedure": 29,
+  "diagnostic": 14
+ },
+ "diagnostic_pages": [
+  37,
+  38,
+  39,
+  40,
+  41,
+  42,
+  43,
+  44,
+  45,
+  46,
+  47,
+  48,
+  49,
+  50
+ ],
+ "units": 2,
+ "failed_reads": 0,
+ "proposals": 186,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "B: relation 32 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "coverage: 2 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 98,
+  "red": 16
+ },
+ "witnesses": {
+  "structure": 93,
+  "agreement": 72,
+  "verifier": 38,
+  "reviewer": 9
+ },
+ "verifier_verdicts": {
+  "not_called": 59,
+  "not_supported": 10,
+  "unclear": 7,
+  "supported": 38
+ },
+ "graph": {
+  "nodes": 106,
+  "nodes_by_type": {
+   "Symptom": 9,
+   "FailureMode": 26,
+   "CorrectiveAction": 44,
+   "Component": 27
+  },
+  "edges": 103,
+  "edges_by_tier": {
+   "green": 88,
+   "red": 15
+  },
+  "merged_aliases": 54
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 6,
+   "answered": 6,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 7,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 9,
+ "usage": {
+  "calls": 11,
+  "failed_calls": 0,
+  "prompt_tokens": 29807,
+  "completion_tokens": 20481,
+  "estimated_cost_usd": 0.01247,
+  "by_operation": {
+   "kg_v3_extract": 5,
+   "kg_v3_map": 1,
+   "kg_v3_merge": 2,
+   "kg_v3_verify": 3
+  }
+ },
+ "agent_usage": {
+  "calls": 7,
+  "failed_calls": 0,
+  "prompt_tokens": 9556,
+  "completion_tokens": 4258,
+  "estimated_cost_usd": 0.00328,
+  "by_operation": {
+   "AgentDecision": 7
+  }
+ },
+ "seconds": {
+  "map": 7.259,
+  "gate_map": 11.84,
+  "extract": 53.138,
+  "check": 10.097,
+  "merge": 5.59,
+  "gate_doubts": 7.655,
+  "gate_approval": 0.001,
+  "total": 95.909
+ },
+ "prompt_ids": {
+  "extraction": "3c25d3843a138719"
+ }
+}

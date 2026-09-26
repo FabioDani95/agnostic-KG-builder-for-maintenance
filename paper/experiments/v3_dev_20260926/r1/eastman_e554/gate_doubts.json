@@ -1,0 +1,384 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u001:B.R4",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p38.b4",
+     "page": 38,
+     "text": "Problem: The Cutting Tool or Pen does not move down Description of Problem: The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. This can be caused by an electrical short, tool mapping in software or a problem with the power supply."
+    },
+    {
+     "segment_id": "p38.b5",
+     "page": 38,
+     "text": "Troubleshooting: 1.Make sure the gantry Tools ON switch is turned on. This can be verified by making sure the laser pointer is on."
+    },
+    {
+     "segment_id": "p38.b12",
+     "page": 38,
+     "text": "4.Make sure you have pressure at the tools. Try pulling tool the holder down by hand to see if it has pressure."
+    },
+    {
+     "segment_id": "p38.b20",
+     "page": 38,
+     "text": "6.The Pen or Tool delays coming down and misses the beginning of marker or cut."
+    },
+    {
+     "segment_id": "p38.b21",
+     "page": 38,
+     "text": "a) Check the 24 VDC power supply located in the diagnos-"
+    },
+    {
+     "segment_id": "p38.b22",
+     "page": 38,
+     "text": "tic cabinet. Make sure the green led is on."
+    },
+    {
+     "segment_id": "p38.b23",
+     "page": 38,
+     "text": "b) Check the 24 VDC power supply fuse."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Power supply problem' -> RESOLVED_BY -> CorrectiveAction 'Turn on the gantry Tools ON switch' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: Verify the switch is on by confirming the laser pointer is on.",
+    "2. Symptom 'Cutting tool or pen does not move down or is delayed coming down' -> MAY_INDICATE -> FailureMode 'Insufficient pressure at the tools'. Meaning: The symptom may indicate the specified failure mode.",
+    "3. Symptom 'Cutting tool or pen does not move down or is delayed coming down' -> MAY_INDICATE -> FailureMode '24 VDC power supply or fuse problem'. Meaning: The symptom may indicate the specified failure mode. Conditions: When the pen or tool delays coming down and misses the beginning of marker or cut."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 33,
+   "target": {
+    "assertion_ids": [
+     "u001.c70",
+     "u001.c71",
+     "u001.c76"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:B.R6",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p39.b3",
+     "page": 39,
+     "text": "2. Check for brass laser nozzle alignment. If the tube or nozzle is bent, the laser beam will reflect off the inside wall of the nozzle causing a wide path. To verify, perform a test pulse on a piece of card board. If the dot has a ring or partial ring around it, the nuzzle is bent or the mirrors may need to be adjusted."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Mirrors may need adjustment' -> AFFECTS -> Component 'Mirrors'. Meaning: The failure mode affects the specified component.",
+    "2. FailureMode 'Mirrors may need adjustment' -> RESOLVED_BY -> CorrectiveAction 'Adjust the mirrors if the test pulse dot has a ring or partial ring' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: If the test pulse dot has a ring or partial ring."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u001.c87",
+     "u001.c88"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:B.R5",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p38.b26",
+     "page": 38,
+     "text": "or no vacuum. Description of Problem: An odor is present when cutting with the laser tool or Laser cutting path is wider than normal"
+    },
+    {
+     "segment_id": "p38.b27",
+     "page": 38,
+     "text": "Troubleshooting: 1. Check the laser fume extractor for power and is turned ON."
+    },
+    {
+     "segment_id": "p38.b28",
+     "page": 38,
+     "text": "2. Increase vacuum pressure using the fume extractor control panel."
+    },
+    {
+     "segment_id": "p38.b29",
+     "page": 38,
+     "text": "3) Replace vacuum filters."
+    },
+    {
+     "segment_id": "p38.b30",
+     "page": 38,
+     "text": "4) Clean vacuum hose and funnel."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Odor when cutting with the laser tool or laser cutting path wider than normal' -> MAY_INDICATE -> FailureMode 'Unspecified cause of odor or wider-than-normal laser cutting path'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u001.c81"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:A.R5",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p38.b25",
+     "page": 38,
+     "text": "Problem: Laser Fume Extractor has reduced vacuum"
+    },
+    {
+     "segment_id": "p38.b27",
+     "page": 38,
+     "text": "Troubleshooting: 1. Check the laser fume extractor for power and is turned ON."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Unspecified cause of reduced or absent laser fume extractor vacuum' -> AFFECTS -> Component 'Laser fume extractor'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u001.c33"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:A.R6",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p39.b3",
+     "page": 39,
+     "text": "2. Check for brass laser nozzle alignment. If the tube or nozzle is bent, the laser beam will reflect off the inside wall of the nozzle causing a wide path. To verify, perform a test pulse on a piece of card board. If the dot has a ring or partial ring around it, the nuzzle is bent or the mirrors may need to be adjusted."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Laser tube or nozzle is bent or misaligned, causing beam reflection inside the nozzle' -> AFFECTS -> Component 'Mirrors'. Meaning: The failure mode affects the specified component. Conditions: Mirrors may need adjustment."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u001.c44"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u001:B.R4",
+   "option_id": "correct",
+   "text": "Keep statement 3 only; the manual links the delayed/missed-start symptom to checks of the 24 VDC power supply and fuse.",
+   "edits": {
+    "keep": [
+     3
+    ]
+   },
+   "rationale": "The manual lists a power-supply problem as a possible cause and directs checking the 24 VDC supply and fuse for the delayed-start symptom, but it does not say the Tools ON switch resolves a power-supply problem or identify insufficient pressure as a cause.",
+   "cited_segment_ids": [
+    "p38.b4",
+    "p38.b5",
+    "p38.b12",
+    "p38.b20",
+    "p38.b21",
+    "p38.b22",
+    "p38.b23"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:26:30.754263Z"
+  },
+  {
+   "question_id": "rel:u001:B.R6",
+   "option_id": "correct",
+   "text": "Keep statement 2 only. The excerpt says the mirrors may need adjustment if the test-pulse dot has a ring or partial ring, but does not state that the failure mode affects the mirrors.",
+   "edits": {
+    "keep": [
+     2
+    ]
+   },
+   "rationale": "The test-pulse result is explicitly associated with the possibility that the mirrors need adjustment, but the excerpt does not establish the proposed AFFECTS relation.",
+   "cited_segment_ids": [
+    "p39.b3"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:26:27.946165Z"
+  },
+  {
+   "question_id": "rel:u001:B.R5",
+   "option_id": "reject",
+   "text": "",
+   "edits": {},
+   "rationale": "The excerpt gives the symptom and troubleshooting actions but does not state that it indicates an unspecified failure mode.",
+   "cited_segment_ids": [
+    "p38.b26",
+    "p38.b27",
+    "p38.b28",
+    "p38.b29",
+    "p38.b30"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:26:24.888492Z"
+  },
+  {
+   "question_id": "rel:u001:A.R5",
+   "option_id": "reject",
+   "text": "The manual states reduced vacuum, not absent vacuum.",
+   "edits": {},
+   "rationale": "The manual identifies reduced vacuum in the laser fume extractor, but does not state absent vacuum as part of this problem.",
+   "cited_segment_ids": [
+    "p38.b25"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:26:27.082546Z"
+  },
+  {
+   "question_id": "rel:u001:A.R6",
+   "option_id": "reject",
+   "text": "The manual does not state that a bent or misaligned tube/nozzle affects the mirrors; it says the nozzle may be bent, or the mirrors may need adjustment.",
+   "edits": {},
+   "rationale": "The excerpt presents a bent nozzle and mirror adjustment as alternative explanations for the ring around the test-pulse dot, not as an effect of the bent tube/nozzle on the mirrors.",
+   "cited_segment_ids": [
+    "p39.b3"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:26:29.186559Z"
+  }
+ ],
+ "pending": []
+}

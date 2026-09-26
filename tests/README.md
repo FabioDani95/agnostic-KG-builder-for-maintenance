@@ -38,6 +38,13 @@ confidence, scoping, PDF extraction/OCR, ontology contracts, graph reasoning,
 grounding, merging, completion, structured preparation, source-subgraph
 generation and repository behavior.
 
+### V3 pipeline tests
+
+`tests/test_kg_v3_*.py` cover the V3 contracts, reviewers, reader, checking rules
+and the whole pipeline with a scripted provider (resume without calls, budgeted
+questions, truncation splitting, application revision). `tests/conftest.py` pins
+the retained PDF tests to `legacy_v22`; V3 tests opt in explicitly.
+
 ### Contract tests
 
 Schema and characterization tests freeze:

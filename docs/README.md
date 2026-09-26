@@ -13,6 +13,10 @@ not work that is still pending.
   gate umano, limiti dichiarati e sequenza CSV→PDF senza approvazioni implicite.
 - [Current PDF diagnostic status](PDF_DIAGNOSTIC_STATUS.md) — v22, record
   correction, document verification, reproducibility and unresolved limitations.
+- [Piano V3](PIANO_V3.md) — approved target architecture replacing the v22 PDF
+  path: six stations, tolerant checks, and gates answered by a person or an agent.
+- [V3 risultati di sviluppo](V3_RISULTATI_SVILUPPO.md) — V3 versus v22 on the four
+  development manuals: recovered cases, human load, time and cost.
 - [Scientific status](../paper/STATUS.md) — evidence supporting paper claims,
   independent annotation still needed and experiment version boundaries.
 - [Normative Specification Package](specs/README.md) — decisions, data

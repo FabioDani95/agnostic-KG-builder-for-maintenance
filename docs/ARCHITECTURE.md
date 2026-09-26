@@ -78,6 +78,19 @@ Repositories own SQL access; routers should not introduce domain rules.
 - Validation fails closed on required properties, extra properties,
   domain/range, endpoints, provenance, unresolved mapping and knowledge gaps.
 
+## V3 PDF pipeline
+
+With `kg_v3.pdf_generator: v3` (default in `config.yaml`, overridable with the
+`KG_PDF_GENERATOR` environment variable) the workspace builds PDF graphs with
+`backend/kg_v3/app_builder.py`. The model cites short segment IDs instead of
+copying text; each relation carries a certificate of independent witnesses
+(page structure, agreement of two reads, a verifier restricted to the cited
+text) and a green/yellow/red tier. Yellow facts become grouped questions that an
+agent reviewer answers first; only what it cannot settle reaches a person.
+Details and measured development results: [Piano V3](PIANO_V3.md) and
+[V3 development results](V3_RISULTATI_SVILUPPO.md). The v22 path below remains
+available as `legacy_v22` until it is removed.
+
 ## Current PDF diagnostic compilation and record correction
 
 The workspace PDF builder in `backend/services/pdf_source_subgraph_generation.py`
@@ -144,6 +157,7 @@ evidence that target publication is implemented.
 | backend/services | preparation, evidence derivation, graph generation, validation and retained pipeline workflows |
 | backend/routers | HTTP/SSE translation and response contracts |
 | backend/security | trusted-local boundary, containment and request limits |
+| backend/kg_v3 | V3 PDF-to-graph pipeline ([plan](PIANO_V3.md)): read, map, extract, check, merge, ask; gates answered by a person or an agent; selected by `kg_v3.pdf_generator` |
 | backend/agents, backend/graph | retained multi-agent orchestration and live PDF state |
 | backend/runstore | retained append-only PDF run persistence |
 | frontend/app | current workspace application modules |

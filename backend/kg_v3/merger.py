@@ -1,0 +1,231 @@
+"""Station 5, merge: one node per thing, one edge per fact, aliases kept.
+
+Names equal after normalisation merge directly; error codes merge by code.
+Similar names go to a model judge; different numbers never merge. Only the
+pairs the judge cannot settle become questions. Graph IDs are made by the code.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import hashlib
+import logging
+from collections import Counter
+from itertools import combinations
+
+from pydantic import BaseModel, Field
+
+from backend.kg_v3.checker import CheckedRelation, normalize_name, similarity
+from backend.kg_v3.contracts import Assertion, Tier
+from backend.kg_v3.extractor import Endpoint
+from backend.kg_v3.llm import ModelClient
+from backend.kg_v3.prompts import MERGE_PROMPT
+
+logger = logging.getLogger(__name__)
+
+JUDGE_THRESHOLD = 0.8
+JUDGE_BATCH = 40
+MAX_JUDGED_PAIRS = 400
+_TIER_RANK = {Tier.GREEN: 0, Tier.YELLOW: 1, Tier.RED: 2}
+
+
+def identity(endpoint: Endpoint) -> str:
+    if endpoint.code and endpoint.type == "ErrorCode":
+        return f"{endpoint.type}|code:{normalize_name(endpoint.code)}"
+    return f"{endpoint.type}|{normalize_name(endpoint.name)}"
+
+
+def node_id(identity_key: str) -> str:
+    return "v3n_" + hashlib.sha256(identity_key.encode("utf-8")).hexdigest()[:20]
+
+
+class MergePair(BaseModel):
+    left: str
+    right: str
+    left_name: str
+    right_name: str
+    type: str
+    left_cites: list[str] = Field(default_factory=list)
+    right_cites: list[str] = Field(default_factory=list)
+    verdict: str = ""
+
+
+class MergePlan(BaseModel):
+    same: list[MergePair] = Field(default_factory=list)
+    unsure: list[MergePair] = Field(default_factory=list)
+    different: list[MergePair] = Field(default_factory=list)
+
+
+class GraphNode(BaseModel):
+    node_id: str
+    type: str
+    name: str
+    code: str = ""
+    kind: str = ""
+    stated: bool = True
+    aliases: list[str] = Field(default_factory=list)
+    cites: list[str] = Field(default_factory=list)
+
+
+class GraphEdge(BaseModel):
+    edge_id: str
+    relation_type: str
+    source: str
+    target: str
+    assertions: list[Assertion]
+
+    @property
+    def tier(self) -> Tier:
+        return min((item.tier for item in self.assertions), key=_TIER_RANK.__getitem__)
+
+    @property
+    def conditions(self) -> list[str]:
+        return sorted({condition for item in self.assertions for condition in item.conditions})
+
+
+class MergedGraph(BaseModel):
+    nodes: dict[str, GraphNode] = Field(default_factory=dict)
+    edges: list[GraphEdge] = Field(default_factory=list)
+    merged_aliases: int = 0
+
+    @property
+    def nodes_by_id(self) -> dict[str, GraphNode]:
+        return {node.node_id: node for node in self.nodes.values()}
+
+
+def _endpoints(relations: list[CheckedRelation]) -> dict[str, list[Endpoint]]:
+    found: dict[str, list[Endpoint]] = {}
+    for relation in relations:
+        for proposal in relation.proposals:
+            for endpoint in (proposal.source, proposal.target):
+                found.setdefault(identity(endpoint), []).append(endpoint)
+    return found
+
+
+def _contained(left: str, right: str) -> bool:
+    """One name is the other plus extra words, such as a cross-reference."""
+
+    a, b = set(normalize_name(left).split()), set(normalize_name(right).split())
+    short, long_ = sorted((a, b), key=len)
+    return len(short) >= 2 and short < long_
+
+
+def merge_candidates(relations: list[CheckedRelation]) -> list[MergePair]:
+    endpoints = _endpoints(relations)
+    by_type: dict[str, list[str]] = {}
+    for key, items in endpoints.items():
+        by_type.setdefault(items[0].type, []).append(key)
+    pairs: list[MergePair] = []
+    for kind, keys in by_type.items():
+        for left, right in combinations(sorted(keys), 2):
+            if "|code:" in left or "|code:" in right:
+                continue
+            a, b = endpoints[left][0], endpoints[right][0]
+            if similarity(a.name, b.name) >= JUDGE_THRESHOLD or _contained(a.name, b.name):
+                pairs.append(MergePair(
+                    left=left, right=right, left_name=a.name, right_name=b.name, type=kind,
+                    left_cites=sorted({c for item in endpoints[left] for c in item.cites})[:3],
+                    right_cites=sorted({c for item in endpoints[right] for c in item.cites})[:3],
+                ))
+    return pairs[:MAX_JUDGED_PAIRS]
+
+
+async def judge_pairs(llm: ModelClient | None, pairs: list[MergePair]) -> MergePlan:
+    plan = MergePlan()
+    if not pairs:
+        return plan
+    if llm is None:
+        plan.unsure = pairs
+        return plan
+
+    async def judge(batch: list[MergePair]) -> None:
+        ids = [f"M{index}" for index in range(1, len(batch) + 1)]
+        text = "\n".join(f"{pair_id}: {pair.type} '{pair.left_name}' vs '{pair.right_name}'"
+                         for pair_id, pair in zip(ids, batch))
+        schema = {"type": "object", "additionalProperties": False, "required": ["answers"], "properties": {
+            "answers": {"type": "array", "items": {
+                "type": "object", "additionalProperties": False, "required": ["id", "answer"],
+                "properties": {"id": {"type": "string", "enum": ids},
+                               "answer": {"type": "string", "enum": ["same", "different", "unsure"]}},
+            }}}}
+        try:
+            data = await llm.json(system=MERGE_PROMPT, user=text, schema=schema, name="kg_v3_merge",
+                                  max_output_tokens=3000)
+            answers = {str(item.get("id")): str(item.get("answer")) for item in data.get("answers") or []}
+        except Exception as exc:
+            logger.warning("Merge judge failed: %s", exc)
+            answers = {}
+        for pair_id, pair in zip(ids, batch):
+            pair.verdict = answers.get(pair_id, "unsure")
+
+    await asyncio.gather(*(judge(pairs[index:index + JUDGE_BATCH]) for index in range(0, len(pairs), JUDGE_BATCH)))
+    for pair in pairs:
+        {"same": plan.same, "different": plan.different}.get(pair.verdict, plan.unsure).append(pair)
+    return plan
+
+
+class _UnionFind:
+    def __init__(self) -> None:
+        self.parent: dict[str, str] = {}
+
+    def find(self, key: str) -> str:
+        self.parent.setdefault(key, key)
+        while self.parent[key] != key:
+            self.parent[key] = self.parent[self.parent[key]]
+            key = self.parent[key]
+        return key
+
+    def union(self, left: str, right: str) -> None:
+        a, b = self.find(left), self.find(right)
+        if a != b:
+            self.parent[max(a, b)] = min(a, b)
+
+
+def assemble(relations: list[CheckedRelation], same_pairs: list[MergePair]) -> MergedGraph:
+    endpoints = _endpoints(relations)
+    groups = _UnionFind()
+    for key in endpoints:
+        groups.find(key)
+    for pair in same_pairs:
+        groups.union(pair.left, pair.right)
+    # Reads that agree on a relation name its ends in their own words: one node each.
+    for relation in relations:
+        lead = relation.proposals[0]
+        for other in relation.proposals[1:]:
+            groups.union(identity(lead.source), identity(other.source))
+            groups.union(identity(lead.target), identity(other.target))
+
+    members: dict[str, list[Endpoint]] = {}
+    for key, items in endpoints.items():
+        members.setdefault(groups.find(key), []).extend(items)
+    graph = MergedGraph()
+    for root, items in members.items():
+        named = [item for item in items if item.stated] or items
+        names = Counter(item.name for item in named)
+        first_seen = {value: index for index, value in reversed(list(enumerate(item.name for item in named)))}
+        name = sorted(names, key=lambda value: (-names[value], first_seen[value]))[0]
+        codes = Counter(item.code for item in items if item.code)
+        kinds = Counter(item.kind for item in items if item.kind)
+        graph.nodes[root] = GraphNode(
+            node_id=node_id(root), type=items[0].type, name=name,
+            code=codes.most_common(1)[0][0] if codes else "",
+            kind=kinds.most_common(1)[0][0] if kinds else "",
+            stated=any(item.stated for item in items),
+            aliases=sorted({item.name for item in items} - {name}),
+            cites=sorted({cite for item in items for cite in item.cites}),
+        )
+        graph.merged_aliases += len(names) - 1
+
+    edges: dict[tuple[str, str, str], GraphEdge] = {}
+    for relation in relations:
+        lead = relation.proposals[0]
+        source = graph.nodes[groups.find(identity(lead.source))].node_id
+        target = graph.nodes[groups.find(identity(lead.target))].node_id
+        key = (lead.relation_type, source, target)
+        if key not in edges:
+            digest = hashlib.sha256("|".join(key).encode("utf-8")).hexdigest()[:20]
+            edges[key] = GraphEdge(edge_id=f"v3e_{digest}", relation_type=lead.relation_type,
+                                   source=source, target=target, assertions=[])
+        edges[key].assertions.append(relation.assertion)
+    graph.edges = list(edges.values())
+    return graph

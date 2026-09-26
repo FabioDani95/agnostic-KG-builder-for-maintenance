@@ -81,6 +81,9 @@ class SourceGraphRelation(BaseModel):
     evidence_ids: list[OpaqueId] = Field(min_length=1)
     evidence_refs: list[RelationEvidenceRef] = Field(default_factory=list)
     branch_lineage_id: str = ""
+    # Provenance metadata, not ontology properties: V3 stores tier, conditions
+    # and verification certificates here.
+    attributes: dict[str, Any] = Field(default_factory=dict)
 
 
 class GraphValidationIssue(BaseModel):

@@ -1,0 +1,48 @@
+{
+ "questions": [
+  {
+   "question_id": "approval",
+   "kind": "graph_approval",
+   "title": "May this graph be used by the maintenance agent?",
+   "source": [],
+   "proposal": [
+    "106 nodes and 103 relations.",
+    "Relations by tier: green 88, yellow 0, red 15.",
+    "Doubt questions: 6 asked, 6 answered, 0 unanswered."
+   ],
+   "options": [
+    {
+     "option_id": "approve",
+     "label": "Approve",
+     "effect": "the graph is published for use"
+    },
+    {
+     "option_id": "reject",
+     "label": "Reject",
+     "effect": "the graph stays a draft"
+    }
+   ],
+   "default_option_id": "approve",
+   "priority": 0,
+   "target": {}
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "approval",
+   "option_id": "approve",
+   "text": "",
+   "edits": {},
+   "rationale": "default option",
+   "cited_segment_ids": [],
+   "confident": true,
+   "answered_by": {
+    "kind": "auto",
+    "name": "accept-proposal",
+    "prompt_hash": ""
+   },
+   "answered_at": "2026-09-26T21:33:20.824604Z"
+  }
+ ],
+ "pending": []
+}

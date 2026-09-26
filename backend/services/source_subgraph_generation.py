@@ -643,7 +643,10 @@ class SourceSubgraphGenerationService:
             fingerprint = pdf_preparation_fingerprint(
                 source=source, scope=scope, evidence=evidence,
             )
-            config_hash = pdf_input_config_hash()
+            from backend.kg_v3.app_builder import V3PdfSubgraphBuilder, kg_v3_config_hash, kg_v3_enabled
+
+            use_v3 = kg_v3_enabled()
+            config_hash = kg_v3_config_hash() if use_v3 else pdf_input_config_hash()
             lock = _PDF_GENERATION_LOCKS.setdefault(source_id, asyncio.Lock())
             async with lock:
                 existing = self.subgraphs.find_matching(
@@ -660,7 +663,8 @@ class SourceSubgraphGenerationService:
                         and item.asset_id == workspace.asset.asset_id
                     ]
                     try:
-                        revision = await PdfSourceSubgraphBuilder().build_revision(
+                        builder = V3PdfSubgraphBuilder() if use_v3 else PdfSourceSubgraphBuilder()
+                        revision = await builder.build_revision(
                             workspace=workspace,
                             source=source,
                             scope=scope,

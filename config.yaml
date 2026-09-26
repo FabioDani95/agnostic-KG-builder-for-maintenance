@@ -267,3 +267,21 @@ confidence:
     human_binding_required: 0.20
     per_retry: 0.02
     ungrounded_evidence: 0.15
+
+# V3 PDF-to-graph architecture (docs/PIANO_V3.md). pdf_generator selects the
+# builder used by the workspace: "v3" or the frozen "legacy_v22". Gate reviewers
+# are tried in order; people receive at most human_question_budget questions.
+kg_v3:
+  pdf_generator: v3
+  model: gpt-6-luna
+  reasoning_effort: low
+  reads: 2
+  unit_max_chars: 9000
+  concurrency: 6
+  human_question_budget: 15
+  agent_model: gpt-6-luna
+  agent_reasoning_effort: medium
+  gates:
+    map: [agent]
+    doubts: [agent, human]
+    approval: []

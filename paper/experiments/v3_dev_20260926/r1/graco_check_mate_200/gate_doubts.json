@@ -1,0 +1,213 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u001:B.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r2",
+     "page": 11,
+     "text": "PROBLEM: Pump fails to operate. | CAUSE: Restricted line or inadequate air supply | SOLUTION: Clear*; see Technical Data on pages 24–27."
+    },
+    {
+     "segment_id": "p11.t1.r6",
+     "page": 11,
+     "text": "PROBLEM: Pump operates, but output is low on both strokes. | CAUSE: Restricted line or inadequate air supply. | SOLUTION: Clear*; see Technical Data on pages 24–27."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Restricted line or inadequate air supply' -> RESOLVED_BY -> CorrectiveAction 'Consult Technical Data on pages 24–27' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything)."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u001.c72",
+     "u001.c73"
+    ],
+    "statement_of": [
+     1,
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:A.R14",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r15",
+     "page": 11,
+     "text": "PROBLEM: Erratic or accelerated pump speed. | CAUSE: Exhausted fluid supply. | SOLUTION: Refill and prime."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Exhausted fluid supply' -> AFFECTS -> Component 'Fluid supply'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u001.c50"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:B.R8",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r9",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Air is leaking into the supply container. | SOLUTION: Check wiper plate seal."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Air leaking into the supply container' -> AFFECTS -> Component 'Supply container'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u001.c74"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u001:B.R1",
+   "option_id": "reject",
+   "text": "The manual lists “Clear*; see Technical Data on pages 24–27” as the solution; it does not prescribe consulting the Technical Data as an inspection or test.",
+   "edits": {},
+   "rationale": "Both troubleshooting rows give clearing as the solution and refer to the Technical Data, but neither states that consulting it is a check or test.",
+   "cited_segment_ids": [
+    "p11.t1.r1",
+    "p11.t1.r2",
+    "p11.t1.r6"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:24:52.782261Z"
+  },
+  {
+   "question_id": "rel:u001:A.R14",
+   "option_id": "reject",
+   "text": "The manual lists “Exhausted fluid supply” as the cause, but does not state that it affects a component called “Fluid supply.”",
+   "edits": {},
+   "rationale": "The table identifies exhausted fluid supply as the cause of erratic or accelerated pump speed, but does not assert the proposed component relationship.",
+   "cited_segment_ids": [
+    "p11.t1.r1",
+    "p11.t1.r15"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:24:51.769129Z"
+  },
+  {
+   "question_id": "rel:u001:B.R8",
+   "option_id": "accept",
+   "text": "",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "The stated cause is air leaking into the supply container, which supports that this failure mode affects the supply container.",
+   "cited_segment_ids": [
+    "p11.t1.r9"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:24:51.558300Z"
+  }
+ ],
+ "pending": []
+}

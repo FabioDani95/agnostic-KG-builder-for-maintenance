@@ -1,0 +1,103 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u004:A.R10",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p64.b12",
+     "page": 64,
+     "text": "Some components like power capacitors and fans become worn out due to long term usage, and increase the risk of failure on the Active"
+    },
+    {
+     "segment_id": "p64.b14",
+     "page": 64,
+     "text": "Contact Danfoss for further information regarding maintenance and service."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Power capacitors worn out due to long-term usage' -> RESOLVED_BY -> CorrectiveAction 'Contact Danfoss for maintenance and service information' [escalation]. Meaning: For this problem or cause the manual says to contact service or the dealer.",
+    "2. FailureMode 'Fans worn out due to long-term usage' -> RESOLVED_BY -> CorrectiveAction 'Contact Danfoss for maintenance and service information' [escalation]. Meaning: For this problem or cause the manual says to contact service or the dealer."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u004.c31",
+     "u004.c32"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "page:65",
+   "kind": "unreadable_page",
+   "title": "Page 65 has no readable text next to diagnostic pages: should it be transcribed?",
+   "source": [],
+   "proposal": [
+    "Page 65 is probably a figure or a scan; the system could not read it."
+   ],
+   "options": [
+    {
+     "option_id": "skip",
+     "label": "Skip it",
+     "effect": "the page stays out of the graph"
+    },
+    {
+     "option_id": "transcribe",
+     "label": "Transcribe it",
+     "effect": "your transcription is kept in the run report for the next extraction"
+    }
+   ],
+   "default_option_id": "skip",
+   "priority": 4,
+   "target": {
+    "page": 65
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u004:A.R10",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual says power capacitors and fans can wear out with long-term use and advises contacting Danfoss for further maintenance and service information, supporting both escalation statements.",
+   "cited_segment_ids": [
+    "p64.b12",
+    "p64.b14"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:27:26.054815Z"
+  }
+ ],
+ "pending": [
+  "page:65"
+ ]
+}

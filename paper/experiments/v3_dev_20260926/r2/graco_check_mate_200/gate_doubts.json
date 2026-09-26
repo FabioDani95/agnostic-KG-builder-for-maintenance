@@ -1,0 +1,141 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u001:A.R6",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r3",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Pump fails to operate. | CAUSE: Obstructed fluid hose or gun/valve; fluid hose ID is too small. | SOLUTION: Clear*; use a hose with a larger ID."
+    },
+    {
+     "segment_id": "p11.t1.r7",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Obstructed fluid hose or gun/valve; fluid hose ID is too small. | SOLUTION: Clear*; use a hose with a larger ID."
+    },
+    {
+     "segment_id": "p11.b6",
+     "page": 11,
+     "text": "* To determine if the fluid hose or gun is obstructed, follow the Pressure Relief Procedure on page 8. Disconnect the fluid hose and place a container at the pump fluid outlet to catch any fluid. Turn on the air just enough to start the pump (about 20–40 psi [0.14–0.3 MPa, 1.4–2.8 bar]). If the pump starts when the air is turned on, the obstruc- tion is in the fluid hose or gun."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Obstructed fluid hose or gun/valve, or fluid hose ID too small' -> RESOLVED_BY -> CorrectiveAction 'Clear the fluid hose or gun/valve obstruction' [repair]. Meaning: The failure mode may be resolved by the specified corrective action."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u001.c22"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:B.R19",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.b7",
+     "page": 11,
+     "text": "NOTE: If you experience air motor icing, contact your Graco distributor for assistance."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Air motor icing' -> MAY_INDICATE -> FailureMode 'Unspecified cause of air motor icing'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u001.c71"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u001:A.R6",
+   "option_id": "reject",
+   "text": "",
+   "edits": {},
+   "rationale": "The table pairs clearing with an obstruction, but the alternative cause of a fluid hose ID that is too small is addressed by using a larger-ID hose, so the proposed combined failure mode is not resolved by clearing alone.",
+   "cited_segment_ids": [
+    "p11.t1.r3",
+    "p11.t1.r7"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:31:25.121840Z"
+  },
+  {
+   "question_id": "rel:u001:B.R19",
+   "option_id": "reject",
+   "text": "The manual says to contact a Graco distributor for assistance if air motor icing occurs; it does not state that icing may indicate an unspecified failure mode.",
+   "edits": {},
+   "rationale": "The note gives an action for air motor icing, not a cause or failure mode.",
+   "cited_segment_ids": [
+    "p11.b7"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:31:22.508113Z"
+  }
+ ],
+ "pending": []
+}

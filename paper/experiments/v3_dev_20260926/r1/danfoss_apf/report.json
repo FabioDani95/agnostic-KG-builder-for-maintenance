@@ -1,0 +1,114 @@
+{
+ "status": "approved",
+ "pages": 66,
+ "page_labels": {
+  "other": 43,
+  "unreadable": 2,
+  "diagnostic": 5,
+  "parts": 1,
+  "procedure": 15
+ },
+ "diagnostic_pages": [
+  17,
+  20,
+  41,
+  42,
+  64
+ ],
+ "units": 4,
+ "failed_reads": 0,
+ "proposals": 64,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "coverage: 5 unused table row(s) read again",
+  "coverage: 13 unused table row(s) read again",
+  "coverage: 5 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 38
+ },
+ "witnesses": {
+  "structure": 36,
+  "verifier": 12,
+  "agreement": 26,
+  "reviewer": 2
+ },
+ "verifier_verdicts": {
+  "supported": 12,
+  "not_called": 26
+ },
+ "graph": {
+  "nodes": 46,
+  "nodes_by_type": {
+   "Symptom": 5,
+   "FailureMode": 15,
+   "Component": 8,
+   "ErrorCode": 6,
+   "CorrectiveAction": 12
+  },
+  "edges": 38,
+  "edges_by_tier": {
+   "green": 38
+  },
+  "merged_aliases": 13
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 2,
+   "answered": 1,
+   "pending": 1
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 2,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 2,
+ "usage": {
+  "calls": 15,
+  "failed_calls": 0,
+  "prompt_tokens": 33492,
+  "completion_tokens": 11786,
+  "estimated_cost_usd": 0.009063,
+  "by_operation": {
+   "kg_v3_extract": 11,
+   "kg_v3_map": 2,
+   "kg_v3_merge": 1,
+   "kg_v3_verify": 1
+  }
+ },
+ "agent_usage": {
+  "calls": 3,
+  "failed_calls": 0,
+  "prompt_tokens": 6158,
+  "completion_tokens": 1601,
+  "estimated_cost_usd": 0.001533,
+  "by_operation": {
+   "AgentDecision": 3
+  }
+ },
+ "seconds": {
+  "map": 7.7,
+  "gate_map": 9.1,
+  "extract": 22.002,
+  "check": 4.207,
+  "merge": 2.816,
+  "gate_doubts": 3.653,
+  "gate_approval": 0.001,
+  "total": 49.522
+ },
+ "prompt_ids": {
+  "extraction": "a864afa6d423ff99"
+ }
+}

@@ -1,0 +1,182 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u003:A.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p42.t1.r1",
+     "page": 42,
+     "text": "TABLE COLUMNS: Number | Item | Description"
+    },
+    {
+     "segment_id": "p42.t1.r3",
+     "page": 42,
+     "text": "Number: 4 | Item: LED indicators | Description: Module status indicator: • Green (Normal): The module operates normally. • Yellow (Standby): The module is in standby mode. • Red (Fault): The module is malfunctioning."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Module malfunctioning' -> AFFECTS -> Component 'Active Power Filter module'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u003.c2"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u004:A.R9",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p64.t1.r1",
+     "page": 64,
+     "text": "TABLE COLUMNS: Fault number | Fault name | Possible fault | Troubleshooting"
+    },
+    {
+     "segment_id": "p64.b7",
+     "page": 64,
+     "text": "Regularly clean the Active Power Filter, especially the slits, openings, and filters, to ensure that the air freely flows into the Active Power"
+    },
+    {
+     "segment_id": "p64.b8",
+     "page": 64,
+     "text": "Filter to avoid overheating. If necessary, use an air blower or vacuum cleaner to clean the slits, and openings and replace the filters"
+    },
+    {
+     "segment_id": "p64.b9",
+     "page": 64,
+     "text": "regularly to avoid any object from blocking or covering these areas."
+    },
+    {
+     "segment_id": "p64.t1.r4",
+     "page": 64,
+     "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Airflow into, around, or through the filter is obstructed' -> AFFECTS -> Component 'Air vents'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u004.c31"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "page:65",
+   "kind": "unreadable_page",
+   "title": "Page 65 has no readable text next to diagnostic pages: should it be transcribed?",
+   "source": [],
+   "proposal": [
+    "Page 65 is probably a figure or a scan; the system could not read it."
+   ],
+   "options": [
+    {
+     "option_id": "skip",
+     "label": "Skip it",
+     "effect": "the page stays out of the graph"
+    },
+    {
+     "option_id": "transcribe",
+     "label": "Transcribe it",
+     "effect": "your transcription is kept in the run report for the next extraction"
+    }
+   ],
+   "default_option_id": "skip",
+   "priority": 4,
+   "target": {
+    "page": 65
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u003:A.R1",
+   "option_id": "reject",
+   "text": "The excerpt states only that a red fault indicator means the module is malfunctioning; it does not identify an Active Power Filter module or state an AFFECTS relationship.",
+   "edits": {},
+   "rationale": "The LED description reports the module’s status but does not establish that the malfunctioning module is an Active Power Filter module or that this failure mode affects that component.",
+   "cited_segment_ids": [
+    "p42.t1.r1",
+    "p42.t1.r3"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:34:26.166256Z"
+  },
+  {
+   "question_id": "rel:u004:A.R9",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The Ambient OTP row lists blocked air vents as a possible fault, supporting the stated airflow-obstruction failure mode affecting the air vents.",
+   "cited_segment_ids": [
+    "p64.t1.r4",
+    "p64.b7",
+    "p64.b8",
+    "p64.b9"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T21:34:26.504343Z"
+  }
+ ],
+ "pending": [
+  "page:65"
+ ]
+}
