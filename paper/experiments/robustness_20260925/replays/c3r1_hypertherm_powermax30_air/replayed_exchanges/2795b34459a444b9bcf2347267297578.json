@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "",
+  "run_id": "",
+  "started_utc": "2026-09-25T16:10:42.066034+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "max_completion_tokens": 24000,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You extract diagnostic records from a technical manual into a typed contract.\n\nSource type: technical PDF\nSource title: hypertherm_powermax30_air_service_manual_rev4_808850.pdf\n\nThe input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be\na complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,\necho its window_id and allowed_source_anchors on every candidate; the system overwrites and\nverifies both fields and no evidence outside that block is allowed. For a section chunk, set\nrecord_window_id=\"\" and set allowed_source_anchors to exactly the anchors referenced by that\ncandidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL\ncontext may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields\nbelong to the current cause/remedy branch. Each displayed FIELD value is one exact source\nspan. Quote the value only: never include the \"FIELD n:\" label, join separate fields, or\nrestore a sibling field omitted by the system.\nReturn every explicit diagnostic record and every distinct cause/remedy branch in the input.\nThe contract is an intermediate record representation, not the final graph. Use schema_version=\"1.1\".\n\nRules:\n1. Never emit graph IDs or ontology relation names. The system owns them.\n2. A diagnostic record has one or more indicators. An indicator is either an observable\n   symptom or an asset-generated error/alarm code. A record may explicitly contain both;\n   keep both. For a symptom set code=null and severity=\"Unknown\" unless the source explicitly\n   states its severity; never invent a risk rating. For an error_code set its\n   code and severity=null. Only an explicit not_diagnostic page disposition may use an empty\n   indicator list.\n3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action\n   from different table rows, flowchart branches or unrelated paragraphs.\n4. A FailureMode is an explicit technical cause or faulty state, not a restatement of the\n   symptom, an inspection result or an invented explanation. Use null when none is stated.\n5. A CorrectiveAction is an explicitly restorative remedy for that failure. Checks and tests\n   are not restorative unless the source says the check itself resolves the fault. Preserve\n   a non-restorative check/test/inspection in inspection_steps, never in actions.\n6. Set resolution_status:\n   - action_stated: at least one restorative action is explicitly linked to the failure;\n   - no_action_stated: the diagnostic record states a failure but no remedy;\n   - check_only: it gives only diagnostic checks/verification;\n   - ambiguous: the row/branch pairing cannot be established safely;\n   - not_diagnostic: a candidate-looking passage is actually preventive/generic content.\n7. An affected component is optional. Include it only if the branch explicitly identifies the\n   affected component. category and failure.material_context are required-but-nullable: use\n   null rather than manufacturing a category/context. A null category does not invalidate a\n   grounded branch; the deterministic compiler supplies a neutral schema category. Do not use\n   a product name as a component.\n8. Evidence is edge-specific. claim_evidence proves only the claim. Each edge evidence list is\n   a support set: one span may explicitly state the whole link, or several spans from the same\n   record/branch may collectively establish it when a manual separates Problem, Cause and\n   Remedy across blocks or pages. failure_link_evidence supports only that exact indicator to\n   failure; resolution_link_evidence supports only that exact failure to action;\n   affects_link_evidence supports only that exact failure to component. Include every span\n   needed to establish the link and no unrelated nearby heading. Never use an action-only span\n   as the sole proof of an indicator-to-failure edge.\n   In a system-owned atomic table row, use the exact endpoint FIELD spans as the edge support\n   set; the deterministic compiler verifies the table structure and completes their union.\n9. Every quote is a short verbatim span contained in the EvidenceUnit named by source_anchor,\n   on source_page. Prefer one span per EvidenceUnit. If wording crosses adjacent units, emit\n   separate exact spans; never concatenate or paraphrase cells. Copy the opaque anchor exactly.\n   Do not include page/anchor marker text in a quote.\n10. record_anchor must be one of this candidate's claim-evidence anchors. branch_anchor must be\n    one of this candidate's evidence anchors (prefer a causal edge anchor). For an explicit\n    not_diagnostic disposition with no claims, set both to the candidate page's EvidenceUnit\n    anchor. These anchors are source locators, not freely generated IDs.\n11. Preserve source language in human-readable values and set source_language accordingly.\n12. Duplicate records caused by overlapping pages must be returned identically; deterministic\n    lineage and compilation will deduplicate them.\n13. Account for candidate-looking passages. If one is actually generic/preventive content,\n    emit a not_diagnostic candidate with empty indicators and no diagnostic claims. Return an\n    empty records list only when the input contains no candidate-looking passage at all. Never\n    fill a missing cause/action simply to make a complete record.\n14. Every anchored candidate-looking passage in the input must occur in a record's claim/edge\n    evidence, or have its own explicit not_diagnostic disposition. Do not cover only the first\n    row or branch of a troubleshooting table.\n15. For check_only, actions must be empty and inspection_steps must preserve each stated check\n    with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.\n16. Preserve every stated precondition, test outcome, negation, threshold and alternative in\n    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection\n    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test\n    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.\n    Keep inspection_steps and actions in source order; do not sort steps alphabetically.\n17. Preserve the actual error CODE separately from its fault name, including a numerical code\n    in a separate table column. Never substitute the name for a printed numeric code.\n"
+      },
+      {
+        "role": "user",
+        "content": "## DOCUMENT CONTEXT\nThese pages come from the following manual sections:\n- Test 7 – torch cap-sensor (pp. 94-94, source: rule)\n- Test 8 – fan (pp. 95-95, source: rule)\n- Test 9 – internal compressor, compressor-driver board, and power board (pp. 96-96, source: rule)\n- Test 9a – Check the diagnostic LED (D5) on the compressor-driver board (pp. 96-96, source: rule)\n- Test 9b – Check the internal compressor (pp. 97-97, source: rule)\n\nUse this context to better interpret the content. Extract all ontology-relevant information from these sections, including components, error codes, symptoms, failure modes, and corrective actions.\n\n--- PAGE 94 ---\n\n[[EVIDENCE_ID: a0001]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0002]]\nTest 7 – torch cap-sensor\n\n[[EVIDENCE_ID: a0003]]\nTest the torch cap-sensor switch and torch leads.\n\n[[EVIDENCE_ID: a0004]]\n1. Set the power switch to OFF (O), and disconnect the power cord from the power source.\n\n[[EVIDENCE_ID: a0005]]\n2. Remove the power supply handle and cover. See Remove the power supply cover on page 106.\n\n[[EVIDENCE_ID: a0006]]\n3. Remove the component barrier. See Remove the component barrier on page 108.\n\n[[EVIDENCE_ID: a0007]]\n4. Detach the front panel. See Detach the front panel on page 110.\n\n[[EVIDENCE_ID: a0008]]\n5. Disconnect the cap-sensor connector at J12 on the heatsink side of the power board by pushing the tab on the \nconnector toward the plug and pulling the plug out.\n\n[[EVIDENCE_ID: a0009]]\nFigure 17\n\n[[EVIDENCE_ID: a0010]]\n6. Measure the resistance from the blue wire (pin 1)\n \nto the orange wire (pin 2)\n. It should measure less \nthan 10 Ω. If it measures high resistance, the \ncap-sensor switch circuit is open.\n\n[[EVIDENCE_ID: a0011]]\n1\n\n[[EVIDENCE_ID: a0012]]\n2\n\n[[EVIDENCE_ID: a0013]]\n7. Make sure the torch plunger moves smoothly. If it \ndoes not, replace the torch body. See Replace the \ntorch body on page 201.\n\n[[EVIDENCE_ID: a0014]]\n8. Make sure the consumables are correctly installed. \nAdjust the consumables if necessary.\n\n[[EVIDENCE_ID: a0015]]\n9. If the torch parts mentioned in step 7 and step 8 are \nworking properly, the cap-sensor switch is faulty or \nthe torch lead has a broken wire. Replace the faulty \npart. See Replace the cap-sensor switch on \npage 204 or Replace the torch lead and strain relief \non page 153.\n\n[[EVIDENCE_ID: a0016]]\nPush tab toward plug\n\n[[EVIDENCE_ID: a0017]]\n1\n\n[[EVIDENCE_ID: a0018]]\n2\n\n[[EVIDENCE_ID: a0019]]\n94\nPowermax30 AIR\nService Manual\n808850\n\n--- PAGE 95 ---\n\n[[EVIDENCE_ID: a0020]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0021]]\nTest 8 – fan\n\n[[EVIDENCE_ID: a0022]]\nTest the fan (M1) for proper operation.\n\n[[EVIDENCE_ID: a0023]]\n1. Set the power switch to OFF (O), and disconnect the power cord from the power source.\n\n[[EVIDENCE_ID: a0024]]\n2. Remove the power supply handle and cover. See Remove the power supply cover on page 106.\n\n[[EVIDENCE_ID: a0025]]\n3. Remove the component barrier. See Remove the component barrier on page 108.\n\n[[EVIDENCE_ID: a0026]]\n4. Place a jumper from ground (see Figure 5 on page 77 for grounding options) to pin 3 of J5 (black wire, see \nFigure 18).\n\n[[EVIDENCE_ID: a0027]]\n5. Reconnect the electrical power and set the power switch to ON (I).\n\n[[EVIDENCE_ID: a0028]]\n6. If the fan does not operate, replace the fan. See Replace the fan on page 164.\n\n[[EVIDENCE_ID: a0029]]\nFigure 18\n\n[[EVIDENCE_ID: a0030]]\n\nBecause of protection features on the fan driver chip, this test can trigger a fault. You can \ndisregard this fault if it occurs as a result of a fan test. The purpose of the fan test is to \nverify that the fan is operating properly, not to test the fan drive circuit.\n\n[[EVIDENCE_ID: a0031]]\nPowermax30 AIR\nService Manual\n808850\n95\n\n[[EVIDENCE_ID: a0032]]\n|  | WARNING! ELECTRIC SHOCK CAN KILL\n\n[[EVIDENCE_ID: a0033]]\n|  | Use extreme caution when working near live electrical circuits. Dangerous voltages exist inside the power supply that can cause serious injury or death. See the WARNING! on page 59 before proceeding.\n\n--- PAGE 96 ---\n\n[[EVIDENCE_ID: a0034]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0035]]\nTest 9 – internal compressor, compressor-driver board, and power board\n\n[[EVIDENCE_ID: a0036]]\nIf the internal compressor fault LED and temperature fault LED both illuminate, the root cause may be:\n\n[[EVIDENCE_ID: a0037]]\n\nFaulty internal compressor\n\n[[EVIDENCE_ID: a0038]]\n\nFaulty compressor-driver board (PCB3)\n\n[[EVIDENCE_ID: a0039]]\n\nFaulty power board (PCB2)\n\n[[EVIDENCE_ID: a0040]]\nUse this test to systematically check each of these 3 components to determine which one needs to be replaced.\n\n[[EVIDENCE_ID: a0041]]\n\nFor a high-level overview of this procedure, see Process flow for troubleshooting internal \ncompressor and temperature fault LEDs on page 228.\n\n[[EVIDENCE_ID: a0042]]\nTurn OFF the power and remove the cover\n\n[[EVIDENCE_ID: a0043]]\n1. Set the power switch to OFF (O), and disconnect the power cord from the power source.\n\n[[EVIDENCE_ID: a0044]]\n2. Remove the power supply handle and cover. See Remove the power supply cover on page 106.\n\n[[EVIDENCE_ID: a0045]]\n3. Remove the component barrier. See Remove the component barrier on page 108.)\n\n[[EVIDENCE_ID: a0046]]\nTest 9a – Check the diagnostic LED (D5) on the compressor-driver board\n\n[[EVIDENCE_ID: a0047]]\n4. Reconnect the power cord, and set the power switch to ON (I).\n\n[[EVIDENCE_ID: a0048]]\n5. Quickly tap the torch trigger to force gas flow \nwithout firing an arc, then watch the green \ndiagnostic LED (D5)\n on the compressor-driver \nboard. Does the LED illuminate while the torch is \nbeing fired?\n\n[[EVIDENCE_ID: a0049]]\n1\n1\n\n[[EVIDENCE_ID: a0050]]\na. If yes, check the internal compressor. Skip to \nstep 10.\n\n[[EVIDENCE_ID: a0051]]\nb. If no, continue with the next step.\n\n[[EVIDENCE_ID: a0052]]\n\nThe D5 diagnostic LED indicates whether or not \nthere is 15 VDC output from the \ncompressor-driver board to the internal \ncompressor.\n\n[[EVIDENCE_ID: a0053]]\n6. Set the power switch to OFF (O).\n\n[[EVIDENCE_ID: a0054]]\n96\nPowermax30 AIR\nService Manual\n808850\n\n[[EVIDENCE_ID: a0055]]\n|  | WARNING! ELECTRIC SHOCK CAN KILL\n\n[[EVIDENCE_ID: a0056]]\n|  | Use extreme caution when working near live electrical circuits. Dangerous voltages exist inside the power supply that can cause serious injury or death. See the WARNING! on page 59 before proceeding.\n\n--- PAGE 97 ---\n\n[[EVIDENCE_ID: a0057]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0058]]\n7. Remove the J2 connector\n from the \ncompressor-driver board.\n\n[[EVIDENCE_ID: a0059]]\n2\n\n[[EVIDENCE_ID: a0060]]\n8. Set the power switch to ON (I).\n\n[[EVIDENCE_ID: a0061]]\n9. Quickly tap the torch trigger, then watch the green \ndiagnostic LED (D5) on the compressor-driver \nboard. Does the LED illuminate while the torch is \nbeing fired?\n\n[[EVIDENCE_ID: a0062]]\na. If yes, check the internal compressor. Continue \nwith the next step.\n\n[[EVIDENCE_ID: a0063]]\n2\n\n[[EVIDENCE_ID: a0064]]\nb. If no, check the compressor-driver board. Skip to step 16.\n\n[[EVIDENCE_ID: a0065]]\nTest 9b – Check the internal compressor\n\n[[EVIDENCE_ID: a0066]]\n10. Set the power switch to OFF (O).\n\n[[EVIDENCE_ID: a0067]]\n11. On the fan side of the power supply, pull back the clip on the right side of the solenoid valve, and work the valve free \nfrom that clip \n. Carefully tilt the top of the valve towards you until you can see the gas shut-off override button\n. \nSee Figure 19.\n\n[[EVIDENCE_ID: a0068]]\n3\n4\n\n[[EVIDENCE_ID: a0069]]\n12. Connect the internal compressor to an external 12 VDC power source (for example, a car battery).\n\n[[EVIDENCE_ID: a0070]]\n13. Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger. Is the \ncompressor running, and is air blowing from the torch?\n\n[[EVIDENCE_ID: a0071]]\na. If yes, check the compressor-driver board. Continue with the next step.\n\n[[EVIDENCE_ID: a0072]]\nb. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push \nthe solenoid valve back into place between both clips from the center panel.\n\n[[EVIDENCE_ID: a0073]]\nPowermax30 AIR\nService Manual\n808850\n97\n\n[[EVIDENCE_ID: a0074]]\n|  | WARNING!\n\n[[EVIDENCE_ID: a0075]]\n| While testing, do not touch the nozzle at the end of the torch. Dangerous voltages can cause serious injury. |\n\n[[EVIDENCE_ID: a0076]]\n|  | WARNING! HOT SURFACE CAN CAUSE INJURY\n\n[[EVIDENCE_ID: a0077]]\n| Allow the internal compressor to cool before touching it. The surface of the compressor can become very hot during use and can cause serious injury if it comes in contact with skin. |"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "DiagnosticChunkOutput",
+        "strict": true,
+        "schema": {
+          "$defs": {
+            "AffectedComponentCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "category": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Category"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "affects_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Affects Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "category",
+                "claim_evidence",
+                "affects_link_evidence"
+              ],
+              "title": "AffectedComponentCandidate",
+              "type": "object"
+            },
+            "CorrectiveActionCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "action_kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Action Kind"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "resolution_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Resolution Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instruction_text",
+                "action_kind",
+                "claim_evidence",
+                "resolution_link_evidence"
+              ],
+              "title": "CorrectiveActionCandidate",
+              "type": "object"
+            },
+            "DiagnosticBundleCandidate": {
+              "additionalProperties": false,
+              "description": "One source record, potentially containing several observed indicators.",
+              "properties": {
+                "record_window_id": {
+                  "title": "Record Window Id",
+                  "type": "string"
+                },
+                "allowed_source_anchors": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Allowed Source Anchors",
+                  "type": "array"
+                },
+                "record_anchor": {
+                  "minLength": 1,
+                  "title": "Record Anchor",
+                  "type": "string"
+                },
+                "branch_anchor": {
+                  "minLength": 1,
+                  "title": "Branch Anchor",
+                  "type": "string"
+                },
+                "indicators": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticIndicatorCandidate"
+                  },
+                  "title": "Indicators",
+                  "type": "array"
+                },
+                "failure": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FailureModeCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actions": {
+                  "items": {
+                    "$ref": "#/$defs/CorrectiveActionCandidate"
+                  },
+                  "title": "Actions",
+                  "type": "array"
+                },
+                "inspection_steps": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticInspectionStepCandidate"
+                  },
+                  "title": "Inspection Steps",
+                  "type": "array"
+                },
+                "conditions": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticConditionCandidate"
+                  },
+                  "title": "Conditions",
+                  "type": "array"
+                },
+                "affected_component": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AffectedComponentCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolution_status": {
+                  "$ref": "#/$defs/ResolutionStatus"
+                }
+              },
+              "required": [
+                "record_window_id",
+                "allowed_source_anchors",
+                "record_anchor",
+                "branch_anchor",
+                "indicators",
+                "failure",
+                "actions",
+                "inspection_steps",
+                "conditions",
+                "affected_component",
+                "resolution_status"
+              ],
+              "title": "DiagnosticBundleCandidate",
+              "type": "object"
+            },
+            "DiagnosticConditionCandidate": {
+              "additionalProperties": false,
+              "description": "Source-stated condition attached to a branch or a zero-based step.",
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "title": "Text",
+                  "type": "string"
+                },
+                "applies_to": {
+                  "enum": [
+                    "branch",
+                    "action",
+                    "inspection"
+                  ],
+                  "title": "Applies To",
+                  "type": "string"
+                },
+                "step_index": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Step Index"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "text",
+                "applies_to",
+                "step_index",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticConditionCandidate",
+              "type": "object"
+            },
+            "DiagnosticEvidenceSpan": {
+              "additionalProperties": false,
+              "description": "A verbatim source span emitted by the extraction model.\n\n``source_anchor`` is the opaque evidence identifier printed in the model's\ninput.  It is intentionally not a graph node identifier.",
+              "properties": {
+                "source_anchor": {
+                  "minLength": 1,
+                  "title": "Source Anchor",
+                  "type": "string"
+                },
+                "source_page": {
+                  "minimum": 1,
+                  "title": "Source Page",
+                  "type": "integer"
+                },
+                "quote": {
+                  "minLength": 1,
+                  "title": "Quote",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source_anchor",
+                "source_page",
+                "quote"
+              ],
+              "title": "DiagnosticEvidenceSpan",
+              "type": "object"
+            },
+            "DiagnosticIndicatorCandidate": {
+              "additionalProperties": false,
+              "description": "Provider-safe flat indicator contract.\n\nOpenAI strict Structured Outputs does not accept the ``oneOf`` emitted by\nPydantic for a discriminated model union inside an array.  Keep the wire\nshape flat and enforce the same symptom/error-code invariants locally.\nNullable fields remain required so the provider schema is strict.",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "symptom",
+                    "error_code"
+                  ],
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "code": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code"
+                },
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "severity": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "Critical",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Severity"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "failure_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Failure Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "code",
+                "name",
+                "description",
+                "severity",
+                "claim_evidence",
+                "failure_link_evidence"
+              ],
+              "title": "DiagnosticIndicatorCandidate",
+              "type": "object"
+            },
+            "DiagnosticInspectionStepCandidate": {
+              "additionalProperties": false,
+              "description": "A diagnostic check that is useful but does not itself restore operation.",
+              "properties": {
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "instruction_text",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticInspectionStepCandidate",
+              "type": "object"
+            },
+            "FailureModeCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "material_context": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Material Context"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "material_context",
+                "claim_evidence"
+              ],
+              "title": "FailureModeCandidate",
+              "type": "object"
+            },
+            "ResolutionStatus": {
+              "description": "The extractor's explicit assessment of diagnostic completeness.",
+              "enum": [
+                "action_stated",
+                "no_action_stated",
+                "check_only",
+                "ambiguous",
+                "not_diagnostic"
+              ],
+              "title": "ResolutionStatus",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Provider structured-output envelope for one diagnostic PDF chunk.\n\nAll fields are required, including nullable/list fields.  This avoids the\noptional-property mismatch of strict provider JSON Schema implementations.",
+          "properties": {
+            "schema_version": {
+              "enum": [
+                "1.0",
+                "1.1"
+              ],
+              "title": "Schema Version",
+              "type": "string"
+            },
+            "source_language": {
+              "minLength": 1,
+              "title": "Source Language",
+              "type": "string"
+            },
+            "records": {
+              "items": {
+                "$ref": "#/$defs/DiagnosticBundleCandidate"
+              },
+              "title": "Records",
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "source_language",
+            "records"
+          ],
+          "title": "DiagnosticChunkOutput",
+          "type": "object"
+        }
+      }
+    },
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 0.0011627500061877072,
+  "response": {
+    "id": "chatcmpl-ES2dhyOmi5gt05S8ZKQITmub2H76x",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"schema_version\":\"1.1\",\"source_language\":\"en\",\"records\":[{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0010\",\"a0003\"],\"record_anchor\":\"a0003\",\"branch_anchor\":\"a0010\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"High resistance in the cap-sensor circuit\",\"description\":\"The resistance from the blue wire (pin 1) to the orange wire (pin 2) measures high resistance.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0010\",\"source_page\":94,\"quote\":\"If it measures high resistance\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0010\",\"source_page\":94,\"quote\":\"If it measures high resistance, the cap-sensor switch circuit is open.\"}]}],\"failure\":{\"name\":\"Cap-sensor switch circuit open\",\"description\":\"The cap-sensor switch circuit is open.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0010\",\"source_page\":94,\"quote\":\"the cap-sensor switch circuit is open\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Measure the resistance from the blue wire (pin 1) to the orange wire (pin 2). It should measure less than 10 Ω.\",\"claim_evidence\":[{\"source_anchor\":\"a0010\",\"source_page\":94,\"quote\":\"Measure the resistance from the blue wire (pin 1) to the orange wire (pin 2). It should measure less than 10 Ω.\"}]}],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"check_only\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0013\"],\"record_anchor\":\"a0013\",\"branch_anchor\":\"a0013\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Torch plunger does not move smoothly\",\"description\":\"The torch plunger does not move smoothly.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":94,\"quote\":\"If it does not\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":94,\"quote\":\"If it does not, replace the torch body.\"}]}],\"failure\":null,\"actions\":[{\"name\":\"Replace the torch body\",\"description\":\"Replace the torch body.\",\"instruction_text\":\"If the torch plunger does not move smoothly, replace the torch body.\",\"action_kind\":\"replacement\",\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":94,\"quote\":\"replace the torch body\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":94,\"quote\":\"If it does not, replace the torch body.\"}]}],\"inspection_steps\":[{\"instruction_text\":\"Make sure the torch plunger moves smoothly.\",\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":94,\"quote\":\"Make sure the torch plunger moves smoothly.\"}]}],\"conditions\":[],\"affected_component\":{\"name\":\"Torch body\",\"description\":\"Torch body identified as the part to replace when the plunger does not move smoothly.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":94,\"quote\":\"replace the torch body\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":94,\"quote\":\"replace the torch body\"}]},\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0014\"],\"record_anchor\":\"a0014\",\"branch_anchor\":\"a0014\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Consumables not correctly installed\",\"description\":\"The consumables are not correctly installed.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":94,\"quote\":\"Make sure the consumables are correctly installed.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":94,\"quote\":\"Adjust the consumables if necessary.\"}]}],\"failure\":null,\"actions\":[{\"name\":\"Adjust the consumables\",\"description\":\"Adjust the consumables if necessary.\",\"instruction_text\":\"Make sure the consumables are correctly installed. Adjust the consumables if necessary.\",\"action_kind\":\"adjustment\",\"claim_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":94,\"quote\":\"Adjust the consumables if necessary.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":94,\"quote\":\"Make sure the consumables are correctly installed. Adjust the consumables if necessary.\"}]}],\"inspection_steps\":[{\"instruction_text\":\"Make sure the consumables are correctly installed.\",\"claim_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":94,\"quote\":\"Make sure the consumables are correctly installed.\"}]}],\"conditions\":[{\"text\":\"Adjust the consumables if necessary.\",\"applies_to\":\"action\",\"step_index\":0,\"claim_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":94,\"quote\":\"if necessary\"}]}],\"affected_component\":{\"name\":\"Consumables\",\"description\":\"Torch consumables identified for installation check and adjustment.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":94,\"quote\":\"the consumables\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":94,\"quote\":\"Adjust the consumables if necessary.\"}]},\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0015\",\"a0013\",\"a0014\"],\"record_anchor\":\"a0015\",\"branch_anchor\":\"a0015\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Cap-sensor switch or torch lead fault\",\"description\":\"When the torch parts checked in steps 7 and 8 are working properly, the cap-sensor switch is faulty or the torch lead has a broken wire.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0015\",\"source_page\":94,\"quote\":\"the cap-sensor switch is faulty or the torch lead has a broken wire\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0015\",\"source_page\":94,\"quote\":\"the cap-sensor switch is faulty or the torch lead has a broken wire\"}]}],\"failure\":{\"name\":\"Faulty cap-sensor switch or broken wire in torch lead\",\"description\":\"The cap-sensor switch is faulty or the torch lead has a broken wire.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0015\",\"source_page\":94,\"quote\":\"the cap-sensor switch is faulty or the torch lead has a broken wire\"}]},\"actions\":[{\"name\":\"Replace the faulty part\",\"description\":\"Replace the faulty cap-sensor switch or torch lead.\",\"instruction_text\":\"If the torch parts mentioned in step 7 and step 8 are working properly, the cap-sensor switch is faulty or the torch lead has a broken wire. Replace the faulty part.\",\"action_kind\":\"replacement\",\"claim_evidence\":[{\"source_anchor\":\"a0015\",\"source_page\":94,\"quote\":\"Replace the faulty part.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0015\",\"source_page\":94,\"quote\":\"the cap-sensor switch is faulty or the torch lead has a broken wire. Replace the faulty part.\"}]}],\"inspection_steps\":[],\"conditions\":[{\"text\":\"The torch parts mentioned in step 7 and step 8 are working properly.\",\"applies_to\":\"branch\",\"step_index\":null,\"claim_evidence\":[{\"source_anchor\":\"a0015\",\"source_page\":94,\"quote\":\"If the torch parts mentioned in step 7 and step 8 are working properly\"}]}],\"affected_component\":null,\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0022\",\"a0028\"],\"record_anchor\":\"a0022\",\"branch_anchor\":\"a0028\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Fan does not operate\",\"description\":\"The fan does not operate during the fan test.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0028\",\"source_page\":95,\"quote\":\"If the fan does not operate\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0028\",\"source_page\":95,\"quote\":\"If the fan does not operate, replace the fan.\"}]}],\"failure\":null,\"actions\":[{\"name\":\"Replace the fan\",\"description\":\"Replace the fan.\",\"instruction_text\":\"If the fan does not operate, replace the fan.\",\"action_kind\":\"replacement\",\"claim_evidence\":[{\"source_anchor\":\"a0028\",\"source_page\":95,\"quote\":\"replace the fan\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0028\",\"source_page\":95,\"quote\":\"If the fan does not operate, replace the fan.\"}]}],\"inspection_steps\":[{\"instruction_text\":\"Place a jumper from ground to pin 3 of J5 (black wire), reconnect electrical power, and set the power switch to ON (I) to test the fan.\",\"claim_evidence\":[{\"source_anchor\":\"a0026\",\"source_page\":95,\"quote\":\"Place a jumper from ground\"},{\"source_anchor\":\"a0027\",\"source_page\":95,\"quote\":\"Reconnect the electrical power and set the power switch to ON (I).\"}]}],\"conditions\":[{\"text\":\"This test can trigger a fault because of protection features on the fan driver chip; disregard the fault if it occurs as a result of a fan test.\",\"applies_to\":\"branch\",\"step_index\":null,\"claim_evidence\":[{\"source_anchor\":\"a0030\",\"source_page\":95,\"quote\":\"You can disregard this fault if it occurs as a result of a fan test.\"}]}],\"affected_component\":{\"name\":\"Fan\",\"description\":\"Fan (M1), tested for proper operation and replaced if it does not operate.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0022\",\"source_page\":95,\"quote\":\"Test the fan (M1) for proper operation.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0028\",\"source_page\":95,\"quote\":\"replace the fan\"}]},\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0036\",\"a0037\",\"a0038\",\"a0039\",\"a0040\"],\"record_anchor\":\"a0036\",\"branch_anchor\":\"a0036\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Internal compressor fault LED and temperature fault LED both illuminate\",\"description\":\"Both the internal compressor fault LED and temperature fault LED illuminate.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0036\",\"source_page\":96,\"quote\":\"If the internal compressor fault LED and temperature fault LED both illuminate\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0036\",\"source_page\":96,\"quote\":\"the root cause may be\"}]}],\"failure\":{\"name\":\"Faulty internal compressor\",\"description\":\"The internal compressor may be faulty.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0037\",\"source_page\":96,\"quote\":\"Faulty internal compressor\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Use Test 9 to systematically check the internal compressor, compressor-driver board, and power board to determine which component needs to be replaced.\",\"claim_evidence\":[{\"source_anchor\":\"a0040\",\"source_page\":96,\"quote\":\"Use this test to systematically check each of these 3 components to determine which one needs to be replaced.\"}]}],\"conditions\":[],\"affected_component\":{\"name\":\"Internal compressor\",\"description\":\"Internal compressor identified as a possible root cause.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0037\",\"source_page\":96,\"quote\":\"Faulty internal compressor\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0037\",\"source_page\":96,\"quote\":\"Faulty internal compressor\"}]},\"resolution_status\":\"no_action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0036\",\"a0037\",\"a0038\",\"a0039\",\"a0040\"],\"record_anchor\":\"a0036\",\"branch_anchor\":\"a0036\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Internal compressor fault LED and temperature fault LED both illuminate\",\"description\":\"Both the internal compressor fault LED and temperature fault LED illuminate.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0036\",\"source_page\":96,\"quote\":\"If the internal compressor fault LED and temperature fault LED both illuminate\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0036\",\"source_page\":96,\"quote\":\"the root cause may be\"}]}],\"failure\":{\"name\":\"Faulty compressor-driver board (PCB3)\",\"description\":\"The compressor-driver board (PCB3) may be faulty.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0038\",\"source_page\":96,\"quote\":\"Faulty compressor-driver board (PCB3)\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Use Test 9 to systematically check the internal compressor, compressor-driver board, and power board to determine which component needs to be replaced.\",\"claim_evidence\":[{\"source_anchor\":\"a0040\",\"source_page\":96,\"quote\":\"Use this test to systematically check each of these 3 components to determine which one needs to be replaced.\"}]}],\"conditions\":[],\"affected_component\":{\"name\":\"Compressor-driver board (PCB3)\",\"description\":\"Compressor-driver board identified as a possible root cause.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0038\",\"source_page\":96,\"quote\":\"Faulty compressor-driver board (PCB3)\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0038\",\"source_page\":96,\"quote\":\"Faulty compressor-driver board (PCB3)\"}]},\"resolution_status\":\"no_action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0036\",\"a0037\",\"a0038\",\"a0039\",\"a0040\"],\"record_anchor\":\"a0036\",\"branch_anchor\":\"a0036\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Internal compressor fault LED and temperature fault LED both illuminate\",\"description\":\"Both the internal compressor fault LED and temperature fault LED illuminate.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0036\",\"source_page\":96,\"quote\":\"If the internal compressor fault LED and temperature fault LED both illuminate\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0036\",\"source_page\":96,\"quote\":\"the root cause may be\"}]}],\"failure\":{\"name\":\"Faulty power board (PCB2)\",\"description\":\"The power board (PCB2) may be faulty.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0039\",\"source_page\":96,\"quote\":\"Faulty power board (PCB2)\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Use Test 9 to systematically check the internal compressor, compressor-driver board, and power board to determine which component needs to be replaced.\",\"claim_evidence\":[{\"source_anchor\":\"a0040\",\"source_page\":96,\"quote\":\"Use this test to systematically check each of these 3 components to determine which one needs to be replaced.\"}]}],\"conditions\":[],\"affected_component\":{\"name\":\"Power board (PCB2)\",\"description\":\"Power board identified as a possible root cause.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0039\",\"source_page\":96,\"quote\":\"Faulty power board (PCB2)\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0039\",\"source_page\":96,\"quote\":\"Faulty power board (PCB2)\"}]},\"resolution_status\":\"no_action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0048\",\"a0052\",\"a0051\",\"a0058\",\"a0064\"],\"record_anchor\":\"a0048\",\"branch_anchor\":\"a0064\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Diagnostic LED D5 does not illuminate with J2 disconnected\",\"description\":\"After removing the J2 connector from the compressor-driver board, D5 does not illuminate while the torch is being fired.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0061\",\"source_page\":97,\"quote\":\"Does the LED illuminate while the torch is being fired?\"},{\"source_anchor\":\"a0064\",\"source_page\":97,\"quote\":\"If no, check the compressor-driver board.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0064\",\"source_page\":97,\"quote\":\"If no, check the compressor-driver board.\"}]}],\"failure\":null,\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Remove the J2 connector from the compressor-driver board, set the power switch to ON (I), quickly tap the torch trigger, and observe whether D5 illuminates while the torch is being fired.\",\"claim_evidence\":[{\"source_anchor\":\"a0058\",\"source_page\":97,\"quote\":\"Remove the J2 connector\"},{\"source_anchor\":\"a0060\",\"source_page\":97,\"quote\":\"Set the power switch to ON (I).\"},{\"source_anchor\":\"a0061\",\"source_page\":97,\"quote\":\"Quickly tap the torch trigger, then watch the green diagnostic LED (D5) on the compressor-driver board.\"}]}],\"conditions\":[],\"affected_component\":{\"name\":\"Compressor-driver board\",\"description\":\"Board indicated for checking when D5 does not illuminate with J2 disconnected.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0064\",\"source_page\":97,\"quote\":\"check the compressor-driver board\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0064\",\"source_page\":97,\"quote\":\"check the compressor-driver board\"}]},\"resolution_status\":\"check_only\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0069\",\"a0070\",\"a0072\"],\"record_anchor\":\"a0070\",\"branch_anchor\":\"a0072\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Compressor is not running or air is not blowing from the torch\",\"description\":\"During the external 12 VDC compressor test with the gas shut-off override button held down and the torch trigger tapped, the compressor is not running or air is not blowing from the torch.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0070\",\"source_page\":97,\"quote\":\"Is the compressor running, and is air blowing from the torch?\"},{\"source_anchor\":\"a0072\",\"source_page\":97,\"quote\":\"If no, replace the internal compressor.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0072\",\"source_page\":97,\"quote\":\"If no, replace the internal compressor.\"}]}],\"failure\":null,\"actions\":[{\"name\":\"Replace the internal compressor\",\"description\":\"Replace the internal compressor.\",\"instruction_text\":\"If the compressor is not running and air is not blowing from the torch, replace the internal compressor. Be sure to push the solenoid valve back into place between both clips from the center panel.\",\"action_kind\":\"replacement\",\"claim_evidence\":[{\"source_anchor\":\"a0072\",\"source_page\":97,\"quote\":\"replace the internal compressor\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0072\",\"source_page\":97,\"quote\":\"If no, replace the internal compressor.\"}]}],\"inspection_steps\":[{\"instruction_text\":\"Connect the internal compressor to an external 12 VDC power source. Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger; check whether the compressor runs and air blows from the torch.\",\"claim_evidence\":[{\"source_anchor\":\"a0069\",\"source_page\":97,\"quote\":\"Connect the internal compressor to an external 12 VDC power source\"},{\"source_anchor\":\"a0070\",\"source_page\":97,\"quote\":\"Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger.\"}]}],\"conditions\":[{\"text\":\"If no (compressor running and air blowing from the torch), replace the internal compressor.\",\"applies_to\":\"action\",\"step_index\":0,\"claim_evidence\":[{\"source_anchor\":\"a0070\",\"source_page\":97,\"quote\":\"Is the compressor running, and is air blowing from the torch?\"},{\"source_anchor\":\"a0072\",\"source_page\":97,\"quote\":\"If no, replace the internal compressor.\"}]}],\"affected_component\":{\"name\":\"Internal compressor\",\"description\":\"Internal compressor to be replaced if it does not pass the external-power test.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0072\",\"source_page\":97,\"quote\":\"replace the internal compressor\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0072\",\"source_page\":97,\"quote\":\"replace the internal compressor\"}]},\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0069\",\"a0070\",\"a0071\"],\"record_anchor\":\"a0070\",\"branch_anchor\":\"a0071\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Compressor runs and air blows from the torch during external-power test\",\"description\":\"The compressor runs and air blows from the torch during the test.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0070\",\"source_page\":97,\"quote\":\"Is the compressor running, and is air blowing from the torch?\"},{\"source_anchor\":\"a0071\",\"source_page\":97,\"quote\":\"If yes, check the compressor-driver board.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0071\",\"source_page\":97,\"quote\":\"If yes, check the compressor-driver board.\"}]}],\"failure\":null,\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Connect the internal compressor to an external 12 VDC power source. Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger; check whether the compressor runs and air blows from the torch.\",\"claim_evidence\":[{\"source_anchor\":\"a0069\",\"source_page\":97,\"quote\":\"Connect the internal compressor to an external 12 VDC power source\"},{\"source_anchor\":\"a0070\",\"source_page\":97,\"quote\":\"Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger.\"}]}],\"conditions\":[{\"text\":\"If yes, check the compressor-driver board.\",\"applies_to\":\"inspection\",\"step_index\":0,\"claim_evidence\":[{\"source_anchor\":\"a0071\",\"source_page\":97,\"quote\":\"If yes, check the compressor-driver board.\"}]}],\"affected_component\":{\"name\":\"Compressor-driver board\",\"description\":\"Board to check if the compressor runs and air blows during the external-power test.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0071\",\"source_page\":97,\"quote\":\"check the compressor-driver board\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0071\",\"source_page\":97,\"quote\":\"check the compressor-driver board\"}]},\"resolution_status\":\"check_only\"}]}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790352037,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 4938,
+      "prompt_tokens": 5057,
+      "total_tokens": 9995,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 163,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cache_write_tokens": 2438,
+        "cached_tokens": 2616
+      }
+    }
+  },
+  "provider_request_id": null,
+  "error": null
+}

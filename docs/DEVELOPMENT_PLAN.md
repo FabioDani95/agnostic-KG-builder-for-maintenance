@@ -1,5 +1,11 @@
 # Piano di sviluppo MVP — Maintenance Knowledge Graph Builder
 
+> Aggiornamento implementativo: il [percorso PDF v22](PDF_DIAGNOSTIC_STATUS.md)
+> include correzione per record, nuove revisioni e prove di ricompilazione.
+> G3 rimane non accettato; i risultati e i limiti correnti sono nel
+> [rapporto C9–C12](../paper/experiments/robustness_continuation_20260926/REPORT.md).
+> Le milestone seguenti conservano le evidenze dei rispettivi checkpoint.
+
 ## 0. Controllo del piano
 
 | Campo | Valore |

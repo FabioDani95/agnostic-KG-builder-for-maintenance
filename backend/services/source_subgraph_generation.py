@@ -499,7 +499,7 @@ class SourceSubgraphGenerationService:
                 )
                 if revision is not None and (
                     revision.preparation_fingerprint != expected_fingerprint
-                    or revision.input_config_hash != expected_config_hash
+                    or (revision.review_base_config_hash or revision.input_config_hash) != expected_config_hash
                 ):
                     revision = None
                 if revision is None:

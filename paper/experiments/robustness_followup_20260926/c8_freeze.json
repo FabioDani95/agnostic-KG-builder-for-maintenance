@@ -1,0 +1,12 @@
+{
+  "variant": "c8",
+  "pipeline_version": "pdf-g3-structured-recovery-v19",
+  "archive_sha256": "abf73eb64a62a2a5761d8060b075bc1eaab9acd095e124d8dcc58b4e3eeab7e9",
+  "differences_from_c7": [
+    "recover known but wrong local evidence anchor only when literal quote has one occurrence in same atomic source window; retain audit before/after"
+  ],
+  "evaluation": "exact provider replay; not new LLM sampling",
+  "campaign_ledger": "../robustness_20260925/real_call_budget.jsonl",
+  "cumulative_cap_usd": 20,
+  "gold_used_in_generation": false
+}

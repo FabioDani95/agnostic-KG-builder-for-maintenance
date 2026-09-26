@@ -111,9 +111,12 @@ def _diagnostic_escalation_priority(report: dict | None) -> int:
 
 def _diagnostic_report_score(report: dict | None) -> tuple[int, int, int, int, int]:
     report = report or {}
+    from backend.services.diagnostic_reconciliation import verified_occurrence_key
+    records = list({verified_occurrence_key(record) or record.get("branch_lineage_id") or json.dumps(record, sort_keys=True): record
+                    for record in (report.get("records") or []) if isinstance(record, dict)}.values())
     dispositions = [
         str(record.get("disposition") or "")
-        for record in (report.get("records") or [])
+        for record in records
         if isinstance(record, dict)
     ]
     # For selective recovery, a grounded publish is best, a traceable gap is
@@ -122,15 +125,23 @@ def _diagnostic_report_score(report: dict | None) -> tuple[int, int, int, int, i
     disposition_rank = {"publish": 4, "gap": 3, "review": 2, "exclude": 1}
     return (
         max((disposition_rank.get(value, 0) for value in dispositions), default=0),
-        int(report.get("publish_count", 0) or 0),
+        sum(value == "publish" for value in dispositions),
         int(bool(report.get("parsed"))),
         -int(report.get("unresolved_count", 0) or 0),
-        int(report.get("candidate_count", 0) or 0),
+        -len(records),
     )
 
 
 def _prefer_escalated_diagnostic_report(primary: dict, escalated: dict) -> bool:
-    """Adopt Terra only when its compiled contract is strictly better."""
+    """A heuristic may rank attempts only after preserving published branches.
+
+    This does not certify semantics. Disjoint publications use the union path;
+    raw duplicate counts must never win a replacement decision.
+    """
+    if primary.get("publish_count", 0) and not _published_branch_ids(primary):
+        return False  # Counts alone cannot prove preservation of any branch.
+    if not _published_branch_ids(primary) <= _published_branch_ids(escalated):
+        return False
     return _diagnostic_report_score(escalated) > _diagnostic_report_score(primary)
 
 
@@ -308,7 +319,7 @@ def _canonical_asset_identity(store: dict) -> dict[str, object]:
 
 
 def _diagnostic_record_windows(store: dict) -> list[dict]:
-    """Validate advisory pre-LLM record windows for audit telemetry only."""
+    """Validate system-owned windows used for telemetry and focused extraction."""
 
     rendered: list[dict] = []
     for raw in store.get("diagnostic_record_windows", []) or []:
@@ -337,7 +348,7 @@ def _diagnostic_record_windows(store: dict) -> list[dict]:
             "page_numbers": pages,
             "text_with_pages": text,
         })
-    return sorted(rendered, key=lambda item: item["window_id"])
+    return sorted(rendered, key=lambda item: (min(item["page_numbers"]), str(item.get("table_key") or ""), int(item.get("branch_ordinal", 1)), item["window_id"]))
 
 
 def _diagnostic_evidence_for_pages(
@@ -395,6 +406,10 @@ def _merge_pipeline_results(
     """Merge chunk-level ontology results into one normalized run-level payload."""
     if len(results) == 1:
         return results[0]
+
+    from backend.services.diagnostic_reconciliation import reconcile_verified_duplicates
+
+    results = reconcile_verified_duplicates(results)
 
     # IDs can legally be equal strings only in malformed legacy model output.
     # Keep remaps type-keyed so such a collision cannot corrupt relation
@@ -697,6 +712,16 @@ def _merge_pipeline_results(
         for result in results
         if result.diagnostic_contract_report
     ]
+    # One unobserved physical occurrence can be reported by the focused and
+    # semantic paths. Collapse only an exact, single-branch window match.
+    missing_window_aliases: dict[tuple[str, ...], set[str]] = {}
+    for report in diagnostic_reports:
+        for window in report.get("record_window_inventory", []):
+            if int(window.get("branch_count", 1)) != 1:
+                continue
+            signature = tuple(sorted(set(window.get("allowed_source_anchors", []))))
+            if signature:
+                missing_window_aliases.setdefault(signature, set()).add(str(window["window_id"]))
     diagnostic_records: dict[str, dict] = {}
     diagnostic_candidate_input_anchors: set[str] = set()
     diagnostic_input_pages: set[int] = set()
@@ -742,6 +767,11 @@ def _merge_pipeline_results(
                 or record.get("candidate_id")
                 or _canonical_report_key(record)
             )
+            if not record.get("candidate") and record.get("accounting_state") == "record_not_observed":
+                signature = tuple(sorted(set(record.get("evidence_ids", []))))
+                aliases = missing_window_aliases.get(signature, set())
+                if len(aliases) == 1:
+                    key = "missing_window:" + next(iter(aliases))
             current = diagnostic_records.get(key)
             disposition_rank = {"publish": 4, "exclude": 3, "gap": 2, "review": 1}
             if current is None or disposition_rank.get(
@@ -868,7 +898,7 @@ def _split_pages_by_section(
         return []
     max_pages = max(1, int(max_pages or 1))
     max_chars = max(1, int(max_chars or 1))
-    overlap_pages = max(0, int(overlap_pages or 0))
+    overlap_pages = min(max_pages - 1, max(0, int(overlap_pages or 0)))
     page_map = {int(page["page_number"]): page for page in pages}
     ordered_pages = [page_map[number] for number in sorted(page_map)]
 
@@ -915,33 +945,19 @@ def _split_pages_by_section(
             or len(chunk_pages) >= max_pages
             or chunk_chars + page_chars > max_chars
         ):
+            carry = list(chunk_pages[-overlap_pages:]) if contiguous and overlap_pages else []
             flush()
+            # Count overlap INSIDE the envelope, reserving room for new content.
+            while carry and (
+                len(carry) + 1 > max_pages
+                or sum(len(f"--- PAGE {p['page_number']} ---\n{p['text']}\n\n") for p in carry) + page_chars > max_chars
+            ):
+                carry.pop(0)
+            chunk_pages.extend(carry)
+            chunk_chars = sum(len(f"--- PAGE {p['page_number']} ---\n{p['text']}\n\n") for p in carry)
         chunk_pages.append(page)
         chunk_chars += page_chars
     flush()
-
-    # Diagnostic records frequently put the symptom/cause at the bottom of a
-    # page and the remedy on the next one.  A small physical-page overlap lets
-    # one typed extraction call see both halves.  It is applied only across a
-    # contiguous boundary; gaps created by scoping never get bridged.
-    if overlap_pages and len(chunks) > 1:
-        overlapped = [chunks[0]]
-        for current_pages, _current_context in chunks[1:]:
-            previous_pages = overlapped[-1][0]
-            if (
-                previous_pages
-                and current_pages
-                and int(previous_pages[-1]["page_number"]) + 1
-                == int(current_pages[0]["page_number"])
-            ):
-                carry = previous_pages[-overlap_pages:]
-                existing = {int(page["page_number"]) for page in current_pages}
-                current_pages = [
-                    *[page for page in carry if int(page["page_number"]) not in existing],
-                    *current_pages,
-                ]
-            overlapped.append((current_pages, context_for(current_pages)))
-        chunks = overlapped
 
     return chunks
 
@@ -996,9 +1012,35 @@ async def _run_chunk_with_retry(
 ):
     """Retry only the failed chunk; completed sibling chunks stay in memory."""
     total_attempts = max(1, int(attempts))
+    previous_metrics = []
+    previous_reports = []
     for attempt in range(1, total_attempts + 1):
         try:
-            return await asyncio.to_thread(operation)
+            value = await asyncio.to_thread(operation)
+            payload = value[0] if isinstance(value, tuple) else value
+            report = (payload.get("diagnostic_contract_report", {}) if isinstance(payload, dict)
+                      else getattr(payload, "diagnostic_contract_report", {})) or {}
+            transient = not report.get("parsed", True) and (
+                report.get("error_status_code") in {429, 500, 502, 503, 504}
+                or _is_transient_chunk_error(RuntimeError(str(report.get("error_message") or report.get("error_type") or "")))
+            )
+            if isinstance(value, tuple) and len(value) == 2 and isinstance(value[1], dict):
+                previous_metrics.append(value[1])
+            if report:
+                previous_reports.append(dict(report))
+            if not transient or attempt >= total_attempts:
+                if report and len(previous_reports) > 1:
+                    report["transport_attempts"] = previous_reports
+                if isinstance(value, tuple) and len(previous_metrics) > 1:
+                    merged = previous_metrics[0]
+                    for item in previous_metrics[1:]:
+                        merged = _merge_escalated_chunk_metrics(merged, item)
+                    return value[0], merged
+                return value
+            delay = max(0.0, float(base_delay_seconds)) * (2 ** (attempt - 1))
+            logger.warning("[ontology] Retrying failed diagnostic transport attempt %d/%d", attempt + 1, total_attempts)
+            if delay:
+                await asyncio.sleep(delay)
         except Exception as exc:
             if attempt >= total_attempts or not _is_transient_chunk_error(exc):
                 raise
@@ -1362,6 +1404,31 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
             int(ontology_cfg.get("diagnostic_chunk_overlap_pages", 1)),
         )
     ]
+    from backend.services.diagnostic_recovery import procedure_context_packets
+
+    procedure_packets = procedure_context_packets(
+        all_pages, max_chars=max_chars,
+        diagnostic_page_numbers={page["page_number"] for page in diagnostic_pages},
+        min_pages=int(ontology_cfg.get("diagnostic_max_pages_per_chunk", max_pages_per_chunk)),
+    )
+    diagnostic_chunks.extend((pages, [], []) for pages in procedure_packets)
+    context_strategy = str(ontology_cfg.get("diagnostic_context_strategy", "semantic"))
+    if context_strategy not in {"semantic", "hybrid"}:
+        raise ValueError(f"Unknown diagnostic_context_strategy: {context_strategy}")
+    if context_strategy == "hybrid":
+        # Structured rows are an additional retrieval path, not an admission
+        # filter. Full semantic coverage above remains in place.
+        page_map = {int(page["page_number"]): page for page in diagnostic_pages}
+        table_windows = [window for window in advisory_record_windows if window.get("edge_policy") in {"table_atomic_endpoint_union", "prose_layout_endpoint_union", "prose_structural_endpoint_union"}]
+        group_size = max(1, int(ontology_cfg.get("diagnostic_windows_per_call", 3)))
+        focused_chunks = []
+        for offset in range(0, len(table_windows), group_size):
+            windows = table_windows[offset:offset + group_size]
+            numbers = sorted({n for window in windows for n in window["page_numbers"]})
+            focused_pages = [page_map[n] for n in numbers if n in page_map]
+            if focused_pages:
+                focused_chunks.append((focused_pages, [], windows))
+        diagnostic_chunks = focused_chunks + diagnostic_chunks
     structural_chunks = _split_pages_by_section(
         structural_pages,
         sections,
@@ -1398,10 +1465,10 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                     f"({primary_model}); received {req.model_name}."
                 ),
             )
-        if not _model_matches_family(escalation_model, "gpt-5.6-terra"):
+        if not any(_model_matches_family(escalation_model, name) for name in ("gpt-5.6-terra", "gpt-6-sol")):
             raise HTTPException(
                 status_code=409,
-                detail="Diagnostic escalation model must be a GPT-5.6 Terra model.",
+                detail="Diagnostic escalation model must have a verified GPT-5.6 Terra or GPT-6 Sol pricing profile.",
             )
         if not cost_guard_cfg.get("enabled", True):
             raise HTTPException(
@@ -1454,6 +1521,8 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
             resolution_max_targets=int(resolution_cfg.get("max_targets", 0)),
             resolution_max_input_tokens=int(resolution_cfg.get("estimated_max_input_tokens", 12500)),
             resolution_max_output_tokens=int(resolution_cfg.get("max_output_tokens", 2500)),
+            chunk_attempts=max(1, int(ontology_cfg.get("chunk_retry_attempts", 3))),
+            diagnostic_recovery_calls_per_chunk=max(0, int(ontology_cfg.get("diagnostic_recovery_calls_per_chunk", 2))),
             scoping_actual_cost_usd=float(scoping_metrics.get("estimated_cost_usd", 0) or 0),
             scoping_actual_call_count=int(scoping_metrics.get("llm_calls", 0) or 0),
             fixed_prompt_overhead_characters=int(
@@ -1548,11 +1617,12 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                     diagnostic_call_options=(
                         {
                             "record_windows": chunk_windows,
+                            "advisory_windows": [window for window in advisory_record_windows if set(window["page_numbers"]) <= set(page_numbers)],
                             "max_output_tokens": _diagnostic_output_token_limit(
                                 chunk_windows, ontology_cfg
                             ),
                         }
-                        if extraction_role == "diagnostic" and chunk_windows
+                        if extraction_role == "diagnostic"
                         else None
                     ),
                     diagnostic_evidence_units=(
@@ -1568,6 +1638,47 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                 attempts=chunk_retry_attempts,
                 base_delay_seconds=chunk_retry_base_seconds,
             )
+        if extraction_role == "diagnostic":
+            from backend.services.diagnostic_recovery import recovery_feedback, recovery_packets
+
+            primary_report = dict(result.diagnostic_contract_report or {})
+            packets = recovery_packets(
+                primary_report, chunk_pages, chunk_windows,
+                limit=max(0, int(ontology_cfg.get("diagnostic_recovery_calls_per_chunk", 2))),
+            )
+            recovered_results = []
+            for recovery_pages, recovery_windows in packets:
+                if not recovery_pages:
+                    continue
+                async with chunk_semaphore:
+                    retry_result, retry_metrics = await asyncio.to_thread(
+                        build_initial_ontology,
+                        text_with_pages=_render_chunk_text(recovery_pages, chunk_sections, recovery_windows),
+                        source_type=req.source_type, source_title=req.source_title,
+                        target_language=req.target_language, model_name=req.model_name,
+                        reasoning_effort=req.reasoning_effort, asset_identity=asset_identity,
+                        extraction_role="diagnostic", relation_first=True,
+                        diagnostic_call_options={
+                            "record_windows": recovery_windows,
+                            "operation": "diagnostic_record_recovery",
+                            "recovery_feedback": recovery_feedback(primary_report),
+                            "max_output_tokens": _diagnostic_output_token_limit(chunk_windows, ontology_cfg),
+                        },
+                        diagnostic_evidence_units=_diagnostic_evidence_for_pages(
+                            list(store.get("diagnostic_evidence_units") or []), recovery_pages,
+                        ),
+                        on_event=on_event,
+                    )
+                recovered_results.append(retry_result)
+                metrics = _merge_escalated_chunk_metrics(metrics, retry_metrics)
+                metrics["retry_count"] = int(metrics.get("retry_count", 0)) + 1
+            if recovered_results:
+                # Retain failures and valid siblings. Recovery never silently
+                # turns an incomplete inventory into an approval certificate.
+                result = _merge_pipeline_results([result, *recovered_results], asset_identity=asset_identity)
+                result.diagnostic_contract_report["recovery_attempts"] = [
+                    dict(item.diagnostic_contract_report or {}) for item in recovered_results
+                ]
         metrics["chunk_index"] = index
         metrics["chunk_pages"] = len(chunk_pages)
         metrics["section_count"] = len(chunk_sections)
@@ -1774,13 +1885,29 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
             set(expected_diagnostic_pages) - set(processed_diagnostic_pages)
         )
         coverage_complete = not unprocessed_diagnostic_pages
+        contract_processing_complete = coverage_complete and not any(
+            not chunk.get("parsed", True) or chunk.get("invalid_record_count", 0)
+            for chunk in result.diagnostic_contract_report.get("chunks", [])
+        ) and not result.diagnostic_contract_report.get("unaccounted_input_anchors")
+        pending_records = sum(
+            entry.get("disposition") in {"gap", "review"} and not entry.get("source_gap_verified", False)
+            for entry in result.diagnostic_contract_report.get("records", [])
+        )
         coverage_report = {
             **dict(result.diagnostic_contract_report),
-            "diagnostic_input_policy": "semantic_scope_full_page_v1",
+            "diagnostic_input_policy": "hybrid_structural_semantic_v1" if context_strategy == "hybrid" else "semantic_scope_full_page_v1",
             "expected_diagnostic_pages": expected_diagnostic_pages,
+            "supplemental_procedure_pages": sorted({page["page_number"] for packet in procedure_packets for page in packet}),
+            "supplemental_procedure_packet_count": len(procedure_packets),
             "processed_diagnostic_pages": processed_diagnostic_pages,
             "unprocessed_diagnostic_pages": unprocessed_diagnostic_pages,
             "diagnostic_page_coverage_complete": coverage_complete,
+            "diagnostic_input_coverage_complete": coverage_complete,
+            "diagnostic_contract_processing_complete": bool(contract_processing_complete),
+            "diagnostic_extraction_complete": bool(contract_processing_complete and pending_records == 0),
+            "pending_diagnostic_records": pending_records,
+            "semantic_completeness_validated": False,
+            "independent_record_window_count": len(advisory_record_windows),
         }
         if not coverage_complete:
             coverage_report.update({
@@ -1874,7 +2001,7 @@ async def draft_ontology_workflow(store: dict, req: OntologyDraftRequest, on_eve
                 "structural_pages": len(structural_pages),
                 "diagnostic_chunks": len(diagnostic_chunks),
                 "structural_chunks": len(structural_chunks),
-                "diagnostic_input_policy": "semantic_scope_full_page_v1",
+                "diagnostic_input_policy": "hybrid_structural_semantic_v1" if context_strategy == "hybrid" else "semantic_scope_full_page_v1",
                 "advisory_record_window_count": len(advisory_record_windows),
                 "reasoning_effort": req.reasoning_effort or "default",
                 "retry_count": total_retries,

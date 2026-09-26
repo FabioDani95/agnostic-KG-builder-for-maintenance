@@ -1,0 +1,317 @@
+{
+  "ontology_name": "Core_Ontology",
+  "version": "2.0",
+  "language": "en",
+  "source_type": "technical PDF",
+  "source_title": "03_graco_check_mate_200_pumps_manual.pdf",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "Graco Check-Mate 200 Pump",
+        "description": "Graco stainless steel Check-Mate 200 displacement pump documented by manual 308200D.",
+        "brand": "Graco",
+        "model": "Check-Mate 200",
+        "asset_type": "industrial displacement pump"
+      }
+    ],
+    "Component": [
+      {
+        "component_id": "comp_piston_valve_or_seals_300de0cb1c76395cf4ef8c03a76ecdc3da173b52032ac333d67e1107bd24f5bc",
+        "name": "piston valve or seals",
+        "description": "piston valve or seals",
+        "category": "source_named_component"
+      }
+    ],
+    "Symptom": [
+      {
+        "symptom_id": "sym_erratic_or_accelerated_pump_speed_dc80d987f359853c321689ee7e053e955dbd41fd92068f3b94953b1a5c837601",
+        "name": "Erratic or accelerated pump speed.",
+        "description": "Erratic or accelerated pump speed.",
+        "severity": "Medium"
+      },
+      {
+        "symptom_id": "sym_pump_fails_to_operate_b6ee56848126ba1f03242c35a4c18fcc98a4f12f655359f69edb5d553a7f9a13",
+        "name": "Pump fails to operate.",
+        "description": "Pump fails to operate.",
+        "severity": "Medium"
+      },
+      {
+        "symptom_id": "sym_pump_operates_but_output_is_low_on_both_strokes_8f17d3e20c013c400901427bebf614725431110ca86ee507ff7f9100c9fc44aa",
+        "name": "Pump operates, but output is low on both strokes.",
+        "description": "Pump operates, but output is low on both strokes.",
+        "severity": "Medium"
+      },
+      {
+        "symptom_id": "sym_pump_operates_but_output_is_low_on_down_stroke_2854b961938682f3a8aa9a2360e4fd305c3255ca4e200d896fd4a8bd9bf626ad",
+        "name": "Pump operates, but output is low on down-stroke.",
+        "description": "Pump operates, but output is low on down-stroke.",
+        "severity": "Medium"
+      },
+      {
+        "symptom_id": "sym_pump_operates_but_output_is_low_on_up_stroke_576d01db9c9a7d4f31d538ec451480a2ad71ab7db159eb94c233bddc035a3e03",
+        "name": "Pump operates, but output is low on up-stroke.",
+        "description": "Pump operates, but output is low on up-stroke.",
+        "severity": "Medium"
+      }
+    ],
+    "FailureMode": [
+      {
+        "failure_mode_id": "fm_exhausted_fluid_supply_b1eb5403d4a6fbbc8841421b27d49311f68bdd8311fc6bb7d1cc72c9f302053d",
+        "name": "Exhausted fluid supply.",
+        "description": "Exhausted fluid supply.",
+        "material_context": "not_stated"
+      },
+      {
+        "failure_mode_id": "fm_fluid_too_heavy_for_pump_priming_c4f60a9064cdad701d995e65fe4273d7f3cd4de0e12d857ead4cfedb211fb2d8",
+        "name": "Fluid too heavy for pump priming.",
+        "description": "Fluid too heavy for pump priming.",
+        "material_context": "not_stated"
+      },
+      {
+        "failure_mode_id": "fm_held_open_or_worn_piston_valve_or_seals_8afd2945ecbe89306ca5336a414ce436d43b5c0c393af58ce97d8ce7bae284dc",
+        "name": "Held open or worn piston valve or seals.",
+        "description": "Held open or worn piston valve or seals.",
+        "material_context": "comp_piston_valve_or_seals_300de0cb1c76395cf4ef8c03a76ecdc3da173b52032ac333d67e1107bd24f5bc"
+      },
+      {
+        "failure_mode_id": "fm_restricted_line_or_inadequate_air_supply_74391a8f7d92923c1f2cd59a162b3d91176ae3798a190a355a113632b33623ce",
+        "name": "Restricted line or inadequate air supply",
+        "description": "Restricted line or inadequate air supply",
+        "material_context": "not_stated"
+      },
+      {
+        "failure_mode_id": "fm_restricted_line_or_inadequate_air_supply_b7a0a1c999ede729d784338bff38a88dd4e944fb0d476cff06d8161b928c01f4",
+        "name": "Restricted line or inadequate air supply.",
+        "description": "Restricted line or inadequate air supply.",
+        "material_context": "not_stated"
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "ca_clear_775a2b1258bc403c77277b8c772e54c8be4a1098ad4a6c732ddf1d677c1b977a",
+        "name": "Clear",
+        "description": "Clear*; see Technical Data on pages 24–27.",
+        "instruction_text": "Clear*; see Technical Data on pages 24–27.",
+        "source_type": "technical PDF",
+        "source_title": "03_graco_check_mate_200_pumps_manual.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      },
+      {
+        "action_id": "ca_clear_valve_replace_seals_395e532b29c5ff2a8bf75772b6fff85331ce59c181802f1940ecf34a321e3311",
+        "name": "Clear valve; replace seals",
+        "description": "Clear valve; replace seals.",
+        "instruction_text": "Clear valve; replace seals.",
+        "source_type": "technical PDF",
+        "source_title": "03_graco_check_mate_200_pumps_manual.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      },
+      {
+        "action_id": "ca_refill_and_prime_9607b26b2122526ad490cd1cc011c3ef2dd26caef063ec1793d87f1e94f371b7",
+        "name": "Refill and prime",
+        "description": "Refill and prime.",
+        "instruction_text": "Refill and prime.",
+        "source_type": "technical PDF",
+        "source_title": "03_graco_check_mate_200_pumps_manual.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      },
+      {
+        "action_id": "ca_use_bleeder_valve_or_wiper_plate_bd73dc0bb1854951da8841e0a5eb5fa5717294f32d6c98f59a4c268d3e1ac162",
+        "name": "Use bleeder valve or wiper plate",
+        "description": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+        "instruction_text": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+        "source_type": "technical PDF",
+        "source_title": "03_graco_check_mate_200_pumps_manual.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      }
+    ],
+    "ErrorCode": []
+  },
+  "relations": [
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "fm_held_open_or_worn_piston_valve_or_seals_8afd2945ecbe89306ca5336a414ce436d43b5c0c393af58ce97d8ce7bae284dc",
+      "to_type": "Component",
+      "to_id": "comp_piston_valve_or_seals_300de0cb1c76395cf4ef8c03a76ecdc3da173b52032ac333d67e1107bd24f5bc",
+      "evidence": [
+        {
+          "source_page": 11,
+          "source_reference": "ev_089571784a473d7df127538a011f",
+          "quote": "Held open or worn piston valve or seals.",
+          "source_anchor": "ev_089571784a473d7df127538a011f"
+        }
+      ],
+      "branch_lineage_id": "dbranch_dc5d7a08307f1752c9e3d3b3a8c0bc5b7655e284ee121b1b86337d825e8f4023"
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "sym_erratic_or_accelerated_pump_speed_dc80d987f359853c321689ee7e053e955dbd41fd92068f3b94953b1a5c837601",
+      "to_type": "FailureMode",
+      "to_id": "fm_exhausted_fluid_supply_b1eb5403d4a6fbbc8841421b27d49311f68bdd8311fc6bb7d1cc72c9f302053d",
+      "evidence": [
+        {
+          "source_page": 11,
+          "source_reference": "ev_a3d02f9eeb67fd6de47dc13df594",
+          "quote": "Erratic or accelerated pump speed. | Exhausted fluid supply.",
+          "source_anchor": "ev_a3d02f9eeb67fd6de47dc13df594"
+        }
+      ],
+      "branch_lineage_id": "dbranch_d717b2a9e966f0bfca7a3aba7b7abb7e4314a03ff17ff2f4315c65e234de7876"
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "sym_pump_fails_to_operate_b6ee56848126ba1f03242c35a4c18fcc98a4f12f655359f69edb5d553a7f9a13",
+      "to_type": "FailureMode",
+      "to_id": "fm_restricted_line_or_inadequate_air_supply_74391a8f7d92923c1f2cd59a162b3d91176ae3798a190a355a113632b33623ce",
+      "evidence": [
+        {
+          "source_page": 11,
+          "source_reference": "ev_f5d5eacbd18233b9a4ece3273d4b",
+          "quote": "Pump fails to operate. | Restricted line or inadequate air supply",
+          "source_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b"
+        }
+      ],
+      "branch_lineage_id": "dbranch_72a1c58d0fb564e3200a7f53159494b1bd0d5ed3081b70f8f7c03c2ed79bab50"
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "sym_pump_operates_but_output_is_low_on_both_strokes_8f17d3e20c013c400901427bebf614725431110ca86ee507ff7f9100c9fc44aa",
+      "to_type": "FailureMode",
+      "to_id": "fm_restricted_line_or_inadequate_air_supply_b7a0a1c999ede729d784338bff38a88dd4e944fb0d476cff06d8161b928c01f4",
+      "evidence": [
+        {
+          "source_page": 11,
+          "source_reference": "ev_0e39c8a79741f02ed861373dfb77",
+          "quote": "Pump operates, but output is low on both strokes. | Restricted line or inadequate air supply.",
+          "source_anchor": "ev_0e39c8a79741f02ed861373dfb77"
+        }
+      ],
+      "branch_lineage_id": "dbranch_b359cbd42121da7d56de034826ac115b9c9780f769a052f92f22cf293d1f601b"
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "sym_pump_operates_but_output_is_low_on_down_stroke_2854b961938682f3a8aa9a2360e4fd305c3255ca4e200d896fd4a8bd9bf626ad",
+      "to_type": "FailureMode",
+      "to_id": "fm_fluid_too_heavy_for_pump_priming_c4f60a9064cdad701d995e65fe4273d7f3cd4de0e12d857ead4cfedb211fb2d8",
+      "evidence": [
+        {
+          "source_page": 11,
+          "source_reference": "ev_61d21bacf740efc4d426328702c2",
+          "quote": "Pump operates, but output is low on down- stroke. | Fluid too heavy for pump priming.",
+          "source_anchor": "ev_61d21bacf740efc4d426328702c2"
+        }
+      ],
+      "branch_lineage_id": "dbranch_30882f435e7d9a18e8560531e0d59e2f966e770a8f54d0f2cdec055cfb8f215f"
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "sym_pump_operates_but_output_is_low_on_up_stroke_576d01db9c9a7d4f31d538ec451480a2ad71ab7db159eb94c233bddc035a3e03",
+      "to_type": "FailureMode",
+      "to_id": "fm_held_open_or_worn_piston_valve_or_seals_8afd2945ecbe89306ca5336a414ce436d43b5c0c393af58ce97d8ce7bae284dc",
+      "evidence": [
+        {
+          "source_page": 11,
+          "source_reference": "ev_089571784a473d7df127538a011f",
+          "quote": "Pump operates, but output is low on up- stroke. | Held open or worn piston valve or seals.",
+          "source_anchor": "ev_089571784a473d7df127538a011f"
+        }
+      ],
+      "branch_lineage_id": "dbranch_dc5d7a08307f1752c9e3d3b3a8c0bc5b7655e284ee121b1b86337d825e8f4023"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_exhausted_fluid_supply_b1eb5403d4a6fbbc8841421b27d49311f68bdd8311fc6bb7d1cc72c9f302053d",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_refill_and_prime_9607b26b2122526ad490cd1cc011c3ef2dd26caef063ec1793d87f1e94f371b7",
+      "evidence": [
+        {
+          "source_page": 11,
+          "source_reference": "ev_a3d02f9eeb67fd6de47dc13df594",
+          "quote": "Exhausted fluid supply. | Refill and prime.",
+          "source_anchor": "ev_a3d02f9eeb67fd6de47dc13df594"
+        }
+      ],
+      "branch_lineage_id": "dbranch_d717b2a9e966f0bfca7a3aba7b7abb7e4314a03ff17ff2f4315c65e234de7876"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_fluid_too_heavy_for_pump_priming_c4f60a9064cdad701d995e65fe4273d7f3cd4de0e12d857ead4cfedb211fb2d8",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_use_bleeder_valve_or_wiper_plate_bd73dc0bb1854951da8841e0a5eb5fa5717294f32d6c98f59a4c268d3e1ac162",
+      "evidence": [
+        {
+          "source_page": 11,
+          "source_reference": "ev_61d21bacf740efc4d426328702c2",
+          "quote": "Fluid too heavy for pump priming. | Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+          "source_anchor": "ev_61d21bacf740efc4d426328702c2"
+        }
+      ],
+      "branch_lineage_id": "dbranch_30882f435e7d9a18e8560531e0d59e2f966e770a8f54d0f2cdec055cfb8f215f"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_held_open_or_worn_piston_valve_or_seals_8afd2945ecbe89306ca5336a414ce436d43b5c0c393af58ce97d8ce7bae284dc",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_clear_valve_replace_seals_395e532b29c5ff2a8bf75772b6fff85331ce59c181802f1940ecf34a321e3311",
+      "evidence": [
+        {
+          "source_page": 11,
+          "source_reference": "ev_089571784a473d7df127538a011f",
+          "quote": "Held open or worn piston valve or seals. | Clear valve; replace seals.",
+          "source_anchor": "ev_089571784a473d7df127538a011f"
+        }
+      ],
+      "branch_lineage_id": "dbranch_dc5d7a08307f1752c9e3d3b3a8c0bc5b7655e284ee121b1b86337d825e8f4023"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_restricted_line_or_inadequate_air_supply_74391a8f7d92923c1f2cd59a162b3d91176ae3798a190a355a113632b33623ce",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_clear_775a2b1258bc403c77277b8c772e54c8be4a1098ad4a6c732ddf1d677c1b977a",
+      "evidence": [
+        {
+          "source_page": 11,
+          "source_reference": "ev_f5d5eacbd18233b9a4ece3273d4b",
+          "quote": "Restricted line or inadequate air supply | Clear*; see Technical Data on pages 24–27.",
+          "source_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b"
+        }
+      ],
+      "branch_lineage_id": "dbranch_72a1c58d0fb564e3200a7f53159494b1bd0d5ed3081b70f8f7c03c2ed79bab50"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_restricted_line_or_inadequate_air_supply_b7a0a1c999ede729d784338bff38a88dd4e944fb0d476cff06d8161b928c01f4",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_clear_775a2b1258bc403c77277b8c772e54c8be4a1098ad4a6c732ddf1d677c1b977a",
+      "evidence": [
+        {
+          "source_page": 11,
+          "source_reference": "ev_0e39c8a79741f02ed861373dfb77",
+          "quote": "Restricted line or inadequate air supply. | Clear*; see Technical Data on pages 24–27.",
+          "source_anchor": "ev_0e39c8a79741f02ed861373dfb77"
+        }
+      ],
+      "branch_lineage_id": "dbranch_b359cbd42121da7d56de034826ac115b9c9780f769a052f92f22cf293d1f601b"
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "comp_piston_valve_or_seals_300de0cb1c76395cf4ef8c03a76ecdc3da173b52032ac333d67e1107bd24f5bc",
+      "evidence": [],
+      "branch_lineage_id": ""
+    }
+  ]
+}

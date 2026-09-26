@@ -1,0 +1,89 @@
+{
+  "status": "historical_unverified_not_gold",
+  "origin_sha256": "c92ba0a8bcb1721055f6fc8c10c3d0a6a57eb3dc35134755d06574d6272a5291",
+  "claims": [
+    {
+      "claim_id": "E1",
+      "pages": [
+        37
+      ],
+      "symptom": "Machine stops in middle of cut and displays Machine Paused",
+      "failure_mode": "intermittent pause circuit, usually in the stop discs",
+      "corrective_action": "adjust the pause plunger activation pressure",
+      "expected_disposition": "publish"
+    },
+    {
+      "claim_id": "E2",
+      "pages": [
+        37,
+        38
+      ],
+      "symptom": "Touch Screen buttons are out of alignment",
+      "failure_mode": "Touch screen calibration is required",
+      "corrective_action": "complete touch screen calibration and save and exit",
+      "expected_disposition": "publish"
+    },
+    {
+      "claim_id": "E3",
+      "pages": [
+        38
+      ],
+      "symptom": "Cutting Tool or Pen does not move down",
+      "failure_mode": "tool or layer is not mapped properly",
+      "corrective_action": "map the tool to the spindle or the layer to the tool",
+      "expected_disposition": "publish"
+    },
+    {
+      "claim_id": "E4",
+      "pages": [
+        38
+      ],
+      "symptom": "Laser Fume Extractor has reduced vacuum or no vacuum",
+      "failure_mode": "vacuum filters require replacement",
+      "corrective_action": "replace vacuum filters",
+      "expected_disposition": "review_or_publish",
+      "annotation_note": "The association is conveyed by the Problem/Troubleshooting layout rather than a standalone causal sentence."
+    },
+    {
+      "claim_id": "E5",
+      "pages": [
+        39
+      ],
+      "symptom": "Laser cutting path is too wide",
+      "failure_mode": "brass laser nozzle is damaged or bent",
+      "corrective_action": "replace the damaged nozzle",
+      "expected_disposition": "publish"
+    },
+    {
+      "claim_id": "E6",
+      "pages": [
+        39
+      ],
+      "symptom": "Loss of laser cutting power causing non-cut edges",
+      "failure_mode": "focusing lens is damaged or dirty",
+      "corrective_action": "clean or replace the focusing lens",
+      "expected_disposition": "review_or_publish"
+    },
+    {
+      "claim_id": "E7",
+      "pages": [
+        39
+      ],
+      "symptom": "Loss of laser cutting power causing non-cut edges",
+      "failure_mode": "beam deflecting mirror is damaged or dirty",
+      "corrective_action": "clean or replace the mirrors",
+      "expected_disposition": "review_or_publish"
+    },
+    {
+      "claim_id": "E8",
+      "pages": [
+        39
+      ],
+      "symptom": "Loss of laser cutting power causing non-cut edges",
+      "failure_mode": "laser nozzle contains damage or debris",
+      "corrective_action": "clean or replace the laser nozzle",
+      "expected_disposition": "review_or_publish"
+    }
+  ],
+  "show_after_independent_annotation": true
+}

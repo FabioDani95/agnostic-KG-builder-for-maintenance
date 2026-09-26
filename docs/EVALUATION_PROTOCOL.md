@@ -8,6 +8,12 @@ is authoritative wherever it adds or changes a gate.
 Any baseline PDF performance number quoted in a report or the README must be
 traceable to a run produced by this protocol.
 
+Current scientific comparisons and semantic claims follow the
+[paper evaluation protocol](../paper/evaluation/PROTOCOL.md). The imported
+harness below remains a regression baseline. Literal quote matches and partial
+golden-fixture accounting are not validated semantic precision/recall. Current
+results and limitations are in [PDF diagnostic status](PDF_DIAGNOSTIC_STATUS.md).
+
 **Audience:** developers adding golden fixtures, interpreting eval reports, or
 reproducing a model/config comparison.
 

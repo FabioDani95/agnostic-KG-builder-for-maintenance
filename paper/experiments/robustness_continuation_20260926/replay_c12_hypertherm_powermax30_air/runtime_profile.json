@@ -1,0 +1,529 @@
+{
+  "mode": "offline_exact_provider_replay",
+  "source_run": "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air",
+  "source_profile_sha256": "29442cae9facbd704e90aa3c4deea151d2895d68927eb292c96b475056c1c3b9",
+  "code_files": {
+    "backend/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/adapters/__init__.py": "1a240543425ce49128a5ab641a0a4a7926f340ce2fc48eb63003d0fdb9021c9b",
+    "backend/adapters/pdf.py": "edc34f0455e120051ca77c1c62e4d16501a00756f88b66a59d2dc994dc5c7826",
+    "backend/adapters/structured/__init__.py": "c57bc2072016badb2bad3ecfd4a8ff860cdccca2f6160128cfa10060a3a504c6",
+    "backend/adapters/structured/common.py": "fd2dcb1018c6b7206acd2ff590f2e17ff0197d7ed6df4e9cd0adc2c49aa9dfa8",
+    "backend/adapters/structured/csv_adapter.py": "b29037a2dcbe34a22bf635277b3135ed8c511796c41d68483e42e714a572d32c",
+    "backend/adapters/structured/json_adapter.py": "b5c81fe6db284c68ed4e90cfe4cb5c963f628445fb20517ed9d6973f06a93947",
+    "backend/adapters/structured/xlsx_adapter.py": "a68d0499acb5f97d0fe651c555b1243d7b251040d6a968a9a6e41155e95bb1e4",
+    "backend/agents/__init__.py": "f2fb83d272388db48df3931b88576c9405b6c30c93f0824f0c9e50d43910ebb9",
+    "backend/agents/conflict_resolution_agent.py": "81aa0ff0b03531c71519ec86f13d19c1da7576262895c02f2d9da6181f979e50",
+    "backend/agents/coverage_agent.py": "9bf3bd9a778c86a595da071a414f787d043003f95b0902c779d73503591440da",
+    "backend/agents/extraction_agent.py": "6520840de170f57fa34299ed0b9c7cc152899ab60f7365232558868d5ede9b59",
+    "backend/agents/grounding_agent.py": "81f00a1a6a71463dc4290e63706729efd98e9a6838116ee49c1f2d641d050377",
+    "backend/agents/ontology_draft_agent.py": "2399825241aa9ef37c7f6c0acc69196e938b18e68403c4f9c8670a3fafd8c449",
+    "backend/agents/refiner_agent.py": "8312019e2a78f9f395223619a49252c87e562e8cbaa97297b8b4c28806013052",
+    "backend/agents/scoping_agent.py": "05ca77c9c2c1e3e9d608a6cf3eb6930ac09b837f9bf50877cc4073d3a5b808f3",
+    "backend/agents/validation_agent.py": "7441b110d28fedac8add24c6dafa144fdc3dcdba3afb9534be812594f48638e8",
+    "backend/app_config.py": "a02c3ea85a5a267004bf7817565140bcb6b44df93d523106ead28c5db6db4c4b",
+    "backend/config.py": "9b7d4b29b756f4c8ccabc51325ee8c5d2b284185121532a6362c96b9600a7d28",
+    "backend/domain/__init__.py": "cd80c603dabec028dae41cd9595cb7d52e771e51f57831a0d9dc3db1b74c71bd",
+    "backend/domain/diagnostic_bundles.py": "8fa81bb99b63627da4dd5114df94e255dc0bb4507357d0941588e86a3acd3491",
+    "backend/domain/evidence.py": "cd38a181060917d2130a5a1b3504e9b96818119d157d6fa1e3751cb4c33c2ca3",
+    "backend/domain/ids.py": "7d1dcb4608630d1acc1a22ed5b02114a58efcc2e8f6941d20b316bc4510d5f6f",
+    "backend/domain/journey.py": "6862fdd794b3c36b123a3c119a1aec4e8c6a4758f7fd7ef48959d5c5cdbcd50c",
+    "backend/domain/locators.py": "8e7f8ee97576d3c1fc41948f18a3f1bb9c575913118834a6b1dc88c067e1ca97",
+    "backend/domain/runs.py": "dafeefb1b33ee5cc03527f0542679c7032fe82d725f2b401b9bfe6988e189065",
+    "backend/domain/sources.py": "a5548fb151205b178dd43512f687a7498bbbc40deb063ee3633303a9ba30b560",
+    "backend/domain/structured.py": "055abcaf67ac479663023cb497dd5a88498d92dc6b73413f61c26012b9e915d2",
+    "backend/domain/subgraphs.py": "3666a3ac21a4b45889068db6f0a47070ecb3c6b9114957a2094a62c1ad054f46",
+    "backend/domain/workspace.py": "d105caec25eac549b3a2904b4b67bafaba168d0ffe166d162601fc342e55f7cc",
+    "backend/graph/__init__.py": "42f8d24d313a1375bc95cece36d1f50387abd17fc4347952ed432c746645ce94",
+    "backend/graph/config_snapshot.py": "9026308ef0c34c3b96512f52ca3299e680ce161be26e90c5a3c7673e78270ee6",
+    "backend/graph/projections.py": "02743ad35f7f97d1906c3339e3e696c16de98010f8ebc750a24edc4d341122eb",
+    "backend/graph/state.py": "9d54f351db9245900d378fe07d7de81aa9116a407aa267562726daf248939129",
+    "backend/graph/store.py": "eaf66b042acf299096c5ed8905e0ff7bd4abbe43bda55db7315709ee127883b4",
+    "backend/graph/supervisor.py": "23502c9e46441683245df0e50d6eff7faf4d79c69ddad51b97090d482949d6c8",
+    "backend/main.py": "4914d43bf60aae781219445e2c984468cb762bf6a25bb0574708497372a2455c",
+    "backend/models.py": "ace757fbdba6da10c64832d8202a63a556caea402ce3c1b4179d6af3be9b716c",
+    "backend/observability/__init__.py": "574fe3d089418d398e6f91bb31dc4ab8a30f005761b1f893ca03fee169285297",
+    "backend/observability/trace.py": "8dccfdf7a1eb4da1d1907678df2b6c969a06005658f33654ec55842b997e834e",
+    "backend/prompts/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/prompts/diagnostic_bundle_prompt.py": "f746d6e975e340d1ea650dcbca5e27f9c2373a58a0400de9d37666f65cbff95a",
+    "backend/prompts/extraction_prompt.py": "a4b3ae711ead349299006a133e7b6ef5c07dd85667e7a53d63280c2daee6163c",
+    "backend/prompts/ontology_prompt.py": "11213030944b8f92068d3008830b63adf69a25918389cfea4931c73d52fc3ffa",
+    "backend/prompts/scoping_prompt.py": "2f34581e76f9a7742c9e64c29004f576a2c60342943884290ddf92b0bf318ec8",
+    "backend/routers/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/routers/chat.py": "c7deb4cc97238a463957560ce5d96b3aae479f1a94d71f060a499ea621ab2dc4",
+    "backend/routers/generate.py": "c9c4f808feb6625d76daab078f4ec68689c217e1c2d3c923bc2559c4767d1119",
+    "backend/routers/journey.py": "bd94709436fd3f087bd9b2db422a179d9e9fe6fab529d17f5612387f95554ab2",
+    "backend/routers/multi_agent.py": "344e6f1422b272cdafe98ce0345fccb723af8e8517d0d94a059d7e438541a910",
+    "backend/routers/preparation.py": "eeb36705a21547c6e169bc027c147039a4cf609209edf009e7588de3aa3b6b09",
+    "backend/routers/runs.py": "6cea421da1109a4fd991a5922104118e80d35bb982521afbd98345ea5fee72f7",
+    "backend/routers/sources.py": "e8d59654cd300683ee18d8bb07958f2c542b4263ad9d445b5ae62b2c890e3b72",
+    "backend/routers/subgraphs.py": "c06391c2c8f7d1484cb7036a1463a025f276c5e28368baeb5ff1f4d76bd733e2",
+    "backend/routers/upload.py": "d9088e4938230654b74394d7e929b0514bc50e68912168f63383b5a3a3b1d68e",
+    "backend/routers/workspaces.py": "033afdb7459ac0677a5208b05a26740b4f625ec0f7022d2346d1c6a61ab2bdbe",
+    "backend/runstore/__init__.py": "4e237648afc161fb3f0b8908638ae9c96fd477eb9853d7d9e3a8f43bd1ab3ff5",
+    "backend/runstore/run_store.py": "e77e69a6bf918c2438e4509a4bc44d1afeaef1e0cfd3c74777cf983db933d735",
+    "backend/schemas/__init__.py": "5167e682be9db24ba9eb6e1ec9deb72605c3c53cd6ed805d7550100799f9102a",
+    "backend/schemas/actions.py": "558ee4e61412fc359d97bf93707f5a58ab54b00aedc5e7c6cf4bdbe8daa35fd6",
+    "backend/schemas/chat_events.py": "677eea3760675f329f556176e0efb563d29ee30c9ef0df0f3e9a36bfad718f10",
+    "backend/schemas/pipeline.py": "0c6eb67041cd4c83e13ba3c4c4c0e9cafe49f10988fb56fb97a93675cbc8fe5f",
+    "backend/schemas/run_state.py": "6c7192bc09a9ef355a531c5f844ec72ae18d9f121d630a9718668e55825bad8c",
+    "backend/schemas/widgets.py": "197001b946f684865f624ed3b91da85e2229b1197716a99711829050080e4933",
+    "backend/security/__init__.py": "c47e06871c820f593367cc8bedc741bc767973e4ae9f9a79e80c32e46805e463",
+    "backend/security/boundary.py": "3c7fd213df7c3b0536e1307302cd7e5f3e11dfa2fa86962be9acac8d542af9db",
+    "backend/services/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/services/candidate_mining_service.py": "aae3ff84ecc8859a7eb77c39630e5957c61a4dcda955877dfe3845ca0ec65a49",
+    "backend/services/confidence.py": "145b4e28504610c078072650433ce2fb70863b0f0e366a49c613f47233f03787",
+    "backend/services/conversation/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/services/conversation/actions.py": "b137dc4d4cc5bbe552c83e4648f882f5e10af30e613c007866a5de642f40bcb9",
+    "backend/services/conversation/critic.py": "bf6ae482f003fb0626dd2007088f7529d40a765cd5277b447a19564f75105101",
+    "backend/services/conversation/events.py": "7e28bad50e7be21aac5c2bb36f453c4be8d97f4be3e3b2edebb6f15fdf07b45a",
+    "backend/services/conversation/gate.py": "0830bcc6644c26586b116a4ce28b9244c28042ebe392efbbeaa444c0708b8e3e",
+    "backend/services/conversation/heuristics.py": "18d71e41004f02d2cbc739b979b82f43aa92cc9fe1983d5dddddb32185764dbf",
+    "backend/services/conversation/orchestrator.py": "f831351c4f5474b8354a2df8005a10e1a153707376334d503df6367bc603459a",
+    "backend/services/conversation/session.py": "89d27e2be921cefc0e9f41402b947a780d2f27e74168e9660910ff74d7933fca",
+    "backend/services/conversation/tools/__init__.py": "0b5a73f519ec616313760b3a5f1792c5444706cad25d50dd27b5832689fd020b",
+    "backend/services/conversation/tools/common.py": "11ca83a71d06c8f636a1d200eac908aa66100a495b7a26fb09ba7bcf53b408fb",
+    "backend/services/conversation/tools/dispatch.py": "bc5e4254b38de83654589ea90bb67e318dc2a02a2281b67af1ac92b1a3f5d27d",
+    "backend/services/conversation/tools/export.py": "4b804351dd9d45b369c2b52be9d453a5cf29ec961e8dfb9e8a6476732681e43b",
+    "backend/services/conversation/tools/extraction.py": "3875d9380a519d44b7f391e888328c18c2c8cac00733c389a6b6c5bb36152093",
+    "backend/services/conversation/tools/inspect.py": "b4591bd6db2f9b33ad606c6751bb800fa890896f1be18f44c22bcc43c04cc16b",
+    "backend/services/conversation/tools/ontology.py": "c1c50bfb8b7c3ceabf0ba09070afa569394caef8dd0a4d434f5dc9439f0e0de0",
+    "backend/services/conversation/tools/review.py": "317eae0ad50235a2a692e2cfbdc27a1c6b7e4cdddb329f14a44901fb98579cd9",
+    "backend/services/conversation/tools/schemas.py": "0cca503fc5752171e3a97bfc0248b4c60b7fbb84e99b1e5ec9c875c7ea1c585e",
+    "backend/services/conversation/tools/scoping.py": "7cfa6a85f7ea702b231e23677bd31e1c4de3fa1bccf72b32bb586439bb784ff4",
+    "backend/services/coverage_completion_service.py": "f6c4ce5e4027a2b6f80dba146680a212eea59f6b8ed7f82d43583268c02fd6b5",
+    "backend/services/cutplan_service.py": "3c99fc4e43e1d9468f9d7ccf7d97e8cb5917d0ac211c55d0fe2cffa6327762aa",
+    "backend/services/diagnostic_bundle_compiler.py": "c8d8f5410328e271dbd4b5e2389e2a4b54a8e4cfaf250081445d60e59aec48ba",
+    "backend/services/diagnostic_publication_service.py": "03bde04c2e52f6e130778e20680ccb425ab9a11e8853f5515ad98fcf775af8d1",
+    "backend/services/diagnostic_reconciliation.py": "16cc4c5658878302e1e83e041909164b7f13192f6a258e32e41a82aae02d1ead",
+    "backend/services/diagnostic_record_review.py": "5da9929762a27d8699f30068efb06f5091f6d165d35f0cc33941ba0381015d11",
+    "backend/services/diagnostic_record_windowing.py": "5fb8d2ba183ce2b66c6d2e92568bf72bf85e275c02e3a90e4b8caafd95f5ec23",
+    "backend/services/diagnostic_recovery.py": "9939c761b8d1c2106dc85c117cee96ed072aaa3254d452fc383339dde4d43e77",
+    "backend/services/diagnostic_response_parsing.py": "5d3b05f09bf54eceeb0f8b17057cca6510bfd616e10712a6ca92f7615079035a",
+    "backend/services/evidence_grounding_service.py": "46406e68d53244fa88817cfdf024f293bcede436804039c098e3043a66c90d9e",
+    "backend/services/extraction_grounding_filters.py": "3b61a0432f39b511d719e94e732f7b35d1ba8ede34285bdb9d0d89b91a3b4f15",
+    "backend/services/extraction_merge.py": "4ccf7e009320fa44e019ab9e89f750ed4dfda9eb753ed1206820db38b502dc45",
+    "backend/services/extraction_parsing.py": "0a29087ac8ee77b2a9edc0a2213747fa9485e8d4d7cd8e12982a1be0ad79270b",
+    "backend/services/extraction_pipeline.py": "dc9f5ecebd940dff51618a686cc71858d42dc091d8f3e6165374249bf2f5ec28",
+    "backend/services/extraction_workflow.py": "bfe93243bf636f79be55fcd5bb7cbfcf0a720cd8ed870111c5690a7037a33f44",
+    "backend/services/foundation_ingestion.py": "50e20cba6eb582dcc837f00851a2b5b1c0523d7b2484216129569f70106e028c",
+    "backend/services/foundation_run_metrics.py": "038d176d6809e431d4553c16570c1571d3fb91d66ed54fb74602e84846e79d48",
+    "backend/services/graph_closure_service.py": "98b8260d1e8111d333d48e00ad532a6417d144ae9e5c53acb31ed72bf13851c1",
+    "backend/services/graph_projection_service.py": "f3a26600850a21135a71e85cb93099b9d0c34fe93e55c8d1454f27fcde10fe49",
+    "backend/services/graph_reasoning.py": "d270ae2e0d873f7bae39ec12deb7547f8c143dfe34b268779cc56703b71cf6b8",
+    "backend/services/graph_view_service.py": "cf4883ba84ebfbc76a3dff2d5c0844f59620c0c44ba7d34d1a6226caf74c359d",
+    "backend/services/language_utils.py": "6a239c71d170b732429fdb03a53fa74cddd5e3fae1864a05b5ddcd44881855f0",
+    "backend/services/legacy_ontology_migration.py": "c30cf1c6f2b38b52b642c492dbf9d04955eb3b470c129212abd2ed198f6cc4c5",
+    "backend/services/llm_gateway.py": "d23b04f028533f95c6213a145eb5e0870f54177a707f4ccc24ebff2d2be7a1d1",
+    "backend/services/llm_guardrails.py": "b0eabe3394a9df444af97b9c297232d86b3aeab2cf47669b73dc025c1867da34",
+    "backend/services/llm_response_archive.py": "18af920fae5a74110eeee0c027ae05ddc84360d21ee6c94fd968e037f635d0ca",
+    "backend/services/llm_service.py": "efaf524e21b5b66420530b94c0a7457c15ccbcea8abf60e18d7d7a8cab8d57a0",
+    "backend/services/manual_loader.py": "0485bf8e3a9f74b7757b0564e6f30232878d48482f7e280b723ca0c0d3ed1f54",
+    "backend/services/ontology_canonicalization_service.py": "4d3033ff04212cd43c1b7c8572b22c201440fb44673f2cbc7fdb29c60e4164e1",
+    "backend/services/ontology_contract.py": "1ed547d1d2ffe94b6a29859b4a06b2edd341ae079c716fac54bda122ed2aadb2",
+    "backend/services/ontology_coverage.py": "34a8eaf64087f48a7a04479fcf244c44a30ef7e90c7a4ae3423b12dd234a1721",
+    "backend/services/ontology_export_store.py": "a2504fd361170088d7f4adc347b82b6b648a0ed80858cde5c197a88214b2bc27",
+    "backend/services/ontology_merge_service.py": "06b2f0c51e130babab1ad0cc6710a86e8b4ac17ca88f52532cc03dcc088fad69",
+    "backend/services/ontology_patch_service.py": "04143daa2512d437985f70732009183b8a2feecec9ce77186411753f8d2e465a",
+    "backend/services/ontology_pipeline.py": "54a36c18bfef4ec8b73a60cc2b4b4ad5e26c31dbe597511152e25253b50c1bca",
+    "backend/services/ontology_pipeline_coercion.py": "7e4912a8676bcb5c0c870bc28d028f667eac39f5f679d3dcacb0620d605ed7f5",
+    "backend/services/ontology_pipeline_parsing.py": "1d9e8e9f7c45004fb0dee5eda0f545dfc81efd10ef69687caea34ec682c0c967",
+    "backend/services/ontology_pipeline_validation.py": "d0e0ece31c9a142d45d5bc153dd5ac50a3f791bca704500de3f1ee0320db3d30",
+    "backend/services/ontology_schema_service.py": "d78408143c6e769ff80ebdec1a307171901688daf6534b0444c0678ed77fd52d",
+    "backend/services/ontology_semantics.py": "2b19aba1e7011095c4808fe81edcdccc8808ed2a3142b16fb07c040594c03765",
+    "backend/services/ontology_workflow.py": "48e0705c01a8a48781c2cdf139c33683feeb1fe4e6fa1ce09ef2510cefd501b1",
+    "backend/services/page_offset_service.py": "df3c944e7f3fa928f621aa4df0f737bc1793163de3ad834f12356862716d5e03",
+    "backend/services/pdf_auto_preparation.py": "a35731a81d04f2b0bd3d1e43f141d386fff5bf19548adced96b456998b60973c",
+    "backend/services/pdf_cost_guard.py": "25909ac89c4da31a89f2f0da73aae615b438d120394eee79c5ab0f3bbfef770e",
+    "backend/services/pdf_service.py": "75e968dd7c5ed66085beea0cdc91d1045d0d3d531a87c74d1a4acf67a7fc6b80",
+    "backend/services/pdf_source_subgraph_generation.py": "9bc01ea0ac34aff3275e32471639534cb4657de2fe0f68ac1940fa5fa8213897",
+    "backend/services/pipeline_actions.py": "e5fe2514a753a64fc55c2705fd22c94b52d5f1de63404270dba75a2dde70669f",
+    "backend/services/real_call_budget_ledger.py": "6e446bc702e32ae260bb320c9f1353d666a4ab397e55f66f59d1a6be84056b6f",
+    "backend/services/resolution_completion_service.py": "4134f41029f151010e1fa4a69952448f82aeed9bcc7a14fdfa56b2ec9cdbff36",
+    "backend/services/review_queue_service.py": "c04bab1c7de2236c97bb0949c63437e3fa6e24a4de150cbf243a08b1b13084b1",
+    "backend/services/run_metrics.py": "4a945c6c8fd32e91984ea3f92700790243b767a7426b1390f5312d412f05a6e4",
+    "backend/services/scoping_workflow.py": "6fb64254398cc0bb8116ead7bda8ed0eccf85d023b2589f86414209fd511cbcc",
+    "backend/services/source_subgraph_generation.py": "f137c4321ff843dbbb74b78c0dea477eef5e52e06292c94f40537cc184ae0074",
+    "backend/services/structured_preparation.py": "f1bccaf3e3691f6a776e14f979393de3b90ab35b3f4a1a631959fc398e5e0e41",
+    "backend/services/style_cleanup_service.py": "48a6d8c59850cce1ff70011603e06daf63d7a3643f912dad3998a908d16722c2",
+    "backend/services/translation_service.py": "1d30a7e093d85fdc3a8ff0f344f5426d51fa96bbfaea5e863eddbc7d9cb50d15",
+    "backend/services/type_consistency_service.py": "9b49478b33cedefbe1a1266c07efc3ebc4ef1c70315c407d1850ddd78461cd4c",
+    "backend/services/workspace_journey.py": "ba0dca5ec09ccaeb3cdded19de690c875e99efda36c4544ddda346a63bf1bdc6",
+    "backend/storage/__init__.py": "62e79a54d8d6dfda83c757b90b73e2b27d8e7efb19549dc3fd072745412a2dea",
+    "backend/storage/database.py": "e58a178f459a4e13dff400c4706bb792c11315066ea4559bee281910093ee88f",
+    "backend/storage/raw_store.py": "6f33b18ed759f400f8d1927c37f397434105129ba3552d63afdc1db668140194",
+    "backend/storage/repositories/__init__.py": "0ea922367f7e25386246aa91d63cb142bbc7ad6ab106c0a247ddbc7c4a18b9a7",
+    "backend/storage/repositories/evidence.py": "2be53fc22e20541bc2b0dfc002676a47603c94aa15c4220b13e0fe7be536923b",
+    "backend/storage/repositories/operational_runs.py": "2438bd97600f5acb13e93805ada7fc7bb5ea4c13742c5f0f9e4defbf40a06b0c",
+    "backend/storage/repositories/raw_units.py": "a13968f5e9cc65d9cd4d52fe319525659b0f2db8468c149bc8e1aabc8ca0fbb3",
+    "backend/storage/repositories/sources.py": "2ec4e7524e7a4f6a1b348a4289e0c22743c009c54ae7c668574439889d6b0265",
+    "backend/storage/repositories/structured.py": "63ec263f6d5289d9991b10e0d0744335cb4c7e0abd142dc4041f5e3534aa8d8f",
+    "backend/storage/repositories/subgraphs.py": "0be3ec243a834d9446e44c3be251d34db9b3b9d0364d9dd14194916f8a4b73de",
+    "backend/storage/repositories/workspaces.py": "9d1476dd8fd29ef84ddf128a23b4cafa654fc1e8a0bb958d60fe6b13e8818138"
+  },
+  "code_sha256": "0ae5dcdfab592b7039558844b150dc3a923034f732f6093f710710fa7990d308",
+  "config": {
+    "chat": {
+      "model": "gpt-5.6-terra",
+      "timeout": 30,
+      "max_output_tokens": 1500,
+      "critic_model": "gpt-5.6-terra",
+      "critic_enabled": true,
+      "idle_reminder_seconds": 60
+    },
+    "shared_models": [
+      {
+        "id": "gpt-6-luna",
+        "label": "GPT-6 Luna"
+      },
+      {
+        "id": "gpt-5.6-sol",
+        "label": "GPT-5.6 Sol"
+      },
+      {
+        "id": "gpt-5.6-terra",
+        "label": "GPT-5.6 Terra"
+      },
+      {
+        "id": "gpt-5.6-luna",
+        "label": "GPT-5.6 Luna"
+      }
+    ],
+    "pipeline": {
+      "mode": "multi_agent"
+    },
+    "pdf_ingestion": {
+      "preserve_all_pages": true,
+      "ocr": {
+        "enabled": true,
+        "language": "eng",
+        "dpi": 200,
+        "min_confidence": 0.8,
+        "min_native_chars": 80,
+        "bootstrap_pages": 15,
+        "bootstrap_max_pages": 5,
+        "selected_max_pages": 24,
+        "inventory_max_pages": 24
+      }
+    },
+    "agents": {
+      "scoping": {
+        "enabled": true,
+        "model": "gpt-6-luna",
+        "reasoning_effort": "low",
+        "timeout": 60
+      },
+      "ontology_draft": {
+        "enabled": true,
+        "model": "gpt-6-luna",
+        "reasoning_effort": "low",
+        "timeout": 120
+      },
+      "extraction": {
+        "enabled": true,
+        "model": "gpt-6-luna",
+        "timeout": 120
+      },
+      "validation": {
+        "enabled": true,
+        "model": "gpt-5.6-terra",
+        "timeout": 90
+      },
+      "refiner": {
+        "enabled": false,
+        "model": "gpt-5.6-terra",
+        "timeout": 90,
+        "max_retries_per_entity": 2,
+        "escalate_after_exhaustion": true
+      },
+      "coverage": {
+        "enabled": false,
+        "model": "gpt-6-luna",
+        "timeout": 60
+      },
+      "grounding": {
+        "enabled": false,
+        "model": "gpt-5.6-terra",
+        "timeout": 90
+      },
+      "conflict_resolution": {
+        "enabled": false,
+        "model": "gpt-5.6-terra",
+        "timeout": 60
+      }
+    },
+    "supervisor": {
+      "mode": "deterministic",
+      "llm_model": "gpt-6-luna",
+      "llm_timeout": 15
+    },
+    "checkpointing": {
+      "enabled": false,
+      "backend": "filesystem",
+      "path": "data/checkpoints/"
+    },
+    "validation": {
+      "grounding_accept_threshold": 0.8,
+      "grounding_refine_threshold": 0.5,
+      "check_ontology_chain": true,
+      "check_page_attribution": true
+    },
+    "resolution_completion": {
+      "enabled": true,
+      "timeout_seconds": 90,
+      "max_input_chars": 50000,
+      "estimated_max_input_tokens": 12500,
+      "max_output_tokens": 2500,
+      "max_targets": 6,
+      "top_pages_per_target": 6,
+      "context_window_pages": 1,
+      "search_full_manual": true
+    },
+    "coverage_completion": {
+      "enabled": true,
+      "timeout_seconds": 120,
+      "max_input_chars": 120000,
+      "estimated_max_input_tokens": 30000,
+      "max_output_tokens": 7000,
+      "max_chains": 8
+    },
+    "pdf_generation_cost_guard": {
+      "enabled": true,
+      "preferred_cost_usd": 8.0,
+      "hard_ceiling_usd": 8.0,
+      "fixed_prompt_overhead_characters": 30000
+    },
+    "style_cleanup": {
+      "enabled": true,
+      "deterministic_enabled": true,
+      "llm_enabled": true,
+      "timeout_seconds": 120,
+      "max_output_tokens": 6000,
+      "preserve_numbers_units_codes": true,
+      "preserve_page_refs": true,
+      "reject_on_semantic_drift": true,
+      "max_name_tokens": 10,
+      "max_description_sentences": 2,
+      "editable_fields": {
+        "Asset": [
+          "name",
+          "description"
+        ],
+        "Component": [
+          "name",
+          "description",
+          "category"
+        ],
+        "Symptom": [
+          "name",
+          "description"
+        ],
+        "FailureMode": [
+          "name",
+          "description",
+          "material_context"
+        ],
+        "CorrectiveAction": [
+          "name",
+          "description",
+          "instruction_text"
+        ],
+        "ErrorCode": [
+          "name",
+          "description"
+        ]
+      }
+    },
+    "scoping": {
+      "small_doc_threshold": 15,
+      "timeout_seconds": 120,
+      "max_input_chars": 90000,
+      "estimated_max_input_tokens": 22000,
+      "max_output_tokens": 6000,
+      "models": [
+        {
+          "id": "gpt-6-luna",
+          "label": "GPT-6 Luna"
+        },
+        {
+          "id": "gpt-5.6-sol",
+          "label": "GPT-5.6 Sol"
+        },
+        {
+          "id": "gpt-5.6-terra",
+          "label": "GPT-5.6 Terra"
+        },
+        {
+          "id": "gpt-5.6-luna",
+          "label": "GPT-5.6 Luna"
+        }
+      ]
+    },
+    "extraction": {
+      "timeout_seconds": 300,
+      "max_input_chars": 220000,
+      "estimated_max_input_tokens": 55000,
+      "max_output_tokens": 6500,
+      "models": [
+        {
+          "id": "gpt-6-luna",
+          "label": "GPT-6 Luna"
+        },
+        {
+          "id": "gpt-5.6-sol",
+          "label": "GPT-5.6 Sol"
+        },
+        {
+          "id": "gpt-5.6-terra",
+          "label": "GPT-5.6 Terra"
+        },
+        {
+          "id": "gpt-5.6-luna",
+          "label": "GPT-5.6 Luna"
+        }
+      ]
+    },
+    "ontology": {
+      "always_include_first_pages": 5,
+      "timeout_seconds": 600,
+      "chunk_concurrency": 1,
+      "chunk_retry_attempts": 3,
+      "chunk_retry_base_seconds": 2,
+      "max_input_chars": 600000,
+      "estimated_max_input_tokens": 150000,
+      "extraction_max_output_tokens": 16000,
+      "diagnostic_bundle_max_output_tokens": 24000,
+      "diagnostic_context_strategy": "hybrid",
+      "diagnostic_windows_per_call": 3,
+      "diagnostic_recovery_calls_per_chunk": 2,
+      "diagnostic_atomic_table_max_output_tokens": 16000,
+      "extraction_retry_max_output_tokens": 24000,
+      "relation_extraction_max_output_tokens": 6000,
+      "validation_max_output_tokens": 4000,
+      "max_pages_per_chunk": 8,
+      "diagnostic_max_pages_per_chunk": 4,
+      "diagnostic_chunk_overlap_pages": 1,
+      "structural_max_pages_per_chunk": 12,
+      "relation_first": true,
+      "diagnostic_escalation": {
+        "enabled": false,
+        "primary_model": "gpt-6-luna",
+        "model": "gpt-6-sol",
+        "reasoning_effort": "medium",
+        "max_chunks_per_run": 0,
+        "timeout_seconds": 180,
+        "max_input_chars": 60000,
+        "estimated_max_input_tokens": 15000,
+        "schema_overhead_characters": 30000,
+        "max_output_tokens": 24000
+      }
+    },
+    "reflective_loop": {
+      "max_retries": 0,
+      "retry_on_severity": "error",
+      "re_extract_max_output_tokens": 14000
+    },
+    "confidence": {
+      "enabled": true,
+      "theta_high": 0.8,
+      "theta_low": 0.45,
+      "auto_reject_enabled": false,
+      "weights": {
+        "evidence_present": 0.25,
+        "corroboration": 0.15,
+        "required_props_complete": 0.25,
+        "chain_participation": 0.2,
+        "clean_extraction": 0.15
+      },
+      "penalties": {
+        "human_binding_required": 0.2,
+        "per_retry": 0.02,
+        "ungrounded_evidence": 0.15
+      }
+    }
+  },
+  "api_calls_made": 0,
+  "gold_used_in_generation": false,
+  "exchange_files": {
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/0145c815dfff4cf7bd9707bf43eb9a52.json": "6ae08cb37761d98f1e4efdb0b9fd1853d35d011f7586325f8327ff3a3fd2514f",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/0155da0b7f2a4db0862de53e7817ee5d.json": "eee4e01d1426d06e7f12611540f710405149f04080edf8c87fe7781213ce93d8",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/0420bacc195e44839e05b52d05ae6410.json": "de8685c040e7bb7cf4d77de7e4b4f9b787b65e0e0abac3c413f5b42c4e6ebddb",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/080bf3164dd349f799f51ca3533e8b70.json": "3b61b7f97058dc21c448126e7d1007952a8633ad28b34fec1ca77b49bdeb25dd",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/0974e22443c84740bbb0e36a123f1290.json": "435ce8a017f26c6ce670f7dd15ddd80f2aaf18a50a4ff9de73f11a3947e30321",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/0d17d3749ca649ccb7268bd4a0283cdf.json": "7f9d3b858133c288f4b84352b3c1b4a196d8dd4a7f7a44793a1f8ee6d6551693",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/0f1d0990bf2a4dc3a721315f73604495.json": "c734e56bd9d4115411d439976455744cacebd3565b052d2a334ae0be28b7ca20",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/0f4770a7e94d4c1ab15323b73dd3c732.json": "d1957c23d0d7a2ebe04c5d3cd67af144357b86db4d6039d2556ba4fc81fc22c7",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/0fc65155630740a49da24875fe245fb7.json": "aaf83bd1e8a83b08d98e5f94262193cc131ab0902062ae08f8f0813cd879d1ac",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/1578613b7a6945ca9cf0d1d4708128d9.json": "7e958cf51b5a3df5496669ba941e65a4a366ca0bb70f73149665f1e1cce5c0e1",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/1672dd068f23476aae419d22df25aa77.json": "7566617af7da1c6eb042373cd5dbad48d36ba7327512c91f5af979bf8909c84e",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/1abb17b5d1454b0dbb4a5ea71e9ca619.json": "3ed79d3ca2032403d1ccd42ccae625c6cffeff8018ea0c84dc6f549d5de32ff6",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/1c320f4872954723afd711e50087d6ec.json": "9be90b14e952d1384a79cdee683b4872ad685eb0fec433743af8b3fc9576633d",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/1eb2223bf3044bdb87be49957cc462e9.json": "b967eb4d756ba9d8dd3bf52e0ec0b547991e63d3fc82927e1ebf1236b96b4bbe",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/1f2c14ab0e764dd1b6fb4bf1566d007f.json": "328debc726ed05955013efdce5a361aba7bee30728abf4ba21a6724c9d7b8a29",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/2294f527a85546e5bcb709fe61fe9235.json": "d8d5777578e89234e4e03c1a1474058344ff8a4472b8c8996e5a54791b0006a6",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/257cdaa7ddb347e88e3a97dff8fa97c8.json": "4e0c742923822aeaf83ca71ac1fcdc9248778e66fe4e3b3eabe4222122ba0938",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/25d9d4e7ba764ffcbb677fcc82855495.json": "70b7013a3b52ee98675e40eba8702179b4fad594974903eddc939dcd5129d400",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/266bca2095ef429fb126c78cca914377.json": "23626f49787a9a61179a7e18c7c7c6725165ffad966d6cc69a3878c19de85fff",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/268f8760d17145eaa938e9489708ec6c.json": "b7b4afeda2821406475bb82cd11adec1acd37e6c26d678f07e4e936a2b1e5022",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/26bf72244f6b49319c65e7a3009d8559.json": "6ef4c1983388b22fe4f37193a5e28d300b0db13d0f43b2b9cd38cc6e3f3e58e4",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/26d6d495c0ec4ad48f661039ea887be4.json": "30028e14e74f5f53ef419cec7ed2f576dceccc9d74d7e7eaabfca57c0b602e50",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/2acb4301fec4415383bb38d2d8e9183c.json": "538bd531883ec4d03d34f1b065706246894e1d4e2c7910fb6e857f5e83f179df",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/2b66b7617c1340dba9fdf81bcb76d526.json": "ef2d4c2f8cffa10afe2fd8d9e455eb0e9949e77a0db1364b1086829abf2e1707",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/32583daad6b34302b8a3e1abeef8bcca.json": "594d21a075cd45ada95cbcd8931edbcda450d13312706f073b59b1254761e59e",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/33398494ae3641eb8a3c61ec6e35ee1c.json": "c9a66fef9c8cf403b3ea0253f35cbf956c229ca31eb36be3500bb392a148833d",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/35ea3b17bcbe4a7baac162262819a9c5.json": "1166438dfc43b4068dccc3e720420c01a5e4555f645e507adf67805a5b4a6b62",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/35f438a05a5b4dd0a8b5d09640b928df.json": "34aae4934bb1197eefff0a47d3c4c61abf26940f1b4d75c9a832c4f59232fe94",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/36d47aca21b64d52b2e126bb694fd1c2.json": "e6d7dbffb34bae2247d4457b86924d5c25e4486d60805168f228bc0b8dde9694",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/374886c79218478787131d5f38537cf1.json": "a77b5495c17abf4133e74f55827c15cf43c65213682048f6617d5f3601abbcdc",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/37898e2187f04baf9449ca57887fe0a9.json": "9777a88448b417740b15aa9dbb56720c131717b958c659bc3b64352bf63959d0",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/3c962ea261254ff8ab246659c7f56f06.json": "ef27b45a005c448d35f944c2dd381837a88984b04b6248f17291c4dd3e8e9eef",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/42df786832cc4b638c1cf0d9e533ca8c.json": "8a377c50db80fcb5323eeb422fe160247b1dbd9e01e4eada8e46aaf7f08fcc14",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/4832cbf3b9cc41fe94ee73a17116667c.json": "25aaa5326a2431fdc9ed9eed22115e5977c3d18f03de3a6f0d8df43553ce11cd",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/499b304c480740e9a0d2c8722c559adf.json": "34d9cb028b0df0cf1a5df6b9ab1265ec0b508d7496332f95b9b8835f5cd7d97b",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/49a2ea087d3a46d0bd6e2c98109acee9.json": "fef970466b45a3e4dec65f005762fcb40f0a3a54d24835eb5d5a39ebcf7733d8",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/578953b82b064d598ff24682a6c3eabb.json": "bfbf2033f626c7d5f76ad7237060bf9149ec6ea5415c04296cd6f8d2d89fa9f4",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/5fcea6d212b446d6aaf0d3b35a1654fa.json": "96b1b2eebd6d93964f63c68f71864c5e5df49ce55ed036749084ba2a606c37aa",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/5fed38f1fc594918a71b5ef4c4055031.json": "cbd95b4e204e2e6f5bc5e900f0dde5a6d272ccd95e04794a5548905ee0e87453",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/61c5f463ad064a42b21d9358a8061586.json": "2b95a7dc68a26f16d55bb97a4b158065c323865a2956352c9b020c7ad7f551fd",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/64cf550d870142b5854797c0957ead5b.json": "ec19d11f792f971e3fb0fcab09b1eb8699fd1507dbaa5495efc488ff474ad54f",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/6e12e51f61484de5b2335ccdc681709d.json": "a69f15f86c27e6bbfdcc9cd3352b8e3b0e3070226d68ee84b390bbba1dbf9e31",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/6f31252a28b645b39ba60423e00de74a.json": "198cda3ad0e0737e3422ed6bb0e8072e1c9e89d1cf2a2cb3404216bbdb8cc4f8",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/6fc365da380642d482b7d6d04a95d7d7.json": "11d8cd8d33333e75712c506444babea4f1431d690b1f760ddc26e5caecb29e16",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/74d09976560c4979ae16af634eee2fc7.json": "8dd9a6f50710bff88473885c8e1a5516fe0cde60263dbbc3201aae751e77f01c",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/76ca8d72240048e4b7ebfe7d0295680f.json": "2f6189a73fe263d73c21321636cd4b15ef08ed67873b4275ea360cc01d97c3c0",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/771bf4ab8a73490395815ac2323c3f93.json": "cfdb1024797f044b16b6e837cee8826c9e8dd66154d868cad1c29f468f6bdd43",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/7b4638402852420083528327c3b30cf9.json": "08cb6f4375fe40e2bf3458c8bfb46dc69ef3e5a7a1baf2d8cd00d19b947dd5a8",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/7db56e452119425e94ea91fc5772d39c.json": "7ef0c7e68b896b807c23790be811ea957e6cc2f1f493794ad8b34a4dc2a06079",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/7dcc77a3fbc54fc58d652b8809a6e564.json": "92438fbca8a76df6bbb0efff2e00f2e376dab84605fb5227ae753c388f29431c",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/83dd9a538a194e56be1c7109a39ea51c.json": "cd25d6f827c9f42fc2061ad9c6d9bd45b5f70b72fd91d186822dbe1e2feab0eb",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/85a2e78f433c4a92a4da03c593324750.json": "ed157f091a4f466a5cc2979427dd640872dbc30b048620bd034416091e8c7b99",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/879f231dea63496aa441901583966c55.json": "1694e454b91acca1e49c7bc402f23c0a0aa76f098d4c57855c831ceafc689bba",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/8cb3e31d93ec455aa44cbb244325b89f.json": "b84fd64e31cc7aeb518e51815afa0a03e04482e3a6165cf8cac322bd05b75e12",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/948fae41dd154a6e9d88f9be9d1942f1.json": "0171c3f20137aea891032d60023c3feee907405897ca869722fe4ab548fe8bdb",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/9680686bd8604d0087848e3480954b2b.json": "50a89d532ccd3111290bdd04baa5276679f235911d147af25293d576ee13664b",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/a3c9bec238fc456d8e2eb22a6e71ebc3.json": "18132c2db8389edd4e83cb876d1bf2f8f13aba53697f16f5a87cb686b4fde290",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/a4e64e4cea3a4fdc97232b79e751f06a.json": "347356bd760e16be178aa7bb6ed4c15ad4547c11219cb7c17ec1211eef5cd3da",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/afddedabdbb043dda2786de38c2c5517.json": "44bd46d252b73fd992f2b526b6ba9279be3a451924039fda493b614833fc8680",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/b2a23321f0814ac199ed45bb26f4889c.json": "878e5223ab0fdce7fa5716896b9f2dc3b743079e6fdde9e7fb29f584331ee11d",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/b3e29f2fc90d47c4bae74ee70b0608ce.json": "3729dee00fbc3fcc562c463487d568ad946e56b4b4e31cfe07ced8803abe1643",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/b76b7fed8df144bfb66e42142ac9a160.json": "1302103ea01bc35fdeb8a888569a4e0219f1349440a627f3d2bb689a149c4b01",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/ba5e7fc1445d4cef8e69a9ff636fc1f5.json": "d72eaa8eb0e3efef37f4c325ed5d3d4f2f033cc19a869a28d39d00638bdbb37e",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/bb660729c60044828723577a82ae5eb2.json": "7c935470f9423f657a1d9114df43bc6ea8c39a4b462128bb54841a711a3fe546",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/c2b47c63864f4a77af71bbc6e84775a8.json": "c8244c80aafe640b76837926f7a5c545958302146cd3f50119a5edf8b11a0d1d",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/c38a6bb161784a95a0a42543ca6abb29.json": "44c66c34013923102131e6ac19fe87cddb8260fd5b9a01d1b68aa8487560ac48",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/c96f12c9f8c24e8da8f3f16edd9355e5.json": "fa14fe32262bd674c3f54a8f8e5c8875471e9eefd5a98cd5180491c01b778cba",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/d0f29736992c4662a037ea7ec1621965.json": "c613c01304c592267311710374ef66784a042403d0c51a48066a5548da6f2569",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/d1da1dcff87d4c80b5b12e46c16f7b8c.json": "29e60fdaaa8a8b620c610be6948bbcd4bdd6419f6810d9c78e3efd54c40b68d2",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/dabd9b46e14e4df6aa4b0514ba56d756.json": "00ed44360f1413b6a757cf82e0a1c6f5592710b1e1d2adebb9db6c5836ac1752",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/dd10a0f709874f889a49bd447f29d045.json": "c788fe0644d494994a2cb8f6fab82b8c0d3da1858cb2406e7d813d4f0389791c",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/e18fd3eb2ee5492cb4b960d65776575e.json": "348276f007a290023bb79c72360295d2a43a9b5aa5d9688c7b9f71a90b37aeca",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/e774c800559047ff8d0e28e8f2e9ec31.json": "3f53b9a8757f6c4ac4401b84e2ca266d5bc4d269692643c337be1ddc7e065f3d",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/e7e35da8004d4793aaaae492a697bedf.json": "e52ad6241ad6cf8f1d594ff087845ef1345576876d6812af509580a20781c09d",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/efb72c67fd504292bda22226fed95e90.json": "2a03ec81ca7cfd8460d4481e4dfedb2837af6cdeff0be3a0cabd994433cf9227",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/f2311e85b0944248b8e37bf71b3431d3.json": "2c6746172e68def598cc5ac58a7202ccbadd9da9d0d5c123beffe17201288856",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/f8ec1dc498a6421190f3ce94a00a2fed.json": "b5502e3ca3818ef15b4750aae1db5047980ae40e87bcd6812fcddcc3a3230f8c",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/f9de781646d4404d8f101578d9922ba1.json": "b4b6beb12882b547c1c5d2c16eb963b80126cb212ffbcc3cb4c2b13f5814c34a",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c11_full_hypertherm_powermax30_air/provider_responses/fc441d5f334c4394950d4a4d3e280fe3.json": "cf120289e6822fd6b2a0d6cd143fcb5b1e79228a6185815df22c0deff96df05b",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_continuation_20260926/c12r1_hypertherm_powermax30_air/new_provider_responses/2928d535f0c6441e88c92493922a0a79.json": "b112e858f0a046ed23b8c7b64d76255e243f7d85e9cf8df5884568c071942cd7",
+    "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_continuation_20260926/c12r1_hypertherm_powermax30_air/new_provider_responses/f7219c27163648f8a47eba04d1b009d9.json": "416b008c0734b9b2215c22a6b86c08885cf72fd69aa40573fd88881335358f7a"
+  }
+}

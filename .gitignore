@@ -59,6 +59,14 @@ artifacts/acceptance/**/raw/
 artifacts/acceptance/**/store/raw/
 artifacts/acceptance/**/*.lock
 
+# Isolated development runs retain these files locally; frozen responses,
+# reports, budgets and source snapshots remain available for versioning.
+paper/experiments/**/operational.db
+paper/experiments/**/operational.db-*
+paper/experiments/**/raw/
+paper/experiments/**/incoming/
+paper/experiments/**/*.lock
+
 # Local render/replay scratch space. Preserve it on disk without treating it as
 # source or checkpoint evidence.
 tmp/

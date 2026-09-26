@@ -1,0 +1,100 @@
+{
+  "ontology_name": "Core_Ontology",
+  "version": "2.0",
+  "language": "en",
+  "source_type": "technical PDF",
+  "source_title": "01_eastman_e554_service_manual.pdf",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "Eastman Eagle S3L",
+        "description": "Eastman Eagle S3L automated laser cutting system documented by service form E-554.",
+        "brand": "Eastman",
+        "model": "Eagle S3L",
+        "asset_type": "01 eastman e554 service manual.pdf"
+      }
+    ],
+    "Component": [],
+    "Symptom": [
+      {
+        "symptom_id": "sym_cutting_tool_or_pen_does_not_move_down_ed05940a9ea0257dbec5990e063bca6700a9585baa1ebcd0c73432430fdc2255",
+        "name": "Cutting tool or pen does not move down",
+        "description": "The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut.",
+        "severity": "Unknown"
+      }
+    ],
+    "FailureMode": [
+      {
+        "failure_mode_id": "fm_tool_or_layer_mapping_is_incorrect_or_tool_is_no_0aecfb823f22dcc455b00b402ffe6d64354758a8b7a215311dd233ea07bf86a2",
+        "name": "Tool or layer mapping is incorrect, or tool is not on the tool holder",
+        "description": "The layer may not be mapped to a tool or the tool may not be on the tool holder.",
+        "material_context": "not_stated"
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "ca_correct_the_tool_or_layer_mapping_bdaf947da4c8d2368c0cb5fe0c5702191ee018be7414210d36145ba909a76d45",
+        "name": "Correct the tool or layer mapping",
+        "description": "Drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+        "instruction_text": "If the layer is not mapped to a tool or the tool is not on the tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+        "source_type": "technical PDF",
+        "source_title": "01_eastman_e554_service_manual.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      }
+    ],
+    "ErrorCode": []
+  },
+  "relations": [
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "sym_cutting_tool_or_pen_does_not_move_down_ed05940a9ea0257dbec5990e063bca6700a9585baa1ebcd0c73432430fdc2255",
+      "to_type": "FailureMode",
+      "to_id": "fm_tool_or_layer_mapping_is_incorrect_or_tool_is_no_0aecfb823f22dcc455b00b402ffe6d64354758a8b7a215311dd233ea07bf86a2",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "ev_1426d40eab333cdb497ae8d47168",
+          "quote": "If the layer is not mapped to a tool or the tool is not on the",
+          "source_anchor": "ev_1426d40eab333cdb497ae8d47168"
+        },
+        {
+          "source_page": 38,
+          "source_reference": "ev_43cd2aa9505c56cc7b46ae3be97a",
+          "quote": "Verify the mapping of your tools and layers are mapped properly under each tool.",
+          "source_anchor": "ev_43cd2aa9505c56cc7b46ae3be97a"
+        },
+        {
+          "source_page": 38,
+          "source_reference": "ev_fd3e8a4d280ca3fffd5c00e2f693",
+          "quote": "This can be caused by an electrical short, tool mapping in software or a problem with the power supply.",
+          "source_anchor": "ev_fd3e8a4d280ca3fffd5c00e2f693"
+        }
+      ],
+      "branch_lineage_id": "dbranch_da2e1279286ccbe6c7fed94de0935f5d5f693db86fac9f48fd5a764c83cfb1a3"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_tool_or_layer_mapping_is_incorrect_or_tool_is_no_0aecfb823f22dcc455b00b402ffe6d64354758a8b7a215311dd233ea07bf86a2",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_correct_the_tool_or_layer_mapping_bdaf947da4c8d2368c0cb5fe0c5702191ee018be7414210d36145ba909a76d45",
+      "evidence": [
+        {
+          "source_page": 38,
+          "source_reference": "ev_1426d40eab333cdb497ae8d47168",
+          "quote": "If the layer is not mapped to a tool or the tool is not on the",
+          "source_anchor": "ev_1426d40eab333cdb497ae8d47168"
+        },
+        {
+          "source_page": 38,
+          "source_reference": "ev_65a05359d046e7ac9e2cc508912f",
+          "quote": "tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+          "source_anchor": "ev_65a05359d046e7ac9e2cc508912f"
+        }
+      ],
+      "branch_lineage_id": "dbranch_da2e1279286ccbe6c7fed94de0935f5d5f693db86fac9f48fd5a764c83cfb1a3"
+    }
+  ]
+}

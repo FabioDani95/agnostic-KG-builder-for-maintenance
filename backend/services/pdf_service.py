@@ -63,6 +63,15 @@ def _ocr_quality_score(text: str) -> float:
     return round(max(0.0, min(1.0, score)), 4)
 
 
+def native_text_is_corrupt(text: str) -> bool:
+    """Detect broken character maps without rejecting technical/numeric pages."""
+    value = str(text or "")
+    if not value:
+        return False
+    corrupt = sum((not ch.isprintable() and ch not in "\n\r\t") or ch == "\ufffd" for ch in value)
+    return corrupt / len(value) >= 0.01
+
+
 def _ocr_settings(config: dict[str, Any] | None = None) -> dict[str, Any]:
     if config is not None:
         return dict(config)
@@ -103,7 +112,8 @@ def apply_selective_ocr(
     candidates = [
         page for page in pages
         if int(page.get("page_number", 0) or 0) in allowed
-        and int(page.get("native_text_chars", len(str(page.get("text", "") or ""))) or 0) < minimum_chars
+        and (int(page.get("native_text_chars", len(str(page.get("text", "") or ""))) or 0) < minimum_chars
+             or native_text_is_corrupt(str(page.get("text") or "")))
     ]
     candidates.sort(key=lambda page: int(page.get("page_number", 0) or 0))
     limit = len(candidates) if max_pages is None else max(0, int(max_pages))
@@ -166,7 +176,8 @@ def apply_selective_ocr(
             if not cleaned:
                 report["empty"] += 1
                 record["ocr_status"] = "empty"
-            elif len(cleaned) > len(native):
+            elif (len(cleaned) > len(native) or native_text_is_corrupt(native)) and not native_text_is_corrupt(cleaned):
+                record["native_text_before_ocr"] = native
                 record["text"] = ocr_text
                 record["text_source"] = "ocr"
                 record["ocr_status"] = "applied"

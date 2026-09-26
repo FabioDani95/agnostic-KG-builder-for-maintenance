@@ -74,6 +74,50 @@ def _evidence(
     )
 
 
+def _titled_table(*, cause="The inlet filter is blocked.", solution="Replace the inlet filter."):
+    cells = [["The pressure alarm illuminates.", ""], ["Possible causes", "Possible solutions"], [cause, solution]]
+    units = []
+    for index, values in enumerate(cells, 1):
+        unit = _evidence(f"ev_titledtable{index:03d}", page=7, table_index=1, row_index=index, text=" | ".join(values))
+        unit.attributes["table_layout"] = {
+            "cells": values, "table_bbox": [10, 10, 210, 110],
+            "cell_bboxes": [[10, 10, 210, 30], None] if index == 1 else [[10, 30, 110, 60], [110, 30, 210, 60]],
+        }
+        units.append(unit)
+    return units
+
+
+def test_spanning_symptom_title_is_root_above_plural_cause_solution_header():
+    units = _titled_table()
+    windows = build_diagnostic_record_windows(units)
+    assert len(windows) == 1
+    window = windows[0]
+    assert window.structure_status == "atomic"
+    assert window.record_anchor == units[0].evidence_id
+    assert window.branch_anchor == units[2].evidence_id
+    assert window.allowed_source_anchors == [units[0].evidence_id, units[2].evidence_id]
+    assert window.allowed_evidence_spans[units[0].evidence_id] == ["The pressure alarm illuminates."]
+    assert units[1].evidence_id not in window.allowed_source_anchors
+    assert build_diagnostic_record_windows(list(reversed(units))) == windows
+
+
+def test_spanning_title_needs_geometry_and_diagnostic_column_roles():
+    units = _titled_table()
+    units[0].attributes["table_layout"]["cell_bboxes"][0][2] = 110
+    assert build_diagnostic_record_windows(units) == []
+    units = _titled_table()
+    units[1].attributes["table_layout"]["cells"] = ["Part number", "Description"]
+    assert build_diagnostic_record_windows(units) == []
+
+
+def test_unnumbered_alternatives_are_not_paired_by_bullet_count():
+    units = _titled_table(cause="□ The inlet is blocked. □ The outlet is blocked.", solution="□ Clean the outlet. □ Clean the inlet.")
+    windows = build_diagnostic_record_windows(units)
+    assert len(windows) == 1
+    assert windows[0].structure_status == "ambiguous_pairing"
+    assert "Clean the inlet" in windows[0].text_with_pages
+
+
 def _base_table() -> list[EvidenceUnit]:
     return [
         _evidence(
@@ -288,7 +332,7 @@ def test_numbered_prose_alternatives_are_atomized_with_alpha_substeps() -> None:
     windows = build_diagnostic_record_windows(units)
 
     assert len(windows) == 2
-    assert all(window.edge_policy == "prose_layout_endpoint_union" for window in windows)
+    assert all(window.edge_policy == "prose_structural_endpoint_union" for window in windows)
     assert windows[0].allowed_source_anchors == [
         "ev_proseroot00001",
         "ev_prosestep00001",
@@ -332,7 +376,7 @@ def test_numbered_procedure_remains_one_sequential_record() -> None:
     windows = build_diagnostic_record_windows(units)
 
     assert len(windows) == 1
-    assert windows[0].edge_policy == "prose_direct"
+    assert windows[0].edge_policy == "prose_structural_endpoint_union"
     assert len(windows[0].allowed_source_anchors) == 4
 
 
@@ -515,3 +559,52 @@ def test_incompatible_numbered_cardinalities_are_not_guessed() -> None:
     assert len(windows) == 1
     assert windows[0].structure_status == "ambiguous_pairing"
     assert windows[0].branch_count == 1
+
+
+def test_lowercase_wrapped_heading_and_procedure_continue_across_pages():
+    units = [
+        _evidence("ev_wrappedroot01", page=12, block_index=1, text="Problem: Controls are out of"),
+        _evidence("ev_wrappedtail01", page=12, block_index=2, text="alignment\nDescription of Problem: Controls do not align."),
+        _evidence("ev_wrappedstep01", page=12, block_index=3, text="Troubleshooting:\nCalibration is required. Proceed as follows.\n1) Start calibration."),
+        _evidence("ev_wrappedstep02", page=13, block_index=0, text="2) Save and exit."),
+    ]
+    windows = build_diagnostic_record_windows(units)
+    assert len(windows) == 1
+    assert windows[0].page_numbers == [12, 13]
+    assert windows[0].edge_policy == "prose_structural_endpoint_union"
+    assert set(windows[0].allowed_source_anchors) == {unit.evidence_id for unit in units}
+
+
+def test_table_rendering_deduplicates_only_literal_geometric_overlap():
+    from backend.adapters.pdf import _semantic_page_units
+    row = _evidence("ev_tableliteral01", page=1, table_index=1, row_index=1, text="Low pressure | Valve closed | Open valve")
+    row = row.model_copy(update={"attributes": {"table_layout": {"table_bbox": [0, 0, 200, 100], "cells": ["Low pressure", "Valve closed", "Open valve"]}}})
+    block = _evidence("ev_blockliteral01", page=1, block_index=1, text="Valve closed")
+    block = block.model_copy(update={"locator": block.locator.model_copy(update={"bbox": [10, 10, 100, 20]})})
+    outside = block.model_copy(update={"evidence_id": "ev_outsideliteral1", "locator": block.locator.model_copy(update={"bbox": [10, 200, 100, 220]})})
+    negated = block.model_copy(update={"evidence_id": "ev_negativeliteral", "locator": block.locator.model_copy(update={"quote": "Valve not closed"})})
+    inventory = [row, block, outside, negated]
+    selected, _ = _semantic_page_units(inventory)
+    assert block not in selected
+    assert row in selected and outside in selected and negated in selected
+    assert len(inventory) == 4
+
+
+def test_only_complete_check_cell_is_an_informational_source_gap():
+    from backend.services.diagnostic_bundle_compiler import compile_diagnostic_bundles
+
+    def run(cell, quote):
+        anchor = 'ev_checkedrow00001'
+        cells = ['Motor stops', 'Drive overheating', cell]
+        unit = _evidence(anchor, page=7, text=' | '.join(cells), table_index=1, row_index=1).model_copy(update={'attributes': {'table_layout': {'cells': cells, 'column_headers': ['Problem', 'Cause', 'Solution']}}})
+        def span(text):
+            return {'source_anchor': anchor, 'source_page': 7, 'quote': text}
+        window = {'window_id': 'diagwin_check_cell', 'record_anchor': anchor, 'branch_anchor': anchor, 'structure_status': 'atomic', 'edge_policy': 'table_atomic_endpoint_union', 'branch_count': 1, 'allowed_source_anchors': [anchor], 'allowed_evidence_spans': {anchor: cells}}
+        candidate = {'record_window_id': window['window_id'], 'record_anchor': anchor, 'branch_anchor': anchor, 'allowed_source_anchors': [anchor], 'indicators': [{'kind': 'symptom', 'name': 'Motor stops', 'description': 'Motor stops', 'severity': 'Unknown', 'claim_evidence': [span('Motor stops')], 'failure_link_evidence': [span('Motor stops'), span('Drive overheating')]}], 'failure': {'name': 'Drive overheating', 'description': 'Drive overheating', 'material_context': None, 'claim_evidence': [span('Drive overheating')]}, 'actions': [], 'inspection_steps': [{'instruction_text': quote, 'claim_evidence': [span(quote)]}], 'conditions': [], 'affected_component': None, 'resolution_status': 'check_only'}
+        result = compile_diagnostic_bundles([candidate], source_type='manual', source_title='Synthetic source', evidence_units=[unit], record_windows=[window])
+        assert not result.ontology.relations
+        return result.report.entries[0]
+    clear = run('Check the temperature.', 'Check the temperature.')
+    assert clear.source_gap_verified and clear.disposition == 'gap'
+    assert not run('Check the temperature. Replace the sensor.', 'Check the temperature.').source_gap_verified
+    assert not run('Check the temperature.', 'temperature').source_gap_verified

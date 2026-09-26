@@ -156,7 +156,7 @@ def test_cost_envelope_applies_long_context_pricing_per_call() -> None:
         model_name="gpt-5.6-luna",
     )
 
-    assert envelope["policy"] == "pdf_relation_first_bounded_v2"
+    assert envelope["policy"] == "pdf_relation_first_bounded_v3"
     assert envelope["by_stage_max_usd"]["draft"] == round(2 * per_call_cost, 6)
     assert envelope["by_stage_max_usd"]["draft"] < estimate_cost_usd(
         prompt_tokens=300000,
@@ -272,12 +272,18 @@ def test_equal_priority_candidates_rank_more_unresolved_records_first() -> None:
 
 
 def test_escalated_result_only_wins_when_contract_score_improves() -> None:
-    primary = {"parsed": True, "candidate_count": 3, "publish_count": 2, "unresolved_count": 1}
-    better = {"parsed": True, "candidate_count": 3, "publish_count": 3, "unresolved_count": 0}
-    lower_coverage = {"parsed": True, "candidate_count": 1, "publish_count": 1, "unresolved_count": 0}
+    def report(branches, pending):
+        return {"parsed": True, "candidate_count": len(branches) + pending,
+                "publish_count": len(branches), "unresolved_count": pending,
+                "records": [{"disposition": "publish", "branch_lineage_id": b} for b in branches]}
+    primary = report(["a", "b"], 1)
+    better = report(["a", "b", "c"], 0)
+    lower_coverage = report(["a"], 0)
 
     assert _prefer_escalated_diagnostic_report(primary, better) is True
     assert _prefer_escalated_diagnostic_report(primary, lower_coverage) is False
+    assert not _prefer_escalated_diagnostic_report(primary, report(["a", "x", "y", "z"], 0))
+    assert not _prefer_escalated_diagnostic_report(primary, report(["a", "b", "b", "b"], 1))
 
 
 def test_atomic_table_output_bound_is_smaller_than_multibranch_prose_bound() -> None:

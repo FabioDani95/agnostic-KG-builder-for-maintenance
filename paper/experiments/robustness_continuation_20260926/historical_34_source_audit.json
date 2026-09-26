@@ -1,0 +1,704 @@
+{
+  "status": "development_source_audit_not_gold",
+  "historical_gold_modified": false,
+  "all_34_claims_checked": true,
+  "global_metrics_allowed": false,
+  "common_context": {
+    "Eastman": "p37 lockout/tagout warnings and qualified personnel apply; preserved in source PDF, not encoded by historical summaries.",
+    "Danfoss": "p64 physical=p62 printed; safety references 2.3 and 2.4 and qualified personnel.",
+    "Graco": "p11 pressure relief p8 and inspect all possible causes before disassembly."
+  },
+  "claims": [
+    {
+      "manual_id": "eastman_e554",
+      "historical_claim": {
+        "claim_id": "E1",
+        "pages": [
+          37
+        ],
+        "symptom": "Machine stops in middle of cut and displays Machine Paused",
+        "failure_mode": "intermittent pause circuit, usually in the stop discs",
+        "corrective_action": "adjust the pause plunger activation pressure",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_summary_incomplete_procedure",
+      "source_based_note": "La causa è dichiarata esplicitamente. Conservare controlli stop disc/plunger, rimozione carter e polarità: serrare aumenta pressione; allentare diminuisce.",
+      "checked_physical_pages": [
+        37
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "eastman_e554",
+      "historical_claim": {
+        "claim_id": "E2",
+        "pages": [
+          37,
+          38
+        ],
+        "symptom": "Touch Screen buttons are out of alignment",
+        "failure_mode": "Touch screen calibration is required",
+        "corrective_action": "complete touch screen calibration and save and exit",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_summary_incomplete_procedure",
+      "source_based_note": "Calibrazione richiesta esplicita; sei passi su due pagine e verifica riavvio. Il riassunto non equivale a procedura completa.",
+      "checked_physical_pages": [
+        37,
+        38
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "eastman_e554",
+      "historical_claim": {
+        "claim_id": "E3",
+        "pages": [
+          38
+        ],
+        "symptom": "Cutting Tool or Pen does not move down",
+        "failure_mode": "tool or layer is not mapped properly",
+        "corrective_action": "map the tool to the spindle or the layer to the tool",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_conditional_branch",
+      "source_based_note": "Il testo associa mapping al mancato movimento; azione subordinata a layer/tool non mappato o tool non sul portautensile. Conservare condizione e alternative elettriche separate.",
+      "checked_physical_pages": [
+        38
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "eastman_e554",
+      "historical_claim": {
+        "claim_id": "E4",
+        "pages": [
+          38
+        ],
+        "symptom": "Laser Fume Extractor has reduced vacuum or no vacuum",
+        "failure_mode": "vacuum filters require replacement",
+        "corrective_action": "replace vacuum filters",
+        "expected_disposition": "review_or_publish",
+        "annotation_note": "The association is conveyed by the Problem/Troubleshooting layout rather than a standalone causal sentence."
+      },
+      "source_audit_status": "failure_inferred_from_remedy",
+      "source_based_note": "Replace vacuum filters è un rimedio nell’elenco. La fonte non dichiara filtri guasti/intasati come causa; non trasformare la sostituzione in diagnosi. Mantenere azione e lacuna causa.",
+      "checked_physical_pages": [
+        38
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "eastman_e554",
+      "historical_claim": {
+        "claim_id": "E5",
+        "pages": [
+          39
+        ],
+        "symptom": "Laser cutting path is too wide",
+        "failure_mode": "brass laser nozzle is damaged or bent",
+        "corrective_action": "replace the damaged nozzle",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "split_required",
+      "source_based_note": "Il nozzle danneggiato porta a sostituzione al punto 1. Tube/nozzle piegato al punto 2 porta a controllo/allineamento con anello su cartone e possibile regolazione specchi. Il gold fonde damaged OR bent con un solo rimedio.",
+      "checked_physical_pages": [
+        39
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "eastman_e554",
+      "historical_claim": {
+        "claim_id": "E6",
+        "pages": [
+          39
+        ],
+        "symptom": "Loss of laser cutting power causing non-cut edges",
+        "failure_mode": "focusing lens is damaged or dirty",
+        "corrective_action": "clean or replace the focusing lens",
+        "expected_disposition": "review_or_publish"
+      },
+      "source_audit_status": "supported_conditional_branch",
+      "source_based_note": "Damaged or dirty lens esplicito; prima controllare, poi clean OR replace as required. Non prescrivere entrambe le azioni senza condizione.",
+      "checked_physical_pages": [
+        39
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "eastman_e554",
+      "historical_claim": {
+        "claim_id": "E7",
+        "pages": [
+          39
+        ],
+        "symptom": "Loss of laser cutting power causing non-cut edges",
+        "failure_mode": "beam deflecting mirror is damaged or dirty",
+        "corrective_action": "clean or replace the mirrors",
+        "expected_disposition": "review_or_publish"
+      },
+      "source_audit_status": "supported_conditional_branch",
+      "source_based_note": "Damaged or dirty mirror esplicito; controllare damage/burn mark/dirt, clean OR replace as required.",
+      "checked_physical_pages": [
+        39
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "eastman_e554",
+      "historical_claim": {
+        "claim_id": "E8",
+        "pages": [
+          39
+        ],
+        "symptom": "Loss of laser cutting power causing non-cut edges",
+        "failure_mode": "laser nozzle contains damage or debris",
+        "corrective_action": "clean or replace the laser nozzle",
+        "expected_disposition": "review_or_publish"
+      },
+      "source_audit_status": "supported_conditional_branch",
+      "source_based_note": "Damage or debris nel nozzle esplicito; controllare, clean OR replace as required.",
+      "checked_physical_pages": [
+        39
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "danfoss_apf",
+      "historical_claim": {
+        "claim_id": "D1",
+        "pages": [
+          64
+        ],
+        "error_code": "1",
+        "symptom": "SYS 485 comm loss",
+        "failure_mode": "communication wire is not well connected",
+        "expected_gap": "inspection_only",
+        "inspection_step": "check if the communication wire is firmly connected"
+      },
+      "source_audit_status": "supported_inspection_only",
+      "source_based_note": "Tabella 41: filo non ben collegato e controllo connessione, nessuna riparazione dichiarata. Non inferire reconnect.",
+      "checked_physical_pages": [
+        64
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "danfoss_apf",
+      "historical_claim": {
+        "claim_id": "D2",
+        "pages": [
+          64
+        ],
+        "error_code": "1",
+        "symptom": "SYS 485 comm loss",
+        "failure_mode": "Active Power Filter modules have repeated IDs",
+        "expected_gap": "inspection_only",
+        "inspection_step": "check the DIP switches of the individual modules"
+      },
+      "source_audit_status": "supported_inspection_only",
+      "source_based_note": "IDs ripetuti e controllo DIP switches. Abbinamento semantico fili/connessione e IDs/DIP da adjudicare; i numeri troubleshooting sono entrambi 1 e non costituiscono da soli prova posizionale.",
+      "checked_physical_pages": [
+        64
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "danfoss_apf",
+      "historical_claim": {
+        "claim_id": "D3",
+        "pages": [
+          64
+        ],
+        "error_code": "2",
+        "symptom": "Fuse blowout",
+        "failure_mode": "input fuse is broken",
+        "corrective_action": "contact service personnel",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_escalation",
+      "source_based_note": "Input fuse broken; Contact service personnel è escalation, non prova di riparazione materiale.",
+      "checked_physical_pages": [
+        64
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "danfoss_apf",
+      "historical_claim": {
+        "claim_id": "D4",
+        "pages": [
+          64
+        ],
+        "error_code": "3",
+        "symptom": "Ambient OTP",
+        "failure_mode": "air vents are blocked",
+        "corrective_action": "contact service personnel",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_shared_remedy",
+      "source_based_note": "Air vents blocked; unica cella Contact service personnel comune alle due cause Ambient OTP, da mantenere come escalation.",
+      "checked_physical_pages": [
+        64
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "danfoss_apf",
+      "historical_claim": {
+        "claim_id": "D5",
+        "pages": [
+          64
+        ],
+        "error_code": "3",
+        "symptom": "Ambient OTP",
+        "failure_mode": "fans do not work",
+        "corrective_action": "contact service personnel",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_shared_remedy",
+      "source_based_note": "Fans do not work; stessa cella comune di escalation. Il paragrafo 10.1 menziona replace fan separatamente: non trasferirlo silenziosamente nel ramo tabella.",
+      "checked_physical_pages": [
+        64
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "danfoss_apf",
+      "historical_claim": {
+        "claim_id": "D6",
+        "pages": [
+          64
+        ],
+        "error_code": "4",
+        "symptom": "BUS OVP/UVP",
+        "failure_mode": "BUS capacitor failure",
+        "corrective_action": "contact service personnel",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_escalation",
+      "source_based_note": "BUS capacitor failure e Contact service personnel direttamente allineati nella riga.",
+      "checked_physical_pages": [
+        64
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "danfoss_apf",
+      "historical_claim": {
+        "claim_id": "D7",
+        "pages": [
+          64
+        ],
+        "error_code": "5",
+        "symptom": "Fan Fail",
+        "failure_mode": "fan failure",
+        "corrective_action": "contact service personnel",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_escalation",
+      "source_based_note": "Fan failure e Contact service personnel direttamente allineati nella riga.",
+      "checked_physical_pages": [
+        64
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "danfoss_apf",
+      "historical_claim": {
+        "claim_id": "D8",
+        "pages": [
+          64
+        ],
+        "error_code": "6",
+        "symptom": "No current compensation or bad current compensation",
+        "failure_mode": "CT is not well connected",
+        "expected_gap": "inspection_only",
+        "inspection_step": "check if the CT wiring is correct"
+      },
+      "source_audit_status": "supported_inspection_only",
+      "source_based_note": "CT not well connected; check wiring correct. Nessun rimedio dichiarato nella cella.",
+      "checked_physical_pages": [
+        64
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G1",
+        "pages": [
+          11
+        ],
+        "symptom": "Pump fails to operate",
+        "failure_mode": "restricted line or inadequate air supply",
+        "corrective_action": "clear the restriction",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_summary_missing_dependency",
+      "source_based_note": "Associazione per riga esplicita. Clear* richiama nota con pressure relief p8, scollegamento hose, recipiente e prova a 20–40 psi; G1/G5 richiamano anche technical data 24–27. Non dichiarare procedura completa dal solo verbo clear.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G2",
+        "pages": [
+          11
+        ],
+        "symptom": "Pump fails to operate",
+        "failure_mode": "obstructed fluid hose or gun valve or fluid hose ID is too small",
+        "corrective_action": "clear the obstruction and use a hose with a larger ID",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_summary_missing_dependency",
+      "source_based_note": "Associazione per riga esplicita. Clear* richiama nota con pressure relief p8, scollegamento hose, recipiente e prova a 20–40 psi; G1/G5 richiamano anche technical data 24–27. Non dichiarare procedura completa dal solo verbo clear.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G3",
+        "pages": [
+          11
+        ],
+        "symptom": "Pump fails to operate",
+        "failure_mode": "fluid dried on the displacement rod",
+        "corrective_action": "clean the displacement rod",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_summary_missing_dependency",
+      "source_based_note": "Clean displacement rod; la fonte rinvia al Service 12–19. Conservare dipendenza, oltre alle precondizioni comuni.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G4",
+        "pages": [
+          11
+        ],
+        "symptom": "Pump fails to operate",
+        "failure_mode": "dirty or worn air motor parts",
+        "corrective_action": "clean or repair the air motor parts",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_summary_missing_dependency",
+      "source_based_note": "Clean OR repair; rinvio a manuale air motor separato. Tale manuale non è incluso: dipendenza irrisolta.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G5",
+        "pages": [
+          11
+        ],
+        "symptom": "Pump operates but output is low on both strokes",
+        "failure_mode": "restricted line or inadequate air supply",
+        "corrective_action": "clear the restriction",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_summary_missing_dependency",
+      "source_based_note": "Associazione per riga esplicita. Clear* richiama nota con pressure relief p8, scollegamento hose, recipiente e prova a 20–40 psi; G1/G5 richiamano anche technical data 24–27. Non dichiarare procedura completa dal solo verbo clear.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G6",
+        "pages": [
+          11
+        ],
+        "symptom": "Pump operates but output is low on both strokes",
+        "failure_mode": "obstructed fluid hose or gun valve or fluid hose ID is too small",
+        "corrective_action": "clear the obstruction and use a hose with a larger ID",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_summary_missing_dependency",
+      "source_based_note": "Associazione per riga esplicita. Clear* richiama nota con pressure relief p8, scollegamento hose, recipiente e prova a 20–40 psi; G1/G5 richiamano anche technical data 24–27. Non dichiarare procedura completa dal solo verbo clear.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G7",
+        "pages": [
+          11
+        ],
+        "symptom": "Pump operates but output is low on both strokes",
+        "failure_mode": "bleeder valve is open",
+        "corrective_action": "close the bleeder valve",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_row_summary",
+      "source_based_note": "Problema ereditato dalla cella unita, causa e soluzione nella stessa riga. Conservare condizione di stroke e prerequisiti comuni: relieve pressure p8 e controllare tutte le cause prima di smontare.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G8",
+        "pages": [
+          11
+        ],
+        "symptom": "Pump operates but output is low on both strokes",
+        "failure_mode": "air is leaking into the supply container",
+        "expected_gap": "inspection_only",
+        "inspection_step": "check wiper plate seal"
+      },
+      "source_audit_status": "supported_inspection_only",
+      "source_based_note": "Air leaking into supply container; Check wiper plate seal. Conservare come ispezione, non riparazione.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G9",
+        "pages": [
+          11
+        ],
+        "symptom": "Pump operates but output is low on both strokes",
+        "failure_mode": "fluid is too heavy for pump priming",
+        "corrective_action": "use the bleeder valve and a wiper plate with ram or pneumatic elevator cart",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_summary_missing_dependency",
+      "source_based_note": "Use bleeder valve p9; use wiper plate with ram OR pneumatic elevator cart. Due istruzioni, alternativa sul supporto: non cambiare OR in AND.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G10",
+        "pages": [
+          11
+        ],
+        "symptom": "Pump operates but output is low on both strokes",
+        "failure_mode": "worn packings in displacement pump",
+        "corrective_action": "replace packings",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_row_summary",
+      "source_based_note": "Problema ereditato dalla cella unita, causa e soluzione nella stessa riga. Conservare condizione di stroke e prerequisiti comuni: relieve pressure p8 e controllare tutte le cause prima di smontare.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G11",
+        "pages": [
+          11
+        ],
+        "symptom": "Pump operates but output is low on down-stroke",
+        "failure_mode": "fluid is too heavy for pump priming",
+        "corrective_action": "use the bleeder valve and a wiper plate with ram or pneumatic elevator cart",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_summary_missing_dependency",
+      "source_based_note": "Use bleeder valve p9; use wiper plate with ram OR pneumatic elevator cart. Due istruzioni, alternativa sul supporto: non cambiare OR in AND.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G12",
+        "pages": [
+          11
+        ],
+        "symptom": "Pump operates but output is low on down-stroke",
+        "failure_mode": "held open or worn intake valve or seals",
+        "corrective_action": "clear valve and replace seals",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_row_summary",
+      "source_based_note": "Problema ereditato dalla cella unita, causa e soluzione nella stessa riga. Conservare condizione di stroke e prerequisiti comuni: relieve pressure p8 e controllare tutte le cause prima di smontare.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G13",
+        "pages": [
+          11
+        ],
+        "symptom": "Pump operates but output is low on up-stroke",
+        "failure_mode": "held open or worn piston valve or seals",
+        "corrective_action": "clear valve and replace seals",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_row_summary",
+      "source_based_note": "Problema ereditato dalla cella unita, causa e soluzione nella stessa riga. Conservare condizione di stroke e prerequisiti comuni: relieve pressure p8 e controllare tutte le cause prima di smontare.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G14",
+        "pages": [
+          11
+        ],
+        "symptom": "Erratic or accelerated pump speed",
+        "failure_mode": "exhausted fluid supply",
+        "corrective_action": "refill and prime",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_row_summary",
+      "source_based_note": "Problema ereditato dalla cella unita, causa e soluzione nella stessa riga. Conservare condizione di stroke e prerequisiti comuni: relieve pressure p8 e controllare tutte le cause prima di smontare.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G15",
+        "pages": [
+          11
+        ],
+        "symptom": "Erratic or accelerated pump speed",
+        "failure_mode": "fluid is too heavy for pump priming",
+        "corrective_action": "use the bleeder valve and a wiper plate with ram or pneumatic elevator cart",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_summary_missing_dependency",
+      "source_based_note": "Use bleeder valve p9; use wiper plate with ram OR pneumatic elevator cart. Due istruzioni, alternativa sul supporto: non cambiare OR in AND.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G16",
+        "pages": [
+          11
+        ],
+        "symptom": "Erratic or accelerated pump speed",
+        "failure_mode": "held open or worn piston valve or seals",
+        "corrective_action": "clear valve and replace seals",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_row_summary",
+      "source_based_note": "Problema ereditato dalla cella unita, causa e soluzione nella stessa riga. Conservare condizione di stroke e prerequisiti comuni: relieve pressure p8 e controllare tutte le cause prima di smontare.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G17",
+        "pages": [
+          11
+        ],
+        "symptom": "Erratic or accelerated pump speed",
+        "failure_mode": "held open or worn priming piston",
+        "corrective_action": "clear and service the priming piston",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_row_summary",
+      "source_based_note": "Problema ereditato dalla cella unita, causa e soluzione nella stessa riga. Conservare condizione di stroke e prerequisiti comuni: relieve pressure p8 e controllare tutte le cause prima di smontare.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "historical_claim": {
+        "claim_id": "G18",
+        "pages": [
+          11
+        ],
+        "symptom": "Erratic or accelerated pump speed",
+        "failure_mode": "worn packings in displacement pump",
+        "corrective_action": "replace packings",
+        "expected_disposition": "publish"
+      },
+      "source_audit_status": "supported_row_summary",
+      "source_based_note": "Problema ereditato dalla cella unita, causa e soluzione nella stessa riga. Conservare condizione di stroke e prerequisiti comuni: relieve pressure p8 e controllare tutte le cause prima di smontare.",
+      "checked_physical_pages": [
+        11
+      ],
+      "method": "PDF page render and native text read; agent exposed to predictions",
+      "human_adjudicated": false
+    }
+  ]
+}

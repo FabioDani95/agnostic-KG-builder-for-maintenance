@@ -34,7 +34,7 @@ def is_mock_mode() -> bool:
 def chat_temperature_kwargs(model_name: str | None, temperature: float) -> dict[str, float]:
     """Return temperature kwargs only for models that support custom values."""
     raw = str(model_name or settings.MODEL_NAME or "").strip().lower()
-    if raw in {"gpt-5.5", "gpt-5.6", "gpt-6-luna"} or raw.startswith(("gpt-5.5-", "gpt-5.6-", "gpt-6-luna-")):
+    if raw in {"gpt-5.5", "gpt-5.6", "gpt-6-luna", "gpt-6-sol"} or raw.startswith(("gpt-5.5-", "gpt-5.6-", "gpt-6-luna-", "gpt-6-sol-")):
         return {}
     return {"temperature": temperature}
 
@@ -57,11 +57,11 @@ def chat_reasoning_kwargs(
     if not effort:
         return {}
     model = str(model_name or settings.MODEL_NAME or "").strip().lower()
-    if not (model in {"gpt-5.5", "gpt-5.6", "gpt-6-luna"} or model.startswith(("gpt-5.5-", "gpt-5.6-", "gpt-6-luna-"))):
+    if not (model in {"gpt-5.5", "gpt-5.6", "gpt-6-luna", "gpt-6-sol"} or model.startswith(("gpt-5.5-", "gpt-5.6-", "gpt-6-luna-", "gpt-6-sol-"))):
         return {}
     allowed_efforts = (
         _GPT_56_REASONING_EFFORTS
-        if model in {"gpt-5.6", "gpt-6-luna"} or model.startswith(("gpt-5.6-", "gpt-6-luna-"))
+        if model in {"gpt-5.6", "gpt-6-luna", "gpt-6-sol"} or model.startswith(("gpt-5.6-", "gpt-6-luna-", "gpt-6-sol-"))
         else _REASONING_EFFORTS
     )
     if effort not in allowed_efforts:
@@ -135,6 +135,8 @@ def _configured_budget_ledger() -> Any | None:
 
 
 def _structured_schema_characters(response_format: Any) -> int:
+    if isinstance(response_format, dict):
+        return len(json.dumps(response_format, ensure_ascii=False).encode("utf-8"))
     schema = getattr(response_format, "model_json_schema", None)
     if not callable(schema):
         return 0
@@ -181,6 +183,8 @@ def _real_call_envelope(kwargs: dict[str, Any]) -> Any:
 def _real_call_stage(method: str, kwargs: dict[str, Any]) -> str:
     response_format = kwargs.get("response_format")
     format_name = str(getattr(response_format, "__name__", "") or "").strip()
+    if isinstance(response_format, dict):
+        format_name = str(response_format.get("json_schema", {}).get("name") or "")
     if format_name:
         return f"chat.{method}:{format_name}"
     messages = _messages_text(kwargs).casefold()
@@ -237,14 +241,55 @@ def _reserve_real_call(method: str, kwargs: dict[str, Any]) -> Any | None:
     )
 
 
+def _transport_request(wrapped, method, kwargs):
+    from backend.services.llm_response_archive import response_format_for
+
+    kwargs = dict(kwargs)
+    kwargs.setdefault("service_tier", "default")
+    schema = kwargs.get("response_format")
+    if method == "parse" and isinstance(schema, type) and hasattr(schema, "model_json_schema") and hasattr(wrapped, "create"):
+        kwargs["response_format"] = response_format_for(schema)
+        return "create", kwargs, schema
+    return method, kwargs, None
+
+
+def _parse_archived_response(response, schema, archive, kwargs):
+    if schema is None:
+        setattr(response, "_kg_response_archive", str(archive.path))
+        return response
+    from openai.lib._parsing._completions import parse_chat_completion
+
+    try:
+        parsed = parse_chat_completion(response_format=schema, input_tools=kwargs.get("tools", []), chat_completion=response)
+    except Exception as exc:
+        archive.payload["local_validation"] = {"status": "failed", "error_type": type(exc).__name__}
+        archive._write()
+        setattr(exc, "completion", response)
+        setattr(exc, "_kg_response_archive", str(archive.path))
+        raise
+    archive.payload["local_validation"] = {"status": "passed"}
+    archive._write()
+    setattr(parsed, "_kg_response_archive", str(archive.path))
+    return parsed
+
+
 class _BudgetedCompletions:
     def __init__(self, wrapped: Any):
         self._wrapped = wrapped
 
     def _call(self, method: str, kwargs: dict[str, Any]) -> Any:
+        from backend.services.llm_response_archive import ResponseArchive
+
+        provider_method, kwargs, local_schema = _transport_request(self._wrapped, method, kwargs)
         reservation = _reserve_real_call(method, kwargs)
         try:
-            response = getattr(self._wrapped, method)(**kwargs)
+            archive = ResponseArchive(kwargs, method=method, call_id=reservation.call_id if reservation else "")
+        except Exception:
+            if reservation is not None:
+                reservation.mark_not_called(status="archive_failed_before_call")
+            raise
+        try:
+            response = getattr(self._wrapped, provider_method)(**kwargs)
         except Exception as exc:
             if reservation is not None:
                 completion = getattr(exc, "completion", None)
@@ -269,6 +314,8 @@ class _BudgetedCompletions:
                     ),
                     "usage_observed": usage is not None,
                 })
+            archive.finish(response=getattr(exc, "completion", None), error=exc)
+            setattr(exc, "_kg_response_archive", str(archive.path))
             raise
         if reservation is not None:
             usage = _actual_usage(response)
@@ -276,7 +323,13 @@ class _BudgetedCompletions:
                 status="succeeded" if usage is not None else "succeeded_unknown_cost",
                 usage=usage,
             )
-        return response
+        try:
+            archive.finish(response=response)
+        except Exception as exc:
+            # The attempt is already charged. Expose usage even on disk failure.
+            setattr(exc, "completion", response)
+            raise
+        return _parse_archived_response(response, local_schema, archive, kwargs)
 
     def create(self, **kwargs: Any) -> Any:
         return self._call("create", kwargs)
@@ -290,9 +343,18 @@ class _BudgetedCompletions:
 
 class _BudgetedAsyncCompletions(_BudgetedCompletions):
     async def _async_call(self, method: str, kwargs: dict[str, Any]) -> Any:
+        from backend.services.llm_response_archive import ResponseArchive
+
+        provider_method, kwargs, local_schema = _transport_request(self._wrapped, method, kwargs)
         reservation = _reserve_real_call(method, kwargs)
         try:
-            response = await getattr(self._wrapped, method)(**kwargs)
+            archive = ResponseArchive(kwargs, method=method, call_id=reservation.call_id if reservation else "")
+        except Exception:
+            if reservation is not None:
+                reservation.mark_not_called(status="archive_failed_before_call")
+            raise
+        try:
+            response = await getattr(self._wrapped, provider_method)(**kwargs)
         except Exception as exc:
             if reservation is not None:
                 completion = getattr(exc, "completion", None)
@@ -313,6 +375,8 @@ class _BudgetedAsyncCompletions(_BudgetedCompletions):
                     ),
                     "usage_observed": usage is not None,
                 })
+            archive.finish(response=getattr(exc, "completion", None), error=exc)
+            setattr(exc, "_kg_response_archive", str(archive.path))
             raise
         if reservation is not None:
             usage = _actual_usage(response)
@@ -320,7 +384,12 @@ class _BudgetedAsyncCompletions(_BudgetedCompletions):
                 status="succeeded" if usage is not None else "succeeded_unknown_cost",
                 usage=usage,
             )
-        return response
+        try:
+            archive.finish(response=response)
+        except Exception as exc:
+            setattr(exc, "completion", response)
+            raise
+        return _parse_archived_response(response, local_schema, archive, kwargs)
 
     async def create(self, **kwargs: Any) -> Any:
         return await self._async_call("create", kwargs)
@@ -349,8 +418,6 @@ class _BudgetedClient:
 
 
 def _with_real_call_budget(client: Any, *, asynchronous: bool = False) -> Any:
-    if not str(os.environ.get("KG_REAL_CALL_BUDGET_LEDGER", "") or "").strip():
-        return client
     # Validate configuration and the existing event stream before returning a
     # client that could reach the network.
     _configured_budget_ledger()
@@ -412,6 +479,8 @@ class _MockResponse:
 def _structured_mock_stage(response_format: Any) -> str | None:
     """Resolve a fixture stage from a Pydantic response model without importing it."""
     format_name = str(getattr(response_format, "__name__", "") or "").strip().lower()
+    if isinstance(response_format, dict):
+        format_name = str(response_format.get("json_schema", {}).get("name") or "").lower()
     return {
         "diagnosticchunkoutput": "diagnostic_bundles",
         "coveragecompletionoutput": "coverage",
@@ -446,6 +515,9 @@ def _mock_parsed_response(kwargs: dict[str, Any]) -> _MockResponse:
 class _MockCompletions:
     def create(self, **kwargs: Any) -> _MockResponse:
         model = str(kwargs.get("model") or settings.MODEL_NAME)
+        if _structured_mock_stage(kwargs.get("response_format")) == "diagnostic_bundles":
+            raw = _fixture_mock_content("diagnostic_bundles")
+            return _MockResponse(raw or json.dumps({"schema_version": "1.0", "source_language": "en", "records": []}), model=model)
         return _MockResponse(_mock_content(kwargs), model=model)
 
     def parse(self, **kwargs: Any) -> _MockResponse:

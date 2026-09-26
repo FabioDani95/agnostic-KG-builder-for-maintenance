@@ -1,0 +1,3106 @@
+{
+  "llm_calls": 1,
+  "prompt_tokens": 5358,
+  "cached_prompt_tokens": 0,
+  "cache_write_prompt_tokens": 5355,
+  "non_cached_prompt_tokens": 5358,
+  "completion_tokens": 7318,
+  "total_tokens": 12676,
+  "estimated_cost_usd": 0.004329,
+  "models": [
+    "gpt-6-luna"
+  ],
+  "pricing_models": [
+    "gpt-6-luna"
+  ],
+  "operations": [
+    "diagnostic_bundle_extraction"
+  ],
+  "by_model": {
+    "gpt-6-luna": {
+      "label": "GPT-6 Luna",
+      "llm_calls": 1,
+      "prompt_tokens": 5358,
+      "cached_prompt_tokens": 0,
+      "cache_write_prompt_tokens": 5355,
+      "non_cached_prompt_tokens": 5358,
+      "completion_tokens": 7318,
+      "total_tokens": 12676,
+      "estimated_cost_usd": 0.004329
+    }
+  },
+  "retry_count": 0,
+  "parse_repair_events": [],
+  "mining_summary": {
+    "component_count": 12,
+    "error_code_count": 0,
+    "component_terms": [
+      "nozzle",
+      "led",
+      "power supply",
+      "solenoid",
+      "board",
+      "cable",
+      "cover",
+      "fuse",
+      "hand",
+      "panel",
+      "spindle",
+      "window"
+    ],
+    "error_code_tokens": []
+  },
+  "resolution_completion": {},
+  "diagnostic_contract": {
+    "input_pages": [
+      37,
+      38,
+      39
+    ],
+    "candidate_input_anchors": [
+      "ev_14a84bdb922d86e41c6b2387f0c3",
+      "ev_1aeb07c216a9d310a03a96b18024",
+      "ev_1fa9e99f783faf4ec80941fe1097",
+      "ev_2cca2fa9c0887ab296c2c199e343",
+      "ev_334be9951ba1439a58d343242134",
+      "ev_83424f5933db3c233bffb9e74c8e",
+      "ev_f1068b8a9b2728803f294747284b",
+      "ev_fd3e8a4d280ca3fffd5c00e2f693"
+    ],
+    "candidate_input_evidence": [
+      [
+        "ev_14a84bdb922d86e41c6b2387f0c3",
+        37
+      ],
+      [
+        "ev_1aeb07c216a9d310a03a96b18024",
+        37
+      ],
+      [
+        "ev_1fa9e99f783faf4ec80941fe1097",
+        39
+      ],
+      [
+        "ev_2cca2fa9c0887ab296c2c199e343",
+        38
+      ],
+      [
+        "ev_334be9951ba1439a58d343242134",
+        39
+      ],
+      [
+        "ev_83424f5933db3c233bffb9e74c8e",
+        37
+      ],
+      [
+        "ev_f1068b8a9b2728803f294747284b",
+        39
+      ],
+      [
+        "ev_fd3e8a4d280ca3fffd5c00e2f693",
+        38
+      ]
+    ],
+    "source_anchor_aliases": {
+      "a0001": "ev_a135761c355af36a9cabe4f4b9a3",
+      "a0002": "ev_47737c342b06ed4c5f2e5d7e3fb8",
+      "a0003": "ev_7f3e0ba12bb3f2060934867d9f5b",
+      "a0004": "ev_de07249809f94d0526ea67237346",
+      "a0005": "ev_14a84bdb922d86e41c6b2387f0c3",
+      "a0006": "ev_2377b14ee64934e0a10fb3e17c4f",
+      "a0007": "ev_242f37122488506881bae1f17ca4",
+      "a0008": "ev_9a027366f2e998223a0341bdeed4",
+      "a0009": "ev_db7fdd1cbdfac47aeac99b3ae714",
+      "a0010": "ev_83424f5933db3c233bffb9e74c8e",
+      "a0011": "ev_2f16ea0a0a0e2293b82421635be2",
+      "a0012": "ev_5aae28d8d61ef6a58dc0076410ab",
+      "a0013": "ev_1aeb07c216a9d310a03a96b18024",
+      "a0014": "ev_13cb50d025e0cacf6856f8219970",
+      "a0015": "ev_32fb4fc7fd2f59f546010bacd0bf",
+      "a0016": "ev_49157c5076834f8b6d211902a624",
+      "a0017": "ev_afa66f12ce69580213a7b3b3e9aa",
+      "a0018": "ev_ac7fd5482087de142216e8602a34",
+      "a0019": "ev_bd75b4c248ecdc6a71ca98dc1dd8",
+      "a0020": "ev_17982f9314f37928bbc35abbc759",
+      "a0021": "ev_18281b1d79d839b23c37164c399c",
+      "a0022": "ev_390c62a3b804a4a05934c73bb9e7",
+      "a0023": "ev_fd3e8a4d280ca3fffd5c00e2f693",
+      "a0024": "ev_23a4b358d3ae6029486f547b5d66",
+      "a0025": "ev_43cd2aa9505c56cc7b46ae3be97a",
+      "a0026": "ev_864b9006cd0affd3fb2018e9c68e",
+      "a0027": "ev_c08b30cfd89a68b6d535f6141a63",
+      "a0028": "ev_1426d40eab333cdb497ae8d47168",
+      "a0029": "ev_65a05359d046e7ac9e2cc508912f",
+      "a0030": "ev_5441bc9bb7b0dd007dd9f24617fc",
+      "a0031": "ev_8757fce26c47b4c75cff50e08ac6",
+      "a0032": "ev_f512e4ae6cfa4e6949e0eb85584d",
+      "a0033": "ev_f1b1011ff909b13de74698e2245b",
+      "a0034": "ev_6538c8ebd98f56f1fd74b16f66c2",
+      "a0035": "ev_af91b18c5907035fdb407a96b12e",
+      "a0036": "ev_1b060ef89a50a10674f74d45daee",
+      "a0037": "ev_6656a575a34deaf1d19ec94949bd",
+      "a0038": "ev_5249604410b41affa75a54209962",
+      "a0039": "ev_61c722da078f1a5a4ea9ac0e1a91",
+      "a0040": "ev_3aa4127a854500155f11840d5d15",
+      "a0041": "ev_c345372cf0d1d40303f626413efb",
+      "a0042": "ev_b3dde131dece0fbb75b116f09d44",
+      "a0043": "ev_45276d510958bf5701cef2f06737",
+      "a0044": "ev_2cca2fa9c0887ab296c2c199e343",
+      "a0045": "ev_6f51af462593ce85cf7d7d56100e",
+      "a0046": "ev_7ab7cbb9afed6571fdcd9c944ab8",
+      "a0047": "ev_0d0808ffe54c715dcae975f2564c",
+      "a0048": "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+      "a0049": "ev_8d1023d8b4eb61d5426ad9efb7e1",
+      "a0050": "ev_205150ce7af5d5b23ee4a19d4a55",
+      "a0051": "ev_334be9951ba1439a58d343242134",
+      "a0052": "ev_604e2b4a25a944f514418336f1b0",
+      "a0053": "ev_fcf5164b42be4339e4523bec14d3",
+      "a0054": "ev_c512a05a1052094d517eee0d0be9",
+      "a0055": "ev_e279e16774f1a4c736f7d89d949f",
+      "a0056": "ev_c7dfcb5040f573ee4c92400c3f7f",
+      "a0057": "ev_7dc4333b670af7fa1882528dcda0",
+      "a0058": "ev_94d2bc72795a8d63e0912926eaaf",
+      "a0059": "ev_10ae70c2e0f41bfdfd803885b80a",
+      "a0060": "ev_8238841422577dea7e3b3321c4b9",
+      "a0061": "ev_f1068b8a9b2728803f294747284b",
+      "a0062": "ev_09ca9edfbe4ad2190b5ca6279aa3",
+      "a0063": "ev_1fa9e99f783faf4ec80941fe1097",
+      "a0064": "ev_1b48b1d3f8900217cea566415002",
+      "a0065": "ev_ccea3409cf0689d0d9c580288be1",
+      "a0066": "ev_3e0d3b15d858c3b4906440f96d37",
+      "a0067": "ev_5564da6fc996bd1417df348da8e1"
+    },
+    "evidence_anchor_rebindings": [],
+    "advisory_window_bindings": [],
+    "schema_version": "1.1",
+    "source_language": "en",
+    "provider_model": "gpt-6-luna",
+    "provider_reasoning_effort": "low",
+    "call_role": "primary",
+    "escalation_reason": "",
+    "provider_response_id": "chatcmpl-ESN7Kdo33dtMHMIHgE6QIyBFbnHQy",
+    "finish_reason": "stop",
+    "parsed": true,
+    "refusal": false,
+    "raw_sha256": "55b18af26344b37b94f5a203860ce9161799176ac3973b183f388b6e9e48e0ce",
+    "response_archive": "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c10p_eastman_low/provider_responses/2d4d9e007812440e84ecbaa59ef4e524.json",
+    "raw_response_text": "",
+    "invalid_record_count": 0,
+    "records": [
+      {
+        "record_lineage_id": "drec_029c591fa2245fee854682ff1d08bd35f77cdba09163de0ab975181f2ed9fb04",
+        "branch_lineage_id": "dbranch_022b9c981a023144b7c7d1eecfcb7b87bea75c69c25a0332a435ecbd2ab14ffe",
+        "record_window_id": "",
+        "record_anchor": "ev_2cca2fa9c0887ab296c2c199e343",
+        "branch_anchor": "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+        "evidence_ids": [
+          "ev_2cca2fa9c0887ab296c2c199e343",
+          "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+          "ev_6f51af462593ce85cf7d7d56100e"
+        ],
+        "resolved_evidence_ids": [
+          "ev_2cca2fa9c0887ab296c2c199e343",
+          "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+          "ev_6f51af462593ce85cf7d7d56100e"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_2cca2fa9c0887ab296c2c199e343",
+            "ev_6f51af462593ce85cf7d7d56100e",
+            "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+            "ev_8d1023d8b4eb61d5426ad9efb7e1"
+          ],
+          "record_anchor": "ev_2cca2fa9c0887ab296c2c199e343",
+          "branch_anchor": "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Laser fume extractor has reduced or no vacuum",
+              "description": "An odor is present when cutting with the laser tool or laser cutting path is wider than normal.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2cca2fa9c0887ab296c2c199e343",
+                  "source_page": 38,
+                  "quote": "Problem: Laser Fume Extractor has reduced vacuum"
+                },
+                {
+                  "source_anchor": "ev_6f51af462593ce85cf7d7d56100e",
+                  "source_page": 38,
+                  "quote": "An odor is present when cutting with the laser tool or Laser cutting path is wider than normal"
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": null,
+          "actions": [
+            {
+              "name": "Replace vacuum filters",
+              "description": "Replace vacuum filters.",
+              "instruction_text": "Replace vacuum filters.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+                  "source_page": 38,
+                  "quote": "Replace vacuum filters."
+                }
+              ],
+              "resolution_link_evidence": []
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": {
+            "name": "vacuum filters",
+            "description": "Filters for the laser fume extractor.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+                "source_page": 38,
+                "quote": "Replace vacuum filters."
+              }
+            ],
+            "affects_link_evidence": []
+          },
+          "resolution_status": "ambiguous"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_029c591fa2245fee854682ff1d08bd35f77cdba09163de0ab975181f2ed9fb04",
+          "branch_lineage_id": "dbranch_022b9c981a023144b7c7d1eecfcb7b87bea75c69c25a0332a435ecbd2ab14ffe",
+          "record_window_id": "",
+          "record_anchor": "ev_2cca2fa9c0887ab296c2c199e343",
+          "branch_anchor": "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "name": "Laser fume extractor has reduced or no vacuum",
+              "description": "An odor is present when cutting with the laser tool or laser cutting path is wider than normal.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2cca2fa9c0887ab296c2c199e343",
+                  "source_page": 38,
+                  "quote": "Problem: Laser Fume Extractor has reduced vacuum",
+                  "evidence_id": "ev_2cca2fa9c0887ab296c2c199e343",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "Problem: Laser Fume Extractor has reduced vacuum",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 24,
+                    "source_block_index": 25,
+                    "bbox": [
+                      315.24,
+                      392.918,
+                      566.99,
+                      402.918
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_6f51af462593ce85cf7d7d56100e",
+                  "source_page": 38,
+                  "quote": "An odor is present when cutting with the laser tool or Laser cutting path is wider than normal",
+                  "evidence_id": "ev_6f51af462593ce85cf7d7d56100e",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "or no vacuum.\nDescription of Problem:\nAn odor is present when cutting with the laser tool or Laser\ncutting path is wider than normal",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 25,
+                    "source_block_index": 26,
+                    "bbox": [
+                      315.24,
+                      403.958,
+                      567.011,
+                      446.958
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": null,
+          "actions": [
+            {
+              "name": "Replace vacuum filters",
+              "description": "Replace vacuum filters.",
+              "instruction_text": "Replace vacuum filters.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+                  "source_page": 38,
+                  "quote": "Replace vacuum filters.",
+                  "evidence_id": "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "3) Replace vacuum filters.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 28,
+                    "source_block_index": 29,
+                    "bbox": [
+                      315.24,
+                      524.918,
+                      426.956,
+                      534.918
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": []
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "procedure_context": [],
+          "procedure_path_verified": false,
+          "affected_component": {
+            "name": "vacuum filters",
+            "description": "Filters for the laser fume extractor.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+                "source_page": 38,
+                "quote": "Replace vacuum filters.",
+                "evidence_id": "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 38,
+                  "section": null,
+                  "quote": "3) Replace vacuum filters.",
+                  "extraction_method": "native_text",
+                  "printed_page": null,
+                  "block_index": 28,
+                  "source_block_index": 29,
+                  "bbox": [
+                    315.24,
+                    524.918,
+                    426.956,
+                    534.918
+                  ],
+                  "table_index": null,
+                  "row_index": null,
+                  "ocr_region_index": null
+                }
+              }
+            ],
+            "affects_link_evidence": []
+          },
+          "resolution_status": "ambiguous"
+        },
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "compiled_semantically_ambiguous",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "action_without_failure",
+            "path": "actions",
+            "message": "CorrectiveAction claims cannot be linked without a FailureMode."
+          },
+          {
+            "code": "component_without_failure",
+            "path": "affected_component",
+            "message": "An affected Component cannot be linked without a FailureMode."
+          },
+          {
+            "code": "declared_ambiguous",
+            "path": "",
+            "message": "The extractor marked this branch as ambiguous."
+          },
+          {
+            "code": "missing_failure",
+            "path": "failure",
+            "message": "No FailureMode claim was supplied."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_c8081da0b7f6a92d7074f19e8b383c792792f7bdff82e97c992664930ff7316b",
+        "branch_lineage_id": "dbranch_227592e8732d308285b60d02c71f86a3d018eb8ceba5b50ab08e77650172600e",
+        "record_window_id": "",
+        "record_anchor": "ev_14a84bdb922d86e41c6b2387f0c3",
+        "branch_anchor": "ev_2377b14ee64934e0a10fb3e17c4f",
+        "evidence_ids": [
+          "ev_14a84bdb922d86e41c6b2387f0c3",
+          "ev_2377b14ee64934e0a10fb3e17c4f",
+          "ev_242f37122488506881bae1f17ca4",
+          "ev_9a027366f2e998223a0341bdeed4",
+          "ev_db7fdd1cbdfac47aeac99b3ae714"
+        ],
+        "resolved_evidence_ids": [
+          "ev_14a84bdb922d86e41c6b2387f0c3",
+          "ev_2377b14ee64934e0a10fb3e17c4f",
+          "ev_242f37122488506881bae1f17ca4",
+          "ev_9a027366f2e998223a0341bdeed4",
+          "ev_db7fdd1cbdfac47aeac99b3ae714"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_14a84bdb922d86e41c6b2387f0c3",
+            "ev_2377b14ee64934e0a10fb3e17c4f",
+            "ev_242f37122488506881bae1f17ca4",
+            "ev_9a027366f2e998223a0341bdeed4",
+            "ev_db7fdd1cbdfac47aeac99b3ae714"
+          ],
+          "record_anchor": "ev_14a84bdb922d86e41c6b2387f0c3",
+          "branch_anchor": "ev_2377b14ee64934e0a10fb3e17c4f",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "UIT does not power up",
+              "description": "The UIT does not power. Screen is blank and not lit up.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_14a84bdb922d86e41c6b2387f0c3",
+                  "source_page": 37,
+                  "quote": "Problem: UIT Does Not Power Up"
+                },
+                {
+                  "source_anchor": "ev_14a84bdb922d86e41c6b2387f0c3",
+                  "source_page": 37,
+                  "quote": "The UIT does not power.  Screen is blank and not lit up."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": null,
+          "actions": [],
+          "inspection_steps": [
+            {
+              "instruction_text": "Touch the screen to see if it turns on.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2377b14ee64934e0a10fb3e17c4f",
+                  "source_page": 37,
+                  "quote": "Touch the screen to see if it turns on."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Make sure your cutting software is open on the cutting system computer.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_242f37122488506881bae1f17ca4",
+                  "source_page": 37,
+                  "quote": "Make sure your cutting software is open on the cutting system computer."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Find the black ethernet power supply (PoE) located next to the computer. Verify the green LED is illuminated.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_9a027366f2e998223a0341bdeed4",
+                  "source_page": 37,
+                  "quote": "Find the black ethernet power supply (PoE) located next to the computer. Verify the green LED is illuminated."
+                }
+              ]
+            },
+            {
+              "instruction_text": "If there is no green LED lit, check the AC outlets located on the back of the diagnostic cabinet. If there is no AC power, check the AC power cord and fuses F3 and F4 in the diagnostic cabinet.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_db7fdd1cbdfac47aeac99b3ae714",
+                  "source_page": 37,
+                  "quote": "If there is no green LED lit, check the AC outlets located on the back of the diagnostic cabinet. If there is no  AC power, check the AC power cord and fuses F3 and F4 in the diagnostic cabinet."
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "check_only"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_c8081da0b7f6a92d7074f19e8b383c792792f7bdff82e97c992664930ff7316b",
+          "branch_lineage_id": "dbranch_227592e8732d308285b60d02c71f86a3d018eb8ceba5b50ab08e77650172600e",
+          "record_window_id": "",
+          "record_anchor": "ev_14a84bdb922d86e41c6b2387f0c3",
+          "branch_anchor": "ev_2377b14ee64934e0a10fb3e17c4f",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "name": "UIT does not power up",
+              "description": "The UIT does not power. Screen is blank and not lit up.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_14a84bdb922d86e41c6b2387f0c3",
+                  "source_page": 37,
+                  "quote": "Problem: UIT Does Not Power Up",
+                  "evidence_id": "ev_14a84bdb922d86e41c6b2387f0c3",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "Problem: UIT Does Not Power Up\nDescription of Problem:\nThe UIT does not power.  Screen is blank and not lit up.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 4,
+                    "source_block_index": 5,
+                    "bbox": [
+                      45.0,
+                      304.238,
+                      285.742,
+                      336.318
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_14a84bdb922d86e41c6b2387f0c3",
+                  "source_page": 37,
+                  "quote": "The UIT does not power. Screen is blank and not lit up.",
+                  "evidence_id": "ev_14a84bdb922d86e41c6b2387f0c3",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "Problem: UIT Does Not Power Up\nDescription of Problem:\nThe UIT does not power.  Screen is blank and not lit up.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 4,
+                    "source_block_index": 5,
+                    "bbox": [
+                      45.0,
+                      304.238,
+                      285.742,
+                      336.318
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": null,
+          "actions": [],
+          "inspection_steps": [
+            {
+              "instruction_text": "Touch the screen to see if it turns on.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2377b14ee64934e0a10fb3e17c4f",
+                  "source_page": 37,
+                  "quote": "Touch the screen to see if it turns on.",
+                  "evidence_id": "ev_2377b14ee64934e0a10fb3e17c4f",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "Troubleshooting:\n1.Touch the screen to see if it turns on.  If the machine sits\nidle for a long period of time the touch screen goes into a\nsleep mode to protect the screen.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 5,
+                    "source_block_index": 6,
+                    "bbox": [
+                      45.0,
+                      348.278,
+                      296.752,
+                      391.278
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            },
+            {
+              "instruction_text": "Make sure your cutting software is open on the cutting system computer.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_242f37122488506881bae1f17ca4",
+                  "source_page": 37,
+                  "quote": "Make sure your cutting software is open on the cutting system computer.",
+                  "evidence_id": "ev_242f37122488506881bae1f17ca4",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "2.Make sure your cutting software is open on the cutting\nsystem computer.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 6,
+                    "source_block_index": 7,
+                    "bbox": [
+                      45.0,
+                      403.238,
+                      296.745,
+                      424.278
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            },
+            {
+              "instruction_text": "Find the black ethernet power supply (PoE) located next to the computer. Verify the green LED is illuminated.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_9a027366f2e998223a0341bdeed4",
+                  "source_page": 37,
+                  "quote": "Find the black ethernet power supply (PoE) located next to the computer. Verify the green LED is illuminated.",
+                  "evidence_id": "ev_9a027366f2e998223a0341bdeed4",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "4.Find the black ethernet power supply (PoE) located next\nto the computer. Verify the green LED is illuminated.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 7,
+                    "source_block_index": 8,
+                    "bbox": [
+                      45.0,
+                      436.238,
+                      296.774,
+                      457.278
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            },
+            {
+              "instruction_text": "If there is no green LED lit, check the AC outlets located on the back of the diagnostic cabinet. If there is no AC power, check the AC power cord and fuses F3 and F4 in the diagnostic cabinet.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_db7fdd1cbdfac47aeac99b3ae714",
+                  "source_page": 37,
+                  "quote": "If there is no green LED lit, check the AC outlets located on the back of the diagnostic cabinet. If there is no AC power, check the AC power cord and fuses F3 and F4 in the diagnostic cabinet.",
+                  "evidence_id": "ev_db7fdd1cbdfac47aeac99b3ae714",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "5.If there is no green LED lit, check the AC outlets located\non the back of the diagnostic cabinet. If there is no  AC\npower, check the AC power cord and fuses F3 and F4 in\nthe diagnostic cabinet.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 8,
+                    "source_block_index": 9,
+                    "bbox": [
+                      45.0,
+                      469.238,
+                      296.808,
+                      512.238
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "procedure_context": [],
+          "procedure_path_verified": false,
+          "affected_component": null,
+          "resolution_status": "check_only"
+        },
+        "source_gap_verified": false,
+        "disposition": "gap",
+        "accounting_state": "inspection_only_gap",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "check_only",
+            "path": "resolution_status",
+            "message": "The source provides a diagnostic check but no restorative action."
+          },
+          {
+            "code": "missing_failure",
+            "path": "failure",
+            "message": "No FailureMode claim was supplied."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_029c591fa2245fee854682ff1d08bd35f77cdba09163de0ab975181f2ed9fb04",
+        "branch_lineage_id": "dbranch_2357d4ea23b6e8f8d3a91bf33af9391f7411134fa9e0dca915df6d51fec93f8a",
+        "record_window_id": "",
+        "record_anchor": "ev_2cca2fa9c0887ab296c2c199e343",
+        "branch_anchor": "ev_8d1023d8b4eb61d5426ad9efb7e1",
+        "evidence_ids": [
+          "ev_2cca2fa9c0887ab296c2c199e343",
+          "ev_6f51af462593ce85cf7d7d56100e",
+          "ev_8d1023d8b4eb61d5426ad9efb7e1"
+        ],
+        "resolved_evidence_ids": [
+          "ev_2cca2fa9c0887ab296c2c199e343",
+          "ev_6f51af462593ce85cf7d7d56100e",
+          "ev_8d1023d8b4eb61d5426ad9efb7e1"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_2cca2fa9c0887ab296c2c199e343",
+            "ev_6f51af462593ce85cf7d7d56100e",
+            "ev_8d1023d8b4eb61d5426ad9efb7e1"
+          ],
+          "record_anchor": "ev_2cca2fa9c0887ab296c2c199e343",
+          "branch_anchor": "ev_8d1023d8b4eb61d5426ad9efb7e1",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Laser fume extractor has reduced or no vacuum",
+              "description": "An odor is present when cutting with the laser tool or laser cutting path is wider than normal.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2cca2fa9c0887ab296c2c199e343",
+                  "source_page": 38,
+                  "quote": "Problem: Laser Fume Extractor has reduced vacuum"
+                },
+                {
+                  "source_anchor": "ev_6f51af462593ce85cf7d7d56100e",
+                  "source_page": 38,
+                  "quote": "An odor is present when cutting with the laser tool or Laser cutting path is wider than normal"
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": null,
+          "actions": [
+            {
+              "name": "Clean vacuum hose and funnel",
+              "description": "Clean vacuum hose and funnel.",
+              "instruction_text": "Clean vacuum hose and funnel.",
+              "action_kind": "cleaning",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_8d1023d8b4eb61d5426ad9efb7e1",
+                  "source_page": 38,
+                  "quote": "Clean vacuum hose and funnel."
+                }
+              ],
+              "resolution_link_evidence": []
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "ambiguous"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_029c591fa2245fee854682ff1d08bd35f77cdba09163de0ab975181f2ed9fb04",
+          "branch_lineage_id": "dbranch_2357d4ea23b6e8f8d3a91bf33af9391f7411134fa9e0dca915df6d51fec93f8a",
+          "record_window_id": "",
+          "record_anchor": "ev_2cca2fa9c0887ab296c2c199e343",
+          "branch_anchor": "ev_8d1023d8b4eb61d5426ad9efb7e1",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "name": "Laser fume extractor has reduced or no vacuum",
+              "description": "An odor is present when cutting with the laser tool or laser cutting path is wider than normal.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2cca2fa9c0887ab296c2c199e343",
+                  "source_page": 38,
+                  "quote": "Problem: Laser Fume Extractor has reduced vacuum",
+                  "evidence_id": "ev_2cca2fa9c0887ab296c2c199e343",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "Problem: Laser Fume Extractor has reduced vacuum",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 24,
+                    "source_block_index": 25,
+                    "bbox": [
+                      315.24,
+                      392.918,
+                      566.99,
+                      402.918
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_6f51af462593ce85cf7d7d56100e",
+                  "source_page": 38,
+                  "quote": "An odor is present when cutting with the laser tool or Laser cutting path is wider than normal",
+                  "evidence_id": "ev_6f51af462593ce85cf7d7d56100e",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "or no vacuum.\nDescription of Problem:\nAn odor is present when cutting with the laser tool or Laser\ncutting path is wider than normal",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 25,
+                    "source_block_index": 26,
+                    "bbox": [
+                      315.24,
+                      403.958,
+                      567.011,
+                      446.958
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": null,
+          "actions": [
+            {
+              "name": "Clean vacuum hose and funnel",
+              "description": "Clean vacuum hose and funnel.",
+              "instruction_text": "Clean vacuum hose and funnel.",
+              "action_kind": "cleaning",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_8d1023d8b4eb61d5426ad9efb7e1",
+                  "source_page": 38,
+                  "quote": "Clean vacuum hose and funnel.",
+                  "evidence_id": "ev_8d1023d8b4eb61d5426ad9efb7e1",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "4) Clean vacuum hose and funnel.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 29,
+                    "source_block_index": 30,
+                    "bbox": [
+                      315.24,
+                      546.878,
+                      461.509,
+                      556.878
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": []
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "procedure_context": [],
+          "procedure_path_verified": false,
+          "affected_component": null,
+          "resolution_status": "ambiguous"
+        },
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "compiled_semantically_ambiguous",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "action_without_failure",
+            "path": "actions",
+            "message": "CorrectiveAction claims cannot be linked without a FailureMode."
+          },
+          {
+            "code": "declared_ambiguous",
+            "path": "",
+            "message": "The extractor marked this branch as ambiguous."
+          },
+          {
+            "code": "missing_failure",
+            "path": "failure",
+            "message": "No FailureMode claim was supplied."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_311eb03f161dfdee138c689edf75f00627dd2d7d1ceec825af41c0975ad26312",
+        "branch_lineage_id": "dbranch_2fcef580d607add22781a743d8034ebb2124085702606354dc89ddb5412b6b4f",
+        "record_window_id": "",
+        "record_anchor": "ev_fd3e8a4d280ca3fffd5c00e2f693",
+        "branch_anchor": "ev_65a05359d046e7ac9e2cc508912f",
+        "evidence_ids": [
+          "ev_1426d40eab333cdb497ae8d47168",
+          "ev_1b060ef89a50a10674f74d45daee",
+          "ev_23a4b358d3ae6029486f547b5d66",
+          "ev_43cd2aa9505c56cc7b46ae3be97a",
+          "ev_5249604410b41affa75a54209962",
+          "ev_5441bc9bb7b0dd007dd9f24617fc",
+          "ev_6538c8ebd98f56f1fd74b16f66c2",
+          "ev_65a05359d046e7ac9e2cc508912f",
+          "ev_6656a575a34deaf1d19ec94949bd",
+          "ev_864b9006cd0affd3fb2018e9c68e",
+          "ev_8757fce26c47b4c75cff50e08ac6",
+          "ev_af91b18c5907035fdb407a96b12e",
+          "ev_c08b30cfd89a68b6d535f6141a63",
+          "ev_f1b1011ff909b13de74698e2245b",
+          "ev_f512e4ae6cfa4e6949e0eb85584d",
+          "ev_fd3e8a4d280ca3fffd5c00e2f693"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_fd3e8a4d280ca3fffd5c00e2f693",
+            "ev_23a4b358d3ae6029486f547b5d66",
+            "ev_43cd2aa9505c56cc7b46ae3be97a",
+            "ev_864b9006cd0affd3fb2018e9c68e",
+            "ev_c08b30cfd89a68b6d535f6141a63",
+            "ev_1426d40eab333cdb497ae8d47168",
+            "ev_65a05359d046e7ac9e2cc508912f",
+            "ev_5441bc9bb7b0dd007dd9f24617fc",
+            "ev_8757fce26c47b4c75cff50e08ac6",
+            "ev_f512e4ae6cfa4e6949e0eb85584d",
+            "ev_f1b1011ff909b13de74698e2245b",
+            "ev_6538c8ebd98f56f1fd74b16f66c2",
+            "ev_af91b18c5907035fdb407a96b12e",
+            "ev_1b060ef89a50a10674f74d45daee",
+            "ev_6656a575a34deaf1d19ec94949bd",
+            "ev_5249604410b41affa75a54209962",
+            "ev_61c722da078f1a5a4ea9ac0e1a91",
+            "ev_3aa4127a854500155f11840d5d15",
+            "ev_c345372cf0d1d40303f626413efb",
+            "ev_b3dde131dece0fbb75b116f09d44",
+            "ev_45276d510958bf5701cef2f06737"
+          ],
+          "record_anchor": "ev_fd3e8a4d280ca3fffd5c00e2f693",
+          "branch_anchor": "ev_65a05359d046e7ac9e2cc508912f",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Cutting tool or pen does not move down",
+              "description": "The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_fd3e8a4d280ca3fffd5c00e2f693",
+                  "source_page": 38,
+                  "quote": "Problem: The Cutting Tool or Pen does not move down"
+                },
+                {
+                  "source_anchor": "ev_fd3e8a4d280ca3fffd5c00e2f693",
+                  "source_page": 38,
+                  "quote": "The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut."
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_fd3e8a4d280ca3fffd5c00e2f693",
+                  "source_page": 38,
+                  "quote": "This can be caused by an electrical short, tool mapping in software or a problem with the power supply."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Tool mapping not assigned correctly",
+            "description": "The layer may not be mapped to a tool, or the tool may not be on the tool holder.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_1426d40eab333cdb497ae8d47168",
+                "source_page": 38,
+                "quote": "If the layer is not mapped to a tool or the tool is not on the"
+              },
+              {
+                "source_anchor": "ev_65a05359d046e7ac9e2cc508912f",
+                "source_page": 38,
+                "quote": "tool holder"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Correct tool or layer mapping",
+              "description": "Drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+              "instruction_text": "If the layer is not mapped to a tool or the tool is not on the tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+              "action_kind": "software_configuration",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1426d40eab333cdb497ae8d47168",
+                  "source_page": 38,
+                  "quote": "If the layer is not mapped to a tool or the tool is not on the"
+                },
+                {
+                  "source_anchor": "ev_65a05359d046e7ac9e2cc508912f",
+                  "source_page": 38,
+                  "quote": "tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_65a05359d046e7ac9e2cc508912f",
+                  "source_page": 38,
+                  "quote": "click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Make sure the gantry Tools ON switch is turned on. This can be verified by making sure the laser pointer is on.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_23a4b358d3ae6029486f547b5d66",
+                  "source_page": 38,
+                  "quote": "Make sure the gantry Tools ON switch is turned on. This can be verified by making sure the laser pointer is on."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Verify the mapping of your tools and layers are mapped properly under each tool. Look at the tool bar at the bottom of the Cut window to quickly verify tool and layer mapping. If there is no Tool Bar as shown, then click on “View” then click on “Layers” and “Tools” in the main E-Suite menu.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_43cd2aa9505c56cc7b46ae3be97a",
+                  "source_page": 38,
+                  "quote": "Verify the mapping of your tools and layers are mapped properly under each tool."
+                },
+                {
+                  "source_anchor": "ev_864b9006cd0affd3fb2018e9c68e",
+                  "source_page": 38,
+                  "quote": "Look at the tool bar at the bottom of the Cut window to"
+                },
+                {
+                  "source_anchor": "ev_c08b30cfd89a68b6d535f6141a63",
+                  "source_page": 38,
+                  "quote": "quickly verify tool and layer mapping.  If there is no Tool Bar as shown, then click on “View” then click on “Layers” and “Tools” in the main E-Suite menu."
+                }
+              ]
+            },
+            {
+              "instruction_text": "With E-Suite closed, check tool holder to see if it moves freely and is not damaged or bent.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_5441bc9bb7b0dd007dd9f24617fc",
+                  "source_page": 38,
+                  "quote": "With E-Suite closed, check tool holder to see if it moves freely and is not damaged or bent."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Make sure you have pressure at the tools. Try pulling tool the holder down by hand to see if it has pressure.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_8757fce26c47b4c75cff50e08ac6",
+                  "source_page": 38,
+                  "quote": "Make sure you have pressure at the tools. Try pulling tool the holder down by hand to see if it has pressure."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Check tool connections. Hit the Cut Down button on the UIT to verify the corresponding green LED light is on. Try firing the tool manually by pressing red button under solenoid block. Check cable connection at air manifold for proper connection.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_f512e4ae6cfa4e6949e0eb85584d",
+                  "source_page": 38,
+                  "quote": "Check tool connections."
+                },
+                {
+                  "source_anchor": "ev_f1b1011ff909b13de74698e2245b",
+                  "source_page": 38,
+                  "quote": "Hit the Cut Down button on the UIT to verify the"
+                },
+                {
+                  "source_anchor": "ev_6538c8ebd98f56f1fd74b16f66c2",
+                  "source_page": 38,
+                  "quote": "corresponding green LED light is on. Located on the slice output cards (non-operator gantry side plate)."
+                },
+                {
+                  "source_anchor": "ev_af91b18c5907035fdb407a96b12e",
+                  "source_page": 38,
+                  "quote": "Try firing the tool manually by pressing red button under"
+                },
+                {
+                  "source_anchor": "ev_1b060ef89a50a10674f74d45daee",
+                  "source_page": 38,
+                  "quote": "solenoid block.  Each solenoid can be manually fired by pressing the individual button."
+                },
+                {
+                  "source_anchor": "ev_6656a575a34deaf1d19ec94949bd",
+                  "source_page": 38,
+                  "quote": "Check cable connection at air manifold for proper"
+                },
+                {
+                  "source_anchor": "ev_5249604410b41affa75a54209962",
+                  "source_page": 38,
+                  "quote": "connection."
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "affected_component": {
+            "name": "tool mapping",
+            "description": "Mapping of tools and layers in the cutting software.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_43cd2aa9505c56cc7b46ae3be97a",
+                "source_page": 38,
+                "quote": "Verify the mapping of your tools and layers are mapped properly under each tool."
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_65a05359d046e7ac9e2cc508912f",
+                "source_page": 38,
+                "quote": "click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_dd877cb5819798acd3178c54c3b22de3cccdb0b7e3cc3d3187329100280b7533",
+        "branch_lineage_id": "dbranch_68482c20c34bfe2671569e7a65f539dcc43df759fec26f93e03eb01bb1482e9e",
+        "record_window_id": "",
+        "record_anchor": "ev_f1068b8a9b2728803f294747284b",
+        "branch_anchor": "ev_1fa9e99f783faf4ec80941fe1097",
+        "evidence_ids": [
+          "ev_1fa9e99f783faf4ec80941fe1097",
+          "ev_f1068b8a9b2728803f294747284b"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_f1068b8a9b2728803f294747284b",
+            "ev_1fa9e99f783faf4ec80941fe1097"
+          ],
+          "record_anchor": "ev_f1068b8a9b2728803f294747284b",
+          "branch_anchor": "ev_1fa9e99f783faf4ec80941fe1097",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Loss of laser cutting power",
+              "description": "The laser cutting power decreases causing non-cut edges.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_f1068b8a9b2728803f294747284b",
+                  "source_page": 39,
+                  "quote": "Problem: Loss of laser cutting power"
+                },
+                {
+                  "source_anchor": "ev_f1068b8a9b2728803f294747284b",
+                  "source_page": 39,
+                  "quote": "The laser cutting power decreases causing non-cut edges."
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_1fa9e99f783faf4ec80941fe1097",
+                  "source_page": 39,
+                  "quote": "Damaged or dirty Mirror."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Damaged or dirty beam-deflecting mirrors",
+            "description": "Mirrors may be damaged, have a burn mark, or be dirty.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_1fa9e99f783faf4ec80941fe1097",
+                "source_page": 39,
+                "quote": "Damaged or dirty Mirror. Check for damage, burn mark or dirt on the beam deflecting mirrors."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clean or replace mirrors",
+              "description": "Clean or replace mirrors as required.",
+              "instruction_text": "Clean or replace mirrors as required.",
+              "action_kind": "cleaning_or_replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1fa9e99f783faf4ec80941fe1097",
+                  "source_page": 39,
+                  "quote": "Clean or replace mirrors as required."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_1fa9e99f783faf4ec80941fe1097",
+                  "source_page": 39,
+                  "quote": "Damaged or dirty Mirror. Check for damage, burn mark or dirt on the beam deflecting mirrors. Clean or replace mirrors as required."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check for damage, burn mark or dirt on the beam deflecting mirrors.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1fa9e99f783faf4ec80941fe1097",
+                  "source_page": 39,
+                  "quote": "Check for damage, burn mark or dirt on the beam deflecting mirrors."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "Clean or replace mirrors as required.",
+              "applies_to": "action",
+              "step_index": 0,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1fa9e99f783faf4ec80941fe1097",
+                  "source_page": 39,
+                  "quote": "Clean or replace mirrors as required."
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "beam deflecting mirrors",
+            "description": "Mirrors may be damaged, have burn marks, or be dirty.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_1fa9e99f783faf4ec80941fe1097",
+                "source_page": 39,
+                "quote": "beam deflecting mirrors"
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_1fa9e99f783faf4ec80941fe1097",
+                "source_page": 39,
+                "quote": "Damaged or dirty Mirror. Check for damage, burn mark or dirt on the beam deflecting mirrors. Clean or replace mirrors as required."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_dd877cb5819798acd3178c54c3b22de3cccdb0b7e3cc3d3187329100280b7533",
+        "branch_lineage_id": "dbranch_71e4940425eae2d4cd45531f795e24646c22843d05e07d38df7dba6a0baea91d",
+        "record_window_id": "",
+        "record_anchor": "ev_f1068b8a9b2728803f294747284b",
+        "branch_anchor": "ev_1b48b1d3f8900217cea566415002",
+        "evidence_ids": [
+          "ev_1b48b1d3f8900217cea566415002",
+          "ev_f1068b8a9b2728803f294747284b"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_f1068b8a9b2728803f294747284b",
+            "ev_1b48b1d3f8900217cea566415002"
+          ],
+          "record_anchor": "ev_f1068b8a9b2728803f294747284b",
+          "branch_anchor": "ev_1b48b1d3f8900217cea566415002",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Loss of laser cutting power",
+              "description": "The laser cutting power decreases causing non-cut edges.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_f1068b8a9b2728803f294747284b",
+                  "source_page": 39,
+                  "quote": "Problem: Loss of laser cutting power"
+                },
+                {
+                  "source_anchor": "ev_f1068b8a9b2728803f294747284b",
+                  "source_page": 39,
+                  "quote": "The laser cutting power decreases causing non-cut edges."
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_1b48b1d3f8900217cea566415002",
+                  "source_page": 39,
+                  "quote": "Damage or debris in laser nozzle."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Damage or debris in laser nozzle",
+            "description": "Damage or debris in laser nozzle.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_1b48b1d3f8900217cea566415002",
+                "source_page": 39,
+                "quote": "Damage or debris in laser nozzle. Check for damage or debris in laser nozzle."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clean or replace laser nozzle",
+              "description": "Clean or replace laser nozzle as required.",
+              "instruction_text": "Clean or replace laser nozzle as required.",
+              "action_kind": "cleaning_or_replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1b48b1d3f8900217cea566415002",
+                  "source_page": 39,
+                  "quote": "Clean or replace laser nozzle as required."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_1b48b1d3f8900217cea566415002",
+                  "source_page": 39,
+                  "quote": "Damage or debris in laser nozzle. Check for damage or debris in laser nozzle. Clean or replace laser nozzle as required."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check for damage or debris in laser nozzle.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1b48b1d3f8900217cea566415002",
+                  "source_page": 39,
+                  "quote": "Check for damage or debris in laser nozzle."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "Clean or replace laser nozzle as required.",
+              "applies_to": "action",
+              "step_index": 0,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1b48b1d3f8900217cea566415002",
+                  "source_page": 39,
+                  "quote": "Clean or replace laser nozzle as required."
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "laser nozzle",
+            "description": "Laser nozzle may be damaged or have debris.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_1b48b1d3f8900217cea566415002",
+                "source_page": 39,
+                "quote": "laser nozzle"
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_1b48b1d3f8900217cea566415002",
+                "source_page": 39,
+                "quote": "Damage or debris in laser nozzle. Check for damage or debris in laser nozzle. Clean or replace laser nozzle as required."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_6149689e913ff4d78d405b8bd913dc0a3f1266444a8b2f1569c07db569513a68",
+        "branch_lineage_id": "dbranch_9109247c16339603505f96e53ed1b7cc0c0cde2eae5893cf060afefc08a8afe2",
+        "record_window_id": "",
+        "record_anchor": "ev_83424f5933db3c233bffb9e74c8e",
+        "branch_anchor": "ev_5aae28d8d61ef6a58dc0076410ab",
+        "evidence_ids": [
+          "ev_2f16ea0a0a0e2293b82421635be2",
+          "ev_5aae28d8d61ef6a58dc0076410ab",
+          "ev_83424f5933db3c233bffb9e74c8e"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_83424f5933db3c233bffb9e74c8e",
+            "ev_2f16ea0a0a0e2293b82421635be2",
+            "ev_5aae28d8d61ef6a58dc0076410ab"
+          ],
+          "record_anchor": "ev_83424f5933db3c233bffb9e74c8e",
+          "branch_anchor": "ev_5aae28d8d61ef6a58dc0076410ab",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Machine stops during cut due to unintentional pause",
+              "description": "The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_83424f5933db3c233bffb9e74c8e",
+                  "source_page": 37,
+                  "quote": "Problem: Machine Stop during Cut Due to Uninten-"
+                },
+                {
+                  "source_anchor": "ev_2f16ea0a0a0e2293b82421635be2",
+                  "source_page": 37,
+                  "quote": "tional pause"
+                },
+                {
+                  "source_anchor": "ev_2f16ea0a0a0e2293b82421635be2",
+                  "source_page": 37,
+                  "quote": "The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen."
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_2f16ea0a0a0e2293b82421635be2",
+                  "source_page": 37,
+                  "quote": "This is typically caused by an intermittent pause circuit, usually in thestop discs."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Intermittent pause circuit",
+            "description": "Typically caused by an intermittent pause circuit, usually in the stop discs.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_2f16ea0a0a0e2293b82421635be2",
+                "source_page": 37,
+                "quote": "This is typically caused by an intermittent pause circuit, usually in thestop discs."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Adjust pause plunger",
+              "description": "Tighten the plunger to increase activation pressure and loosen to decrease activation pressure.",
+              "instruction_text": "Remove gantry side cover. Check the pause plunger. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure.",
+              "action_kind": "adjustment",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_5aae28d8d61ef6a58dc0076410ab",
+                  "source_page": 37,
+                  "quote": "Remove gantry side cover. Check the pause plunger. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_5aae28d8d61ef6a58dc0076410ab",
+                  "source_page": 37,
+                  "quote": "Tighten the plunger to increase activation pressure and loosen to decrease activation pressure."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check stop disc activation. The stop discs should not activate by a slight touch or vibration. They should activate only when moved by minimum pressure.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_5aae28d8d61ef6a58dc0076410ab",
+                  "source_page": 37,
+                  "quote": "Check stop disc activation. The stop discs should not activate by a slight touch or vibration. They should activate only when moved by minimum pressure."
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "affected_component": {
+            "name": "pause plunger",
+            "description": "Pause plunger associated with the stop discs.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_5aae28d8d61ef6a58dc0076410ab",
+                "source_page": 37,
+                "quote": "Check the pause plunger."
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_5aae28d8d61ef6a58dc0076410ab",
+                "source_page": 37,
+                "quote": "Check the pause plunger. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "actions[0].resolution_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_1f782512a27caae21e930e0ff5ceb8db514a6350839b0668e57ad191f6ba898d",
+        "branch_lineage_id": "dbranch_a7e72fdf35745e9a3c3e2678914831403f1d3452f7995909d9d54a04ba084e35",
+        "record_window_id": "",
+        "record_anchor": "ev_334be9951ba1439a58d343242134",
+        "branch_anchor": "ev_fcf5164b42be4339e4523bec14d3",
+        "evidence_ids": [
+          "ev_334be9951ba1439a58d343242134",
+          "ev_604e2b4a25a944f514418336f1b0",
+          "ev_c512a05a1052094d517eee0d0be9",
+          "ev_fcf5164b42be4339e4523bec14d3"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_334be9951ba1439a58d343242134",
+            "ev_604e2b4a25a944f514418336f1b0",
+            "ev_fcf5164b42be4339e4523bec14d3",
+            "ev_c512a05a1052094d517eee0d0be9"
+          ],
+          "record_anchor": "ev_334be9951ba1439a58d343242134",
+          "branch_anchor": "ev_fcf5164b42be4339e4523bec14d3",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Laser cutting path is too wide",
+              "description": "The laser cutting path increases to an undesirable width.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_334be9951ba1439a58d343242134",
+                  "source_page": 39,
+                  "quote": "Problem: Laser cutting path is too wide"
+                },
+                {
+                  "source_anchor": "ev_334be9951ba1439a58d343242134",
+                  "source_page": 39,
+                  "quote": "The laser cutting path increases to an undesirable width."
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_fcf5164b42be4339e4523bec14d3",
+                  "source_page": 39,
+                  "quote": "If the tube or nozzle is bent,  the laser beam will reflect off the inside wall of the nozzle causing a wide path."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Bent laser tube or nozzle",
+            "description": "If the tube or nozzle is bent, the laser beam reflects off the inside wall of the nozzle causing a wide path.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_fcf5164b42be4339e4523bec14d3",
+                "source_page": 39,
+                "quote": "If the tube or nozzle is bent,  the laser beam will reflect off the inside wall of the nozzle causing a wide path."
+              }
+            ]
+          },
+          "actions": [],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check for damage to brass laser nozzle.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_604e2b4a25a944f514418336f1b0",
+                  "source_page": 39,
+                  "quote": "Check for damage to brass laser nozzle."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Check for brass laser nozzle alignment. To verify, perform a test pulse on a piece of card board. If the dot has a ring or partial ring around it, the nozzle is bent or the mirrors may need to be adjusted.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_fcf5164b42be4339e4523bec14d3",
+                  "source_page": 39,
+                  "quote": "Check for brass laser nozzle alignment."
+                },
+                {
+                  "source_anchor": "ev_fcf5164b42be4339e4523bec14d3",
+                  "source_page": 39,
+                  "quote": "To verify, perform a test pulse on a piece of card board.  If the dot has a ring or partial ring around it, the nuzzle is bent or the mirrors may need to be adjusted."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Check laser power and cutting speed. Settings may vary when changing materials. Testing will yield best results.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_c512a05a1052094d517eee0d0be9",
+                  "source_page": 39,
+                  "quote": "Check laser power and cutting speed. Settings may vary when changing materials. Testing will yield best results."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "If any damage is present, replace nozzle.",
+              "applies_to": "inspection",
+              "step_index": 0,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_604e2b4a25a944f514418336f1b0",
+                  "source_page": 39,
+                  "quote": "Replace nozzle if any damage is present."
+                }
+              ]
+            },
+            {
+              "text": "If the dot has a ring or partial ring around it, the nozzle is bent or the mirrors may need to be adjusted.",
+              "applies_to": "inspection",
+              "step_index": 1,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_fcf5164b42be4339e4523bec14d3",
+                  "source_page": 39,
+                  "quote": "If the dot has a ring or partial ring around it, the nuzzle is bent or the mirrors may need to be adjusted."
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "brass laser nozzle",
+            "description": "The nozzle may be damaged, bent, or misaligned.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_604e2b4a25a944f514418336f1b0",
+                "source_page": 39,
+                "quote": "brass laser nozzle"
+              },
+              {
+                "source_anchor": "ev_fcf5164b42be4339e4523bec14d3",
+                "source_page": 39,
+                "quote": "If the tube or nozzle is bent"
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_fcf5164b42be4339e4523bec14d3",
+                "source_page": 39,
+                "quote": "the laser beam will reflect off the inside wall of the nozzle causing a wide path."
+              }
+            ]
+          },
+          "resolution_status": "check_only"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_actions",
+            "path": "actions",
+            "message": "No CorrectiveAction claim was supplied."
+          },
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_cf391f1e83e33e8ac4da0b6e89665085dc50dcfed57cc9539465511cd0dde548",
+        "branch_lineage_id": "dbranch_aa46dbe0ad46d19ed5aa7ee6ceaf97e494f860b8cf37bec0f5834c5b6e84977b",
+        "record_window_id": "",
+        "record_anchor": "ev_1aeb07c216a9d310a03a96b18024",
+        "branch_anchor": "ev_32fb4fc7fd2f59f546010bacd0bf",
+        "evidence_ids": [
+          "ev_13cb50d025e0cacf6856f8219970",
+          "ev_17982f9314f37928bbc35abbc759",
+          "ev_18281b1d79d839b23c37164c399c",
+          "ev_1aeb07c216a9d310a03a96b18024",
+          "ev_32fb4fc7fd2f59f546010bacd0bf",
+          "ev_390c62a3b804a4a05934c73bb9e7",
+          "ev_49157c5076834f8b6d211902a624",
+          "ev_ac7fd5482087de142216e8602a34",
+          "ev_afa66f12ce69580213a7b3b3e9aa"
+        ],
+        "resolved_evidence_ids": [
+          "ev_13cb50d025e0cacf6856f8219970",
+          "ev_17982f9314f37928bbc35abbc759",
+          "ev_18281b1d79d839b23c37164c399c",
+          "ev_1aeb07c216a9d310a03a96b18024",
+          "ev_32fb4fc7fd2f59f546010bacd0bf",
+          "ev_390c62a3b804a4a05934c73bb9e7",
+          "ev_49157c5076834f8b6d211902a624",
+          "ev_ac7fd5482087de142216e8602a34",
+          "ev_afa66f12ce69580213a7b3b3e9aa"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_1aeb07c216a9d310a03a96b18024",
+            "ev_13cb50d025e0cacf6856f8219970",
+            "ev_32fb4fc7fd2f59f546010bacd0bf",
+            "ev_49157c5076834f8b6d211902a624",
+            "ev_afa66f12ce69580213a7b3b3e9aa",
+            "ev_ac7fd5482087de142216e8602a34",
+            "ev_17982f9314f37928bbc35abbc759",
+            "ev_18281b1d79d839b23c37164c399c",
+            "ev_390c62a3b804a4a05934c73bb9e7"
+          ],
+          "record_anchor": "ev_1aeb07c216a9d310a03a96b18024",
+          "branch_anchor": "ev_32fb4fc7fd2f59f546010bacd0bf",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Touch screen buttons are out of alignment",
+              "description": "The touch screen buttons do not match where the screen needs to be touched to activate the command.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1aeb07c216a9d310a03a96b18024",
+                  "source_page": 37,
+                  "quote": "Problem: The buttons on the Touch Screen are out of"
+                },
+                {
+                  "source_anchor": "ev_13cb50d025e0cacf6856f8219970",
+                  "source_page": 37,
+                  "quote": "alignment"
+                },
+                {
+                  "source_anchor": "ev_13cb50d025e0cacf6856f8219970",
+                  "source_page": 37,
+                  "quote": "The touch screen buttons do not match where the screen needs to be touched to activate the command."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": null,
+          "actions": [
+            {
+              "name": "Calibrate touch screen",
+              "description": "Perform the touch screen calibration procedure.",
+              "instruction_text": "Touch screen calibration in required. Proceed as follows. Power down the cutting system. Place finger on the upper left corner of the touch screen as shown. While holding finger on the screen, turn ON the main power switch located on the back of the diagnostic control cabinet. Remove finger after the \"Power On Setup\" screen appears. Using the left and right arrows to navigate, go to the Calibration Screen (screen page 2). Press Touch screen to begin calibrating. Using a paper clip or fine tip object, press the center of the cross as shown. The cross will reappear in the lower right corner. Press the center of the cross. Navigate to screen page 3. Select save and exit to complete calibration. The touch screen will restart in normal mode. Check for proper screen operation and begin your normal start-up procedure.",
+              "action_kind": "calibration",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_32fb4fc7fd2f59f546010bacd0bf",
+                  "source_page": 37,
+                  "quote": "Touch screen calibration in required. Proceed as follows."
+                },
+                {
+                  "source_anchor": "ev_32fb4fc7fd2f59f546010bacd0bf",
+                  "source_page": 37,
+                  "quote": "1) Power down the cutting system."
+                },
+                {
+                  "source_anchor": "ev_49157c5076834f8b6d211902a624",
+                  "source_page": 37,
+                  "quote": "Place finger on the upper left corner of the touch screen as Shown. While holding finger on the screen, turn ON the main power switch located on the back of the diagnostic control cabinet."
+                },
+                {
+                  "source_anchor": "ev_afa66f12ce69580213a7b3b3e9aa",
+                  "source_page": 37,
+                  "quote": "Remove finger after the \"Power On Setup\" screen appears."
+                },
+                {
+                  "source_anchor": "ev_ac7fd5482087de142216e8602a34",
+                  "source_page": 37,
+                  "quote": "Using the left and right arrows to navigate, go to the Calibration Screen (screen page 2). Press Touch screen to begin calibrating."
+                },
+                {
+                  "source_anchor": "ev_17982f9314f37928bbc35abbc759",
+                  "source_page": 38,
+                  "quote": "Using a paper clip or fine tip object, press the center of the cross as shown. The cross will reappear in the lower right corner. Press the center of the cross."
+                },
+                {
+                  "source_anchor": "ev_18281b1d79d839b23c37164c399c",
+                  "source_page": 38,
+                  "quote": "Navigate to screen page 3. Select save and exit to complete calibration."
+                },
+                {
+                  "source_anchor": "ev_390c62a3b804a4a05934c73bb9e7",
+                  "source_page": 38,
+                  "quote": "The touch screen will restart in normal mode."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_32fb4fc7fd2f59f546010bacd0bf",
+                  "source_page": 37,
+                  "quote": "Touch screen calibration in required. Proceed as follows."
+                },
+                {
+                  "source_anchor": "ev_18281b1d79d839b23c37164c399c",
+                  "source_page": 38,
+                  "quote": "Select save and exit to complete calibration."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check for proper screen operation.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_390c62a3b804a4a05934c73bb9e7",
+                  "source_page": 38,
+                  "quote": "Check for proper screen operation"
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "affected_component": {
+            "name": "touch screen",
+            "description": "Touch screen buttons are out of alignment and require calibration.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_13cb50d025e0cacf6856f8219970",
+                "source_page": 37,
+                "quote": "The touch screen buttons do not match where the screen needs to be touched to activate the command."
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_32fb4fc7fd2f59f546010bacd0bf",
+                "source_page": 37,
+                "quote": "Touch screen calibration in required."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_cf391f1e83e33e8ac4da0b6e89665085dc50dcfed57cc9539465511cd0dde548",
+          "branch_lineage_id": "dbranch_aa46dbe0ad46d19ed5aa7ee6ceaf97e494f860b8cf37bec0f5834c5b6e84977b",
+          "record_window_id": "",
+          "record_anchor": "ev_1aeb07c216a9d310a03a96b18024",
+          "branch_anchor": "ev_32fb4fc7fd2f59f546010bacd0bf",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "name": "Touch screen buttons are out of alignment",
+              "description": "The touch screen buttons do not match where the screen needs to be touched to activate the command.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_13cb50d025e0cacf6856f8219970",
+                  "source_page": 37,
+                  "quote": "The touch screen buttons do not match where the screen needs to be touched to activate the command.",
+                  "evidence_id": "ev_13cb50d025e0cacf6856f8219970",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "alignment\nDescription of Problem:\nThe touch screen buttons do not match where the screen\nneeds to be touched to activate the command.  Operator\nneeds to push above, below, right or left of the button for the\ncommand to take effect.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 13,
+                    "source_block_index": 14,
+                    "bbox": [
+                      324.24,
+                      84.998,
+                      576.006,
+                      149.958
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_13cb50d025e0cacf6856f8219970",
+                  "source_page": 37,
+                  "quote": "alignment",
+                  "evidence_id": "ev_13cb50d025e0cacf6856f8219970",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "alignment\nDescription of Problem:\nThe touch screen buttons do not match where the screen\nneeds to be touched to activate the command.  Operator\nneeds to push above, below, right or left of the button for the\ncommand to take effect.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 13,
+                    "source_block_index": 14,
+                    "bbox": [
+                      324.24,
+                      84.998,
+                      576.006,
+                      149.958
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_1aeb07c216a9d310a03a96b18024",
+                  "source_page": 37,
+                  "quote": "Problem: The buttons on the Touch Screen are out of",
+                  "evidence_id": "ev_1aeb07c216a9d310a03a96b18024",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "Problem: The buttons on the Touch Screen are out of",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 12,
+                    "source_block_index": 13,
+                    "bbox": [
+                      324.24,
+                      73.958,
+                      576.008,
+                      83.958
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": null,
+          "actions": [
+            {
+              "name": "Calibrate touch screen",
+              "description": "Perform the touch screen calibration procedure.",
+              "instruction_text": "Touch screen calibration in required. Proceed as follows. Power down the cutting system. Place finger on the upper left corner of the touch screen as shown. While holding finger on the screen, turn ON the main power switch located on the back of the diagnostic control cabinet. Remove finger after the \"Power On Setup\" screen appears. Using the left and right arrows to navigate, go to the Calibration Screen (screen page 2). Press Touch screen to begin calibrating. Using a paper clip or fine tip object, press the center of the cross as shown. The cross will reappear in the lower right corner. Press the center of the cross. Navigate to screen page 3. Select save and exit to complete calibration. The touch screen will restart in normal mode. Check for proper screen operation and begin your normal start-up procedure.",
+              "action_kind": "calibration",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_17982f9314f37928bbc35abbc759",
+                  "source_page": 38,
+                  "quote": "Using a paper clip or fine tip object, press the center of the cross as shown. The cross will reappear in the lower right corner. Press the center of the cross.",
+                  "evidence_id": "ev_17982f9314f37928bbc35abbc759",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "5) Using a paper clip or fine tip object, press the center of the\ncross as shown. The cross will reappear in the lower right\ncorner. Press the center of the cross.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 0,
+                    "source_block_index": 1,
+                    "bbox": [
+                      36.0,
+                      73.958,
+                      287.763,
+                      105.918
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_18281b1d79d839b23c37164c399c",
+                  "source_page": 38,
+                  "quote": "Navigate to screen page 3. Select save and exit to complete calibration.",
+                  "evidence_id": "ev_18281b1d79d839b23c37164c399c",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "6) Navigate to screen page 3. Select save and exit to\ncomplete calibration.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 1,
+                    "source_block_index": 2,
+                    "bbox": [
+                      36.0,
+                      300.518,
+                      287.768,
+                      321.558
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_32fb4fc7fd2f59f546010bacd0bf",
+                  "source_page": 37,
+                  "quote": "1) Power down the cutting system.",
+                  "evidence_id": "ev_32fb4fc7fd2f59f546010bacd0bf",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "Troubleshooting:\nTouch screen calibration in required. Proceed as follows.\n1) Power down the cutting system.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 14,
+                    "source_block_index": 15,
+                    "bbox": [
+                      324.24,
+                      161.918,
+                      568.681,
+                      193.998
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_32fb4fc7fd2f59f546010bacd0bf",
+                  "source_page": 37,
+                  "quote": "Touch screen calibration in required. Proceed as follows.",
+                  "evidence_id": "ev_32fb4fc7fd2f59f546010bacd0bf",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "Troubleshooting:\nTouch screen calibration in required. Proceed as follows.\n1) Power down the cutting system.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 14,
+                    "source_block_index": 15,
+                    "bbox": [
+                      324.24,
+                      161.918,
+                      568.681,
+                      193.998
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_390c62a3b804a4a05934c73bb9e7",
+                  "source_page": 38,
+                  "quote": "The touch screen will restart in normal mode.",
+                  "evidence_id": "ev_390c62a3b804a4a05934c73bb9e7",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "The touch screen will restart in normal mode. Check for\nproper screen operation and begin your normal start-up\nprocedure.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 2,
+                    "source_block_index": 3,
+                    "bbox": [
+                      36.0,
+                      333.518,
+                      287.776,
+                      365.598
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_49157c5076834f8b6d211902a624",
+                  "source_page": 37,
+                  "quote": "Place finger on the upper left corner of the touch screen as Shown. While holding finger on the screen, turn ON the main power switch located on the back of the diagnostic control cabinet.",
+                  "evidence_id": "ev_49157c5076834f8b6d211902a624",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "2) Place finger on the upper left corner of the touch screen as\nShown. While holding finger on the screen, turn ON the\nmain power switch located on the back of the diagnostic\ncontrol cabinet.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 15,
+                    "source_block_index": 16,
+                    "bbox": [
+                      324.24,
+                      205.958,
+                      576.026,
+                      248.958
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_ac7fd5482087de142216e8602a34",
+                  "source_page": 37,
+                  "quote": "Using the left and right arrows to navigate, go to the Calibration Screen (screen page 2). Press Touch screen to begin calibrating.",
+                  "evidence_id": "ev_ac7fd5482087de142216e8602a34",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "4) Using the left and right arrows to navigate, go to the\nCalibration Screen (screen page 2). Press Touch screen\nto begin calibrating.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 17,
+                    "source_block_index": 18,
+                    "bbox": [
+                      324.24,
+                      484.718,
+                      575.976,
+                      516.678
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_afa66f12ce69580213a7b3b3e9aa",
+                  "source_page": 37,
+                  "quote": "Remove finger after the \"Power On Setup\" screen appears.",
+                  "evidence_id": "ev_afa66f12ce69580213a7b3b3e9aa",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "3) Remove finger after the \"Power On Setup\" screen appears.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 16,
+                    "source_block_index": 17,
+                    "bbox": [
+                      324.24,
+                      462.758,
+                      576.018,
+                      472.758
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_18281b1d79d839b23c37164c399c",
+                  "source_page": 38,
+                  "quote": "Select save and exit to complete calibration.",
+                  "evidence_id": "ev_18281b1d79d839b23c37164c399c",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "6) Navigate to screen page 3. Select save and exit to\ncomplete calibration.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 1,
+                    "source_block_index": 2,
+                    "bbox": [
+                      36.0,
+                      300.518,
+                      287.768,
+                      321.558
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_32fb4fc7fd2f59f546010bacd0bf",
+                  "source_page": 37,
+                  "quote": "Touch screen calibration in required. Proceed as follows.",
+                  "evidence_id": "ev_32fb4fc7fd2f59f546010bacd0bf",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 37,
+                    "section": null,
+                    "quote": "Troubleshooting:\nTouch screen calibration in required. Proceed as follows.\n1) Power down the cutting system.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 14,
+                    "source_block_index": 15,
+                    "bbox": [
+                      324.24,
+                      161.918,
+                      568.681,
+                      193.998
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check for proper screen operation.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_390c62a3b804a4a05934c73bb9e7",
+                  "source_page": 38,
+                  "quote": "Check for proper screen operation",
+                  "evidence_id": "ev_390c62a3b804a4a05934c73bb9e7",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "The touch screen will restart in normal mode. Check for\nproper screen operation and begin your normal start-up\nprocedure.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 2,
+                    "source_block_index": 3,
+                    "bbox": [
+                      36.0,
+                      333.518,
+                      287.776,
+                      365.598
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "procedure_context": [],
+          "procedure_path_verified": false,
+          "affected_component": {
+            "name": "touch screen",
+            "description": "Touch screen buttons are out of alignment and require calibration.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_13cb50d025e0cacf6856f8219970",
+                "source_page": 37,
+                "quote": "The touch screen buttons do not match where the screen needs to be touched to activate the command.",
+                "evidence_id": "ev_13cb50d025e0cacf6856f8219970",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 37,
+                  "section": null,
+                  "quote": "alignment\nDescription of Problem:\nThe touch screen buttons do not match where the screen\nneeds to be touched to activate the command.  Operator\nneeds to push above, below, right or left of the button for the\ncommand to take effect.",
+                  "extraction_method": "native_text",
+                  "printed_page": null,
+                  "block_index": 13,
+                  "source_block_index": 14,
+                  "bbox": [
+                    324.24,
+                    84.998,
+                    576.006,
+                    149.958
+                  ],
+                  "table_index": null,
+                  "row_index": null,
+                  "ocr_region_index": null
+                }
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_32fb4fc7fd2f59f546010bacd0bf",
+                "source_page": 37,
+                "quote": "Touch screen calibration in required.",
+                "evidence_id": "ev_32fb4fc7fd2f59f546010bacd0bf",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 37,
+                  "section": null,
+                  "quote": "Troubleshooting:\nTouch screen calibration in required. Proceed as follows.\n1) Power down the cutting system.",
+                  "extraction_method": "native_text",
+                  "printed_page": null,
+                  "block_index": 14,
+                  "source_block_index": 15,
+                  "bbox": [
+                    324.24,
+                    161.918,
+                    568.681,
+                    193.998
+                  ],
+                  "table_index": null,
+                  "row_index": null,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "action_without_failure",
+            "path": "actions",
+            "message": "CorrectiveAction claims cannot be linked without a FailureMode."
+          },
+          {
+            "code": "component_without_failure",
+            "path": "affected_component",
+            "message": "An affected Component cannot be linked without a FailureMode."
+          },
+          {
+            "code": "missing_failure",
+            "path": "failure",
+            "message": "No FailureMode claim was supplied."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_dd877cb5819798acd3178c54c3b22de3cccdb0b7e3cc3d3187329100280b7533",
+        "branch_lineage_id": "dbranch_d5c8d7d9e75faef8a85c7f9c57a1e3e9056027c32d38c5f886889141e9ab8d17",
+        "record_window_id": "",
+        "record_anchor": "ev_f1068b8a9b2728803f294747284b",
+        "branch_anchor": "ev_09ca9edfbe4ad2190b5ca6279aa3",
+        "evidence_ids": [
+          "ev_09ca9edfbe4ad2190b5ca6279aa3",
+          "ev_f1068b8a9b2728803f294747284b"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_f1068b8a9b2728803f294747284b",
+            "ev_09ca9edfbe4ad2190b5ca6279aa3"
+          ],
+          "record_anchor": "ev_f1068b8a9b2728803f294747284b",
+          "branch_anchor": "ev_09ca9edfbe4ad2190b5ca6279aa3",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Loss of laser cutting power",
+              "description": "The laser cutting power decreases causing non-cut edges.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_f1068b8a9b2728803f294747284b",
+                  "source_page": 39,
+                  "quote": "Problem: Loss of laser cutting power"
+                },
+                {
+                  "source_anchor": "ev_f1068b8a9b2728803f294747284b",
+                  "source_page": 39,
+                  "quote": "The laser cutting power decreases causing non-cut edges."
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_09ca9edfbe4ad2190b5ca6279aa3",
+                  "source_page": 39,
+                  "quote": "Damaged or dirty lens."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Damaged or dirty focusing lens",
+            "description": "Damaged or dirty focusing lens.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_09ca9edfbe4ad2190b5ca6279aa3",
+                "source_page": 39,
+                "quote": "Damaged or dirty lens. Check for damage or dirt on the focusing lens."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clean or replace lens",
+              "description": "Clean or replace lens as required.",
+              "instruction_text": "Clean or replace lens as required.",
+              "action_kind": "cleaning_or_replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_09ca9edfbe4ad2190b5ca6279aa3",
+                  "source_page": 39,
+                  "quote": "Clean or replace lens as required."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_09ca9edfbe4ad2190b5ca6279aa3",
+                  "source_page": 39,
+                  "quote": "Damaged or dirty lens. Check for damage or dirt on the focusing lens. Clean or replace lens as required."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check for damage or dirt on the focusing lens.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_09ca9edfbe4ad2190b5ca6279aa3",
+                  "source_page": 39,
+                  "quote": "Check for damage or dirt on the focusing lens."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "Clean or replace lens as required.",
+              "applies_to": "action",
+              "step_index": 0,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_09ca9edfbe4ad2190b5ca6279aa3",
+                  "source_page": 39,
+                  "quote": "Clean or replace lens as required."
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "focusing lens",
+            "description": "Focusing lens may be damaged or dirty.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_09ca9edfbe4ad2190b5ca6279aa3",
+                "source_page": 39,
+                "quote": "focusing lens"
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_09ca9edfbe4ad2190b5ca6279aa3",
+                "source_page": 39,
+                "quote": "Damaged or dirty lens. Check for damage or dirt on the focusing lens. Clean or replace lens as required."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_2b6316c78ea166307c741e22e512f67e5e2d583053e064f0eca790bc25d9e6b7",
+        "branch_lineage_id": "dbranch_ea727e2a04ba121cea7a9b7fe63e2384dbd0f63709a679a4575cd6a384730bcd",
+        "record_window_id": "",
+        "record_anchor": "ev_fd3e8a4d280ca3fffd5c00e2f693",
+        "branch_anchor": "ev_3aa4127a854500155f11840d5d15",
+        "evidence_ids": [
+          "ev_3aa4127a854500155f11840d5d15",
+          "ev_45276d510958bf5701cef2f06737",
+          "ev_61c722da078f1a5a4ea9ac0e1a91",
+          "ev_b3dde131dece0fbb75b116f09d44",
+          "ev_c345372cf0d1d40303f626413efb",
+          "ev_fd3e8a4d280ca3fffd5c00e2f693"
+        ],
+        "resolved_evidence_ids": [
+          "ev_3aa4127a854500155f11840d5d15",
+          "ev_45276d510958bf5701cef2f06737",
+          "ev_61c722da078f1a5a4ea9ac0e1a91",
+          "ev_b3dde131dece0fbb75b116f09d44",
+          "ev_c345372cf0d1d40303f626413efb",
+          "ev_fd3e8a4d280ca3fffd5c00e2f693"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_fd3e8a4d280ca3fffd5c00e2f693",
+            "ev_61c722da078f1a5a4ea9ac0e1a91",
+            "ev_3aa4127a854500155f11840d5d15",
+            "ev_c345372cf0d1d40303f626413efb",
+            "ev_b3dde131dece0fbb75b116f09d44",
+            "ev_45276d510958bf5701cef2f06737"
+          ],
+          "record_anchor": "ev_fd3e8a4d280ca3fffd5c00e2f693",
+          "branch_anchor": "ev_3aa4127a854500155f11840d5d15",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Pen or tool delays coming down",
+              "description": "The Pen or Tool delays coming down and misses the beginning of marker or cut.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_fd3e8a4d280ca3fffd5c00e2f693",
+                  "source_page": 38,
+                  "quote": "The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut."
+                },
+                {
+                  "source_anchor": "ev_61c722da078f1a5a4ea9ac0e1a91",
+                  "source_page": 38,
+                  "quote": "The Pen or Tool delays coming down and misses the beginning of marker or cut."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": null,
+          "actions": [],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check the 24 VDC power supply located in the diagnostic cabinet. Make sure the green led is on.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_3aa4127a854500155f11840d5d15",
+                  "source_page": 38,
+                  "quote": "Check the 24 VDC power supply located in the diagnos-"
+                },
+                {
+                  "source_anchor": "ev_c345372cf0d1d40303f626413efb",
+                  "source_page": 38,
+                  "quote": "tic cabinet. Make sure the green led is on."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Check the 24 VDC power supply fuse.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_b3dde131dece0fbb75b116f09d44",
+                  "source_page": 38,
+                  "quote": "Check the 24 VDC power supply fuse."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Check flow control valves on the pen air cylinder.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_45276d510958bf5701cef2f06737",
+                  "source_page": 38,
+                  "quote": "Check flow control valves on the pen air cylinder."
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "check_only"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_2b6316c78ea166307c741e22e512f67e5e2d583053e064f0eca790bc25d9e6b7",
+          "branch_lineage_id": "dbranch_ea727e2a04ba121cea7a9b7fe63e2384dbd0f63709a679a4575cd6a384730bcd",
+          "record_window_id": "",
+          "record_anchor": "ev_fd3e8a4d280ca3fffd5c00e2f693",
+          "branch_anchor": "ev_3aa4127a854500155f11840d5d15",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "name": "Pen or tool delays coming down",
+              "description": "The Pen or Tool delays coming down and misses the beginning of marker or cut.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_61c722da078f1a5a4ea9ac0e1a91",
+                  "source_page": 38,
+                  "quote": "The Pen or Tool delays coming down and misses the beginning of marker or cut.",
+                  "evidence_id": "ev_61c722da078f1a5a4ea9ac0e1a91",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "6.The Pen or Tool delays coming down and misses the\nbeginning of marker or cut.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 19,
+                    "source_block_index": 20,
+                    "bbox": [
+                      315.24,
+                      282.998,
+                      567.02,
+                      303.918
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_fd3e8a4d280ca3fffd5c00e2f693",
+                  "source_page": 38,
+                  "quote": "The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut.",
+                  "evidence_id": "ev_fd3e8a4d280ca3fffd5c00e2f693",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "Problem: The Cutting Tool or Pen does not move down\nDescription of Problem:\nThe tool or Pen does not move down when cutting a file or\nthey are delayed coming down at the beginning of a cut.  This\ncan be caused by an electrical short, tool mapping in\nsoftware or a problem with the power supply.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 3,
+                    "source_block_index": 4,
+                    "bbox": [
+                      36.0,
+                      377.558,
+                      287.758,
+                      442.518
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": null,
+          "actions": [],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check the 24 VDC power supply located in the diagnostic cabinet. Make sure the green led is on.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_3aa4127a854500155f11840d5d15",
+                  "source_page": 38,
+                  "quote": "Check the 24 VDC power supply located in the diagnos-",
+                  "evidence_id": "ev_3aa4127a854500155f11840d5d15",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "a) Check the 24 VDC power supply located in the diagnos-",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 20,
+                    "source_block_index": 21,
+                    "bbox": [
+                      324.24,
+                      315.998,
+                      566.995,
+                      325.998
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_c345372cf0d1d40303f626413efb",
+                  "source_page": 38,
+                  "quote": "tic cabinet. Make sure the green led is on.",
+                  "evidence_id": "ev_c345372cf0d1d40303f626413efb",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "tic cabinet. Make sure the green led is on.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 21,
+                    "source_block_index": 22,
+                    "bbox": [
+                      330.96,
+                      326.918,
+                      513.948,
+                      336.918
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            },
+            {
+              "instruction_text": "Check the 24 VDC power supply fuse.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_b3dde131dece0fbb75b116f09d44",
+                  "source_page": 38,
+                  "quote": "Check the 24 VDC power supply fuse.",
+                  "evidence_id": "ev_b3dde131dece0fbb75b116f09d44",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "b) Check the 24 VDC power supply fuse.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 22,
+                    "source_block_index": 23,
+                    "bbox": [
+                      324.24,
+                      348.998,
+                      500.523,
+                      358.998
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            },
+            {
+              "instruction_text": "Check flow control valves on the pen air cylinder.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_45276d510958bf5701cef2f06737",
+                  "source_page": 38,
+                  "quote": "Check flow control valves on the pen air cylinder.",
+                  "evidence_id": "ev_45276d510958bf5701cef2f06737",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 38,
+                    "section": null,
+                    "quote": "c) Check flow control valves on the pen air cylinder.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 23,
+                    "source_block_index": 24,
+                    "bbox": [
+                      324.24,
+                      370.958,
+                      545.503,
+                      380.958
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "procedure_context": [],
+          "procedure_path_verified": false,
+          "affected_component": null,
+          "resolution_status": "check_only"
+        },
+        "source_gap_verified": false,
+        "disposition": "gap",
+        "accounting_state": "inspection_only_gap",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "check_only",
+            "path": "resolution_status",
+            "message": "The source provides a diagnostic check but no restorative action."
+          },
+          {
+            "code": "missing_failure",
+            "path": "failure",
+            "message": "No FailureMode claim was supplied."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_029c591fa2245fee854682ff1d08bd35f77cdba09163de0ab975181f2ed9fb04",
+        "branch_lineage_id": "dbranch_f14201a8ccaadeeb0078e0b33b0ebe7310f5eca5f3aafa63b39ceb4ab4fceabb",
+        "record_window_id": "",
+        "record_anchor": "ev_2cca2fa9c0887ab296c2c199e343",
+        "branch_anchor": "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+        "evidence_ids": [
+          "ev_0d0808ffe54c715dcae975f2564c",
+          "ev_2cca2fa9c0887ab296c2c199e343",
+          "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+          "ev_6f51af462593ce85cf7d7d56100e",
+          "ev_7ab7cbb9afed6571fdcd9c944ab8"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_2cca2fa9c0887ab296c2c199e343",
+            "ev_6f51af462593ce85cf7d7d56100e",
+            "ev_7ab7cbb9afed6571fdcd9c944ab8",
+            "ev_0d0808ffe54c715dcae975f2564c",
+            "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+            "ev_8d1023d8b4eb61d5426ad9efb7e1"
+          ],
+          "record_anchor": "ev_2cca2fa9c0887ab296c2c199e343",
+          "branch_anchor": "ev_378b5f5a9fc8a50bf640d6bb1ddb",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Laser fume extractor has reduced or no vacuum",
+              "description": "An odor is present when cutting with the laser tool or laser cutting path is wider than normal.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2cca2fa9c0887ab296c2c199e343",
+                  "source_page": 38,
+                  "quote": "Problem: Laser Fume Extractor has reduced vacuum"
+                },
+                {
+                  "source_anchor": "ev_6f51af462593ce85cf7d7d56100e",
+                  "source_page": 38,
+                  "quote": "An odor is present when cutting with the laser tool or Laser cutting path is wider than normal"
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": null,
+          "actions": [
+            {
+              "name": "Increase vacuum pressure",
+              "description": "Increase vacuum pressure using the fume extractor control panel.",
+              "instruction_text": "Increase vacuum pressure using the fume extractor control panel.",
+              "action_kind": "adjustment",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0d0808ffe54c715dcae975f2564c",
+                  "source_page": 38,
+                  "quote": "Increase vacuum pressure using the fume extractor control panel."
+                }
+              ],
+              "resolution_link_evidence": []
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check the laser fume extractor for power and is turned ON.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_7ab7cbb9afed6571fdcd9c944ab8",
+                  "source_page": 38,
+                  "quote": "Check the laser fume extractor for power and is turned ON."
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "ambiguous"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "compiled_semantically_ambiguous",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "action_without_failure",
+            "path": "actions",
+            "message": "CorrectiveAction claims cannot be linked without a FailureMode."
+          },
+          {
+            "code": "declared_ambiguous",
+            "path": "",
+            "message": "The extractor marked this branch as ambiguous."
+          },
+          {
+            "code": "lineage_anchor_outside_bundle",
+            "path": "branch_anchor",
+            "message": "branch_anchor 'ev_378b5f5a9fc8a50bf640d6bb1ddb' does not belong to this branch's claim/edge support set"
+          },
+          {
+            "code": "missing_failure",
+            "path": "failure",
+            "message": "No FailureMode claim was supplied."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_1a561891c4c071ac91de7d2ae6a09616248c373d34a667ef701f4f61ebe0f224",
+        "branch_lineage_id": "dbranch_f29657b816beccb11b25f2521964b02ef639cb0dd59d9ea0db50d49b055052a9",
+        "record_window_id": "",
+        "record_anchor": "ev_e279e16774f1a4c736f7d89d949f",
+        "branch_anchor": "ev_e279e16774f1a4c736f7d89d949f",
+        "evidence_ids": [
+          "ev_e279e16774f1a4c736f7d89d949f"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_e279e16774f1a4c736f7d89d949f",
+            "ev_c7dfcb5040f573ee4c92400c3f7f",
+            "ev_7dc4333b670af7fa1882528dcda0",
+            "ev_94d2bc72795a8d63e0912926eaaf",
+            "ev_10ae70c2e0f41bfdfd803885b80a",
+            "ev_8238841422577dea7e3b3321c4b9"
+          ],
+          "record_anchor": "ev_e279e16774f1a4c736f7d89d949f",
+          "branch_anchor": "ev_e279e16774f1a4c736f7d89d949f",
+          "indicators": [],
+          "failure": null,
+          "actions": [],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "not_diagnostic"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "exclude",
+        "accounting_state": "observed_excluded",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "declared_not_diagnostic",
+            "path": "",
+            "message": "The extractor explicitly classified this record as non-diagnostic."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      }
+    ],
+    "candidate_count": 13,
+    "duplicate_candidate_count": 0,
+    "publish_count": 0,
+    "unresolved_count": 12,
+    "disposition_counts": {
+      "publish": 0,
+      "gap": 2,
+      "review": 10,
+      "exclude": 1
+    },
+    "drop_reasons": {
+      "action_without_failure": 4,
+      "check_only": 2,
+      "component_without_failure": 2,
+      "declared_ambiguous": 3,
+      "declared_not_diagnostic": 1,
+      "lineage_anchor_outside_bundle": 1,
+      "missing_actions": 1,
+      "missing_failure": 6,
+      "relation_endpoint_support_unestablished": 6
+    },
+    "escalation_recommended": true
+  },
+  "llm_call_entries": [
+    {
+      "operation": "diagnostic_bundle_extraction",
+      "model": "gpt-6-luna",
+      "pricing_model": "gpt-6-luna",
+      "prompt": 5358,
+      "completion": 7318,
+      "total": 12676,
+      "cached_prompt": 0,
+      "cache_write_prompt": 5355,
+      "non_cached_prompt": 5358,
+      "estimated_cost_usd": 0.004329,
+      "reasoning_effort": "low",
+      "call_role": "primary",
+      "escalation_reason": ""
+    }
+  ]
+}

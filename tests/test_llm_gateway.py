@@ -43,10 +43,11 @@ def test_gateway_defaults_to_real_mode_and_uses_real_factory(monkeypatch):
     class FakeRealClient:
         def __init__(self, **kwargs):
             calls.append(kwargs)
+            self.chat = SimpleNamespace(completions=SimpleNamespace())
 
     client = get_client(timeout=3, api_key="key-real", client_factory=FakeRealClient)
 
-    assert isinstance(client, FakeRealClient)
+    assert isinstance(client._wrapped, FakeRealClient)
     assert calls == [{"api_key": "key-real", "timeout": 3}]
 
 

@@ -1,0 +1,1362 @@
+{
+  "llm_calls": 1,
+  "prompt_tokens": 5932,
+  "cached_prompt_tokens": 0,
+  "cache_write_prompt_tokens": 5929,
+  "non_cached_prompt_tokens": 5932,
+  "completion_tokens": 5007,
+  "total_tokens": 10939,
+  "estimated_cost_usd": 0.003245,
+  "models": [
+    "gpt-6-luna"
+  ],
+  "pricing_models": [
+    "gpt-6-luna"
+  ],
+  "operations": [
+    "diagnostic_bundle_extraction"
+  ],
+  "by_model": {
+    "gpt-6-luna": {
+      "label": "GPT-6 Luna",
+      "llm_calls": 1,
+      "prompt_tokens": 5932,
+      "cached_prompt_tokens": 0,
+      "cache_write_prompt_tokens": 5929,
+      "non_cached_prompt_tokens": 5932,
+      "completion_tokens": 5007,
+      "total_tokens": 10939,
+      "estimated_cost_usd": 0.003245
+    }
+  },
+  "retry_count": 0,
+  "parse_repair_events": [],
+  "mining_summary": {
+    "component_count": 13,
+    "error_code_count": 0,
+    "component_terms": [
+      "board",
+      "driver",
+      "connector",
+      "led",
+      "power supply",
+      "valve",
+      "solenoid",
+      "solenoid valve",
+      "cover",
+      "nozzle",
+      "panel",
+      "battery",
+      "fan"
+    ],
+    "error_code_tokens": []
+  },
+  "resolution_completion": {},
+  "diagnostic_contract": {
+    "input_pages": [
+      96,
+      97,
+      98,
+      99,
+      100
+    ],
+    "candidate_input_anchors": [],
+    "candidate_input_evidence": [],
+    "source_anchor_aliases": {
+      "a0001": "ev_130f4a3798737369cb6ff03b8f80",
+      "a0002": "ev_7b830e5d01cdc90e2d96ed7e4102",
+      "a0003": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+      "a0004": "ev_3cc0d6982268a6c15d5d95a7b366",
+      "a0005": "ev_f777cf5415351056a711fb8bfbcd",
+      "a0006": "ev_d90d4b038f23cacf6022bcd1337f",
+      "a0007": "ev_01688c479955b302995ba8064950",
+      "a0008": "ev_9d362f4f3b01f341ad8fdd1413c0",
+      "a0009": "ev_072bda65915800ab65ba56699419",
+      "a0010": "ev_ed9926b47cde479e8afa5f58dc6f",
+      "a0011": "ev_d6534cfbfd27ec60788edbc2ffab",
+      "a0012": "ev_fa547296ccad76e8ec996347e64a",
+      "a0013": "ev_205c05b9934a2425c31b55bfb13a",
+      "a0014": "ev_59666649ea8dbd58fd9ee447a9d6",
+      "a0015": "ev_c472345e7e74882166775f3b9b4b",
+      "a0016": "ev_c87d83989907d9db93651b16702c",
+      "a0017": "ev_0d2f114db8e32521ea3adc64c480",
+      "a0018": "ev_b9cdd7205730b4efa48887f0fd2d",
+      "a0019": "ev_da1bc8f5269e3c40019f39fcce68",
+      "a0020": "ev_4c46ed1145596b2c8c3b7b974ea1",
+      "a0021": "ev_24c1a4c302c518aac7f76889125e",
+      "a0022": "ev_61be567630d3f8cdb4bc529c4823",
+      "a0023": "ev_a5bc46c4b27e1f45f814c28e6e8c",
+      "a0024": "ev_25c3a33d0a6978a943c79ab11247",
+      "a0025": "ev_bd5f8cb001e684f1611bee2f38ad",
+      "a0026": "ev_3b49dfaf56a261f06ee0eec8f331",
+      "a0027": "ev_9c85d17070cd07ce0eb8d6b88342",
+      "a0028": "ev_8b5e4ca8098956966426ff3367c7",
+      "a0029": "ev_99ac77d87d01504635eade3fd83b",
+      "a0030": "ev_57dd21fa5b91bc6453d42535fac6",
+      "a0031": "ev_c697ea405cb662d74757c1299dbf",
+      "a0032": "ev_349097fa5d305b77a7b92e508120",
+      "a0033": "ev_6b944c84669506df76657dd60831",
+      "a0034": "ev_7bf6b96929616886ce8de17fb599",
+      "a0035": "ev_1dc07952e5742c6f46f65635fc8a",
+      "a0036": "ev_632515fdb12a8bce92914665b5f7",
+      "a0037": "ev_700a025bf79fd7026914b2579fe3",
+      "a0038": "ev_6c2dc35b9e5a9f3d2f2fd71279f4",
+      "a0039": "ev_1a7421e328153f553d9355552b1b",
+      "a0040": "ev_6a5b547113d2aaeb2ae3ec3d29f3",
+      "a0041": "ev_bd5f15449abb8aedf42f011ff63c",
+      "a0042": "ev_46fb5e0c2f7d7027e9e63497c979",
+      "a0043": "ev_812928db5d243a01c2cab6325553",
+      "a0044": "ev_e38921f342290c94ed0dd2c9af76",
+      "a0045": "ev_6eab23e068d31aaba603a794ab69",
+      "a0046": "ev_e7077c9ff7587912b5ecdf049409",
+      "a0047": "ev_875535b6a624546e5d0f0808d390",
+      "a0048": "ev_2897c3a44dc789d6ec7ac33d67ca",
+      "a0049": "ev_1f4d282853ed2d55bef623f0eef8",
+      "a0050": "ev_7d0b9cb90d9b889589d42fabf947",
+      "a0051": "ev_6ae57bf36c0aaa6962e2569bafae",
+      "a0052": "ev_6af3e19cdddfde87262b755bdcf4",
+      "a0053": "ev_b4d4ac565e8f8068be51e2195d9f",
+      "a0054": "ev_842009f6e68beb2d8272c7e9b3ad",
+      "a0055": "ev_b14f134f8b3efb796c7726246403",
+      "a0056": "ev_af974ca258efbd01138adc26a5c3",
+      "a0057": "ev_27e6ce006e9a2574691f8ddd84f8",
+      "a0058": "ev_63e506ccfcf5a1d076e19023ef95",
+      "a0059": "ev_ce10a390ece4bce3c399c608dd60",
+      "a0060": "ev_546a761dbe00116de90494adfb41",
+      "a0061": "ev_8f919bccdc9343eafd69355d1b49",
+      "a0062": "ev_810640c10e61bf61d437e165bacf",
+      "a0063": "ev_01d0a3343f3ca89264704a7dd3eb",
+      "a0064": "ev_228dc0ee9192cb781ca343945cbe",
+      "a0065": "ev_d92f1c0c71c8110ddffb3157d5d5",
+      "a0066": "ev_a9c5712e1bfbbcb3246e4cb56d90",
+      "a0067": "ev_5fd56890b7d6f3f69e385aaa973a",
+      "a0068": "ev_e26105dcaad9567be05a4d3c8fd2",
+      "a0069": "ev_02971eb94db77ceb5cb04af09514",
+      "a0070": "ev_a97ccf73f957fc7aa76957d4f54e",
+      "a0071": "ev_05bbe57b95da266253849e49b242",
+      "a0072": "ev_db0e1118e04b65218b4a6e64934a",
+      "a0073": "ev_c2b6b04f63938d24d276d2c6dd01",
+      "a0074": "ev_22e2076b0043718a9b075fd00aab",
+      "a0075": "ev_88339a88ce7f1a20b8bca3bd23d5",
+      "a0076": "ev_07a6873e9c3d1546fea626309ccf",
+      "a0077": "ev_f581455e283f84c21a43e0c31c6a",
+      "a0078": "ev_cd012c7f99786df1a69eb18ae014",
+      "a0079": "ev_ec2968b64a571336650f371044d4",
+      "a0080": "ev_73f51788c0552c3041bf43f1d9db",
+      "a0081": "ev_870edebfc1801870008575d14532",
+      "a0082": "ev_efa35b71658bffef9642d1ec391a",
+      "a0083": "ev_a0a0861b95533b873dc3ce033939",
+      "a0084": "ev_f04cc32052989fe24332fc728693",
+      "a0085": "ev_595a838da84fcf5abe6da379b91e",
+      "a0086": "ev_44bd3afbcebb92a5c6aa7fa58622",
+      "a0087": "ev_121ccd36319b32d6cdc559bb31eb",
+      "a0088": "ev_d72a596d5b4d05d42195621ff54f",
+      "a0089": "ev_2feba172a53511481e324539cb7f",
+      "a0090": "ev_bb8dd5d81b429e998d3a30f9e04d",
+      "a0091": "ev_253cb953feaf91f9a0ae5dc3da02",
+      "a0092": "ev_73a2cb9ee14f8e6b8d7d3dec0394",
+      "a0093": "ev_cf2356ad6fb360d8e8d82f20add5",
+      "a0094": "ev_2fff6f4cc5b6931922083b252983",
+      "a0095": "ev_3d6c3d624b78d5ed8168804c7678",
+      "a0096": "ev_4bbb1a832a5fef8e348a9b8ca7d6",
+      "a0097": "ev_d3752b580257fb99be9fa8d8bc6f",
+      "a0098": "ev_2f8ed1b2c2e862822247169ee2bc",
+      "a0099": "ev_841f530968162d8b9a363926f972",
+      "a0100": "ev_a5c885b45fe2d09cede0fdedbf4a",
+      "a0101": "ev_a31657855e196ede2bfbf0591722",
+      "a0102": "ev_f2be30308daeb9c764c7c19a4f88",
+      "a0103": "ev_bb6e4c32bff29c3ec0f8783c7395",
+      "a0104": "ev_bcf3ad90571db3076a8b342ff9cd",
+      "a0105": "ev_3f903c2f631fd7e21deb132b4bcd",
+      "a0106": "ev_0976bdff30be82a68dc02815b1c5",
+      "a0107": "ev_ff6b439fb2d69f1a9534839db2f8",
+      "a0108": "ev_6e6763480eec41910866200364ec",
+      "a0109": "ev_780eae6f835b843216eb20a7b822",
+      "a0110": "ev_b7b16bd6e6efd2365c43d53452f6",
+      "a0111": "ev_8cfcb5eab3bbfa93630f3db797f4",
+      "a0112": "ev_0315ac5c8375675b75fdfe1d0e35",
+      "a0113": "ev_5f2165818aa19e72dfea20b335e0",
+      "a0114": "ev_7b661df034f369068ce15f97b67e",
+      "a0115": "ev_e1fb92349e6d2618dc7568bd1d6d",
+      "a0116": "ev_4d8ffbc2784aea30d634350c949c",
+      "a0117": "ev_0e86a616f25bfa0890b43b0b03dc",
+      "a0118": "ev_af450d14e62d538c563f4491817b",
+      "a0119": "ev_f96004a6446e336f738bc9e6149a",
+      "a0120": "ev_00d043d6fb6d266d9c236f31251d"
+    },
+    "evidence_anchor_rebindings": [],
+    "advisory_window_bindings": [],
+    "schema_version": "1.1",
+    "source_language": "en",
+    "provider_model": "gpt-6-luna",
+    "provider_reasoning_effort": "low",
+    "call_role": "primary",
+    "escalation_reason": "",
+    "provider_response_id": "chatcmpl-ESMs98hWadfRgHxtS6PVfzVzuQdg0",
+    "finish_reason": "stop",
+    "parsed": true,
+    "refusal": false,
+    "raw_sha256": "f5fc388175f649a3080a42571ab16e789b317d5ecee094462587c6b374a643d7",
+    "response_archive": "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c9p_test9_low_r1/provider_responses/9dec533740be4eea87d8b566d3d046d3.json",
+    "raw_response_text": "",
+    "invalid_record_count": 0,
+    "records": [
+      {
+        "record_lineage_id": "drec_26fdf6e66dfe81e6650d21a819936f2afbb28eeadc49d1ebd566a0c0864cd8c4",
+        "branch_lineage_id": "dbranch_189c57cc119d2c1977941e2a8378318f5b9c117f010447df0a2439d356652ec4",
+        "record_window_id": "",
+        "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+        "branch_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+        "evidence_ids": [
+          "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "ev_253cb953feaf91f9a0ae5dc3da02",
+          "ev_2feba172a53511481e324539cb7f",
+          "ev_44bd3afbcebb92a5c6aa7fa58622",
+          "ev_cf2356ad6fb360d8e8d82f20add5"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_0b87a1e934ae5d429a19a0ff2e7c",
+            "ev_f777cf5415351056a711fb8bfbcd",
+            "ev_44bd3afbcebb92a5c6aa7fa58622",
+            "ev_2feba172a53511481e324539cb7f",
+            "ev_253cb953feaf91f9a0ae5dc3da02",
+            "ev_cf2356ad6fb360d8e8d82f20add5"
+          ],
+          "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "branch_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+              "description": "Both fault LEDs illuminate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                },
+                {
+                  "source_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+                  "source_page": 99,
+                  "quote": "If yes, replace the J1-to-J9 twisted pair wires."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty J1-to-J9 twisted pair wires",
+            "description": "Compressor-enable voltage is present at J9 on the power board but not at J1 on the compressor-driver board; the manual directs checking the twisted pair wires connecting the boards.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_2feba172a53511481e324539cb7f",
+                "source_page": 99,
+                "quote": "check the twisted pair wires that connect the compressor-driver board to the power board."
+              },
+              {
+                "source_anchor": "ev_253cb953feaf91f9a0ae5dc3da02",
+                "source_page": 99,
+                "quote": "Is compressor-enable voltage present (3 VDC)?"
+              },
+              {
+                "source_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+                "source_page": 99,
+                "quote": "replace the J1-to-J9 twisted pair wires."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the J1-to-J9 twisted pair wires",
+              "description": "Replace the J1-to-J9 twisted pair wires.",
+              "instruction_text": "Replace the J1-to-J9 twisted pair wires. See Replace the wire group on page 146.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+                  "source_page": 99,
+                  "quote": "replace the J1-to-J9 twisted pair wires. See Replace the wire group on page 146."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+                  "source_page": 99,
+                  "quote": "If yes, replace the J1-to-J9 twisted pair wires."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check compressor-enable voltage at J1 on the compressor-driver board and at J9 on the power board; determine whether 3 VDC is present at each.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_44bd3afbcebb92a5c6aa7fa58622",
+                  "source_page": 99,
+                  "quote": "check the compressor-enable voltage on the J1 connector"
+                },
+                {
+                  "source_anchor": "ev_253cb953feaf91f9a0ae5dc3da02",
+                  "source_page": 99,
+                  "quote": "check the compressor-enable voltage on the J9 connector on the power board."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "Compressor-enable voltage is not present at J1 on the compressor-driver board but is present at J9 on the power board.",
+              "applies_to": "branch",
+              "step_index": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_44bd3afbcebb92a5c6aa7fa58622",
+                  "source_page": 99,
+                  "quote": "Is compressor-enable voltage present (3 VDC)?"
+                },
+                {
+                  "source_anchor": "ev_2feba172a53511481e324539cb7f",
+                  "source_page": 99,
+                  "quote": "If no, check the twisted pair wires"
+                },
+                {
+                  "source_anchor": "ev_253cb953feaf91f9a0ae5dc3da02",
+                  "source_page": 99,
+                  "quote": "Is compressor-enable voltage present (3 VDC)?"
+                },
+                {
+                  "source_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+                  "source_page": 99,
+                  "quote": "If yes, replace the J1-to-J9 twisted pair wires."
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "J1-to-J9 twisted pair wires",
+            "description": "Twisted pair wires connecting the compressor-driver board to the power board.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_2feba172a53511481e324539cb7f",
+                "source_page": 99,
+                "quote": "the twisted pair wires that connect the compressor-driver board to the power board."
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+                "source_page": 99,
+                "quote": "replace the J1-to-J9 twisted pair wires."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_26fdf6e66dfe81e6650d21a819936f2afbb28eeadc49d1ebd566a0c0864cd8c4",
+        "branch_lineage_id": "dbranch_2c74948d425570b9eee4f45afb9dc2564fcd05b7019c529f84bafa968c562a80",
+        "record_window_id": "",
+        "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+        "branch_anchor": "ev_4d8ffbc2784aea30d634350c949c",
+        "evidence_ids": [
+          "ev_0976bdff30be82a68dc02815b1c5",
+          "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "ev_0e86a616f25bfa0890b43b0b03dc",
+          "ev_4d8ffbc2784aea30d634350c949c",
+          "ev_5f2165818aa19e72dfea20b335e0",
+          "ev_6e6763480eec41910866200364ec",
+          "ev_bcf3ad90571db3076a8b342ff9cd",
+          "ev_d90d4b038f23cacf6022bcd1337f"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_0b87a1e934ae5d429a19a0ff2e7c",
+            "ev_d90d4b038f23cacf6022bcd1337f",
+            "ev_cd012c7f99786df1a69eb18ae014",
+            "ev_870edebfc1801870008575d14532",
+            "ev_a0a0861b95533b873dc3ce033939",
+            "ev_595a838da84fcf5abe6da379b91e",
+            "ev_bcf3ad90571db3076a8b342ff9cd",
+            "ev_0976bdff30be82a68dc02815b1c5",
+            "ev_6e6763480eec41910866200364ec",
+            "ev_5f2165818aa19e72dfea20b335e0",
+            "ev_4d8ffbc2784aea30d634350c949c",
+            "ev_0e86a616f25bfa0890b43b0b03dc"
+          ],
+          "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "branch_anchor": "ev_4d8ffbc2784aea30d634350c949c",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+              "description": "Both fault LEDs illuminate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                },
+                {
+                  "source_anchor": "ev_4d8ffbc2784aea30d634350c949c",
+                  "source_page": 100,
+                  "quote": "replace the power board."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty power board (PCB2)",
+            "description": "Neither VBUS nor compressor-enable voltage is present on the isolated power board.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_d90d4b038f23cacf6022bcd1337f",
+                "source_page": 96,
+                "quote": "Faulty power board (PCB2)"
+              },
+              {
+                "source_anchor": "ev_bcf3ad90571db3076a8b342ff9cd",
+                "source_page": 100,
+                "quote": "This isolates the power board."
+              },
+              {
+                "source_anchor": "ev_0976bdff30be82a68dc02815b1c5",
+                "source_page": 100,
+                "quote": "Check VBUS on the power board (nominal 375 VDC bus voltage)"
+              },
+              {
+                "source_anchor": "ev_6e6763480eec41910866200364ec",
+                "source_page": 100,
+                "quote": "check compressor-enable voltage at J9 on the power board (3 VDC)"
+              },
+              {
+                "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                "source_page": 100,
+                "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+              },
+              {
+                "source_anchor": "ev_4d8ffbc2784aea30d634350c949c",
+                "source_page": 100,
+                "quote": "If neither VBUS nor compressor-enable voltage are present on the power board"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the power board",
+              "description": "Replace the power board.",
+              "instruction_text": "Replace the power board. See Replace the power board on page 135.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_4d8ffbc2784aea30d634350c949c",
+                  "source_page": 100,
+                  "quote": "replace the power board."
+                },
+                {
+                  "source_anchor": "ev_0e86a616f25bfa0890b43b0b03dc",
+                  "source_page": 100,
+                  "quote": "See Replace the power board on page 135."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_4d8ffbc2784aea30d634350c949c",
+                  "source_page": 100,
+                  "quote": "If neither VBUS nor compressor-enable voltage are present on the power board, replace the power board."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Remove the J1 and J3 connectors from the compressor-driver board to isolate the power board; check VBUS and compressor-enable voltage on the power board.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_bcf3ad90571db3076a8b342ff9cd",
+                  "source_page": 100,
+                  "quote": "Remove the J1 and J3 connectors from the compressor-driver board. This isolates the power board."
+                },
+                {
+                  "source_anchor": "ev_0976bdff30be82a68dc02815b1c5",
+                  "source_page": 100,
+                  "quote": "Check VBUS on the power board (nominal 375 VDC bus voltage)"
+                },
+                {
+                  "source_anchor": "ev_6e6763480eec41910866200364ec",
+                  "source_page": 100,
+                  "quote": "check compressor-enable voltage at J9 on the power board (3 VDC)"
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "Neither VBUS nor compressor-enable voltage is present on the isolated power board.",
+              "applies_to": "branch",
+              "step_index": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                  "source_page": 100,
+                  "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+                },
+                {
+                  "source_anchor": "ev_4d8ffbc2784aea30d634350c949c",
+                  "source_page": 100,
+                  "quote": "If neither VBUS nor compressor-enable voltage are present on the power board"
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "Power board (PCB2)",
+            "description": "Power board.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_d90d4b038f23cacf6022bcd1337f",
+                "source_page": 96,
+                "quote": "Faulty power board (PCB2)"
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_4d8ffbc2784aea30d634350c949c",
+                "source_page": 100,
+                "quote": "replace the power board."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_26fdf6e66dfe81e6650d21a819936f2afbb28eeadc49d1ebd566a0c0864cd8c4",
+        "branch_lineage_id": "dbranch_502f7cd23a0891e74d3b2c8e62d174437f2ac2ac8f03135a7e66512a8108d87a",
+        "record_window_id": "",
+        "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+        "branch_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d",
+        "evidence_ids": [
+          "ev_0976bdff30be82a68dc02815b1c5",
+          "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "ev_5f2165818aa19e72dfea20b335e0",
+          "ev_6e6763480eec41910866200364ec",
+          "ev_7b661df034f369068ce15f97b67e",
+          "ev_bcf3ad90571db3076a8b342ff9cd",
+          "ev_e1fb92349e6d2618dc7568bd1d6d",
+          "ev_f777cf5415351056a711fb8bfbcd"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_0b87a1e934ae5d429a19a0ff2e7c",
+            "ev_f777cf5415351056a711fb8bfbcd",
+            "ev_bcf3ad90571db3076a8b342ff9cd",
+            "ev_0976bdff30be82a68dc02815b1c5",
+            "ev_6e6763480eec41910866200364ec",
+            "ev_5f2165818aa19e72dfea20b335e0",
+            "ev_7b661df034f369068ce15f97b67e",
+            "ev_e1fb92349e6d2618dc7568bd1d6d"
+          ],
+          "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "branch_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+              "description": "Both fault LEDs illuminate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                },
+                {
+                  "source_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d",
+                  "source_page": 100,
+                  "quote": "replace the compressor-driver board."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty compressor-driver board (PCB3)",
+            "description": "With the power board isolated, both VBUS and compressor-enable voltage are present on the power board.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_f777cf5415351056a711fb8bfbcd",
+                "source_page": 96,
+                "quote": "Faulty compressor-driver board (PCB3)"
+              },
+              {
+                "source_anchor": "ev_bcf3ad90571db3076a8b342ff9cd",
+                "source_page": 100,
+                "quote": "This isolates the power board."
+              },
+              {
+                "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                "source_page": 100,
+                "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+              },
+              {
+                "source_anchor": "ev_7b661df034f369068ce15f97b67e",
+                "source_page": 100,
+                "quote": "If VBUS and compressor-enable voltage are both present on the power board"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the compressor-driver board",
+              "description": "Replace the compressor-driver board.",
+              "instruction_text": "Replace the compressor-driver board. See Replace the compressor-driver board on page 129.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_7b661df034f369068ce15f97b67e",
+                  "source_page": 100,
+                  "quote": "replace the"
+                },
+                {
+                  "source_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d",
+                  "source_page": 100,
+                  "quote": "compressor-driver board. See Replace the compressor-driver board on page 129."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_7b661df034f369068ce15f97b67e",
+                  "source_page": 100,
+                  "quote": "If VBUS and compressor-enable voltage are both present on the power board, replace the"
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Remove the J1 and J3 connectors from the compressor-driver board to isolate the power board; check VBUS and compressor-enable voltage on the power board.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_bcf3ad90571db3076a8b342ff9cd",
+                  "source_page": 100,
+                  "quote": "Remove the J1 and J3 connectors from the compressor-driver board. This isolates the power board."
+                },
+                {
+                  "source_anchor": "ev_0976bdff30be82a68dc02815b1c5",
+                  "source_page": 100,
+                  "quote": "Check VBUS on the power board (nominal 375 VDC bus voltage)"
+                },
+                {
+                  "source_anchor": "ev_6e6763480eec41910866200364ec",
+                  "source_page": 100,
+                  "quote": "check compressor-enable voltage at J9 on the power board (3 VDC)"
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "VBUS and compressor-enable voltage are both present on the isolated power board.",
+              "applies_to": "branch",
+              "step_index": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                  "source_page": 100,
+                  "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+                },
+                {
+                  "source_anchor": "ev_7b661df034f369068ce15f97b67e",
+                  "source_page": 100,
+                  "quote": "If VBUS and compressor-enable voltage are both present on the power board"
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "Compressor-driver board (PCB3)",
+            "description": "Compressor-driver board.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_f777cf5415351056a711fb8bfbcd",
+                "source_page": 96,
+                "quote": "Faulty compressor-driver board (PCB3)"
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d",
+                "source_page": 100,
+                "quote": "compressor-driver board."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_26fdf6e66dfe81e6650d21a819936f2afbb28eeadc49d1ebd566a0c0864cd8c4",
+        "branch_lineage_id": "dbranch_5449751907f91fd6ec089a2eadbcfca219d3706b78f3803b0c522ce2a0a7bd5c",
+        "record_window_id": "",
+        "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+        "branch_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+        "evidence_ids": [
+          "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "ev_1f4d282853ed2d55bef623f0eef8",
+          "ev_2897c3a44dc789d6ec7ac33d67ca",
+          "ev_3cc0d6982268a6c15d5d95a7b366",
+          "ev_6ae57bf36c0aaa6962e2569bafae",
+          "ev_6af3e19cdddfde87262b755bdcf4",
+          "ev_7d0b9cb90d9b889589d42fabf947"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_0b87a1e934ae5d429a19a0ff2e7c",
+            "ev_3cc0d6982268a6c15d5d95a7b366",
+            "ev_1f4d282853ed2d55bef623f0eef8",
+            "ev_7d0b9cb90d9b889589d42fabf947",
+            "ev_6ae57bf36c0aaa6962e2569bafae"
+          ],
+          "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "branch_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+              "description": "Both fault LEDs illuminate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                },
+                {
+                  "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "source_page": 97,
+                  "quote": "If no, replace the internal compressor."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty internal compressor",
+            "description": "The compressor does not run and air does not blow from the torch during the external 12 VDC power-source test.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_3cc0d6982268a6c15d5d95a7b366",
+                "source_page": 96,
+                "quote": "Faulty internal compressor"
+              },
+              {
+                "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+                "source_page": 97,
+                "quote": "Connect the internal compressor to an external 12 VDC power source"
+              },
+              {
+                "source_anchor": "ev_7d0b9cb90d9b889589d42fabf947",
+                "source_page": 97,
+                "quote": "Is the compressor running, and is air blowing from the torch?"
+              },
+              {
+                "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                "source_page": 97,
+                "quote": "If no, replace the internal compressor."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the internal compressor",
+              "description": "Replace the internal compressor.",
+              "instruction_text": "Replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push the solenoid valve back into place between both clips from the center panel.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "source_page": 97,
+                  "quote": "replace the internal compressor. See Replace the internal compressor on page 169."
+                },
+                {
+                  "source_anchor": "ev_6af3e19cdddfde87262b755bdcf4",
+                  "source_page": 97,
+                  "quote": "the solenoid valve back into place between both clips from the center panel."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "source_page": 97,
+                  "quote": "If no, replace the internal compressor."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Connect the internal compressor to an external 12 VDC power source; hold down the gas shut-off override button and quickly tap the torch trigger; check whether the compressor runs and air blows from the torch.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2897c3a44dc789d6ec7ac33d67ca",
+                  "source_page": 97,
+                  "quote": "Connect the internal compressor to an external 12 VDC power source"
+                },
+                {
+                  "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+                  "source_page": 97,
+                  "quote": "Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger. Is the compressor running, and is air blowing from the torch?"
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "The compressor is not running and air is not blowing from the torch.",
+              "applies_to": "branch",
+              "step_index": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_7d0b9cb90d9b889589d42fabf947",
+                  "source_page": 97,
+                  "quote": "If yes, check the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "source_page": 97,
+                  "quote": "If no, replace the internal compressor."
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "Internal compressor",
+            "description": "The internal compressor.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_3cc0d6982268a6c15d5d95a7b366",
+                "source_page": 96,
+                "quote": "Faulty internal compressor"
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                "source_page": 97,
+                "quote": "replace the internal compressor."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "failure.claim_evidence[1]",
+            "message": "failure.claim_evidence[1]: quote is not an exact lexical span of anchor 'ev_1f4d282853ed2d55bef623f0eef8' or a unique contiguous EvidenceUnit support set"
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "failure.claim_evidence[2]",
+            "message": "failure.claim_evidence[2]: quote is not an exact lexical span of anchor 'ev_7d0b9cb90d9b889589d42fabf947' or a unique contiguous EvidenceUnit support set"
+          },
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_26fdf6e66dfe81e6650d21a819936f2afbb28eeadc49d1ebd566a0c0864cd8c4",
+        "branch_lineage_id": "dbranch_bd0401189917f8086a9b9624d6d51055feb6e9baaa4e9c8f16ec5528ec6490e7",
+        "record_window_id": "",
+        "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+        "branch_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+        "evidence_ids": [
+          "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "ev_44bd3afbcebb92a5c6aa7fa58622",
+          "ev_d72a596d5b4d05d42195621ff54f",
+          "ev_f777cf5415351056a711fb8bfbcd"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_0b87a1e934ae5d429a19a0ff2e7c",
+            "ev_f777cf5415351056a711fb8bfbcd",
+            "ev_cd012c7f99786df1a69eb18ae014",
+            "ev_73f51788c0552c3041bf43f1d9db",
+            "ev_44bd3afbcebb92a5c6aa7fa58622",
+            "ev_d72a596d5b4d05d42195621ff54f"
+          ],
+          "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "branch_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+              "description": "Both fault LEDs illuminate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                },
+                {
+                  "source_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+                  "source_page": 99,
+                  "quote": "If yes, replace the compressor-driver board."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty compressor-driver board (PCB3)",
+            "description": "Compressor-enable voltage is present at J1 on the compressor-driver board.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_f777cf5415351056a711fb8bfbcd",
+                "source_page": 96,
+                "quote": "Faulty compressor-driver board (PCB3)"
+              },
+              {
+                "source_anchor": "ev_44bd3afbcebb92a5c6aa7fa58622",
+                "source_page": 99,
+                "quote": "Is compressor-enable voltage present (3 VDC)?"
+              },
+              {
+                "source_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+                "source_page": 99,
+                "quote": "If yes, replace the compressor-driver board."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the compressor-driver board",
+              "description": "Replace the compressor-driver board.",
+              "instruction_text": "Replace the compressor-driver board. See Replace the compressor-driver board on page 129.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+                  "source_page": 99,
+                  "quote": "replace the compressor-driver board. See Replace the compressor-driver board on page 129."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+                  "source_page": 99,
+                  "quote": "If yes, replace the compressor-driver board."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Quickly tap the torch trigger, then check compressor-enable voltage on the J1 connector on the compressor-driver board; determine whether 3 VDC is present.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_44bd3afbcebb92a5c6aa7fa58622",
+                  "source_page": 99,
+                  "quote": "Quickly tap the torch trigger, then check the compressor-enable voltage on the J1 connector on the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_44bd3afbcebb92a5c6aa7fa58622",
+                  "source_page": 99,
+                  "quote": "Is compressor-enable voltage present (3 VDC)?"
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "Compressor-enable voltage (3 VDC) is present at J1 on the compressor-driver board.",
+              "applies_to": "branch",
+              "step_index": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_44bd3afbcebb92a5c6aa7fa58622",
+                  "source_page": 99,
+                  "quote": "Is compressor-enable voltage present (3 VDC)?"
+                },
+                {
+                  "source_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+                  "source_page": 99,
+                  "quote": "If yes, replace the compressor-driver board."
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "Compressor-driver board (PCB3)",
+            "description": "Compressor-driver board.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_f777cf5415351056a711fb8bfbcd",
+                "source_page": 96,
+                "quote": "Faulty compressor-driver board (PCB3)"
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+                "source_page": 99,
+                "quote": "replace the compressor-driver board."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_26fdf6e66dfe81e6650d21a819936f2afbb28eeadc49d1ebd566a0c0864cd8c4",
+        "branch_lineage_id": "dbranch_d8f16e6476279a1411c2743004c2b1c34ee99a58c1247cec0a64e2c11785589f",
+        "record_window_id": "",
+        "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+        "branch_anchor": "ev_f96004a6446e336f738bc9e6149a",
+        "evidence_ids": [
+          "ev_0976bdff30be82a68dc02815b1c5",
+          "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "ev_5f2165818aa19e72dfea20b335e0",
+          "ev_6e6763480eec41910866200364ec",
+          "ev_af450d14e62d538c563f4491817b",
+          "ev_bcf3ad90571db3076a8b342ff9cd",
+          "ev_d90d4b038f23cacf6022bcd1337f",
+          "ev_f96004a6446e336f738bc9e6149a"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_0b87a1e934ae5d429a19a0ff2e7c",
+            "ev_d90d4b038f23cacf6022bcd1337f",
+            "ev_bcf3ad90571db3076a8b342ff9cd",
+            "ev_0976bdff30be82a68dc02815b1c5",
+            "ev_6e6763480eec41910866200364ec",
+            "ev_5f2165818aa19e72dfea20b335e0",
+            "ev_af450d14e62d538c563f4491817b",
+            "ev_f96004a6446e336f738bc9e6149a"
+          ],
+          "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "branch_anchor": "ev_f96004a6446e336f738bc9e6149a",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+              "description": "Both fault LEDs illuminate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                },
+                {
+                  "source_anchor": "ev_f96004a6446e336f738bc9e6149a",
+                  "source_page": 100,
+                  "quote": "replace the power board."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty power board (PCB2)",
+            "description": "One of VBUS or compressor-enable voltage is present on the isolated power board, but the other is not.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_d90d4b038f23cacf6022bcd1337f",
+                "source_page": 96,
+                "quote": "Faulty power board (PCB2)"
+              },
+              {
+                "source_anchor": "ev_bcf3ad90571db3076a8b342ff9cd",
+                "source_page": 100,
+                "quote": "This isolates the power board."
+              },
+              {
+                "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                "source_page": 100,
+                "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+              },
+              {
+                "source_anchor": "ev_af450d14e62d538c563f4491817b",
+                "source_page": 100,
+                "quote": "If VBUS or compressor-enable voltage is present on the power board but the other is not"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the power board",
+              "description": "Replace the power board.",
+              "instruction_text": "Replace the power board. See Replace the power board on page 135.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_af450d14e62d538c563f4491817b",
+                  "source_page": 100,
+                  "quote": "replace the power"
+                },
+                {
+                  "source_anchor": "ev_f96004a6446e336f738bc9e6149a",
+                  "source_page": 100,
+                  "quote": "board. See Replace the power board on page 135."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_af450d14e62d538c563f4491817b",
+                  "source_page": 100,
+                  "quote": "If VBUS or compressor-enable voltage is present on the power board but the other is not, replace the power"
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Remove the J1 and J3 connectors from the compressor-driver board to isolate the power board; check VBUS and compressor-enable voltage on the power board.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_bcf3ad90571db3076a8b342ff9cd",
+                  "source_page": 100,
+                  "quote": "Remove the J1 and J3 connectors from the compressor-driver board. This isolates the power board."
+                },
+                {
+                  "source_anchor": "ev_0976bdff30be82a68dc02815b1c5",
+                  "source_page": 100,
+                  "quote": "Check VBUS on the power board (nominal 375 VDC bus voltage)"
+                },
+                {
+                  "source_anchor": "ev_6e6763480eec41910866200364ec",
+                  "source_page": 100,
+                  "quote": "check compressor-enable voltage at J9 on the power board (3 VDC)"
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "VBUS or compressor-enable voltage is present, but the other is not.",
+              "applies_to": "branch",
+              "step_index": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                  "source_page": 100,
+                  "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+                },
+                {
+                  "source_anchor": "ev_af450d14e62d538c563f4491817b",
+                  "source_page": 100,
+                  "quote": "If VBUS or compressor-enable voltage is present on the power board but the other is not"
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "Power board (PCB2)",
+            "description": "Power board.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_d90d4b038f23cacf6022bcd1337f",
+                "source_page": 96,
+                "quote": "Faulty power board (PCB2)"
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_f96004a6446e336f738bc9e6149a",
+                "source_page": 100,
+                "quote": "replace the power board."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      }
+    ],
+    "candidate_count": 6,
+    "duplicate_candidate_count": 0,
+    "publish_count": 0,
+    "unresolved_count": 6,
+    "disposition_counts": {
+      "publish": 0,
+      "gap": 0,
+      "review": 6,
+      "exclude": 0
+    },
+    "drop_reasons": {
+      "quote_not_in_anchored_evidence": 2,
+      "relation_endpoint_support_unestablished": 6
+    },
+    "escalation_recommended": true
+  },
+  "llm_call_entries": [
+    {
+      "operation": "diagnostic_bundle_extraction",
+      "model": "gpt-6-luna",
+      "pricing_model": "gpt-6-luna",
+      "prompt": 5932,
+      "completion": 5007,
+      "total": 10939,
+      "cached_prompt": 0,
+      "cache_write_prompt": 5929,
+      "non_cached_prompt": 5932,
+      "estimated_cost_usd": 0.003245,
+      "reasoning_effort": "low",
+      "call_role": "primary",
+      "escalation_reason": ""
+    }
+  ]
+}

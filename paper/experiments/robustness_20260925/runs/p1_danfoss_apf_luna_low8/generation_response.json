@@ -1,0 +1,3303 @@
+{
+  "status": "ready",
+  "ontology": {
+    "ontology_name": "Core_Ontology",
+    "version": "2.0",
+    "language": "en",
+    "source_type": "technical PDF",
+    "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+    "nodes": {
+      "Asset": [
+        {
+          "asset_id": "ASSET-001",
+          "name": "Danfoss Active Power Filter",
+          "description": "Danfoss Active Power Filter documented by operating guide 130R1375.",
+          "brand": "Danfoss",
+          "model": "Active Power Filter",
+          "asset_type": "active power filter"
+        }
+      ],
+      "Component": [
+        {
+          "component_id": "comp_bus_capacitor_1ca94b87d6127de0b19e3e0e69fc665d3542a85499ab7f5339701af373ea40af",
+          "name": "BUS capacitor",
+          "description": "BUS capacitor failure.",
+          "category": "source_named_component"
+        },
+        {
+          "component_id": "comp_fan_17203c3924a6891411b62f47cd8331f2fedc7b73bacd9d6dbf00b40a54563556",
+          "name": "Fan",
+          "description": "Fan failure.",
+          "category": "source_named_component"
+        },
+        {
+          "component_id": "comp_input_fuse_943b387256953b83acf977e060a2f4e751bfe75dbb18baae6e04f214918ca4d4",
+          "name": "input fuse",
+          "description": "The input fuse is broken.",
+          "category": "source_named_component"
+        }
+      ],
+      "Symptom": [],
+      "FailureMode": [
+        {
+          "failure_mode_id": "fm_bus_capacitor_failure_00dc7f56d87ab4ce98f0b28211d34a7fca750c15f26f36483e60f5ece65ecddc",
+          "name": "BUS capacitor failure.",
+          "description": "BUS capacitor failure.",
+          "material_context": "comp_bus_capacitor_1ca94b87d6127de0b19e3e0e69fc665d3542a85499ab7f5339701af373ea40af"
+        },
+        {
+          "failure_mode_id": "fm_fan_failure_2b41cfcb34866ad64b7c2c7d0ef9079486e30ad22f3d6361d05aec63dfad2f3d",
+          "name": "Fan failure.",
+          "description": "Fan failure.",
+          "material_context": "comp_fan_17203c3924a6891411b62f47cd8331f2fedc7b73bacd9d6dbf00b40a54563556"
+        },
+        {
+          "failure_mode_id": "fm_the_air_vents_ate_blocked_fd54e55691c24792d3aaf51d7c39c89aefbb43c60384fa08eaea47d44bbfd940",
+          "name": "The air vents ate blocked.",
+          "description": "The air vents ate blocked.",
+          "material_context": "not_stated"
+        },
+        {
+          "failure_mode_id": "fm_the_fans_do_not_work_be601744250bed0537fdeff1485d6f9474b178b417af810de50afaf589ec200a",
+          "name": "The fans do not work.",
+          "description": "The fans do not work.",
+          "material_context": "not_stated"
+        },
+        {
+          "failure_mode_id": "fm_the_input_fuse_is_broken_300402296aab2bef34e1d5e7822ed9ec1e6a30d5372f5596bbfdaf19c09c4f89",
+          "name": "The input fuse is broken.",
+          "description": "The input fuse is broken.",
+          "material_context": "comp_input_fuse_943b387256953b83acf977e060a2f4e751bfe75dbb18baae6e04f214918ca4d4"
+        }
+      ],
+      "CorrectiveAction": [
+        {
+          "action_id": "ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6",
+          "name": "Contact service personnel.",
+          "description": "Contact service personnel.",
+          "instruction_text": "Contact service personnel.",
+          "source_type": "technical PDF",
+          "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+          "source_reference": "typed_diagnostic_edge_evidence"
+        }
+      ],
+      "ErrorCode": [
+        {
+          "error_code_id": "err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1",
+          "name": "Fuse blowout",
+          "description": "Fuse blowout",
+          "code": "2"
+        },
+        {
+          "error_code_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+          "name": "Ambient OTP",
+          "description": "Ambient OTP",
+          "code": "3"
+        },
+        {
+          "error_code_id": "err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f",
+          "name": "BUS OVP/UVP",
+          "description": "BUS OVP/UVP",
+          "code": "4"
+        },
+        {
+          "error_code_id": "err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad",
+          "name": "Fan Fail",
+          "description": "Fan Fail",
+          "code": "5"
+        }
+      ]
+    },
+    "relations": [
+      {
+        "name": "AFFECTS",
+        "from_type": "FailureMode",
+        "from_id": "fm_bus_capacitor_failure_00dc7f56d87ab4ce98f0b28211d34a7fca750c15f26f36483e60f5ece65ecddc",
+        "to_type": "Component",
+        "to_id": "comp_bus_capacitor_1ca94b87d6127de0b19e3e0e69fc665d3542a85499ab7f5339701af373ea40af",
+        "evidence": [
+          {
+            "source_page": 64,
+            "source_reference": "ev_96ed605696bfbeb932e90a8ead5c",
+            "quote": "BUS capacitor failure.",
+            "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c"
+          }
+        ],
+        "branch_lineage_id": "dbranch_4bb3e581e3bce1105241bc4f71e1c241688ebd367990a1288b8a67a865a2b40e"
+      },
+      {
+        "name": "AFFECTS",
+        "from_type": "FailureMode",
+        "from_id": "fm_fan_failure_2b41cfcb34866ad64b7c2c7d0ef9079486e30ad22f3d6361d05aec63dfad2f3d",
+        "to_type": "Component",
+        "to_id": "comp_fan_17203c3924a6891411b62f47cd8331f2fedc7b73bacd9d6dbf00b40a54563556",
+        "evidence": [
+          {
+            "source_page": 64,
+            "source_reference": "ev_e8f5ccbf7b758fa29edb98bffd92",
+            "quote": "Fan failure.",
+            "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92"
+          }
+        ],
+        "branch_lineage_id": "dbranch_840bac61598630c9f2361c21188bbdb613603dd127743b515d0e158218cd5099"
+      },
+      {
+        "name": "AFFECTS",
+        "from_type": "FailureMode",
+        "from_id": "fm_the_input_fuse_is_broken_300402296aab2bef34e1d5e7822ed9ec1e6a30d5372f5596bbfdaf19c09c4f89",
+        "to_type": "Component",
+        "to_id": "comp_input_fuse_943b387256953b83acf977e060a2f4e751bfe75dbb18baae6e04f214918ca4d4",
+        "evidence": [
+          {
+            "source_page": 64,
+            "source_reference": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+            "quote": "The input fuse is broken.",
+            "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2"
+          }
+        ],
+        "branch_lineage_id": "dbranch_8ee14d0378e73e53d585fb568762bfe952435904177da9091847da351d9a39e2"
+      },
+      {
+        "name": "INDICATES",
+        "from_type": "ErrorCode",
+        "from_id": "err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1",
+        "to_type": "FailureMode",
+        "to_id": "fm_the_input_fuse_is_broken_300402296aab2bef34e1d5e7822ed9ec1e6a30d5372f5596bbfdaf19c09c4f89",
+        "evidence": [
+          {
+            "source_page": 64,
+            "source_reference": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+            "quote": "2 | Fuse blowout",
+            "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2"
+          },
+          {
+            "source_page": 64,
+            "source_reference": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+            "quote": "The input fuse is broken.",
+            "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2"
+          }
+        ],
+        "branch_lineage_id": "dbranch_8ee14d0378e73e53d585fb568762bfe952435904177da9091847da351d9a39e2"
+      },
+      {
+        "name": "INDICATES",
+        "from_type": "ErrorCode",
+        "from_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+        "to_type": "FailureMode",
+        "to_id": "fm_the_air_vents_ate_blocked_fd54e55691c24792d3aaf51d7c39c89aefbb43c60384fa08eaea47d44bbfd940",
+        "evidence": [
+          {
+            "source_page": 64,
+            "source_reference": "ev_be36fe564a699168bb8b6df2af8d",
+            "quote": "1 The air vents ate blocked.",
+            "source_anchor": "ev_be36fe564a699168bb8b6df2af8d"
+          },
+          {
+            "source_page": 64,
+            "source_reference": "ev_be36fe564a699168bb8b6df2af8d",
+            "quote": "3 | Ambient OTP",
+            "source_anchor": "ev_be36fe564a699168bb8b6df2af8d"
+          }
+        ],
+        "branch_lineage_id": "dbranch_f5313fba0c356b68af1bf30cdbdca56224307a3de8a15451b92ba60b0fe9be7e"
+      },
+      {
+        "name": "INDICATES",
+        "from_type": "ErrorCode",
+        "from_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+        "to_type": "FailureMode",
+        "to_id": "fm_the_fans_do_not_work_be601744250bed0537fdeff1485d6f9474b178b417af810de50afaf589ec200a",
+        "evidence": [
+          {
+            "source_page": 64,
+            "source_reference": "ev_be36fe564a699168bb8b6df2af8d",
+            "quote": "2 The fans do not work.",
+            "source_anchor": "ev_be36fe564a699168bb8b6df2af8d"
+          },
+          {
+            "source_page": 64,
+            "source_reference": "ev_be36fe564a699168bb8b6df2af8d",
+            "quote": "3 | Ambient OTP",
+            "source_anchor": "ev_be36fe564a699168bb8b6df2af8d"
+          }
+        ],
+        "branch_lineage_id": "dbranch_2260fd39c4a826793747c79d121d66c185ce281f830c7599d0d14fafb7801a53"
+      },
+      {
+        "name": "INDICATES",
+        "from_type": "ErrorCode",
+        "from_id": "err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f",
+        "to_type": "FailureMode",
+        "to_id": "fm_bus_capacitor_failure_00dc7f56d87ab4ce98f0b28211d34a7fca750c15f26f36483e60f5ece65ecddc",
+        "evidence": [
+          {
+            "source_page": 64,
+            "source_reference": "ev_96ed605696bfbeb932e90a8ead5c",
+            "quote": "4 | BUS OVP/UVP",
+            "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c"
+          },
+          {
+            "source_page": 64,
+            "source_reference": "ev_96ed605696bfbeb932e90a8ead5c",
+            "quote": "BUS capacitor failure.",
+            "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c"
+          }
+        ],
+        "branch_lineage_id": "dbranch_4bb3e581e3bce1105241bc4f71e1c241688ebd367990a1288b8a67a865a2b40e"
+      },
+      {
+        "name": "INDICATES",
+        "from_type": "ErrorCode",
+        "from_id": "err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad",
+        "to_type": "FailureMode",
+        "to_id": "fm_fan_failure_2b41cfcb34866ad64b7c2c7d0ef9079486e30ad22f3d6361d05aec63dfad2f3d",
+        "evidence": [
+          {
+            "source_page": 64,
+            "source_reference": "ev_e8f5ccbf7b758fa29edb98bffd92",
+            "quote": "5 | Fan Fail",
+            "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92"
+          },
+          {
+            "source_page": 64,
+            "source_reference": "ev_e8f5ccbf7b758fa29edb98bffd92",
+            "quote": "Fan failure.",
+            "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92"
+          }
+        ],
+        "branch_lineage_id": "dbranch_840bac61598630c9f2361c21188bbdb613603dd127743b515d0e158218cd5099"
+      },
+      {
+        "name": "RESOLVED_BY",
+        "from_type": "FailureMode",
+        "from_id": "fm_bus_capacitor_failure_00dc7f56d87ab4ce98f0b28211d34a7fca750c15f26f36483e60f5ece65ecddc",
+        "to_type": "CorrectiveAction",
+        "to_id": "ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6",
+        "evidence": [
+          {
+            "source_page": 64,
+            "source_reference": "ev_96ed605696bfbeb932e90a8ead5c",
+            "quote": "BUS capacitor failure.",
+            "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c"
+          },
+          {
+            "source_page": 64,
+            "source_reference": "ev_96ed605696bfbeb932e90a8ead5c",
+            "quote": "Contact service personnel.",
+            "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c"
+          }
+        ],
+        "branch_lineage_id": "dbranch_4bb3e581e3bce1105241bc4f71e1c241688ebd367990a1288b8a67a865a2b40e"
+      },
+      {
+        "name": "RESOLVED_BY",
+        "from_type": "FailureMode",
+        "from_id": "fm_fan_failure_2b41cfcb34866ad64b7c2c7d0ef9079486e30ad22f3d6361d05aec63dfad2f3d",
+        "to_type": "CorrectiveAction",
+        "to_id": "ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6",
+        "evidence": [
+          {
+            "source_page": 64,
+            "source_reference": "ev_e8f5ccbf7b758fa29edb98bffd92",
+            "quote": "Contact service personnel.",
+            "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92"
+          },
+          {
+            "source_page": 64,
+            "source_reference": "ev_e8f5ccbf7b758fa29edb98bffd92",
+            "quote": "Fan failure.",
+            "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92"
+          }
+        ],
+        "branch_lineage_id": "dbranch_840bac61598630c9f2361c21188bbdb613603dd127743b515d0e158218cd5099"
+      },
+      {
+        "name": "RESOLVED_BY",
+        "from_type": "FailureMode",
+        "from_id": "fm_the_air_vents_ate_blocked_fd54e55691c24792d3aaf51d7c39c89aefbb43c60384fa08eaea47d44bbfd940",
+        "to_type": "CorrectiveAction",
+        "to_id": "ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6",
+        "evidence": [
+          {
+            "source_page": 64,
+            "source_reference": "ev_be36fe564a699168bb8b6df2af8d",
+            "quote": "1 The air vents ate blocked.",
+            "source_anchor": "ev_be36fe564a699168bb8b6df2af8d"
+          },
+          {
+            "source_page": 64,
+            "source_reference": "ev_be36fe564a699168bb8b6df2af8d",
+            "quote": "Contact service personnel.",
+            "source_anchor": "ev_be36fe564a699168bb8b6df2af8d"
+          }
+        ],
+        "branch_lineage_id": "dbranch_f5313fba0c356b68af1bf30cdbdca56224307a3de8a15451b92ba60b0fe9be7e"
+      },
+      {
+        "name": "RESOLVED_BY",
+        "from_type": "FailureMode",
+        "from_id": "fm_the_fans_do_not_work_be601744250bed0537fdeff1485d6f9474b178b417af810de50afaf589ec200a",
+        "to_type": "CorrectiveAction",
+        "to_id": "ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6",
+        "evidence": [
+          {
+            "source_page": 64,
+            "source_reference": "ev_be36fe564a699168bb8b6df2af8d",
+            "quote": "2 The fans do not work.",
+            "source_anchor": "ev_be36fe564a699168bb8b6df2af8d"
+          },
+          {
+            "source_page": 64,
+            "source_reference": "ev_be36fe564a699168bb8b6df2af8d",
+            "quote": "Contact service personnel.",
+            "source_anchor": "ev_be36fe564a699168bb8b6df2af8d"
+          }
+        ],
+        "branch_lineage_id": "dbranch_2260fd39c4a826793747c79d121d66c185ce281f830c7599d0d14fafb7801a53"
+      },
+      {
+        "name": "RESOLVED_BY",
+        "from_type": "FailureMode",
+        "from_id": "fm_the_input_fuse_is_broken_300402296aab2bef34e1d5e7822ed9ec1e6a30d5372f5596bbfdaf19c09c4f89",
+        "to_type": "CorrectiveAction",
+        "to_id": "ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6",
+        "evidence": [
+          {
+            "source_page": 64,
+            "source_reference": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+            "quote": "Contact service personnel.",
+            "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2"
+          },
+          {
+            "source_page": 64,
+            "source_reference": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+            "quote": "The input fuse is broken.",
+            "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2"
+          }
+        ],
+        "branch_lineage_id": "dbranch_8ee14d0378e73e53d585fb568762bfe952435904177da9091847da351d9a39e2"
+      },
+      {
+        "name": "HAS_COMPONENT",
+        "from_type": "Asset",
+        "from_id": "ASSET-001",
+        "to_type": "Component",
+        "to_id": "comp_bus_capacitor_1ca94b87d6127de0b19e3e0e69fc665d3542a85499ab7f5339701af373ea40af",
+        "evidence": [],
+        "branch_lineage_id": ""
+      },
+      {
+        "name": "HAS_COMPONENT",
+        "from_type": "Asset",
+        "from_id": "ASSET-001",
+        "to_type": "Component",
+        "to_id": "comp_fan_17203c3924a6891411b62f47cd8331f2fedc7b73bacd9d6dbf00b40a54563556",
+        "evidence": [],
+        "branch_lineage_id": ""
+      },
+      {
+        "name": "HAS_COMPONENT",
+        "from_type": "Asset",
+        "from_id": "ASSET-001",
+        "to_type": "Component",
+        "to_id": "comp_input_fuse_943b387256953b83acf977e060a2f4e751bfe75dbb18baae6e04f214918ca4d4",
+        "evidence": [],
+        "branch_lineage_id": ""
+      },
+      {
+        "name": "GENERATES_ERROR",
+        "from_type": "Asset",
+        "from_id": "ASSET-001",
+        "to_type": "ErrorCode",
+        "to_id": "err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1",
+        "evidence": [],
+        "branch_lineage_id": ""
+      },
+      {
+        "name": "GENERATES_ERROR",
+        "from_type": "Asset",
+        "from_id": "ASSET-001",
+        "to_type": "ErrorCode",
+        "to_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+        "evidence": [],
+        "branch_lineage_id": ""
+      },
+      {
+        "name": "GENERATES_ERROR",
+        "from_type": "Asset",
+        "from_id": "ASSET-001",
+        "to_type": "ErrorCode",
+        "to_id": "err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f",
+        "evidence": [],
+        "branch_lineage_id": ""
+      },
+      {
+        "name": "GENERATES_ERROR",
+        "from_type": "Asset",
+        "from_id": "ASSET-001",
+        "to_type": "ErrorCode",
+        "to_id": "err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad",
+        "evidence": [],
+        "branch_lineage_id": ""
+      }
+    ]
+  },
+  "semantic_issues": [],
+  "schema_issues": [
+    {
+      "severity": "warning",
+      "code": "instruction_not_actionable",
+      "message": "CorrectiveAction 'Contact service personnel.' has instruction_text without any restorative action step (it reads like a cause, observation, or inspection note).",
+      "target_type": "CorrectiveAction",
+      "target_id": "ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6",
+      "property_name": "instruction_text",
+      "fix_hint": "Rewrite instruction_text as numbered restorative steps (replace, reconnect, tighten, clean, adjust, calibrate, reset, ...) supported by the source page, or remove the action if the manual provides no repair procedure."
+    },
+    {
+      "severity": "warning",
+      "code": "material_context_not_linked",
+      "message": "FailureMode 'The air vents ate blocked.' has material_context='not_stated' which is not a Component.component_id.",
+      "target_type": "FailureMode",
+      "target_id": "fm_the_air_vents_ate_blocked_fd54e55691c24792d3aaf51d7c39c89aefbb43c60384fa08eaea47d44bbfd940",
+      "property_name": "material_context",
+      "fix_hint": "Either set material_context to an existing Component.component_id, add the missing Component node and link it here, or set it to \"asset_level\" when the failure is genuinely general to the whole asset. Do not leave it empty: the field is required by the export contract."
+    },
+    {
+      "severity": "warning",
+      "code": "material_context_not_linked",
+      "message": "FailureMode 'The fans do not work.' has material_context='not_stated' which is not a Component.component_id.",
+      "target_type": "FailureMode",
+      "target_id": "fm_the_fans_do_not_work_be601744250bed0537fdeff1485d6f9474b178b417af810de50afaf589ec200a",
+      "property_name": "material_context",
+      "fix_hint": "Either set material_context to an existing Component.component_id, add the missing Component node and link it here, or set it to \"asset_level\" when the failure is genuinely general to the whole asset. Do not leave it empty: the field is required by the export contract."
+    }
+  ],
+  "human_required_fields": [],
+  "is_schema_compliant": false,
+  "is_ready_for_human_review": true,
+  "retry_count": 0,
+  "graph_issues": [],
+  "suggested_relations": [
+    {
+      "relation_name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "fm_bus_capacitor_failure_00dc7f56d87ab4ce98f0b28211d34a7fca750c15f26f36483e60f5ece65ecddc",
+      "from_label": "BUS capacitor failure.",
+      "to_type": "Component",
+      "to_id": "comp_fan_17203c3924a6891411b62f47cd8331f2fedc7b73bacd9d6dbf00b40a54563556",
+      "to_label": "Fan",
+      "confidence": 0.5,
+      "rationale": "Token overlap 0.50 between 'BUS capacitor failure.' and 'Fan'."
+    },
+    {
+      "relation_name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "fm_fan_failure_2b41cfcb34866ad64b7c2c7d0ef9079486e30ad22f3d6361d05aec63dfad2f3d",
+      "from_label": "Fan failure.",
+      "to_type": "Component",
+      "to_id": "comp_bus_capacitor_1ca94b87d6127de0b19e3e0e69fc665d3542a85499ab7f5339701af373ea40af",
+      "to_label": "BUS capacitor",
+      "confidence": 0.333,
+      "rationale": "Token overlap 0.33 between 'Fan failure.' and 'BUS capacitor'."
+    }
+  ],
+  "confidence_report": {
+    "entries": [
+      {
+        "node_type": "Asset",
+        "node_id": "ASSET-001",
+        "score": 0.6,
+        "classification": "human_review",
+        "signals": {
+          "evidence_present": 0.0,
+          "corroboration": 0.0,
+          "required_props_complete": 1.0,
+          "chain_participation": 1.0,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "no evidence attached"
+        ]
+      },
+      {
+        "node_type": "Component",
+        "node_id": "comp_bus_capacitor_1ca94b87d6127de0b19e3e0e69fc665d3542a85499ab7f5339701af373ea40af",
+        "score": 0.9005,
+        "classification": "auto_approve",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 1.0,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only"
+        ]
+      },
+      {
+        "node_type": "Component",
+        "node_id": "comp_fan_17203c3924a6891411b62f47cd8331f2fedc7b73bacd9d6dbf00b40a54563556",
+        "score": 0.9005,
+        "classification": "auto_approve",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 1.0,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only"
+        ]
+      },
+      {
+        "node_type": "Component",
+        "node_id": "comp_input_fuse_943b387256953b83acf977e060a2f4e751bfe75dbb18baae6e04f214918ca4d4",
+        "score": 0.9005,
+        "classification": "auto_approve",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 1.0,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only"
+        ]
+      },
+      {
+        "node_type": "FailureMode",
+        "node_id": "fm_bus_capacitor_failure_00dc7f56d87ab4ce98f0b28211d34a7fca750c15f26f36483e60f5ece65ecddc",
+        "score": 0.8505,
+        "classification": "auto_approve",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 0.75,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only",
+          "incomplete schema-expected relations"
+        ]
+      },
+      {
+        "node_type": "FailureMode",
+        "node_id": "fm_fan_failure_2b41cfcb34866ad64b7c2c7d0ef9079486e30ad22f3d6361d05aec63dfad2f3d",
+        "score": 0.8505,
+        "classification": "auto_approve",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 0.75,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only",
+          "incomplete schema-expected relations"
+        ]
+      },
+      {
+        "node_type": "FailureMode",
+        "node_id": "fm_the_air_vents_ate_blocked_fd54e55691c24792d3aaf51d7c39c89aefbb43c60384fa08eaea47d44bbfd940",
+        "score": 0.6505,
+        "classification": "human_review",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 0.5,
+          "clean_extraction": 0.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only",
+          "incomplete schema-expected relations",
+          "validation issues or retries"
+        ]
+      },
+      {
+        "node_type": "FailureMode",
+        "node_id": "fm_the_fans_do_not_work_be601744250bed0537fdeff1485d6f9474b178b417af810de50afaf589ec200a",
+        "score": 0.6505,
+        "classification": "human_review",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 0.5,
+          "clean_extraction": 0.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only",
+          "incomplete schema-expected relations",
+          "validation issues or retries"
+        ]
+      },
+      {
+        "node_type": "FailureMode",
+        "node_id": "fm_the_input_fuse_is_broken_300402296aab2bef34e1d5e7822ed9ec1e6a30d5372f5596bbfdaf19c09c4f89",
+        "score": 0.8505,
+        "classification": "auto_approve",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 0.75,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only",
+          "incomplete schema-expected relations"
+        ]
+      },
+      {
+        "node_type": "CorrectiveAction",
+        "node_id": "ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6",
+        "score": 0.7505,
+        "classification": "human_review",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 1.0,
+          "clean_extraction": 0.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only",
+          "validation issues or retries"
+        ]
+      },
+      {
+        "node_type": "ErrorCode",
+        "node_id": "err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1",
+        "score": 0.9005,
+        "classification": "auto_approve",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 1.0,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only"
+        ]
+      },
+      {
+        "node_type": "ErrorCode",
+        "node_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+        "score": 0.9005,
+        "classification": "auto_approve",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 1.0,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only"
+        ]
+      },
+      {
+        "node_type": "ErrorCode",
+        "node_id": "err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f",
+        "score": 0.9005,
+        "classification": "auto_approve",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 1.0,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only"
+        ]
+      },
+      {
+        "node_type": "ErrorCode",
+        "node_id": "err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad",
+        "score": 0.9005,
+        "classification": "auto_approve",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 1.0,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only"
+        ]
+      }
+    ],
+    "theta_high": 0.8,
+    "theta_low": 0.45,
+    "auto_reject_enabled": false,
+    "counts": {
+      "auto_approve": 10,
+      "human_review": 4,
+      "auto_reject": 0
+    }
+  },
+  "diagnostic_contract_report": {
+    "input_pages": [
+      64
+    ],
+    "candidate_input_anchors": [
+      "ev_1bfed85da319c7eaf0f70e296c77",
+      "ev_2a7fb8b57f32637cd9b1debcd3d2",
+      "ev_7f6b5be938f5a57c073dc6e4e5ff",
+      "ev_96ed605696bfbeb932e90a8ead5c",
+      "ev_be36fe564a699168bb8b6df2af8d",
+      "ev_e8f5ccbf7b758fa29edb98bffd92"
+    ],
+    "candidate_input_evidence": [
+      [
+        "ev_1bfed85da319c7eaf0f70e296c77",
+        64
+      ],
+      [
+        "ev_2a7fb8b57f32637cd9b1debcd3d2",
+        64
+      ],
+      [
+        "ev_7f6b5be938f5a57c073dc6e4e5ff",
+        64
+      ],
+      [
+        "ev_96ed605696bfbeb932e90a8ead5c",
+        64
+      ],
+      [
+        "ev_be36fe564a699168bb8b6df2af8d",
+        64
+      ],
+      [
+        "ev_e8f5ccbf7b758fa29edb98bffd92",
+        64
+      ]
+    ],
+    "source_anchor_aliases": {
+      "a0001": "ev_f1ff1200e8530c6a60ff66770edc",
+      "a0002": "ev_debae2b20a5ef89a4e0af9b3828d",
+      "a0003": "ev_bd7aafa5fddbbb2d5bc72ee69d13",
+      "a0004": "ev_1a4c3ec3e8a6ab45b41e81d1b197",
+      "a0005": "ev_a814549b13b846a6aff507673365",
+      "a0006": "ev_b629c8df6582117eb147af152d12",
+      "a0007": "ev_83dc97ed47b0eea01b2fd61e04a5",
+      "a0008": "ev_b8b4f03d246b1a112d306a9570f6",
+      "a0009": "ev_327cb789412dd05b40a47d5905e4",
+      "a0010": "ev_1fd125490ec3a4e093534018cea1",
+      "a0011": "ev_17e899f2205ec2ce6bb207196baa",
+      "a0012": "ev_87da484d955bebc9eae222522c40",
+      "a0013": "ev_23fd43c4d7726ec8c64183d2e063",
+      "a0014": "ev_51af6f9e08b5596f7bb76d966032",
+      "a0015": "ev_a1580fbad442d1df51bd2b37f7a1",
+      "a0016": "ev_15f94a1c4172216965316254b7ff",
+      "a0017": "ev_bd58b259f470c901e7900d4ea676",
+      "a0018": "ev_1dda6fb2d6f638183092bad12843",
+      "a0019": "ev_773c98cc79fe32e0b7e54a58d048",
+      "a0020": "ev_c69185b0d54f08d763e48dfb776b",
+      "a0021": "ev_522e278b7c8da1a7d92e902bf5b7",
+      "a0022": "ev_05ab545552d843a498fa7090f236",
+      "a0023": "ev_f72fd8c040188a936118be5ce0c0",
+      "a0024": "ev_4758e88a15b20bcc8827617900a3",
+      "a0025": "ev_0bbf9f70fdc5d4dcf9a1d7911ef4",
+      "a0026": "ev_79f66662604155ddfba584047438",
+      "a0027": "ev_fbf1ff5d5126cbfe002f7d9bb1c9",
+      "a0028": "ev_a3b83d306d03e260ff749d80bc0b",
+      "a0029": "ev_50c83074615f786db352e42db3ea",
+      "a0030": "ev_cc8e5178322183d4de9c1371cc2b",
+      "a0031": "ev_a952a187f5309410e9082be993be",
+      "a0032": "ev_9b23897868d5997b52d3e647b9f8",
+      "a0033": "ev_3462e8a3c166a0552ed136197659",
+      "a0034": "ev_8544b9c044268f27ca5b348eedfb",
+      "a0035": "ev_6d91cd4b3ca99d86216a6c5b21fe",
+      "a0036": "ev_717f5b63e0b26e6d83f8a1818011",
+      "a0037": "ev_661ed7fad002963d7ed9e37b7e9d",
+      "a0038": "ev_d1019d1efaa3253b2df8d3883773",
+      "a0039": "ev_785a35a0e541af430aed6e9db012",
+      "a0040": "ev_1ed37fa1818f967195777efc54b2",
+      "a0041": "ev_51240f2b1a0a30751d853b25424e",
+      "a0042": "ev_5a9c38b3eb6bee24632af4475ec6",
+      "a0043": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+      "a0044": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+      "a0045": "ev_be36fe564a699168bb8b6df2af8d",
+      "a0046": "ev_96ed605696bfbeb932e90a8ead5c",
+      "a0047": "ev_e8f5ccbf7b758fa29edb98bffd92",
+      "a0048": "ev_1bfed85da319c7eaf0f70e296c77"
+    },
+    "schema_version": "1.1",
+    "source_language": "en",
+    "provider_model": "gpt-6-luna",
+    "provider_reasoning_effort": "low",
+    "call_role": "primary",
+    "escalation_reason": "",
+    "provider_response_id": "chatcmpl-ES0OWllz4oXbIf8yYBBmHsA4GG5gd",
+    "finish_reason": "stop",
+    "parsed": true,
+    "refusal": false,
+    "raw_sha256": "dbcb6b45ff24b1c1e402314320347b7201ae5c64b910c523e96b5c8d81412218",
+    "response_archive": "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/p1_danfoss_apf_luna_low8/provider_responses/19390c6c575b495baaaf514a05d717e8.json",
+    "raw_response_text": "",
+    "invalid_record_count": 0,
+    "records": [
+      {
+        "record_lineage_id": "drec_a9baf81c6d2d2fe0f3706835860902eb9de599c83f3e8f1beac19c8382d9d3c1",
+        "branch_lineage_id": "dbranch_1c0e9b194ec8ad0acb9d9b9a339a03ba9c068921f7b49db8fa6bd715de6427eb",
+        "record_window_id": "",
+        "record_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+        "branch_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+        "evidence_ids": [
+          "ev_7f6b5be938f5a57c073dc6e4e5ff"
+        ],
+        "resolved_evidence_ids": [
+          "ev_7f6b5be938f5a57c073dc6e4e5ff"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_522e278b7c8da1a7d92e902bf5b7",
+            "ev_0bbf9f70fdc5d4dcf9a1d7911ef4",
+            "ev_fbf1ff5d5126cbfe002f7d9bb1c9",
+            "ev_a3b83d306d03e260ff749d80bc0b",
+            "ev_7f6b5be938f5a57c073dc6e4e5ff"
+          ],
+          "record_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+          "branch_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "1",
+              "name": "SYS 485 comm loss",
+              "description": "SYS 485 comm loss",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "1 | SYS 485 comm loss"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "1 | SYS 485 comm loss"
+                },
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "2 The Active Power Filter modules have repeated IDs."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "The Active Power Filter modules have repeated IDs.",
+            "description": "The Active Power Filter modules have repeated IDs.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                "source_page": 64,
+                "quote": "2 The Active Power Filter modules have repeated IDs."
+              }
+            ]
+          },
+          "actions": [],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check the DIP switches of the individual modules.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "1 Check the DIP switches of the individual modules."
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "check_only"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_a9baf81c6d2d2fe0f3706835860902eb9de599c83f3e8f1beac19c8382d9d3c1",
+          "branch_lineage_id": "dbranch_1c0e9b194ec8ad0acb9d9b9a339a03ba9c068921f7b49db8fa6bd715de6427eb",
+          "record_window_id": "",
+          "record_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+          "branch_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "1",
+              "name": "SYS 485 comm loss",
+              "description": "SYS 485 comm loss",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "1 | SYS 485 comm loss",
+                  "evidence_id": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "1 | SYS 485 comm loss | 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 2,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "1 | SYS 485 comm loss",
+                  "evidence_id": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "1 | SYS 485 comm loss | 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 2,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "2 The Active Power Filter modules have repeated IDs.",
+                  "evidence_id": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "1 | SYS 485 comm loss | 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 2,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "The Active Power Filter modules have repeated IDs.",
+            "description": "The Active Power Filter modules have repeated IDs.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                "source_page": 64,
+                "quote": "2 The Active Power Filter modules have repeated IDs.",
+                "evidence_id": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "1 | SYS 485 comm loss | 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 2,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check the DIP switches of the individual modules.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "1 Check the DIP switches of the individual modules.",
+                  "evidence_id": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "1 | SYS 485 comm loss | 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 2,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "check_only"
+        },
+        "disposition": "gap",
+        "accounting_state": "inspection_only_gap",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "check_only",
+            "path": "resolution_status",
+            "message": "The source provides a diagnostic check but no restorative action."
+          },
+          {
+            "code": "missing_actions",
+            "path": "actions",
+            "message": "No CorrectiveAction claim was supplied."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_256eb6ab4b90f93e8da59e9bfbf7fada6a81d11fdf89407282e332c45f1230c1",
+        "branch_lineage_id": "dbranch_2260fd39c4a826793747c79d121d66c185ce281f830c7599d0d14fafb7801a53",
+        "record_window_id": "",
+        "record_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+        "branch_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+        "evidence_ids": [
+          "ev_be36fe564a699168bb8b6df2af8d"
+        ],
+        "resolved_evidence_ids": [
+          "ev_be36fe564a699168bb8b6df2af8d"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_cc8e5178322183d4de9c1371cc2b",
+            "ev_9b23897868d5997b52d3e647b9f8",
+            "ev_a952a187f5309410e9082be993be",
+            "ev_be36fe564a699168bb8b6df2af8d"
+          ],
+          "record_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+          "branch_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "3",
+              "name": "Ambient OTP",
+              "description": "Ambient OTP",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "3 | Ambient OTP"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "3 | Ambient OTP"
+                },
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "2 The fans do not work."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "The fans do not work.",
+            "description": "The fans do not work.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                "source_page": 64,
+                "quote": "2 The fans do not work."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Contact service personnel.",
+              "description": "Contact service personnel.",
+              "instruction_text": "Contact service personnel.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "Contact service personnel."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "2 The fans do not work."
+                },
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "Contact service personnel."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_256eb6ab4b90f93e8da59e9bfbf7fada6a81d11fdf89407282e332c45f1230c1",
+          "branch_lineage_id": "dbranch_2260fd39c4a826793747c79d121d66c185ce281f830c7599d0d14fafb7801a53",
+          "record_window_id": "",
+          "record_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+          "branch_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "3",
+              "name": "Ambient OTP",
+              "description": "Ambient OTP",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "3 | Ambient OTP",
+                  "evidence_id": "ev_be36fe564a699168bb8b6df2af8d",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 4,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "2 The fans do not work.",
+                  "evidence_id": "ev_be36fe564a699168bb8b6df2af8d",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 4,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "3 | Ambient OTP",
+                  "evidence_id": "ev_be36fe564a699168bb8b6df2af8d",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 4,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "The fans do not work.",
+            "description": "The fans do not work.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                "source_page": 64,
+                "quote": "2 The fans do not work.",
+                "evidence_id": "ev_be36fe564a699168bb8b6df2af8d",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 4,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Contact service personnel.",
+              "description": "Contact service personnel.",
+              "instruction_text": "Contact service personnel.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "Contact service personnel.",
+                  "evidence_id": "ev_be36fe564a699168bb8b6df2af8d",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 4,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "2 The fans do not work.",
+                  "evidence_id": "ev_be36fe564a699168bb8b6df2af8d",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 4,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "Contact service personnel.",
+                  "evidence_id": "ev_be36fe564a699168bb8b6df2af8d",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 4,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "disposition": "publish",
+        "accounting_state": "autonomously_publishable",
+        "compiler_recoveries": [],
+        "drop_reasons": [],
+        "emitted_node_ids": [
+          "ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6",
+          "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+          "fm_the_fans_do_not_work_be601744250bed0537fdeff1485d6f9474b178b417af810de50afaf589ec200a"
+        ],
+        "emitted_relations": [
+          "INDICATES:err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a->fm_the_fans_do_not_work_be601744250bed0537fdeff1485d6f9474b178b417af810de50afaf589ec200a",
+          "RESOLVED_BY:fm_the_fans_do_not_work_be601744250bed0537fdeff1485d6f9474b178b417af810de50afaf589ec200a->ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6"
+        ]
+      },
+      {
+        "record_lineage_id": "drec_567a694f2c2282ab8e4629ef118b7dcfef854f1c7f73dcfeb478e0f13eae289f",
+        "branch_lineage_id": "dbranch_4bb3e581e3bce1105241bc4f71e1c241688ebd367990a1288b8a67a865a2b40e",
+        "record_window_id": "",
+        "record_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+        "branch_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+        "evidence_ids": [
+          "ev_96ed605696bfbeb932e90a8ead5c"
+        ],
+        "resolved_evidence_ids": [
+          "ev_96ed605696bfbeb932e90a8ead5c"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_3462e8a3c166a0552ed136197659",
+            "ev_96ed605696bfbeb932e90a8ead5c"
+          ],
+          "record_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+          "branch_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "4",
+              "name": "BUS OVP/UVP",
+              "description": "BUS OVP/UVP",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "source_page": 64,
+                  "quote": "4 | BUS OVP/UVP"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "source_page": 64,
+                  "quote": "4 | BUS OVP/UVP"
+                },
+                {
+                  "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "source_page": 64,
+                  "quote": "BUS capacitor failure."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "BUS capacitor failure.",
+            "description": "BUS capacitor failure.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                "source_page": 64,
+                "quote": "BUS capacitor failure."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Contact service personnel.",
+              "description": "Contact service personnel.",
+              "instruction_text": "Contact service personnel.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "source_page": 64,
+                  "quote": "Contact service personnel."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "source_page": 64,
+                  "quote": "BUS capacitor failure."
+                },
+                {
+                  "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "source_page": 64,
+                  "quote": "Contact service personnel."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": {
+            "name": "BUS capacitor",
+            "description": "BUS capacitor failure.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                "source_page": 64,
+                "quote": "BUS capacitor failure."
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                "source_page": 64,
+                "quote": "BUS capacitor failure."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_567a694f2c2282ab8e4629ef118b7dcfef854f1c7f73dcfeb478e0f13eae289f",
+          "branch_lineage_id": "dbranch_4bb3e581e3bce1105241bc4f71e1c241688ebd367990a1288b8a67a865a2b40e",
+          "record_window_id": "",
+          "record_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+          "branch_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "4",
+              "name": "BUS OVP/UVP",
+              "description": "BUS OVP/UVP",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "source_page": 64,
+                  "quote": "4 | BUS OVP/UVP",
+                  "evidence_id": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "4 | BUS OVP/UVP | BUS capacitor failure. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 5,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "source_page": 64,
+                  "quote": "4 | BUS OVP/UVP",
+                  "evidence_id": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "4 | BUS OVP/UVP | BUS capacitor failure. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 5,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "source_page": 64,
+                  "quote": "BUS capacitor failure.",
+                  "evidence_id": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "4 | BUS OVP/UVP | BUS capacitor failure. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 5,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "BUS capacitor failure.",
+            "description": "BUS capacitor failure.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                "source_page": 64,
+                "quote": "BUS capacitor failure.",
+                "evidence_id": "ev_96ed605696bfbeb932e90a8ead5c",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "4 | BUS OVP/UVP | BUS capacitor failure. | Contact service personnel.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 5,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Contact service personnel.",
+              "description": "Contact service personnel.",
+              "instruction_text": "Contact service personnel.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "source_page": 64,
+                  "quote": "Contact service personnel.",
+                  "evidence_id": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "4 | BUS OVP/UVP | BUS capacitor failure. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 5,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "source_page": 64,
+                  "quote": "BUS capacitor failure.",
+                  "evidence_id": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "4 | BUS OVP/UVP | BUS capacitor failure. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 5,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "source_page": 64,
+                  "quote": "Contact service personnel.",
+                  "evidence_id": "ev_96ed605696bfbeb932e90a8ead5c",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "4 | BUS OVP/UVP | BUS capacitor failure. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 5,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": {
+            "name": "BUS capacitor",
+            "description": "BUS capacitor failure.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                "source_page": 64,
+                "quote": "BUS capacitor failure.",
+                "evidence_id": "ev_96ed605696bfbeb932e90a8ead5c",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "4 | BUS OVP/UVP | BUS capacitor failure. | Contact service personnel.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 5,
+                  "ocr_region_index": null
+                }
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c",
+                "source_page": 64,
+                "quote": "BUS capacitor failure.",
+                "evidence_id": "ev_96ed605696bfbeb932e90a8ead5c",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "4 | BUS OVP/UVP | BUS capacitor failure. | Contact service personnel.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 5,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "disposition": "publish",
+        "accounting_state": "autonomously_publishable",
+        "compiler_recoveries": [],
+        "drop_reasons": [],
+        "emitted_node_ids": [
+          "ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6",
+          "comp_bus_capacitor_1ca94b87d6127de0b19e3e0e69fc665d3542a85499ab7f5339701af373ea40af",
+          "err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f",
+          "fm_bus_capacitor_failure_00dc7f56d87ab4ce98f0b28211d34a7fca750c15f26f36483e60f5ece65ecddc"
+        ],
+        "emitted_relations": [
+          "AFFECTS:fm_bus_capacitor_failure_00dc7f56d87ab4ce98f0b28211d34a7fca750c15f26f36483e60f5ece65ecddc->comp_bus_capacitor_1ca94b87d6127de0b19e3e0e69fc665d3542a85499ab7f5339701af373ea40af",
+          "INDICATES:err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f->fm_bus_capacitor_failure_00dc7f56d87ab4ce98f0b28211d34a7fca750c15f26f36483e60f5ece65ecddc",
+          "RESOLVED_BY:fm_bus_capacitor_failure_00dc7f56d87ab4ce98f0b28211d34a7fca750c15f26f36483e60f5ece65ecddc->ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6"
+        ]
+      },
+      {
+        "record_lineage_id": "drec_70dff7b8732930654a6bb1c7ed7047e322eadc37240ec7c5a6784fb870b4400a",
+        "branch_lineage_id": "dbranch_840bac61598630c9f2361c21188bbdb613603dd127743b515d0e158218cd5099",
+        "record_window_id": "",
+        "record_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+        "branch_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+        "evidence_ids": [
+          "ev_e8f5ccbf7b758fa29edb98bffd92"
+        ],
+        "resolved_evidence_ids": [
+          "ev_e8f5ccbf7b758fa29edb98bffd92"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_8544b9c044268f27ca5b348eedfb",
+            "ev_e8f5ccbf7b758fa29edb98bffd92"
+          ],
+          "record_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+          "branch_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "5",
+              "name": "Fan Fail",
+              "description": "Fan Fail",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "source_page": 64,
+                  "quote": "5 | Fan Fail"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "source_page": 64,
+                  "quote": "5 | Fan Fail"
+                },
+                {
+                  "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "source_page": 64,
+                  "quote": "Fan failure."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Fan failure.",
+            "description": "Fan failure.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                "source_page": 64,
+                "quote": "Fan failure."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Contact service personnel.",
+              "description": "Contact service personnel.",
+              "instruction_text": "Contact service personnel.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "source_page": 64,
+                  "quote": "Contact service personnel."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "source_page": 64,
+                  "quote": "Fan failure."
+                },
+                {
+                  "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "source_page": 64,
+                  "quote": "Contact service personnel."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": {
+            "name": "Fan",
+            "description": "Fan failure.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                "source_page": 64,
+                "quote": "Fan failure."
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                "source_page": 64,
+                "quote": "Fan failure."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_70dff7b8732930654a6bb1c7ed7047e322eadc37240ec7c5a6784fb870b4400a",
+          "branch_lineage_id": "dbranch_840bac61598630c9f2361c21188bbdb613603dd127743b515d0e158218cd5099",
+          "record_window_id": "",
+          "record_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+          "branch_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "5",
+              "name": "Fan Fail",
+              "description": "Fan Fail",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "source_page": 64,
+                  "quote": "5 | Fan Fail",
+                  "evidence_id": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "5 | Fan Fail | Fan failure. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 6,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "source_page": 64,
+                  "quote": "5 | Fan Fail",
+                  "evidence_id": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "5 | Fan Fail | Fan failure. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 6,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "source_page": 64,
+                  "quote": "Fan failure.",
+                  "evidence_id": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "5 | Fan Fail | Fan failure. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 6,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Fan failure.",
+            "description": "Fan failure.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                "source_page": 64,
+                "quote": "Fan failure.",
+                "evidence_id": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "5 | Fan Fail | Fan failure. | Contact service personnel.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 6,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Contact service personnel.",
+              "description": "Contact service personnel.",
+              "instruction_text": "Contact service personnel.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "source_page": 64,
+                  "quote": "Contact service personnel.",
+                  "evidence_id": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "5 | Fan Fail | Fan failure. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 6,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "source_page": 64,
+                  "quote": "Contact service personnel.",
+                  "evidence_id": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "5 | Fan Fail | Fan failure. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 6,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "source_page": 64,
+                  "quote": "Fan failure.",
+                  "evidence_id": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "5 | Fan Fail | Fan failure. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 6,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": {
+            "name": "Fan",
+            "description": "Fan failure.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                "source_page": 64,
+                "quote": "Fan failure.",
+                "evidence_id": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "5 | Fan Fail | Fan failure. | Contact service personnel.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 6,
+                  "ocr_region_index": null
+                }
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                "source_page": 64,
+                "quote": "Fan failure.",
+                "evidence_id": "ev_e8f5ccbf7b758fa29edb98bffd92",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "5 | Fan Fail | Fan failure. | Contact service personnel.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 6,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "disposition": "publish",
+        "accounting_state": "autonomously_publishable",
+        "compiler_recoveries": [],
+        "drop_reasons": [],
+        "emitted_node_ids": [
+          "ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6",
+          "comp_fan_17203c3924a6891411b62f47cd8331f2fedc7b73bacd9d6dbf00b40a54563556",
+          "err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad",
+          "fm_fan_failure_2b41cfcb34866ad64b7c2c7d0ef9079486e30ad22f3d6361d05aec63dfad2f3d"
+        ],
+        "emitted_relations": [
+          "AFFECTS:fm_fan_failure_2b41cfcb34866ad64b7c2c7d0ef9079486e30ad22f3d6361d05aec63dfad2f3d->comp_fan_17203c3924a6891411b62f47cd8331f2fedc7b73bacd9d6dbf00b40a54563556",
+          "INDICATES:err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad->fm_fan_failure_2b41cfcb34866ad64b7c2c7d0ef9079486e30ad22f3d6361d05aec63dfad2f3d",
+          "RESOLVED_BY:fm_fan_failure_2b41cfcb34866ad64b7c2c7d0ef9079486e30ad22f3d6361d05aec63dfad2f3d->ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6"
+        ]
+      },
+      {
+        "record_lineage_id": "drec_e5c100a4efe1b21fa934ab90083e21085e5e0ff21ebf92737c30e20c4ab6a83a",
+        "branch_lineage_id": "dbranch_8ee14d0378e73e53d585fb568762bfe952435904177da9091847da351d9a39e2",
+        "record_window_id": "",
+        "record_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+        "branch_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+        "evidence_ids": [
+          "ev_2a7fb8b57f32637cd9b1debcd3d2"
+        ],
+        "resolved_evidence_ids": [
+          "ev_2a7fb8b57f32637cd9b1debcd3d2"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_50c83074615f786db352e42db3ea",
+            "ev_2a7fb8b57f32637cd9b1debcd3d2"
+          ],
+          "record_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+          "branch_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "2",
+              "name": "Fuse blowout",
+              "description": "Fuse blowout",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "source_page": 64,
+                  "quote": "2 | Fuse blowout"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "source_page": 64,
+                  "quote": "2 | Fuse blowout"
+                },
+                {
+                  "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "source_page": 64,
+                  "quote": "The input fuse is broken."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "The input fuse is broken.",
+            "description": "The input fuse is broken.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                "source_page": 64,
+                "quote": "The input fuse is broken."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Contact service personnel.",
+              "description": "Contact service personnel.",
+              "instruction_text": "Contact service personnel.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "source_page": 64,
+                  "quote": "Contact service personnel."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "source_page": 64,
+                  "quote": "The input fuse is broken."
+                },
+                {
+                  "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "source_page": 64,
+                  "quote": "Contact service personnel."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": {
+            "name": "input fuse",
+            "description": "The input fuse is broken.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                "source_page": 64,
+                "quote": "The input fuse is broken."
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                "source_page": 64,
+                "quote": "The input fuse is broken."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_e5c100a4efe1b21fa934ab90083e21085e5e0ff21ebf92737c30e20c4ab6a83a",
+          "branch_lineage_id": "dbranch_8ee14d0378e73e53d585fb568762bfe952435904177da9091847da351d9a39e2",
+          "record_window_id": "",
+          "record_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+          "branch_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "2",
+              "name": "Fuse blowout",
+              "description": "Fuse blowout",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "source_page": 64,
+                  "quote": "2 | Fuse blowout",
+                  "evidence_id": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "2 | Fuse blowout | The input fuse is broken. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 3,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "source_page": 64,
+                  "quote": "2 | Fuse blowout",
+                  "evidence_id": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "2 | Fuse blowout | The input fuse is broken. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 3,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "source_page": 64,
+                  "quote": "The input fuse is broken.",
+                  "evidence_id": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "2 | Fuse blowout | The input fuse is broken. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 3,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "The input fuse is broken.",
+            "description": "The input fuse is broken.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                "source_page": 64,
+                "quote": "The input fuse is broken.",
+                "evidence_id": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "2 | Fuse blowout | The input fuse is broken. | Contact service personnel.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 3,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Contact service personnel.",
+              "description": "Contact service personnel.",
+              "instruction_text": "Contact service personnel.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "source_page": 64,
+                  "quote": "Contact service personnel.",
+                  "evidence_id": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "2 | Fuse blowout | The input fuse is broken. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 3,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "source_page": 64,
+                  "quote": "Contact service personnel.",
+                  "evidence_id": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "2 | Fuse blowout | The input fuse is broken. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 3,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "source_page": 64,
+                  "quote": "The input fuse is broken.",
+                  "evidence_id": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "2 | Fuse blowout | The input fuse is broken. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 3,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": {
+            "name": "input fuse",
+            "description": "The input fuse is broken.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                "source_page": 64,
+                "quote": "The input fuse is broken.",
+                "evidence_id": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "2 | Fuse blowout | The input fuse is broken. | Contact service personnel.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 3,
+                  "ocr_region_index": null
+                }
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                "source_page": 64,
+                "quote": "The input fuse is broken.",
+                "evidence_id": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "2 | Fuse blowout | The input fuse is broken. | Contact service personnel.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 3,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "disposition": "publish",
+        "accounting_state": "autonomously_publishable",
+        "compiler_recoveries": [],
+        "drop_reasons": [],
+        "emitted_node_ids": [
+          "ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6",
+          "comp_input_fuse_943b387256953b83acf977e060a2f4e751bfe75dbb18baae6e04f214918ca4d4",
+          "err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1",
+          "fm_the_input_fuse_is_broken_300402296aab2bef34e1d5e7822ed9ec1e6a30d5372f5596bbfdaf19c09c4f89"
+        ],
+        "emitted_relations": [
+          "AFFECTS:fm_the_input_fuse_is_broken_300402296aab2bef34e1d5e7822ed9ec1e6a30d5372f5596bbfdaf19c09c4f89->comp_input_fuse_943b387256953b83acf977e060a2f4e751bfe75dbb18baae6e04f214918ca4d4",
+          "INDICATES:err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1->fm_the_input_fuse_is_broken_300402296aab2bef34e1d5e7822ed9ec1e6a30d5372f5596bbfdaf19c09c4f89",
+          "RESOLVED_BY:fm_the_input_fuse_is_broken_300402296aab2bef34e1d5e7822ed9ec1e6a30d5372f5596bbfdaf19c09c4f89->ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6"
+        ]
+      },
+      {
+        "record_lineage_id": "drec_db77ec104a56936ea16449be9fc153b22531784d3ed99fb51aed32ee14081d45",
+        "branch_lineage_id": "dbranch_bd34757c6e330e1ab7eebe945767c4c9eb6b513e57b8fd82b0caa66ee603fa18",
+        "record_window_id": "",
+        "record_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+        "branch_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+        "evidence_ids": [
+          "ev_1bfed85da319c7eaf0f70e296c77"
+        ],
+        "resolved_evidence_ids": [
+          "ev_1bfed85da319c7eaf0f70e296c77"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_6d91cd4b3ca99d86216a6c5b21fe",
+            "ev_717f5b63e0b26e6d83f8a1818011",
+            "ev_785a35a0e541af430aed6e9db012",
+            "ev_1ed37fa1818f967195777efc54b2",
+            "ev_1bfed85da319c7eaf0f70e296c77"
+          ],
+          "record_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+          "branch_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "6",
+              "name": "No current compensation/Bad current compensation",
+              "description": "No current compensation/Bad current compensation",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+                  "source_page": 64,
+                  "quote": "6 | No current compensation/Bad current compensation"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+                  "source_page": 64,
+                  "quote": "6 | No current compensation/Bad current compensation"
+                },
+                {
+                  "source_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+                  "source_page": 64,
+                  "quote": "The CT is not well connected."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "The CT is not well connected.",
+            "description": "The CT is not well connected.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+                "source_page": 64,
+                "quote": "The CT is not well connected."
+              }
+            ]
+          },
+          "actions": [],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check if the CT wiring is cor- rect.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+                  "source_page": 64,
+                  "quote": "Check if the CT wiring is cor- rect."
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "affected_component": {
+            "name": "CT",
+            "description": "The CT is not well connected.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+                "source_page": 64,
+                "quote": "The CT is not well connected."
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+                "source_page": 64,
+                "quote": "The CT is not well connected."
+              }
+            ]
+          },
+          "resolution_status": "check_only"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_db77ec104a56936ea16449be9fc153b22531784d3ed99fb51aed32ee14081d45",
+          "branch_lineage_id": "dbranch_bd34757c6e330e1ab7eebe945767c4c9eb6b513e57b8fd82b0caa66ee603fa18",
+          "record_window_id": "",
+          "record_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+          "branch_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "6",
+              "name": "No current compensation/Bad current compensation",
+              "description": "No current compensation/Bad current compensation",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+                  "source_page": 64,
+                  "quote": "6 | No current compensation/Bad current compensation",
+                  "evidence_id": "ev_1bfed85da319c7eaf0f70e296c77",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "6 | No current compensation/Bad current compensation | The CT is not well connected. | Check if the CT wiring is cor- rect.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 7,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+                  "source_page": 64,
+                  "quote": "6 | No current compensation/Bad current compensation",
+                  "evidence_id": "ev_1bfed85da319c7eaf0f70e296c77",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "6 | No current compensation/Bad current compensation | The CT is not well connected. | Check if the CT wiring is cor- rect.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 7,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+                  "source_page": 64,
+                  "quote": "The CT is not well connected.",
+                  "evidence_id": "ev_1bfed85da319c7eaf0f70e296c77",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "6 | No current compensation/Bad current compensation | The CT is not well connected. | Check if the CT wiring is cor- rect.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 7,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "The CT is not well connected.",
+            "description": "The CT is not well connected.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+                "source_page": 64,
+                "quote": "The CT is not well connected.",
+                "evidence_id": "ev_1bfed85da319c7eaf0f70e296c77",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "6 | No current compensation/Bad current compensation | The CT is not well connected. | Check if the CT wiring is cor- rect.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 7,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check if the CT wiring is cor- rect.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+                  "source_page": 64,
+                  "quote": "Check if the CT wiring is cor- rect.",
+                  "evidence_id": "ev_1bfed85da319c7eaf0f70e296c77",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "6 | No current compensation/Bad current compensation | The CT is not well connected. | Check if the CT wiring is cor- rect.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 7,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "affected_component": {
+            "name": "CT",
+            "description": "The CT is not well connected.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+                "source_page": 64,
+                "quote": "The CT is not well connected.",
+                "evidence_id": "ev_1bfed85da319c7eaf0f70e296c77",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "6 | No current compensation/Bad current compensation | The CT is not well connected. | Check if the CT wiring is cor- rect.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 7,
+                  "ocr_region_index": null
+                }
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_1bfed85da319c7eaf0f70e296c77",
+                "source_page": 64,
+                "quote": "The CT is not well connected.",
+                "evidence_id": "ev_1bfed85da319c7eaf0f70e296c77",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "6 | No current compensation/Bad current compensation | The CT is not well connected. | Check if the CT wiring is cor- rect.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 7,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "resolution_status": "check_only"
+        },
+        "disposition": "gap",
+        "accounting_state": "inspection_only_gap",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "check_only",
+            "path": "resolution_status",
+            "message": "The source provides a diagnostic check but no restorative action."
+          },
+          {
+            "code": "missing_actions",
+            "path": "actions",
+            "message": "No CorrectiveAction claim was supplied."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_a9baf81c6d2d2fe0f3706835860902eb9de599c83f3e8f1beac19c8382d9d3c1",
+        "branch_lineage_id": "dbranch_c95c3233a82799cf841b24d8805a237042b8dbeaa0becf717eb968854b12fdd9",
+        "record_window_id": "",
+        "record_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+        "branch_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+        "evidence_ids": [
+          "ev_7f6b5be938f5a57c073dc6e4e5ff"
+        ],
+        "resolved_evidence_ids": [
+          "ev_7f6b5be938f5a57c073dc6e4e5ff"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_522e278b7c8da1a7d92e902bf5b7",
+            "ev_f72fd8c040188a936118be5ce0c0",
+            "ev_4758e88a15b20bcc8827617900a3",
+            "ev_7f6b5be938f5a57c073dc6e4e5ff"
+          ],
+          "record_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+          "branch_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "1",
+              "name": "SYS 485 comm loss",
+              "description": "SYS 485 comm loss",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "1 | SYS 485 comm loss"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "1 | SYS 485 comm loss"
+                },
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "1 The communication wire is not well connected."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "The communication wire is not well connected.",
+            "description": "The communication wire is not well connected.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                "source_page": 64,
+                "quote": "1 The communication wire is not well connected."
+              }
+            ]
+          },
+          "actions": [],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check if the communication wire is firmly connected.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "1 Check if the communication wire is firmly connected."
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "check_only"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_a9baf81c6d2d2fe0f3706835860902eb9de599c83f3e8f1beac19c8382d9d3c1",
+          "branch_lineage_id": "dbranch_c95c3233a82799cf841b24d8805a237042b8dbeaa0becf717eb968854b12fdd9",
+          "record_window_id": "",
+          "record_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+          "branch_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "1",
+              "name": "SYS 485 comm loss",
+              "description": "SYS 485 comm loss",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "1 | SYS 485 comm loss",
+                  "evidence_id": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "1 | SYS 485 comm loss | 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 2,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "1 The communication wire is not well connected.",
+                  "evidence_id": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "1 | SYS 485 comm loss | 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 2,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "1 | SYS 485 comm loss",
+                  "evidence_id": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "1 | SYS 485 comm loss | 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 2,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "The communication wire is not well connected.",
+            "description": "The communication wire is not well connected.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                "source_page": 64,
+                "quote": "1 The communication wire is not well connected.",
+                "evidence_id": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "1 | SYS 485 comm loss | 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 2,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check if the communication wire is firmly connected.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "source_page": 64,
+                  "quote": "1 Check if the communication wire is firmly connected.",
+                  "evidence_id": "ev_7f6b5be938f5a57c073dc6e4e5ff",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "1 | SYS 485 comm loss | 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 2,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "check_only"
+        },
+        "disposition": "gap",
+        "accounting_state": "inspection_only_gap",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "check_only",
+            "path": "resolution_status",
+            "message": "The source provides a diagnostic check but no restorative action."
+          },
+          {
+            "code": "missing_actions",
+            "path": "actions",
+            "message": "No CorrectiveAction claim was supplied."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_256eb6ab4b90f93e8da59e9bfbf7fada6a81d11fdf89407282e332c45f1230c1",
+        "branch_lineage_id": "dbranch_f5313fba0c356b68af1bf30cdbdca56224307a3de8a15451b92ba60b0fe9be7e",
+        "record_window_id": "",
+        "record_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+        "branch_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+        "evidence_ids": [
+          "ev_be36fe564a699168bb8b6df2af8d"
+        ],
+        "resolved_evidence_ids": [
+          "ev_be36fe564a699168bb8b6df2af8d"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_cc8e5178322183d4de9c1371cc2b",
+            "ev_a952a187f5309410e9082be993be",
+            "ev_be36fe564a699168bb8b6df2af8d"
+          ],
+          "record_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+          "branch_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "3",
+              "name": "Ambient OTP",
+              "description": "Ambient OTP",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "3 | Ambient OTP"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "3 | Ambient OTP"
+                },
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "1 The air vents ate blocked."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "The air vents ate blocked.",
+            "description": "The air vents ate blocked.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                "source_page": 64,
+                "quote": "1 The air vents ate blocked."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Contact service personnel.",
+              "description": "Contact service personnel.",
+              "instruction_text": "Contact service personnel.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "Contact service personnel."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "1 The air vents ate blocked."
+                },
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "Contact service personnel."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_256eb6ab4b90f93e8da59e9bfbf7fada6a81d11fdf89407282e332c45f1230c1",
+          "branch_lineage_id": "dbranch_f5313fba0c356b68af1bf30cdbdca56224307a3de8a15451b92ba60b0fe9be7e",
+          "record_window_id": "",
+          "record_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+          "branch_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "3",
+              "name": "Ambient OTP",
+              "description": "Ambient OTP",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "3 | Ambient OTP",
+                  "evidence_id": "ev_be36fe564a699168bb8b6df2af8d",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 4,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "1 The air vents ate blocked.",
+                  "evidence_id": "ev_be36fe564a699168bb8b6df2af8d",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 4,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "3 | Ambient OTP",
+                  "evidence_id": "ev_be36fe564a699168bb8b6df2af8d",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 4,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "The air vents ate blocked.",
+            "description": "The air vents ate blocked.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                "source_page": 64,
+                "quote": "1 The air vents ate blocked.",
+                "evidence_id": "ev_be36fe564a699168bb8b6df2af8d",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 64,
+                  "section": null,
+                  "quote": "3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 64,
+                  "row_index": 4,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Contact service personnel.",
+              "description": "Contact service personnel.",
+              "instruction_text": "Contact service personnel.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "Contact service personnel.",
+                  "evidence_id": "ev_be36fe564a699168bb8b6df2af8d",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 4,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "1 The air vents ate blocked.",
+                  "evidence_id": "ev_be36fe564a699168bb8b6df2af8d",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 4,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_be36fe564a699168bb8b6df2af8d",
+                  "source_page": 64,
+                  "quote": "Contact service personnel.",
+                  "evidence_id": "ev_be36fe564a699168bb8b6df2af8d",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 64,
+                    "section": null,
+                    "quote": "3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 64,
+                    "row_index": 4,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "disposition": "publish",
+        "accounting_state": "autonomously_publishable",
+        "compiler_recoveries": [],
+        "drop_reasons": [],
+        "emitted_node_ids": [
+          "ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6",
+          "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+          "fm_the_air_vents_ate_blocked_fd54e55691c24792d3aaf51d7c39c89aefbb43c60384fa08eaea47d44bbfd940"
+        ],
+        "emitted_relations": [
+          "INDICATES:err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a->fm_the_air_vents_ate_blocked_fd54e55691c24792d3aaf51d7c39c89aefbb43c60384fa08eaea47d44bbfd940",
+          "RESOLVED_BY:fm_the_air_vents_ate_blocked_fd54e55691c24792d3aaf51d7c39c89aefbb43c60384fa08eaea47d44bbfd940->ca_contact_service_personnel_16ab7f60d2e554c0fd57cb4189f5354920795eeaf095a028d7fccbf788cbe7e6"
+        ]
+      }
+    ],
+    "candidate_count": 8,
+    "duplicate_candidate_count": 0,
+    "publish_count": 5,
+    "unresolved_count": 3,
+    "disposition_counts": {
+      "publish": 5,
+      "gap": 3,
+      "review": 0,
+      "exclude": 0
+    },
+    "drop_reasons": {
+      "check_only": 3,
+      "missing_actions": 3
+    },
+    "escalation_recommended": true
+  },
+  "resolution_completion_report": {},
+  "canonicalization_report": {},
+  "review_queue": [],
+  "review_summary": {}
+}

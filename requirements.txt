@@ -7,7 +7,9 @@ python-multipart
 # affect deterministic EvidenceUnit/window inventories.  Pin the runtime used
 # by the v9 campaign so replay digests are reproducible.
 pymupdf==1.27.1
-openai>=2.50.0,<3
+# Strict schema conversion/local parsing are isolated in llm_response_archive and llm_gateway.
+# Pin the tested adapter API; upgrades require replay tests.
+openai==2.54.0
 pydantic-settings
 pyyaml
 langgraph

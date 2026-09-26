@@ -1,0 +1,466 @@
+{
+  "ontology_name": "Core_Ontology",
+  "version": "2.0",
+  "language": "English",
+  "source_type": "technical PDF",
+  "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "Powermax30 AIR plasma cutting system",
+        "description": "Plasma arc cutting system with integrated air compressor",
+        "brand": "Hypertherm",
+        "model": "Powermax30 AIR",
+        "asset_type": "hypertherm powermax30 air service manual rev4 808850.pdf"
+      }
+    ],
+    "Component": [
+      {
+        "component_id": "comp_compressor_driver_board_pcb3_c9b010e3c52d0157d8d1f224d1211534f17ac3aaed7796d04c08a738deda07e4",
+        "name": "Compressor-driver board (PCB3)",
+        "description": "Compressor-driver board identified for replacement.",
+        "category": "source_named_component"
+      },
+      {
+        "component_id": "comp_power_board_pcb2_6727e0aa8420dd6f736b08fdcfffaa2d7df067bb835b2c1646ca5495e7c0b30b",
+        "name": "Power board (PCB2)",
+        "description": "Power board identified for replacement.",
+        "category": "source_named_component"
+      }
+    ],
+    "Symptom": [
+      {
+        "symptom_id": "sym_internal_compressor_fault_led_and_temperature_fa_ca55bc0d1bf4c745588929fc9b8c4a345bdbac3b51ae9f61c54c75b673549aaa",
+        "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+        "description": "Both the internal compressor fault LED and temperature fault LED illuminate.",
+        "severity": "Unknown"
+      }
+    ],
+    "FailureMode": [
+      {
+        "failure_mode_id": "fm_faulty_compressor_driver_board_pcb3_b968575761278e5c74959bccf5a72455e9f9d8de36c45de51429464af559500d",
+        "name": "Faulty compressor-driver board (PCB3)",
+        "description": "With the power board isolated, both VBUS and compressor-enable voltage are present on the power board; the procedure directs replacement of the compressor-driver board.",
+        "material_context": "comp_compressor_driver_board_pcb3_c9b010e3c52d0157d8d1f224d1211534f17ac3aaed7796d04c08a738deda07e4"
+      },
+      {
+        "failure_mode_id": "fm_faulty_compressor_driver_board_pcb3_e1845787c3955ddebefd18848cf3d0bfe78e622c71181bc37c5b265898ad4300",
+        "name": "Faulty compressor-driver board (PCB3)",
+        "description": "The compressor-enable voltage is present at J1 on the compressor-driver board, but the diagnostic procedure directs replacement of that board.",
+        "material_context": "comp_compressor_driver_board_pcb3_c9b010e3c52d0157d8d1f224d1211534f17ac3aaed7796d04c08a738deda07e4"
+      },
+      {
+        "failure_mode_id": "fm_faulty_power_board_pcb2_62d01d4a6f026080b9278828d48f79e6bc5cc4d48c5b44230045635117f60e0e",
+        "name": "Faulty power board (PCB2)",
+        "description": "With the power board isolated, neither VBUS nor compressor-enable voltage is present.",
+        "material_context": "comp_power_board_pcb2_6727e0aa8420dd6f736b08fdcfffaa2d7df067bb835b2c1646ca5495e7c0b30b"
+      },
+      {
+        "failure_mode_id": "fm_faulty_power_board_pcb2_7a438f6cb927ebbd88d5c052a15e721eb25b3075e2ae5100872a468c0dcf9b9d",
+        "name": "Faulty power board (PCB2)",
+        "description": "With the power board isolated, one of VBUS or compressor-enable voltage is present and the other is not.",
+        "material_context": "comp_power_board_pcb2_6727e0aa8420dd6f736b08fdcfffaa2d7df067bb835b2c1646ca5495e7c0b30b"
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "ca_replace_the_compressor_driver_board_c286770b9e7e21744ff1675e0437ac8a91ec9fe37d8fd4fd9763050f80cc9996",
+        "name": "Replace the compressor-driver board",
+        "description": "Replace the compressor-driver board.",
+        "instruction_text": "If compressor-enable voltage is present at J1, replace the compressor-driver board.",
+        "action_kind": "replacement",
+        "source_type": "technical PDF",
+        "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      },
+      {
+        "action_id": "ca_replace_the_compressor_driver_board_fbec0a50a0dff414e74738b8d68707503b7b55829c9723abaa0313042db8aa4b",
+        "name": "Replace the compressor-driver board",
+        "description": "Replace the compressor-driver board.",
+        "instruction_text": "If VBUS and compressor-enable voltage are both present on the power board, replace the compressor-driver board.",
+        "action_kind": "replacement",
+        "source_type": "technical PDF",
+        "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      },
+      {
+        "action_id": "ca_replace_the_power_board_8033d99245320e1fb345dde798b1f93f69c2946c35a646383878275bd9a6e0f9",
+        "name": "Replace the power board",
+        "description": "Replace the power board.",
+        "instruction_text": "If VBUS or compressor-enable voltage is present on the power board but the other is not, replace the power board.",
+        "action_kind": "replacement",
+        "source_type": "technical PDF",
+        "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      },
+      {
+        "action_id": "ca_replace_the_power_board_b7f7bcdd7233cd2296540fe6b0cb1e5b50504324ee6a65e076cdf8760080f80f",
+        "name": "Replace the power board",
+        "description": "Replace the power board.",
+        "instruction_text": "If neither VBUS nor compressor-enable voltage is present on the power board, replace the power board.",
+        "action_kind": "replacement",
+        "source_type": "technical PDF",
+        "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      }
+    ],
+    "ErrorCode": []
+  },
+  "relations": [
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "fm_faulty_compressor_driver_board_pcb3_b968575761278e5c74959bccf5a72455e9f9d8de36c45de51429464af559500d",
+      "to_type": "Component",
+      "to_id": "comp_compressor_driver_board_pcb3_c9b010e3c52d0157d8d1f224d1211534f17ac3aaed7796d04c08a738deda07e4",
+      "evidence": [
+        {
+          "source_page": 100,
+          "source_reference": "ev_7b661df034f369068ce15f97b67e",
+          "quote": "replace the",
+          "source_anchor": "ev_7b661df034f369068ce15f97b67e"
+        },
+        {
+          "source_page": 100,
+          "source_reference": "ev_e1fb92349e6d2618dc7568bd1d6d",
+          "quote": "compressor-driver board.",
+          "source_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d"
+        }
+      ],
+      "branch_lineage_id": "dbranch_d374203d2a1f5bca469123a3679774c2c2cc2db068d7dbdd0d40a5e0cf11ee3c"
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "fm_faulty_compressor_driver_board_pcb3_e1845787c3955ddebefd18848cf3d0bfe78e622c71181bc37c5b265898ad4300",
+      "to_type": "Component",
+      "to_id": "comp_compressor_driver_board_pcb3_c9b010e3c52d0157d8d1f224d1211534f17ac3aaed7796d04c08a738deda07e4",
+      "evidence": [
+        {
+          "source_page": 99,
+          "source_reference": "ev_d72a596d5b4d05d42195621ff54f",
+          "quote": "replace the compressor-driver board",
+          "source_anchor": "ev_d72a596d5b4d05d42195621ff54f"
+        }
+      ],
+      "branch_lineage_id": "dbranch_2f8391b8e640aae8380a17cd4dccddd428cf40f29d4ce3dbc22826926a27db80"
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "fm_faulty_power_board_pcb2_62d01d4a6f026080b9278828d48f79e6bc5cc4d48c5b44230045635117f60e0e",
+      "to_type": "Component",
+      "to_id": "comp_power_board_pcb2_6727e0aa8420dd6f736b08fdcfffaa2d7df067bb835b2c1646ca5495e7c0b30b",
+      "evidence": [
+        {
+          "source_page": 100,
+          "source_reference": "ev_4d8ffbc2784aea30d634350c949c",
+          "quote": "replace the power board",
+          "source_anchor": "ev_4d8ffbc2784aea30d634350c949c"
+        }
+      ],
+      "branch_lineage_id": "dbranch_a2844f1ab817fff9f17dd364b11fdae6815fa4d743d1b82bb5f18c8030276171"
+    },
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "fm_faulty_power_board_pcb2_7a438f6cb927ebbd88d5c052a15e721eb25b3075e2ae5100872a468c0dcf9b9d",
+      "to_type": "Component",
+      "to_id": "comp_power_board_pcb2_6727e0aa8420dd6f736b08fdcfffaa2d7df067bb835b2c1646ca5495e7c0b30b",
+      "evidence": [
+        {
+          "source_page": 100,
+          "source_reference": "ev_af450d14e62d538c563f4491817b",
+          "quote": "replace the power",
+          "source_anchor": "ev_af450d14e62d538c563f4491817b"
+        },
+        {
+          "source_page": 100,
+          "source_reference": "ev_f96004a6446e336f738bc9e6149a",
+          "quote": "board",
+          "source_anchor": "ev_f96004a6446e336f738bc9e6149a"
+        }
+      ],
+      "branch_lineage_id": "dbranch_36da437c639e57635a047069c6e9cac6c6fe7710304654af93a0d7168cecde53"
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "sym_internal_compressor_fault_led_and_temperature_fa_ca55bc0d1bf4c745588929fc9b8c4a345bdbac3b51ae9f61c54c75b673549aaa",
+      "to_type": "FailureMode",
+      "to_id": "fm_faulty_compressor_driver_board_pcb3_b968575761278e5c74959bccf5a72455e9f9d8de36c45de51429464af559500d",
+      "evidence": [
+        {
+          "source_page": 96,
+          "source_reference": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "quote": "If the internal compressor fault LED and temperature fault LED both illuminate",
+          "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c"
+        },
+        {
+          "source_page": 96,
+          "source_reference": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "quote": "If the internal compressor fault LED and temperature fault LED both illuminate, the root cause may be:",
+          "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c"
+        },
+        {
+          "source_page": 96,
+          "source_reference": "ev_f777cf5415351056a711fb8bfbcd",
+          "quote": " Faulty compressor-driver board (PCB3)",
+          "source_anchor": "ev_f777cf5415351056a711fb8bfbcd"
+        },
+        {
+          "source_page": 100,
+          "source_reference": "ev_5f2165818aa19e72dfea20b335e0",
+          "quote": "Are VBUS and compressor-enable voltage present on the power board?",
+          "source_anchor": "ev_5f2165818aa19e72dfea20b335e0"
+        },
+        {
+          "source_page": 100,
+          "source_reference": "ev_7b661df034f369068ce15f97b67e",
+          "quote": "If VBUS and compressor-enable voltage are both present on the power board, replace the",
+          "source_anchor": "ev_7b661df034f369068ce15f97b67e"
+        },
+        {
+          "source_page": 100,
+          "source_reference": "ev_e1fb92349e6d2618dc7568bd1d6d",
+          "quote": "compressor-driver board.",
+          "source_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d"
+        }
+      ],
+      "branch_lineage_id": "dbranch_d374203d2a1f5bca469123a3679774c2c2cc2db068d7dbdd0d40a5e0cf11ee3c"
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "sym_internal_compressor_fault_led_and_temperature_fa_ca55bc0d1bf4c745588929fc9b8c4a345bdbac3b51ae9f61c54c75b673549aaa",
+      "to_type": "FailureMode",
+      "to_id": "fm_faulty_compressor_driver_board_pcb3_e1845787c3955ddebefd18848cf3d0bfe78e622c71181bc37c5b265898ad4300",
+      "evidence": [
+        {
+          "source_page": 96,
+          "source_reference": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "quote": "If the internal compressor fault LED and temperature fault LED both illuminate",
+          "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c"
+        },
+        {
+          "source_page": 96,
+          "source_reference": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "quote": "If the internal compressor fault LED and temperature fault LED both illuminate, the root cause may be:",
+          "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c"
+        },
+        {
+          "source_page": 96,
+          "source_reference": "ev_f777cf5415351056a711fb8bfbcd",
+          "quote": " Faulty compressor-driver board (PCB3)",
+          "source_anchor": "ev_f777cf5415351056a711fb8bfbcd"
+        },
+        {
+          "source_page": 99,
+          "source_reference": "ev_44bd3afbcebb92a5c6aa7fa58622",
+          "quote": "Is compressor-enable voltage present (3 VDC)?",
+          "source_anchor": "ev_44bd3afbcebb92a5c6aa7fa58622"
+        },
+        {
+          "source_page": 99,
+          "source_reference": "ev_d72a596d5b4d05d42195621ff54f",
+          "quote": "If yes, replace the compressor-driver board.",
+          "source_anchor": "ev_d72a596d5b4d05d42195621ff54f"
+        }
+      ],
+      "branch_lineage_id": "dbranch_2f8391b8e640aae8380a17cd4dccddd428cf40f29d4ce3dbc22826926a27db80"
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "sym_internal_compressor_fault_led_and_temperature_fa_ca55bc0d1bf4c745588929fc9b8c4a345bdbac3b51ae9f61c54c75b673549aaa",
+      "to_type": "FailureMode",
+      "to_id": "fm_faulty_power_board_pcb2_62d01d4a6f026080b9278828d48f79e6bc5cc4d48c5b44230045635117f60e0e",
+      "evidence": [
+        {
+          "source_page": 96,
+          "source_reference": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "quote": "If the internal compressor fault LED and temperature fault LED both illuminate",
+          "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c"
+        },
+        {
+          "source_page": 96,
+          "source_reference": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "quote": "If the internal compressor fault LED and temperature fault LED both illuminate, the root cause may be:",
+          "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c"
+        },
+        {
+          "source_page": 96,
+          "source_reference": "ev_d90d4b038f23cacf6022bcd1337f",
+          "quote": " Faulty power board (PCB2)",
+          "source_anchor": "ev_d90d4b038f23cacf6022bcd1337f"
+        },
+        {
+          "source_page": 100,
+          "source_reference": "ev_4d8ffbc2784aea30d634350c949c",
+          "quote": "If neither VBUS nor compressor-enable voltage are present on the power board, replace the power board.",
+          "source_anchor": "ev_4d8ffbc2784aea30d634350c949c"
+        },
+        {
+          "source_page": 100,
+          "source_reference": "ev_5f2165818aa19e72dfea20b335e0",
+          "quote": "Are VBUS and compressor-enable voltage present on the power board?",
+          "source_anchor": "ev_5f2165818aa19e72dfea20b335e0"
+        }
+      ],
+      "branch_lineage_id": "dbranch_a2844f1ab817fff9f17dd364b11fdae6815fa4d743d1b82bb5f18c8030276171"
+    },
+    {
+      "name": "MAY_INDICATE",
+      "from_type": "Symptom",
+      "from_id": "sym_internal_compressor_fault_led_and_temperature_fa_ca55bc0d1bf4c745588929fc9b8c4a345bdbac3b51ae9f61c54c75b673549aaa",
+      "to_type": "FailureMode",
+      "to_id": "fm_faulty_power_board_pcb2_7a438f6cb927ebbd88d5c052a15e721eb25b3075e2ae5100872a468c0dcf9b9d",
+      "evidence": [
+        {
+          "source_page": 96,
+          "source_reference": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "quote": "If the internal compressor fault LED and temperature fault LED both illuminate",
+          "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c"
+        },
+        {
+          "source_page": 96,
+          "source_reference": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "quote": "If the internal compressor fault LED and temperature fault LED both illuminate, the root cause may be:",
+          "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c"
+        },
+        {
+          "source_page": 96,
+          "source_reference": "ev_d90d4b038f23cacf6022bcd1337f",
+          "quote": " Faulty power board (PCB2)",
+          "source_anchor": "ev_d90d4b038f23cacf6022bcd1337f"
+        },
+        {
+          "source_page": 100,
+          "source_reference": "ev_5f2165818aa19e72dfea20b335e0",
+          "quote": "Are VBUS and compressor-enable voltage present on the power board?",
+          "source_anchor": "ev_5f2165818aa19e72dfea20b335e0"
+        },
+        {
+          "source_page": 100,
+          "source_reference": "ev_af450d14e62d538c563f4491817b",
+          "quote": "If VBUS or compressor-enable voltage is present on the power board but the other is not, replace the power",
+          "source_anchor": "ev_af450d14e62d538c563f4491817b"
+        }
+      ],
+      "branch_lineage_id": "dbranch_36da437c639e57635a047069c6e9cac6c6fe7710304654af93a0d7168cecde53"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_faulty_compressor_driver_board_pcb3_b968575761278e5c74959bccf5a72455e9f9d8de36c45de51429464af559500d",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_replace_the_compressor_driver_board_fbec0a50a0dff414e74738b8d68707503b7b55829c9723abaa0313042db8aa4b",
+      "evidence": [
+        {
+          "source_page": 100,
+          "source_reference": "ev_5f2165818aa19e72dfea20b335e0",
+          "quote": "Are VBUS and compressor-enable voltage present on the power board?",
+          "source_anchor": "ev_5f2165818aa19e72dfea20b335e0"
+        },
+        {
+          "source_page": 100,
+          "source_reference": "ev_7b661df034f369068ce15f97b67e",
+          "quote": "If VBUS and compressor-enable voltage are both present on the power board, replace the",
+          "source_anchor": "ev_7b661df034f369068ce15f97b67e"
+        },
+        {
+          "source_page": 100,
+          "source_reference": "ev_e1fb92349e6d2618dc7568bd1d6d",
+          "quote": "compressor-driver board.",
+          "source_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d"
+        }
+      ],
+      "branch_lineage_id": "dbranch_d374203d2a1f5bca469123a3679774c2c2cc2db068d7dbdd0d40a5e0cf11ee3c"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_faulty_compressor_driver_board_pcb3_e1845787c3955ddebefd18848cf3d0bfe78e622c71181bc37c5b265898ad4300",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_replace_the_compressor_driver_board_c286770b9e7e21744ff1675e0437ac8a91ec9fe37d8fd4fd9763050f80cc9996",
+      "evidence": [
+        {
+          "source_page": 99,
+          "source_reference": "ev_44bd3afbcebb92a5c6aa7fa58622",
+          "quote": "Is compressor-enable voltage present (3 VDC)?",
+          "source_anchor": "ev_44bd3afbcebb92a5c6aa7fa58622"
+        },
+        {
+          "source_page": 99,
+          "source_reference": "ev_d72a596d5b4d05d42195621ff54f",
+          "quote": "If yes, replace the compressor-driver board.",
+          "source_anchor": "ev_d72a596d5b4d05d42195621ff54f"
+        }
+      ],
+      "branch_lineage_id": "dbranch_2f8391b8e640aae8380a17cd4dccddd428cf40f29d4ce3dbc22826926a27db80"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_faulty_power_board_pcb2_62d01d4a6f026080b9278828d48f79e6bc5cc4d48c5b44230045635117f60e0e",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_replace_the_power_board_b7f7bcdd7233cd2296540fe6b0cb1e5b50504324ee6a65e076cdf8760080f80f",
+      "evidence": [
+        {
+          "source_page": 100,
+          "source_reference": "ev_4d8ffbc2784aea30d634350c949c",
+          "quote": "If neither VBUS nor compressor-enable voltage are present on the power board, replace the power board.",
+          "source_anchor": "ev_4d8ffbc2784aea30d634350c949c"
+        },
+        {
+          "source_page": 100,
+          "source_reference": "ev_5f2165818aa19e72dfea20b335e0",
+          "quote": "Are VBUS and compressor-enable voltage present on the power board?",
+          "source_anchor": "ev_5f2165818aa19e72dfea20b335e0"
+        }
+      ],
+      "branch_lineage_id": "dbranch_a2844f1ab817fff9f17dd364b11fdae6815fa4d743d1b82bb5f18c8030276171"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_faulty_power_board_pcb2_7a438f6cb927ebbd88d5c052a15e721eb25b3075e2ae5100872a468c0dcf9b9d",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_replace_the_power_board_8033d99245320e1fb345dde798b1f93f69c2946c35a646383878275bd9a6e0f9",
+      "evidence": [
+        {
+          "source_page": 100,
+          "source_reference": "ev_af450d14e62d538c563f4491817b",
+          "quote": "If VBUS or compressor-enable voltage is present on the power board but the other is not, replace the power",
+          "source_anchor": "ev_af450d14e62d538c563f4491817b"
+        },
+        {
+          "source_page": 100,
+          "source_reference": "ev_f96004a6446e336f738bc9e6149a",
+          "quote": "board.",
+          "source_anchor": "ev_f96004a6446e336f738bc9e6149a"
+        }
+      ],
+      "branch_lineage_id": "dbranch_36da437c639e57635a047069c6e9cac6c6fe7710304654af93a0d7168cecde53"
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "comp_compressor_driver_board_pcb3_c9b010e3c52d0157d8d1f224d1211534f17ac3aaed7796d04c08a738deda07e4",
+      "evidence": [],
+      "branch_lineage_id": ""
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "comp_power_board_pcb2_6727e0aa8420dd6f736b08fdcfffaa2d7df067bb835b2c1646ca5495e7c0b30b",
+      "evidence": [],
+      "branch_lineage_id": ""
+    }
+  ]
+}

@@ -1,0 +1,482 @@
+{
+  "status": "prediction_exposed_agent_source_audit_not_gold",
+  "graph_sha256": "4c7f8e68817fbbba165e804d9f5e0a1f95148f0dcadd503bae42649f27d7e855",
+  "published_record_denominator": 21,
+  "new_test9_records": 4,
+  "new_test9_unique_local_outcomes": 4,
+  "test9_source_terminal_outcomes": [
+    "13b",
+    "21a",
+    "22a",
+    "28a",
+    "28b",
+    "28c"
+  ],
+  "test9_outcomes_without_published_branch": [
+    "13b",
+    "22a"
+  ],
+  "test9_complete_operational_chains_verified": 0,
+  "global_precision": null,
+  "global_recall": null,
+  "records": [
+    {
+      "branch_id": "dbranch_032c4803a46c95807f43d76e1b0f782ecc99926b8ae11572b681bedafc18a6d5",
+      "new_in_c12": false,
+      "source_pages": [
+        77
+      ],
+      "failure": "Inverter saturation",
+      "conditions": [
+        "If you continue to see this error code"
+      ],
+      "inspection_steps": [],
+      "actions": [
+        "Install new consumables in the torch. If you continue to see this error code, replace the power board.",
+        "If you continue to see this error code, replace the power board."
+      ],
+      "procedure_context_spans": 0,
+      "complete_operational_path_verified": false,
+      "audit_status": "not_exhaustively_source_adjudicated_in_c12",
+      "note": "Preserved from C11. Metadata inspected for duplicates and omitted dependencies; no complete-chain or correctness certification is made here."
+    },
+    {
+      "branch_id": "dbranch_0760dc941683f5bc4b669e91ddaa4ec848ed04e0e083e04d97ecfbeff8533dc2",
+      "new_in_c12": false,
+      "source_pages": [
+        77
+      ],
+      "failure": "Faulty power board or control board",
+      "conditions": [
+        "If any of the values are incorrect",
+        "If any of the values for pins 5, 7, or 12 are incorrect",
+        "If the values are correct",
+        "If the values for pins 5, 7, or 12 are correct when you perform Test 2 – power board voltage checks on page 84 but any other values from Test 2 are incorrect"
+      ],
+      "inspection_steps": [
+        "Perform Test 3 – VBUS and voltage balance on power board on page 86.",
+        "Perform Test 2 – power board voltage checks on page 84.",
+        "Remove the control board and test again."
+      ],
+      "actions": [
+        "Perform Test 3 – VBUS and voltage balance on power board on page 86. If any of the values are incorrect, replace the power board.",
+        "Perform Test 2 – power board voltage checks on page 84. If any of the values for pins 5, 7, or 12 are incorrect, remove the control board and test again. If the values are correct, replace the control board.",
+        "If the values for pins 5, 7, or 12 are correct when you perform Test 2 – power board voltage checks on page 84 but any other values from Test 2 are incorrect, replace the power board."
+      ],
+      "procedure_context_spans": 0,
+      "complete_operational_path_verified": false,
+      "audit_status": "not_exhaustively_source_adjudicated_in_c12",
+      "note": "Preserved from C11. Metadata inspected for duplicates and omitted dependencies; no complete-chain or correctness certification is made here."
+    },
+    {
+      "branch_id": "dbranch_11d36fca80364391cf3225ae67a605456ed5410a6823775a7cb67d04ad7d2280",
+      "new_in_c12": false,
+      "source_pages": [
+        69
+      ],
+      "failure": "Internal compressor air inlet filter completely clogged",
+      "conditions": [],
+      "inspection_steps": [],
+      "actions": [
+        "Replace the compressor’s air inlet filter. See Replace the air inlet filter in the internal compressor on page 174."
+      ],
+      "procedure_context_spans": 0,
+      "complete_operational_path_verified": false,
+      "audit_status": "local_filter_cause_remedy_supported_but_incomplete",
+      "missing": "The source requires blockage sufficient to prevent all airflow and continuation after previous checks; conditions/checks metadata are empty. Both published filter records represent the same source case."
+    },
+    {
+      "branch_id": "dbranch_223a765b5cac96ac9a8ca5efb0880f4ecdabe9e668feb5c93d0cafe177fcbe29",
+      "new_in_c12": false,
+      "source_pages": [
+        71
+      ],
+      "failure": "Poor work lead connection",
+      "conditions": [
+        "Repair if necessary."
+      ],
+      "inspection_steps": [
+        "Inspect for loose connections at the ground clamp and at the power supply."
+      ],
+      "actions": [
+        "Inspect for loose connections at the ground clamp and at the power supply, and repair if necessary.",
+        "Reposition the work lead on the workpiece.",
+        "Clean the cutting surface to make a better connection with the work lead."
+      ],
+      "procedure_context_spans": 0,
+      "complete_operational_path_verified": false,
+      "audit_status": "not_exhaustively_source_adjudicated_in_c12",
+      "note": "Preserved from C11. Metadata inspected for duplicates and omitted dependencies; no complete-chain or correctness certification is made here."
+    },
+    {
+      "branch_id": "dbranch_234b2cc9b71b8fea1cf7b724c1a4cd35593eca569a773d91c6a8b3ec82ba931e",
+      "new_in_c12": true,
+      "source_pages": [
+        100
+      ],
+      "failure": "Faulty power board (PCB2)",
+      "conditions": [
+        "VBUS or compressor-enable voltage is present on the power board, but the other is not."
+      ],
+      "inspection_steps": [
+        "Check VBUS on the power board (nominal 375 VDC bus voltage).",
+        "Quickly tap the torch trigger, then check compressor-enable voltage at J9 on the power board (3 VDC)."
+      ],
+      "actions": [
+        "If VBUS or compressor-enable voltage is present on the power board but the other is not, replace the power board. See Replace the power board on page 135."
+      ],
+      "procedure_context_spans": 111,
+      "complete_operational_path_verified": false,
+      "audit_status": "local_cause_and_terminal_remedy_supported_but_path_incomplete",
+      "source_outcome": "28c",
+      "cause_source_page": 96,
+      "missing": "Ordered power-off/on, covers/barrier removal, connector isolation and prerequisite routes are not resolved into an executable branch. Replacement references and warning p59 are not expanded. All 111 source spans remain available as raw ordered context; that is not a verified path."
+    },
+    {
+      "branch_id": "dbranch_3501970c1491a8f8997d2ab840064ea7d4cbc73bc03ce5f0f2142a6069298671",
+      "new_in_c12": false,
+      "source_pages": [
+        94
+      ],
+      "failure": "Torch plunger does not move smoothly",
+      "conditions": [
+        "The torch plunger does not move smoothly."
+      ],
+      "inspection_steps": [
+        "Make sure the torch plunger moves smoothly."
+      ],
+      "actions": [
+        "If the torch plunger does not move smoothly, replace the torch body."
+      ],
+      "procedure_context_spans": 19,
+      "complete_operational_path_verified": false,
+      "audit_status": "not_exhaustively_source_adjudicated_in_c12",
+      "note": "Preserved from C11. Metadata inspected for duplicates and omitted dependencies; no complete-chain or correctness certification is made here."
+    },
+    {
+      "branch_id": "dbranch_3ec380a33020724399791baa4dfb6c82706f010cca347de4066f531f2343e9ff",
+      "new_in_c12": false,
+      "source_pages": [
+        77
+      ],
+      "failure": "Faulty fan, solenoid valve, or power board",
+      "conditions": [
+        "The solenoid valve test and the fan test both pass.",
+        "Test 4 fails.",
+        "Test 8 fails."
+      ],
+      "inspection_steps": [
+        "Perform Test 4 – solenoid valve on page 89 and Test 8 – fan on page 95."
+      ],
+      "actions": [
+        "If the solenoid valve test and the fan test both pass, replace the power board.",
+        "If Test 4 fails, replace the solenoid valve.",
+        "If Test 8 fails, replace the fan."
+      ],
+      "procedure_context_spans": 0,
+      "complete_operational_path_verified": false,
+      "audit_status": "not_exhaustively_source_adjudicated_in_c12",
+      "note": "Preserved from C11. Metadata inspected for duplicates and omitted dependencies; no complete-chain or correctness certification is made here."
+    },
+    {
+      "branch_id": "dbranch_41f6bebd3894373779ec45c80040c8cb96a7363284a536b86f62f2a28ece0b2b",
+      "new_in_c12": true,
+      "source_pages": [
+        100
+      ],
+      "failure": "Faulty power board (PCB2)",
+      "conditions": [
+        "VBUS is absent with J2 disconnected; the procedure proceeds to check the isolated power board.",
+        "Neither VBUS nor compressor-enable voltage is present on the power board."
+      ],
+      "inspection_steps": [
+        "Check VBUS on the power board (nominal 375 VDC bus voltage).",
+        "Quickly tap the torch trigger, then check compressor-enable voltage at J9 on the power board (3 VDC)."
+      ],
+      "actions": [
+        "If neither VBUS nor compressor-enable voltage are present on the power board, replace the power board. See Replace the power board on page 135."
+      ],
+      "procedure_context_spans": 111,
+      "complete_operational_path_verified": false,
+      "audit_status": "local_cause_and_terminal_remedy_supported_but_path_incomplete",
+      "source_outcome": "28b",
+      "cause_source_page": 96,
+      "missing": "Ordered power-off/on, covers/barrier removal, connector isolation and prerequisite routes are not resolved into an executable branch. Replacement references and warning p59 are not expanded. All 111 source spans remain available as raw ordered context; that is not a verified path.",
+      "additional_condition_loss": "Restricts entry to step20b (VBUS absent with J2 disconnected); source also reaches step23 through step22b (no enable voltage at J9). Local neither-voltage remedy is supported; path coverage is incomplete."
+    },
+    {
+      "branch_id": "dbranch_503d2397cc70afafc5bee480c85ac3c36ffcdbcd78f21ba182ca495d964ccd3b",
+      "new_in_c12": false,
+      "source_pages": [
+        77
+      ],
+      "failure": "Inverter saturation",
+      "conditions": [
+        "If you continue to see this error code after installing new consumables, replace the power board."
+      ],
+      "inspection_steps": [],
+      "actions": [
+        "Install new consumables in the torch.",
+        "If you continue to see this error code, replace the power board."
+      ],
+      "procedure_context_spans": 0,
+      "complete_operational_path_verified": false,
+      "audit_status": "not_exhaustively_source_adjudicated_in_c12",
+      "note": "Preserved from C11. Metadata inspected for duplicates and omitted dependencies; no complete-chain or correctness certification is made here."
+    },
+    {
+      "branch_id": "dbranch_562f7ceaa75e8a1b9d35844e28cbc6608d5dd126c587a522929e96e3bec3fba9",
+      "new_in_c12": true,
+      "source_pages": [
+        100
+      ],
+      "failure": "Faulty compressor-driver board (PCB3)",
+      "conditions": [
+        "VBUS and compressor-enable voltage are both present on the isolated power board."
+      ],
+      "inspection_steps": [
+        "Check VBUS on the power board (nominal 375 VDC bus voltage).",
+        "Quickly tap the torch trigger, then check compressor-enable voltage at J9 on the power board (3 VDC)."
+      ],
+      "actions": [
+        "If VBUS and compressor-enable voltage are both present on the power board, replace the compressor-driver board. See Replace the compressor-driver board on page 129."
+      ],
+      "procedure_context_spans": 111,
+      "complete_operational_path_verified": false,
+      "audit_status": "local_cause_and_terminal_remedy_supported_but_path_incomplete",
+      "source_outcome": "28a",
+      "cause_source_page": 96,
+      "missing": "Ordered power-off/on, covers/barrier removal, connector isolation and prerequisite routes are not resolved into an executable branch. Replacement references and warning p59 are not expanded. All 111 source spans remain available as raw ordered context; that is not a verified path."
+    },
+    {
+      "branch_id": "dbranch_5b60a79337a62a3adeb38fe40cc259bb77c116ad5cd13ba4376610f7cea6563b",
+      "new_in_c12": false,
+      "source_pages": [
+        103
+      ],
+      "failure": "Faulty internal air compressor",
+      "conditions": [
+        "If low pressure persists after you complete all of these checks"
+      ],
+      "inspection_steps": [
+        "Install a different torch to see if the low pressure issue persists. See page 153."
+      ],
+      "actions": [
+        "If low pressure persists after you complete all of these checks, the internal air compressor may be faulty. Install a new air compressor. See page 169."
+      ],
+      "procedure_context_spans": 67,
+      "complete_operational_path_verified": false,
+      "audit_status": "local_final_instruction_supported_but_prerequisites_incomplete",
+      "missing": "After all checks is retained as text; the preceding complete check sequence is absent from inspection metadata. Two records represent this same terminal source case."
+    },
+    {
+      "branch_id": "dbranch_6ea33fc8a7ef4a48423e7abbae11e997ea921b9fe285d27868141f5284767704",
+      "new_in_c12": false,
+      "source_pages": [
+        103
+      ],
+      "failure": "Internal air compressor may be faulty",
+      "conditions": [
+        "Install a new air compressor if low pressure persists after completing all of these checks."
+      ],
+      "inspection_steps": [],
+      "actions": [
+        "If low pressure persists after you complete all of these checks, install a new air compressor."
+      ],
+      "procedure_context_spans": 0,
+      "complete_operational_path_verified": false,
+      "audit_status": "local_final_instruction_supported_but_prerequisites_incomplete",
+      "missing": "After all checks is retained as text; the preceding complete check sequence is absent from inspection metadata. Two records represent this same terminal source case."
+    },
+    {
+      "branch_id": "dbranch_7bbf30f0307211b3881865633c3cba769accdd819e81dbeeeb7701859d8cc41c",
+      "new_in_c12": false,
+      "source_pages": [
+        95
+      ],
+      "failure": "Fan does not operate",
+      "conditions": [
+        "The fan does not operate."
+      ],
+      "inspection_steps": [],
+      "actions": [
+        "If the fan does not operate, replace the fan."
+      ],
+      "procedure_context_spans": 16,
+      "complete_operational_path_verified": false,
+      "audit_status": "not_exhaustively_source_adjudicated_in_c12",
+      "note": "Preserved from C11. Metadata inspected for duplicates and omitted dependencies; no complete-chain or correctness certification is made here."
+    },
+    {
+      "branch_id": "dbranch_81256b08e52f492f199bc1ad95a48a68025f4566e8e9bbf5c91fffa1456c4d24",
+      "new_in_c12": false,
+      "source_pages": [
+        69
+      ],
+      "failure": "The air inlet filter on the internal compressor is completely clogged",
+      "conditions": [],
+      "inspection_steps": [],
+      "actions": [
+        "Replace the compressor’s air inlet filter. See Replace the air inlet filter in the internal compressor on page 174."
+      ],
+      "procedure_context_spans": 0,
+      "complete_operational_path_verified": false,
+      "audit_status": "local_filter_cause_remedy_supported_but_incomplete",
+      "missing": "The source requires blockage sufficient to prevent all airflow and continuation after previous checks; conditions/checks metadata are empty. Both published filter records represent the same source case."
+    },
+    {
+      "branch_id": "dbranch_8a28f81856a7c1d3418486f8e1c6407e0f43c7de4d80ea3b1f945ba86025242c",
+      "new_in_c12": false,
+      "source_pages": [
+        77
+      ],
+      "failure": "Faulty fan, solenoid valve, or power board",
+      "conditions": [
+        "If the solenoid valve test and the fan test both pass, replace the power board.",
+        "If Test 4 fails, replace the solenoid valve.",
+        "If Test 8 fails, replace the fan."
+      ],
+      "inspection_steps": [
+        "Perform Test 4 – solenoid valve on page 89.",
+        "Perform Test 8 – fan on page 95."
+      ],
+      "actions": [
+        "Perform Test 4 – solenoid valve on page 89 and Test 8 – fan on page 95. If the solenoid valve test and the fan test both pass, replace the power board.",
+        "Perform Test 4 – solenoid valve on page 89. If Test 4 fails, replace the solenoid valve.",
+        "Perform Test 8 – fan on page 95. If Test 8 fails, replace the fan."
+      ],
+      "procedure_context_spans": 0,
+      "complete_operational_path_verified": false,
+      "audit_status": "not_exhaustively_source_adjudicated_in_c12",
+      "note": "Preserved from C11. Metadata inspected for duplicates and omitted dependencies; no complete-chain or correctness certification is made here."
+    },
+    {
+      "branch_id": "dbranch_959d292149487ec59021c68d02583ed595ed853fc4abfc36fdcc0d838ad66641",
+      "new_in_c12": false,
+      "source_pages": [
+        67
+      ],
+      "failure": "System continuously draws too much input current for too long",
+      "conditions": [],
+      "inspection_steps": [],
+      "actions": [
+        "Let the system cool for 3 minutes before using it. Leave the system on to allow the fan to cool the power supply."
+      ],
+      "procedure_context_spans": 0,
+      "complete_operational_path_verified": false,
+      "audit_status": "local_cooling_remedy_supported_but_incomplete",
+      "missing": "Three-minute cooling with system left ON is retained; four triggering circumstances and the prevention list on p67 are omitted."
+    },
+    {
+      "branch_id": "dbranch_9eeb12aaa0d59b1e04066b22308e8de34dbcf394df37405a112c95117543294d",
+      "new_in_c12": false,
+      "source_pages": [
+        77
+      ],
+      "failure": "Faulty power board or control board",
+      "conditions": [
+        "If any of the values are incorrect, replace the power board.",
+        "If any of the values for pins 5, 7, or 12 are incorrect, remove the control board and test again. If the values are correct, replace the control board.",
+        "If the values for pins 5, 7, or 12 are correct when you perform Test 2 – power board voltage checks on page 84 but any other values from Test 2 are incorrect, replace the power board."
+      ],
+      "inspection_steps": [
+        "Perform Test 3 – VBUS and voltage balance on power board on page 86.",
+        "Perform Test 2 – power board voltage checks on page 84. If any of the values for pins 5, 7, or 12 are incorrect, remove the control board and test again."
+      ],
+      "actions": [
+        "Perform Test 3 – VBUS and voltage balance on power board on page 86. If any of the values are incorrect, replace the power board.",
+        "Perform Test 2 – power board voltage checks on page 84. If any of the values for pins 5, 7, or 12 are incorrect, remove the control board and test again. If the values are correct, replace the control board.",
+        "If the values for pins 5, 7, or 12 are correct when you perform Test 2 – power board voltage checks on page 84 but any other values from Test 2 are incorrect, replace the power board."
+      ],
+      "procedure_context_spans": 0,
+      "complete_operational_path_verified": false,
+      "audit_status": "not_exhaustively_source_adjudicated_in_c12",
+      "note": "Preserved from C11. Metadata inspected for duplicates and omitted dependencies; no complete-chain or correctness certification is made here."
+    },
+    {
+      "branch_id": "dbranch_babd3f53a33cf169bedd8f722b5a5ef93fd72aab95d84de15efae1c604410eb5",
+      "new_in_c12": true,
+      "source_pages": [
+        99
+      ],
+      "failure": "Faulty compressor-driver board (PCB3)",
+      "conditions": [
+        "VBUS is present (nominal 375 VDC bus voltage).",
+        "Compressor-enable voltage is present (3 VDC)."
+      ],
+      "inspection_steps": [
+        "Check VBUS on the red and black wires on the J3 connector (pin 1 and pin 4).",
+        "Quickly tap the torch trigger, then check the compressor-enable voltage on the J1 connector on the compressor-driver board."
+      ],
+      "actions": [
+        "If yes, replace the compressor-driver board. See Replace the compressor-driver board on page 129."
+      ],
+      "procedure_context_spans": 111,
+      "complete_operational_path_verified": false,
+      "audit_status": "local_cause_and_terminal_remedy_supported_but_path_incomplete",
+      "source_outcome": "21a",
+      "cause_source_page": 96,
+      "missing": "Ordered power-off/on, covers/barrier removal, connector isolation and prerequisite routes are not resolved into an executable branch. Replacement references and warning p59 are not expanded. All 111 source spans remain available as raw ordered context; that is not a verified path.",
+      "additional_condition_loss": "Retains VBUS-present and J1-enable-present checks but does not resolve the alternative entry from step20a after J2 disconnection."
+    },
+    {
+      "branch_id": "dbranch_e574523b380ec60f420401b9c2c436259bef76060bb4c44a07c238ca3ec26ae2",
+      "new_in_c12": false,
+      "source_pages": [
+        88
+      ],
+      "failure": "Power board voltage imbalance",
+      "conditions": [],
+      "inspection_steps": [],
+      "actions": [
+        "If the values differ by more than 30 V, replace the power board."
+      ],
+      "procedure_context_spans": 0,
+      "complete_operational_path_verified": false,
+      "audit_status": "not_exhaustively_source_adjudicated_in_c12",
+      "note": "Preserved from C11. Metadata inspected for duplicates and omitted dependencies; no complete-chain or correctness certification is made here."
+    },
+    {
+      "branch_id": "dbranch_e6c6d66ecc54451ae496a9a1a424bb1ad7bfa1e29727577ea23dc82f5c104c4d",
+      "new_in_c12": false,
+      "source_pages": [
+        94
+      ],
+      "failure": "Cap-sensor switch faulty or torch lead has a broken wire",
+      "conditions": [
+        "The torch parts mentioned in step 7 and step 8 are working properly."
+      ],
+      "inspection_steps": [],
+      "actions": [
+        "Replace the faulty part."
+      ],
+      "procedure_context_spans": 19,
+      "complete_operational_path_verified": false,
+      "audit_status": "not_exhaustively_source_adjudicated_in_c12",
+      "note": "Preserved from C11. Metadata inspected for duplicates and omitted dependencies; no complete-chain or correctness certification is made here."
+    },
+    {
+      "branch_id": "dbranch_f9d9d858287e2ea247e57c88415dbf826bbbe363f9b83db1ee3a4925298bef8b",
+      "new_in_c12": false,
+      "source_pages": [
+        94
+      ],
+      "failure": "Cap-sensor switch faulty or torch lead has a broken wire",
+      "conditions": [
+        "If the torch plunger and consumables mentioned in steps 7 and 8 are working properly, the cap-sensor switch is faulty or the torch lead has a broken wire; replace the faulty part."
+      ],
+      "inspection_steps": [],
+      "actions": [
+        "If the torch parts mentioned in step 7 and step 8 are working properly, the cap-sensor switch is faulty or the torch lead has a broken wire. Replace the faulty part."
+      ],
+      "procedure_context_spans": 18,
+      "complete_operational_path_verified": false,
+      "audit_status": "not_exhaustively_source_adjudicated_in_c12",
+      "note": "Preserved from C11. Metadata inspected for duplicates and omitted dependencies; no complete-chain or correctness certification is made here."
+    }
+  ],
+  "page228": "Rendered and inspected visually. OCR text alone cannot establish arrow topology; no semantic diagram coverage credited.",
+  "tables67_69": "The paired low/medium source packet produced no published records. Hot/cold alternatives and continuation steps remain unresolved. No index pairing of bullets was introduced.",
+  "source_only_vs_missing_cause": "Step22a states replacement of wires but not an explicit wire-failure entity. Keep an action-only/source-gap representation; do not infer a failure just to make a graph path.",
+  "scope_note": "Physical pages67–69 and96–104 were read; Test9 ends on100. Published branches elsewhere are listed as unjudged. No exhaustive recall denominator for the manual or deduplicated human decision count is asserted."
+}

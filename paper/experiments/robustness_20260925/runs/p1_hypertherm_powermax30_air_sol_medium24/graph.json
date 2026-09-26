@@ -1,0 +1,118 @@
+{
+  "ontology_name": "Core_Ontology",
+  "version": "2.0",
+  "language": "en",
+  "source_type": "technical PDF",
+  "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "Powermax30 AIR plasma cutting system",
+        "description": "Plasma arc cutting system with integrated air compressor",
+        "brand": "Hypertherm",
+        "model": "Powermax30 AIR",
+        "asset_type": "hypertherm powermax30 air service manual rev4 808850.pdf"
+      }
+    ],
+    "Component": [],
+    "Symptom": [],
+    "FailureMode": [
+      {
+        "failure_mode_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+        "name": "Inverter saturation",
+        "description": "Inverter saturation.",
+        "material_context": "not_stated"
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "ca_install_new_consumables_35395446e08249316474e341f8db497fa0a3f272ab504b537be6b94d95f00119",
+        "name": "Install new consumables",
+        "description": "Install new consumables in the torch.",
+        "instruction_text": "Install new consumables in the torch.",
+        "action_kind": "replacement",
+        "source_type": "technical PDF",
+        "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      },
+      {
+        "action_id": "ca_replace_the_power_board_70e094e9b0bc478f06b32c069f00f707393f5ced2be8d5bd5675bae8db304d3e",
+        "name": "Replace the power board",
+        "description": "Replace the power board if the error code continues after installing new consumables.",
+        "instruction_text": "Install new consumables in the torch. If you continue to see this error code, replace the power board.",
+        "action_kind": "replacement",
+        "source_type": "technical PDF",
+        "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      }
+    ],
+    "ErrorCode": [
+      {
+        "error_code_id": "err_6_164bff9b9b56c454944e0848488418cdfd8275e523583e9b8afcc4952e2a8bf8",
+        "name": "Inverter saturation",
+        "description": "The Error LED blinks 6 times.",
+        "code": "6"
+      }
+    ]
+  },
+  "relations": [
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "err_6_164bff9b9b56c454944e0848488418cdfd8275e523583e9b8afcc4952e2a8bf8",
+      "to_type": "FailureMode",
+      "to_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+      "evidence": [
+        {
+          "source_page": 77,
+          "source_reference": "ev_50eab2ff50f878d436092d263667",
+          "quote": "6 Inverter saturation",
+          "source_anchor": "ev_50eab2ff50f878d436092d263667"
+        }
+      ],
+      "branch_lineage_id": "dbranch_052bd09671639da2c0fe7513ed989f065fb74c9795d2653aa1a4cfb213b430f2"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_install_new_consumables_35395446e08249316474e341f8db497fa0a3f272ab504b537be6b94d95f00119",
+      "evidence": [
+        {
+          "source_page": 77,
+          "source_reference": "ev_50eab2ff50f878d436092d263667",
+          "quote": "6 Inverter saturation • Install new consumables in the torch.",
+          "source_anchor": "ev_50eab2ff50f878d436092d263667"
+        }
+      ],
+      "branch_lineage_id": "dbranch_052bd09671639da2c0fe7513ed989f065fb74c9795d2653aa1a4cfb213b430f2"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_replace_the_power_board_70e094e9b0bc478f06b32c069f00f707393f5ced2be8d5bd5675bae8db304d3e",
+      "evidence": [
+        {
+          "source_page": 77,
+          "source_reference": "ev_50eab2ff50f878d436092d263667",
+          "quote": "Inverter saturation • Install new consumables in the torch. If you continue to see this error code, replace the power board.",
+          "source_anchor": "ev_50eab2ff50f878d436092d263667"
+        }
+      ],
+      "branch_lineage_id": "dbranch_537738d94dc92372af57a60e57f15cdc4a9bd343552d287ef9ea92ea544c296f"
+    },
+    {
+      "name": "GENERATES_ERROR",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "ErrorCode",
+      "to_id": "err_6_164bff9b9b56c454944e0848488418cdfd8275e523583e9b8afcc4952e2a8bf8",
+      "evidence": [],
+      "branch_lineage_id": ""
+    }
+  ]
+}

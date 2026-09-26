@@ -274,6 +274,7 @@
     { id: "collegamenti", chiave: "gr.vista.collegamenti" },
     { id: "righe", chiave: "gr.vista.righe" },
     { id: "manca", chiave: "gr.vista.manca" },
+    { id: "revisione", chiave: "Revisione dei record" },
   ];
 
   const barra = (modello) => {
@@ -286,9 +287,10 @@
       manca: (modello.grafo.knowledge_gaps || []).length
         + (((modello.grafo.validation || {}).issues) || []).length,
     };
+    if (state.view === "revisione") return `<div class="barra"><div class="segmento" role="tablist" style="flex-wrap:wrap;max-width:100%">${VISTE.map((vista) => `<button type="button" class="tab" role="tab" data-vista="${vista.id}" aria-selected="${state.view === vista.id}">${esc(t(pdf && vista.id === "righe" ? "gr.vista.evidenze" : vista.chiave))}</button>`).join("")}</div></div>`;
     return `
       <div class="barra">
-        <div class="segmento" role="tablist">
+        <div class="segmento" role="tablist" style="flex-wrap:wrap;max-width:100%">
           ${VISTE.map((vista) => `<button type="button" class="tab" role="tab" data-vista="${vista.id}"
             aria-selected="${state.view === vista.id}">${esc(t(pdf && vista.id === "righe" ? "gr.vista.evidenze" : vista.chiave))}${conteggi[vista.id] == null ? "" : ` ${conteggi[vista.id]}`}</button>`).join("")}
         </div>
@@ -428,6 +430,31 @@
     </div>`;
   };
 
+  const dettagliDiagnostici = (modello) => {
+    const records = modello.grafo.diagnostic_records || [];
+    if (!records.length) return "";
+    const elenco = (title, values) => values.length
+      ? `<div class="voce-testo"><strong>${esc(t(title))}</strong><ol>${values.map((v) => `<li>${esc(v)}</li>`).join("")}</ol></div>` : "";
+    return `<section class="gruppo lavoro-pad"><div class="gruppo-capo"><h3>${esc(t("gr.recordTitolo"))}</h3>
+      <p>${esc(t("gr.recordTesto"))}</p></div><div class="lista">${records.map((item) => {
+        const record = item.record;
+        const title = (record.indicators || []).map((v) => v.code ? `${v.code}: ${v.name}` : v.name).join(" · ");
+        const steps = record.inspection_steps || [];
+        const conditions = record.conditions || [];
+        const evidence = [...conditions.flatMap((v) => v.claim_evidence || []), ...steps.flatMap((v) => v.claim_evidence || [])];
+        const seen = new Set();
+        const links = evidence.filter((v) => { const key = `${v.evidence_id}:${v.quote}`; if (seen.has(key)) return false; seen.add(key); return true; });
+        return `<details class="voce"><summary><strong>${esc(title)}</strong> · ${esc(t(item.disposition === "gap" && !item.review_required ? "gr.recordFonteVerificata" : `gr.recordStato.${item.disposition}`))}</summary>
+          ${record.failure ? `<p class="voce-testo">${esc(record.failure.name)}</p>` : ""}
+          ${elenco("gr.recordCondizioni", conditions.map((v) => `${v.text} (${t(`gr.recordTarget.${v.applies_to}`)}${v.step_index === null ? "" : ` ${v.step_index + 1}`})`))}
+          ${elenco("gr.recordIspezioni", steps.map((v) => v.instruction_text))}
+          ${elenco("gr.recordAzioni", (record.actions || []).map((v) => v.instruction_text))}
+          ${(record.procedure_context || []).length ? `<details><summary>Contesto sorgente della procedura: prerequisiti e alternative</summary><p>Ordine della fonte disponibile; il percorso tra le alternative richiede verifica.</p>${record.procedure_context.map((v) => `<p><strong>Pagina ${v.source_page}</strong> ${esc(v.quote)}</p>`).join("")}</details>` : ""}
+          ${links.map((v) => `<button type="button" class="voce" data-scegli="evidenza" data-id="${esc(v.evidence_id)}"><span class="voce-meta">${esc(t("gr.recordPagina"))} ${v.source_page}</span><span class="voce-testo">${esc(v.quote)}</span></button>`).join("")}
+        </details>`;
+      }).join("")}</div></section>`;
+  };
+
   /** Catene diagnostiche: una voce per causa, con quello che le righe provano. */
   const catene = (modello) => {
     const cause = modello.grafo.nodes.filter((nodo) => nodo.node_type === "FailureMode");
@@ -439,18 +466,14 @@
       data-scegli="nodo" data-id="${esc(nodo.node_id)}"><i aria-hidden="true"></i><span>${esc(nodo.label)}</span></button>`;
     const freccia = '<span class="catena-freccia" aria-hidden="true">→</span>';
 
-    const voci = cause.map((causa) => {
-      const legami = modello.legamiPerNodo.get(causa.node_id) || [];
-      const prendi = (tipo, lato) => legami.filter((l) => l.relation_type === tipo)
-        .map((l) => modello.nodiPerId.get(lato === "from" ? l.from_id : l.to_id)).filter(Boolean);
-      const indizi = [...prendi("MAY_INDICATE", "from"), ...prendi("INDICATES", "from")];
-      const azioni = prendi("RESOLVED_BY", "to");
-      const componenti = prendi("AFFECTS", "to");
+    const voci = cause.flatMap((causa) => root.catenePerCausa(modello, causa)).map((catena) => {
+      const { causa, indizi, azioni, componenti } = catena;
       const manca = [];
       if (!indizi.length) manca.push(t("gr.senzaSintomo"));
       if (!azioni.length) manca.push(t("gr.senzaAzione"));
       return `
         <div class="voce">
+          ${root.condizioniCatena(catena)}
           <div class="catena">
             ${indizi.length ? indizi.map(passo).join(freccia) : `<span class="catena-passo">${esc(t("gr.origineNonDichiarata"))}</span>`}
             ${freccia}${passo(causa)}${freccia}
@@ -527,6 +550,103 @@
     </div>`;
   };
 
+  const recordLabels = { indicators: "Sintomi e codici", failure: "Guasto", actions: "Azioni", inspection_steps: "Ispezioni ordinate", conditions: "Condizioni", affected_component: "Componente", name: "Nome", description: "Descrizione", instruction_text: "Istruzione", text: "Condizione", claim_evidence: "Prove della dichiarazione", failure_link_evidence: "Prove del collegamento al guasto", resolution_link_evidence: "Prove del rimedio", affects_link_evidence: "Prove del componente", quote: "Citazione esatta", source_anchor: "Fonte", source_page: "Pagina", step_index: "Indice del passo (da zero)", applies_to: "Si applica a", severity: "Gravità", code: "Codice", category: "Categoria", material_context: "Contesto materiale", action_kind: "Tipo di azione", kind: "Tipo", resolution_status: "Disposizione" };
+  const editRecordFields = (value, path, sources) => {
+    const key = path[path.length - 1];
+    if (["record_window_id", "allowed_source_anchors", "record_anchor", "branch_anchor"].includes(key)) return "";
+    if (Array.isArray(value)) return `<fieldset><legend>${esc(recordLabels[key] || key)}</legend>${value.map((v, i) => `<details open><summary>${i + 1}</summary>${editRecordFields(v, [...path, i], sources)}<button type="button" data-remove-record-field="${esc(JSON.stringify([...path, i]))}">Rimuovi voce</button></details>`).join("")}<button type="button" data-add-record-field="${esc(JSON.stringify(path))}">Aggiungi voce</button></fieldset>`;
+    if (value && typeof value === "object") return `<fieldset><legend>${esc(recordLabels[key] || "Dichiarazione")}</legend>${Object.entries(value).map(([k, v]) => editRecordFields(v, [...path, k], sources)).join("")}${["failure", "affected_component"].includes(key) ? `<button type="button" data-remove-record-field="${esc(JSON.stringify(path))}">Rimuovi dichiarazione</button>` : ""}</fieldset>`;
+    if (value === null && ["failure", "affected_component"].includes(key)) return `<p>${esc(recordLabels[key])}: non dichiarato nella proposta <button type="button" data-add-record-field="${esc(JSON.stringify(path))}">Aggiungi con prova</button></p>`;
+    const data = `data-record-field="${esc(JSON.stringify(path))}" data-value-type="${value === null ? "nullable" : typeof value}"`;
+    if (key === "source_anchor") return `<label>${esc(recordLabels[key])}<select ${data}>${sources.map((s) => `<option value="${esc(s.evidence_id)}" ${s.evidence_id === value ? "selected" : ""}>${esc(s.label)} — ${esc(s.excerpt.slice(0, 100))}</option>`).join("")}${sources.some((s) => s.evidence_id === value) ? "" : `<option selected value="${esc(value)}">${esc(value)}</option>`}</select></label>`;
+    const options = { resolution_status: ["action_stated", "check_only", "no_action_stated", "ambiguous", "not_diagnostic"], applies_to: ["branch", "action", "inspection"], severity: ["", "Unknown", "Low", "Medium", "High", "Critical"], kind: ["symptom", "error_code"] }[key];
+    if (options) return `<label>${esc(recordLabels[key])}<select ${data}>${options.map((v) => `<option value="${v}" ${v === (value || "") ? "selected" : ""}>${v || "Non dichiarato"}</option>`).join("")}</select></label>`;
+    return `<label style="display:block">${esc(recordLabels[key] || key)}<textarea ${data} rows="2" style="width:100%">${esc(value == null ? "" : String(value))}</textarea></label>`;
+  };
+  const initialRecordCandidate = (r) => r.candidate || {
+    record_window_id: r.record_window_id || "", allowed_source_anchors: [],
+    record_anchor: r.record_anchor, branch_anchor: r.branch_anchor,
+    indicators: [], failure: null, actions: [], inspection_steps: [], conditions: [],
+    affected_component: null, resolution_status: "ambiguous",
+  };
+  const reviewGuidance = (record) => {
+    const codes = new Set((record.drop_reasons || []).map((x) => x.code));
+    if ([...codes].some((x) => /quote|anchor|page_mismatch/.test(x))) return "Controlla pagina, fonte e citazione: almeno una prova non corrisponde al documento. Copia il passaggio esatto dalla fonte affiancata.";
+    if (codes.has("structurally_ambiguous_pairing")) return "La fonte contiene alternative: verifica quale causa corrisponde a ciascuna azione. Mantieni separati i rami e le loro condizioni; se il testo non decide, conserva lo stato ambiguo.";
+    if (codes.has("compound_negative_condition_strengthened")) return "Controlla la condizione negativa: il NO a due verifiche congiunte non significa che entrambe siano negative.";
+    if (codes.has("candidate_passage_missing_disposition")) return "Il passaggio non ha una proposta. Inserisci solo le dichiarazioni esplicite nella fonte, oppure indica che non è diagnostico.";
+    if (codes.has("relation_endpoint_support_unestablished")) return "Le prove non stabiliscono ancora il collegamento. Cerca il titolo, la riga o il passaggio che associa esplicitamente sintomo, causa e rimedio.";
+    if (codes.has("missing_failure") || codes.has("failure_inferred_from_instruction")) return "Verifica se la causa è dichiarata. Una richiesta di controllo o sostituzione da sola non dimostra un guasto; conserva la lacuna quando la causa manca.";
+    return record.disposition === "publish" ? "Il record supera i controlli automatici. Verifica anche condizioni, ordine e completezza rispetto alla fonte." : "Confronta dichiarazioni, condizioni e istruzioni con la fonte. Mantieni le informazioni non dichiarate come lacune.";
+  };
+  const revisioneRecord = (modello) => {
+    const g = modello.grafo;
+    const records = (g.diagnostic_compilation_ledger || {}).records || [];
+    const r = records.find((x) => x.branch_lineage_id === state.reviewBranch) || records.find((x) => x.disposition === "review") || records[0];
+    const title = (x) => (x.candidate?.failure || {}).name || (x.candidate?.indicators?.[0] || {}).name || "Passaggio senza proposta";
+    const sources = r ? g.evidence.filter((e) => (r.evidence_ids || []).includes(e.evidence_id)) : [];
+    return `<div class="lavoro-pad record-review"><h3>Correzione di un record</h3>
+      <p>Confronta ogni dichiarazione con la fonte. Il salvataggio crea una nuova revisione e ripete i controlli. I blocchi residui restano attivi.</p>
+      <label>Record da correggere<select data-review-record style="width:100%">${records.map((x, i) => `<option value="${esc(x.branch_lineage_id)}" ${x === r ? "selected" : ""}>${i + 1}. ${esc(title(x))} · ${esc(x.disposition)}</option>`).join("")}</select></label>
+      ${r ? `<p>${esc(reviewGuidance(r))}</p><details><summary>Dettagli dei controlli</summary><p>${esc((r.drop_reasons || []).map((x) => x.message).join(" "))}</p></details>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+        <form data-record-correction="${esc(r.branch_lineage_id)}">
+          <label>Revisore<input name="reviewer" required maxlength="160"></label>
+          <label>Motivazione<textarea name="reason" required maxlength="2000"></textarea></label>
+          <button type="submit" class="btn primario" ${state.graphBusy ? "disabled" : ""}>Salva e ricompila</button>
+          ${editRecordFields((state.diagnosticDrafts || {})[`${g.source_subgraph_revision_id}:${r.branch_lineage_id}`] || initialRecordCandidate(r), [], g.evidence)}
+        </form>
+        <aside><h4>Fonti del record</h4>${sources.map((e) => `<details open><summary>${esc(e.label)}</summary><p style="white-space:pre-wrap">${esc(e.locator.quote || e.excerpt)}</p><button type="button" data-scegli="evidenza" data-id="${esc(e.evidence_id)}">Apri fonte</button></details>`).join("") || "Seleziona una fonte nei campi della dichiarazione."}</aside>
+      </div>` : "Nessun record disponibile."}
+      <h3>Cronologia delle correzioni</h3>${(g.diagnostic_review_history || []).map((h) => `<details><summary>${esc(h.created_at)} · ${esc(h.reviewer)}</summary><p>${esc(h.reason)}</p><p>${esc(h.before.disposition)} → ${esc(h.after.disposition)}</p></details>`).join("") || "Nessuna correzione registrata."}</div>`;
+  };
+
+  const readRecordForm = (form) => {
+    const g = vistaFonte().subgraph;
+    const branch = form.dataset.recordCorrection;
+    const entry = g.diagnostic_compilation_ledger.records.find((r) => r.branch_lineage_id === branch);
+    const key = `${g.source_subgraph_revision_id}:${branch}`;
+    const candidate = JSON.parse(JSON.stringify((state.diagnosticDrafts || {})[key] || initialRecordCandidate(entry)));
+    form.querySelectorAll("[data-record-field]").forEach((field) => {
+      const path = JSON.parse(field.dataset.recordField);
+      let target = candidate;
+      path.slice(0, -1).forEach((part) => { target = target[part]; });
+      const part = path[path.length - 1];
+      target[part] = field.value === "" && (field.dataset.valueType === "nullable" || ["severity", "step_index"].includes(part)) ? null
+        : ["source_page", "step_index"].includes(part) ? Number(field.value) : field.value;
+    });
+    state.diagnosticDrafts = { ...(state.diagnosticDrafts || {}), [key]: candidate };
+    return candidate;
+  };
+  const editRecordList = (button, remove) => {
+    const form = button.closest("form");
+    const candidate = readRecordForm(form);
+    const path = JSON.parse(remove ? button.dataset.removeRecordField : button.dataset.addRecordField);
+    let target = candidate;
+    path.slice(0, -1).forEach((part) => { target = target[part]; });
+    const key = path[path.length - 1];
+    if (remove) { if (Array.isArray(target)) target.splice(key, 1); else target[key] = null; }
+    else {
+      const source = vistaFonte().subgraph.evidence.find((e) => e.evidence_id === candidate.record_anchor);
+      const span = { source_anchor: candidate.record_anchor, source_page: source?.locator.page || 1, quote: "" };
+      const claim = { name: "", description: "", claim_evidence: [span] };
+      const value = key.endsWith("evidence") ? span : {
+        failure: { ...claim, material_context: null },
+        affected_component: { ...claim, category: null, affects_link_evidence: [] },
+        indicators: { ...claim, kind: "symptom", code: null, severity: "Unknown", failure_link_evidence: [] },
+        actions: { ...claim, instruction_text: "", action_kind: null, resolution_link_evidence: [] },
+        inspection_steps: { instruction_text: "", claim_evidence: [span] },
+        conditions: { text: "", applies_to: "branch", step_index: null, claim_evidence: [span] },
+      }[key];
+      if (Array.isArray(target[key])) target[key].push(value); else target[key] = value;
+    }
+    const reviewer = form.elements.reviewer.value, reason = form.elements.reason.value;
+    const html = editRecordFields(candidate, [], vistaFonte().subgraph.evidence);
+    const fields = form.querySelector("fieldset");
+    fields.outerHTML = html;
+    form.elements.reviewer.value = reviewer; form.elements.reason.value = reason;
+  };
+
   const contenuto = (vista, modello) => {
     if (state.view === "confronto") return confronto();
     if (!modello) {
@@ -537,7 +657,8 @@
     if (state.view === "collegamenti") return tabellaCollegamenti(modello);
     if (state.view === "righe") return listaRighe(modello);
     if (state.view === "manca") return cosaManca(modello);
-    if (state.view === "catene") return catene(modello);
+    if (state.view === "revisione") return revisioneRecord(modello);
+    if (state.view === "catene") return catene(modello) + dettagliDiagnostici(modello);
     return mappa(modello);
   };
 
@@ -651,12 +772,35 @@
           ? t(vista.source_kind === "pdf" ? "gr.sottoPdf" : "gr.sotto")
           : t("gr.nonCostruito"))}</p></div>`;
       return `${testa}
-        ${vista && state.view !== "confronto" ? riepilogoPdf(vista.subgraph) : ""}
+        ${vista && !["confronto", "revisione"].includes(state.view) ? riepilogoPdf(vista.subgraph) : ""}
         ${modello && state.view !== "confronto" ? barra(modello) : ""}
         <div class="lavoro-scorri">${contenuto(vista, modello)}</div>`;
     },
 
     bindLavoro(contenitore) {
+      root.delegate(contenitore, "change", "[data-review-record]", (select) => {
+        const form = contenitore.querySelector("[data-record-correction]");
+        if (form) readRecordForm(form);
+        state.reviewBranch = select.value;
+        root.render({ regioni: ["lavoro"] });
+      });
+      root.delegate(contenitore, "click", "[data-add-record-field]", (button) => editRecordList(button, false));
+      root.delegate(contenitore, "click", "[data-remove-record-field]", (button) => editRecordList(button, true));
+      root.delegate(contenitore, "submit", "[data-record-correction]", (form, event) => {
+        event.preventDefault();
+        if (state.graphBusy || !form.reportValidity()) return;
+        const vista = vistaFonte();
+        const branch = form.dataset.recordCorrection;
+        const candidate = readRecordForm(form);
+        if (candidate.resolution_status === "not_diagnostic") Object.assign(candidate, { indicators: [], failure: null, actions: [], inspection_steps: [], conditions: [], affected_component: null });
+        esegui(async () => {
+          const result = await root.api(`/api/g3/subgraphs/${encodeURIComponent(vista.subgraph.source_subgraph_revision_id)}/records/${encodeURIComponent(branch)}/correction`,
+            { method: "POST", body: { candidate, reviewer: form.elements.reviewer.value, reason: form.elements.reason.value } });
+          const graph = result.sources.find((x) => x.source_id === vista.source_id)?.subgraph;
+          state.reviewBranch = graph?.diagnostic_review_history?.at(-1)?.after?.branch_lineage_id || branch;
+          return result;
+        });
+      });
       root.delegate(contenitore, "click", "[data-riprova]", () => esegui(async () => {
         await carica();
         if (!state.graph) throw new Error(state.graphError || t("gr.erroreTitolo"));

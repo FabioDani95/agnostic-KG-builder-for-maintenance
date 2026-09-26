@@ -1,8 +1,11 @@
 # Handoff — hardening del motore di creazione del grafo
 
-> **Aggiornamento PDF (2026-08-13):** la sezione PDF di questo handoff descrive
+> **Stato corrente:** vedere [PDF diagnostic status](PDF_DIAGNOSTIC_STATUS.md)
+> per v22 e la correzione dei singoli record. Il seguito è un handoff storico.
+>
+> **Aggiornamento PDF storico (2026-08-13):** la sezione PDF di questo handoff descrive
 > lo stato precedente alla seconda campagna di hardening. La baseline PDF
-> diagnostica corrente è documentata in
+> diagnostica di quel checkpoint è documentata in
 > [PDF G3 Second Hardening](PDF_G3_SECOND_HARDENING.md). Restano valide le
 > barriere di revisione umana e di non-merge descritte qui.
 

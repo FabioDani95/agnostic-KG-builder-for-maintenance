@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "c7_hypertherm_powermax30_air:1292b082994e485ba1eb93a6989c3d04",
+  "run_id": "c7_hypertherm_powermax30_air",
+  "started_utc": "2026-09-26T10:11:45.439201+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "max_completion_tokens": 24000,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You extract diagnostic records from a technical manual into a typed contract.\n\nSource type: technical PDF\nSource title: hypertherm_powermax30_air_service_manual_rev4_808850.pdf\n\nThe input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be\na complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,\necho its window_id and allowed_source_anchors on every candidate; the system overwrites and\nverifies both fields and no evidence outside that block is allowed. For a section chunk, set\nrecord_window_id=\"\" and set allowed_source_anchors to exactly the anchors referenced by that\ncandidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL\ncontext may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields\nbelong to the current cause/remedy branch. Each displayed FIELD value is one exact source\nspan. Quote the value only: never include the \"FIELD n:\" label, join separate fields, or\nrestore a sibling field omitted by the system.\nReturn every explicit diagnostic record and every distinct cause/remedy branch in the input.\nThe contract is an intermediate record representation, not the final graph. Use schema_version=\"1.1\".\n\nRules:\n1. Never emit graph IDs or ontology relation names. The system owns them.\n2. A diagnostic record has one or more indicators. An indicator is either an observable\n   symptom or an asset-generated error/alarm code. A record may explicitly contain both;\n   keep both. For a symptom set code=null and severity=\"Unknown\" unless the source explicitly\n   states its severity; never invent a risk rating. For an error_code set its\n   code and severity=null. Only an explicit not_diagnostic page disposition may use an empty\n   indicator list.\n3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action\n   from different table rows, flowchart branches or unrelated paragraphs.\n4. A FailureMode is an explicit technical cause or faulty state, not a restatement of the\n   symptom, an inspection result or an invented explanation. Use null when none is stated.\n5. A CorrectiveAction is an explicitly restorative remedy for that failure. Checks and tests\n   are not restorative unless the source says the check itself resolves the fault. Preserve\n   a non-restorative check/test/inspection in inspection_steps, never in actions.\n6. Set resolution_status:\n   - action_stated: at least one restorative action is explicitly linked to the failure;\n   - no_action_stated: the diagnostic record states a failure but no remedy;\n   - check_only: it gives only diagnostic checks/verification;\n   - ambiguous: the row/branch pairing cannot be established safely;\n   - not_diagnostic: a candidate-looking passage is actually preventive/generic content.\n7. An affected component is optional. Include it only if the branch explicitly identifies the\n   affected component. category and failure.material_context are required-but-nullable: use\n   null rather than manufacturing a category/context. A null category does not invalidate a\n   grounded branch; the deterministic compiler supplies a neutral schema category. Do not use\n   a product name as a component.\n8. Evidence is edge-specific. claim_evidence proves only the claim. Each edge evidence list is\n   a support set: one span may explicitly state the whole link, or several spans from the same\n   record/branch may collectively establish it when a manual separates Problem, Cause and\n   Remedy across blocks or pages. failure_link_evidence supports only that exact indicator to\n   failure; resolution_link_evidence supports only that exact failure to action;\n   affects_link_evidence supports only that exact failure to component. Include every span\n   needed to establish the link and no unrelated nearby heading. Never use an action-only span\n   as the sole proof of an indicator-to-failure edge.\n   In a system-owned atomic table row, use the exact endpoint FIELD spans as the edge support\n   set; the deterministic compiler verifies the table structure and completes their union.\n9. Every quote is a short verbatim span contained in the EvidenceUnit named by source_anchor,\n   on source_page. Prefer one span per EvidenceUnit. If wording crosses adjacent units, emit\n   separate exact spans; never concatenate or paraphrase cells. Copy the opaque anchor exactly.\n   Do not include page/anchor marker text in a quote.\n10. record_anchor must be one of this candidate's claim-evidence anchors. branch_anchor must be\n    one of this candidate's evidence anchors (prefer a causal edge anchor). For an explicit\n    not_diagnostic disposition with no claims, set both to the candidate page's EvidenceUnit\n    anchor. These anchors are source locators, not freely generated IDs.\n11. Preserve source language in human-readable values and set source_language accordingly.\n12. Duplicate records caused by overlapping pages must be returned identically; deterministic\n    lineage and compilation will deduplicate them.\n13. Account for candidate-looking passages. If one is actually generic/preventive content,\n    emit a not_diagnostic candidate with empty indicators and no diagnostic claims. Return an\n    empty records list only when the input contains no candidate-looking passage at all. Never\n    fill a missing cause/action simply to make a complete record.\n14. Every anchored candidate-looking passage in the input must occur in a record's claim/edge\n    evidence, or have its own explicit not_diagnostic disposition. Do not cover only the first\n    row or branch of a troubleshooting table.\n15. For check_only, actions must be empty and inspection_steps must preserve each stated check\n    with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.\n16. Preserve every stated precondition, test outcome, negation, threshold and alternative in\n    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection\n    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test\n    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.\n    Keep inspection_steps and actions in source order; do not sort steps alphabetically.\n17. Preserve the actual error CODE separately from its fault name, including a numerical code\n    in a separate table column. Never substitute the name for a printed numeric code.\n"
+      },
+      {
+        "role": "user",
+        "content": "## DOCUMENT CONTEXT\nThese pages come from the following manual sections:\n- 9 Wiring Diagrams (pp. 227-227, source: rule)\n- Process flow for troubleshooting internal compressor and temperature fault LEDs (pp. 228-228, source: rule)\n\nUse this context to better interpret the content. Extract all ontology-relevant information from these sections, including components, error codes, symptoms, failure modes, and corrective actions.\n\n--- PAGE 225 ---\n\n[[EVIDENCE_ID: a0001]]\n8 – Parts\n\n[[EVIDENCE_ID: a0002]]\nCSA warning label\n\n[[EVIDENCE_ID: a0003]]\nThis warning label is affixed to some power supplies. It is important that the operator and maintenance technician \nunderstand the intent of these warning symbols as described.\n\n[[EVIDENCE_ID: a0004]]\nRead and follow these instructions, employer safety\npractices, and material safety data sheets. Refer to \nANS Z49.1, “Safety in Welding, Cutting and Allied \nProcesses” from American Welding Society \n(http://www.aws.org) and OSHA Safety and Health \nStandards, 29 CFR 1910 (http://www.osha.gov).\n\n[[EVIDENCE_ID: a0005]]\n1. Cutting sparks can cause explosion or ﬁre.\n1.1 Do not cut near ﬂammables.\n1.2 Have a ﬁre extinguisher nearby and ready to use.\n1.3 Do not use a drum or other closed container as a cutting\n      table.\n\n[[EVIDENCE_ID: a0006]]\n1. Les étincelles de coupage peuvent provoquer \n    une explosion ou un incendie.\n1.1 Ne pas couper près des matières inﬂammables. \n1.2 Un extincteur doit être à proximité et prêt à être utilisé.\n1.3 Ne pas utiliser un fût ou un autre contenant fermé comme \n      table de coupage.\n\n[[EVIDENCE_ID: a0007]]\n2. L’arc plasma peut blesser et brûler; éloigner \n    la buse de soi. Il s’allume instantanément \n    quand on l’amorce. \n2.1 Couper l’alimentation avant de démonter la torche. \n2.2 Ne pas saisir la pièce à couper de la trajectoire de coupage. \n2.3 Se protéger entièrement le corps.\n3. Tension dangereuse. Risque de choc électrique \n    ou de brûlure. \n3.1 Porter des gants isolants. Remplacer les gants quand ils sont \n      humides ou endommagés. \n3.2 Se protéger contre les chocs en s’isolant de la pièce et de\n      la terre.\n3.3 Couper l’alimentation avant l’entretien. Ne pas toucher \n      les pièces sous tension.\n\n[[EVIDENCE_ID: a0008]]\nWARNING: This product can expose you to chemicals including \nlead and lead compounds, which are known to the State of \nCalifornia to cause cancer and birth defects or other reproductive \nharm. For more information go to www.p65warnings.ca.gov.\n\n[[EVIDENCE_ID: a0009]]\nPowermax30 AIR\nService Manual\n808850\n225\n\n[[EVIDENCE_ID: a0010]]\nse instructions, employer safety rial safety data sheets. Refer to in Welding, Cutting and Allied erican Welding Society ) and OSHA Safety and Health 1910 (http://www.osha.gov). | WARNING |  | AVERTISSEMENT |  |  |  |  |  |  |  |  |  |  |\n\n[[EVIDENCE_ID: a0011]]\n| Plasma cutting can be injurious to operator and persons in the work area. Consult manual before operating. Failure to follow all these safety instructions can result in death. |  | Le coupage plasma peut être préjudiciable pour l’opérateur et les personnes qui se trouvent sur les lieux de travail. Consulter le manuel avant de faire fonctionner. Le non respect des ces instructions de sécurité peut entraîner la mort. |  |  |  |  |  |  |  |  |  |  |\n\n[[EVIDENCE_ID: a0012]]\n| 1. Cutting sparks can cause explosion or fire. 1.1 Do not cut near flammables. 1.2 Have a fire extinguisher nearby and ready to use. |  | 1. Les étincelles de coupage peuvent provoquer une explosion ou un incendie. 1.1 Ne pas couper près des matières inflammables. |  |  |  |  |  |  |  |  |  |  |\n\n[[EVIDENCE_ID: a0013]]\n| 1.3 Do not use a drum or other closed container as a cutting table. 2. Plasma arc can injure and burn; point the nozzle away from yourself. Arc starts instantly when triggered. 2.1 Turn off power before disassembling torch. 2.2 Do not grip the workpiece near the cutting path. 2.3 Wear complete body protection. |  | 1.2 Un extincteur doit être à proximité et prêt à être utilisé. 1.3 Ne pas utiliser un fût ou un autre contenant fermé comme table de coupage. 2. L’arc plasma peut blesser et brûler; éloigner la buse de soi. Il s’allume instantanément quand on l’amorce. 2.1 Couper l’alimentation avant de démonter la torche. 2.2 Ne pas saisir la pièce à couper de la trajectoire de coupage. 2.3 Se protéger entièrement le corps. |  |  |  |  |  |  |  |  |  |  |\n\n[[EVIDENCE_ID: a0014]]\n| 3. Hazardous voltage. Risk of electric shock or burn. 3.1 Wear insulating gloves. Replace gloves when wet or damaged. 3.2 Protect from shock by insulating yourself from work and ground. 3.3 Disconnect power before servicing. Do not touch live parts. |  | 3. Tension dangereuse. Risque de choc électrique ou de brûlure. 3.1 Porter des gants isolants. Remplacer les gants quand ils sont humides ou endommagés. 3.2 Se protéger contre les chocs en s’isolant de la pièce et de la terre. 3.3 Couper l’alimentation avant l’entretien. Ne pas toucher les pièces sous tension. |  |  |  |  |  |  |  |  |  |  |\n\n[[EVIDENCE_ID: a0015]]\n| 4. Plasma fumes can be hazardous. 4.1 Do not inhale fumes. 4.2 Use forced ventilation or local exhaust to remove the fumes. 4.3 Do not operate in closed spaces. Remove fumes with ventilation. |  | 4. Les fumées plasma peuvent être dangereuses. 4.1 Ne pas inhaler les fumées. 4.2 Utiliser une ventilation forcée ou un extracteur local pour dissiper les fumées. 4.3 Ne pas couper dans des espaces clos. Chasser les fumées par ventilation. |  |  |  |  |  |  |  |  |  |  |\n\n[[EVIDENCE_ID: a0016]]\n| 5. Arc rays can burn eyes and injure skin. 5.1 Wear correct and appropriate protective equipment to protect head, eyes, ears, hands, and body. Button shirt collar. Protect ears from noise. Use welding helmet with the correct shade of filter. |  | 5. Les rayons d’arc peuvent brûler les yeux et blesser la peau. 5.1 Porter un bon équipement de protection pour se protéger la tête, les yeux, les oreilles, les mains et le corps. Boutonner le col de la chemise. Protéger les oreilles contre le bruit. Utiliser un masque de soudeur avec un filtre de nuance appropriée. |  |  |  |  |  |  |  |  |  |  |\n\n[[EVIDENCE_ID: a0017]]\n| 6. Become trained. Only qualified personnel should operate this equipment. Use torches specified in the manual. Keep non-qualified personnel and children away. 7. Do not remove, destroy, or cover this label. Replace if it is missing, damaged, or worn. |  | 6. Suivre une formation. Seul le personnel qualifié a le droit de faire fonctionner cet équipement. Utiliser exclusivement les torches indiquées dans le manual. Le personnel non qualifié et les enfants doivent se tenir à l’écart. 7. Ne pas enlever, détruire ni couvrir cette étiquette. La remplacer si elle est absente, endommagée ou usée. |  |  |  |  |  |  |  |  |  |  |\n\n[[EVIDENCE_ID: a0018]]\nt can expose you to chemicals including which are known to the State of and birth defects or other reproductive go to www.p65warnings.ca.gov. |  | AVERTISSEMENT : Ce produit peut vous exposer à des produits chimiques, dont le plomb et des composés de plomb, reconnus par l’État de la Californie comme cause de cancer et d’anomalie congénitale ou d’autres anomalies de l’appareil reproducteur. Pour obtenir de plus amples renseignements, consultez le www.p65warnings.ca.gov. |  |  |  |  |  |  |  |  |  |  |  | )\n\n[[EVIDENCE_ID: a0019]]\n|  |  |  |  |  |  |  | ( | 11 | 06 | 73 | Re | v F | )\n\n--- PAGE 226 ---\n\n[[EVIDENCE_ID: a0020]]\n8 – Parts\n\n[[EVIDENCE_ID: a0021]]\nCE/CCC warning label\n\n[[EVIDENCE_ID: a0022]]\n1.\nCutting sparks can cause explosion \nor fire.\n\n[[EVIDENCE_ID: a0023]]\nThis warning label is affixed to some power supplies. It is important that the \noperator and maintenance technician understand the intent of these \nwarning symbols as described. The numbered text corresponds to the \nnumbered boxes on the label.\n\n[[EVIDENCE_ID: a0024]]\nwww.hypertherm.com/weee\n\n[[EVIDENCE_ID: a0025]]\n1.1 Do not cut near flammables.\n\n[[EVIDENCE_ID: a0026]]\n1.2 Have a fire extinguisher nearby and \nready to use.\n\n[[EVIDENCE_ID: a0027]]\n1.3 Do not use a drum or other closed \ncontainer as a cutting table.\n\n[[EVIDENCE_ID: a0028]]\n2.\nPlasma arc can injure and burn; point \nthe nozzle away from yourself. Arc \nstarts instantly when triggered.\n\n[[EVIDENCE_ID: a0029]]\n2.1 Turn off power before disassembling \ntorch.\n\n[[EVIDENCE_ID: a0030]]\n2.2 Do not grip the workpiece near the \ncutting path.\n\n[[EVIDENCE_ID: a0031]]\n2.3 Wear complete body protection.\n\n[[EVIDENCE_ID: a0032]]\n3.\nHazardous voltage. Risk of electric \nshock or burn.\n\n[[EVIDENCE_ID: a0033]]\n3.1 Wear insulating gloves. Replace \ngloves when wet or damaged.\n\n[[EVIDENCE_ID: a0034]]\n3.2 Protect from shock by insulating \nyourself from work and ground.\n\n[[EVIDENCE_ID: a0035]]\n3.3 Disconnect power before servicing. \nDo not touch live parts.\n\n[[EVIDENCE_ID: a0036]]\n4.\nPlasma fumes can be hazardous.\n\n[[EVIDENCE_ID: a0037]]\n4.1 Do not inhale fumes.\n\n[[EVIDENCE_ID: a0038]]\n4.2 Use forced ventilation or local exhaust \nto remove the fumes.\n\n[[EVIDENCE_ID: a0039]]\n4.3 Do not operate in closed spaces. \nRemove fumes with ventilation.\n\n[[EVIDENCE_ID: a0040]]\n5.\nArc rays can burn eyes and injure \nskin.\n\n[[EVIDENCE_ID: a0041]]\n5.1 Wear correct and appropriate \nprotective equipment to protect head, \neyes, ears, hands, and body. Button \nshirt collar. Protect ears from noise. \nUse welding helmet with the correct \nshade of filter.\n\n[[EVIDENCE_ID: a0042]]\n6.\nBecome trained. Only qualified \npersonnel should operate this \nequipment. Use torches specified in \nthe manual. Keep non-qualified \npersonnel and children away.\n\n[[EVIDENCE_ID: a0043]]\n7.\nDo not remove, destroy, or cover this \nlabel. Replace if it is missing, \ndamaged, or worn.\n\n[[EVIDENCE_ID: a0044]]\n226\nPowermax30 AIR\nService Manual\n808850\n\n--- PAGE 227 ---\n\n[[EVIDENCE_ID: a0045]]\nPowermax30 AIR\nService Manual\n808850\n227\nSection 9\nWiring Diagrams\nThis section contains the following diagrams:\n\nProcess flow for troubleshooting internal compressor and temperature fault LEDs\n\nTiming chart for torch start\n\nPowermax30 AIR schematic\n\n--- PAGE 228 ---\n\n[[EVIDENCE_ID: a0046]]\n228\nPowermax30 AIR\nService Manual\n808850\n9 – Wiring Diagrams\nProcess flow for troubleshooting internal compressor and temperature fault \nLEDs\n\u000b\r9(1$\u0003 \u0003FRPSUHVVRU\u0010HQDEOH\u0003YROWDJH\f\n:DWFK\u0003&'%\u0003/('\u0003\u000b'\u0018\f\u0003\nafter tapping torch trigger\n&'%\u0003\n/('\u0003\u000b'\u0018\f\u0003\nRQ\"\n'LVFRQQHFW\u0003-\u0015\u0003\nIURP\u0003&'%\n:DWFK\u0003&'%\u0003/('\u0003\u000b'\u0018\f\u0003\nDIWHU\u0003WDSSLQJ\u0003WRUFK\u0003WULJJHU\n&'%\u0003\n/('\u0003\u000b'\u0018\f\u0003\nRQ\"\n&RPSUHVVRU\u0003\nZRUNV\"\n&KHFN\u00039%86\u0003DW\u0003-\u0016\u0003\nRQ\u0003&'%\n9%86\u0003\nSUHVHQW\u0003RQ\u0003\n&'%\"\n&KHFN\u00039(1$\r\u0003\nDW\u0003-\u0014\u0003RQ\u0003&'%\u0003\nafter tapping torch trigger\n9(1$\u0003\nSUHVHQW\u0003RQ\u0003\n&'%\"\n'LVFRQQHFW\u0003-\u0015\u0003\nIURP\u0003&'%\n&KHFN\u00039%86\u0003DW\u0003-\u0016\u0003\nRQ\u0003&'%\u0003DJDLQ\n9%86\u0003\nSUHVHQW\u0003RQ\u0003\n&'%\"\n&KHFN\u0003FRPSUHVVRU\u0003\nRQ\u0003H[WHUQDO\u0003\u0014\u0015\u00039'&\u0003\nSRZHU\u0003VRXUFH\n'LVFRQQHFW\u0003-\u0014\u0003DQG\u0003-\u0016\u0003\nIURP\u0003&'%\u0003WR\u0003LVRODWH\u0003\n3:5\u0003%'\n&KHFN\u00039%86\u0003RQ\u0003\n3:5\u0003%'\n&KHFN\u00039(1$\u0003DW\u0003-\u001c\u0003RQ\u00033:5\u0003%'\u0003\nafter tapping torch trigger\n9%86\u0003DQG\u00039(1$\u0003\nSUHVHQW\u0003RQ\u00033:5\u0003%'\"\n1R\n<HV\n1R\n<HV\n<HV\n1R\n<HV\n1R\n1R\n<HV\n1R\n1R\n<HV\n<HV\n&KHFN\u00039(1$\u0003DW\u0003-\u001c\u0003\nRQ\u00033:5\u0003%'\u0003after \ntapping torch trigger\n9(1$\u0003\nSUHVHQW\u0003RQ\u0003\n3:5\u0003%'\"\n1R\n<HV"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "DiagnosticChunkOutput",
+        "strict": true,
+        "schema": {
+          "$defs": {
+            "AffectedComponentCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "category": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Category"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "affects_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Affects Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "category",
+                "claim_evidence",
+                "affects_link_evidence"
+              ],
+              "title": "AffectedComponentCandidate",
+              "type": "object"
+            },
+            "CorrectiveActionCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "action_kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Action Kind"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "resolution_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Resolution Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instruction_text",
+                "action_kind",
+                "claim_evidence",
+                "resolution_link_evidence"
+              ],
+              "title": "CorrectiveActionCandidate",
+              "type": "object"
+            },
+            "DiagnosticBundleCandidate": {
+              "additionalProperties": false,
+              "description": "One source record, potentially containing several observed indicators.",
+              "properties": {
+                "record_window_id": {
+                  "title": "Record Window Id",
+                  "type": "string"
+                },
+                "allowed_source_anchors": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Allowed Source Anchors",
+                  "type": "array"
+                },
+                "record_anchor": {
+                  "minLength": 1,
+                  "title": "Record Anchor",
+                  "type": "string"
+                },
+                "branch_anchor": {
+                  "minLength": 1,
+                  "title": "Branch Anchor",
+                  "type": "string"
+                },
+                "indicators": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticIndicatorCandidate"
+                  },
+                  "title": "Indicators",
+                  "type": "array"
+                },
+                "failure": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FailureModeCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actions": {
+                  "items": {
+                    "$ref": "#/$defs/CorrectiveActionCandidate"
+                  },
+                  "title": "Actions",
+                  "type": "array"
+                },
+                "inspection_steps": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticInspectionStepCandidate"
+                  },
+                  "title": "Inspection Steps",
+                  "type": "array"
+                },
+                "conditions": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticConditionCandidate"
+                  },
+                  "title": "Conditions",
+                  "type": "array"
+                },
+                "affected_component": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AffectedComponentCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolution_status": {
+                  "$ref": "#/$defs/ResolutionStatus"
+                }
+              },
+              "required": [
+                "record_window_id",
+                "allowed_source_anchors",
+                "record_anchor",
+                "branch_anchor",
+                "indicators",
+                "failure",
+                "actions",
+                "inspection_steps",
+                "conditions",
+                "affected_component",
+                "resolution_status"
+              ],
+              "title": "DiagnosticBundleCandidate",
+              "type": "object"
+            },
+            "DiagnosticConditionCandidate": {
+              "additionalProperties": false,
+              "description": "Source-stated condition attached to a branch or a zero-based step.",
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "title": "Text",
+                  "type": "string"
+                },
+                "applies_to": {
+                  "enum": [
+                    "branch",
+                    "action",
+                    "inspection"
+                  ],
+                  "title": "Applies To",
+                  "type": "string"
+                },
+                "step_index": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Step Index"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "text",
+                "applies_to",
+                "step_index",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticConditionCandidate",
+              "type": "object"
+            },
+            "DiagnosticEvidenceSpan": {
+              "additionalProperties": false,
+              "description": "A verbatim source span emitted by the extraction model.\n\n``source_anchor`` is the opaque evidence identifier printed in the model's\ninput.  It is intentionally not a graph node identifier.",
+              "properties": {
+                "source_anchor": {
+                  "minLength": 1,
+                  "title": "Source Anchor",
+                  "type": "string"
+                },
+                "source_page": {
+                  "minimum": 1,
+                  "title": "Source Page",
+                  "type": "integer"
+                },
+                "quote": {
+                  "minLength": 1,
+                  "title": "Quote",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source_anchor",
+                "source_page",
+                "quote"
+              ],
+              "title": "DiagnosticEvidenceSpan",
+              "type": "object"
+            },
+            "DiagnosticIndicatorCandidate": {
+              "additionalProperties": false,
+              "description": "Provider-safe flat indicator contract.\n\nOpenAI strict Structured Outputs does not accept the ``oneOf`` emitted by\nPydantic for a discriminated model union inside an array.  Keep the wire\nshape flat and enforce the same symptom/error-code invariants locally.\nNullable fields remain required so the provider schema is strict.",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "symptom",
+                    "error_code"
+                  ],
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "code": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code"
+                },
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "severity": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "Critical",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Severity"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "failure_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Failure Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "code",
+                "name",
+                "description",
+                "severity",
+                "claim_evidence",
+                "failure_link_evidence"
+              ],
+              "title": "DiagnosticIndicatorCandidate",
+              "type": "object"
+            },
+            "DiagnosticInspectionStepCandidate": {
+              "additionalProperties": false,
+              "description": "A diagnostic check that is useful but does not itself restore operation.",
+              "properties": {
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "instruction_text",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticInspectionStepCandidate",
+              "type": "object"
+            },
+            "FailureModeCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "material_context": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Material Context"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "material_context",
+                "claim_evidence"
+              ],
+              "title": "FailureModeCandidate",
+              "type": "object"
+            },
+            "ResolutionStatus": {
+              "description": "The extractor's explicit assessment of diagnostic completeness.",
+              "enum": [
+                "action_stated",
+                "no_action_stated",
+                "check_only",
+                "ambiguous",
+                "not_diagnostic"
+              ],
+              "title": "ResolutionStatus",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Provider structured-output envelope for one diagnostic PDF chunk.\n\nAll fields are required, including nullable/list fields.  This avoids the\noptional-property mismatch of strict provider JSON Schema implementations.",
+          "properties": {
+            "schema_version": {
+              "enum": [
+                "1.0",
+                "1.1"
+              ],
+              "title": "Schema Version",
+              "type": "string"
+            },
+            "source_language": {
+              "minLength": 1,
+              "title": "Source Language",
+              "type": "string"
+            },
+            "records": {
+              "items": {
+                "$ref": "#/$defs/DiagnosticBundleCandidate"
+              },
+              "title": "Records",
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "source_language",
+            "records"
+          ],
+          "title": "DiagnosticChunkOutput",
+          "type": "object"
+        }
+      }
+    },
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 10.797862500010524,
+  "response": {
+    "id": "chatcmpl-ESJfeLX2F5LXNt8lFIH7DieAq9xPG",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"schema_version\":\"1.1\",\"source_language\":\"English\",\"records\":[{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0046\"],\"record_anchor\":\"a0046\",\"branch_anchor\":\"a0046\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Internal compressor and temperature fault LEDs\",\"description\":\"Process flow for troubleshooting internal compressor and temperature fault LEDs.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":228,\"quote\":\"Process flow for troubleshooting internal compressor and temperature fault LEDs\"}],\"failure_link_evidence\":[]}],\"failure\":null,\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Watch CDB LED (D5) after tapping torch trigger.\",\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":228,\"quote\":\":DWFK CDB LED (D5)\"}]},{\"instruction_text\":\"Disconnect J2 from CDB.\",\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":228,\"quote\":\"'LVFRQQHFW J2\"}]},{\"instruction_text\":\"Watch CDB LED (D5) after tapping torch trigger.\",\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":228,\"quote\":\":DWFK CDB LED (D5)\"}]},{\"instruction_text\":\"Check VBUS at J3 on CDB.\",\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":228,\"quote\":\"&KHFN VBUS\"}]},{\"instruction_text\":\"Check VENA at J1 on CDB after tapping torch trigger.\",\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":228,\"quote\":\"&KHFN VENA\"}]},{\"instruction_text\":\"Disconnect J2 from CDB.\",\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":228,\"quote\":\"'LVFRQQHFW J2\"}]},{\"instruction_text\":\"Check VBUS at J3 on CDB again.\",\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":228,\"quote\":\"&KHFN VBUS\"}]},{\"instruction_text\":\"Check compressor on external 12 VDC power source.\",\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":228,\"quote\":\"&KHFN compressor\"}]},{\"instruction_text\":\"Disconnect J1 and J3 from CDB to isolate PWR BD.\",\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":228,\"quote\":\"'LVFRQQHFW J1 and J3\"}]},{\"instruction_text\":\"Check VBUS on PWR BD.\",\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":228,\"quote\":\"&KHFN VBUS\"}]},{\"instruction_text\":\"Check VENA at J9 on PWR BD after tapping torch trigger.\",\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":228,\"quote\":\"&KHFN VENA at J9\"}]},{\"instruction_text\":\"Check VENA at J9 on PWR BD after tapping torch trigger.\",\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":228,\"quote\":\"&KHFN VENA at J9\"}]}],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"check_only\"}]}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790417506,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 1354,
+      "prompt_tokens": 6027,
+      "total_tokens": 7381,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 656,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cache_write_tokens": 3408,
+        "cached_tokens": 2616
+      }
+    }
+  },
+  "provider_request_id": "req_02476cd931c145c3952e495fb06dc658",
+  "error": null
+}

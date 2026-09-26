@@ -21,7 +21,7 @@ separabili per esperimenti controllati e confini di pubblicazione verificabili.
 | Zero relazioni non supportate nell'intero output | Gold Eastman parziale e controlli non esaustivi | Non dimostrato; serve audit semantico dell'output completo nel perimetro valutato |
 | Il codice v12 conserva i risultati v11 | v12 amplia il contesto semantico e rende advisory le finestre diagnostiche | Non verificato; confronto controllato da eseguire |
 | Hypertherm dimostra generalizzazione blind | `benchmark_runs/hypertherm_holdout_v12_20260813/real_run_state_recovery.json` | Non utilizzabile come nuovo blind: osservato in sviluppo, gold assente, accounting incompleto |
-| Il nuovo modello riduce il costo del sistema a pari qualità | Prezzi unitari ufficiali inferiori; nessuna nuova campagna | Ipotesi; misurare token, retry, qualità e revisione |
+| Il nuovo modello riduce il costo del sistema a pari qualità | Prezzi unitari inferiori; pilot reale completato, qualità insufficiente nel profilo provato | Ipotesi; misurare token, retry, qualità e revisione |
 | Il grafo abilita interrogazioni deterministiche | Contratto proposto in `sections/02_maintenance_graph_rationale.md` | Motivazione fondata; executor e valutazione dedicata ancora da completare |
 | Il sistema è ontology/provider/language agnostic | Schema diagnostico specifico e provider corrente | Non sostenibile; valutare esplicitamente il trasferimento tra produttori |
 | Riduce tempi di riparazione o fermo impianto | Nessuno studio operativo | Fuori dalle conclusioni attuali |
@@ -46,7 +46,7 @@ manifest originario e non può essere presunta dal solo commit.
 - Motivazione scientifica del grafo e fonti: prima sezione scritta.
 - Protocollo gold e sperimentale: specificato, da congelare con gli annotatori.
 - Integrazione GPT-6 Luna: primo incremento completato; 564 test offline superati e lint dei file modificati superato. Dettagli e limiti della verifica in `MODEL_DECISION.md`.
-- Nuova estrazione reale, nuovi gold, risultati comparativi e studio downstream: non eseguiti.
+- Pilot reale GPT-6 Luna sui 4 manuali di sviluppo completato. Nuovi gold, confronto controllato tra modelli e studio downstream ancora da eseguire.
 - Manoscritto: struttura e prima sezione; non ancora un draft completo circolabile.
 
 Per ogni nuova campagna aggiungere un riferimento al manifest, all'output grezzo,
@@ -55,6 +55,161 @@ storici e non riclassificare retroattivamente un campione di sviluppo come test.
 
 ## Preparazione del corpus
 
-Creato `manuals/registry.json` con 4 documenti storici da riconciliare ai PDF
+Creato `manuals/registry.json` con 4 documenti storici riconciliati ai PDF originali
 e 12 slot nuovi da selezionare. Responsabilità e criteri in `manuals/README.md`.
 Nessun nuovo manuale è stato acquisito o annotato in questo passaggio.
+
+## Pilot reale registrato
+
+[Report](experiments/dev_luna_20260925/REPORT.md) e
+[osservazioni](experiments/dev_luna_20260925/OBSERVATIONS.md).
+Codice del generatore: `528f069`; un run per documento, reasoning low,
+escalation disabilitata. Cap cumulativo autorizzato: 15 USD.
+
+Quattro output prodotti in 1.152,319 secondi di esecuzione della campagna
+(19 minuti e 12 secondi), con 116 chiamate incluso il test API.
+Costo contabilizzato prudenziale: 0,156349335 USD; quota stimabile dai token
+osservati: 0,139875960 USD. Due tentativi mantengono la prenotazione massima
+per assenza di uso osservabile. Tutte le prenotazioni sono chiuse, senza
+superamenti del cap o degli envelope.
+
+Il matching storico riconosce 3/8 casi autonomi per Eastman, 0/8 per Danfoss
+e 0/18 per Graco. Danfoss ha inoltre un caso riconosciuto come lacuna esplicita.
+Hypertherm non ha gold. Tutti i grafi hanno approval_eligible=false.
+Il profilo corrente non supera la valutazione di sviluppo; i risultati non
+consentono una conclusione isolata sulla qualità del modello rispetto a v11.
+
+Prima della campagna finale servono interventi mirati su risposte troncate,
+validazione dei record e associazione degli anchor, seguiti da un nuovo pilot
+confrontabile. Nessuna modifica al generatore è stata applicata durante i run.
+
+## Audit della pipeline antecedente all'implementazione
+
+Completata l'[analisi con piano concreto](ANALISI_PIANO_ROBUSTEZZA_ESTRAZIONE.md)
+del codice `528f069` e del pilot `dev_luna_20260925`. La baseline `4564d39`
+indicata all'inizio di questo registro riguarda l'audit precedente, non il codice
+del pilot. Nessuna implementazione del servizio, modifica al gold o nuova
+chiamata API di estrazione è stata eseguita in questa fase.
+
+L'[audit offline](analysis/pipeline_audit_20260925.json) verifica 47 hash degli
+artifact e quattro PDF; riproduce le disposizioni di tutti i 141 candidati
+tipizzati persistiti. Non recupera risposte originali non salvate e non attesta
+la correttezza semantica dei candidati. Il runtime locale ha versioni PyMuPDF e
+OpenAI diverse da quelle del pilot: il replay usa le evidenze SQLite congelate.
+
+Riscontri aggiuntivi: Danfoss e Graco producono grafi esclusivamente strutturali;
+56 occorrenze di passi di ispezione nei candidati non hanno una rappresentazione
+di tipo Inspection nel grafo; pagine diagnostiche Hypertherm numeriche o con
+testo corrotto possono essere escluse. Probe sintetici riproducono il rigetto
+di un'intera risposta per un record invalido, il retry esterno non attivato da
+errori catturati internamente e una relazione fra righe diverse che supera il
+solo grounding letterale. Lo scorer storico accetta alcuni contrasti di
+negazione e up/down-stroke: non può certificare precisione semantica.
+
+Le questioni individuate nel gold tramite lettura dei PDF sono proposte di audit,
+non correzioni già validate da tecnici. Il piano richiede gold versionato e
+adjudication, incluso un perimetro esplicito Hypertherm, prima del confronto
+decisivo. Il cap originariamente proposto era 40 USD. L'utente ha successivamente
+approvato l'implementazione con un nuovo cap cumulativo di **20 USD**,
+comprensivo di confronti, retry ed escalation. Il budget precedente è chiuso.
+
+## Incremento di robustezza approvato
+
+Codice e dati baseline congelati prima delle modifiche in
+`experiments/robustness_20260925/baseline_manifest.json` e `baseline_source.tar.gz`.
+Il [report operativo](experiments/robustness_20260925/REPORT.md) distingue
+baseline B1, pacchetti P1, candidato C1 e candidato C2, ciascuno con sorgente,
+configurazione, ledger e output conservati. Le [misure generate](experiments/robustness_20260925/analysis/MEASUREMENTS.md)
+non sono metriche di qualità validate da tecnici.
+
+L'ontologia resta invariata. Ispezioni ordinate e condizioni vengono conservate
+come metadati diagnostici tipizzati, collegati ai rami e consultabili nella UI;
+non sono nuovi tipi dell'ontologia e non sono trasformate in riparazioni.
+Il nuovo percorso conserva risposta e usage prima del parsing, valida e recupera
+i singoli record, mantiene layout/celle/continuazioni e controlla il supporto
+dei collegamenti oltre alla presenza letterale delle citazioni.
+
+Il gold originale è immutato. I [pacchetti per i tecnici](evaluation/gold_review_v1/README.md)
+sono preparati senza predizioni e comprendono Hypertherm su un perimetro esplicito.
+Nessuna annotazione è ancora certificata come gold tecnico. La qualità semantica
+finale, la completezza dei rami e il carico umano restano da verificare sui PDF;
+i risultati negativi e i duplicati residui sono riportati nel report operativo.
+
+## Esito del primo ciclo implementato
+
+[Rapporto finale di sviluppo](experiments/robustness_20260925/REPORT.md):
+599 test Python superati e quattro replay esatti C6 completati senza rete.
+Probe storico finale: Eastman 4/8, Danfoss 5/8 più 3 gap, Graco 17/18 più
+1 gap; Hypertherm senza gold. La nuova baseline B1 dava rispettivamente
+5/8, 0/8 e 0/18. Non sono metriche semantiche validate. Hypertherm passa
+da 25 a 10 rami nel grafo e da 89 a 117 review; regressione quantitativa
+aperta. Tutti i grafi restano non approvabili e con estrazione incompleta.
+Costo prudenziale cumulativo 1,261482795 USD su 20 USD, 414 tentativi chiusi.
+Il gold tecnico, la completezza dei rami e la riduzione del carico umano
+restano necessari prima di dichiarare raggiunto l'obiettivo.
+
+## Continuazione sulle tabelle Hypertherm
+
+[Rapporto C7/C8](experiments/robustness_followup_20260926/REPORT.md): riconoscimento
+dei titoli diagnostici estesi sopra intestazioni causa/soluzione e gestione
+esplicita degli elenchi non abbinati. Nuovo run completo Hypertherm: 17 rami
+nel grafo contro 10 nel precedente C6; review 111 contro 117, ma record irrisolti
+93 contro 89 e condizioni conservate 29 contro 35. Restano duplicati e limiti
+semantici: non è un risultato di accettazione. C8 recupera locator errati solo
+entro finestre atomiche verificate; zero casi applicabili nei quattro replay,
+quindi nessun beneficio empirico attribuibile a quel recupero.
+605 test superati, quattro replay esatti senza rete. Costo cumulativo
+1,343788355 USD su 20 USD, 482 tentativi chiusi. Gold Hypertherm ancora
+non annotato tecnicamente; aggiunte quattro note proposte per l'adjudicator,
+separate dai moduli A/B e non usate per generazione o scoring. Anche il flusso
+G3 di correzione/ricompilazione umana dei singoli record resta da completare.
+
+
+## Continuazione C9–C12: verifica documentale e gate per record
+
+[Rapporto di continuazione](experiments/robustness_continuation_20260926/REPORT.md):
+quattro nuove estrazioni complete C11, quindi verifica incrementale C12 del
+generatore `pdf-g3-structured-recovery-v22`. C12 riusa richieste identiche C11 e
+aggiunge due chiamate sul Test 9 Hypertherm, recuperando il contesto delle pagine
+strutturali 98–99. Non è una nuova estrazione indipendente. Hypertherm conserva
+tutti i 17 rami C11 e ne aggiunge quattro con causa/rimedio terminale sostenuti
+dalla fonte; nessuna delle quattro catene operative è certificata completa.
+Restano prerequisiti, ordine e percorsi alternativi non risolti. Sugli altri tre
+manuali nodi e relazioni C12 sono identici a C11.
+
+Risultati finali: Eastman 9 rami/75 review; Danfoss 8/26; Graco 19/64;
+Hypertherm 21/157, con 145 record irrisolti. Il confronto Hypertherm C8→C12
+(17→21 rami, 111→157 review, 93→145 irrisolti) non dimostra una riduzione del
+carico umano. Graco regredisce quantitativamente rispetto a C8. Tutti i grafi
+restano non approvabili. I riferimenti canonici sono letterali, ma tale verifica
+non certifica la semantica. Gli audit separano casi locali supportati,
+incompletezze e record non giudicati; precisione/recall globali non disponibili.
+
+Implementata correzione del singolo record G3 con prove affiancate, storia,
+nuova revisione, ricompilazione e controllo di concorrenza. Verificata via API
+e browser su copia: 152 relazioni estranee preservate, citazione inventata
+bloccata e approvazione residua rifiutata. Nessuna annotazione tecnica umana è
+attribuita a queste prove. Suite finale: 612 test Python superati e test
+frontend superato. Ontologia, gold storico e documenti locali protetti invariati.
+
+Audit di tutti i 34 casi storici e delle 21 ambiguità di identità conservati come
+proposte dell'agente esposto alle predizioni; moduli A/B ancora unannotated e
+vuoti. Preparata la procedura concreta per annotazione indipendente e adjudication.
+Costo prudenziale cumulativo **1,644144695 USD su 20 USD**, 681 tentativi chiusi,
+nessuna prenotazione attiva. Snapshot di consegna `source_final_v22.tar.gz`;
+C10 fallito e snapshot intermedi restano distinti e preservati.
+
+Quattro replay offline finali della composizione C11+C12 completati con richieste
+esatte e rete bloccata: nodi, relazioni, record e review identici ai risultati C12.
+Le sole differenze sono identificatori/tempi e registrazione raw/telemetria;
+nessuna ulteriore chiamata reale o spesa.
+
+## Allineamento della documentazione per il commit
+
+README principale, indice docs, architettura, mappa dei test e guida italiana
+sono allineati a v22 e ai limiti C9–C12. La guida italiana precedente è conservata
+in `docs/PIPELINE_SPIEGAZIONE_IT_20260728.md`; i report v11 sono etichettati come
+storici. Questo aggiornamento documentale successivo al freeze non modifica
+risultati, gold, codice del generatore o ledger. I controlli di conservazione
+negli artifact descrivono lo stato alla chiusura della campagna, prima di questo
+aggiornamento esplicitamente richiesto ai documenti generali.

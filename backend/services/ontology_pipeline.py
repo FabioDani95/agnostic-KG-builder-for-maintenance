@@ -174,8 +174,21 @@ def _diagnostic_input_inventory(text_with_pages: str) -> dict[str, Any]:
             else len(text_with_pages)
         )
         page_text = text_with_pages[page_match.end() : end]
+        diagnostic_table = False
         for anchor_match in _DIAGNOSTIC_ANCHOR_RE.finditer(page_text):
-            if evidence_has_diagnostic_candidate(anchor_match.group(2).strip()):
+            passage = anchor_match.group(2).strip()
+            # A row need not repeat the diagnostic words of its header. Its
+            # source structure exists even if the model produces no records.
+            from backend.services.diagnostic_record_windowing import _looks_like_header
+
+            is_table = passage.count("|") >= 2
+            is_header = is_table and _looks_like_header(passage.split("|"))
+            if is_header:
+                diagnostic_table = True
+            elif not is_table:
+                diagnostic_table = False
+            table_row = is_table and diagnostic_table and not is_header
+            if evidence_has_diagnostic_candidate(passage) or table_row:
                 candidate_evidence.append({
                     "evidence_id": anchor_match.group(1).strip(),
                     "page": int(page_match.group(1)),
@@ -270,6 +283,11 @@ def _record_windows(call_options: dict[str, Any]) -> list[dict[str, Any]]:
             "window_kind": str(raw.get("window_kind") or "").strip(),
             "record_anchor": record_anchor,
             "branch_anchor": branch_anchor,
+            "anchor_pages": {
+                anchor: int(page)
+                for page, body in re.findall(r"--- PAGE\s+(\d+)\s+---(.*?)(?=--- PAGE|\Z)", str(raw.get("text_with_pages") or ""), re.S)
+                for anchor in re.findall(r"\[\[EVIDENCE_ID:\s*([^\]]+?)\s*\]\]", body)
+            },
             "allowed_source_anchors": anchors,
             "allowed_evidence_spans": {
                 str(anchor).strip(): [
@@ -320,6 +338,8 @@ def _candidate_claim_anchors(candidate: Any) -> set[str]:
         add(action.resolution_link_evidence)
     for step in candidate.inspection_steps:
         add(step.claim_evidence)
+    for condition in candidate.conditions:
+        add(condition.claim_evidence)
     if candidate.affected_component is not None:
         add(candidate.affected_component.claim_evidence)
         add(candidate.affected_component.affects_link_evidence)
@@ -355,6 +375,7 @@ def _complete_structural_edge_evidence(candidate: Any, window: dict[str, Any]) -
         window.get("edge_policy") not in {
             "table_atomic_endpoint_union",
             "prose_layout_endpoint_union",
+            "prose_structural_endpoint_union",
         }
         or window.get("structure_status") != "atomic"
         or candidate.failure is None
@@ -362,6 +383,18 @@ def _complete_structural_edge_evidence(candidate: Any, window: dict[str, Any]) -
     ):
         return candidate
     payload = candidate.model_dump(mode="json")
+    # The system owns inherited table roots. Rebind only when the literal
+    # indicator label/code has exactly one home in the root cell; never infer
+    # a symptom from a cause cell just because the row is structurally valid.
+    if window.get("edge_policy") == "table_atomic_endpoint_union":
+        root = window["record_anchor"]
+        root_page = window.get("anchor_pages", {}).get(root)
+        for indicator in payload["indicators"]:
+            label = str(indicator.get("code") or indicator["name"]).strip().rstrip(".")
+            matches = [fragment for fragment in window.get("allowed_evidence_spans", {}).get(root, [])
+                       if re.search(r"(?<!\w)" + re.escape(label) + r"(?!\w)", fragment, re.I)]
+            if len(matches) == 1 and root_page:
+                indicator["claim_evidence"] = [{"source_anchor": root, "source_page": root_page, "quote": matches[0]}]
     failure_claims = list(payload["failure"]["claim_evidence"])
     for indicator in payload["indicators"]:
         indicator["failure_link_evidence"] = _dedupe_candidate_spans([
@@ -381,7 +414,47 @@ def _complete_structural_edge_evidence(candidate: Any, window: dict[str, Any]) -
     return candidate.__class__.model_validate(payload)
 
 
-def _bind_candidates_to_record_windows(parsed: Any, windows: list[dict[str, Any]]) -> Any:
+def _rebind_unique_window_spans(candidate: Any, window: dict[str, Any], audit: list[dict[str, Any]]) -> Any:
+    """Repair a wrong local locator only for a unique literal source occurrence.
+
+    Scope, text and window identity stay immutable. Unknown/outside anchors,
+    ambiguous windows and repeated quotations remain compiler errors. This
+    never searches a neighbouring branch or supplies an unquoted assertion.
+    """
+    if window.get("structure_status") != "atomic" or window.get("edge_policy") != "table_atomic_endpoint_union":
+        return candidate
+    allowed = set(window.get("allowed_source_anchors") or [])
+    scopes = window.get("allowed_evidence_spans") or {}
+    pages = window.get("anchor_pages") or {}
+    def normalize(value):
+        return re.sub(r"\s+", " ", str(value)).strip()
+    def visit(value, path):
+        if isinstance(value, list):
+            return [visit(item, f"{path}[{index}]") for index, item in enumerate(value)]
+        if not isinstance(value, dict):
+            return value
+        if {"source_anchor", "source_page", "quote"}.issubset(value):
+            original = value["source_anchor"]
+            quote = normalize(value["quote"])
+            if original not in allowed or not quote:
+                return value
+            # Leave a correctly anchored span untouched; the compiler still
+            # validates its page, canonical location and field context.
+            if any(quote in normalize(span) for span in scopes.get(original, [])):
+                return value
+            occurrences = [anchor for anchor, spans in scopes.items() if anchor in allowed
+                           for span in spans for _ in range(normalize(span).count(quote))]
+            if len(occurrences) == 1 and pages.get(occurrences[0]):
+                repaired = {**value, "source_anchor": occurrences[0], "source_page": pages[occurrences[0]]}
+                audit.append({"record_window_id": window["window_id"], "field_path": path,
+                              "before": value, "after": repaired, "policy": "unique_literal_in_same_atomic_window"})
+                return repaired
+            return value
+        return {key: visit(item, f"{path}.{key}" if path else key) for key, item in value.items()}
+    return candidate.__class__.model_validate(visit(candidate.model_dump(mode="json"), ""))
+
+
+def _bind_candidates_to_record_windows(parsed: Any, windows: list[dict[str, Any]], *, strict: bool = True, rebindings: list[dict[str, Any]] | None = None) -> Any:
     """Replace model lineage constraints with the immutable input inventory.
 
     The model may echo a window identifier for routing, but it never controls
@@ -399,12 +472,35 @@ def _bind_candidates_to_record_windows(parsed: Any, windows: list[dict[str, Any]
         echoed = str(candidate.record_window_id or "").strip()
         selected = by_id.get(echoed)
         if selected is None:
+            claim_spans = []
+            def collect_claims(value):
+                if isinstance(value, dict):
+                    claim_spans.extend(value.get("claim_evidence", []))
+                    for key, item in value.items():
+                        if key != "claim_evidence":
+                            collect_claims(item)
+                elif isinstance(value, list):
+                    for item in value:
+                        collect_claims(item)
+            collect_claims(candidate.model_dump(mode="json"))
+            def literal_claims_fit(window):
+                scopes = window.get("allowed_evidence_spans") or {}
+                if not scopes:
+                    return True
+                return all(any(
+                    re.sub(r"\s+", " ", span["quote"]).strip() in re.sub(r"\s+", " ", text).strip()
+                    for text in [*scopes.get(span["source_anchor"], []), " | ".join(scopes.get(span["source_anchor"], []))]
+                ) for span in claim_spans)
             matches = [
                 window
                 for window in windows
                 if referenced.issubset(set(window["allowed_source_anchors"]))
+                and literal_claims_fit(window)
             ]
             selected = matches[0] if len(matches) == 1 else None
+        if selected is None and not strict:
+            rebound.append(candidate)
+            continue
         if selected is None:
             # A non-empty id activates enforcement in the compiler; an empty
             # allowed set then makes every model anchor explicitly out-of-window.
@@ -421,6 +517,7 @@ def _bind_candidates_to_record_windows(parsed: Any, windows: list[dict[str, Any]
             "record_anchor": record_anchor,
             "branch_anchor": selected["branch_anchor"],
         })
+        bound = _rebind_unique_window_spans(bound, selected, rebindings if rebindings is not None else [])
         rebound.append(_complete_structural_edge_evidence(bound, selected))
     return parsed.model_copy(update={"records": rebound})
 
@@ -466,6 +563,8 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
     """Extract typed records, validate evidence, then compile ontology claims."""
     from backend.domain.diagnostic_bundles import DiagnosticChunkOutput
     from backend.services.diagnostic_bundle_compiler import compile_diagnostic_bundles
+    from backend.services.diagnostic_response_parsing import parse_diagnostic_records
+    from backend.services.llm_response_archive import response_format_for
 
     started = time.perf_counter()
     system_prompt = build_diagnostic_bundle_prompt(
@@ -473,6 +572,9 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
         source_title=state["source_title"],
     )
     call_options = dict(state.get("diagnostic_call_options") or {})
+    # Repair targets are untrusted predictions, never part of the canonical
+    # source used by the inventory, anchor resolver or deterministic compiler.
+    repair_feedback = str(call_options.get("recovery_feedback") or "")
     max_output_tokens = int(call_options.get("max_output_tokens") or (
         get_ontology_config().get("diagnostic_bundle_max_output_tokens", 8000)
     ))
@@ -560,21 +662,32 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
         phase="Typed diagnostic bundle extraction",
         cfg=cfg,
         system_text=system_prompt,
-        user_text=state["text_with_pages"],
+        user_text=state["text_with_pages"] + repair_feedback,
     )
     client = _get_client(cfg["timeout_seconds"])
     model_name = state["model_name"] or settings.MODEL_NAME
+    wire_text = state["text_with_pages"]
+    canonical_anchors = list(dict.fromkeys(re.findall(r"\[\[EVIDENCE_ID:\s*([^\]]+)\]\]", wire_text)))
+    anchor_aliases = {f"a{position:04d}": anchor.strip() for position, anchor in enumerate(canonical_anchors, 1)}
+    for alias, canonical in anchor_aliases.items():
+        wire_text = wire_text.replace(canonical, alias)
+        repair_feedback = repair_feedback.replace(canonical, alias)
+    input_inventory["source_anchor_aliases"] = anchor_aliases
     try:
-        response = client.chat.completions.parse(
+        # Receive and archive the provider response BEFORE validating records.
+        # The parse-only fallback supports existing offline client adapters.
+        create = getattr(client.chat.completions, "create", None)
+        response = (create or client.chat.completions.parse)(
             model=model_name,
             **chat_reasoning_kwargs(model_name, state.get("reasoning_effort")),
             **chat_temperature_kwargs(model_name, 0.0),
             max_completion_tokens=cfg["max_output_tokens"],
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": state["text_with_pages"]},
+                {"role": "user", "content": wire_text},
+                *([{"role": "user", "content": repair_feedback}] if repair_feedback else []),
             ],
-            response_format=DiagnosticChunkOutput,
+            response_format=response_format_for(DiagnosticChunkOutput) if create else DiagnosticChunkOutput,
         )
     except Exception as exc:
         logger.warning("[ontology] Typed diagnostic response failed closed: %s", exc)
@@ -652,6 +765,9 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
             "unresolved_count": max(1, len(window_entries)),
             "drop_reasons": {"structured_response_error": max(1, len(window_entries))},
             "error_type": type(exc).__name__,
+            "error_message": str(exc)[:1000],
+            "error_status_code": getattr(exc, "status_code", None),
+            "response_archive": str(getattr(exc, "_kg_response_archive", "") or ""),
             "escalation_recommended": True,
         }
         result = {
@@ -673,9 +789,33 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
         "escalation_reason": escalation_reason,
     })
     raw = str(message.content or "")
-    parsed = getattr(message, "parsed", None)
+    legacy_parsed = getattr(message, "parsed", None)
+    if not raw and legacy_parsed is not None:
+        raw = legacy_parsed.model_dump_json()
     refusal = str(getattr(message, "refusal", "") or "").strip()
     finish_reason = str(getattr(choice, "finish_reason", "") or "")
+    decoded = parse_diagnostic_records(raw, anchor_aliases=anchor_aliases)
+    parsed = decoded.output if finish_reason == "stop" and not refusal else None
+    response_archive = str(getattr(response, "_kg_response_archive", "") or "")
+    rejected_entries = []
+    for rejected in decoded.rejected:
+        payload = rejected["payload"]
+        record = payload if isinstance(payload, dict) else {}
+        digest = hashlib.sha256(json.dumps(rejected, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+        rejected_entries.append({
+            "record_lineage_id": f"drec_invalid_{digest}",
+            "branch_lineage_id": f"dbranch_invalid_{digest}",
+            "record_window_id": str(record.get("record_window_id") or ""),
+            "record_anchor": str(record.get("record_anchor") or ""),
+            "branch_anchor": str(record.get("branch_anchor") or ""),
+            "evidence_ids": [], "resolved_evidence_ids": [],
+            "candidate": None, "invalid_payload": payload,
+            "response_record_index": rejected["index"],
+            "validation_errors": rejected["errors"],
+            "disposition": "review", "accounting_state": "record_schema_invalid",
+            "drop_reasons": [{"code": "record_schema_invalid", "path": f"records.{rejected['index']}", "message": "This record failed local validation; valid siblings were retained."}],
+            "emitted_node_ids": [], "emitted_relations": [],
+        })
     if parsed is None or refusal:
         window_entries = _synthetic_window_entries(
             windows,
@@ -706,6 +846,9 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
             "refusal": bool(refusal),
             "refusal_text": refusal[:500],
             "raw_sha256": hashlib.sha256(raw.encode("utf-8")).hexdigest() if raw else "",
+            "response_archive": response_archive,
+            "raw_response_text": raw if not response_archive else "",
+            "envelope_error": decoded.envelope_error,
             "records": window_entries,
             "candidate_count": len(window_entries),
             "publish_count": 0,
@@ -724,7 +867,11 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
         }
 
     canonical_raw = raw or parsed.model_dump_json()
-    parsed = _bind_candidates_to_record_windows(parsed, windows)
+    compilation_windows = windows or _record_windows({"record_windows": call_options.get("advisory_windows", [])})
+    rebindings: list[dict[str, Any]] = []
+    parsed = _bind_candidates_to_record_windows(parsed, compilation_windows, strict=bool(windows), rebindings=rebindings)
+    input_inventory["evidence_anchor_rebindings"] = rebindings
+    input_inventory["advisory_window_bindings"] = compilation_windows if not windows else []
     provider_model = getattr(response, "model", model_name) or model_name
     try:
         compilation = compile_diagnostic_bundles(
@@ -733,7 +880,7 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
             source_title=state["source_title"],
             evidence_units=state.get("diagnostic_evidence_units", []),
             text_with_pages=state["text_with_pages"],
-            record_windows=windows,
+            record_windows=compilation_windows,
             schema=state["schema"],
             language=parsed.source_language,
         )
@@ -822,6 +969,8 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
             "parsed": True,
             "refusal": False,
             "raw_sha256": hashlib.sha256(canonical_raw.encode("utf-8")).hexdigest(),
+            "response_archive": response_archive,
+            "raw_response_text": raw if not response_archive else "",
             "records": window_entries,
             "candidate_count": max(candidate_count, len(window_entries)),
             "publish_count": 0,
@@ -841,7 +990,7 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
         }
 
     compilation_report = compilation.report.model_dump(mode="json")
-    entries = list(compilation_report.get("entries", []))
+    entries = [*compilation_report.get("entries", []), *rejected_entries]
     covered_window_ids = {
         str(entry.get("record_window_id") or "")
         for entry in entries
@@ -871,11 +1020,13 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
     publish_count = int(
         compilation_report.get("disposition_counts", {}).get("publish", 0) or 0
     )
-    unresolved_count = len(missing_window_entries) + len(missing_scope_entries) + sum(
+    unresolved_count = len(rejected_entries) + len(missing_window_entries) + len(missing_scope_entries) + sum(
         int(compilation_report.get("disposition_counts", {}).get(key, 0) or 0)
         for key in ("gap", "review")
     )
     disposition_counts = dict(compilation_report.get("disposition_counts", {}))
+    if rejected_entries:
+        disposition_counts["review"] = int(disposition_counts.get("review", 0) or 0) + len(rejected_entries)
     if missing_scope_entries:
         disposition_counts["review"] = int(disposition_counts.get("review", 0) or 0) + len(
             missing_scope_entries
@@ -893,6 +1044,9 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
         "parsed": True,
         "refusal": False,
         "raw_sha256": hashlib.sha256(canonical_raw.encode("utf-8")).hexdigest(),
+        "response_archive": response_archive,
+        "raw_response_text": raw if not response_archive else "",
+        "invalid_record_count": len(rejected_entries),
         "records": entries,
         "candidate_count": len(entries),
         "duplicate_candidate_count": int(
@@ -903,6 +1057,7 @@ def _call_diagnostic_bundle_llm(state: PipelineState) -> PipelineState:
         "disposition_counts": disposition_counts,
         "drop_reasons": {
             **compilation_report.get("dropped_items_by_reason", {}),
+            **({"record_schema_invalid": len(rejected_entries)} if rejected_entries else {}),
             **(
                 {"record_window_missing_disposition": len(missing_window_entries)}
                 if missing_window_entries

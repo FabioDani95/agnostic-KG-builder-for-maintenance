@@ -21,6 +21,10 @@ npx playwright install chromium
 npm run test:e2e
 ~~~
 
+Ruff covers active source and maintained runners; frozen programs under
+`artifacts/acceptance` and `paper/experiments` are excluded to preserve their
+recorded hashes. Their historical formatting is not rewritten during lint fixes.
+
 pytest discovers both tests/test_*.py and tests/planned/test_*.py. The planned
 directory name is historical: its current files are executable acceptance and
 contract tests referenced by the normative specification package.
@@ -83,6 +87,36 @@ run itself produces a separate report under ignored eval_runs.
 
 Mock success proves reproducibility and regression safety, not live-model
 quality. Real-model reports must follow the evaluation protocol.
+
+## Diagnostic continuation verification
+
+The frozen C12 suite passed 612 Python tests. This is an observed run count,
+not a required count for future versions or a semantic-quality score.
+`tests/test_diagnostic_procedure_recovery.py` covers real development fixtures,
+causal-introduction support, negative conjunctions, source-only recovery and
+multipage continuation. `tests/test_diagnostic_escalation_policy.py` checks
+preservation of previously accepted branches. Integration tests protect the
+boundary between repair predictions and document evidence.
+
+```sh
+node --test tests/frontend/diagnostic_branches.test.cjs
+.venv/bin/python scripts/verify_diagnostic_record_review.py \
+  --source-run paper/experiments/robustness_20260925/runs/c7_hypertherm_powermax30_air \
+  --output /tmp/record-review-verification-new.json
+```
+
+The API verifier uses a temporary SQLite copy without model calls. It checks
+valid/invalid corrections, stale revisions, unrelated-relation preservation,
+history and residual approval blockers. Its source database must be present
+locally; it is not committed. The browser verification recorded in the campaign
+is a separate targeted exercise, not a claim that the entire Playwright suite
+was rerun for C12.
+
+Exact replays use `scripts/replay_extraction_experiment.py` with network denied;
+`--extra-response-dir` supplies the frozen C12 incremental exchanges. Missing
+request matches fail closed. `scripts/continue_extraction_experiment.py` is a
+different runner that can make bounded real calls and must not be used as an
+offline replay. [Instructions and artifacts](../paper/experiments/robustness_continuation_20260926/REPRODUCE.md).
 
 ## Manual runners
 

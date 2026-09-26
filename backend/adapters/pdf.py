@@ -29,7 +29,7 @@ from backend.domain.sources import Source
 from backend.domain.workspace import Workspace
 from backend.services.pdf_service import extract_text_by_page
 
-ADAPTER_VERSION = "pdf-v3"
+ADAPTER_VERSION = f"pdf-v4-layout-{fitz.VersionBind}"
 EVIDENCE_ANCHOR_PREFIX = "EVIDENCE_ID"
 
 
@@ -301,7 +301,9 @@ class PdfAdapter:
                 # payload; they can never truncate RawUnit inventory.
                 try:
                     tables = list(getattr(page.find_tables(), "tables", None) or [])
-                except Exception:
+                except Exception as exc:
+                    page_record["table_extraction_error"] = type(exc).__name__
+                    previews[-1]["table_extraction_error"] = type(exc).__name__
                     tables = []
                 for table in tables:
                     document_table_index += 1
@@ -352,7 +354,7 @@ class PdfAdapter:
                         )
                         row_locator = PdfLocator(
                             page=page_number,
-                            quote=row_quote[:4000],
+                            quote=row_quote,
                             extraction_method="table",
                             table_index=table_index,
                             row_index=row_index,
@@ -382,6 +384,9 @@ class PdfAdapter:
                             )
                         )
                         if page_number in allowed and row_text:
+                            table_rows = list(getattr(table, "rows", []) or [])
+                            geometry = table_rows[row_index - 1] if row_index <= len(table_rows) else None
+                            header = getattr(table, "header", None)
                             evidence_units.append(
                                 self._evidence(
                                     workspace=workspace,
@@ -394,7 +399,14 @@ class PdfAdapter:
                                         f"page:{page_number}:table:{table_index}"
                                     ),
                                     flags=flags,
-                                )
+                                ).model_copy(update={"attributes": {"table_layout": {
+                                    "cells": row,
+                                    "cell_bboxes": [list(box) if box is not None else None for box in (getattr(geometry, "cells", []) or [])],
+                                    "row_bbox": list(getattr(geometry, "bbox", []) or []),
+                                    "table_bbox": list(getattr(table, "bbox", []) or []),
+                                    "column_headers": list(getattr(header, "names", []) or []),
+                                    "header_external": bool(getattr(header, "external", False)),
+                                }}})
                             )
 
                 ocr_regions = list(page_record.get("ocr_regions") or [])
@@ -581,20 +593,42 @@ def _semantic_page_units(items: list[EvidenceUnit]) -> tuple[list[EvidenceUnit],
 
     block_text = _semantic_text_key(" ".join(item.locator.quote for item in blocks))
     ocr_text = _semantic_text_key(" ".join(item.locator.quote for item in ocr_regions))
-    if ocr_regions and len(ocr_text) > len(block_text):
+    from backend.services.pdf_service import native_text_is_corrupt
+
+    if ocr_regions and (len(ocr_text) > len(block_text) or native_text_is_corrupt(" ".join(item.locator.quote for item in blocks))):
         selected = list(ocr_regions)
         text_source = "ocr"
     else:
         selected = list(blocks or ocr_regions)
         text_source = "native" if blocks else "ocr"
 
-    covered = _semantic_text_key(" ".join(item.locator.quote for item in selected))
+    if text_source == "native" and table_rows:
+        # Retain the immutable block inventory, but render a cell only once
+        # when both geometry and literal content prove it is already in a table.
+        tables: dict[tuple[float, ...], list[str]] = {}
+        for row in table_rows:
+            layout = row.attributes.get("table_layout", {})
+            box = layout.get("table_bbox")
+            if box and len(box) == 4:
+                tables.setdefault(tuple(box), []).extend(str(cell) for cell in layout.get("cells", []))
+        def represented_in_table(unit):
+            box = unit.locator.bbox
+            if not box:
+                return False
+            literal = re.sub(r"\s+", "", unicodedata.normalize("NFKC", unit.locator.quote))
+            for table_box, cells in tables.items():
+                contained = box[0] >= table_box[0] - 1 and box[1] >= table_box[1] - 1 and box[2] <= table_box[2] + 1 and box[3] <= table_box[3] + 1
+                text = re.sub(r"\s+", "", unicodedata.normalize("NFKC", " ".join(cells)))
+                if contained and literal and literal in text:
+                    return True
+            return False
+        selected = [unit for unit in selected if not represented_in_table(unit)]
+
     for row in table_rows:
         row_text = _semantic_text_key(row.locator.quote)
-        if not row_text or row_text in covered:
+        if not row_text:
             continue
         selected.append(row)
-        covered = f"{covered} {row_text}".strip()
 
     # Defensive fallback for legacy/custom evidence that has no positional subtype.
     if not selected:
@@ -604,11 +638,11 @@ def _semantic_page_units(items: list[EvidenceUnit]) -> tuple[list[EvidenceUnit],
         ) else "native"
 
     unique: list[EvidenceUnit] = []
-    seen_quotes: set[str] = set()
+    seen_ids: set[str] = set()
     for item in selected:
         quote_key = _semantic_text_key(item.locator.quote)
-        if quote_key and quote_key not in seen_quotes:
-            seen_quotes.add(quote_key)
+        if quote_key and item.evidence_id not in seen_ids:
+            seen_ids.add(item.evidence_id)
             unique.append(item)
     return unique, text_source
 

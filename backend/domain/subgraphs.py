@@ -7,6 +7,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from backend.domain.diagnostic_bundles import DiagnosticBundleCandidate, ValidatedDiagnosticBundle
 from backend.domain.ids import OpaqueId, UtcTimestamp
 from backend.domain.sources import SourceKind
 
@@ -166,6 +167,7 @@ class KnowledgeGap(BaseModel):
     stage: str = ""
     blocking: bool = False
     disposition: Literal["gap", "exclude", "review"] = "gap"
+    review_required: bool = True
 
 
 class GraphProjection(BaseModel):
@@ -241,6 +243,20 @@ class PdfExtractionScope(BaseModel):
         return self
 
 
+class DiagnosticKnowledgeRecord(BaseModel):
+    """Grounded diagnostic context; does not extend the approved ontology.
+
+    Source-subgraph approval is still required for downstream operational use.
+    Checks and source-stated gaps remain available without becoming repairs.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+    record: ValidatedDiagnosticBundle
+    disposition: Literal["publish", "gap", "review"]
+    review_required: bool
+    node_ids: list[str] = Field(default_factory=list)
+
+
 class SourceSubgraphRevision(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -274,10 +290,21 @@ class SourceSubgraphRevision(BaseModel):
     # excluded and incomplete candidates so a reviewer can audit accounting
     # without reconstructing model output from transient run logs.
     diagnostic_compilation_ledger: dict[str, Any] = Field(default_factory=dict)
+    diagnostic_records: list[DiagnosticKnowledgeRecord] = Field(default_factory=list)
+    diagnostic_review_history: list[dict[str, Any]] = Field(default_factory=list)
+    review_base_config_hash: str | None = None
     canonicalization_report: dict[str, Any] = Field(default_factory=dict)
     approval_eligible: bool = False
     supersedes: OpaqueId | None = None
     created_at: UtcTimestamp
+
+
+class DiagnosticRecordCorrectionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    candidate: DiagnosticBundleCandidate
+    reviewer: str = Field(min_length=1, max_length=160)
+    reason: str = Field(min_length=1, max_length=2000)
 
 
 class G3SourceView(BaseModel):

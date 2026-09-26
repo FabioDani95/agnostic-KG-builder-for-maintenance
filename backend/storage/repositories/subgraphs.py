@@ -96,7 +96,7 @@ class SourceSubgraphRepository:
             ).fetchall()
         return {row["source_id"]: int(row["revision_count"]) for row in rows}
 
-    def create(self, revision: SourceSubgraphRevision) -> SourceSubgraphRevision:
+    def create(self, revision: SourceSubgraphRevision, *, expected_current_revision_id: str | None = None) -> SourceSubgraphRevision:
         payload = revision.model_dump(mode="json", exclude={"status", "approval_decision_id", "decision_note"})
         audit_payload = {
             "source_id": revision.source_id,
@@ -122,6 +122,13 @@ class SourceSubgraphRepository:
                 "execution_mode": revision.generation_metrics.execution_mode,
             }
         with self.database.transaction() as connection:
+            if expected_current_revision_id is not None:
+                current = connection.execute(
+                    "SELECT source_subgraph_revision_id FROM source_subgraph_revisions WHERE source_id = ? ORDER BY created_at DESC, source_subgraph_revision_id DESC LIMIT 1",
+                    (revision.source_id,),
+                ).fetchone()
+                if current is None or current[0] != expected_current_revision_id:
+                    raise ValueError("La revisione è cambiata: ricarica il record prima di correggerlo")
             connection.execute(
                 "INSERT INTO entity_ids(entity_id, entity_type, created_at) VALUES (?, 'source_subgraph', ?)",
                 (revision.source_subgraph_revision_id, revision.created_at),

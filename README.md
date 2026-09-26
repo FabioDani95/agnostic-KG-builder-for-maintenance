@@ -15,17 +15,26 @@ The repository is in active MVP development against
 | G2 | Product Owner accepted | deterministic CSV/XLSX/JSON/JSONL profiling, mapping, evidence creation and exception handling |
 | G3 | Human review open | source-scoped graph generation, strict validation, evidence drill-down and the graph explorer are implemented; no subgraph is approved, merged or published automatically |
 
-The automated G3 hardening suite is green, but it is not a Product Owner
-approval. The frozen three-manual PDF diagnostic campaign now passes its
-semantic and publication-integrity gate: the final structure-first v11 pipeline
-reached 87.5%/100%/100% semantic recall with zero forbidden cross-pairings and
-complete accounting. Every resulting revision nevertheless remains
-`reviewing` and non-approvable while review items or explicit gaps exist.
-Generalization beyond those three manuals, multilingual canonicalization and
-structural-Component precision remain open. See
-[PDF G3 Second Hardening](docs/PDF_G3_SECOND_HARDENING.md),
-[G3 Engine Hardening Handoff](docs/G3_ENGINE_HARDENING_HANDOFF.md) and
-[CSV Hardening Campaign](docs/CSV_HARDENING_CAMPAIGN.md).
+The current PDF generator is `pdf-g3-structured-recovery-v22`. The C9–C12
+continuation adds bounded recovery after compiler errors, multipage procedure
+context and correction of individual records with evidence, revision history
+and recompilation. The final technical suite passed 612 Python tests, and four
+exact offline replays reproduced the diagnostic records and graph relations.
+These checks do not establish semantic quality or Product Owner acceptance.
+
+All four final development graphs remain non-approvable. Hypertherm gained four
+source-supported terminal diagnostic branches, but complete operational paths
+remain unverified; its review notifications increased from 111 to 157 against
+C8. Global semantic precision/recall and reduced human effort are not established.
+See the [current PDF status](docs/PDF_DIAGNOSTIC_STATUS.md),
+[C9–C12 report](paper/experiments/robustness_continuation_20260926/REPORT.md)
+and [scientific status](paper/STATUS.md).
+
+The v11 campaign remains a historical development result.
+Its accounting and lexical scores must not be interpreted as validated semantic
+recall or transferred to v22. The original report is retained in
+[PDF G3 Second Hardening](docs/PDF_G3_SECOND_HARDENING.md). Structured-source
+checkpoint evidence remains in [CSV Hardening Campaign](docs/CSV_HARDENING_CAMPAIGN.md).
 
 ## Product flow
 
@@ -36,7 +45,9 @@ The primary application works on one machine per workspace:
 3. **Struttura** — prepare structured sources automatically and present only
    unresolved mapping or join decisions, one at a time.
 4. **Grafo** — build one immutable revision per source, inspect nodes,
-   relations and originating evidence, then make an explicit human decision.
+   relations and originating evidence, correct individual diagnostic records
+   with source evidence and revision history,
+   then make an explicit human decision.
 
 Important invariants:
 
@@ -141,7 +152,9 @@ quality evaluation.
 
 Generated previews and ad-hoc demo bundles belong outside version control.
 Committed datasets live under tests/fixtures or tests/golden; committed
-checkpoint evidence lives under artifacts.
+checkpoint evidence lives under artifacts and paper/experiments. Raw PDFs and
+SQLite stores excluded by .gitignore remain local; see each campaign’s
+reproduction instructions for required source data.
 
 ## Deployment boundary
 

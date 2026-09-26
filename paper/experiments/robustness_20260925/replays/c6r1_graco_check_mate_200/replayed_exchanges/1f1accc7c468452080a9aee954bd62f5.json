@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "",
+  "run_id": "",
+  "started_utc": "2026-09-25T16:22:26.183177+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "max_completion_tokens": 24000,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You extract diagnostic records from a technical manual into a typed contract.\n\nSource type: technical PDF\nSource title: 03_graco_check_mate_200_pumps_manual.pdf\n\nThe input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be\na complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,\necho its window_id and allowed_source_anchors on every candidate; the system overwrites and\nverifies both fields and no evidence outside that block is allowed. For a section chunk, set\nrecord_window_id=\"\" and set allowed_source_anchors to exactly the anchors referenced by that\ncandidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL\ncontext may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields\nbelong to the current cause/remedy branch. Each displayed FIELD value is one exact source\nspan. Quote the value only: never include the \"FIELD n:\" label, join separate fields, or\nrestore a sibling field omitted by the system.\nReturn every explicit diagnostic record and every distinct cause/remedy branch in the input.\nThe contract is an intermediate record representation, not the final graph. Use schema_version=\"1.1\".\n\nRules:\n1. Never emit graph IDs or ontology relation names. The system owns them.\n2. A diagnostic record has one or more indicators. An indicator is either an observable\n   symptom or an asset-generated error/alarm code. A record may explicitly contain both;\n   keep both. For a symptom set code=null and severity=\"Unknown\" unless the source explicitly\n   states its severity; never invent a risk rating. For an error_code set its\n   code and severity=null. Only an explicit not_diagnostic page disposition may use an empty\n   indicator list.\n3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action\n   from different table rows, flowchart branches or unrelated paragraphs.\n4. A FailureMode is an explicit technical cause or faulty state, not a restatement of the\n   symptom, an inspection result or an invented explanation. Use null when none is stated.\n5. A CorrectiveAction is an explicitly restorative remedy for that failure. Checks and tests\n   are not restorative unless the source says the check itself resolves the fault. Preserve\n   a non-restorative check/test/inspection in inspection_steps, never in actions.\n6. Set resolution_status:\n   - action_stated: at least one restorative action is explicitly linked to the failure;\n   - no_action_stated: the diagnostic record states a failure but no remedy;\n   - check_only: it gives only diagnostic checks/verification;\n   - ambiguous: the row/branch pairing cannot be established safely;\n   - not_diagnostic: a candidate-looking passage is actually preventive/generic content.\n7. An affected component is optional. Include it only if the branch explicitly identifies the\n   affected component. category and failure.material_context are required-but-nullable: use\n   null rather than manufacturing a category/context. A null category does not invalidate a\n   grounded branch; the deterministic compiler supplies a neutral schema category. Do not use\n   a product name as a component.\n8. Evidence is edge-specific. claim_evidence proves only the claim. Each edge evidence list is\n   a support set: one span may explicitly state the whole link, or several spans from the same\n   record/branch may collectively establish it when a manual separates Problem, Cause and\n   Remedy across blocks or pages. failure_link_evidence supports only that exact indicator to\n   failure; resolution_link_evidence supports only that exact failure to action;\n   affects_link_evidence supports only that exact failure to component. Include every span\n   needed to establish the link and no unrelated nearby heading. Never use an action-only span\n   as the sole proof of an indicator-to-failure edge.\n   In a system-owned atomic table row, use the exact endpoint FIELD spans as the edge support\n   set; the deterministic compiler verifies the table structure and completes their union.\n9. Every quote is a short verbatim span contained in the EvidenceUnit named by source_anchor,\n   on source_page. Prefer one span per EvidenceUnit. If wording crosses adjacent units, emit\n   separate exact spans; never concatenate or paraphrase cells. Copy the opaque anchor exactly.\n   Do not include page/anchor marker text in a quote.\n10. record_anchor must be one of this candidate's claim-evidence anchors. branch_anchor must be\n    one of this candidate's evidence anchors (prefer a causal edge anchor). For an explicit\n    not_diagnostic disposition with no claims, set both to the candidate page's EvidenceUnit\n    anchor. These anchors are source locators, not freely generated IDs.\n11. Preserve source language in human-readable values and set source_language accordingly.\n12. Duplicate records caused by overlapping pages must be returned identically; deterministic\n    lineage and compilation will deduplicate them.\n13. Account for candidate-looking passages. If one is actually generic/preventive content,\n    emit a not_diagnostic candidate with empty indicators and no diagnostic claims. Return an\n    empty records list only when the input contains no candidate-looking passage at all. Never\n    fill a missing cause/action simply to make a complete record.\n14. Every anchored candidate-looking passage in the input must occur in a record's claim/edge\n    evidence, or have its own explicit not_diagnostic disposition. Do not cover only the first\n    row or branch of a troubleshooting table.\n15. For check_only, actions must be empty and inspection_steps must preserve each stated check\n    with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.\n16. Preserve every stated precondition, test outcome, negation, threshold and alternative in\n    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection\n    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test\n    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.\n    Keep inspection_steps and actions in source order; do not sort steps alphabetically.\n17. Preserve the actual error CODE separately from its fault name, including a numerical code\n    in a separate table column. Never substitute the name for a printed numeric code.\n"
+      },
+      {
+        "role": "user",
+        "content": "## DOCUMENT CONTEXT\nThese pages come from the following manual sections:\n- Reconnecting the Displacement Pump (pp. 13-13, source: rule)\n- Displacement Pump Service (pp. 14-19, source: rule)\n\nUse this context to better interpret the content. Extract all ontology-relevant information from these sections, including components, error codes, symptoms, failure modes, and corrective actions.\n\n--- PAGE 13 ---\n\n[[EVIDENCE_ID: a0001]]\nService\n\n[[EVIDENCE_ID: a0002]]\nReconnecting the Displacement Pump\n\n[[EVIDENCE_ID: a0003]]\nWARNING\n\n[[EVIDENCE_ID: a0004]]\nTo reduce the risk of serious injury whenever you\nare instructed to relieve pressure, always follow the\nPressure Relief Procedure on page 8.\n\n[[EVIDENCE_ID: a0005]]\n1.\nOrient the pump’s fluid outlet to the air motor’s air\ninlet as was noted in step 3 under Disconnecting\nthe Displacement Pump. Position the displace-\nment pump (107) on the tie rods (102). See Fig. 4.\n\n[[EVIDENCE_ID: a0006]]\nNOTE: If you removed the tie rods (102) from the air\nmotor (101) or air motor adapter plate, reinstall them\nusing an 11 mm wrench. Torque the rods to 20-25 N.m\n(15-18 ft-lb) on Model 222907, and 34-41 N.m (25-30\nft-lb) on Model 222839.\n\n[[EVIDENCE_ID: a0007]]\n2.\nScrew the locknuts (106) onto the tie rods (102)\nand torque to 34-41 N.m (25-30 ft-lb), using the\nwrench (113) provided (or a 17 mm box or socket\nwrench).\n\n[[EVIDENCE_ID: a0008]]\n3.\nPlace the coupling nut (104) on the displacement\nrod (1), then place the collars (105) in the nut.\nScrew the nut onto the connecting rod (103)\nloosely. Hold the connecting rod flats with an\nadjustable wrench to keep it from turning. Using an\nadjustable wrench, torque the nut to 41-48 N.m\n(30-35 ft-lb).\n\n[[EVIDENCE_ID: a0009]]\n4.\nUsing a torque wrench in the square hole of the\nsupplied wrench (113), torque the packing nut (2)\nto 27-34 N.m (20-25 ft-lb).\n\n[[EVIDENCE_ID: a0010]]\n5.\nMount the pump and reconnect all hoses. Recon-\nnect the ground wire if it was disconnected during\nrepair. Turn on the air and run the pump slowly.\n\n[[EVIDENCE_ID: a0011]]\n6.\nFill the packing nut/wet-cup 1/3 full of Graco\nThroat Seal Liquid or compatible solvent.\n\n[[EVIDENCE_ID: a0012]]\n101\n\n[[EVIDENCE_ID: a0013]]\n108\n\n[[EVIDENCE_ID: a0014]]\n103\n\n[[EVIDENCE_ID: a0015]]\n102\n\n[[EVIDENCE_ID: a0016]]\n2\n\n[[EVIDENCE_ID: a0017]]\n105\n\n[[EVIDENCE_ID: a0018]]\n104\n\n[[EVIDENCE_ID: a0019]]\n1\n\n[[EVIDENCE_ID: a0020]]\n1\n\n[[EVIDENCE_ID: a0021]]\n2\n\n[[EVIDENCE_ID: a0022]]\n3\n\n[[EVIDENCE_ID: a0023]]\n106\n\n[[EVIDENCE_ID: a0024]]\n7\n\n[[EVIDENCE_ID: a0025]]\n113\n\n[[EVIDENCE_ID: a0026]]\n4\n\n[[EVIDENCE_ID: a0027]]\n107\n\n[[EVIDENCE_ID: a0028]]\nTorque to 30–35 ft–lb (41–48 N\u0005m).\n\n[[EVIDENCE_ID: a0029]]\n1\n\n[[EVIDENCE_ID: a0030]]\nTorque to 15–18 ft–lb (20–25 N\u0005m) on model 222907; 25–30\nft–lb (34–41 N\u0005m) on model 222839.\n\n[[EVIDENCE_ID: a0031]]\n2\n\n[[EVIDENCE_ID: a0032]]\n3\n\n[[EVIDENCE_ID: a0033]]\nTorque to 20–25 ft–lb (27–34 N\u0005m).\n\n[[EVIDENCE_ID: a0034]]\n4\n\n[[EVIDENCE_ID: a0035]]\nTorque to 25–30 ft–lb (34–41 N\u0005m).\n\n[[EVIDENCE_ID: a0036]]\n01059\n\n[[EVIDENCE_ID: a0037]]\nFig. 4\n\n[[EVIDENCE_ID: a0038]]\n308200\n13\n\n--- PAGE 14 ---\n\n[[EVIDENCE_ID: a0039]]\nService\n\n[[EVIDENCE_ID: a0040]]\nDisassembly\n\n[[EVIDENCE_ID: a0041]]\nWhen disassembling the pump, lay out all removed\nparts in sequence, to ease reassembly. Refer to Fig. 7.\n\n[[EVIDENCE_ID: a0042]]\nNOTE: Repair Kit 222784 is available separately to\nreplace the piston and intake valve seals. For the best\nresults, use all the new parts in the kit. Kit parts are\nmarked with one asterisk, for example (8*). See Dis-\nplacement Pump Parts on page 23.\n\n[[EVIDENCE_ID: a0043]]\nRepair Kit 222785 is available to replace the throat\npackings. For the best results, use all the new parts in\nthe kit. Kit parts are marked with a check mark, for\nexample (3\u0006).\n\n[[EVIDENCE_ID: a0044]]\n1.\nDisconnect the displacement pump from the air\nmotor as explained on page 12.\n\n[[EVIDENCE_ID: a0045]]\n2.\nPlace the pump in a vise, with the jaws on the\noutlet housing (9).\n\n[[EVIDENCE_ID: a0046]]\n3.\nHold the flats of the priming piston rod (21) with an\n8 mm wrench. Using a 3/4 in. wrench, unscrew the\npriming piston nut (22) from the rod. Slide the\npriming piston (23) and priming piston guide (24)\noff the rod. Inspect the surfaces of the guide (24)\nand piston (23) for scoring, wear, or other damage.\n\n[[EVIDENCE_ID: a0047]]\n4.\nLoosen the packing nut (2) using the packing nut\nwrench (113, supplied), or a hammer and brass\nrod.\n\n[[EVIDENCE_ID: a0048]]\n5.\nRemove the intake cylinder (20), using a 24 in.\nadjustable wrench. Remove the seal (19) and seat\n(18) from the intake valve housing (16); always\nreplace the seal with a new one.\n\n[[EVIDENCE_ID: a0049]]\n6.\nUnscrew the intake valve housing (16) from the\ncylinder (11), using a 24 in. adjustable wrench. Pull\nthe housing off the pump. The intake check valve\nassembly (U) should slide down the priming piston\nrod (21) as you remove the housing; if it does not\nslide easily, loosen it by firmly tapping the top of\nthe housing (16) with a rubber mallet. Take care\nnot to drop the assembly (U) as it comes free. Set\nthe check valve assembly aside for disassembly\nlater.\n\n[[EVIDENCE_ID: a0050]]\n7.\nInspect the rod guide (17) while in place in the\nhousing (16). Remove the rod guide only if it is\nvisibly damaged. Using a hammer and brass rod,\ngently tap around the outer edge of the guide to\nloosen it.\n\n[[EVIDENCE_ID: a0051]]\n8.\nPush the displacement rod (1) down as far as\npossible, then pull it and the priming piston rod\n(21) out of the outlet housing (9) and cylinder (11).\n\n[[EVIDENCE_ID: a0052]]\n9.\nRemove the packing nut (2) and throat packings\nfrom the outlet housing (9). Do not remove the\nfluid outlet nipple (7) and o-ring (8) unless dam-\naged.\n\n[[EVIDENCE_ID: a0053]]\n10. Unscrew the plug (AA) of the bleeder valve (33)\ncompletely from the valve housing (BB). Do not\nunscrew the valve housing from the outlet housing\n(9), because the threads may gall. Clean the valve\nthreads and the bleed hole on the underside of the\nvalve housing.\n\n[[EVIDENCE_ID: a0054]]\n11. Use a 24 in. adjustable wrench on the pump\ncylinder (11) flats to unscrew it from the housing\n(9). Remove the o-rings (10). Inspect the inside of\nthe cylinder for damage by holding it up to the light\nat an angle or running a finger over the surface.\n\n[[EVIDENCE_ID: a0055]]\n12. Inspect the surface of the displacement rod (1)\nand priming piston rod (21) for wear, scoring or\nother damage by running a finger over the surface.\n\n[[EVIDENCE_ID: a0056]]\n13. Use a vise with soft jaws to hold the displacement\nrod (1) by its flats.  Place a 15 mm wrench on the\npiston flats and unscrew the piston (13) and prim-\ning piston rod (21) from the displacement rod (1).\nRemove the piston guide assembly (V) from the\npiston (13), and set aside for disassembly later.\n\n[[EVIDENCE_ID: a0057]]\n14. It is not necessary to remove the priming piston\nrod (21) from the piston (13) unless you see scor-\ning, wear, or other damage to either part. To\ndisassemble, place the piston flats in a vise. Using\nan 8 mm wrench on the rod flats, unscrew the rod.\n\n[[EVIDENCE_ID: a0058]]\n14\n308200\n\n--- PAGE 15 ---\n\n[[EVIDENCE_ID: a0059]]\nService\n\n[[EVIDENCE_ID: a0060]]\n15. To disassemble the piston guide assembly (V),\nplace the flats of the piston seat (15) in a vise.\nClose the jaws just tight enough to hold the part; it\ncan be damaged by squeezing it too tightly. Using\nan  8 mm (5/16 in.) dia. brass rod, unscrew the\npiston guide (12) from the piston seat (15). See\nFig. 5. Remove the piston seal (14); always re-\nplace with a new one. Inspect the mating surfaces\nof the piston (13) and piston seat (15) for nicks,\nscoring or wear.\n\n[[EVIDENCE_ID: a0061]]\n15\n\n[[EVIDENCE_ID: a0062]]\nBrass\nRod\n\n[[EVIDENCE_ID: a0063]]\n12\n\n[[EVIDENCE_ID: a0064]]\n0205\n\n[[EVIDENCE_ID: a0065]]\nFig. 5\n\n[[EVIDENCE_ID: a0066]]\n16. To disassemble the intake check valve assembly\n(U), place the nut (27) in a vise and unscrew the\nintake valve body (25) from the nut, using a 25 mm\nwrench. See Fig. 6. Remove the seal (30) from the\nnut (27) and the other seal (26) from the valve\nbody; always replace them with new ones. Inspect\nthe mating surfaces of the intake valve body (25)\nand seat (18) for wear, scoring, or other damage.\n\n[[EVIDENCE_ID: a0067]]\n27\n\n[[EVIDENCE_ID: a0068]]\n25\n\n[[EVIDENCE_ID: a0069]]\n0206\n\n[[EVIDENCE_ID: a0070]]\nFig. 6\n\n[[EVIDENCE_ID: a0071]]\nNOTE: The seal (30) is press-fit in the nut (27), and\nmay require cutting with a razor to ease removal.\n\n[[EVIDENCE_ID: a0072]]\n17. Inspect all parts and threads, and clean with a\ncompatible solvent. To reassemble, see page 17.\n\n[[EVIDENCE_ID: a0073]]\n308200\n15"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "DiagnosticChunkOutput",
+        "strict": true,
+        "schema": {
+          "$defs": {
+            "AffectedComponentCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "category": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Category"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "affects_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Affects Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "category",
+                "claim_evidence",
+                "affects_link_evidence"
+              ],
+              "title": "AffectedComponentCandidate",
+              "type": "object"
+            },
+            "CorrectiveActionCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "action_kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Action Kind"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "resolution_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Resolution Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instruction_text",
+                "action_kind",
+                "claim_evidence",
+                "resolution_link_evidence"
+              ],
+              "title": "CorrectiveActionCandidate",
+              "type": "object"
+            },
+            "DiagnosticBundleCandidate": {
+              "additionalProperties": false,
+              "description": "One source record, potentially containing several observed indicators.",
+              "properties": {
+                "record_window_id": {
+                  "title": "Record Window Id",
+                  "type": "string"
+                },
+                "allowed_source_anchors": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Allowed Source Anchors",
+                  "type": "array"
+                },
+                "record_anchor": {
+                  "minLength": 1,
+                  "title": "Record Anchor",
+                  "type": "string"
+                },
+                "branch_anchor": {
+                  "minLength": 1,
+                  "title": "Branch Anchor",
+                  "type": "string"
+                },
+                "indicators": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticIndicatorCandidate"
+                  },
+                  "title": "Indicators",
+                  "type": "array"
+                },
+                "failure": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FailureModeCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actions": {
+                  "items": {
+                    "$ref": "#/$defs/CorrectiveActionCandidate"
+                  },
+                  "title": "Actions",
+                  "type": "array"
+                },
+                "inspection_steps": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticInspectionStepCandidate"
+                  },
+                  "title": "Inspection Steps",
+                  "type": "array"
+                },
+                "conditions": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticConditionCandidate"
+                  },
+                  "title": "Conditions",
+                  "type": "array"
+                },
+                "affected_component": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AffectedComponentCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolution_status": {
+                  "$ref": "#/$defs/ResolutionStatus"
+                }
+              },
+              "required": [
+                "record_window_id",
+                "allowed_source_anchors",
+                "record_anchor",
+                "branch_anchor",
+                "indicators",
+                "failure",
+                "actions",
+                "inspection_steps",
+                "conditions",
+                "affected_component",
+                "resolution_status"
+              ],
+              "title": "DiagnosticBundleCandidate",
+              "type": "object"
+            },
+            "DiagnosticConditionCandidate": {
+              "additionalProperties": false,
+              "description": "Source-stated condition attached to a branch or a zero-based step.",
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "title": "Text",
+                  "type": "string"
+                },
+                "applies_to": {
+                  "enum": [
+                    "branch",
+                    "action",
+                    "inspection"
+                  ],
+                  "title": "Applies To",
+                  "type": "string"
+                },
+                "step_index": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Step Index"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "text",
+                "applies_to",
+                "step_index",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticConditionCandidate",
+              "type": "object"
+            },
+            "DiagnosticEvidenceSpan": {
+              "additionalProperties": false,
+              "description": "A verbatim source span emitted by the extraction model.\n\n``source_anchor`` is the opaque evidence identifier printed in the model's\ninput.  It is intentionally not a graph node identifier.",
+              "properties": {
+                "source_anchor": {
+                  "minLength": 1,
+                  "title": "Source Anchor",
+                  "type": "string"
+                },
+                "source_page": {
+                  "minimum": 1,
+                  "title": "Source Page",
+                  "type": "integer"
+                },
+                "quote": {
+                  "minLength": 1,
+                  "title": "Quote",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source_anchor",
+                "source_page",
+                "quote"
+              ],
+              "title": "DiagnosticEvidenceSpan",
+              "type": "object"
+            },
+            "DiagnosticIndicatorCandidate": {
+              "additionalProperties": false,
+              "description": "Provider-safe flat indicator contract.\n\nOpenAI strict Structured Outputs does not accept the ``oneOf`` emitted by\nPydantic for a discriminated model union inside an array.  Keep the wire\nshape flat and enforce the same symptom/error-code invariants locally.\nNullable fields remain required so the provider schema is strict.",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "symptom",
+                    "error_code"
+                  ],
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "code": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code"
+                },
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "severity": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "Critical",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Severity"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "failure_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Failure Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "code",
+                "name",
+                "description",
+                "severity",
+                "claim_evidence",
+                "failure_link_evidence"
+              ],
+              "title": "DiagnosticIndicatorCandidate",
+              "type": "object"
+            },
+            "DiagnosticInspectionStepCandidate": {
+              "additionalProperties": false,
+              "description": "A diagnostic check that is useful but does not itself restore operation.",
+              "properties": {
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "instruction_text",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticInspectionStepCandidate",
+              "type": "object"
+            },
+            "FailureModeCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "material_context": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Material Context"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "material_context",
+                "claim_evidence"
+              ],
+              "title": "FailureModeCandidate",
+              "type": "object"
+            },
+            "ResolutionStatus": {
+              "description": "The extractor's explicit assessment of diagnostic completeness.",
+              "enum": [
+                "action_stated",
+                "no_action_stated",
+                "check_only",
+                "ambiguous",
+                "not_diagnostic"
+              ],
+              "title": "ResolutionStatus",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Provider structured-output envelope for one diagnostic PDF chunk.\n\nAll fields are required, including nullable/list fields.  This avoids the\noptional-property mismatch of strict provider JSON Schema implementations.",
+          "properties": {
+            "schema_version": {
+              "enum": [
+                "1.0",
+                "1.1"
+              ],
+              "title": "Schema Version",
+              "type": "string"
+            },
+            "source_language": {
+              "minLength": 1,
+              "title": "Source Language",
+              "type": "string"
+            },
+            "records": {
+              "items": {
+                "$ref": "#/$defs/DiagnosticBundleCandidate"
+              },
+              "title": "Records",
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "source_language",
+            "records"
+          ],
+          "title": "DiagnosticChunkOutput",
+          "type": "object"
+        }
+      }
+    },
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 0.0015577080193907022,
+  "response": {
+    "id": "chatcmpl-ES2WPRxCF7SZtJJjiOsrTf46XqF1b",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"schema_version\":\"1.1\",\"source_language\":\"English\",\"records\":[{\"record_window_id\":\"\",\"allowed_source_anchors\":[],\"record_anchor\":\"a0039\",\"branch_anchor\":\"a0039\",\"indicators\":[],\"failure\":null,\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"not_diagnostic\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[],\"record_anchor\":\"a0059\",\"branch_anchor\":\"a0059\",\"indicators\":[],\"failure\":null,\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"not_diagnostic\"}]}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790351585,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 512,
+      "prompt_tokens": 5290,
+      "total_tokens": 5802,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 373,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cache_write_tokens": 2673,
+        "cached_tokens": 2614
+      }
+    }
+  },
+  "provider_request_id": null,
+  "error": null
+}

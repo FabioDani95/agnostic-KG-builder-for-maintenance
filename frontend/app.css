@@ -762,3 +762,10 @@ button.catena-passo:hover{background:var(--fill)}
   .cella.stato i{margin-left:auto}
   .cella.freccia{display:none}
 }
+
+/* Single-record review: keep the source readable beside the editable claims. */
+.record-review label{display:grid;gap:6px;margin:12px 0;min-width:0}
+.record-review input,.record-review textarea,.record-review select{width:100%;min-width:0;box-sizing:border-box}
+.record-review fieldset{min-width:0;margin:12px 0;padding:12px;border:1px solid var(--line);border-radius:8px}
+.record-review aside{min-width:0;overflow-wrap:anywhere}
+.record-review form>button{margin:8px 0}

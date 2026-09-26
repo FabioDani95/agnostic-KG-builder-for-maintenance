@@ -1,0 +1,254 @@
+16:51:37 INFO httpx — HTTP Request: POST http://testserver/api/workspaces "HTTP/1.1 201 Created"
+16:51:38 INFO backend.services.pdf_service — [pdf] Structured tables appended on 10/30 page(s)
+16:51:42 INFO httpx — HTTP Request: POST http://testserver/api/workspaces/ws_5Y-Vsh4Rj1nzEhxWSkgsqQ/sources "HTTP/1.1 200 OK"
+16:51:42 INFO backend.services.scoping_workflow — [scoping] Page offset autodetected: 0 (source=page_labels, confidence=0.9545)
+16:51:42 INFO backend.services.scoping_workflow — [scoping] Start — 30 pages, offset=0, timeout=120s
+16:51:42 INFO backend.services.scoping_workflow — [scoping] 1/4 ToC found pp.1-1 (0.0s)
+16:51:42 INFO backend.services.llm_guardrails — [llm] Scoping guardrails — chars=19218, est_tokens=4804, timeout=120s, max_output_tokens=6000
+16:51:46 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:51:46 INFO backend.services.llm_service — [llm] Scoping call — model=gpt-6-luna, tokens={'operation': 'scoping', 'model': 'gpt-6-luna', 'pricing_model': 'gpt-6-luna', 'prompt': 5827, 'completion': 396, 'total': 6223, 'cached_prompt': 0, 'cache_write_prompt': 5824, 'non_cached_prompt': 5827, 'estimated_cost_usd': 0.000926}
+16:51:46 INFO backend.services.scoping_workflow — [scoping] 2/4 ToC extracted — 16 entries, tokens={'operation': 'scoping', 'model': 'gpt-6-luna', 'pricing_model': 'gpt-6-luna', 'prompt': 5827, 'completion': 396, 'total': 6223, 'cached_prompt': 0, 'cache_write_prompt': 5824, 'non_cached_prompt': 5827, 'estimated_cost_usd': 0.000926} (4.7s)
+16:51:46 INFO backend.services.llm_guardrails — [llm] Scoping guardrails — chars=3938, est_tokens=984, timeout=120s, max_output_tokens=6000
+16:51:51 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:51:51 INFO backend.services.llm_service — [llm] Scoping call — model=gpt-6-luna, tokens={'operation': 'scoping', 'model': 'gpt-6-luna', 'pricing_model': 'gpt-6-luna', 'prompt': 924, 'completion': 507, 'total': 1431, 'cached_prompt': 0, 'cache_write_prompt': 0, 'non_cached_prompt': 924, 'estimated_cost_usd': 0.000346}
+16:51:51 INFO backend.services.scoping_workflow — [scoping] 3/4 Sections selected — rule=5 llm=4, tokens={'operation': 'scoping', 'model': 'gpt-6-luna', 'pricing_model': 'gpt-6-luna', 'prompt': 924, 'completion': 507, 'total': 1431, 'cached_prompt': 0, 'cache_write_prompt': 0, 'non_cached_prompt': 924, 'estimated_cost_usd': 0.000346} (8.9s)
+16:51:51 INFO backend.services.scoping_workflow — [scoping]   rule: Installation pp.5-7 (score check passed)
+16:51:51 INFO backend.services.scoping_workflow — [scoping]   rule: Service pp.11-11 (score check passed)
+16:51:51 INFO backend.services.scoping_workflow — [scoping]   rule: Troubleshooting pp.11-11 (score check passed)
+16:51:51 INFO backend.services.scoping_workflow — [scoping]   rule: Reconnecting the Displacement Pump pp.13-13 (score check passed)
+16:51:51 INFO backend.services.scoping_workflow — [scoping]   rule: Displacement Pump Service pp.14-19 (score check passed)
+16:51:51 INFO backend.services.scoping_workflow — [scoping]   llm: Service pp.11-11
+16:51:51 INFO backend.services.scoping_workflow — [scoping]   llm: Troubleshooting pp.11-11
+16:51:51 INFO backend.services.scoping_workflow — [scoping]   llm: Reconnecting the Displacement Pump pp.13-13
+16:51:51 INFO backend.services.scoping_workflow — [scoping]   llm: Displacement Pump Service pp.14-19
+16:51:51 INFO backend.services.scoping_workflow — [scoping] Reliable section plan retained without keyword expansion — 5 sections
+16:51:51 INFO backend.services.scoping_workflow — [scoping] 4/4 Language filter: 11→8 pages (8.9s)
+16:51:51 INFO backend.services.scoping_workflow — [scoping] Done — 5 sections, 8 pages to keep out of 30 (8.9s)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Drafting from 17 pages (15 diagnostic, 11 structural), 5 sections → 19 chunk(s)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 1/19 [diagnostic] — 0 sections, pages 11-11 (2211 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 2/19 [diagnostic] — 0 sections, pages 11-11 (2320 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 3/19 [diagnostic] — 0 sections, pages 11-11 (2005 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 4/19 [diagnostic] — 0 sections, pages 11-11 (2283 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 5/19 [diagnostic] — 0 sections, pages 11-11 (2294 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 6/19 [diagnostic] — 0 sections, pages 11-11 (2393 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 7/19 [diagnostic] — 0 sections, pages 1-4 (10770 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 8/19 [diagnostic] — 3 sections, pages 10-13 (13039 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 9/19 [diagnostic] — 2 sections, pages 13-15 (10526 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 10/19 [diagnostic] — 1 sections, pages 17-19 (8107 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 11/19 [diagnostic] — 0 sections, pages 29-30 (6811 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 12/19 [structural] — 0 sections, pages 2-2 (4458 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 13/19 [structural] — 1 sections, pages 4-6 (9955 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 14/19 [structural] — 0 sections, pages 10-10 (2256 chars)
+16:51:51 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 3 component candidates, 0 error-code candidates
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 15/19 [structural] — 1 sections, pages 12-13 (6894 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 16/19 [structural] — 1 sections, pages 15-15 (2276 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 17/19 [structural] — 1 sections, pages 17-17 (2751 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 18/19 [structural] — 1 sections, pages 19-19 (1190 chars)
+16:51:51 INFO backend.services.ontology_workflow — [ontology] Chunk 19/19 [structural] — 0 sections, pages 29-29 (1307 chars)
+16:51:51 INFO backend.services.llm_guardrails — [llm] Typed diagnostic bundle extraction guardrails — chars=9633, est_tokens=2408, timeout=600s, max_output_tokens=16000
+16:51:58 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:51:59 INFO backend.services.ontology_pipeline — [ontology] Typed diagnostic extraction: 3 candidate(s), 2 publishable, 1 unresolved (7.8s)
+16:51:59 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:51:59 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:51:59 INFO backend.services.graph_reasoning — [graph_reasoning] 5 issue(s), 0 suggestion(s)
+16:51:59 INFO backend.services.confidence — [confidence] Scored 6 nodes — auto_approve=1, human_review=5, auto_reject=0
+16:51:59 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 6 entries
+16:51:59 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 2 component candidates, 0 error-code candidates
+16:51:59 INFO backend.services.llm_guardrails — [llm] Typed diagnostic bundle extraction guardrails — chars=9742, est_tokens=2435, timeout=600s, max_output_tokens=16000
+16:52:06 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:52:06 INFO backend.services.ontology_pipeline — [ontology] Typed diagnostic extraction: 3 candidate(s), 3 publishable, 0 unresolved (7.5s)
+16:52:06 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:52:06 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:52:06 INFO backend.services.graph_reasoning — [graph_reasoning] 8 issue(s), 1 suggestion(s)
+16:52:06 INFO backend.services.confidence — [confidence] Scored 9 nodes — auto_approve=3, human_review=6, auto_reject=0
+16:52:06 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 9 entries
+16:52:06 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 2 component candidates, 0 error-code candidates
+16:52:06 INFO backend.services.llm_guardrails — [llm] Typed diagnostic bundle extraction guardrails — chars=9427, est_tokens=2356, timeout=600s, max_output_tokens=16000
+16:52:15 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:52:15 INFO backend.services.ontology_pipeline — [ontology] Typed diagnostic extraction: 3 candidate(s), 3 publishable, 0 unresolved (9.3s)
+16:52:15 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:52:15 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:52:15 INFO backend.services.graph_reasoning — [graph_reasoning] 9 issue(s), 1 suggestion(s)
+16:52:15 INFO backend.services.confidence — [confidence] Scored 10 nodes — auto_approve=4, human_review=6, auto_reject=0
+16:52:15 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 10 entries
+16:52:15 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 2 component candidates, 0 error-code candidates
+16:52:15 INFO backend.services.llm_guardrails — [llm] Typed diagnostic bundle extraction guardrails — chars=9705, est_tokens=2426, timeout=600s, max_output_tokens=16000
+16:52:23 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:52:23 INFO backend.services.ontology_pipeline — [ontology] Typed diagnostic extraction: 3 candidate(s), 3 publishable, 0 unresolved (7.3s)
+16:52:23 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:52:23 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:52:23 INFO backend.services.graph_reasoning — [graph_reasoning] 8 issue(s), 0 suggestion(s)
+16:52:23 INFO backend.services.confidence — [confidence] Scored 9 nodes — auto_approve=4, human_review=5, auto_reject=0
+16:52:23 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 9 entries
+16:52:23 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 2 component candidates, 0 error-code candidates
+16:52:23 INFO backend.services.llm_guardrails — [llm] Typed diagnostic bundle extraction guardrails — chars=9716, est_tokens=2429, timeout=600s, max_output_tokens=16000
+16:52:29 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:52:29 INFO backend.services.ontology_pipeline — [ontology] Typed diagnostic extraction: 3 candidate(s), 3 publishable, 0 unresolved (6.1s)
+16:52:29 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:52:29 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:52:29 INFO backend.services.graph_reasoning — [graph_reasoning] 7 issue(s), 2 suggestion(s)
+16:52:29 INFO backend.services.confidence — [confidence] Scored 8 nodes — auto_approve=5, human_review=3, auto_reject=0
+16:52:29 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 8 entries
+16:52:29 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 2 component candidates, 0 error-code candidates
+16:52:29 INFO backend.services.llm_guardrails — [llm] Typed diagnostic bundle extraction guardrails — chars=9815, est_tokens=2453, timeout=600s, max_output_tokens=16000
+16:52:37 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:52:37 INFO backend.services.ontology_pipeline — [ontology] Typed diagnostic extraction: 3 candidate(s), 3 publishable, 0 unresolved (7.9s)
+16:52:37 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:52:37 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:52:37 INFO backend.services.graph_reasoning — [graph_reasoning] 7 issue(s), 1 suggestion(s)
+16:52:37 INFO backend.services.confidence — [confidence] Scored 8 nodes — auto_approve=4, human_review=4, auto_reject=0
+16:52:37 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 8 entries
+16:52:37 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 4 component candidates, 0 error-code candidates
+16:52:37 INFO backend.services.llm_guardrails — [llm] Typed diagnostic bundle extraction guardrails — chars=18192, est_tokens=4548, timeout=600s, max_output_tokens=24000
+16:52:41 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:52:41 INFO backend.services.ontology_pipeline — [ontology] Typed diagnostic extraction: 1 candidate(s), 0 publishable, 1 unresolved (4.1s)
+16:52:41 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:52:41 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:52:41 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 0 suggestion(s)
+16:52:41 INFO backend.services.confidence — [confidence] Scored 1 nodes — auto_approve=0, human_review=1, auto_reject=0
+16:52:41 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 1 entries
+16:52:41 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 6 component candidates, 0 error-code candidates
+16:52:41 INFO backend.services.llm_guardrails — [llm] Typed diagnostic bundle extraction guardrails — chars=20461, est_tokens=5115, timeout=600s, max_output_tokens=24000
+16:53:14 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:53:15 INFO backend.services.ontology_pipeline — [ontology] Typed diagnostic extraction: 18 candidate(s), 16 publishable, 3 unresolved (33.6s)
+16:53:15 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:53:15 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:53:15 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 45 suggestion(s)
+16:53:15 INFO backend.services.confidence — [confidence] Scored 36 nodes — auto_approve=23, human_review=13, auto_reject=0
+16:53:15 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 36 entries
+16:53:15 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 5 component candidates, 0 error-code candidates
+16:53:15 INFO backend.services.llm_guardrails — [llm] Typed diagnostic bundle extraction guardrails — chars=17948, est_tokens=4487, timeout=600s, max_output_tokens=24000
+16:53:25 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:53:25 INFO backend.services.ontology_pipeline — [ontology] Typed diagnostic extraction: 2 candidate(s), 0 publishable, 13 unresolved (10.6s)
+16:53:25 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:53:25 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:53:25 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 0 suggestion(s)
+16:53:25 INFO backend.services.confidence — [confidence] Scored 1 nodes — auto_approve=0, human_review=1, auto_reject=0
+16:53:25 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 1 entries
+16:53:25 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 5 component candidates, 0 error-code candidates
+16:53:25 INFO backend.services.llm_guardrails — [llm] Typed diagnostic bundle extraction guardrails — chars=15529, est_tokens=3882, timeout=600s, max_output_tokens=24000
+16:53:27 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:53:27 INFO backend.services.ontology_pipeline — [ontology] Typed diagnostic extraction: 0 candidate(s), 0 publishable, 1 unresolved (1.8s)
+16:53:27 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:53:27 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:53:27 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 0 suggestion(s)
+16:53:27 INFO backend.services.confidence — [confidence] Scored 1 nodes — auto_approve=0, human_review=1, auto_reject=0
+16:53:27 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 1 entries
+16:53:27 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 3 component candidates, 0 error-code candidates
+16:53:27 INFO backend.services.llm_guardrails — [llm] Typed diagnostic bundle extraction guardrails — chars=14233, est_tokens=3558, timeout=600s, max_output_tokens=24000
+16:53:29 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:53:29 INFO backend.services.ontology_pipeline — [ontology] Typed diagnostic extraction: 0 candidate(s), 0 publishable, 0 unresolved (1.7s)
+16:53:29 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:53:29 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:53:29 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 0 suggestion(s)
+16:53:29 INFO backend.services.confidence — [confidence] Scored 1 nodes — auto_approve=0, human_review=1, auto_reject=0
+16:53:29 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 1 entries
+16:53:29 INFO backend.services.llm_guardrails — [llm] Ontology draft guardrails — chars=21221, est_tokens=5305, timeout=600s, max_output_tokens=16000
+16:53:32 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:53:32 INFO backend.services.ontology_pipeline — [ontology] Extraction draft generated (3.5s)
+16:53:32 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:53:32 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:53:32 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 0 suggestion(s)
+16:53:32 INFO backend.services.confidence — [confidence] Scored 2 nodes — auto_approve=0, human_review=2, auto_reject=0
+16:53:32 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 2 entries
+16:53:32 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 7 component candidates, 0 error-code candidates
+16:53:32 INFO backend.services.llm_guardrails — [llm] Ontology draft guardrails — chars=27268, est_tokens=6817, timeout=600s, max_output_tokens=16000
+16:53:37 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:53:37 INFO backend.services.ontology_pipeline — [ontology] Extraction draft generated (4.9s)
+16:53:37 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:53:37 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:53:37 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 0 suggestion(s)
+16:53:37 INFO backend.services.confidence — [confidence] Scored 7 nodes — auto_approve=0, human_review=7, auto_reject=0
+16:53:37 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 7 entries
+16:53:37 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 3 component candidates, 0 error-code candidates
+16:53:37 INFO backend.services.llm_guardrails — [llm] Ontology draft guardrails — chars=19413, est_tokens=4853, timeout=600s, max_output_tokens=16000
+16:53:42 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:53:42 INFO backend.services.ontology_pipeline — [ontology] Extraction draft generated (5.0s)
+16:53:42 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:53:42 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:53:42 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 0 suggestion(s)
+16:53:42 INFO backend.services.confidence — [confidence] Scored 7 nodes — auto_approve=0, human_review=7, auto_reject=0
+16:53:42 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 7 entries
+16:53:42 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 4 component candidates, 0 error-code candidates
+16:53:42 INFO backend.services.llm_guardrails — [llm] Ontology draft guardrails — chars=24093, est_tokens=6023, timeout=600s, max_output_tokens=16000
+16:53:47 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:53:47 INFO backend.services.ontology_pipeline — [ontology] Extraction draft generated (4.6s)
+16:53:47 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:53:47 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:53:47 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 0 suggestion(s)
+16:53:47 INFO backend.services.confidence — [confidence] Scored 3 nodes — auto_approve=0, human_review=3, auto_reject=0
+16:53:47 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 3 entries
+16:53:47 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 2 component candidates, 0 error-code candidates
+16:53:47 INFO backend.services.llm_guardrails — [llm] Ontology draft guardrails — chars=19397, est_tokens=4849, timeout=600s, max_output_tokens=16000
+16:53:53 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:53:53 INFO backend.services.ontology_pipeline — [ontology] Extraction draft generated (6.3s)
+16:53:53 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:53:53 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:53:53 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 0 suggestion(s)
+16:53:53 INFO backend.services.confidence — [confidence] Scored 10 nodes — auto_approve=0, human_review=10, auto_reject=0
+16:53:53 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 10 entries
+16:53:53 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 3 component candidates, 0 error-code candidates
+16:53:53 INFO backend.services.llm_guardrails — [llm] Ontology draft guardrails — chars=19908, est_tokens=4977, timeout=600s, max_output_tokens=16000
+16:53:59 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:53:59 INFO backend.services.ontology_pipeline — [ontology] Extraction draft generated (6.1s)
+16:53:59 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:53:59 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:53:59 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 0 suggestion(s)
+16:53:59 INFO backend.services.confidence — [confidence] Scored 12 nodes — auto_approve=0, human_review=12, auto_reject=0
+16:53:59 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 12 entries
+16:53:59 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 1 component candidates, 0 error-code candidates
+16:53:59 INFO backend.services.llm_guardrails — [llm] Ontology draft guardrails — chars=18277, est_tokens=4569, timeout=600s, max_output_tokens=16000
+16:54:04 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:54:04 INFO backend.services.ontology_pipeline — [ontology] Extraction draft generated (4.8s)
+16:54:04 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:54:04 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:54:04 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 0 suggestion(s)
+16:54:04 INFO backend.services.confidence — [confidence] Scored 5 nodes — auto_approve=0, human_review=5, auto_reject=0
+16:54:04 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 5 entries
+16:54:04 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 1 component candidates, 0 error-code candidates
+16:54:04 INFO backend.services.llm_guardrails — [llm] Ontology draft guardrails — chars=18393, est_tokens=4598, timeout=600s, max_output_tokens=16000
+16:54:08 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:54:08 INFO backend.services.ontology_pipeline — [ontology] Extraction draft generated (4.0s)
+16:54:08 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:54:08 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:54:08 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 0 suggestion(s)
+16:54:08 INFO backend.services.confidence — [confidence] Scored 1 nodes — auto_approve=0, human_review=1, auto_reject=0
+16:54:08 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 1 entries
+16:54:08 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 6 component candidates, 0 error-code candidates
+16:54:08 INFO backend.services.llm_guardrails — [llm] Typed diagnostic bundle extraction guardrails — chars=24040, est_tokens=6010, timeout=600s, max_output_tokens=24000
+16:54:13 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:54:13 INFO backend.services.ontology_pipeline — [ontology] Typed diagnostic extraction: 1 candidate(s), 1 publishable, 18 unresolved (5.1s)
+16:54:13 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:54:13 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:54:13 INFO backend.services.graph_reasoning — [graph_reasoning] 3 issue(s), 0 suggestion(s)
+16:54:13 INFO backend.services.confidence — [confidence] Scored 4 nodes — auto_approve=1, human_review=3, auto_reject=0
+16:54:13 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 4 entries
+16:54:13 INFO backend.services.confidence — [confidence] Scored 37 nodes — auto_approve=25, human_review=12, auto_reject=0
+16:54:13 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 5 component candidates, 0 error-code candidates
+16:54:13 INFO backend.services.llm_guardrails — [llm] Typed diagnostic bundle extraction guardrails — chars=12334, est_tokens=3083, timeout=600s, max_output_tokens=24000
+16:54:15 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:54:15 INFO backend.services.ontology_pipeline — [ontology] Typed diagnostic extraction: 0 candidate(s), 0 publishable, 2 unresolved (2.5s)
+16:54:15 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:54:15 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:54:15 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 0 suggestion(s)
+16:54:15 INFO backend.services.confidence — [confidence] Scored 1 nodes — auto_approve=0, human_review=1, auto_reject=0
+16:54:15 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 1 entries
+16:54:15 INFO backend.services.ontology_pipeline — [ontology] Pre-LLM mining: 2 component candidates, 0 error-code candidates
+16:54:15 INFO backend.services.llm_guardrails — [llm] Typed diagnostic bundle extraction guardrails — chars=9761, est_tokens=2440, timeout=600s, max_output_tokens=24000
+16:54:17 INFO httpx — HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+16:54:17 INFO backend.services.ontology_pipeline — [ontology] Typed diagnostic extraction: 0 candidate(s), 0 publishable, 0 unresolved (1.5s)
+16:54:17 INFO backend.services.ontology_pipeline — [ontology] Relation pass skipped (relation-first extraction contract)
+16:54:17 INFO backend.services.ontology_pipeline — [ontology] LLM semantic validation skipped (deterministic publication policy)
+16:54:17 INFO backend.services.graph_reasoning — [graph_reasoning] 0 issue(s), 0 suggestion(s)
+16:54:17 INFO backend.services.confidence — [confidence] Scored 1 nodes — auto_approve=0, human_review=1, auto_reject=0
+16:54:17 INFO backend.services.ontology_pipeline — [ontology] Confidence scoring completed (0.0s) — 1 entries
+16:54:17 INFO backend.services.confidence — [confidence] Scored 1 nodes — auto_approve=0, human_review=1, auto_reject=0
+16:54:17 INFO backend.services.confidence — [confidence] Scored 79 nodes — auto_approve=31, human_review=48, auto_reject=0
+16:54:17 INFO backend.services.graph_reasoning — [graph_reasoning] 11 issue(s), 79 suggestion(s)
+16:54:17 INFO backend.services.evidence_grounding_service — [grounding] All 47 relation evidence quote(s) verified
+16:54:17 INFO backend.services.graph_reasoning — [graph_reasoning] 11 issue(s), 79 suggestion(s)
+16:54:17 INFO backend.services.confidence — [confidence] Scored 78 nodes — auto_approve=28, human_review=50, auto_reject=0
+16:54:17 INFO backend.services.ontology_workflow — [ontology] Review queue: 24 item(s) for the operator ({'review': 5, 'advisory': 19})
+16:54:17 INFO httpx — HTTP Request: POST http://testserver/api/workspaces/ws_5Y-Vsh4Rj1nzEhxWSkgsqQ/g3/sources/src_-IciwloWtxFHhfs43sBoug/generate "HTTP/1.1 200 OK"
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+{"status": "completed", "started_utc": "2026-09-26T14:51:36.363898+00:00", "budget_before": {"absolute_budget_usd": 20.0, "committed_usd": 1.55632139, "active_reserved_usd": 0.0116355, "remaining_usd": 18.43204311, "reservation_count": 615, "finalized_count": 614}, "workspace_id": "ws_5Y-Vsh4Rj1nzEhxWSkgsqQ", "source_id": "src_-IciwloWtxFHhfs43sBoug", "total_elapsed_seconds": 161.615, "finished_utc": "2026-09-26T14:54:17.982702+00:00", "budget_after": {"absolute_budget_usd": 20.0, "committed_usd": 1.60932734, "active_reserved_usd": 0.011301375, "remaining_usd": 18.379371285, "reservation_count": 663, "finalized_count": 662}}

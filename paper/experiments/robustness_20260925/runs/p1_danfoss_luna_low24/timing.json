@@ -1,0 +1,24 @@
+{
+  "status": "failed",
+  "started_utc": "2026-09-25T13:32:20.377800+00:00",
+  "budget_before": {
+    "absolute_budget_usd": 20.0,
+    "committed_usd": 0.0,
+    "active_reserved_usd": 0.0,
+    "remaining_usd": 20.0,
+    "reservation_count": 0,
+    "finalized_count": 0
+  },
+  "error_type": "ValidationError",
+  "error": "3 validation errors for Workspace\nconfirmed_at\n  Value error, Application timestamps must use UTC and end in Z [type=value_error, input_value='2026-09-25T13:32:20.377800+00:00', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error\ncreated_at\n  Value error, Application timestamps must use UTC and end in Z [type=value_error, input_value='2026-09-25T13:32:20.377800+00:00', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error\nupdated_at\n  Value error, Application timestamps must use UTC and end in Z [type=value_error, input_value='2026-09-25T13:32:20.377800+00:00', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+  "total_elapsed_seconds": 0.83,
+  "finished_utc": "2026-09-25T13:32:21.208628+00:00",
+  "budget_after": {
+    "absolute_budget_usd": 20.0,
+    "committed_usd": 0.0,
+    "active_reserved_usd": 0.0,
+    "remaining_usd": 20.0,
+    "reservation_count": 0,
+    "finalized_count": 0
+  }
+}

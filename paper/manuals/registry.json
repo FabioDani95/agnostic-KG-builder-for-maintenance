@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "proposed_not_frozen",
+  "status": "plan_accepted_development_pilot_completed_test_selection_pending",
   "target_development_count": 4,
   "target_new_test_count": 12,
   "minimum_new_test_manufacturers_proposed": 6,
@@ -8,43 +8,55 @@
   "entries": [
     {
       "document_id": "D01",
-      "label": "Eastman E-554",
+      "label": "Eastman Eagle S3L",
       "split": "development",
-      "status": "historical_pdf_to_reconcile",
+      "status": "pilot_completed_requires_review",
       "exposure_status": "observed_in_development",
       "evidence_path": "artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_v11_20260813/campaign_results.json",
-      "pdf_path": null,
-      "sha256": null
+      "pdf_path": "paper/manuals/files/01_eastman_e554_service_manual.pdf",
+      "sha256": "a7467316234f2d84550e7c267bf709fda55e1023055d9569dc27348f192641d0",
+      "page_count": 54,
+      "last_run": "paper/experiments/dev_luna_20260925/runs/real/eastman_e554",
+      "last_run_approval_eligible": false
     },
     {
       "document_id": "D02",
-      "label": "Danfoss APF",
+      "label": "Danfoss Active Power Filter",
       "split": "development",
-      "status": "historical_pdf_to_reconcile",
+      "status": "pilot_completed_requires_review",
       "exposure_status": "observed_in_development",
       "evidence_path": "artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_v11_20260813/campaign_results.json",
-      "pdf_path": null,
-      "sha256": null
+      "pdf_path": "paper/manuals/files/02_danfoss_active_power_filter_operating_guide.pdf",
+      "sha256": "33d76bc0bcad7def1cf95d82d31a0522589d02d900d3974abc753b8ce2c0ab34",
+      "page_count": 66,
+      "last_run": "paper/experiments/dev_luna_20260925/runs/real/danfoss_apf",
+      "last_run_approval_eligible": false
     },
     {
       "document_id": "D03",
-      "label": "Graco Check-Mate 200",
+      "label": "Graco Check-Mate 200 Pump",
       "split": "development",
-      "status": "historical_pdf_to_reconcile",
+      "status": "pilot_completed_requires_review",
       "exposure_status": "observed_in_development",
       "evidence_path": "artifacts/acceptance/g3/diagnostic_benchmark_second_hardening_v11_20260813/campaign_results.json",
-      "pdf_path": null,
-      "sha256": null
+      "pdf_path": "paper/manuals/files/03_graco_check_mate_200_pumps_manual.pdf",
+      "sha256": "db64c770deeac9541bd17e310dc6c18a8c10ced8172278796ea53b6947127d37",
+      "page_count": 30,
+      "last_run": "paper/experiments/dev_luna_20260925/runs/real/graco_check_mate_200",
+      "last_run_approval_eligible": false
     },
     {
       "document_id": "D04",
-      "label": "Hypertherm (modello/versione da riconciliare)",
+      "label": "Powermax30 AIR plasma cutting system",
       "split": "development",
-      "status": "historical_pdf_to_reconcile",
+      "status": "pilot_completed_requires_review",
       "exposure_status": "observed_in_development",
       "evidence_path": "benchmark_runs/hypertherm_holdout_v12_20260813/real_run_state_recovery.json",
-      "pdf_path": null,
-      "sha256": null
+      "pdf_path": "paper/manuals/files/hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+      "sha256": "3c2b7cd62ae1b8b69f8b86fcbf9b36f4ee1fc8d35fed3f90d6271f8ef50d5c45",
+      "page_count": 231,
+      "last_run": "paper/experiments/dev_luna_20260925/runs/real/hypertherm_powermax30_air",
+      "last_run_approval_eligible": false
     },
     {
       "document_id": "T01",

@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "c2_eastman_e554:5d4a2d84869448c3bb71066003f4afb1",
+  "run_id": "c2_eastman_e554",
+  "started_utc": "2026-09-25T15:44:32.293802+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "max_completion_tokens": 24000,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You extract diagnostic records from a technical manual into a typed contract.\n\nSource type: technical PDF\nSource title: 01_eastman_e554_service_manual.pdf\n\nThe input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be\na complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,\necho its window_id and allowed_source_anchors on every candidate; the system overwrites and\nverifies both fields and no evidence outside that block is allowed. For a section chunk, set\nrecord_window_id=\"\" and set allowed_source_anchors to exactly the anchors referenced by that\ncandidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL\ncontext may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields\nbelong to the current cause/remedy branch. Each displayed FIELD value is one exact source\nspan. Quote the value only: never include the \"FIELD n:\" label, join separate fields, or\nrestore a sibling field omitted by the system.\nReturn every explicit diagnostic record and every distinct cause/remedy branch in the input.\nThe contract is an intermediate record representation, not the final graph. Use schema_version=\"1.1\".\n\nRules:\n1. Never emit graph IDs or ontology relation names. The system owns them.\n2. A diagnostic record has one or more indicators. An indicator is either an observable\n   symptom or an asset-generated error/alarm code. A record may explicitly contain both;\n   keep both. For a symptom set code=null and severity=\"Unknown\" unless the source explicitly\n   states its severity; never invent a risk rating. For an error_code set its\n   code and severity=null. Only an explicit not_diagnostic page disposition may use an empty\n   indicator list.\n3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action\n   from different table rows, flowchart branches or unrelated paragraphs.\n4. A FailureMode is an explicit technical cause or faulty state, not a restatement of the\n   symptom, an inspection result or an invented explanation. Use null when none is stated.\n5. A CorrectiveAction is an explicitly restorative remedy for that failure. Checks and tests\n   are not restorative unless the source says the check itself resolves the fault. Preserve\n   a non-restorative check/test/inspection in inspection_steps, never in actions.\n6. Set resolution_status:\n   - action_stated: at least one restorative action is explicitly linked to the failure;\n   - no_action_stated: the diagnostic record states a failure but no remedy;\n   - check_only: it gives only diagnostic checks/verification;\n   - ambiguous: the row/branch pairing cannot be established safely;\n   - not_diagnostic: a candidate-looking passage is actually preventive/generic content.\n7. An affected component is optional. Include it only if the branch explicitly identifies the\n   affected component. category and failure.material_context are required-but-nullable: use\n   null rather than manufacturing a category/context. A null category does not invalidate a\n   grounded branch; the deterministic compiler supplies a neutral schema category. Do not use\n   a product name as a component.\n8. Evidence is edge-specific. claim_evidence proves only the claim. Each edge evidence list is\n   a support set: one span may explicitly state the whole link, or several spans from the same\n   record/branch may collectively establish it when a manual separates Problem, Cause and\n   Remedy across blocks or pages. failure_link_evidence supports only that exact indicator to\n   failure; resolution_link_evidence supports only that exact failure to action;\n   affects_link_evidence supports only that exact failure to component. Include every span\n   needed to establish the link and no unrelated nearby heading. Never use an action-only span\n   as the sole proof of an indicator-to-failure edge.\n   In a system-owned atomic table row, use the exact endpoint FIELD spans as the edge support\n   set; the deterministic compiler verifies the table structure and completes their union.\n9. Every quote is a short verbatim span contained in the EvidenceUnit named by source_anchor,\n   on source_page. Prefer one span per EvidenceUnit. If wording crosses adjacent units, emit\n   separate exact spans; never concatenate or paraphrase cells. Copy the opaque anchor exactly.\n   Do not include page/anchor marker text in a quote.\n10. record_anchor must be one of this candidate's claim-evidence anchors. branch_anchor must be\n    one of this candidate's evidence anchors (prefer a causal edge anchor). For an explicit\n    not_diagnostic disposition with no claims, set both to the candidate page's EvidenceUnit\n    anchor. These anchors are source locators, not freely generated IDs.\n11. Preserve source language in human-readable values and set source_language accordingly.\n12. Duplicate records caused by overlapping pages must be returned identically; deterministic\n    lineage and compilation will deduplicate them.\n13. Account for candidate-looking passages. If one is actually generic/preventive content,\n    emit a not_diagnostic candidate with empty indicators and no diagnostic claims. Return an\n    empty records list only when the input contains no candidate-looking passage at all. Never\n    fill a missing cause/action simply to make a complete record.\n14. Every anchored candidate-looking passage in the input must occur in a record's claim/edge\n    evidence, or have its own explicit not_diagnostic disposition. Do not cover only the first\n    row or branch of a troubleshooting table.\n15. For check_only, actions must be empty and inspection_steps must preserve each stated check\n    with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.\n16. Preserve every stated precondition, test outcome, negation, threshold and alternative in\n    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection\n    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test\n    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.\n    Keep inspection_steps and actions in source order; do not sort steps alphabetically.\n17. Preserve the actual error CODE separately from its fault name, including a numerical code\n    in a separate table column. Never substitute the name for a printed numeric code.\n"
+      },
+      {
+        "role": "user",
+        "content": "--- PAGE 2 ---\n\n[[EVIDENCE_ID: a0001]]\nTable of Contents\n\n[[EVIDENCE_ID: a0002]]\nSafety Information ....................................................... 3\nGeneral Safety Precautions......................................... 3\nLaser Safety Precautions ............................................ 4\nLaser Safety Hazard Information.................................. 4\nSafety Zone and Stop Devices ..................................... 6\nEagle S3L Familiarization ........................................... 7\nReference Manuals ..................................................... 8\nINSTALLATION ............................................................ 8\nSite Preparation .......................................................... 8\nUnpacking Instructions ................................................ 8\nTable Assembly ........................................................... 9\nVacuum Assembly Installation................................... 12\nGantry Installation ..................................................... 12\nFume extractor hose and Festoon installation ........... 12\nChiller Installation ...................................................... 12\nCo2 Tank Installation ................................................. 12\nSignage and safety glasses ...................................... 12\nEnvironmental Conditions .......................................... 13\nSERVICE and MAINTENANCE ................................. 13\nAligning, Cleaning and Replacing Consumables ........ 13\nRound Knife Replacement ......................................... 14\nDrag Knife Replacement............................................ 15\nPunch Replacement .................................................. 16\nPen Replacement...................................................... 16\nAirbrush Ink Refill ...................................................... 17\nCleaning of Airbrush .................................................. 17\nSpray Tip and Cap Replacement ............................... 17\nNeedle Removal ........................................................ 17\nNeedle Setting .......................................................... 17\nX-Motor Belt Replacement ......................................... 18\nY-Motor Belt Replacement ........................................ 18\n\n[[EVIDENCE_ID: a0003]]\nTheta-Motor Belt Replacement .................................. 19\nX-Axis Linear Bearing Replacement .......................... 19\nY-Axis Top Linear Bearing Replacement .................... 20\nY-Axis Front Linear Bearing Replacement ................. 21\nLaser Mirror Replacement ......................................... 22\nLaser Focus Lens Replacement ................................ 23\nLaser Optics Cleaning ............................................... 24\nFume Extractor Filter Replacement ........................... 24\nChiller Coolant Level .................................................. 24\nCALIBRATION & ADJUSTMENTS ............................. 25\nPressure Transducer Calibration................................ 25\nGantry Backlash Adjustment ..................................... 25\nY-Car Backlash Adjustment....................................... 26\nStop Disc Adjustment................................................ 27\nLaser Focus Lens Adjustment ................................... 27\nLaser Mirror Alignment/Adjustment............................ 28\nGantry Calibration Procedure .................................... 28\nSCHEDULES MAINTENANCE PROCEDURES......... 28\nDaily Maintenance (Start of each shift) ...................... 28\nWeekly or every 40 hours .......................................... 29\nFirst Working Day of Month....................................... 29\nLubrication Chart ....................................................... 30\nYearly Maintenance Checklist ................................... 31\nTROUBLE SHOOTING GUIDE .................................. 37\nELECTRICAL & PNEUMATIC DIAGRAMS ................ 39\nPneumatic Diagram Blue Print No. (31-9000-41) ....... 40\nLabel Locations Gantry Assembly ............................. 51\nLabel Locations Laser Module ................................... 52\nAgency Compliance .................................................. 53\nTechnical Data .......................................................... 54\n\n[[EVIDENCE_ID: a0004]]\nIMPORTANT\nThe purchaser must instruct all operators on the proper use of this equipment.  All standard industrial safety measures\nand equipment should be provided to protect the operator.  Operators must be cautioned that improper or careless\nuse of this equipment may cause personal injury.  If you do not have qualified operators to instruct new persons,\ncontact your EASTMAN sales representative or EASTMAN factory direct.\n\n[[EVIDENCE_ID: a0005]]\nElectrical connections and servicing to this equipment should be made by a qualified electrician who is familiar with\napplicable codes and regulations.  Disconnect this equipment from electrical power source before proceeding with\nany disassembly for adjustment or repair.\n\n[[EVIDENCE_ID: a0006]]\n2\nForm E-554\n\n--- PAGE 3 ---\n\n[[EVIDENCE_ID: a0007]]\nSafety Information\nThroughout this manual, safety information is presented by\nthe use of the terms DANGER, WARNING, CAUTION, ELEC-\nTRICAL HAZARD, and NOTE. These terms have the follow-\ning meanings:\n\n[[EVIDENCE_ID: a0008]]\nDanger\nA danger contains instructions for the use or main-\ntenance of the machine. Failure to follow these pro-\ncedures may result in death or serious personal\ninjury to the user.\n\n[[EVIDENCE_ID: a0009]]\nWARNING\nA warning contains critical information regarding\npotential safety hazards that can occur during proper\nuse or misuse of the machine. Failure to follow these\nprocedures may result in serious personal injury to\nthe user.\n\n[[EVIDENCE_ID: a0010]]\nCAUTION\nA caution contains instructions for the use or main-\ntenance of the machine. Failure to follow these pro-\ncedures may result in damage to the machine.\n\n[[EVIDENCE_ID: a0011]]\nELECTRICAL HAZARD\nAn electrical hazard calls attention to a procedure,\npractice, or the like, which, if not correctly performed\nor adhered to, could result in personal injury. Do\nnot proceed beyond an Electrical Hazard.\n\n[[EVIDENCE_ID: a0012]]\nSupplementary information may be given in a Note.\n\n[[EVIDENCE_ID: a0013]]\nSafety and Indemnification\nDuring the life of the machine, the purchaser agrees\nto provide to all machine users (including its own\nemployees and independent contractors) all relevant\nsafety information, including warning labels and in-\nstruction manuals. The purchaser also agrees to\nmaintain the safety features and working condition\nof the machine, and to adequately train all users in\nthe safe use and maintenance of the machine. The\npurchaser agrees to defend, protect, indemnify, and\nhold Eastman Machine Company and its subsid-\niaries harmless from and against all claims, losses,\nexpenses, damages, and liabilities to the extent\nthat they have been caused by the purchaser’s fail-\nure to comply with the terms and instructions of\nthis manual.\n\n[[EVIDENCE_ID: a0014]]\nGeneral Safety Precautions\nWARNING\n• This machine is equipped with very sharp and dan-\ngerous tools. Keep hands, arms, and hair away from\nthe cutting area and drive system at all times. Safety\ngloves, glasses, and appropriate clothing may pre-\nvent serious personal injuries.\n\n[[EVIDENCE_ID: a0015]]\n• Disconnect the power supply to the machine when it\nis not in use or during routine maintenance, including\ncleaning and lubrication.\n\n[[EVIDENCE_ID: a0016]]\n• The purchaser must instruct all operators in the proper\nuse of the machine according to the instructions in\nthis manual. This training must include instruction\non the potential safety hazards arising from the use\nor misuse of the machine. In addition to such train-\ning, the purchaser should provide written work instruc-\ntions as necessary to ensure correct use of the ma-\nchine for specific cutting and spreading applications.\n\n[[EVIDENCE_ID: a0017]]\n• Do not modify this machine or disable safety fea-\ntures.  Unauthorized modification may result in seri-\nous personal injuries to the user.  Electrical connec-\ntions to this machine must be made by a qualified\nelectrician familiar with applicable codes and regula-\ntions.\n\n[[EVIDENCE_ID: a0018]]\n• Safety labels must be kept clean and legible at all\ntimes.  Call the Eastman Machine factory to order\nreplacement labels.\n\n[[EVIDENCE_ID: a0019]]\nCAUTION\n• This equipment is not designed for use in conditions\nof extreme temperature or humidity. Operating this\nequipment in an environment outside the specified\nranges may result in damage and will void the war-\nranty.\n\n[[EVIDENCE_ID: a0020]]\nAcceptable temperature range:\n10ºC to 35ºC (50ºF to 95ºF).\nAcceptable operating humidity range:\n20% to 80% (non-condensing).\n\n[[EVIDENCE_ID: a0021]]\n• Altitude: We anticipate that the system will operate\nwithin all specifications at an altitude up to 1000m\nabove mean sea level.\n\n[[EVIDENCE_ID: a0022]]\n• Transportation:During transportation and storage, the\nsystem is capable of withstanding ranges from -25ºC\nto 55ºC and for periods not exceeding 24 hrs. at up\nto +70ºC.\n\n[[EVIDENCE_ID: a0023]]\n3\nForm E-554\n\n--- PAGE 4 ---\n\n[[EVIDENCE_ID: a0024]]\n• Lifting/Moving:The lifting or moving of this system\nmust be in accordance with the installation require-\nments. Failure to adhere to these installation require-\nments may cause injury to persons or hinderance or\nthe machine performance.\n\n[[EVIDENCE_ID: a0025]]\n• This system operates at 96dba under full load. Hear-\ning protection devices must be used during prolonged\nexposure to the noise.\n\n[[EVIDENCE_ID: a0026]]\nLaser Safety Precautions\n\n[[EVIDENCE_ID: a0027]]\nDANGER: serious personal injury\n•\nThis Class IV laser product emits invisible infrared\nlaser radiation in the 10.6 ìm CO2 wavelength band.\n\n[[EVIDENCE_ID: a0028]]\nDo not allow laser radiation to enter the eye by view-\ning direct or reflected laser energy. CO2 laser radia-\ntion can be reflected from metallic objects even\nthough the surface is darkened. Direct or diffuse\nlaser radiation can inflict severe corneal injuries lead-\ning to permanent eye damage or blindness. All per-\nsonnel must wear eye protection suitable for 10.6\nìm CO2 radiation when in the same area as an ex-\nposed laser beam. Eyewear protects against scat-\ntered energy but is not intended to protect against\ndirect viewing of the beam—never look directly into\nthe laser output aperture or view scattered laser\nreflections from metallic surfaces.\n\n[[EVIDENCE_ID: a0029]]\nEnclose the beam path whenever possible. Expo-\nsure to direct or diffuse CO2 laser radiation can se-\nriously burn human or animal tissue, which may\ncause permanent damage.\n\n[[EVIDENCE_ID: a0030]]\nDANGER: serious personal injury\n•\nThis product is not intended for use in explosive, or\npotentially explosive, atmospheres.\n\n[[EVIDENCE_ID: a0031]]\nWARNING: serious personal injury\n•\nU.S. Customers should refer to and follow the laser\nsafety precautions described in the American Na-\ntional Standards Institute (ANSI) Z136.1-2000 docu-\nment, Safe Use of Lasers. Procedures listed in this\nStandard include the appointment of a Laser Safety\nOfficer (LSO), operation of the product in an area of\nlimited access by trained personnel, servicing of\nequipment only by trained and authorized person-\nnel, and posting of signs warning of the potential\nhazards.\n\n[[EVIDENCE_ID: a0032]]\nEuropean customers should appoint a Laser\nSafety Officer (LSO) who should refer to and\nfollow the laser safety precautions described in\nEN 60825-1, 2007—Safety of Laser Products.\n\n[[EVIDENCE_ID: a0033]]\nWARNING: serious personal injury\n•\nMaterials processing with a laser can generate air\ncontaminants such as vapors, fumes, and/or par-\nticles that may be noxious, toxic, or even fatal.\nMaterial Safety Data Sheets (MSDS) for materials\nbeing processed should be thoroughly evaluated and\nthe adequacy of provisions for fume extraction, fil-\ntering, and venting should be carefully considered.\nReview the following references for further informa-\ntion on exposure criteria:\n\n[[EVIDENCE_ID: a0034]]\nANSI Z136.1-2000, Safe Use of Lasers, section 7.3.\n\n[[EVIDENCE_ID: a0035]]\nU.S. Government’s Code of Federal Regulations:\n29 CFR 1910, Subpart Z.\n\n[[EVIDENCE_ID: a0036]]\nThreshold Limit Values (TLV’s) published by the\nAmerican Conference of Governmental Industrial\nHygienists (ACGIH). It may be necessary to\nconsult with local governmental agencies regard-\ning restrictions on the venting of processing\nvapors.\n\n[[EVIDENCE_ID: a0037]]\nWARNING: serious personal injury\n•\nThe use of controls or adjustments or performance\nof procedures other than those specified herein may\nresult in hazardous radiation exposure.\n\n[[EVIDENCE_ID: a0038]]\nLaser Safety Hazard Information\nEastman lasers should be installed and operated in manu-\nfacturing or laboratory facilities by trained personnel only.\nDue to the considerable risks and hazards associated with\nthe installation and operational use of any equipment incor-\nporating a laser, the operator must follow product warning\nlabels and instructions to the user regarding laser safety.\n\n[[EVIDENCE_ID: a0039]]\nTo prevent exposure to direct or scattered laser radiation,\nfollow all safety precautions specified throughout this manual\nand exercise safe operating practices per ANSI Z136.1-2000\nat all times when actively lasing.\n\n[[EVIDENCE_ID: a0040]]\nAlways wear safety glasses or protective goggles with side\nshields to reduce the risk of damage to the eyes when oper-\nating the laser.\n\n[[EVIDENCE_ID: a0041]]\n4\nForm E-554"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "DiagnosticChunkOutput",
+        "strict": true,
+        "schema": {
+          "$defs": {
+            "AffectedComponentCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "category": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Category"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "affects_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Affects Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "category",
+                "claim_evidence",
+                "affects_link_evidence"
+              ],
+              "title": "AffectedComponentCandidate",
+              "type": "object"
+            },
+            "CorrectiveActionCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "action_kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Action Kind"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "resolution_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Resolution Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instruction_text",
+                "action_kind",
+                "claim_evidence",
+                "resolution_link_evidence"
+              ],
+              "title": "CorrectiveActionCandidate",
+              "type": "object"
+            },
+            "DiagnosticBundleCandidate": {
+              "additionalProperties": false,
+              "description": "One source record, potentially containing several observed indicators.",
+              "properties": {
+                "record_window_id": {
+                  "title": "Record Window Id",
+                  "type": "string"
+                },
+                "allowed_source_anchors": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Allowed Source Anchors",
+                  "type": "array"
+                },
+                "record_anchor": {
+                  "minLength": 1,
+                  "title": "Record Anchor",
+                  "type": "string"
+                },
+                "branch_anchor": {
+                  "minLength": 1,
+                  "title": "Branch Anchor",
+                  "type": "string"
+                },
+                "indicators": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticIndicatorCandidate"
+                  },
+                  "title": "Indicators",
+                  "type": "array"
+                },
+                "failure": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FailureModeCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actions": {
+                  "items": {
+                    "$ref": "#/$defs/CorrectiveActionCandidate"
+                  },
+                  "title": "Actions",
+                  "type": "array"
+                },
+                "inspection_steps": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticInspectionStepCandidate"
+                  },
+                  "title": "Inspection Steps",
+                  "type": "array"
+                },
+                "conditions": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticConditionCandidate"
+                  },
+                  "title": "Conditions",
+                  "type": "array"
+                },
+                "affected_component": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AffectedComponentCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolution_status": {
+                  "$ref": "#/$defs/ResolutionStatus"
+                }
+              },
+              "required": [
+                "record_window_id",
+                "allowed_source_anchors",
+                "record_anchor",
+                "branch_anchor",
+                "indicators",
+                "failure",
+                "actions",
+                "inspection_steps",
+                "conditions",
+                "affected_component",
+                "resolution_status"
+              ],
+              "title": "DiagnosticBundleCandidate",
+              "type": "object"
+            },
+            "DiagnosticConditionCandidate": {
+              "additionalProperties": false,
+              "description": "Source-stated condition attached to a branch or a zero-based step.",
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "title": "Text",
+                  "type": "string"
+                },
+                "applies_to": {
+                  "enum": [
+                    "branch",
+                    "action",
+                    "inspection"
+                  ],
+                  "title": "Applies To",
+                  "type": "string"
+                },
+                "step_index": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Step Index"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "text",
+                "applies_to",
+                "step_index",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticConditionCandidate",
+              "type": "object"
+            },
+            "DiagnosticEvidenceSpan": {
+              "additionalProperties": false,
+              "description": "A verbatim source span emitted by the extraction model.\n\n``source_anchor`` is the opaque evidence identifier printed in the model's\ninput.  It is intentionally not a graph node identifier.",
+              "properties": {
+                "source_anchor": {
+                  "minLength": 1,
+                  "title": "Source Anchor",
+                  "type": "string"
+                },
+                "source_page": {
+                  "minimum": 1,
+                  "title": "Source Page",
+                  "type": "integer"
+                },
+                "quote": {
+                  "minLength": 1,
+                  "title": "Quote",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source_anchor",
+                "source_page",
+                "quote"
+              ],
+              "title": "DiagnosticEvidenceSpan",
+              "type": "object"
+            },
+            "DiagnosticIndicatorCandidate": {
+              "additionalProperties": false,
+              "description": "Provider-safe flat indicator contract.\n\nOpenAI strict Structured Outputs does not accept the ``oneOf`` emitted by\nPydantic for a discriminated model union inside an array.  Keep the wire\nshape flat and enforce the same symptom/error-code invariants locally.\nNullable fields remain required so the provider schema is strict.",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "symptom",
+                    "error_code"
+                  ],
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "code": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code"
+                },
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "severity": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "Critical",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Severity"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "failure_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Failure Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "code",
+                "name",
+                "description",
+                "severity",
+                "claim_evidence",
+                "failure_link_evidence"
+              ],
+              "title": "DiagnosticIndicatorCandidate",
+              "type": "object"
+            },
+            "DiagnosticInspectionStepCandidate": {
+              "additionalProperties": false,
+              "description": "A diagnostic check that is useful but does not itself restore operation.",
+              "properties": {
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "instruction_text",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticInspectionStepCandidate",
+              "type": "object"
+            },
+            "FailureModeCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "material_context": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Material Context"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "material_context",
+                "claim_evidence"
+              ],
+              "title": "FailureModeCandidate",
+              "type": "object"
+            },
+            "ResolutionStatus": {
+              "description": "The extractor's explicit assessment of diagnostic completeness.",
+              "enum": [
+                "action_stated",
+                "no_action_stated",
+                "check_only",
+                "ambiguous",
+                "not_diagnostic"
+              ],
+              "title": "ResolutionStatus",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Provider structured-output envelope for one diagnostic PDF chunk.\n\nAll fields are required, including nullable/list fields.  This avoids the\noptional-property mismatch of strict provider JSON Schema implementations.",
+          "properties": {
+            "schema_version": {
+              "enum": [
+                "1.0",
+                "1.1"
+              ],
+              "title": "Schema Version",
+              "type": "string"
+            },
+            "source_language": {
+              "minLength": 1,
+              "title": "Source Language",
+              "type": "string"
+            },
+            "records": {
+              "items": {
+                "$ref": "#/$defs/DiagnosticBundleCandidate"
+              },
+              "title": "Records",
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "source_language",
+            "records"
+          ],
+          "title": "DiagnosticChunkOutput",
+          "type": "object"
+        }
+      }
+    },
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 2.5058833329821937,
+  "response": {
+    "id": "chatcmpl-ES2O8qpL73GH74YfMCllb4y5lJbAE",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"schema_version\":\"1.1\",\"source_language\":\"English\",\"records\":[]}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790351072,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 85,
+      "prompt_tokens": 5440,
+      "total_tokens": 5525,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 55,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cache_write_tokens": 2826,
+        "cached_tokens": 2611
+      }
+    }
+  },
+  "provider_request_id": "req_5563976e650a42708b63750860ea3010",
+  "error": null
+}

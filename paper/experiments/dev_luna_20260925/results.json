@@ -1,0 +1,797 @@
+{
+  "budget_audit": {
+    "cap_usd": 15,
+    "all_reservations_within_cap": true,
+    "no_token_envelope_breaches": true,
+    "all_attempts_finalized": true
+  },
+  "campaign": {
+    "started_utc": "2026-09-25T11:22:19.035732+00:00",
+    "budget_cap_usd": 15,
+    "status": "completed",
+    "manuals": [
+      {
+        "manual_id": "eastman_e554",
+        "return_code": 0
+      },
+      {
+        "manual_id": "danfoss_apf",
+        "return_code": 0
+      },
+      {
+        "manual_id": "graco_check_mate_200",
+        "return_code": 0
+      },
+      {
+        "manual_id": "hypertherm_powermax30_air",
+        "return_code": 0
+      }
+    ],
+    "finished_utc": "2026-09-25T11:41:31.340032+00:00",
+    "elapsed_seconds": 1152.319,
+    "budget": {
+      "absolute_budget_usd": 15.0,
+      "committed_usd": 0.156349335,
+      "active_reserved_usd": 0.0,
+      "remaining_usd": 14.843650665,
+      "reservation_count": 116,
+      "finalized_count": 116
+    }
+  },
+  "manuals": [
+    {
+      "manual_id": "eastman_e554",
+      "label": "Eastman Eagle S3L",
+      "cost": {
+        "calls": 21,
+        "estimated_usd": 0.030195205000000003,
+        "charged_usd": 0.030195205000000003,
+        "unknown_cost_calls": 0,
+        "failed_calls": 1,
+        "prompt_tokens": 114579,
+        "completion_tokens": 37212,
+        "models": {
+          "gpt-6-luna": 21
+        }
+      },
+      "timing": {
+        "started_utc": "2026-09-25T11:22:31.728751+00:00",
+        "manual_id": "eastman_e554",
+        "status": "completed",
+        "finished_utc": "2026-09-25T11:26:50.659312+00:00",
+        "total_elapsed_seconds": 258.934,
+        "budget": {
+          "absolute_budget_usd": 15.0,
+          "committed_usd": 0.030212205,
+          "active_reserved_usd": 0.0,
+          "remaining_usd": 14.969787795,
+          "reservation_count": 22,
+          "finalized_count": 22
+        },
+        "generation_elapsed_seconds": 236.545,
+        "preparation_and_overhead_seconds": 22.389
+      },
+      "diagnostic_compilation": {
+        "candidate_count": 73,
+        "publish_count": 6,
+        "unresolved_count": 22,
+        "contract_failure_count": 1,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 4,
+          "check_only": 1,
+          "declared_not_diagnostic": 45,
+          "failure_edge_without_failure": 1,
+          "missing_actions": 8,
+          "missing_failure": 1,
+          "no_action_stated": 6,
+          "quote_not_in_anchored_evidence": 3,
+          "structured_response_error": 8
+        },
+        "diagnostic_page_coverage_complete": true,
+        "unreadable_page_count": 0
+      },
+      "nodes": 144,
+      "relations": 145,
+      "node_types": {
+        "Asset": 1,
+        "Component": 127,
+        "CorrectiveAction": 6,
+        "FailureMode": 6,
+        "Symptom": 4
+      },
+      "review": {
+        "blocking": 25,
+        "by_code": {
+          "canonicalization_ambiguous": 14,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_contract_incomplete": 1,
+          "pdf_diagnostic_record_gap": 7,
+          "pdf_diagnostic_record_review": 15,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_pipeline_blocked": 1,
+          "pdf_pipeline_not_reviewable": 1,
+          "pdf_pipeline_schema_noncompliant": 1,
+          "pdf_relation_endpoint_omitted": 1
+        },
+        "total": 44
+      },
+      "approval_eligible": false,
+      "validation": {
+        "domain_range_errors": 0,
+        "duplicate_ids": 0,
+        "endpoint_errors": 0,
+        "extra_properties": 0,
+        "graph_invariant_errors": 0,
+        "issues": [],
+        "passed": true,
+        "provenance_resolvable": 394,
+        "provenance_total": 394,
+        "relation_grounding_passed": 145,
+        "relation_grounding_total": 145,
+        "required_properties_present": 595,
+        "required_properties_total": 595,
+        "unresolved_mapping_diagnostics": 0
+      },
+      "publication": {
+        "ambiguous_near_duplicates": 14,
+        "auto_merged_duplicates": 1,
+        "candidate_corrective_actions": 6,
+        "candidate_nodes": 144,
+        "candidate_relations": 145,
+        "diagnostic_accounting_complete": false,
+        "diagnostic_accounting_states": {
+          "autonomously_publishable": 6,
+          "extracted_not_compilable": 1,
+          "inspection_only_gap": 1,
+          "observed_excluded": 45,
+          "observed_structurally_incomplete": 8,
+          "record_not_observed": 12
+        },
+        "diagnostic_candidate_evidence_anchors": 12,
+        "diagnostic_candidate_pages": 11,
+        "diagnostic_candidate_records": 73,
+        "diagnostic_candidate_windows": 0,
+        "diagnostic_components": 6,
+        "diagnostic_disposed_records": 73,
+        "diagnostic_published_records": 6,
+        "diagnostic_unaccounted_candidate_evidence": 0,
+        "diagnostic_unaccounted_candidate_pages": 1,
+        "diagnostic_unaccounted_candidate_windows": 0,
+        "diagnostic_unresolved_records": 22,
+        "diagnostic_weak_component_sizes": [
+          10,
+          4,
+          4,
+          4
+        ],
+        "diagnostic_weakly_connected_components": 4,
+        "excluded_ungrounded_relations": 0,
+        "grounded_relations": 145,
+        "isolated_nodes": 0,
+        "knowledge_gaps": 44,
+        "low_confidence_ocr_pages": 6,
+        "nodes_by_type": {
+          "Asset": 1,
+          "Component": 127,
+          "CorrectiveAction": 6,
+          "FailureMode": 6,
+          "Symptom": 4
+        },
+        "published_corrective_actions": 6,
+        "published_corrective_actions_without_failure": 0,
+        "published_failure_modes": 6,
+        "published_failure_modes_without_action": 0,
+        "published_failure_modes_without_component": 0,
+        "published_failure_modes_without_indicator": 0,
+        "published_nodes": 144,
+        "published_relations": 145,
+        "published_symptoms": 4,
+        "published_symptoms_with_complete_path": 4,
+        "relations_by_type": {
+          "AFFECTS": 6,
+          "HAS_COMPONENT": 127,
+          "MAY_INDICATE": 6,
+          "RESOLVED_BY": 6
+        },
+        "review_queue_items": 44,
+        "structural_components": 127,
+        "ungrounded_relations": 0,
+        "unreadable_pages": 0,
+        "weak_component_sizes": [
+          144
+        ],
+        "weakly_connected_components": 1
+      },
+      "exact_grounding": {
+        "exact": 753,
+        "total": 753,
+        "relations_exact": 145,
+        "relations_total": 145,
+        "unresolved": [],
+        "passed": true
+      },
+      "historical_gold": {
+        "gold_claims_present": 3,
+        "gold_claims_total": 8,
+        "gold_claim_recall": 0.375,
+        "recall_floor": 0.75,
+        "autonomous_expected_claims_present": 3,
+        "traceable_review_claims_present": 0,
+        "explicit_expected_gaps_present": 0,
+        "published_complete_paths_total": 6,
+        "paths_outside_frozen_gold": 3,
+        "unsupported_path_gate_scope": "manual_audit_required",
+        "unsupported_published_paths_detected": 0,
+        "forbidden_pairings_found": 0,
+        "gold_pages_retained": [
+          37,
+          38,
+          39
+        ],
+        "gold_pages_required": [
+          37,
+          38,
+          39
+        ],
+        "checks": {
+          "recall_floor": false,
+          "forbidden_pairings_zero": true,
+          "unsupported_published_paths_zero": true,
+          "gold_page_retention": true
+        }
+      }
+    },
+    {
+      "manual_id": "danfoss_apf",
+      "label": "Danfoss Active Power Filter",
+      "cost": {
+        "calls": 16,
+        "estimated_usd": 0.0167932,
+        "charged_usd": 0.0167932,
+        "unknown_cost_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 96500,
+        "completion_tokens": 11589,
+        "models": {
+          "gpt-6-luna": 16
+        }
+      },
+      "timing": {
+        "started_utc": "2026-09-25T11:26:52.158088+00:00",
+        "manual_id": "danfoss_apf",
+        "status": "completed",
+        "finished_utc": "2026-09-25T11:28:46.981605+00:00",
+        "total_elapsed_seconds": 114.825,
+        "budget": {
+          "absolute_budget_usd": 15.0,
+          "committed_usd": 0.047005405,
+          "active_reserved_usd": 0.0,
+          "remaining_usd": 14.952994595,
+          "reservation_count": 38,
+          "finalized_count": 38
+        },
+        "generation_elapsed_seconds": 102.323,
+        "preparation_and_overhead_seconds": 12.502
+      },
+      "diagnostic_compilation": {
+        "candidate_count": 18,
+        "publish_count": 0,
+        "unresolved_count": 14,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 6,
+          "check_only": 1,
+          "declared_not_diagnostic": 4,
+          "missing_actions": 3,
+          "quote_not_in_anchored_evidence": 23,
+          "unknown_source_anchor": 1
+        },
+        "diagnostic_page_coverage_complete": true,
+        "unreadable_page_count": 2
+      },
+      "nodes": 35,
+      "relations": 34,
+      "node_types": {
+        "Asset": 1,
+        "Component": 34
+      },
+      "review": {
+        "blocking": 17,
+        "by_code": {
+          "canonicalization_ambiguous": 4,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 1,
+          "pdf_diagnostic_record_review": 13,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_unreadable_pages": 1
+        },
+        "total": 23
+      },
+      "approval_eligible": false,
+      "validation": {
+        "domain_range_errors": 0,
+        "duplicate_ids": 0,
+        "endpoint_errors": 0,
+        "extra_properties": 0,
+        "graph_invariant_errors": 0,
+        "issues": [],
+        "passed": true,
+        "provenance_resolvable": 152,
+        "provenance_total": 152,
+        "relation_grounding_passed": 34,
+        "relation_grounding_total": 34,
+        "required_properties_present": 141,
+        "required_properties_total": 141,
+        "unresolved_mapping_diagnostics": 0
+      },
+      "publication": {
+        "ambiguous_near_duplicates": 4,
+        "auto_merged_duplicates": 0,
+        "candidate_corrective_actions": 0,
+        "candidate_nodes": 35,
+        "candidate_relations": 34,
+        "diagnostic_accounting_complete": false,
+        "diagnostic_accounting_states": {
+          "extracted_not_compilable": 5,
+          "inspection_only_gap": 1,
+          "observed_excluded": 4,
+          "observed_structurally_incomplete": 2,
+          "record_not_observed": 6
+        },
+        "diagnostic_candidate_evidence_anchors": 6,
+        "diagnostic_candidate_pages": 5,
+        "diagnostic_candidate_records": 18,
+        "diagnostic_candidate_windows": 0,
+        "diagnostic_components": 0,
+        "diagnostic_disposed_records": 18,
+        "diagnostic_published_records": 0,
+        "diagnostic_unaccounted_candidate_evidence": 0,
+        "diagnostic_unaccounted_candidate_pages": 1,
+        "diagnostic_unaccounted_candidate_windows": 0,
+        "diagnostic_unresolved_records": 14,
+        "diagnostic_weak_component_sizes": [],
+        "diagnostic_weakly_connected_components": 0,
+        "excluded_ungrounded_relations": 0,
+        "grounded_relations": 34,
+        "isolated_nodes": 0,
+        "knowledge_gaps": 23,
+        "low_confidence_ocr_pages": 1,
+        "nodes_by_type": {
+          "Asset": 1,
+          "Component": 34
+        },
+        "published_corrective_actions": 0,
+        "published_corrective_actions_without_failure": 0,
+        "published_failure_modes": 0,
+        "published_failure_modes_without_action": 0,
+        "published_failure_modes_without_component": 0,
+        "published_failure_modes_without_indicator": 0,
+        "published_nodes": 35,
+        "published_relations": 34,
+        "published_symptoms": 0,
+        "published_symptoms_with_complete_path": 0,
+        "relations_by_type": {
+          "HAS_COMPONENT": 34
+        },
+        "review_queue_items": 23,
+        "structural_components": 34,
+        "ungrounded_relations": 0,
+        "unreadable_pages": 2,
+        "weak_component_sizes": [
+          35
+        ],
+        "weakly_connected_components": 1
+      },
+      "exact_grounding": {
+        "exact": 166,
+        "total": 166,
+        "relations_exact": 34,
+        "relations_total": 34,
+        "unresolved": [],
+        "passed": true
+      },
+      "historical_gold": {
+        "gold_claims_present": 1,
+        "gold_claims_total": 8,
+        "gold_claim_recall": 0.125,
+        "recall_floor": 0.75,
+        "autonomous_expected_claims_present": 0,
+        "traceable_review_claims_present": 0,
+        "explicit_expected_gaps_present": 1,
+        "published_complete_paths_total": 0,
+        "paths_outside_frozen_gold": 0,
+        "unsupported_path_gate_scope": "exhaustive_gold",
+        "unsupported_published_paths_detected": 0,
+        "forbidden_pairings_found": 0,
+        "gold_pages_retained": [
+          64
+        ],
+        "gold_pages_required": [
+          64
+        ],
+        "checks": {
+          "recall_floor": false,
+          "forbidden_pairings_zero": true,
+          "unsupported_published_paths_zero": true,
+          "gold_page_retention": true
+        }
+      }
+    },
+    {
+      "manual_id": "graco_check_mate_200",
+      "label": "Graco Check-Mate 200 Pump",
+      "cost": {
+        "calls": 15,
+        "estimated_usd": 0.01600785,
+        "charged_usd": 0.01600785,
+        "unknown_cost_calls": 0,
+        "failed_calls": 1,
+        "prompt_tokens": 80209,
+        "completion_tokens": 14136,
+        "models": {
+          "gpt-6-luna": 15
+        }
+      },
+      "timing": {
+        "started_utc": "2026-09-25T11:28:48.617744+00:00",
+        "manual_id": "graco_check_mate_200",
+        "status": "completed",
+        "finished_utc": "2026-09-25T11:30:34.770538+00:00",
+        "total_elapsed_seconds": 106.154,
+        "budget": {
+          "absolute_budget_usd": 15.0,
+          "committed_usd": 0.063013255,
+          "active_reserved_usd": 0.0,
+          "remaining_usd": 14.936986745,
+          "reservation_count": 53,
+          "finalized_count": 53
+        },
+        "generation_elapsed_seconds": 99.301,
+        "preparation_and_overhead_seconds": 6.853
+      },
+      "diagnostic_compilation": {
+        "candidate_count": 6,
+        "publish_count": 0,
+        "unresolved_count": 3,
+        "contract_failure_count": 1,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 3,
+          "declared_not_diagnostic": 3,
+          "structured_response_error": 1
+        },
+        "diagnostic_page_coverage_complete": true,
+        "unreadable_page_count": 0
+      },
+      "nodes": 42,
+      "relations": 41,
+      "node_types": {
+        "Asset": 1,
+        "Component": 41
+      },
+      "review": {
+        "blocking": 5,
+        "by_code": {
+          "canonicalization_ambiguous": 2,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_contract_incomplete": 1,
+          "pdf_diagnostic_record_review": 3,
+          "pdf_pipeline_blocked": 1,
+          "pdf_pipeline_not_reviewable": 1,
+          "pdf_pipeline_schema_noncompliant": 1
+        },
+        "total": 10
+      },
+      "approval_eligible": false,
+      "validation": {
+        "domain_range_errors": 0,
+        "duplicate_ids": 0,
+        "endpoint_errors": 0,
+        "extra_properties": 0,
+        "graph_invariant_errors": 0,
+        "issues": [],
+        "passed": true,
+        "provenance_resolvable": 152,
+        "provenance_total": 152,
+        "relation_grounding_passed": 41,
+        "relation_grounding_total": 41,
+        "required_properties_present": 169,
+        "required_properties_total": 169,
+        "unresolved_mapping_diagnostics": 0
+      },
+      "publication": {
+        "ambiguous_near_duplicates": 2,
+        "auto_merged_duplicates": 0,
+        "candidate_corrective_actions": 0,
+        "candidate_nodes": 42,
+        "candidate_relations": 41,
+        "diagnostic_accounting_complete": false,
+        "diagnostic_accounting_states": {
+          "observed_excluded": 3,
+          "record_not_observed": 3
+        },
+        "diagnostic_candidate_evidence_anchors": 3,
+        "diagnostic_candidate_pages": 6,
+        "diagnostic_candidate_records": 6,
+        "diagnostic_candidate_windows": 0,
+        "diagnostic_components": 0,
+        "diagnostic_disposed_records": 6,
+        "diagnostic_published_records": 0,
+        "diagnostic_unaccounted_candidate_evidence": 0,
+        "diagnostic_unaccounted_candidate_pages": 4,
+        "diagnostic_unaccounted_candidate_windows": 0,
+        "diagnostic_unresolved_records": 3,
+        "diagnostic_weak_component_sizes": [],
+        "diagnostic_weakly_connected_components": 0,
+        "excluded_ungrounded_relations": 0,
+        "grounded_relations": 41,
+        "isolated_nodes": 0,
+        "knowledge_gaps": 10,
+        "low_confidence_ocr_pages": 0,
+        "nodes_by_type": {
+          "Asset": 1,
+          "Component": 41
+        },
+        "published_corrective_actions": 0,
+        "published_corrective_actions_without_failure": 0,
+        "published_failure_modes": 0,
+        "published_failure_modes_without_action": 0,
+        "published_failure_modes_without_component": 0,
+        "published_failure_modes_without_indicator": 0,
+        "published_nodes": 42,
+        "published_relations": 41,
+        "published_symptoms": 0,
+        "published_symptoms_with_complete_path": 0,
+        "relations_by_type": {
+          "HAS_COMPONENT": 41
+        },
+        "review_queue_items": 10,
+        "structural_components": 41,
+        "ungrounded_relations": 0,
+        "unreadable_pages": 0,
+        "weak_component_sizes": [
+          42
+        ],
+        "weakly_connected_components": 1
+      },
+      "exact_grounding": {
+        "exact": 319,
+        "total": 319,
+        "relations_exact": 41,
+        "relations_total": 41,
+        "unresolved": [],
+        "passed": true
+      },
+      "historical_gold": {
+        "gold_claims_present": 0,
+        "gold_claims_total": 18,
+        "gold_claim_recall": 0.0,
+        "recall_floor": 0.8333,
+        "autonomous_expected_claims_present": 0,
+        "traceable_review_claims_present": 0,
+        "explicit_expected_gaps_present": 0,
+        "published_complete_paths_total": 0,
+        "paths_outside_frozen_gold": 0,
+        "unsupported_path_gate_scope": "exhaustive_gold",
+        "unsupported_published_paths_detected": 0,
+        "forbidden_pairings_found": 0,
+        "gold_pages_retained": [
+          11
+        ],
+        "gold_pages_required": [
+          11
+        ],
+        "checks": {
+          "recall_floor": false,
+          "forbidden_pairings_zero": true,
+          "unsupported_published_paths_zero": true,
+          "gold_page_retention": true
+        }
+      }
+    },
+    {
+      "manual_id": "hypertherm_powermax30_air",
+      "label": "Powermax30 AIR plasma cutting system",
+      "cost": {
+        "calls": 63,
+        "estimated_usd": 0.07686270499999999,
+        "charged_usd": 0.09333608000000002,
+        "unknown_cost_calls": 2,
+        "failed_calls": 3,
+        "prompt_tokens": 362560,
+        "completion_tokens": 74417,
+        "models": {
+          "gpt-6-luna": 63
+        }
+      },
+      "timing": {
+        "started_utc": "2026-09-25T11:30:36.511756+00:00",
+        "manual_id": "hypertherm_powermax30_air",
+        "status": "completed",
+        "finished_utc": "2026-09-25T11:41:31.087765+00:00",
+        "total_elapsed_seconds": 654.585,
+        "budget": {
+          "absolute_budget_usd": 15.0,
+          "committed_usd": 0.156349335,
+          "active_reserved_usd": 0.0,
+          "remaining_usd": 14.843650665,
+          "reservation_count": 116,
+          "finalized_count": 116
+        },
+        "generation_elapsed_seconds": 606.277,
+        "preparation_and_overhead_seconds": 48.308
+      },
+      "diagnostic_compilation": {
+        "candidate_count": 83,
+        "publish_count": 10,
+        "unresolved_count": 56,
+        "contract_failure_count": 3,
+        "drop_reasons": {
+          "action_without_failure": 5,
+          "candidate_passage_missing_disposition": 13,
+          "check_only": 10,
+          "component_without_failure": 4,
+          "declared_not_diagnostic": 17,
+          "failure_edge_without_failure": 7,
+          "lineage_anchor_outside_bundle": 5,
+          "missing_actions": 15,
+          "missing_failure": 12,
+          "no_action_stated": 8,
+          "quote_not_in_anchored_evidence": 14,
+          "structured_response_error": 5,
+          "unknown_lineage_anchor": 6,
+          "unknown_source_anchor": 23
+        },
+        "diagnostic_page_coverage_complete": true,
+        "unreadable_page_count": 0
+      },
+      "nodes": 134,
+      "relations": 132,
+      "node_types": {
+        "Asset": 1,
+        "Component": 112,
+        "CorrectiveAction": 7,
+        "ErrorCode": 1,
+        "FailureMode": 7,
+        "Symptom": 6
+      },
+      "review": {
+        "blocking": 59,
+        "by_code": {
+          "canonicalization_ambiguous": 15,
+          "diagnostic_failure_without_component": 2,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_contract_incomplete": 1,
+          "pdf_diagnostic_record_gap": 18,
+          "pdf_diagnostic_record_review": 38,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_pipeline_blocked": 1,
+          "pdf_pipeline_not_reviewable": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1
+        },
+        "total": 82
+      },
+      "approval_eligible": false,
+      "validation": {
+        "domain_range_errors": 0,
+        "duplicate_ids": 0,
+        "endpoint_errors": 0,
+        "extra_properties": 0,
+        "graph_invariant_errors": 0,
+        "issues": [],
+        "passed": true,
+        "provenance_resolvable": 1399,
+        "provenance_total": 1399,
+        "relation_grounding_passed": 132,
+        "relation_grounding_total": 132,
+        "required_properties_present": 558,
+        "required_properties_total": 558,
+        "unresolved_mapping_diagnostics": 0
+      },
+      "publication": {
+        "ambiguous_near_duplicates": 15,
+        "auto_merged_duplicates": 1,
+        "candidate_corrective_actions": 10,
+        "candidate_nodes": 137,
+        "candidate_relations": 135,
+        "diagnostic_accounting_complete": false,
+        "diagnostic_accounting_states": {
+          "autonomously_publishable": 10,
+          "extracted_not_compilable": 11,
+          "inspection_only_gap": 10,
+          "observed_excluded": 17,
+          "observed_structurally_incomplete": 17,
+          "record_not_observed": 18
+        },
+        "diagnostic_candidate_evidence_anchors": 18,
+        "diagnostic_candidate_pages": 25,
+        "diagnostic_candidate_records": 83,
+        "diagnostic_candidate_windows": 0,
+        "diagnostic_components": 4,
+        "diagnostic_disposed_records": 83,
+        "diagnostic_published_records": 10,
+        "diagnostic_unaccounted_candidate_evidence": 0,
+        "diagnostic_unaccounted_candidate_pages": 2,
+        "diagnostic_unaccounted_candidate_windows": 0,
+        "diagnostic_unresolved_records": 56,
+        "diagnostic_weak_component_sizes": [
+          7,
+          4,
+          4,
+          4,
+          4,
+          3
+        ],
+        "diagnostic_weakly_connected_components": 6,
+        "excluded_ungrounded_relations": 0,
+        "grounded_relations": 132,
+        "isolated_nodes": 0,
+        "knowledge_gaps": 82,
+        "low_confidence_ocr_pages": 3,
+        "nodes_by_type": {
+          "Asset": 1,
+          "Component": 112,
+          "CorrectiveAction": 7,
+          "ErrorCode": 1,
+          "FailureMode": 7,
+          "Symptom": 6
+        },
+        "published_corrective_actions": 7,
+        "published_corrective_actions_without_failure": 0,
+        "published_failure_modes": 7,
+        "published_failure_modes_without_action": 0,
+        "published_failure_modes_without_component": 2,
+        "published_failure_modes_without_indicator": 0,
+        "published_nodes": 134,
+        "published_relations": 132,
+        "published_symptoms": 6,
+        "published_symptoms_with_complete_path": 6,
+        "relations_by_type": {
+          "AFFECTS": 5,
+          "GENERATES_ERROR": 1,
+          "HAS_COMPONENT": 112,
+          "INDICATES": 1,
+          "MAY_INDICATE": 6,
+          "RESOLVED_BY": 7
+        },
+        "review_queue_items": 82,
+        "structural_components": 112,
+        "ungrounded_relations": 0,
+        "unreadable_pages": 0,
+        "weak_component_sizes": [
+          131,
+          3
+        ],
+        "weakly_connected_components": 2
+      },
+      "exact_grounding": {
+        "exact": 3016,
+        "total": 3016,
+        "relations_exact": 132,
+        "relations_total": 132,
+        "unresolved": [],
+        "passed": true
+      },
+      "historical_gold": null
+    }
+  ],
+  "smoke_cost": {
+    "calls": 1,
+    "estimated_usd": 1.7e-05,
+    "charged_usd": 1.7e-05,
+    "unknown_cost_calls": 0,
+    "failed_calls": 0,
+    "prompt_tokens": 70,
+    "completion_tokens": 20,
+    "models": {
+      "gpt-6-luna": 1
+    }
+  },
+  "gold_sha256": "c92ba0a8bcb1721055f6fc8c10c3d0a6a57eb3dc35134755d06574d6272a5291",
+  "evaluation_limit": "Historical partial/development gold and lexical matcher. No estimate of full semantic precision. Hypertherm has no gold. No direct causal comparison with v11 because code and model differ."
+}

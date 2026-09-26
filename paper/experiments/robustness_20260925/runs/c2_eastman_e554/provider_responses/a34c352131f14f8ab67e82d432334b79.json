@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "c2_eastman_e554:2e4f9b40f1c840689718dad7ddb25e61",
+  "run_id": "c2_eastman_e554",
+  "started_utc": "2026-09-25T15:44:51.759071+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "max_completion_tokens": 24000,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You extract diagnostic records from a technical manual into a typed contract.\n\nSource type: technical PDF\nSource title: 01_eastman_e554_service_manual.pdf\n\nThe input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be\na complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,\necho its window_id and allowed_source_anchors on every candidate; the system overwrites and\nverifies both fields and no evidence outside that block is allowed. For a section chunk, set\nrecord_window_id=\"\" and set allowed_source_anchors to exactly the anchors referenced by that\ncandidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL\ncontext may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields\nbelong to the current cause/remedy branch. Each displayed FIELD value is one exact source\nspan. Quote the value only: never include the \"FIELD n:\" label, join separate fields, or\nrestore a sibling field omitted by the system.\nReturn every explicit diagnostic record and every distinct cause/remedy branch in the input.\nThe contract is an intermediate record representation, not the final graph. Use schema_version=\"1.1\".\n\nRules:\n1. Never emit graph IDs or ontology relation names. The system owns them.\n2. A diagnostic record has one or more indicators. An indicator is either an observable\n   symptom or an asset-generated error/alarm code. A record may explicitly contain both;\n   keep both. For a symptom set code=null and severity=\"Unknown\" unless the source explicitly\n   states its severity; never invent a risk rating. For an error_code set its\n   code and severity=null. Only an explicit not_diagnostic page disposition may use an empty\n   indicator list.\n3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action\n   from different table rows, flowchart branches or unrelated paragraphs.\n4. A FailureMode is an explicit technical cause or faulty state, not a restatement of the\n   symptom, an inspection result or an invented explanation. Use null when none is stated.\n5. A CorrectiveAction is an explicitly restorative remedy for that failure. Checks and tests\n   are not restorative unless the source says the check itself resolves the fault. Preserve\n   a non-restorative check/test/inspection in inspection_steps, never in actions.\n6. Set resolution_status:\n   - action_stated: at least one restorative action is explicitly linked to the failure;\n   - no_action_stated: the diagnostic record states a failure but no remedy;\n   - check_only: it gives only diagnostic checks/verification;\n   - ambiguous: the row/branch pairing cannot be established safely;\n   - not_diagnostic: a candidate-looking passage is actually preventive/generic content.\n7. An affected component is optional. Include it only if the branch explicitly identifies the\n   affected component. category and failure.material_context are required-but-nullable: use\n   null rather than manufacturing a category/context. A null category does not invalidate a\n   grounded branch; the deterministic compiler supplies a neutral schema category. Do not use\n   a product name as a component.\n8. Evidence is edge-specific. claim_evidence proves only the claim. Each edge evidence list is\n   a support set: one span may explicitly state the whole link, or several spans from the same\n   record/branch may collectively establish it when a manual separates Problem, Cause and\n   Remedy across blocks or pages. failure_link_evidence supports only that exact indicator to\n   failure; resolution_link_evidence supports only that exact failure to action;\n   affects_link_evidence supports only that exact failure to component. Include every span\n   needed to establish the link and no unrelated nearby heading. Never use an action-only span\n   as the sole proof of an indicator-to-failure edge.\n   In a system-owned atomic table row, use the exact endpoint FIELD spans as the edge support\n   set; the deterministic compiler verifies the table structure and completes their union.\n9. Every quote is a short verbatim span contained in the EvidenceUnit named by source_anchor,\n   on source_page. Prefer one span per EvidenceUnit. If wording crosses adjacent units, emit\n   separate exact spans; never concatenate or paraphrase cells. Copy the opaque anchor exactly.\n   Do not include page/anchor marker text in a quote.\n10. record_anchor must be one of this candidate's claim-evidence anchors. branch_anchor must be\n    one of this candidate's evidence anchors (prefer a causal edge anchor). For an explicit\n    not_diagnostic disposition with no claims, set both to the candidate page's EvidenceUnit\n    anchor. These anchors are source locators, not freely generated IDs.\n11. Preserve source language in human-readable values and set source_language accordingly.\n12. Duplicate records caused by overlapping pages must be returned identically; deterministic\n    lineage and compilation will deduplicate them.\n13. Account for candidate-looking passages. If one is actually generic/preventive content,\n    emit a not_diagnostic candidate with empty indicators and no diagnostic claims. Return an\n    empty records list only when the input contains no candidate-looking passage at all. Never\n    fill a missing cause/action simply to make a complete record.\n14. Every anchored candidate-looking passage in the input must occur in a record's claim/edge\n    evidence, or have its own explicit not_diagnostic disposition. Do not cover only the first\n    row or branch of a troubleshooting table.\n15. For check_only, actions must be empty and inspection_steps must preserve each stated check\n    with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.\n16. Preserve every stated precondition, test outcome, negation, threshold and alternative in\n    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection\n    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test\n    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.\n    Keep inspection_steps and actions in source order; do not sort steps alphabetically.\n17. Preserve the actual error CODE separately from its fault name, including a numerical code\n    in a separate table column. Never substitute the name for a printed numeric code.\n"
+      },
+      {
+        "role": "user",
+        "content": "## DOCUMENT CONTEXT\nThese pages come from the following manual sections:\n- Pen Replacement (pp. 16-16, source: rule)\n- Punch Replacement (pp. 16-16, source: rule)\n- Cleaning of Airbrush (pp. 17-17, source: rule)\n- Needle Removal (pp. 17-17, source: rule)\n- X-Motor Belt Replacement (pp. 18-18, source: rule)\n- Y-Motor Belt Replacement (pp. 18-18, source: rule)\n- Theta-Motor Belt Replacement (pp. 19-19, source: rule)\n- X-Axis Linear Bearing Replacement (pp. 19-19, source: rule)\n\nUse this context to better interpret the content. Extract all ontology-relevant information from these sections, including components, error codes, symptoms, failure modes, and corrective actions.\n\n--- PAGE 16 ---\n\n[[EVIDENCE_ID: a0001]]\nPunch Replacement\n\n[[EVIDENCE_ID: a0002]]\nWarning: Always handle punches blades with care.\nSafely dispose of use punch blades.\n\n[[EVIDENCE_ID: a0003]]\nPlace the tool holder assembly on the tool changing station\n(Eastman #68-26141) as shown. Engage alignment tang in\ntool changing station and secure both holder screws to\nprevent movement.\n\n[[EVIDENCE_ID: a0004]]\nUsing an allen wrench, loosen the locking screw as shown.\nRemove worn punch blade from holder and replace with new\npunch blade. Secure locking screw.\n\n[[EVIDENCE_ID: a0005]]\nPen Replacement\nUsing an allen wrench remove the screws holding the white\nplastic pen saddle.\n\n[[EVIDENCE_ID: a0006]]\nRemove the marking pen.\n\n[[EVIDENCE_ID: a0007]]\nDisassemble the pen exposing the pen ink refill. Replace\nwith new refill. Reassemble the marking pen. Secure pen and\nwhite plastic saddle by mounting and tightening the screws\nwith the allen wrench.\n\n[[EVIDENCE_ID: a0008]]\n16\nForm E-554\n\n--- PAGE 17 ---\n\n[[EVIDENCE_ID: a0009]]\nAirbrush Ink Refill\nWhen the ink supply runs low, replace the 1/2 pint ink\nreservoir with a fresh container of ink. This will eliminate\nimpurities clogging the air brush.\n\n[[EVIDENCE_ID: a0010]]\nSeal Pin\n\n[[EVIDENCE_ID: a0011]]\nInk Reservoir\n\n[[EVIDENCE_ID: a0012]]\nIf refilling the 1/2 pint ink reservoir from gallon containers, the\nink reservoir should be drained and cleaned. This will help\navoid thick sediment from forming at the bottom of the ink\nreservoir.\n\n[[EVIDENCE_ID: a0013]]\nNote: Ink should always be shaken before refilling or install-\ning a new ink reservoir.\n\n[[EVIDENCE_ID: a0014]]\nNote: Always seal the bottle top vent hole with the sealing pin\nwhen not in use. If the vent hole is not sealed, the ink will\nthicken and may cause airbrush clogging.\n\n[[EVIDENCE_ID: a0015]]\nIt is recommended to activate the airbrush at the beginning\nand end of each shift. Eastman ink is considered a self\ncleaning ink and will clean the air brush as it is activated.\n\n[[EVIDENCE_ID: a0016]]\nIf using a washable ink, check expiration date. Washable ink\nhas a 6 month expiration date. After expiration date the ink\ncan potentially damage the air brush and should not be used.\n\n[[EVIDENCE_ID: a0017]]\nCleaning of Airbrush\nThe air brush stylus has been designed for minimum main-\ntenance. The leather packing washers should be lubricated\nonce a month with light oil. Old packing washers cause\nleakage of air or fluid. Flush clean solvent through the fluid\npassage of the stylus and wipe off the outside with clean\nsolvent. Never leave the entire stylus immersed in solvent.\nDirty spray caps and tips should be cleaned by soaking in\nsolvent and blow clean with air.\n\n[[EVIDENCE_ID: a0018]]\nNote: Never use wire or sharp instruments to clean ports as\npermanent damage may occur.\n\n[[EVIDENCE_ID: a0019]]\nSpray Tip and Cap Replacement\nRemove the Airbrush stylus from tool head. Release needle\npressure from the seat of tip, by backing off the fluid adjusting\nnut. Loosen spray cap nut and remove spray cap and spray\ntip. Leave needle in place. Check cap and tip size. Install new\ncap and tip. Note: use only matching size cap and tip.\nSecure spray cap nut.\n\n[[EVIDENCE_ID: a0020]]\nNeedle Removal\nRemove the Airbrush stylus from tool head. Release needle\npressure from the seat of tip, by backing off the fluid adjusting\nnut.Remove the rear cap assembly. Using a pair of pliers,\ngrip the needle piston assembly nut and pull the assembly\nout.Loosen the needle chuck and slide needle out. Replace\nneedle to desired position and secure needle chuck. Reas-\nsemble in reverse order.\n\n[[EVIDENCE_ID: a0021]]\nNeedle Setting\nInk should be mixed thoroughly and always strained through\na lint free cloth or fine mesh filter  (Eastman# 67-26588)\nbefore using. The needle-piston assembly has a needle\nchuck which locks the needle in position. The single groove\non the shank of the needle indicates location at which to lock\nthe piston. Lock piston slightly below mark for use with very\nheavy fluids and slightly above mark (nearer blunt end) for\nlight fluids.\nEx: Eastman MP style ink requires the groove to be com-\npletely covered.\n\n[[EVIDENCE_ID: a0022]]\n17\nForm E-554\n\n--- PAGE 18 ---\n\n[[EVIDENCE_ID: a0023]]\nX-Motor Belt Replacement\nX-Motor belts are located under the gantry and covers.\n\n[[EVIDENCE_ID: a0024]]\n1. Power down the machine using proper shut down/lock out\nprocedures.\n\n[[EVIDENCE_ID: a0025]]\n2. Remove the gantry end cover.\n\n[[EVIDENCE_ID: a0026]]\n3. Loosen the (4) motor screws to remove belt tension.\n\n[[EVIDENCE_ID: a0027]]\n4. Remove the (6) shaft support plate screws and rotate plate\ndown out of way.\n\n[[EVIDENCE_ID: a0028]]\n5. If equipped, loosen belt guides.\n\n[[EVIDENCE_ID: a0029]]\n6. Remove old worn belt and replace with new belt.\n\n[[EVIDENCE_ID: a0030]]\n7. Hold the belt on the large pulley and roll the belt onto the\nmotor pulley until the belt seats itself into the pulley teeth.\n\n[[EVIDENCE_ID: a0031]]\n8. Rotate the Support plate into position and secure (6)\nscrews.\n\n[[EVIDENCE_ID: a0032]]\n9. Tension the belt by applying up pressure to motor as\nshown. Secure motor screws. Secure the belt tensioner\nif equipped.\n\n[[EVIDENCE_ID: a0033]]\n10. Reinstall gantry cover.\n\n[[EVIDENCE_ID: a0034]]\nY-Motor Belt Replacement\nY-Motor belt is located on the y-car under the laser bridge.\n\n[[EVIDENCE_ID: a0035]]\n1. Power down the machine using proper shut down/lock out\nprocedures.\n\n[[EVIDENCE_ID: a0036]]\n2. Remove the tool head cover and the non-operator side rear\nbridge cover. Remove the fume extractor shroud.\n\n[[EVIDENCE_ID: a0037]]\n3. Remove the vertical shroud mount by removing (2) screws.\n\n[[EVIDENCE_ID: a0038]]\n4. Loosen the (4) y-motor mounting screws to release belt\ntension.\n\n[[EVIDENCE_ID: a0039]]\n18\nForm E-554\n\n--- PAGE 19 ---\n\n[[EVIDENCE_ID: a0040]]\n5. Remove (6) screws holding the upper pulley plate &\nbearing. Lift the upper pulley plate & bearing evenly to\nremove. A prybar or screwdriver may be required.\n\n[[EVIDENCE_ID: a0041]]\n6. Remove old belt and replace with new.\n\n[[EVIDENCE_ID: a0042]]\n7. Install upper pulley plate & bearing. Secure all (6) screws.\nCheck backlash and adjust if required.\n\n[[EVIDENCE_ID: a0043]]\n8. Set belt tension and secure motor.\n\n[[EVIDENCE_ID: a0044]]\n9. Reassemble the remaining components.\n\n[[EVIDENCE_ID: a0045]]\nTheta-Motor Belt Replacement\nThe Theta-Motor Belt in located on the tool head. There are\na variety of tool heads available for your system and the\nprocess may vary slightly.\n\n[[EVIDENCE_ID: a0046]]\n1. Power down the machine using proper shut down/lock out\nprocedures.\n\n[[EVIDENCE_ID: a0047]]\n2. Remover the tool head cover.\n\n[[EVIDENCE_ID: a0048]]\n3. Loosen the (4) theta motor mounting screws to release\nbelt tension.\n\n[[EVIDENCE_ID: a0049]]\n4. Label each brass spindle coupling with corresponding\nspindle number. This will ensure the coupling is reas-\nsembled on the same spindle. Remove coupling.\n\n[[EVIDENCE_ID: a0050]]\n5. Some models may require the removal of the home sensor\nand/or belt tensioner. If required, remove them now.\n\n[[EVIDENCE_ID: a0051]]\n6. Remove the old belt and replace with new. It is not\nrecommended to cut the old belt off.\n\n[[EVIDENCE_ID: a0052]]\n7. Reassemble in reverse order. Check belt tension and\nadjust as required.\n\n[[EVIDENCE_ID: a0053]]\nX-Axis Linear Bearing Replacement\nIt is important to regularly inspect and replace the linear\nbearings on the Eastman cutting system.  Properly main-\ntaining your linear bearings with grease and regular replace-\nment will prevent damage to the linear rails, increase life of\nspur gears, increase cutting performance and accuracy.\n\n[[EVIDENCE_ID: a0054]]\n1. Power down the machine using proper shut down/lock out\nprocedures.\n\n[[EVIDENCE_ID: a0055]]\n2. Remove table end stop and (4) screws..\n\n[[EVIDENCE_ID: a0056]]\n3. Remove the gantry end cover.\n\n[[EVIDENCE_ID: a0057]]\n4. Place wood block under gantry for support.\n\n[[EVIDENCE_ID: a0058]]\n19\nForm E-554"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "DiagnosticChunkOutput",
+        "strict": true,
+        "schema": {
+          "$defs": {
+            "AffectedComponentCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "category": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Category"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "affects_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Affects Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "category",
+                "claim_evidence",
+                "affects_link_evidence"
+              ],
+              "title": "AffectedComponentCandidate",
+              "type": "object"
+            },
+            "CorrectiveActionCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "action_kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Action Kind"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "resolution_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Resolution Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instruction_text",
+                "action_kind",
+                "claim_evidence",
+                "resolution_link_evidence"
+              ],
+              "title": "CorrectiveActionCandidate",
+              "type": "object"
+            },
+            "DiagnosticBundleCandidate": {
+              "additionalProperties": false,
+              "description": "One source record, potentially containing several observed indicators.",
+              "properties": {
+                "record_window_id": {
+                  "title": "Record Window Id",
+                  "type": "string"
+                },
+                "allowed_source_anchors": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Allowed Source Anchors",
+                  "type": "array"
+                },
+                "record_anchor": {
+                  "minLength": 1,
+                  "title": "Record Anchor",
+                  "type": "string"
+                },
+                "branch_anchor": {
+                  "minLength": 1,
+                  "title": "Branch Anchor",
+                  "type": "string"
+                },
+                "indicators": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticIndicatorCandidate"
+                  },
+                  "title": "Indicators",
+                  "type": "array"
+                },
+                "failure": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FailureModeCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actions": {
+                  "items": {
+                    "$ref": "#/$defs/CorrectiveActionCandidate"
+                  },
+                  "title": "Actions",
+                  "type": "array"
+                },
+                "inspection_steps": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticInspectionStepCandidate"
+                  },
+                  "title": "Inspection Steps",
+                  "type": "array"
+                },
+                "conditions": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticConditionCandidate"
+                  },
+                  "title": "Conditions",
+                  "type": "array"
+                },
+                "affected_component": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AffectedComponentCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolution_status": {
+                  "$ref": "#/$defs/ResolutionStatus"
+                }
+              },
+              "required": [
+                "record_window_id",
+                "allowed_source_anchors",
+                "record_anchor",
+                "branch_anchor",
+                "indicators",
+                "failure",
+                "actions",
+                "inspection_steps",
+                "conditions",
+                "affected_component",
+                "resolution_status"
+              ],
+              "title": "DiagnosticBundleCandidate",
+              "type": "object"
+            },
+            "DiagnosticConditionCandidate": {
+              "additionalProperties": false,
+              "description": "Source-stated condition attached to a branch or a zero-based step.",
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "title": "Text",
+                  "type": "string"
+                },
+                "applies_to": {
+                  "enum": [
+                    "branch",
+                    "action",
+                    "inspection"
+                  ],
+                  "title": "Applies To",
+                  "type": "string"
+                },
+                "step_index": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Step Index"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "text",
+                "applies_to",
+                "step_index",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticConditionCandidate",
+              "type": "object"
+            },
+            "DiagnosticEvidenceSpan": {
+              "additionalProperties": false,
+              "description": "A verbatim source span emitted by the extraction model.\n\n``source_anchor`` is the opaque evidence identifier printed in the model's\ninput.  It is intentionally not a graph node identifier.",
+              "properties": {
+                "source_anchor": {
+                  "minLength": 1,
+                  "title": "Source Anchor",
+                  "type": "string"
+                },
+                "source_page": {
+                  "minimum": 1,
+                  "title": "Source Page",
+                  "type": "integer"
+                },
+                "quote": {
+                  "minLength": 1,
+                  "title": "Quote",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source_anchor",
+                "source_page",
+                "quote"
+              ],
+              "title": "DiagnosticEvidenceSpan",
+              "type": "object"
+            },
+            "DiagnosticIndicatorCandidate": {
+              "additionalProperties": false,
+              "description": "Provider-safe flat indicator contract.\n\nOpenAI strict Structured Outputs does not accept the ``oneOf`` emitted by\nPydantic for a discriminated model union inside an array.  Keep the wire\nshape flat and enforce the same symptom/error-code invariants locally.\nNullable fields remain required so the provider schema is strict.",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "symptom",
+                    "error_code"
+                  ],
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "code": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code"
+                },
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "severity": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "Critical",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Severity"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "failure_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Failure Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "code",
+                "name",
+                "description",
+                "severity",
+                "claim_evidence",
+                "failure_link_evidence"
+              ],
+              "title": "DiagnosticIndicatorCandidate",
+              "type": "object"
+            },
+            "DiagnosticInspectionStepCandidate": {
+              "additionalProperties": false,
+              "description": "A diagnostic check that is useful but does not itself restore operation.",
+              "properties": {
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "instruction_text",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticInspectionStepCandidate",
+              "type": "object"
+            },
+            "FailureModeCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "material_context": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Material Context"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "material_context",
+                "claim_evidence"
+              ],
+              "title": "FailureModeCandidate",
+              "type": "object"
+            },
+            "ResolutionStatus": {
+              "description": "The extractor's explicit assessment of diagnostic completeness.",
+              "enum": [
+                "action_stated",
+                "no_action_stated",
+                "check_only",
+                "ambiguous",
+                "not_diagnostic"
+              ],
+              "title": "ResolutionStatus",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Provider structured-output envelope for one diagnostic PDF chunk.\n\nAll fields are required, including nullable/list fields.  This avoids the\noptional-property mismatch of strict provider JSON Schema implementations.",
+          "properties": {
+            "schema_version": {
+              "enum": [
+                "1.0",
+                "1.1"
+              ],
+              "title": "Schema Version",
+              "type": "string"
+            },
+            "source_language": {
+              "minLength": 1,
+              "title": "Source Language",
+              "type": "string"
+            },
+            "records": {
+              "items": {
+                "$ref": "#/$defs/DiagnosticBundleCandidate"
+              },
+              "title": "Records",
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "source_language",
+            "records"
+          ],
+          "title": "DiagnosticChunkOutput",
+          "type": "object"
+        }
+      }
+    },
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 9.922290999966208,
+  "response": {
+    "id": "chatcmpl-ES2OSvedLAQqsxg7mQ9Usy5UNmLtS",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"schema_version\":\"1.1\",\"source_language\":\"English\",\"records\":[{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0017\"],\"record_anchor\":\"a0017\",\"branch_anchor\":\"a0017\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Leakage of air or fluid\",\"description\":\"Leakage of air or fluid from the airbrush stylus.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0017\",\"source_page\":17,\"quote\":\"cause leakage of air or fluid\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0017\",\"source_page\":17,\"quote\":\"Old packing washers cause leakage of air or fluid.\"}]}],\"failure\":{\"name\":\"Old packing washers\",\"description\":\"Old packing washers cause leakage of air or fluid.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0017\",\"source_page\":17,\"quote\":\"Old packing washers cause leakage of air or fluid.\"}]},\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"Leather packing washers\",\"description\":\"Packing washers in the air brush stylus.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0017\",\"source_page\":17,\"quote\":\"The leather packing washers\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0017\",\"source_page\":17,\"quote\":\"The leather packing washers should be lubricated once a month with light oil. Old packing washers cause leakage of air or fluid.\"}]},\"resolution_status\":\"no_action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0014\"],\"record_anchor\":\"a0014\",\"branch_anchor\":\"a0014\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Airbrush clogging\",\"description\":\"Ink may thicken and cause airbrush clogging when the bottle top vent hole is not sealed.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":17,\"quote\":\"the ink will thicken and may cause airbrush clogging\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":17,\"quote\":\"If the vent hole is not sealed, the ink will thicken and may cause airbrush clogging.\"}]}],\"failure\":{\"name\":\"Bottle top vent hole not sealed\",\"description\":\"If the vent hole is not sealed, the ink will thicken and may cause airbrush clogging.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":17,\"quote\":\"If the vent hole is not sealed, the ink will thicken and may cause airbrush clogging.\"}]},\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"Bottle top vent hole\",\"description\":\"The bottle top vent hole should be sealed with the sealing pin when not in use.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":17,\"quote\":\"Always seal the bottle top vent hole with the sealing pin when not in use.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":17,\"quote\":\"If the vent hole is not sealed, the ink will thicken and may cause airbrush clogging.\"}]},\"resolution_status\":\"no_action_stated\"}]}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790351092,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 1191,
+      "prompt_tokens": 4895,
+      "total_tokens": 6086,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 492,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cache_write_tokens": 2281,
+        "cached_tokens": 2611
+      }
+    }
+  },
+  "provider_request_id": "req_9f7f2330cb974c639d4a3d72a07675ee",
+  "error": null
+}

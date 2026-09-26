@@ -1,0 +1,33 @@
+{
+  "preservation": {
+    "docs/README.md": true,
+    "docs/PIPELINE_SPIEGAZIONE_IT.md": true,
+    "ontology_schema.JSON": true,
+    "historical_gold": true
+  },
+  "python_tests": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "599",
+    "time": "59.196",
+    "timestamp": "2026-09-25T18:21:54.166884+02:00",
+    "hostname": "DTI-25650"
+  },
+  "frontend_test": {
+    "passed": 1,
+    "failed": 0
+  },
+  "frontend_visual_check": {
+    "synthetic_shared_failure_branches": 2,
+    "condition_occurrences": 1,
+    "browser_errors": [],
+    "network_blocked": true,
+    "artifact": "analysis/ui_branches.png",
+    "scope": "isolated actual inspector rendering, not full authenticated app E2E"
+  },
+  "lint": "passed backend plus new experiment/scoring scripts and tests",
+  "final_backend_snapshot": "source_c6.tar.gz",
+  "frontend_post_c6_delta": "detail.js visible chain count corrected from shared failure count to branch count; no generation change"
+}

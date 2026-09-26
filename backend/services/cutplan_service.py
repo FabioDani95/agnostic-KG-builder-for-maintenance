@@ -417,6 +417,7 @@ def find_toc_pages(
 
 def has_supported_language_content(text: str, threshold: float = 0.2) -> bool:
     """Check if text contains meaningful content in one supported language."""
+    text = re.sub(r"\[\[EVIDENCE_ID:[^\]]+\]\]", "", text)
     words = re.findall(r'\b[a-zA-Z]{2,}\b', text.lower())
     if not words:
         return False

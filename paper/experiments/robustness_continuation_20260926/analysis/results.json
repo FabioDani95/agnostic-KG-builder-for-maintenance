@@ -1,0 +1,4476 @@
+{
+  "evaluation_status": "development_only_pending_technicians",
+  "gold_sha256": "c92ba0a8bcb1721055f6fc8c10c3d0a6a57eb3dc35134755d06574d6272a5291",
+  "budget": {
+    "cap_usd": 20,
+    "calls_reserved": 678,
+    "calls_finalized": 678,
+    "charged_usd": 1.636820045,
+    "observed_estimated_usd": 1.20521167,
+    "unknown_usage_calls": 30,
+    "all_reservations_within_cap": true,
+    "no_envelope_breaches": true,
+    "active_calls": []
+  },
+  "runs": [
+    {
+      "run_id": "b1_eastman_e554",
+      "manual_id": "eastman_e554",
+      "status": "failed",
+      "elapsed_seconds": 1.081,
+      "code_sha256": "8b3316d5e4fd3ba639ab3ede7374cfc6b5d59569f8b9cbdc97826234bfc8d6f6",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 0,
+        "charged_usd": 0.0,
+        "observed_estimated_usd": 0.0,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0
+      },
+      "response_archives": {
+        "count": 0,
+        "response_available": 0,
+        "with_usage": 0,
+        "statuses": {},
+        "missing_finalized_call_ids": []
+      }
+    },
+    {
+      "run_id": "b1r1_danfoss_apf",
+      "manual_id": "danfoss_apf",
+      "status": "completed",
+      "elapsed_seconds": 118.033,
+      "code_sha256": "8b3316d5e4fd3ba639ab3ede7374cfc6b5d59569f8b9cbdc97826234bfc8d6f6",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 16,
+        "charged_usd": 0.0167862,
+        "observed_estimated_usd": 0.0167862,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 96324,
+        "completion_tokens": 11619
+      },
+      "response_archives": {
+        "count": 0,
+        "response_available": 0,
+        "with_usage": 0,
+        "statuses": {},
+        "missing_finalized_call_ids": [
+          "b1r1_danfoss_apf:00021c7f43294018a9ffdd27ce817fdd",
+          "b1r1_danfoss_apf:0c313cc0fc4c4223b6219678f947742a",
+          "b1r1_danfoss_apf:1a5f08251239461cb985d6855e1eb130",
+          "b1r1_danfoss_apf:2744d634b4ec428a9d4d49034161c10f",
+          "b1r1_danfoss_apf:82ae68b921cd47dfa426927e81ad9214",
+          "b1r1_danfoss_apf:8ca1ea57a7ea46fa9c2a56e55dbd8a74",
+          "b1r1_danfoss_apf:afb861317d5e48ca8933c3151435d5a8",
+          "b1r1_danfoss_apf:b5aaa65ade3d493bacdf8ea2823f6959",
+          "b1r1_danfoss_apf:ba0c8ceb4bf74eb38ce6a9bb06d035e2",
+          "b1r1_danfoss_apf:be4524bb5c2c469da16531ff1ba5b50e",
+          "b1r1_danfoss_apf:c693c65de1b64104b68104611f0e612d",
+          "b1r1_danfoss_apf:d5546083c165415e8d39dfaf02c8c241",
+          "b1r1_danfoss_apf:e63081081b3b4117bf9142610cdae35d",
+          "b1r1_danfoss_apf:e85192b326504951aadc03183084078b",
+          "b1r1_danfoss_apf:eb0466e6d49349eebbbaa0ab99cb081d",
+          "b1r1_danfoss_apf:f60b39135f024cb6ba6a1e45ede32720"
+        ]
+      },
+      "nodes": 36,
+      "relations": 35,
+      "review": {
+        "blocking": 17,
+        "by_code": {
+          "canonicalization_ambiguous": 5,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_review": 14,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_unreadable_pages": 1
+        },
+        "total": 24
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 16,
+        "publish_count": 0,
+        "unresolved_count": 14,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 6,
+          "declared_not_diagnostic": 2,
+          "missing_actions": 3,
+          "source_page_mismatch": 73,
+          "unknown_source_anchor": 2
+        },
+        "diagnostic_input_coverage_complete": null,
+        "diagnostic_extraction_complete": null
+      },
+      "multiple_published_records_in_one_window": {},
+      "dispositions": {
+        "review": 14,
+        "exclude": 2
+      },
+      "canonical_grounding": {
+        "references": 414,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 0,
+      "distinct_graph_branches": 0,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 0,
+        "expected_gap_probe": 0,
+        "one_to_one_source_page_branch_probe": 0,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "b1r1_eastman_e554",
+      "manual_id": "eastman_e554",
+      "status": "completed",
+      "elapsed_seconds": 283.807,
+      "code_sha256": "8b3316d5e4fd3ba639ab3ede7374cfc6b5d59569f8b9cbdc97826234bfc8d6f6",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 21,
+        "charged_usd": 0.030475014999999998,
+        "observed_estimated_usd": 0.030475014999999998,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 114511,
+        "completion_tokens": 37790
+      },
+      "response_archives": {
+        "count": 0,
+        "response_available": 0,
+        "with_usage": 0,
+        "statuses": {},
+        "missing_finalized_call_ids": [
+          "b1r1_eastman_e554:14366ceb402a400b9fec6677efb78fa6",
+          "b1r1_eastman_e554:1b000a6f285c42acb0faf053579baa42",
+          "b1r1_eastman_e554:250bfc4fe01b43e8aba23d5a2f9497ba",
+          "b1r1_eastman_e554:3610f84c9ff440ba91513777ab9c8261",
+          "b1r1_eastman_e554:37ff9566638e43c786def41967603734",
+          "b1r1_eastman_e554:497d64d3abce4df8b1f770f357a27eab",
+          "b1r1_eastman_e554:566415abb86544d3aa296b54ab8449f4",
+          "b1r1_eastman_e554:5b1a08d66aa0463b99282bbd034755dd",
+          "b1r1_eastman_e554:5f18b4f2b5b441e7bc8cac40f93caa86",
+          "b1r1_eastman_e554:91e62ad846c948fd96fdb6709297061e",
+          "b1r1_eastman_e554:9fe141835b7e418884313cc0148f6da6",
+          "b1r1_eastman_e554:a4b10747a01347c3ac922487d47f7015",
+          "b1r1_eastman_e554:aa12afb10fea415f941f08f7bcfbfc38",
+          "b1r1_eastman_e554:acce1e0048904649b0c9faffe0a62a78",
+          "b1r1_eastman_e554:c3900c98e5424d6bbc67a12b888fa79e",
+          "b1r1_eastman_e554:c938ca38a8974a53a1bc9c99262af8b7",
+          "b1r1_eastman_e554:cc739b2e9a8e44299368aec804a56948",
+          "b1r1_eastman_e554:e09c972ef747432f8267750861e7e7f5",
+          "b1r1_eastman_e554:e123813a25554f0887914e9a5dac147e",
+          "b1r1_eastman_e554:ebc66742acdc4fc38e85ca081afcc70f",
+          "b1r1_eastman_e554:fab724525f1f42a69d28101773811462"
+        ]
+      },
+      "nodes": 163,
+      "relations": 172,
+      "review": {
+        "blocking": 24,
+        "by_code": {
+          "canonicalization_ambiguous": 27,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 8,
+          "pdf_diagnostic_record_review": 14,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1
+        },
+        "total": 54
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 56,
+        "publish_count": 11,
+        "unresolved_count": 22,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "action_without_failure": 5,
+          "candidate_passage_missing_disposition": 4,
+          "check_only": 1,
+          "component_without_failure": 1,
+          "declared_not_diagnostic": 23,
+          "failure_edge_without_failure": 1,
+          "lineage_anchor_outside_bundle": 1,
+          "missing_actions": 7,
+          "missing_failure": 7,
+          "no_action_stated": 7,
+          "quote_not_in_anchored_evidence": 10,
+          "unknown_source_anchor": 1
+        },
+        "diagnostic_input_coverage_complete": null,
+        "diagnostic_extraction_complete": null
+      },
+      "multiple_published_records_in_one_window": {},
+      "dispositions": {
+        "publish": 11,
+        "exclude": 23,
+        "review": 14,
+        "gap": 8
+      },
+      "canonical_grounding": {
+        "references": 693,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 11,
+      "distinct_graph_branches": 11,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 5,
+        "expected_gap_probe": 0,
+        "one_to_one_source_page_branch_probe": 5,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "b1r1_graco_check_mate_200",
+      "manual_id": "graco_check_mate_200",
+      "status": "completed",
+      "elapsed_seconds": 115.842,
+      "code_sha256": "8b3316d5e4fd3ba639ab3ede7374cfc6b5d59569f8b9cbdc97826234bfc8d6f6",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 15,
+        "charged_usd": 0.016380350000000002,
+        "observed_estimated_usd": 0.016380350000000002,
+        "unknown_usage_calls": 0,
+        "failed_calls": 1,
+        "prompt_tokens": 80117,
+        "completion_tokens": 14904
+      },
+      "response_archives": {
+        "count": 0,
+        "response_available": 0,
+        "with_usage": 0,
+        "statuses": {},
+        "missing_finalized_call_ids": [
+          "b1r1_graco_check_mate_200:0515fb67ef0b48c7854dbc3098553c88",
+          "b1r1_graco_check_mate_200:0fafccc6410a4966a92fc69fb336bb80",
+          "b1r1_graco_check_mate_200:14d7538de1714c81b27836b5f3dc16dc",
+          "b1r1_graco_check_mate_200:416f5b2c734e46c39d536534eaad6b94",
+          "b1r1_graco_check_mate_200:44852a3ac9bf46b2a96890db98237432",
+          "b1r1_graco_check_mate_200:83b591c1a74a4512b1121eed6cbb3ad2",
+          "b1r1_graco_check_mate_200:83ee01af1c2a4e7bbb143f986e5aa2ba",
+          "b1r1_graco_check_mate_200:8c5da63be85d4f13b4765d54a4396f5d",
+          "b1r1_graco_check_mate_200:8cdf708d7c1e4f35ba69cdac39efcf61",
+          "b1r1_graco_check_mate_200:9152f7916ca64d159e22e0803568d59a",
+          "b1r1_graco_check_mate_200:a5334fbcb84e4650bbef34b7a6602aee",
+          "b1r1_graco_check_mate_200:d870e435f610479ba731b2c9d0cac92c",
+          "b1r1_graco_check_mate_200:ea8435cf09b2465aa3632486bdf870ca",
+          "b1r1_graco_check_mate_200:f41b2d55a47840f68f3a3c8c4275fd38",
+          "b1r1_graco_check_mate_200:f6243bd50f3a4c2a86002eaa20305cce"
+        ]
+      },
+      "nodes": 48,
+      "relations": 47,
+      "review": {
+        "blocking": 5,
+        "by_code": {
+          "canonicalization_ambiguous": 6,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_contract_incomplete": 1,
+          "pdf_diagnostic_record_review": 3,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_pipeline_blocked": 1,
+          "pdf_pipeline_not_reviewable": 1,
+          "pdf_pipeline_schema_noncompliant": 1,
+          "pdf_relation_endpoint_omitted": 1
+        },
+        "total": 16
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 8,
+        "publish_count": 0,
+        "unresolved_count": 3,
+        "contract_failure_count": 1,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 3,
+          "declared_not_diagnostic": 5,
+          "structured_response_error": 1
+        },
+        "diagnostic_input_coverage_complete": null,
+        "diagnostic_extraction_complete": null
+      },
+      "multiple_published_records_in_one_window": {},
+      "dispositions": {
+        "review": 3,
+        "exclude": 5
+      },
+      "canonical_grounding": {
+        "references": 320,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 0,
+      "distinct_graph_branches": 0,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 18,
+        "autonomous_probe": 0,
+        "expected_gap_probe": 0,
+        "one_to_one_source_page_branch_probe": 0,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "b1r1_hypertherm_powermax30_air",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 793.881,
+      "code_sha256": "8b3316d5e4fd3ba639ab3ede7374cfc6b5d59569f8b9cbdc97826234bfc8d6f6",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 63,
+        "charged_usd": 0.08820535500000001,
+        "observed_estimated_usd": 0.08820535500000001,
+        "unknown_usage_calls": 0,
+        "failed_calls": 2,
+        "prompt_tokens": 377682,
+        "completion_tokens": 94387
+      },
+      "response_archives": {
+        "count": 0,
+        "response_available": 0,
+        "with_usage": 0,
+        "statuses": {},
+        "missing_finalized_call_ids": [
+          "b1r1_hypertherm_powermax30_air:00c75ef0f36b4978b6b32754a3799db7",
+          "b1r1_hypertherm_powermax30_air:02b7d75093a54603ab75525b1aa6597d",
+          "b1r1_hypertherm_powermax30_air:0480abb41fe24f08be10896b81024970",
+          "b1r1_hypertherm_powermax30_air:06db6991fb034c819419d6d3172c8c63",
+          "b1r1_hypertherm_powermax30_air:081a350ba1944e01a9d2b438241f6fa1",
+          "b1r1_hypertherm_powermax30_air:0bed9e3ce6224420b497d642cfa6082b",
+          "b1r1_hypertherm_powermax30_air:1a53ee84fa204fb3ac5229fba17e8fe0",
+          "b1r1_hypertherm_powermax30_air:1cefbffc32a145feb259af37724055c1",
+          "b1r1_hypertherm_powermax30_air:1daadae5a71a4821a6cd06d1d78820ad",
+          "b1r1_hypertherm_powermax30_air:1f217e5301e44bffa64aba5738d7b5c5",
+          "b1r1_hypertherm_powermax30_air:21b7ac59af044c3f8aae95fe70c760ed",
+          "b1r1_hypertherm_powermax30_air:2606325546424554832e2158c6348ba4",
+          "b1r1_hypertherm_powermax30_air:3d29b82ee55c4cecbee59d665a827fa8",
+          "b1r1_hypertherm_powermax30_air:40043449fb564af2bb1f535fec5b60d2",
+          "b1r1_hypertherm_powermax30_air:44a1a6f3e26b4124a21fa10a0d42bc38",
+          "b1r1_hypertherm_powermax30_air:4588056b9ba849129c86a5b49a307561",
+          "b1r1_hypertherm_powermax30_air:499198a8511a43cc9323a3e9ba8d6cd5",
+          "b1r1_hypertherm_powermax30_air:4ee83a90e0fb48d6b25a026c7154322b",
+          "b1r1_hypertherm_powermax30_air:4f60942864234196a678de3d466b15e1",
+          "b1r1_hypertherm_powermax30_air:5138b3f7bc5a44edb128f7fc01c1a95f",
+          "b1r1_hypertherm_powermax30_air:5862dd1ac14d49f88684ba8e5b9d7c5d",
+          "b1r1_hypertherm_powermax30_air:634c5b8023d643fc9850a0a846fe1c16",
+          "b1r1_hypertherm_powermax30_air:65f6b05d5219486b95dea7256f02c515",
+          "b1r1_hypertherm_powermax30_air:67aeee1aef0d4c2ca7efb594461d9e79",
+          "b1r1_hypertherm_powermax30_air:6872ce1efdaa4938a24349ded6f5b5f6",
+          "b1r1_hypertherm_powermax30_air:690f58c4f75d43e897a6d281cadb8f00",
+          "b1r1_hypertherm_powermax30_air:7453c5fdc06b49e493cb776f520624f2",
+          "b1r1_hypertherm_powermax30_air:74ad3e5f8a5a41d6ad71c5e8cbb51cda",
+          "b1r1_hypertherm_powermax30_air:7815bb8600524f53ab61a1edcfc9e2d1",
+          "b1r1_hypertherm_powermax30_air:79e0dc13012547f4bc9b3d8ef8711dda",
+          "b1r1_hypertherm_powermax30_air:84365217c0bf497282c560cb658b546e",
+          "b1r1_hypertherm_powermax30_air:8eb5140dd1e14204aba6aa391fa199f9",
+          "b1r1_hypertherm_powermax30_air:90c014763b5342ada33d2b5dceb1ad7b",
+          "b1r1_hypertherm_powermax30_air:93dc5bcaeba34aaf8759c142796dccaa",
+          "b1r1_hypertherm_powermax30_air:9cb5fd2e6f3e41cfbd1e61064d34ac3a",
+          "b1r1_hypertherm_powermax30_air:a41cfd8dc9174f36b6fa1649a931b7e9",
+          "b1r1_hypertherm_powermax30_air:a60cad3a0073426bac793d55457eab6e",
+          "b1r1_hypertherm_powermax30_air:a72ff0d8d486440bbcce3c9c3f157f8c",
+          "b1r1_hypertherm_powermax30_air:a769e5686a6d45a6a978b8b3cc4bceb4",
+          "b1r1_hypertherm_powermax30_air:a7e4aeb531c246d595b87c071deb501e",
+          "b1r1_hypertherm_powermax30_air:a84fba8147054bf1b34d3d3027a43302",
+          "b1r1_hypertherm_powermax30_air:a8676e36f55e418692d11ec90974acff",
+          "b1r1_hypertherm_powermax30_air:af07adcb46114bf6977fca7b5d8aea8d",
+          "b1r1_hypertherm_powermax30_air:b04094bf169b482d920879d5088a5638",
+          "b1r1_hypertherm_powermax30_air:b051573fcd1147cdba1c7aa7de8e4c78",
+          "b1r1_hypertherm_powermax30_air:b2cced5d5bbe4deebeec3da03d5dc821",
+          "b1r1_hypertherm_powermax30_air:b4846ade62334f58911808120212a51d",
+          "b1r1_hypertherm_powermax30_air:c1d1e285937d4c6da68d68a3f9b7d42f",
+          "b1r1_hypertherm_powermax30_air:c6ff19d64a834a93b3724a3cad9dfb43",
+          "b1r1_hypertherm_powermax30_air:cc82cbcdf50049398d1206bdb44fbcc6",
+          "b1r1_hypertherm_powermax30_air:cdef8230c5d2437fac9100c250c73b67",
+          "b1r1_hypertherm_powermax30_air:cef5011deb944bbabc086b443d694127",
+          "b1r1_hypertherm_powermax30_air:cf10cd5c52db41d8a3daec0285ff19e9",
+          "b1r1_hypertherm_powermax30_air:d1e3f881cb29450ca36fdb5154a98ae4",
+          "b1r1_hypertherm_powermax30_air:d4fa6e8758b543e8a4eda91471f3666b",
+          "b1r1_hypertherm_powermax30_air:d82b355415f947e695323797de3a4c2b",
+          "b1r1_hypertherm_powermax30_air:e0dcf9892a1645338e330210470e9ad9",
+          "b1r1_hypertherm_powermax30_air:e35135fd8299424098bdce7b848ddd0f",
+          "b1r1_hypertherm_powermax30_air:f27ec898736d4840b36edda9d535f23e",
+          "b1r1_hypertherm_powermax30_air:f645e48be0224fe8a1c80ce980da3235",
+          "b1r1_hypertherm_powermax30_air:f831b4f25b9f4956b35b3f3124b7d023",
+          "b1r1_hypertherm_powermax30_air:fed162d361c5418da9d265cdded142b7",
+          "b1r1_hypertherm_powermax30_air:fee9897312b84e449f087da4cb192b49"
+        ]
+      },
+      "nodes": 194,
+      "relations": 198,
+      "review": {
+        "blocking": 55,
+        "by_code": {
+          "canonicalization_ambiguous": 22,
+          "diagnostic_failure_without_component": 6,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_contract_incomplete": 1,
+          "pdf_diagnostic_record_gap": 23,
+          "pdf_diagnostic_record_review": 29,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_pipeline_blocked": 1,
+          "pdf_pipeline_not_reviewable": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1
+        },
+        "total": 89
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 91,
+        "publish_count": 25,
+        "unresolved_count": 52,
+        "contract_failure_count": 2,
+        "drop_reasons": {
+          "action_without_failure": 2,
+          "candidate_passage_missing_disposition": 12,
+          "check_only": 13,
+          "component_without_failure": 1,
+          "declared_not_diagnostic": 14,
+          "failure_edge_without_failure": 4,
+          "lineage_anchor_outside_bundle": 3,
+          "missing_actions": 25,
+          "missing_failure": 5,
+          "no_action_stated": 10,
+          "quote_not_in_anchored_evidence": 4,
+          "source_page_mismatch": 7,
+          "structured_response_error": 3,
+          "unknown_source_anchor": 5
+        },
+        "diagnostic_input_coverage_complete": null,
+        "diagnostic_extraction_complete": null
+      },
+      "multiple_published_records_in_one_window": {},
+      "dispositions": {
+        "exclude": 14,
+        "review": 29,
+        "gap": 23,
+        "publish": 25
+      },
+      "canonical_grounding": {
+        "references": 3196,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 25,
+      "distinct_graph_branches": 25
+    },
+    {
+      "run_id": "c10_full_eastman_e554",
+      "manual_id": "eastman_e554",
+      "status": "failed",
+      "elapsed_seconds": 0.974,
+      "code_sha256": "38f243e9368a119dfea6c2f41b6a922ad5255243090f5b0624b1ceed5ae15706",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 0,
+        "charged_usd": 0.0,
+        "observed_estimated_usd": 0.0,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0
+      },
+      "response_archives": {
+        "count": 0,
+        "response_available": 0,
+        "with_usage": 0,
+        "statuses": {},
+        "missing_finalized_call_ids": []
+      }
+    },
+    {
+      "run_id": "c10p_eastman_low",
+      "manual_id": "eastman_e554",
+      "status": "completed",
+      "elapsed_seconds": 56.586,
+      "code_sha256": "38f243e9368a119dfea6c2f41b6a922ad5255243090f5b0624b1ceed5ae15706",
+      "model": "gpt-6-luna",
+      "packet_pages": "37,38,39",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.004328675,
+        "observed_estimated_usd": 0.004328675,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 5358,
+        "completion_tokens": 7318
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 13,
+        "publish_count": 0,
+        "unresolved_count": 12,
+        "drop_reasons": {
+          "action_without_failure": 4,
+          "check_only": 2,
+          "component_without_failure": 2,
+          "declared_ambiguous": 3,
+          "declared_not_diagnostic": 1,
+          "lineage_anchor_outside_bundle": 1,
+          "missing_actions": 1,
+          "missing_failure": 6,
+          "relation_endpoint_support_unestablished": 6
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "c10p_eastman_medium",
+      "manual_id": "eastman_e554",
+      "status": "completed",
+      "elapsed_seconds": 83.983,
+      "code_sha256": "38f243e9368a119dfea6c2f41b6a922ad5255243090f5b0624b1ceed5ae15706",
+      "model": "gpt-6-luna",
+      "packet_pages": "37,38,39",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.006395675,
+        "observed_estimated_usd": 0.006395675,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 5358,
+        "completion_tokens": 11452
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 14,
+        "publish_count": 1,
+        "unresolved_count": 12,
+        "drop_reasons": {
+          "action_without_failure": 2,
+          "check_only": 3,
+          "declared_ambiguous": 1,
+          "declared_not_diagnostic": 1,
+          "failure_inferred_from_instruction": 1,
+          "missing_actions": 2,
+          "missing_failure": 5,
+          "quote_not_in_anchored_evidence": 1,
+          "relation_endpoint_support_unestablished": 7
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "c10p_tables_low",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 53.308,
+      "code_sha256": "38f243e9368a119dfea6c2f41b6a922ad5255243090f5b0624b1ceed5ae15706",
+      "model": "gpt-6-luna",
+      "packet_pages": "67,68,69",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.00311746,
+        "observed_estimated_usd": 0.00311746,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 6075,
+        "completion_tokens": 5364
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 9,
+        "publish_count": 0,
+        "unresolved_count": 9,
+        "drop_reasons": {
+          "declared_ambiguous": 2,
+          "missing_actions": 4,
+          "quote_not_in_anchored_evidence": 7,
+          "relation_endpoint_support_unestablished": 13
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "c10p_tables_medium",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 67.439,
+      "code_sha256": "38f243e9368a119dfea6c2f41b6a922ad5255243090f5b0624b1ceed5ae15706",
+      "model": "gpt-6-luna",
+      "packet_pages": "67,68,69",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.00448646,
+        "observed_estimated_usd": 0.00448646,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 6075,
+        "completion_tokens": 8102
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 11,
+        "publish_count": 0,
+        "unresolved_count": 10,
+        "drop_reasons": {
+          "declared_not_diagnostic": 1,
+          "missing_actions": 3,
+          "relation_endpoint_support_unestablished": 16
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "c10p_test9_low_r1",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 53.399,
+      "code_sha256": "38f243e9368a119dfea6c2f41b6a922ad5255243090f5b0624b1ceed5ae15706",
+      "model": "gpt-6-luna",
+      "packet_pages": "96,97,98,99,100",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.00265759,
+        "observed_estimated_usd": 0.00265759,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 5932,
+        "completion_tokens": 5196
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 6,
+        "publish_count": 4,
+        "unresolved_count": 2,
+        "drop_reasons": {
+          "compound_negative_condition_strengthened": 1,
+          "failure_inferred_from_instruction": 1,
+          "relation_endpoint_support_unestablished": 1
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "c10p_test9_low_r2",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 61.43,
+      "code_sha256": "38f243e9368a119dfea6c2f41b6a922ad5255243090f5b0624b1ceed5ae15706",
+      "model": "gpt-6-luna",
+      "packet_pages": "96,97,98,99,100",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.00309159,
+        "observed_estimated_usd": 0.00309159,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 5932,
+        "completion_tokens": 6064
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 5,
+        "publish_count": 3,
+        "unresolved_count": 2,
+        "drop_reasons": {
+          "compound_negative_condition_strengthened": 1,
+          "failure_inferred_from_instruction": 1,
+          "relation_endpoint_support_unestablished": 1
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "c10p_test9_medium_r1",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 65.456,
+      "code_sha256": "38f243e9368a119dfea6c2f41b6a922ad5255243090f5b0624b1ceed5ae15706",
+      "model": "gpt-6-luna",
+      "packet_pages": "96,97,98,99,100",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.00394459,
+        "observed_estimated_usd": 0.00394459,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 5932,
+        "completion_tokens": 7770
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 6,
+        "publish_count": 3,
+        "unresolved_count": 3,
+        "drop_reasons": {
+          "action_without_failure": 1,
+          "component_without_failure": 1,
+          "compound_negative_condition_strengthened": 1,
+          "failure_edge_without_failure": 1,
+          "missing_failure": 1,
+          "quote_not_in_anchored_evidence": 14
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "c10p_test9_medium_r2",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 61.535,
+      "code_sha256": "38f243e9368a119dfea6c2f41b6a922ad5255243090f5b0624b1ceed5ae15706",
+      "model": "gpt-6-luna",
+      "packet_pages": "96,97,98,99,100",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.00362609,
+        "observed_estimated_usd": 0.00362609,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 5932,
+        "completion_tokens": 7133
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 6,
+        "publish_count": 0,
+        "unresolved_count": 6,
+        "drop_reasons": {
+          "compound_negative_condition_strengthened": 1,
+          "lineage_anchor_outside_bundle": 1,
+          "quote_not_in_anchored_evidence": 7,
+          "relation_endpoint_support_unestablished": 1
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "c10r1_full_eastman_e554",
+      "manual_id": "eastman_e554",
+      "status": "failed",
+      "elapsed_seconds": 1.147,
+      "code_sha256": "38f243e9368a119dfea6c2f41b6a922ad5255243090f5b0624b1ceed5ae15706",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 0,
+        "charged_usd": 0.0,
+        "observed_estimated_usd": 0.0,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0
+      },
+      "response_archives": {
+        "count": 0,
+        "response_available": 0,
+        "with_usage": 0,
+        "statuses": {},
+        "missing_finalized_call_ids": []
+      }
+    },
+    {
+      "run_id": "c10r2_full_eastman_e554",
+      "manual_id": "eastman_e554",
+      "status": "completed",
+      "elapsed_seconds": 341.593,
+      "code_sha256": "38f243e9368a119dfea6c2f41b6a922ad5255243090f5b0624b1ceed5ae15706",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 32,
+        "charged_usd": 0.03969464500000001,
+        "observed_estimated_usd": 0.03969464500000001,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 164724,
+        "completion_tokens": 52247
+      },
+      "response_archives": {
+        "count": 32,
+        "response_available": 32,
+        "with_usage": 32,
+        "statuses": {
+          "received": 32
+        },
+        "missing_finalized_call_ids": []
+      },
+      "nodes": 186,
+      "relations": 191,
+      "review": {
+        "blocking": 55,
+        "by_code": {
+          "canonicalization_ambiguous": 16,
+          "diagnostic_failure_without_component": 2,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 19,
+          "pdf_diagnostic_record_review": 34,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        },
+        "total": 78
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 74,
+        "publish_count": 14,
+        "unresolved_count": 55,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "action_without_failure": 4,
+          "candidate_passage_missing_disposition": 14,
+          "check_only": 13,
+          "declared_ambiguous": 3,
+          "declared_not_diagnostic": 5,
+          "failure_edge_without_failure": 2,
+          "failure_inferred_from_instruction": 4,
+          "missing_actions": 11,
+          "missing_failure": 17,
+          "missing_indicator_failure_evidence": 1,
+          "no_action_stated": 7,
+          "quote_not_in_anchored_evidence": 17,
+          "relation_endpoint_support_unestablished": 20
+        },
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_extraction_complete": false
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_4bd001b300a0e1d55e663173": 2,
+        "diagwin_0ee59d4c529f4f96debb5c13": 2,
+        "diagwin_3ef69822f15b9b88930834a2": 2,
+        "diagwin_b43ced10f17efe1addcbdcba": 2
+      },
+      "dispositions": {
+        "publish": 14,
+        "review": 34,
+        "gap": 21,
+        "exclude": 5
+      },
+      "canonical_grounding": {
+        "references": 911,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 15,
+      "distinct_graph_branches": 14,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 6,
+        "expected_gap_probe": 0,
+        "one_to_one_source_page_branch_probe": 6,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c11_full_danfoss_apf",
+      "manual_id": "danfoss_apf",
+      "status": "completed",
+      "elapsed_seconds": 110.729,
+      "code_sha256": "578d842e5d69ed055a8d9ab6767e8fc731ea2cd36708fd124467905c0b88978b",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 18,
+        "charged_usd": 0.015814739999999997,
+        "observed_estimated_usd": 0.015814739999999997,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 94066,
+        "completion_tokens": 11999
+      },
+      "response_archives": {
+        "count": 18,
+        "response_available": 18,
+        "with_usage": 18,
+        "statuses": {
+          "received": 18
+        },
+        "missing_finalized_call_ids": []
+      },
+      "nodes": 49,
+      "relations": 60,
+      "review": {
+        "blocking": 8,
+        "by_code": {
+          "canonicalization_ambiguous": 11,
+          "diagnostic_failure_without_component": 3,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 3,
+          "pdf_diagnostic_record_review": 2,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1,
+          "pdf_unreadable_pages": 1
+        },
+        "total": 26
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 19,
+        "publish_count": 8,
+        "unresolved_count": 9,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 2,
+          "check_only": 6,
+          "duplicate_verified_occurrence": 2,
+          "missing_actions": 6,
+          "missing_failure": 1,
+          "no_action_stated": 1
+        },
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_extraction_complete": false
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_5a4e1942fa87e71c0908bc6a": 2,
+        "diagwin_8d7b36b3ee2442b2299a387f": 2,
+        "diagwin_cddeef8b251cb73cf5edf07c": 2
+      },
+      "dispositions": {
+        "gap": 7,
+        "publish": 8,
+        "review": 2,
+        "exclude": 2
+      },
+      "canonical_grounding": {
+        "references": 461,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 8,
+      "distinct_graph_branches": 8,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 5,
+        "expected_gap_probe": 3,
+        "one_to_one_source_page_branch_probe": 5,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c11_full_eastman_e554",
+      "manual_id": "eastman_e554",
+      "status": "completed",
+      "elapsed_seconds": 1013.237,
+      "code_sha256": "578d842e5d69ed055a8d9ab6767e8fc731ea2cd36708fd124467905c0b88978b",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 33,
+        "charged_usd": 0.05293237,
+        "observed_estimated_usd": 0.03822599499999999,
+        "unknown_usage_calls": 1,
+        "failed_calls": 1,
+        "prompt_tokens": 161294,
+        "completion_tokens": 51676
+      },
+      "response_archives": {
+        "count": 33,
+        "response_available": 32,
+        "with_usage": 32,
+        "statuses": {
+          "received": 32,
+          "provider_error": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "nodes": 157,
+      "relations": 159,
+      "review": {
+        "blocking": 52,
+        "by_code": {
+          "canonicalization_ambiguous": 17,
+          "diagnostic_failure_without_component": 1,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 19,
+          "pdf_diagnostic_record_review": 31,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        },
+        "total": 75
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 96,
+        "publish_count": 9,
+        "unresolved_count": 57,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "action_without_failure": 7,
+          "candidate_passage_missing_disposition": 12,
+          "check_only": 15,
+          "component_without_failure": 3,
+          "declared_ambiguous": 2,
+          "declared_not_diagnostic": 27,
+          "duplicate_verified_occurrence": 3,
+          "failure_edge_without_failure": 1,
+          "failure_inferred_from_instruction": 4,
+          "missing_actions": 17,
+          "missing_failure": 19,
+          "no_action_stated": 9,
+          "quote_not_in_anchored_evidence": 17,
+          "relation_endpoint_support_unestablished": 14
+        },
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_extraction_complete": false
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_52ceaa650de1090fbcbec209": 2,
+        "diagwin_17c5afcb9af4a9f023532865": 2
+      },
+      "dispositions": {
+        "exclude": 30,
+        "publish": 9,
+        "gap": 24,
+        "review": 33
+      },
+      "canonical_grounding": {
+        "references": 715,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 9,
+      "distinct_graph_branches": 9,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 5,
+        "expected_gap_probe": 0,
+        "one_to_one_source_page_branch_probe": 5,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c11_full_graco_check_mate_200",
+      "manual_id": "graco_check_mate_200",
+      "status": "completed",
+      "elapsed_seconds": 161.615,
+      "code_sha256": "578d842e5d69ed055a8d9ab6767e8fc731ea2cd36708fd124467905c0b88978b",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 24,
+        "charged_usd": 0.021662124999999994,
+        "observed_estimated_usd": 0.021662124999999994,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 109389,
+        "completion_tokens": 25168
+      },
+      "response_archives": {
+        "count": 24,
+        "response_available": 24,
+        "with_usage": 24,
+        "statuses": {
+          "received": 24
+        },
+        "missing_finalized_call_ids": []
+      },
+      "nodes": 78,
+      "relations": 84,
+      "review": {
+        "blocking": 36,
+        "by_code": {
+          "canonicalization_ambiguous": 16,
+          "diagnostic_failure_without_component": 9,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_review": 34,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        },
+        "total": 64
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 73,
+        "publish_count": 19,
+        "unresolved_count": 36,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 22,
+          "check_only": 2,
+          "declared_not_diagnostic": 3,
+          "duplicate_verified_occurrence": 15,
+          "missing_actions": 2,
+          "quote_not_in_anchored_evidence": 5,
+          "record_schema_invalid": 11
+        },
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_extraction_complete": false
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_dbc3d2fcb723b3ea8d4cb5de": 2
+      },
+      "dispositions": {
+        "publish": 19,
+        "exclude": 18,
+        "review": 34,
+        "gap": 2
+      },
+      "canonical_grounding": {
+        "references": 471,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 19,
+      "distinct_graph_branches": 19,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 18,
+        "autonomous_probe": 17,
+        "expected_gap_probe": 1,
+        "one_to_one_source_page_branch_probe": 17,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c11_full_hypertherm_powermax30_air",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 1615.165,
+      "code_sha256": "578d842e5d69ed055a8d9ab6767e8fc731ea2cd36708fd124467905c0b88978b",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 79,
+        "charged_usd": 0.12236183000000002,
+        "observed_estimated_usd": 0.107478455,
+        "unknown_usage_calls": 1,
+        "failed_calls": 1,
+        "prompt_tokens": 467851,
+        "completion_tokens": 130003
+      },
+      "response_archives": {
+        "count": 79,
+        "response_available": 78,
+        "with_usage": 78,
+        "statuses": {
+          "received": 78,
+          "provider_error": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "nodes": 164,
+      "relations": 168,
+      "review": {
+        "blocking": 118,
+        "by_code": {
+          "canonicalization_ambiguous": 23,
+          "diagnostic_failure_without_component": 5,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 8,
+          "pdf_diagnostic_record_review": 108,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        },
+        "total": 151
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 177,
+        "publish_count": 17,
+        "unresolved_count": 142,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "action_without_failure": 9,
+          "candidate_passage_missing_disposition": 19,
+          "check_only": 8,
+          "component_without_failure": 5,
+          "compound_negative_condition_strengthened": 1,
+          "declared_ambiguous": 23,
+          "declared_not_diagnostic": 18,
+          "failure_edge_without_failure": 2,
+          "failure_inferred_from_instruction": 2,
+          "indicator_inferred_from_inspection": 4,
+          "inspection_only_action": 1,
+          "lineage_anchor_outside_bundle": 10,
+          "missing_actions": 39,
+          "missing_failure": 20,
+          "missing_indicator_failure_evidence": 3,
+          "missing_resolution_evidence": 5,
+          "no_action_stated": 2,
+          "quote_not_in_anchored_evidence": 47,
+          "relation_endpoint_support_unestablished": 72,
+          "structurally_ambiguous_pairing": 38
+        },
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_extraction_complete": false
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_431c20ab2d51e3af71e3c571": 2
+      },
+      "dispositions": {
+        "review": 132,
+        "publish": 17,
+        "exclude": 18,
+        "gap": 10
+      },
+      "canonical_grounding": {
+        "references": 3370,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 29,
+      "distinct_graph_branches": 17
+    },
+    {
+      "run_id": "c1_danfoss_apf",
+      "manual_id": "danfoss_apf",
+      "status": "completed",
+      "elapsed_seconds": 131.946,
+      "code_sha256": "f950cfa523b3e829e9b5fcfed6fcb77a7979092c835dff7d6bb915e6916ed6a1",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 18,
+        "charged_usd": 0.016185755,
+        "observed_estimated_usd": 0.016185755,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 92915,
+        "completion_tokens": 13354
+      },
+      "response_archives": {
+        "count": 18,
+        "response_available": 18,
+        "with_usage": 18,
+        "statuses": {
+          "received": 18
+        },
+        "missing_finalized_call_ids": []
+      },
+      "nodes": 43,
+      "relations": 49,
+      "review": {
+        "blocking": 75,
+        "by_code": {
+          "canonicalization_ambiguous": 7,
+          "diagnostic_failure_without_component": 5,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 4,
+          "pdf_diagnostic_record_review": 68,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1,
+          "pdf_unreadable_pages": 1
+        },
+        "total": 91
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 81,
+        "publish_count": 7,
+        "unresolved_count": 72,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "ambiguous_source_anchor": 4,
+          "candidate_passage_missing_disposition": 62,
+          "check_only": 3,
+          "declared_not_diagnostic": 2,
+          "missing_actions": 6,
+          "missing_failure": 1,
+          "no_action_stated": 1,
+          "quote_not_in_anchored_evidence": 8
+        },
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_extraction_complete": true
+      },
+      "multiple_published_records_in_one_window": {},
+      "dispositions": {
+        "publish": 7,
+        "review": 68,
+        "exclude": 2,
+        "gap": 4
+      },
+      "canonical_grounding": {
+        "references": 240,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 7,
+      "distinct_graph_branches": 7,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 5,
+        "expected_gap_probe": 3,
+        "one_to_one_source_page_branch_probe": 5,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c1_eastman_e554",
+      "manual_id": "eastman_e554",
+      "status": "completed",
+      "elapsed_seconds": 367.894,
+      "code_sha256": "f950cfa523b3e829e9b5fcfed6fcb77a7979092c835dff7d6bb915e6916ed6a1",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 29,
+        "charged_usd": 0.035074194999999996,
+        "observed_estimated_usd": 0.035074194999999996,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 137732,
+        "completion_tokens": 47533
+      },
+      "response_archives": {
+        "count": 29,
+        "response_available": 29,
+        "with_usage": 29,
+        "statuses": {
+          "received": 29
+        },
+        "missing_finalized_call_ids": []
+      },
+      "nodes": 164,
+      "relations": 171,
+      "review": {
+        "blocking": 68,
+        "by_code": {
+          "canonicalization_ambiguous": 21,
+          "diagnostic_failure_without_component": 2,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 21,
+          "pdf_diagnostic_record_review": 45,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        },
+        "total": 96
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 129,
+        "publish_count": 12,
+        "unresolved_count": 70,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "action_without_failure": 6,
+          "candidate_passage_missing_disposition": 30,
+          "check_only": 15,
+          "component_without_failure": 1,
+          "declared_ambiguous": 3,
+          "declared_not_diagnostic": 47,
+          "failure_edge_without_failure": 1,
+          "failure_inferred_from_instruction": 5,
+          "missing_actions": 5,
+          "missing_failure": 26,
+          "no_action_stated": 9,
+          "quote_not_in_anchored_evidence": 10,
+          "relation_endpoint_support_unestablished": 6
+        },
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_extraction_complete": true
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_6330ab95cf3271f3ea4e4941": 2,
+        "diagwin_2d7e93e9542bbc8c01b8496e": 2,
+        "diagwin_7233879e59a17fdcd9bd980a": 2,
+        "diagwin_9230958b11b7da30cdaf6044": 2
+      },
+      "dispositions": {
+        "gap": 24,
+        "review": 46,
+        "exclude": 47,
+        "publish": 12
+      },
+      "canonical_grounding": {
+        "references": 725,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 17,
+      "distinct_graph_branches": 12,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 7,
+        "expected_gap_probe": 0,
+        "one_to_one_source_page_branch_probe": 7,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c1_graco_check_mate_200",
+      "manual_id": "graco_check_mate_200",
+      "status": "completed",
+      "elapsed_seconds": 170.293,
+      "code_sha256": "f950cfa523b3e829e9b5fcfed6fcb77a7979092c835dff7d6bb915e6916ed6a1",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 21,
+        "charged_usd": 0.01945554,
+        "observed_estimated_usd": 0.01945554,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 92659,
+        "completion_tokens": 22408
+      },
+      "response_archives": {
+        "count": 21,
+        "response_available": 21,
+        "with_usage": 21,
+        "statuses": {
+          "received": 21
+        },
+        "missing_finalized_call_ids": []
+      },
+      "nodes": 102,
+      "relations": 108,
+      "review": {
+        "blocking": 12,
+        "by_code": {
+          "canonicalization_ambiguous": 17,
+          "diagnostic_failure_without_component": 15,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 1,
+          "pdf_diagnostic_record_review": 9,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        },
+        "total": 47
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 54,
+        "publish_count": 34,
+        "unresolved_count": 11,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 9,
+          "check_only": 2,
+          "declared_not_diagnostic": 9,
+          "missing_actions": 2
+        },
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_extraction_complete": true
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_2a6105e42b7c7309593784bf": 2,
+        "diagwin_f54f606b4595f31cd06052e9": 2,
+        "diagwin_cdea6c6aabef9ecd8ddfdc4b": 2,
+        "diagwin_851db6678f38307916860546": 2,
+        "diagwin_11f5553ef7762f5047d6f622": 2,
+        "diagwin_7326d0451e7a245f7968a978": 2,
+        "diagwin_652cdc825602353928e0eb3b": 2,
+        "diagwin_9e06073c58ac86cc7b66845b": 2,
+        "diagwin_389f74f408ece3b6f08008d5": 2,
+        "diagwin_faf85e812495ae08c1b6ff3b": 2,
+        "diagwin_8e5be3a305c08910e9d6ad2a": 2,
+        "diagwin_5e99e4829d7f2be9d8548014": 2,
+        "diagwin_f240edcd338328e0f547995c": 2
+      },
+      "dispositions": {
+        "review": 9,
+        "publish": 34,
+        "exclude": 9,
+        "gap": 2
+      },
+      "canonical_grounding": {
+        "references": 424,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 28,
+      "distinct_graph_branches": 27,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 18,
+        "autonomous_probe": 15,
+        "expected_gap_probe": 1,
+        "one_to_one_source_page_branch_probe": 15,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c1_hypertherm_powermax30_air",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 954.577,
+      "code_sha256": "f950cfa523b3e829e9b5fcfed6fcb77a7979092c835dff7d6bb915e6916ed6a1",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 81,
+        "charged_usd": 0.4698116949999999,
+        "observed_estimated_usd": 0.06779306999999998,
+        "unknown_usage_calls": 28,
+        "failed_calls": 28,
+        "prompt_tokens": 312807,
+        "completion_tokens": 67568
+      },
+      "response_archives": {
+        "count": 81,
+        "response_available": 53,
+        "with_usage": 53,
+        "statuses": {
+          "provider_error": 28,
+          "received": 53
+        },
+        "missing_finalized_call_ids": []
+      },
+      "nodes": 169,
+      "relations": 170,
+      "review": {
+        "blocking": 97,
+        "by_code": {
+          "canonicalization_ambiguous": 22,
+          "diagnostic_failure_without_component": 6,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_contract_incomplete": 1,
+          "pdf_diagnostic_record_gap": 4,
+          "pdf_diagnostic_record_review": 90,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_pipeline_blocked": 1,
+          "pdf_pipeline_not_reviewable": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        },
+        "total": 132
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 121,
+        "publish_count": 17,
+        "unresolved_count": 97,
+        "contract_failure_count": 9,
+        "drop_reasons": {
+          "action_without_failure": 1,
+          "candidate_passage_missing_disposition": 35,
+          "check_only": 2,
+          "component_without_failure": 3,
+          "declared_not_diagnostic": 7,
+          "failure_edge_without_failure": 3,
+          "failure_inferred_from_instruction": 5,
+          "inspection_only_action": 2,
+          "lineage_anchor_outside_bundle": 9,
+          "missing_actions": 6,
+          "missing_affects_evidence": 1,
+          "missing_failure": 8,
+          "no_action_stated": 1,
+          "quote_not_in_anchored_evidence": 27,
+          "relation_endpoint_support_unestablished": 21,
+          "structured_response_error": 25
+        },
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_extraction_complete": false
+      },
+      "multiple_published_records_in_one_window": {},
+      "dispositions": {
+        "review": 93,
+        "publish": 17,
+        "exclude": 7,
+        "gap": 4
+      },
+      "canonical_grounding": {
+        "references": 3179,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 19,
+      "distinct_graph_branches": 16
+    },
+    {
+      "run_id": "c2_danfoss_apf",
+      "manual_id": "danfoss_apf",
+      "status": "completed",
+      "elapsed_seconds": 147.18,
+      "code_sha256": "95f5679e9ab9a8c482faacde5b4288830f1726bf9bbe53f2fbb7e802c63d89ca",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 21,
+        "charged_usd": 0.016995015,
+        "observed_estimated_usd": 0.016995015,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 91842,
+        "completion_tokens": 14640
+      },
+      "response_archives": {
+        "count": 21,
+        "response_available": 21,
+        "with_usage": 21,
+        "statuses": {
+          "received": 21
+        },
+        "missing_finalized_call_ids": []
+      },
+      "nodes": 40,
+      "relations": 43,
+      "review": {
+        "blocking": 14,
+        "by_code": {
+          "canonicalization_ambiguous": 6,
+          "diagnostic_failure_without_component": 5,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 9,
+          "pdf_diagnostic_record_review": 2,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1,
+          "pdf_unreadable_pages": 1
+        },
+        "total": 29
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 19,
+        "publish_count": 5,
+        "unresolved_count": 14,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 2,
+          "check_only": 6,
+          "missing_actions": 11,
+          "missing_failure": 1,
+          "no_action_stated": 6
+        },
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_extraction_complete": true
+      },
+      "multiple_published_records_in_one_window": {},
+      "dispositions": {
+        "gap": 12,
+        "publish": 5,
+        "review": 2
+      },
+      "canonical_grounding": {
+        "references": 255,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 5,
+      "distinct_graph_branches": 5,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 5,
+        "expected_gap_probe": 3,
+        "one_to_one_source_page_branch_probe": 5,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c2_eastman_e554",
+      "manual_id": "eastman_e554",
+      "status": "completed",
+      "elapsed_seconds": 392.863,
+      "code_sha256": "95f5679e9ab9a8c482faacde5b4288830f1726bf9bbe53f2fbb7e802c63d89ca",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 29,
+        "charged_usd": 0.038415849999999994,
+        "observed_estimated_usd": 0.038415849999999994,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 137592,
+        "completion_tokens": 53194
+      },
+      "response_archives": {
+        "count": 29,
+        "response_available": 29,
+        "with_usage": 29,
+        "statuses": {
+          "received": 29
+        },
+        "missing_finalized_call_ids": []
+      },
+      "nodes": 164,
+      "relations": 167,
+      "review": {
+        "blocking": 49,
+        "by_code": {
+          "canonicalization_ambiguous": 22,
+          "diagnostic_failure_without_component": 2,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 23,
+          "pdf_diagnostic_record_review": 24,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        },
+        "total": 78
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 107,
+        "publish_count": 12,
+        "unresolved_count": 52,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "action_without_failure": 9,
+          "candidate_passage_missing_disposition": 5,
+          "check_only": 14,
+          "component_without_failure": 3,
+          "declared_not_diagnostic": 43,
+          "failure_edge_without_failure": 4,
+          "failure_inferred_from_instruction": 5,
+          "inspection_only_action": 1,
+          "missing_actions": 10,
+          "missing_failure": 27,
+          "missing_indicator_failure_evidence": 2,
+          "no_action_stated": 11,
+          "quote_not_in_anchored_evidence": 13,
+          "relation_endpoint_support_unestablished": 4
+        },
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_extraction_complete": true
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_e89f8ba594d535722e2fd2aa": 2,
+        "diagwin_23584feab16f4a15ab8563aa": 3,
+        "diagwin_1037b2f350a605889c403eb5": 2
+      },
+      "dispositions": {
+        "review": 27,
+        "publish": 12,
+        "gap": 25,
+        "exclude": 43
+      },
+      "canonical_grounding": {
+        "references": 613,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 12,
+      "distinct_graph_branches": 12,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 4,
+        "expected_gap_probe": 0,
+        "one_to_one_source_page_branch_probe": 4,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c2_graco_check_mate_200",
+      "manual_id": "graco_check_mate_200",
+      "status": "completed",
+      "elapsed_seconds": 170.338,
+      "code_sha256": "95f5679e9ab9a8c482faacde5b4288830f1726bf9bbe53f2fbb7e802c63d89ca",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 21,
+        "charged_usd": 0.01947765,
+        "observed_estimated_usd": 0.01947765,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 92715,
+        "completion_tokens": 21837
+      },
+      "response_archives": {
+        "count": 21,
+        "response_available": 21,
+        "with_usage": 21,
+        "statuses": {
+          "received": 21
+        },
+        "missing_finalized_call_ids": []
+      },
+      "nodes": 85,
+      "relations": 84,
+      "review": {
+        "blocking": 8,
+        "by_code": {
+          "canonicalization_ambiguous": 15,
+          "diagnostic_failure_without_component": 14,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 1,
+          "pdf_diagnostic_record_review": 5,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        },
+        "total": 40
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 42,
+        "publish_count": 22,
+        "unresolved_count": 7,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 5,
+          "check_only": 2,
+          "declared_not_diagnostic": 3,
+          "duplicate_verified_occurrence": 10,
+          "missing_actions": 2
+        },
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_extraction_complete": true
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_e7da559ed4a24d452b2c46b1": 2,
+        "diagwin_10c9266cb2fa5eafe6fd4a67": 2,
+        "diagwin_0661230e10730c65e648e9ed": 2,
+        "diagwin_616e3fdd1abebf6e34cda238": 2,
+        "diagwin_1ef14c888f9c7acdc4e54a39": 2
+      },
+      "dispositions": {
+        "publish": 22,
+        "exclude": 13,
+        "review": 5,
+        "gap": 2
+      },
+      "canonical_grounding": {
+        "references": 275,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 22,
+      "distinct_graph_branches": 20,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 18,
+        "autonomous_probe": 17,
+        "expected_gap_probe": 1,
+        "one_to_one_source_page_branch_probe": 17,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c2_hypertherm_powermax30_air",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 804.52,
+      "code_sha256": "95f5679e9ab9a8c482faacde5b4288830f1726bf9bbe53f2fbb7e802c63d89ca",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 63,
+        "charged_usd": 0.07969475500000002,
+        "observed_estimated_usd": 0.07969475500000002,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 355538,
+        "completion_tokens": 86706
+      },
+      "response_archives": {
+        "count": 63,
+        "response_available": 63,
+        "with_usage": 63,
+        "statuses": {
+          "received": 63
+        },
+        "missing_finalized_call_ids": []
+      },
+      "nodes": 139,
+      "relations": 139,
+      "review": {
+        "blocking": 91,
+        "by_code": {
+          "canonicalization_ambiguous": 16,
+          "diagnostic_failure_without_component": 5,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 15,
+          "pdf_diagnostic_record_review": 74,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        },
+        "total": 117
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 113,
+        "publish_count": 10,
+        "unresolved_count": 89,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "action_without_failure": 5,
+          "candidate_passage_missing_disposition": 14,
+          "check_only": 2,
+          "component_without_failure": 7,
+          "declared_not_diagnostic": 14,
+          "failure_edge_without_failure": 7,
+          "failure_inferred_from_instruction": 5,
+          "inspection_only_action": 1,
+          "lineage_anchor_outside_bundle": 13,
+          "missing_actions": 25,
+          "missing_failure": 8,
+          "missing_resolution_evidence": 19,
+          "no_action_stated": 2,
+          "quote_not_in_anchored_evidence": 15,
+          "relation_endpoint_support_unestablished": 47
+        },
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_extraction_complete": true
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_a636065e7d8fdbeb029f934f": 2,
+        "diagwin_685b6bad58403ed74f4d412b": 2
+      },
+      "dispositions": {
+        "review": 74,
+        "exclude": 14,
+        "publish": 10,
+        "gap": 15
+      },
+      "canonical_grounding": {
+        "references": 3096,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 19,
+      "distinct_graph_branches": 10
+    },
+    {
+      "run_id": "c7_hypertherm_powermax30_air",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 603.94,
+      "code_sha256": "3cddd3c2b76ae697465e3198b29120f1b32b1acbfd4dee83541d25f0e4aa3e93",
+      "model": "gpt-6-luna",
+      "packet_pages": null,
+      "cost": {
+        "calls": 68,
+        "charged_usd": 0.08230556000000003,
+        "observed_estimated_usd": 0.08230556000000003,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 372798,
+        "completion_tokens": 90021
+      },
+      "response_archives": {
+        "count": 68,
+        "response_available": 68,
+        "with_usage": 68,
+        "statuses": {
+          "received": 68
+        },
+        "missing_finalized_call_ids": []
+      },
+      "nodes": 153,
+      "relations": 154,
+      "review": {
+        "blocking": 79,
+        "by_code": {
+          "canonicalization_ambiguous": 21,
+          "diagnostic_failure_without_component": 6,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 7,
+          "pdf_diagnostic_record_review": 70,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        },
+        "total": 111
+      },
+      "approval_eligible": false,
+      "diagnostics": {
+        "candidate_count": 119,
+        "publish_count": 17,
+        "unresolved_count": 93,
+        "contract_failure_count": 0,
+        "drop_reasons": {
+          "action_without_failure": 4,
+          "candidate_passage_missing_disposition": 17,
+          "check_only": 6,
+          "component_without_failure": 4,
+          "declared_ambiguous": 10,
+          "declared_not_diagnostic": 9,
+          "failure_edge_without_failure": 7,
+          "failure_inferred_from_instruction": 2,
+          "indicator_inferred_from_inspection": 2,
+          "inspection_only_action": 3,
+          "lineage_anchor_outside_bundle": 2,
+          "missing_actions": 20,
+          "missing_affects_evidence": 2,
+          "missing_failure": 16,
+          "no_action_stated": 1,
+          "quote_not_in_anchored_evidence": 30,
+          "relation_endpoint_support_unestablished": 38,
+          "structurally_ambiguous_pairing": 29
+        },
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_extraction_complete": false
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_801ada29217e8fba589c7ff1": 2,
+        "diagwin_5da0a69fcdb848697f6b347a": 2
+      },
+      "dispositions": {
+        "review": 85,
+        "publish": 17,
+        "exclude": 9,
+        "gap": 8
+      },
+      "canonical_grounding": {
+        "references": 3604,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostic_paths": 20,
+      "distinct_graph_branches": 17
+    },
+    {
+      "run_id": "c9p_test9_low_r1",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 59.258,
+      "code_sha256": "25dfd8b548c8694df80ece9de0b5d57e9f516914e92332a76e6466921592cd20",
+      "model": "gpt-6-luna",
+      "packet_pages": "96,97,98,99,100",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.003244925,
+        "observed_estimated_usd": 0.003244925,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 5932,
+        "completion_tokens": 5007
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 6,
+        "publish_count": 0,
+        "unresolved_count": 6,
+        "drop_reasons": {
+          "quote_not_in_anchored_evidence": 2,
+          "relation_endpoint_support_unestablished": 6
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "c9p_test9_medium_r1",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 74.658,
+      "code_sha256": "25dfd8b548c8694df80ece9de0b5d57e9f516914e92332a76e6466921592cd20",
+      "model": "gpt-6-luna",
+      "packet_pages": "96,97,98,99,100",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.005672925,
+        "observed_estimated_usd": 0.005672925,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 5932,
+        "completion_tokens": 9863
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 6,
+        "publish_count": 0,
+        "unresolved_count": 6,
+        "drop_reasons": {
+          "action_without_failure": 1,
+          "component_without_failure": 1,
+          "failure_edge_without_failure": 1,
+          "missing_failure": 1,
+          "quote_not_in_anchored_evidence": 5,
+          "relation_endpoint_support_unestablished": 5
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1_danfoss_apf_luna_low8",
+      "manual_id": "danfoss_apf",
+      "status": "completed",
+      "elapsed_seconds": 25.889,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-luna",
+      "packet_pages": "64",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.00153302,
+        "observed_estimated_usd": 0.00153302,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 3775,
+        "completion_tokens": 2990
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 8,
+        "publish_count": 5,
+        "unresolved_count": 3,
+        "drop_reasons": {
+          "check_only": 3,
+          "missing_actions": 3
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1_danfoss_apf_luna_none24",
+      "manual_id": "danfoss_apf",
+      "status": "completed",
+      "elapsed_seconds": 23.451,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-luna",
+      "packet_pages": "64",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.0016893,
+        "observed_estimated_usd": 0.0016893,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 3775,
+        "completion_tokens": 2435
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 14,
+        "publish_count": 3,
+        "unresolved_count": 11,
+        "drop_reasons": {
+          "missing_actions": 3,
+          "quote_not_in_anchored_evidence": 2,
+          "relation_endpoint_support_unestablished": 6,
+          "candidate_passage_missing_disposition": 6
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1_danfoss_apf_sol_medium24",
+      "manual_id": "danfoss_apf",
+      "status": "completed",
+      "elapsed_seconds": 66.935,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-sol",
+      "packet_pages": "64",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.051866,
+        "observed_estimated_usd": 0.051866,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 3775,
+        "completion_tokens": 4243
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 10,
+        "publish_count": 0,
+        "unresolved_count": 8,
+        "drop_reasons": {
+          "check_only": 3,
+          "declared_not_diagnostic": 2,
+          "missing_actions": 8,
+          "no_action_stated": 5
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1_danfoss_luna_low24",
+      "manual_id": "danfoss_apf",
+      "status": "failed",
+      "elapsed_seconds": 0.83,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-luna",
+      "packet_pages": "64",
+      "cost": {
+        "calls": 0,
+        "charged_usd": 0.0,
+        "observed_estimated_usd": 0.0,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0
+      },
+      "response_archives": {
+        "count": 0,
+        "response_available": 0,
+        "with_usage": 0,
+        "statuses": {},
+        "missing_finalized_call_ids": []
+      }
+    },
+    {
+      "run_id": "p1_eastman_e554_luna_low24",
+      "manual_id": "eastman_e554",
+      "status": "completed",
+      "elapsed_seconds": 63.419,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-luna",
+      "packet_pages": "37,38,39",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.00415695,
+        "observed_estimated_usd": 0.00415695,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 5068,
+        "completion_tokens": 8212
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 15,
+        "publish_count": 0,
+        "unresolved_count": 14,
+        "drop_reasons": {
+          "action_without_failure": 1,
+          "check_only": 2,
+          "declared_not_diagnostic": 1,
+          "missing_actions": 4,
+          "missing_failure": 3,
+          "quote_not_in_anchored_evidence": 6,
+          "relation_endpoint_support_unestablished": 10
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1_eastman_e554_luna_low8",
+      "manual_id": "eastman_e554",
+      "status": "completed",
+      "elapsed_seconds": 62.588,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-luna",
+      "packet_pages": "37,38,39",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.004597925,
+        "observed_estimated_usd": 0.004597925,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 5068,
+        "completion_tokens": 7929
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 12,
+        "publish_count": 0,
+        "unresolved_count": 11,
+        "drop_reasons": {
+          "action_without_failure": 2,
+          "check_only": 2,
+          "declared_not_diagnostic": 1,
+          "missing_actions": 1,
+          "missing_failure": 4,
+          "quote_not_in_anchored_evidence": 2,
+          "relation_endpoint_support_unestablished": 7
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1_eastman_e554_luna_none24",
+      "manual_id": "eastman_e554",
+      "status": "completed",
+      "elapsed_seconds": 79.509,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-luna",
+      "packet_pages": "37,38,39",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.005308425,
+        "observed_estimated_usd": 0.005308425,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 5068,
+        "completion_tokens": 9350
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 12,
+        "publish_count": 0,
+        "unresolved_count": 12,
+        "drop_reasons": {
+          "action_without_failure": 2,
+          "check_only": 1,
+          "component_without_failure": 1,
+          "missing_failure": 5,
+          "quote_not_in_anchored_evidence": 11,
+          "relation_endpoint_support_unestablished": 7
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1_eastman_e554_sol_medium24",
+      "manual_id": "eastman_e554",
+      "status": "completed",
+      "elapsed_seconds": 155.417,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-sol",
+      "packet_pages": "37,38,39",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.1268485,
+        "observed_estimated_usd": 0.1268485,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 5068,
+        "completion_tokens": 11418
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 33,
+        "publish_count": 0,
+        "unresolved_count": 23,
+        "drop_reasons": {
+          "action_without_failure": 3,
+          "check_only": 8,
+          "declared_not_diagnostic": 10,
+          "missing_actions": 4,
+          "missing_failure": 11,
+          "no_action_stated": 1,
+          "relation_endpoint_support_unestablished": 12
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1_graco_check_mate_200_luna_low24",
+      "manual_id": "graco_check_mate_200",
+      "status": "completed",
+      "elapsed_seconds": 39.461,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-luna",
+      "packet_pages": "11",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.00342137,
+        "observed_estimated_usd": 0.00342137,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 4160,
+        "completion_tokens": 6759
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 19,
+        "publish_count": 5,
+        "unresolved_count": 14,
+        "drop_reasons": {
+          "missing_actions": 1,
+          "quote_not_in_anchored_evidence": 26,
+          "candidate_passage_missing_disposition": 1
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1_graco_check_mate_200_luna_low8",
+      "manual_id": "graco_check_mate_200",
+      "status": "completed",
+      "elapsed_seconds": 38.617,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-luna",
+      "packet_pages": "11",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.003950925,
+        "observed_estimated_usd": 0.003950925,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 4160,
+        "completion_tokens": 6862
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 19,
+        "publish_count": 3,
+        "unresolved_count": 16,
+        "drop_reasons": {
+          "missing_actions": 1,
+          "quote_not_in_anchored_evidence": 33,
+          "candidate_passage_missing_disposition": 1
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1_graco_check_mate_200_luna_none24",
+      "manual_id": "graco_check_mate_200",
+      "status": "completed",
+      "elapsed_seconds": 32.213,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-luna",
+      "packet_pages": "11",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.003319425,
+        "observed_estimated_usd": 0.003319425,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 4160,
+        "completion_tokens": 5599
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 19,
+        "publish_count": 0,
+        "unresolved_count": 19,
+        "drop_reasons": {
+          "missing_actions": 1,
+          "missing_indicator_failure_evidence": 18,
+          "quote_not_in_anchored_evidence": 13,
+          "candidate_passage_missing_disposition": 1
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1_graco_check_mate_200_sol_medium24",
+      "manual_id": "graco_check_mate_200",
+      "status": "completed",
+      "elapsed_seconds": 116.877,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-sol",
+      "packet_pages": "11",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.0990785,
+        "observed_estimated_usd": 0.0990785,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 4160,
+        "completion_tokens": 8868
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 23,
+        "publish_count": 5,
+        "unresolved_count": 14,
+        "drop_reasons": {
+          "declared_not_diagnostic": 4,
+          "missing_actions": 1,
+          "relation_endpoint_support_unestablished": 13,
+          "candidate_passage_missing_disposition": 1
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1_hypertherm_powermax30_air_luna_low24",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 60.052,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-luna",
+      "packet_pages": "76,77",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.00243243,
+        "observed_estimated_usd": 0.00243243,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 4116,
+        "completion_tokens": 4782
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 12,
+        "publish_count": 1,
+        "unresolved_count": 10,
+        "drop_reasons": {
+          "check_only": 1,
+          "declared_not_diagnostic": 1,
+          "missing_actions": 1,
+          "relation_endpoint_support_unestablished": 6,
+          "candidate_passage_missing_disposition": 3
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1_hypertherm_powermax30_air_luna_low8",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 61.436,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-luna",
+      "packet_pages": "76,77",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.003019925,
+        "observed_estimated_usd": 0.003019925,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 4116,
+        "completion_tokens": 5011
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 12,
+        "publish_count": 2,
+        "unresolved_count": 10,
+        "drop_reasons": {
+          "quote_not_in_anchored_evidence": 4,
+          "relation_endpoint_support_unestablished": 5,
+          "record_schema_invalid": 1,
+          "candidate_passage_missing_disposition": 3
+        },
+        "invalid_record_count": 1
+      }
+    },
+    {
+      "run_id": "p1_hypertherm_powermax30_air_luna_none24",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 68.906,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-luna",
+      "packet_pages": "76,77",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.003344425,
+        "observed_estimated_usd": 0.003344425,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 4116,
+        "completion_tokens": 5660
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 12,
+        "publish_count": 3,
+        "unresolved_count": 9,
+        "drop_reasons": {
+          "quote_not_in_anchored_evidence": 6,
+          "relation_endpoint_support_unestablished": 5,
+          "candidate_passage_missing_disposition": 3
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1_hypertherm_powermax30_air_sol_medium24",
+      "manual_id": "hypertherm_powermax30_air",
+      "status": "completed",
+      "elapsed_seconds": 135.316,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-sol",
+      "packet_pages": "76,77",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.0982685,
+        "observed_estimated_usd": 0.0982685,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 4116,
+        "completion_tokens": 8798
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 10,
+        "publish_count": 2,
+        "unresolved_count": 8,
+        "drop_reasons": {
+          "quote_not_in_anchored_evidence": 10,
+          "relation_endpoint_support_unestablished": 6
+        },
+        "invalid_record_count": 0
+      }
+    },
+    {
+      "run_id": "p1r1_danfoss_luna_low24",
+      "manual_id": "danfoss_apf",
+      "status": "failed",
+      "elapsed_seconds": 0.875,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-luna",
+      "packet_pages": "64",
+      "cost": {
+        "calls": 0,
+        "charged_usd": 0.0,
+        "observed_estimated_usd": 0.0,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0
+      },
+      "response_archives": {
+        "count": 0,
+        "response_available": 0,
+        "with_usage": 0,
+        "statuses": {},
+        "missing_finalized_call_ids": []
+      }
+    },
+    {
+      "run_id": "p1r2_danfoss_luna_low24",
+      "manual_id": "danfoss_apf",
+      "status": "completed",
+      "elapsed_seconds": 22.693,
+      "code_sha256": "2848ece3e0f6de1e6bcc49f84db3caf8895766a58bd11e662570bc411be4cd02",
+      "model": "gpt-6-luna",
+      "packet_pages": "64",
+      "cost": {
+        "calls": 1,
+        "charged_usd": 0.0016898,
+        "observed_estimated_usd": 0.0016898,
+        "unknown_usage_calls": 0,
+        "failed_calls": 0,
+        "prompt_tokens": 3775,
+        "completion_tokens": 2436
+      },
+      "response_archives": {
+        "count": 1,
+        "response_available": 1,
+        "with_usage": 1,
+        "statuses": {
+          "received": 1
+        },
+        "missing_finalized_call_ids": []
+      },
+      "diagnostics": {
+        "candidate_count": 8,
+        "publish_count": 5,
+        "unresolved_count": 3,
+        "drop_reasons": {
+          "check_only": 3,
+          "missing_actions": 3
+        },
+        "invalid_record_count": 0
+      }
+    }
+  ],
+  "replays": [
+    {
+      "run_id": "c3r1_danfoss_apf",
+      "source_run": "c2_danfoss_apf",
+      "manual_id": "danfoss_apf",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "54b0dab19ecfac43ebdef40699b1a104678e2ddd95d83f205649d19d85df1b7b",
+      "nodes": 40,
+      "relations": 43,
+      "distinct_graph_branches": 5,
+      "review": {
+        "total": 29,
+        "blocking": 14,
+        "by_code": {
+          "canonicalization_ambiguous": 6,
+          "diagnostic_failure_without_component": 5,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 9,
+          "pdf_diagnostic_record_review": 2,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1,
+          "pdf_unreadable_pages": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 265,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 19,
+        "publish_count": 5,
+        "unresolved_count": 14,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 2,
+          "check_only": 6,
+          "missing_actions": 11,
+          "missing_failure": 1,
+          "no_action_stated": 6
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": null,
+        "diagnostic_extraction_complete": true,
+        "pending_diagnostic_records": null,
+        "semantic_completeness_validated": null
+      },
+      "multiple_published_records_in_one_window": {},
+      "inspection_step_occurrences": 6,
+      "condition_occurrences": 0,
+      "verified_source_gap_information": 0,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 5,
+        "expected_gap_probe": 3,
+        "one_to_one_source_page_branch_probe": 5,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c3r1_eastman_e554",
+      "source_run": "c2_eastman_e554",
+      "manual_id": "eastman_e554",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "54b0dab19ecfac43ebdef40699b1a104678e2ddd95d83f205649d19d85df1b7b",
+      "nodes": 164,
+      "relations": 167,
+      "distinct_graph_branches": 12,
+      "review": {
+        "total": 78,
+        "blocking": 49,
+        "by_code": {
+          "canonicalization_ambiguous": 22,
+          "diagnostic_failure_without_component": 2,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 23,
+          "pdf_diagnostic_record_review": 24,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 633,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 107,
+        "publish_count": 12,
+        "unresolved_count": 52,
+        "drop_reasons": {
+          "action_without_failure": 9,
+          "candidate_passage_missing_disposition": 5,
+          "check_only": 14,
+          "component_without_failure": 3,
+          "declared_not_diagnostic": 43,
+          "failure_edge_without_failure": 4,
+          "failure_inferred_from_instruction": 5,
+          "inspection_only_action": 1,
+          "missing_actions": 10,
+          "missing_failure": 27,
+          "missing_indicator_failure_evidence": 2,
+          "no_action_stated": 11,
+          "quote_not_in_anchored_evidence": 13,
+          "relation_endpoint_support_unestablished": 4
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": null,
+        "diagnostic_extraction_complete": true,
+        "pending_diagnostic_records": null,
+        "semantic_completeness_validated": null
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_e89f8ba594d535722e2fd2aa": 2,
+        "diagwin_23584feab16f4a15ab8563aa": 3,
+        "diagwin_1037b2f350a605889c403eb5": 2
+      },
+      "inspection_step_occurrences": 48,
+      "condition_occurrences": 30,
+      "verified_source_gap_information": 0,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 4,
+        "expected_gap_probe": 0,
+        "one_to_one_source_page_branch_probe": 4,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c3r1_graco_check_mate_200",
+      "source_run": "c2_graco_check_mate_200",
+      "manual_id": "graco_check_mate_200",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "54b0dab19ecfac43ebdef40699b1a104678e2ddd95d83f205649d19d85df1b7b",
+      "nodes": 86,
+      "relations": 88,
+      "distinct_graph_branches": 22,
+      "review": {
+        "total": 40,
+        "blocking": 8,
+        "by_code": {
+          "canonicalization_ambiguous": 15,
+          "diagnostic_failure_without_component": 14,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 1,
+          "pdf_diagnostic_record_review": 5,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 312,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 42,
+        "publish_count": 22,
+        "unresolved_count": 7,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 5,
+          "check_only": 2,
+          "declared_not_diagnostic": 3,
+          "duplicate_verified_occurrence": 10,
+          "missing_actions": 2
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": null,
+        "diagnostic_extraction_complete": true,
+        "pending_diagnostic_records": null,
+        "semantic_completeness_validated": null
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_e7da559ed4a24d452b2c46b1": 2,
+        "diagwin_10c9266cb2fa5eafe6fd4a67": 2,
+        "diagwin_0661230e10730c65e648e9ed": 2,
+        "diagwin_616e3fdd1abebf6e34cda238": 2,
+        "diagwin_1ef14c888f9c7acdc4e54a39": 2
+      },
+      "inspection_step_occurrences": 2,
+      "condition_occurrences": 0,
+      "verified_source_gap_information": 0,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 18,
+        "autonomous_probe": 17,
+        "expected_gap_probe": 1,
+        "one_to_one_source_page_branch_probe": 17,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c3r1_hypertherm_powermax30_air",
+      "source_run": "c2_hypertherm_powermax30_air",
+      "manual_id": "hypertherm_powermax30_air",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "54b0dab19ecfac43ebdef40699b1a104678e2ddd95d83f205649d19d85df1b7b",
+      "nodes": 139,
+      "relations": 139,
+      "distinct_graph_branches": 10,
+      "review": {
+        "total": 117,
+        "blocking": 91,
+        "by_code": {
+          "canonicalization_ambiguous": 16,
+          "diagnostic_failure_without_component": 5,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 15,
+          "pdf_diagnostic_record_review": 74,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 3112,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 113,
+        "publish_count": 10,
+        "unresolved_count": 89,
+        "drop_reasons": {
+          "action_without_failure": 5,
+          "candidate_passage_missing_disposition": 14,
+          "check_only": 2,
+          "component_without_failure": 7,
+          "declared_not_diagnostic": 14,
+          "failure_edge_without_failure": 7,
+          "failure_inferred_from_instruction": 5,
+          "inspection_only_action": 1,
+          "lineage_anchor_outside_bundle": 13,
+          "missing_actions": 25,
+          "missing_failure": 8,
+          "missing_resolution_evidence": 19,
+          "no_action_stated": 2,
+          "quote_not_in_anchored_evidence": 15,
+          "relation_endpoint_support_unestablished": 47
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": null,
+        "diagnostic_extraction_complete": true,
+        "pending_diagnostic_records": null,
+        "semantic_completeness_validated": null
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_a636065e7d8fdbeb029f934f": 2,
+        "diagwin_685b6bad58403ed74f4d412b": 2
+      },
+      "inspection_step_occurrences": 24,
+      "condition_occurrences": 35,
+      "verified_source_gap_information": 0
+    },
+    {
+      "run_id": "c4r1_danfoss_apf",
+      "source_run": "c2_danfoss_apf",
+      "manual_id": "danfoss_apf",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "95ecae5e5380c0d9edf43f17b6a475e3c2b51611ff812f9975f6a6f73ed08ebe",
+      "nodes": 40,
+      "relations": 43,
+      "distinct_graph_branches": 5,
+      "review": {
+        "total": 29,
+        "blocking": 14,
+        "by_code": {
+          "canonicalization_ambiguous": 6,
+          "diagnostic_failure_without_component": 5,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 9,
+          "pdf_diagnostic_record_review": 2,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1,
+          "pdf_unreadable_pages": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 265,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 19,
+        "publish_count": 5,
+        "unresolved_count": 14,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 2,
+          "check_only": 6,
+          "missing_actions": 11,
+          "missing_failure": 1,
+          "no_action_stated": 6
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": null,
+        "diagnostic_extraction_complete": true,
+        "pending_diagnostic_records": null,
+        "semantic_completeness_validated": null
+      },
+      "multiple_published_records_in_one_window": {},
+      "inspection_step_occurrences": 6,
+      "condition_occurrences": 0,
+      "verified_source_gap_information": 0,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 5,
+        "expected_gap_probe": 3,
+        "one_to_one_source_page_branch_probe": 5,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c4r1_eastman_e554",
+      "source_run": "c2_eastman_e554",
+      "manual_id": "eastman_e554",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "95ecae5e5380c0d9edf43f17b6a475e3c2b51611ff812f9975f6a6f73ed08ebe",
+      "nodes": 153,
+      "relations": 157,
+      "distinct_graph_branches": 9,
+      "review": {
+        "total": 80,
+        "blocking": 52,
+        "by_code": {
+          "canonicalization_ambiguous": 22,
+          "diagnostic_failure_without_component": 1,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 24,
+          "pdf_diagnostic_record_review": 26,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 620,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 107,
+        "publish_count": 9,
+        "unresolved_count": 55,
+        "drop_reasons": {
+          "action_without_failure": 9,
+          "candidate_passage_missing_disposition": 5,
+          "check_only": 14,
+          "component_without_failure": 3,
+          "declared_not_diagnostic": 43,
+          "failure_edge_without_failure": 4,
+          "failure_inferred_from_instruction": 5,
+          "indicator_inferred_from_inspection": 2,
+          "inspection_only_action": 2,
+          "missing_actions": 10,
+          "missing_failure": 27,
+          "missing_indicator_failure_evidence": 2,
+          "no_action_stated": 11,
+          "quote_not_in_anchored_evidence": 13,
+          "relation_endpoint_support_unestablished": 4
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": null,
+        "diagnostic_extraction_complete": true,
+        "pending_diagnostic_records": null,
+        "semantic_completeness_validated": null
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_e89f8ba594d535722e2fd2aa": 2,
+        "diagwin_23584feab16f4a15ab8563aa": 3,
+        "diagwin_1037b2f350a605889c403eb5": 2
+      },
+      "inspection_step_occurrences": 48,
+      "condition_occurrences": 29,
+      "verified_source_gap_information": 0,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 4,
+        "expected_gap_probe": 0,
+        "one_to_one_source_page_branch_probe": 4,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c4r1_graco_check_mate_200",
+      "source_run": "c2_graco_check_mate_200",
+      "manual_id": "graco_check_mate_200",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "95ecae5e5380c0d9edf43f17b6a475e3c2b51611ff812f9975f6a6f73ed08ebe",
+      "nodes": 86,
+      "relations": 88,
+      "distinct_graph_branches": 22,
+      "review": {
+        "total": 40,
+        "blocking": 8,
+        "by_code": {
+          "canonicalization_ambiguous": 15,
+          "diagnostic_failure_without_component": 14,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 1,
+          "pdf_diagnostic_record_review": 5,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 312,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 42,
+        "publish_count": 22,
+        "unresolved_count": 7,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 5,
+          "check_only": 2,
+          "declared_not_diagnostic": 3,
+          "duplicate_verified_occurrence": 10,
+          "missing_actions": 2
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": null,
+        "diagnostic_extraction_complete": true,
+        "pending_diagnostic_records": null,
+        "semantic_completeness_validated": null
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_e7da559ed4a24d452b2c46b1": 2,
+        "diagwin_10c9266cb2fa5eafe6fd4a67": 2,
+        "diagwin_0661230e10730c65e648e9ed": 2,
+        "diagwin_616e3fdd1abebf6e34cda238": 2,
+        "diagwin_1ef14c888f9c7acdc4e54a39": 2
+      },
+      "inspection_step_occurrences": 2,
+      "condition_occurrences": 0,
+      "verified_source_gap_information": 0,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 18,
+        "autonomous_probe": 17,
+        "expected_gap_probe": 1,
+        "one_to_one_source_page_branch_probe": 17,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c4r1_hypertherm_powermax30_air",
+      "source_run": "c2_hypertherm_powermax30_air",
+      "manual_id": "hypertherm_powermax30_air",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "95ecae5e5380c0d9edf43f17b6a475e3c2b51611ff812f9975f6a6f73ed08ebe",
+      "nodes": 139,
+      "relations": 139,
+      "distinct_graph_branches": 10,
+      "review": {
+        "total": 117,
+        "blocking": 91,
+        "by_code": {
+          "canonicalization_ambiguous": 16,
+          "diagnostic_failure_without_component": 5,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 15,
+          "pdf_diagnostic_record_review": 74,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 3112,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 113,
+        "publish_count": 10,
+        "unresolved_count": 89,
+        "drop_reasons": {
+          "action_without_failure": 5,
+          "candidate_passage_missing_disposition": 14,
+          "check_only": 2,
+          "component_without_failure": 7,
+          "declared_not_diagnostic": 14,
+          "failure_edge_without_failure": 7,
+          "failure_inferred_from_instruction": 5,
+          "indicator_inferred_from_inspection": 3,
+          "inspection_only_action": 1,
+          "lineage_anchor_outside_bundle": 13,
+          "missing_actions": 25,
+          "missing_failure": 8,
+          "missing_resolution_evidence": 19,
+          "no_action_stated": 2,
+          "quote_not_in_anchored_evidence": 15,
+          "relation_endpoint_support_unestablished": 47
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": null,
+        "diagnostic_extraction_complete": true,
+        "pending_diagnostic_records": null,
+        "semantic_completeness_validated": null
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_a636065e7d8fdbeb029f934f": 2,
+        "diagwin_685b6bad58403ed74f4d412b": 2
+      },
+      "inspection_step_occurrences": 24,
+      "condition_occurrences": 35,
+      "verified_source_gap_information": 0
+    },
+    {
+      "run_id": "c5r1_danfoss_apf",
+      "source_run": "c2_danfoss_apf",
+      "manual_id": "danfoss_apf",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "8c0cbdc8e3fd82b7c5558de44bf58d4d03c68273911237554905853c740c474a",
+      "nodes": 40,
+      "relations": 43,
+      "distinct_graph_branches": 5,
+      "review": {
+        "total": 28,
+        "blocking": 13,
+        "by_code": {
+          "canonicalization_ambiguous": 6,
+          "diagnostic_failure_without_component": 5,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 8,
+          "pdf_diagnostic_record_review": 2,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1,
+          "pdf_unreadable_pages": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 265,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 19,
+        "publish_count": 5,
+        "unresolved_count": 14,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 2,
+          "check_only": 6,
+          "missing_actions": 11,
+          "missing_failure": 1,
+          "no_action_stated": 6
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": null,
+        "diagnostic_extraction_complete": true,
+        "pending_diagnostic_records": null,
+        "semantic_completeness_validated": null
+      },
+      "multiple_published_records_in_one_window": {},
+      "inspection_step_occurrences": 6,
+      "condition_occurrences": 0,
+      "verified_source_gap_information": 1,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 5,
+        "expected_gap_probe": 3,
+        "one_to_one_source_page_branch_probe": 5,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c5r1_eastman_e554",
+      "source_run": "c2_eastman_e554",
+      "manual_id": "eastman_e554",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "8c0cbdc8e3fd82b7c5558de44bf58d4d03c68273911237554905853c740c474a",
+      "nodes": 153,
+      "relations": 157,
+      "distinct_graph_branches": 9,
+      "review": {
+        "total": 80,
+        "blocking": 52,
+        "by_code": {
+          "canonicalization_ambiguous": 22,
+          "diagnostic_failure_without_component": 1,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 24,
+          "pdf_diagnostic_record_review": 26,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 620,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 107,
+        "publish_count": 9,
+        "unresolved_count": 55,
+        "drop_reasons": {
+          "action_without_failure": 9,
+          "candidate_passage_missing_disposition": 5,
+          "check_only": 14,
+          "component_without_failure": 3,
+          "declared_not_diagnostic": 43,
+          "failure_edge_without_failure": 4,
+          "failure_inferred_from_instruction": 5,
+          "indicator_inferred_from_inspection": 2,
+          "inspection_only_action": 2,
+          "missing_actions": 10,
+          "missing_failure": 27,
+          "missing_indicator_failure_evidence": 2,
+          "no_action_stated": 11,
+          "quote_not_in_anchored_evidence": 13,
+          "relation_endpoint_support_unestablished": 4
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": null,
+        "diagnostic_extraction_complete": true,
+        "pending_diagnostic_records": null,
+        "semantic_completeness_validated": null
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_e89f8ba594d535722e2fd2aa": 2,
+        "diagwin_23584feab16f4a15ab8563aa": 3,
+        "diagwin_1037b2f350a605889c403eb5": 2
+      },
+      "inspection_step_occurrences": 48,
+      "condition_occurrences": 29,
+      "verified_source_gap_information": 0,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 4,
+        "expected_gap_probe": 0,
+        "one_to_one_source_page_branch_probe": 4,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c5r1_graco_check_mate_200",
+      "source_run": "c2_graco_check_mate_200",
+      "manual_id": "graco_check_mate_200",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "8c0cbdc8e3fd82b7c5558de44bf58d4d03c68273911237554905853c740c474a",
+      "nodes": 86,
+      "relations": 88,
+      "distinct_graph_branches": 22,
+      "review": {
+        "total": 39,
+        "blocking": 7,
+        "by_code": {
+          "canonicalization_ambiguous": 15,
+          "diagnostic_failure_without_component": 14,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_review": 5,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 312,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 42,
+        "publish_count": 22,
+        "unresolved_count": 7,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 5,
+          "check_only": 2,
+          "declared_not_diagnostic": 3,
+          "duplicate_verified_occurrence": 10,
+          "missing_actions": 2
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": null,
+        "diagnostic_extraction_complete": true,
+        "pending_diagnostic_records": null,
+        "semantic_completeness_validated": null
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_e7da559ed4a24d452b2c46b1": 2,
+        "diagwin_10c9266cb2fa5eafe6fd4a67": 2,
+        "diagwin_0661230e10730c65e648e9ed": 2,
+        "diagwin_616e3fdd1abebf6e34cda238": 2,
+        "diagwin_1ef14c888f9c7acdc4e54a39": 2
+      },
+      "inspection_step_occurrences": 2,
+      "condition_occurrences": 0,
+      "verified_source_gap_information": 1,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 18,
+        "autonomous_probe": 17,
+        "expected_gap_probe": 1,
+        "one_to_one_source_page_branch_probe": 17,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c5r1_hypertherm_powermax30_air",
+      "source_run": "c2_hypertherm_powermax30_air",
+      "manual_id": "hypertherm_powermax30_air",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "8c0cbdc8e3fd82b7c5558de44bf58d4d03c68273911237554905853c740c474a",
+      "nodes": 139,
+      "relations": 139,
+      "distinct_graph_branches": 10,
+      "review": {
+        "total": 117,
+        "blocking": 91,
+        "by_code": {
+          "canonicalization_ambiguous": 16,
+          "diagnostic_failure_without_component": 5,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 15,
+          "pdf_diagnostic_record_review": 74,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 3112,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 113,
+        "publish_count": 10,
+        "unresolved_count": 89,
+        "drop_reasons": {
+          "action_without_failure": 5,
+          "candidate_passage_missing_disposition": 14,
+          "check_only": 2,
+          "component_without_failure": 7,
+          "declared_not_diagnostic": 14,
+          "failure_edge_without_failure": 7,
+          "failure_inferred_from_instruction": 5,
+          "indicator_inferred_from_inspection": 3,
+          "inspection_only_action": 1,
+          "lineage_anchor_outside_bundle": 13,
+          "missing_actions": 25,
+          "missing_failure": 8,
+          "missing_resolution_evidence": 19,
+          "no_action_stated": 2,
+          "quote_not_in_anchored_evidence": 15,
+          "relation_endpoint_support_unestablished": 47
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": null,
+        "diagnostic_extraction_complete": true,
+        "pending_diagnostic_records": null,
+        "semantic_completeness_validated": null
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_a636065e7d8fdbeb029f934f": 2,
+        "diagwin_685b6bad58403ed74f4d412b": 2
+      },
+      "inspection_step_occurrences": 24,
+      "condition_occurrences": 35,
+      "verified_source_gap_information": 0
+    },
+    {
+      "run_id": "c6r1_danfoss_apf",
+      "source_run": "c2_danfoss_apf",
+      "manual_id": "danfoss_apf",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "ad3bb96bb561f7d4ca4fb1760bd5af87608ab9f73f46d05a037956987a03f061",
+      "nodes": 40,
+      "relations": 43,
+      "distinct_graph_branches": 5,
+      "review": {
+        "total": 28,
+        "blocking": 13,
+        "by_code": {
+          "canonicalization_ambiguous": 6,
+          "diagnostic_failure_without_component": 5,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 8,
+          "pdf_diagnostic_record_review": 2,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1,
+          "pdf_unreadable_pages": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 265,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 19,
+        "publish_count": 5,
+        "unresolved_count": 14,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 2,
+          "check_only": 6,
+          "missing_actions": 11,
+          "missing_failure": 1,
+          "no_action_stated": 6
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": true,
+        "diagnostic_extraction_complete": false,
+        "pending_diagnostic_records": 12,
+        "semantic_completeness_validated": false
+      },
+      "multiple_published_records_in_one_window": {},
+      "inspection_step_occurrences": 6,
+      "condition_occurrences": 0,
+      "verified_source_gap_information": 1,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 5,
+        "expected_gap_probe": 3,
+        "one_to_one_source_page_branch_probe": 5,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c6r1_eastman_e554",
+      "source_run": "c2_eastman_e554",
+      "manual_id": "eastman_e554",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "ad3bb96bb561f7d4ca4fb1760bd5af87608ab9f73f46d05a037956987a03f061",
+      "nodes": 153,
+      "relations": 157,
+      "distinct_graph_branches": 9,
+      "review": {
+        "total": 80,
+        "blocking": 52,
+        "by_code": {
+          "canonicalization_ambiguous": 22,
+          "diagnostic_failure_without_component": 1,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 24,
+          "pdf_diagnostic_record_review": 26,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 620,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 107,
+        "publish_count": 9,
+        "unresolved_count": 55,
+        "drop_reasons": {
+          "action_without_failure": 9,
+          "candidate_passage_missing_disposition": 5,
+          "check_only": 14,
+          "component_without_failure": 3,
+          "declared_not_diagnostic": 43,
+          "failure_edge_without_failure": 4,
+          "failure_inferred_from_instruction": 5,
+          "indicator_inferred_from_inspection": 2,
+          "inspection_only_action": 2,
+          "missing_actions": 10,
+          "missing_failure": 27,
+          "missing_indicator_failure_evidence": 2,
+          "no_action_stated": 11,
+          "quote_not_in_anchored_evidence": 13,
+          "relation_endpoint_support_unestablished": 4
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": true,
+        "diagnostic_extraction_complete": false,
+        "pending_diagnostic_records": 55,
+        "semantic_completeness_validated": false
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_e89f8ba594d535722e2fd2aa": 2,
+        "diagwin_23584feab16f4a15ab8563aa": 3,
+        "diagwin_1037b2f350a605889c403eb5": 2
+      },
+      "inspection_step_occurrences": 48,
+      "condition_occurrences": 29,
+      "verified_source_gap_information": 0,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 4,
+        "expected_gap_probe": 0,
+        "one_to_one_source_page_branch_probe": 4,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c6r1_graco_check_mate_200",
+      "source_run": "c2_graco_check_mate_200",
+      "manual_id": "graco_check_mate_200",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "ad3bb96bb561f7d4ca4fb1760bd5af87608ab9f73f46d05a037956987a03f061",
+      "nodes": 86,
+      "relations": 88,
+      "distinct_graph_branches": 22,
+      "review": {
+        "total": 39,
+        "blocking": 7,
+        "by_code": {
+          "canonicalization_ambiguous": 15,
+          "diagnostic_failure_without_component": 14,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_review": 5,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 312,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 42,
+        "publish_count": 22,
+        "unresolved_count": 7,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 5,
+          "check_only": 2,
+          "declared_not_diagnostic": 3,
+          "duplicate_verified_occurrence": 10,
+          "missing_actions": 2
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": true,
+        "diagnostic_extraction_complete": false,
+        "pending_diagnostic_records": 5,
+        "semantic_completeness_validated": false
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_e7da559ed4a24d452b2c46b1": 2,
+        "diagwin_10c9266cb2fa5eafe6fd4a67": 2,
+        "diagwin_0661230e10730c65e648e9ed": 2,
+        "diagwin_616e3fdd1abebf6e34cda238": 2,
+        "diagwin_1ef14c888f9c7acdc4e54a39": 2
+      },
+      "inspection_step_occurrences": 2,
+      "condition_occurrences": 0,
+      "verified_source_gap_information": 1,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 18,
+        "autonomous_probe": 17,
+        "expected_gap_probe": 1,
+        "one_to_one_source_page_branch_probe": 17,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c6r1_hypertherm_powermax30_air",
+      "source_run": "c2_hypertherm_powermax30_air",
+      "manual_id": "hypertherm_powermax30_air",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "ad3bb96bb561f7d4ca4fb1760bd5af87608ab9f73f46d05a037956987a03f061",
+      "nodes": 139,
+      "relations": 139,
+      "distinct_graph_branches": 10,
+      "review": {
+        "total": 117,
+        "blocking": 91,
+        "by_code": {
+          "canonicalization_ambiguous": 16,
+          "diagnostic_failure_without_component": 5,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 15,
+          "pdf_diagnostic_record_review": 74,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 3112,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 113,
+        "publish_count": 10,
+        "unresolved_count": 89,
+        "drop_reasons": {
+          "action_without_failure": 5,
+          "candidate_passage_missing_disposition": 14,
+          "check_only": 2,
+          "component_without_failure": 7,
+          "declared_not_diagnostic": 14,
+          "failure_edge_without_failure": 7,
+          "failure_inferred_from_instruction": 5,
+          "indicator_inferred_from_inspection": 3,
+          "inspection_only_action": 1,
+          "lineage_anchor_outside_bundle": 13,
+          "missing_actions": 25,
+          "missing_failure": 8,
+          "missing_resolution_evidence": 19,
+          "no_action_stated": 2,
+          "quote_not_in_anchored_evidence": 15,
+          "relation_endpoint_support_unestablished": 47
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": true,
+        "diagnostic_extraction_complete": false,
+        "pending_diagnostic_records": 89,
+        "semantic_completeness_validated": false
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_a636065e7d8fdbeb029f934f": 2,
+        "diagwin_685b6bad58403ed74f4d412b": 2
+      },
+      "inspection_step_occurrences": 24,
+      "condition_occurrences": 35,
+      "verified_source_gap_information": 0
+    },
+    {
+      "run_id": "c8r1_danfoss_apf",
+      "source_run": "c2_danfoss_apf",
+      "manual_id": "danfoss_apf",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "ee5d8b443162d97e6ea6fe89ec1ecf51f2bcdafccc60e8331e6056cccfea6adb",
+      "nodes": 40,
+      "relations": 43,
+      "distinct_graph_branches": 5,
+      "review": {
+        "total": 28,
+        "blocking": 13,
+        "by_code": {
+          "canonicalization_ambiguous": 6,
+          "diagnostic_failure_without_component": 5,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 8,
+          "pdf_diagnostic_record_review": 2,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1,
+          "pdf_unreadable_pages": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 265,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 19,
+        "publish_count": 5,
+        "unresolved_count": 14,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 2,
+          "check_only": 6,
+          "missing_actions": 11,
+          "missing_failure": 1,
+          "no_action_stated": 6
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": true,
+        "diagnostic_extraction_complete": false,
+        "pending_diagnostic_records": 12,
+        "semantic_completeness_validated": false
+      },
+      "multiple_published_records_in_one_window": {},
+      "inspection_step_occurrences": 6,
+      "condition_occurrences": 0,
+      "verified_source_gap_information": 1,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 5,
+        "expected_gap_probe": 3,
+        "one_to_one_source_page_branch_probe": 5,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c8r1_eastman_e554",
+      "source_run": "c2_eastman_e554",
+      "manual_id": "eastman_e554",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "ee5d8b443162d97e6ea6fe89ec1ecf51f2bcdafccc60e8331e6056cccfea6adb",
+      "nodes": 153,
+      "relations": 157,
+      "distinct_graph_branches": 9,
+      "review": {
+        "total": 80,
+        "blocking": 52,
+        "by_code": {
+          "canonicalization_ambiguous": 22,
+          "diagnostic_failure_without_component": 1,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 24,
+          "pdf_diagnostic_record_review": 26,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 620,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 107,
+        "publish_count": 9,
+        "unresolved_count": 55,
+        "drop_reasons": {
+          "action_without_failure": 9,
+          "candidate_passage_missing_disposition": 5,
+          "check_only": 14,
+          "component_without_failure": 3,
+          "declared_not_diagnostic": 43,
+          "failure_edge_without_failure": 4,
+          "failure_inferred_from_instruction": 5,
+          "indicator_inferred_from_inspection": 2,
+          "inspection_only_action": 2,
+          "missing_actions": 10,
+          "missing_failure": 27,
+          "missing_indicator_failure_evidence": 2,
+          "no_action_stated": 11,
+          "quote_not_in_anchored_evidence": 13,
+          "relation_endpoint_support_unestablished": 4
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": true,
+        "diagnostic_extraction_complete": false,
+        "pending_diagnostic_records": 55,
+        "semantic_completeness_validated": false
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_e89f8ba594d535722e2fd2aa": 2,
+        "diagwin_23584feab16f4a15ab8563aa": 3,
+        "diagwin_1037b2f350a605889c403eb5": 2
+      },
+      "inspection_step_occurrences": 48,
+      "condition_occurrences": 29,
+      "verified_source_gap_information": 0,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 8,
+        "autonomous_probe": 4,
+        "expected_gap_probe": 0,
+        "one_to_one_source_page_branch_probe": 4,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c8r1_graco_check_mate_200",
+      "source_run": "c2_graco_check_mate_200",
+      "manual_id": "graco_check_mate_200",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "ee5d8b443162d97e6ea6fe89ec1ecf51f2bcdafccc60e8331e6056cccfea6adb",
+      "nodes": 86,
+      "relations": 88,
+      "distinct_graph_branches": 22,
+      "review": {
+        "total": 39,
+        "blocking": 7,
+        "by_code": {
+          "canonicalization_ambiguous": 15,
+          "diagnostic_failure_without_component": 14,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_review": 5,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 312,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 42,
+        "publish_count": 22,
+        "unresolved_count": 7,
+        "drop_reasons": {
+          "candidate_passage_missing_disposition": 5,
+          "check_only": 2,
+          "declared_not_diagnostic": 3,
+          "duplicate_verified_occurrence": 10,
+          "missing_actions": 2
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": true,
+        "diagnostic_extraction_complete": false,
+        "pending_diagnostic_records": 5,
+        "semantic_completeness_validated": false
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_e7da559ed4a24d452b2c46b1": 2,
+        "diagwin_10c9266cb2fa5eafe6fd4a67": 2,
+        "diagwin_0661230e10730c65e648e9ed": 2,
+        "diagwin_616e3fdd1abebf6e34cda238": 2,
+        "diagwin_1ef14c888f9c7acdc4e54a39": 2
+      },
+      "inspection_step_occurrences": 2,
+      "condition_occurrences": 0,
+      "verified_source_gap_information": 1,
+      "historical_probe": {
+        "status": "historical_lexical_probe_not_validated_quality",
+        "gold_total": 18,
+        "autonomous_probe": 17,
+        "expected_gap_probe": 1,
+        "one_to_one_source_page_branch_probe": 17,
+        "semantic_precision": null,
+        "semantic_recall": null
+      }
+    },
+    {
+      "run_id": "c8r1_hypertherm_powermax30_air",
+      "source_run": "c7_hypertherm_powermax30_air",
+      "manual_id": "hypertherm_powermax30_air",
+      "mode": "offline_exact_provider_replay",
+      "status": "completed",
+      "api_calls_made": 0,
+      "network_attempts": 0,
+      "unused_exchanges": 0,
+      "code_sha256": "ee5d8b443162d97e6ea6fe89ec1ecf51f2bcdafccc60e8331e6056cccfea6adb",
+      "nodes": 153,
+      "relations": 154,
+      "distinct_graph_branches": 17,
+      "review": {
+        "total": 111,
+        "blocking": 79,
+        "by_code": {
+          "canonicalization_ambiguous": 21,
+          "diagnostic_failure_without_component": 6,
+          "pdf_diagnostic_candidate_pages_unaccounted": 1,
+          "pdf_diagnostic_record_gap": 7,
+          "pdf_diagnostic_record_review": 70,
+          "pdf_node_provenance_unresolved": 1,
+          "pdf_ocr_low_confidence": 1,
+          "pdf_prepublication_graph_issue_summary": 1,
+          "pdf_relation_endpoint_omitted": 1,
+          "pdf_schema_instruction_not_actionable": 1,
+          "pdf_schema_material_context_not_linked": 1
+        }
+      },
+      "approval_eligible": false,
+      "compiled_branches_missing_from_graph": [],
+      "canonical_grounding": {
+        "references": 3604,
+        "failures": [],
+        "all_refs_literal_in_canonical_source": true,
+        "semantic_support_verified": false
+      },
+      "diagnostics": {
+        "candidate_count": 119,
+        "publish_count": 17,
+        "unresolved_count": 93,
+        "drop_reasons": {
+          "action_without_failure": 4,
+          "candidate_passage_missing_disposition": 17,
+          "check_only": 6,
+          "component_without_failure": 4,
+          "declared_ambiguous": 10,
+          "declared_not_diagnostic": 9,
+          "failure_edge_without_failure": 7,
+          "failure_inferred_from_instruction": 2,
+          "indicator_inferred_from_inspection": 2,
+          "inspection_only_action": 3,
+          "lineage_anchor_outside_bundle": 2,
+          "missing_actions": 20,
+          "missing_affects_evidence": 2,
+          "missing_failure": 16,
+          "no_action_stated": 1,
+          "quote_not_in_anchored_evidence": 30,
+          "relation_endpoint_support_unestablished": 38,
+          "structurally_ambiguous_pairing": 29
+        },
+        "contract_failure_count": 0
+      },
+      "completeness": {
+        "diagnostic_input_coverage_complete": true,
+        "diagnostic_contract_processing_complete": true,
+        "diagnostic_extraction_complete": false,
+        "pending_diagnostic_records": 93,
+        "semantic_completeness_validated": false
+      },
+      "multiple_published_records_in_one_window": {
+        "diagwin_801ada29217e8fba589c7ff1": 2,
+        "diagwin_5da0a69fcdb848697f6b347a": 2
+      },
+      "inspection_step_occurrences": 28,
+      "condition_occurrences": 29,
+      "verified_source_gap_information": 0
+    }
+  ]
+}

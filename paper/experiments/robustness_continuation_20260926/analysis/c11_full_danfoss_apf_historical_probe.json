@@ -1,0 +1,174 @@
+{
+  "status": "historical_lexical_probe_not_validated_quality",
+  "gold_total": 8,
+  "autonomous_probe": 5,
+  "expected_gap_probe": 3,
+  "one_to_one_source_page_branch_probe": 5,
+  "one_to_one_assignments": {
+    "dbranch_a2326a75f3be09190455760d33f5bea94d322d4b574aafa0878ef4f30b8463c7": "D3",
+    "dbranch_2879fd4a1f3c8b69a2f57ed95fc12e9df3673f4f4662874a0da76cfdbd16b4ba": "D4",
+    "dbranch_6c59ecc49d676e989282249971d3a5d46285975d6451fb9cc337242a87d1d52c": "D5",
+    "dbranch_047b727222262f212f7ea3ed4352d27efe7e8087655c311758a582e6224745e2": "D6",
+    "dbranch_9ee0da4dfa3c7a44980f0a268629c3cee309f0e31bff5cf636876ae3d38c4dae": "D7"
+  },
+  "witnesses": [
+    {
+      "claim_id": "D1",
+      "kind": "expected_gap",
+      "present": true,
+      "score": 1.0,
+      "target_id": "diagwin_f560aea9514acac73e2f6860"
+    },
+    {
+      "claim_id": "D2",
+      "kind": "expected_gap",
+      "present": true,
+      "score": 1.0,
+      "target_id": "diagwin_f560aea9514acac73e2f6860"
+    },
+    {
+      "claim_id": "D3",
+      "kind": "published_path",
+      "present": true,
+      "score": 1.0,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "ErrorCode",
+        "indicator": "Fuse blowout",
+        "failure_mode": "Input fuse is broken",
+        "corrective_action": "Contact service personnel",
+        "indicator_context": "Fuse blowout Fuse blowout 2 Fuse blowout err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1 Fuse blowout 2 The input fuse is broken.",
+        "failure_mode_context": "Input fuse is broken The input fuse is broken. The input fuse is broken. fm_input_fuse_is_broken_56e14ed6d6ef35e9aa50fbf1d1a9363121b88fce387960fc19769f7a6a3f07a3 comp_input_fuse_943b387256953b83acf977e060a2f4e751bfe75dbb18baae6e04f214918ca4d4 Input fuse is broken 2 The input fuse is broken. Contact service personnel. The input fuse is broken.",
+        "corrective_action_context": "Contact service personnel Contact service personnel. ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4 Contact service personnel. Contact service personnel. Contact service personnel typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF Contact service personnel. The input fuse is broken.",
+        "pages": [
+          64
+        ],
+        "indicator_id": "err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1",
+        "failure_mode_id": "fm_input_fuse_is_broken_56e14ed6d6ef35e9aa50fbf1d1a9363121b88fce387960fc19769f7a6a3f07a3",
+        "corrective_action_id": "ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4",
+        "branch_lineage_id": "dbranch_a2326a75f3be09190455760d33f5bea94d322d4b574aafa0878ef4f30b8463c7"
+      }
+    },
+    {
+      "claim_id": "D4",
+      "kind": "published_path",
+      "present": true,
+      "score": 1.0,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "ErrorCode",
+        "indicator": "Ambient OTP",
+        "failure_mode": "Air vents are blocked",
+        "corrective_action": "Contact service personnel",
+        "indicator_context": "Ambient OTP Ambient OTP 3 Ambient OTP err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a Ambient OTP 1 The air vents ate blocked. 3",
+        "failure_mode_context": "Air vents are blocked The air vents ate blocked. The air vents ate blocked. fm_air_vents_are_blocked_cfc2df212d0159b33453378961ad09e174641be22e9ffbd75c992097f3667b04 comp_air_vents_c695a01e025f99397ace2a63f25e53a38d804cadc930e693f8b4f1b9b7df2a3b Air vents are blocked 1 The air vents ate blocked. 3 1 The air vents ate blocked. Contact service personnel.",
+        "corrective_action_context": "Contact service personnel Contact service personnel. ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4 Contact service personnel. Contact service personnel. Contact service personnel typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF 1 The air vents ate blocked. Contact service personnel.",
+        "pages": [
+          64
+        ],
+        "indicator_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+        "failure_mode_id": "fm_air_vents_are_blocked_cfc2df212d0159b33453378961ad09e174641be22e9ffbd75c992097f3667b04",
+        "corrective_action_id": "ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4",
+        "branch_lineage_id": "dbranch_88fce248c4587dff4cd66812954d23add7206af830e771c642e3c5e8a47b45ca"
+      }
+    },
+    {
+      "claim_id": "D5",
+      "kind": "published_path",
+      "present": true,
+      "score": 1.0,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "ErrorCode",
+        "indicator": "Ambient OTP",
+        "failure_mode": "Fans do not work",
+        "corrective_action": "Contact service personnel",
+        "indicator_context": "Ambient OTP Ambient OTP 3 Ambient OTP err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a Ambient OTP 2 The fans do not work. 3",
+        "failure_mode_context": "Fans do not work The fans do not work. The fans do not work. fm_fans_do_not_work_248236fa846426e144f200e4329719f1104fa2ac8cd687b7668644c34420fd53 comp_fans_9211c9f178a2e9189d6e471da0f1111ea54beff3fe108a6e72a92a82f17446a2 Fans do not work 2 The fans do not work. 3 2 The fans do not work. Contact service personnel.",
+        "corrective_action_context": "Contact service personnel Contact service personnel. ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4 Contact service personnel. Contact service personnel. Contact service personnel typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF 2 The fans do not work. Contact service personnel.",
+        "pages": [
+          64
+        ],
+        "indicator_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+        "failure_mode_id": "fm_fans_do_not_work_248236fa846426e144f200e4329719f1104fa2ac8cd687b7668644c34420fd53",
+        "corrective_action_id": "ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4",
+        "branch_lineage_id": "dbranch_6c59ecc49d676e989282249971d3a5d46285975d6451fb9cc337242a87d1d52c"
+      }
+    },
+    {
+      "claim_id": "D6",
+      "kind": "published_path",
+      "present": true,
+      "score": 1.0,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "ErrorCode",
+        "indicator": "BUS OVP/UVP",
+        "failure_mode": "BUS capacitor failure",
+        "corrective_action": "Contact service personnel",
+        "indicator_context": "BUS OVP/UVP BUS OVP/UVP 4 BUS OVP/UVP err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f BUS OVP/UVP 4 BUS capacitor failure.",
+        "failure_mode_context": "BUS capacitor failure BUS capacitor failure. BUS capacitor failure. fm_bus_capacitor_failure_8204f6e0536c690f2dc92f8a7494946c56a2680469cacb41c40843525db4302f comp_bus_capacitor_1ca94b87d6127de0b19e3e0e69fc665d3542a85499ab7f5339701af373ea40af BUS capacitor failure 4 BUS capacitor failure. BUS capacitor failure. Contact service personnel.",
+        "corrective_action_context": "Contact service personnel Contact service personnel. ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4 Contact service personnel. Contact service personnel. Contact service personnel typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF BUS capacitor failure. Contact service personnel.",
+        "pages": [
+          64
+        ],
+        "indicator_id": "err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f",
+        "failure_mode_id": "fm_bus_capacitor_failure_8204f6e0536c690f2dc92f8a7494946c56a2680469cacb41c40843525db4302f",
+        "corrective_action_id": "ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4",
+        "branch_lineage_id": "dbranch_047b727222262f212f7ea3ed4352d27efe7e8087655c311758a582e6224745e2"
+      }
+    },
+    {
+      "claim_id": "D7",
+      "kind": "published_path",
+      "present": true,
+      "score": 1.0,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "ErrorCode",
+        "indicator": "Fan Fail",
+        "failure_mode": "Fan failure",
+        "corrective_action": "Contact service personnel",
+        "indicator_context": "Fan Fail Fan Fail 5 Fan Fail err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad Fan Fail 5 Fan failure.",
+        "failure_mode_context": "Fan failure Fan failure. Fan failure. fm_fan_failure_9d27bd67b8a7c4916c6881c4068b59dfe2b78a43809c45fc75b620a2913d65bb comp_fan_17203c3924a6891411b62f47cd8331f2fedc7b73bacd9d6dbf00b40a54563556 Fan failure 5 Fan failure. Contact service personnel. Fan failure.",
+        "corrective_action_context": "Contact service personnel Contact service personnel. ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4 Contact service personnel. Contact service personnel. Contact service personnel typed_diagnostic_edge_evidence 02_danfoss_active_power_filter_operating_guide.pdf technical PDF Contact service personnel. Fan failure.",
+        "pages": [
+          64
+        ],
+        "indicator_id": "err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad",
+        "failure_mode_id": "fm_fan_failure_9d27bd67b8a7c4916c6881c4068b59dfe2b78a43809c45fc75b620a2913d65bb",
+        "corrective_action_id": "ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4",
+        "branch_lineage_id": "dbranch_9ee0da4dfa3c7a44980f0a268629c3cee309f0e31bff5cf636876ae3d38c4dae"
+      }
+    },
+    {
+      "claim_id": "D8",
+      "kind": "expected_gap",
+      "present": true,
+      "score": 0.830769,
+      "target_id": "diagwin_b6040ad61a336637d6e71c89"
+    }
+  ],
+  "semantic_precision": null,
+  "semantic_recall": null
+}

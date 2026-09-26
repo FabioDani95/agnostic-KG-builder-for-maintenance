@@ -1,0 +1,1016 @@
+{
+  "status": "development_audit_by_prediction_exposed_agent_not_gold",
+  "test9_source_outcome_denominator": 6,
+  "source_outcomes": [
+    "T9-13b",
+    "T9-21a",
+    "T9-22a",
+    "T9-28a",
+    "T9-28b",
+    "T9-28c"
+  ],
+  "note": "Six terminal action outcomes identified in the source; one record may join 28b/28c. Counts are not global precision/recall. Zero complete verified chains is a conservative audit result, not a claim that no useful knowledge was extracted.",
+  "runs": [
+    {
+      "run_id": "c10p_eastman_low",
+      "candidate_denominator": 13,
+      "compiler_publish_count": 0,
+      "unresolved_count": 12,
+      "disposition_counts": {
+        "review": 10,
+        "gap": 2,
+        "exclude": 1
+      },
+      "complete_autonomous_chains_verified": 0,
+      "records": [
+        {
+          "index": 0,
+          "branch_id": "dbranch_022b9c981a023144b7c7d1eecfcb7b87bea75c69c25a0332a435ecbd2ab14ffe",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "action_without_failure",
+            "component_without_failure",
+            "declared_ambiguous",
+            "missing_failure"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 1,
+          "branch_id": "dbranch_227592e8732d308285b60d02c71f86a3d018eb8ceba5b50ab08e77650172600e",
+          "compiler_disposition": "gap",
+          "compiler_errors": [
+            "check_only",
+            "missing_failure"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 2,
+          "branch_id": "dbranch_2357d4ea23b6e8f8d3a91bf33af9391f7411134fa9e0dca915df6d51fec93f8a",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "action_without_failure",
+            "declared_ambiguous",
+            "missing_failure"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 3,
+          "branch_id": "dbranch_2fcef580d607add22781a743d8034ebb2124085702606354dc89ddb5412b6b4f",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 4,
+          "branch_id": "dbranch_68482c20c34bfe2671569e7a65f539dcc43df759fec26f93e03eb01bb1482e9e",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 5,
+          "branch_id": "dbranch_71e4940425eae2d4cd45531f795e24646c22843d05e07d38df7dba6a0baea91d",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 6,
+          "branch_id": "dbranch_9109247c16339603505f96e53ed1b7cc0c0cde2eae5893cf060afefc08a8afe2",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 7,
+          "branch_id": "dbranch_a7e72fdf35745e9a3c3e2678914831403f1d3452f7995909d9d54a04ba084e35",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "missing_actions",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 8,
+          "branch_id": "dbranch_aa46dbe0ad46d19ed5aa7ee6ceaf97e494f860b8cf37bec0f5834c5b6e84977b",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "action_without_failure",
+            "component_without_failure",
+            "missing_failure"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 9,
+          "branch_id": "dbranch_d5c8d7d9e75faef8a85c7f9c57a1e3e9056027c32d38c5f886889141e9ab8d17",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 10,
+          "branch_id": "dbranch_ea727e2a04ba121cea7a9b7fe63e2384dbd0f63709a679a4575cd6a384730bcd",
+          "compiler_disposition": "gap",
+          "compiler_errors": [
+            "check_only",
+            "missing_failure"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 11,
+          "branch_id": "dbranch_f14201a8ccaadeeb0078e0b33b0ebe7310f5eca5f3aafa63b39ceb4ab4fceabb",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "action_without_failure",
+            "declared_ambiguous",
+            "lineage_anchor_outside_bundle",
+            "missing_failure"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 12,
+          "branch_id": "dbranch_f29657b816beccb11b25f2521964b02ef639cb0dd59d9ea0db50d49b055052a9",
+          "compiler_disposition": "exclude",
+          "compiler_errors": [
+            "declared_not_diagnostic"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        }
+      ]
+    },
+    {
+      "run_id": "c10p_eastman_medium",
+      "candidate_denominator": 14,
+      "compiler_publish_count": 1,
+      "unresolved_count": 12,
+      "disposition_counts": {
+        "review": 9,
+        "gap": 3,
+        "publish": 1,
+        "exclude": 1
+      },
+      "complete_autonomous_chains_verified": 0,
+      "records": [
+        {
+          "index": 0,
+          "branch_id": "dbranch_03dc10bb690d190b2336d9b1f0e5c0fa8ecbd0ef37eeafbfb84e20b81505d33e",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "declared_ambiguous",
+            "missing_actions",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 1,
+          "branch_id": "dbranch_0f16218edb7ced4f70d1285ea3fb4f62f96f1a5aada47ba870d2a8bff9baa9e4",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 2,
+          "branch_id": "dbranch_2cca2165be78b53bb2d9421f7eb9d9914ea59b7ae221b3276f958f1f52064b39",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "failure_inferred_from_instruction",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 3,
+          "branch_id": "dbranch_36d61fb62141c7940465330610adc95d0353fb423112d833e01c93f831b069a0",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "missing_actions",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 4,
+          "branch_id": "dbranch_3c9eb0245d618772f31408b145ef3e835664cc426c5a9382cb102289e6d9fa75",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 5,
+          "branch_id": "dbranch_5851ac60d9b1e629e46ec83b7c48143cb51255a1164252a1096016684281f8e1",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "quote_not_in_anchored_evidence",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 6,
+          "branch_id": "dbranch_727a71b490da36e543ced2f240b74c7ced3c6d71806148c186b3af1d5d7f914b",
+          "compiler_disposition": "gap",
+          "compiler_errors": [
+            "check_only",
+            "missing_failure"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 7,
+          "branch_id": "dbranch_99a82e0c85b8e7c86a4617b2d0ab84002ac4c2342f762934d611d7ad8eb18df9",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "action_without_failure",
+            "missing_failure"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 8,
+          "branch_id": "dbranch_a18d8e9a5d83dc361702b9fe5e69bc02dcea08f29c7e6af4df1fbc3e85f75729",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "action_without_failure",
+            "missing_failure"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 9,
+          "branch_id": "dbranch_a2283c3d96e2f5df8ffadd772f50db3b7fbae0dab40103d1adc277b04e9e50db",
+          "compiler_disposition": "gap",
+          "compiler_errors": [
+            "check_only",
+            "missing_failure"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 10,
+          "branch_id": "dbranch_c4d44d2eb377fabc3bf1f7ba088474b3116e5e8b2c57dd3cb71e2afbb657a82a",
+          "compiler_disposition": "gap",
+          "compiler_errors": [
+            "check_only",
+            "missing_failure"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 11,
+          "branch_id": "dbranch_ca4b4ac9536efcc704560534ad18cb099d438b2bdfe340d2a2cf0e7e99c92379",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 12,
+          "branch_id": "dbranch_da2e1279286ccbe6c7fed94de0935f5d5f693db86fac9f48fd5a764c83cfb1a3",
+          "compiler_disposition": "publish",
+          "compiler_errors": [],
+          "semantic_status": "supported_conditional_mapping_branch",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            38
+          ],
+          "note": "Tool/layer mapping is an explicit possible cause; the if-clause and drag-to-spindle/layer action are preserved. Other troubleshooting steps and p37 general prerequisites are absent, so completeness is not certified."
+        },
+        {
+          "index": 13,
+          "branch_id": "dbranch_f29657b816beccb11b25f2521964b02ef639cb0dd59d9ea0db50d49b055052a9",
+          "compiler_disposition": "exclude",
+          "compiler_errors": [
+            "declared_not_diagnostic"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        }
+      ]
+    },
+    {
+      "run_id": "c10p_tables_low",
+      "candidate_denominator": 9,
+      "compiler_publish_count": 0,
+      "unresolved_count": 9,
+      "disposition_counts": {
+        "review": 9
+      },
+      "complete_autonomous_chains_verified": 0,
+      "records": [
+        {
+          "index": 0,
+          "branch_id": "dbranch_300a5167f923e20d8c7a912f038d119b8e9aff729cd52f7afdc2b6e823c8d647",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "missing_actions",
+            "quote_not_in_anchored_evidence",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 1,
+          "branch_id": "dbranch_352ff04c31b88b69007e144d2762ccc948b88b9ee2f59becdf71655126f7f9f8",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 2,
+          "branch_id": "dbranch_431f0dfe343d4329afe8a19fe295add6f3efc17a035b4a5771dc01f62f3506ba",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 3,
+          "branch_id": "dbranch_96d6a115232f8ce1f77fa0e1351dbef923b2d684c05cdef5935ec4b46dce8b3a",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished",
+            "relation_endpoint_support_unestablished",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 4,
+          "branch_id": "dbranch_9b5f5651782c21db6b42a5723e29c4b14450559052c7b600c1c597ef86099935",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 5,
+          "branch_id": "dbranch_d4ef21e9fed8016652e72d58b2605857d101200152e5a5da5be424a8f9b0a97e",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "missing_actions",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 6,
+          "branch_id": "dbranch_ddc430bdd350300c1c07786397537bc8cb15ca36203334d2596319ddc9fabd42",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "declared_ambiguous",
+            "missing_actions",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 7,
+          "branch_id": "dbranch_e812ecd99a23af7fc28392af77b6d9a4604ca26f0e3bfc0c0a6fdd022457db85",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "declared_ambiguous",
+            "missing_actions",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 8,
+          "branch_id": "dbranch_ee90136ab369f5b7ee0ada2cf501b50888eedd23fac288a4f405d709b88325fb",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        }
+      ]
+    },
+    {
+      "run_id": "c10p_tables_medium",
+      "candidate_denominator": 11,
+      "compiler_publish_count": 0,
+      "unresolved_count": 10,
+      "disposition_counts": {
+        "review": 10,
+        "exclude": 1
+      },
+      "complete_autonomous_chains_verified": 0,
+      "records": [
+        {
+          "index": 0,
+          "branch_id": "dbranch_077381751112e32d754f79692e1faf08f8ab7ce99c90375da0fb0885f565db32",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "missing_actions",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 1,
+          "branch_id": "dbranch_0a3b860ef1d0a56b34ef69a66cf23e2a93e9357eaf3e8eea2553738f9c49b196",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "missing_actions",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 2,
+          "branch_id": "dbranch_549dec06eeed42b0a77e3195045ac7c1387429352025b05c893feb78d49c7fd5",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 3,
+          "branch_id": "dbranch_77ec0588ab40781cdabc215fac17e2333a2b1b7c8c4cbacc02dcb22738829f6e",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 4,
+          "branch_id": "dbranch_8208e0df532363fca67af2b5249a69ee7400a1fce4a27253cd81f71fc6c8fd8d",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 5,
+          "branch_id": "dbranch_86df40791aa130451598c8c0be0c1977f93fb18e21254fe4f65c0c8ffec5cb91",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "missing_actions",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 6,
+          "branch_id": "dbranch_a786fb006236a1b94647f9d0d0d0b22df44534c2046004cd6d8573b39d3f7232",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 7,
+          "branch_id": "dbranch_d9a9225d4553892ed7e7a174b48dafc89a4f2bca56a99d49c095c5248efacc30",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 8,
+          "branch_id": "dbranch_da40069011f6e8bb5a36a29a682d984f61054a71e85865aea1d3a4453af8f6e7",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 9,
+          "branch_id": "dbranch_e610f50118e724875e05752b0be87b10f5070f9c88be792c826d3c3089746b49",
+          "compiler_disposition": "exclude",
+          "compiler_errors": [
+            "declared_not_diagnostic"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 10,
+          "branch_id": "dbranch_efed9e00cabc6164e46667bd2dc9fb42713141127c244530008f68414ebde181",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        }
+      ]
+    },
+    {
+      "run_id": "c10p_test9_low_r1",
+      "candidate_denominator": 6,
+      "compiler_publish_count": 4,
+      "unresolved_count": 2,
+      "disposition_counts": {
+        "review": 2,
+        "publish": 4
+      },
+      "complete_autonomous_chains_verified": 0,
+      "records": [
+        {
+          "index": 0,
+          "branch_id": "dbranch_2ba88bb9cb135829d0d7cf2d020d659b5bf94d28d307d5d02806af82870501e0",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "compound_negative_condition_strengthened"
+          ],
+          "semantic_status": "source_polarity_error_rejected",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            97
+          ],
+          "note": "Step 13 asks compressor running AND air blowing. NO is NOT(A AND B), not NOT A AND NOT B; candidate strengthens the condition. Compiler rejects it."
+        },
+        {
+          "index": 1,
+          "branch_id": "dbranch_2f8391b8e640aae8380a17cd4dccddd428cf40f29d4ce3dbc22826926a27db80",
+          "compiler_disposition": "publish",
+          "compiler_errors": [],
+          "semantic_status": "local_cause_remedy_outcome_supported_procedure_incomplete",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            96,
+            97,
+            98,
+            99,
+            100
+          ],
+          "note": "Explicit introductory cause list supports indicator/failure; final conditional remedy is stated. Prerequisite power-off/on, disconnection, cover/barrier removal and intermediate paths are not completely encoded in ordered inspection_steps. procedure_context preserves raw source with path_verified=false; it does not establish an executable path.",
+          "source_outcomes": [
+            "T9-21a"
+          ]
+        },
+        {
+          "index": 2,
+          "branch_id": "dbranch_36da437c639e57635a047069c6e9cac6c6fe7710304654af93a0d7168cecde53",
+          "compiler_disposition": "publish",
+          "compiler_errors": [],
+          "semantic_status": "local_cause_remedy_outcome_supported_procedure_incomplete",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            96,
+            97,
+            98,
+            99,
+            100
+          ],
+          "note": "Explicit introductory cause list supports indicator/failure; final conditional remedy is stated. Prerequisite power-off/on, disconnection, cover/barrier removal and intermediate paths are not completely encoded in ordered inspection_steps. procedure_context preserves raw source with path_verified=false; it does not establish an executable path.",
+          "source_outcomes": [
+            "T9-28c"
+          ]
+        },
+        {
+          "index": 3,
+          "branch_id": "dbranch_a2844f1ab817fff9f17dd364b11fdae6815fa4d743d1b82bb5f18c8030276171",
+          "compiler_disposition": "publish",
+          "compiler_errors": [],
+          "semantic_status": "local_cause_remedy_outcome_supported_procedure_incomplete",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            96,
+            97,
+            98,
+            99,
+            100
+          ],
+          "note": "Explicit introductory cause list supports indicator/failure; final conditional remedy is stated. Prerequisite power-off/on, disconnection, cover/barrier removal and intermediate paths are not completely encoded in ordered inspection_steps. procedure_context preserves raw source with path_verified=false; it does not establish an executable path.",
+          "source_outcomes": [
+            "T9-28b"
+          ]
+        },
+        {
+          "index": 4,
+          "branch_id": "dbranch_bad5617c4ce1a8765f433ab057bffe94c087f0f9deaaa488a271d3f655a05ca5",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "failure_inferred_from_instruction",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "source_remedy_without_explicit_wire_failure",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            99
+          ],
+          "note": "Step 22a states replace wires when J9 voltage present after J1 voltage absent. A faulty-wire causal statement is not explicitly declared in the root cause list; preserve remedy/check and cause gap, do not invent it."
+        },
+        {
+          "index": 5,
+          "branch_id": "dbranch_d374203d2a1f5bca469123a3679774c2c2cc2db068d7dbdd0d40a5e0cf11ee3c",
+          "compiler_disposition": "publish",
+          "compiler_errors": [],
+          "semantic_status": "local_cause_remedy_outcome_supported_procedure_incomplete",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            96,
+            97,
+            98,
+            99,
+            100
+          ],
+          "note": "Explicit introductory cause list supports indicator/failure; final conditional remedy is stated. Prerequisite power-off/on, disconnection, cover/barrier removal and intermediate paths are not completely encoded in ordered inspection_steps. procedure_context preserves raw source with path_verified=false; it does not establish an executable path.",
+          "source_outcomes": [
+            "T9-28a"
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": "c10p_test9_low_r2",
+      "candidate_denominator": 5,
+      "compiler_publish_count": 3,
+      "unresolved_count": 2,
+      "disposition_counts": {
+        "review": 2,
+        "publish": 3
+      },
+      "complete_autonomous_chains_verified": 0,
+      "records": [
+        {
+          "index": 0,
+          "branch_id": "dbranch_19a272163d69d597385ea1e5d954f81659672894680cd16fe57d817b8796a8b2",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "failure_inferred_from_instruction",
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "source_remedy_without_explicit_wire_failure",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            99
+          ],
+          "note": "Step 22a states replace wires when J9 voltage present after J1 voltage absent. A faulty-wire causal statement is not explicitly declared in the root cause list; preserve remedy/check and cause gap, do not invent it."
+        },
+        {
+          "index": 1,
+          "branch_id": "dbranch_3e8cb1ef8493b6bbd33f8395a5535010c0587bec2e5f4f3651a3719367261006",
+          "compiler_disposition": "publish",
+          "compiler_errors": [],
+          "semantic_status": "local_cause_remedy_outcome_supported_procedure_incomplete",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            96,
+            97,
+            98,
+            99,
+            100
+          ],
+          "note": "Explicit introductory cause list supports indicator/failure; final conditional remedy is stated. Prerequisite power-off/on, disconnection, cover/barrier removal and intermediate paths are not completely encoded in ordered inspection_steps. procedure_context preserves raw source with path_verified=false; it does not establish an executable path. The path stated through D5=no/no omits the alternate entry through compressor check=yes.",
+          "source_outcomes": [
+            "T9-21a"
+          ]
+        },
+        {
+          "index": 2,
+          "branch_id": "dbranch_49167601ed9ce602294d968ea611de3ed7cc19c16e361f36d0158ce0ce684a22",
+          "compiler_disposition": "publish",
+          "compiler_errors": [],
+          "semantic_status": "local_cause_remedy_outcome_supported_procedure_incomplete",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            96,
+            97,
+            98,
+            99,
+            100
+          ],
+          "note": "Explicit introductory cause list supports indicator/failure; final conditional remedy is stated. Prerequisite power-off/on, disconnection, cover/barrier removal and intermediate paths are not completely encoded in ordered inspection_steps. procedure_context preserves raw source with path_verified=false; it does not establish an executable path.",
+          "source_outcomes": [
+            "T9-28a"
+          ]
+        },
+        {
+          "index": 3,
+          "branch_id": "dbranch_8ee0b2a1e69ef96ecb15bfba17d61de502f7495ed5b3d71059eb7fe63ad65090",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "compound_negative_condition_strengthened"
+          ],
+          "semantic_status": "source_polarity_error_rejected",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            97
+          ],
+          "note": "Step 13 asks compressor running AND air blowing. NO is NOT(A AND B), not NOT A AND NOT B; candidate strengthens the condition. Compiler rejects it."
+        },
+        {
+          "index": 4,
+          "branch_id": "dbranch_d58ba24a3025c92fb2c075084e6b33968190cbc1c6c5a95db5ccc4202e567412",
+          "compiler_disposition": "publish",
+          "compiler_errors": [],
+          "semantic_status": "local_cause_remedy_outcome_supported_procedure_incomplete",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            96,
+            97,
+            98,
+            99,
+            100
+          ],
+          "note": "Explicit introductory cause list supports indicator/failure; final conditional remedy is stated. Prerequisite power-off/on, disconnection, cover/barrier removal and intermediate paths are not completely encoded in ordered inspection_steps. procedure_context preserves raw source with path_verified=false; it does not establish an executable path.",
+          "source_outcomes": [
+            "T9-28b",
+            "T9-28c"
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": "c10p_test9_medium_r1",
+      "candidate_denominator": 6,
+      "compiler_publish_count": 3,
+      "unresolved_count": 3,
+      "disposition_counts": {
+        "publish": 3,
+        "review": 3
+      },
+      "complete_autonomous_chains_verified": 0,
+      "records": [
+        {
+          "index": 0,
+          "branch_id": "dbranch_8c082e605bd617e61d22dcdfc02262a2c604ad4b13298c40bed309c07b22ba70",
+          "compiler_disposition": "publish",
+          "compiler_errors": [],
+          "semantic_status": "local_cause_remedy_outcome_supported_procedure_incomplete",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            96,
+            97,
+            98,
+            99,
+            100
+          ],
+          "note": "Explicit introductory cause list supports indicator/failure; final conditional remedy is stated. Prerequisite power-off/on, disconnection, cover/barrier removal and intermediate paths are not completely encoded in ordered inspection_steps. procedure_context preserves raw source with path_verified=false; it does not establish an executable path.",
+          "source_outcomes": [
+            "T9-28b"
+          ]
+        },
+        {
+          "index": 1,
+          "branch_id": "dbranch_96296e42853af024c88c27b92e0a104ae3ad941b04596bb12102ea717b3d6031",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "compound_negative_condition_strengthened",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence"
+          ],
+          "semantic_status": "source_polarity_error_rejected",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            97
+          ],
+          "note": "Step 13 asks compressor running AND air blowing. NO is NOT(A AND B), not NOT A AND NOT B; candidate strengthens the condition. Compiler rejects it."
+        },
+        {
+          "index": 2,
+          "branch_id": "dbranch_9f3d85bbcfb0bf9c82ad270c7d8b6dabdd0188f0b1097e22cf234b399ac080e1",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 3,
+          "branch_id": "dbranch_a9f5f5772877500000c6e649504244c9a7b1fb83b05ea4900c9d5ba8de5faa30",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "action_without_failure",
+            "component_without_failure",
+            "failure_edge_without_failure",
+            "missing_failure",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence"
+          ],
+          "semantic_status": "source_remedy_without_explicit_wire_failure",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            99
+          ],
+          "note": "Step 22a states replace wires when J9 voltage present after J1 voltage absent. A faulty-wire causal statement is not explicitly declared in the root cause list; preserve remedy/check and cause gap, do not invent it."
+        },
+        {
+          "index": 4,
+          "branch_id": "dbranch_b51b4f1cff094426df1d673f192a22c7d399ecf6e44beb40fc7ca8d2a11406b7",
+          "compiler_disposition": "publish",
+          "compiler_errors": [],
+          "semantic_status": "local_cause_remedy_outcome_supported_procedure_incomplete",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            96,
+            97,
+            98,
+            99,
+            100
+          ],
+          "note": "Explicit introductory cause list supports indicator/failure; final conditional remedy is stated. Prerequisite power-off/on, disconnection, cover/barrier removal and intermediate paths are not completely encoded in ordered inspection_steps. procedure_context preserves raw source with path_verified=false; it does not establish an executable path.",
+          "source_outcomes": [
+            "T9-28c"
+          ]
+        },
+        {
+          "index": 5,
+          "branch_id": "dbranch_e23e56917668fbdcb54c593e6f8d21e307099766219f58ad3e1a86af47e116c2",
+          "compiler_disposition": "publish",
+          "compiler_errors": [],
+          "semantic_status": "local_cause_remedy_outcome_supported_procedure_incomplete",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            96,
+            97,
+            98,
+            99,
+            100
+          ],
+          "note": "Explicit introductory cause list supports indicator/failure; final conditional remedy is stated. Prerequisite power-off/on, disconnection, cover/barrier removal and intermediate paths are not completely encoded in ordered inspection_steps. procedure_context preserves raw source with path_verified=false; it does not establish an executable path.",
+          "source_outcomes": [
+            "T9-21a"
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": "c10p_test9_medium_r2",
+      "candidate_denominator": 6,
+      "compiler_publish_count": 0,
+      "unresolved_count": 6,
+      "disposition_counts": {
+        "review": 6
+      },
+      "complete_autonomous_chains_verified": 0,
+      "records": [
+        {
+          "index": 0,
+          "branch_id": "dbranch_0763b9c060765c7a52e8886e3340fddc49e8f5d0b148f688193fa3359564bdc8",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 1,
+          "branch_id": "dbranch_0dd9113c437a5a381d5052cd1992900e54773f85cc8a75e40a945a89b1dc7834",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 2,
+          "branch_id": "dbranch_1c322b176ffc840e80436611e05a5790e4dd5bd4a580bb7c924c3a79959d77a7",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "lineage_anchor_outside_bundle",
+            "quote_not_in_anchored_evidence",
+            "quote_not_in_anchored_evidence"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        },
+        {
+          "index": 3,
+          "branch_id": "dbranch_4e3b59c6715f960ca965bd0775182d06840ed09816fc9b25166abb220aa6c0f0",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "compound_negative_condition_strengthened"
+          ],
+          "semantic_status": "source_polarity_error_rejected",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            97
+          ],
+          "note": "Step 13 asks compressor running AND air blowing. NO is NOT(A AND B), not NOT A AND NOT B; candidate strengthens the condition. Compiler rejects it."
+        },
+        {
+          "index": 4,
+          "branch_id": "dbranch_b73f6bd321f4a09ce68ba9cceff23d8a74ec3294cf39f13b0d39e287e7f54e3b",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "relation_endpoint_support_unestablished"
+          ],
+          "semantic_status": "source_remedy_without_explicit_wire_failure",
+          "complete_autonomous_chain_verified": false,
+          "checked_pdf_pages": [
+            99
+          ],
+          "note": "Step 22a states replace wires when J9 voltage present after J1 voltage absent. A faulty-wire causal statement is not explicitly declared in the root cause list; preserve remedy/check and cause gap, do not invent it."
+        },
+        {
+          "index": 5,
+          "branch_id": "dbranch_c76af4e019283a9377cacd891f27caff9515c73e0132b1c49c9eb5b3b5132c80",
+          "compiler_disposition": "review",
+          "compiler_errors": [
+            "quote_not_in_anchored_evidence"
+          ],
+          "semantic_status": "not_individually_adjudicated",
+          "complete_autonomous_chain_verified": false
+        }
+      ]
+    }
+  ]
+}

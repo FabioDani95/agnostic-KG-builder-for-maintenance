@@ -1,0 +1,95 @@
+{
+  "status": "historical_unverified_not_gold",
+  "origin_sha256": "c92ba0a8bcb1721055f6fc8c10c3d0a6a57eb3dc35134755d06574d6272a5291",
+  "claims": [
+    {
+      "claim_id": "D1",
+      "pages": [
+        64
+      ],
+      "error_code": "1",
+      "symptom": "SYS 485 comm loss",
+      "failure_mode": "communication wire is not well connected",
+      "expected_gap": "inspection_only",
+      "inspection_step": "check if the communication wire is firmly connected"
+    },
+    {
+      "claim_id": "D2",
+      "pages": [
+        64
+      ],
+      "error_code": "1",
+      "symptom": "SYS 485 comm loss",
+      "failure_mode": "Active Power Filter modules have repeated IDs",
+      "expected_gap": "inspection_only",
+      "inspection_step": "check the DIP switches of the individual modules"
+    },
+    {
+      "claim_id": "D3",
+      "pages": [
+        64
+      ],
+      "error_code": "2",
+      "symptom": "Fuse blowout",
+      "failure_mode": "input fuse is broken",
+      "corrective_action": "contact service personnel",
+      "expected_disposition": "publish"
+    },
+    {
+      "claim_id": "D4",
+      "pages": [
+        64
+      ],
+      "error_code": "3",
+      "symptom": "Ambient OTP",
+      "failure_mode": "air vents are blocked",
+      "corrective_action": "contact service personnel",
+      "expected_disposition": "publish"
+    },
+    {
+      "claim_id": "D5",
+      "pages": [
+        64
+      ],
+      "error_code": "3",
+      "symptom": "Ambient OTP",
+      "failure_mode": "fans do not work",
+      "corrective_action": "contact service personnel",
+      "expected_disposition": "publish"
+    },
+    {
+      "claim_id": "D6",
+      "pages": [
+        64
+      ],
+      "error_code": "4",
+      "symptom": "BUS OVP/UVP",
+      "failure_mode": "BUS capacitor failure",
+      "corrective_action": "contact service personnel",
+      "expected_disposition": "publish"
+    },
+    {
+      "claim_id": "D7",
+      "pages": [
+        64
+      ],
+      "error_code": "5",
+      "symptom": "Fan Fail",
+      "failure_mode": "fan failure",
+      "corrective_action": "contact service personnel",
+      "expected_disposition": "publish"
+    },
+    {
+      "claim_id": "D8",
+      "pages": [
+        64
+      ],
+      "error_code": "6",
+      "symptom": "No current compensation or bad current compensation",
+      "failure_mode": "CT is not well connected",
+      "expected_gap": "inspection_only",
+      "inspection_step": "check if the CT wiring is correct"
+    }
+  ],
+  "show_after_independent_annotation": true
+}

@@ -1,0 +1,2717 @@
+{
+  "status": "blocked",
+  "ontology": {
+    "ontology_name": "Core_Ontology",
+    "version": "2.0",
+    "language": "en",
+    "source_type": "technical PDF",
+    "source_title": "03_graco_check_mate_200_pumps_manual.pdf",
+    "nodes": {
+      "Asset": [
+        {
+          "asset_id": "ASSET-001",
+          "name": "Graco Check-Mate 200 Pump",
+          "description": "Graco stainless steel Check-Mate 200 displacement pump documented by manual 308200D.",
+          "brand": "Graco",
+          "model": "Check-Mate 200",
+          "asset_type": "industrial displacement pump"
+        }
+      ],
+      "Component": [],
+      "Symptom": [],
+      "FailureMode": [],
+      "CorrectiveAction": [],
+      "ErrorCode": []
+    },
+    "relations": []
+  },
+  "semantic_issues": [],
+  "schema_issues": [
+    {
+      "severity": "error",
+      "code": "empty_draft_content",
+      "message": "Ontology draft contains only the Asset node and no extracted diagnostic content.",
+      "target_type": "ontology",
+      "target_id": "",
+      "property_name": "",
+      "fix_hint": "Rerun the draft with broader page coverage or review the extraction prompt/output."
+    }
+  ],
+  "human_required_fields": [],
+  "is_schema_compliant": false,
+  "is_ready_for_human_review": false,
+  "retry_count": 0,
+  "graph_issues": [],
+  "suggested_relations": [],
+  "confidence_report": {
+    "entries": [
+      {
+        "node_type": "Asset",
+        "node_id": "ASSET-001",
+        "score": 0.4,
+        "classification": "human_review",
+        "signals": {
+          "evidence_present": 0.0,
+          "corroboration": 0.0,
+          "required_props_complete": 1.0,
+          "chain_participation": 0.0,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "no evidence attached",
+          "incomplete schema-expected relations"
+        ]
+      }
+    ],
+    "theta_high": 0.8,
+    "theta_low": 0.45,
+    "auto_reject_enabled": false,
+    "counts": {
+      "auto_approve": 0,
+      "human_review": 1,
+      "auto_reject": 0
+    }
+  },
+  "diagnostic_contract_report": {
+    "input_pages": [
+      11
+    ],
+    "candidate_input_anchors": [
+      "ev_089571784a473d7df127538a011f",
+      "ev_0e39c8a79741f02ed861373dfb77",
+      "ev_0e6d92b9ee117707e5cc602b9d1a",
+      "ev_2467982841e9ef64bf80516252a8",
+      "ev_2883ae9c7f67fd23bd5172f52348",
+      "ev_2fddf7b39646de5493cf9897b752",
+      "ev_61d21bacf740efc4d426328702c2",
+      "ev_68e078e59254ec33a3cc6cdfcc0f",
+      "ev_6ceebb2c69fbc5e4ee167ab90165",
+      "ev_7ecb907ce1a051b6058b4fd94f47",
+      "ev_a30f93f9c0698b17ff84ffd1a991",
+      "ev_a3d02f9eeb67fd6de47dc13df594",
+      "ev_ac30749758218e88e36cc44c9938",
+      "ev_b767b092e7b1fc039cf4db30fcd4",
+      "ev_d6514d5e6cd3eb55497fae409f32",
+      "ev_deb406eb1f1b807f5310c892fe36",
+      "ev_e1665321c5b6b0519020bc8f0e16",
+      "ev_e2bbf6f69d5af9d6b7d50ede16ab",
+      "ev_f5d5eacbd18233b9a4ece3273d4b"
+    ],
+    "candidate_input_evidence": [
+      [
+        "ev_089571784a473d7df127538a011f",
+        11
+      ],
+      [
+        "ev_0e39c8a79741f02ed861373dfb77",
+        11
+      ],
+      [
+        "ev_0e6d92b9ee117707e5cc602b9d1a",
+        11
+      ],
+      [
+        "ev_2467982841e9ef64bf80516252a8",
+        11
+      ],
+      [
+        "ev_2883ae9c7f67fd23bd5172f52348",
+        11
+      ],
+      [
+        "ev_2fddf7b39646de5493cf9897b752",
+        11
+      ],
+      [
+        "ev_61d21bacf740efc4d426328702c2",
+        11
+      ],
+      [
+        "ev_68e078e59254ec33a3cc6cdfcc0f",
+        11
+      ],
+      [
+        "ev_6ceebb2c69fbc5e4ee167ab90165",
+        11
+      ],
+      [
+        "ev_7ecb907ce1a051b6058b4fd94f47",
+        11
+      ],
+      [
+        "ev_a30f93f9c0698b17ff84ffd1a991",
+        11
+      ],
+      [
+        "ev_a3d02f9eeb67fd6de47dc13df594",
+        11
+      ],
+      [
+        "ev_ac30749758218e88e36cc44c9938",
+        11
+      ],
+      [
+        "ev_b767b092e7b1fc039cf4db30fcd4",
+        11
+      ],
+      [
+        "ev_d6514d5e6cd3eb55497fae409f32",
+        11
+      ],
+      [
+        "ev_deb406eb1f1b807f5310c892fe36",
+        11
+      ],
+      [
+        "ev_e1665321c5b6b0519020bc8f0e16",
+        11
+      ],
+      [
+        "ev_e2bbf6f69d5af9d6b7d50ede16ab",
+        11
+      ],
+      [
+        "ev_f5d5eacbd18233b9a4ece3273d4b",
+        11
+      ]
+    ],
+    "source_anchor_aliases": {
+      "a0001": "ev_b01d7ec885041399d7979d5fa256",
+      "a0002": "ev_a8495016cd0b742f88518e1fc782",
+      "a0003": "ev_e7e0f0bbb2594acb1ec00fc41c9b",
+      "a0004": "ev_719f144b99c5af66eef1e7193672",
+      "a0005": "ev_79fa548ed236bdfb6af3fde54556",
+      "a0006": "ev_f91182291d19c19a05d6654e86d8",
+      "a0007": "ev_acddeefe61470a2474c5196129ef",
+      "a0008": "ev_e407501f2f91d0895815b68de5d1",
+      "a0009": "ev_5580e6b9019700a0713ed611645a",
+      "a0010": "ev_392765837f2c381790662984ebcb",
+      "a0011": "ev_f23f909cc084d7b6b7f1bc2a7edf",
+      "a0012": "ev_20bf4df29dc47921ad0a1eee7209",
+      "a0013": "ev_f7622ed461087d4fb1cd29c6483a",
+      "a0014": "ev_c92b5f6b67204af5f5587ab33141",
+      "a0015": "ev_450f52cfcf808408d24407264c97",
+      "a0016": "ev_7ab4eb2612d7e58b6c7441bdbe6f",
+      "a0017": "ev_74d13feaee34c200b85f198e136f",
+      "a0018": "ev_4c4d1fa9c7cf1ca6fc9ff138ad26",
+      "a0019": "ev_ebefd67ac4235e441a9e5971433c",
+      "a0020": "ev_ea9a907386f381443298409ebf35",
+      "a0021": "ev_677b323938af33ec5c4d20605c15",
+      "a0022": "ev_68617304c6e13495320eef79b0a4",
+      "a0023": "ev_2cb1ea90bd14de3e144dfc3aae89",
+      "a0024": "ev_7f2108cafb61f244317cfba8fa22",
+      "a0025": "ev_8a5a911f97c9e5865996139bb97d",
+      "a0026": "ev_18ba79dd1efd820cbd8760be025e",
+      "a0027": "ev_10eb9818a8200fd4dac712ac2691",
+      "a0028": "ev_9e6815a6995000f1c3a07c913e65",
+      "a0029": "ev_1093c9e2e1ec6ea7de1bfe3c92f3",
+      "a0030": "ev_ba5b7c7596076656052ea63d03fb",
+      "a0031": "ev_198d674eb7e27e5b28bbcb92217d",
+      "a0032": "ev_e085de73b6df447117cd96279cd5",
+      "a0033": "ev_97a73e0a0a39ff890efb196e840e",
+      "a0034": "ev_deb406eb1f1b807f5310c892fe36",
+      "a0035": "ev_f5d5eacbd18233b9a4ece3273d4b",
+      "a0036": "ev_e2bbf6f69d5af9d6b7d50ede16ab",
+      "a0037": "ev_2fddf7b39646de5493cf9897b752",
+      "a0038": "ev_ac30749758218e88e36cc44c9938",
+      "a0039": "ev_0e39c8a79741f02ed861373dfb77",
+      "a0040": "ev_e1665321c5b6b0519020bc8f0e16",
+      "a0041": "ev_0e6d92b9ee117707e5cc602b9d1a",
+      "a0042": "ev_d6514d5e6cd3eb55497fae409f32",
+      "a0043": "ev_2883ae9c7f67fd23bd5172f52348",
+      "a0044": "ev_b767b092e7b1fc039cf4db30fcd4",
+      "a0045": "ev_61d21bacf740efc4d426328702c2",
+      "a0046": "ev_2467982841e9ef64bf80516252a8",
+      "a0047": "ev_089571784a473d7df127538a011f",
+      "a0048": "ev_a3d02f9eeb67fd6de47dc13df594",
+      "a0049": "ev_68e078e59254ec33a3cc6cdfcc0f",
+      "a0050": "ev_6ceebb2c69fbc5e4ee167ab90165",
+      "a0051": "ev_a30f93f9c0698b17ff84ffd1a991",
+      "a0052": "ev_7ecb907ce1a051b6058b4fd94f47"
+    },
+    "schema_version": "1.1",
+    "source_language": "en",
+    "provider_model": "gpt-6-luna",
+    "provider_reasoning_effort": "none",
+    "call_role": "primary",
+    "escalation_reason": "",
+    "provider_response_id": "chatcmpl-ES0SVt5uj8oWo83vnmkcI3LxBlzgn",
+    "finish_reason": "stop",
+    "parsed": true,
+    "refusal": false,
+    "raw_sha256": "7eae9259721f48fe8bc346bd8db27c93e7fd3fae459405374707d34360d306d2",
+    "response_archive": "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/p1_graco_check_mate_200_luna_none24/provider_responses/56c67b2271a24525a9e10318f0b3d14f.json",
+    "raw_response_text": "",
+    "invalid_record_count": 0,
+    "records": [
+      {
+        "record_lineage_id": "drec_b44d60cfea201d7c0b45baafbed5cff8740f60880cf42dfc781b6869166a8500",
+        "branch_lineage_id": "dbranch_139e5478d7ce3f5e1bb9145594fa3702cf3f9408a18c6e8793d0d326d5321254",
+        "record_window_id": "",
+        "record_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+        "branch_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+        "evidence_ids": [
+          "ev_f5d5eacbd18233b9a4ece3273d4b"
+        ],
+        "resolved_evidence_ids": [
+          "ev_f5d5eacbd18233b9a4ece3273d4b"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_f5d5eacbd18233b9a4ece3273d4b"
+          ],
+          "record_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+          "branch_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Pump fails to operate.",
+              "description": "Pump fails to operate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                  "source_page": 11,
+                  "quote": "Pump fails to operate."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Restricted line or inadequate air supply",
+            "description": "Restricted line or inadequate air supply",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                "source_page": 11,
+                "quote": "Restricted line or inadequate air supply"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clear*; see Technical Data on pages 24–27.",
+              "description": "Clear*; see Technical Data on pages 24–27.",
+              "instruction_text": "Clear*; see Technical Data on pages 24–27.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                  "source_page": 11,
+                  "quote": "Clear*; see Technical Data on pages 24–27."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                  "source_page": 11,
+                  "quote": "Restricted line or inadequate air supply"
+                },
+                {
+                  "source_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                  "source_page": 11,
+                  "quote": "Clear*; see Technical Data on pages 24–27."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_b44d60cfea201d7c0b45baafbed5cff8740f60880cf42dfc781b6869166a8500",
+          "branch_lineage_id": "dbranch_139e5478d7ce3f5e1bb9145594fa3702cf3f9408a18c6e8793d0d326d5321254",
+          "record_window_id": "",
+          "record_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+          "branch_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "name": "Pump fails to operate.",
+              "description": "Pump fails to operate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                  "source_page": 11,
+                  "quote": "Pump fails to operate.",
+                  "evidence_id": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump fails to operate. | Restricted line or inadequate air supply | Clear*; see Technical Data on pages 24–27.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 2,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Restricted line or inadequate air supply",
+            "description": "Restricted line or inadequate air supply",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                "source_page": 11,
+                "quote": "Restricted line or inadequate air supply",
+                "evidence_id": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 11,
+                  "section": null,
+                  "quote": "Pump fails to operate. | Restricted line or inadequate air supply | Clear*; see Technical Data on pages 24–27.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 4,
+                  "row_index": 2,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clear*; see Technical Data on pages 24–27.",
+              "description": "Clear*; see Technical Data on pages 24–27.",
+              "instruction_text": "Clear*; see Technical Data on pages 24–27.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                  "source_page": 11,
+                  "quote": "Clear*; see Technical Data on pages 24–27.",
+                  "evidence_id": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump fails to operate. | Restricted line or inadequate air supply | Clear*; see Technical Data on pages 24–27.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 2,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                  "source_page": 11,
+                  "quote": "Clear*; see Technical Data on pages 24–27.",
+                  "evidence_id": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump fails to operate. | Restricted line or inadequate air supply | Clear*; see Technical Data on pages 24–27.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 2,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                  "source_page": 11,
+                  "quote": "Restricted line or inadequate air supply",
+                  "evidence_id": "ev_f5d5eacbd18233b9a4ece3273d4b",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump fails to operate. | Restricted line or inadequate air supply | Clear*; see Technical Data on pages 24–27.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 2,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "disposition": "gap",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_add74e622ac6c5d7d45806f8fd102cf51066515a13d2e936a1674e0ab59c0afb",
+        "branch_lineage_id": "dbranch_1ea2577040e87486b6bbe65ac6d9aeca2eec4a6004960a7ddf57ad99602a30c4",
+        "record_window_id": "",
+        "record_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+        "branch_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+        "evidence_ids": [
+          "ev_a3d02f9eeb67fd6de47dc13df594"
+        ],
+        "resolved_evidence_ids": [
+          "ev_a3d02f9eeb67fd6de47dc13df594"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_a3d02f9eeb67fd6de47dc13df594"
+          ],
+          "record_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+          "branch_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Erratic or accelerated pump speed.",
+              "description": "Erratic or accelerated pump speed.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+                  "source_page": 11,
+                  "quote": "Erratic or accelerated pump speed."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Exhausted fluid supply.",
+            "description": "Exhausted fluid supply.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+                "source_page": 11,
+                "quote": "Exhausted fluid supply."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Refill and prime.",
+              "description": "Refill and prime.",
+              "instruction_text": "Refill and prime.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+                  "source_page": 11,
+                  "quote": "Refill and prime."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+                  "source_page": 11,
+                  "quote": "Exhausted fluid supply."
+                },
+                {
+                  "source_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+                  "source_page": 11,
+                  "quote": "Refill and prime."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_add74e622ac6c5d7d45806f8fd102cf51066515a13d2e936a1674e0ab59c0afb",
+          "branch_lineage_id": "dbranch_1ea2577040e87486b6bbe65ac6d9aeca2eec4a6004960a7ddf57ad99602a30c4",
+          "record_window_id": "",
+          "record_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+          "branch_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "name": "Erratic or accelerated pump speed.",
+              "description": "Erratic or accelerated pump speed.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+                  "source_page": 11,
+                  "quote": "Erratic or accelerated pump speed.",
+                  "evidence_id": "ev_a3d02f9eeb67fd6de47dc13df594",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Erratic or accelerated pump speed. | Exhausted fluid supply. | Refill and prime.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 15,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Exhausted fluid supply.",
+            "description": "Exhausted fluid supply.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+                "source_page": 11,
+                "quote": "Exhausted fluid supply.",
+                "evidence_id": "ev_a3d02f9eeb67fd6de47dc13df594",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 11,
+                  "section": null,
+                  "quote": "Erratic or accelerated pump speed. | Exhausted fluid supply. | Refill and prime.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 4,
+                  "row_index": 15,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Refill and prime.",
+              "description": "Refill and prime.",
+              "instruction_text": "Refill and prime.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+                  "source_page": 11,
+                  "quote": "Refill and prime.",
+                  "evidence_id": "ev_a3d02f9eeb67fd6de47dc13df594",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Erratic or accelerated pump speed. | Exhausted fluid supply. | Refill and prime.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 15,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+                  "source_page": 11,
+                  "quote": "Exhausted fluid supply.",
+                  "evidence_id": "ev_a3d02f9eeb67fd6de47dc13df594",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Erratic or accelerated pump speed. | Exhausted fluid supply. | Refill and prime.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 15,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_a3d02f9eeb67fd6de47dc13df594",
+                  "source_page": 11,
+                  "quote": "Refill and prime.",
+                  "evidence_id": "ev_a3d02f9eeb67fd6de47dc13df594",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Erratic or accelerated pump speed. | Exhausted fluid supply. | Refill and prime.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 15,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "disposition": "gap",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_fdfd4911cbe7092e9fb0169a3e48888cef24fe6864319c5c4291f909d5e28d87",
+        "branch_lineage_id": "dbranch_30cab500ec999e26fb8b8cb2e295fb14e3f4793529834b3a3fed26871eab9dd0",
+        "record_window_id": "",
+        "record_anchor": "ev_e2bbf6f69d5af9d6b7d50ede16ab",
+        "branch_anchor": "ev_e2bbf6f69d5af9d6b7d50ede16ab",
+        "evidence_ids": [
+          "ev_e2bbf6f69d5af9d6b7d50ede16ab"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_e2bbf6f69d5af9d6b7d50ede16ab"
+          ],
+          "record_anchor": "ev_e2bbf6f69d5af9d6b7d50ede16ab",
+          "branch_anchor": "ev_e2bbf6f69d5af9d6b7d50ede16ab",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Pump fails to operate.",
+              "description": "Pump fails to operate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_e2bbf6f69d5af9d6b7d50ede16ab",
+                  "source_page": 11,
+                  "quote": "Pump fails to operate."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+            "description": "Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_e2bbf6f69d5af9d6b7d50ede16ab",
+                "source_page": 11,
+                "quote": "Obstructed fluid hose or gun/valve; fluid hose ID is too small."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clear*; use a hose with a larger ID.",
+              "description": "Clear*; use a hose with a larger ID.",
+              "instruction_text": "Clear*; use a hose with a larger ID.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_e2bbf6f69d5af9d6b7d50ede16ab",
+                  "source_page": 11,
+                  "quote": "Clear*; use a hose with a larger ID."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_e2bbf6f69d5af9d6b7d50ede16ab",
+                  "source_page": 11,
+                  "quote": "Obstructed fluid hose or gun/valve; fluid hose ID is too small."
+                },
+                {
+                  "source_anchor": "ev_e2bbf6f69d5af9d6b7d50ede16ab",
+                  "source_page": 11,
+                  "quote": "Clear*; use a hose with a larger ID."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "indicators[0].claim_evidence[0]",
+            "message": "indicators[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_e2bbf6f69d5af9d6b7d50ede16ab' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_4a7a5bcfd39402287f59cf02e18c7f138a830d1d7de3b5f9977214bf4373bb7c",
+        "branch_lineage_id": "dbranch_34ae28acb8aba5c7414e70f7c156d47e631527f8b288c341fa6476f520bb9e5a",
+        "record_window_id": "",
+        "record_anchor": "ev_b767b092e7b1fc039cf4db30fcd4",
+        "branch_anchor": "ev_b767b092e7b1fc039cf4db30fcd4",
+        "evidence_ids": [
+          "ev_b767b092e7b1fc039cf4db30fcd4"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_b767b092e7b1fc039cf4db30fcd4"
+          ],
+          "record_anchor": "ev_b767b092e7b1fc039cf4db30fcd4",
+          "branch_anchor": "ev_b767b092e7b1fc039cf4db30fcd4",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Pump operates, but output is low on both strokes.",
+              "description": "Pump operates, but output is low on both strokes.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_b767b092e7b1fc039cf4db30fcd4",
+                  "source_page": 11,
+                  "quote": "Pump operates, but output is low on both strokes."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Worn packings in displacement pump.",
+            "description": "Worn packings in displacement pump.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_b767b092e7b1fc039cf4db30fcd4",
+                "source_page": 11,
+                "quote": "Worn packings in displacement pump."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace packings.",
+              "description": "Replace packings.",
+              "instruction_text": "Replace packings.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_b767b092e7b1fc039cf4db30fcd4",
+                  "source_page": 11,
+                  "quote": "Replace packings."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_b767b092e7b1fc039cf4db30fcd4",
+                  "source_page": 11,
+                  "quote": "Worn packings in displacement pump."
+                },
+                {
+                  "source_anchor": "ev_b767b092e7b1fc039cf4db30fcd4",
+                  "source_page": 11,
+                  "quote": "Replace packings."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "indicators[0].claim_evidence[0]",
+            "message": "indicators[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_b767b092e7b1fc039cf4db30fcd4' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_9475aa02cb36918f754541f9df6c5a27bbe7738b1ccf1453c560215e05a30dca",
+        "branch_lineage_id": "dbranch_645134348a040bae8a7df1cb53e08fd62ff9401430a1e36fccbc535aafcf55b5",
+        "record_window_id": "",
+        "record_anchor": "ev_2883ae9c7f67fd23bd5172f52348",
+        "branch_anchor": "ev_2883ae9c7f67fd23bd5172f52348",
+        "evidence_ids": [
+          "ev_2883ae9c7f67fd23bd5172f52348"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_2883ae9c7f67fd23bd5172f52348"
+          ],
+          "record_anchor": "ev_2883ae9c7f67fd23bd5172f52348",
+          "branch_anchor": "ev_2883ae9c7f67fd23bd5172f52348",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Pump operates, but output is low on both strokes.",
+              "description": "Pump operates, but output is low on both strokes.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2883ae9c7f67fd23bd5172f52348",
+                  "source_page": 11,
+                  "quote": "Pump operates, but output is low on both strokes."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Fluid is too heavy for pump priming.",
+            "description": "Fluid is too heavy for pump priming.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_2883ae9c7f67fd23bd5172f52348",
+                "source_page": 11,
+                "quote": "Fluid is too heavy for pump priming."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "description": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "instruction_text": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2883ae9c7f67fd23bd5172f52348",
+                  "source_page": 11,
+                  "quote": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_2883ae9c7f67fd23bd5172f52348",
+                  "source_page": 11,
+                  "quote": "Fluid is too heavy for pump priming."
+                },
+                {
+                  "source_anchor": "ev_2883ae9c7f67fd23bd5172f52348",
+                  "source_page": 11,
+                  "quote": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "indicators[0].claim_evidence[0]",
+            "message": "indicators[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_2883ae9c7f67fd23bd5172f52348' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_d0e1db6bd79c2cd9eeb7cd93f524e4df7a77ec9ad18fdd267a0a7330c708e01e",
+        "branch_lineage_id": "dbranch_6b6965d95469be5fc0ab1994966ac2110cc42223a30aa83bfd8beba83b6da6f5",
+        "record_window_id": "",
+        "record_anchor": "ev_7ecb907ce1a051b6058b4fd94f47",
+        "branch_anchor": "ev_7ecb907ce1a051b6058b4fd94f47",
+        "evidence_ids": [
+          "ev_7ecb907ce1a051b6058b4fd94f47"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_7ecb907ce1a051b6058b4fd94f47"
+          ],
+          "record_anchor": "ev_7ecb907ce1a051b6058b4fd94f47",
+          "branch_anchor": "ev_7ecb907ce1a051b6058b4fd94f47",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Erratic or accelerated pump speed.",
+              "description": "Erratic or accelerated pump speed.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_7ecb907ce1a051b6058b4fd94f47",
+                  "source_page": 11,
+                  "quote": "Erratic or accelerated pump speed."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Worn packings in displacement pump.",
+            "description": "Worn packings in displacement pump.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_7ecb907ce1a051b6058b4fd94f47",
+                "source_page": 11,
+                "quote": "Worn packings in displacement pump."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace packings.",
+              "description": "Replace packings.",
+              "instruction_text": "Replace packings.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_7ecb907ce1a051b6058b4fd94f47",
+                  "source_page": 11,
+                  "quote": "Replace packings."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_7ecb907ce1a051b6058b4fd94f47",
+                  "source_page": 11,
+                  "quote": "Worn packings in displacement pump."
+                },
+                {
+                  "source_anchor": "ev_7ecb907ce1a051b6058b4fd94f47",
+                  "source_page": 11,
+                  "quote": "Replace packings."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "indicators[0].claim_evidence[0]",
+            "message": "indicators[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_7ecb907ce1a051b6058b4fd94f47' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_45e58b203e7d2a3500bd5ab11bd766f093ac225c9a845497d664cdb7463e50f7",
+        "branch_lineage_id": "dbranch_6f8c7aa2fbd213628dba0de6a18697bedf7352d348a6e974b6bd7070912ed536",
+        "record_window_id": "",
+        "record_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+        "branch_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+        "evidence_ids": [
+          "ev_0e39c8a79741f02ed861373dfb77"
+        ],
+        "resolved_evidence_ids": [
+          "ev_0e39c8a79741f02ed861373dfb77"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_0e39c8a79741f02ed861373dfb77"
+          ],
+          "record_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+          "branch_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Pump operates, but output is low on both strokes.",
+              "description": "Pump operates, but output is low on both strokes.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+                  "source_page": 11,
+                  "quote": "Pump operates, but output is low on both strokes."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Restricted line or inadequate air supply.",
+            "description": "Restricted line or inadequate air supply.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+                "source_page": 11,
+                "quote": "Restricted line or inadequate air supply."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clear*; see Technical Data on pages 24–27.",
+              "description": "Clear*; see Technical Data on pages 24–27.",
+              "instruction_text": "Clear*; see Technical Data on pages 24–27.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+                  "source_page": 11,
+                  "quote": "Clear*; see Technical Data on pages 24–27."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+                  "source_page": 11,
+                  "quote": "Restricted line or inadequate air supply."
+                },
+                {
+                  "source_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+                  "source_page": 11,
+                  "quote": "Clear*; see Technical Data on pages 24–27."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_45e58b203e7d2a3500bd5ab11bd766f093ac225c9a845497d664cdb7463e50f7",
+          "branch_lineage_id": "dbranch_6f8c7aa2fbd213628dba0de6a18697bedf7352d348a6e974b6bd7070912ed536",
+          "record_window_id": "",
+          "record_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+          "branch_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "name": "Pump operates, but output is low on both strokes.",
+              "description": "Pump operates, but output is low on both strokes.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+                  "source_page": 11,
+                  "quote": "Pump operates, but output is low on both strokes.",
+                  "evidence_id": "ev_0e39c8a79741f02ed861373dfb77",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump operates, but output is low on both strokes. | Restricted line or inadequate air supply. | Clear*; see Technical Data on pages 24–27.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 6,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Restricted line or inadequate air supply.",
+            "description": "Restricted line or inadequate air supply.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+                "source_page": 11,
+                "quote": "Restricted line or inadequate air supply.",
+                "evidence_id": "ev_0e39c8a79741f02ed861373dfb77",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 11,
+                  "section": null,
+                  "quote": "Pump operates, but output is low on both strokes. | Restricted line or inadequate air supply. | Clear*; see Technical Data on pages 24–27.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 4,
+                  "row_index": 6,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clear*; see Technical Data on pages 24–27.",
+              "description": "Clear*; see Technical Data on pages 24–27.",
+              "instruction_text": "Clear*; see Technical Data on pages 24–27.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+                  "source_page": 11,
+                  "quote": "Clear*; see Technical Data on pages 24–27.",
+                  "evidence_id": "ev_0e39c8a79741f02ed861373dfb77",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump operates, but output is low on both strokes. | Restricted line or inadequate air supply. | Clear*; see Technical Data on pages 24–27.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 6,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+                  "source_page": 11,
+                  "quote": "Clear*; see Technical Data on pages 24–27.",
+                  "evidence_id": "ev_0e39c8a79741f02ed861373dfb77",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump operates, but output is low on both strokes. | Restricted line or inadequate air supply. | Clear*; see Technical Data on pages 24–27.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 6,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_0e39c8a79741f02ed861373dfb77",
+                  "source_page": 11,
+                  "quote": "Restricted line or inadequate air supply.",
+                  "evidence_id": "ev_0e39c8a79741f02ed861373dfb77",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump operates, but output is low on both strokes. | Restricted line or inadequate air supply. | Clear*; see Technical Data on pages 24–27.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 6,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "disposition": "gap",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_1f0d541f8c32891fd36d67651fa2cadd08f2e09ab05c4f0b7ee7af82b8499946",
+        "branch_lineage_id": "dbranch_8238503344470480a6335dbfcb7c41fd95743df97db069b6e7c5d5083aae9e40",
+        "record_window_id": "",
+        "record_anchor": "ev_2467982841e9ef64bf80516252a8",
+        "branch_anchor": "ev_2467982841e9ef64bf80516252a8",
+        "evidence_ids": [
+          "ev_2467982841e9ef64bf80516252a8"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_2467982841e9ef64bf80516252a8"
+          ],
+          "record_anchor": "ev_2467982841e9ef64bf80516252a8",
+          "branch_anchor": "ev_2467982841e9ef64bf80516252a8",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Pump operates, but output is low on down- stroke.",
+              "description": "Pump operates, but output is low on down- stroke.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2467982841e9ef64bf80516252a8",
+                  "source_page": 11,
+                  "quote": "Pump operates, but output is low on down- stroke."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Held open or worn intake valve or seals.",
+            "description": "Held open or worn intake valve or seals.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_2467982841e9ef64bf80516252a8",
+                "source_page": 11,
+                "quote": "Held open or worn intake valve or seals."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clear valve; replace seals.",
+              "description": "Clear valve; replace seals.",
+              "instruction_text": "Clear valve; replace seals.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2467982841e9ef64bf80516252a8",
+                  "source_page": 11,
+                  "quote": "Clear valve; replace seals."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_2467982841e9ef64bf80516252a8",
+                  "source_page": 11,
+                  "quote": "Held open or worn intake valve or seals."
+                },
+                {
+                  "source_anchor": "ev_2467982841e9ef64bf80516252a8",
+                  "source_page": 11,
+                  "quote": "Clear valve; replace seals."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "indicators[0].claim_evidence[0]",
+            "message": "indicators[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_2467982841e9ef64bf80516252a8' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_48ccfb89c2399919775f358a0ee0b9448e47dd93540167992200e4c4c319f072",
+        "branch_lineage_id": "dbranch_86c6a47282def33f0967ca72969bb70f15693bbb90fb57fa4efd2fd0e0bd2e59",
+        "record_window_id": "",
+        "record_anchor": "ev_d6514d5e6cd3eb55497fae409f32",
+        "branch_anchor": "ev_d6514d5e6cd3eb55497fae409f32",
+        "evidence_ids": [
+          "ev_d6514d5e6cd3eb55497fae409f32"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_d6514d5e6cd3eb55497fae409f32"
+          ],
+          "record_anchor": "ev_d6514d5e6cd3eb55497fae409f32",
+          "branch_anchor": "ev_d6514d5e6cd3eb55497fae409f32",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Pump operates, but output is low on both strokes.",
+              "description": "Pump operates, but output is low on both strokes.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_d6514d5e6cd3eb55497fae409f32",
+                  "source_page": 11,
+                  "quote": "Pump operates, but output is low on both strokes."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Air is leaking into the supply container.",
+            "description": "Air is leaking into the supply container.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_d6514d5e6cd3eb55497fae409f32",
+                "source_page": 11,
+                "quote": "Air is leaking into the supply container."
+              }
+            ]
+          },
+          "actions": [],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check wiper plate seal.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_d6514d5e6cd3eb55497fae409f32",
+                  "source_page": 11,
+                  "quote": "Check wiper plate seal."
+                }
+              ]
+            }
+          ],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "check_only"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_actions",
+            "path": "actions",
+            "message": "No CorrectiveAction claim was supplied."
+          },
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "indicators[0].claim_evidence[0]",
+            "message": "indicators[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_d6514d5e6cd3eb55497fae409f32' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_740d07ae09b7b5e1f98565bba292b9f9a9253912a6b0f8af16c885a8611d7133",
+        "branch_lineage_id": "dbranch_873ad7ba6e383e8f243368ab40484c635513a79b92475782148b4c853ab2a49d",
+        "record_window_id": "",
+        "record_anchor": "ev_a30f93f9c0698b17ff84ffd1a991",
+        "branch_anchor": "ev_a30f93f9c0698b17ff84ffd1a991",
+        "evidence_ids": [
+          "ev_a30f93f9c0698b17ff84ffd1a991"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_a30f93f9c0698b17ff84ffd1a991"
+          ],
+          "record_anchor": "ev_a30f93f9c0698b17ff84ffd1a991",
+          "branch_anchor": "ev_a30f93f9c0698b17ff84ffd1a991",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Erratic or accelerated pump speed.",
+              "description": "Erratic or accelerated pump speed.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_a30f93f9c0698b17ff84ffd1a991",
+                  "source_page": 11,
+                  "quote": "Erratic or accelerated pump speed."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Held open or worn priming piston.",
+            "description": "Held open or worn priming piston.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_a30f93f9c0698b17ff84ffd1a991",
+                "source_page": 11,
+                "quote": "Held open or worn priming piston."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clear; service.",
+              "description": "Clear; service.",
+              "instruction_text": "Clear; service.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_a30f93f9c0698b17ff84ffd1a991",
+                  "source_page": 11,
+                  "quote": "Clear; service."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_a30f93f9c0698b17ff84ffd1a991",
+                  "source_page": 11,
+                  "quote": "Held open or worn priming piston."
+                },
+                {
+                  "source_anchor": "ev_a30f93f9c0698b17ff84ffd1a991",
+                  "source_page": 11,
+                  "quote": "Clear; service."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "indicators[0].claim_evidence[0]",
+            "message": "indicators[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_a30f93f9c0698b17ff84ffd1a991' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_e1615e4e0133cd03e04231dc2bbce465a729ae7001ead6c624f8abfdfe7bbca7",
+        "branch_lineage_id": "dbranch_8a3e739ff4bb728d35a4717d769975a5a91bb13ee9a7ebc8d0e10bc48737de36",
+        "record_window_id": "",
+        "record_anchor": "ev_ac30749758218e88e36cc44c9938",
+        "branch_anchor": "ev_ac30749758218e88e36cc44c9938",
+        "evidence_ids": [
+          "ev_ac30749758218e88e36cc44c9938"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_ac30749758218e88e36cc44c9938"
+          ],
+          "record_anchor": "ev_ac30749758218e88e36cc44c9938",
+          "branch_anchor": "ev_ac30749758218e88e36cc44c9938",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Pump fails to operate.",
+              "description": "Pump fails to operate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_ac30749758218e88e36cc44c9938",
+                  "source_page": 11,
+                  "quote": "Pump fails to operate."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Dirty or worn air motor parts.",
+            "description": "Dirty or worn air motor parts.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_ac30749758218e88e36cc44c9938",
+                "source_page": 11,
+                "quote": "Dirty or worn air motor parts."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clean or repair; see separate air motor manual.",
+              "description": "Clean or repair; see separate air motor manual.",
+              "instruction_text": "Clean or repair; see separate air motor manual.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_ac30749758218e88e36cc44c9938",
+                  "source_page": 11,
+                  "quote": "Clean or repair; see separate air motor manual."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_ac30749758218e88e36cc44c9938",
+                  "source_page": 11,
+                  "quote": "Dirty or worn air motor parts."
+                },
+                {
+                  "source_anchor": "ev_ac30749758218e88e36cc44c9938",
+                  "source_page": 11,
+                  "quote": "Clean or repair; see separate air motor manual."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "indicators[0].claim_evidence[0]",
+            "message": "indicators[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_ac30749758218e88e36cc44c9938' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_bbeda3b2fdca9d8fa590e71dd99769e221d8c755849361e0f5faca419b8c06bd",
+        "branch_lineage_id": "dbranch_8c12b046d5beb0a0538eaa8adf15a6fd937e33415417834a0f7b69b84b60a64d",
+        "record_window_id": "",
+        "record_anchor": "ev_089571784a473d7df127538a011f",
+        "branch_anchor": "ev_089571784a473d7df127538a011f",
+        "evidence_ids": [
+          "ev_089571784a473d7df127538a011f"
+        ],
+        "resolved_evidence_ids": [
+          "ev_089571784a473d7df127538a011f"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_089571784a473d7df127538a011f"
+          ],
+          "record_anchor": "ev_089571784a473d7df127538a011f",
+          "branch_anchor": "ev_089571784a473d7df127538a011f",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Pump operates, but output is low on up- stroke.",
+              "description": "Pump operates, but output is low on up- stroke.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_089571784a473d7df127538a011f",
+                  "source_page": 11,
+                  "quote": "Pump operates, but output is low on up- stroke."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Held open or worn piston valve or seals.",
+            "description": "Held open or worn piston valve or seals.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_089571784a473d7df127538a011f",
+                "source_page": 11,
+                "quote": "Held open or worn piston valve or seals."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clear valve; replace seals.",
+              "description": "Clear valve; replace seals.",
+              "instruction_text": "Clear valve; replace seals.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_089571784a473d7df127538a011f",
+                  "source_page": 11,
+                  "quote": "Clear valve; replace seals."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_089571784a473d7df127538a011f",
+                  "source_page": 11,
+                  "quote": "Held open or worn piston valve or seals."
+                },
+                {
+                  "source_anchor": "ev_089571784a473d7df127538a011f",
+                  "source_page": 11,
+                  "quote": "Clear valve; replace seals."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_bbeda3b2fdca9d8fa590e71dd99769e221d8c755849361e0f5faca419b8c06bd",
+          "branch_lineage_id": "dbranch_8c12b046d5beb0a0538eaa8adf15a6fd937e33415417834a0f7b69b84b60a64d",
+          "record_window_id": "",
+          "record_anchor": "ev_089571784a473d7df127538a011f",
+          "branch_anchor": "ev_089571784a473d7df127538a011f",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "name": "Pump operates, but output is low on up- stroke.",
+              "description": "Pump operates, but output is low on up- stroke.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_089571784a473d7df127538a011f",
+                  "source_page": 11,
+                  "quote": "Pump operates, but output is low on up- stroke.",
+                  "evidence_id": "ev_089571784a473d7df127538a011f",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump operates, but output is low on up- stroke. | Held open or worn piston valve or seals. | Clear valve; replace seals.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 14,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Held open or worn piston valve or seals.",
+            "description": "Held open or worn piston valve or seals.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_089571784a473d7df127538a011f",
+                "source_page": 11,
+                "quote": "Held open or worn piston valve or seals.",
+                "evidence_id": "ev_089571784a473d7df127538a011f",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 11,
+                  "section": null,
+                  "quote": "Pump operates, but output is low on up- stroke. | Held open or worn piston valve or seals. | Clear valve; replace seals.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 4,
+                  "row_index": 14,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clear valve; replace seals.",
+              "description": "Clear valve; replace seals.",
+              "instruction_text": "Clear valve; replace seals.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_089571784a473d7df127538a011f",
+                  "source_page": 11,
+                  "quote": "Clear valve; replace seals.",
+                  "evidence_id": "ev_089571784a473d7df127538a011f",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump operates, but output is low on up- stroke. | Held open or worn piston valve or seals. | Clear valve; replace seals.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 14,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_089571784a473d7df127538a011f",
+                  "source_page": 11,
+                  "quote": "Clear valve; replace seals.",
+                  "evidence_id": "ev_089571784a473d7df127538a011f",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump operates, but output is low on up- stroke. | Held open or worn piston valve or seals. | Clear valve; replace seals.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 14,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_089571784a473d7df127538a011f",
+                  "source_page": 11,
+                  "quote": "Held open or worn piston valve or seals.",
+                  "evidence_id": "ev_089571784a473d7df127538a011f",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump operates, but output is low on up- stroke. | Held open or worn piston valve or seals. | Clear valve; replace seals.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 14,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "disposition": "gap",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_4ba553e76d5eb70646cdfad46ee6f493b22eff69831679e5bf18ca9866054a7f",
+        "branch_lineage_id": "dbranch_8c43890ac2be8dca1c6e34f8960ef386f82631197a5b916c853a8501fae2707c",
+        "record_window_id": "",
+        "record_anchor": "ev_68e078e59254ec33a3cc6cdfcc0f",
+        "branch_anchor": "ev_68e078e59254ec33a3cc6cdfcc0f",
+        "evidence_ids": [
+          "ev_68e078e59254ec33a3cc6cdfcc0f"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_68e078e59254ec33a3cc6cdfcc0f"
+          ],
+          "record_anchor": "ev_68e078e59254ec33a3cc6cdfcc0f",
+          "branch_anchor": "ev_68e078e59254ec33a3cc6cdfcc0f",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Erratic or accelerated pump speed.",
+              "description": "Erratic or accelerated pump speed.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_68e078e59254ec33a3cc6cdfcc0f",
+                  "source_page": 11,
+                  "quote": "Erratic or accelerated pump speed."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Fluid is too heavy for pump priming.",
+            "description": "Fluid is too heavy for pump priming.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_68e078e59254ec33a3cc6cdfcc0f",
+                "source_page": 11,
+                "quote": "Fluid is too heavy for pump priming."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "description": "Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "instruction_text": "Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_68e078e59254ec33a3cc6cdfcc0f",
+                  "source_page": 11,
+                  "quote": "Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_68e078e59254ec33a3cc6cdfcc0f",
+                  "source_page": 11,
+                  "quote": "Fluid is too heavy for pump priming."
+                },
+                {
+                  "source_anchor": "ev_68e078e59254ec33a3cc6cdfcc0f",
+                  "source_page": 11,
+                  "quote": "Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "indicators[0].claim_evidence[0]",
+            "message": "indicators[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_68e078e59254ec33a3cc6cdfcc0f' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_b428ca4828ee2ab66b639b9b400c7fecf25eb3f97e07bbe95bca7c2ab576187c",
+        "branch_lineage_id": "dbranch_a677934ce97944603d1cacc056d3672bce5dddf35e2a1c2c6179e888473ca15e",
+        "record_window_id": "",
+        "record_anchor": "ev_6ceebb2c69fbc5e4ee167ab90165",
+        "branch_anchor": "ev_6ceebb2c69fbc5e4ee167ab90165",
+        "evidence_ids": [
+          "ev_6ceebb2c69fbc5e4ee167ab90165"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_6ceebb2c69fbc5e4ee167ab90165"
+          ],
+          "record_anchor": "ev_6ceebb2c69fbc5e4ee167ab90165",
+          "branch_anchor": "ev_6ceebb2c69fbc5e4ee167ab90165",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Erratic or accelerated pump speed.",
+              "description": "Erratic or accelerated pump speed.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_6ceebb2c69fbc5e4ee167ab90165",
+                  "source_page": 11,
+                  "quote": "Erratic or accelerated pump speed."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Held open or worn piston valve or seals.",
+            "description": "Held open or worn piston valve or seals.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_6ceebb2c69fbc5e4ee167ab90165",
+                "source_page": 11,
+                "quote": "Held open or worn piston valve or seals."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clear valve; replace seals.",
+              "description": "Clear valve; replace seals.",
+              "instruction_text": "Clear valve; replace seals.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_6ceebb2c69fbc5e4ee167ab90165",
+                  "source_page": 11,
+                  "quote": "Clear valve; replace seals."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_6ceebb2c69fbc5e4ee167ab90165",
+                  "source_page": 11,
+                  "quote": "Held open or worn piston valve or seals."
+                },
+                {
+                  "source_anchor": "ev_6ceebb2c69fbc5e4ee167ab90165",
+                  "source_page": 11,
+                  "quote": "Clear valve; replace seals."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "indicators[0].claim_evidence[0]",
+            "message": "indicators[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_6ceebb2c69fbc5e4ee167ab90165' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_24480f2f24ef248c106f3ed73c1560fc917979dcc3ae6a386fd681013fd082ac",
+        "branch_lineage_id": "dbranch_abbd2fdf74b244cb05b469cf9f108ac2ce83e9e7ba1bc4e9bb7bd7d266e5b9fe",
+        "record_window_id": "",
+        "record_anchor": "ev_e1665321c5b6b0519020bc8f0e16",
+        "branch_anchor": "ev_e1665321c5b6b0519020bc8f0e16",
+        "evidence_ids": [
+          "ev_e1665321c5b6b0519020bc8f0e16"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_e1665321c5b6b0519020bc8f0e16"
+          ],
+          "record_anchor": "ev_e1665321c5b6b0519020bc8f0e16",
+          "branch_anchor": "ev_e1665321c5b6b0519020bc8f0e16",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Pump operates, but output is low on both strokes.",
+              "description": "Pump operates, but output is low on both strokes.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_e1665321c5b6b0519020bc8f0e16",
+                  "source_page": 11,
+                  "quote": "Pump operates, but output is low on both strokes."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+            "description": "Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_e1665321c5b6b0519020bc8f0e16",
+                "source_page": 11,
+                "quote": "Obstructed fluid hose or gun/valve; fluid hose ID is too small."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clear*; use a hose with a larger ID.",
+              "description": "Clear*; use a hose with a larger ID.",
+              "instruction_text": "Clear*; use a hose with a larger ID.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_e1665321c5b6b0519020bc8f0e16",
+                  "source_page": 11,
+                  "quote": "Clear*; use a hose with a larger ID."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_e1665321c5b6b0519020bc8f0e16",
+                  "source_page": 11,
+                  "quote": "Obstructed fluid hose or gun/valve; fluid hose ID is too small."
+                },
+                {
+                  "source_anchor": "ev_e1665321c5b6b0519020bc8f0e16",
+                  "source_page": 11,
+                  "quote": "Clear*; use a hose with a larger ID."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "indicators[0].claim_evidence[0]",
+            "message": "indicators[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_e1665321c5b6b0519020bc8f0e16' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_9ad132ed7c7704772140d3b058160023deaea2e2edd73ff512bd6a18fed66718",
+        "branch_lineage_id": "dbranch_e58f74f11611f1b3b00a563d2ee174e04b1d429167e4eca9d663bd98fc95e634",
+        "record_window_id": "",
+        "record_anchor": "ev_61d21bacf740efc4d426328702c2",
+        "branch_anchor": "ev_61d21bacf740efc4d426328702c2",
+        "evidence_ids": [
+          "ev_61d21bacf740efc4d426328702c2"
+        ],
+        "resolved_evidence_ids": [
+          "ev_61d21bacf740efc4d426328702c2"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_61d21bacf740efc4d426328702c2"
+          ],
+          "record_anchor": "ev_61d21bacf740efc4d426328702c2",
+          "branch_anchor": "ev_61d21bacf740efc4d426328702c2",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Pump operates, but output is low on down- stroke.",
+              "description": "Pump operates, but output is low on down- stroke.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_61d21bacf740efc4d426328702c2",
+                  "source_page": 11,
+                  "quote": "Pump operates, but output is low on down- stroke."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Fluid too heavy for pump priming.",
+            "description": "Fluid too heavy for pump priming.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_61d21bacf740efc4d426328702c2",
+                "source_page": 11,
+                "quote": "Fluid too heavy for pump priming."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "description": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "instruction_text": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_61d21bacf740efc4d426328702c2",
+                  "source_page": 11,
+                  "quote": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_61d21bacf740efc4d426328702c2",
+                  "source_page": 11,
+                  "quote": "Fluid too heavy for pump priming."
+                },
+                {
+                  "source_anchor": "ev_61d21bacf740efc4d426328702c2",
+                  "source_page": 11,
+                  "quote": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_9ad132ed7c7704772140d3b058160023deaea2e2edd73ff512bd6a18fed66718",
+          "branch_lineage_id": "dbranch_e58f74f11611f1b3b00a563d2ee174e04b1d429167e4eca9d663bd98fc95e634",
+          "record_window_id": "",
+          "record_anchor": "ev_61d21bacf740efc4d426328702c2",
+          "branch_anchor": "ev_61d21bacf740efc4d426328702c2",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "name": "Pump operates, but output is low on down- stroke.",
+              "description": "Pump operates, but output is low on down- stroke.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_61d21bacf740efc4d426328702c2",
+                  "source_page": 11,
+                  "quote": "Pump operates, but output is low on down- stroke.",
+                  "evidence_id": "ev_61d21bacf740efc4d426328702c2",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump operates, but output is low on down- stroke. | Fluid too heavy for pump priming. | Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 12,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Fluid too heavy for pump priming.",
+            "description": "Fluid too heavy for pump priming.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_61d21bacf740efc4d426328702c2",
+                "source_page": 11,
+                "quote": "Fluid too heavy for pump priming.",
+                "evidence_id": "ev_61d21bacf740efc4d426328702c2",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 11,
+                  "section": null,
+                  "quote": "Pump operates, but output is low on down- stroke. | Fluid too heavy for pump priming. | Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+                  "extraction_method": "table",
+                  "printed_page": null,
+                  "block_index": null,
+                  "source_block_index": null,
+                  "bbox": null,
+                  "table_index": 4,
+                  "row_index": 12,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "description": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "instruction_text": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_61d21bacf740efc4d426328702c2",
+                  "source_page": 11,
+                  "quote": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+                  "evidence_id": "ev_61d21bacf740efc4d426328702c2",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump operates, but output is low on down- stroke. | Fluid too heavy for pump priming. | Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 12,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_61d21bacf740efc4d426328702c2",
+                  "source_page": 11,
+                  "quote": "Fluid too heavy for pump priming.",
+                  "evidence_id": "ev_61d21bacf740efc4d426328702c2",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump operates, but output is low on down- stroke. | Fluid too heavy for pump priming. | Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 12,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_61d21bacf740efc4d426328702c2",
+                  "source_page": 11,
+                  "quote": "Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+                  "evidence_id": "ev_61d21bacf740efc4d426328702c2",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 11,
+                    "section": null,
+                    "quote": "Pump operates, but output is low on down- stroke. | Fluid too heavy for pump priming. | Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+                    "extraction_method": "table",
+                    "printed_page": null,
+                    "block_index": null,
+                    "source_block_index": null,
+                    "bbox": null,
+                    "table_index": 4,
+                    "row_index": 12,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "disposition": "gap",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_d257a30332f6891b6f359495c233eacd7dc942a1f27d12f4d7650b201bcdf4ea",
+        "branch_lineage_id": "dbranch_e9d845c5c8fc8bbcf125aac5c0229feb99b665a821e8db763407c6c0b684873a",
+        "record_window_id": "",
+        "record_anchor": "ev_0e6d92b9ee117707e5cc602b9d1a",
+        "branch_anchor": "ev_0e6d92b9ee117707e5cc602b9d1a",
+        "evidence_ids": [
+          "ev_0e6d92b9ee117707e5cc602b9d1a"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_0e6d92b9ee117707e5cc602b9d1a"
+          ],
+          "record_anchor": "ev_0e6d92b9ee117707e5cc602b9d1a",
+          "branch_anchor": "ev_0e6d92b9ee117707e5cc602b9d1a",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Pump operates, but output is low on both strokes.",
+              "description": "Pump operates, but output is low on both strokes.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0e6d92b9ee117707e5cc602b9d1a",
+                  "source_page": 11,
+                  "quote": "Pump operates, but output is low on both strokes."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Bleeder valve is open.",
+            "description": "Bleeder valve is open.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_0e6d92b9ee117707e5cc602b9d1a",
+                "source_page": 11,
+                "quote": "Bleeder valve is open."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Close.",
+              "description": "Close.",
+              "instruction_text": "Close.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0e6d92b9ee117707e5cc602b9d1a",
+                  "source_page": 11,
+                  "quote": "Close."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_0e6d92b9ee117707e5cc602b9d1a",
+                  "source_page": 11,
+                  "quote": "Bleeder valve is open."
+                },
+                {
+                  "source_anchor": "ev_0e6d92b9ee117707e5cc602b9d1a",
+                  "source_page": 11,
+                  "quote": "Close."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "indicators[0].claim_evidence[0]",
+            "message": "indicators[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_0e6d92b9ee117707e5cc602b9d1a' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_fc2dc71e3c918f84d6bdddf98fe2be86eafc0c9753f92d4d39c81f69ab1e4d47",
+        "branch_lineage_id": "dbranch_f39bdd0642afaf7c1bee7214865e26c7b5e1500af9991e70b0c84df130d78000",
+        "record_window_id": "",
+        "record_anchor": "ev_2fddf7b39646de5493cf9897b752",
+        "branch_anchor": "ev_2fddf7b39646de5493cf9897b752",
+        "evidence_ids": [
+          "ev_2fddf7b39646de5493cf9897b752"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_2fddf7b39646de5493cf9897b752"
+          ],
+          "record_anchor": "ev_2fddf7b39646de5493cf9897b752",
+          "branch_anchor": "ev_2fddf7b39646de5493cf9897b752",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Pump fails to operate.",
+              "description": "Pump fails to operate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2fddf7b39646de5493cf9897b752",
+                  "source_page": 11,
+                  "quote": "Pump fails to operate."
+                }
+              ],
+              "failure_link_evidence": []
+            }
+          ],
+          "failure": {
+            "name": "Fluid dried on the displacement rod.",
+            "description": "Fluid dried on the displacement rod.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_2fddf7b39646de5493cf9897b752",
+                "source_page": 11,
+                "quote": "Fluid dried on the displacement rod."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Clean; see Service on pages 12–19.",
+              "description": "Clean; see Service on pages 12–19.",
+              "instruction_text": "Clean; see Service on pages 12–19.",
+              "action_kind": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2fddf7b39646de5493cf9897b752",
+                  "source_page": 11,
+                  "quote": "Clean; see Service on pages 12–19."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_2fddf7b39646de5493cf9897b752",
+                  "source_page": 11,
+                  "quote": "Fluid dried on the displacement rod."
+                },
+                {
+                  "source_anchor": "ev_2fddf7b39646de5493cf9897b752",
+                  "source_page": 11,
+                  "quote": "Clean; see Service on pages 12–19."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "missing_indicator_failure_evidence",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The indicator-to-failure edge has no direct evidence."
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "indicators[0].claim_evidence[0]",
+            "message": "indicators[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_2fddf7b39646de5493cf9897b752' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_24fa84f4b1acaee70a5830f34080d335c6c3718397e4db8dc373f078ca23b5f0",
+        "branch_lineage_id": "dbranch_24fa84f4b1acaee70a5830f34080d335c6c3718397e4db8dc373f078ca23b5f0",
+        "record_window_id": "",
+        "record_anchor": "ev_deb406eb1f1b807f5310c892fe36",
+        "branch_anchor": "ev_deb406eb1f1b807f5310c892fe36",
+        "evidence_ids": [
+          "ev_deb406eb1f1b807f5310c892fe36"
+        ],
+        "resolved_evidence_ids": [
+          "ev_deb406eb1f1b807f5310c892fe36"
+        ],
+        "candidate": null,
+        "disposition": "review",
+        "accounting_state": "record_not_observed",
+        "drop_reasons": [
+          {
+            "code": "candidate_passage_missing_disposition",
+            "path": "semantic_scope",
+            "message": "The typed output omitted this candidate passage from the scoped diagnostic input."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      }
+    ],
+    "candidate_count": 19,
+    "duplicate_candidate_count": 0,
+    "publish_count": 0,
+    "unresolved_count": 19,
+    "disposition_counts": {
+      "publish": 0,
+      "gap": 5,
+      "review": 14,
+      "exclude": 0
+    },
+    "drop_reasons": {
+      "missing_actions": 1,
+      "missing_indicator_failure_evidence": 18,
+      "quote_not_in_anchored_evidence": 13,
+      "candidate_passage_missing_disposition": 1
+    },
+    "escalation_recommended": true
+  },
+  "resolution_completion_report": {},
+  "canonicalization_report": {},
+  "review_queue": [],
+  "review_summary": {}
+}

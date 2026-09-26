@@ -1,6 +1,11 @@
 # Pipeline PDF G3 e KPI di esecuzione
 
-Data: `2026-08-09`
+Data del checkpoint descritto: `2026-08-09`.
+
+> Questo documento conserva il contratto KPI e l’implementazione di quel
+> checkpoint. Per il flusso v22, i recuperi e la correzione per record vedere
+> [stato PDF corrente](PDF_DIAGNOSTIC_STATUS.md). Nei replay gli usage riutilizzati
+> non sono nuova spesa: per C9–C12 fa fede il ledger cumulativo della campagna.
 
 ## Scopo
 
@@ -15,7 +20,7 @@ costi storici, necessariamente stimata perché la revisione precedente non
 persistiva il ledger, è in
 `artifacts/acceptance/g3/e554/pdf_pipeline_cost_reconstruction.json`.
 
-## Flusso corrente
+## Flusso al checkpoint descritto
 
 ```text
 PDF originale

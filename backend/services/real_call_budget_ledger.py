@@ -589,6 +589,9 @@ class RealCallBudgetLedger:
             maximum=128,
         )
         pricing = pricing_for_model(model)
+        key = pricing["model_key"]
+        if not (model == key or model.startswith(f"{key}-") or model == "gpt-5.6"):
+            raise BudgetConfigurationError(f"No verified pricing for model {model!r}")
         if worst_case_cost_usd is None:
             calculated = self._envelope_cost_estimator(token_envelope, pricing)
             worst_case = _as_decimal(calculated, field="calculated worst_case_cost_usd")

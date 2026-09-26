@@ -11,9 +11,10 @@ not work that is still pending.
   deterministico, risultati dei CSV reali, regressioni e prossimi casi.
 - [G3 Engine Hardening Handoff](G3_ENGINE_HARDENING_HANDOFF.md) — stato del
   gate umano, limiti dichiarati e sequenza CSV→PDF senza approvazioni implicite.
-- [PDF G3 Second Hardening](PDF_G3_SECOND_HARDENING.md) — baseline PDF
-  diagnostica v11 corrente, risultati reali sui tre manuali, riproducibilità,
-  limiti di generalizzazione e protocollo per il prossimo holdout blind.
+- [Current PDF diagnostic status](PDF_DIAGNOSTIC_STATUS.md) — v22, record
+  correction, document verification, reproducibility and unresolved limitations.
+- [Scientific status](../paper/STATUS.md) — evidence supporting paper claims,
+  independent annotation still needed and experiment version boundaries.
 - [Normative Specification Package](specs/README.md) — decisions, data
   contracts, codebase implications, and acceptance criteria.
 - [UX Specification](specs/UX_SPECIFICATION.md) — unified multi-format
@@ -27,6 +28,9 @@ not work that is still pending.
 - [Evaluation Protocol](EVALUATION_PROTOCOL.md) — normative golden-fixture and
   model-comparison procedure.
 - [Test Suite Map](../tests/README.md) — correctness-test layers and commands.
+- [Pipeline Spiegazione (IT)](PIPELINE_SPIEGAZIONE_IT.md) — non-specialist walkthrough
+  of the current pipeline, record correction, measured results and limitations.
+
 ## Frozen evaluation records
 
 These reports explain the annotations and gates for individual real-manual
@@ -40,6 +44,11 @@ fixtures. Keep them next to any corresponding frozen expected output:
 
 ## Historical records
 
+- [PDF G3 Second Hardening](PDF_G3_SECOND_HARDENING.md) — frozen v11
+  development results; superseded as the current PDF status.
+- [Pipeline Spiegazione, versione storica](PIPELINE_SPIEGAZIONE_IT_20260728.md) —
+  original walkthrough preserved; code line references and scores are historical.
+
 - [E-554 Luna Validation Handoff](E554_LUNA_VALIDATION_HANDOFF.md) — procedura
   storica per il precedente singolo rerun; superseded dalla campagna v11.
 - [MVP Specification 0.2 Draft](archive/SPECIFICHE_MVP_0.2_DRAFT.md) —
@@ -51,5 +60,5 @@ fixtures. Keep them next to any corresponding frozen expected output:
 - [QA Demo Report](archive/QA_DEMO_REPORT.md) — pre-fix run evidence; its verdict is
   scoped to the recorded build and is not the current release verdict.
 
-Historical records live under `docs/archive/` so they cannot be mistaken for
-current specifications.
+Historical records are explicitly labelled; older plans also live under
+`docs/archive/`. Their metrics do not describe the current generator.

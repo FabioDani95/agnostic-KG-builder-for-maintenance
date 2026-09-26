@@ -13,7 +13,9 @@ packages = []
 [tool.ruff]
 line-length = 120
 target-version = "py312"
-extend-exclude = ["node_modules", "output", "output_e2e", "runs_e2e", "batch_runs", "benchmark_runs", "eval_runs", "data", "manuals"]
+# Frozen experiment programs are evidence, not active source to reformat.
+# Runtime, maintained runners and tests remain covered by `ruff check .`.
+extend-exclude = ["node_modules", "output", "output_e2e", "runs_e2e", "batch_runs", "benchmark_runs", "eval_runs", "data", "manuals", "artifacts/acceptance", "paper/experiments"]
 
 [tool.ruff.lint]
 # F: pyflakes (dead imports/variables, undefined names)

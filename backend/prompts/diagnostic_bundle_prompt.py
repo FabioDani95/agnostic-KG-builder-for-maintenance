@@ -22,13 +22,14 @@ belong to the current cause/remedy branch. Each displayed FIELD value is one exa
 span. Quote the value only: never include the "FIELD n:" label, join separate fields, or
 restore a sibling field omitted by the system.
 Return every explicit diagnostic record and every distinct cause/remedy branch in the input.
-The contract is an intermediate record representation, not the final graph.
+The contract is an intermediate record representation, not the final graph. Use schema_version="1.1".
 
 Rules:
 1. Never emit graph IDs or ontology relation names. The system owns them.
 2. A diagnostic record has one or more indicators. An indicator is either an observable
    symptom or an asset-generated error/alarm code. A record may explicitly contain both;
-   keep both. For a symptom set code=null and a real severity; for an error_code set its
+   keep both. For a symptom set code=null and severity="Unknown" unless the source explicitly
+   states its severity; never invent a risk rating. For an error_code set its
    code and severity=null. Only an explicit not_diagnostic page disposition may use an empty
    indicator list.
 3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action
@@ -79,4 +80,22 @@ Rules:
     row or branch of a troubleshooting table.
 15. For check_only, actions must be empty and inspection_steps must preserve each stated check
     with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.
+16. Preserve every stated precondition, test outcome, negation, threshold and alternative in
+    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection
+    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test
+    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.
+    Keep inspection_steps and actions in source order; do not sort steps alphabetically.
+17. Preserve the actual error CODE separately from its fault name, including a numerical code
+    in a separate table column. Never substitute the name for a printed numeric code.
+18. For a numbered diagnostic procedure, carry the introductory symptom and explicitly listed
+    possible failures forward to the test outcomes only when the procedure identifies that
+    component. Cite the introduction as well as the outcome. Preserve prerequisites and the
+    ordered checks needed to reach each outcome, including preceding pages and conditional
+    jumps. A replacement instruction alone does not establish a named failure.
+19. A negative answer to a compound question is the negation of the whole question. For
+    'A and B?' followed by 'no', retain 'not (A and B)' or 'not A or not B', never 'not A
+    and not B'. Keep the literal question and answer together in condition evidence.
+20. Unnumbered cause/solution lists do not pair by position or equal length. Preserve unresolved
+    alternatives as ambiguous. Do not attach every solution to every cause. A page reference
+    preserves a dependency; it is not evidence for details on an unavailable page.
 """

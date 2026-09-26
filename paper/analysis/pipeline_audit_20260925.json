@@ -1,0 +1,419 @@
+{
+  "kind": "offline_analysis_not_extraction_quality_validation",
+  "real_api_calls": 0,
+  "git_head": "528f0690c8a678dd94fe0e5e385203e4f0d0fbe7",
+  "audit_script_sha256": "4562fa506c8ae1cbe0ba761bcbf3dc7c64d65b00a1abb8673b505f0cb7830f9b",
+  "gold_sha256": "c92ba0a8bcb1721055f6fc8c10c3d0a6a57eb3dc35134755d06574d6272a5291",
+  "runtime": {
+    "openai": "2.44.0",
+    "pymupdf": "1.28.0",
+    "pydantic": "2.13.4"
+  },
+  "runtime_note": "Local runtime differs from pilot. No PDF inventory regeneration or provider call is performed.",
+  "artifact_hash_mismatches": [],
+  "manuals": {
+    "eastman_e554": {
+      "pdf_hash_verified": true,
+      "graph_matches_generation_response": true,
+      "scope_counts": {
+        "selected_pages": 43,
+        "diagnostic_pages": 22,
+        "structural_pages": 32,
+        "retrieval_pages": 54
+      },
+      "node_types": {
+        "Asset": 1,
+        "Component": 127,
+        "CorrectiveAction": 6,
+        "FailureMode": 6,
+        "Symptom": 4
+      },
+      "review_codes": {
+        "pdf_node_provenance_unresolved": 1,
+        "pdf_relation_endpoint_omitted": 1,
+        "pdf_ocr_low_confidence": 1,
+        "pdf_diagnostic_contract_incomplete": 1,
+        "pdf_diagnostic_record_review": 15,
+        "pdf_diagnostic_record_gap": 7,
+        "pdf_diagnostic_candidate_pages_unaccounted": 1,
+        "pdf_pipeline_schema_noncompliant": 1,
+        "pdf_pipeline_not_reviewable": 1,
+        "pdf_pipeline_blocked": 1,
+        "canonicalization_ambiguous": 14
+      },
+      "candidate_count": 73,
+      "typed_candidates": 61,
+      "synthetic_records": 12,
+      "dispositions": {
+        "exclude": 45,
+        "review": 15,
+        "gap": 7,
+        "publish": 6
+      },
+      "replay_changed_dispositions": [],
+      "inspection_steps_in_candidates": 7,
+      "inspection_steps_in_publish_candidates": 4,
+      "failed_chunks": [
+        {
+          "input_pages": [
+            36,
+            37,
+            38,
+            39
+          ],
+          "error_type": "LengthFinishReasonError",
+          "finish_reason": "length",
+          "candidate_count": 8,
+          "provider_response_id": "",
+          "raw_sha256": "",
+          "candidate_input_anchors": [
+            "ev_13a28e2b409fdfbbe27b7f725a0a",
+            "ev_1649a74e2e26df55600bc1c6b504",
+            "ev_27e6e582931036201966cdd8193a",
+            "ev_4f14554a9b0e86b8701b6aa27cfb",
+            "ev_92fedc86edd357b1373dee123fe6",
+            "ev_aa2d4d3a594119bd57bdce41302d",
+            "ev_bfabe014287674559983e0f828b4",
+            "ev_c60a8e4c4118ac5c8b48b17d90c2"
+          ]
+        }
+      ],
+      "key_pages": {
+        "37": {
+          "selected": true,
+          "canonical_units": 17,
+          "rendered_anchors": 17,
+          "language_filter_pass": true
+        },
+        "38": {
+          "selected": true,
+          "canonical_units": 24,
+          "rendered_anchors": 24,
+          "language_filter_pass": true
+        },
+        "39": {
+          "selected": true,
+          "canonical_units": 17,
+          "rendered_anchors": 17,
+          "language_filter_pass": true
+        }
+      }
+    },
+    "danfoss_apf": {
+      "pdf_hash_verified": true,
+      "graph_matches_generation_response": true,
+      "scope_counts": {
+        "selected_pages": 45,
+        "diagnostic_pages": 14,
+        "structural_pages": 40,
+        "retrieval_pages": 66
+      },
+      "node_types": {
+        "Asset": 1,
+        "Component": 34
+      },
+      "review_codes": {
+        "pdf_node_provenance_unresolved": 1,
+        "pdf_relation_endpoint_omitted": 1,
+        "pdf_ocr_low_confidence": 1,
+        "pdf_unreadable_pages": 1,
+        "pdf_diagnostic_record_review": 13,
+        "pdf_diagnostic_record_gap": 1,
+        "pdf_diagnostic_candidate_pages_unaccounted": 1,
+        "canonicalization_ambiguous": 4
+      },
+      "candidate_count": 18,
+      "typed_candidates": 12,
+      "synthetic_records": 6,
+      "dispositions": {
+        "review": 13,
+        "exclude": 4,
+        "gap": 1
+      },
+      "replay_changed_dispositions": [],
+      "inspection_steps_in_candidates": 3,
+      "inspection_steps_in_publish_candidates": 0,
+      "failed_chunks": [],
+      "key_pages": {
+        "64": {
+          "selected": true,
+          "canonical_units": 48,
+          "rendered_anchors": 44,
+          "language_filter_pass": true
+        }
+      }
+    },
+    "graco_check_mate_200": {
+      "pdf_hash_verified": true,
+      "graph_matches_generation_response": true,
+      "scope_counts": {
+        "selected_pages": 17,
+        "diagnostic_pages": 15,
+        "structural_pages": 11,
+        "retrieval_pages": 30
+      },
+      "node_types": {
+        "Asset": 1,
+        "Component": 41
+      },
+      "review_codes": {
+        "pdf_diagnostic_contract_incomplete": 1,
+        "pdf_diagnostic_record_review": 3,
+        "pdf_diagnostic_candidate_pages_unaccounted": 1,
+        "pdf_pipeline_schema_noncompliant": 1,
+        "pdf_pipeline_not_reviewable": 1,
+        "pdf_pipeline_blocked": 1,
+        "canonicalization_ambiguous": 2
+      },
+      "candidate_count": 6,
+      "typed_candidates": 3,
+      "synthetic_records": 3,
+      "dispositions": {
+        "review": 3,
+        "exclude": 3
+      },
+      "replay_changed_dispositions": [],
+      "inspection_steps_in_candidates": 0,
+      "inspection_steps_in_publish_candidates": 0,
+      "failed_chunks": [
+        {
+          "input_pages": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "error_type": "LengthFinishReasonError",
+          "finish_reason": "length",
+          "candidate_count": 0,
+          "provider_response_id": "",
+          "raw_sha256": "",
+          "candidate_input_anchors": []
+        }
+      ],
+      "key_pages": {
+        "11": {
+          "selected": true,
+          "canonical_units": 52,
+          "rendered_anchors": 33,
+          "language_filter_pass": false
+        }
+      }
+    },
+    "hypertherm_powermax30_air": {
+      "pdf_hash_verified": true,
+      "graph_matches_generation_response": true,
+      "scope_counts": {
+        "selected_pages": 146,
+        "diagnostic_pages": 65,
+        "structural_pages": 121,
+        "retrieval_pages": 231
+      },
+      "node_types": {
+        "Asset": 1,
+        "Component": 112,
+        "CorrectiveAction": 7,
+        "ErrorCode": 1,
+        "FailureMode": 7,
+        "Symptom": 6
+      },
+      "review_codes": {
+        "pdf_node_provenance_unresolved": 1,
+        "pdf_relation_endpoint_omitted": 1,
+        "pdf_ocr_low_confidence": 1,
+        "pdf_schema_instruction_not_actionable": 1,
+        "pdf_prepublication_graph_issue_summary": 1,
+        "pdf_diagnostic_contract_incomplete": 1,
+        "pdf_diagnostic_record_review": 38,
+        "pdf_diagnostic_record_gap": 18,
+        "pdf_diagnostic_candidate_pages_unaccounted": 1,
+        "pdf_pipeline_not_reviewable": 1,
+        "pdf_pipeline_blocked": 1,
+        "diagnostic_failure_without_component": 2,
+        "canonicalization_ambiguous": 15
+      },
+      "candidate_count": 83,
+      "typed_candidates": 65,
+      "synthetic_records": 18,
+      "dispositions": {
+        "review": 38,
+        "gap": 18,
+        "publish": 10,
+        "exclude": 17
+      },
+      "replay_changed_dispositions": [],
+      "inspection_steps_in_candidates": 46,
+      "inspection_steps_in_publish_candidates": 12,
+      "failed_chunks": [
+        {
+          "input_pages": [
+            66,
+            67,
+            68,
+            69,
+            70
+          ],
+          "error_type": "LengthFinishReasonError",
+          "finish_reason": "length",
+          "candidate_count": 2,
+          "provider_response_id": "",
+          "raw_sha256": "",
+          "candidate_input_anchors": [
+            "ev_6bbdbed276625e61d1f6dae6173c",
+            "ev_fa4d3fae3719836656e3cfd9b6ef"
+          ]
+        },
+        {
+          "input_pages": [
+            70,
+            71,
+            72,
+            73,
+            74
+          ],
+          "error_type": "InternalServerError",
+          "finish_reason": "error",
+          "candidate_count": 2,
+          "provider_response_id": "",
+          "raw_sha256": "",
+          "candidate_input_anchors": [
+            "ev_6bbdbed276625e61d1f6dae6173c",
+            "ev_e72dd9ec00d529d8363233a3042a"
+          ]
+        },
+        {
+          "input_pages": [
+            91,
+            92,
+            93,
+            94,
+            95
+          ],
+          "error_type": "ValidationError",
+          "finish_reason": "error",
+          "candidate_count": 2,
+          "provider_response_id": "",
+          "raw_sha256": "",
+          "candidate_input_anchors": [
+            "ev_2c89daf1fe85035a0cff45583c04",
+            "ev_7915bf7ae1a9fed59bf0b1f64405"
+          ]
+        }
+      ],
+      "key_pages": {
+        "65": {
+          "selected": true,
+          "canonical_units": 33,
+          "rendered_anchors": 26,
+          "language_filter_pass": true
+        },
+        "77": {
+          "selected": true,
+          "canonical_units": 23,
+          "rendered_anchors": 21,
+          "language_filter_pass": true
+        },
+        "85": {
+          "selected": false,
+          "canonical_units": 28,
+          "rendered_anchors": 16,
+          "language_filter_pass": false
+        },
+        "228": {
+          "selected": false,
+          "canonical_units": 41,
+          "rendered_anchors": 23,
+          "language_filter_pass": false
+        }
+      }
+    }
+  },
+  "probes": {
+    "danfoss_wrong_anchor": {
+      "anchor": "ev_e5afd58033ce44902f2fb94c0b62",
+      "text": "modules have repeated IDs.",
+      "cited_quote": "the individual modules.",
+      "literal_match": false
+    },
+    "literal_quotes_do_not_prove_relation": {
+      "synthetic": true,
+      "disposition": "publish",
+      "relations_emitted": 2,
+      "explanation": "Pump stops is linked to the broken fan of a different row; all cited strings exist."
+    },
+    "mixed_record_validation": {
+      "envelope_rejected": true,
+      "invalid_locations": [
+        [
+          "records",
+          1
+        ]
+      ],
+      "first_record_individually_schema_valid": true
+    },
+    "typed_transport_error_bypasses_outer_retry": {
+      "configured_attempts": 3,
+      "actual_fake_attempts": 1,
+      "parsed": false
+    },
+    "overlap_exceeds_page_limit": {
+      "configured_pages": 4,
+      "chunk_pages": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        [
+          8,
+          9
+        ]
+      ]
+    },
+    "historical_scorer_contrasts": [
+      {
+        "expected": "fan works",
+        "actual": "fan does not work",
+        "score": 0.9,
+        "passes_055": true
+      },
+      {
+        "expected": "Replace the seal",
+        "actual": "Do not replace the seal",
+        "score": 1.0,
+        "passes_055": true
+      },
+      {
+        "expected": "Pump output is low on down-stroke",
+        "actual": "Pump output is low on up-stroke",
+        "score": 0.72,
+        "passes_055": true
+      },
+      {
+        "expected": "Replace the seal",
+        "actual": "Check the seal",
+        "score": 0.466667,
+        "passes_055": false
+      }
+    ],
+    "legacy_export_discards_lineage": {
+      "input_lineage": "synthetic_branch",
+      "output_keys": [
+        "evidence",
+        "from_id",
+        "to_id",
+        "type"
+      ],
+      "branch_lineage_preserved": false
+    }
+  },
+  "artifact_hashes_checked": 47
+}

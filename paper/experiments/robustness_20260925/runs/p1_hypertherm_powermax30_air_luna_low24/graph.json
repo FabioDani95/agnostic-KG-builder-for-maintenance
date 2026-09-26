@@ -1,0 +1,118 @@
+{
+  "ontology_name": "Core_Ontology",
+  "version": "2.0",
+  "language": "en",
+  "source_type": "technical PDF",
+  "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "Powermax30 AIR plasma cutting system",
+        "description": "Plasma arc cutting system with integrated air compressor",
+        "brand": "Hypertherm",
+        "model": "Powermax30 AIR",
+        "asset_type": "hypertherm powermax30 air service manual rev4 808850.pdf"
+      }
+    ],
+    "Component": [],
+    "Symptom": [],
+    "FailureMode": [
+      {
+        "failure_mode_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+        "name": "Inverter saturation",
+        "description": "Inverter saturation.",
+        "material_context": "not_stated"
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "ca_install_new_consumables_in_the_torch_9f39bd2da0caf75133c3aebdcf6094ee9220848811a3472e4cf9d3754415f9fa",
+        "name": "Install new consumables in the torch",
+        "description": "Install new consumables in the torch.",
+        "instruction_text": "Install new consumables in the torch. If you continue to see this error code, replace the power board.",
+        "action_kind": "replacement",
+        "source_type": "technical PDF",
+        "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      },
+      {
+        "action_id": "ca_replace_the_power_board_680d489b6a90213dc2cc63f49f8791ebe52e30a1979a01457047c444bb1947e3",
+        "name": "Replace the power board",
+        "description": "Replace the power board if the error code continues after installing new torch consumables.",
+        "instruction_text": "If you continue to see this error code, replace the power board.",
+        "action_kind": "replacement",
+        "source_type": "technical PDF",
+        "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      }
+    ],
+    "ErrorCode": [
+      {
+        "error_code_id": "err_6_df6eb22995719698e584717a78a2870063627fd622bf4849876d4e533e8c1e3e",
+        "name": "Inverter saturation",
+        "description": "The Error LED blinks 6 times; the problem is identified as inverter saturation.",
+        "code": "6"
+      }
+    ]
+  },
+  "relations": [
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "err_6_df6eb22995719698e584717a78a2870063627fd622bf4849876d4e533e8c1e3e",
+      "to_type": "FailureMode",
+      "to_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+      "evidence": [
+        {
+          "source_page": 77,
+          "source_reference": "ev_50eab2ff50f878d436092d263667",
+          "quote": "Inverter saturation",
+          "source_anchor": "ev_50eab2ff50f878d436092d263667"
+        }
+      ],
+      "branch_lineage_id": "dbranch_8cc3d239545bc5d8aea5874ff1d8776b9ededb0a41b18bdad5e0f229b6ddb5eb"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_install_new_consumables_in_the_torch_9f39bd2da0caf75133c3aebdcf6094ee9220848811a3472e4cf9d3754415f9fa",
+      "evidence": [
+        {
+          "source_page": 77,
+          "source_reference": "ev_50eab2ff50f878d436092d263667",
+          "quote": "Install new consumables in the torch.",
+          "source_anchor": "ev_50eab2ff50f878d436092d263667"
+        }
+      ],
+      "branch_lineage_id": "dbranch_8cc3d239545bc5d8aea5874ff1d8776b9ededb0a41b18bdad5e0f229b6ddb5eb"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_replace_the_power_board_680d489b6a90213dc2cc63f49f8791ebe52e30a1979a01457047c444bb1947e3",
+      "evidence": [
+        {
+          "source_page": 77,
+          "source_reference": "ev_50eab2ff50f878d436092d263667",
+          "quote": "If you continue to see this error code, replace the power board.",
+          "source_anchor": "ev_50eab2ff50f878d436092d263667"
+        }
+      ],
+      "branch_lineage_id": "dbranch_8cc3d239545bc5d8aea5874ff1d8776b9ededb0a41b18bdad5e0f229b6ddb5eb"
+    },
+    {
+      "name": "GENERATES_ERROR",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "ErrorCode",
+      "to_id": "err_6_df6eb22995719698e584717a78a2870063627fd622bf4849876d4e533e8c1e3e",
+      "evidence": [],
+      "branch_lineage_id": ""
+    }
+  ]
+}

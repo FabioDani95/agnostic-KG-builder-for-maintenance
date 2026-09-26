@@ -1,0 +1,2308 @@
+{
+  "status": "ready",
+  "ontology": {
+    "ontology_name": "Core_Ontology",
+    "version": "2.0",
+    "language": "en",
+    "source_type": "technical PDF",
+    "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+    "nodes": {
+      "Asset": [
+        {
+          "asset_id": "ASSET-001",
+          "name": "Powermax30 AIR plasma cutting system",
+          "description": "Plasma arc cutting system with integrated air compressor",
+          "brand": "Hypertherm",
+          "model": "Powermax30 AIR",
+          "asset_type": "hypertherm powermax30 air service manual rev4 808850.pdf"
+        }
+      ],
+      "Component": [],
+      "Symptom": [],
+      "FailureMode": [
+        {
+          "failure_mode_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+          "name": "Inverter saturation",
+          "description": "Inverter saturation.",
+          "material_context": "not_stated"
+        }
+      ],
+      "CorrectiveAction": [
+        {
+          "action_id": "ca_install_new_consumables_in_the_torch_9f39bd2da0caf75133c3aebdcf6094ee9220848811a3472e4cf9d3754415f9fa",
+          "name": "Install new consumables in the torch",
+          "description": "Install new consumables in the torch.",
+          "instruction_text": "Install new consumables in the torch. If you continue to see this error code, replace the power board.",
+          "action_kind": "replacement",
+          "source_type": "technical PDF",
+          "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+          "source_reference": "typed_diagnostic_edge_evidence"
+        },
+        {
+          "action_id": "ca_replace_the_power_board_67c2d02b2ad91df188b473fe1ddaae114baee85cb6b4ab45990bf9aaf5f0ef89",
+          "name": "Replace the power board",
+          "description": "Replace the power board if the error code continues after installing new torch consumables.",
+          "instruction_text": "If you continue to see this error code after installing new consumables in the torch, replace the power board.",
+          "action_kind": "replacement",
+          "source_type": "technical PDF",
+          "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+          "source_reference": "typed_diagnostic_edge_evidence"
+        }
+      ],
+      "ErrorCode": [
+        {
+          "error_code_id": "err_6_164bff9b9b56c454944e0848488418cdfd8275e523583e9b8afcc4952e2a8bf8",
+          "name": "Inverter saturation",
+          "description": "The Error LED blinks 6 times.",
+          "code": "6"
+        }
+      ]
+    },
+    "relations": [
+      {
+        "name": "INDICATES",
+        "from_type": "ErrorCode",
+        "from_id": "err_6_164bff9b9b56c454944e0848488418cdfd8275e523583e9b8afcc4952e2a8bf8",
+        "to_type": "FailureMode",
+        "to_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+        "evidence": [
+          {
+            "source_page": 77,
+            "source_reference": "ev_50eab2ff50f878d436092d263667",
+            "quote": "6",
+            "source_anchor": "ev_50eab2ff50f878d436092d263667"
+          },
+          {
+            "source_page": 77,
+            "source_reference": "ev_50eab2ff50f878d436092d263667",
+            "quote": "Inverter saturation",
+            "source_anchor": "ev_50eab2ff50f878d436092d263667"
+          }
+        ],
+        "branch_lineage_id": "dbranch_143a070ebb42a9439ee025db59cfea60b6b97f6de8a8ee9326ea8ea9e335c5c8"
+      },
+      {
+        "name": "RESOLVED_BY",
+        "from_type": "FailureMode",
+        "from_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+        "to_type": "CorrectiveAction",
+        "to_id": "ca_install_new_consumables_in_the_torch_9f39bd2da0caf75133c3aebdcf6094ee9220848811a3472e4cf9d3754415f9fa",
+        "evidence": [
+          {
+            "source_page": 77,
+            "source_reference": "ev_50eab2ff50f878d436092d263667",
+            "quote": "Install new consumables in the torch.",
+            "source_anchor": "ev_50eab2ff50f878d436092d263667"
+          },
+          {
+            "source_page": 77,
+            "source_reference": "ev_50eab2ff50f878d436092d263667",
+            "quote": "Inverter saturation",
+            "source_anchor": "ev_50eab2ff50f878d436092d263667"
+          }
+        ],
+        "branch_lineage_id": "dbranch_143a070ebb42a9439ee025db59cfea60b6b97f6de8a8ee9326ea8ea9e335c5c8"
+      },
+      {
+        "name": "RESOLVED_BY",
+        "from_type": "FailureMode",
+        "from_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+        "to_type": "CorrectiveAction",
+        "to_id": "ca_replace_the_power_board_67c2d02b2ad91df188b473fe1ddaae114baee85cb6b4ab45990bf9aaf5f0ef89",
+        "evidence": [
+          {
+            "source_page": 77,
+            "source_reference": "ev_50eab2ff50f878d436092d263667",
+            "quote": "If you continue to see this error code, replace the power board.",
+            "source_anchor": "ev_50eab2ff50f878d436092d263667"
+          },
+          {
+            "source_page": 77,
+            "source_reference": "ev_50eab2ff50f878d436092d263667",
+            "quote": "Inverter saturation",
+            "source_anchor": "ev_50eab2ff50f878d436092d263667"
+          }
+        ],
+        "branch_lineage_id": "dbranch_c259db8964e10e362db73ae02619c10c8f2fb12831548cb6e324adf1acb33c5c"
+      },
+      {
+        "name": "GENERATES_ERROR",
+        "from_type": "Asset",
+        "from_id": "ASSET-001",
+        "to_type": "ErrorCode",
+        "to_id": "err_6_164bff9b9b56c454944e0848488418cdfd8275e523583e9b8afcc4952e2a8bf8",
+        "evidence": [],
+        "branch_lineage_id": ""
+      }
+    ]
+  },
+  "semantic_issues": [],
+  "schema_issues": [
+    {
+      "severity": "warning",
+      "code": "material_context_not_linked",
+      "message": "FailureMode 'Inverter saturation' has material_context='not_stated' which is not a Component.component_id.",
+      "target_type": "FailureMode",
+      "target_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+      "property_name": "material_context",
+      "fix_hint": "Either set material_context to an existing Component.component_id, add the missing Component node and link it here, or set it to \"asset_level\" when the failure is genuinely general to the whole asset. Do not leave it empty: the field is required by the export contract."
+    }
+  ],
+  "human_required_fields": [],
+  "is_schema_compliant": false,
+  "is_ready_for_human_review": true,
+  "retry_count": 0,
+  "graph_issues": [],
+  "suggested_relations": [],
+  "confidence_report": {
+    "entries": [
+      {
+        "node_type": "Asset",
+        "node_id": "ASSET-001",
+        "score": 0.5,
+        "classification": "human_review",
+        "signals": {
+          "evidence_present": 0.0,
+          "corroboration": 0.0,
+          "required_props_complete": 1.0,
+          "chain_participation": 0.5,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "no evidence attached",
+          "incomplete schema-expected relations"
+        ]
+      },
+      {
+        "node_type": "FailureMode",
+        "node_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+        "score": 0.6505,
+        "classification": "human_review",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 0.5,
+          "clean_extraction": 0.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only",
+          "incomplete schema-expected relations",
+          "validation issues or retries"
+        ]
+      },
+      {
+        "node_type": "CorrectiveAction",
+        "node_id": "ca_install_new_consumables_in_the_torch_9f39bd2da0caf75133c3aebdcf6094ee9220848811a3472e4cf9d3754415f9fa",
+        "score": 0.9005,
+        "classification": "auto_approve",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 1.0,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only"
+        ]
+      },
+      {
+        "node_type": "CorrectiveAction",
+        "node_id": "ca_replace_the_power_board_67c2d02b2ad91df188b473fe1ddaae114baee85cb6b4ab45990bf9aaf5f0ef89",
+        "score": 0.9005,
+        "classification": "auto_approve",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 1.0,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only"
+        ]
+      },
+      {
+        "node_type": "ErrorCode",
+        "node_id": "err_6_164bff9b9b56c454944e0848488418cdfd8275e523583e9b8afcc4952e2a8bf8",
+        "score": 0.9005,
+        "classification": "auto_approve",
+        "signals": {
+          "evidence_present": 1.0,
+          "corroboration": 0.3367,
+          "required_props_complete": 1.0,
+          "chain_participation": 1.0,
+          "clean_extraction": 1.0
+        },
+        "penalties": {},
+        "reasons": [
+          "evidence inferred from relations only"
+        ]
+      }
+    ],
+    "theta_high": 0.8,
+    "theta_low": 0.45,
+    "auto_reject_enabled": false,
+    "counts": {
+      "auto_approve": 3,
+      "human_review": 2,
+      "auto_reject": 0
+    }
+  },
+  "diagnostic_contract_report": {
+    "input_pages": [
+      76,
+      77
+    ],
+    "candidate_input_anchors": [
+      "ev_06641617e0fd8456e9b9c4cb7c18",
+      "ev_caba0ad10b6fd1b0970064c5eb40",
+      "ev_ce34445be5b4292c7f99c3df2aad"
+    ],
+    "candidate_input_evidence": [
+      [
+        "ev_06641617e0fd8456e9b9c4cb7c18",
+        77
+      ],
+      [
+        "ev_caba0ad10b6fd1b0970064c5eb40",
+        77
+      ],
+      [
+        "ev_ce34445be5b4292c7f99c3df2aad",
+        77
+      ]
+    ],
+    "source_anchor_aliases": {
+      "a0001": "ev_01bcaaead73de95e9362190b1ad0",
+      "a0002": "ev_9365f4b1578b1ef72bd58272f6e1",
+      "a0003": "ev_937b448fd244b049362da4600f85",
+      "a0004": "ev_0ea42abb3d7ce6a492c0ffc866e0",
+      "a0005": "ev_10d334e97aebe752b2e5441e6e45",
+      "a0006": "ev_ef9b16fc7e7fd2e7d9890bfa9b81",
+      "a0007": "ev_d48030f22c7301a61d271f05c3af",
+      "a0008": "ev_05c5e786e62d1cbcaf4e1012bec2",
+      "a0009": "ev_ba5a5fb6d9d814134eb2d3399858",
+      "a0010": "ev_c84975c6901f725bd0dec4e6d1e1",
+      "a0011": "ev_ac6d4d2154d1d1373634b5a7c949",
+      "a0012": "ev_332c913b7007a2ac4687c5943a98",
+      "a0013": "ev_179b2e217f2d3235b8ebe61bb355",
+      "a0014": "ev_90038bdbadb18f4522cfe3792f8e",
+      "a0015": "ev_1c9975c844062b401fbee0edc878",
+      "a0016": "ev_a2f1dd600588986d3c2b344b4851",
+      "a0017": "ev_14cda188197820f3eb69e0e0144b",
+      "a0018": "ev_5985eff252fa2b58469af0bd7af0",
+      "a0019": "ev_05015ab4696de9939f318636d472",
+      "a0020": "ev_5898137e918e136fbe384321de8c",
+      "a0021": "ev_c7c414612012231496f76ee9c7aa",
+      "a0022": "ev_3830fa81588bad20eaabc1be0a02",
+      "a0023": "ev_9f5260a78c3b8d732f6b2b30df4b",
+      "a0024": "ev_ec34af49c0d7e79f165ab932b1de",
+      "a0025": "ev_1da54cdea9d43c02a7fddbb4cfdb",
+      "a0026": "ev_4245525685d7617c538fa4cb12b6",
+      "a0027": "ev_a51190b0300f6618671baa75b57f",
+      "a0028": "ev_89ebcbfd60c7bbb73ba03bdd1372",
+      "a0029": "ev_cb853e7e3d8f71d2b01ac5b11166",
+      "a0030": "ev_66a0a68230748d666b1857763825",
+      "a0031": "ev_50eab2ff50f878d436092d263667",
+      "a0032": "ev_a9e78c15d2962cde63574bd5e4aa",
+      "a0033": "ev_5049620289c59342768e039090cb",
+      "a0034": "ev_c60ed30fbc6cfbfa77f80e43cf81",
+      "a0035": "ev_6c168dee98f49192b009353cac61",
+      "a0036": "ev_41b58589029b011f1d8193d12231",
+      "a0037": "ev_19d5b90064badecddd9a8d473125",
+      "a0038": "ev_af12965cb264b5cbd241e12ebf61",
+      "a0039": "ev_0b5aed96d1d78f0463489cab69d5",
+      "a0040": "ev_caba0ad10b6fd1b0970064c5eb40",
+      "a0041": "ev_ce34445be5b4292c7f99c3df2aad",
+      "a0042": "ev_06641617e0fd8456e9b9c4cb7c18"
+    },
+    "schema_version": "1.1",
+    "source_language": "en",
+    "provider_model": "gpt-6-luna",
+    "provider_reasoning_effort": "low",
+    "call_role": "primary",
+    "escalation_reason": "",
+    "provider_response_id": "chatcmpl-ES0TtybhYVo5zJjpPjNsVazJRC9tf",
+    "finish_reason": "stop",
+    "parsed": true,
+    "refusal": false,
+    "raw_sha256": "2d507e836cad8f5f872246be6c785710e0aa14ed67f78866b5b19448ed8ad493",
+    "response_archive": "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/p1_hypertherm_powermax30_air_luna_low8/provider_responses/c7683282467445738b7dae7aad6d6593.json",
+    "raw_response_text": "",
+    "invalid_record_count": 1,
+    "records": [
+      {
+        "record_lineage_id": "drec_dde74c9b5519082d9e14e964a5078790d03973641c7e88e5d0852552cede5db5",
+        "branch_lineage_id": "dbranch_143a070ebb42a9439ee025db59cfea60b6b97f6de8a8ee9326ea8ea9e335c5c8",
+        "record_window_id": "",
+        "record_anchor": "ev_50eab2ff50f878d436092d263667",
+        "branch_anchor": "ev_50eab2ff50f878d436092d263667",
+        "evidence_ids": [
+          "ev_50eab2ff50f878d436092d263667"
+        ],
+        "resolved_evidence_ids": [
+          "ev_50eab2ff50f878d436092d263667"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_ec34af49c0d7e79f165ab932b1de",
+            "ev_50eab2ff50f878d436092d263667",
+            "ev_06641617e0fd8456e9b9c4cb7c18"
+          ],
+          "record_anchor": "ev_50eab2ff50f878d436092d263667",
+          "branch_anchor": "ev_50eab2ff50f878d436092d263667",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "6",
+              "name": "Inverter saturation",
+              "description": "The Error LED blinks 6 times.",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "6"
+                },
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Inverter saturation"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "6"
+                },
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Inverter saturation"
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Inverter saturation",
+            "description": "Inverter saturation.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                "source_page": 77,
+                "quote": "Inverter saturation"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Install new consumables in the torch",
+              "description": "Install new consumables in the torch.",
+              "instruction_text": "Install new consumables in the torch. If you continue to see this error code, replace the power board.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Install new consumables in the torch."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Inverter saturation"
+                },
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Install new consumables in the torch."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_dde74c9b5519082d9e14e964a5078790d03973641c7e88e5d0852552cede5db5",
+          "branch_lineage_id": "dbranch_143a070ebb42a9439ee025db59cfea60b6b97f6de8a8ee9326ea8ea9e335c5c8",
+          "record_window_id": "",
+          "record_anchor": "ev_50eab2ff50f878d436092d263667",
+          "branch_anchor": "ev_50eab2ff50f878d436092d263667",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "6",
+              "name": "Inverter saturation",
+              "description": "The Error LED blinks 6 times.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "6",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Inverter saturation",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "6",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Inverter saturation",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Inverter saturation",
+            "description": "Inverter saturation.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                "source_page": 77,
+                "quote": "Inverter saturation",
+                "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 77,
+                  "section": null,
+                  "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                  "extraction_method": "native_text",
+                  "printed_page": null,
+                  "block_index": 11,
+                  "source_block_index": 15,
+                  "bbox": [
+                    92.1,
+                    369.157,
+                    566.303,
+                    391.119
+                  ],
+                  "table_index": null,
+                  "row_index": null,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Install new consumables in the torch",
+              "description": "Install new consumables in the torch.",
+              "instruction_text": "Install new consumables in the torch. If you continue to see this error code, replace the power board.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Install new consumables in the torch.",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Install new consumables in the torch.",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Inverter saturation",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "disposition": "publish",
+        "accounting_state": "autonomously_publishable",
+        "compiler_recoveries": [],
+        "drop_reasons": [],
+        "emitted_node_ids": [
+          "ca_install_new_consumables_in_the_torch_9f39bd2da0caf75133c3aebdcf6094ee9220848811a3472e4cf9d3754415f9fa",
+          "err_6_164bff9b9b56c454944e0848488418cdfd8275e523583e9b8afcc4952e2a8bf8",
+          "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9"
+        ],
+        "emitted_relations": [
+          "INDICATES:err_6_164bff9b9b56c454944e0848488418cdfd8275e523583e9b8afcc4952e2a8bf8->fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+          "RESOLVED_BY:fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9->ca_install_new_consumables_in_the_torch_9f39bd2da0caf75133c3aebdcf6094ee9220848811a3472e4cf9d3754415f9fa"
+        ]
+      },
+      {
+        "record_lineage_id": "drec_c9c2689bd4fa14a4e02d852bf199cb45a682566751d9ecc0950872ee2cbf6cb9",
+        "branch_lineage_id": "dbranch_235bfd674e197a5a046db90d595177b515dee245b7be54c0b481569791de3cbf",
+        "record_window_id": "",
+        "record_anchor": "ev_4245525685d7617c538fa4cb12b6",
+        "branch_anchor": "ev_4245525685d7617c538fa4cb12b6",
+        "evidence_ids": [
+          "ev_1da54cdea9d43c02a7fddbb4cfdb",
+          "ev_4245525685d7617c538fa4cb12b6"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_ec34af49c0d7e79f165ab932b1de",
+            "ev_1da54cdea9d43c02a7fddbb4cfdb",
+            "ev_4245525685d7617c538fa4cb12b6",
+            "ev_caba0ad10b6fd1b0970064c5eb40"
+          ],
+          "record_anchor": "ev_4245525685d7617c538fa4cb12b6",
+          "branch_anchor": "ev_4245525685d7617c538fa4cb12b6",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "3",
+              "name": "Faulty power board or control board",
+              "description": "The Error LED blinks 3 times.",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                  "source_page": 77,
+                  "quote": "3"
+                },
+                {
+                  "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                  "source_page": 77,
+                  "quote": "Faulty power board or control board"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                  "source_page": 77,
+                  "quote": "3"
+                },
+                {
+                  "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                  "source_page": 77,
+                  "quote": "Faulty power board or control board"
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty power board or control board",
+            "description": "The source identifies a faulty power board or control board.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                "source_page": 77,
+                "quote": "Faulty power board or control board"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the power board",
+              "description": "Replace the power board if any Test 3 values are incorrect.",
+              "instruction_text": "Perform Test 3 – VBUS and voltage balance on power board. If any of the values are incorrect, replace the power board.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1da54cdea9d43c02a7fddbb4cfdb",
+                  "source_page": 77,
+                  "quote": "If any of the values are incorrect, replace the power board."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                  "source_page": 77,
+                  "quote": "Faulty power board or control board"
+                },
+                {
+                  "source_anchor": "ev_1da54cdea9d43c02a7fddbb4cfdb",
+                  "source_page": 77,
+                  "quote": "If any of the values are incorrect, replace the power board."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Perform Test 3 – VBUS and voltage balance on power board.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1da54cdea9d43c02a7fddbb4cfdb",
+                  "source_page": 77,
+                  "quote": "Perform Test 3 – VBUS and voltage balance on power board"
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "If any of the Test 3 values are incorrect, replace the power board.",
+              "applies_to": "action",
+              "step_index": 0,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1da54cdea9d43c02a7fddbb4cfdb",
+                  "source_page": 77,
+                  "quote": "If any of the values are incorrect, replace the power board."
+                }
+              ]
+            }
+          ],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "actions[0].resolution_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_c9c2689bd4fa14a4e02d852bf199cb45a682566751d9ecc0950872ee2cbf6cb9",
+        "branch_lineage_id": "dbranch_2a09cd44b735868bf8e629e625ce4069255169e905382a0a5980233f7dbcd389",
+        "record_window_id": "",
+        "record_anchor": "ev_4245525685d7617c538fa4cb12b6",
+        "branch_anchor": "ev_89ebcbfd60c7bbb73ba03bdd1372",
+        "evidence_ids": [
+          "ev_4245525685d7617c538fa4cb12b6",
+          "ev_89ebcbfd60c7bbb73ba03bdd1372"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_ec34af49c0d7e79f165ab932b1de",
+            "ev_4245525685d7617c538fa4cb12b6",
+            "ev_89ebcbfd60c7bbb73ba03bdd1372",
+            "ev_caba0ad10b6fd1b0970064c5eb40"
+          ],
+          "record_anchor": "ev_4245525685d7617c538fa4cb12b6",
+          "branch_anchor": "ev_89ebcbfd60c7bbb73ba03bdd1372",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "3",
+              "name": "Faulty power board or control board",
+              "description": "The Error LED blinks 3 times.",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                  "source_page": 77,
+                  "quote": "3"
+                },
+                {
+                  "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                  "source_page": 77,
+                  "quote": "Faulty power board or control board"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                  "source_page": 77,
+                  "quote": "3"
+                },
+                {
+                  "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                  "source_page": 77,
+                  "quote": "Faulty power board or control board"
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty power board",
+            "description": "The power board is faulty when pins 5, 7, or 12 are correct but other Test 2 values are incorrect.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_89ebcbfd60c7bbb73ba03bdd1372",
+                "source_page": 77,
+                "quote": "If the values for pins 5, 7, or 12 are correct when you perform Test 2 – power board voltage checks on page 84 but any other values from Test 2 are incorrect"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the power board",
+              "description": "Replace the power board if the specified pins are correct but other Test 2 values are incorrect.",
+              "instruction_text": "If the values for pins 5, 7, or 12 are correct when you perform Test 2 – power board voltage checks but any other values from Test 2 are incorrect, replace the power board.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_89ebcbfd60c7bbb73ba03bdd1372",
+                  "source_page": 77,
+                  "quote": "replace the power board."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_89ebcbfd60c7bbb73ba03bdd1372",
+                  "source_page": 77,
+                  "quote": "If the values for pins 5, 7, or 12 are correct when you perform Test 2 – power board voltage checks on page 84 but any other values from Test 2 are incorrect, replace the power board."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [
+            {
+              "text": "Pins 5, 7, or 12 are correct, but any other values from Test 2 are incorrect.",
+              "applies_to": "action",
+              "step_index": 0,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_89ebcbfd60c7bbb73ba03bdd1372",
+                  "source_page": 77,
+                  "quote": "If the values for pins 5, 7, or 12 are correct when you perform Test 2 – power board voltage checks on page 84 but any other values from Test 2 are incorrect"
+                }
+              ]
+            }
+          ],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_468a74564a85dd4e668e0f62ecae91992c681a086ff9892786453cd183f07739",
+        "branch_lineage_id": "dbranch_a3e704565c9844ee237a1327d3efe28f963abdae7205023b356a97cf377e9950",
+        "record_window_id": "",
+        "record_anchor": "ev_66a0a68230748d666b1857763825",
+        "branch_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+        "evidence_ids": [
+          "ev_66a0a68230748d666b1857763825",
+          "ev_cb853e7e3d8f71d2b01ac5b11166"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_ec34af49c0d7e79f165ab932b1de",
+            "ev_66a0a68230748d666b1857763825",
+            "ev_cb853e7e3d8f71d2b01ac5b11166",
+            "ev_ce34445be5b4292c7f99c3df2aad"
+          ],
+          "record_anchor": "ev_66a0a68230748d666b1857763825",
+          "branch_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "4",
+              "name": "Faulty fan, solenoid valve, or power board",
+              "description": "The Error LED blinks 4 times.",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_66a0a68230748d666b1857763825",
+                  "source_page": 77,
+                  "quote": "4"
+                },
+                {
+                  "source_anchor": "ev_66a0a68230748d666b1857763825",
+                  "source_page": 77,
+                  "quote": "Faulty fan, solenoid valve, or power board"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_66a0a68230748d666b1857763825",
+                  "source_page": 77,
+                  "quote": "4"
+                },
+                {
+                  "source_anchor": "ev_66a0a68230748d666b1857763825",
+                  "source_page": 77,
+                  "quote": "Faulty fan, solenoid valve, or power board"
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty fan, solenoid valve, or power board",
+            "description": "The source identifies a faulty fan, solenoid valve, or power board.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_66a0a68230748d666b1857763825",
+                "source_page": 77,
+                "quote": "Faulty fan, solenoid valve, or power board"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the power board",
+              "description": "Replace the power board if both tests pass.",
+              "instruction_text": "Perform Test 4 – solenoid valve and Test 8 – fan. If the solenoid valve test and the fan test both pass, replace the power board.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+                  "source_page": 77,
+                  "quote": "If the solenoid valve test and the fan test both pass, replace the power board."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_66a0a68230748d666b1857763825",
+                  "source_page": 77,
+                  "quote": "Faulty fan, solenoid valve, or power board"
+                },
+                {
+                  "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+                  "source_page": 77,
+                  "quote": "If the solenoid valve test and the fan test both pass, replace the power board."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Perform Test 4 – solenoid valve and Test 8 – fan.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+                  "source_page": 77,
+                  "quote": "Perform Test 4 – solenoid valve on page 89 and Test 8 – fan on page 95."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "If the solenoid valve test and the fan test both pass, replace the power board.",
+              "applies_to": "action",
+              "step_index": 0,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+                  "source_page": 77,
+                  "quote": "If the solenoid valve test and the fan test both pass, replace the power board."
+                }
+              ]
+            }
+          ],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "actions[0].resolution_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_468a74564a85dd4e668e0f62ecae91992c681a086ff9892786453cd183f07739",
+        "branch_lineage_id": "dbranch_acb97cf0b99ffc7688575f76d35d7c7d868e036528fdb445572186c70c6de09a",
+        "record_window_id": "",
+        "record_anchor": "ev_66a0a68230748d666b1857763825",
+        "branch_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+        "evidence_ids": [
+          "ev_66a0a68230748d666b1857763825",
+          "ev_cb853e7e3d8f71d2b01ac5b11166"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_ec34af49c0d7e79f165ab932b1de",
+            "ev_66a0a68230748d666b1857763825",
+            "ev_cb853e7e3d8f71d2b01ac5b11166",
+            "ev_ce34445be5b4292c7f99c3df2aad"
+          ],
+          "record_anchor": "ev_66a0a68230748d666b1857763825",
+          "branch_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "4",
+              "name": "Faulty fan, solenoid valve, or power board",
+              "description": "The Error LED blinks 4 times.",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_66a0a68230748d666b1857763825",
+                  "source_page": 77,
+                  "quote": "4"
+                },
+                {
+                  "source_anchor": "ev_66a0a68230748d666b1857763825",
+                  "source_page": 77,
+                  "quote": "Faulty fan, solenoid valve, or power board"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_66a0a68230748d666b1857763825",
+                  "source_page": 77,
+                  "quote": "4"
+                },
+                {
+                  "source_anchor": "ev_66a0a68230748d666b1857763825",
+                  "source_page": 77,
+                  "quote": "Faulty fan, solenoid valve, or power board"
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty fan",
+            "description": "The fan is faulty if Test 8 fails.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+                "source_page": 77,
+                "quote": "if Test 8 fails"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the fan",
+              "description": "Replace the fan if Test 8 fails.",
+              "instruction_text": "Perform Test 8 – fan. If Test 8 fails, replace the fan.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+                  "source_page": 77,
+                  "quote": "if Test 8 fails, replace the fan."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+                  "source_page": 77,
+                  "quote": "if Test 8 fails, replace the fan."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Perform Test 8 – fan.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+                  "source_page": 77,
+                  "quote": "Test 8 – fan on page 95."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "If Test 8 fails, replace the fan.",
+              "applies_to": "action",
+              "step_index": 0,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+                  "source_page": 77,
+                  "quote": "If Test 8 fails, replace the fan."
+                }
+              ]
+            }
+          ],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "conditions[0].claim_evidence[0]",
+            "message": "conditions[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_cb853e7e3d8f71d2b01ac5b11166' or a unique contiguous EvidenceUnit support set"
+          },
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "indicators[0].failure_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_dde74c9b5519082d9e14e964a5078790d03973641c7e88e5d0852552cede5db5",
+        "branch_lineage_id": "dbranch_c259db8964e10e362db73ae02619c10c8f2fb12831548cb6e324adf1acb33c5c",
+        "record_window_id": "",
+        "record_anchor": "ev_50eab2ff50f878d436092d263667",
+        "branch_anchor": "ev_50eab2ff50f878d436092d263667",
+        "evidence_ids": [
+          "ev_50eab2ff50f878d436092d263667"
+        ],
+        "resolved_evidence_ids": [
+          "ev_50eab2ff50f878d436092d263667"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_ec34af49c0d7e79f165ab932b1de",
+            "ev_50eab2ff50f878d436092d263667",
+            "ev_06641617e0fd8456e9b9c4cb7c18"
+          ],
+          "record_anchor": "ev_50eab2ff50f878d436092d263667",
+          "branch_anchor": "ev_50eab2ff50f878d436092d263667",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "6",
+              "name": "Inverter saturation",
+              "description": "The Error LED blinks 6 times.",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "6"
+                },
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Inverter saturation"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "6"
+                },
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Inverter saturation"
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Inverter saturation",
+            "description": "Inverter saturation.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                "source_page": 77,
+                "quote": "Inverter saturation"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the power board",
+              "description": "Replace the power board if the error code continues after installing new torch consumables.",
+              "instruction_text": "If you continue to see this error code after installing new consumables in the torch, replace the power board.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "If you continue to see this error code, replace the power board."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Inverter saturation"
+                },
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "If you continue to see this error code, replace the power board."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [
+            {
+              "text": "If you continue to see this error code after installing new consumables in the torch, replace the power board.",
+              "applies_to": "action",
+              "step_index": 0,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "If you continue to see this error code, replace the power board."
+                }
+              ]
+            }
+          ],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_dde74c9b5519082d9e14e964a5078790d03973641c7e88e5d0852552cede5db5",
+          "branch_lineage_id": "dbranch_c259db8964e10e362db73ae02619c10c8f2fb12831548cb6e324adf1acb33c5c",
+          "record_window_id": "",
+          "record_anchor": "ev_50eab2ff50f878d436092d263667",
+          "branch_anchor": "ev_50eab2ff50f878d436092d263667",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "6",
+              "name": "Inverter saturation",
+              "description": "The Error LED blinks 6 times.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "6",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Inverter saturation",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "6",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Inverter saturation",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Inverter saturation",
+            "description": "Inverter saturation.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                "source_page": 77,
+                "quote": "Inverter saturation",
+                "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 77,
+                  "section": null,
+                  "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                  "extraction_method": "native_text",
+                  "printed_page": null,
+                  "block_index": 11,
+                  "source_block_index": 15,
+                  "bbox": [
+                    92.1,
+                    369.157,
+                    566.303,
+                    391.119
+                  ],
+                  "table_index": null,
+                  "row_index": null,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the power board",
+              "description": "Replace the power board if the error code continues after installing new torch consumables.",
+              "instruction_text": "If you continue to see this error code after installing new consumables in the torch, replace the power board.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "If you continue to see this error code, replace the power board.",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "If you continue to see this error code, replace the power board.",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "Inverter saturation",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [],
+          "conditions": [
+            {
+              "text": "If you continue to see this error code after installing new consumables in the torch, replace the power board.",
+              "applies_to": "action",
+              "step_index": 0,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_50eab2ff50f878d436092d263667",
+                  "source_page": 77,
+                  "quote": "If you continue to see this error code, replace the power board.",
+                  "evidence_id": "ev_50eab2ff50f878d436092d263667",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 77,
+                    "section": null,
+                    "quote": "6\nInverter saturation\n•\nInstall new consumables in the torch. If you continue to see this error \ncode, replace the power board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 11,
+                    "source_block_index": 15,
+                    "bbox": [
+                      92.1,
+                      369.157,
+                      566.303,
+                      391.119
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "disposition": "publish",
+        "accounting_state": "autonomously_publishable",
+        "compiler_recoveries": [],
+        "drop_reasons": [],
+        "emitted_node_ids": [
+          "ca_replace_the_power_board_67c2d02b2ad91df188b473fe1ddaae114baee85cb6b4ab45990bf9aaf5f0ef89",
+          "err_6_164bff9b9b56c454944e0848488418cdfd8275e523583e9b8afcc4952e2a8bf8",
+          "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9"
+        ],
+        "emitted_relations": [
+          "INDICATES:err_6_164bff9b9b56c454944e0848488418cdfd8275e523583e9b8afcc4952e2a8bf8->fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+          "RESOLVED_BY:fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9->ca_replace_the_power_board_67c2d02b2ad91df188b473fe1ddaae114baee85cb6b4ab45990bf9aaf5f0ef89"
+        ]
+      },
+      {
+        "record_lineage_id": "drec_c9c2689bd4fa14a4e02d852bf199cb45a682566751d9ecc0950872ee2cbf6cb9",
+        "branch_lineage_id": "dbranch_e463914c92028faea17d086caa476790f72d9896e4f97458c03ab3842962d251",
+        "record_window_id": "",
+        "record_anchor": "ev_4245525685d7617c538fa4cb12b6",
+        "branch_anchor": "ev_a51190b0300f6618671baa75b57f",
+        "evidence_ids": [
+          "ev_4245525685d7617c538fa4cb12b6",
+          "ev_a51190b0300f6618671baa75b57f"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_ec34af49c0d7e79f165ab932b1de",
+            "ev_4245525685d7617c538fa4cb12b6",
+            "ev_a51190b0300f6618671baa75b57f",
+            "ev_caba0ad10b6fd1b0970064c5eb40"
+          ],
+          "record_anchor": "ev_4245525685d7617c538fa4cb12b6",
+          "branch_anchor": "ev_a51190b0300f6618671baa75b57f",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "3",
+              "name": "Faulty power board or control board",
+              "description": "The Error LED blinks 3 times.",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                  "source_page": 77,
+                  "quote": "3"
+                },
+                {
+                  "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                  "source_page": 77,
+                  "quote": "Faulty power board or control board"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                  "source_page": 77,
+                  "quote": "3"
+                },
+                {
+                  "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                  "source_page": 77,
+                  "quote": "Faulty power board or control board"
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty power board or control board",
+            "description": "The source identifies a faulty power board or control board.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                "source_page": 77,
+                "quote": "Faulty power board or control board"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the control board",
+              "description": "Replace the control board if the specified pin values are correct after removing the control board and testing again.",
+              "instruction_text": "Perform Test 2 – power board voltage checks. If any of the values for pins 5, 7, or 12 are incorrect, remove the control board and test again. If the values are correct, replace the control board.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_a51190b0300f6618671baa75b57f",
+                  "source_page": 77,
+                  "quote": "If the values are correct, replace the control board."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_4245525685d7617c538fa4cb12b6",
+                  "source_page": 77,
+                  "quote": "Faulty power board or control board"
+                },
+                {
+                  "source_anchor": "ev_a51190b0300f6618671baa75b57f",
+                  "source_page": 77,
+                  "quote": "If the values are correct, replace the control board."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Perform Test 2 – power board voltage checks.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_a51190b0300f6618671baa75b57f",
+                  "source_page": 77,
+                  "quote": "Perform Test 2 – power board voltage checks"
+                }
+              ]
+            },
+            {
+              "instruction_text": "If any of the values for pins 5, 7, or 12 are incorrect, remove the control board and test again.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_a51190b0300f6618671baa75b57f",
+                  "source_page": 77,
+                  "quote": "If any of the values for pins 5, 7, or 12 are incorrect, remove the control board and test again."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "If any of the values for pins 5, 7, or 12 are incorrect, remove the control board and test again.",
+              "applies_to": "inspection",
+              "step_index": 1,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_a51190b0300f6618671baa75b57f",
+                  "source_page": 77,
+                  "quote": "If any of the values for pins 5, 7, or 12 are incorrect"
+                }
+              ]
+            },
+            {
+              "text": "If the values are correct, replace the control board.",
+              "applies_to": "action",
+              "step_index": 0,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_a51190b0300f6618671baa75b57f",
+                  "source_page": 77,
+                  "quote": "If the values are correct, replace the control board."
+                }
+              ]
+            }
+          ],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "relation_endpoint_support_unestablished",
+            "path": "actions[0].resolution_link_evidence",
+            "message": "The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_468a74564a85dd4e668e0f62ecae91992c681a086ff9892786453cd183f07739",
+        "branch_lineage_id": "dbranch_ff0bdb77150b9df3caa5ef43d6301d8f2ed5b7d43eb7f579837cf96471ae486e",
+        "record_window_id": "",
+        "record_anchor": "ev_66a0a68230748d666b1857763825",
+        "branch_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+        "evidence_ids": [
+          "ev_66a0a68230748d666b1857763825",
+          "ev_cb853e7e3d8f71d2b01ac5b11166"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_ec34af49c0d7e79f165ab932b1de",
+            "ev_66a0a68230748d666b1857763825",
+            "ev_cb853e7e3d8f71d2b01ac5b11166",
+            "ev_ce34445be5b4292c7f99c3df2aad"
+          ],
+          "record_anchor": "ev_66a0a68230748d666b1857763825",
+          "branch_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+          "indicators": [
+            {
+              "kind": "error_code",
+              "code": "4",
+              "name": "Faulty fan, solenoid valve, or power board",
+              "description": "The Error LED blinks 4 times.",
+              "severity": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_66a0a68230748d666b1857763825",
+                  "source_page": 77,
+                  "quote": "4"
+                },
+                {
+                  "source_anchor": "ev_66a0a68230748d666b1857763825",
+                  "source_page": 77,
+                  "quote": "Faulty fan, solenoid valve, or power board"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_66a0a68230748d666b1857763825",
+                  "source_page": 77,
+                  "quote": "4"
+                },
+                {
+                  "source_anchor": "ev_66a0a68230748d666b1857763825",
+                  "source_page": 77,
+                  "quote": "Faulty fan, solenoid valve, or power board"
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty solenoid valve",
+            "description": "The solenoid valve is faulty if Test 4 fails.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+                "source_page": 77,
+                "quote": "if Test 4 fails"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the solenoid valve",
+              "description": "Replace the solenoid valve if Test 4 fails.",
+              "instruction_text": "Perform Test 4 – solenoid valve. If Test 4 fails, replace the solenoid valve.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+                  "source_page": 77,
+                  "quote": "if Test 4 fails, replace the solenoid valve"
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+                  "source_page": 77,
+                  "quote": "if Test 4 fails, replace the solenoid valve"
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Perform Test 4 – solenoid valve.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+                  "source_page": 77,
+                  "quote": "Perform Test 4 – solenoid valve on page 89"
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "If Test 4 fails, replace the solenoid valve.",
+              "applies_to": "action",
+              "step_index": 0,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166",
+                  "source_page": 77,
+                  "quote": "If Test 4 fails, replace the solenoid valve"
+                }
+              ]
+            }
+          ],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "actions[0].claim_evidence[0]",
+            "message": "actions[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_cb853e7e3d8f71d2b01ac5b11166' or a unique contiguous EvidenceUnit support set"
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "actions[0].resolution_link_evidence[0]",
+            "message": "actions[0].resolution_link_evidence[0]: quote is not an exact lexical span of anchor 'ev_cb853e7e3d8f71d2b01ac5b11166' or a unique contiguous EvidenceUnit support set"
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "failure.claim_evidence[0]",
+            "message": "failure.claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_cb853e7e3d8f71d2b01ac5b11166' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_invalid_7ec42e1b2290c43a9a1476793c6d2d1813fb3ce1764e796aabf7bcb9c26d64d0",
+        "branch_lineage_id": "dbranch_invalid_7ec42e1b2290c43a9a1476793c6d2d1813fb3ce1764e796aabf7bcb9c26d64d0",
+        "record_window_id": "",
+        "record_anchor": "ev_90038bdbadb18f4522cfe3792f8e",
+        "branch_anchor": "ev_5985eff252fa2b58469af0bd7af0",
+        "evidence_ids": [],
+        "resolved_evidence_ids": [],
+        "candidate": null,
+        "invalid_payload": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_90038bdbadb18f4522cfe3792f8e",
+            "ev_1c9975c844062b401fbee0edc878",
+            "ev_a2f1dd600588986d3c2b344b4851",
+            "ev_14cda188197820f3eb69e0e0144b",
+            "ev_5985eff252fa2b58469af0bd7af0"
+          ],
+          "record_anchor": "ev_90038bdbadb18f4522cfe3792f8e",
+          "branch_anchor": "ev_5985eff252fa2b58469af0bd7af0",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Reset LED illuminates",
+              "description": "The control board’s Reset LED illuminates.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_90038bdbadb18f4522cfe3792f8e",
+                  "source_page": 76,
+                  "quote": "When the control board’s Reset LED illuminates"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_90038bdbadb18f4522cfe3792f8e",
+                  "source_page": 76,
+                  "quote": "the voltages on the power board may be incorrect"
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Incorrect voltages on the power board",
+            "description": "The voltages on the power board may be incorrect.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_90038bdbadb18f4522cfe3792f8e",
+                "source_page": 76,
+                "quote": "the voltages on the power board may be incorrect"
+              }
+            ]
+          },
+          "actions": [],
+          "inspection_steps": [
+            {
+              "instruction_text": "Test pin 5 to ground for 3.3 VDC (±10%).",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1c9975c844062b401fbee0edc878",
+                  "source_page": 76,
+                  "quote": "Test pin 5 to ground for 3.3 VDC (±10%)."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Test pin 7 to ground for 5 VDC (±10%).",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_a2f1dd600588986d3c2b344b4851",
+                  "source_page": 76,
+                  "quote": "Test pin 7 to ground for 5 VDC (±10%)."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Test pin 12 to ground for 2.2 VDC (±10%).",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_14cda188197820f3eb69e0e0144b",
+                  "source_page": 76,
+                  "quote": "Test pin 12 to ground for 2.2 VDC (±10%)."
+                }
+              ]
+            },
+            {
+              "instruction_text": "If the values are not within ±10% of the three listed values, detach the control board’s ribbon cable and perform the tests again.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_5985eff252fa2b58469af0bd7af0",
+                  "source_page": 76,
+                  "quote": "If the values you find are not within ±10% of the three values listed above, detach the control board’s ribbon cable and perform the tests again."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "If the values are not within ±10% of the three listed values, detach the control board’s ribbon cable and perform the tests again.",
+              "applies_to": "inspection",
+              "step_index": 3,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_5985eff252fa2b58469af0bd7af0",
+                  "source_page": 76,
+                  "quote": "If the values you find are not within ±10% of the three values listed above"
+                }
+              ]
+            },
+            {
+              "text": "If you find the correct values the second time, replace the control board.",
+              "applies_to": "action",
+              "step_index": 0,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_5985eff252fa2b58469af0bd7af0",
+                  "source_page": 76,
+                  "quote": "If you find the correct values the second time, replace the control board."
+                }
+              ]
+            },
+            {
+              "text": "Otherwise, replace the power board.",
+              "applies_to": "action",
+              "step_index": 1,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_5985eff252fa2b58469af0bd7af0",
+                  "source_page": 76,
+                  "quote": "Otherwise, replace the power board."
+                }
+              ]
+            }
+          ],
+          "affected_component": null,
+          "resolution_status": "action_stated"
+        },
+        "response_record_index": 0,
+        "validation_errors": [
+          {
+            "type": "value_error",
+            "loc": [],
+            "msg": "Value error, condition step_index does not identify an existing step",
+            "input": {
+              "record_window_id": "",
+              "allowed_source_anchors": [
+                "ev_90038bdbadb18f4522cfe3792f8e",
+                "ev_1c9975c844062b401fbee0edc878",
+                "ev_a2f1dd600588986d3c2b344b4851",
+                "ev_14cda188197820f3eb69e0e0144b",
+                "ev_5985eff252fa2b58469af0bd7af0"
+              ],
+              "record_anchor": "ev_90038bdbadb18f4522cfe3792f8e",
+              "branch_anchor": "ev_5985eff252fa2b58469af0bd7af0",
+              "indicators": [
+                {
+                  "kind": "symptom",
+                  "code": null,
+                  "name": "Reset LED illuminates",
+                  "description": "The control board’s Reset LED illuminates.",
+                  "severity": "Unknown",
+                  "claim_evidence": [
+                    {
+                      "source_anchor": "ev_90038bdbadb18f4522cfe3792f8e",
+                      "source_page": 76,
+                      "quote": "When the control board’s Reset LED illuminates"
+                    }
+                  ],
+                  "failure_link_evidence": [
+                    {
+                      "source_anchor": "ev_90038bdbadb18f4522cfe3792f8e",
+                      "source_page": 76,
+                      "quote": "the voltages on the power board may be incorrect"
+                    }
+                  ]
+                }
+              ],
+              "failure": {
+                "name": "Incorrect voltages on the power board",
+                "description": "The voltages on the power board may be incorrect.",
+                "material_context": null,
+                "claim_evidence": [
+                  {
+                    "source_anchor": "ev_90038bdbadb18f4522cfe3792f8e",
+                    "source_page": 76,
+                    "quote": "the voltages on the power board may be incorrect"
+                  }
+                ]
+              },
+              "actions": [],
+              "inspection_steps": [
+                {
+                  "instruction_text": "Test pin 5 to ground for 3.3 VDC (±10%).",
+                  "claim_evidence": [
+                    {
+                      "source_anchor": "ev_1c9975c844062b401fbee0edc878",
+                      "source_page": 76,
+                      "quote": "Test pin 5 to ground for 3.3 VDC (±10%)."
+                    }
+                  ]
+                },
+                {
+                  "instruction_text": "Test pin 7 to ground for 5 VDC (±10%).",
+                  "claim_evidence": [
+                    {
+                      "source_anchor": "ev_a2f1dd600588986d3c2b344b4851",
+                      "source_page": 76,
+                      "quote": "Test pin 7 to ground for 5 VDC (±10%)."
+                    }
+                  ]
+                },
+                {
+                  "instruction_text": "Test pin 12 to ground for 2.2 VDC (±10%).",
+                  "claim_evidence": [
+                    {
+                      "source_anchor": "ev_14cda188197820f3eb69e0e0144b",
+                      "source_page": 76,
+                      "quote": "Test pin 12 to ground for 2.2 VDC (±10%)."
+                    }
+                  ]
+                },
+                {
+                  "instruction_text": "If the values are not within ±10% of the three listed values, detach the control board’s ribbon cable and perform the tests again.",
+                  "claim_evidence": [
+                    {
+                      "source_anchor": "ev_5985eff252fa2b58469af0bd7af0",
+                      "source_page": 76,
+                      "quote": "If the values you find are not within ±10% of the three values listed above, detach the control board’s ribbon cable and perform the tests again."
+                    }
+                  ]
+                }
+              ],
+              "conditions": [
+                {
+                  "text": "If the values are not within ±10% of the three listed values, detach the control board’s ribbon cable and perform the tests again.",
+                  "applies_to": "inspection",
+                  "step_index": 3,
+                  "claim_evidence": [
+                    {
+                      "source_anchor": "ev_5985eff252fa2b58469af0bd7af0",
+                      "source_page": 76,
+                      "quote": "If the values you find are not within ±10% of the three values listed above"
+                    }
+                  ]
+                },
+                {
+                  "text": "If you find the correct values the second time, replace the control board.",
+                  "applies_to": "action",
+                  "step_index": 0,
+                  "claim_evidence": [
+                    {
+                      "source_anchor": "ev_5985eff252fa2b58469af0bd7af0",
+                      "source_page": 76,
+                      "quote": "If you find the correct values the second time, replace the control board."
+                    }
+                  ]
+                },
+                {
+                  "text": "Otherwise, replace the power board.",
+                  "applies_to": "action",
+                  "step_index": 1,
+                  "claim_evidence": [
+                    {
+                      "source_anchor": "ev_5985eff252fa2b58469af0bd7af0",
+                      "source_page": 76,
+                      "quote": "Otherwise, replace the power board."
+                    }
+                  ]
+                }
+              ],
+              "affected_component": null,
+              "resolution_status": "action_stated"
+            }
+          }
+        ],
+        "disposition": "review",
+        "accounting_state": "record_schema_invalid",
+        "drop_reasons": [
+          {
+            "code": "record_schema_invalid",
+            "path": "records.0",
+            "message": "This record failed local validation; valid siblings were retained."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_8f505ed044e08de3798c8c811655817042ebce7d02651680ee368a73b75034d2",
+        "branch_lineage_id": "dbranch_8f505ed044e08de3798c8c811655817042ebce7d02651680ee368a73b75034d2",
+        "record_window_id": "",
+        "record_anchor": "ev_06641617e0fd8456e9b9c4cb7c18",
+        "branch_anchor": "ev_06641617e0fd8456e9b9c4cb7c18",
+        "evidence_ids": [
+          "ev_06641617e0fd8456e9b9c4cb7c18"
+        ],
+        "resolved_evidence_ids": [
+          "ev_06641617e0fd8456e9b9c4cb7c18"
+        ],
+        "candidate": null,
+        "disposition": "review",
+        "accounting_state": "record_not_observed",
+        "drop_reasons": [
+          {
+            "code": "candidate_passage_missing_disposition",
+            "path": "semantic_scope",
+            "message": "The typed output omitted this candidate passage from the scoped diagnostic input."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_f9f23ae90ab968f13bc4e07aac2767889c73bddbd0858436e38b26c1d4401304",
+        "branch_lineage_id": "dbranch_f9f23ae90ab968f13bc4e07aac2767889c73bddbd0858436e38b26c1d4401304",
+        "record_window_id": "",
+        "record_anchor": "ev_caba0ad10b6fd1b0970064c5eb40",
+        "branch_anchor": "ev_caba0ad10b6fd1b0970064c5eb40",
+        "evidence_ids": [
+          "ev_caba0ad10b6fd1b0970064c5eb40"
+        ],
+        "resolved_evidence_ids": [
+          "ev_caba0ad10b6fd1b0970064c5eb40"
+        ],
+        "candidate": null,
+        "disposition": "review",
+        "accounting_state": "record_not_observed",
+        "drop_reasons": [
+          {
+            "code": "candidate_passage_missing_disposition",
+            "path": "semantic_scope",
+            "message": "The typed output omitted this candidate passage from the scoped diagnostic input."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_4cd19e7230e9210cb7dd563d4d4fe7e2b5c431730292022f15932637494131b7",
+        "branch_lineage_id": "dbranch_4cd19e7230e9210cb7dd563d4d4fe7e2b5c431730292022f15932637494131b7",
+        "record_window_id": "",
+        "record_anchor": "ev_ce34445be5b4292c7f99c3df2aad",
+        "branch_anchor": "ev_ce34445be5b4292c7f99c3df2aad",
+        "evidence_ids": [
+          "ev_ce34445be5b4292c7f99c3df2aad"
+        ],
+        "resolved_evidence_ids": [
+          "ev_ce34445be5b4292c7f99c3df2aad"
+        ],
+        "candidate": null,
+        "disposition": "review",
+        "accounting_state": "record_not_observed",
+        "drop_reasons": [
+          {
+            "code": "candidate_passage_missing_disposition",
+            "path": "semantic_scope",
+            "message": "The typed output omitted this candidate passage from the scoped diagnostic input."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      }
+    ],
+    "candidate_count": 12,
+    "duplicate_candidate_count": 0,
+    "publish_count": 2,
+    "unresolved_count": 10,
+    "disposition_counts": {
+      "publish": 2,
+      "gap": 0,
+      "review": 10,
+      "exclude": 0
+    },
+    "drop_reasons": {
+      "quote_not_in_anchored_evidence": 4,
+      "relation_endpoint_support_unestablished": 5,
+      "record_schema_invalid": 1,
+      "candidate_passage_missing_disposition": 3
+    },
+    "escalation_recommended": true
+  },
+  "resolution_completion_report": {},
+  "canonicalization_report": {},
+  "review_queue": [],
+  "review_summary": {}
+}

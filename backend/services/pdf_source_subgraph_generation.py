@@ -62,7 +62,7 @@ from backend.services.ontology_workflow import draft_ontology_workflow
 from backend.services.run_metrics import MODEL_PRICING, build_metrics_payload
 from backend.services.scoping_workflow import create_cut_plan_workflow
 
-PDF_SUBGRAPH_GENERATOR_VERSION = "pdf-g3-semantic-scope-extraction-v12"
+PDF_SUBGRAPH_GENERATOR_VERSION = "pdf-g3-structured-recovery-v22"
 
 _ID_PROPERTIES = {
     "Asset": "asset_id",
@@ -658,7 +658,7 @@ class PdfSourceSubgraphBuilder:
         store["diagnostic_record_windows"] = [
             window.model_dump(mode="json") for window in diagnostic_record_windows
         ]
-        store["diagnostic_record_windows_mode"] = "advisory_only"
+        store["diagnostic_record_windows_mode"] = "focused_plus_semantic" if get_ontology_config().get("diagnostic_context_strategy") == "hybrid" else "advisory_only"
         # The compiler resolves against canonical units, never against the
         # rendered prompt copy.  These objects stay process-local; only the
         # compilation ledger is serialized into the revision.
@@ -681,7 +681,7 @@ class PdfSourceSubgraphBuilder:
             "high_recall_candidate_pages": sorted(all_candidate_pages),
             "high_recall_candidate_page_count": len(all_candidate_pages),
             "high_recall_candidate_evidence_anchors": candidate_evidence_anchors,
-            "diagnostic_input_policy": "semantic_scope_full_page_v1",
+            "diagnostic_input_policy": "hybrid_structural_semantic_v1" if get_ontology_config().get("diagnostic_context_strategy") == "hybrid" else "semantic_scope_full_page_v1",
             "advisory_record_window_inventory": [
                 window.model_dump(mode="json") for window in diagnostic_record_windows
             ],
@@ -796,6 +796,7 @@ class PdfSourceSubgraphBuilder:
             disposition: str = "gap",
             target_kind: str = "",
             target_id: str = "",
+            review_required: bool = True,
         ) -> None:
             ids = tuple(sorted(set(evidence_ids or [])))
             key = (code, target_kind, target_id, ids)
@@ -811,6 +812,7 @@ class PdfSourceSubgraphBuilder:
                 disposition=disposition,
                 target_kind=target_kind,
                 target_id=target_id,
+                review_required=review_required,
             ))
 
         def resolve(
@@ -881,7 +883,8 @@ class PdfSourceSubgraphBuilder:
                     f"Relazione non prevista dall'ontologia: {relation_key}.",
                 )
                 continue
-            resolved: dict[str, RelationEvidenceRef] = {}
+            resolved: dict[tuple[str, str], RelationEvidenceRef] = {}
+            unresolved_required_ref = False
             for provenance in relation.evidence:
                 if provenance.source_page > 0:
                     matches = resolve(
@@ -890,8 +893,9 @@ class PdfSourceSubgraphBuilder:
                         target=relation_key,
                         source_anchor=provenance.source_anchor,
                     )
+                    unresolved_required_ref |= not bool(matches)
                     for matched in matches:
-                        resolved[matched.evidence_id] = RelationEvidenceRef(
+                        resolved[(matched.evidence_id, provenance.quote.strip())] = RelationEvidenceRef(
                             evidence_id=matched.evidence_id,
                             quote=provenance.quote.strip(),
                             source_anchor=matched.evidence_id,
@@ -899,17 +903,21 @@ class PdfSourceSubgraphBuilder:
                             support_role="direct",
                         )
                 else:
+                    unresolved_required_ref = True
                     add_gap(
                         "pdf_evidence_page_missing",
                         f"{relation_key}: la provenienza non indica una pagina PDF.",
                     )
+            if unresolved_required_ref:
+                add_gap("pdf_required_relation_evidence_unresolved", f"{relation_key}: almeno una citazione necessaria non è risolvibile; il collegamento completo rimane in revisione.", blocking=True, disposition="review", target_kind="relation", target_id=relation_key)
+                continue
             relation_drafts.append({
                 "index": index,
                 "relation": relation,
                 "evidence_refs": resolved,
             })
-            incident_evidence[relation.from_id].update(resolved)
-            incident_evidence[relation.to_id].update(resolved)
+            incident_evidence[relation.from_id].update(ref.evidence_id for ref in resolved.values())
+            incident_evidence[relation.to_id].update(ref.evidence_id for ref in resolved.values())
 
         semantic_pages = (
             set(semantic_scope.selected_pages) if semantic_scope is not None else None
@@ -1036,15 +1044,15 @@ class PdfSourceSubgraphBuilder:
                     )
                     if not quote.strip():
                         continue
-                    draft["evidence_refs"][evidence_id] = RelationEvidenceRef(
+                    draft["evidence_refs"][(evidence_id, quote.strip())] = RelationEvidenceRef(
                         evidence_id=evidence_id,
                         quote=quote.strip(),
                         source_anchor=evidence_id,
                         locator=item.locator.model_dump(mode="json"),
                         support_role="derived_structural",
                     )
-                incident_evidence[relation.from_id].update(draft["evidence_refs"])
-                incident_evidence[relation.to_id].update(draft["evidence_refs"])
+                incident_evidence[relation.from_id].update(ref.evidence_id for ref in draft["evidence_refs"].values())
+                incident_evidence[relation.to_id].update(ref.evidence_id for ref in draft["evidence_refs"].values())
 
         # A node may only enter the target graph when at least one canonical
         # EvidenceUnit can be shown to the reviewer.
@@ -1240,13 +1248,15 @@ class PdfSourceSubgraphBuilder:
                     if isinstance(reason, dict)
                 ]
                 branch_lineage_id = str(entry.get("branch_lineage_id") or "")
+                source_gap_verified = bool(entry.get("source_gap_verified"))
                 add_gap(
                     f"pdf_diagnostic_record_{disposition}",
-                    "Record diagnostico non pubblicabile senza decisione umana"
+                    ("La cella di rimedio contiene soltanto un'ispezione verificata; nessuna riparazione è dichiarata" if source_gap_verified else "Record diagnostico non pubblicabile senza decisione umana")
                     + (f" ({', '.join(sorted(set(reasons)))})" if reasons else "."),
                     sorted(entry_evidence_ids),
-                    blocking=True,
+                    blocking=not source_gap_verified,
                     disposition=disposition,
+                    review_required=not source_gap_verified,
                     target_kind="diagnostic_record",
                     target_id=(
                         str(entry.get("record_window_id") or "")
@@ -1437,6 +1447,15 @@ class PdfSourceSubgraphBuilder:
             review_summary=publication.review_summary,
             publication_metrics=publication_metrics,
             diagnostic_compilation_ledger=contract_report,
+            diagnostic_records=[{
+                "record": entry["validated_record"],
+                "disposition": entry["disposition"],
+                "review_required": entry["disposition"] in {"gap", "review"} and not entry.get("source_gap_verified", False),
+                "node_ids": sorted({endpoint for relation in relations
+                    if relation.branch_lineage_id == entry["branch_lineage_id"]
+                    for endpoint in (relation.from_id, relation.to_id)}),
+            } for entry in contract_report.get("records", [])
+                if entry.get("validated_record") and entry.get("disposition") in {"publish", "gap", "review"}],
             canonicalization_report=result.canonicalization_report,
             approval_eligible=(
                 validation.passed

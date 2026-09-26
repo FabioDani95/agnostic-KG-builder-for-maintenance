@@ -1,0 +1,15 @@
+{
+  "variant": "c7",
+  "pipeline_version": "pdf-g3-structured-recovery-v18",
+  "archive_sha256": "227a13e43d7aa09f75b75fbe30febcca1d261e94ad9de4db2c0898a7fa04c6c0",
+  "baseline": "../robustness_20260925/source_c6.tar.gz",
+  "changes": [
+    "recognize spanning symptom titles above Cause/Solution headers using canonical table geometry",
+    "normalize plural diagnostic headers",
+    "retain unnumbered alternative pairings as ambiguous unless proven"
+  ],
+  "campaign_ledger": "../robustness_20260925/real_call_budget.jsonl",
+  "cumulative_cap_usd": 20,
+  "charged_before_usd": 1.261482795,
+  "gold_used_in_generation": false
+}

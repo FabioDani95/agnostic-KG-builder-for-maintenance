@@ -577,6 +577,14 @@ def create_cut_plan_workflow(store: dict, req: CutPlanRequest, on_event=None) ->
         section for section in merged
         if is_component_inventory_section(section.name)
     ])
+    # Technical tables and circuit/flow diagrams need not resemble prose.
+    # A weak language score must not veto a diagnostic section selected above.
+    from backend.services.cutplan_service import is_diagnostic_section
+
+    protected_diagnostic_pages = sections_to_page_list([
+        section for section in merged if is_diagnostic_section(section.name)
+    ])
+    filtered_pages = sorted(set(filtered_pages) | set(protected_diagnostic_pages))
     restored_component_pages = sorted(set(component_pages) - set(filtered_pages))
     if restored_component_pages:
         logger.info(

@@ -1,0 +1,85 @@
+{
+  "danfoss_apf": {
+    "before": {
+      "publish": 7,
+      "review": 6,
+      "exclude": 2,
+      "gap": 4
+    },
+    "after_compiler": {
+      "publish": 10,
+      "gap": 7,
+      "review": 0,
+      "exclude": 2
+    },
+    "after_reconciliation": {
+      "gap": 7,
+      "publish": 10,
+      "exclude": 2
+    },
+    "reasons": {
+      "check_only": 6,
+      "declared_not_diagnostic": 2,
+      "missing_actions": 6,
+      "missing_failure": 1,
+      "no_action_stated": 1
+    }
+  },
+  "graco_check_mate_200": {
+    "before": {
+      "publish": 34,
+      "exclude": 9,
+      "gap": 2
+    },
+    "after_compiler": {
+      "publish": 34,
+      "gap": 2,
+      "review": 0,
+      "exclude": 9
+    },
+    "after_reconciliation": {
+      "publish": 31,
+      "exclude": 12,
+      "gap": 2
+    },
+    "reasons": {
+      "check_only": 2,
+      "declared_not_diagnostic": 9,
+      "missing_actions": 2
+    }
+  },
+  "eastman_e554": {
+    "before": {
+      "gap": 24,
+      "review": 16,
+      "exclude": 47,
+      "publish": 12
+    },
+    "after_compiler": {
+      "publish": 12,
+      "gap": 24,
+      "review": 16,
+      "exclude": 47
+    },
+    "after_reconciliation": {
+      "gap": 24,
+      "review": 16,
+      "exclude": 47,
+      "publish": 12
+    },
+    "reasons": {
+      "action_without_failure": 6,
+      "check_only": 15,
+      "component_without_failure": 1,
+      "declared_ambiguous": 3,
+      "declared_not_diagnostic": 47,
+      "failure_edge_without_failure": 1,
+      "failure_inferred_from_instruction": 5,
+      "missing_actions": 5,
+      "missing_failure": 26,
+      "no_action_stated": 9,
+      "quote_not_in_anchored_evidence": 10,
+      "relation_endpoint_support_unestablished": 6
+    }
+  }
+}

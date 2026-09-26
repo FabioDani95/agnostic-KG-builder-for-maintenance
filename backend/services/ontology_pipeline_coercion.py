@@ -118,6 +118,7 @@ def _relation_exists(relations: list[OntologyRelationInstance], candidate: Ontol
             and rel.from_id == candidate.from_id
             and rel.to_type == candidate.to_type
             and rel.to_id == candidate.to_id
+            and rel.branch_lineage_id == candidate.branch_lineage_id
         ):
             return True
     return False
@@ -236,6 +237,14 @@ def _normalize_ontology_instance(
             continue
         if not _relation_exists(relations, relation):
             relations.append(relation)
+        else:
+            existing = next(item for item in relations if _relation_exists([item], relation))
+            seen = {(ev.source_page, ev.source_anchor, ev.quote) for ev in existing.evidence}
+            for item in relation.evidence:
+                key = (item.source_page, item.source_anchor, item.quote)
+                if key not in seen:
+                    existing.evidence.append(item)
+                    seen.add(key)
 
     assets = nodes.get("Asset", [])
     components = nodes.get("Component", [])

@@ -1,0 +1,236 @@
+{
+  "status": "historical_lexical_probe_not_validated_quality",
+  "gold_total": 8,
+  "autonomous_probe": 6,
+  "expected_gap_probe": 0,
+  "one_to_one_source_page_branch_probe": 6,
+  "one_to_one_assignments": {
+    "dbranch_34371fd5a5a660c0e072080d361c39fbec743229069b4b052860864474de9764": "E1",
+    "dbranch_03b04448632d1aabffb47390841a349bd8a93fe9525e818a791b97483c633825": "E2",
+    "dbranch_18b72a5895c409ee518f48cbd039a06efeee140524029e688a9ad4eaa96ef220": "E3",
+    "dbranch_aa6663656093c7beff220fb59313112eeabee37d019a18510cd610d9381ac60b": "E6",
+    "dbranch_eb8e732b10bc97b2235de92995ae86faa4fcc63f51ab1bd71d90cfd653fed15d": "E7",
+    "dbranch_a2a3ef0cdfacd3073b35c681e0b40fc33d9a708240e72d61d5daecc16f958178": "E8"
+  },
+  "witnesses": [
+    {
+      "claim_id": "E1",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.837037,
+      "field_scores": {
+        "indicator": 0.846154,
+        "failure_mode": 1.0,
+        "corrective_action": 0.837037
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Machine stops in middle of cut",
+        "failure_mode": "Intermittent pause circuit",
+        "corrective_action": "Adjust pause plunger activation pressure",
+        "indicator_context": "Machine stops in middle of cut The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. Machine stops in middle of cut Unknown sym_machine_stops_in_middle_of_cut_51860d9cfbc452db8fba93154a42609760b48610cdebd538311bf42507dba51a Problem: Machine Stop during Cut Due to Uninten- The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. This is typically caused by an intermittent pause circuit, usually in thestop discs. tional pause",
+        "failure_mode_context": "Intermittent pause circuit Typically caused by an intermittent pause circuit, usually in the stop discs. Typically caused by an intermittent pause circuit, usually in the stop discs. fm_intermittent_pause_circuit_55d88ceba98dc538fd4acda19b2b8e2d835235fa2295a69d29e65fc7fe87cf6c comp_stop_discs_9146d4d112f9e1e9575289d97905558b53ca6b5426f0eb770ff5bebf4e41811c Intermittent pause circuit Problem: Machine Stop during Cut Due to Uninten- The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. This is typically caused by an intermittent pause circuit, usually in thestop discs. tional pause This is typically caused by an intermittent pause circuit, usually in thestop discs. Remove gantry side cover. Check the pause plunger. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure.",
+        "corrective_action_context": "Adjust pause plunger activation pressure Tighten the plunger to increase activation pressure and loosen to decrease activation pressure. ca_adjust_pause_plunger_activation_pressure_f2b309c85a2df00881b31cafbadd3c96f849c8715453cb1aa99ba8fe04156d8c adjustment Tighten the plunger to increase activation pressure and loosen to decrease activation pressure. Remove gantry side cover. Check the pause plunger. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure. Adjust pause plunger activation pressure typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF This is typically caused by an intermittent pause circuit, usually in thestop discs. Remove gantry side cover. Check the pause plunger. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure.",
+        "pages": [
+          37
+        ],
+        "indicator_id": "sym_machine_stops_in_middle_of_cut_51860d9cfbc452db8fba93154a42609760b48610cdebd538311bf42507dba51a",
+        "failure_mode_id": "fm_intermittent_pause_circuit_55d88ceba98dc538fd4acda19b2b8e2d835235fa2295a69d29e65fc7fe87cf6c",
+        "corrective_action_id": "ca_adjust_pause_plunger_activation_pressure_f2b309c85a2df00881b31cafbadd3c96f849c8715453cb1aa99ba8fe04156d8c",
+        "branch_lineage_id": "dbranch_34371fd5a5a660c0e072080d361c39fbec743229069b4b052860864474de9764"
+      }
+    },
+    {
+      "claim_id": "E2",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.819672,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 0.819672
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Touch screen buttons are out of alignment",
+        "failure_mode": "Touch screen requires calibration",
+        "corrective_action": "Calibrate the touch screen",
+        "indicator_context": "Touch screen buttons are out of alignment The touch screen buttons do not match where the screen needs to be touched to activate the command. Operator needs to push above, below, right or left of the button for the command to take effect. The touch screen buttons do not match where the screen needs to be touched to activate the command. Operator needs to push above, below, right or left of the button for the command to take effect. Touch screen buttons are out of alignment Unknown sym_touch_screen_buttons_are_out_of_alignment_609f9f2af09ab33b77c60a6bd5b883429911e531f57cdfa3762966157bede003 Problem: The buttons on the Touch Screen are out of Touch screen calibration in required. The touch screen buttons do not match where the screen needs to be touched to activate the command. Operator needs to push above, below, right or left of the button for the command to take effect. alignment",
+        "failure_mode_context": "Touch screen requires calibration Touch screen calibration is required. Touch screen calibration is required. fm_touch_screen_requires_calibration_4d2a65fdf66f61f1d06ad76b6abd74eba7ff33ba48737d1bbd5d9cc5350b9017 comp_touch_screen_77ecea6b8ca8bef4c8d688f2c7195541ffe6bfb1dcb09d99f3816af88eeb514b Touch screen requires calibration Problem: The buttons on the Touch Screen are out of Touch screen calibration in required. The touch screen buttons do not match where the screen needs to be touched to activate the command. Operator needs to push above, below, right or left of the button for the command to take effect. alignment 1) Power down the cutting system. Touch screen calibration in required. Touch screen calibration in required. Proceed as follows. 4) Using the left and right arrows to navigate, go to the Calibration Screen (screen page 2). Press Touch screen to begin calibrating. 2) Place finger on the upper left corner of the touch screen as Shown. While holding finger on the screen, turn ON the main power switch located on the back of the diagnostic control cabinet. 3) Remove finger after the \"Power On Setup\" screen appears. 5) Using a paper clip or fine tip object, press the center of the cross as shown. The cross will reappear in the lower right corner. Press the center of the cross. 6) Navigate to screen page 3. Select save and exit to complete calibration.",
+        "corrective_action_context": "Calibrate the touch screen Perform the stated touch screen calibration procedure and save and exit. ca_calibrate_the_touch_screen_9eb27226d00fea19f79f8496877942145447c134c716b0726bab47d4e93e1e11 calibration Perform the stated touch screen calibration procedure and save and exit. Power down the cutting system. Place finger on the upper left corner of the touch screen as Shown. While holding finger on the screen, turn ON the main power switch located on the back of the diagnostic control cabinet. Remove finger after the \"Power On Setup\" screen appears. Using the left and right arrows to navigate, go to the Calibration Screen (screen page 2). Press Touch screen to begin calibrating. Using a paper clip or fine tip object, press the center of the cross as shown. The cross will reappear in the lower right corner. Press the center of the cross. Navigate to screen page 3. Select save and exit to complete calibration. Calibrate the touch screen typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF 1) Power down the cutting system. Touch screen calibration in required. Touch screen calibration in required. Proceed as follows. 4) Using the left and right arrows to navigate, go to the Calibration Screen (screen page 2). Press Touch screen to begin calibrating. 2) Place finger on the upper left corner of the touch screen as Shown. While holding finger on the screen, turn ON the main power switch located on the back of the diagnostic control cabinet. 3) Remove finger after the \"Power On Setup\" screen appears. 5) Using a paper clip or fine tip object, press the center of the cross as shown. The cross will reappear in the lower right corner. Press the center of the cross. 6) Navigate to screen page 3. Select save and exit to complete calibration.",
+        "pages": [
+          37,
+          38
+        ],
+        "indicator_id": "sym_touch_screen_buttons_are_out_of_alignment_609f9f2af09ab33b77c60a6bd5b883429911e531f57cdfa3762966157bede003",
+        "failure_mode_id": "fm_touch_screen_requires_calibration_4d2a65fdf66f61f1d06ad76b6abd74eba7ff33ba48737d1bbd5d9cc5350b9017",
+        "corrective_action_id": "ca_calibrate_the_touch_screen_9eb27226d00fea19f79f8496877942145447c134c716b0726bab47d4e93e1e11",
+        "branch_lineage_id": "dbranch_03b04448632d1aabffb47390841a349bd8a93fe9525e818a791b97483c633825"
+      }
+    },
+    {
+      "claim_id": "E3",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.668571,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 0.668571,
+        "corrective_action": 0.84
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "The Cutting Tool or Pen does not move down",
+        "failure_mode": "Tool or layer mapped incorrectly",
+        "corrective_action": "Correct the tool or layer mapping",
+        "indicator_context": "The Cutting Tool or Pen does not move down The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. The Cutting Tool or Pen does not move down Unknown sym_the_cutting_tool_or_pen_does_not_move_down_1fb7ec01ba134de6d80bc4cdda6f7a8c8e752f0611d4d7d4dceed68f653411fd If the layer is not mapped to a tool or the tool is not on the The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut.",
+        "failure_mode_context": "Tool or layer mapped incorrectly The layer is not mapped to a tool, or the tool is not on the tool holder. The layer is not mapped to a tool, or the tool is not on the tool holder. fm_tool_or_layer_mapped_incorrectly_aad453f1561b1fdcce03797550ead2cf24f3172bfbad9e6a8368fef200a602d7 not_stated Tool or layer mapped incorrectly If the layer is not mapped to a tool or the tool is not on the The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. If the layer is not mapped to a tool or the tool is not on the tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+        "corrective_action_context": "Correct the tool or layer mapping Drag the tool to the spindle or the layer to the tool. ca_correct_the_tool_or_layer_mapping_c4629bb8aeba8b50e4b3967c54b3780019237e200e4b75f94ef7140637b35366 Drag the tool to the spindle or the layer to the tool. If the layer is not mapped to a tool or the tool is not on the tool holder, click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter. Correct the tool or layer mapping typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF If the layer is not mapped to a tool or the tool is not on the tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.",
+        "pages": [
+          38
+        ],
+        "indicator_id": "sym_the_cutting_tool_or_pen_does_not_move_down_1fb7ec01ba134de6d80bc4cdda6f7a8c8e752f0611d4d7d4dceed68f653411fd",
+        "failure_mode_id": "fm_tool_or_layer_mapped_incorrectly_aad453f1561b1fdcce03797550ead2cf24f3172bfbad9e6a8368fef200a602d7",
+        "corrective_action_id": "ca_correct_the_tool_or_layer_mapping_c4629bb8aeba8b50e4b3967c54b3780019237e200e4b75f94ef7140637b35366",
+        "branch_lineage_id": "dbranch_18b72a5895c409ee518f48cbd039a06efeee140524029e688a9ad4eaa96ef220"
+      }
+    },
+    {
+      "claim_id": "E4",
+      "kind": "published_path",
+      "present": false,
+      "score": 0.211111,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 0.211111,
+        "corrective_action": 0.276667
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Reduced or no vacuum in the laser fume extractor",
+        "failure_mode": "Reduced or no vacuum",
+        "corrective_action": "Increase vacuum pressure",
+        "indicator_context": "Reduced or no vacuum in the laser fume extractor Laser Fume Extractor has reduced vacuum or no vacuum. Laser Fume Extractor has reduced vacuum or no vacuum. Reduced or no vacuum in the laser fume extractor Unknown sym_reduced_or_no_vacuum_in_the_laser_fume_extractor_0384155b04daf6eddda8f8a75d2f9a1ba2554fa82dcf7257116eb4ca8932e80c or no vacuum. Problem: Laser Fume Extractor has reduced vacuum",
+        "failure_mode_context": "Reduced or no vacuum Laser Fume Extractor has reduced vacuum or no vacuum. Laser Fume Extractor has reduced vacuum or no vacuum. fm_reduced_or_no_vacuum_751ee2f6c17a949e8a2443b5a4ccc6f678ecb01805c253e0ec4d5e590b177d48 comp_laser_fume_extractor_5f677e16a8c7e8b82970981fe6ad8fd85b3719d0a16652b6ba3094493a8c55bc Reduced or no vacuum or no vacuum. Problem: Laser Fume Extractor has reduced vacuum 2. Increase vacuum pressure using the fume extractor control panel. or no vacuum. Problem: Laser Fume Extractor has reduced vacuum",
+        "corrective_action_context": "Increase vacuum pressure Increase vacuum pressure using the fume extractor control panel. ca_increase_vacuum_pressure_8009b329f1267ff5827c7654ae026f103c826ca3ea948936a603ec9967407c9a Increase vacuum pressure using the fume extractor control panel. Increase vacuum pressure using the fume extractor control panel. Increase vacuum pressure typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF 2. Increase vacuum pressure using the fume extractor control panel. or no vacuum. Problem: Laser Fume Extractor has reduced vacuum",
+        "pages": [
+          38
+        ],
+        "indicator_id": "sym_reduced_or_no_vacuum_in_the_laser_fume_extractor_0384155b04daf6eddda8f8a75d2f9a1ba2554fa82dcf7257116eb4ca8932e80c",
+        "failure_mode_id": "fm_reduced_or_no_vacuum_751ee2f6c17a949e8a2443b5a4ccc6f678ecb01805c253e0ec4d5e590b177d48",
+        "corrective_action_id": "ca_increase_vacuum_pressure_8009b329f1267ff5827c7654ae026f103c826ca3ea948936a603ec9967407c9a",
+        "branch_lineage_id": "dbranch_74575e4906542e63f4e442ba72455fc234259c6e76994e6f03a7de30e4b92a2e"
+      }
+    },
+    {
+      "claim_id": "E5",
+      "kind": "published_path",
+      "present": false,
+      "score": 0.51,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 0.51,
+        "corrective_action": 0.561905
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Laser cutting path is too wide",
+        "failure_mode": "Damage to brass laser nozzle",
+        "corrective_action": "Replace nozzle",
+        "indicator_context": "Laser cutting path is too wide The laser cutting path increases to an undesirable width. The laser cutting path increases to an undesirable width. Laser cutting path is too wide Unknown sym_laser_cutting_path_is_too_wide_3ccbd445c3a728792fbe7c0f56f0966fe48fc9c3c8e11ec1af761f2e466bd6b3 Problem: Laser cutting path is too wide The laser cutting path increases to an undesirable width. damage to brass laser nozzle",
+        "failure_mode_context": "Damage to brass laser nozzle Damage to the brass laser nozzle. Damage to the brass laser nozzle. fm_damage_to_brass_laser_nozzle_62923875aa35d0430feac465f6c6723ccaaec5a5df4f18ac13e2741b47a39d73 comp_brass_laser_nozzle_fdd88dbe285d8798e4808042825e1319fd03d0d7b551efaa2c65edbb4a3d4d14 Damage to brass laser nozzle Problem: Laser cutting path is too wide The laser cutting path increases to an undesirable width. damage to brass laser nozzle Replace nozzle if any damage is present. damage to brass laser nozzle",
+        "corrective_action_context": "Replace nozzle Replace the nozzle if damage is present. ca_replace_nozzle_32286c0996ba1d91bd96c841d47500327b45592cfe6a466987c4d2865558e261 Replace the nozzle if damage is present. Replace nozzle if any damage is present. Replace nozzle typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Replace nozzle if any damage is present. damage to brass laser nozzle",
+        "pages": [
+          39
+        ],
+        "indicator_id": "sym_laser_cutting_path_is_too_wide_3ccbd445c3a728792fbe7c0f56f0966fe48fc9c3c8e11ec1af761f2e466bd6b3",
+        "failure_mode_id": "fm_damage_to_brass_laser_nozzle_62923875aa35d0430feac465f6c6723ccaaec5a5df4f18ac13e2741b47a39d73",
+        "corrective_action_id": "ca_replace_nozzle_32286c0996ba1d91bd96c841d47500327b45592cfe6a466987c4d2865558e261",
+        "branch_lineage_id": "dbranch_f1b16c34fd4bcc62569900aa219b4f38bc3f28dae903fa27c6233131d1d882ed"
+      }
+    },
+    {
+      "claim_id": "E6",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.853333,
+      "field_scores": {
+        "indicator": 0.882353,
+        "failure_mode": 1.0,
+        "corrective_action": 0.853333
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Loss of laser cutting power",
+        "failure_mode": "Damaged or dirty lens",
+        "corrective_action": "Clean or replace lens",
+        "indicator_context": "Loss of laser cutting power The laser cutting power decreases causing non-cut edges. The laser cutting power decreases causing non-cut edges. Loss of laser cutting power Unknown sym_loss_of_laser_cutting_power_d41d1d0c1f3e1ec42bf9ac7e57269389a07c7fe1b553f20031e3b880da73d529 Damaged or dirty lens. Check for damage or dirt on the focusing lens. The laser cutting power decreases causing non-cut edges.",
+        "failure_mode_context": "Damaged or dirty lens The focusing lens is damaged or dirty. The focusing lens is damaged or dirty. fm_damaged_or_dirty_lens_5e6d95ace4750e42d28cc07d4cde47211cbde27f202b00432a9c5a660ede7b1f comp_focusing_lens_3527f4130d65f4a7016b41a6180c72b90857ea89e8e0af2b556ec5b1a03c254b Damaged or dirty lens Damaged or dirty lens. Check for damage or dirt on the focusing lens. The laser cutting power decreases causing non-cut edges. Clean or replace lens as required. Damaged or dirty lens. Check for damage or dirt on the focusing lens.",
+        "corrective_action_context": "Clean or replace lens Clean or replace the lens as required. ca_clean_or_replace_lens_81841c426e347819adcafa3616d9d0dc17a1482495a85e008271989c9c3ea58c cleaning or replacement Clean or replace the lens as required. Clean or replace lens as required. Clean or replace lens typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Clean or replace lens as required. Damaged or dirty lens. Check for damage or dirt on the focusing lens.",
+        "pages": [
+          39
+        ],
+        "indicator_id": "sym_loss_of_laser_cutting_power_d41d1d0c1f3e1ec42bf9ac7e57269389a07c7fe1b553f20031e3b880da73d529",
+        "failure_mode_id": "fm_damaged_or_dirty_lens_5e6d95ace4750e42d28cc07d4cde47211cbde27f202b00432a9c5a660ede7b1f",
+        "corrective_action_id": "ca_clean_or_replace_lens_81841c426e347819adcafa3616d9d0dc17a1482495a85e008271989c9c3ea58c",
+        "branch_lineage_id": "dbranch_f99cfd9e9466208fbb3fc32f307488f08bd461c0cf0981500614d1374099afa2"
+      }
+    },
+    {
+      "claim_id": "E7",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.841667,
+      "field_scores": {
+        "indicator": 0.87,
+        "failure_mode": 0.841667,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Loss of laser cutting power",
+        "failure_mode": "Damaged or dirty mirror",
+        "corrective_action": "Clean or replace mirrors",
+        "indicator_context": "Loss of laser cutting power The laser cutting power decreases causing non-cut edges. The laser cutting power decreases causing non-cut edges. Loss of laser cutting power Unknown sym_loss_of_laser_cutting_power_d41d1d0c1f3e1ec42bf9ac7e57269389a07c7fe1b553f20031e3b880da73d529 Damaged or dirty Mirror. Check for damage, burn mark or dirt on the beam deflecting mirrors. The laser cutting power decreases causing non-cut edges.",
+        "failure_mode_context": "Damaged or dirty mirror The beam-deflecting mirrors are damaged, have burn marks, or are dirty. The beam-deflecting mirrors are damaged, have burn marks, or are dirty. fm_damaged_or_dirty_mirror_2419fb4ba31eeaf2df12c88e4193eefa4ba5f32733474d7e22aec2c1f3384e15 comp_beam_deflecting_mirrors_92aa176c91e1912c6fabce889eaccb0ba17a28a9a59f9eaec83bea950d44e679 Damaged or dirty mirror Damaged or dirty Mirror. Check for damage, burn mark or dirt on the beam deflecting mirrors. The laser cutting power decreases causing non-cut edges. Clean or replace mirrors as required. Damaged or dirty Mirror. Check for damage, burn mark or dirt on the beam deflecting mirrors.",
+        "corrective_action_context": "Clean or replace mirrors Clean or replace the mirrors as required. ca_clean_or_replace_mirrors_3e510da1b16438a839f5fc63896968c58ce96c569ee8adeb627847446b6a2b71 cleaning or replacement Clean or replace the mirrors as required. Clean or replace mirrors as required. Clean or replace mirrors typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Clean or replace mirrors as required. Damaged or dirty Mirror. Check for damage, burn mark or dirt on the beam deflecting mirrors.",
+        "pages": [
+          39
+        ],
+        "indicator_id": "sym_loss_of_laser_cutting_power_d41d1d0c1f3e1ec42bf9ac7e57269389a07c7fe1b553f20031e3b880da73d529",
+        "failure_mode_id": "fm_damaged_or_dirty_mirror_2419fb4ba31eeaf2df12c88e4193eefa4ba5f32733474d7e22aec2c1f3384e15",
+        "corrective_action_id": "ca_clean_or_replace_mirrors_3e510da1b16438a839f5fc63896968c58ce96c569ee8adeb627847446b6a2b71",
+        "branch_lineage_id": "dbranch_eb8e732b10bc97b2235de92995ae86faa4fcc63f51ab1bd71d90cfd653fed15d"
+      }
+    },
+    {
+      "claim_id": "E8",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.855556,
+      "field_scores": {
+        "indicator": 0.9,
+        "failure_mode": 0.855556,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Loss of laser cutting power",
+        "failure_mode": "Damage or debris in laser nozzle",
+        "corrective_action": "Clean or replace laser nozzle",
+        "indicator_context": "Loss of laser cutting power The laser cutting power decreases causing non-cut edges. The laser cutting power decreases causing non-cut edges. Loss of laser cutting power Unknown sym_loss_of_laser_cutting_power_d41d1d0c1f3e1ec42bf9ac7e57269389a07c7fe1b553f20031e3b880da73d529 The laser cutting power decreases causing non-cut edges. Damage or debris in laser nozzle. Check for damage or debris in laser nozzle.",
+        "failure_mode_context": "Damage or debris in laser nozzle The laser nozzle is damaged or contains debris. The laser nozzle is damaged or contains debris. fm_damage_or_debris_in_laser_nozzle_43bc12bd3e44e19d7d1f0b442f8e0139c5ca16f9f8d6b2a66a59b6e4203bef51 comp_laser_nozzle_70469ff2ff07ba00b78087da22874d151d07be5401527a9f1fe224e98b2771bc Damage or debris in laser nozzle The laser cutting power decreases causing non-cut edges. Damage or debris in laser nozzle. Check for damage or debris in laser nozzle. Clean or replace laser nozzle as required. Damage or debris in laser nozzle. Check for damage or debris in laser nozzle.",
+        "corrective_action_context": "Clean or replace laser nozzle Clean or replace the laser nozzle as required. ca_clean_or_replace_laser_nozzle_5bfab3076842b7bb54c13acf8ed2d4394b112c2c2a2e0345a2eaafd1a66b90e6 cleaning or replacement Clean or replace the laser nozzle as required. Clean or replace laser nozzle as required. Clean or replace laser nozzle typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Clean or replace laser nozzle as required. Damage or debris in laser nozzle. Check for damage or debris in laser nozzle.",
+        "pages": [
+          39
+        ],
+        "indicator_id": "sym_loss_of_laser_cutting_power_d41d1d0c1f3e1ec42bf9ac7e57269389a07c7fe1b553f20031e3b880da73d529",
+        "failure_mode_id": "fm_damage_or_debris_in_laser_nozzle_43bc12bd3e44e19d7d1f0b442f8e0139c5ca16f9f8d6b2a66a59b6e4203bef51",
+        "corrective_action_id": "ca_clean_or_replace_laser_nozzle_5bfab3076842b7bb54c13acf8ed2d4394b112c2c2a2e0345a2eaafd1a66b90e6",
+        "branch_lineage_id": "dbranch_a2a3ef0cdfacd3073b35c681e0b40fc33d9a708240e72d61d5daecc16f958178"
+      }
+    }
+  ],
+  "semantic_precision": null,
+  "semantic_recall": null
+}

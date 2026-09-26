@@ -65,17 +65,22 @@
    * risolve. Le relazioni una per una dicono se un collegamento esiste; la
    * catena dice se il racconto sta in piedi, ed è lì che si verifica davvero.
    */
-  const catenaDi = (modello, causa) => {
+  root.catenePerCausa = (modello, causa) => {
     const legami = modello.legamiPerNodo.get(causa.node_id) || [];
-    const prendi = (tipo, lato) => legami.filter((l) => l.relation_type === tipo)
-      .map((l) => modello.nodiPerId.get(lato === "from" ? l.from_id : l.to_id)).filter(Boolean);
-    return {
-      causa,
-      indizi: [...prendi("MAY_INDICATE", "from"), ...prendi("INDICATES", "from")],
-      azioni: prendi("RESOLVED_BY", "to"),
-      componenti: prendi("AFFECTS", "to"),
-    };
+    const rami = [...new Set(legami.filter((l) => ["MAY_INDICATE", "INDICATES", "RESOLVED_BY", "AFFECTS"].includes(l.relation_type)).map((l) => l.branch_lineage_id || ""))];
+    return (rami.length ? rami : [""]).map((ramo) => {
+      const prendi = (tipo, lato) => legami.filter((l) => l.relation_type === tipo && (l.branch_lineage_id || "") === ramo)
+        .map((l) => modello.nodiPerId.get(lato === "from" ? l.from_id : l.to_id)).filter(Boolean);
+      const record = (modello.grafo?.diagnostic_records || []).find((v) => v.record.branch_lineage_id === ramo)?.record;
+      return { causa, ramo, record,
+        indizi: [...prendi("MAY_INDICATE", "from"), ...prendi("INDICATES", "from")],
+        azioni: prendi("RESOLVED_BY", "to"), componenti: prendi("AFFECTS", "to"),
+      };
+    });
   };
+
+  root.condizioniCatena = (catena) => (catena.record?.conditions || []).map((v) =>
+    `<p class="voce-testo"><strong>${esc(t("gr.recordCondizioni"))}:</strong> ${esc(v.text)} (${esc(t(`gr.recordTarget.${v.applies_to}`))}${v.step_index === null ? "" : ` ${v.step_index + 1}`})</p>`).join("");
 
   const passoCatena = (nodo, corrente) => `
     <button type="button" class="catena-passo tipo-${esc(nodo.node_type)} ${corrente === nodo.node_id ? "qui" : ""}"
@@ -106,6 +111,7 @@
     if (!catena.azioni.length) manca.push(t("gr.senzaAzione"));
     return `<article class="catena-scheda">
       <div class="catena-capo">${passoCatena(catena.causa, corrente)}</div>
+      ${root.condizioniCatena(catena)}
       ${lato(t("gr.catenaRiconosce"), catena.indizi, t("gr.origineNonDichiarata"), corrente)}
       ${lato(t("gr.catenaRisolve"), catena.azioni, t("gr.azioneNonDichiarata"), corrente)}
       ${catena.componenti.length
@@ -128,13 +134,16 @@
       (modello.legamiPerNodo.get(causa.node_id) || [])
         .some((l) => l.from_id === nodo.node_id || l.to_id === nodo.node_id)
     ));
-    if (!scelte.length) {
+    const catene = scelte.flatMap((causa) => root.catenePerCausa(modello, causa))
+      .filter((catena) => !nodo || [catena.causa, ...catena.indizi, ...catena.azioni, ...catena.componenti]
+        .some((v) => v.node_id === nodo.node_id));
+    if (!catene.length) {
       return `<section class="blocco"><h4>${esc(t("gr.catenaTitolo"))}</h4>
         <p class="blocco-vuoto">${esc(t("gr.nienteCatene"))}</p></section>`;
     }
     return `<section class="blocco">
-      <h4>${esc(t("gr.catenaTitolo"))} <span>${scelte.length}</span></h4>
-      ${scelte.map((causa) => scheda(catenaDi(modello, causa), nodo ? nodo.node_id : "")).join("")}
+      <h4>${esc(t("gr.catenaTitolo"))} <span>${catene.length}</span></h4>
+      ${catene.map((catena) => scheda(catena, nodo ? nodo.node_id : "")).join("")}
       ${nodo ? "" : `<p>${esc(t("gr.catenaTesto"))}</p>`}
     </section>`;
   };

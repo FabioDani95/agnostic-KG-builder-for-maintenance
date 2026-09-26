@@ -1,0 +1,542 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "p1_danfoss_apf_luna_low8:2c6aae89e4144e83a32f5b4f37d6c54c",
+  "run_id": "p1_danfoss_apf_luna_low8",
+  "started_utc": "2026-09-25T13:36:47.950685+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "max_completion_tokens": 8000,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You extract diagnostic records from a technical manual into a typed contract.\n\nSource type: technical PDF\nSource title: 02_danfoss_active_power_filter_operating_guide.pdf\n\nThe input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be\na complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,\necho its window_id and allowed_source_anchors on every candidate; the system overwrites and\nverifies both fields and no evidence outside that block is allowed. For a section chunk, set\nrecord_window_id=\"\" and set allowed_source_anchors to exactly the anchors referenced by that\ncandidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL\ncontext may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields\nbelong to the current cause/remedy branch. Each displayed FIELD value is one exact source\nspan. Quote the value only: never include the \"FIELD n:\" label, join separate fields, or\nrestore a sibling field omitted by the system.\nReturn every explicit diagnostic record and every distinct cause/remedy branch in the input.\nThe contract is an intermediate record representation, not the final graph. Use schema_version=\"1.1\".\n\nRules:\n1. Never emit graph IDs or ontology relation names. The system owns them.\n2. A diagnostic record has one or more indicators. An indicator is either an observable\n   symptom or an asset-generated error/alarm code. A record may explicitly contain both;\n   keep both. For a symptom set code=null and severity=\"Unknown\" unless the source explicitly\n   states its severity; never invent a risk rating. For an error_code set its\n   code and severity=null. Only an explicit not_diagnostic page disposition may use an empty\n   indicator list.\n3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action\n   from different table rows, flowchart branches or unrelated paragraphs.\n4. A FailureMode is an explicit technical cause or faulty state, not a restatement of the\n   symptom, an inspection result or an invented explanation. Use null when none is stated.\n5. A CorrectiveAction is an explicitly restorative remedy for that failure. Checks and tests\n   are not restorative unless the source says the check itself resolves the fault. Preserve\n   a non-restorative check/test/inspection in inspection_steps, never in actions.\n6. Set resolution_status:\n   - action_stated: at least one restorative action is explicitly linked to the failure;\n   - no_action_stated: the diagnostic record states a failure but no remedy;\n   - check_only: it gives only diagnostic checks/verification;\n   - ambiguous: the row/branch pairing cannot be established safely;\n   - not_diagnostic: a candidate-looking passage is actually preventive/generic content.\n7. An affected component is optional. Include it only if the branch explicitly identifies the\n   affected component. category and failure.material_context are required-but-nullable: use\n   null rather than manufacturing a category/context. A null category does not invalidate a\n   grounded branch; the deterministic compiler supplies a neutral schema category. Do not use\n   a product name as a component.\n8. Evidence is edge-specific. claim_evidence proves only the claim. Each edge evidence list is\n   a support set: one span may explicitly state the whole link, or several spans from the same\n   record/branch may collectively establish it when a manual separates Problem, Cause and\n   Remedy across blocks or pages. failure_link_evidence supports only that exact indicator to\n   failure; resolution_link_evidence supports only that exact failure to action;\n   affects_link_evidence supports only that exact failure to component. Include every span\n   needed to establish the link and no unrelated nearby heading. Never use an action-only span\n   as the sole proof of an indicator-to-failure edge.\n   In a system-owned atomic table row, use the exact endpoint FIELD spans as the edge support\n   set; the deterministic compiler verifies the table structure and completes their union.\n9. Every quote is a short verbatim span contained in the EvidenceUnit named by source_anchor,\n   on source_page. Prefer one span per EvidenceUnit. If wording crosses adjacent units, emit\n   separate exact spans; never concatenate or paraphrase cells. Copy the opaque anchor exactly.\n   Do not include page/anchor marker text in a quote.\n10. record_anchor must be one of this candidate's claim-evidence anchors. branch_anchor must be\n    one of this candidate's evidence anchors (prefer a causal edge anchor). For an explicit\n    not_diagnostic disposition with no claims, set both to the candidate page's EvidenceUnit\n    anchor. These anchors are source locators, not freely generated IDs.\n11. Preserve source language in human-readable values and set source_language accordingly.\n12. Duplicate records caused by overlapping pages must be returned identically; deterministic\n    lineage and compilation will deduplicate them.\n13. Account for candidate-looking passages. If one is actually generic/preventive content,\n    emit a not_diagnostic candidate with empty indicators and no diagnostic claims. Return an\n    empty records list only when the input contains no candidate-looking passage at all. Never\n    fill a missing cause/action simply to make a complete record.\n14. Every anchored candidate-looking passage in the input must occur in a record's claim/edge\n    evidence, or have its own explicit not_diagnostic disposition. Do not cover only the first\n    row or branch of a troubleshooting table.\n15. For check_only, actions must be empty and inspection_steps must preserve each stated check\n    with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.\n16. Preserve every stated precondition, test outcome, negation, threshold and alternative in\n    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection\n    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test\n    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.\n    Keep inspection_steps and actions in source order; do not sort steps alphabetically.\n17. Preserve the actual error CODE separately from its fault name, including a numerical code\n    in a separate table column. Never substitute the name for a printed numeric code.\n"
+      },
+      {
+        "role": "user",
+        "content": "--- PAGE 64 ---\n\n[[EVIDENCE_ID: a0001]]\nOperating Guide | Active Power Filter\n[[EVIDENCE_ID: a0002]]\n10 Troubleshooting\n[[EVIDENCE_ID: a0003]]\n10.1 Service and Maintenance\n[[EVIDENCE_ID: a0004]]\nReview all safety warnings and cautions in 2.3 General Safety Precautions and 2.4 Electrical Installation Precautions before the service/\n[[EVIDENCE_ID: a0005]]\nmaintenance begin\n[[EVIDENCE_ID: a0006]]\nOnly qualified service personnel can update the Active Power Filter hardware and firmware.\n[[EVIDENCE_ID: a0007]]\nRegularly clean the Active Power Filter, especially the slits, openings, and filters, to ensure that the air freely flows into the Active Power\n[[EVIDENCE_ID: a0008]]\nFilter to avoid overheating. If necessary, use an air blower or vacuum cleaner to clean the slits, and openings and replace the filters\n[[EVIDENCE_ID: a0009]]\nregularly to avoid any object from blocking or covering these areas.\n[[EVIDENCE_ID: a0010]]\nCheck if all fans work properly when the Active Power Filter is running, and ensure that air can move freely around and through the\n[[EVIDENCE_ID: a0011]]\nActive Power Filter. Replace the fan if it is not working properly.\n[[EVIDENCE_ID: a0012]]\nSome components like power capacitors and fans become worn out due to long term usage, and increase the risk of failure on the Active\n[[EVIDENCE_ID: a0013]]\nPower Filter.\n[[EVIDENCE_ID: a0014]]\nContact Danfoss for further information regarding maintenance and service.\n[[EVIDENCE_ID: a0015]]\n10.2 Fault Finding and Troubleshooting\n[[EVIDENCE_ID: a0016]]\nReview all safety warnings and cautions in 2.3 General Safety Precautions and 2.4 Electrical Installation Precautions before the fault\n[[EVIDENCE_ID: a0017]]\nfinding and troubleshooting begin.\n[[EVIDENCE_ID: a0018]]\nIf the filter does not work properly, readout the fault name and investigate possible root causes for the fault.\n[[EVIDENCE_ID: a0019]]\nTable 41: Overview of Faults and Troubleshooting Hints\n[[EVIDENCE_ID: a0020]]\nFault number\nFault name\nPossible fault\nTroubleshooting\n[[EVIDENCE_ID: a0021]]\n1\nSYS 485 comm loss\n1 The communication wire is\n[[EVIDENCE_ID: a0022]]\n1 Check if the communication\n[[EVIDENCE_ID: a0023]]\nnot well connected.\n[[EVIDENCE_ID: a0024]]\nwire is firmly connected.\n[[EVIDENCE_ID: a0025]]\n2 The Active Power Filter\n[[EVIDENCE_ID: a0026]]\n1 Check the DIP switches of\n[[EVIDENCE_ID: a0027]]\nmodules have repeated IDs.\n[[EVIDENCE_ID: a0028]]\nthe individual modules.\n[[EVIDENCE_ID: a0029]]\n2\nFuse blowout\nThe input fuse is broken.\nContact service personnel.\n[[EVIDENCE_ID: a0030]]\n3\nAmbient OTP\n1 The air vents ate blocked.\n[[EVIDENCE_ID: a0031]]\nContact service personnel.\n[[EVIDENCE_ID: a0032]]\n2 The fans do not work.\n[[EVIDENCE_ID: a0033]]\n4\nBUS OVP/UVP\nBUS capacitor failure.\nContact service personnel.\n[[EVIDENCE_ID: a0034]]\n5\nFan Fail\nFan failure.\nContact service personnel.\n[[EVIDENCE_ID: a0035]]\n6\nNo current compensation/Bad\n[[EVIDENCE_ID: a0036]]\ncurrent compensation\n[[EVIDENCE_ID: a0037]]\n10.3 Disposal\n[[EVIDENCE_ID: a0038]]\nDanfoss accepts defective filter modules for disposal.\n[[EVIDENCE_ID: a0039]]\nThe CT is not well connected.\nCheck if the CT wiring is cor-\n[[EVIDENCE_ID: a0040]]\nrect.\n[[EVIDENCE_ID: a0041]]\n62 | Danfoss A/S © 2024.01                                                                                                                                                                        AQ467435236403en-000101 / 130R1375\n[[EVIDENCE_ID: a0042]]\nFault number | Fault name | Possible fault | Troubleshooting\n[[EVIDENCE_ID: a0043]]\n1 | SYS 485 comm loss | 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.\n[[EVIDENCE_ID: a0044]]\n2 | Fuse blowout | The input fuse is broken. | Contact service personnel.\n[[EVIDENCE_ID: a0045]]\n3 | Ambient OTP | 1 The air vents ate blocked. 2 The fans do not work. | Contact service personnel.\n[[EVIDENCE_ID: a0046]]\n4 | BUS OVP/UVP | BUS capacitor failure. | Contact service personnel.\n[[EVIDENCE_ID: a0047]]\n5 | Fan Fail | Fan failure. | Contact service personnel.\n[[EVIDENCE_ID: a0048]]\n6 | No current compensation/Bad current compensation | The CT is not well connected. | Check if the CT wiring is cor- rect."
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "DiagnosticChunkOutput",
+        "strict": true,
+        "schema": {
+          "$defs": {
+            "AffectedComponentCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "category": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Category"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "affects_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Affects Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "category",
+                "claim_evidence",
+                "affects_link_evidence"
+              ],
+              "title": "AffectedComponentCandidate",
+              "type": "object"
+            },
+            "CorrectiveActionCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "action_kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Action Kind"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "resolution_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Resolution Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instruction_text",
+                "action_kind",
+                "claim_evidence",
+                "resolution_link_evidence"
+              ],
+              "title": "CorrectiveActionCandidate",
+              "type": "object"
+            },
+            "DiagnosticBundleCandidate": {
+              "additionalProperties": false,
+              "description": "One source record, potentially containing several observed indicators.",
+              "properties": {
+                "record_window_id": {
+                  "title": "Record Window Id",
+                  "type": "string"
+                },
+                "allowed_source_anchors": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Allowed Source Anchors",
+                  "type": "array"
+                },
+                "record_anchor": {
+                  "minLength": 1,
+                  "title": "Record Anchor",
+                  "type": "string"
+                },
+                "branch_anchor": {
+                  "minLength": 1,
+                  "title": "Branch Anchor",
+                  "type": "string"
+                },
+                "indicators": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticIndicatorCandidate"
+                  },
+                  "title": "Indicators",
+                  "type": "array"
+                },
+                "failure": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FailureModeCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actions": {
+                  "items": {
+                    "$ref": "#/$defs/CorrectiveActionCandidate"
+                  },
+                  "title": "Actions",
+                  "type": "array"
+                },
+                "inspection_steps": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticInspectionStepCandidate"
+                  },
+                  "title": "Inspection Steps",
+                  "type": "array"
+                },
+                "conditions": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticConditionCandidate"
+                  },
+                  "title": "Conditions",
+                  "type": "array"
+                },
+                "affected_component": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AffectedComponentCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolution_status": {
+                  "$ref": "#/$defs/ResolutionStatus"
+                }
+              },
+              "required": [
+                "record_window_id",
+                "allowed_source_anchors",
+                "record_anchor",
+                "branch_anchor",
+                "indicators",
+                "failure",
+                "actions",
+                "inspection_steps",
+                "conditions",
+                "affected_component",
+                "resolution_status"
+              ],
+              "title": "DiagnosticBundleCandidate",
+              "type": "object"
+            },
+            "DiagnosticConditionCandidate": {
+              "additionalProperties": false,
+              "description": "Source-stated condition attached to a branch or a zero-based step.",
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "title": "Text",
+                  "type": "string"
+                },
+                "applies_to": {
+                  "enum": [
+                    "branch",
+                    "action",
+                    "inspection"
+                  ],
+                  "title": "Applies To",
+                  "type": "string"
+                },
+                "step_index": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Step Index"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "text",
+                "applies_to",
+                "step_index",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticConditionCandidate",
+              "type": "object"
+            },
+            "DiagnosticEvidenceSpan": {
+              "additionalProperties": false,
+              "description": "A verbatim source span emitted by the extraction model.\n\n``source_anchor`` is the opaque evidence identifier printed in the model's\ninput.  It is intentionally not a graph node identifier.",
+              "properties": {
+                "source_anchor": {
+                  "minLength": 1,
+                  "title": "Source Anchor",
+                  "type": "string"
+                },
+                "source_page": {
+                  "minimum": 1,
+                  "title": "Source Page",
+                  "type": "integer"
+                },
+                "quote": {
+                  "minLength": 1,
+                  "title": "Quote",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source_anchor",
+                "source_page",
+                "quote"
+              ],
+              "title": "DiagnosticEvidenceSpan",
+              "type": "object"
+            },
+            "DiagnosticIndicatorCandidate": {
+              "additionalProperties": false,
+              "description": "Provider-safe flat indicator contract.\n\nOpenAI strict Structured Outputs does not accept the ``oneOf`` emitted by\nPydantic for a discriminated model union inside an array.  Keep the wire\nshape flat and enforce the same symptom/error-code invariants locally.\nNullable fields remain required so the provider schema is strict.",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "symptom",
+                    "error_code"
+                  ],
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "code": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code"
+                },
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "severity": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "Critical",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Severity"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "failure_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Failure Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "code",
+                "name",
+                "description",
+                "severity",
+                "claim_evidence",
+                "failure_link_evidence"
+              ],
+              "title": "DiagnosticIndicatorCandidate",
+              "type": "object"
+            },
+            "DiagnosticInspectionStepCandidate": {
+              "additionalProperties": false,
+              "description": "A diagnostic check that is useful but does not itself restore operation.",
+              "properties": {
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "instruction_text",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticInspectionStepCandidate",
+              "type": "object"
+            },
+            "FailureModeCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "material_context": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Material Context"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "material_context",
+                "claim_evidence"
+              ],
+              "title": "FailureModeCandidate",
+              "type": "object"
+            },
+            "ResolutionStatus": {
+              "description": "The extractor's explicit assessment of diagnostic completeness.",
+              "enum": [
+                "action_stated",
+                "no_action_stated",
+                "check_only",
+                "ambiguous",
+                "not_diagnostic"
+              ],
+              "title": "ResolutionStatus",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Provider structured-output envelope for one diagnostic PDF chunk.\n\nAll fields are required, including nullable/list fields.  This avoids the\noptional-property mismatch of strict provider JSON Schema implementations.",
+          "properties": {
+            "schema_version": {
+              "enum": [
+                "1.0",
+                "1.1"
+              ],
+              "title": "Schema Version",
+              "type": "string"
+            },
+            "source_language": {
+              "minLength": 1,
+              "title": "Source Language",
+              "type": "string"
+            },
+            "records": {
+              "items": {
+                "$ref": "#/$defs/DiagnosticBundleCandidate"
+              },
+              "title": "Records",
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "source_language",
+            "records"
+          ],
+          "title": "DiagnosticChunkOutput",
+          "type": "object"
+        }
+      }
+    }
+  },
+  "elapsed_seconds": 19.862608125025872,
+  "response": {
+    "id": "chatcmpl-ES0OWllz4oXbIf8yYBBmHsA4GG5gd",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"schema_version\":\"1.1\",\"source_language\":\"en\",\"records\":[{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0021\",\"a0023\",\"a0024\",\"a0043\"],\"record_anchor\":\"a0043\",\"branch_anchor\":\"a0043\",\"indicators\":[{\"kind\":\"error_code\",\"code\":\"1\",\"name\":\"SYS 485 comm loss\",\"description\":\"SYS 485 comm loss\",\"severity\":null,\"claim_evidence\":[{\"source_anchor\":\"a0043\",\"source_page\":64,\"quote\":\"1 | SYS 485 comm loss\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0043\",\"source_page\":64,\"quote\":\"1 | SYS 485 comm loss\"},{\"source_anchor\":\"a0043\",\"source_page\":64,\"quote\":\"1 The communication wire is not well connected.\"}]}],\"failure\":{\"name\":\"The communication wire is not well connected.\",\"description\":\"The communication wire is not well connected.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0043\",\"source_page\":64,\"quote\":\"1 The communication wire is not well connected.\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Check if the communication wire is firmly connected.\",\"claim_evidence\":[{\"source_anchor\":\"a0043\",\"source_page\":64,\"quote\":\"1 Check if the communication wire is firmly connected.\"}]}],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"check_only\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0021\",\"a0025\",\"a0027\",\"a0028\",\"a0043\"],\"record_anchor\":\"a0043\",\"branch_anchor\":\"a0043\",\"indicators\":[{\"kind\":\"error_code\",\"code\":\"1\",\"name\":\"SYS 485 comm loss\",\"description\":\"SYS 485 comm loss\",\"severity\":null,\"claim_evidence\":[{\"source_anchor\":\"a0043\",\"source_page\":64,\"quote\":\"1 | SYS 485 comm loss\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0043\",\"source_page\":64,\"quote\":\"1 | SYS 485 comm loss\"},{\"source_anchor\":\"a0043\",\"source_page\":64,\"quote\":\"2 The Active Power Filter modules have repeated IDs.\"}]}],\"failure\":{\"name\":\"The Active Power Filter modules have repeated IDs.\",\"description\":\"The Active Power Filter modules have repeated IDs.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0043\",\"source_page\":64,\"quote\":\"2 The Active Power Filter modules have repeated IDs.\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Check the DIP switches of the individual modules.\",\"claim_evidence\":[{\"source_anchor\":\"a0043\",\"source_page\":64,\"quote\":\"1 Check the DIP switches of the individual modules.\"}]}],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"check_only\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0029\",\"a0044\"],\"record_anchor\":\"a0044\",\"branch_anchor\":\"a0044\",\"indicators\":[{\"kind\":\"error_code\",\"code\":\"2\",\"name\":\"Fuse blowout\",\"description\":\"Fuse blowout\",\"severity\":null,\"claim_evidence\":[{\"source_anchor\":\"a0044\",\"source_page\":64,\"quote\":\"2 | Fuse blowout\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0044\",\"source_page\":64,\"quote\":\"2 | Fuse blowout\"},{\"source_anchor\":\"a0044\",\"source_page\":64,\"quote\":\"The input fuse is broken.\"}]}],\"failure\":{\"name\":\"The input fuse is broken.\",\"description\":\"The input fuse is broken.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0044\",\"source_page\":64,\"quote\":\"The input fuse is broken.\"}]},\"actions\":[{\"name\":\"Contact service personnel.\",\"description\":\"Contact service personnel.\",\"instruction_text\":\"Contact service personnel.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0044\",\"source_page\":64,\"quote\":\"Contact service personnel.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0044\",\"source_page\":64,\"quote\":\"The input fuse is broken.\"},{\"source_anchor\":\"a0044\",\"source_page\":64,\"quote\":\"Contact service personnel.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"input fuse\",\"description\":\"The input fuse is broken.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0044\",\"source_page\":64,\"quote\":\"The input fuse is broken.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0044\",\"source_page\":64,\"quote\":\"The input fuse is broken.\"}]},\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0030\",\"a0031\",\"a0045\"],\"record_anchor\":\"a0045\",\"branch_anchor\":\"a0045\",\"indicators\":[{\"kind\":\"error_code\",\"code\":\"3\",\"name\":\"Ambient OTP\",\"description\":\"Ambient OTP\",\"severity\":null,\"claim_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":64,\"quote\":\"3 | Ambient OTP\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":64,\"quote\":\"3 | Ambient OTP\"},{\"source_anchor\":\"a0045\",\"source_page\":64,\"quote\":\"1 The air vents ate blocked.\"}]}],\"failure\":{\"name\":\"The air vents ate blocked.\",\"description\":\"The air vents ate blocked.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":64,\"quote\":\"1 The air vents ate blocked.\"}]},\"actions\":[{\"name\":\"Contact service personnel.\",\"description\":\"Contact service personnel.\",\"instruction_text\":\"Contact service personnel.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":64,\"quote\":\"Contact service personnel.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":64,\"quote\":\"1 The air vents ate blocked.\"},{\"source_anchor\":\"a0045\",\"source_page\":64,\"quote\":\"Contact service personnel.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0030\",\"a0032\",\"a0031\",\"a0045\"],\"record_anchor\":\"a0045\",\"branch_anchor\":\"a0045\",\"indicators\":[{\"kind\":\"error_code\",\"code\":\"3\",\"name\":\"Ambient OTP\",\"description\":\"Ambient OTP\",\"severity\":null,\"claim_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":64,\"quote\":\"3 | Ambient OTP\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":64,\"quote\":\"3 | Ambient OTP\"},{\"source_anchor\":\"a0045\",\"source_page\":64,\"quote\":\"2 The fans do not work.\"}]}],\"failure\":{\"name\":\"The fans do not work.\",\"description\":\"The fans do not work.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":64,\"quote\":\"2 The fans do not work.\"}]},\"actions\":[{\"name\":\"Contact service personnel.\",\"description\":\"Contact service personnel.\",\"instruction_text\":\"Contact service personnel.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":64,\"quote\":\"Contact service personnel.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":64,\"quote\":\"2 The fans do not work.\"},{\"source_anchor\":\"a0045\",\"source_page\":64,\"quote\":\"Contact service personnel.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0033\",\"a0046\"],\"record_anchor\":\"a0046\",\"branch_anchor\":\"a0046\",\"indicators\":[{\"kind\":\"error_code\",\"code\":\"4\",\"name\":\"BUS OVP/UVP\",\"description\":\"BUS OVP/UVP\",\"severity\":null,\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":64,\"quote\":\"4 | BUS OVP/UVP\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":64,\"quote\":\"4 | BUS OVP/UVP\"},{\"source_anchor\":\"a0046\",\"source_page\":64,\"quote\":\"BUS capacitor failure.\"}]}],\"failure\":{\"name\":\"BUS capacitor failure.\",\"description\":\"BUS capacitor failure.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":64,\"quote\":\"BUS capacitor failure.\"}]},\"actions\":[{\"name\":\"Contact service personnel.\",\"description\":\"Contact service personnel.\",\"instruction_text\":\"Contact service personnel.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":64,\"quote\":\"Contact service personnel.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":64,\"quote\":\"BUS capacitor failure.\"},{\"source_anchor\":\"a0046\",\"source_page\":64,\"quote\":\"Contact service personnel.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"BUS capacitor\",\"description\":\"BUS capacitor failure.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":64,\"quote\":\"BUS capacitor failure.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0046\",\"source_page\":64,\"quote\":\"BUS capacitor failure.\"}]},\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0034\",\"a0047\"],\"record_anchor\":\"a0047\",\"branch_anchor\":\"a0047\",\"indicators\":[{\"kind\":\"error_code\",\"code\":\"5\",\"name\":\"Fan Fail\",\"description\":\"Fan Fail\",\"severity\":null,\"claim_evidence\":[{\"source_anchor\":\"a0047\",\"source_page\":64,\"quote\":\"5 | Fan Fail\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0047\",\"source_page\":64,\"quote\":\"5 | Fan Fail\"},{\"source_anchor\":\"a0047\",\"source_page\":64,\"quote\":\"Fan failure.\"}]}],\"failure\":{\"name\":\"Fan failure.\",\"description\":\"Fan failure.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0047\",\"source_page\":64,\"quote\":\"Fan failure.\"}]},\"actions\":[{\"name\":\"Contact service personnel.\",\"description\":\"Contact service personnel.\",\"instruction_text\":\"Contact service personnel.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0047\",\"source_page\":64,\"quote\":\"Contact service personnel.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0047\",\"source_page\":64,\"quote\":\"Fan failure.\"},{\"source_anchor\":\"a0047\",\"source_page\":64,\"quote\":\"Contact service personnel.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"Fan\",\"description\":\"Fan failure.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0047\",\"source_page\":64,\"quote\":\"Fan failure.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0047\",\"source_page\":64,\"quote\":\"Fan failure.\"}]},\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0035\",\"a0036\",\"a0039\",\"a0040\",\"a0048\"],\"record_anchor\":\"a0048\",\"branch_anchor\":\"a0048\",\"indicators\":[{\"kind\":\"error_code\",\"code\":\"6\",\"name\":\"No current compensation/Bad current compensation\",\"description\":\"No current compensation/Bad current compensation\",\"severity\":null,\"claim_evidence\":[{\"source_anchor\":\"a0048\",\"source_page\":64,\"quote\":\"6 | No current compensation/Bad current compensation\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0048\",\"source_page\":64,\"quote\":\"6 | No current compensation/Bad current compensation\"},{\"source_anchor\":\"a0048\",\"source_page\":64,\"quote\":\"The CT is not well connected.\"}]}],\"failure\":{\"name\":\"The CT is not well connected.\",\"description\":\"The CT is not well connected.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0048\",\"source_page\":64,\"quote\":\"The CT is not well connected.\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Check if the CT wiring is cor- rect.\",\"claim_evidence\":[{\"source_anchor\":\"a0048\",\"source_page\":64,\"quote\":\"Check if the CT wiring is cor- rect.\"}]}],\"conditions\":[],\"affected_component\":{\"name\":\"CT\",\"description\":\"The CT is not well connected.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0048\",\"source_page\":64,\"quote\":\"The CT is not well connected.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0048\",\"source_page\":64,\"quote\":\"The CT is not well connected.\"}]},\"resolution_status\":\"check_only\"}]}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790343408,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 2990,
+      "prompt_tokens": 3775,
+      "total_tokens": 6765,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 313,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cache_write_tokens": 0,
+        "cached_tokens": 3772
+      }
+    }
+  },
+  "provider_request_id": "req_18c22af0ffa747fcb90f5186aa14ecaf",
+  "error": null
+}

@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "",
+  "run_id": "",
+  "started_utc": "2026-09-26T10:12:36.783205+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "max_completion_tokens": 24000,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You extract diagnostic records from a technical manual into a typed contract.\n\nSource type: technical PDF\nSource title: 01_eastman_e554_service_manual.pdf\n\nThe input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be\na complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,\necho its window_id and allowed_source_anchors on every candidate; the system overwrites and\nverifies both fields and no evidence outside that block is allowed. For a section chunk, set\nrecord_window_id=\"\" and set allowed_source_anchors to exactly the anchors referenced by that\ncandidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL\ncontext may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields\nbelong to the current cause/remedy branch. Each displayed FIELD value is one exact source\nspan. Quote the value only: never include the \"FIELD n:\" label, join separate fields, or\nrestore a sibling field omitted by the system.\nReturn every explicit diagnostic record and every distinct cause/remedy branch in the input.\nThe contract is an intermediate record representation, not the final graph. Use schema_version=\"1.1\".\n\nRules:\n1. Never emit graph IDs or ontology relation names. The system owns them.\n2. A diagnostic record has one or more indicators. An indicator is either an observable\n   symptom or an asset-generated error/alarm code. A record may explicitly contain both;\n   keep both. For a symptom set code=null and severity=\"Unknown\" unless the source explicitly\n   states its severity; never invent a risk rating. For an error_code set its\n   code and severity=null. Only an explicit not_diagnostic page disposition may use an empty\n   indicator list.\n3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action\n   from different table rows, flowchart branches or unrelated paragraphs.\n4. A FailureMode is an explicit technical cause or faulty state, not a restatement of the\n   symptom, an inspection result or an invented explanation. Use null when none is stated.\n5. A CorrectiveAction is an explicitly restorative remedy for that failure. Checks and tests\n   are not restorative unless the source says the check itself resolves the fault. Preserve\n   a non-restorative check/test/inspection in inspection_steps, never in actions.\n6. Set resolution_status:\n   - action_stated: at least one restorative action is explicitly linked to the failure;\n   - no_action_stated: the diagnostic record states a failure but no remedy;\n   - check_only: it gives only diagnostic checks/verification;\n   - ambiguous: the row/branch pairing cannot be established safely;\n   - not_diagnostic: a candidate-looking passage is actually preventive/generic content.\n7. An affected component is optional. Include it only if the branch explicitly identifies the\n   affected component. category and failure.material_context are required-but-nullable: use\n   null rather than manufacturing a category/context. A null category does not invalidate a\n   grounded branch; the deterministic compiler supplies a neutral schema category. Do not use\n   a product name as a component.\n8. Evidence is edge-specific. claim_evidence proves only the claim. Each edge evidence list is\n   a support set: one span may explicitly state the whole link, or several spans from the same\n   record/branch may collectively establish it when a manual separates Problem, Cause and\n   Remedy across blocks or pages. failure_link_evidence supports only that exact indicator to\n   failure; resolution_link_evidence supports only that exact failure to action;\n   affects_link_evidence supports only that exact failure to component. Include every span\n   needed to establish the link and no unrelated nearby heading. Never use an action-only span\n   as the sole proof of an indicator-to-failure edge.\n   In a system-owned atomic table row, use the exact endpoint FIELD spans as the edge support\n   set; the deterministic compiler verifies the table structure and completes their union.\n9. Every quote is a short verbatim span contained in the EvidenceUnit named by source_anchor,\n   on source_page. Prefer one span per EvidenceUnit. If wording crosses adjacent units, emit\n   separate exact spans; never concatenate or paraphrase cells. Copy the opaque anchor exactly.\n   Do not include page/anchor marker text in a quote.\n10. record_anchor must be one of this candidate's claim-evidence anchors. branch_anchor must be\n    one of this candidate's evidence anchors (prefer a causal edge anchor). For an explicit\n    not_diagnostic disposition with no claims, set both to the candidate page's EvidenceUnit\n    anchor. These anchors are source locators, not freely generated IDs.\n11. Preserve source language in human-readable values and set source_language accordingly.\n12. Duplicate records caused by overlapping pages must be returned identically; deterministic\n    lineage and compilation will deduplicate them.\n13. Account for candidate-looking passages. If one is actually generic/preventive content,\n    emit a not_diagnostic candidate with empty indicators and no diagnostic claims. Return an\n    empty records list only when the input contains no candidate-looking passage at all. Never\n    fill a missing cause/action simply to make a complete record.\n14. Every anchored candidate-looking passage in the input must occur in a record's claim/edge\n    evidence, or have its own explicit not_diagnostic disposition. Do not cover only the first\n    row or branch of a troubleshooting table.\n15. For check_only, actions must be empty and inspection_steps must preserve each stated check\n    with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.\n16. Preserve every stated precondition, test outcome, negation, threshold and alternative in\n    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection\n    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test\n    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.\n    Keep inspection_steps and actions in source order; do not sort steps alphabetically.\n17. Preserve the actual error CODE separately from its fault name, including a numerical code\n    in a separate table column. Never substitute the name for a printed numeric code.\n"
+      },
+      {
+        "role": "user",
+        "content": "--- PAGE 53 ---\n\n[[EVIDENCE_ID: a0001]]\nAgency Compliance\n-Center for Devices and Radiological Health (CDRH) re-\nquirements\n-Federal Communications Commission (FCC) require-\nments\n-European Union (EU) requirements\n\n[[EVIDENCE_ID: a0002]]\nSYNRAD lasers are designed, tested, and certified to com-\nply with certain United States (U.S.) and European Union\n(EU) regulations. These regulations impose product perfor-\nmance requirements related to electromagnetic compatibil-\nity (EMC) and product safety characteristics for industrial,\nscientific, and medical (ISM) equipment.\n\n[[EVIDENCE_ID: a0003]]\nIn the U.S., laser safety requirements are governed by the\nCenter for Devices and Radiological Health (CDRH) under\nthe auspices of the U.S. Food and Drug Administration (FDA)\nwhile radiated emission standards fall under the jurisdiction\nof the U.S. Federal Communications Commission (FCC).\nOutside the U.S., laser safety and emissions are governed\nby European Union (EU) Directives and Standards.\n\n[[EVIDENCE_ID: a0004]]\nCenter for Devices and Radiological Health (CDRH) re-\nquirements\n\n[[EVIDENCE_ID: a0005]]\nEastman lasers comply with requirements for Class IV la-\nser products imposed by the Radiation Control for Health\nand Safety Act of 1968. Under this Act, the U.S. Food and\nDrug Administration (FDA) issued a performance standard\nin the Code of Federal Regulations (CFR) for laser prod-\nucts. This performance standard, (21 CFR, Subchapter J,\nPart 1040.10) was developed to protect public health and\nsafety by imposing requirements upon manufacturers of la-\nser products to provide an indication of the presence of la-\nser radiation, to provide the user with certain means to con-\ntrol radiation, and to assure that all personnel are adequately\nwarned of potential hazards through the use of product la-\nbels and instructions.\n\n[[EVIDENCE_ID: a0006]]\nProduct features incorporated into the design to comply with\nCDRH requirements are integrated as panel controls or in-\ndicators, internal circuit elements, or input/output signal in-\nterfaces. Specifically, these features include a Keyswitch,\nlase and laser ready indicators, remote interlock for power\non/off, a laser aperture shutter switch, and a five-second\ndelay between power on and lasing.\n\n[[EVIDENCE_ID: a0007]]\nFederal Communications Commission (FCC) require-\nments\nThe United States Communication Act of 1934 vested the\nFederal Communications Commission (FCC) with the au-\nthority to regulate equipment that emits electromagnetic ra-\ndiation in the radio frequency spectrum. The purpose of the\n\n[[EVIDENCE_ID: a0008]]\nCommunication Act is to prevent harmful electromagnetic\ninterference (EMI) from affecting authorized radio communi-\ncation services. The FCC regulations that govern industrial,\nscientific, and medical (ISM) equipment are fully described\nin 47 CFR, Part 18, Subpart C. SYNRAD’s Firestar  f201\nlasers have been tested and found to comply by demon-\nstrating performance characteristics that have met or ex-\nceeded the requirements of 47 CFR, Part 18, Radiated and\nConducted Emissions.\n\n[[EVIDENCE_ID: a0009]]\nFCC information to the user\nNOTE: The following FCC information to the user is pro-\nvided to comply with the requirements of 47 CFR, Part 18,\nSection 213.\n\n[[EVIDENCE_ID: a0010]]\nInterference Potential\nIn testing, SYNRAD, Inc. has not discovered any significant\nelectrical interference traceable to Firestar f-Series lasers.\nSystem Maintenance\nEnsure that all exterior covers are properly fastened in posi-\ntion.\nMeasures to Correct Interference\nIf you suspect that your Firestar laser interferes with other\nequipment, take the following steps to minimize this inter-\nference:\n1) Use shielded cables to and from the equipment that is\nexperiencing interference problems.\n2) Ensure that the Firestar laser is properly grounded to the\nsame electrical potential as the equipment or system it is\nconnected to.\n\n[[EVIDENCE_ID: a0011]]\nFCC caution to the user\nThe Federal Communications Commission warns the user\nthat changes or modifications of the unit not expressly ap-\nproved by the party responsible for compliance could void\nthe user’s authority to operate the equipment.\n\n[[EVIDENCE_ID: a0012]]\nEuropean Union (EU) requirements\nLaser safety standards\nUnder the Low Voltage Directive, 2006/95/EC, the European\nNorm (EN) document EN 60825-1 was developed to protect\npersons from laser radiation by imposing requirements upon\nmanufacturers of laser products to provide an indication of\nlaser radiation; to classify laser products according to the\ndegree of hazard; to require both user and manufacturer to\nestablish procedures so that proper precautions are adopted;\nto ensure adequate warning of the hazards associated with\naccessible radiation through signs, labels, and instructions;\nto improve control of laser radiation through protective fea-\ntures; and to provide safe usage of laser products by speci-\nfying user control measures.\n\n[[EVIDENCE_ID: a0013]]\n53\nForm E-554\n\n--- PAGE 54 ---\n\n[[EVIDENCE_ID: a0014]]\nTechnical Data\nEASTMAN  Eagle S3L\n®\n\n[[EVIDENCE_ID: a0015]]\nInformation based on a standard 72\" Maximum cutting capacity machine.\n* Relative to the type and quality of fabric, Cutting speed, Pulling mode, Operational Settings etc.\n\n[[EVIDENCE_ID: a0016]]\nMachine\nWorking\nTable Width\nOverall Machine\nSize\nWidth\n(Including Rack & Rail)\nWidth\n60\"\n58.6\"\n72\"\n91\"\n(1530 mm)\n(1488 mm)\n(1830 mm)\n(2310 mm)\n66\"\n64.6\"\n78\"\n97\"\n(1680 mm)\n(1641 mm)\n(1980  mm)\n(2464 mm)\n72\"\n70.6\"\n 84\"\n103\"\n(1830 mm)\n(1793 mm)\n(2130 mm)\n(2616 mm)\n78\"\n76.6\"\n90\"\n109\"\n(1980 mm)\n(1946 mm)\n(2290 mm)\n(2770 mm)\nPlease allow 3 ft working clearance on all sides.\n* For all other sizes consult factory.\n\n[[EVIDENCE_ID: a0017]]\nLimited Warranty.  Eastman warrants to the buyer that the equipment shall be free from defects in materials or workmanship\nfor a period of 180 days commencing on the date of invoice.  Any goods or parts claimed by the buyer to be defective must be\nreturned to Eastman, freight charges prepaid, within the 180-day warranty period.  If Eastman determines that the goods or parts\nare defective in materials or workmanship, Eastman’s sole obligation under this warranty shall be, at Eastman’s sole option, to repair\nor replace the defective goods or parts or to provide the buyer a credit equal to the portion of the purchase price allocable to the\ndefective goods or parts.  This warranty shall not apply if defects are caused by product misuse or neglect, if the machine has\nbeen altered or modified by the buyer, or if other than genuine Eastman belts, emery wheels, knives or parts are used in the machine.\nTHIS WARRANTY IS THE ONLY WARRANTY APPLICABLE TO THIS PURCHASE.  SELLER DISCLAIMS ALL OTHER WARRANTIES,\nEXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\nA PARTICULAR PURPOSE.\n\n[[EVIDENCE_ID: a0018]]\nLimitation of Liability.  Eastman’s liability to the buyer, and the buyer’s remedies from Eastman, whether in contract, negligence,\ntort, under any warranty or otherwise, shall be limited to the remedies provided in the foregoing Limited Warranty.  In no event shall\nEastman have any responsibility or liability to the buyer for (a) any special, indirect, incidental, or consequential damages, including,\nbut not limited to, loss of use, revenue, or profit, even if Eastman has been advised of the possibility of such damages, or (b) any\nclaim against the buyer by any third party.  The price stated for the product sold is a consideration for limiting Eastman’s liability.\n\n[[EVIDENCE_ID: a0019]]\n779 Washington St., Buffalo, N.Y. 14203-1396 U.S.A. • (716)856-2200 • Fax (716)856-1140 or (716)856-2068\nManufacturers of Eastman Cloth Cutting and Cloth Spreading Machines\nWebsite: www.EastmanCuts.com\nForm E-554\n ©2012 Eastman Machine Company    Printed in U.S.A.   3/12\n\n[[EVIDENCE_ID: a0020]]\n| Technical Data ® EASTMAN Eagle S3L |\n\n[[EVIDENCE_ID: a0021]]\nEagle S3L Maximum Machine Speed* ...................................... 60 in/sec. (150 cm/sec.) Maximum Table Length ............................................ None Cut Accuracy*.......................................................... +/- .015\" (+/- .4 mm) Gantry Weight.......................................................... Approx. 200 lbs. (145 kg) Eagle S3L Operating Voltage ................................... 110v; 60hz Blower Operating Voltage ......................................... 220v; 60hz Power Requirement (Eagle S3l)................................ 110V/20A (Blowers)................................... 220V/25A Minimum Operating Pressure ................................... 75 PSI Volume of Air Service ............................................... 5 SCFM Minimum Temperature.............................................. 55° non-condensing Laser Specifications Laser Class:............................................................. IV Model ....................................................................... Synrad Firestar f201 sealed CO2 Output Power ........................................................... 200W Beam Diameter ........................................................ 3.5mm Cooling..................................................................... Water Input voltage/current ................................................. 96 VDC/36A Heat Load (max) ...................................................... 4000W Wavelength .............................................................. 10.2-10.7 um |  |\n\n[[EVIDENCE_ID: a0022]]\nMachine Size | Working Width | Table Width (Including Rack & Rail) | Overall Machine Width\n\n[[EVIDENCE_ID: a0023]]\n60\" (1530 mm) | 58.6\" (1488 mm) | 72\" (1830 mm) | 91\" (2310 mm)\n\n[[EVIDENCE_ID: a0024]]\n66\" (1680 mm) | 64.6\" (1641 mm) | 78\" (1980 mm) | 97\" (2464 mm)\n\n[[EVIDENCE_ID: a0025]]\n72\" (1830 mm) | 70.6\" (1793 mm) | 84\" (2130 mm) | 103\" (2616 mm)\n\n[[EVIDENCE_ID: a0026]]\n78\" (1980 mm) | 76.6\" (1946 mm) | 90\" (2290 mm) | 109\" (2770 mm)"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "DiagnosticChunkOutput",
+        "strict": true,
+        "schema": {
+          "$defs": {
+            "AffectedComponentCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "category": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Category"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "affects_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Affects Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "category",
+                "claim_evidence",
+                "affects_link_evidence"
+              ],
+              "title": "AffectedComponentCandidate",
+              "type": "object"
+            },
+            "CorrectiveActionCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "action_kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Action Kind"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "resolution_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Resolution Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instruction_text",
+                "action_kind",
+                "claim_evidence",
+                "resolution_link_evidence"
+              ],
+              "title": "CorrectiveActionCandidate",
+              "type": "object"
+            },
+            "DiagnosticBundleCandidate": {
+              "additionalProperties": false,
+              "description": "One source record, potentially containing several observed indicators.",
+              "properties": {
+                "record_window_id": {
+                  "title": "Record Window Id",
+                  "type": "string"
+                },
+                "allowed_source_anchors": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Allowed Source Anchors",
+                  "type": "array"
+                },
+                "record_anchor": {
+                  "minLength": 1,
+                  "title": "Record Anchor",
+                  "type": "string"
+                },
+                "branch_anchor": {
+                  "minLength": 1,
+                  "title": "Branch Anchor",
+                  "type": "string"
+                },
+                "indicators": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticIndicatorCandidate"
+                  },
+                  "title": "Indicators",
+                  "type": "array"
+                },
+                "failure": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FailureModeCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actions": {
+                  "items": {
+                    "$ref": "#/$defs/CorrectiveActionCandidate"
+                  },
+                  "title": "Actions",
+                  "type": "array"
+                },
+                "inspection_steps": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticInspectionStepCandidate"
+                  },
+                  "title": "Inspection Steps",
+                  "type": "array"
+                },
+                "conditions": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticConditionCandidate"
+                  },
+                  "title": "Conditions",
+                  "type": "array"
+                },
+                "affected_component": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AffectedComponentCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolution_status": {
+                  "$ref": "#/$defs/ResolutionStatus"
+                }
+              },
+              "required": [
+                "record_window_id",
+                "allowed_source_anchors",
+                "record_anchor",
+                "branch_anchor",
+                "indicators",
+                "failure",
+                "actions",
+                "inspection_steps",
+                "conditions",
+                "affected_component",
+                "resolution_status"
+              ],
+              "title": "DiagnosticBundleCandidate",
+              "type": "object"
+            },
+            "DiagnosticConditionCandidate": {
+              "additionalProperties": false,
+              "description": "Source-stated condition attached to a branch or a zero-based step.",
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "title": "Text",
+                  "type": "string"
+                },
+                "applies_to": {
+                  "enum": [
+                    "branch",
+                    "action",
+                    "inspection"
+                  ],
+                  "title": "Applies To",
+                  "type": "string"
+                },
+                "step_index": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Step Index"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "text",
+                "applies_to",
+                "step_index",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticConditionCandidate",
+              "type": "object"
+            },
+            "DiagnosticEvidenceSpan": {
+              "additionalProperties": false,
+              "description": "A verbatim source span emitted by the extraction model.\n\n``source_anchor`` is the opaque evidence identifier printed in the model's\ninput.  It is intentionally not a graph node identifier.",
+              "properties": {
+                "source_anchor": {
+                  "minLength": 1,
+                  "title": "Source Anchor",
+                  "type": "string"
+                },
+                "source_page": {
+                  "minimum": 1,
+                  "title": "Source Page",
+                  "type": "integer"
+                },
+                "quote": {
+                  "minLength": 1,
+                  "title": "Quote",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source_anchor",
+                "source_page",
+                "quote"
+              ],
+              "title": "DiagnosticEvidenceSpan",
+              "type": "object"
+            },
+            "DiagnosticIndicatorCandidate": {
+              "additionalProperties": false,
+              "description": "Provider-safe flat indicator contract.\n\nOpenAI strict Structured Outputs does not accept the ``oneOf`` emitted by\nPydantic for a discriminated model union inside an array.  Keep the wire\nshape flat and enforce the same symptom/error-code invariants locally.\nNullable fields remain required so the provider schema is strict.",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "symptom",
+                    "error_code"
+                  ],
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "code": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code"
+                },
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "severity": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "Critical",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Severity"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "failure_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Failure Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "code",
+                "name",
+                "description",
+                "severity",
+                "claim_evidence",
+                "failure_link_evidence"
+              ],
+              "title": "DiagnosticIndicatorCandidate",
+              "type": "object"
+            },
+            "DiagnosticInspectionStepCandidate": {
+              "additionalProperties": false,
+              "description": "A diagnostic check that is useful but does not itself restore operation.",
+              "properties": {
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "instruction_text",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticInspectionStepCandidate",
+              "type": "object"
+            },
+            "FailureModeCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "material_context": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Material Context"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "material_context",
+                "claim_evidence"
+              ],
+              "title": "FailureModeCandidate",
+              "type": "object"
+            },
+            "ResolutionStatus": {
+              "description": "The extractor's explicit assessment of diagnostic completeness.",
+              "enum": [
+                "action_stated",
+                "no_action_stated",
+                "check_only",
+                "ambiguous",
+                "not_diagnostic"
+              ],
+              "title": "ResolutionStatus",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Provider structured-output envelope for one diagnostic PDF chunk.\n\nAll fields are required, including nullable/list fields.  This avoids the\noptional-property mismatch of strict provider JSON Schema implementations.",
+          "properties": {
+            "schema_version": {
+              "enum": [
+                "1.0",
+                "1.1"
+              ],
+              "title": "Schema Version",
+              "type": "string"
+            },
+            "source_language": {
+              "minLength": 1,
+              "title": "Source Language",
+              "type": "string"
+            },
+            "records": {
+              "items": {
+                "$ref": "#/$defs/DiagnosticBundleCandidate"
+              },
+              "title": "Records",
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "source_language",
+            "records"
+          ],
+          "title": "DiagnosticChunkOutput",
+          "type": "object"
+        }
+      }
+    },
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 0.0015074160182848573,
+  "response": {
+    "id": "chatcmpl-ES2QZ3RC7xEfnWX2pZw5unDaZ5RD7",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"schema_version\":\"1.1\",\"source_language\":\"en\",\"records\":[{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0010\"],\"record_anchor\":\"a0010\",\"branch_anchor\":\"a0010\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"electrical interference\",\"description\":\"electrical interference traceable to Firestar f-Series lasers\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0010\",\"source_page\":53,\"quote\":\"electrical interference traceable to Firestar f-Series lasers\"}],\"failure_link_evidence\":[]}],\"failure\":null,\"actions\":[{\"name\":\"Use shielded cables\",\"description\":\"Use shielded cables to and from the equipment that is experiencing interference problems.\",\"instruction_text\":\"Use shielded cables to and from the equipment that is experiencing interference problems.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0010\",\"source_page\":53,\"quote\":\"Use shielded cables to and from the equipment that is experiencing interference problems.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0010\",\"source_page\":53,\"quote\":\"If you suspect that your Firestar laser interferes with other equipment, take the following steps to minimize this interference:\"},{\"source_anchor\":\"a0010\",\"source_page\":53,\"quote\":\"Use shielded cables to and from the equipment that is experiencing interference problems.\"}]},{\"name\":\"Ensure proper grounding\",\"description\":\"Ensure that the Firestar laser is properly grounded to the same electrical potential as the equipment or system it is connected to.\",\"instruction_text\":\"Ensure that the Firestar laser is properly grounded to the same electrical potential as the equipment or system it is connected to.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0010\",\"source_page\":53,\"quote\":\"Ensure that the Firestar laser is properly grounded to the same electrical potential as the equipment or system it is connected to.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0010\",\"source_page\":53,\"quote\":\"If you suspect that your Firestar laser interferes with other equipment, take the following steps to minimize this interference:\"},{\"source_anchor\":\"a0010\",\"source_page\":53,\"quote\":\"Ensure that the Firestar laser is properly grounded to the same electrical potential as the equipment or system it is connected to.\"}]}],\"inspection_steps\":[],\"conditions\":[{\"text\":\"If you suspect that your Firestar laser interferes with other equipment\",\"applies_to\":\"branch\",\"step_index\":null,\"claim_evidence\":[{\"source_anchor\":\"a0010\",\"source_page\":53,\"quote\":\"If you suspect that your Firestar laser interferes with other equipment\"}]}],\"affected_component\":null,\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0010\"],\"record_anchor\":\"a0010\",\"branch_anchor\":\"a0010\",\"indicators\":[],\"failure\":null,\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"not_diagnostic\"}]}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790351223,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 982,
+      "prompt_tokens": 4956,
+      "total_tokens": 5938,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 349,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cache_write_tokens": 2342,
+        "cached_tokens": 2611
+      }
+    }
+  },
+  "provider_request_id": null,
+  "error": null
+}

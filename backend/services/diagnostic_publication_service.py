@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+import unicodedata
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from typing import Any
@@ -71,13 +73,13 @@ def _grounded_copy(
     for ref in relation.evidence_refs:
         evidence = evidence_by_id.get(str(ref.evidence_id))
         if evidence is None:
-            continue
-        quote = normalize_semantic_text(ref.quote)
-        canonical_text = normalize_semantic_text(_canonical_evidence_text(evidence))
+            return None
+        quote = re.sub(r"\s+", " ", unicodedata.normalize("NFKC", ref.quote)).strip()
+        canonical_text = re.sub(r"\s+", " ", unicodedata.normalize("NFKC", _canonical_evidence_text(evidence))).strip()
         if not quote or not canonical_text or quote not in canonical_text:
-            continue
+            return None
         if not _anchor_resolves(ref.source_anchor, evidence):
-            continue
+            return None
         valid_refs.append(ref)
     if not valid_refs:
         return None
@@ -374,7 +376,7 @@ def build_publication_graph(
             "disposition": gap.disposition,
         }
         for index, gap in enumerate(gaps)
-        if gap.blocking or gap.disposition in {"gap", "review"}
+        if gap.blocking or (gap.review_required and gap.disposition in {"gap", "review"})
     ]
 
     relation_counts = Counter(relation.relation_type for relation in canonical_relations)
@@ -435,6 +437,7 @@ def build_publication_graph(
         "ambiguous_near_duplicates": len(ambiguous),
         "knowledge_gaps": len(gaps),
         "review_queue_items": len(review_queue),
+        "verified_source_gap_information": sum(not gap.review_required and not gap.blocking for gap in gaps),
     }
 
     projections = {

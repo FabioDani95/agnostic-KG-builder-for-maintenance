@@ -34,7 +34,7 @@ Per ciascun manuale compilare nel registro titolo e versione esatti, produttore,
 famiglia, fonte, percorso del PDF, SHA-256, split, storia di esposizione, lingua,
 formato, pagine diagnostiche da annotare e assegnazioni agli annotatori.
 I quattro documenti storici sono identificati tramite gli artifact già presenti;
-il loro percorso PDF e hash vanno riconciliati prima del nuovo run.
+il loro percorso PDF e hash sono stati riconciliati e registrati per il pilot.
 
 Usare `files/<document_id>/` per i PDF locali, senza duplicare quelli già presenti
 se basta un percorso nel registro. Usare `annotations/<document_id>/` per le

@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "c2_hypertherm_powermax30_air:f277fb55eb1247e0984f23629eba4463",
+  "run_id": "c2_hypertherm_powermax30_air",
+  "started_utc": "2026-09-25T16:02:20.426293+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "max_completion_tokens": 24000,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You extract diagnostic records from a technical manual into a typed contract.\n\nSource type: technical PDF\nSource title: hypertherm_powermax30_air_service_manual_rev4_808850.pdf\n\nThe input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be\na complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,\necho its window_id and allowed_source_anchors on every candidate; the system overwrites and\nverifies both fields and no evidence outside that block is allowed. For a section chunk, set\nrecord_window_id=\"\" and set allowed_source_anchors to exactly the anchors referenced by that\ncandidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL\ncontext may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields\nbelong to the current cause/remedy branch. Each displayed FIELD value is one exact source\nspan. Quote the value only: never include the \"FIELD n:\" label, join separate fields, or\nrestore a sibling field omitted by the system.\nReturn every explicit diagnostic record and every distinct cause/remedy branch in the input.\nThe contract is an intermediate record representation, not the final graph. Use schema_version=\"1.1\".\n\nRules:\n1. Never emit graph IDs or ontology relation names. The system owns them.\n2. A diagnostic record has one or more indicators. An indicator is either an observable\n   symptom or an asset-generated error/alarm code. A record may explicitly contain both;\n   keep both. For a symptom set code=null and severity=\"Unknown\" unless the source explicitly\n   states its severity; never invent a risk rating. For an error_code set its\n   code and severity=null. Only an explicit not_diagnostic page disposition may use an empty\n   indicator list.\n3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action\n   from different table rows, flowchart branches or unrelated paragraphs.\n4. A FailureMode is an explicit technical cause or faulty state, not a restatement of the\n   symptom, an inspection result or an invented explanation. Use null when none is stated.\n5. A CorrectiveAction is an explicitly restorative remedy for that failure. Checks and tests\n   are not restorative unless the source says the check itself resolves the fault. Preserve\n   a non-restorative check/test/inspection in inspection_steps, never in actions.\n6. Set resolution_status:\n   - action_stated: at least one restorative action is explicitly linked to the failure;\n   - no_action_stated: the diagnostic record states a failure but no remedy;\n   - check_only: it gives only diagnostic checks/verification;\n   - ambiguous: the row/branch pairing cannot be established safely;\n   - not_diagnostic: a candidate-looking passage is actually preventive/generic content.\n7. An affected component is optional. Include it only if the branch explicitly identifies the\n   affected component. category and failure.material_context are required-but-nullable: use\n   null rather than manufacturing a category/context. A null category does not invalidate a\n   grounded branch; the deterministic compiler supplies a neutral schema category. Do not use\n   a product name as a component.\n8. Evidence is edge-specific. claim_evidence proves only the claim. Each edge evidence list is\n   a support set: one span may explicitly state the whole link, or several spans from the same\n   record/branch may collectively establish it when a manual separates Problem, Cause and\n   Remedy across blocks or pages. failure_link_evidence supports only that exact indicator to\n   failure; resolution_link_evidence supports only that exact failure to action;\n   affects_link_evidence supports only that exact failure to component. Include every span\n   needed to establish the link and no unrelated nearby heading. Never use an action-only span\n   as the sole proof of an indicator-to-failure edge.\n   In a system-owned atomic table row, use the exact endpoint FIELD spans as the edge support\n   set; the deterministic compiler verifies the table structure and completes their union.\n9. Every quote is a short verbatim span contained in the EvidenceUnit named by source_anchor,\n   on source_page. Prefer one span per EvidenceUnit. If wording crosses adjacent units, emit\n   separate exact spans; never concatenate or paraphrase cells. Copy the opaque anchor exactly.\n   Do not include page/anchor marker text in a quote.\n10. record_anchor must be one of this candidate's claim-evidence anchors. branch_anchor must be\n    one of this candidate's evidence anchors (prefer a causal edge anchor). For an explicit\n    not_diagnostic disposition with no claims, set both to the candidate page's EvidenceUnit\n    anchor. These anchors are source locators, not freely generated IDs.\n11. Preserve source language in human-readable values and set source_language accordingly.\n12. Duplicate records caused by overlapping pages must be returned identically; deterministic\n    lineage and compilation will deduplicate them.\n13. Account for candidate-looking passages. If one is actually generic/preventive content,\n    emit a not_diagnostic candidate with empty indicators and no diagnostic claims. Return an\n    empty records list only when the input contains no candidate-looking passage at all. Never\n    fill a missing cause/action simply to make a complete record.\n14. Every anchored candidate-looking passage in the input must occur in a record's claim/edge\n    evidence, or have its own explicit not_diagnostic disposition. Do not cover only the first\n    row or branch of a troubleshooting table.\n15. For check_only, actions must be empty and inspection_steps must preserve each stated check\n    with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.\n16. Preserve every stated precondition, test outcome, negation, threshold and alternative in\n    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection\n    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test\n    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.\n    Keep inspection_steps and actions in source order; do not sort steps alphabetically.\n17. Preserve the actual error CODE separately from its fault name, including a numerical code\n    in a separate table column. Never substitute the name for a printed numeric code.\n"
+      },
+      {
+        "role": "user",
+        "content": "## DOCUMENT CONTEXT\nThese pages come from the following manual sections:\n- Replace the air filter bowl and air filter element (pp. 160-163, source: rule)\n\nUse this context to better interpret the content. Extract all ontology-relevant information from these sections, including components, error codes, symptoms, failure modes, and corrective actions.\n\n--- PAGE 160 ---\n\n[[EVIDENCE_ID: a0001]]\n6 – Power Supply Component Replacement\n\n[[EVIDENCE_ID: a0002]]\nReplace the air filter bowl and air filter element\n\n[[EVIDENCE_ID: a0003]]\nKit number\nDescription\n\n[[EVIDENCE_ID: a0004]]\n428378\nKit: Air filter element\n\n[[EVIDENCE_ID: a0005]]\n428380\nKit: Air filter bowl (includes hose barb, O-ring, and drain hose)\n\n[[EVIDENCE_ID: a0006]]\nRemove the air filter bowl and air filter element\n\n[[EVIDENCE_ID: a0007]]\n1. Complete the following procedures:\n\n[[EVIDENCE_ID: a0008]]\na. Set the power switch to OFF (O), and disconnect the power cord from the power source.\n\n[[EVIDENCE_ID: a0009]]\nb. See Remove the power supply cover on page 106.\n\n[[EVIDENCE_ID: a0010]]\n2. From the fan side of the power supply, disconnect the drain hose\n from the fitting\n at the bottom of the air filter \nbowl.\n\n[[EVIDENCE_ID: a0011]]\n1\n2\n\n[[EVIDENCE_ID: a0012]]\n\nIt is normal to see water in the drain hose and in the air filter bowl. Remove any water that \nspills inside the power supply before operating the system again.\n\n[[EVIDENCE_ID: a0013]]\n\nIf you need better access to the air filter, remove the fan plenum\n. Use a pair of \nneedlenose pliers to compress and release the plenum’s top 2 corner clips first before \nworking the bottom 2 clips free from the fan casing.\n\n[[EVIDENCE_ID: a0014]]\n3\n\n[[EVIDENCE_ID: a0015]]\n3. Hold the top of the air filter assembly\n steady with one hand. With your other hand, unscrew the air filter bowl\n to \nremove it.\n\n[[EVIDENCE_ID: a0016]]\n4\n5\n\n[[EVIDENCE_ID: a0017]]\nFigure 67\n\n[[EVIDENCE_ID: a0018]]\n4\n\n[[EVIDENCE_ID: a0019]]\n5\n\n[[EVIDENCE_ID: a0020]]\n2\n1\n3\n\n[[EVIDENCE_ID: a0021]]\n160\nPowermax30 AIR\nService Manual\n808850\n\n--- PAGE 161 ---\n\n[[EVIDENCE_ID: a0022]]\n6 – Power Supply Component Replacement\n\n[[EVIDENCE_ID: a0023]]\n4. Does the air filter element\n need to be \nreplaced?\n\n[[EVIDENCE_ID: a0024]]\n6\n\n[[EVIDENCE_ID: a0025]]\n\nIf yes, continue with the next step.\n\n[[EVIDENCE_ID: a0026]]\n\nIf no, skip to step 5 on page 162.\n\n[[EVIDENCE_ID: a0027]]\n5. Pry the air filter element out of the top of the \nfilter bowl to remove it. Be careful not to \ndamage the O-ring at the top of the bowl.\n\n[[EVIDENCE_ID: a0028]]\n6. Gently twist the plastic fittings\n until they \ncome apart and you can remove the air filter \nelement from them. Set the 2 plastic fittings \naside.\n\n[[EVIDENCE_ID: a0029]]\n7\n\n[[EVIDENCE_ID: a0030]]\nFigure 68\n\n[[EVIDENCE_ID: a0031]]\n7\n\n[[EVIDENCE_ID: a0032]]\n7\n\n[[EVIDENCE_ID: a0033]]\n6\n\n[[EVIDENCE_ID: a0034]]\nInstall the air filter element and air filter bowl\n\n[[EVIDENCE_ID: a0035]]\n1. Are you replacing the whole filter bowl assembly or only the air filter element?\n\n[[EVIDENCE_ID: a0036]]\n\nAir filter element: continue with the next step.\n\n[[EVIDENCE_ID: a0037]]\n\nFilter bowl assembly: start with step 5 on page 162.\n\n[[EVIDENCE_ID: a0038]]\n2. Enclose the new air filter element in the plastic \nfittings. Gently twist the plastic fittings until they lock \ntogether and fit snugly against the air filter element.\n\n[[EVIDENCE_ID: a0039]]\n3. Clean the filter bowl\n before installing it by wiping \naway any oil, dirt, or other contaminants. Make sure \nthe O-ring\n on the bowl is not cracked or \ndamaged. See Figure 69 on page 162.\n\n[[EVIDENCE_ID: a0040]]\n1\n\n[[EVIDENCE_ID: a0041]]\n2\n\n[[EVIDENCE_ID: a0042]]\nPowermax30 AIR\nService Manual\n808850\n161\n\n--- PAGE 162 ---\n\n[[EVIDENCE_ID: a0043]]\n6 – Power Supply Component Replacement\n\n[[EVIDENCE_ID: a0044]]\n4. Place the air filter element\n inside the air \nfilter bowl. Press down on the filter element’s \ntop plastic fitting so that you hear it snap into \nplace.\n\n[[EVIDENCE_ID: a0045]]\n3\n\n[[EVIDENCE_ID: a0046]]\n5. Position the filter bowl behind the wires from \nthe fan. Screw the filter bowl into the air filter. \nTighten the filter bowl to finger-tight.\n\n[[EVIDENCE_ID: a0047]]\n\nBe careful not to trap the fan’s wires behind \nthe filter bowl when you install the bowl.\n\n[[EVIDENCE_ID: a0048]]\n6. Connect the drain hose\n to the fitting\n at \nthe bottom of the filter bowl.\n\n[[EVIDENCE_ID: a0049]]\n4\n5\n\n[[EVIDENCE_ID: a0050]]\n7. Make sure the other end of the drain hose is \npressed securely in the hole in the base of the \npower supply.\n\n[[EVIDENCE_ID: a0051]]\nFigure 69\n\n[[EVIDENCE_ID: a0052]]\n2\n\n[[EVIDENCE_ID: a0053]]\n3\n\n[[EVIDENCE_ID: a0054]]\n4\n\n[[EVIDENCE_ID: a0055]]\n8. Put the fan plenum back in place, if you removed it earlier.\n\n[[EVIDENCE_ID: a0056]]\n1\n\n[[EVIDENCE_ID: a0057]]\n5\n\n[[EVIDENCE_ID: a0058]]\n162\nPowermax30 AIR\nService Manual\n808850\n\n--- PAGE 163 ---\n\n[[EVIDENCE_ID: a0059]]\n6 – Power Supply Component Replacement\n\n[[EVIDENCE_ID: a0060]]\n9. Check for leaks and loose connections at each fitting and hose connection point on the air filter assembly.\n\n[[EVIDENCE_ID: a0061]]\n10. Complete the following procedures:\n\n[[EVIDENCE_ID: a0062]]\na. See Install the power supply cover on page 107.\n\n[[EVIDENCE_ID: a0063]]\nb. Reconnect the power cord, and set the power switch to ON (I).\n\n[[EVIDENCE_ID: a0064]]\nPowermax30 AIR\nService Manual\n808850\n163\n\n[[EVIDENCE_ID: a0065]]\n| CAUTION!\n\n[[EVIDENCE_ID: a0066]]\nIf there are leaks in the gas supply hoses or connections:  Cut speeds can decrease.  Cut quality can deteriorate.  Cutting thickness capability can decrease.  Parts life can shorten. |"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "DiagnosticChunkOutput",
+        "strict": true,
+        "schema": {
+          "$defs": {
+            "AffectedComponentCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "category": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Category"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "affects_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Affects Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "category",
+                "claim_evidence",
+                "affects_link_evidence"
+              ],
+              "title": "AffectedComponentCandidate",
+              "type": "object"
+            },
+            "CorrectiveActionCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "action_kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Action Kind"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "resolution_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Resolution Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instruction_text",
+                "action_kind",
+                "claim_evidence",
+                "resolution_link_evidence"
+              ],
+              "title": "CorrectiveActionCandidate",
+              "type": "object"
+            },
+            "DiagnosticBundleCandidate": {
+              "additionalProperties": false,
+              "description": "One source record, potentially containing several observed indicators.",
+              "properties": {
+                "record_window_id": {
+                  "title": "Record Window Id",
+                  "type": "string"
+                },
+                "allowed_source_anchors": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Allowed Source Anchors",
+                  "type": "array"
+                },
+                "record_anchor": {
+                  "minLength": 1,
+                  "title": "Record Anchor",
+                  "type": "string"
+                },
+                "branch_anchor": {
+                  "minLength": 1,
+                  "title": "Branch Anchor",
+                  "type": "string"
+                },
+                "indicators": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticIndicatorCandidate"
+                  },
+                  "title": "Indicators",
+                  "type": "array"
+                },
+                "failure": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FailureModeCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actions": {
+                  "items": {
+                    "$ref": "#/$defs/CorrectiveActionCandidate"
+                  },
+                  "title": "Actions",
+                  "type": "array"
+                },
+                "inspection_steps": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticInspectionStepCandidate"
+                  },
+                  "title": "Inspection Steps",
+                  "type": "array"
+                },
+                "conditions": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticConditionCandidate"
+                  },
+                  "title": "Conditions",
+                  "type": "array"
+                },
+                "affected_component": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AffectedComponentCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolution_status": {
+                  "$ref": "#/$defs/ResolutionStatus"
+                }
+              },
+              "required": [
+                "record_window_id",
+                "allowed_source_anchors",
+                "record_anchor",
+                "branch_anchor",
+                "indicators",
+                "failure",
+                "actions",
+                "inspection_steps",
+                "conditions",
+                "affected_component",
+                "resolution_status"
+              ],
+              "title": "DiagnosticBundleCandidate",
+              "type": "object"
+            },
+            "DiagnosticConditionCandidate": {
+              "additionalProperties": false,
+              "description": "Source-stated condition attached to a branch or a zero-based step.",
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "title": "Text",
+                  "type": "string"
+                },
+                "applies_to": {
+                  "enum": [
+                    "branch",
+                    "action",
+                    "inspection"
+                  ],
+                  "title": "Applies To",
+                  "type": "string"
+                },
+                "step_index": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Step Index"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "text",
+                "applies_to",
+                "step_index",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticConditionCandidate",
+              "type": "object"
+            },
+            "DiagnosticEvidenceSpan": {
+              "additionalProperties": false,
+              "description": "A verbatim source span emitted by the extraction model.\n\n``source_anchor`` is the opaque evidence identifier printed in the model's\ninput.  It is intentionally not a graph node identifier.",
+              "properties": {
+                "source_anchor": {
+                  "minLength": 1,
+                  "title": "Source Anchor",
+                  "type": "string"
+                },
+                "source_page": {
+                  "minimum": 1,
+                  "title": "Source Page",
+                  "type": "integer"
+                },
+                "quote": {
+                  "minLength": 1,
+                  "title": "Quote",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source_anchor",
+                "source_page",
+                "quote"
+              ],
+              "title": "DiagnosticEvidenceSpan",
+              "type": "object"
+            },
+            "DiagnosticIndicatorCandidate": {
+              "additionalProperties": false,
+              "description": "Provider-safe flat indicator contract.\n\nOpenAI strict Structured Outputs does not accept the ``oneOf`` emitted by\nPydantic for a discriminated model union inside an array.  Keep the wire\nshape flat and enforce the same symptom/error-code invariants locally.\nNullable fields remain required so the provider schema is strict.",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "symptom",
+                    "error_code"
+                  ],
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "code": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code"
+                },
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "severity": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "Critical",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Severity"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "failure_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Failure Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "code",
+                "name",
+                "description",
+                "severity",
+                "claim_evidence",
+                "failure_link_evidence"
+              ],
+              "title": "DiagnosticIndicatorCandidate",
+              "type": "object"
+            },
+            "DiagnosticInspectionStepCandidate": {
+              "additionalProperties": false,
+              "description": "A diagnostic check that is useful but does not itself restore operation.",
+              "properties": {
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "instruction_text",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticInspectionStepCandidate",
+              "type": "object"
+            },
+            "FailureModeCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "material_context": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Material Context"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "material_context",
+                "claim_evidence"
+              ],
+              "title": "FailureModeCandidate",
+              "type": "object"
+            },
+            "ResolutionStatus": {
+              "description": "The extractor's explicit assessment of diagnostic completeness.",
+              "enum": [
+                "action_stated",
+                "no_action_stated",
+                "check_only",
+                "ambiguous",
+                "not_diagnostic"
+              ],
+              "title": "ResolutionStatus",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Provider structured-output envelope for one diagnostic PDF chunk.\n\nAll fields are required, including nullable/list fields.  This avoids the\noptional-property mismatch of strict provider JSON Schema implementations.",
+          "properties": {
+            "schema_version": {
+              "enum": [
+                "1.0",
+                "1.1"
+              ],
+              "title": "Schema Version",
+              "type": "string"
+            },
+            "source_language": {
+              "minLength": 1,
+              "title": "Source Language",
+              "type": "string"
+            },
+            "records": {
+              "items": {
+                "$ref": "#/$defs/DiagnosticBundleCandidate"
+              },
+              "title": "Records",
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "source_language",
+            "records"
+          ],
+          "title": "DiagnosticChunkOutput",
+          "type": "object"
+        }
+      }
+    },
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 6.890745333977975,
+  "response": {
+    "id": "chatcmpl-ES2fNaDZKYSdkzoiytBexd3NQpjJZ",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"schema_version\":\"1.1\",\"source_language\":\"en\",\"records\":[{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0060\",\"a0065\"],\"record_anchor\":\"a0060\",\"branch_anchor\":\"a0065\",\"indicators\":[],\"failure\":null,\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"not_diagnostic\"}]}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790352141,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 408,
+      "prompt_tokens": 4295,
+      "total_tokens": 4703,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 315,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cache_write_tokens": 1676,
+        "cached_tokens": 2616
+      }
+    }
+  },
+  "provider_request_id": "req_b030d54a68ce47bea198e161dc169fc6",
+  "error": null
+}

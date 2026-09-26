@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "",
+  "run_id": "",
+  "started_utc": "2026-09-25T16:10:48.249315+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "max_completion_tokens": 24000,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You extract diagnostic records from a technical manual into a typed contract.\n\nSource type: technical PDF\nSource title: hypertherm_powermax30_air_service_manual_rev4_808850.pdf\n\nThe input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be\na complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,\necho its window_id and allowed_source_anchors on every candidate; the system overwrites and\nverifies both fields and no evidence outside that block is allowed. For a section chunk, set\nrecord_window_id=\"\" and set allowed_source_anchors to exactly the anchors referenced by that\ncandidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL\ncontext may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields\nbelong to the current cause/remedy branch. Each displayed FIELD value is one exact source\nspan. Quote the value only: never include the \"FIELD n:\" label, join separate fields, or\nrestore a sibling field omitted by the system.\nReturn every explicit diagnostic record and every distinct cause/remedy branch in the input.\nThe contract is an intermediate record representation, not the final graph. Use schema_version=\"1.1\".\n\nRules:\n1. Never emit graph IDs or ontology relation names. The system owns them.\n2. A diagnostic record has one or more indicators. An indicator is either an observable\n   symptom or an asset-generated error/alarm code. A record may explicitly contain both;\n   keep both. For a symptom set code=null and severity=\"Unknown\" unless the source explicitly\n   states its severity; never invent a risk rating. For an error_code set its\n   code and severity=null. Only an explicit not_diagnostic page disposition may use an empty\n   indicator list.\n3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action\n   from different table rows, flowchart branches or unrelated paragraphs.\n4. A FailureMode is an explicit technical cause or faulty state, not a restatement of the\n   symptom, an inspection result or an invented explanation. Use null when none is stated.\n5. A CorrectiveAction is an explicitly restorative remedy for that failure. Checks and tests\n   are not restorative unless the source says the check itself resolves the fault. Preserve\n   a non-restorative check/test/inspection in inspection_steps, never in actions.\n6. Set resolution_status:\n   - action_stated: at least one restorative action is explicitly linked to the failure;\n   - no_action_stated: the diagnostic record states a failure but no remedy;\n   - check_only: it gives only diagnostic checks/verification;\n   - ambiguous: the row/branch pairing cannot be established safely;\n   - not_diagnostic: a candidate-looking passage is actually preventive/generic content.\n7. An affected component is optional. Include it only if the branch explicitly identifies the\n   affected component. category and failure.material_context are required-but-nullable: use\n   null rather than manufacturing a category/context. A null category does not invalidate a\n   grounded branch; the deterministic compiler supplies a neutral schema category. Do not use\n   a product name as a component.\n8. Evidence is edge-specific. claim_evidence proves only the claim. Each edge evidence list is\n   a support set: one span may explicitly state the whole link, or several spans from the same\n   record/branch may collectively establish it when a manual separates Problem, Cause and\n   Remedy across blocks or pages. failure_link_evidence supports only that exact indicator to\n   failure; resolution_link_evidence supports only that exact failure to action;\n   affects_link_evidence supports only that exact failure to component. Include every span\n   needed to establish the link and no unrelated nearby heading. Never use an action-only span\n   as the sole proof of an indicator-to-failure edge.\n   In a system-owned atomic table row, use the exact endpoint FIELD spans as the edge support\n   set; the deterministic compiler verifies the table structure and completes their union.\n9. Every quote is a short verbatim span contained in the EvidenceUnit named by source_anchor,\n   on source_page. Prefer one span per EvidenceUnit. If wording crosses adjacent units, emit\n   separate exact spans; never concatenate or paraphrase cells. Copy the opaque anchor exactly.\n   Do not include page/anchor marker text in a quote.\n10. record_anchor must be one of this candidate's claim-evidence anchors. branch_anchor must be\n    one of this candidate's evidence anchors (prefer a causal edge anchor). For an explicit\n    not_diagnostic disposition with no claims, set both to the candidate page's EvidenceUnit\n    anchor. These anchors are source locators, not freely generated IDs.\n11. Preserve source language in human-readable values and set source_language accordingly.\n12. Duplicate records caused by overlapping pages must be returned identically; deterministic\n    lineage and compilation will deduplicate them.\n13. Account for candidate-looking passages. If one is actually generic/preventive content,\n    emit a not_diagnostic candidate with empty indicators and no diagnostic claims. Return an\n    empty records list only when the input contains no candidate-looking passage at all. Never\n    fill a missing cause/action simply to make a complete record.\n14. Every anchored candidate-looking passage in the input must occur in a record's claim/edge\n    evidence, or have its own explicit not_diagnostic disposition. Do not cover only the first\n    row or branch of a troubleshooting table.\n15. For check_only, actions must be empty and inspection_steps must preserve each stated check\n    with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.\n16. Preserve every stated precondition, test outcome, negation, threshold and alternative in\n    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection\n    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test\n    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.\n    Keep inspection_steps and actions in source order; do not sort steps alphabetically.\n17. Preserve the actual error CODE separately from its fault name, including a numerical code\n    in a separate table column. Never substitute the name for a printed numeric code.\n"
+      },
+      {
+        "role": "user",
+        "content": "## DOCUMENT CONTEXT\nThese pages come from the following manual sections:\n- Internal compressor LED faults (pp. 68-69, source: rule)\n- Torch cap LED faults (pp. 70-70, source: rule)\n\nUse this context to better interpret the content. Extract all ontology-relevant information from these sections, including components, error codes, symptoms, failure modes, and corrective actions.\n\n--- PAGE 69 ---\n\n[[EVIDENCE_ID: a0001]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0002]]\nPowermax30 AIR\nService Manual\n808850\n69\n\n[[EVIDENCE_ID: a0003]]\nThe internal compressor LED and the temperature LED illuminate while the machine is powered ON and the torch trigger is pulled. |\n\n[[EVIDENCE_ID: a0004]]\nPossible causes | Possible solutions\n\n[[EVIDENCE_ID: a0005]]\n The air inlet filter on the internal compressor is completely clogged. For the compressor’s air inlet filter to trigger this LED fault, the filter would have to be so blocked that no air can flow through it. | 6. Replace the compressor’s air inlet filter. See Replace the air inlet filter in the internal compressor on page 174.\n\n[[EVIDENCE_ID: a0006]]\n One of the following internal components is faulty and needs to be replaced:  Internal compressor  Compressor-driver board  Power board | 7. Systematically check the internal compressor, the compressor-driver board, and the power board to determine which component needs to be replaced. Perform Test 9 – internal compressor, compressor-driver board, and power board on page 96.\n\n[[EVIDENCE_ID: a0007]]\nThe internal compressor LED and the temperature LED blink alternately when the machine is powered ON. |\n\n[[EVIDENCE_ID: a0008]]\nPossible causes | Possible solutions\n\n[[EVIDENCE_ID: a0009]]\n The system was powered on with the torch trigger being pulled.  The start circuit is stuck closed. |  Release the torch trigger and reset the system by turning it OFF (O) and then turning it ON (I) again. The system automatically disables itself when the power supply is turned on while the torch trigger is pulled.  Perform Test 6 – plasma start on page 92.\n\n--- PAGE 70 ---\n\n[[EVIDENCE_ID: a0010]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0011]]\nTorch cap LED faults\n\n[[EVIDENCE_ID: a0012]]\nThe internal compressor, temperature, and \npower ON LEDs blink, and the torch cap LED \nilluminates.\n\n[[EVIDENCE_ID: a0013]]\n70\nPowermax30 AIR\nService Manual\n808850\n\n[[EVIDENCE_ID: a0014]]\nThe torch cap LED illuminates while the machine is powered ON. |\n\n[[EVIDENCE_ID: a0015]]\nPossible causes | Possible solutions\n\n[[EVIDENCE_ID: a0016]]\n The cap-sensing circuit is open due to:  The consumables are loose, incorrectly installed, or missing. OR  The cap-sensor switch, torch lead, or torch body is faulty. |  Make sure the consumables are installed correctly.  Perform Test 7 – torch cap-sensor on page 94.\n\n[[EVIDENCE_ID: a0017]]\nThe torch cap LED blinks while the machine is powered ON. |\n\n[[EVIDENCE_ID: a0018]]\nPossible causes | Possible solutions\n\n[[EVIDENCE_ID: a0019]]\n The consumables are stuck in an open or closed position because they are installed incorrectly, worn, or damaged.  The nozzle and electrode are not touching when the torch trigger is pulled. The torch plunger is stuck.  The torch or torch lead has a broken or short-circuited wire. |  Inspect the torch lead. If it is twisted or kinked, straighten it out and try to fire the torch again.  Make sure the consumables are installed correctly. See Step 1 – Install the consumables on page 45.  Inspect the consumables for wear, and replace if necessary. Always replace the nozzle and electrode together.  Perform Test 5 – torch stuck open or torch stuck closed on page 90.\n\n[[EVIDENCE_ID: a0020]]\nThe internal compressor, temperature, and power ON LEDs blink, and the torch cap LED AC illuminates. |\n\n[[EVIDENCE_ID: a0021]]\nPossible causes | Possible solutions\n\n[[EVIDENCE_ID: a0022]]\n The torch was repeatedly fired with worn out consumables.  The inverter is saturated (is in an over-current condition). |  Install new consumables in the torch (they may be corroded or approaching end of life).  If you continue to see this error, replace the power board. See Replace the power board on page 135.\n\n--- PAGE 71 ---\n\n[[EVIDENCE_ID: a0023]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0024]]\nCommon cutting issues\n\n[[EVIDENCE_ID: a0025]]\nPowermax30 AIR\nService Manual\n808850\n71\n\n[[EVIDENCE_ID: a0026]]\nProblem | Possible causes | Possible solutions\n\n[[EVIDENCE_ID: a0027]]\nWhen you pull the torch trigger: • Gas flows from the torch, but the torch does not fire or fires only for a short period of time. OR • The pilot arc starts but then extinguishes before the normal 5-second timeout period. | • The consumables are worn or damaged. • The torch or torch lead is damaged. • The air filter element is dirty. • There is a voltage imbalance on the power board. The power board may be faulty. | • Inspect the consumables, torch, and torch lead, and replace if necessary. • Inspect the air filter element, and replace if necessary. See Replace the air filter bowl and air filter element on page 160. • Perform Test 3 – VBUS and voltage balance on power board on page 86.\n\n[[EVIDENCE_ID: a0028]]\nThe arc goes out during cutting or intermittently will not fire. | • The work lead connection is poor. The work lead may be damaged or not properly connected to the workpiece. | • Inspect for loose connections at the ground clamp and at the power supply, and repair if necessary. • Reposition the work lead on the workpiece. • Clean the cutting surface to make a better connection with the work lead.\n\n[[EVIDENCE_ID: a0029]]\nThe pilot arc extinguishes when you move the plasma arc off the workpiece while still pulling the torch trigger. | • The consumables are worn or damaged. • The system is connected to a generator and is running on low input voltage (for example, less than 100 V). • The continuous pilot arc is not functioning correctly. The power board may be faulty. | • Inspect the consumables and replace if necessary. • If you use a generator, make sure it is properly rated for this system. See Generator recommendations on page 33. • Perform Test 2 – power board voltage checks on page 84 and Test 3 – VBUS and voltage balance on power board on page 86.\n\n--- PAGE 72 ---\n\n[[EVIDENCE_ID: a0030]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0031]]\n72\nPowermax30 AIR\nService Manual\n808850\n\n[[EVIDENCE_ID: a0032]]\nProblem | Possible causes | Possible solutions\n\n[[EVIDENCE_ID: a0033]]\nMoisture exits the torch nozzle. | • A small amount of moisture at the torch nozzle is normal for this system, particularly in very humid environments. • A larger amount of moisture at the torch nozzle may indicate that the air filter is not properly removing moisture from the system. | • A small amount of moisture should not prevent the torch from firing or degrade cut quality or performance. • In case of excess moisture, examine the air filter inside the power supply. It is normal to see water in the filter bowl. The filter purges water when the water level in the bowl is high enough to engage the float mechanism. If the water level in the filter bowl is approximately half full (or more), the air filter may not be purging water properly. • Make sure the drain hose connected to the bottom of the air filter bowl is not twisted or clogged. • Water purged from the air filter exits through a hole in bottom of the of the power supply. Make sure this hole is not blocked. • Replace the air filter bowl. See Replace the air filter bowl and air filter element on page 160. • If the problem persists, replace the whole air filter assembly. See Replace the air filter assembly on page 157."
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "DiagnosticChunkOutput",
+        "strict": true,
+        "schema": {
+          "$defs": {
+            "AffectedComponentCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "category": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Category"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "affects_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Affects Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "category",
+                "claim_evidence",
+                "affects_link_evidence"
+              ],
+              "title": "AffectedComponentCandidate",
+              "type": "object"
+            },
+            "CorrectiveActionCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "action_kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Action Kind"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "resolution_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Resolution Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instruction_text",
+                "action_kind",
+                "claim_evidence",
+                "resolution_link_evidence"
+              ],
+              "title": "CorrectiveActionCandidate",
+              "type": "object"
+            },
+            "DiagnosticBundleCandidate": {
+              "additionalProperties": false,
+              "description": "One source record, potentially containing several observed indicators.",
+              "properties": {
+                "record_window_id": {
+                  "title": "Record Window Id",
+                  "type": "string"
+                },
+                "allowed_source_anchors": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Allowed Source Anchors",
+                  "type": "array"
+                },
+                "record_anchor": {
+                  "minLength": 1,
+                  "title": "Record Anchor",
+                  "type": "string"
+                },
+                "branch_anchor": {
+                  "minLength": 1,
+                  "title": "Branch Anchor",
+                  "type": "string"
+                },
+                "indicators": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticIndicatorCandidate"
+                  },
+                  "title": "Indicators",
+                  "type": "array"
+                },
+                "failure": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FailureModeCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actions": {
+                  "items": {
+                    "$ref": "#/$defs/CorrectiveActionCandidate"
+                  },
+                  "title": "Actions",
+                  "type": "array"
+                },
+                "inspection_steps": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticInspectionStepCandidate"
+                  },
+                  "title": "Inspection Steps",
+                  "type": "array"
+                },
+                "conditions": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticConditionCandidate"
+                  },
+                  "title": "Conditions",
+                  "type": "array"
+                },
+                "affected_component": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AffectedComponentCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolution_status": {
+                  "$ref": "#/$defs/ResolutionStatus"
+                }
+              },
+              "required": [
+                "record_window_id",
+                "allowed_source_anchors",
+                "record_anchor",
+                "branch_anchor",
+                "indicators",
+                "failure",
+                "actions",
+                "inspection_steps",
+                "conditions",
+                "affected_component",
+                "resolution_status"
+              ],
+              "title": "DiagnosticBundleCandidate",
+              "type": "object"
+            },
+            "DiagnosticConditionCandidate": {
+              "additionalProperties": false,
+              "description": "Source-stated condition attached to a branch or a zero-based step.",
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "title": "Text",
+                  "type": "string"
+                },
+                "applies_to": {
+                  "enum": [
+                    "branch",
+                    "action",
+                    "inspection"
+                  ],
+                  "title": "Applies To",
+                  "type": "string"
+                },
+                "step_index": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Step Index"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "text",
+                "applies_to",
+                "step_index",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticConditionCandidate",
+              "type": "object"
+            },
+            "DiagnosticEvidenceSpan": {
+              "additionalProperties": false,
+              "description": "A verbatim source span emitted by the extraction model.\n\n``source_anchor`` is the opaque evidence identifier printed in the model's\ninput.  It is intentionally not a graph node identifier.",
+              "properties": {
+                "source_anchor": {
+                  "minLength": 1,
+                  "title": "Source Anchor",
+                  "type": "string"
+                },
+                "source_page": {
+                  "minimum": 1,
+                  "title": "Source Page",
+                  "type": "integer"
+                },
+                "quote": {
+                  "minLength": 1,
+                  "title": "Quote",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source_anchor",
+                "source_page",
+                "quote"
+              ],
+              "title": "DiagnosticEvidenceSpan",
+              "type": "object"
+            },
+            "DiagnosticIndicatorCandidate": {
+              "additionalProperties": false,
+              "description": "Provider-safe flat indicator contract.\n\nOpenAI strict Structured Outputs does not accept the ``oneOf`` emitted by\nPydantic for a discriminated model union inside an array.  Keep the wire\nshape flat and enforce the same symptom/error-code invariants locally.\nNullable fields remain required so the provider schema is strict.",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "symptom",
+                    "error_code"
+                  ],
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "code": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code"
+                },
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "severity": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "Critical",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Severity"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "failure_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Failure Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "code",
+                "name",
+                "description",
+                "severity",
+                "claim_evidence",
+                "failure_link_evidence"
+              ],
+              "title": "DiagnosticIndicatorCandidate",
+              "type": "object"
+            },
+            "DiagnosticInspectionStepCandidate": {
+              "additionalProperties": false,
+              "description": "A diagnostic check that is useful but does not itself restore operation.",
+              "properties": {
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "instruction_text",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticInspectionStepCandidate",
+              "type": "object"
+            },
+            "FailureModeCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "material_context": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Material Context"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "material_context",
+                "claim_evidence"
+              ],
+              "title": "FailureModeCandidate",
+              "type": "object"
+            },
+            "ResolutionStatus": {
+              "description": "The extractor's explicit assessment of diagnostic completeness.",
+              "enum": [
+                "action_stated",
+                "no_action_stated",
+                "check_only",
+                "ambiguous",
+                "not_diagnostic"
+              ],
+              "title": "ResolutionStatus",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Provider structured-output envelope for one diagnostic PDF chunk.\n\nAll fields are required, including nullable/list fields.  This avoids the\noptional-property mismatch of strict provider JSON Schema implementations.",
+          "properties": {
+            "schema_version": {
+              "enum": [
+                "1.0",
+                "1.1"
+              ],
+              "title": "Schema Version",
+              "type": "string"
+            },
+            "source_language": {
+              "minLength": 1,
+              "title": "Source Language",
+              "type": "string"
+            },
+            "records": {
+              "items": {
+                "$ref": "#/$defs/DiagnosticBundleCandidate"
+              },
+              "title": "Records",
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "source_language",
+            "records"
+          ],
+          "title": "DiagnosticChunkOutput",
+          "type": "object"
+        }
+      }
+    },
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 0.0012705830158665776,
+  "response": {
+    "id": "chatcmpl-ES2aSfyIkQ56QyXztn6FLZAHoOQae",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"schema_version\":\"1.1\",\"source_language\":\"en\",\"records\":[{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0003\",\"a0005\"],\"record_anchor\":\"a0003\",\"branch_anchor\":\"a0005\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Internal compressor LED and temperature LED illuminate\",\"description\":\"The internal compressor LED and the temperature LED illuminate while the machine is powered ON and the torch trigger is pulled.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0003\",\"source_page\":69,\"quote\":\"The internal compressor LED and the temperature LED illuminate while the machine is powered ON and the torch trigger is pulled.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0003\",\"source_page\":69,\"quote\":\"The internal compressor LED and the temperature LED illuminate while the machine is powered ON and the torch trigger is pulled.\"},{\"source_anchor\":\"a0005\",\"source_page\":69,\"quote\":\"The air inlet filter on the internal compressor is completely clogged.\"}]}],\"failure\":{\"name\":\"Internal compressor air inlet filter completely clogged\",\"description\":\"The filter is so blocked that no air can flow through it.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0005\",\"source_page\":69,\"quote\":\"The air inlet filter on the internal compressor is completely clogged.\"},{\"source_anchor\":\"a0005\",\"source_page\":69,\"quote\":\"the filter would have to be so blocked that no air can flow through it.\"}]},\"actions\":[{\"name\":\"Replace the compressor’s air inlet filter\",\"description\":\"Replace the compressor’s air inlet filter.\",\"instruction_text\":\"Replace the compressor’s air inlet filter. See Replace the air inlet filter in the internal compressor on page 174.\",\"action_kind\":\"replacement\",\"claim_evidence\":[{\"source_anchor\":\"a0005\",\"source_page\":69,\"quote\":\"Replace the compressor’s air inlet filter.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0005\",\"source_page\":69,\"quote\":\"The air inlet filter on the internal compressor is completely clogged.\"},{\"source_anchor\":\"a0005\",\"source_page\":69,\"quote\":\"Replace the compressor’s air inlet filter.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"Compressor’s air inlet filter\",\"description\":\"Air inlet filter on the internal compressor.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0005\",\"source_page\":69,\"quote\":\"The air inlet filter on the internal compressor\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0005\",\"source_page\":69,\"quote\":\"The air inlet filter on the internal compressor is completely clogged.\"}]},\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0003\",\"a0006\"],\"record_anchor\":\"a0003\",\"branch_anchor\":\"a0006\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Internal compressor LED and temperature LED illuminate\",\"description\":\"The internal compressor LED and the temperature LED illuminate while the machine is powered ON and the torch trigger is pulled.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0003\",\"source_page\":69,\"quote\":\"The internal compressor LED and the temperature LED illuminate while the machine is powered ON and the torch trigger is pulled.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0003\",\"source_page\":69,\"quote\":\"The internal compressor LED and the temperature LED illuminate while the machine is powered ON and the torch trigger is pulled.\"},{\"source_anchor\":\"a0006\",\"source_page\":69,\"quote\":\"One of the following internal components is faulty and needs to be replaced\"}]}],\"failure\":{\"name\":\"Faulty internal component\",\"description\":\"One of the internal compressor, compressor-driver board, or power board is faulty and needs to be replaced; the specific faulty component is to be determined by testing.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0006\",\"source_page\":69,\"quote\":\"One of the following internal components is faulty and needs to be replaced:\"},{\"source_anchor\":\"a0006\",\"source_page\":69,\"quote\":\"Internal compressor\"},{\"source_anchor\":\"a0006\",\"source_page\":69,\"quote\":\"Compressor-driver board\"},{\"source_anchor\":\"a0006\",\"source_page\":69,\"quote\":\"Power board\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Systematically check the internal compressor, the compressor-driver board, and the power board to determine which component needs to be replaced. Perform Test 9 – internal compressor, compressor-driver board, and power board on page 96.\",\"claim_evidence\":[{\"source_anchor\":\"a0006\",\"source_page\":69,\"quote\":\"Systematically check the internal compressor, the compressor-driver board, and the power board to determine which component needs to be replaced.\"},{\"source_anchor\":\"a0006\",\"source_page\":69,\"quote\":\"Perform Test 9 – internal compressor, compressor-driver board, and power board on page 96.\"}]}],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"check_only\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0007\",\"a0009\"],\"record_anchor\":\"a0007\",\"branch_anchor\":\"a0009\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Internal compressor LED and temperature LED blink alternately\",\"description\":\"The internal compressor LED and the temperature LED blink alternately when the machine is powered ON.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0007\",\"source_page\":69,\"quote\":\"The internal compressor LED and the temperature LED blink alternately when the machine is powered ON.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0007\",\"source_page\":69,\"quote\":\"The internal compressor LED and the temperature LED blink alternately when the machine is powered ON.\"},{\"source_anchor\":\"a0009\",\"source_page\":69,\"quote\":\"The system was powered on with the torch trigger being pulled.\"}]}],\"failure\":{\"name\":\"System powered on with torch trigger pulled\",\"description\":\"The system was powered on while the torch trigger was pulled.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0009\",\"source_page\":69,\"quote\":\"The system was powered on with the torch trigger being pulled.\"}]},\"actions\":[{\"name\":\"Release torch trigger and reset system\",\"description\":\"Release the torch trigger and reset the system by switching it off and on again.\",\"instruction_text\":\"Release the torch trigger and reset the system by turning it OFF (O) and then turning it ON (I) again. The system automatically disables itself when the power supply is turned on while the torch trigger is pulled.\",\"action_kind\":\"reset\",\"claim_evidence\":[{\"source_anchor\":\"a0009\",\"source_page\":69,\"quote\":\"Release the torch trigger and reset the system by turning it OFF (O) and then turning it ON (I) again.\"},{\"source_anchor\":\"a0009\",\"source_page\":69,\"quote\":\"The system automatically disables itself when the power supply is turned on while the torch trigger is pulled.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0009\",\"source_page\":69,\"quote\":\"The system was powered on with the torch trigger being pulled.\"},{\"source_anchor\":\"a0009\",\"source_page\":69,\"quote\":\"Release the torch trigger and reset the system by turning it OFF (O) and then turning it ON (I) again.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0007\",\"a0009\"],\"record_anchor\":\"a0007\",\"branch_anchor\":\"a0009\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Internal compressor LED and temperature LED blink alternately\",\"description\":\"The internal compressor LED and the temperature LED blink alternately when the machine is powered ON.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0007\",\"source_page\":69,\"quote\":\"The internal compressor LED and the temperature LED blink alternately when the machine is powered ON.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0007\",\"source_page\":69,\"quote\":\"The internal compressor LED and the temperature LED blink alternately when the machine is powered ON.\"},{\"source_anchor\":\"a0009\",\"source_page\":69,\"quote\":\"The start circuit is stuck closed.\"}]}],\"failure\":{\"name\":\"Start circuit stuck closed\",\"description\":\"The start circuit is stuck closed.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0009\",\"source_page\":69,\"quote\":\"The start circuit is stuck closed.\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Perform Test 6 – plasma start on page 92.\",\"claim_evidence\":[{\"source_anchor\":\"a0009\",\"source_page\":69,\"quote\":\"Perform Test 6 – plasma start on page 92.\"}]}],\"conditions\":[],\"affected_component\":{\"name\":\"Start circuit\",\"description\":\"Start circuit stated to be stuck closed.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0009\",\"source_page\":69,\"quote\":\"The start circuit is stuck closed.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0009\",\"source_page\":69,\"quote\":\"The start circuit is stuck closed.\"}]},\"resolution_status\":\"check_only\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0014\",\"a0016\"],\"record_anchor\":\"a0014\",\"branch_anchor\":\"a0016\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Torch cap LED illuminates\",\"description\":\"The torch cap LED illuminates while the machine is powered ON.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":70,\"quote\":\"The torch cap LED illuminates while the machine is powered ON.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0014\",\"source_page\":70,\"quote\":\"The torch cap LED illuminates while the machine is powered ON.\"},{\"source_anchor\":\"a0016\",\"source_page\":70,\"quote\":\"The cap-sensing circuit is open\"}]}],\"failure\":{\"name\":\"Cap-sensing circuit open\",\"description\":\"The cap-sensing circuit is open due to loose, incorrectly installed, or missing consumables, or a faulty cap-sensor switch, torch lead, or torch body.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0016\",\"source_page\":70,\"quote\":\"The cap-sensing circuit is open due to:\"},{\"source_anchor\":\"a0016\",\"source_page\":70,\"quote\":\"The consumables are loose, incorrectly installed, or missing.\"},{\"source_anchor\":\"a0016\",\"source_page\":70,\"quote\":\"The cap-sensor switch, torch lead, or torch body is faulty.\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Make sure the consumables are installed correctly.\",\"claim_evidence\":[{\"source_anchor\":\"a0016\",\"source_page\":70,\"quote\":\"Make sure the consumables are installed correctly.\"}]},{\"instruction_text\":\"Perform Test 7 – torch cap-sensor on page 94.\",\"claim_evidence\":[{\"source_anchor\":\"a0016\",\"source_page\":70,\"quote\":\"Perform Test 7 – torch cap-sensor on page 94.\"}]}],\"conditions\":[],\"affected_component\":{\"name\":\"Cap-sensing circuit\",\"description\":\"Cap-sensing circuit stated to be open.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0016\",\"source_page\":70,\"quote\":\"The cap-sensing circuit is open\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0016\",\"source_page\":70,\"quote\":\"The cap-sensing circuit is open due to:\"}]},\"resolution_status\":\"check_only\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0017\",\"a0019\"],\"record_anchor\":\"a0017\",\"branch_anchor\":\"a0019\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Torch cap LED blinks\",\"description\":\"The torch cap LED blinks while the machine is powered ON.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0017\",\"source_page\":70,\"quote\":\"The torch cap LED blinks while the machine is powered ON.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0017\",\"source_page\":70,\"quote\":\"The torch cap LED blinks while the machine is powered ON.\"},{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The consumables are stuck in an open or closed position because they are installed incorrectly, worn, or damaged.\"}]}],\"failure\":{\"name\":\"Consumables stuck in an open or closed position\",\"description\":\"The consumables are stuck in an open or closed position because they are installed incorrectly, worn, or damaged.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The consumables are stuck in an open or closed position because they are installed incorrectly, worn, or damaged.\"}]},\"actions\":[{\"name\":\"Install consumables correctly\",\"description\":\"Make sure the consumables are installed correctly.\",\"instruction_text\":\"Make sure the consumables are installed correctly. See Step 1 – Install the consumables on page 45.\",\"action_kind\":\"adjustment\",\"claim_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"Make sure the consumables are installed correctly.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The consumables are stuck in an open or closed position because they are installed incorrectly, worn, or damaged.\"},{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"Make sure the consumables are installed correctly.\"}]},{\"name\":\"Replace worn consumables\",\"description\":\"Inspect consumables for wear and replace if necessary; always replace the nozzle and electrode together.\",\"instruction_text\":\"Inspect the consumables for wear, and replace if necessary. Always replace the nozzle and electrode together.\",\"action_kind\":\"replacement\",\"claim_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"Inspect the consumables for wear, and replace if necessary.\"},{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"Always replace the nozzle and electrode together.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The consumables are stuck in an open or closed position because they are installed incorrectly, worn, or damaged.\"},{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"Inspect the consumables for wear, and replace if necessary.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"Consumables\",\"description\":\"Consumables stated to be stuck in an open or closed position.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The consumables are stuck in an open or closed position\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The consumables are stuck in an open or closed position because they are installed incorrectly, worn, or damaged.\"}]},\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0017\",\"a0019\"],\"record_anchor\":\"a0017\",\"branch_anchor\":\"a0019\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Torch cap LED blinks\",\"description\":\"The torch cap LED blinks while the machine is powered ON.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0017\",\"source_page\":70,\"quote\":\"The torch cap LED blinks while the machine is powered ON.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0017\",\"source_page\":70,\"quote\":\"The torch cap LED blinks while the machine is powered ON.\"},{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The nozzle and electrode are not touching when the torch trigger is pulled. The torch plunger is stuck.\"}]}],\"failure\":{\"name\":\"Torch plunger stuck\",\"description\":\"The nozzle and electrode are not touching when the torch trigger is pulled because the torch plunger is stuck.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The nozzle and electrode are not touching when the torch trigger is pulled.\"},{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The torch plunger is stuck.\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Perform Test 5 – torch stuck open or torch stuck closed on page 90.\",\"claim_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"Perform Test 5 – torch stuck open or torch stuck closed on page 90.\"}]}],\"conditions\":[],\"affected_component\":{\"name\":\"Torch plunger\",\"description\":\"Torch plunger stated to be stuck.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The torch plunger is stuck.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The torch plunger is stuck.\"}]},\"resolution_status\":\"check_only\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0017\",\"a0019\"],\"record_anchor\":\"a0017\",\"branch_anchor\":\"a0019\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Torch cap LED blinks\",\"description\":\"The torch cap LED blinks while the machine is powered ON.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0017\",\"source_page\":70,\"quote\":\"The torch cap LED blinks while the machine is powered ON.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0017\",\"source_page\":70,\"quote\":\"The torch cap LED blinks while the machine is powered ON.\"},{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The torch or torch lead has a broken or short-circuited wire.\"}]}],\"failure\":{\"name\":\"Broken or short-circuited wire\",\"description\":\"The torch or torch lead has a broken or short-circuited wire.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The torch or torch lead has a broken or short-circuited wire.\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Inspect the torch lead. If it is twisted or kinked, straighten it out and try to fire the torch again.\",\"claim_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"Inspect the torch lead. If it is twisted or kinked, straighten it out and try to fire the torch again.\"}]}],\"conditions\":[],\"affected_component\":{\"name\":\"Torch or torch lead\",\"description\":\"The torch or torch lead may have a broken or short-circuited wire.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The torch or torch lead has a broken or short-circuited wire.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0019\",\"source_page\":70,\"quote\":\"The torch or torch lead has a broken or short-circuited wire.\"}]},\"resolution_status\":\"check_only\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0020\",\"a0022\"],\"record_anchor\":\"a0020\",\"branch_anchor\":\"a0022\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Internal compressor, temperature, and power ON LEDs blink; torch cap LED AC illuminates\",\"description\":\"The internal compressor, temperature, and power ON LEDs blink, and the torch cap LED AC illuminates.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0020\",\"source_page\":70,\"quote\":\"The internal compressor, temperature, and power ON LEDs blink, and the torch cap LED AC illuminates.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0020\",\"source_page\":70,\"quote\":\"The internal compressor, temperature, and power ON LEDs blink, and the torch cap LED AC illuminates.\"},{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"The torch was repeatedly fired with worn out consumables.\"}]}],\"failure\":{\"name\":\"Torch repeatedly fired with worn out consumables\",\"description\":\"The torch was repeatedly fired with worn out consumables.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"The torch was repeatedly fired with worn out consumables.\"}]},\"actions\":[{\"name\":\"Install new consumables in the torch\",\"description\":\"Install new consumables in the torch; they may be corroded or approaching end of life.\",\"instruction_text\":\"Install new consumables in the torch (they may be corroded or approaching end of life).\",\"action_kind\":\"replacement\",\"claim_evidence\":[{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"Install new consumables in the torch (they may be corroded or approaching end of life).\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"The torch was repeatedly fired with worn out consumables.\"},{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"Install new consumables in the torch\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"Consumables\",\"description\":\"Worn out consumables in the torch.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"worn out consumables\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"The torch was repeatedly fired with worn out consumables.\"}]},\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0020\",\"a0022\"],\"record_anchor\":\"a0020\",\"branch_anchor\":\"a0022\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Internal compressor, temperature, and power ON LEDs blink; torch cap LED AC illuminates\",\"description\":\"The internal compressor, temperature, and power ON LEDs blink, and the torch cap LED AC illuminates.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0020\",\"source_page\":70,\"quote\":\"The internal compressor, temperature, and power ON LEDs blink, and the torch cap LED AC illuminates.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0020\",\"source_page\":70,\"quote\":\"The internal compressor, temperature, and power ON LEDs blink, and the torch cap LED AC illuminates.\"},{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"The inverter is saturated (is in an over-current condition).\"}]},{\"kind\":\"error_code\",\"code\":\"AC\",\"name\":\"Torch cap LED AC\",\"description\":\"The torch cap LED AC illuminates with the internal compressor, temperature, and power ON LEDs blinking.\",\"severity\":null,\"claim_evidence\":[{\"source_anchor\":\"a0020\",\"source_page\":70,\"quote\":\"the torch cap LED AC illuminates.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0020\",\"source_page\":70,\"quote\":\"the torch cap LED AC illuminates.\"},{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"The inverter is saturated (is in an over-current condition).\"}]}],\"failure\":{\"name\":\"Inverter saturated\",\"description\":\"The inverter is saturated (is in an over-current condition).\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"The inverter is saturated (is in an over-current condition).\"}]},\"actions\":[{\"name\":\"Replace the power board if the error continues\",\"description\":\"If the error continues, replace the power board.\",\"instruction_text\":\"If you continue to see this error, replace the power board. See Replace the power board on page 135.\",\"action_kind\":\"replacement\",\"claim_evidence\":[{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"If you continue to see this error, replace the power board.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"The inverter is saturated (is in an over-current condition).\"},{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"If you continue to see this error, replace the power board.\"}]}],\"inspection_steps\":[],\"conditions\":[{\"text\":\"If you continue to see this error\",\"applies_to\":\"action\",\"step_index\":0,\"claim_evidence\":[{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"If you continue to see this error\"}]}],\"affected_component\":{\"name\":\"Power board\",\"description\":\"Power board identified for replacement if the error continues.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"replace the power board.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"The inverter is saturated (is in an over-current condition).\"},{\"source_anchor\":\"a0022\",\"source_page\":70,\"quote\":\"replace the power board.\"}]},\"resolution_status\":\"action_stated\"}]}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790351836,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 5790,
+      "prompt_tokens": 4482,
+      "total_tokens": 10272,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 491,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cache_write_tokens": 1863,
+        "cached_tokens": 2616
+      }
+    }
+  },
+  "provider_request_id": null,
+  "error": null
+}

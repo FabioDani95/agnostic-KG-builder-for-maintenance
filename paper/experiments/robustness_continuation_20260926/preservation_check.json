@@ -1,0 +1,26 @@
+{
+  "protected_unchanged": {
+    "ontology_schema.JSON": true,
+    "docs/README.md": true,
+    "docs/PIPELINE_SPIEGAZIONE_IT.md": true,
+    "artifacts/acceptance/g3/diagnostic_benchmark_20260812/golden.json": true
+  },
+  "independent_forms": {
+    "paper/evaluation/gold_review_v1/graco_check_mate_200/annotation_B.json": "unannotated",
+    "paper/evaluation/gold_review_v1/graco_check_mate_200/annotation_A.json": "unannotated",
+    "paper/evaluation/gold_review_v1/hypertherm_powermax30_air/annotation_B.json": "unannotated",
+    "paper/evaluation/gold_review_v1/hypertherm_powermax30_air/annotation_A.json": "unannotated",
+    "paper/evaluation/gold_review_v1/danfoss_apf/annotation_B.json": "unannotated",
+    "paper/evaluation/gold_review_v1/danfoss_apf/annotation_A.json": "unannotated",
+    "paper/evaluation/gold_review_v1/eastman_e554/annotation_B.json": "unannotated",
+    "paper/evaluation/gold_review_v1/eastman_e554/annotation_A.json": "unannotated"
+  },
+  "changed_since_c11": [
+    "backend/services/diagnostic_record_review.py",
+    "frontend/app/graph.js",
+    "frontend/app.css",
+    "frontend/console.html",
+    "tests/test_typed_diagnostic_integration.py"
+  ],
+  "note": "Final changes after C11 affect human review bookkeeping, frontend, integration verification and tests. No model prompt, extraction workflow, compiler or runtime configuration changed after C11 freeze."
+}

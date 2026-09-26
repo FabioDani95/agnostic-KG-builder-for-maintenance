@@ -1,0 +1,219 @@
+{
+  "ontology_name": "Core_Ontology",
+  "version": "2.0",
+  "language": "en",
+  "source_type": "technical PDF",
+  "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "Powermax30 AIR plasma cutting system",
+        "description": "Plasma arc cutting system with integrated air compressor",
+        "brand": "Hypertherm",
+        "model": "Powermax30 AIR",
+        "asset_type": "hypertherm powermax30 air service manual rev4 808850.pdf"
+      }
+    ],
+    "Component": [
+      {
+        "component_id": "comp_solenoid_valve_d2679e63a7dea5d19f6f7b55021e79d8b0f0f025eacaa0ab6c78d94f5e8b9164",
+        "name": "solenoid valve",
+        "description": "The component replaced when Test 4 fails.",
+        "category": "source_named_component"
+      }
+    ],
+    "Symptom": [],
+    "FailureMode": [
+      {
+        "failure_mode_id": "fm_faulty_solenoid_valve_766f09efb9ac5dd7ea968fdf617bc257569890e67cf8781de31e76819af2b58a",
+        "name": "Faulty solenoid valve",
+        "description": "Test 4 (solenoid valve) fails.",
+        "material_context": "comp_solenoid_valve_d2679e63a7dea5d19f6f7b55021e79d8b0f0f025eacaa0ab6c78d94f5e8b9164"
+      },
+      {
+        "failure_mode_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+        "name": "Inverter saturation",
+        "description": "Inverter saturation.",
+        "material_context": "not_stated"
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "ca_install_new_consumables_in_the_torch_9f39bd2da0caf75133c3aebdcf6094ee9220848811a3472e4cf9d3754415f9fa",
+        "name": "Install new consumables in the torch",
+        "description": "Install new consumables in the torch.",
+        "instruction_text": "Install new consumables in the torch. If you continue to see this error code, replace the power board.",
+        "action_kind": "replacement",
+        "source_type": "technical PDF",
+        "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      },
+      {
+        "action_id": "ca_replace_the_power_board_67c2d02b2ad91df188b473fe1ddaae114baee85cb6b4ab45990bf9aaf5f0ef89",
+        "name": "Replace the power board",
+        "description": "Replace the power board if the error code continues after installing new torch consumables.",
+        "instruction_text": "If you continue to see this error code after installing new consumables in the torch, replace the power board.",
+        "action_kind": "replacement",
+        "source_type": "technical PDF",
+        "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      },
+      {
+        "action_id": "ca_replace_the_solenoid_valve_4702ee31e8c2f3917ac0a61e27442821f8e0fe7ddb0f4d621b0e219d630b5b98",
+        "name": "Replace the solenoid valve",
+        "description": "Replace the solenoid valve if Test 4 fails.",
+        "instruction_text": "If Test 4 fails, replace the solenoid valve.",
+        "action_kind": "replacement",
+        "source_type": "technical PDF",
+        "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      }
+    ],
+    "ErrorCode": [
+      {
+        "error_code_id": "err_4_c3214f04b37fcb04b123af7ade11f1eddde9176d9f6cd51cb91bcd2d15f37839",
+        "name": "Faulty fan, solenoid valve, or power board",
+        "description": "Four Error LED blinks indicate a faulty fan, solenoid valve, or power board.",
+        "code": "4"
+      },
+      {
+        "error_code_id": "err_6_c3ef245a10c9e83607eee1dfe8fdcf7ed98c6af60911e4a12164e93df1da1074",
+        "name": "Inverter saturation",
+        "description": "Six Error LED blinks indicate inverter saturation.",
+        "code": "6"
+      }
+    ]
+  },
+  "relations": [
+    {
+      "name": "AFFECTS",
+      "from_type": "FailureMode",
+      "from_id": "fm_faulty_solenoid_valve_766f09efb9ac5dd7ea968fdf617bc257569890e67cf8781de31e76819af2b58a",
+      "to_type": "Component",
+      "to_id": "comp_solenoid_valve_d2679e63a7dea5d19f6f7b55021e79d8b0f0f025eacaa0ab6c78d94f5e8b9164",
+      "evidence": [
+        {
+          "source_page": 77,
+          "source_reference": "ev_cb853e7e3d8f71d2b01ac5b11166",
+          "quote": "If Test 4 fails, replace the solenoid valve",
+          "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166"
+        }
+      ],
+      "branch_lineage_id": "dbranch_8365149dd77c6e1c27b9cc0d7b853ba41c14d15a40312efaf3f660285650fff4"
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "err_4_c3214f04b37fcb04b123af7ade11f1eddde9176d9f6cd51cb91bcd2d15f37839",
+      "to_type": "FailureMode",
+      "to_id": "fm_faulty_solenoid_valve_766f09efb9ac5dd7ea968fdf617bc257569890e67cf8781de31e76819af2b58a",
+      "evidence": [
+        {
+          "source_page": 77,
+          "source_reference": "ev_66a0a68230748d666b1857763825",
+          "quote": "Faulty fan, solenoid valve, or power board",
+          "source_anchor": "ev_66a0a68230748d666b1857763825"
+        },
+        {
+          "source_page": 77,
+          "source_reference": "ev_cb853e7e3d8f71d2b01ac5b11166",
+          "quote": "If Test 4 fails",
+          "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166"
+        }
+      ],
+      "branch_lineage_id": "dbranch_8365149dd77c6e1c27b9cc0d7b853ba41c14d15a40312efaf3f660285650fff4"
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "err_6_c3ef245a10c9e83607eee1dfe8fdcf7ed98c6af60911e4a12164e93df1da1074",
+      "to_type": "FailureMode",
+      "to_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+      "evidence": [
+        {
+          "source_page": 77,
+          "source_reference": "ev_50eab2ff50f878d436092d263667",
+          "quote": "Inverter saturation",
+          "source_anchor": "ev_50eab2ff50f878d436092d263667"
+        }
+      ],
+      "branch_lineage_id": "dbranch_1a2fb758b10588344c154b106b2bd4fba2dbbc97e7dfce770fd0d2418357aed6"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_faulty_solenoid_valve_766f09efb9ac5dd7ea968fdf617bc257569890e67cf8781de31e76819af2b58a",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_replace_the_solenoid_valve_4702ee31e8c2f3917ac0a61e27442821f8e0fe7ddb0f4d621b0e219d630b5b98",
+      "evidence": [
+        {
+          "source_page": 77,
+          "source_reference": "ev_cb853e7e3d8f71d2b01ac5b11166",
+          "quote": "If Test 4 fails, replace the solenoid valve",
+          "source_anchor": "ev_cb853e7e3d8f71d2b01ac5b11166"
+        }
+      ],
+      "branch_lineage_id": "dbranch_8365149dd77c6e1c27b9cc0d7b853ba41c14d15a40312efaf3f660285650fff4"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_install_new_consumables_in_the_torch_9f39bd2da0caf75133c3aebdcf6094ee9220848811a3472e4cf9d3754415f9fa",
+      "evidence": [
+        {
+          "source_page": 77,
+          "source_reference": "ev_50eab2ff50f878d436092d263667",
+          "quote": "Install new consumables in the torch.",
+          "source_anchor": "ev_50eab2ff50f878d436092d263667"
+        }
+      ],
+      "branch_lineage_id": "dbranch_1a2fb758b10588344c154b106b2bd4fba2dbbc97e7dfce770fd0d2418357aed6"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_inverter_saturation_8c65c135917e32db0701467a0456ae9155b1355f660da35ab6ae0c8ab086e7e9",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_replace_the_power_board_67c2d02b2ad91df188b473fe1ddaae114baee85cb6b4ab45990bf9aaf5f0ef89",
+      "evidence": [
+        {
+          "source_page": 77,
+          "source_reference": "ev_50eab2ff50f878d436092d263667",
+          "quote": "If you continue to see this error code, replace the power board.",
+          "source_anchor": "ev_50eab2ff50f878d436092d263667"
+        }
+      ],
+      "branch_lineage_id": "dbranch_4583383014f07aee1533878d6bf4d6174023e1814c70d1dab345170b8cb3c844"
+    },
+    {
+      "name": "HAS_COMPONENT",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "Component",
+      "to_id": "comp_solenoid_valve_d2679e63a7dea5d19f6f7b55021e79d8b0f0f025eacaa0ab6c78d94f5e8b9164",
+      "evidence": [],
+      "branch_lineage_id": ""
+    },
+    {
+      "name": "GENERATES_ERROR",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "ErrorCode",
+      "to_id": "err_4_c3214f04b37fcb04b123af7ade11f1eddde9176d9f6cd51cb91bcd2d15f37839",
+      "evidence": [],
+      "branch_lineage_id": ""
+    },
+    {
+      "name": "GENERATES_ERROR",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "ErrorCode",
+      "to_id": "err_6_c3ef245a10c9e83607eee1dfe8fdcf7ed98c6af60911e4a12164e93df1da1074",
+      "evidence": [],
+      "branch_lineage_id": ""
+    }
+  ]
+}

@@ -1,10 +1,16 @@
-# PDF G3 diagnostic pipeline — current v11 baseline
+# PDF G3 diagnostic pipeline — frozen v11 baseline
+
+> Historical development report. The current generator and acceptance limitations
+> are described in [PDF diagnostic status](PDF_DIAGNOSTIC_STATUS.md). The original
+> table below uses historical metric names: 25/34 is a micro proportion, not
+> macro, and accounting/lexical matching does not establish semantic recall.
+> See [scientific status](../paper/STATUS.md) for the corrected interpretation.
 
 Last updated: 2026-08-13
 
 ## Status
 
-The current production path is `pdf-g3-atomic-record-publication-v11`.
+The production path at this historical checkpoint was `pdf-g3-atomic-record-publication-v11`.
 It is the normal workspace PDF G3 path, not a benchmark-only fork. The PDF
 generator builds deterministic diagnostic record windows before typed semantic
 extraction, then uses the normal compiler, canonicalizer, publication gate and

@@ -1,0 +1,507 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "c1_hypertherm_powermax30_air:002b324c893144bb80a53b15eb584724",
+  "run_id": "c1_hypertherm_powermax30_air",
+  "started_utc": "2026-09-25T15:11:23.271746+00:00",
+  "status": "provider_error",
+  "request": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "max_completion_tokens": 24000,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You extract diagnostic records from a technical manual into a typed contract.\n\nSource type: technical PDF\nSource title: hypertherm_powermax30_air_service_manual_rev4_808850.pdf\n\nThe input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be\na complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,\necho its window_id and allowed_source_anchors on every candidate; the system overwrites and\nverifies both fields and no evidence outside that block is allowed. For a section chunk, set\nrecord_window_id=\"\" and set allowed_source_anchors to exactly the anchors referenced by that\ncandidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL\ncontext may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields\nbelong to the current cause/remedy branch. Each displayed FIELD value is one exact source\nspan. Quote the value only: never include the \"FIELD n:\" label, join separate fields, or\nrestore a sibling field omitted by the system.\nReturn every explicit diagnostic record and every distinct cause/remedy branch in the input.\nThe contract is an intermediate record representation, not the final graph. Use schema_version=\"1.1\".\n\nRules:\n1. Never emit graph IDs or ontology relation names. The system owns them.\n2. A diagnostic record has one or more indicators. An indicator is either an observable\n   symptom or an asset-generated error/alarm code. A record may explicitly contain both;\n   keep both. For a symptom set code=null and severity=\"Unknown\" unless the source explicitly\n   states its severity; never invent a risk rating. For an error_code set its\n   code and severity=null. Only an explicit not_diagnostic page disposition may use an empty\n   indicator list.\n3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action\n   from different table rows, flowchart branches or unrelated paragraphs.\n4. A FailureMode is an explicit technical cause or faulty state, not a restatement of the\n   symptom, an inspection result or an invented explanation. Use null when none is stated.\n5. A CorrectiveAction is an explicitly restorative remedy for that failure. Checks and tests\n   are not restorative unless the source says the check itself resolves the fault. Preserve\n   a non-restorative check/test/inspection in inspection_steps, never in actions.\n6. Set resolution_status:\n   - action_stated: at least one restorative action is explicitly linked to the failure;\n   - no_action_stated: the diagnostic record states a failure but no remedy;\n   - check_only: it gives only diagnostic checks/verification;\n   - ambiguous: the row/branch pairing cannot be established safely;\n   - not_diagnostic: a candidate-looking passage is actually preventive/generic content.\n7. An affected component is optional. Include it only if the branch explicitly identifies the\n   affected component. category and failure.material_context are required-but-nullable: use\n   null rather than manufacturing a category/context. A null category does not invalidate a\n   grounded branch; the deterministic compiler supplies a neutral schema category. Do not use\n   a product name as a component.\n8. Evidence is edge-specific. claim_evidence proves only the claim. Each edge evidence list is\n   a support set: one span may explicitly state the whole link, or several spans from the same\n   record/branch may collectively establish it when a manual separates Problem, Cause and\n   Remedy across blocks or pages. failure_link_evidence supports only that exact indicator to\n   failure; resolution_link_evidence supports only that exact failure to action;\n   affects_link_evidence supports only that exact failure to component. Include every span\n   needed to establish the link and no unrelated nearby heading. Never use an action-only span\n   as the sole proof of an indicator-to-failure edge.\n   In a system-owned atomic table row, use the exact endpoint FIELD spans as the edge support\n   set; the deterministic compiler verifies the table structure and completes their union.\n9. Every quote is a short verbatim span contained in the EvidenceUnit named by source_anchor,\n   on source_page. Prefer one span per EvidenceUnit. If wording crosses adjacent units, emit\n   separate exact spans; never concatenate or paraphrase cells. Copy the opaque anchor exactly.\n   Do not include page/anchor marker text in a quote.\n10. record_anchor must be one of this candidate's claim-evidence anchors. branch_anchor must be\n    one of this candidate's evidence anchors (prefer a causal edge anchor). For an explicit\n    not_diagnostic disposition with no claims, set both to the candidate page's EvidenceUnit\n    anchor. These anchors are source locators, not freely generated IDs.\n11. Preserve source language in human-readable values and set source_language accordingly.\n12. Duplicate records caused by overlapping pages must be returned identically; deterministic\n    lineage and compilation will deduplicate them.\n13. Account for candidate-looking passages. If one is actually generic/preventive content,\n    emit a not_diagnostic candidate with empty indicators and no diagnostic claims. Return an\n    empty records list only when the input contains no candidate-looking passage at all. Never\n    fill a missing cause/action simply to make a complete record.\n14. Every anchored candidate-looking passage in the input must occur in a record's claim/edge\n    evidence, or have its own explicit not_diagnostic disposition. Do not cover only the first\n    row or branch of a troubleshooting table.\n15. For check_only, actions must be empty and inspection_steps must preserve each stated check\n    with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.\n16. Preserve every stated precondition, test outcome, negation, threshold and alternative in\n    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection\n    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test\n    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.\n    Keep inspection_steps and actions in source order; do not sort steps alphabetically.\n17. Preserve the actual error CODE separately from its fault name, including a numerical code\n    in a separate table column. Never substitute the name for a printed numeric code.\n"
+      },
+      {
+        "role": "user",
+        "content": "--- PAGE 14 ---\n\n[[EVIDENCE_ID: a0001]]\nElectromagnetic Compatibility (EMC)\n\n[[EVIDENCE_ID: a0002]]\nEarthing of the workpiece\n\n[[EVIDENCE_ID: a0003]]\nWhere the workpiece is not bonded to earth for electrical safety, nor \nconnected to earth because of its size and position, for example, ship’s \nhull or building steel work, a connection bonding the workpiece to earth \nmay reduce emissions in some, but not all instances. Care should be \ntaken to prevent the earthing of the workpiece increasing the risk of injury \nto users, or damage to other electrical equipment. Where necessary, the \nconnection of the workpiece to earth should be made by a direct \nconnection to the workpiece, but in some countries where direct \nconnection is not permitted, the bonding should be achieved by suitable \ncapacitances selected according to national regulations.\n\n[[EVIDENCE_ID: a0004]]\nNote: The cutting circuit may or may not be earthed for safety reasons. \nChanging the earthing arrangements should only be authorized by a \nperson who is competent to assess whether the changes will increase \nthe risk of injury, for example, by allowing parallel cutting current return \npaths which may damage the earth circuits of other equipment. \nFurther guidance is provided in IEC 60974-9, Arc Welding Equipment, \nPart 9: Installation and Use.\n\n[[EVIDENCE_ID: a0005]]\nScreening and shielding\n\n[[EVIDENCE_ID: a0006]]\nSelective screening and shielding of other cables and equipment in the \nsurrounding area may alleviate problems of interference. Screening of the \nentire plasma cutting installation may be considered for special \napplications.\n\n[[EVIDENCE_ID: a0007]]\nSC-14\nSafety and compliance\n\n--- PAGE 15 ---\n\n[[EVIDENCE_ID: a0008]]\nAttention\n\n[[EVIDENCE_ID: a0009]]\nGenuine Hypertherm parts are the factory-recommended replacement \nparts for your Hypertherm system. Any damage or injury caused by the \nuse of other than genuine Hypertherm parts may not be covered by the \nHypertherm warranty, and will constitute misuse of the Hypertherm \nProduct.\n\n[[EVIDENCE_ID: a0010]]\nYou are solely responsible for the safe use of the Product. Hypertherm \ndoes not and cannot make any guarantee or warranty regarding the safe \nuse of the product in your environment.\n\n[[EVIDENCE_ID: a0011]]\nGeneral\n\n[[EVIDENCE_ID: a0012]]\nHypertherm, Inc. warrants that its Products shall be free from defects in \nmaterials and workmanship for the specific periods of time set forth \nherein and as follows: if Hypertherm is notified of a defect (i) with respect \nto the plasma power supply within a period of two (2) years from the date \nof its delivery to you, with the exception of Powermax brand power \nsupplies, which shall be within a period of three (3) years from the date of \ndelivery to you, and (ii) with respect to the torch and leads within a period \nof one (1) year from its date of delivery to you, with the exception of the \nHPRXD short torch with integrated lead, which shall be within a period of \nsix (6) months from the date of delivery to you, and with respect to torch \nlifter assemblies within a period of one (1) year from its date of delivery to \nyou, and with respect to Automation products one (1) year from its date \nof delivery to you, with the exception of the EDGE Connect CNC, \nEDGE Connect T CNC, EDGE Connect TC CNC, EDGE Pro CNC, \nEDGE Pro Ti CNC, MicroEDGE Pro CNC, and ArcGlide THC, which \nshall be within a period of two (2) years from the date of delivery to you, \nand (iii) with respect to HyIntensity fiber laser components within a \nperiod of two (2) years from the date of its delivery to you, with the \nexception of laser heads and beam delivery cables, which shall be within \na period of one (1) year from its date of delivery to you.\n\n[[EVIDENCE_ID: a0013]]\nAll third-party engines, engine accessories, alternators, and alternator \naccessories are covered by the respective manufacturers’ warranties and \nnot covered by this warranty.\n\n[[EVIDENCE_ID: a0014]]\nThis warranty shall not apply to any Powermax brand power supplies that \nhave been used with phase converters. In addition, Hypertherm does not \nwarranty systems that have been damaged as a result of poor power \nquality, whether from phase converters or incoming line power. This \nwarranty shall not apply to any product which has been incorrectly \ninstalled, modified, or otherwise damaged.\n\n[[EVIDENCE_ID: a0015]]\nHypertherm provides repair, replacement or adjustment of the Product as \nthe sole and exclusive remedy, if and only if the warranty set forth herein \nproperly is invoked and applies. Hypertherm, at its sole option, shall \nrepair, replace, or adjust, free of charge, any defective Products covered \nby this warranty which shall be returned with Hypertherm’s prior \nauthorization (which shall not be unreasonably withheld), properly \npacked, to Hypertherm’s place of business in Hanover, New Hampshire, \nor to an authorized Hypertherm repair facility, all costs, insurance and \nfreight pre paid by the customer. Hypertherm shall not be liable for any \nrepairs, replacement, or adjustments of Products covered by this \nwarranty, except those made pursuant to this paragraph and with \nHypertherm’s prior written consent.\n\n[[EVIDENCE_ID: a0016]]\nWarranty\n\n[[EVIDENCE_ID: a0017]]\nThe warranty set forth above is exclusive and is in lieu of all other \nwarranties, express, implied, statutory, or otherwise with respect to the \nProducts or as to the results which may be obtained therefrom, and all \nimplied warranties or conditions of quality or of merchantability or fitness \nfor a particular purpose or against infringement. The foregoing shall \nconstitute the sole and exclusive remedy for any breach by Hypertherm \nof its warranty.\n\n[[EVIDENCE_ID: a0018]]\nDistributors/OEMs may offer different or additional warranties, but \nDistributors/OEMs are not authorized to give any additional warranty \nprotection to you or make any representation to you purporting to be \nbinding upon Hypertherm.\n\n[[EVIDENCE_ID: a0019]]\nPatent indemnity\n\n[[EVIDENCE_ID: a0020]]\nExcept only in cases of products not manufactured by Hypertherm or \nmanufactured by a person other than Hypertherm not in strict conformity \nwith Hypertherm’s specifications and in cases of designs, processes, \nformulae, or combinations not developed or purported to be developed \nby Hypertherm, Hypertherm will have the right to defend or settle, at its \nown expense, any suit or proceeding brought against you alleging that \nthe use of the Hypertherm product, alone and not in combination with \nany other product not supplied by Hypertherm, infringes any patent of \nany third party. You shall notify Hypertherm promptly upon learning of any \naction or threatened action in connection with any such alleged \ninfringement (and in any event no longer than fourteen (14) days after \nlearning of any action or threat of action), and Hypertherm’s obligation to \ndefend shall be conditioned upon Hypertherm’s sole control of, and the \nindemnified party’s cooperation and assistance in, the defense of the \nclaim.\n\n[[EVIDENCE_ID: a0021]]\nLimitation of liability\n\n[[EVIDENCE_ID: a0022]]\nIn no event shall Hypertherm be liable to any person or entity for \nany incidental, consequential direct, indirect, punitive or \nexemplary damages (including but not limited to lost profits) \nregardless of whether such liability is based on breach of \ncontract, tort, strict liability, breach of warranty, failure of \nessential purpose, or otherwise, and even if advised of the \npossibility of such damages. Hypertherm shall not be liable for \nany losses to Distributor based on down time, lost production or \nlost profits. It is the intention of the Distributor and Hypertherm \nthat this provision be construed by a court as being the \nbroadest limitation of liability consistent with applicable law.\n\n[[EVIDENCE_ID: a0023]]\nNational and local codes\n\n[[EVIDENCE_ID: a0024]]\nNational and local codes governing plumbing and electrical installation \nshall take precedence over any instructions contained in this manual. \nIn no event shall Hypertherm be liable for injury to persons or property \ndamage by reason of any code violation or poor work practices.\n\n[[EVIDENCE_ID: a0025]]\nSafety and compliance\nSC-15\n\n--- PAGE 16 ---\n\n[[EVIDENCE_ID: a0026]]\nWarranty\n\n[[EVIDENCE_ID: a0027]]\nLiability cap\n\n[[EVIDENCE_ID: a0028]]\nIn no event shall Hypertherm’s liability, if any, whether such \nliability is based on breach of contract, tort, strict liability, \nbreach of warranties, failure of essential purpose or otherwise, \nfor any claim, action, suit or proceeding (whether in court, \narbitration, regulatory proceeding or otherwise) arising out of or \nrelating to the use of the Products exceed in the aggregate the \namount paid for the Products that gave rise to such claim.\n\n[[EVIDENCE_ID: a0029]]\nInsurance\n\n[[EVIDENCE_ID: a0030]]\nAt all times you will have and maintain insurance in such quantities and \ntypes, and with coverage sufficient and appropriate to defend and to hold \nHypertherm harmless in the event of any cause of action arising from the \nuse of the products.\n\n[[EVIDENCE_ID: a0031]]\nTransfer of rights\n\n[[EVIDENCE_ID: a0032]]\nYou may transfer any remaining rights you may have hereunder only in \nconnection with the sale of all or substantially all of your assets or capital \nstock to a successor in interest who agrees to be bound by all of the \nterms and conditions of this Warranty. Within thirty (30) days before any \nsuch transfer occurs, you agree to notify in writing Hypertherm, which \nreserves the right of approval. Should you fail timely to notify Hypertherm \nand seek its approval as set forth herein, the Warranty set forth herein \nshall be null and void and you will have no further recourse against \nHypertherm under the Warranty or otherwise.\n\n[[EVIDENCE_ID: a0033]]\nWaterjet product warranty coverage\n\n[[EVIDENCE_ID: a0034]]\nProduct\nParts coverage\n\n[[EVIDENCE_ID: a0035]]\nHyPrecision pumps\n27 months from the ship date, or 24 months \nfrom the date of proven installation, or \n4,000 hours, whichever occurs first\n\n[[EVIDENCE_ID: a0036]]\nPowerDredge \nabrasive removal \nsystem\n\n[[EVIDENCE_ID: a0037]]\n15 months from the ship date or 12 months \nfrom the date of proven installation, \nwhichever occurs first\n\n[[EVIDENCE_ID: a0038]]\nEcoSift abrasive \nrecycling system\n15 months from the ship date or 12 months \nfrom the date of proven installation, \nwhichever occurs first\n\n[[EVIDENCE_ID: a0039]]\nAbrasive metering \ndevices\n15 months from the ship date or 12 months \nfrom the date of proven installation, \nwhichever occurs first\n\n[[EVIDENCE_ID: a0040]]\nOn/off valve air \nactuators\n15 months from the ship date or 12 months \nfrom the date of proven installation, \nwhichever occurs first\n\n[[EVIDENCE_ID: a0041]]\nDiamond orifices\n600 hours of use with the use of a thimble \nfilter and compliance with Hypertherm’s \nwater quality requirements\n\n[[EVIDENCE_ID: a0042]]\nConsumable parts are not covered by this warranty. Consumable parts \ninclude, but are not limited to, high-pressure water seals, check valves, \ncylinders, bleed-down valves, low-pressure seals, high-pressure tubing, \nlow- and high-pressure water filters and abrasive collection bags. All \nthird-party pumps, pump accessories, hoppers, hopper accessories, \ndryer boxes, dryer box accessories and plumbing accessories are \ncovered by the respective manufacturers’ warranties and not covered by \nthis warranty.\n\n[[EVIDENCE_ID: a0043]]\nSC-16\nSafety and compliance"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "DiagnosticChunkOutput",
+        "strict": true,
+        "schema": {
+          "$defs": {
+            "AffectedComponentCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "category": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Category"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "affects_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Affects Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "category",
+                "claim_evidence",
+                "affects_link_evidence"
+              ],
+              "title": "AffectedComponentCandidate",
+              "type": "object"
+            },
+            "CorrectiveActionCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "action_kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Action Kind"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "resolution_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Resolution Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instruction_text",
+                "action_kind",
+                "claim_evidence",
+                "resolution_link_evidence"
+              ],
+              "title": "CorrectiveActionCandidate",
+              "type": "object"
+            },
+            "DiagnosticBundleCandidate": {
+              "additionalProperties": false,
+              "description": "One source record, potentially containing several observed indicators.",
+              "properties": {
+                "record_window_id": {
+                  "title": "Record Window Id",
+                  "type": "string"
+                },
+                "allowed_source_anchors": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Allowed Source Anchors",
+                  "type": "array"
+                },
+                "record_anchor": {
+                  "minLength": 1,
+                  "title": "Record Anchor",
+                  "type": "string"
+                },
+                "branch_anchor": {
+                  "minLength": 1,
+                  "title": "Branch Anchor",
+                  "type": "string"
+                },
+                "indicators": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticIndicatorCandidate"
+                  },
+                  "title": "Indicators",
+                  "type": "array"
+                },
+                "failure": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FailureModeCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actions": {
+                  "items": {
+                    "$ref": "#/$defs/CorrectiveActionCandidate"
+                  },
+                  "title": "Actions",
+                  "type": "array"
+                },
+                "inspection_steps": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticInspectionStepCandidate"
+                  },
+                  "title": "Inspection Steps",
+                  "type": "array"
+                },
+                "conditions": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticConditionCandidate"
+                  },
+                  "title": "Conditions",
+                  "type": "array"
+                },
+                "affected_component": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AffectedComponentCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolution_status": {
+                  "$ref": "#/$defs/ResolutionStatus"
+                }
+              },
+              "required": [
+                "record_window_id",
+                "allowed_source_anchors",
+                "record_anchor",
+                "branch_anchor",
+                "indicators",
+                "failure",
+                "actions",
+                "inspection_steps",
+                "conditions",
+                "affected_component",
+                "resolution_status"
+              ],
+              "title": "DiagnosticBundleCandidate",
+              "type": "object"
+            },
+            "DiagnosticConditionCandidate": {
+              "additionalProperties": false,
+              "description": "Source-stated condition attached to a branch or a zero-based step.",
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "title": "Text",
+                  "type": "string"
+                },
+                "applies_to": {
+                  "enum": [
+                    "branch",
+                    "action",
+                    "inspection"
+                  ],
+                  "title": "Applies To",
+                  "type": "string"
+                },
+                "step_index": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Step Index"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "text",
+                "applies_to",
+                "step_index",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticConditionCandidate",
+              "type": "object"
+            },
+            "DiagnosticEvidenceSpan": {
+              "additionalProperties": false,
+              "description": "A verbatim source span emitted by the extraction model.\n\n``source_anchor`` is the opaque evidence identifier printed in the model's\ninput.  It is intentionally not a graph node identifier.",
+              "properties": {
+                "source_anchor": {
+                  "minLength": 1,
+                  "title": "Source Anchor",
+                  "type": "string"
+                },
+                "source_page": {
+                  "minimum": 1,
+                  "title": "Source Page",
+                  "type": "integer"
+                },
+                "quote": {
+                  "minLength": 1,
+                  "title": "Quote",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source_anchor",
+                "source_page",
+                "quote"
+              ],
+              "title": "DiagnosticEvidenceSpan",
+              "type": "object"
+            },
+            "DiagnosticIndicatorCandidate": {
+              "additionalProperties": false,
+              "description": "Provider-safe flat indicator contract.\n\nOpenAI strict Structured Outputs does not accept the ``oneOf`` emitted by\nPydantic for a discriminated model union inside an array.  Keep the wire\nshape flat and enforce the same symptom/error-code invariants locally.\nNullable fields remain required so the provider schema is strict.",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "symptom",
+                    "error_code"
+                  ],
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "code": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code"
+                },
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "severity": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "Critical",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Severity"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "failure_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Failure Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "code",
+                "name",
+                "description",
+                "severity",
+                "claim_evidence",
+                "failure_link_evidence"
+              ],
+              "title": "DiagnosticIndicatorCandidate",
+              "type": "object"
+            },
+            "DiagnosticInspectionStepCandidate": {
+              "additionalProperties": false,
+              "description": "A diagnostic check that is useful but does not itself restore operation.",
+              "properties": {
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "instruction_text",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticInspectionStepCandidate",
+              "type": "object"
+            },
+            "FailureModeCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "material_context": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Material Context"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "material_context",
+                "claim_evidence"
+              ],
+              "title": "FailureModeCandidate",
+              "type": "object"
+            },
+            "ResolutionStatus": {
+              "description": "The extractor's explicit assessment of diagnostic completeness.",
+              "enum": [
+                "action_stated",
+                "no_action_stated",
+                "check_only",
+                "ambiguous",
+                "not_diagnostic"
+              ],
+              "title": "ResolutionStatus",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Provider structured-output envelope for one diagnostic PDF chunk.\n\nAll fields are required, including nullable/list fields.  This avoids the\noptional-property mismatch of strict provider JSON Schema implementations.",
+          "properties": {
+            "schema_version": {
+              "enum": [
+                "1.0",
+                "1.1"
+              ],
+              "title": "Schema Version",
+              "type": "string"
+            },
+            "source_language": {
+              "minLength": 1,
+              "title": "Source Language",
+              "type": "string"
+            },
+            "records": {
+              "items": {
+                "$ref": "#/$defs/DiagnosticBundleCandidate"
+              },
+              "title": "Records",
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "source_language",
+            "records"
+          ],
+          "title": "DiagnosticChunkOutput",
+          "type": "object"
+        }
+      }
+    },
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 0.014034666994120926,
+  "response": null,
+  "provider_request_id": null,
+  "error": {
+    "type": "APIConnectionError",
+    "status_code": null,
+    "message": "Connection error."
+  }
+}

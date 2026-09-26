@@ -166,6 +166,7 @@ class ExportOntologyRelationship(BaseModel):
     from_id: str
     to_id: str
     evidence: list[OntologyEvidence] = Field(default_factory=list)
+    branch_lineage_id: str = ""
 
 
 class ExportOntologyInstance(BaseModel):

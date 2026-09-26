@@ -1,0 +1,233 @@
+{
+  "status": "historical_lexical_probe_not_validated_quality",
+  "gold_total": 8,
+  "autonomous_probe": 4,
+  "expected_gap_probe": 0,
+  "one_to_one_source_page_branch_probe": 4,
+  "one_to_one_assignments": {
+    "dbranch_064c7b8bdef4a33caeaaf76e2eeeb0c11657f85a23831122d97c64e2feddf093": "E1",
+    "dbranch_fba140e60cad3ca800eea6edc048ef0216fcd2272af3dc2d3ffb121c0b6a8d53": "E3",
+    "dbranch_0679dd5928036cb94effe7fccb4a5fab0a1e8718625d98783754632f6b3f7601": "E6",
+    "dbranch_2162357e6126adaf41af8274af96642ac4008d9617187fbdd7e43ff777e5fab8": "E8"
+  },
+  "witnesses": [
+    {
+      "claim_id": "E1",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.837037,
+      "field_scores": {
+        "indicator": 0.84,
+        "failure_mode": 1.0,
+        "corrective_action": 0.837037
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Machine stops during cut due to unintentional pause",
+        "failure_mode": "Intermittent pause circuit",
+        "corrective_action": "Adjust pause plunger activation pressure",
+        "indicator_context": "Machine stops during cut due to unintentional pause The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. When pressing NEXT on the keypad, the machine will continue to cut where it left off. The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. When pressing NEXT on the keypad, the machine will continue to cut where it left off. Machine stops during cut due to unintentional pause Medium sym_machine_stop_during_cut_due_to_unintentional_pau_cb73eef7280c1cd3c0be85511f553a1884a4001cb862adcd692ba7f5b15d3ef7 This is typically caused by an intermittent pause circuit, usually in thestop discs.",
+        "failure_mode_context": "Intermittent pause circuit Typically caused by an intermittent pause circuit, usually in the stop discs. Typically caused by an intermittent pause circuit, usually in the stop discs. fm_intermittent_pause_circuit_91bc8aa29ac386481d1bb9524b915a2cef40a7913088648c7c56f8c12c7d2a0a comp_stop_discs_6c9bf76b6b64efa7452ef7ffd08fb9e1b15539d59080b8c6953085e71837cc46 Intermittent pause circuit This is typically caused by an intermittent pause circuit, usually in thestop discs. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure. This is typically caused by an intermittent pause circuit, usually in thestop discs.",
+        "corrective_action_context": "Adjust pause plunger activation pressure Tighten the plunger to increase activation pressure and loosen it to decrease activation pressure. ca_adjust_pause_plunger_activation_pressure_622a79705c1e5853cf2d0b872237e0121b94c65387e0b221705a2c8b772c4c62 Tighten the plunger to increase activation pressure and loosen it to decrease activation pressure. Remove gantry side cover. Check the pause plunger. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure. Adjust pause plunger activation pressure typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Tighten the plunger to increase activation pressure and loosen to decrease activation pressure. This is typically caused by an intermittent pause circuit, usually in thestop discs.",
+        "pages": [
+          37
+        ],
+        "indicator_id": "sym_machine_stop_during_cut_due_to_unintentional_pau_cb73eef7280c1cd3c0be85511f553a1884a4001cb862adcd692ba7f5b15d3ef7",
+        "failure_mode_id": "fm_intermittent_pause_circuit_91bc8aa29ac386481d1bb9524b915a2cef40a7913088648c7c56f8c12c7d2a0a",
+        "corrective_action_id": "ca_adjust_pause_plunger_activation_pressure_622a79705c1e5853cf2d0b872237e0121b94c65387e0b221705a2c8b772c4c62",
+        "branch_lineage_id": "dbranch_064c7b8bdef4a33caeaaf76e2eeeb0c11657f85a23831122d97c64e2feddf093"
+      }
+    },
+    {
+      "claim_id": "E2",
+      "kind": "published_path",
+      "present": false,
+      "score": 0.290196,
+      "field_scores": {
+        "indicator": 0.336,
+        "failure_mode": 0.415385,
+        "corrective_action": 0.290196
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "UIT Does Not Power Up",
+        "failure_mode": "Touch screen in sleep mode",
+        "corrective_action": "Touch the screen",
+        "indicator_context": "UIT Does Not Power Up The UIT does not power. Screen is blank and not lit up. The UIT does not power. Screen is blank and not lit up. UIT Does Not Power Up Medium sym_uit_does_not_power_up_f70461c3a3185d2346e10fa632040c795f510334116829214bdad7f265d41a72 The UIT does not power. Screen is blank and not lit up. If the machine sits idle for a long period of time the touch screen goes into a sleep mode to protect the screen.",
+        "failure_mode_context": "Touch screen in sleep mode If the machine sits idle for a long period of time the touch screen goes into a sleep mode to protect the screen. If the machine sits idle for a long period of time the touch screen goes into a sleep mode to protect the screen. fm_touch_screen_in_sleep_mode_dcefd7eff0bc8021be7d28841a68e0bda77d9b2c48af5209f5c492b79fb1214c not_stated Touch screen in sleep mode The UIT does not power. Screen is blank and not lit up. If the machine sits idle for a long period of time the touch screen goes into a sleep mode to protect the screen. Touch the screen to see if it turns on.",
+        "corrective_action_context": "Touch the screen Touch the screen to wake it from sleep mode. ca_touch_the_screen_4c32869a827a1a4e3d4c28351d21aa4de424b5464f1549f2d3e75b2e2ccedc50 Touch the screen to wake it from sleep mode. Touch the screen to see if it turns on. Touch the screen typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Touch the screen to see if it turns on.",
+        "pages": [
+          37
+        ],
+        "indicator_id": "sym_uit_does_not_power_up_f70461c3a3185d2346e10fa632040c795f510334116829214bdad7f265d41a72",
+        "failure_mode_id": "fm_touch_screen_in_sleep_mode_dcefd7eff0bc8021be7d28841a68e0bda77d9b2c48af5209f5c492b79fb1214c",
+        "corrective_action_id": "ca_touch_the_screen_4c32869a827a1a4e3d4c28351d21aa4de424b5464f1549f2d3e75b2e2ccedc50",
+        "branch_lineage_id": "dbranch_5e706b091971f23952793a41bd5da8fea6c5750a288ea61196b544a3b78aabc8"
+      }
+    },
+    {
+      "claim_id": "E3",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.83125,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 0.83125,
+        "corrective_action": 0.832
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "The Cutting Tool or Pen does not move down",
+        "failure_mode": "Layer or tool mapping is incorrect",
+        "corrective_action": "Correct the tool or layer mapping",
+        "indicator_context": "The Cutting Tool or Pen does not move down The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. The Cutting Tool or Pen does not move down Medium sym_the_cutting_tool_or_pen_does_not_move_down_1fb7ec01ba134de6d80bc4cdda6f7a8c8e752f0611d4d7d4dceed68f653411fd The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. If the layer is not mapped to a tool or the tool is not on the tool holder Verify the mapping of your tools and layers are mapped properly under each tool.",
+        "failure_mode_context": "Layer or tool mapping is incorrect The layer is not mapped to a tool or the tool is not on the tool holder. The layer is not mapped to a tool or the tool is not on the tool holder. fm_layer_or_tool_mapping_is_incorrect_a49047a157a6ac785b44e5e1eb67d6f19c2f4a6e03689abbf497d3da56bc197c not_stated Layer or tool mapping is incorrect The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. If the layer is not mapped to a tool or the tool is not on the tool holder Verify the mapping of your tools and layers are mapped properly under each tool. then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter. Verify the mapping of your tools and layers are mapped properly under each tool.",
+        "corrective_action_context": "Correct the tool or layer mapping Drag the tool to the spindle or the layer to the tool. ca_correct_the_tool_or_layer_mapping_01a15c5fa6daf0187b602d96b061c5562f82a8d4e923c1f98920f6f25df58717 Drag the tool to the spindle or the layer to the tool. If the layer is not mapped to a tool or the tool is not on the tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter. Correct the tool or layer mapping typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter. Verify the mapping of your tools and layers are mapped properly under each tool.",
+        "pages": [
+          38
+        ],
+        "indicator_id": "sym_the_cutting_tool_or_pen_does_not_move_down_1fb7ec01ba134de6d80bc4cdda6f7a8c8e752f0611d4d7d4dceed68f653411fd",
+        "failure_mode_id": "fm_layer_or_tool_mapping_is_incorrect_a49047a157a6ac785b44e5e1eb67d6f19c2f4a6e03689abbf497d3da56bc197c",
+        "corrective_action_id": "ca_correct_the_tool_or_layer_mapping_01a15c5fa6daf0187b602d96b061c5562f82a8d4e923c1f98920f6f25df58717",
+        "branch_lineage_id": "dbranch_fba140e60cad3ca800eea6edc048ef0216fcd2272af3dc2d3ffb121c0b6a8d53"
+      }
+    },
+    {
+      "claim_id": "E4",
+      "kind": "published_path",
+      "present": false,
+      "score": 0.0,
+      "field_scores": {
+        "indicator": 0.0,
+        "failure_mode": 0.21,
+        "corrective_action": 0.276667
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Drive belts show wear",
+        "failure_mode": "Worn drive belt",
+        "corrective_action": "Replace drive belt",
+        "indicator_context": "Drive belts show wear Drive belts show signs of wear, such as cuts, frays, or missing teeth. Drive belts show signs of wear, such as cuts, frays, or missing teeth. Drive belts show wear Medium sym_drive_belts_show_wear_9be62df56a476e53bea3e6a1d8ab243284ebfcd242a44c4e7c2eed157c9b0085 Check Drive belts for signs of wear such as cuts, frays or missing teeth. Replace if required.",
+        "failure_mode_context": "Worn drive belt A drive belt has signs of wear such as cuts, frays, or missing teeth. A drive belt has signs of wear such as cuts, frays, or missing teeth. fm_worn_drive_belt_00f51863bea805b1ea892368c4d576ebe4b97cde7a942b89ff406146e20e02db comp_drive_belts_fb9ba2ba0bd62fd994c13520e0c9757953d62bba972974432eeba78ffef6cf98 Worn drive belt Check Drive belts for signs of wear such as cuts, frays or missing teeth. Replace if required. Check Drive belts for signs of wear such as cuts, frays or missing teeth. Replace if required.",
+        "corrective_action_context": "Replace drive belt Replace the drive belt if required. ca_replace_drive_belt_976bc968409d95715edfa9d552517de4a6056c1b5c34717544f6e8a9addf101b Replace the drive belt if required. Check Drive belts for signs of wear such as cuts, frays or missing teeth. Replace if required. Replace drive belt typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Check Drive belts for signs of wear such as cuts, frays or missing teeth. Replace if required.",
+        "pages": [
+          29
+        ],
+        "indicator_id": "sym_drive_belts_show_wear_9be62df56a476e53bea3e6a1d8ab243284ebfcd242a44c4e7c2eed157c9b0085",
+        "failure_mode_id": "fm_worn_drive_belt_00f51863bea805b1ea892368c4d576ebe4b97cde7a942b89ff406146e20e02db",
+        "corrective_action_id": "ca_replace_drive_belt_976bc968409d95715edfa9d552517de4a6056c1b5c34717544f6e8a9addf101b",
+        "branch_lineage_id": "dbranch_8575c275122c36068cc7f0be7636e17e27df79b75c6405d7fec73e758881fc3e"
+      }
+    },
+    {
+      "claim_id": "E5",
+      "kind": "published_path",
+      "present": false,
+      "score": 0.345,
+      "field_scores": {
+        "indicator": 0.345,
+        "failure_mode": 0.345,
+        "corrective_action": 0.558333
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Loss of laser cutting power",
+        "failure_mode": "Damaged or dirty focusing lens",
+        "corrective_action": "Clean or replace focusing lens",
+        "indicator_context": "Loss of laser cutting power The laser cutting power decreases, causing non-cut edges. The laser cutting power decreases, causing non-cut edges. Loss of laser cutting power Medium sym_loss_of_laser_cutting_power_5e72b75a9e0162426c913df3071b574bec8501f074eab79236e1df73b6c0c896 Damaged or dirty lens. The laser cutting power decreases causing non-cut edges.",
+        "failure_mode_context": "Damaged or dirty focusing lens The focusing lens is damaged or dirty. The focusing lens is damaged or dirty. fm_damaged_or_dirty_focusing_lens_38c5a14a91529ea868200b2b8b6646277ba020952689555eb3197a2842b55dfd comp_focusing_lens_3454b797f453d034aabcede7513f1103ef419c999e8fcbae42768929b2f0c856 Damaged or dirty focusing lens Damaged or dirty lens. The laser cutting power decreases causing non-cut edges. Damaged or dirty lens.",
+        "corrective_action_context": "Clean or replace focusing lens Clean or replace the lens as required. ca_clean_or_replace_focusing_lens_fc23b126991fef4287f03ded3cbaab2cb38adbb890c20d9f930d5d18fec93413 Clean or replace the lens as required. Check for damage or dirt on the focusing lens. Clean or replace lens as required. Clean or replace focusing lens typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Damaged or dirty lens.",
+        "pages": [
+          39
+        ],
+        "indicator_id": "sym_loss_of_laser_cutting_power_5e72b75a9e0162426c913df3071b574bec8501f074eab79236e1df73b6c0c896",
+        "failure_mode_id": "fm_damaged_or_dirty_focusing_lens_38c5a14a91529ea868200b2b8b6646277ba020952689555eb3197a2842b55dfd",
+        "corrective_action_id": "ca_clean_or_replace_focusing_lens_fc23b126991fef4287f03ded3cbaab2cb38adbb890c20d9f930d5d18fec93413",
+        "branch_lineage_id": "dbranch_0679dd5928036cb94effe7fccb4a5fab0a1e8718625d98783754632f6b3f7601"
+      }
+    },
+    {
+      "claim_id": "E6",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.907692,
+      "field_scores": {
+        "indicator": 0.907692,
+        "failure_mode": 1.0,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Loss of laser cutting power",
+        "failure_mode": "Damaged or dirty focusing lens",
+        "corrective_action": "Clean or replace lens",
+        "indicator_context": "Loss of laser cutting power The laser cutting power decreases, causing non-cut edges. The laser cutting power decreases, causing non-cut edges. Loss of laser cutting power Medium sym_loss_of_laser_cutting_power_5e72b75a9e0162426c913df3071b574bec8501f074eab79236e1df73b6c0c896 Damaged or dirty lens. The laser cutting power decreases causing non-cut edges.",
+        "failure_mode_context": "Damaged or dirty focusing lens The focusing lens is damaged or dirty. The focusing lens is damaged or dirty. fm_damaged_or_dirty_focusing_lens_5d11283d0deeeadfa9f330abf2f5ce7efd9a173ba1583cab2a9c804a726aaa4f comp_focusing_lens_3454b797f453d034aabcede7513f1103ef419c999e8fcbae42768929b2f0c856 Damaged or dirty focusing lens Damaged or dirty lens. The laser cutting power decreases causing non-cut edges. Damaged or dirty lens.",
+        "corrective_action_context": "Clean or replace lens Clean or replace the focusing lens as required. ca_clean_or_replace_lens_06197f1f4c594ca28c110d54467ada7b97c033aed92c7156a07cba027a7ef7b4 cleaning_or_replacement Clean or replace the focusing lens as required. Clean or replace lens as required. Clean or replace lens typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Damaged or dirty lens.",
+        "pages": [
+          39
+        ],
+        "indicator_id": "sym_loss_of_laser_cutting_power_5e72b75a9e0162426c913df3071b574bec8501f074eab79236e1df73b6c0c896",
+        "failure_mode_id": "fm_damaged_or_dirty_focusing_lens_5d11283d0deeeadfa9f330abf2f5ce7efd9a173ba1583cab2a9c804a726aaa4f",
+        "corrective_action_id": "ca_clean_or_replace_lens_06197f1f4c594ca28c110d54467ada7b97c033aed92c7156a07cba027a7ef7b4",
+        "branch_lineage_id": "dbranch_8b93167091acc5b52afe8c1bc6db3ed2f496263c76aa8eb175cb65f8528f740a"
+      }
+    },
+    {
+      "claim_id": "E7",
+      "kind": "published_path",
+      "present": false,
+      "score": 0.522857,
+      "field_scores": {
+        "indicator": 0.907692,
+        "failure_mode": 0.522857,
+        "corrective_action": 0.854545
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Loss of laser cutting power",
+        "failure_mode": "Damaged or dirty mirror",
+        "corrective_action": "Clean or replace mirrors",
+        "indicator_context": "Loss of laser cutting power The laser cutting power decreases, causing non-cut edges. The laser cutting power decreases, causing non-cut edges. Loss of laser cutting power Medium sym_loss_of_laser_cutting_power_5e72b75a9e0162426c913df3071b574bec8501f074eab79236e1df73b6c0c896 Damaged or dirty Mirror. The laser cutting power decreases causing non-cut edges.",
+        "failure_mode_context": "Damaged or dirty mirror A mirror is damaged or dirty. A mirror is damaged or dirty. fm_damaged_or_dirty_mirror_583b36e7875830e9b4c49d3181b3937d84858c17b48eab09368ba8b2eadc5790 comp_beam_deflecting_mirrors_f6e04ee76e42d3705c18cb69eaa9eb3d0888a657461b532c27630ab4e93aea41 Damaged or dirty mirror Damaged or dirty Mirror. The laser cutting power decreases causing non-cut edges. Damaged or dirty Mirror.",
+        "corrective_action_context": "Clean or replace mirrors Clean or replace mirrors as required. ca_clean_or_replace_mirrors_3e510da1b16438a839f5fc63896968c58ce96c569ee8adeb627847446b6a2b71 Clean or replace mirrors as required. Clean or replace mirrors as required. Clean or replace mirrors typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Damaged or dirty Mirror.",
+        "pages": [
+          39
+        ],
+        "indicator_id": "sym_loss_of_laser_cutting_power_5e72b75a9e0162426c913df3071b574bec8501f074eab79236e1df73b6c0c896",
+        "failure_mode_id": "fm_damaged_or_dirty_mirror_583b36e7875830e9b4c49d3181b3937d84858c17b48eab09368ba8b2eadc5790",
+        "corrective_action_id": "ca_clean_or_replace_mirrors_3e510da1b16438a839f5fc63896968c58ce96c569ee8adeb627847446b6a2b71",
+        "branch_lineage_id": "dbranch_336f91a3525961b7b152447448ddd9070f3b0af4b529ed49af00d76020d497ae"
+      }
+    },
+    {
+      "claim_id": "E8",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.871429,
+      "field_scores": {
+        "indicator": 0.907692,
+        "failure_mode": 0.871429,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Loss of laser cutting power",
+        "failure_mode": "Damage or debris in laser nozzle",
+        "corrective_action": "Clean or replace laser nozzle",
+        "indicator_context": "Loss of laser cutting power The laser cutting power decreases, causing non-cut edges. The laser cutting power decreases, causing non-cut edges. Loss of laser cutting power Medium sym_loss_of_laser_cutting_power_5e72b75a9e0162426c913df3071b574bec8501f074eab79236e1df73b6c0c896 The laser cutting power decreases causing non-cut edges. Damage or debris in laser nozzle.",
+        "failure_mode_context": "Damage or debris in laser nozzle The laser nozzle is damaged or contains debris. The laser nozzle is damaged or contains debris. fm_damage_or_debris_in_laser_nozzle_f3d2e5535eb791352edc267de1747c803582b6d22249101da9c105b1e5e7fb3e comp_laser_nozzle_bb7e2bd0f3070e413d9fdad397d8b5fda92e180a4c9f0e058c186ef94fad8732 Damage or debris in laser nozzle The laser cutting power decreases causing non-cut edges. Damage or debris in laser nozzle. Damage or debris in laser nozzle.",
+        "corrective_action_context": "Clean or replace laser nozzle Clean or replace the laser nozzle as required. ca_clean_or_replace_laser_nozzle_f42c0ed6af28a916efe9ed50b252440670a61d341ea26764fb711bfb935631c0 Clean or replace the laser nozzle as required. Check for damage or debris in laser nozzle. Clean or replace laser nozzle as required. Clean or replace laser nozzle typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Damage or debris in laser nozzle.",
+        "pages": [
+          39
+        ],
+        "indicator_id": "sym_loss_of_laser_cutting_power_5e72b75a9e0162426c913df3071b574bec8501f074eab79236e1df73b6c0c896",
+        "failure_mode_id": "fm_damage_or_debris_in_laser_nozzle_f3d2e5535eb791352edc267de1747c803582b6d22249101da9c105b1e5e7fb3e",
+        "corrective_action_id": "ca_clean_or_replace_laser_nozzle_f42c0ed6af28a916efe9ed50b252440670a61d341ea26764fb711bfb935631c0",
+        "branch_lineage_id": "dbranch_2162357e6126adaf41af8274af96642ac4008d9617187fbdd7e43ff777e5fab8"
+      }
+    }
+  ],
+  "semantic_precision": null,
+  "semantic_recall": null
+}

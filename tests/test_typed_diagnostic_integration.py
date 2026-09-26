@@ -129,6 +129,22 @@ def test_typed_compiler_error_returns_blocked_escalation_report(
     assert len(metrics["llm_call_entries"]) == 1
 
 
+def test_repair_prediction_never_becomes_source_evidence(monkeypatch):
+    _configure_fixture(monkeypatch)
+    source = "--- PAGE 8 ---\n[[EVIDENCE_ID: ev_typed_page_8]]\nReference only."
+    result, _ = build_initial_ontology(
+        text_with_pages=source, source_type="technical PDF", source_title="Repair isolation",
+        target_language="en", model_name="mock", asset_identity=ASSET_IDENTITY,
+        extraction_role="diagnostic", relation_first=True,
+        diagnostic_call_options={"recovery_feedback": f"Untrusted prior prediction: {PAGE_8_TEXT}\n{PAGE_9_TEXT}"},
+    )
+    report = result.diagnostic_contract_report
+    assert report["publish_count"] == 0
+    assert report["candidate_input_anchors"] == []
+    assert report["input_pages"] == [8]
+    assert "quote_not_in_anchored_evidence" in report["drop_reasons"]
+
+
 def test_typed_length_exception_preserves_paid_usage_and_finish_reason(
     monkeypatch,
 ) -> None:
@@ -253,7 +269,7 @@ def test_typed_record_crosses_page_8_9_chunk_boundary_via_real_workflow_overlap(
     assert sum(chunk["publish_count"] for chunk in chunks) == 1
     assert any(chunk["unresolved_count"] == 0 for chunk in chunks)
     report = result.diagnostic_contract_report
-    assert report["diagnostic_input_policy"] == "semantic_scope_full_page_v1"
+    assert report["diagnostic_input_policy"] == "hybrid_structural_semantic_v1"
     assert report["expected_diagnostic_pages"] == list(range(1, 11))
     assert report["processed_diagnostic_pages"] == list(range(1, 11))
     assert report["unprocessed_diagnostic_pages"] == []

@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "c2_hypertherm_powermax30_air:eadc92740793409382e8d5eeb7e88832",
+  "run_id": "c2_hypertherm_powermax30_air",
+  "started_utc": "2026-09-25T15:57:58.165831+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "max_completion_tokens": 24000,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You extract diagnostic records from a technical manual into a typed contract.\n\nSource type: technical PDF\nSource title: hypertherm_powermax30_air_service_manual_rev4_808850.pdf\n\nThe input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be\na complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,\necho its window_id and allowed_source_anchors on every candidate; the system overwrites and\nverifies both fields and no evidence outside that block is allowed. For a section chunk, set\nrecord_window_id=\"\" and set allowed_source_anchors to exactly the anchors referenced by that\ncandidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL\ncontext may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields\nbelong to the current cause/remedy branch. Each displayed FIELD value is one exact source\nspan. Quote the value only: never include the \"FIELD n:\" label, join separate fields, or\nrestore a sibling field omitted by the system.\nReturn every explicit diagnostic record and every distinct cause/remedy branch in the input.\nThe contract is an intermediate record representation, not the final graph. Use schema_version=\"1.1\".\n\nRules:\n1. Never emit graph IDs or ontology relation names. The system owns them.\n2. A diagnostic record has one or more indicators. An indicator is either an observable\n   symptom or an asset-generated error/alarm code. A record may explicitly contain both;\n   keep both. For a symptom set code=null and severity=\"Unknown\" unless the source explicitly\n   states its severity; never invent a risk rating. For an error_code set its\n   code and severity=null. Only an explicit not_diagnostic page disposition may use an empty\n   indicator list.\n3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action\n   from different table rows, flowchart branches or unrelated paragraphs.\n4. A FailureMode is an explicit technical cause or faulty state, not a restatement of the\n   symptom, an inspection result or an invented explanation. Use null when none is stated.\n5. A CorrectiveAction is an explicitly restorative remedy for that failure. Checks and tests\n   are not restorative unless the source says the check itself resolves the fault. Preserve\n   a non-restorative check/test/inspection in inspection_steps, never in actions.\n6. Set resolution_status:\n   - action_stated: at least one restorative action is explicitly linked to the failure;\n   - no_action_stated: the diagnostic record states a failure but no remedy;\n   - check_only: it gives only diagnostic checks/verification;\n   - ambiguous: the row/branch pairing cannot be established safely;\n   - not_diagnostic: a candidate-looking passage is actually preventive/generic content.\n7. An affected component is optional. Include it only if the branch explicitly identifies the\n   affected component. category and failure.material_context are required-but-nullable: use\n   null rather than manufacturing a category/context. A null category does not invalidate a\n   grounded branch; the deterministic compiler supplies a neutral schema category. Do not use\n   a product name as a component.\n8. Evidence is edge-specific. claim_evidence proves only the claim. Each edge evidence list is\n   a support set: one span may explicitly state the whole link, or several spans from the same\n   record/branch may collectively establish it when a manual separates Problem, Cause and\n   Remedy across blocks or pages. failure_link_evidence supports only that exact indicator to\n   failure; resolution_link_evidence supports only that exact failure to action;\n   affects_link_evidence supports only that exact failure to component. Include every span\n   needed to establish the link and no unrelated nearby heading. Never use an action-only span\n   as the sole proof of an indicator-to-failure edge.\n   In a system-owned atomic table row, use the exact endpoint FIELD spans as the edge support\n   set; the deterministic compiler verifies the table structure and completes their union.\n9. Every quote is a short verbatim span contained in the EvidenceUnit named by source_anchor,\n   on source_page. Prefer one span per EvidenceUnit. If wording crosses adjacent units, emit\n   separate exact spans; never concatenate or paraphrase cells. Copy the opaque anchor exactly.\n   Do not include page/anchor marker text in a quote.\n10. record_anchor must be one of this candidate's claim-evidence anchors. branch_anchor must be\n    one of this candidate's evidence anchors (prefer a causal edge anchor). For an explicit\n    not_diagnostic disposition with no claims, set both to the candidate page's EvidenceUnit\n    anchor. These anchors are source locators, not freely generated IDs.\n11. Preserve source language in human-readable values and set source_language accordingly.\n12. Duplicate records caused by overlapping pages must be returned identically; deterministic\n    lineage and compilation will deduplicate them.\n13. Account for candidate-looking passages. If one is actually generic/preventive content,\n    emit a not_diagnostic candidate with empty indicators and no diagnostic claims. Return an\n    empty records list only when the input contains no candidate-looking passage at all. Never\n    fill a missing cause/action simply to make a complete record.\n14. Every anchored candidate-looking passage in the input must occur in a record's claim/edge\n    evidence, or have its own explicit not_diagnostic disposition. Do not cover only the first\n    row or branch of a troubleshooting table.\n15. For check_only, actions must be empty and inspection_steps must preserve each stated check\n    with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.\n16. Preserve every stated precondition, test outcome, negation, threshold and alternative in\n    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection\n    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test\n    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.\n    Keep inspection_steps and actions in source order; do not sort steps alphabetically.\n17. Preserve the actual error CODE separately from its fault name, including a numerical code\n    in a separate table column. Never substitute the name for a printed numeric code.\n"
+      },
+      {
+        "role": "user",
+        "content": "--- PAGE 72 ---\n\n[[EVIDENCE_ID: a0001]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0002]]\n72\nPowermax30 AIR\nService Manual\n808850\n\n[[EVIDENCE_ID: a0003]]\nProblem | Possible causes | Possible solutions\n\n[[EVIDENCE_ID: a0004]]\nMoisture exits the torch nozzle. | • A small amount of moisture at the torch nozzle is normal for this system, particularly in very humid environments. • A larger amount of moisture at the torch nozzle may indicate that the air filter is not properly removing moisture from the system. | • A small amount of moisture should not prevent the torch from firing or degrade cut quality or performance. • In case of excess moisture, examine the air filter inside the power supply. It is normal to see water in the filter bowl. The filter purges water when the water level in the bowl is high enough to engage the float mechanism. If the water level in the filter bowl is approximately half full (or more), the air filter may not be purging water properly. • Make sure the drain hose connected to the bottom of the air filter bowl is not twisted or clogged. • Water purged from the air filter exits through a hole in bottom of the of the power supply. Make sure this hole is not blocked. • Replace the air filter bowl. See Replace the air filter bowl and air filter element on page 160. • If the problem persists, replace the whole air filter assembly. See Replace the air filter assembly on page 157.\n\n--- PAGE 73 ---\n\n[[EVIDENCE_ID: a0005]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0006]]\nPowermax30 AIR\nService Manual\n808850\n73\n\n[[EVIDENCE_ID: a0007]]\nProblem | Possible causes | Possible solutions\n\n[[EVIDENCE_ID: a0008]]\nThe arc blows out but re-ignites when the torch trigger is pulled again, or the arc sputters and hisses. | • Too much moisture is present in the consumables. • The consumables are worn or damaged. | • Inspect the consumables for signs of excess moisture. A small amount of moisture at the torch nozzle is normal for this system and should not prevent the torch from firing. If excess moisture is present, fire the torch approximately 5 times in succession. Fire the torch in the air, not on the workpiece. • If the problem persists and excess moisture is not an issue, inspect and replace the consumable parts if they are worn or damaged. • If firing the torch does not clear out the excess moisture, examine the air filter inside the power supply. It is normal to see water in the filter bowl. The filter purges water when the water level in the bowl is high enough to engage the float mechanism. If the water level in the filter bowl is approximately half full (or more), the air filter may not be purging water properly. • Make sure the drain hose connected to the bottom of the air filter bowl is not twisted or clogged. • Water purged from the air filter exits through a hole in bottom of the of the power supply. Make sure this hole is not blocked. • Replace the air filter bowl. See Replace the air filter bowl and air filter element on page 160. • If the problem persists, replace the whole air filter assembly. See Replace the air filter assembly on page 157.\n\n--- PAGE 74 ---\n\n[[EVIDENCE_ID: a0009]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0010]]\n74\nPowermax30 AIR\nService Manual\n808850\n\n[[EVIDENCE_ID: a0011]]\nProblem | Possible causes | Possible solutions\n\n[[EVIDENCE_ID: a0012]]\nThe cut quality is poor, or the cut does not sever the metal. | • The consumables are worn or damaged. • The work lead connection is poor. The work lead may be damaged or not properly connected to the workpiece. • The amperage adjustment knob is set too low. • The air pressure to the torch is too low. • The power board is producing low current and may be faulty. • The extension cord is too long, is damaged, or is not capable of delivering sufficient power to the power supply. | • Inspect the consumables and replace if necessary. • Reposition the work lead on the workpiece. • Clean the workpiece surface to make a better connection with the work lead. • Inspect the work lead and replace if necessary. • If your input circuit is capable, turn the amperage adjustment knob to a higher setting. • Check the gas supply line for leaks or defective parts. Perform Test 10 – check air pressure on page 101. • Perform Test 2 – power board voltage checks on page 84 and Test 3 – VBUS and voltage balance on power board on page 86. • Operate the system without using an extension cord. If you must use an extension cord, use a heavy conductor cord of the shortest possible length. See Extension cord recommendations on page 33.\n\n[[EVIDENCE_ID: a0013]]\nThe circuit breaker trips frequently while you are cutting. | • The amperage adjustment knob is set too high for the input circuit. • The wrong consumables are being used. • The input circuit is not delivering sufficient power to the power supply. • The operator is stretching the arc by holding the torch too far from the workpiece when cutting. • The extension cord is too long, is damaged, or is not capable of delivering sufficient power to the power supply. | • Turn down the cutting current. See Step 3 – Adjust the output current on page 47. • Make sure the correct consumables are installed for this power supply and torch. See Consumable use on page 37. • Operate the system on a 240 VAC input circuit whenever possible. • Avoid stretching the arc. Drag the torch on the workpiece. See Edge start on a workpiece on page 54. • Operate the system without using an extension cord. If you must use an extension cord, use a heavy conductor cord of the shortest possible length. See Extension cord recommendations on page 33. • Make sure nothing else is drawing power on the same circuit.\n\n--- PAGE 75 ---\n\n[[EVIDENCE_ID: a0014]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0015]]\nControl board LEDs\n\n[[EVIDENCE_ID: a0016]]\nThe control board (PCB1) is located inside of the front panel.\n\n[[EVIDENCE_ID: a0017]]\nFigure 3\n\n[[EVIDENCE_ID: a0018]]\nControl board\n\n[[EVIDENCE_ID: a0019]]\nRibbon cable\n\n[[EVIDENCE_ID: a0020]]\nThe control board has four diagnostic LEDs:\n\n[[EVIDENCE_ID: a0021]]\n\nReset – This LED illuminates when certain voltage readings to the power board are out of range. See Reset LED on \npage 76.\n\n[[EVIDENCE_ID: a0022]]\n\nError – This LED illuminates when the internal compressor, torch cap, or temperature LEDs on the front of the power \nsupply illuminate. If all four LEDs on the front of the power supply are blinking, the Error LED also blinks. The number \nof blinks between pauses indicates which component may have failed.\n\n[[EVIDENCE_ID: a0023]]\n\nTransfer – This LED illuminates when there is proper arc transfer between the torch and the workpiece, and blinks \nduring continuous pilot arc operation (such as when cutting expanded metal or moving the arc off the plate and then \nback on).\n\n[[EVIDENCE_ID: a0024]]\n\nStart – This LED illuminates when the power supply receives a start signal and remains illuminated during normal \noperation.\n\n[[EVIDENCE_ID: a0025]]\nPowermax30 AIR\nService Manual\n808850\n75"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "DiagnosticChunkOutput",
+        "strict": true,
+        "schema": {
+          "$defs": {
+            "AffectedComponentCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "category": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Category"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "affects_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Affects Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "category",
+                "claim_evidence",
+                "affects_link_evidence"
+              ],
+              "title": "AffectedComponentCandidate",
+              "type": "object"
+            },
+            "CorrectiveActionCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "action_kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Action Kind"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "resolution_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Resolution Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instruction_text",
+                "action_kind",
+                "claim_evidence",
+                "resolution_link_evidence"
+              ],
+              "title": "CorrectiveActionCandidate",
+              "type": "object"
+            },
+            "DiagnosticBundleCandidate": {
+              "additionalProperties": false,
+              "description": "One source record, potentially containing several observed indicators.",
+              "properties": {
+                "record_window_id": {
+                  "title": "Record Window Id",
+                  "type": "string"
+                },
+                "allowed_source_anchors": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Allowed Source Anchors",
+                  "type": "array"
+                },
+                "record_anchor": {
+                  "minLength": 1,
+                  "title": "Record Anchor",
+                  "type": "string"
+                },
+                "branch_anchor": {
+                  "minLength": 1,
+                  "title": "Branch Anchor",
+                  "type": "string"
+                },
+                "indicators": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticIndicatorCandidate"
+                  },
+                  "title": "Indicators",
+                  "type": "array"
+                },
+                "failure": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FailureModeCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actions": {
+                  "items": {
+                    "$ref": "#/$defs/CorrectiveActionCandidate"
+                  },
+                  "title": "Actions",
+                  "type": "array"
+                },
+                "inspection_steps": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticInspectionStepCandidate"
+                  },
+                  "title": "Inspection Steps",
+                  "type": "array"
+                },
+                "conditions": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticConditionCandidate"
+                  },
+                  "title": "Conditions",
+                  "type": "array"
+                },
+                "affected_component": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AffectedComponentCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolution_status": {
+                  "$ref": "#/$defs/ResolutionStatus"
+                }
+              },
+              "required": [
+                "record_window_id",
+                "allowed_source_anchors",
+                "record_anchor",
+                "branch_anchor",
+                "indicators",
+                "failure",
+                "actions",
+                "inspection_steps",
+                "conditions",
+                "affected_component",
+                "resolution_status"
+              ],
+              "title": "DiagnosticBundleCandidate",
+              "type": "object"
+            },
+            "DiagnosticConditionCandidate": {
+              "additionalProperties": false,
+              "description": "Source-stated condition attached to a branch or a zero-based step.",
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "title": "Text",
+                  "type": "string"
+                },
+                "applies_to": {
+                  "enum": [
+                    "branch",
+                    "action",
+                    "inspection"
+                  ],
+                  "title": "Applies To",
+                  "type": "string"
+                },
+                "step_index": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Step Index"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "text",
+                "applies_to",
+                "step_index",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticConditionCandidate",
+              "type": "object"
+            },
+            "DiagnosticEvidenceSpan": {
+              "additionalProperties": false,
+              "description": "A verbatim source span emitted by the extraction model.\n\n``source_anchor`` is the opaque evidence identifier printed in the model's\ninput.  It is intentionally not a graph node identifier.",
+              "properties": {
+                "source_anchor": {
+                  "minLength": 1,
+                  "title": "Source Anchor",
+                  "type": "string"
+                },
+                "source_page": {
+                  "minimum": 1,
+                  "title": "Source Page",
+                  "type": "integer"
+                },
+                "quote": {
+                  "minLength": 1,
+                  "title": "Quote",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source_anchor",
+                "source_page",
+                "quote"
+              ],
+              "title": "DiagnosticEvidenceSpan",
+              "type": "object"
+            },
+            "DiagnosticIndicatorCandidate": {
+              "additionalProperties": false,
+              "description": "Provider-safe flat indicator contract.\n\nOpenAI strict Structured Outputs does not accept the ``oneOf`` emitted by\nPydantic for a discriminated model union inside an array.  Keep the wire\nshape flat and enforce the same symptom/error-code invariants locally.\nNullable fields remain required so the provider schema is strict.",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "symptom",
+                    "error_code"
+                  ],
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "code": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code"
+                },
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "severity": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "Critical",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Severity"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "failure_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Failure Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "code",
+                "name",
+                "description",
+                "severity",
+                "claim_evidence",
+                "failure_link_evidence"
+              ],
+              "title": "DiagnosticIndicatorCandidate",
+              "type": "object"
+            },
+            "DiagnosticInspectionStepCandidate": {
+              "additionalProperties": false,
+              "description": "A diagnostic check that is useful but does not itself restore operation.",
+              "properties": {
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "instruction_text",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticInspectionStepCandidate",
+              "type": "object"
+            },
+            "FailureModeCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "material_context": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Material Context"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "material_context",
+                "claim_evidence"
+              ],
+              "title": "FailureModeCandidate",
+              "type": "object"
+            },
+            "ResolutionStatus": {
+              "description": "The extractor's explicit assessment of diagnostic completeness.",
+              "enum": [
+                "action_stated",
+                "no_action_stated",
+                "check_only",
+                "ambiguous",
+                "not_diagnostic"
+              ],
+              "title": "ResolutionStatus",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Provider structured-output envelope for one diagnostic PDF chunk.\n\nAll fields are required, including nullable/list fields.  This avoids the\noptional-property mismatch of strict provider JSON Schema implementations.",
+          "properties": {
+            "schema_version": {
+              "enum": [
+                "1.0",
+                "1.1"
+              ],
+              "title": "Schema Version",
+              "type": "string"
+            },
+            "source_language": {
+              "minLength": 1,
+              "title": "Source Language",
+              "type": "string"
+            },
+            "records": {
+              "items": {
+                "$ref": "#/$defs/DiagnosticBundleCandidate"
+              },
+              "title": "Records",
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "source_language",
+            "records"
+          ],
+          "title": "DiagnosticChunkOutput",
+          "type": "object"
+        }
+      }
+    },
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 48.89934212499065,
+  "response": {
+    "id": "chatcmpl-ES2b8BNFcB7YwrwVQUMxeXaviwn8o",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"schema_version\":\"1.1\",\"source_language\":\"English\",\"records\":[\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0004\"],\"record_anchor\":\"a0004\",\"branch_anchor\":\"a0004\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Moisture exits the torch nozzle\",\"description\":\"Moisture exits the torch nozzle.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0004\",\"source_page\":72,\"quote\":\"Moisture exits the torch nozzle.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0004\",\"source_page\":72,\"quote\":\"A small amount of moisture at the torch nozzle is normal for this system, particularly in very humid environments.\"}]}],\"failure\":{\"name\":\"Small amount of moisture at the torch nozzle\",\"description\":\"A small amount of moisture at the torch nozzle is normal for this system, particularly in very humid environments.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0004\",\"source_page\":72,\"quote\":\"A small amount of moisture at the torch nozzle is normal for this system, particularly in very humid environments.\"}]},\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"no_action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0004\"],\"record_anchor\":\"a0004\",\"branch_anchor\":\"a0004\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Moisture exits the torch nozzle\",\"description\":\"Moisture exits the torch nozzle.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0004\",\"source_page\":72,\"quote\":\"Moisture exits the torch nozzle.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0004\",\"source_page\":72,\"quote\":\"A larger amount of moisture at the torch nozzle may indicate that the air filter is not properly removing moisture from the system.\"}]}],\"failure\":{\"name\":\"Air filter not properly removing moisture\",\"description\":\"A larger amount of moisture at the torch nozzle may indicate that the air filter is not properly removing moisture from the system.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0004\",\"source_page\":72,\"quote\":\"A larger amount of moisture at the torch nozzle may indicate that the air filter is not properly removing moisture from the system.\"}]},\"actions\":[{\"name\":\"Examine the air filter\",\"description\":\"Examine the air filter inside the power supply in case of excess moisture.\",\"instruction_text\":\"In case of excess moisture, examine the air filter inside the power supply.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0004\",\"source_page\":72,\"quote\":\"In case of excess moisture, examine the air filter inside the power supply.\"}],\"resolution_link_evidence\":[]} ,{\"name\":\"Make sure the drain hose is not twisted or clogged\",\"description\":\"Check the drain hose connected to the bottom of the air filter bowl.\",\"instruction_text\":\"Make sure the drain hose connected to the bottom of the air filter bowl is not twisted or clogged.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0004\",\"source_page\":72,\"quote\":\"Make sure the drain hose connected to the bottom of the air filter bowl is not twisted or clogged.\"}],\"resolution_link_evidence\":[]},{\"name\":\"Make sure the drain hole is not blocked\",\"description\":\"Check the hole through which water purged from the air filter exits.\",\"instruction_text\":\"Water purged from the air filter exits through a hole in bottom of the of the power supply. Make sure this hole is not blocked.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0004\",\"source_page\":72,\"quote\":\"Make sure this hole is not blocked.\"}],\"resolution_link_evidence\":[]},{\"name\":\"Replace the air filter bowl\",\"description\":\"Replace the air filter bowl.\",\"instruction_text\":\"Replace the air filter bowl. See Replace the air filter bowl and air filter element on page 160.\",\"action_kind\":\"replacement\",\"claim_evidence\":[{\"source_anchor\":\"a0004\",\"source_page\":72,\"quote\":\"Replace the air filter bowl.\"}],\"resolution_link_evidence\":[]} ,{\"name\":\"Replace the whole air filter assembly\",\"description\":\"If the problem persists, replace the whole air filter assembly.\",\"instruction_text\":\"If the problem persists, replace the whole air filter assembly. See Replace the air filter assembly on page 157.\",\"action_kind\":\"replacement\",\"claim_evidence\":[{\"source_anchor\":\"a0004\",\"source_page\":72,\"quote\":\"If the problem persists, replace the whole air filter assembly.\"}],\"resolution_link_evidence\":[]}],\"inspection_steps\":[{\"instruction_text\":\"It is normal to see water in the filter bowl. The filter purges water when the water level in the bowl is high enough to engage the float mechanism. If the water level in the filter bowl is approximately half full (or more), the air filter may not be purging water properly.\",\"claim_evidence\":[{\"source_anchor\":\"a0004\",\"source_page\":72,\"quote\":\"If the water level in the filter bowl is approximately half full (or more), the air filter may not be purging water properly.\"}]}],\"conditions\":[{\"text\":\"In case of excess moisture\",\"applies_to\":\"action\",\"step_index\":0,\"claim_evidence\":[{\"source_anchor\":\"a0004\",\"source_page\":72,\"quote\":\"In case of excess moisture\"}]},{\"text\":\"If the problem persists\",\"applies_to\":\"action\",\"step_index\":4,\"claim_evidence\":[{\"source_anchor\":\"a0004\",\"source_page\":72,\"quote\":\"If the problem persists\"}]}],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0008\"],\"record_anchor\":\"a0008\",\"branch_anchor\":\"a0008\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Arc blows out, then re-ignites, or arc sputters and hisses\",\"description\":\"The arc blows out but re-ignites when the torch trigger is pulled again, or the arc sputters and hisses.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"The arc blows out but re-ignites when the torch trigger is pulled again, or the arc sputters and hisses.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"Too much moisture is present in the consumables.\"}]}],\"failure\":{\"name\":\"Too much moisture in consumables\",\"description\":\"Too much moisture is present in the consumables.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"Too much moisture is present in the consumables.\"}]},\"actions\":[{\"name\":\"Fire the torch approximately 5 times in succession\",\"description\":\"Fire the torch in the air, not on the workpiece, to clear excess moisture.\",\"instruction_text\":\"If excess moisture is present, fire the torch approximately 5 times in succession. Fire the torch in the air, not on the workpiece.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"If excess moisture is present, fire the torch approximately 5 times in succession. Fire the torch in the air, not on the workpiece.\"}],\"resolution_link_evidence\":[]}],\"inspection_steps\":[{\"instruction_text\":\"Inspect the consumables for signs of excess moisture.\",\"claim_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"Inspect the consumables for signs of excess moisture.\"}]},{\"instruction_text\":\"If firing the torch does not clear out the excess moisture, examine the air filter inside the power supply. It is normal to see water in the filter bowl. The filter purges water when the water level in the bowl is high enough to engage the float mechanism. If the water level in the filter bowl is approximately half full (or more), the air filter may not be purging water properly.\",\"claim_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"If firing the torch does not clear out the excess moisture, examine the air filter inside the power supply.\"}]},{\"instruction_text\":\"Make sure the drain hose connected to the bottom of the air filter bowl is not twisted or clogged.\",\"claim_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"Make sure the drain hose connected to the bottom of the air filter bowl is not twisted or clogged.\"}]},{\"instruction_text\":\"Water purged from the air filter exits through a hole in bottom of the of the power supply. Make sure this hole is not blocked.\",\"claim_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"Make sure this hole is not blocked.\"}]}],\"conditions\":[{\"text\":\"If excess moisture is present\",\"applies_to\":\"action\",\"step_index\":0,\"claim_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"If excess moisture is present\"}]},{\"text\":\"If firing the torch does not clear out the excess moisture\",\"applies_to\":\"inspection\",\"step_index\":1,\"claim_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"If firing the torch does not clear out the excess moisture\"}]}],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0008\"],\"record_anchor\":\"a0008\",\"branch_anchor\":\"a0008\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Arc blows out, then re-ignites, or arc sputters and hisses\",\"description\":\"The arc blows out but re-ignites when the torch trigger is pulled again, or the arc sputters and hisses.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"The arc blows out but re-ignites when the torch trigger is pulled again, or the arc sputters and hisses.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"The consumables are worn or damaged.\"}]}],\"failure\":{\"name\":\"Consumables worn or damaged\",\"description\":\"The consumables are worn or damaged.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"The consumables are worn or damaged.\"}]},\"actions\":[{\"name\":\"Replace worn or damaged consumable parts\",\"description\":\"Inspect and replace consumable parts if worn or damaged.\",\"instruction_text\":\"If the problem persists and excess moisture is not an issue, inspect and replace the consumable parts if they are worn or damaged.\",\"action_kind\":\"replacement\",\"claim_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"inspect and replace the consumable parts if they are worn or damaged.\"}],\"resolution_link_evidence\":[]}],\"inspection_steps\":[{\"instruction_text\":\"Inspect the consumables for signs of excess moisture.\",\"claim_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"Inspect the consumables for signs of excess moisture.\"}]}],\"conditions\":[{\"text\":\"If the problem persists and excess moisture is not an issue\",\"applies_to\":\"action\",\"step_index\":0,\"claim_evidence\":[{\"source_anchor\":\"a0008\",\"source_page\":73,\"quote\":\"If the problem persists and excess moisture is not an issue\"}]}],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0012\"],\"record_anchor\":\"a0012\",\"branch_anchor\":\"a0012\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Poor cut quality or cut does not sever metal\",\"description\":\"The cut quality is poor, or the cut does not sever the metal.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The cut quality is poor, or the cut does not sever the metal.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The consumables are worn or damaged.\"}]}],\"failure\":{\"name\":\"Consumables worn or damaged\",\"description\":\"The consumables are worn or damaged.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The consumables are worn or damaged.\"}]},\"actions\":[{\"name\":\"Replace consumables if necessary\",\"description\":\"Inspect the consumables and replace if necessary.\",\"instruction_text\":\"Inspect the consumables and replace if necessary.\",\"action_kind\":\"replacement\",\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"Inspect the consumables and replace if necessary.\"}],\"resolution_link_evidence\":[]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0012\"],\"record_anchor\":\"a0012\",\"branch_anchor\":\"a0012\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Poor cut quality or cut does not sever metal\",\"description\":\"The cut quality is poor, or the cut does not sever the metal.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The cut quality is poor, or the cut does not sever the metal.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The work lead connection is poor. The work lead may be damaged or not properly connected to the workpiece.\"}]}],\"failure\":{\"name\":\"Poor work lead connection\",\"description\":\"The work lead connection is poor. The work lead may be damaged or not properly connected to the workpiece.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The work lead connection is poor. The work lead may be damaged or not properly connected to the workpiece.\"}]},\"actions\":[{\"name\":\"Reposition work lead\",\"description\":\"Reposition the work lead on the workpiece.\",\"instruction_text\":\"Reposition the work lead on the workpiece.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"Reposition the work lead on the workpiece.\"}],\"resolution_link_evidence\":[]},{\"name\":\"Clean workpiece surface\",\"description\":\"Clean the workpiece surface to make a better connection with the work lead.\",\"instruction_text\":\"Clean the workpiece surface to make a better connection with the work lead.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"Clean the workpiece surface to make a better connection with the work lead.\"}],\"resolution_link_evidence\":[]},{\"name\":\"Replace work lead if necessary\",\"description\":\"Inspect the work lead and replace if necessary.\",\"instruction_text\":\"Inspect the work lead and replace if necessary.\",\"action_kind\":\"replacement\",\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"Inspect the work lead and replace if necessary.\"}],\"resolution_link_evidence\":[]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"Work lead\",\"description\":\"Work lead connection to the workpiece.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The work lead connection is poor. The work lead may be damaged or not properly connected to the workpiece.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The work lead connection is poor. The work lead may be damaged or not properly connected to the workpiece.\"}]},\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0012\"],\"record_anchor\":\"a0012\",\"branch_anchor\":\"a0012\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Poor cut quality or cut does not sever metal\",\"description\":\"The cut quality is poor, or the cut does not sever the metal.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The cut quality is poor, or the cut does not sever the metal.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The amperage adjustment knob is set too low.\"}]}],\"failure\":{\"name\":\"Amperage adjustment knob set too low\",\"description\":\"The amperage adjustment knob is set too low.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The amperage adjustment knob is set too low.\"}]},\"actions\":[{\"name\":\"Turn amperage adjustment knob to a higher setting\",\"description\":\"Increase the amperage adjustment setting if the input circuit is capable.\",\"instruction_text\":\"If your input circuit is capable, turn the amperage adjustment knob to a higher setting.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"If your input circuit is capable, turn the amperage adjustment knob to a higher setting.\"}],\"resolution_link_evidence\":[]}],\"inspection_steps\":[],\"conditions\":[{\"text\":\"If your input circuit is capable\",\"applies_to\":\"action\",\"step_index\":0,\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"If your input circuit is capable\"}]}],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0012\"],\"record_anchor\":\"a0012\",\"branch_anchor\":\"a0012\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Poor cut quality or cut does not sever metal\",\"description\":\"The cut quality is poor, or the cut does not sever the metal.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The cut quality is poor, or the cut does not sever the metal.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The air pressure to the torch is too low.\"}]}],\"failure\":{\"name\":\"Air pressure to torch too low\",\"description\":\"The air pressure to the torch is too low.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The air pressure to the torch is too low.\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Check the gas supply line for leaks or defective parts. Perform Test 10 – check air pressure on page 101.\",\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"Check the gas supply line for leaks or defective parts. Perform Test 10 – check air pressure\"}]}],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"check_only\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0012\"],\"record_anchor\":\"a0012\",\"branch_anchor\":\"a0012\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Poor cut quality or cut does not sever metal\",\"description\":\"The cut quality is poor, or the cut does not sever the metal.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The cut quality is poor, or the cut does not sever the metal.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The power board is producing low current and may be faulty.\"}]}],\"failure\":{\"name\":\"Power board producing low current and may be faulty\",\"description\":\"The power board is producing low current and may be faulty.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The power board is producing low current and may be faulty.\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Perform Test 2 – power board voltage checks on page 84 and Test 3 – VBUS and voltage balance on power board on page 86.\",\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"Perform Test 2 – power board voltage checks on page 84 and Test 3 – VBUS and voltage balance on power board on page 86.\"}]}],\"conditions\":[],\"affected_component\":{\"name\":\"Power board\",\"description\":\"Power board producing low current.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The power board is producing low current and may be faulty.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The power board is producing low current and may be faulty.\"}]},\"resolution_status\":\"check_only\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0012\"],\"record_anchor\":\"a0012\",\"branch_anchor\":\"a0012\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Poor cut quality or cut does not sever metal\",\"description\":\"The cut quality is poor, or the cut does not sever the metal.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The cut quality is poor, or the cut does not sever the metal.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The extension cord is too long, is damaged, or is not capable of delivering sufficient power to the power supply.\"}]}],\"failure\":{\"name\":\"Extension cord inadequate or damaged\",\"description\":\"The extension cord is too long, is damaged, or is not capable of delivering sufficient power to the power supply.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"The extension cord is too long, is damaged, or is not capable of delivering sufficient power to the power supply.\"}]},\"actions\":[{\"name\":\"Operate without extension cord or use suitable cord\",\"description\":\"Operate the system without an extension cord; if one is required, use a heavy conductor cord of the shortest possible length.\",\"instruction_text\":\"Operate the system without using an extension cord. If you must use an extension cord, use a heavy conductor cord of the shortest possible length. See Extension cord recommendations on page 33.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"Operate the system without using an extension cord. If you must use an extension cord, use a heavy conductor cord of the shortest possible length.\"}],\"resolution_link_evidence\":[]}],\"inspection_steps\":[],\"conditions\":[{\"text\":\"If you must use an extension cord\",\"applies_to\":\"action\",\"step_index\":0,\"claim_evidence\":[{\"source_anchor\":\"a0012\",\"source_page\":74,\"quote\":\"If you must use an extension cord\"}]}],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0013\"],\"record_anchor\":\"a0013\",\"branch_anchor\":\"a0013\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Circuit breaker trips frequently while cutting\",\"description\":\"The circuit breaker trips frequently while you are cutting.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The circuit breaker trips frequently while you are cutting.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The amperage adjustment knob is set too high for the input circuit.\"}]}],\"failure\":{\"name\":\"Amperage adjustment knob too high for input circuit\",\"description\":\"The amperage adjustment knob is set too high for the input circuit.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The amperage adjustment knob is set too high for the input circuit.\"}]},\"actions\":[{\"name\":\"Turn down cutting current\",\"description\":\"Turn down the cutting current.\",\"instruction_text\":\"Turn down the cutting current. See Step 3 – Adjust the output current on page 47.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"Turn down the cutting current.\"}],\"resolution_link_evidence\":[]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0013\"],\"record_anchor\":\"a0013\",\"branch_anchor\":\"a0013\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Circuit breaker trips frequently while cutting\",\"description\":\"The circuit breaker trips frequently while you are cutting.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The circuit breaker trips frequently while you are cutting.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The wrong consumables are being used.\"}]}],\"failure\":{\"name\":\"Wrong consumables being used\",\"description\":\"The wrong consumables are being used.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The wrong consumables are being used.\"}]},\"actions\":[{\"name\":\"Install correct consumables\",\"description\":\"Make sure the correct consumables are installed for this power supply and torch.\",\"instruction_text\":\"Make sure the correct consumables are installed for this power supply and torch. See Consumable use on page 37.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"Make sure the correct consumables are installed for this power supply and torch.\"}],\"resolution_link_evidence\":[]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0013\"],\"record_anchor\":\"a0013\",\"branch_anchor\":\"a0013\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Circuit breaker trips frequently while cutting\",\"description\":\"The circuit breaker trips frequently while you are cutting.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The circuit breaker trips frequently while you are cutting.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The input circuit is not delivering sufficient power to the power supply.\"}]}],\"failure\":{\"name\":\"Input circuit not delivering sufficient power\",\"description\":\"The input circuit is not delivering sufficient power to the power supply.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The input circuit is not delivering sufficient power to the power supply.\"}]},\"actions\":[{\"name\":\"Operate on 240 VAC input circuit when possible\",\"description\":\"Operate the system on a 240 VAC input circuit whenever possible.\",\"instruction_text\":\"Operate the system on a 240 VAC input circuit whenever possible.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"Operate the system on a 240 VAC input circuit whenever possible.\"}],\"resolution_link_evidence\":[]},{\"name\":\"Make sure nothing else is drawing power on the same circuit\",\"description\":\"Ensure no other equipment is drawing power on the same circuit.\",\"instruction_text\":\"Make sure nothing else is drawing power on the same circuit.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"Make sure nothing else is drawing power on the same circuit.\"}],\"resolution_link_evidence\":[]}],\"inspection_steps\":[],\"conditions\":[{\"text\":\"whenever possible\",\"applies_to\":\"action\",\"step_index\":0,\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"whenever possible\"}]}],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0013\"],\"record_anchor\":\"a0013\",\"branch_anchor\":\"a0013\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Circuit breaker trips frequently while cutting\",\"description\":\"The circuit breaker trips frequently while you are cutting.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The circuit breaker trips frequently while you are cutting.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The operator is stretching the arc by holding the torch too far from the workpiece when cutting.\"}]}],\"failure\":{\"name\":\"Arc stretched by holding torch too far from workpiece\",\"description\":\"The operator is stretching the arc by holding the torch too far from the workpiece when cutting.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The operator is stretching the arc by holding the torch too far from the workpiece when cutting.\"}]},\"actions\":[{\"name\":\"Avoid stretching arc; drag torch on workpiece\",\"description\":\"Avoid stretching the arc and drag the torch on the workpiece.\",\"instruction_text\":\"Avoid stretching the arc. Drag the torch on the workpiece. See Edge start on a workpiece on page 54.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"Avoid stretching the arc. Drag the torch on the workpiece.\"}],\"resolution_link_evidence\":[]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0013\"],\"record_anchor\":\"a0013\",\"branch_anchor\":\"a0013\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Circuit breaker trips frequently while cutting\",\"description\":\"The circuit breaker trips frequently while you are cutting.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The circuit breaker trips frequently while you are cutting.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The extension cord is too long, is damaged, or is not capable of delivering sufficient power to the power supply.\"}]}],\"failure\":{\"name\":\"Extension cord inadequate or damaged\",\"description\":\"The extension cord is too long, is damaged, or is not capable of delivering sufficient power to the power supply.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"The extension cord is too long, is damaged, or is not capable of delivering sufficient power to the power supply.\"}]},\"actions\":[{\"name\":\"Operate without extension cord or use suitable cord\",\"description\":\"Operate without an extension cord; if required, use a heavy conductor cord of the shortest possible length.\",\"instruction_text\":\"Operate the system without using an extension cord. If you must use an extension cord, use a heavy conductor cord of the shortest possible length. See Extension cord recommendations on page 33.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"Operate the system without using an extension cord. If you must use an extension cord, use a heavy conductor cord of the shortest possible length.\"}],\"resolution_link_evidence\":[]}],\"inspection_steps\":[],\"conditions\":[{\"text\":\"If you must use an extension cord\",\"applies_to\":\"action\",\"step_index\":0,\"claim_evidence\":[{\"source_anchor\":\"a0013\",\"source_page\":74,\"quote\":\"If you must use an extension cord\"}]}],\"affected_component\":null,\"resolution_status\":\"action_stated\"}\n]}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790351878,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 6964,
+      "prompt_tokens": 4282,
+      "total_tokens": 11246,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 281,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cache_write_tokens": 1663,
+        "cached_tokens": 2616
+      }
+    }
+  },
+  "provider_request_id": "req_c80fa49d042e4afe94c70b2647fc8c5c",
+  "error": null
+}

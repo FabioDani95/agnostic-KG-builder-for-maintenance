@@ -5,7 +5,7 @@ import json
 import re
 import subprocess
 import unicodedata
-from collections import Counter, defaultdict
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -233,7 +233,7 @@ def test_real_e554_pdf_adapter_preserves_all_required_source_spans(
     real_pdf_adapter_result,
     typed_output,
 ) -> None:
-    assert ADAPTER_VERSION == "pdf-v3"
+    assert ADAPTER_VERSION.startswith("pdf-v4-layout-")
     assert len(real_pdf_adapter_result.page_previews) == 54
     assert {
         preview["page"]
@@ -282,44 +282,20 @@ def test_real_e554_pdf_adapter_preserves_all_required_source_spans(
     assert calibration_pages == {37, 38}
 
 
-def test_real_e554_typed_compiler_represents_all_eight_gold_chains(
-    compiled_replay,
-) -> None:
-    gold = _load(GOLD_PATH)
-    expected_paths = {
-        (chain["symptom"], chain["failure_mode"], chain["corrective_action"])
-        for chain in gold["minimum_expected_manual_chains"]
-    }
-
+def test_historical_e554_fixture_requires_edge_support_adjudication(compiled_replay) -> None:
+    # The frozen historical fixture is intentionally unchanged. Literal node
+    # quotes alone did not prove its cross-block edges. This is a regression in
+    # automatic yield, not evidence that extraction quality has improved.
     assert compiled_replay.report.input_candidates == 8
-    assert compiled_replay.report.unique_candidates == 8
-    assert compiled_replay.report.duplicate_candidates == 0
     assert compiled_replay.report.disposition_counts == {
-        "publish": 8,
-        "gap": 0,
-        "review": 0,
-        "exclude": 0,
+        "publish": 0, "gap": 0, "review": 8, "exclude": 0,
     }
-    assert compiled_replay.report.dropped_items_by_reason == {}
-    assert _compiled_paths(compiled_replay.ontology) == expected_paths
-
-    assert {
-        node_type: len(nodes)
-        for node_type, nodes in compiled_replay.ontology.nodes.items()
-        if nodes
-    } == {
-        "Symptom": 6,
-        "FailureMode": 8,
-        "CorrectiveAction": 8,
+    assert compiled_replay.report.dropped_items_by_reason == {
+        "relation_endpoint_support_unestablished": 9,
+        "failure_inferred_from_instruction": 1,
     }
-    assert Counter(relation.name for relation in compiled_replay.ontology.relations) == {
-        "MAY_INDICATE": 8,
-        "RESOLVED_BY": 8,
-    }
-    assert sum(
-        len(relation.evidence)
-        for relation in compiled_replay.ontology.relations
-    ) == 24
+    assert not compiled_replay.ontology.relations
+    assert all(entry.candidate is not None for entry in compiled_replay.report.entries)
 
 
 def test_real_e554_replay_rejects_all_forbidden_cross_pairings(compiled_replay) -> None:
@@ -348,113 +324,23 @@ def test_real_e554_replay_rejects_all_forbidden_cross_pairings(compiled_replay) 
         assert forbidden_pair not in actual_pairs
 
 
-def test_real_e554_relation_evidence_is_exact_and_edge_specific(
-    real_pdf_adapter_result,
-    typed_output,
-    compiled_replay,
+def test_historical_e554_quotes_remain_literal_despite_edge_uncertainty(
+    real_pdf_adapter_result, typed_output,
 ) -> None:
-    evidence_by_id = {
-        evidence.evidence_id: evidence
-        for evidence in real_pdf_adapter_result.evidence_units
-    }
-    nodes = _nodes_by_id(compiled_replay.ontology)
-    relations_by_names = {
-        (
-            relation.name,
-            nodes[relation.from_id][1]["name"],
-            nodes[relation.to_id][1]["name"],
-        ): relation
-        for relation in compiled_replay.ontology.relations
-    }
-
+    evidence = {unit.evidence_id: unit for unit in real_pdf_adapter_result.evidence_units}
     for record in typed_output.records:
-        assert record.failure is not None
-        indicator = record.indicators[0]
-        action = record.actions[0]
-        expected_edges = [
-            (
-                "MAY_INDICATE",
-                indicator.name,
-                record.failure.name,
-                indicator.failure_link_evidence,
-            ),
-            (
-                "RESOLVED_BY",
-                record.failure.name,
-                action.name,
-                action.resolution_link_evidence,
-            ),
-        ]
-        for relation_name, from_name, to_name, expected_spans in expected_edges:
-            relation = relations_by_names[(relation_name, from_name, to_name)]
-            expected = {
-                (span.source_page, span.source_anchor, _normalized(span.quote))
-                for span in expected_spans
-            }
-            actual = {
-                (item.source_page, item.source_anchor, item.quote)
-                for item in relation.evidence
-            }
-            assert actual == expected
-            for item in relation.evidence:
-                canonical = evidence_by_id[item.source_reference]
-                assert item.source_anchor == canonical.evidence_id
-                assert item.source_page == canonical.locator.page
-                assert _normalized(item.quote) in _normalized(canonical.locator.quote)
+        spans = [*(span for indicator in record.indicators for span in indicator.failure_link_evidence),
+                 *(span for action in record.actions for span in action.resolution_link_evidence)]
+        for span in spans:
+            source = evidence[span.source_anchor]
+            assert span.source_page == source.locator.page
+            assert _normalized(span.quote) in _normalized(source.locator.quote)
 
 
-def test_real_e554_compiled_schema_and_local_topology_are_closed(compiled_replay) -> None:
-    ontology = compiled_replay.ontology
-    nodes = _nodes_by_id(ontology)
-    schema_issues, human_fields = validate_ontology_instance(ontology)
-    assert not [issue for issue in schema_issues if issue.severity == "error"]
-    assert {
-        (field.target_type, field.property_name)
-        for field in human_fields
-    } == {
-        ("Asset", "brand"),
-        ("Asset", "model"),
-    }
-
-    incoming: dict[str, list[str]] = defaultdict(list)
-    outgoing: dict[str, list[str]] = defaultdict(list)
-    for relation in ontology.relations:
-        assert relation.from_id in nodes
-        assert relation.to_id in nodes
-        outgoing[relation.from_id].append(relation.name)
-        incoming[relation.to_id].append(relation.name)
-
-    for node_id, (node_type, _) in nodes.items():
-        if node_type == "Symptom":
-            assert outgoing[node_id].count("MAY_INDICATE") >= 1
-        elif node_type == "FailureMode":
-            assert incoming[node_id].count("MAY_INDICATE") == 1
-            assert outgoing[node_id].count("RESOLVED_BY") == 1
-        elif node_type == "CorrectiveAction":
-            assert incoming[node_id].count("RESOLVED_BY") == 1
-        else:
-            raise AssertionError(f"Unexpected compiled node type: {node_type}")
-
-    # The typed compiler owns diagnostic branches, not the canonical Asset
-    # injection/HAS_COMPONENT merge. Its direct output is therefore a complete
-    # diagnostic forest, not yet one globally Asset-connected source graph.
-    assert ontology.nodes["Asset"] == []
-
-    undirected: dict[str, set[str]] = defaultdict(set)
-    for relation in ontology.relations:
-        undirected[relation.from_id].add(relation.to_id)
-        undirected[relation.to_id].add(relation.from_id)
-    remaining = set(nodes)
-    components = 0
-    while remaining:
-        components += 1
-        pending = [remaining.pop()]
-        while pending:
-            current = pending.pop()
-            unseen = undirected[current] & remaining
-            remaining -= unseen
-            pending.extend(unseen)
-    assert components == 6
+def test_empty_historical_replay_does_not_count_as_robust_extraction(compiled_replay) -> None:
+    issues, _ = validate_ontology_instance(compiled_replay.ontology)
+    assert "empty_draft_content" in {issue.code for issue in issues}
+    assert not _compiled_paths(compiled_replay.ontology)
 
 
 def test_real_e554_replay_result_artifact_matches_executable_gate() -> None:

@@ -44,7 +44,7 @@ class SymptomIndicatorCandidate(BaseModel):
     kind: Literal["symptom"]
     name: str = Field(min_length=1)
     description: str = Field(min_length=1)
-    severity: Literal["Low", "Medium", "High", "Critical"]
+    severity: Literal["Low", "Medium", "High", "Critical", "Unknown"]
     claim_evidence: list[DiagnosticEvidenceSpan] = Field(min_length=1)
     failure_link_evidence: list[DiagnosticEvidenceSpan]
 
@@ -75,7 +75,7 @@ class DiagnosticIndicatorCandidate(BaseModel):
     code: str | None
     name: str = Field(min_length=1)
     description: str = Field(min_length=1)
-    severity: Literal["Low", "Medium", "High", "Critical"] | None
+    severity: Literal["Low", "Medium", "High", "Critical", "Unknown"] | None
     claim_evidence: list[DiagnosticEvidenceSpan] = Field(min_length=1)
     failure_link_evidence: list[DiagnosticEvidenceSpan]
 
@@ -149,6 +149,17 @@ class AffectedComponentCandidate(BaseModel):
     affects_link_evidence: list[DiagnosticEvidenceSpan]
 
 
+class DiagnosticConditionCandidate(BaseModel):
+    """Source-stated condition attached to a branch or a zero-based step."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    text: str = Field(min_length=1)
+    applies_to: Literal["branch", "action", "inspection"]
+    step_index: int | None = Field(ge=0)
+    claim_evidence: list[DiagnosticEvidenceSpan] = Field(min_length=1)
+
+
 class DiagnosticBundleCandidate(BaseModel):
     """One source record, potentially containing several observed indicators."""
 
@@ -165,6 +176,7 @@ class DiagnosticBundleCandidate(BaseModel):
     failure: FailureModeCandidate | None
     actions: list[CorrectiveActionCandidate]
     inspection_steps: list[DiagnosticInspectionStepCandidate]
+    conditions: list[DiagnosticConditionCandidate]
     affected_component: AffectedComponentCandidate | None
     resolution_status: ResolutionStatus
 
@@ -182,11 +194,20 @@ class DiagnosticBundleCandidate(BaseModel):
             normalized.setdefault("record_window_id", "")
             normalized.setdefault("allowed_source_anchors", [])
             normalized.setdefault("inspection_steps", [])
+            normalized.setdefault("conditions", [])
             return normalized
         return value
 
     @model_validator(mode="after")
     def require_indicator_except_for_explicit_exclusion(self) -> DiagnosticBundleCandidate:
+        for condition in self.conditions:
+            if condition.applies_to == "branch":
+                if condition.step_index is not None:
+                    raise ValueError("branch conditions require step_index=null")
+            else:
+                steps = self.actions if condition.applies_to == "action" else self.inspection_steps
+                if condition.step_index is None or condition.step_index >= len(steps):
+                    raise ValueError("condition step_index does not identify an existing step")
         if self.resolution_status is not ResolutionStatus.NOT_DIAGNOSTIC and not self.indicators:
             raise ValueError("indicators must not be empty for a diagnostic candidate")
         if self.resolution_status is ResolutionStatus.NOT_DIAGNOSTIC and (
@@ -194,6 +215,7 @@ class DiagnosticBundleCandidate(BaseModel):
             or self.failure is not None
             or self.actions
             or self.inspection_steps
+            or self.conditions
             or self.affected_component is not None
         ):
             raise ValueError("not_diagnostic candidates cannot carry diagnostic claims")
@@ -209,7 +231,7 @@ class DiagnosticChunkOutput(BaseModel):
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    schema_version: Literal["1.0"]
+    schema_version: Literal["1.0", "1.1"]
     source_language: str = Field(min_length=1)
     records: list[DiagnosticBundleCandidate]
 
@@ -232,7 +254,7 @@ class ValidatedSymptomIndicator(BaseModel):
     kind: Literal["symptom"] = "symptom"
     name: str = Field(min_length=1)
     description: str = Field(min_length=1)
-    severity: Literal["Low", "Medium", "High", "Critical"]
+    severity: Literal["Low", "Medium", "High", "Critical", "Unknown"]
     claim_evidence: list[ValidatedDiagnosticEvidenceSpan] = Field(min_length=1)
     failure_link_evidence: list[ValidatedDiagnosticEvidenceSpan] = Field(default_factory=list)
 
@@ -291,6 +313,15 @@ class ValidatedAffectedComponent(BaseModel):
     affects_link_evidence: list[ValidatedDiagnosticEvidenceSpan] = Field(default_factory=list)
 
 
+class ValidatedDiagnosticCondition(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    text: str
+    applies_to: Literal["branch", "action", "inspection"]
+    step_index: int | None
+    claim_evidence: list[ValidatedDiagnosticEvidenceSpan] = Field(min_length=1)
+
+
 class ValidatedDiagnosticBundle(BaseModel):
     """Evidence-resolved bundle with deterministic, non-ontology lineage IDs."""
 
@@ -305,5 +336,10 @@ class ValidatedDiagnosticBundle(BaseModel):
     failure: ValidatedFailureMode | None = None
     actions: list[ValidatedCorrectiveAction] = Field(default_factory=list)
     inspection_steps: list[ValidatedDiagnosticInspectionStep] = Field(default_factory=list)
+    conditions: list[ValidatedDiagnosticCondition] = Field(default_factory=list)
+    # Full source-order context retains prerequisites and conditional jumps.
+    # It is not a flattened executable sequence or a verified path.
+    procedure_context: list[ValidatedDiagnosticEvidenceSpan] = Field(default_factory=list)
+    procedure_path_verified: bool = False
     affected_component: ValidatedAffectedComponent | None = None
     resolution_status: ResolutionStatus

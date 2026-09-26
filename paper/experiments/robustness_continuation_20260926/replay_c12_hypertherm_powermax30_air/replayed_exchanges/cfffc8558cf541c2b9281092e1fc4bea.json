@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "",
+  "run_id": "",
+  "started_utc": "2026-09-26T15:30:45.606360+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "max_completion_tokens": 24000,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You extract diagnostic records from a technical manual into a typed contract.\n\nSource type: technical PDF\nSource title: hypertherm_powermax30_air_service_manual_rev4_808850.pdf\n\nThe input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be\na complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,\necho its window_id and allowed_source_anchors on every candidate; the system overwrites and\nverifies both fields and no evidence outside that block is allowed. For a section chunk, set\nrecord_window_id=\"\" and set allowed_source_anchors to exactly the anchors referenced by that\ncandidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL\ncontext may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields\nbelong to the current cause/remedy branch. Each displayed FIELD value is one exact source\nspan. Quote the value only: never include the \"FIELD n:\" label, join separate fields, or\nrestore a sibling field omitted by the system.\nReturn every explicit diagnostic record and every distinct cause/remedy branch in the input.\nThe contract is an intermediate record representation, not the final graph. Use schema_version=\"1.1\".\n\nRules:\n1. Never emit graph IDs or ontology relation names. The system owns them.\n2. A diagnostic record has one or more indicators. An indicator is either an observable\n   symptom or an asset-generated error/alarm code. A record may explicitly contain both;\n   keep both. For a symptom set code=null and severity=\"Unknown\" unless the source explicitly\n   states its severity; never invent a risk rating. For an error_code set its\n   code and severity=null. Only an explicit not_diagnostic page disposition may use an empty\n   indicator list.\n3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action\n   from different table rows, flowchart branches or unrelated paragraphs.\n4. A FailureMode is an explicit technical cause or faulty state, not a restatement of the\n   symptom, an inspection result or an invented explanation. Use null when none is stated.\n5. A CorrectiveAction is an explicitly restorative remedy for that failure. Checks and tests\n   are not restorative unless the source says the check itself resolves the fault. Preserve\n   a non-restorative check/test/inspection in inspection_steps, never in actions.\n6. Set resolution_status:\n   - action_stated: at least one restorative action is explicitly linked to the failure;\n   - no_action_stated: the diagnostic record states a failure but no remedy;\n   - check_only: it gives only diagnostic checks/verification;\n   - ambiguous: the row/branch pairing cannot be established safely;\n   - not_diagnostic: a candidate-looking passage is actually preventive/generic content.\n7. An affected component is optional. Include it only if the branch explicitly identifies the\n   affected component. category and failure.material_context are required-but-nullable: use\n   null rather than manufacturing a category/context. A null category does not invalidate a\n   grounded branch; the deterministic compiler supplies a neutral schema category. Do not use\n   a product name as a component.\n8. Evidence is edge-specific. claim_evidence proves only the claim. Each edge evidence list is\n   a support set: one span may explicitly state the whole link, or several spans from the same\n   record/branch may collectively establish it when a manual separates Problem, Cause and\n   Remedy across blocks or pages. failure_link_evidence supports only that exact indicator to\n   failure; resolution_link_evidence supports only that exact failure to action;\n   affects_link_evidence supports only that exact failure to component. Include every span\n   needed to establish the link and no unrelated nearby heading. Never use an action-only span\n   as the sole proof of an indicator-to-failure edge.\n   In a system-owned atomic table row, use the exact endpoint FIELD spans as the edge support\n   set; the deterministic compiler verifies the table structure and completes their union.\n9. Every quote is a short verbatim span contained in the EvidenceUnit named by source_anchor,\n   on source_page. Prefer one span per EvidenceUnit. If wording crosses adjacent units, emit\n   separate exact spans; never concatenate or paraphrase cells. Copy the opaque anchor exactly.\n   Do not include page/anchor marker text in a quote.\n10. record_anchor must be one of this candidate's claim-evidence anchors. branch_anchor must be\n    one of this candidate's evidence anchors (prefer a causal edge anchor). For an explicit\n    not_diagnostic disposition with no claims, set both to the candidate page's EvidenceUnit\n    anchor. These anchors are source locators, not freely generated IDs.\n11. Preserve source language in human-readable values and set source_language accordingly.\n12. Duplicate records caused by overlapping pages must be returned identically; deterministic\n    lineage and compilation will deduplicate them.\n13. Account for candidate-looking passages. If one is actually generic/preventive content,\n    emit a not_diagnostic candidate with empty indicators and no diagnostic claims. Return an\n    empty records list only when the input contains no candidate-looking passage at all. Never\n    fill a missing cause/action simply to make a complete record.\n14. Every anchored candidate-looking passage in the input must occur in a record's claim/edge\n    evidence, or have its own explicit not_diagnostic disposition. Do not cover only the first\n    row or branch of a troubleshooting table.\n15. For check_only, actions must be empty and inspection_steps must preserve each stated check\n    with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.\n16. Preserve every stated precondition, test outcome, negation, threshold and alternative in\n    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection\n    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test\n    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.\n    Keep inspection_steps and actions in source order; do not sort steps alphabetically.\n17. Preserve the actual error CODE separately from its fault name, including a numerical code\n    in a separate table column. Never substitute the name for a printed numeric code.\n18. For a numbered diagnostic procedure, carry the introductory symptom and explicitly listed\n    possible failures forward to the test outcomes only when the procedure identifies that\n    component. Cite the introduction as well as the outcome. Preserve prerequisites and the\n    ordered checks needed to reach each outcome, including preceding pages and conditional\n    jumps. A replacement instruction alone does not establish a named failure.\n19. A negative answer to a compound question is the negation of the whole question. For\n    'A and B?' followed by 'no', retain 'not (A and B)' or 'not A or not B', never 'not A\n    and not B'. Keep the literal question and answer together in condition evidence.\n20. Unnumbered cause/solution lists do not pair by position or equal length. Preserve unresolved\n    alternatives as ambiguous. Do not attach every solution to every cause. A page reference\n    preserves a dependency; it is not evidence for details on an unavailable page.\n"
+      },
+      {
+        "role": "user",
+        "content": "## DOCUMENT CONTEXT\nThese pages come from the following manual sections:\n- Check the power switch (pp. 62-63, source: rule)\n- Power LED faults (pp. 65-66, source: rule)\n- Troubleshooting guide (pp. 65-66, source: rule)\n\nUse this context to better interpret the content. Extract all ontology-relevant information from these sections, including components, error codes, symptoms, failure modes, and corrective actions.\n\n--- PAGE 62 ---\n\n[[EVIDENCE_ID: a0001]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0002]]\nCheck the power switch\n\n[[EVIDENCE_ID: a0003]]\n1. Set the power switch to OFF (O), disconnect the power cord from the power source, and then set the power switch \nto ON (I).\n\n[[EVIDENCE_ID: a0004]]\n2. Check the resistance across the input leads. \nThe resistance should read as approximately \n75 kΩ.\n\n[[EVIDENCE_ID: a0005]]\n3. Check the resistance from the input leads to \nground to make sure it reads as open. For all \npower supplies, the resistance from input to \nground should read as > 20 MΩ.\n\n[[EVIDENCE_ID: a0006]]\n\nWith the electrical power disconnected \nand the power switch set to OFF (O), all \ncircuits should read as open.\n\n[[EVIDENCE_ID: a0007]]\nThe electrical value shown is ±25%. \nHowever, this range is intended only for \nreference. Resistance values can vary \nwidely depending on the type of \nmultimeter and the polarity used to \nmeasure the readings.\n\n[[EVIDENCE_ID: a0008]]\n4. Remove the consumables from the torch. \nIf you do not remove the consumables, the \nresistance values will not read correctly.\n\n[[EVIDENCE_ID: a0009]]\n75 kΩ\n\n[[EVIDENCE_ID: a0010]]\nBlack (CSA)\nBrown (CE/CCC)\n\n[[EVIDENCE_ID: a0011]]\n5. Check the output resistance for the values shown in the following table.\n\n[[EVIDENCE_ID: a0012]]\n\nJ16 and J17 are labeled on the component side of the power board. See Figure 1 for \nlocations on the back side of the power board.\n\n[[EVIDENCE_ID: a0013]]\n62\nPowermax30 AIR\nService Manual\n808850\n\n[[EVIDENCE_ID: a0014]]\nMeasure resistance from (with consumables removed) | Approximate values\n\n[[EVIDENCE_ID: a0015]]\nWork lead (J22) to nozzle (J16, red wire) | 100 kΩ\n\n[[EVIDENCE_ID: a0016]]\nWork lead (J22) to electrode (J17, white wire) | 20 kΩ\n\n[[EVIDENCE_ID: a0017]]\nElectrode (J17, white wire) to nozzle (J16, red wire) | 120 kΩ\n\n[[EVIDENCE_ID: a0018]]\nWork lead (J22), nozzle (J16, red wire), and electrode (J17, white wire) to ground | > 20 MΩ\n\n--- PAGE 63 ---\n\n[[EVIDENCE_ID: a0019]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0020]]\nJ16, red\n\n[[EVIDENCE_ID: a0021]]\nJ17, white\n\n[[EVIDENCE_ID: a0022]]\nWORK LEAD (BLK)\n\n[[EVIDENCE_ID: a0023]]\nJ22\n\n[[EVIDENCE_ID: a0024]]\nFigure 1\n\n[[EVIDENCE_ID: a0025]]\nAC\nAC\n\n[[EVIDENCE_ID: a0026]]\nTORCH \nSTART\n\n[[EVIDENCE_ID: a0027]]\nTORCH \nSTART\n\n[[EVIDENCE_ID: a0028]]\nBLK\n\n[[EVIDENCE_ID: a0029]]\nBLK\n\n[[EVIDENCE_ID: a0030]]\nw\n\n[[EVIDENCE_ID: a0031]]\nR\n\n[[EVIDENCE_ID: a0032]]\nWORK LEAD  (BLK)\n\n[[EVIDENCE_ID: a0033]]\nB\n\n[[EVIDENCE_ID: a0034]]\n6. If you do not find any problems during the visual inspection or the initial resistance check, and the power supply is still \nnot operating correctly, see Troubleshooting guide on page 65.\n\n[[EVIDENCE_ID: a0035]]\nPowermax30 AIR\nService Manual\n808850\n63\n\n--- PAGE 64 ---\n\n[[EVIDENCE_ID: a0036]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0037]]\nPower supply overview\n\n[[EVIDENCE_ID: a0038]]\nFigure 2 – Power board side of power supply\n\n[[EVIDENCE_ID: a0039]]\n6\n7\n8\n9\n10\n\n[[EVIDENCE_ID: a0040]]\nTORCH \nSTART\n\n[[EVIDENCE_ID: a0041]]\nTORCH \nSTART\n\n[[EVIDENCE_ID: a0042]]\nBLK\n\n[[EVIDENCE_ID: a0043]]\nBLK\n\n[[EVIDENCE_ID: a0044]]\nR\n\n[[EVIDENCE_ID: a0045]]\n1\n\n[[EVIDENCE_ID: a0046]]\nWORK LEAD  (BLK)\n\n[[EVIDENCE_ID: a0047]]\n2\n\n[[EVIDENCE_ID: a0048]]\n1\nOutput diode and pilot arc IGBT module (D27)\n\n[[EVIDENCE_ID: a0049]]\n2\nWork lead connection (J22)\n\n[[EVIDENCE_ID: a0050]]\n3\nInput diode bridges (D24, D30)\n\n[[EVIDENCE_ID: a0051]]\n4\nPE (ground)\n\n[[EVIDENCE_ID: a0052]]\n5\nPower board (PCB2)\n\n[[EVIDENCE_ID: a0053]]\nAC\nAC\n\n[[EVIDENCE_ID: a0054]]\n5\n\n[[EVIDENCE_ID: a0055]]\n4\n\n[[EVIDENCE_ID: a0056]]\n3\n\n[[EVIDENCE_ID: a0057]]\nw\n\n[[EVIDENCE_ID: a0058]]\nB\n\n[[EVIDENCE_ID: a0059]]\n6\nPower switch (S1)\n\n[[EVIDENCE_ID: a0060]]\n7\nPFC IGBT (Q1)\n\n[[EVIDENCE_ID: a0061]]\n8\nFlyback circuit\n\n[[EVIDENCE_ID: a0062]]\n9\nInverter IGBT (Q2)\n\n[[EVIDENCE_ID: a0063]]\n10\nControl board (PCB1)\n\n[[EVIDENCE_ID: a0064]]\n64\nPowermax30 AIR\nService Manual\n808850\n\n--- PAGE 65 ---\n\n[[EVIDENCE_ID: a0065]]\n5 – Troubleshooting and System Tests\n\n[[EVIDENCE_ID: a0066]]\nTroubleshooting guide\n\n[[EVIDENCE_ID: a0067]]\nThis guide provides the most common causes and solutions.\n\n[[EVIDENCE_ID: a0068]]\n\nBefore troubleshooting, study the Powermax30 AIR schematic on page 230 and understand the Theory of operation \non page 57.\n\n[[EVIDENCE_ID: a0069]]\n\nBefore purchasing any major replacement component, verify the problem with Hypertherm Technical Service or the \nnearest Hypertherm repair facility listed in the front of this manual.\n\n[[EVIDENCE_ID: a0070]]\n\nSee System tests on page 77 for detailed test procedures.\n\n[[EVIDENCE_ID: a0071]]\nPower LED faults\n\n[[EVIDENCE_ID: a0072]]\nAC\n\n[[EVIDENCE_ID: a0073]]\nThe ON/OFF power switch is set to ON (I), \nbut the power ON LED does not illuminate.\n\n[[EVIDENCE_ID: a0074]]\nThe power ON LED illuminates, but no fault LEDs illuminate, and no gas \nflows when you pull the torch trigger.\n\n[[EVIDENCE_ID: a0075]]\nPowermax30 AIR\nService Manual\n808850\n65\n\n[[EVIDENCE_ID: a0076]]\nThe ON/OFF power switch is set to ON (I), AC but the power ON LED does not illuminate. |\n\n[[EVIDENCE_ID: a0077]]\nPossible causes | Possible solutions\n\n[[EVIDENCE_ID: a0078]]\n The system has no incoming voltage or an improper incoming voltage.  The power cord, power switch, or power board is faulty. |  Make sure the electrical power is connected to an appropriately sized circuit.  Make sure the system did not trip the circuit breaker.  Perform Test 1 – voltage input on page 82.\n\n[[EVIDENCE_ID: a0079]]\nThe power ON LED illuminates, but no fault LEDs illuminate, and no gas AC flows when you pull the torch trigger. |\n\n[[EVIDENCE_ID: a0080]]\nPossible causes | Possible solutions\n\n[[EVIDENCE_ID: a0081]]\n The start signal is not reaching the control board due to:  Damaged torch or torch lead  Faulty power board OR  Faulty control board |  Inspect the torch and torch lead, and replace if necessary.  Make sure the control board start LED illuminates when you pull the torch trigger. If it does not, perform Test 6 – plasma start on page 92."
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "DiagnosticChunkOutput",
+        "strict": true,
+        "schema": {
+          "$defs": {
+            "AffectedComponentCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "category": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Category"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "affects_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Affects Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "category",
+                "claim_evidence",
+                "affects_link_evidence"
+              ],
+              "title": "AffectedComponentCandidate",
+              "type": "object"
+            },
+            "CorrectiveActionCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "action_kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Action Kind"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "resolution_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Resolution Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instruction_text",
+                "action_kind",
+                "claim_evidence",
+                "resolution_link_evidence"
+              ],
+              "title": "CorrectiveActionCandidate",
+              "type": "object"
+            },
+            "DiagnosticBundleCandidate": {
+              "additionalProperties": false,
+              "description": "One source record, potentially containing several observed indicators.",
+              "properties": {
+                "record_window_id": {
+                  "title": "Record Window Id",
+                  "type": "string"
+                },
+                "allowed_source_anchors": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Allowed Source Anchors",
+                  "type": "array"
+                },
+                "record_anchor": {
+                  "minLength": 1,
+                  "title": "Record Anchor",
+                  "type": "string"
+                },
+                "branch_anchor": {
+                  "minLength": 1,
+                  "title": "Branch Anchor",
+                  "type": "string"
+                },
+                "indicators": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticIndicatorCandidate"
+                  },
+                  "title": "Indicators",
+                  "type": "array"
+                },
+                "failure": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FailureModeCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actions": {
+                  "items": {
+                    "$ref": "#/$defs/CorrectiveActionCandidate"
+                  },
+                  "title": "Actions",
+                  "type": "array"
+                },
+                "inspection_steps": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticInspectionStepCandidate"
+                  },
+                  "title": "Inspection Steps",
+                  "type": "array"
+                },
+                "conditions": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticConditionCandidate"
+                  },
+                  "title": "Conditions",
+                  "type": "array"
+                },
+                "affected_component": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AffectedComponentCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolution_status": {
+                  "$ref": "#/$defs/ResolutionStatus"
+                }
+              },
+              "required": [
+                "record_window_id",
+                "allowed_source_anchors",
+                "record_anchor",
+                "branch_anchor",
+                "indicators",
+                "failure",
+                "actions",
+                "inspection_steps",
+                "conditions",
+                "affected_component",
+                "resolution_status"
+              ],
+              "title": "DiagnosticBundleCandidate",
+              "type": "object"
+            },
+            "DiagnosticConditionCandidate": {
+              "additionalProperties": false,
+              "description": "Source-stated condition attached to a branch or a zero-based step.",
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "title": "Text",
+                  "type": "string"
+                },
+                "applies_to": {
+                  "enum": [
+                    "branch",
+                    "action",
+                    "inspection"
+                  ],
+                  "title": "Applies To",
+                  "type": "string"
+                },
+                "step_index": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Step Index"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "text",
+                "applies_to",
+                "step_index",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticConditionCandidate",
+              "type": "object"
+            },
+            "DiagnosticEvidenceSpan": {
+              "additionalProperties": false,
+              "description": "A verbatim source span emitted by the extraction model.\n\n``source_anchor`` is the opaque evidence identifier printed in the model's\ninput.  It is intentionally not a graph node identifier.",
+              "properties": {
+                "source_anchor": {
+                  "minLength": 1,
+                  "title": "Source Anchor",
+                  "type": "string"
+                },
+                "source_page": {
+                  "minimum": 1,
+                  "title": "Source Page",
+                  "type": "integer"
+                },
+                "quote": {
+                  "minLength": 1,
+                  "title": "Quote",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source_anchor",
+                "source_page",
+                "quote"
+              ],
+              "title": "DiagnosticEvidenceSpan",
+              "type": "object"
+            },
+            "DiagnosticIndicatorCandidate": {
+              "additionalProperties": false,
+              "description": "Provider-safe flat indicator contract.\n\nOpenAI strict Structured Outputs does not accept the ``oneOf`` emitted by\nPydantic for a discriminated model union inside an array.  Keep the wire\nshape flat and enforce the same symptom/error-code invariants locally.\nNullable fields remain required so the provider schema is strict.",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "symptom",
+                    "error_code"
+                  ],
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "code": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code"
+                },
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "severity": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "Critical",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Severity"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "failure_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Failure Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "code",
+                "name",
+                "description",
+                "severity",
+                "claim_evidence",
+                "failure_link_evidence"
+              ],
+              "title": "DiagnosticIndicatorCandidate",
+              "type": "object"
+            },
+            "DiagnosticInspectionStepCandidate": {
+              "additionalProperties": false,
+              "description": "A diagnostic check that is useful but does not itself restore operation.",
+              "properties": {
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "instruction_text",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticInspectionStepCandidate",
+              "type": "object"
+            },
+            "FailureModeCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "material_context": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Material Context"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "material_context",
+                "claim_evidence"
+              ],
+              "title": "FailureModeCandidate",
+              "type": "object"
+            },
+            "ResolutionStatus": {
+              "description": "The extractor's explicit assessment of diagnostic completeness.",
+              "enum": [
+                "action_stated",
+                "no_action_stated",
+                "check_only",
+                "ambiguous",
+                "not_diagnostic"
+              ],
+              "title": "ResolutionStatus",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Provider structured-output envelope for one diagnostic PDF chunk.\n\nAll fields are required, including nullable/list fields.  This avoids the\noptional-property mismatch of strict provider JSON Schema implementations.",
+          "properties": {
+            "schema_version": {
+              "enum": [
+                "1.0",
+                "1.1"
+              ],
+              "title": "Schema Version",
+              "type": "string"
+            },
+            "source_language": {
+              "minLength": 1,
+              "title": "Source Language",
+              "type": "string"
+            },
+            "records": {
+              "items": {
+                "$ref": "#/$defs/DiagnosticBundleCandidate"
+              },
+              "title": "Records",
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "source_language",
+            "records"
+          ],
+          "title": "DiagnosticChunkOutput",
+          "type": "object"
+        }
+      }
+    },
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 0.0015090000233612955,
+  "response": {
+    "id": "chatcmpl-ESNwgr1eoyIm6zx0Bvrw7G2vCk55C",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"schema_version\":\"1.1\",\"source_language\":\"English\",\"records\":[{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0073\",\"a0076\",\"a0078\"],\"record_anchor\":\"a0073\",\"branch_anchor\":\"a0078\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Power ON LED does not illuminate\",\"description\":\"The ON/OFF power switch is set to ON (I), but the power ON LED does not illuminate.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0073\",\"source_page\":65,\"quote\":\"The ON/OFF power switch is set to ON (I), \\nbut the power ON LED does not illuminate.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0073\",\"source_page\":65,\"quote\":\"The ON/OFF power switch is set to ON (I), \\nbut the power ON LED does not illuminate.\"},{\"source_anchor\":\"a0078\",\"source_page\":65,\"quote\":\"The system has no incoming voltage or an improper incoming voltage.\"}]}],\"failure\":{\"name\":\"No incoming voltage or improper incoming voltage\",\"description\":\"The system has no incoming voltage or an improper incoming voltage.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0078\",\"source_page\":65,\"quote\":\"The system has no incoming voltage or an improper incoming voltage.\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Make sure the electrical power is connected to an appropriately sized circuit.\",\"claim_evidence\":[{\"source_anchor\":\"a0078\",\"source_page\":65,\"quote\":\"Make sure the electrical power is connected to an appropriately sized circuit.\"}]},{\"instruction_text\":\"Make sure the system did not trip the circuit breaker.\",\"claim_evidence\":[{\"source_anchor\":\"a0078\",\"source_page\":65,\"quote\":\"Make sure the system did not trip the circuit breaker.\"}]},{\"instruction_text\":\"Perform Test 1 – voltage input on page 82.\",\"claim_evidence\":[{\"source_anchor\":\"a0078\",\"source_page\":65,\"quote\":\"Perform Test 1 – voltage input on page 82.\"}]}],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"check_only\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0073\",\"a0076\",\"a0078\"],\"record_anchor\":\"a0073\",\"branch_anchor\":\"a0078\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Power ON LED does not illuminate\",\"description\":\"The ON/OFF power switch is set to ON (I), but the power ON LED does not illuminate.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0073\",\"source_page\":65,\"quote\":\"The ON/OFF power switch is set to ON (I), \\nbut the power ON LED does not illuminate.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0073\",\"source_page\":65,\"quote\":\"The ON/OFF power switch is set to ON (I), \\nbut the power ON LED does not illuminate.\"},{\"source_anchor\":\"a0078\",\"source_page\":65,\"quote\":\"The power cord, power switch, or power board is faulty.\"}]}],\"failure\":{\"name\":\"Faulty power cord, power switch, or power board\",\"description\":\"The power cord, power switch, or power board is faulty.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0078\",\"source_page\":65,\"quote\":\"The power cord, power switch, or power board is faulty.\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Make sure the electrical power is connected to an appropriately sized circuit.\",\"claim_evidence\":[{\"source_anchor\":\"a0078\",\"source_page\":65,\"quote\":\"Make sure the electrical power is connected to an appropriately sized circuit.\"}]},{\"instruction_text\":\"Make sure the system did not trip the circuit breaker.\",\"claim_evidence\":[{\"source_anchor\":\"a0078\",\"source_page\":65,\"quote\":\"Make sure the system did not trip the circuit breaker.\"}]},{\"instruction_text\":\"Perform Test 1 – voltage input on page 82.\",\"claim_evidence\":[{\"source_anchor\":\"a0078\",\"source_page\":65,\"quote\":\"Perform Test 1 – voltage input on page 82.\"}]}],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"ambiguous\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0074\",\"a0079\",\"a0081\"],\"record_anchor\":\"a0074\",\"branch_anchor\":\"a0081\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"No gas flow when torch trigger is pulled\",\"description\":\"The power ON LED illuminates, but no fault LEDs illuminate, and no gas flows when you pull the torch trigger.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0074\",\"source_page\":65,\"quote\":\"The power ON LED illuminates, but no fault LEDs illuminate, and no gas \\nflows when you pull the torch trigger.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0074\",\"source_page\":65,\"quote\":\"The power ON LED illuminates, but no fault LEDs illuminate, and no gas \\nflows when you pull the torch trigger.\"},{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"The start signal is not reaching the control board due to:\"}]}],\"failure\":{\"name\":\"Start signal is not reaching the control board\",\"description\":\"The start signal is not reaching the control board.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"The start signal is not reaching the control board due to:\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Inspect the torch and torch lead, and replace if necessary.\",\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"Inspect the torch and torch lead, and replace if necessary.\"}]},{\"instruction_text\":\"Make sure the control board start LED illuminates when you pull the torch trigger.\",\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"Make sure the control board start LED illuminates when you pull the torch trigger.\"}]},{\"instruction_text\":\"If it does not, perform Test 6 – plasma start on page 92.\",\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"If it does not, perform Test 6 – plasma start on page 92.\"}]}],\"conditions\":[{\"text\":\"If it does not (the control board start LED does not illuminate when you pull the torch trigger), perform Test 6 – plasma start on page 92.\",\"applies_to\":\"inspection\",\"step_index\":2,\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"If it does not, perform Test 6 – plasma start on page 92.\"}]}],\"affected_component\":null,\"resolution_status\":\"ambiguous\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0074\",\"a0079\",\"a0081\"],\"record_anchor\":\"a0074\",\"branch_anchor\":\"a0081\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"No gas flow when torch trigger is pulled\",\"description\":\"The power ON LED illuminates, but no fault LEDs illuminate, and no gas flows when you pull the torch trigger.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0074\",\"source_page\":65,\"quote\":\"The power ON LED illuminates, but no fault LEDs illuminate, and no gas \\nflows when you pull the torch trigger.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0074\",\"source_page\":65,\"quote\":\"The power ON LED illuminates, but no fault LEDs illuminate, and no gas \\nflows when you pull the torch trigger.\"},{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"Damaged torch or torch lead\"}]}],\"failure\":{\"name\":\"Damaged torch or torch lead\",\"description\":\"Damaged torch or torch lead.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"Damaged torch or torch lead\"}]},\"actions\":[{\"name\":\"Replace torch or torch lead if necessary\",\"description\":\"Replace the torch or torch lead if inspection indicates replacement is necessary.\",\"instruction_text\":\"Inspect the torch and torch lead, and replace if necessary.\",\"action_kind\":\"replacement\",\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"Inspect the torch and torch lead, and replace if necessary.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"Inspect the torch and torch lead, and replace if necessary.\"}]}],\"inspection_steps\":[{\"instruction_text\":\"Inspect the torch and torch lead.\",\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"Inspect the torch and torch lead, and replace if necessary.\"}]},{\"instruction_text\":\"Make sure the control board start LED illuminates when you pull the torch trigger.\",\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"Make sure the control board start LED illuminates when you pull the torch trigger.\"}]},{\"instruction_text\":\"If it does not, perform Test 6 – plasma start on page 92.\",\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"If it does not, perform Test 6 – plasma start on page 92.\"}]}],\"conditions\":[{\"text\":\"Replace if necessary.\",\"applies_to\":\"action\",\"step_index\":0,\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"replace if necessary.\"}]},{\"text\":\"If it does not (the control board start LED does not illuminate when you pull the torch trigger), perform Test 6 – plasma start on page 92.\",\"applies_to\":\"inspection\",\"step_index\":2,\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"If it does not, perform Test 6 – plasma start on page 92.\"}]}],\"affected_component\":null,\"resolution_status\":\"action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0074\",\"a0079\",\"a0081\"],\"record_anchor\":\"a0074\",\"branch_anchor\":\"a0081\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"No gas flow when torch trigger is pulled\",\"description\":\"The power ON LED illuminates, but no fault LEDs illuminate, and no gas flows when you pull the torch trigger.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0074\",\"source_page\":65,\"quote\":\"The power ON LED illuminates, but no fault LEDs illuminate, and no gas \\nflows when you pull the torch trigger.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0074\",\"source_page\":65,\"quote\":\"The power ON LED illuminates, but no fault LEDs illuminate, and no gas \\nflows when you pull the torch trigger.\"},{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"Faulty power board OR\"}]}],\"failure\":{\"name\":\"Faulty power board\",\"description\":\"Faulty power board.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"Faulty power board OR\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Make sure the control board start LED illuminates when you pull the torch trigger.\",\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"Make sure the control board start LED illuminates when you pull the torch trigger.\"}]},{\"instruction_text\":\"If it does not, perform Test 6 – plasma start on page 92.\",\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"If it does not, perform Test 6 – plasma start on page 92.\"}]}],\"conditions\":[{\"text\":\"If it does not (the control board start LED does not illuminate when you pull the torch trigger), perform Test 6 – plasma start on page 92.\",\"applies_to\":\"inspection\",\"step_index\":1,\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"If it does not, perform Test 6 – plasma start on page 92.\"}]}],\"affected_component\":null,\"resolution_status\":\"no_action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0074\",\"a0079\",\"a0081\"],\"record_anchor\":\"a0074\",\"branch_anchor\":\"a0081\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"No gas flow when torch trigger is pulled\",\"description\":\"The power ON LED illuminates, but no fault LEDs illuminate, and no gas flows when you pull the torch trigger.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0074\",\"source_page\":65,\"quote\":\"The power ON LED illuminates, but no fault LEDs illuminate, and no gas \\nflows when you pull the torch trigger.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0074\",\"source_page\":65,\"quote\":\"The power ON LED illuminates, but no fault LEDs illuminate, and no gas \\nflows when you pull the torch trigger.\"},{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"Faulty control board\"}]}],\"failure\":{\"name\":\"Faulty control board\",\"description\":\"Faulty control board.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"Faulty control board\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Make sure the control board start LED illuminates when you pull the torch trigger.\",\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"Make sure the control board start LED illuminates when you pull the torch trigger.\"}]},{\"instruction_text\":\"If it does not, perform Test 6 – plasma start on page 92.\",\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"If it does not, perform Test 6 – plasma start on page 92.\"}]}],\"conditions\":[{\"text\":\"If it does not (the control board start LED does not illuminate when you pull the torch trigger), perform Test 6 – plasma start on page 92.\",\"applies_to\":\"inspection\",\"step_index\":1,\"claim_evidence\":[{\"source_anchor\":\"a0081\",\"source_page\":65,\"quote\":\"If it does not, perform Test 6 – plasma start on page 92.\"}]}],\"affected_component\":null,\"resolution_status\":\"no_action_stated\"}]}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790433938,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 3406,
+      "prompt_tokens": 4843,
+      "total_tokens": 8249,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 322,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cached_tokens": 2816,
+        "cache_write_tokens": 2024
+      }
+    }
+  },
+  "provider_request_id": null,
+  "error": null
+}

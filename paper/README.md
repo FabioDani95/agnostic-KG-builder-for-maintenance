@@ -41,3 +41,18 @@ l'introduzione e il metodo; abstract quantitativo e conclusioni seguiranno le mi
 
 Il [registro dei manuali](manuals/README.md) propone 4 manuali di sviluppo e
 12 nuovi documenti per il test, con responsabilità e stato di selezione.
+
+## Evidenze correnti
+
+La [continuazione C9–C12](experiments/robustness_continuation_20260926/REPORT.md)
+documenta v22, quattro manuali verificati, gate di correzione per record e replay.
+La [riproduzione](experiments/robustness_continuation_20260926/REPRODUCE.md) distingue
+run completi, verifiche incrementali e prove offline. Qualità semantica globale,
+completezza e riduzione del lavoro umano restano non dimostrate; i moduli gold
+A/B sono ancora non annotati. Per l'uso applicativo partire dallo
+[stato PDF corrente](../docs/PDF_DIAGNOSTIC_STATUS.md).
+
+## Prima campagna reale, conservata come storico
+
+[Report delle quattro estrazioni](experiments/dev_luna_20260925/REPORT.md) e
+[problemi osservati](experiments/dev_luna_20260925/OBSERVATIONS.md).

@@ -1,0 +1,56 @@
+
+==================================== ERRORS ====================================
+_____________ ERROR collecting tests/planned/test_g2_acceptance.py _____________
+ImportError while importing test module '/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/tests/planned/test_g2_acceptance.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/planned/test_g2_acceptance.py:9: in <module>
+    from openpyxl import Workbook
+E   ModuleNotFoundError: No module named 'openpyxl'
+____________ ERROR collecting tests/planned/test_join_acceptance.py ____________
+ImportError while importing test module '/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/tests/planned/test_join_acceptance.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/planned/test_join_acceptance.py:3: in <module>
+    from tests.planned import test_g2_acceptance as scenarios
+tests/planned/test_g2_acceptance.py:9: in <module>
+    from openpyxl import Workbook
+E   ModuleNotFoundError: No module named 'openpyxl'
+____________ ERROR collecting tests/planned/test_lang_acceptance.py ____________
+ImportError while importing test module '/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/tests/planned/test_lang_acceptance.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/planned/test_lang_acceptance.py:3: in <module>
+    from tests.planned.test_g2_acceptance import _start, _upload, _workspace
+tests/planned/test_g2_acceptance.py:9: in <module>
+    from openpyxl import Workbook
+E   ModuleNotFoundError: No module named 'openpyxl'
+____________ ERROR collecting tests/planned/test_tab_acceptance.py _____________
+ImportError while importing test module '/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/tests/planned/test_tab_acceptance.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/planned/test_tab_acceptance.py:3: in <module>
+    from tests.planned import test_g2_acceptance as scenarios
+tests/planned/test_g2_acceptance.py:9: in <module>
+    from openpyxl import Workbook
+E   ModuleNotFoundError: No module named 'openpyxl'
+=========================== short test summary info ============================
+ERROR tests/planned/test_g2_acceptance.py
+ERROR tests/planned/test_join_acceptance.py
+ERROR tests/planned/test_lang_acceptance.py
+ERROR tests/planned/test_tab_acceptance.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 4 errors during collection !!!!!!!!!!!!!!!!!!!!
+5 warnings, 4 errors in 1.88s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

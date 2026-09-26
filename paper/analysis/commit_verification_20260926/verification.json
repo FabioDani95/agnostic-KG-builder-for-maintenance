@@ -1,0 +1,28 @@
+{
+  "scope": "Pre-commit verification of current implementation and documentation; no paid model calls",
+  "python_tests": {
+    "tests": "612",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "59.574"
+  },
+  "ruff": "passed; frozen artifacts/acceptance and paper/experiments excluded without editing archived programs",
+  "documentation_links": {
+    "checked_markdown_files": 329,
+    "missing_local_targets": 0,
+    "links_depending_on_unversioned_targets": 0
+  },
+  "golden_mock": {
+    "fixture_count": 9,
+    "schema_compliant_count": 9,
+    "fail_on_regression_exit_code": 0,
+    "scientific_quality_claim": false
+  },
+  "frontend_branch_test": "1 passed",
+  "frozen_manifest_entries_verified": 1121,
+  "frozen_manifest_mismatches": [],
+  "whitespace_check": "active code and docs passed; source PDF extracts and archived pricing text retain original whitespace",
+  "secret_scan": "No credential patterns or private environment files found in versioned candidates or source archive member names",
+  "ignored_data": "SQLite databases, raw source stores, local environments and secrets remain local under existing ignore rules; fresh clone alone cannot reproduce full PDF runs"
+}

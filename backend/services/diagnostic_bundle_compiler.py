@@ -21,6 +21,7 @@ from backend.domain.diagnostic_bundles import (
     ValidatedAffectedComponent,
     ValidatedCorrectiveAction,
     ValidatedDiagnosticBundle,
+    ValidatedDiagnosticCondition,
     ValidatedDiagnosticEvidenceSpan,
     ValidatedDiagnosticInspectionStep,
     ValidatedErrorCodeIndicator,
@@ -84,6 +85,8 @@ class BundleCompilationEntry(BaseModel):
     evidence_ids: list[str] = Field(default_factory=list)
     resolved_evidence_ids: list[str] = Field(default_factory=list)
     candidate: dict[str, Any]
+    validated_record: ValidatedDiagnosticBundle | None = None
+    source_gap_verified: bool = False
     disposition: BundleDisposition
     accounting_state: str = ""
     compiler_recoveries: list[BundleDropReason] = Field(default_factory=list)
@@ -203,16 +206,18 @@ def _identity_text(value: str) -> str:
     return _display_text(value).casefold()
 
 
-def _canonical_value(value: Any) -> Any:
+def _canonical_value(value: Any, field: str = "") -> Any:
     if isinstance(value, BaseModel):
         value = value.model_dump(mode="json")
     if isinstance(value, Mapping):
         return {
-            str(key): _canonical_value(item)
+            str(key): _canonical_value(item, str(key))
             for key, item in sorted(value.items(), key=lambda pair: str(pair[0]))
         }
     if isinstance(value, (list, tuple, set, frozenset)):
         items = [_canonical_value(item) for item in value]
+        if field in {"actions", "inspection_steps", "conditions"}:
+            return items
         return sorted(items, key=lambda item: json.dumps(item, sort_keys=True, ensure_ascii=False))
     if isinstance(value, str):
         return _identity_text(value)
@@ -452,7 +457,7 @@ def _resolve_span(
     if matching:
         best_priority = min(record.priority for record in matching)
         preferred = [record for record in matching if record.priority == best_priority]
-        canonical_texts = {_display_text(record.text) for record in preferred}
+        canonical_texts = {_display_text(record.locator.get("quote", record.text)) for record in preferred}
         if len(canonical_texts) > 1:
             return [], EvidenceValidationProblem(
                 code="ambiguous_source_anchor",
@@ -470,6 +475,29 @@ def _resolve_span(
                 locator=record.locator,
             ),
         ], None)
+
+    if allowed_source_anchors and anchor_is_allowed and page_records and quote:
+        # Scoped cells can share one canonical row anchor. Accept a quoted
+        # union only when it is literally present in that canonical row and
+        # every non-separator character belongs to allowed cells. This cannot
+        # admit a sibling cell omitted by the deterministic window.
+        best_priority = min(record.priority for record in page_records)
+        source_records = [record for record in page_records if record.priority == best_priority]
+        canonical = {_display_text(record.locator.get("quote", "")) for record in source_records}
+        if len(canonical) == 1:
+            full = next(iter(canonical))
+            if quote in full:
+                coverage = [False] * len(full)
+                for record in source_records:
+                    fragment = _display_text(record.text)
+                    start = full.find(fragment) if fragment else -1
+                    while start >= 0:
+                        coverage[start:start + len(fragment)] = [True] * len(fragment)
+                        start = full.find(fragment, start + 1)
+                start = full.find(quote)
+                if all(coverage[i] or full[i].isspace() or full[i] == "|" for i in range(start, start + len(quote))):
+                    record = source_records[0]
+                    return [ValidatedDiagnosticEvidenceSpan(source_anchor=anchor, source_page=span.source_page, quote=quote, evidence_id=record.evidence_id, locator=record.locator)], None
 
     # In a system-owned record window the model does not own anchor routing.
     # Repair only the mechanical case where its normalized verbatim quote has
@@ -558,7 +586,7 @@ def _resolve_unique_window_direct_span(
             signature = (
                 record.evidence_id,
                 record.page,
-                _display_text(record.text),
+                _display_text(record.locator.get("quote", record.text)),
             )
             matches[signature] = record
     if len(matches) != 1:
@@ -776,6 +804,7 @@ def _validated_bundle(
     index: _EvidenceIndex,
     source_type: str,
     source_title: str,
+    structural_edge_support: bool = False,
 ) -> ValidatedDiagnosticBundle:
     problems: list[EvidenceValidationProblem] = []
     record_anchor = _validate_lineage_anchor(
@@ -926,6 +955,19 @@ def _validated_bundle(
                 )
             )
 
+    conditions: list[ValidatedDiagnosticCondition] = []
+    for position, condition in enumerate(candidate.conditions):
+        spans = _resolve_spans(
+            condition.claim_evidence, path=f"conditions[{position}].claim_evidence",
+            index=index, problems=problems,
+            allowed_source_anchors=allowed_source_anchors if candidate.record_window_id else None,
+        )
+        if spans:
+            conditions.append(ValidatedDiagnosticCondition(
+                text=condition.text, applies_to=condition.applies_to,
+                step_index=condition.step_index, claim_evidence=spans,
+            ))
+
     component: ValidatedAffectedComponent | None = None
     if candidate.affected_component is not None:
         component_claims = _resolve_spans(
@@ -976,6 +1018,8 @@ def _validated_bundle(
         edge_anchors.update(span.source_anchor for span in action.resolution_link_evidence)
     for step in inspection_steps:
         claim_anchors.update(span.source_anchor for span in step.claim_evidence)
+    for condition in conditions:
+        claim_anchors.update(span.source_anchor for span in condition.claim_evidence)
     if component is not None:
         claim_anchors.update(span.source_anchor for span in component.claim_evidence)
         edge_anchors.update(span.source_anchor for span in component.affects_link_evidence)
@@ -1006,6 +1050,8 @@ def _validated_bundle(
         candidate_claim_anchors.update(span.source_anchor for span in action.claim_evidence)
     for step in candidate.inspection_steps:
         candidate_claim_anchors.update(span.source_anchor for span in step.claim_evidence)
+    for condition in candidate.conditions:
+        candidate_claim_anchors.update(span.source_anchor for span in condition.claim_evidence)
     if candidate.affected_component is not None:
         candidate_claim_anchors.update(
             span.source_anchor for span in candidate.affected_component.claim_evidence
@@ -1053,12 +1099,110 @@ def _validated_bundle(
                 )
             )
 
+    def supports_claim(link, claims):
+        return any(
+            _display_text(claim.quote) in _display_text(link.quote)
+            or claim.evidence_id == link.evidence_id
+            for claim in claims
+        )
+
+    def labeled_record_support(links, left, right):
+        anchors = {span.evidence_id for span in links}
+        if not ({span.evidence_id for span in left} & anchors and {span.evidence_id for span in right} & anchors):
+            return False
+        positions = [position for position, record in enumerate(index.ordered) if record.evidence_id in anchors]
+        if not positions:
+            return False
+        region = index.ordered[min(positions):max(positions) + 1]
+        if not _records_are_contiguous(region):
+            return False
+        text = "\n".join(record.text for record in region)
+        roots = re.findall(r"(?im)^\s*(?:problem|symptom|fault|alarm|error(?: code)?)\s*:", text)
+        causes = re.findall(r"(?im)^\s*(?:possible\s+)?(?:cause|reason)\s*:", text)
+        remedies = re.findall(r"(?im)^\s*(?:remedy|solution|corrective action)\s*:", text)
+        # Cause->remedy may start after the root, but no second cause/remedy
+        # or unrelated problem can intervene. All spans remain literal.
+        return len(roots) <= 1 and len(causes) == 1 and len(remedies) <= 1
+
+    def explicit_cause_list_support(links, left, right):
+        """A causal lead-in scopes consecutive bullets, never later remedies.
+
+        This establishes only indicator -> possible cause. Physical proximity
+        to a procedure or a shared component is not a resolution proof.
+        """
+        linked = {s.evidence_id for s in [*links, *left, *right]}
+        for start, root in enumerate(index.ordered):
+            if root.evidence_id not in linked or not any(s.evidence_id == root.evidence_id for s in left):
+                continue
+            if not re.search(r"(?i)\b(?:root\s+)?causes?\s+(?:may\s+be|can\s+be|include|are)\s*:\s*$", root.text):
+                continue
+            previous = root
+            for bullet in index.ordered[start + 1:]:
+                if bullet.page != root.page or not _records_are_contiguous([previous, bullet]):
+                    break
+                if not re.match(r"^\s*[\u2022\u25a0\u25a1\u25aa\u25cf\uf06e\uf071\uf06c]", bullet.text):
+                    break
+                if bullet.evidence_id in linked and any(s.evidence_id == bullet.evidence_id and _display_text(s.quote) in _display_text(bullet.text) for s in right):
+                    return [ValidatedDiagnosticEvidenceSpan(source_anchor=r.evidence_id, source_page=r.page,
+                              quote=_display_text(r.text), evidence_id=r.evidence_id, locator=r.locator) for r in (root, bullet)]
+                previous = bullet
+        return False
+
+    def check_link(links, left, right, path):
+        if not links or not left or not right or structural_edge_support:
+            return
+        # A literal span proving only the other endpoint cannot establish an
+        # edge. Distributed endpoint unions need a system-verified table row.
+        cause_list = path.startswith("indicators[") and explicit_cause_list_support(links, left, right)
+        if not any(supports_claim(link, left) and supports_claim(link, right) for link in links) and not labeled_record_support(links, left, right) and not cause_list:
+            problems.append(EvidenceValidationProblem(
+                code="relation_endpoint_support_unestablished", path=path,
+                message="The support does not cover both endpoints in one passage, one contiguous labeled record or a verified structural branch; adjudication is required.",
+            ))
+
+    if failure is not None:
+        if not structural_edge_support and indicators and all(
+            re.match(r"(?is)^\s*(?:\d+[.)]\s*)?(?:check|inspect|verify|examine|measure|test)\b", _display_text(span.locator.get("quote", "")))
+            for indicator in indicators for span in indicator.claim_evidence
+        ):
+            problems.append(EvidenceValidationProblem(
+                code="indicator_inferred_from_inspection", path="indicators.claim_evidence",
+                message="The full source passage is an inspection instruction, not an observed diagnostic indicator. Quoting a noun fragment cannot establish a causal chain; retain the inspection for adjudication.",
+            ))
+        for position, indicator in enumerate(indicators):
+            support = explicit_cause_list_support(indicator.failure_link_evidence, indicator.claim_evidence, failure.claim_evidence)
+            if support:
+                indicator = indicator.model_copy(update={"failure_link_evidence": [*indicator.failure_link_evidence, *support]})
+                indicators[position] = indicator
+            check_link(indicator.failure_link_evidence, indicator.claim_evidence, failure.claim_evidence, f"indicators[{position}].failure_link_evidence")
+        for position, action in enumerate(actions):
+            check_link(action.resolution_link_evidence, failure.claim_evidence, action.claim_evidence, f"actions[{position}].resolution_link_evidence")
+
     if problems:
         raise DiagnosticBundleEvidenceError(problems)
 
+    procedure_context = []
+    # A named numbered test has an explicit scope, including lettered subtests.
+    # Preserve its source blocks in order; do not infer which branches to run.
+    heading = re.compile(r"(?i)^\s*test\s+(\d+)([a-z]?)\s*[-–—:]\s+")
+    root_position = next((i for i, r in enumerate(index.ordered) if r.evidence_id == record_anchor), None)
+    if root_position is not None:
+        starts = [(i, heading.match(r.text)) for i, r in enumerate(index.ordered[:root_position + 1])]
+        starts = [(i, m) for i, m in starts if m and not m.group(2)]
+        if starts:
+            start, match = starts[-1]
+            first = index.ordered[start]
+            selected = []
+            for r in index.ordered[start:]:
+                next_heading = heading.match(r.text)
+                if r.page - first.page > 9 or (next_heading and next_heading.group(1) != match.group(1)):
+                    break
+                if r.locator.get("block_index") is not None:
+                    selected.append(r)
+            if record_anchor in {r.evidence_id for r in selected} and branch_anchor in {r.evidence_id for r in selected}:
+                procedure_context = [ValidatedDiagnosticEvidenceSpan(source_anchor=r.evidence_id, source_page=r.page,
+                    quote=_display_text(r.text), evidence_id=r.evidence_id, locator=r.locator) for r in selected]
     indicators.sort(key=_canonical_json)
-    actions.sort(key=_canonical_json)
-    inspection_steps.sort(key=_canonical_json)
     return ValidatedDiagnosticBundle(
         record_lineage_id=diagnostic_record_lineage_id(
             candidate,
@@ -1077,6 +1221,8 @@ def _validated_bundle(
         failure=failure,
         actions=actions,
         inspection_steps=inspection_steps,
+        conditions=conditions,
+        procedure_context=procedure_context,
         affected_component=component,
         resolution_status=candidate.resolution_status,
     )
@@ -1129,6 +1275,18 @@ def _classify_candidate(
         for problem in evidence_problems
     ]
     contradictions = False
+    # A source's negative answer to a conjunction does not entail two
+    # negative observations. Keep the original candidate in review rather
+    # than publishing a fluent but logically stronger paraphrase.
+    def negative_conjunction(value):
+        return bool(re.search(r"(?i)\b(?:not|no)\b[^.;?]*\band\b[^.;?]*\b(?:not|no)\b", value))
+    conditional_evidence = [s.quote for c in candidate.conditions for s in c.claim_evidence]
+    if any(re.search(r"(?i)\band\b.*\?", q) for q in conditional_evidence) and any(re.search(r"(?i)\bif no\b", q) for q in conditional_evidence):
+        texts = [c.text for c in candidate.conditions] + [a.instruction_text for a in candidate.actions]
+        texts += [candidate.failure.description] if candidate.failure else []
+        if any(negative_conjunction(text) for text in texts):
+            contradictions = True
+            reasons.append(_reason("compound_negative_condition_strengthened", "A negative answer to a compound AND question was paraphrased as two negative facts; preserve the whole question and its outcome.", "conditions"))
     missing = False
     non_restorative_actions = [
         position
@@ -1143,6 +1301,15 @@ def _classify_candidate(
                 f"actions[{position}]",
             )
         )
+
+    if candidate.failure is not None and all(
+        re.match(r"(?is)^\s*(?:(?:troubleshooting|remedy)\s*:\s*)?(?:\d+[.)]\s*)?(?:if\s+(?:yes|no)\s*,\s*)?(?:check|inspect|verify|replace|clean|adjust|tighten|loosen|contact|test)\b", span.quote)
+        for span in candidate.failure.claim_evidence
+    ):
+        contradictions = True
+        reasons.append(_reason(
+            "failure_inferred_from_instruction", "An inspection or remedy alone does not state a technical failure; retain the candidate for adjudication.", "failure.claim_evidence",
+        ))
 
     if candidate.failure is None:
         missing = True
@@ -1361,7 +1528,7 @@ _RESTORATIVE_VERBS = re.compile(
 )
 _INSPECTION_VERBS = re.compile(
     r"\b(?:check|confirm|determine|diagnose|examine|inspect|measure|monitor|observe|"
-    r"test|verify)\b",
+    r"test|verify)\b|\bto see (?:if|whether)\b",
     flags=re.IGNORECASE,
 )
 
@@ -1398,6 +1565,8 @@ def _candidate_referenced_anchors(candidate: DiagnosticBundleCandidate) -> set[s
         add(action.resolution_link_evidence)
     for step in candidate.inspection_steps:
         add(step.claim_evidence)
+    for condition in candidate.conditions:
+        add(condition.claim_evidence)
     if candidate.affected_component is not None:
         add(candidate.affected_component.claim_evidence)
         add(candidate.affected_component.affects_link_evidence)
@@ -1564,7 +1733,7 @@ def _compile_published(
             )
 
         failure = bundle.failure
-        material_context = component_id or "asset_level"
+        material_context = component_id or ("asset_level" if _is_asset_level(bundle.failure.material_context) else "not_stated")
         failure_claim = {
             **source_scope,
             "name": failure.name,
@@ -1719,6 +1888,8 @@ def _bundle_evidence_ids(bundle: ValidatedDiagnosticBundle | None) -> list[str]:
         add(action.resolution_link_evidence)
     for step in bundle.inspection_steps:
         add(step.claim_evidence)
+    for condition in bundle.conditions:
+        add(condition.claim_evidence)
     if bundle.affected_component is not None:
         add(bundle.affected_component.claim_evidence)
         add(bundle.affected_component.affects_link_evidence)
@@ -1733,6 +1904,39 @@ def _candidate_evidence_ids(
 
     anchors = _candidate_referenced_anchors(candidate)
     return sorted(anchor for anchor in anchors if anchor in index)
+
+
+def _verified_inspection_source_gap(candidate, resolved, disposition, reasons, windows, units):
+    """Recognize a complete, source-owned check-only remedy cell, never a miss.
+
+Only simple atomic table rows qualify. Prose, partial quotations, conditional
+alternatives and mixed check/remedy cells continue to require adjudication.
+    """
+    if (disposition is not BundleDisposition.GAP or resolved is None
+            or candidate.resolution_status is not ResolutionStatus.CHECK_ONLY
+            or candidate.failure is None or candidate.actions or not candidate.inspection_steps
+            or {r.code for r in reasons} - {"check_only", "missing_actions"}):
+        return False
+    window = next((w for w in windows if w.get("window_id") == candidate.record_window_id), {})
+    if (window.get("edge_policy") != "table_atomic_endpoint_union"
+            or window.get("structure_status") != "atomic" or int(window.get("branch_count", 1)) != 1):
+        return False
+    unit = next((u for u in units if str(u.evidence_id) == candidate.branch_anchor), None)
+    layout = unit.attributes.get("table_layout", {}) if unit is not None else {}
+    cells, headers = layout.get("cells", []), layout.get("column_headers", [])
+    if not cells or not headers or not re.fullmatch(r"(?i)(?:solution|remedy|troubleshooting|corrective action)s?", _display_text(headers[-1])):
+        return False
+    cell = _display_text(cells[-1])
+    if not cell or not _inspection_only_instruction(cell, None):
+        return False
+    sentences = [s.strip() for s in re.split(r"[.;]+\s*", cell) if s.strip()]
+    if not all(re.match(r"(?i)^(?:check|inspect|verify|measure|test)\b", sentence) for sentence in sentences):
+        return False
+    allowed = window.get("allowed_evidence_spans", {}).get(candidate.branch_anchor, [])
+    if cell not in {_display_text(value) for value in allowed}:
+        return False
+    quoted = " ".join(_display_text(span.quote) for step in resolved.inspection_steps for span in step.claim_evidence if span.source_anchor == candidate.branch_anchor)
+    return cell in quoted
 
 
 def compile_diagnostic_bundles(
@@ -1810,6 +2014,15 @@ def compile_diagnostic_bundles(
 
     index = _evidence_index(evidence_units, legacy_chunks, text_with_pages)
     window_scopes: dict[str, dict[str, list[str]]] = {}
+    structural_windows = {
+        str(window.get("window_id") or "") for window in record_windows
+        if window.get("edge_policy") in {"table_atomic_endpoint_union", "prose_structural_endpoint_union"}
+        and window.get("structure_status") == "atomic"
+    }
+    ambiguous_windows = {
+        str(window.get("window_id") or "") for window in record_windows
+        if window.get("structure_status") == "ambiguous_pairing"
+    }
     for window in record_windows:
         window_id = str(window.get("window_id") or window.get("record_window_id") or "").strip()
         raw_scope = window.get("allowed_evidence_spans") or {}
@@ -1879,10 +2092,16 @@ def compile_diagnostic_bundles(
                     index=candidate_index,
                     source_type=source_type,
                     source_title=source_title,
+                    structural_edge_support=candidate.record_window_id in structural_windows and candidate.record_window_id in window_scopes,
                 )
                 validated.append(resolved)
             except DiagnosticBundleEvidenceError as exc:
                 evidence_problems = exc.problems
+        if candidate.record_window_id in ambiguous_windows and candidate.resolution_status is not ResolutionStatus.NOT_DIAGNOSTIC:
+            evidence_problems = [*evidence_problems, EvidenceValidationProblem(
+                code="structurally_ambiguous_pairing", path="record_window_id",
+                message="The source window contains alternatives without a verified pairing. Literal endpoint spans alone do not resolve their relationship.",
+            )]
         disposition, reasons = _classify_candidate(candidate, evidence_problems)
         staged.append(
             (candidate, record_id, branch_id, disposition, reasons, recoveries, resolved)
@@ -1921,6 +2140,8 @@ def compile_diagnostic_bundles(
                 evidence_ids=_candidate_evidence_ids(candidate, index),
                 resolved_evidence_ids=_bundle_evidence_ids(resolved),
                 candidate=candidate.model_dump(mode="json"),
+                validated_record=resolved,
+                source_gap_verified=_verified_inspection_source_gap(candidate, resolved, disposition, reasons, record_windows, evidence_units),
                 disposition=disposition,
                 accounting_state=_accounting_state(candidate, disposition, reasons),
                 compiler_recoveries=recoveries,

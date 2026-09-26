@@ -1,0 +1,192 @@
+{
+  "status": "source_notes_for_adjudicator_not_gold",
+  "document_id": "hypertherm_powermax30_air",
+  "document_sha256": "3c2b7cd62ae1b8b69f8b86fcbf9b36f4ee1fc8d35fed3f90d6271f8ef50d5c45",
+  "scope_exhaustive": false,
+  "coverage": "four selected source issues; not annotation of the 37-page scope",
+  "author_kind": "assistant",
+  "author_previously_exposed_to_predictions": true,
+  "independent_annotation": false,
+  "presentation_rule": "show only after independent technician annotations; do not prefill annotation_A/B",
+  "used_for_generation": false,
+  "used_for_scoring": false,
+  "cases": [
+    {
+      "case_id": "source-note-table69-filter",
+      "pages": [
+        68,
+        69
+      ],
+      "topic": "Titolo comune e riga di filtro ostruito",
+      "source_spans": [
+        {
+          "physical_page": 69,
+          "quote": "The internal compressor LED and the temperature LED illuminate while the machine is powered ON and the torch trigger is pulled.",
+          "normalized_native_offset": 1286,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 69,
+          "quote": "The air inlet filter on the internal compressor is completely clogged.",
+          "normalized_native_offset": 79,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 69,
+          "quote": "Replace the compressor’s air inlet filter.",
+          "normalized_native_offset": 290,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 68,
+          "quote": "If the fault LEDs persist, continue with the following troubleshooting steps in the order listed.",
+          "normalized_native_offset": 1049,
+          "literal_in_pdf_native_text": true
+        }
+      ],
+      "proposed_interpretation": "La geometria associa il sintomo nel titolo alla causa e al rimedio della riga 6. La sequenza diagnostica inizia nella pagina precedente.",
+      "adjudication_questions": [
+        "Definire se la sequenza dei passi 1–5 è prerequisito del ramo 6 o contesto della procedura; non eliminare il rinvio.",
+        "Confermare granularità del ramo e gestione dei passi con ordine esplicito."
+      ],
+      "validation_status": "agent_proposed_not_technician_validated"
+    },
+    {
+      "case_id": "source-note-table67-hot-cold",
+      "pages": [
+        67
+      ],
+      "topic": "Due cause e tre punti nella colonna delle soluzioni",
+      "source_spans": [
+        {
+          "physical_page": 67,
+          "quote": "The system overheated because the duty cycle was exceeded.",
+          "normalized_native_offset": 202,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 67,
+          "quote": "The system is too cold to operate. The ambient temperature is too low.",
+          "normalized_native_offset": 263,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 67,
+          "quote": "Let the system cool before using it.",
+          "normalized_native_offset": 336,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 67,
+          "quote": "Let the system warm up before using it.",
+          "normalized_native_offset": 566,
+          "literal_in_pdf_native_text": true
+        }
+      ],
+      "proposed_interpretation": "La pagina conserva due alternative termiche. La semplice cardinalità degli elenchi non fornisce un abbinamento posizionale completo.",
+      "adjudication_questions": [
+        "Annotare il supporto semantico dell’abbinamento caldo/raffreddamento e freddo/riscaldamento.",
+        "Stabilire a quale ramo si applica il test della ventola, mantenendo il rinvio a pagina 95."
+      ],
+      "validation_status": "agent_proposed_not_technician_validated"
+    },
+    {
+      "case_id": "source-note-test9-root",
+      "pages": [
+        96
+      ],
+      "topic": "Radice diagnostica e tre componenti alternativi",
+      "source_spans": [
+        {
+          "physical_page": 96,
+          "quote": "If the internal compressor fault LED and temperature fault LED both illuminate, the root cause may be:",
+          "normalized_native_offset": 148,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 96,
+          "quote": "Faulty internal compressor",
+          "normalized_native_offset": 253,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 96,
+          "quote": "Faulty compressor-driver board (PCB3)",
+          "normalized_native_offset": 282,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 96,
+          "quote": "Faulty power board (PCB2)",
+          "normalized_native_offset": 322,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 96,
+          "quote": "Use this test to systematically check each of these 3 components to determine which one needs to be replaced.",
+          "normalized_native_offset": 348,
+          "literal_in_pdf_native_text": true
+        }
+      ],
+      "proposed_interpretation": "Il testo dichiara tre guasti possibili. Non dichiara che tutte e tre le sostituzioni siano necessarie.",
+      "adjudication_questions": [
+        "Confermare tre candidati distinti sotto una radice comune.",
+        "Definire la propagazione delle condizioni di ingresso nei sotto-test 9a/9b/9c."
+      ],
+      "validation_status": "agent_proposed_not_technician_validated"
+    },
+    {
+      "case_id": "source-note-test9b-step13-no",
+      "pages": [
+        96,
+        97
+      ],
+      "topic": "Esito negativo di una domanda congiunta e sostituzione del compressore",
+      "source_spans": [
+        {
+          "physical_page": 96,
+          "quote": "Faulty internal compressor",
+          "normalized_native_offset": 253,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 96,
+          "quote": "If yes, check the internal compressor. Skip to step 10.",
+          "normalized_native_offset": 1245,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 97,
+          "quote": "Test 9b – Check the internal compressor",
+          "normalized_native_offset": 469,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 97,
+          "quote": "Connect the internal compressor to an external 12 VDC power source (for example, a car battery).",
+          "normalized_native_offset": 808,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 97,
+          "quote": "Is the compressor running, and is air blowing from the torch?",
+          "normalized_native_offset": 1018,
+          "literal_in_pdf_native_text": true
+        },
+        {
+          "physical_page": 97,
+          "quote": "If no, replace the internal compressor.",
+          "normalized_native_offset": 1158,
+          "literal_in_pdf_native_text": true
+        }
+      ],
+      "proposed_interpretation": "La sostituzione è un esito condizionato del test 13, collegato alla radice di pagina 96 e al sotto-test 9b. Il “no” nega la domanda congiunta; non equivale automaticamente a due osservazioni negative separate.",
+      "adjudication_questions": [
+        "Registrare i due percorsi di ingresso al passo 10 (5a oppure 9a) e le preparazioni necessarie.",
+        "Confermare la rappresentazione della negazione congiunta e dei requisiti di prova.",
+        "Conservare la parte successiva della stessa istruzione che riposiziona la valvola e il rinvio alla procedura di sostituzione."
+      ],
+      "validation_status": "agent_proposed_not_technician_validated"
+    }
+  ]
+}

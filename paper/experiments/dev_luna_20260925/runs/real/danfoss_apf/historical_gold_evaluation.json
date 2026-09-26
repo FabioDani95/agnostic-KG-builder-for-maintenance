@@ -1,0 +1,481 @@
+{
+  "manual_id": "danfoss_apf",
+  "gold_scope": "exhaustive_troubleshooting_table",
+  "semantic": {
+    "gold_claims_present": 1,
+    "gold_claims_total": 8,
+    "gold_claim_recall": 0.125,
+    "recall_floor": 0.75,
+    "autonomous_expected_claims_present": 0,
+    "traceable_review_claims_present": 0,
+    "explicit_expected_gaps_present": 1,
+    "published_complete_paths_total": 0,
+    "paths_outside_frozen_gold": 0,
+    "unsupported_path_gate_scope": "exhaustive_gold",
+    "unsupported_published_paths_detected": 0,
+    "forbidden_pairings_found": 0,
+    "gold_pages_retained": [
+      64
+    ],
+    "gold_pages_required": [
+      64
+    ],
+    "checks": {
+      "recall_floor": false,
+      "forbidden_pairings_zero": true,
+      "unsupported_published_paths_zero": true,
+      "gold_page_retention": true
+    },
+    "witnesses": [
+      {
+        "claim_id": "D1",
+        "expected_outcome": "traceable_explicit_gap",
+        "present": true,
+        "best_min_field_score": 0.857143,
+        "field_scores": {
+          "indicator": 1.0,
+          "failure_mode": 1.0,
+          "inspection_step": 0.857143
+        },
+        "matched_gap": {
+          "blocking": true,
+          "code": "pdf_diagnostic_record_gap",
+          "disposition": "gap",
+          "evidence_ids": [
+            "ev_327886ebc0fe1a54bff8f103201d",
+            "ev_51746a02edb4742abf56388ff859",
+            "ev_895bea290e3af840476b78fe3747",
+            "ev_da183c33328124e9dad217bfd816"
+          ],
+          "message": "Record diagnostico non pubblicabile senza decisione umana (check_only, missing_actions)",
+          "stage": "pdf_adapter",
+          "target_id": "dbranch_d917ebe8c53fdebbfb66ee946419f4cfe41801ef23d2e693296b0fa31c14b253",
+          "target_kind": "diagnostic_record"
+        }
+      },
+      {
+        "claim_id": "D2",
+        "expected_outcome": "traceable_explicit_gap",
+        "present": false,
+        "best_min_field_score": 0.0,
+        "field_scores": {
+          "indicator": 1.0,
+          "failure_mode": 0.0,
+          "inspection_step": 0.168
+        },
+        "matched_gap": {
+          "blocking": true,
+          "code": "pdf_diagnostic_record_gap",
+          "disposition": "gap",
+          "evidence_ids": [
+            "ev_327886ebc0fe1a54bff8f103201d",
+            "ev_51746a02edb4742abf56388ff859",
+            "ev_895bea290e3af840476b78fe3747",
+            "ev_da183c33328124e9dad217bfd816"
+          ],
+          "message": "Record diagnostico non pubblicabile senza decisione umana (check_only, missing_actions)",
+          "stage": "pdf_adapter",
+          "target_id": "dbranch_d917ebe8c53fdebbfb66ee946419f4cfe41801ef23d2e693296b0fa31c14b253",
+          "target_kind": "diagnostic_record"
+        }
+      },
+      {
+        "claim_id": "D3",
+        "expected_outcome": "complete_published_path",
+        "present": false,
+        "matched_outcome": "none",
+        "best_min_field_score": 0.0,
+        "field_scores": {},
+        "matched_record": {}
+      },
+      {
+        "claim_id": "D4",
+        "expected_outcome": "complete_published_path",
+        "present": false,
+        "matched_outcome": "none",
+        "best_min_field_score": 0.0,
+        "field_scores": {},
+        "matched_record": {}
+      },
+      {
+        "claim_id": "D5",
+        "expected_outcome": "complete_published_path",
+        "present": false,
+        "matched_outcome": "none",
+        "best_min_field_score": 0.0,
+        "field_scores": {},
+        "matched_record": {}
+      },
+      {
+        "claim_id": "D6",
+        "expected_outcome": "complete_published_path",
+        "present": false,
+        "matched_outcome": "none",
+        "best_min_field_score": 0.0,
+        "field_scores": {},
+        "matched_record": {}
+      },
+      {
+        "claim_id": "D7",
+        "expected_outcome": "complete_published_path",
+        "present": false,
+        "matched_outcome": "none",
+        "best_min_field_score": 0.0,
+        "field_scores": {},
+        "matched_record": {}
+      },
+      {
+        "claim_id": "D8",
+        "expected_outcome": "traceable_explicit_gap",
+        "present": false,
+        "best_min_field_score": 0.0,
+        "field_scores": {
+          "indicator": 0.0,
+          "failure_mode": 0.627273,
+          "inspection_step": 0.336667
+        },
+        "matched_gap": {
+          "blocking": true,
+          "code": "pdf_diagnostic_record_gap",
+          "disposition": "gap",
+          "evidence_ids": [
+            "ev_327886ebc0fe1a54bff8f103201d",
+            "ev_51746a02edb4742abf56388ff859",
+            "ev_895bea290e3af840476b78fe3747",
+            "ev_da183c33328124e9dad217bfd816"
+          ],
+          "message": "Record diagnostico non pubblicabile senza decisione umana (check_only, missing_actions)",
+          "stage": "pdf_adapter",
+          "target_id": "dbranch_d917ebe8c53fdebbfb66ee946419f4cfe41801ef23d2e693296b0fa31c14b253",
+          "target_kind": "diagnostic_record"
+        }
+      }
+    ],
+    "forbidden": [
+      {
+        "symptom": "SYS 485 comm loss",
+        "failure_mode": "input fuse is broken",
+        "found": false,
+        "matches": []
+      },
+      {
+        "symptom": "Fuse blowout",
+        "failure_mode": "CT is not well connected",
+        "found": false,
+        "matches": []
+      },
+      {
+        "symptom": "Ambient OTP",
+        "failure_mode": "BUS capacitor failure",
+        "found": false,
+        "matches": []
+      },
+      {
+        "symptom": "No current compensation or bad current compensation",
+        "failure_mode": "fan failure",
+        "found": false,
+        "matches": []
+      }
+    ]
+  },
+  "graph": {
+    "nodes": 35,
+    "relations": 34,
+    "nodes_by_type": {
+      "Asset": 1,
+      "Component": 34
+    },
+    "relations_by_type": {
+      "HAS_COMPONENT": 34
+    },
+    "published_paths": []
+  },
+  "integrity": {
+    "passed": true,
+    "checks": {
+      "strict_validation": true,
+      "exact_relation_grounding": true,
+      "zero_isolated_diagnostic_nodes": true,
+      "all_corrective_actions_have_incoming_resolved_by": true,
+      "one_original_canonical_asset": true,
+      "candidate_accounting_or_nonapprovable": true,
+      "no_approval_merge_or_structured_processing": true
+    },
+    "grounding": {
+      "exact": 166,
+      "total": 166,
+      "relations_exact": 34,
+      "relations_total": 34,
+      "unresolved": [],
+      "passed": true
+    },
+    "diagnostic_accounting_complete": false,
+    "approval_eligible": false,
+    "review_summary": {
+      "blocking": 17,
+      "by_code": {
+        "canonicalization_ambiguous": 4,
+        "pdf_diagnostic_candidate_pages_unaccounted": 1,
+        "pdf_diagnostic_record_gap": 1,
+        "pdf_diagnostic_record_review": 13,
+        "pdf_node_provenance_unresolved": 1,
+        "pdf_ocr_low_confidence": 1,
+        "pdf_relation_endpoint_omitted": 1,
+        "pdf_unreadable_pages": 1
+      },
+      "total": 23
+    },
+    "validation": {
+      "domain_range_errors": 0,
+      "duplicate_ids": 0,
+      "endpoint_errors": 0,
+      "extra_properties": 0,
+      "graph_invariant_errors": 0,
+      "issues": [],
+      "passed": true,
+      "provenance_resolvable": 152,
+      "provenance_total": 152,
+      "relation_grounding_passed": 34,
+      "relation_grounding_total": 34,
+      "required_properties_present": 141,
+      "required_properties_total": 141,
+      "unresolved_mapping_diagnostics": 0
+    }
+  },
+  "scope": {
+    "diagnostic_pages": [
+      17,
+      18,
+      19,
+      26,
+      27,
+      28,
+      29,
+      30,
+      50,
+      51,
+      52,
+      63,
+      64,
+      65
+    ],
+    "method": "retained_cut_plan",
+    "page_offset": 2,
+    "retrieval_pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66
+    ],
+    "sections": [
+      {
+        "end_page": 11,
+        "name": "2.4 Electrical Installation Precautions",
+        "source": "rule",
+        "start_page": 11
+      },
+      {
+        "end_page": 66,
+        "name": "6 Mechanical Installation Considerations",
+        "source": "rule",
+        "start_page": 31
+      },
+      {
+        "end_page": 66,
+        "name": "6.1 Pre-Installation",
+        "source": "rule",
+        "start_page": 31
+      }
+    ],
+    "selected_pages": [
+      11,
+      17,
+      18,
+      19,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66
+    ],
+    "skipped": false,
+    "structural_pages": [
+      11,
+      17,
+      19,
+      26,
+      28,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      65,
+      66
+    ],
+    "total_pages": 66,
+    "unselected_pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      12,
+      13,
+      14,
+      15,
+      16,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25
+    ]
+  },
+  "operations": {
+    "cost_usd": 0.016792,
+    "calls": 16,
+    "elapsed_seconds": 102.323,
+    "conservative_preflight_usd": 0.16118,
+    "models": {
+      "gpt-6-luna": 16
+    },
+    "hard_ceiling_usd": 3.5
+  },
+  "verdict": {
+    "semantic": "fail",
+    "publication_integrity": "pass"
+  }
+}

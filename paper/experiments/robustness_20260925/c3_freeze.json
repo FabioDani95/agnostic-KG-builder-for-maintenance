@@ -1,0 +1,15 @@
+{
+  "variant": "c3",
+  "pipeline_version": "pdf-g3-structured-recovery-v14",
+  "archive_sha256": "c7435d9518b7c860dfcca5fbef1dd360389e167ab0afa9df1503f89e33bf7b24",
+  "mode": "offline exact provider replay of C2; no new model sampling",
+  "differences_from_c2": [
+    "normalization preserves branch identity",
+    "preserve all required quotes on same anchor",
+    "reject whole relation on any unresolved required reference",
+    "record node IDs follow canonical graph branch",
+    "UI displays each source branch and its conditions separately"
+  ],
+  "campaign_cap_usd": 20,
+  "gold_used_in_generation": false
+}

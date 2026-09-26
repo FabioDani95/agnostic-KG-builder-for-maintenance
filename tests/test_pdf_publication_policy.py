@@ -410,3 +410,14 @@ def test_cost_guard_is_bounded_by_chunk_and_completion_caps():
     assert envelope["assumptions"]["sdk_retries"] == 0
     assert envelope["conservative_max_cost_usd"] < 0.50
     assert envelope["central_estimated_cost_usd"] < envelope["conservative_max_cost_usd"]
+
+
+def test_verified_source_gap_stays_visible_without_becoming_a_human_task():
+    from backend.domain.subgraphs import KnowledgeGap
+    informational = KnowledgeGap(code='pdf_diagnostic_record_gap', message='Verified check-only source cell', review_required=False, blocking=False)
+    uncertain = KnowledgeGap(code='pdf_diagnostic_record_gap', message='An action may be missing', review_required=True, blocking=True)
+    result = build_publication_graph(candidate_nodes=[], candidate_relations=[], evidence=[], prior_gaps=[informational, uncertain])
+    assert len(result.knowledge_gaps) == 2
+    assert len(result.review_queue) == 1
+    assert result.review_queue[0]['message'] == uncertain.message
+    assert result.metrics['verified_source_gap_information'] == 1

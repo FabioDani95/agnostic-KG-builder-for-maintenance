@@ -11,7 +11,7 @@ from tests.planned.source_fixtures import upload_pdf
 
 def _legacy_prepared_source(foundation_client, machine_payload, monkeypatch):
     current_version = pdf_adapter.ADAPTER_VERSION
-    assert current_version == "pdf-v3"
+    assert current_version.startswith("pdf-v4-layout-")
     monkeypatch.setattr(pdf_adapter, "ADAPTER_VERSION", "pdf-v2")
     monkeypatch.setattr(pdf_auto_preparation, "ADAPTER_VERSION", "pdf-v2")
 
@@ -86,7 +86,7 @@ def test_obsolete_pdf_inventory_is_regenerated_without_deleting_history(
     migrated_response = foundation_client.get(f"/api/sources/{source_id}/pdf/preparation")
     assert migrated_response.status_code == 200
     migrated = migrated_response.json()
-    assert migrated["adapter_version"] == "pdf-v3"
+    assert migrated["adapter_version"] == pdf_adapter.ADAPTER_VERSION
     assert migrated["scope_version"] == 2
     assert migrated["scope_id"] != legacy["scope_id"]
     assert migrated["run_id"] != legacy["run_id"]
@@ -100,7 +100,7 @@ def test_obsolete_pdf_inventory_is_regenerated_without_deleting_history(
             (source_id,),
         ).fetchall()
         current_raw_ids = {
-            row["raw_unit_id"] for row in raw_rows if row["adapter_version"] == "pdf-v3"
+            row["raw_unit_id"] for row in raw_rows if row["adapter_version"] == pdf_adapter.ADAPTER_VERSION
         }
         assert old_raw_ids.issubset({row["raw_unit_id"] for row in raw_rows})
         assert current_raw_ids
@@ -114,7 +114,7 @@ def test_obsolete_pdf_inventory_is_regenerated_without_deleting_history(
             json.loads(row["payload_json"])["ingestion"]["adapter_version"]
             for row in evidence_rows
         }
-        assert persisted_versions == {"pdf-v2", "pdf-v3"}
+        assert persisted_versions == {"pdf-v2", pdf_adapter.ADAPTER_VERSION}
         assert old_evidence_ids.issubset({row["evidence_id"] for row in evidence_rows})
 
         scopes = connection.execute(
@@ -135,7 +135,7 @@ def test_obsolete_pdf_inventory_is_regenerated_without_deleting_history(
     assert active_evidence
     assert {
         item["ingestion"]["adapter_version"] for item in active_evidence
-    } == {"pdf-v3"}
+    } == {pdf_adapter.ADAPTER_VERSION}
     assert old_evidence_ids.isdisjoint({item["evidence_id"] for item in active_evidence})
 
     accounting = foundation_client.get(

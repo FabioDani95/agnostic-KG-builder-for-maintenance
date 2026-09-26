@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "c1_eastman_e554:3b5efe4e6032455d89931b60759ffbb6",
+  "run_id": "c1_eastman_e554",
+  "started_utc": "2026-09-25T13:59:03.215403+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "max_completion_tokens": 24000,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You extract diagnostic records from a technical manual into a typed contract.\n\nSource type: technical PDF\nSource title: 01_eastman_e554_service_manual.pdf\n\nThe input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be\na complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,\necho its window_id and allowed_source_anchors on every candidate; the system overwrites and\nverifies both fields and no evidence outside that block is allowed. For a section chunk, set\nrecord_window_id=\"\" and set allowed_source_anchors to exactly the anchors referenced by that\ncandidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL\ncontext may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields\nbelong to the current cause/remedy branch. Each displayed FIELD value is one exact source\nspan. Quote the value only: never include the \"FIELD n:\" label, join separate fields, or\nrestore a sibling field omitted by the system.\nReturn every explicit diagnostic record and every distinct cause/remedy branch in the input.\nThe contract is an intermediate record representation, not the final graph. Use schema_version=\"1.1\".\n\nRules:\n1. Never emit graph IDs or ontology relation names. The system owns them.\n2. A diagnostic record has one or more indicators. An indicator is either an observable\n   symptom or an asset-generated error/alarm code. A record may explicitly contain both;\n   keep both. For a symptom set code=null and severity=\"Unknown\" unless the source explicitly\n   states its severity; never invent a risk rating. For an error_code set its\n   code and severity=null. Only an explicit not_diagnostic page disposition may use an empty\n   indicator list.\n3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action\n   from different table rows, flowchart branches or unrelated paragraphs.\n4. A FailureMode is an explicit technical cause or faulty state, not a restatement of the\n   symptom, an inspection result or an invented explanation. Use null when none is stated.\n5. A CorrectiveAction is an explicitly restorative remedy for that failure. Checks and tests\n   are not restorative unless the source says the check itself resolves the fault. Preserve\n   a non-restorative check/test/inspection in inspection_steps, never in actions.\n6. Set resolution_status:\n   - action_stated: at least one restorative action is explicitly linked to the failure;\n   - no_action_stated: the diagnostic record states a failure but no remedy;\n   - check_only: it gives only diagnostic checks/verification;\n   - ambiguous: the row/branch pairing cannot be established safely;\n   - not_diagnostic: a candidate-looking passage is actually preventive/generic content.\n7. An affected component is optional. Include it only if the branch explicitly identifies the\n   affected component. category and failure.material_context are required-but-nullable: use\n   null rather than manufacturing a category/context. A null category does not invalidate a\n   grounded branch; the deterministic compiler supplies a neutral schema category. Do not use\n   a product name as a component.\n8. Evidence is edge-specific. claim_evidence proves only the claim. Each edge evidence list is\n   a support set: one span may explicitly state the whole link, or several spans from the same\n   record/branch may collectively establish it when a manual separates Problem, Cause and\n   Remedy across blocks or pages. failure_link_evidence supports only that exact indicator to\n   failure; resolution_link_evidence supports only that exact failure to action;\n   affects_link_evidence supports only that exact failure to component. Include every span\n   needed to establish the link and no unrelated nearby heading. Never use an action-only span\n   as the sole proof of an indicator-to-failure edge.\n   In a system-owned atomic table row, use the exact endpoint FIELD spans as the edge support\n   set; the deterministic compiler verifies the table structure and completes their union.\n9. Every quote is a short verbatim span contained in the EvidenceUnit named by source_anchor,\n   on source_page. Prefer one span per EvidenceUnit. If wording crosses adjacent units, emit\n   separate exact spans; never concatenate or paraphrase cells. Copy the opaque anchor exactly.\n   Do not include page/anchor marker text in a quote.\n10. record_anchor must be one of this candidate's claim-evidence anchors. branch_anchor must be\n    one of this candidate's evidence anchors (prefer a causal edge anchor). For an explicit\n    not_diagnostic disposition with no claims, set both to the candidate page's EvidenceUnit\n    anchor. These anchors are source locators, not freely generated IDs.\n11. Preserve source language in human-readable values and set source_language accordingly.\n12. Duplicate records caused by overlapping pages must be returned identically; deterministic\n    lineage and compilation will deduplicate them.\n13. Account for candidate-looking passages. If one is actually generic/preventive content,\n    emit a not_diagnostic candidate with empty indicators and no diagnostic claims. Return an\n    empty records list only when the input contains no candidate-looking passage at all. Never\n    fill a missing cause/action simply to make a complete record.\n14. Every anchored candidate-looking passage in the input must occur in a record's claim/edge\n    evidence, or have its own explicit not_diagnostic disposition. Do not cover only the first\n    row or branch of a troubleshooting table.\n15. For check_only, actions must be empty and inspection_steps must preserve each stated check\n    with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.\n16. Preserve every stated precondition, test outcome, negation, threshold and alternative in\n    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection\n    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test\n    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.\n    Keep inspection_steps and actions in source order; do not sort steps alphabetically.\n17. Preserve the actual error CODE separately from its fault name, including a numerical code\n    in a separate table column. Never substitute the name for a printed numeric code.\n"
+      },
+      {
+        "role": "user",
+        "content": "## DOCUMENT CONTEXT\nThese pages come from the following manual sections:\n- Chiller Installation (pp. 12-12, source: rule)\n- Co2 Tank Installation (pp. 12-12, source: rule)\n- Fume extractor hose and Festoon installation (pp. 12-12, source: rule)\n- Gantry Installation (pp. 12-12, source: rule)\n- Vacuum Assembly Installation (pp. 12-12, source: rule)\n- Aligning, Cleaning and Replacing Consumables (pp. 13-13, source: rule)\n- SERVICE and MAINTENANCE (pp. 13-13, source: rule)\n- Round Knife Replacement (pp. 14-14, source: rule)\n\nUse this context to better interpret the content. Extract all ontology-relevant information from these sections, including components, error codes, symptoms, failure modes, and corrective actions.\n\n--- PAGE 12 ---\n\n[[EVIDENCE_ID: a0001]]\nVacuum Assembly Installation\nReview Vacuum Assembly drawing and determine blower\nand piping layout. Remove rubber seals from fittings. Place\nlarge tee on blower intake and reducers on each end and\nsecure using large TEK screws. Position blower under table\nin proper location with motor towards operator side. As-\nsemble remaining vacuum piping using (4) small TEK screws\nand silicone sealant at each joint, with blast gates at proper\nangle towards operator side.\n\n[[EVIDENCE_ID: a0002]]\nIf Equipped, attach blast gate brackets and handles to front\nangle support with small TEK screws. Ensure clearance\nbetween gantry plate and blast gate handles when blast\ngates are fully open.\n\n[[EVIDENCE_ID: a0003]]\nPosition silencers and secure using two rubber sleeve and\nsmall pipe. Place silencer board in position. The blowers are\nready for power hookup. Verify correct motor rotation and\nvacuum.\n\n[[EVIDENCE_ID: a0004]]\nNote: Power connections to each blower should be made by\na qualified electrician and is the customers responsibil-\nity.\n\n[[EVIDENCE_ID: a0005]]\nInstall (4) angle braces on frame end sections using (2) large\nTEK screws on each angle brace end. Clamp table end\ncovers into place. Drill  1/8\" pilot holes and attach using #8\nx 2\" deck screws.\n\n[[EVIDENCE_ID: a0006]]\nGantry Installation\nRemove gantry side covers & (4) rail car assemblies. Place\none inner assembly on each rail. Set two 4\" x 4\" blocks on\ntable top to support the gantry. Carefully guide spur gear\nunder rack and set gantry onto 4\" x 4\" blocks. Slide outer rail\ncar onto each rail. Secure the rail cars to each side of gantry.\nAdjust backlash on each side of gantry ensuring gantry side\nplates are level. Assemble stop discs. Reinstall operator\nside cover onto gantry.\n\n[[EVIDENCE_ID: a0007]]\nAssemble shock absorbers to mounts, place shock mounts\nunder front angle supports, flush to ends. Drill ¼” holes\nthrough angle, table top and rack plate. Install using ¼”\nbutton head screws, flat washers, lock washers and nuts.\nInstall dust covers to rack plate using ¼” button head screws.\n\n[[EVIDENCE_ID: a0008]]\nInstall (2) home cam ramps on dust cover starting 15-3/4\"\nfrom left table end.  Drill, tap and install using # 8-32 x 3/8\"\nscrews. Install (1) right limit cam on dust cover starting 8 ½”\nfrom right table end, non-operator side in same manner.\nCheck roller limit switches (3) for proper cam contact. The\nswitch rollers must depress approximately 1/16\". Adjust\nlimit switches as required.\n\n[[EVIDENCE_ID: a0009]]\nE-chain & E-stop Installation\nInstall E-stop boxes and mounting plates to operator side\nangle supports.\n\n[[EVIDENCE_ID: a0010]]\nAssemble the e-chain trough and position assembly under\nthe table overhang. Place the e-chain in the trough. Secure\nthe e-chain assembly to the gantry. Square the trough to the\ntable structure along its entire length. The cables leaving the\ne-chain will exit the bottom of trough immediately. Connect\ne-chain cables, air line, Co2 line, and water lines to gantry.\nReplace gantry covers  and at this time.\n\n[[EVIDENCE_ID: a0011]]\nRoute cables, air line, Co2 line, and water lines under the\ntable, through cable protector floor mat and to the final\ndestination.\n\n[[EVIDENCE_ID: a0012]]\nPlace diagnostic control cabinet, fume extractor, chiller and\nCo2 tank in working location. Run the cables thru the bulk\nhead connectors and connect inside the diagnostic cabinet\nas required. Notify the electrician to begin making the final\nelectrical connections to the diagnostic cabinet, chiller and\nfume extractor. Test voltage and ground plug before making\nany connections. Turn on main power switch, and test for\nproper voltage at computer outlets. Setup computer, key-\nboard and monitor. Install air regulator at customer specified\nlocation and set to 90 PSI.\n\n[[EVIDENCE_ID: a0013]]\nFume extractor hose and Festoon installation\nInstall the festoon assembly 68\" above the table surface  and\ncentered (approx. 102\" from the floor). Place the trollies in the\ntrack and space the trollies evenly in the track along its entire\nlength. Secure the fume hose to the gantry y-car. Hook the\nhose to the trollies using the web loops and zip ties. Check\nfor proper operation. Connect the hose to the fume extractor.\n\n[[EVIDENCE_ID: a0014]]\nChiller Installation\nConnect the two chiller lines the inlet and outlet fittings on\nchiller unit. Fill the chiller with clean distilled water. Refer to\nthe chiller manual for filling instructions.\n\n[[EVIDENCE_ID: a0015]]\nCo2 Tank Installation\nCo2 tank installation is the customers responsibility. All\napplicable codes and regulations should be followed for a\nsafe work environment. Connect Co2 Line the regulator. Set\nthe regulator to 20 psi operating pressure.\n\n[[EVIDENCE_ID: a0016]]\nSignage and safety glasses\nThere are (4) four warning signs supplied with you laser\ncutter. The signs should be displayed in a manner all\noperators  and spectators can view  before entering you\nmachine area.  All operators and spectators must where\nlaser approved safety glasses when the laser is operating.\n\n[[EVIDENCE_ID: a0017]]\n12\nForm E-554\n\n--- PAGE 13 ---\n\n[[EVIDENCE_ID: a0018]]\nEnvironmental Conditions\n\n[[EVIDENCE_ID: a0019]]\n* RF Interference:\n\n[[EVIDENCE_ID: a0020]]\nFor customers using RF welders or other equipment that\nemits RF, Eastman Machine Company recommends that\nthis equipment be kept at least 70 feet away from the\nEastman cutting system. High levels of RF emissions may\ncause the electronic controls in the system to malfunction.\nPlease note that interference and damage, caused by RF\nemissions from equipment that is not stationed at least 70\nfeet away, may not be covered under the warranty of your\nEastman cutting system.\n\n[[EVIDENCE_ID: a0021]]\nCustomer is responsible for installing and using earth\ngrounds to protect machine from RF.\n\n[[EVIDENCE_ID: a0022]]\nSERVICE and MAINTENANCE\n\n[[EVIDENCE_ID: a0023]]\nWarning: Always disconnect power source (lockout/\ntagout) to machine before proceeding with any\nmaintenance, adjustments or repair. Failure to\ndisconnect power may cause serious personal injury\nand/or damage to machine.\n\n[[EVIDENCE_ID: a0024]]\nWarning: This machine is equipped with a very sharp\nknife and powerful laser. Use caution when working on\nthis machine. Failure to keep hands, arms, and  loose\nobjects away from knife area may cause serious\npersonal injury.\n\n[[EVIDENCE_ID: a0025]]\nService and maintenance to this machine should be per-\nformed by qualified personnel. If you do not have qualified\npersonnel, contact your Eastman Sales Representative or\nEastman Factory direct.\n\n[[EVIDENCE_ID: a0026]]\nAligning, Cleaning and Replacing Consumables\nTool Holder removal\n\n[[EVIDENCE_ID: a0027]]\nWarning: Always handle blades with care. Safely\ndispose of use blades.\n\n[[EVIDENCE_ID: a0028]]\nTo remove the tool holder assembly, turn the power off to the\ngantry (use lock out / tag out if required). Loosen the two allen\nhead screws on the tool holder. Carefully slide tool holder off\nthe tool spindle.\n\n[[EVIDENCE_ID: a0029]]\nTo install tool holder assembly, slide the holder on the\nspindle ensuring that the alignment tang is engaged on the\nspindle. Tighten the two allen head screws.\n\n[[EVIDENCE_ID: a0030]]\nNote: If the tool type is different from the one removed, it is\nimportant to re-map and change the tool type represented in\nthe software to match the one installed.\n\n[[EVIDENCE_ID: a0031]]\nNote: Tools do not need to be re-calibrated unless cut\naccuracy is critical to 0.010\" or less. If calibration is needed\nrefer to operator’s manual.\n\n[[EVIDENCE_ID: a0032]]\nCaution: Failing to re-map a tool after changing tool\ntypes can result in damage to the table cutting surface, tool\nand or tool spindle. (Example: changing a punch to a drag\nknife).\n\n[[EVIDENCE_ID: a0033]]\n13\nForm E-554\n\n[[EVIDENCE_ID: a0034]]\nCondition | Normal Operating Condition | If Outside the Normal Condition\n\n[[EVIDENCE_ID: a0035]]\nTemperature | 55-100 degrees Fahrenheit | Cutter may not operate correctly\n\n[[EVIDENCE_ID: a0036]]\nHumidity | 20% and 80% relative humidity (Non-Condensing) | Cutter may not operate correctly\n\n[[EVIDENCE_ID: a0037]]\nHigh Altitude | Sea Level to 1000 Feet above Sea Level | Blower Pressure will be lower (less material hold down\n\n[[EVIDENCE_ID: a0038]]\nRadio Frequency* interference (RFI) (i.e...RF Welding Equipment) | No Interference Minimum Recommendation 75 feet away | Cutter may not operate correctly\n\n[[EVIDENCE_ID: a0039]]\nElectrical Power Disturbance | No Disturbances | Cutter may not operate correctly\n\n[[EVIDENCE_ID: a0040]]\nGeneral Shop Cleanliness | Clean Environment | Cutter may not operate correctly\n\n[[EVIDENCE_ID: a0041]]\nClean/Filtered Shop Air | Clean Air | Cylinders and Valves may not operate\n\n--- PAGE 14 ---\n\n[[EVIDENCE_ID: a0042]]\nRound Knife Replacement\n\n[[EVIDENCE_ID: a0043]]\nWarning: Always handle blades with care. Safely\ndispose of use blades.\n\n[[EVIDENCE_ID: a0044]]\nPlace the tool holder assembly on the tool changing station\n(Eastman #68-26141) as shown. Engage alignment tang in\ntool changing station and secure both holder screws to\nprevent movement.\n\n[[EVIDENCE_ID: a0045]]\nUsing nut drivers (Eastman #67-26450 & 67-26451), Remove\nthe blade retaining nut.\n\n[[EVIDENCE_ID: a0046]]\nCaution: Improper depth limits may cause damage to\ncutting surface.\n\n[[EVIDENCE_ID: a0047]]\nCarefully remove the worn knife. Replace with a new Genuine\nEastman knife. Failure to use genuine Eastman knives may\nvoid your warrantee. Ensure that the depth limiters and new\nknife are installed in the same sequence as removed.\n\n[[EVIDENCE_ID: a0048]]\nWarning: Always handle blades with care. Safely\ndispose of use blades.\n\n[[EVIDENCE_ID: a0049]]\n14\nForm E-554"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "DiagnosticChunkOutput",
+        "strict": true,
+        "schema": {
+          "$defs": {
+            "AffectedComponentCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "category": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Category"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "affects_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Affects Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "category",
+                "claim_evidence",
+                "affects_link_evidence"
+              ],
+              "title": "AffectedComponentCandidate",
+              "type": "object"
+            },
+            "CorrectiveActionCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "action_kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Action Kind"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "resolution_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Resolution Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instruction_text",
+                "action_kind",
+                "claim_evidence",
+                "resolution_link_evidence"
+              ],
+              "title": "CorrectiveActionCandidate",
+              "type": "object"
+            },
+            "DiagnosticBundleCandidate": {
+              "additionalProperties": false,
+              "description": "One source record, potentially containing several observed indicators.",
+              "properties": {
+                "record_window_id": {
+                  "title": "Record Window Id",
+                  "type": "string"
+                },
+                "allowed_source_anchors": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Allowed Source Anchors",
+                  "type": "array"
+                },
+                "record_anchor": {
+                  "minLength": 1,
+                  "title": "Record Anchor",
+                  "type": "string"
+                },
+                "branch_anchor": {
+                  "minLength": 1,
+                  "title": "Branch Anchor",
+                  "type": "string"
+                },
+                "indicators": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticIndicatorCandidate"
+                  },
+                  "title": "Indicators",
+                  "type": "array"
+                },
+                "failure": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FailureModeCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actions": {
+                  "items": {
+                    "$ref": "#/$defs/CorrectiveActionCandidate"
+                  },
+                  "title": "Actions",
+                  "type": "array"
+                },
+                "inspection_steps": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticInspectionStepCandidate"
+                  },
+                  "title": "Inspection Steps",
+                  "type": "array"
+                },
+                "conditions": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticConditionCandidate"
+                  },
+                  "title": "Conditions",
+                  "type": "array"
+                },
+                "affected_component": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AffectedComponentCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolution_status": {
+                  "$ref": "#/$defs/ResolutionStatus"
+                }
+              },
+              "required": [
+                "record_window_id",
+                "allowed_source_anchors",
+                "record_anchor",
+                "branch_anchor",
+                "indicators",
+                "failure",
+                "actions",
+                "inspection_steps",
+                "conditions",
+                "affected_component",
+                "resolution_status"
+              ],
+              "title": "DiagnosticBundleCandidate",
+              "type": "object"
+            },
+            "DiagnosticConditionCandidate": {
+              "additionalProperties": false,
+              "description": "Source-stated condition attached to a branch or a zero-based step.",
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "title": "Text",
+                  "type": "string"
+                },
+                "applies_to": {
+                  "enum": [
+                    "branch",
+                    "action",
+                    "inspection"
+                  ],
+                  "title": "Applies To",
+                  "type": "string"
+                },
+                "step_index": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Step Index"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "text",
+                "applies_to",
+                "step_index",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticConditionCandidate",
+              "type": "object"
+            },
+            "DiagnosticEvidenceSpan": {
+              "additionalProperties": false,
+              "description": "A verbatim source span emitted by the extraction model.\n\n``source_anchor`` is the opaque evidence identifier printed in the model's\ninput.  It is intentionally not a graph node identifier.",
+              "properties": {
+                "source_anchor": {
+                  "minLength": 1,
+                  "title": "Source Anchor",
+                  "type": "string"
+                },
+                "source_page": {
+                  "minimum": 1,
+                  "title": "Source Page",
+                  "type": "integer"
+                },
+                "quote": {
+                  "minLength": 1,
+                  "title": "Quote",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source_anchor",
+                "source_page",
+                "quote"
+              ],
+              "title": "DiagnosticEvidenceSpan",
+              "type": "object"
+            },
+            "DiagnosticIndicatorCandidate": {
+              "additionalProperties": false,
+              "description": "Provider-safe flat indicator contract.\n\nOpenAI strict Structured Outputs does not accept the ``oneOf`` emitted by\nPydantic for a discriminated model union inside an array.  Keep the wire\nshape flat and enforce the same symptom/error-code invariants locally.\nNullable fields remain required so the provider schema is strict.",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "symptom",
+                    "error_code"
+                  ],
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "code": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code"
+                },
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "severity": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "Critical",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Severity"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "failure_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Failure Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "code",
+                "name",
+                "description",
+                "severity",
+                "claim_evidence",
+                "failure_link_evidence"
+              ],
+              "title": "DiagnosticIndicatorCandidate",
+              "type": "object"
+            },
+            "DiagnosticInspectionStepCandidate": {
+              "additionalProperties": false,
+              "description": "A diagnostic check that is useful but does not itself restore operation.",
+              "properties": {
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "instruction_text",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticInspectionStepCandidate",
+              "type": "object"
+            },
+            "FailureModeCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "material_context": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Material Context"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "material_context",
+                "claim_evidence"
+              ],
+              "title": "FailureModeCandidate",
+              "type": "object"
+            },
+            "ResolutionStatus": {
+              "description": "The extractor's explicit assessment of diagnostic completeness.",
+              "enum": [
+                "action_stated",
+                "no_action_stated",
+                "check_only",
+                "ambiguous",
+                "not_diagnostic"
+              ],
+              "title": "ResolutionStatus",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Provider structured-output envelope for one diagnostic PDF chunk.\n\nAll fields are required, including nullable/list fields.  This avoids the\noptional-property mismatch of strict provider JSON Schema implementations.",
+          "properties": {
+            "schema_version": {
+              "enum": [
+                "1.0",
+                "1.1"
+              ],
+              "title": "Schema Version",
+              "type": "string"
+            },
+            "source_language": {
+              "minLength": 1,
+              "title": "Source Language",
+              "type": "string"
+            },
+            "records": {
+              "items": {
+                "$ref": "#/$defs/DiagnosticBundleCandidate"
+              },
+              "title": "Records",
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "source_language",
+            "records"
+          ],
+          "title": "DiagnosticChunkOutput",
+          "type": "object"
+        }
+      }
+    },
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 12.483004999987315,
+  "response": {
+    "id": "chatcmpl-ES0k3zI7XXDi3KoQiOe1P6AMJVtCI",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"schema_version\":\"1.1\",\"source_language\":\"English\",\"records\":[{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0035\"],\"record_anchor\":\"a0035\",\"branch_anchor\":\"a0035\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Cutter may not operate correctly\",\"description\":\"Cutter may not operate correctly\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0035\",\"source_page\":13,\"quote\":\"Cutter may not operate correctly\"}],\"failure_link_evidence\":[]}],\"failure\":null,\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"no_action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0036\"],\"record_anchor\":\"a0036\",\"branch_anchor\":\"a0036\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Cutter may not operate correctly\",\"description\":\"Cutter may not operate correctly\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0036\",\"source_page\":13,\"quote\":\"Cutter may not operate correctly\"}],\"failure_link_evidence\":[]}],\"failure\":null,\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"no_action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0037\"],\"record_anchor\":\"a0037\",\"branch_anchor\":\"a0037\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Blower Pressure will be lower (less material hold down\",\"description\":\"Blower Pressure will be lower (less material hold down\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0037\",\"source_page\":13,\"quote\":\"Blower Pressure will be lower (less material hold down\"}],\"failure_link_evidence\":[]}],\"failure\":null,\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"no_action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0038\"],\"record_anchor\":\"a0038\",\"branch_anchor\":\"a0038\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Cutter may not operate correctly\",\"description\":\"Cutter may not operate correctly\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0038\",\"source_page\":13,\"quote\":\"Cutter may not operate correctly\"}],\"failure_link_evidence\":[]}],\"failure\":null,\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"no_action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0039\"],\"record_anchor\":\"a0039\",\"branch_anchor\":\"a0039\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Cutter may not operate correctly\",\"description\":\"Cutter may not operate correctly\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0039\",\"source_page\":13,\"quote\":\"Cutter may not operate correctly\"}],\"failure_link_evidence\":[]}],\"failure\":null,\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"no_action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0040\"],\"record_anchor\":\"a0040\",\"branch_anchor\":\"a0040\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Cutter may not operate correctly\",\"description\":\"Cutter may not operate correctly\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0040\",\"source_page\":13,\"quote\":\"Cutter may not operate correctly\"}],\"failure_link_evidence\":[]}],\"failure\":null,\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"no_action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0041\"],\"record_anchor\":\"a0041\",\"branch_anchor\":\"a0041\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Cylinders and Valves may not operate\",\"description\":\"Cylinders and Valves may not operate\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0041\",\"source_page\":13,\"quote\":\"Cylinders and Valves may not operate\"}],\"failure_link_evidence\":[]}],\"failure\":null,\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"no_action_stated\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0020\"],\"record_anchor\":\"a0020\",\"branch_anchor\":\"a0020\",\"indicators\":[],\"failure\":null,\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"not_diagnostic\"},{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0021\"],\"record_anchor\":\"a0021\",\"branch_anchor\":\"a0021\",\"indicators\":[],\"failure\":null,\"actions\":[],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"not_diagnostic\"}]}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790344743,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 1668,
+      "prompt_tokens": 5212,
+      "total_tokens": 6880,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 622,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cache_write_tokens": 2598,
+        "cached_tokens": 2611
+      }
+    }
+  },
+  "provider_request_id": "req_5854bd133abf4115ba1856d495dcc0ee",
+  "error": null
+}

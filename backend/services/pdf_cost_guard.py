@@ -28,6 +28,8 @@ def estimate_pdf_generation_envelope(
     resolution_max_input_tokens: int,
     resolution_max_output_tokens: int,
     chunk_max_output_tokens: list[int] | None = None,
+    chunk_attempts: int = 1,
+    diagnostic_recovery_calls_per_chunk: int = 0,
     scoping_actual_cost_usd: float = 0.0,
     scoping_actual_call_count: int = 0,
     fixed_prompt_overhead_characters: int = 30000,
@@ -43,9 +45,8 @@ def estimate_pdf_generation_envelope(
     For the ceiling, one character is counted as one token, every prompt token
     is priced as a cache write, and no cache-hit credit is assumed. Each call is
     priced independently so the GPT-5.6 long-context multiplier is applied only
-    when that individual request crosses its threshold. The relation-first path
-    disables SDK retries and output-parse retries, so the call count below is a
-    genuine maximum rather than an average.
+    when that individual request crosses its threshold. The relation-first path disables SDK retries. Explicit transport and
+    recovery attempts are reserved below, rather than treated as free retries.
     """
     chunk_count = len(chunk_input_characters)
     draft_prompt_ceilings = [
@@ -70,6 +71,12 @@ def estimate_pdf_generation_envelope(
             draft_prompt_ceilings, draft_output_ceilings,
         )
     )
+
+    attempts = max(1, int(chunk_attempts))
+    recovery_calls = max(0, int(diagnostic_recovery_calls_per_chunk))
+    # A recovery packet is bounded by its original chunk input/output caps.
+    # It has no recursive retry; transport attempts apply to primary chunks.
+    draft_ceiling *= attempts + recovery_calls
 
     coverage_ceiling = 0.0
     if coverage_enabled:
@@ -185,10 +192,10 @@ def estimate_pdf_generation_envelope(
         )
 
     post_scoping_maximum_call_count = (
-        chunk_count + int(coverage_enabled) + resolution_calls + escalation_calls
+        chunk_count * (attempts + recovery_calls) + int(coverage_enabled) + resolution_calls + escalation_calls
     )
     return {
-        "policy": "pdf_relation_first_bounded_v2",
+        "policy": "pdf_relation_first_bounded_v3",
         "model": model_name,
         "diagnostic_escalation_model": escalation_model if escalation_calls else "",
         "chunk_count": chunk_count,
@@ -196,7 +203,8 @@ def estimate_pdf_generation_envelope(
         "maximum_post_scoping_call_count": post_scoping_maximum_call_count,
         "assumptions": {
             "sdk_retries": 0,
-            "manual_retries": 0,
+            "manual_retries": attempts - 1,
+            "diagnostic_recovery_calls_per_chunk": recovery_calls,
             "draft_parse_retries": 0,
             "cached_input_credit": 0,
             "cache_write_prompt_tokens_per_prompt_token": 1,

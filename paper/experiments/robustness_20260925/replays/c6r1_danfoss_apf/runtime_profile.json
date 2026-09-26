@@ -1,0 +1,445 @@
+{
+  "mode": "offline_exact_provider_replay",
+  "source_run": "/Users/fabio.daniele/Coding/agnostic-KG-builder-for-maintenance/paper/experiments/robustness_20260925/runs/c2_danfoss_apf",
+  "source_profile_sha256": "b32abcaed9d040253d9669fbf4a1d792cfcf934e92cac35f60a9f427a2f02433",
+  "code_files": {
+    "backend/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/adapters/__init__.py": "1a240543425ce49128a5ab641a0a4a7926f340ce2fc48eb63003d0fdb9021c9b",
+    "backend/adapters/pdf.py": "edc34f0455e120051ca77c1c62e4d16501a00756f88b66a59d2dc994dc5c7826",
+    "backend/adapters/structured/__init__.py": "c57bc2072016badb2bad3ecfd4a8ff860cdccca2f6160128cfa10060a3a504c6",
+    "backend/adapters/structured/common.py": "fd2dcb1018c6b7206acd2ff590f2e17ff0197d7ed6df4e9cd0adc2c49aa9dfa8",
+    "backend/adapters/structured/csv_adapter.py": "b29037a2dcbe34a22bf635277b3135ed8c511796c41d68483e42e714a572d32c",
+    "backend/adapters/structured/json_adapter.py": "b5c81fe6db284c68ed4e90cfe4cb5c963f628445fb20517ed9d6973f06a93947",
+    "backend/adapters/structured/xlsx_adapter.py": "a68d0499acb5f97d0fe651c555b1243d7b251040d6a968a9a6e41155e95bb1e4",
+    "backend/agents/__init__.py": "f2fb83d272388db48df3931b88576c9405b6c30c93f0824f0c9e50d43910ebb9",
+    "backend/agents/conflict_resolution_agent.py": "81aa0ff0b03531c71519ec86f13d19c1da7576262895c02f2d9da6181f979e50",
+    "backend/agents/coverage_agent.py": "9bf3bd9a778c86a595da071a414f787d043003f95b0902c779d73503591440da",
+    "backend/agents/extraction_agent.py": "6520840de170f57fa34299ed0b9c7cc152899ab60f7365232558868d5ede9b59",
+    "backend/agents/grounding_agent.py": "81f00a1a6a71463dc4290e63706729efd98e9a6838116ee49c1f2d641d050377",
+    "backend/agents/ontology_draft_agent.py": "2399825241aa9ef37c7f6c0acc69196e938b18e68403c4f9c8670a3fafd8c449",
+    "backend/agents/refiner_agent.py": "8312019e2a78f9f395223619a49252c87e562e8cbaa97297b8b4c28806013052",
+    "backend/agents/scoping_agent.py": "05ca77c9c2c1e3e9d608a6cf3eb6930ac09b837f9bf50877cc4073d3a5b808f3",
+    "backend/agents/validation_agent.py": "7441b110d28fedac8add24c6dafa144fdc3dcdba3afb9534be812594f48638e8",
+    "backend/app_config.py": "a02c3ea85a5a267004bf7817565140bcb6b44df93d523106ead28c5db6db4c4b",
+    "backend/config.py": "9b7d4b29b756f4c8ccabc51325ee8c5d2b284185121532a6362c96b9600a7d28",
+    "backend/domain/__init__.py": "cd80c603dabec028dae41cd9595cb7d52e771e51f57831a0d9dc3db1b74c71bd",
+    "backend/domain/diagnostic_bundles.py": "a4eb7958edfa46b04f9150c166d9761c55febfad90d42278af8a5e5e8940305d",
+    "backend/domain/evidence.py": "cd38a181060917d2130a5a1b3504e9b96818119d157d6fa1e3751cb4c33c2ca3",
+    "backend/domain/ids.py": "7d1dcb4608630d1acc1a22ed5b02114a58efcc2e8f6941d20b316bc4510d5f6f",
+    "backend/domain/journey.py": "6862fdd794b3c36b123a3c119a1aec4e8c6a4758f7fd7ef48959d5c5cdbcd50c",
+    "backend/domain/locators.py": "8e7f8ee97576d3c1fc41948f18a3f1bb9c575913118834a6b1dc88c067e1ca97",
+    "backend/domain/runs.py": "dafeefb1b33ee5cc03527f0542679c7032fe82d725f2b401b9bfe6988e189065",
+    "backend/domain/sources.py": "a5548fb151205b178dd43512f687a7498bbbc40deb063ee3633303a9ba30b560",
+    "backend/domain/structured.py": "055abcaf67ac479663023cb497dd5a88498d92dc6b73413f61c26012b9e915d2",
+    "backend/domain/subgraphs.py": "6493e65f4d0a6ba26cd713fe7d0e8d99a598bd165a63c31fdc009ad5d4f04093",
+    "backend/domain/workspace.py": "d105caec25eac549b3a2904b4b67bafaba168d0ffe166d162601fc342e55f7cc",
+    "backend/graph/__init__.py": "42f8d24d313a1375bc95cece36d1f50387abd17fc4347952ed432c746645ce94",
+    "backend/graph/config_snapshot.py": "9026308ef0c34c3b96512f52ca3299e680ce161be26e90c5a3c7673e78270ee6",
+    "backend/graph/projections.py": "02743ad35f7f97d1906c3339e3e696c16de98010f8ebc750a24edc4d341122eb",
+    "backend/graph/state.py": "9d54f351db9245900d378fe07d7de81aa9116a407aa267562726daf248939129",
+    "backend/graph/store.py": "eaf66b042acf299096c5ed8905e0ff7bd4abbe43bda55db7315709ee127883b4",
+    "backend/graph/supervisor.py": "23502c9e46441683245df0e50d6eff7faf4d79c69ddad51b97090d482949d6c8",
+    "backend/main.py": "4914d43bf60aae781219445e2c984468cb762bf6a25bb0574708497372a2455c",
+    "backend/models.py": "ace757fbdba6da10c64832d8202a63a556caea402ce3c1b4179d6af3be9b716c",
+    "backend/observability/__init__.py": "574fe3d089418d398e6f91bb31dc4ab8a30f005761b1f893ca03fee169285297",
+    "backend/observability/trace.py": "8dccfdf7a1eb4da1d1907678df2b6c969a06005658f33654ec55842b997e834e",
+    "backend/prompts/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/prompts/diagnostic_bundle_prompt.py": "7e46b849e78298e3e5b1a816f4431ef058bda0d17ba3a8ce7cbcc81c7ad96a2e",
+    "backend/prompts/extraction_prompt.py": "a4b3ae711ead349299006a133e7b6ef5c07dd85667e7a53d63280c2daee6163c",
+    "backend/prompts/ontology_prompt.py": "11213030944b8f92068d3008830b63adf69a25918389cfea4931c73d52fc3ffa",
+    "backend/prompts/scoping_prompt.py": "2f34581e76f9a7742c9e64c29004f576a2c60342943884290ddf92b0bf318ec8",
+    "backend/routers/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/routers/chat.py": "c7deb4cc97238a463957560ce5d96b3aae479f1a94d71f060a499ea621ab2dc4",
+    "backend/routers/generate.py": "c9c4f808feb6625d76daab078f4ec68689c217e1c2d3c923bc2559c4767d1119",
+    "backend/routers/journey.py": "bd94709436fd3f087bd9b2db422a179d9e9fe6fab529d17f5612387f95554ab2",
+    "backend/routers/multi_agent.py": "344e6f1422b272cdafe98ce0345fccb723af8e8517d0d94a059d7e438541a910",
+    "backend/routers/preparation.py": "eeb36705a21547c6e169bc027c147039a4cf609209edf009e7588de3aa3b6b09",
+    "backend/routers/runs.py": "6cea421da1109a4fd991a5922104118e80d35bb982521afbd98345ea5fee72f7",
+    "backend/routers/sources.py": "e8d59654cd300683ee18d8bb07958f2c542b4263ad9d445b5ae62b2c890e3b72",
+    "backend/routers/subgraphs.py": "1162e5710089136051b651bd5b05158f9fffa1bb048c0006cadb3b1e6c96a501",
+    "backend/routers/upload.py": "d9088e4938230654b74394d7e929b0514bc50e68912168f63383b5a3a3b1d68e",
+    "backend/routers/workspaces.py": "033afdb7459ac0677a5208b05a26740b4f625ec0f7022d2346d1c6a61ab2bdbe",
+    "backend/runstore/__init__.py": "4e237648afc161fb3f0b8908638ae9c96fd477eb9853d7d9e3a8f43bd1ab3ff5",
+    "backend/runstore/run_store.py": "e77e69a6bf918c2438e4509a4bc44d1afeaef1e0cfd3c74777cf983db933d735",
+    "backend/schemas/__init__.py": "5167e682be9db24ba9eb6e1ec9deb72605c3c53cd6ed805d7550100799f9102a",
+    "backend/schemas/actions.py": "558ee4e61412fc359d97bf93707f5a58ab54b00aedc5e7c6cf4bdbe8daa35fd6",
+    "backend/schemas/chat_events.py": "677eea3760675f329f556176e0efb563d29ee30c9ef0df0f3e9a36bfad718f10",
+    "backend/schemas/pipeline.py": "0c6eb67041cd4c83e13ba3c4c4c0e9cafe49f10988fb56fb97a93675cbc8fe5f",
+    "backend/schemas/run_state.py": "6c7192bc09a9ef355a531c5f844ec72ae18d9f121d630a9718668e55825bad8c",
+    "backend/schemas/widgets.py": "197001b946f684865f624ed3b91da85e2229b1197716a99711829050080e4933",
+    "backend/security/__init__.py": "c47e06871c820f593367cc8bedc741bc767973e4ae9f9a79e80c32e46805e463",
+    "backend/security/boundary.py": "3c7fd213df7c3b0536e1307302cd7e5f3e11dfa2fa86962be9acac8d542af9db",
+    "backend/services/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/services/candidate_mining_service.py": "aae3ff84ecc8859a7eb77c39630e5957c61a4dcda955877dfe3845ca0ec65a49",
+    "backend/services/confidence.py": "145b4e28504610c078072650433ce2fb70863b0f0e366a49c613f47233f03787",
+    "backend/services/conversation/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/services/conversation/actions.py": "b137dc4d4cc5bbe552c83e4648f882f5e10af30e613c007866a5de642f40bcb9",
+    "backend/services/conversation/critic.py": "bf6ae482f003fb0626dd2007088f7529d40a765cd5277b447a19564f75105101",
+    "backend/services/conversation/events.py": "7e28bad50e7be21aac5c2bb36f453c4be8d97f4be3e3b2edebb6f15fdf07b45a",
+    "backend/services/conversation/gate.py": "0830bcc6644c26586b116a4ce28b9244c28042ebe392efbbeaa444c0708b8e3e",
+    "backend/services/conversation/heuristics.py": "18d71e41004f02d2cbc739b979b82f43aa92cc9fe1983d5dddddb32185764dbf",
+    "backend/services/conversation/orchestrator.py": "f831351c4f5474b8354a2df8005a10e1a153707376334d503df6367bc603459a",
+    "backend/services/conversation/session.py": "89d27e2be921cefc0e9f41402b947a780d2f27e74168e9660910ff74d7933fca",
+    "backend/services/conversation/tools/__init__.py": "0b5a73f519ec616313760b3a5f1792c5444706cad25d50dd27b5832689fd020b",
+    "backend/services/conversation/tools/common.py": "11ca83a71d06c8f636a1d200eac908aa66100a495b7a26fb09ba7bcf53b408fb",
+    "backend/services/conversation/tools/dispatch.py": "bc5e4254b38de83654589ea90bb67e318dc2a02a2281b67af1ac92b1a3f5d27d",
+    "backend/services/conversation/tools/export.py": "4b804351dd9d45b369c2b52be9d453a5cf29ec961e8dfb9e8a6476732681e43b",
+    "backend/services/conversation/tools/extraction.py": "3875d9380a519d44b7f391e888328c18c2c8cac00733c389a6b6c5bb36152093",
+    "backend/services/conversation/tools/inspect.py": "b4591bd6db2f9b33ad606c6751bb800fa890896f1be18f44c22bcc43c04cc16b",
+    "backend/services/conversation/tools/ontology.py": "c1c50bfb8b7c3ceabf0ba09070afa569394caef8dd0a4d434f5dc9439f0e0de0",
+    "backend/services/conversation/tools/review.py": "317eae0ad50235a2a692e2cfbdc27a1c6b7e4cdddb329f14a44901fb98579cd9",
+    "backend/services/conversation/tools/schemas.py": "0cca503fc5752171e3a97bfc0248b4c60b7fbb84e99b1e5ec9c875c7ea1c585e",
+    "backend/services/conversation/tools/scoping.py": "7cfa6a85f7ea702b231e23677bd31e1c4de3fa1bccf72b32bb586439bb784ff4",
+    "backend/services/coverage_completion_service.py": "f6c4ce5e4027a2b6f80dba146680a212eea59f6b8ed7f82d43583268c02fd6b5",
+    "backend/services/cutplan_service.py": "3c99fc4e43e1d9468f9d7ccf7d97e8cb5917d0ac211c55d0fe2cffa6327762aa",
+    "backend/services/diagnostic_bundle_compiler.py": "f93fd86bffd4b061ef60edc502ffce238e4dd8bc6d39097555486119aac925b5",
+    "backend/services/diagnostic_publication_service.py": "03bde04c2e52f6e130778e20680ccb425ab9a11e8853f5515ad98fcf775af8d1",
+    "backend/services/diagnostic_reconciliation.py": "360fe62a820452e9fa83e42ea41587061009de0f1e4e54ffbd8965f904a459d3",
+    "backend/services/diagnostic_record_windowing.py": "25bbe2dfb3cbcb173ab0ddadfc8749143651a135daf19817aa5b1234548492b5",
+    "backend/services/diagnostic_recovery.py": "34a1190c874e8652a6e38e5ca8e02f386a343ac8649a166570002a2e3547d995",
+    "backend/services/diagnostic_response_parsing.py": "5d3b05f09bf54eceeb0f8b17057cca6510bfd616e10712a6ca92f7615079035a",
+    "backend/services/evidence_grounding_service.py": "46406e68d53244fa88817cfdf024f293bcede436804039c098e3043a66c90d9e",
+    "backend/services/extraction_grounding_filters.py": "3b61a0432f39b511d719e94e732f7b35d1ba8ede34285bdb9d0d89b91a3b4f15",
+    "backend/services/extraction_merge.py": "4ccf7e009320fa44e019ab9e89f750ed4dfda9eb753ed1206820db38b502dc45",
+    "backend/services/extraction_parsing.py": "0a29087ac8ee77b2a9edc0a2213747fa9485e8d4d7cd8e12982a1be0ad79270b",
+    "backend/services/extraction_pipeline.py": "dc9f5ecebd940dff51618a686cc71858d42dc091d8f3e6165374249bf2f5ec28",
+    "backend/services/extraction_workflow.py": "bfe93243bf636f79be55fcd5bb7cbfcf0a720cd8ed870111c5690a7037a33f44",
+    "backend/services/foundation_ingestion.py": "50e20cba6eb582dcc837f00851a2b5b1c0523d7b2484216129569f70106e028c",
+    "backend/services/foundation_run_metrics.py": "038d176d6809e431d4553c16570c1571d3fb91d66ed54fb74602e84846e79d48",
+    "backend/services/graph_closure_service.py": "98b8260d1e8111d333d48e00ad532a6417d144ae9e5c53acb31ed72bf13851c1",
+    "backend/services/graph_projection_service.py": "f3a26600850a21135a71e85cb93099b9d0c34fe93e55c8d1454f27fcde10fe49",
+    "backend/services/graph_reasoning.py": "d270ae2e0d873f7bae39ec12deb7547f8c143dfe34b268779cc56703b71cf6b8",
+    "backend/services/graph_view_service.py": "cf4883ba84ebfbc76a3dff2d5c0844f59620c0c44ba7d34d1a6226caf74c359d",
+    "backend/services/language_utils.py": "6a239c71d170b732429fdb03a53fa74cddd5e3fae1864a05b5ddcd44881855f0",
+    "backend/services/legacy_ontology_migration.py": "c30cf1c6f2b38b52b642c492dbf9d04955eb3b470c129212abd2ed198f6cc4c5",
+    "backend/services/llm_gateway.py": "d23b04f028533f95c6213a145eb5e0870f54177a707f4ccc24ebff2d2be7a1d1",
+    "backend/services/llm_guardrails.py": "b0eabe3394a9df444af97b9c297232d86b3aeab2cf47669b73dc025c1867da34",
+    "backend/services/llm_response_archive.py": "18af920fae5a74110eeee0c027ae05ddc84360d21ee6c94fd968e037f635d0ca",
+    "backend/services/llm_service.py": "efaf524e21b5b66420530b94c0a7457c15ccbcea8abf60e18d7d7a8cab8d57a0",
+    "backend/services/manual_loader.py": "0485bf8e3a9f74b7757b0564e6f30232878d48482f7e280b723ca0c0d3ed1f54",
+    "backend/services/ontology_canonicalization_service.py": "4d3033ff04212cd43c1b7c8572b22c201440fb44673f2cbc7fdb29c60e4164e1",
+    "backend/services/ontology_contract.py": "1ed547d1d2ffe94b6a29859b4a06b2edd341ae079c716fac54bda122ed2aadb2",
+    "backend/services/ontology_coverage.py": "34a8eaf64087f48a7a04479fcf244c44a30ef7e90c7a4ae3423b12dd234a1721",
+    "backend/services/ontology_export_store.py": "a2504fd361170088d7f4adc347b82b6b648a0ed80858cde5c197a88214b2bc27",
+    "backend/services/ontology_merge_service.py": "06b2f0c51e130babab1ad0cc6710a86e8b4ac17ca88f52532cc03dcc088fad69",
+    "backend/services/ontology_patch_service.py": "04143daa2512d437985f70732009183b8a2feecec9ce77186411753f8d2e465a",
+    "backend/services/ontology_pipeline.py": "045a5174488d61de228996702af4884c51b48e75df13900e201862f22165d15f",
+    "backend/services/ontology_pipeline_coercion.py": "7e4912a8676bcb5c0c870bc28d028f667eac39f5f679d3dcacb0620d605ed7f5",
+    "backend/services/ontology_pipeline_parsing.py": "1d9e8e9f7c45004fb0dee5eda0f545dfc81efd10ef69687caea34ec682c0c967",
+    "backend/services/ontology_pipeline_validation.py": "d0e0ece31c9a142d45d5bc153dd5ac50a3f791bca704500de3f1ee0320db3d30",
+    "backend/services/ontology_schema_service.py": "d78408143c6e769ff80ebdec1a307171901688daf6534b0444c0678ed77fd52d",
+    "backend/services/ontology_semantics.py": "6589817a1119b624cff06b79bc0a37e38493c25f60f6dd8eb44b112a1b11f9ed",
+    "backend/services/ontology_workflow.py": "cde0a76db987f91b998e111ef8b085769390a6bb6c11001cc9e9b74110b8976f",
+    "backend/services/page_offset_service.py": "df3c944e7f3fa928f621aa4df0f737bc1793163de3ad834f12356862716d5e03",
+    "backend/services/pdf_auto_preparation.py": "a35731a81d04f2b0bd3d1e43f141d386fff5bf19548adced96b456998b60973c",
+    "backend/services/pdf_cost_guard.py": "25909ac89c4da31a89f2f0da73aae615b438d120394eee79c5ab0f3bbfef770e",
+    "backend/services/pdf_service.py": "75e968dd7c5ed66085beea0cdc91d1045d0d3d531a87c74d1a4acf67a7fc6b80",
+    "backend/services/pdf_source_subgraph_generation.py": "3951ff7a9b06e987e9e6386ff28279af156b9017168b4bcc9d9266ca68b687a0",
+    "backend/services/pipeline_actions.py": "e5fe2514a753a64fc55c2705fd22c94b52d5f1de63404270dba75a2dde70669f",
+    "backend/services/real_call_budget_ledger.py": "6e446bc702e32ae260bb320c9f1353d666a4ab397e55f66f59d1a6be84056b6f",
+    "backend/services/resolution_completion_service.py": "4134f41029f151010e1fa4a69952448f82aeed9bcc7a14fdfa56b2ec9cdbff36",
+    "backend/services/review_queue_service.py": "c04bab1c7de2236c97bb0949c63437e3fa6e24a4de150cbf243a08b1b13084b1",
+    "backend/services/run_metrics.py": "4a945c6c8fd32e91984ea3f92700790243b767a7426b1390f5312d412f05a6e4",
+    "backend/services/scoping_workflow.py": "6fb64254398cc0bb8116ead7bda8ed0eccf85d023b2589f86414209fd511cbcc",
+    "backend/services/source_subgraph_generation.py": "3da0d8018bf6d67813f300a3dcaba2ec4e1655fb5d30c122da4da71df025f307",
+    "backend/services/structured_preparation.py": "f1bccaf3e3691f6a776e14f979393de3b90ab35b3f4a1a631959fc398e5e0e41",
+    "backend/services/style_cleanup_service.py": "48a6d8c59850cce1ff70011603e06daf63d7a3643f912dad3998a908d16722c2",
+    "backend/services/translation_service.py": "1d30a7e093d85fdc3a8ff0f344f5426d51fa96bbfaea5e863eddbc7d9cb50d15",
+    "backend/services/type_consistency_service.py": "9b49478b33cedefbe1a1266c07efc3ebc4ef1c70315c407d1850ddd78461cd4c",
+    "backend/services/workspace_journey.py": "ba0dca5ec09ccaeb3cdded19de690c875e99efda36c4544ddda346a63bf1bdc6",
+    "backend/storage/__init__.py": "62e79a54d8d6dfda83c757b90b73e2b27d8e7efb19549dc3fd072745412a2dea",
+    "backend/storage/database.py": "e58a178f459a4e13dff400c4706bb792c11315066ea4559bee281910093ee88f",
+    "backend/storage/raw_store.py": "6f33b18ed759f400f8d1927c37f397434105129ba3552d63afdc1db668140194",
+    "backend/storage/repositories/__init__.py": "0ea922367f7e25386246aa91d63cb142bbc7ad6ab106c0a247ddbc7c4a18b9a7",
+    "backend/storage/repositories/evidence.py": "2be53fc22e20541bc2b0dfc002676a47603c94aa15c4220b13e0fe7be536923b",
+    "backend/storage/repositories/operational_runs.py": "2438bd97600f5acb13e93805ada7fc7bb5ea4c13742c5f0f9e4defbf40a06b0c",
+    "backend/storage/repositories/raw_units.py": "a13968f5e9cc65d9cd4d52fe319525659b0f2db8468c149bc8e1aabc8ca0fbb3",
+    "backend/storage/repositories/sources.py": "2ec4e7524e7a4f6a1b348a4289e0c22743c009c54ae7c668574439889d6b0265",
+    "backend/storage/repositories/structured.py": "63ec263f6d5289d9991b10e0d0744335cb4c7e0abd142dc4041f5e3534aa8d8f",
+    "backend/storage/repositories/subgraphs.py": "dfa8d7bc8f3aa0afb0b9d326eef5714fdeea866c8ce054ab11108b43acde97d4",
+    "backend/storage/repositories/workspaces.py": "9d1476dd8fd29ef84ddf128a23b4cafa654fc1e8a0bb958d60fe6b13e8818138"
+  },
+  "code_sha256": "ad3bb96bb561f7d4ca4fb1760bd5af87608ab9f73f46d05a037956987a03f061",
+  "config": {
+    "chat": {
+      "model": "gpt-5.6-terra",
+      "timeout": 30,
+      "max_output_tokens": 1500,
+      "critic_model": "gpt-5.6-terra",
+      "critic_enabled": true,
+      "idle_reminder_seconds": 60
+    },
+    "shared_models": [
+      {
+        "id": "gpt-6-luna",
+        "label": "GPT-6 Luna"
+      },
+      {
+        "id": "gpt-5.6-sol",
+        "label": "GPT-5.6 Sol"
+      },
+      {
+        "id": "gpt-5.6-terra",
+        "label": "GPT-5.6 Terra"
+      },
+      {
+        "id": "gpt-5.6-luna",
+        "label": "GPT-5.6 Luna"
+      }
+    ],
+    "pipeline": {
+      "mode": "multi_agent"
+    },
+    "pdf_ingestion": {
+      "preserve_all_pages": true,
+      "ocr": {
+        "enabled": true,
+        "language": "eng",
+        "dpi": 200,
+        "min_confidence": 0.8,
+        "min_native_chars": 80,
+        "bootstrap_pages": 15,
+        "bootstrap_max_pages": 5,
+        "selected_max_pages": 24,
+        "inventory_max_pages": 24
+      }
+    },
+    "agents": {
+      "scoping": {
+        "enabled": true,
+        "model": "gpt-6-luna",
+        "reasoning_effort": "low",
+        "timeout": 60
+      },
+      "ontology_draft": {
+        "enabled": true,
+        "model": "gpt-6-luna",
+        "reasoning_effort": "low",
+        "timeout": 120
+      },
+      "extraction": {
+        "enabled": true,
+        "model": "gpt-6-luna",
+        "timeout": 120
+      },
+      "validation": {
+        "enabled": true,
+        "model": "gpt-5.6-terra",
+        "timeout": 90
+      },
+      "refiner": {
+        "enabled": false,
+        "model": "gpt-5.6-terra",
+        "timeout": 90,
+        "max_retries_per_entity": 2,
+        "escalate_after_exhaustion": true
+      },
+      "coverage": {
+        "enabled": false,
+        "model": "gpt-6-luna",
+        "timeout": 60
+      },
+      "grounding": {
+        "enabled": false,
+        "model": "gpt-5.6-terra",
+        "timeout": 90
+      },
+      "conflict_resolution": {
+        "enabled": false,
+        "model": "gpt-5.6-terra",
+        "timeout": 60
+      }
+    },
+    "supervisor": {
+      "mode": "deterministic",
+      "llm_model": "gpt-6-luna",
+      "llm_timeout": 15
+    },
+    "checkpointing": {
+      "enabled": false,
+      "backend": "filesystem",
+      "path": "data/checkpoints/"
+    },
+    "validation": {
+      "grounding_accept_threshold": 0.8,
+      "grounding_refine_threshold": 0.5,
+      "check_ontology_chain": true,
+      "check_page_attribution": true
+    },
+    "resolution_completion": {
+      "enabled": true,
+      "timeout_seconds": 90,
+      "max_input_chars": 50000,
+      "estimated_max_input_tokens": 12500,
+      "max_output_tokens": 2500,
+      "max_targets": 6,
+      "top_pages_per_target": 6,
+      "context_window_pages": 1,
+      "search_full_manual": true
+    },
+    "coverage_completion": {
+      "enabled": true,
+      "timeout_seconds": 120,
+      "max_input_chars": 120000,
+      "estimated_max_input_tokens": 30000,
+      "max_output_tokens": 7000,
+      "max_chains": 8
+    },
+    "pdf_generation_cost_guard": {
+      "enabled": true,
+      "preferred_cost_usd": 15.0,
+      "hard_ceiling_usd": 15.0,
+      "fixed_prompt_overhead_characters": 30000
+    },
+    "style_cleanup": {
+      "enabled": true,
+      "deterministic_enabled": true,
+      "llm_enabled": true,
+      "timeout_seconds": 120,
+      "max_output_tokens": 6000,
+      "preserve_numbers_units_codes": true,
+      "preserve_page_refs": true,
+      "reject_on_semantic_drift": true,
+      "max_name_tokens": 10,
+      "max_description_sentences": 2,
+      "editable_fields": {
+        "Asset": [
+          "name",
+          "description"
+        ],
+        "Component": [
+          "name",
+          "description",
+          "category"
+        ],
+        "Symptom": [
+          "name",
+          "description"
+        ],
+        "FailureMode": [
+          "name",
+          "description",
+          "material_context"
+        ],
+        "CorrectiveAction": [
+          "name",
+          "description",
+          "instruction_text"
+        ],
+        "ErrorCode": [
+          "name",
+          "description"
+        ]
+      }
+    },
+    "scoping": {
+      "small_doc_threshold": 15,
+      "timeout_seconds": 120,
+      "max_input_chars": 90000,
+      "estimated_max_input_tokens": 22000,
+      "max_output_tokens": 6000,
+      "models": [
+        {
+          "id": "gpt-6-luna",
+          "label": "GPT-6 Luna"
+        },
+        {
+          "id": "gpt-5.6-sol",
+          "label": "GPT-5.6 Sol"
+        },
+        {
+          "id": "gpt-5.6-terra",
+          "label": "GPT-5.6 Terra"
+        },
+        {
+          "id": "gpt-5.6-luna",
+          "label": "GPT-5.6 Luna"
+        }
+      ]
+    },
+    "extraction": {
+      "timeout_seconds": 300,
+      "max_input_chars": 220000,
+      "estimated_max_input_tokens": 55000,
+      "max_output_tokens": 6500,
+      "models": [
+        {
+          "id": "gpt-6-luna",
+          "label": "GPT-6 Luna"
+        },
+        {
+          "id": "gpt-5.6-sol",
+          "label": "GPT-5.6 Sol"
+        },
+        {
+          "id": "gpt-5.6-terra",
+          "label": "GPT-5.6 Terra"
+        },
+        {
+          "id": "gpt-5.6-luna",
+          "label": "GPT-5.6 Luna"
+        }
+      ]
+    },
+    "ontology": {
+      "always_include_first_pages": 5,
+      "timeout_seconds": 600,
+      "chunk_concurrency": 1,
+      "chunk_retry_attempts": 3,
+      "chunk_retry_base_seconds": 2,
+      "max_input_chars": 600000,
+      "estimated_max_input_tokens": 150000,
+      "extraction_max_output_tokens": 16000,
+      "diagnostic_bundle_max_output_tokens": 24000,
+      "diagnostic_context_strategy": "hybrid",
+      "diagnostic_windows_per_call": 3,
+      "diagnostic_recovery_calls_per_chunk": 2,
+      "diagnostic_atomic_table_max_output_tokens": 16000,
+      "extraction_retry_max_output_tokens": 24000,
+      "relation_extraction_max_output_tokens": 6000,
+      "validation_max_output_tokens": 4000,
+      "max_pages_per_chunk": 8,
+      "diagnostic_max_pages_per_chunk": 4,
+      "diagnostic_chunk_overlap_pages": 1,
+      "structural_max_pages_per_chunk": 12,
+      "relation_first": true,
+      "diagnostic_escalation": {
+        "enabled": false,
+        "primary_model": "gpt-6-luna",
+        "model": "gpt-6-sol",
+        "reasoning_effort": "medium",
+        "max_chunks_per_run": 0,
+        "timeout_seconds": 180,
+        "max_input_chars": 60000,
+        "estimated_max_input_tokens": 15000,
+        "schema_overhead_characters": 30000,
+        "max_output_tokens": 24000
+      }
+    },
+    "reflective_loop": {
+      "max_retries": 0,
+      "retry_on_severity": "error",
+      "re_extract_max_output_tokens": 14000
+    },
+    "confidence": {
+      "enabled": true,
+      "theta_high": 0.8,
+      "theta_low": 0.45,
+      "auto_reject_enabled": false,
+      "weights": {
+        "evidence_present": 0.25,
+        "corroboration": 0.15,
+        "required_props_complete": 0.25,
+        "chain_participation": 0.2,
+        "clean_extraction": 0.15
+      },
+      "penalties": {
+        "human_binding_required": 0.2,
+        "per_retry": 0.02,
+        "ungrounded_evidence": 0.15
+      }
+    }
+  },
+  "api_calls_made": 0,
+  "gold_used_in_generation": false
+}

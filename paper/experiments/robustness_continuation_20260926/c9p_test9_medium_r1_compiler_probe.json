@@ -1,0 +1,3763 @@
+{
+  "ontology": {
+    "ontology_name": "Core_Ontology",
+    "version": "2.0",
+    "language": "en",
+    "source_type": "technical PDF",
+    "source_title": "hypertherm_powermax30_air_service_manual_rev4_808850.pdf",
+    "nodes": {
+      "Asset": [],
+      "Component": [],
+      "Symptom": [],
+      "FailureMode": [],
+      "CorrectiveAction": [],
+      "ErrorCode": []
+    },
+    "relations": []
+  },
+  "validated_bundles": [
+    {
+      "record_lineage_id": "drec_26fdf6e66dfe81e6650d21a819936f2afbb28eeadc49d1ebd566a0c0864cd8c4",
+      "branch_lineage_id": "dbranch_5565d5827c987ea392238bf5d0636b8f4da7913d9a0d88ee31cb71c57d950779",
+      "record_window_id": "",
+      "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+      "branch_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+      "indicators": [
+        {
+          "kind": "symptom",
+          "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+          "description": "Both fault LEDs illuminate.",
+          "severity": "Unknown",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+              "source_page": 96,
+              "quote": "If the internal compressor fault LED and temperature fault LED both illuminate",
+              "evidence_id": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+              "locator": {
+                "kind": "pdf",
+                "page": 96,
+                "section": null,
+                "quote": "If the internal compressor fault LED and temperature fault LED both illuminate, the root cause may be:",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 2,
+                "source_block_index": 3,
+                "bbox": [
+                  42.0,
+                  91.117,
+                  472.475,
+                  101.077
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            }
+          ],
+          "failure_link_evidence": [
+            {
+              "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+              "source_page": 96,
+              "quote": "If the internal compressor fault LED and temperature fault LED both illuminate",
+              "evidence_id": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+              "locator": {
+                "kind": "pdf",
+                "page": 96,
+                "section": null,
+                "quote": "If the internal compressor fault LED and temperature fault LED both illuminate, the root cause may be:",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 2,
+                "source_block_index": 3,
+                "bbox": [
+                  42.0,
+                  91.117,
+                  472.475,
+                  101.077
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_3cc0d6982268a6c15d5d95a7b366",
+              "source_page": 96,
+              "quote": "Faulty internal compressor",
+              "evidence_id": "ev_3cc0d6982268a6c15d5d95a7b366",
+              "locator": {
+                "kind": "pdf",
+                "page": 96,
+                "section": null,
+                "quote": "\nFaulty internal compressor",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 3,
+                "source_block_index": 4,
+                "bbox": [
+                  42.0,
+                  109.117,
+                  171.596,
+                  119.077
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+              "source_page": 97,
+              "quote": "If no, replace the internal compressor.",
+              "evidence_id": "ev_6ae57bf36c0aaa6962e2569bafae",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 22,
+                "source_block_index": 14,
+                "bbox": [
+                  82.472,
+                  649.927,
+                  570.083,
+                  660.349
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            }
+          ]
+        }
+      ],
+      "failure": {
+        "name": "Faulty internal compressor",
+        "description": "The internal compressor does not run and air does not blow from the torch during the stated test.",
+        "material_context": null,
+        "claim_evidence": [
+          {
+            "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+            "source_page": 97,
+            "quote": "Is the compressor running, and is air blowing from the torch?",
+            "evidence_id": "ev_1f4d282853ed2d55bef623f0eef8",
+            "locator": {
+              "kind": "pdf",
+              "page": 97,
+              "section": null,
+              "quote": "13. Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger. Is the \ncompressor running, and is air blowing from the torch?",
+              "extraction_method": "native_text",
+              "printed_page": null,
+              "block_index": 20,
+              "source_block_index": 12,
+              "bbox": [
+                60.281,
+                602.221,
+                552.927,
+                624.183
+              ],
+              "table_index": null,
+              "row_index": null,
+              "ocr_region_index": null
+            }
+          },
+          {
+            "source_anchor": "ev_3cc0d6982268a6c15d5d95a7b366",
+            "source_page": 96,
+            "quote": "Faulty internal compressor",
+            "evidence_id": "ev_3cc0d6982268a6c15d5d95a7b366",
+            "locator": {
+              "kind": "pdf",
+              "page": 96,
+              "section": null,
+              "quote": "\nFaulty internal compressor",
+              "extraction_method": "native_text",
+              "printed_page": null,
+              "block_index": 3,
+              "source_block_index": 4,
+              "bbox": [
+                42.0,
+                109.117,
+                171.596,
+                119.077
+              ],
+              "table_index": null,
+              "row_index": null,
+              "ocr_region_index": null
+            }
+          },
+          {
+            "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+            "source_page": 97,
+            "quote": "If no, replace the internal compressor.",
+            "evidence_id": "ev_6ae57bf36c0aaa6962e2569bafae",
+            "locator": {
+              "kind": "pdf",
+              "page": 97,
+              "section": null,
+              "quote": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push",
+              "extraction_method": "native_text",
+              "printed_page": null,
+              "block_index": 22,
+              "source_block_index": 14,
+              "bbox": [
+                82.472,
+                649.927,
+                570.083,
+                660.349
+              ],
+              "table_index": null,
+              "row_index": null,
+              "ocr_region_index": null
+            }
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "Replace the internal compressor",
+          "description": "Replace the internal compressor.",
+          "instruction_text": "If the compressor is not running and air is not blowing from the torch, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push the solenoid valve back into place between both clips from the center panel.",
+          "action_kind": "replacement",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+              "source_page": 97,
+              "quote": "If no, replace the internal compressor.",
+              "evidence_id": "ev_6ae57bf36c0aaa6962e2569bafae",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 22,
+                "source_block_index": 14,
+                "bbox": [
+                  82.472,
+                  649.927,
+                  570.083,
+                  660.349
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+              "source_page": 97,
+              "quote": "See Replace the internal compressor on page 169. Be sure to push",
+              "evidence_id": "ev_6ae57bf36c0aaa6962e2569bafae",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 22,
+                "source_block_index": 14,
+                "bbox": [
+                  82.472,
+                  649.927,
+                  570.083,
+                  660.349
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_6af3e19cdddfde87262b755bdcf4",
+              "source_page": 97,
+              "quote": "the solenoid valve back into place between both clips from the center panel.",
+              "evidence_id": "ev_6af3e19cdddfde87262b755bdcf4",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "the solenoid valve back into place between both clips from the center panel.",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 23,
+                "source_block_index": 15,
+                "bbox": [
+                  95.968,
+                  662.28,
+                  417.714,
+                  672.24
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            }
+          ],
+          "resolution_link_evidence": [
+            {
+              "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+              "source_page": 97,
+              "quote": "Is the compressor running, and is air blowing from the torch?",
+              "evidence_id": "ev_1f4d282853ed2d55bef623f0eef8",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "13. Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger. Is the \ncompressor running, and is air blowing from the torch?",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 20,
+                "source_block_index": 12,
+                "bbox": [
+                  60.281,
+                  602.221,
+                  552.927,
+                  624.183
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+              "source_page": 97,
+              "quote": "If no, replace the internal compressor.",
+              "evidence_id": "ev_6ae57bf36c0aaa6962e2569bafae",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 22,
+                "source_block_index": 14,
+                "bbox": [
+                  82.472,
+                  649.927,
+                  570.083,
+                  660.349
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            }
+          ]
+        }
+      ],
+      "inspection_steps": [
+        {
+          "instruction_text": "Quickly tap the torch trigger to force gas flow without firing an arc, then watch the green diagnostic LED (D5) on the compressor-driver board. If it illuminates, check the internal compressor and skip to step 10.",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_24c1a4c302c518aac7f76889125e",
+              "source_page": 96,
+              "quote": "If yes, check the internal compressor. Skip to",
+              "evidence_id": "ev_24c1a4c302c518aac7f76889125e",
+              "locator": {
+                "kind": "pdf",
+                "page": 96,
+                "section": null,
+                "quote": "a. If yes, check the internal compressor. Skip to",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 20,
+                "source_block_index": 16,
+                "bbox": [
+                  64.474,
+                  584.216,
+                  269.991,
+                  594.287
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_61be567630d3f8cdb4bc529c4823",
+              "source_page": 96,
+              "quote": "step 10.",
+              "evidence_id": "ev_61be567630d3f8cdb4bc529c4823",
+              "locator": {
+                "kind": "pdf",
+                "page": 96,
+                "section": null,
+                "quote": "step 10.",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 21,
+                "source_block_index": 17,
+                "bbox": [
+                  77.97,
+                  596.145,
+                  112.053,
+                  606.178
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_da1bc8f5269e3c40019f39fcce68",
+              "source_page": 96,
+              "quote": "Quickly tap the torch trigger to force gas flow without firing an arc, then watch the green diagnostic LED (D5)",
+              "evidence_id": "ev_da1bc8f5269e3c40019f39fcce68",
+              "locator": {
+                "kind": "pdf",
+                "page": 96,
+                "section": null,
+                "quote": "5. Quickly tap the torch trigger to force gas flow \nwithout firing an arc, then watch the green \ndiagnostic LED (D5)\n on the compressor-driver \nboard. Does the LED illuminate while the torch is \nbeing fired?",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 18,
+                "source_block_index": 15,
+                "bbox": [
+                  46.477,
+                  517.913,
+                  272.751,
+                  576.179
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            }
+          ]
+        },
+        {
+          "instruction_text": "If D5 does not illuminate, continue with the next step: set the power switch to OFF, remove the J2 connector from the compressor-driver board, set the switch to ON, and repeat the torch-trigger test while watching D5. If D5 illuminates, check the internal compressor and continue with the next step.",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_1dc07952e5742c6f46f65635fc8a",
+              "source_page": 97,
+              "quote": "with the next step.",
+              "evidence_id": "ev_1dc07952e5742c6f46f65635fc8a",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "with the next step.",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 6,
+                "source_block_index": 6,
+                "bbox": [
+                  95.988,
+                  191.451,
+                  173.002,
+                  201.411
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_349097fa5d305b77a7b92e508120",
+              "source_page": 97,
+              "quote": "Set the power switch to ON (I).",
+              "evidence_id": "ev_349097fa5d305b77a7b92e508120",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "8. Set the power switch to ON (I).",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 3,
+                "source_block_index": 3,
+                "bbox": [
+                  64.505,
+                  101.091,
+                  211.796,
+                  111.513
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_57dd21fa5b91bc6453d42535fac6",
+              "source_page": 97,
+              "quote": "Remove the J2 connector from the compressor-driver board.",
+              "evidence_id": "ev_57dd21fa5b91bc6453d42535fac6",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "7. Remove the J2 connector\n from the \ncompressor-driver board.",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 1,
+                "source_block_index": 2,
+                "bbox": [
+                  65.64,
+                  65.437,
+                  240.394,
+                  87.399
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_6b944c84669506df76657dd60831",
+              "source_page": 97,
+              "quote": "Quickly tap the torch trigger, then watch the green diagnostic LED (D5) on the compressor-driver board.",
+              "evidence_id": "ev_6b944c84669506df76657dd60831",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "9. Quickly tap the torch trigger, then watch the green \ndiagnostic LED (D5) on the compressor-driver \nboard. Does the LED illuminate while the torch is \nbeing fired?",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 4,
+                "source_block_index": 4,
+                "bbox": [
+                  64.495,
+                  125.446,
+                  293.764,
+                  171.412
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_7bf6b96929616886ce8de17fb599",
+              "source_page": 97,
+              "quote": "If yes, check the internal compressor. Continue",
+              "evidence_id": "ev_7bf6b96929616886ce8de17fb599",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "a. If yes, check the internal compressor. Continue",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 5,
+                "source_block_index": 5,
+                "bbox": [
+                  82.492,
+                  179.449,
+                  296.959,
+                  189.52
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_a5bc46c4b27e1f45f814c28e6e8c",
+              "source_page": 96,
+              "quote": "If no, continue with the next step.",
+              "evidence_id": "ev_a5bc46c4b27e1f45f814c28e6e8c",
+              "locator": {
+                "kind": "pdf",
+                "page": 96,
+                "section": null,
+                "quote": "b. If no, continue with the next step.",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 22,
+                "source_block_index": 18,
+                "bbox": [
+                  64.474,
+                  614.216,
+                  217.446,
+                  624.286
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_bd5f8cb001e684f1611bee2f38ad",
+              "source_page": 96,
+              "quote": "Set the power switch to OFF (O).",
+              "evidence_id": "ev_bd5f8cb001e684f1611bee2f38ad",
+              "locator": {
+                "kind": "pdf",
+                "page": 96,
+                "section": null,
+                "quote": "6. Set the power switch to OFF (O).",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 24,
+                "source_block_index": 20,
+                "bbox": [
+                  46.497,
+                  701.868,
+                  202.553,
+                  712.29
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            }
+          ]
+        },
+        {
+          "instruction_text": "Set the power switch to OFF. On the fan side, free the solenoid valve from its right-side clip and tilt it to expose the gas shut-off override button. Connect the internal compressor to an external 12 VDC power source. Hold down the override button, quickly tap the torch trigger, and check whether the compressor runs and air blows from the torch.",
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+              "source_page": 97,
+              "quote": "Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger.",
+              "evidence_id": "ev_1f4d282853ed2d55bef623f0eef8",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "13. Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger. Is the \ncompressor running, and is air blowing from the torch?",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 20,
+                "source_block_index": 12,
+                "bbox": [
+                  60.281,
+                  602.221,
+                  552.927,
+                  624.183
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_2897c3a44dc789d6ec7ac33d67ca",
+              "source_page": 97,
+              "quote": "Connect the internal compressor to an external 12 VDC power source",
+              "evidence_id": "ev_2897c3a44dc789d6ec7ac33d67ca",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "12. Connect the internal compressor to an external 12 VDC power source (for example, a car battery).",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 19,
+                "source_block_index": 11,
+                "bbox": [
+                  60.281,
+                  578.218,
+                  494.026,
+                  588.288
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_6eab23e068d31aaba603a794ab69",
+              "source_page": 97,
+              "quote": "Set the power switch to OFF (O).",
+              "evidence_id": "ev_6eab23e068d31aaba603a794ab69",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "10. Set the power switch to OFF (O).",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 16,
+                "source_block_index": 9,
+                "bbox": [
+                  59.983,
+                  505.616,
+                  220.541,
+                  516.038
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_e7077c9ff7587912b5ecdf049409",
+              "source_page": 97,
+              "quote": "pull back the clip on the right side of the solenoid valve, and work the valve free",
+              "evidence_id": "ev_e7077c9ff7587912b5ecdf049409",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "11. On the fan side of the power supply, pull back the clip on the right side of the solenoid valve, and work the valve free \nfrom that clip \n. Carefully tilt the top of the valve towards you until you can see the gas shut-off override button\n. \nSee Figure 19.",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 17,
+                "source_block_index": 10,
+                "bbox": [
+                  60.7,
+                  529.972,
+                  570.118,
+                  564.174
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "text": "The failure branch is reached if D5 illuminates during the initial test, or if D5 does not illuminate initially, J2 is disconnected, and D5 illuminates on the repeated test; in either case, the compressor test then finds that the compressor is not running and air is not blowing from the torch.",
+          "applies_to": "branch",
+          "step_index": null,
+          "claim_evidence": [
+            {
+              "source_anchor": "ev_1dc07952e5742c6f46f65635fc8a",
+              "source_page": 97,
+              "quote": "with the next step.",
+              "evidence_id": "ev_1dc07952e5742c6f46f65635fc8a",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "with the next step.",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 6,
+                "source_block_index": 6,
+                "bbox": [
+                  95.988,
+                  191.451,
+                  173.002,
+                  201.411
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+              "source_page": 97,
+              "quote": "Is the compressor running, and is air blowing from the torch?",
+              "evidence_id": "ev_1f4d282853ed2d55bef623f0eef8",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "13. Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger. Is the \ncompressor running, and is air blowing from the torch?",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 20,
+                "source_block_index": 12,
+                "bbox": [
+                  60.281,
+                  602.221,
+                  552.927,
+                  624.183
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_24c1a4c302c518aac7f76889125e",
+              "source_page": 96,
+              "quote": "If yes, check the internal compressor. Skip to",
+              "evidence_id": "ev_24c1a4c302c518aac7f76889125e",
+              "locator": {
+                "kind": "pdf",
+                "page": 96,
+                "section": null,
+                "quote": "a. If yes, check the internal compressor. Skip to",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 20,
+                "source_block_index": 16,
+                "bbox": [
+                  64.474,
+                  584.216,
+                  269.991,
+                  594.287
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_61be567630d3f8cdb4bc529c4823",
+              "source_page": 96,
+              "quote": "step 10.",
+              "evidence_id": "ev_61be567630d3f8cdb4bc529c4823",
+              "locator": {
+                "kind": "pdf",
+                "page": 96,
+                "section": null,
+                "quote": "step 10.",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 21,
+                "source_block_index": 17,
+                "bbox": [
+                  77.97,
+                  596.145,
+                  112.053,
+                  606.178
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+              "source_page": 97,
+              "quote": "If no, replace the internal compressor.",
+              "evidence_id": "ev_6ae57bf36c0aaa6962e2569bafae",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 22,
+                "source_block_index": 14,
+                "bbox": [
+                  82.472,
+                  649.927,
+                  570.083,
+                  660.349
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_6b944c84669506df76657dd60831",
+              "source_page": 97,
+              "quote": "Does the LED illuminate while the torch is being fired?",
+              "evidence_id": "ev_6b944c84669506df76657dd60831",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "9. Quickly tap the torch trigger, then watch the green \ndiagnostic LED (D5) on the compressor-driver \nboard. Does the LED illuminate while the torch is \nbeing fired?",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 4,
+                "source_block_index": 4,
+                "bbox": [
+                  64.495,
+                  125.446,
+                  293.764,
+                  171.412
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_7bf6b96929616886ce8de17fb599",
+              "source_page": 97,
+              "quote": "If yes, check the internal compressor. Continue",
+              "evidence_id": "ev_7bf6b96929616886ce8de17fb599",
+              "locator": {
+                "kind": "pdf",
+                "page": 97,
+                "section": null,
+                "quote": "a. If yes, check the internal compressor. Continue",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 5,
+                "source_block_index": 5,
+                "bbox": [
+                  82.492,
+                  179.449,
+                  296.959,
+                  189.52
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_a5bc46c4b27e1f45f814c28e6e8c",
+              "source_page": 96,
+              "quote": "If no, continue with the next step.",
+              "evidence_id": "ev_a5bc46c4b27e1f45f814c28e6e8c",
+              "locator": {
+                "kind": "pdf",
+                "page": 96,
+                "section": null,
+                "quote": "b. If no, continue with the next step.",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 22,
+                "source_block_index": 18,
+                "bbox": [
+                  64.474,
+                  614.216,
+                  217.446,
+                  624.286
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            },
+            {
+              "source_anchor": "ev_da1bc8f5269e3c40019f39fcce68",
+              "source_page": 96,
+              "quote": "Does the LED illuminate while the torch is being fired?",
+              "evidence_id": "ev_da1bc8f5269e3c40019f39fcce68",
+              "locator": {
+                "kind": "pdf",
+                "page": 96,
+                "section": null,
+                "quote": "5. Quickly tap the torch trigger to force gas flow \nwithout firing an arc, then watch the green \ndiagnostic LED (D5)\n on the compressor-driver \nboard. Does the LED illuminate while the torch is \nbeing fired?",
+                "extraction_method": "native_text",
+                "printed_page": null,
+                "block_index": 18,
+                "source_block_index": 15,
+                "bbox": [
+                  46.477,
+                  517.913,
+                  272.751,
+                  576.179
+                ],
+                "table_index": null,
+                "row_index": null,
+                "ocr_region_index": null
+              }
+            }
+          ]
+        }
+      ],
+      "affected_component": {
+        "name": "Internal compressor",
+        "description": "Internal compressor tested with an external 12 VDC power source.",
+        "category": null,
+        "claim_evidence": [
+          {
+            "source_anchor": "ev_2897c3a44dc789d6ec7ac33d67ca",
+            "source_page": 97,
+            "quote": "Connect the internal compressor to an external 12 VDC power source",
+            "evidence_id": "ev_2897c3a44dc789d6ec7ac33d67ca",
+            "locator": {
+              "kind": "pdf",
+              "page": 97,
+              "section": null,
+              "quote": "12. Connect the internal compressor to an external 12 VDC power source (for example, a car battery).",
+              "extraction_method": "native_text",
+              "printed_page": null,
+              "block_index": 19,
+              "source_block_index": 11,
+              "bbox": [
+                60.281,
+                578.218,
+                494.026,
+                588.288
+              ],
+              "table_index": null,
+              "row_index": null,
+              "ocr_region_index": null
+            }
+          }
+        ],
+        "affects_link_evidence": [
+          {
+            "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+            "source_page": 97,
+            "quote": "replace the internal compressor.",
+            "evidence_id": "ev_6ae57bf36c0aaa6962e2569bafae",
+            "locator": {
+              "kind": "pdf",
+              "page": 97,
+              "section": null,
+              "quote": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push",
+              "extraction_method": "native_text",
+              "printed_page": null,
+              "block_index": 22,
+              "source_block_index": 14,
+              "bbox": [
+                82.472,
+                649.927,
+                570.083,
+                660.349
+              ],
+              "table_index": null,
+              "row_index": null,
+              "ocr_region_index": null
+            }
+          }
+        ]
+      },
+      "resolution_status": "action_stated"
+    }
+  ],
+  "report": {
+    "input_candidates": 6,
+    "unique_candidates": 6,
+    "duplicate_candidates": 0,
+    "disposition_counts": {
+      "publish": 0,
+      "gap": 0,
+      "review": 6,
+      "exclude": 0
+    },
+    "recovered_items_by_reason": {},
+    "dropped_items_by_reason": {
+      "action_without_failure": 1,
+      "component_without_failure": 1,
+      "compound_negative_condition_strengthened": 1,
+      "failure_edge_without_failure": 1,
+      "missing_failure": 1,
+      "quote_not_in_anchored_evidence": 5
+    },
+    "entries": [
+      {
+        "record_lineage_id": "drec_26fdf6e66dfe81e6650d21a819936f2afbb28eeadc49d1ebd566a0c0864cd8c4",
+        "branch_lineage_id": "dbranch_114ae6e9914350d521ff83756e2fb12bc33b60ca1ff888bb97bd2888efe37cc4",
+        "record_window_id": "",
+        "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+        "branch_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+        "evidence_ids": [
+          "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "ev_253cb953feaf91f9a0ae5dc3da02",
+          "ev_2feba172a53511481e324539cb7f",
+          "ev_44bd3afbcebb92a5c6aa7fa58622",
+          "ev_870edebfc1801870008575d14532",
+          "ev_a0a0861b95533b873dc3ce033939",
+          "ev_cd012c7f99786df1a69eb18ae014",
+          "ev_cf2356ad6fb360d8e8d82f20add5",
+          "ev_f04cc32052989fe24332fc728693"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_0b87a1e934ae5d429a19a0ff2e7c",
+            "ev_d90d4b038f23cacf6022bcd1337f",
+            "ev_da1bc8f5269e3c40019f39fcce68",
+            "ev_a5bc46c4b27e1f45f814c28e6e8c",
+            "ev_57dd21fa5b91bc6453d42535fac6",
+            "ev_6b944c84669506df76657dd60831",
+            "ev_700a025bf79fd7026914b2579fe3",
+            "ev_cd012c7f99786df1a69eb18ae014",
+            "ev_870edebfc1801870008575d14532",
+            "ev_a0a0861b95533b873dc3ce033939",
+            "ev_f04cc32052989fe24332fc728693",
+            "ev_595a838da84fcf5abe6da379b91e",
+            "ev_44bd3afbcebb92a5c6aa7fa58622",
+            "ev_2feba172a53511481e324539cb7f",
+            "ev_bb8dd5d81b429e998d3a30f9e04d",
+            "ev_253cb953feaf91f9a0ae5dc3da02",
+            "ev_cf2356ad6fb360d8e8d82f20add5",
+            "ev_2fff6f4cc5b6931922083b252983"
+          ],
+          "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "branch_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+              "description": "Both fault LEDs illuminate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                },
+                {
+                  "source_anchor": "ev_253cb953feaf91f9a0ae5dc3da02",
+                  "source_page": 99,
+                  "quote": "Is compressor-enable voltage present (3 VDC)?"
+                },
+                {
+                  "source_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+                  "source_page": 99,
+                  "quote": "If yes, replace the J1-to-J9 twisted pair wires."
+                }
+              ]
+            }
+          ],
+          "failure": null,
+          "actions": [
+            {
+              "name": "Replace the J1-to-J9 twisted pair wires",
+              "description": "Replace the twisted pair wires connecting J1 to J9.",
+              "instruction_text": "If compressor-enable voltage (3 VDC) is present at J9 on the power board, replace the J1-to-J9 twisted pair wires. See Replace the wire group on page 146.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_253cb953feaf91f9a0ae5dc3da02",
+                  "source_page": 99,
+                  "quote": "check the compressor-enable voltage on the J9 connector on the power board."
+                },
+                {
+                  "source_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+                  "source_page": 99,
+                  "quote": "If yes, replace the J1-to-J9 twisted pair wires. See Replace the wire group on page 146."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_253cb953feaf91f9a0ae5dc3da02",
+                  "source_page": 99,
+                  "quote": "Is compressor-enable voltage present (3 VDC)?"
+                },
+                {
+                  "source_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+                  "source_page": 99,
+                  "quote": "If yes, replace the J1-to-J9 twisted pair wires."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check VBUS (nominal 375 VDC) at J3. If absent, remove J2 and repeat the VBUS check; if VBUS is present with J2 disconnected, proceed to check compressor-enable voltage.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cd012c7f99786df1a69eb18ae014",
+                  "source_page": 99,
+                  "quote": "Check VBUS on the red and black wires on the J3 connector (pin 1 and pin 4). Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_870edebfc1801870008575d14532",
+                  "source_page": 99,
+                  "quote": "If no, remove the J2 connector from the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_a0a0861b95533b873dc3ce033939",
+                  "source_page": 99,
+                  "quote": "Repeat the previous step to check VBUS with J2 disconnected. Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_f04cc32052989fe24332fc728693",
+                  "source_page": 99,
+                  "quote": "If yes, check the compressor-enable voltage on the compressor-driver board."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Quickly tap the torch trigger and check compressor-enable voltage (3 VDC) at J1 on the compressor-driver board. If absent, check the twisted pair wires connecting the compressor-driver board to the power board, then quickly tap the torch trigger and check compressor-enable voltage (3 VDC) at J9 on the power board.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_44bd3afbcebb92a5c6aa7fa58622",
+                  "source_page": 99,
+                  "quote": "Quickly tap the torch trigger, then check the compressor-enable voltage on the J1 connector on the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_2feba172a53511481e324539cb7f",
+                  "source_page": 99,
+                  "quote": "If no, check the twisted pair wires that connect the compressor-driver board to the power board."
+                },
+                {
+                  "source_anchor": "ev_253cb953feaf91f9a0ae5dc3da02",
+                  "source_page": 99,
+                  "quote": "Quickly tap the torch trigger, then check the compressor-enable voltage on the J9 connector on the power board."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "The wire-replacement branch is reached when VBUS is absent with J2 connected but present with J2 disconnected, compressor-enable voltage is absent at J1 on the compressor-driver board, and compressor-enable voltage is present at J9 on the power board.",
+              "applies_to": "branch",
+              "step_index": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cd012c7f99786df1a69eb18ae014",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_870edebfc1801870008575d14532",
+                  "source_page": 99,
+                  "quote": "If no, remove the J2 connector from the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_a0a0861b95533b873dc3ce033939",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_f04cc32052989fe24332fc728693",
+                  "source_page": 99,
+                  "quote": "If yes, check the compressor-enable voltage on the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_44bd3afbcebb92a5c6aa7fa58622",
+                  "source_page": 99,
+                  "quote": "Is compressor-enable voltage present (3 VDC)?"
+                },
+                {
+                  "source_anchor": "ev_2feba172a53511481e324539cb7f",
+                  "source_page": 99,
+                  "quote": "If no, check the twisted pair wires that connect the compressor-driver board to the power board."
+                },
+                {
+                  "source_anchor": "ev_253cb953feaf91f9a0ae5dc3da02",
+                  "source_page": 99,
+                  "quote": "Is compressor-enable voltage present (3 VDC)?"
+                },
+                {
+                  "source_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+                  "source_page": 99,
+                  "quote": "If yes, replace the J1-to-J9 twisted pair wires."
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "J1-to-J9 twisted pair wires",
+            "description": "Twisted pair wires connecting the compressor-driver board to the power board.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_2feba172a53511481e324539cb7f",
+                "source_page": 99,
+                "quote": "twisted pair wires that connect the compressor-driver board to the power board."
+              },
+              {
+                "source_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+                "source_page": 99,
+                "quote": "replace the J1-to-J9 twisted pair wires."
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_cf2356ad6fb360d8e8d82f20add5",
+                "source_page": 99,
+                "quote": "replace the J1-to-J9 twisted pair wires."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "observed_structurally_incomplete",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "action_without_failure",
+            "path": "actions",
+            "message": "CorrectiveAction claims cannot be linked without a FailureMode."
+          },
+          {
+            "code": "component_without_failure",
+            "path": "affected_component",
+            "message": "An affected Component cannot be linked without a FailureMode."
+          },
+          {
+            "code": "failure_edge_without_failure",
+            "path": "indicators",
+            "message": "Indicator-to-failure evidence was supplied without a FailureMode."
+          },
+          {
+            "code": "missing_failure",
+            "path": "failure",
+            "message": "No FailureMode claim was supplied."
+          },
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "inspection_steps[0].claim_evidence[0]",
+            "message": "inspection_steps[0].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_cd012c7f99786df1a69eb18ae014' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_26fdf6e66dfe81e6650d21a819936f2afbb28eeadc49d1ebd566a0c0864cd8c4",
+        "branch_lineage_id": "dbranch_45a0266f3bf4a448964683c89b1b0bb7ec914ca41acfe0e60ceb87e683217945",
+        "record_window_id": "",
+        "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+        "branch_anchor": "ev_f96004a6446e336f738bc9e6149a",
+        "evidence_ids": [
+          "ev_0976bdff30be82a68dc02815b1c5",
+          "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "ev_595a838da84fcf5abe6da379b91e",
+          "ev_5f2165818aa19e72dfea20b335e0",
+          "ev_6e6763480eec41910866200364ec",
+          "ev_870edebfc1801870008575d14532",
+          "ev_a0a0861b95533b873dc3ce033939",
+          "ev_af450d14e62d538c563f4491817b",
+          "ev_bcf3ad90571db3076a8b342ff9cd",
+          "ev_cd012c7f99786df1a69eb18ae014",
+          "ev_d90d4b038f23cacf6022bcd1337f",
+          "ev_f96004a6446e336f738bc9e6149a"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_0b87a1e934ae5d429a19a0ff2e7c",
+            "ev_d90d4b038f23cacf6022bcd1337f",
+            "ev_da1bc8f5269e3c40019f39fcce68",
+            "ev_a5bc46c4b27e1f45f814c28e6e8c",
+            "ev_57dd21fa5b91bc6453d42535fac6",
+            "ev_6b944c84669506df76657dd60831",
+            "ev_700a025bf79fd7026914b2579fe3",
+            "ev_cd012c7f99786df1a69eb18ae014",
+            "ev_870edebfc1801870008575d14532",
+            "ev_a0a0861b95533b873dc3ce033939",
+            "ev_595a838da84fcf5abe6da379b91e",
+            "ev_bcf3ad90571db3076a8b342ff9cd",
+            "ev_0976bdff30be82a68dc02815b1c5",
+            "ev_6e6763480eec41910866200364ec",
+            "ev_5f2165818aa19e72dfea20b335e0",
+            "ev_af450d14e62d538c563f4491817b",
+            "ev_f96004a6446e336f738bc9e6149a"
+          ],
+          "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "branch_anchor": "ev_f96004a6446e336f738bc9e6149a",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+              "description": "Both fault LEDs illuminate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                },
+                {
+                  "source_anchor": "ev_d90d4b038f23cacf6022bcd1337f",
+                  "source_page": 96,
+                  "quote": "Faulty power board (PCB2)"
+                },
+                {
+                  "source_anchor": "ev_af450d14e62d538c563f4491817b",
+                  "source_page": 100,
+                  "quote": "If VBUS or compressor-enable voltage is present on the power board but the other is not, replace the power"
+                },
+                {
+                  "source_anchor": "ev_f96004a6446e336f738bc9e6149a",
+                  "source_page": 100,
+                  "quote": "board."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty power board (PCB2)",
+            "description": "Exactly one of VBUS and compressor-enable voltage is present on the power board during the stated isolated test.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_d90d4b038f23cacf6022bcd1337f",
+                "source_page": 96,
+                "quote": "Faulty power board (PCB2)"
+              },
+              {
+                "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                "source_page": 100,
+                "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+              },
+              {
+                "source_anchor": "ev_af450d14e62d538c563f4491817b",
+                "source_page": 100,
+                "quote": "If VBUS or compressor-enable voltage is present on the power board but the other is not, replace the power"
+              },
+              {
+                "source_anchor": "ev_f96004a6446e336f738bc9e6149a",
+                "source_page": 100,
+                "quote": "board."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the power board",
+              "description": "Replace the power board.",
+              "instruction_text": "If VBUS or compressor-enable voltage is present on the power board but the other is not, replace the power board. See Replace the power board on page 135.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_af450d14e62d538c563f4491817b",
+                  "source_page": 100,
+                  "quote": "If VBUS or compressor-enable voltage is present on the power board but the other is not, replace the power"
+                },
+                {
+                  "source_anchor": "ev_f96004a6446e336f738bc9e6149a",
+                  "source_page": 100,
+                  "quote": "board. See Replace the power board on page 135."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                  "source_page": 100,
+                  "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+                },
+                {
+                  "source_anchor": "ev_af450d14e62d538c563f4491817b",
+                  "source_page": 100,
+                  "quote": "If VBUS or compressor-enable voltage is present on the power board but the other is not, replace the power"
+                },
+                {
+                  "source_anchor": "ev_f96004a6446e336f738bc9e6149a",
+                  "source_page": 100,
+                  "quote": "board."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check VBUS (nominal 375 VDC) at J3. If VBUS is absent, remove J2 and repeat the check; if VBUS is still absent, check the power board and continue to the power-board test.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cd012c7f99786df1a69eb18ae014",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_870edebfc1801870008575d14532",
+                  "source_page": 99,
+                  "quote": "If no, remove the J2 connector from the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_a0a0861b95533b873dc3ce033939",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_595a838da84fcf5abe6da379b91e",
+                  "source_page": 99,
+                  "quote": "If no, check the power board. Skip to step 23."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Isolate the power board by removing J1 and J3 connectors from the compressor-driver board. Check VBUS on the power board (nominal 375 VDC), then quickly tap the torch trigger and check compressor-enable voltage at J9 (3 VDC).",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_bcf3ad90571db3076a8b342ff9cd",
+                  "source_page": 100,
+                  "quote": "Remove the J1 and J3 connectors from the compressor-driver board. This isolates the power board."
+                },
+                {
+                  "source_anchor": "ev_0976bdff30be82a68dc02815b1c5",
+                  "source_page": 100,
+                  "quote": "Check VBUS on the power board (nominal 375 VDC bus voltage)"
+                },
+                {
+                  "source_anchor": "ev_6e6763480eec41910866200364ec",
+                  "source_page": 100,
+                  "quote": "Quickly tap the torch trigger, then check compressor-enable voltage at J9 on the power board (3 VDC)."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "This branch is reached when VBUS is absent at the initial J3 check and remains absent with J2 disconnected; after isolating the power board, one of VBUS and compressor-enable voltage is present and the other is not.",
+              "applies_to": "branch",
+              "step_index": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cd012c7f99786df1a69eb18ae014",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_870edebfc1801870008575d14532",
+                  "source_page": 99,
+                  "quote": "If no, remove the J2 connector from the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_a0a0861b95533b873dc3ce033939",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_595a838da84fcf5abe6da379b91e",
+                  "source_page": 99,
+                  "quote": "If no, check the power board. Skip to step 23."
+                },
+                {
+                  "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                  "source_page": 100,
+                  "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+                },
+                {
+                  "source_anchor": "ev_af450d14e62d538c563f4491817b",
+                  "source_page": 100,
+                  "quote": "If VBUS or compressor-enable voltage is present on the power board but the other is not, replace the power"
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "Power board (PCB2)",
+            "description": "Power board tested for VBUS and compressor-enable voltage.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_d90d4b038f23cacf6022bcd1337f",
+                "source_page": 96,
+                "quote": "Faulty power board (PCB2)"
+              },
+              {
+                "source_anchor": "ev_0976bdff30be82a68dc02815b1c5",
+                "source_page": 100,
+                "quote": "Check VBUS on the power board"
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_af450d14e62d538c563f4491817b",
+                "source_page": 100,
+                "quote": "replace the power"
+              },
+              {
+                "source_anchor": "ev_f96004a6446e336f738bc9e6149a",
+                "source_page": 100,
+                "quote": "board."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "inspection_steps[1].claim_evidence[2]",
+            "message": "inspection_steps[1].claim_evidence[2]: quote is not an exact lexical span of anchor 'ev_6e6763480eec41910866200364ec' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_26fdf6e66dfe81e6650d21a819936f2afbb28eeadc49d1ebd566a0c0864cd8c4",
+        "branch_lineage_id": "dbranch_5565d5827c987ea392238bf5d0636b8f4da7913d9a0d88ee31cb71c57d950779",
+        "record_window_id": "",
+        "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+        "branch_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+        "evidence_ids": [
+          "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "ev_1dc07952e5742c6f46f65635fc8a",
+          "ev_1f4d282853ed2d55bef623f0eef8",
+          "ev_24c1a4c302c518aac7f76889125e",
+          "ev_2897c3a44dc789d6ec7ac33d67ca",
+          "ev_349097fa5d305b77a7b92e508120",
+          "ev_3cc0d6982268a6c15d5d95a7b366",
+          "ev_57dd21fa5b91bc6453d42535fac6",
+          "ev_61be567630d3f8cdb4bc529c4823",
+          "ev_6ae57bf36c0aaa6962e2569bafae",
+          "ev_6af3e19cdddfde87262b755bdcf4",
+          "ev_6b944c84669506df76657dd60831",
+          "ev_6eab23e068d31aaba603a794ab69",
+          "ev_7bf6b96929616886ce8de17fb599",
+          "ev_a5bc46c4b27e1f45f814c28e6e8c",
+          "ev_bd5f8cb001e684f1611bee2f38ad",
+          "ev_da1bc8f5269e3c40019f39fcce68",
+          "ev_e7077c9ff7587912b5ecdf049409"
+        ],
+        "resolved_evidence_ids": [
+          "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "ev_1dc07952e5742c6f46f65635fc8a",
+          "ev_1f4d282853ed2d55bef623f0eef8",
+          "ev_24c1a4c302c518aac7f76889125e",
+          "ev_2897c3a44dc789d6ec7ac33d67ca",
+          "ev_349097fa5d305b77a7b92e508120",
+          "ev_3cc0d6982268a6c15d5d95a7b366",
+          "ev_57dd21fa5b91bc6453d42535fac6",
+          "ev_61be567630d3f8cdb4bc529c4823",
+          "ev_6ae57bf36c0aaa6962e2569bafae",
+          "ev_6af3e19cdddfde87262b755bdcf4",
+          "ev_6b944c84669506df76657dd60831",
+          "ev_6eab23e068d31aaba603a794ab69",
+          "ev_7bf6b96929616886ce8de17fb599",
+          "ev_a5bc46c4b27e1f45f814c28e6e8c",
+          "ev_bd5f8cb001e684f1611bee2f38ad",
+          "ev_da1bc8f5269e3c40019f39fcce68",
+          "ev_e7077c9ff7587912b5ecdf049409"
+        ],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_0b87a1e934ae5d429a19a0ff2e7c",
+            "ev_3cc0d6982268a6c15d5d95a7b366",
+            "ev_f777cf5415351056a711fb8bfbcd",
+            "ev_d90d4b038f23cacf6022bcd1337f",
+            "ev_da1bc8f5269e3c40019f39fcce68",
+            "ev_24c1a4c302c518aac7f76889125e",
+            "ev_a5bc46c4b27e1f45f814c28e6e8c",
+            "ev_57dd21fa5b91bc6453d42535fac6",
+            "ev_6b944c84669506df76657dd60831",
+            "ev_7bf6b96929616886ce8de17fb599",
+            "ev_700a025bf79fd7026914b2579fe3",
+            "ev_2897c3a44dc789d6ec7ac33d67ca",
+            "ev_1f4d282853ed2d55bef623f0eef8",
+            "ev_6ae57bf36c0aaa6962e2569bafae",
+            "ev_6af3e19cdddfde87262b755bdcf4"
+          ],
+          "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "branch_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+              "description": "Both fault LEDs illuminate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                },
+                {
+                  "source_anchor": "ev_3cc0d6982268a6c15d5d95a7b366",
+                  "source_page": 96,
+                  "quote": "Faulty internal compressor"
+                },
+                {
+                  "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "source_page": 97,
+                  "quote": "If no, replace the internal compressor."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty internal compressor",
+            "description": "The internal compressor does not run and air does not blow from the torch during the stated test.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_3cc0d6982268a6c15d5d95a7b366",
+                "source_page": 96,
+                "quote": "Faulty internal compressor"
+              },
+              {
+                "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+                "source_page": 97,
+                "quote": "Is the compressor running, and is air blowing from the torch?"
+              },
+              {
+                "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                "source_page": 97,
+                "quote": "If no, replace the internal compressor."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the internal compressor",
+              "description": "Replace the internal compressor.",
+              "instruction_text": "If the compressor is not running and air is not blowing from the torch, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push the solenoid valve back into place between both clips from the center panel.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "source_page": 97,
+                  "quote": "If no, replace the internal compressor."
+                },
+                {
+                  "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "source_page": 97,
+                  "quote": "See Replace the internal compressor on page 169. Be sure to push"
+                },
+                {
+                  "source_anchor": "ev_6af3e19cdddfde87262b755bdcf4",
+                  "source_page": 97,
+                  "quote": "the solenoid valve back into place between both clips from the center panel."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+                  "source_page": 97,
+                  "quote": "Is the compressor running, and is air blowing from the torch?"
+                },
+                {
+                  "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "source_page": 97,
+                  "quote": "If no, replace the internal compressor."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Quickly tap the torch trigger to force gas flow without firing an arc, then watch the green diagnostic LED (D5) on the compressor-driver board. If it illuminates, check the internal compressor and skip to step 10.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_da1bc8f5269e3c40019f39fcce68",
+                  "source_page": 96,
+                  "quote": "Quickly tap the torch trigger to force gas flow without firing an arc, then watch the green diagnostic LED (D5)"
+                },
+                {
+                  "source_anchor": "ev_24c1a4c302c518aac7f76889125e",
+                  "source_page": 96,
+                  "quote": "If yes, check the internal compressor. Skip to"
+                },
+                {
+                  "source_anchor": "ev_61be567630d3f8cdb4bc529c4823",
+                  "source_page": 96,
+                  "quote": "step 10."
+                }
+              ]
+            },
+            {
+              "instruction_text": "If D5 does not illuminate, continue with the next step: set the power switch to OFF, remove the J2 connector from the compressor-driver board, set the switch to ON, and repeat the torch-trigger test while watching D5. If D5 illuminates, check the internal compressor and continue with the next step.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_a5bc46c4b27e1f45f814c28e6e8c",
+                  "source_page": 96,
+                  "quote": "If no, continue with the next step."
+                },
+                {
+                  "source_anchor": "ev_bd5f8cb001e684f1611bee2f38ad",
+                  "source_page": 96,
+                  "quote": "Set the power switch to OFF (O)."
+                },
+                {
+                  "source_anchor": "ev_57dd21fa5b91bc6453d42535fac6",
+                  "source_page": 97,
+                  "quote": "Remove the J2 connector from the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_349097fa5d305b77a7b92e508120",
+                  "source_page": 97,
+                  "quote": "Set the power switch to ON (I)."
+                },
+                {
+                  "source_anchor": "ev_6b944c84669506df76657dd60831",
+                  "source_page": 97,
+                  "quote": "Quickly tap the torch trigger, then watch the green diagnostic LED (D5) on the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_7bf6b96929616886ce8de17fb599",
+                  "source_page": 97,
+                  "quote": "If yes, check the internal compressor. Continue"
+                },
+                {
+                  "source_anchor": "ev_1dc07952e5742c6f46f65635fc8a",
+                  "source_page": 97,
+                  "quote": "with the next step."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Set the power switch to OFF. On the fan side, free the solenoid valve from its right-side clip and tilt it to expose the gas shut-off override button. Connect the internal compressor to an external 12 VDC power source. Hold down the override button, quickly tap the torch trigger, and check whether the compressor runs and air blows from the torch.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_6eab23e068d31aaba603a794ab69",
+                  "source_page": 97,
+                  "quote": "Set the power switch to OFF (O)."
+                },
+                {
+                  "source_anchor": "ev_e7077c9ff7587912b5ecdf049409",
+                  "source_page": 97,
+                  "quote": "pull back the clip on the right side of the solenoid valve, and work the valve free"
+                },
+                {
+                  "source_anchor": "ev_2897c3a44dc789d6ec7ac33d67ca",
+                  "source_page": 97,
+                  "quote": "Connect the internal compressor to an external 12 VDC power source"
+                },
+                {
+                  "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+                  "source_page": 97,
+                  "quote": "Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "The failure branch is reached if D5 illuminates during the initial test, or if D5 does not illuminate initially, J2 is disconnected, and D5 illuminates on the repeated test; in either case, the compressor test then finds that the compressor is not running and air is not blowing from the torch.",
+              "applies_to": "branch",
+              "step_index": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_da1bc8f5269e3c40019f39fcce68",
+                  "source_page": 96,
+                  "quote": "Does the LED illuminate while the torch is being fired?"
+                },
+                {
+                  "source_anchor": "ev_24c1a4c302c518aac7f76889125e",
+                  "source_page": 96,
+                  "quote": "If yes, check the internal compressor. Skip to"
+                },
+                {
+                  "source_anchor": "ev_61be567630d3f8cdb4bc529c4823",
+                  "source_page": 96,
+                  "quote": "step 10."
+                },
+                {
+                  "source_anchor": "ev_a5bc46c4b27e1f45f814c28e6e8c",
+                  "source_page": 96,
+                  "quote": "If no, continue with the next step."
+                },
+                {
+                  "source_anchor": "ev_6b944c84669506df76657dd60831",
+                  "source_page": 97,
+                  "quote": "Does the LED illuminate while the torch is being fired?"
+                },
+                {
+                  "source_anchor": "ev_7bf6b96929616886ce8de17fb599",
+                  "source_page": 97,
+                  "quote": "If yes, check the internal compressor. Continue"
+                },
+                {
+                  "source_anchor": "ev_1dc07952e5742c6f46f65635fc8a",
+                  "source_page": 97,
+                  "quote": "with the next step."
+                },
+                {
+                  "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+                  "source_page": 97,
+                  "quote": "Is the compressor running, and is air blowing from the torch?"
+                },
+                {
+                  "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "source_page": 97,
+                  "quote": "If no, replace the internal compressor."
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "Internal compressor",
+            "description": "Internal compressor tested with an external 12 VDC power source.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_2897c3a44dc789d6ec7ac33d67ca",
+                "source_page": 97,
+                "quote": "Connect the internal compressor to an external 12 VDC power source"
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                "source_page": 97,
+                "quote": "replace the internal compressor."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": {
+          "record_lineage_id": "drec_26fdf6e66dfe81e6650d21a819936f2afbb28eeadc49d1ebd566a0c0864cd8c4",
+          "branch_lineage_id": "dbranch_5565d5827c987ea392238bf5d0636b8f4da7913d9a0d88ee31cb71c57d950779",
+          "record_window_id": "",
+          "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "branch_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+              "description": "Both fault LEDs illuminate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate",
+                  "evidence_id": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 96,
+                    "section": null,
+                    "quote": "If the internal compressor fault LED and temperature fault LED both illuminate, the root cause may be:",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 2,
+                    "source_block_index": 3,
+                    "bbox": [
+                      42.0,
+                      91.117,
+                      472.475,
+                      101.077
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate",
+                  "evidence_id": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 96,
+                    "section": null,
+                    "quote": "If the internal compressor fault LED and temperature fault LED both illuminate, the root cause may be:",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 2,
+                    "source_block_index": 3,
+                    "bbox": [
+                      42.0,
+                      91.117,
+                      472.475,
+                      101.077
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_3cc0d6982268a6c15d5d95a7b366",
+                  "source_page": 96,
+                  "quote": "Faulty internal compressor",
+                  "evidence_id": "ev_3cc0d6982268a6c15d5d95a7b366",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 96,
+                    "section": null,
+                    "quote": "\nFaulty internal compressor",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 3,
+                    "source_block_index": 4,
+                    "bbox": [
+                      42.0,
+                      109.117,
+                      171.596,
+                      119.077
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "source_page": 97,
+                  "quote": "If no, replace the internal compressor.",
+                  "evidence_id": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 22,
+                    "source_block_index": 14,
+                    "bbox": [
+                      82.472,
+                      649.927,
+                      570.083,
+                      660.349
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty internal compressor",
+            "description": "The internal compressor does not run and air does not blow from the torch during the stated test.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+                "source_page": 97,
+                "quote": "Is the compressor running, and is air blowing from the torch?",
+                "evidence_id": "ev_1f4d282853ed2d55bef623f0eef8",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 97,
+                  "section": null,
+                  "quote": "13. Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger. Is the \ncompressor running, and is air blowing from the torch?",
+                  "extraction_method": "native_text",
+                  "printed_page": null,
+                  "block_index": 20,
+                  "source_block_index": 12,
+                  "bbox": [
+                    60.281,
+                    602.221,
+                    552.927,
+                    624.183
+                  ],
+                  "table_index": null,
+                  "row_index": null,
+                  "ocr_region_index": null
+                }
+              },
+              {
+                "source_anchor": "ev_3cc0d6982268a6c15d5d95a7b366",
+                "source_page": 96,
+                "quote": "Faulty internal compressor",
+                "evidence_id": "ev_3cc0d6982268a6c15d5d95a7b366",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 96,
+                  "section": null,
+                  "quote": "\nFaulty internal compressor",
+                  "extraction_method": "native_text",
+                  "printed_page": null,
+                  "block_index": 3,
+                  "source_block_index": 4,
+                  "bbox": [
+                    42.0,
+                    109.117,
+                    171.596,
+                    119.077
+                  ],
+                  "table_index": null,
+                  "row_index": null,
+                  "ocr_region_index": null
+                }
+              },
+              {
+                "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                "source_page": 97,
+                "quote": "If no, replace the internal compressor.",
+                "evidence_id": "ev_6ae57bf36c0aaa6962e2569bafae",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 97,
+                  "section": null,
+                  "quote": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push",
+                  "extraction_method": "native_text",
+                  "printed_page": null,
+                  "block_index": 22,
+                  "source_block_index": 14,
+                  "bbox": [
+                    82.472,
+                    649.927,
+                    570.083,
+                    660.349
+                  ],
+                  "table_index": null,
+                  "row_index": null,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the internal compressor",
+              "description": "Replace the internal compressor.",
+              "instruction_text": "If the compressor is not running and air is not blowing from the torch, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push the solenoid valve back into place between both clips from the center panel.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "source_page": 97,
+                  "quote": "If no, replace the internal compressor.",
+                  "evidence_id": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 22,
+                    "source_block_index": 14,
+                    "bbox": [
+                      82.472,
+                      649.927,
+                      570.083,
+                      660.349
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "source_page": 97,
+                  "quote": "See Replace the internal compressor on page 169. Be sure to push",
+                  "evidence_id": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 22,
+                    "source_block_index": 14,
+                    "bbox": [
+                      82.472,
+                      649.927,
+                      570.083,
+                      660.349
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_6af3e19cdddfde87262b755bdcf4",
+                  "source_page": 97,
+                  "quote": "the solenoid valve back into place between both clips from the center panel.",
+                  "evidence_id": "ev_6af3e19cdddfde87262b755bdcf4",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "the solenoid valve back into place between both clips from the center panel.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 23,
+                    "source_block_index": 15,
+                    "bbox": [
+                      95.968,
+                      662.28,
+                      417.714,
+                      672.24
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+                  "source_page": 97,
+                  "quote": "Is the compressor running, and is air blowing from the torch?",
+                  "evidence_id": "ev_1f4d282853ed2d55bef623f0eef8",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "13. Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger. Is the \ncompressor running, and is air blowing from the torch?",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 20,
+                    "source_block_index": 12,
+                    "bbox": [
+                      60.281,
+                      602.221,
+                      552.927,
+                      624.183
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "source_page": 97,
+                  "quote": "If no, replace the internal compressor.",
+                  "evidence_id": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 22,
+                    "source_block_index": 14,
+                    "bbox": [
+                      82.472,
+                      649.927,
+                      570.083,
+                      660.349
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Quickly tap the torch trigger to force gas flow without firing an arc, then watch the green diagnostic LED (D5) on the compressor-driver board. If it illuminates, check the internal compressor and skip to step 10.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_24c1a4c302c518aac7f76889125e",
+                  "source_page": 96,
+                  "quote": "If yes, check the internal compressor. Skip to",
+                  "evidence_id": "ev_24c1a4c302c518aac7f76889125e",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 96,
+                    "section": null,
+                    "quote": "a. If yes, check the internal compressor. Skip to",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 20,
+                    "source_block_index": 16,
+                    "bbox": [
+                      64.474,
+                      584.216,
+                      269.991,
+                      594.287
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_61be567630d3f8cdb4bc529c4823",
+                  "source_page": 96,
+                  "quote": "step 10.",
+                  "evidence_id": "ev_61be567630d3f8cdb4bc529c4823",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 96,
+                    "section": null,
+                    "quote": "step 10.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 21,
+                    "source_block_index": 17,
+                    "bbox": [
+                      77.97,
+                      596.145,
+                      112.053,
+                      606.178
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_da1bc8f5269e3c40019f39fcce68",
+                  "source_page": 96,
+                  "quote": "Quickly tap the torch trigger to force gas flow without firing an arc, then watch the green diagnostic LED (D5)",
+                  "evidence_id": "ev_da1bc8f5269e3c40019f39fcce68",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 96,
+                    "section": null,
+                    "quote": "5. Quickly tap the torch trigger to force gas flow \nwithout firing an arc, then watch the green \ndiagnostic LED (D5)\n on the compressor-driver \nboard. Does the LED illuminate while the torch is \nbeing fired?",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 18,
+                    "source_block_index": 15,
+                    "bbox": [
+                      46.477,
+                      517.913,
+                      272.751,
+                      576.179
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            },
+            {
+              "instruction_text": "If D5 does not illuminate, continue with the next step: set the power switch to OFF, remove the J2 connector from the compressor-driver board, set the switch to ON, and repeat the torch-trigger test while watching D5. If D5 illuminates, check the internal compressor and continue with the next step.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1dc07952e5742c6f46f65635fc8a",
+                  "source_page": 97,
+                  "quote": "with the next step.",
+                  "evidence_id": "ev_1dc07952e5742c6f46f65635fc8a",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "with the next step.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 6,
+                    "source_block_index": 6,
+                    "bbox": [
+                      95.988,
+                      191.451,
+                      173.002,
+                      201.411
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_349097fa5d305b77a7b92e508120",
+                  "source_page": 97,
+                  "quote": "Set the power switch to ON (I).",
+                  "evidence_id": "ev_349097fa5d305b77a7b92e508120",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "8. Set the power switch to ON (I).",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 3,
+                    "source_block_index": 3,
+                    "bbox": [
+                      64.505,
+                      101.091,
+                      211.796,
+                      111.513
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_57dd21fa5b91bc6453d42535fac6",
+                  "source_page": 97,
+                  "quote": "Remove the J2 connector from the compressor-driver board.",
+                  "evidence_id": "ev_57dd21fa5b91bc6453d42535fac6",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "7. Remove the J2 connector\n from the \ncompressor-driver board.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 1,
+                    "source_block_index": 2,
+                    "bbox": [
+                      65.64,
+                      65.437,
+                      240.394,
+                      87.399
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_6b944c84669506df76657dd60831",
+                  "source_page": 97,
+                  "quote": "Quickly tap the torch trigger, then watch the green diagnostic LED (D5) on the compressor-driver board.",
+                  "evidence_id": "ev_6b944c84669506df76657dd60831",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "9. Quickly tap the torch trigger, then watch the green \ndiagnostic LED (D5) on the compressor-driver \nboard. Does the LED illuminate while the torch is \nbeing fired?",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 4,
+                    "source_block_index": 4,
+                    "bbox": [
+                      64.495,
+                      125.446,
+                      293.764,
+                      171.412
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_7bf6b96929616886ce8de17fb599",
+                  "source_page": 97,
+                  "quote": "If yes, check the internal compressor. Continue",
+                  "evidence_id": "ev_7bf6b96929616886ce8de17fb599",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "a. If yes, check the internal compressor. Continue",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 5,
+                    "source_block_index": 5,
+                    "bbox": [
+                      82.492,
+                      179.449,
+                      296.959,
+                      189.52
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_a5bc46c4b27e1f45f814c28e6e8c",
+                  "source_page": 96,
+                  "quote": "If no, continue with the next step.",
+                  "evidence_id": "ev_a5bc46c4b27e1f45f814c28e6e8c",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 96,
+                    "section": null,
+                    "quote": "b. If no, continue with the next step.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 22,
+                    "source_block_index": 18,
+                    "bbox": [
+                      64.474,
+                      614.216,
+                      217.446,
+                      624.286
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_bd5f8cb001e684f1611bee2f38ad",
+                  "source_page": 96,
+                  "quote": "Set the power switch to OFF (O).",
+                  "evidence_id": "ev_bd5f8cb001e684f1611bee2f38ad",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 96,
+                    "section": null,
+                    "quote": "6. Set the power switch to OFF (O).",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 24,
+                    "source_block_index": 20,
+                    "bbox": [
+                      46.497,
+                      701.868,
+                      202.553,
+                      712.29
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            },
+            {
+              "instruction_text": "Set the power switch to OFF. On the fan side, free the solenoid valve from its right-side clip and tilt it to expose the gas shut-off override button. Connect the internal compressor to an external 12 VDC power source. Hold down the override button, quickly tap the torch trigger, and check whether the compressor runs and air blows from the torch.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+                  "source_page": 97,
+                  "quote": "Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger.",
+                  "evidence_id": "ev_1f4d282853ed2d55bef623f0eef8",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "13. Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger. Is the \ncompressor running, and is air blowing from the torch?",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 20,
+                    "source_block_index": 12,
+                    "bbox": [
+                      60.281,
+                      602.221,
+                      552.927,
+                      624.183
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_2897c3a44dc789d6ec7ac33d67ca",
+                  "source_page": 97,
+                  "quote": "Connect the internal compressor to an external 12 VDC power source",
+                  "evidence_id": "ev_2897c3a44dc789d6ec7ac33d67ca",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "12. Connect the internal compressor to an external 12 VDC power source (for example, a car battery).",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 19,
+                    "source_block_index": 11,
+                    "bbox": [
+                      60.281,
+                      578.218,
+                      494.026,
+                      588.288
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_6eab23e068d31aaba603a794ab69",
+                  "source_page": 97,
+                  "quote": "Set the power switch to OFF (O).",
+                  "evidence_id": "ev_6eab23e068d31aaba603a794ab69",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "10. Set the power switch to OFF (O).",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 16,
+                    "source_block_index": 9,
+                    "bbox": [
+                      59.983,
+                      505.616,
+                      220.541,
+                      516.038
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_e7077c9ff7587912b5ecdf049409",
+                  "source_page": 97,
+                  "quote": "pull back the clip on the right side of the solenoid valve, and work the valve free",
+                  "evidence_id": "ev_e7077c9ff7587912b5ecdf049409",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "11. On the fan side of the power supply, pull back the clip on the right side of the solenoid valve, and work the valve free \nfrom that clip \n. Carefully tilt the top of the valve towards you until you can see the gas shut-off override button\n. \nSee Figure 19.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 17,
+                    "source_block_index": 10,
+                    "bbox": [
+                      60.7,
+                      529.972,
+                      570.118,
+                      564.174
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "The failure branch is reached if D5 illuminates during the initial test, or if D5 does not illuminate initially, J2 is disconnected, and D5 illuminates on the repeated test; in either case, the compressor test then finds that the compressor is not running and air is not blowing from the torch.",
+              "applies_to": "branch",
+              "step_index": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1dc07952e5742c6f46f65635fc8a",
+                  "source_page": 97,
+                  "quote": "with the next step.",
+                  "evidence_id": "ev_1dc07952e5742c6f46f65635fc8a",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "with the next step.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 6,
+                    "source_block_index": 6,
+                    "bbox": [
+                      95.988,
+                      191.451,
+                      173.002,
+                      201.411
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+                  "source_page": 97,
+                  "quote": "Is the compressor running, and is air blowing from the torch?",
+                  "evidence_id": "ev_1f4d282853ed2d55bef623f0eef8",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "13. Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger. Is the \ncompressor running, and is air blowing from the torch?",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 20,
+                    "source_block_index": 12,
+                    "bbox": [
+                      60.281,
+                      602.221,
+                      552.927,
+                      624.183
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_24c1a4c302c518aac7f76889125e",
+                  "source_page": 96,
+                  "quote": "If yes, check the internal compressor. Skip to",
+                  "evidence_id": "ev_24c1a4c302c518aac7f76889125e",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 96,
+                    "section": null,
+                    "quote": "a. If yes, check the internal compressor. Skip to",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 20,
+                    "source_block_index": 16,
+                    "bbox": [
+                      64.474,
+                      584.216,
+                      269.991,
+                      594.287
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_61be567630d3f8cdb4bc529c4823",
+                  "source_page": 96,
+                  "quote": "step 10.",
+                  "evidence_id": "ev_61be567630d3f8cdb4bc529c4823",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 96,
+                    "section": null,
+                    "quote": "step 10.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 21,
+                    "source_block_index": 17,
+                    "bbox": [
+                      77.97,
+                      596.145,
+                      112.053,
+                      606.178
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "source_page": 97,
+                  "quote": "If no, replace the internal compressor.",
+                  "evidence_id": "ev_6ae57bf36c0aaa6962e2569bafae",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 22,
+                    "source_block_index": 14,
+                    "bbox": [
+                      82.472,
+                      649.927,
+                      570.083,
+                      660.349
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_6b944c84669506df76657dd60831",
+                  "source_page": 97,
+                  "quote": "Does the LED illuminate while the torch is being fired?",
+                  "evidence_id": "ev_6b944c84669506df76657dd60831",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "9. Quickly tap the torch trigger, then watch the green \ndiagnostic LED (D5) on the compressor-driver \nboard. Does the LED illuminate while the torch is \nbeing fired?",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 4,
+                    "source_block_index": 4,
+                    "bbox": [
+                      64.495,
+                      125.446,
+                      293.764,
+                      171.412
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_7bf6b96929616886ce8de17fb599",
+                  "source_page": 97,
+                  "quote": "If yes, check the internal compressor. Continue",
+                  "evidence_id": "ev_7bf6b96929616886ce8de17fb599",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 97,
+                    "section": null,
+                    "quote": "a. If yes, check the internal compressor. Continue",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 5,
+                    "source_block_index": 5,
+                    "bbox": [
+                      82.492,
+                      179.449,
+                      296.959,
+                      189.52
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_a5bc46c4b27e1f45f814c28e6e8c",
+                  "source_page": 96,
+                  "quote": "If no, continue with the next step.",
+                  "evidence_id": "ev_a5bc46c4b27e1f45f814c28e6e8c",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 96,
+                    "section": null,
+                    "quote": "b. If no, continue with the next step.",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 22,
+                    "source_block_index": 18,
+                    "bbox": [
+                      64.474,
+                      614.216,
+                      217.446,
+                      624.286
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                },
+                {
+                  "source_anchor": "ev_da1bc8f5269e3c40019f39fcce68",
+                  "source_page": 96,
+                  "quote": "Does the LED illuminate while the torch is being fired?",
+                  "evidence_id": "ev_da1bc8f5269e3c40019f39fcce68",
+                  "locator": {
+                    "kind": "pdf",
+                    "page": 96,
+                    "section": null,
+                    "quote": "5. Quickly tap the torch trigger to force gas flow \nwithout firing an arc, then watch the green \ndiagnostic LED (D5)\n on the compressor-driver \nboard. Does the LED illuminate while the torch is \nbeing fired?",
+                    "extraction_method": "native_text",
+                    "printed_page": null,
+                    "block_index": 18,
+                    "source_block_index": 15,
+                    "bbox": [
+                      46.477,
+                      517.913,
+                      272.751,
+                      576.179
+                    ],
+                    "table_index": null,
+                    "row_index": null,
+                    "ocr_region_index": null
+                  }
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "Internal compressor",
+            "description": "Internal compressor tested with an external 12 VDC power source.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_2897c3a44dc789d6ec7ac33d67ca",
+                "source_page": 97,
+                "quote": "Connect the internal compressor to an external 12 VDC power source",
+                "evidence_id": "ev_2897c3a44dc789d6ec7ac33d67ca",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 97,
+                  "section": null,
+                  "quote": "12. Connect the internal compressor to an external 12 VDC power source (for example, a car battery).",
+                  "extraction_method": "native_text",
+                  "printed_page": null,
+                  "block_index": 19,
+                  "source_block_index": 11,
+                  "bbox": [
+                    60.281,
+                    578.218,
+                    494.026,
+                    588.288
+                  ],
+                  "table_index": null,
+                  "row_index": null,
+                  "ocr_region_index": null
+                }
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_6ae57bf36c0aaa6962e2569bafae",
+                "source_page": 97,
+                "quote": "replace the internal compressor.",
+                "evidence_id": "ev_6ae57bf36c0aaa6962e2569bafae",
+                "locator": {
+                  "kind": "pdf",
+                  "page": 97,
+                  "section": null,
+                  "quote": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push",
+                  "extraction_method": "native_text",
+                  "printed_page": null,
+                  "block_index": 22,
+                  "source_block_index": 14,
+                  "bbox": [
+                    82.472,
+                    649.927,
+                    570.083,
+                    660.349
+                  ],
+                  "table_index": null,
+                  "row_index": null,
+                  "ocr_region_index": null
+                }
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "compound_negative_condition_strengthened",
+            "path": "conditions",
+            "message": "A negative answer to a compound AND question was paraphrased as two negative facts; preserve the whole question and its outcome."
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_26fdf6e66dfe81e6650d21a819936f2afbb28eeadc49d1ebd566a0c0864cd8c4",
+        "branch_lineage_id": "dbranch_9200f69b0a6370c7e538cfe71198541b1071513c9c2d540cc5090508becdf752",
+        "record_window_id": "",
+        "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+        "branch_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+        "evidence_ids": [
+          "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "ev_1f4d282853ed2d55bef623f0eef8",
+          "ev_2897c3a44dc789d6ec7ac33d67ca",
+          "ev_44bd3afbcebb92a5c6aa7fa58622",
+          "ev_57dd21fa5b91bc6453d42535fac6",
+          "ev_6b944c84669506df76657dd60831",
+          "ev_73f51788c0552c3041bf43f1d9db",
+          "ev_7bf6b96929616886ce8de17fb599",
+          "ev_7d0b9cb90d9b889589d42fabf947",
+          "ev_870edebfc1801870008575d14532",
+          "ev_a0a0861b95533b873dc3ce033939",
+          "ev_a5bc46c4b27e1f45f814c28e6e8c",
+          "ev_cd012c7f99786df1a69eb18ae014",
+          "ev_d72a596d5b4d05d42195621ff54f",
+          "ev_da1bc8f5269e3c40019f39fcce68",
+          "ev_f04cc32052989fe24332fc728693",
+          "ev_f777cf5415351056a711fb8bfbcd"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_0b87a1e934ae5d429a19a0ff2e7c",
+            "ev_f777cf5415351056a711fb8bfbcd",
+            "ev_da1bc8f5269e3c40019f39fcce68",
+            "ev_24c1a4c302c518aac7f76889125e",
+            "ev_61be567630d3f8cdb4bc529c4823",
+            "ev_a5bc46c4b27e1f45f814c28e6e8c",
+            "ev_57dd21fa5b91bc6453d42535fac6",
+            "ev_6b944c84669506df76657dd60831",
+            "ev_7bf6b96929616886ce8de17fb599",
+            "ev_700a025bf79fd7026914b2579fe3",
+            "ev_2897c3a44dc789d6ec7ac33d67ca",
+            "ev_1f4d282853ed2d55bef623f0eef8",
+            "ev_7d0b9cb90d9b889589d42fabf947",
+            "ev_cd012c7f99786df1a69eb18ae014",
+            "ev_73f51788c0552c3041bf43f1d9db",
+            "ev_870edebfc1801870008575d14532",
+            "ev_a0a0861b95533b873dc3ce033939",
+            "ev_f04cc32052989fe24332fc728693",
+            "ev_595a838da84fcf5abe6da379b91e",
+            "ev_44bd3afbcebb92a5c6aa7fa58622",
+            "ev_d72a596d5b4d05d42195621ff54f"
+          ],
+          "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "branch_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+              "description": "Both fault LEDs illuminate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                },
+                {
+                  "source_anchor": "ev_f777cf5415351056a711fb8bfbcd",
+                  "source_page": 96,
+                  "quote": "Faulty compressor-driver board (PCB3)"
+                },
+                {
+                  "source_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+                  "source_page": 99,
+                  "quote": "If yes, replace the compressor-driver board."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty compressor-driver board (PCB3)",
+            "description": "Compressor-enable voltage is present at J1 on the compressor-driver board during the stated test.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_f777cf5415351056a711fb8bfbcd",
+                "source_page": 96,
+                "quote": "Faulty compressor-driver board (PCB3)"
+              },
+              {
+                "source_anchor": "ev_44bd3afbcebb92a5c6aa7fa58622",
+                "source_page": 99,
+                "quote": "Is compressor-enable voltage present (3 VDC)?"
+              },
+              {
+                "source_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+                "source_page": 99,
+                "quote": "If yes, replace the compressor-driver board."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the compressor-driver board",
+              "description": "Replace the compressor-driver board.",
+              "instruction_text": "If compressor-enable voltage (3 VDC) is present on J1, replace the compressor-driver board. See Replace the compressor-driver board on page 129.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+                  "source_page": 99,
+                  "quote": "If yes, replace the compressor-driver board. See Replace the compressor-driver board on page 129."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_44bd3afbcebb92a5c6aa7fa58622",
+                  "source_page": 99,
+                  "quote": "Is compressor-enable voltage present (3 VDC)?"
+                },
+                {
+                  "source_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+                  "source_page": 99,
+                  "quote": "If yes, replace the compressor-driver board."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Quickly tap the torch trigger and watch the green diagnostic LED (D5). If D5 does not illuminate, set the switch to OFF, remove J2, set the switch to ON, and repeat the trigger test. Continue to check the compressor if D5 illuminates on the repeat test.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_da1bc8f5269e3c40019f39fcce68",
+                  "source_page": 96,
+                  "quote": "Quickly tap the torch trigger to force gas flow without firing an arc, then watch the green diagnostic LED (D5)"
+                },
+                {
+                  "source_anchor": "ev_a5bc46c4b27e1f45f814c28e6e8c",
+                  "source_page": 96,
+                  "quote": "If no, continue with the next step."
+                },
+                {
+                  "source_anchor": "ev_57dd21fa5b91bc6453d42535fac6",
+                  "source_page": 97,
+                  "quote": "Remove the J2 connector from the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_6b944c84669506df76657dd60831",
+                  "source_page": 97,
+                  "quote": "Quickly tap the torch trigger, then watch the green diagnostic LED (D5) on the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_7bf6b96929616886ce8de17fb599",
+                  "source_page": 97,
+                  "quote": "If yes, check the internal compressor."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Connect the internal compressor to an external 12 VDC power source, hold down the gas shut-off override button, quickly tap the torch trigger, and check whether the compressor runs and air blows from the torch. If yes, check the compressor-driver board and continue.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_2897c3a44dc789d6ec7ac33d67ca",
+                  "source_page": 97,
+                  "quote": "Connect the internal compressor to an external 12 VDC power source"
+                },
+                {
+                  "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+                  "source_page": 97,
+                  "quote": "Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger."
+                },
+                {
+                  "source_anchor": "ev_7d0b9cb90d9b889589d42fabf947",
+                  "source_page": 97,
+                  "quote": "If yes, check the compressor-driver board. Continue with the next step."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Check VBUS (nominal 375 VDC) on the J3 connector. If present, check the compressor-enable voltage on the compressor-driver board; if absent, disconnect J2 and repeat the VBUS check. If VBUS is then present, proceed to check compressor-enable voltage.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cd012c7f99786df1a69eb18ae014",
+                  "source_page": 99,
+                  "quote": "Check VBUS on the red and black wires on the J3 connector (pin 1 and pin 4). Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_73f51788c0552c3041bf43f1d9db",
+                  "source_page": 99,
+                  "quote": "If yes, check the compressor-enable voltage on the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_870edebfc1801870008575d14532",
+                  "source_page": 99,
+                  "quote": "If no, remove the J2 connector from the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_a0a0861b95533b873dc3ce033939",
+                  "source_page": 99,
+                  "quote": "Repeat the previous step to check VBUS with J2 disconnected. Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_f04cc32052989fe24332fc728693",
+                  "source_page": 99,
+                  "quote": "If yes, check the compressor-enable voltage on the compressor-driver board."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "The compressor-driver-board replacement branch is reached after the internal-compressor test finds the compressor running and air blowing, and VBUS is present at J3, or VBUS is absent with J2 connected but present with J2 disconnected; compressor-enable voltage (3 VDC) is then present at J1.",
+              "applies_to": "branch",
+              "step_index": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_1f4d282853ed2d55bef623f0eef8",
+                  "source_page": 97,
+                  "quote": "Is the compressor running, and is air blowing from the torch?"
+                },
+                {
+                  "source_anchor": "ev_7d0b9cb90d9b889589d42fabf947",
+                  "source_page": 97,
+                  "quote": "If yes, check the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_cd012c7f99786df1a69eb18ae014",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_73f51788c0552c3041bf43f1d9db",
+                  "source_page": 99,
+                  "quote": "If yes, check the compressor-enable voltage on the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_870edebfc1801870008575d14532",
+                  "source_page": 99,
+                  "quote": "If no, remove the J2 connector from the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_a0a0861b95533b873dc3ce033939",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_f04cc32052989fe24332fc728693",
+                  "source_page": 99,
+                  "quote": "If yes, check the compressor-enable voltage on the compressor-driver board. Continue with the next step."
+                },
+                {
+                  "source_anchor": "ev_44bd3afbcebb92a5c6aa7fa58622",
+                  "source_page": 99,
+                  "quote": "Is compressor-enable voltage present (3 VDC)?"
+                },
+                {
+                  "source_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+                  "source_page": 99,
+                  "quote": "If yes, replace the compressor-driver board."
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "Compressor-driver board (PCB3)",
+            "description": "Compressor-driver board whose J1 compressor-enable voltage is tested.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_f777cf5415351056a711fb8bfbcd",
+                "source_page": 96,
+                "quote": "Faulty compressor-driver board (PCB3)"
+              },
+              {
+                "source_anchor": "ev_44bd3afbcebb92a5c6aa7fa58622",
+                "source_page": 99,
+                "quote": "compressor-enable voltage on the J1 connector on the compressor-driver board."
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_d72a596d5b4d05d42195621ff54f",
+                "source_page": 99,
+                "quote": "replace the compressor-driver board."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "inspection_steps[2].claim_evidence[0]",
+            "message": "inspection_steps[2].claim_evidence[0]: quote is not an exact lexical span of anchor 'ev_cd012c7f99786df1a69eb18ae014' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_26fdf6e66dfe81e6650d21a819936f2afbb28eeadc49d1ebd566a0c0864cd8c4",
+        "branch_lineage_id": "dbranch_dd6878657d8862dc8f17723b466425f6ba9b92619bed40dbe880c48ebd4698ed",
+        "record_window_id": "",
+        "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+        "branch_anchor": "ev_0e86a616f25bfa0890b43b0b03dc",
+        "evidence_ids": [
+          "ev_0976bdff30be82a68dc02815b1c5",
+          "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "ev_0e86a616f25bfa0890b43b0b03dc",
+          "ev_4d8ffbc2784aea30d634350c949c",
+          "ev_595a838da84fcf5abe6da379b91e",
+          "ev_5f2165818aa19e72dfea20b335e0",
+          "ev_6e6763480eec41910866200364ec",
+          "ev_870edebfc1801870008575d14532",
+          "ev_a0a0861b95533b873dc3ce033939",
+          "ev_bcf3ad90571db3076a8b342ff9cd",
+          "ev_cd012c7f99786df1a69eb18ae014",
+          "ev_d90d4b038f23cacf6022bcd1337f"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_0b87a1e934ae5d429a19a0ff2e7c",
+            "ev_d90d4b038f23cacf6022bcd1337f",
+            "ev_da1bc8f5269e3c40019f39fcce68",
+            "ev_a5bc46c4b27e1f45f814c28e6e8c",
+            "ev_57dd21fa5b91bc6453d42535fac6",
+            "ev_6b944c84669506df76657dd60831",
+            "ev_700a025bf79fd7026914b2579fe3",
+            "ev_cd012c7f99786df1a69eb18ae014",
+            "ev_870edebfc1801870008575d14532",
+            "ev_a0a0861b95533b873dc3ce033939",
+            "ev_595a838da84fcf5abe6da379b91e",
+            "ev_bcf3ad90571db3076a8b342ff9cd",
+            "ev_0976bdff30be82a68dc02815b1c5",
+            "ev_6e6763480eec41910866200364ec",
+            "ev_5f2165818aa19e72dfea20b335e0",
+            "ev_4d8ffbc2784aea30d634350c949c",
+            "ev_0e86a616f25bfa0890b43b0b03dc"
+          ],
+          "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "branch_anchor": "ev_0e86a616f25bfa0890b43b0b03dc",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+              "description": "Both fault LEDs illuminate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                },
+                {
+                  "source_anchor": "ev_d90d4b038f23cacf6022bcd1337f",
+                  "source_page": 96,
+                  "quote": "Faulty power board (PCB2)"
+                },
+                {
+                  "source_anchor": "ev_4d8ffbc2784aea30d634350c949c",
+                  "source_page": 100,
+                  "quote": "If neither VBUS nor compressor-enable voltage are present on the power board, replace the power board."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty power board (PCB2)",
+            "description": "Neither VBUS nor compressor-enable voltage is present on the power board during the stated isolated test.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_d90d4b038f23cacf6022bcd1337f",
+                "source_page": 96,
+                "quote": "Faulty power board (PCB2)"
+              },
+              {
+                "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                "source_page": 100,
+                "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+              },
+              {
+                "source_anchor": "ev_4d8ffbc2784aea30d634350c949c",
+                "source_page": 100,
+                "quote": "If neither VBUS nor compressor-enable voltage are present on the power board, replace the power board."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the power board",
+              "description": "Replace the power board.",
+              "instruction_text": "If neither VBUS nor compressor-enable voltage is present on the power board, replace the power board. See Replace the power board on page 135.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_4d8ffbc2784aea30d634350c949c",
+                  "source_page": 100,
+                  "quote": "If neither VBUS nor compressor-enable voltage are present on the power board, replace the power board."
+                },
+                {
+                  "source_anchor": "ev_0e86a616f25bfa0890b43b0b03dc",
+                  "source_page": 100,
+                  "quote": "See Replace the power board on page 135."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                  "source_page": 100,
+                  "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+                },
+                {
+                  "source_anchor": "ev_4d8ffbc2784aea30d634350c949c",
+                  "source_page": 100,
+                  "quote": "If neither VBUS nor compressor-enable voltage are present on the power board, replace the power board."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check VBUS (nominal 375 VDC) at J3. If VBUS is absent, remove J2 and repeat the check; if VBUS is still absent, check the power board and continue to the power-board test.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cd012c7f99786df1a69eb18ae014",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_870edebfc1801870008575d14532",
+                  "source_page": 99,
+                  "quote": "If no, remove the J2 connector from the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_a0a0861b95533b873dc3ce033939",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_595a838da84fcf5abe6da379b91e",
+                  "source_page": 99,
+                  "quote": "If no, check the power board. Skip to step 23."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Isolate the power board by removing J1 and J3 connectors from the compressor-driver board. Check VBUS on the power board (nominal 375 VDC), then quickly tap the torch trigger and check compressor-enable voltage at J9 (3 VDC).",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_bcf3ad90571db3076a8b342ff9cd",
+                  "source_page": 100,
+                  "quote": "Remove the J1 and J3 connectors from the compressor-driver board. This isolates the power board."
+                },
+                {
+                  "source_anchor": "ev_0976bdff30be82a68dc02815b1c5",
+                  "source_page": 100,
+                  "quote": "Check VBUS on the power board (nominal 375 VDC bus voltage)"
+                },
+                {
+                  "source_anchor": "ev_6e6763480eec41910866200364ec",
+                  "source_page": 100,
+                  "quote": "Quickly tap the torch trigger, then check compressor-enable voltage at J9 on the power board (3 VDC)."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "This branch is reached when VBUS is absent at the initial J3 check and remains absent with J2 disconnected; after isolating the power board, neither VBUS nor compressor-enable voltage is present on the power board.",
+              "applies_to": "branch",
+              "step_index": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cd012c7f99786df1a69eb18ae014",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_870edebfc1801870008575d14532",
+                  "source_page": 99,
+                  "quote": "If no, remove the J2 connector from the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_a0a0861b95533b873dc3ce033939",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_595a838da84fcf5abe6da379b91e",
+                  "source_page": 99,
+                  "quote": "If no, check the power board. Skip to step 23."
+                },
+                {
+                  "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                  "source_page": 100,
+                  "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+                },
+                {
+                  "source_anchor": "ev_4d8ffbc2784aea30d634350c949c",
+                  "source_page": 100,
+                  "quote": "If neither VBUS nor compressor-enable voltage are present on the power board, replace the power board."
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "Power board (PCB2)",
+            "description": "Power board tested for VBUS and compressor-enable voltage.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_d90d4b038f23cacf6022bcd1337f",
+                "source_page": 96,
+                "quote": "Faulty power board (PCB2)"
+              },
+              {
+                "source_anchor": "ev_0976bdff30be82a68dc02815b1c5",
+                "source_page": 100,
+                "quote": "Check VBUS on the power board"
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_4d8ffbc2784aea30d634350c949c",
+                "source_page": 100,
+                "quote": "replace the power board."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "inspection_steps[1].claim_evidence[2]",
+            "message": "inspection_steps[1].claim_evidence[2]: quote is not an exact lexical span of anchor 'ev_6e6763480eec41910866200364ec' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      },
+      {
+        "record_lineage_id": "drec_26fdf6e66dfe81e6650d21a819936f2afbb28eeadc49d1ebd566a0c0864cd8c4",
+        "branch_lineage_id": "dbranch_ff71c71687890d63a38fc7217ef12348cfcdba9fa4de3eb119d523d5d1bb5e8b",
+        "record_window_id": "",
+        "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+        "branch_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d",
+        "evidence_ids": [
+          "ev_0976bdff30be82a68dc02815b1c5",
+          "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "ev_595a838da84fcf5abe6da379b91e",
+          "ev_5f2165818aa19e72dfea20b335e0",
+          "ev_6e6763480eec41910866200364ec",
+          "ev_7b661df034f369068ce15f97b67e",
+          "ev_870edebfc1801870008575d14532",
+          "ev_a0a0861b95533b873dc3ce033939",
+          "ev_bcf3ad90571db3076a8b342ff9cd",
+          "ev_cd012c7f99786df1a69eb18ae014",
+          "ev_e1fb92349e6d2618dc7568bd1d6d",
+          "ev_f777cf5415351056a711fb8bfbcd"
+        ],
+        "resolved_evidence_ids": [],
+        "candidate": {
+          "record_window_id": "",
+          "allowed_source_anchors": [
+            "ev_0b87a1e934ae5d429a19a0ff2e7c",
+            "ev_d90d4b038f23cacf6022bcd1337f",
+            "ev_da1bc8f5269e3c40019f39fcce68",
+            "ev_a5bc46c4b27e1f45f814c28e6e8c",
+            "ev_57dd21fa5b91bc6453d42535fac6",
+            "ev_6b944c84669506df76657dd60831",
+            "ev_700a025bf79fd7026914b2579fe3",
+            "ev_cd012c7f99786df1a69eb18ae014",
+            "ev_870edebfc1801870008575d14532",
+            "ev_a0a0861b95533b873dc3ce033939",
+            "ev_595a838da84fcf5abe6da379b91e",
+            "ev_253cb953feaf91f9a0ae5dc3da02",
+            "ev_2fff6f4cc5b6931922083b252983",
+            "ev_bcf3ad90571db3076a8b342ff9cd",
+            "ev_0976bdff30be82a68dc02815b1c5",
+            "ev_6e6763480eec41910866200364ec",
+            "ev_5f2165818aa19e72dfea20b335e0",
+            "ev_7b661df034f369068ce15f97b67e",
+            "ev_e1fb92349e6d2618dc7568bd1d6d"
+          ],
+          "record_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+          "branch_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d",
+          "indicators": [
+            {
+              "kind": "symptom",
+              "code": null,
+              "name": "Internal compressor fault LED and temperature fault LED both illuminate",
+              "description": "Both fault LEDs illuminate.",
+              "severity": "Unknown",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                }
+              ],
+              "failure_link_evidence": [
+                {
+                  "source_anchor": "ev_0b87a1e934ae5d429a19a0ff2e7c",
+                  "source_page": 96,
+                  "quote": "If the internal compressor fault LED and temperature fault LED both illuminate"
+                },
+                {
+                  "source_anchor": "ev_f777cf5415351056a711fb8bfbcd",
+                  "source_page": 96,
+                  "quote": "Faulty compressor-driver board (PCB3)"
+                },
+                {
+                  "source_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d",
+                  "source_page": 100,
+                  "quote": "replace the compressor-driver board."
+                }
+              ]
+            }
+          ],
+          "failure": {
+            "name": "Faulty compressor-driver board (PCB3)",
+            "description": "On the isolated power-board test, both VBUS and compressor-enable voltage are present at the power board.",
+            "material_context": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_f777cf5415351056a711fb8bfbcd",
+                "source_page": 96,
+                "quote": "Faulty compressor-driver board (PCB3)"
+              },
+              {
+                "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                "source_page": 100,
+                "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+              },
+              {
+                "source_anchor": "ev_7b661df034f369068ce15f97b67e",
+                "source_page": 100,
+                "quote": "If VBUS and compressor-enable voltage are both present on the power board, replace the"
+              },
+              {
+                "source_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d",
+                "source_page": 100,
+                "quote": "compressor-driver board."
+              }
+            ]
+          },
+          "actions": [
+            {
+              "name": "Replace the compressor-driver board",
+              "description": "Replace the compressor-driver board.",
+              "instruction_text": "If VBUS and compressor-enable voltage are both present on the isolated power board, replace the compressor-driver board. See Replace the compressor-driver board on page 129.",
+              "action_kind": "replacement",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_7b661df034f369068ce15f97b67e",
+                  "source_page": 100,
+                  "quote": "If VBUS and compressor-enable voltage are both present on the power board, replace the"
+                },
+                {
+                  "source_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d",
+                  "source_page": 100,
+                  "quote": "compressor-driver board. See Replace the compressor-driver board on page 129."
+                }
+              ],
+              "resolution_link_evidence": [
+                {
+                  "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                  "source_page": 100,
+                  "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+                },
+                {
+                  "source_anchor": "ev_7b661df034f369068ce15f97b67e",
+                  "source_page": 100,
+                  "quote": "If VBUS and compressor-enable voltage are both present on the power board, replace the"
+                },
+                {
+                  "source_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d",
+                  "source_page": 100,
+                  "quote": "compressor-driver board."
+                }
+              ]
+            }
+          ],
+          "inspection_steps": [
+            {
+              "instruction_text": "Check VBUS (nominal 375 VDC) at J3. If VBUS is absent, remove J2 and repeat the check; if VBUS is still absent, check the power board and continue to the power-board test.",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cd012c7f99786df1a69eb18ae014",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_870edebfc1801870008575d14532",
+                  "source_page": 99,
+                  "quote": "If no, remove the J2 connector from the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_a0a0861b95533b873dc3ce033939",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_595a838da84fcf5abe6da379b91e",
+                  "source_page": 99,
+                  "quote": "If no, check the power board. Skip to step 23."
+                }
+              ]
+            },
+            {
+              "instruction_text": "Isolate the power board by removing J1 and J3 connectors from the compressor-driver board. Check VBUS on the power board (nominal 375 VDC), then quickly tap the torch trigger and check compressor-enable voltage at J9 (3 VDC).",
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_bcf3ad90571db3076a8b342ff9cd",
+                  "source_page": 100,
+                  "quote": "Remove the J1 and J3 connectors from the compressor-driver board. This isolates the power board."
+                },
+                {
+                  "source_anchor": "ev_0976bdff30be82a68dc02815b1c5",
+                  "source_page": 100,
+                  "quote": "Check VBUS on the power board (nominal 375 VDC bus voltage)"
+                },
+                {
+                  "source_anchor": "ev_6e6763480eec41910866200364ec",
+                  "source_page": 100,
+                  "quote": "Quickly tap the torch trigger, then check compressor-enable voltage at J9 on the power board (3 VDC)."
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "text": "This branch is reached when VBUS is absent at the initial J3 check and remains absent when J2 is disconnected; after isolating the power board, both VBUS and compressor-enable voltage are present on the power board.",
+              "applies_to": "branch",
+              "step_index": null,
+              "claim_evidence": [
+                {
+                  "source_anchor": "ev_cd012c7f99786df1a69eb18ae014",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_870edebfc1801870008575d14532",
+                  "source_page": 99,
+                  "quote": "If no, remove the J2 connector from the compressor-driver board."
+                },
+                {
+                  "source_anchor": "ev_a0a0861b95533b873dc3ce033939",
+                  "source_page": 99,
+                  "quote": "Is VBUS present (nominal 375 VDC bus voltage)?"
+                },
+                {
+                  "source_anchor": "ev_595a838da84fcf5abe6da379b91e",
+                  "source_page": 99,
+                  "quote": "If no, check the power board. Skip to step 23."
+                },
+                {
+                  "source_anchor": "ev_5f2165818aa19e72dfea20b335e0",
+                  "source_page": 100,
+                  "quote": "Are VBUS and compressor-enable voltage present on the power board?"
+                },
+                {
+                  "source_anchor": "ev_7b661df034f369068ce15f97b67e",
+                  "source_page": 100,
+                  "quote": "If VBUS and compressor-enable voltage are both present on the power board, replace the"
+                },
+                {
+                  "source_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d",
+                  "source_page": 100,
+                  "quote": "compressor-driver board."
+                }
+              ]
+            }
+          ],
+          "affected_component": {
+            "name": "Compressor-driver board (PCB3)",
+            "description": "Compressor-driver board isolated from the power-board test.",
+            "category": null,
+            "claim_evidence": [
+              {
+                "source_anchor": "ev_f777cf5415351056a711fb8bfbcd",
+                "source_page": 96,
+                "quote": "Faulty compressor-driver board (PCB3)"
+              },
+              {
+                "source_anchor": "ev_bcf3ad90571db3076a8b342ff9cd",
+                "source_page": 100,
+                "quote": "Remove the J1 and J3 connectors from the compressor-driver board. This isolates the power board."
+              }
+            ],
+            "affects_link_evidence": [
+              {
+                "source_anchor": "ev_e1fb92349e6d2618dc7568bd1d6d",
+                "source_page": 100,
+                "quote": "compressor-driver board."
+              }
+            ]
+          },
+          "resolution_status": "action_stated"
+        },
+        "validated_record": null,
+        "source_gap_verified": false,
+        "disposition": "review",
+        "accounting_state": "extracted_not_compilable",
+        "compiler_recoveries": [],
+        "drop_reasons": [
+          {
+            "code": "quote_not_in_anchored_evidence",
+            "path": "inspection_steps[1].claim_evidence[2]",
+            "message": "inspection_steps[1].claim_evidence[2]: quote is not an exact lexical span of anchor 'ev_6e6763480eec41910866200364ec' or a unique contiguous EvidenceUnit support set"
+          }
+        ],
+        "emitted_node_ids": [],
+        "emitted_relations": []
+      }
+    ]
+  }
+}

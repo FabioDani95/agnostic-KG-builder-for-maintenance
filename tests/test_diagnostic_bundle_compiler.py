@@ -16,6 +16,7 @@ from backend.services.graph_projection_service import project_graph_to_triplets
 from backend.services.ontology_pipeline import (
     _bind_candidates_to_record_windows,
     _call_diagnostic_bundle_llm,
+    _rebind_unique_window_spans,
     _record_windows,
 )
 from backend.services.ontology_schema_service import load_ontology_schema
@@ -117,6 +118,7 @@ def test_structured_output_contract_requires_nullable_and_list_fields() -> None:
         "failure",
         "actions",
         "inspection_steps",
+        "conditions",
         "affected_component",
         "resolution_status",
     }
@@ -124,6 +126,19 @@ def test_structured_output_contract_requires_nullable_and_list_fields() -> None:
     component = schema["$defs"]["AffectedComponentCandidate"]
     assert "material_context" in failure["required"]
     assert "category" in component["required"]
+
+
+def test_ambiguous_source_pairing_requires_review_even_with_literal_endpoints() -> None:
+    candidate = _dual_indicator_candidate().model_copy(update={
+        "record_window_id": "diagwin_ambiguous", "allowed_source_anchors": ["ev_dualrecord0001"],
+    })
+    result = compile_diagnostic_bundles(
+        [candidate], source_type="manual", source_title="Synthetic alternatives", text_with_pages=DUAL_TEXT,
+        record_windows=[{"window_id": "diagwin_ambiguous", "structure_status": "ambiguous_pairing"}],
+    )
+    assert result.report.entries[0].disposition is BundleDisposition.REVIEW
+    assert "structurally_ambiguous_pairing" in result.report.dropped_items_by_reason
+    assert not result.ontology.relations
 
 
 def test_not_diagnostic_marker_accounts_for_false_positive_without_graph_claims() -> None:
@@ -295,7 +310,7 @@ def test_actionless_record_is_an_explicit_gap_and_publishes_no_partial_graph() -
     assert result.validated_bundles[0].actions == []
 
 
-def test_unspecified_material_context_is_safely_compiled_as_asset_level() -> None:
+def test_unspecified_material_context_remains_explicitly_not_stated() -> None:
     payload = _dual_indicator_candidate().model_dump(mode="json")
     payload["failure"]["material_context"] = None
     result = compile_diagnostic_bundles(
@@ -306,7 +321,7 @@ def test_unspecified_material_context_is_safely_compiled_as_asset_level() -> Non
     )
 
     assert result.report.entries[0].disposition is BundleDisposition.PUBLISH
-    assert result.ontology.nodes["FailureMode"][0]["material_context"] == "asset_level"
+    assert result.ontology.nodes["FailureMode"][0]["material_context"] == "not_stated"
 
 
 def test_unlinked_optional_material_context_is_recovered_without_component() -> None:
@@ -329,7 +344,7 @@ def test_unlinked_optional_material_context_is_recovered_without_component() -> 
         "discarded_unlinked_material_context": 1
     }
     assert result.ontology.nodes["Component"] == []
-    assert result.ontology.nodes["FailureMode"][0]["material_context"] == "asset_level"
+    assert result.ontology.nodes["FailureMode"][0]["material_context"] == "not_stated"
     assert not any(relation.name == "AFFECTS" for relation in result.ontology.relations)
 
 
@@ -384,6 +399,113 @@ def test_compiler_rejects_literal_sibling_cell_outside_atomic_evidence_scope() -
         reason.code for reason in result.report.entries[0].drop_reasons
     }
     assert not result.ontology.relations
+
+
+def test_scoped_row_allows_literal_adjacent_cells_but_not_a_hidden_sibling():
+    from backend.domain.diagnostic_bundles import DiagnosticEvidenceSpan
+    from backend.services.diagnostic_bundle_compiler import _evidence_index, _resolve_span, _scoped_evidence_index
+
+    index = _evidence_index([], [], "--- PAGE 7 ---\n[[EVIDENCE_ID: ev_row]]\n2 | Fuse blowout | Replace fuse | Hidden sibling")
+    scoped = _scoped_evidence_index(index, {"ev_row": ["2", "Fuse blowout", "Replace fuse"]})
+    for quote in ("2 | Fuse blowout", "Fuse blowout | Replace fuse"):
+        spans, error = _resolve_span(DiagnosticEvidenceSpan(**_span("ev_row", quote)), path="claim", index=scoped, allowed_source_anchors=frozenset({"ev_row"}))
+        assert error is None and spans[0].quote == quote
+    spans, error = _resolve_span(DiagnosticEvidenceSpan(**_span("ev_row", "Replace fuse | Hidden sibling")), path="claim", index=scoped, allowed_source_anchors=frozenset({"ev_row"}))
+    assert not spans and error is not None
+
+
+def test_wrong_known_anchor_recovers_only_a_unique_literal_in_same_atomic_window():
+    candidate = _dual_indicator_candidate()
+    window = {"window_id": "diagwin_rebind", "structure_status": "atomic", "edge_policy": "table_atomic_endpoint_union",
+              "allowed_source_anchors": ["ev_dualrecord0001", "ev_cause"], "anchor_pages": {"ev_dualrecord0001": 7, "ev_cause": 8},
+              "allowed_evidence_spans": {"ev_dualrecord0001": ["Machine stops during operation"], "ev_cause": ["drive overheating"]}}
+    audit = []
+    repaired = _rebind_unique_window_spans(candidate, window, audit)
+    assert repaired.failure.claim_evidence[0].source_anchor == "ev_cause"
+    assert repaired.failure.claim_evidence[0].source_page == 8
+    assert repaired.failure.claim_evidence[0].quote == candidate.failure.claim_evidence[0].quote
+    assert candidate.failure.claim_evidence[0].source_anchor == "ev_dualrecord0001"
+    assert audit[0]["before"]["source_anchor"] == "ev_dualrecord0001"
+    # Missing relation quotes are still missing; no new wording is fabricated.
+    assert repaired.actions[0].resolution_link_evidence == candidate.actions[0].resolution_link_evidence
+    window["allowed_evidence_spans"]["ev_cause"] = ["drive overheating and drive overheating"]
+    assert _rebind_unique_window_spans(candidate, window, []).failure == candidate.failure
+    window["allowed_evidence_spans"]["ev_cause"] = ["drive overheating"]
+    window["structure_status"] = "ambiguous_pairing"
+    assert _rebind_unique_window_spans(candidate, window, []).failure == candidate.failure
+
+
+def test_unknown_or_outside_anchor_is_not_relocated_by_window_recovery():
+    candidate = _dual_indicator_candidate()
+    window = {"window_id": "diagwin_other", "structure_status": "atomic", "edge_policy": "table_atomic_endpoint_union",
+              "allowed_source_anchors": ["ev_other"], "anchor_pages": {"ev_other": 7},
+              "allowed_evidence_spans": {"ev_other": ["drive overheating"]}}
+    audit = []
+    assert _rebind_unique_window_spans(candidate, window, audit) == candidate
+    assert audit == []
+
+
+def test_duplicate_reconciliation_requires_same_occurrence_and_ordered_assertions():
+    from copy import deepcopy
+
+    from backend.models import OntologyPipelineResponse
+    from backend.services.diagnostic_reconciliation import reconcile_verified_duplicates, verified_occurrence_key
+
+    candidate = _dual_indicator_candidate().model_copy(update={"record_window_id": "diagwin_one", "allowed_source_anchors": ["ev_dualrecord0001"]})
+    alternate = candidate.model_copy(update={"failure": candidate.failure.model_copy(update={"name": candidate.failure.name + ".", "description": "Alternate display wording."})})
+    results = []
+    for value in (candidate, alternate):
+        compiled = compile_diagnostic_bundles([value], source_type="manual", source_title="Drive", text_with_pages=DUAL_TEXT)
+        entry = compiled.report.entries[0].model_dump(mode="json")
+        assert entry["disposition"] == "publish"
+        results.append(OntologyPipelineResponse(ontology=compiled.ontology, status="ok", diagnostic_contract_report={"records": [entry]}))
+    fixed = reconcile_verified_duplicates(results)
+    entries = [r.diagnostic_contract_report["records"][0] for r in fixed]
+    assert sorted(e["disposition"] for e in entries) == ["exclude", "publish"]
+    assert sum(len(r.ontology.relations) for r in fixed) == 3
+    duplicate = next(e for e in entries if e["disposition"] == "exclude")
+    assert duplicate["reconciled_from"]["disposition"] == "publish"
+    original = results[0].diagnostic_contract_report["records"][0]
+    key = verified_occurrence_key(original)
+    for field, value in (("record_window_id", "diagwin_other"),):
+        changed = deepcopy(original)
+        changed[field] = value
+        assert verified_occurrence_key(changed) != key
+    changed = deepcopy(original)
+    changed["candidate"]["failure"]["name"] = "Drive not overheating"
+    assert verified_occurrence_key(changed) != key
+    changed = deepcopy(original)
+    changed["candidate"]["conditions"] = [{"text": "Only if power is off", "applies_to": "action", "step_index": 0}]
+    assert verified_occurrence_key(changed) != key
+
+
+def test_inherited_table_indicator_binds_to_unique_literal_root_cell():
+    payload = _dual_indicator_candidate().model_dump(mode="json")
+    payload["indicators"] = [payload["indicators"][0]]
+    payload["indicators"][0].update(name="Machine stops", claim_evidence=[_span("ev_dualrecord0001", "drive overheating")])
+    window = {"window_id": "diagwin_inherited", "record_anchor": "ev_root", "branch_anchor": "ev_dualrecord0001", "window_kind": "table_row", "structure_status": "atomic", "allowed_source_anchors": ["ev_root", "ev_dualrecord0001"], "allowed_evidence_spans": {"ev_root": ["Machine stops."], "ev_dualrecord0001": ["drive overheating", "Clean the drive ventilation path."]}, "text_with_pages": "--- PAGE 6 ---\n[[EVIDENCE_ID: ev_root]]\nMachine stops.\n--- PAGE 7 ---\n[[EVIDENCE_ID: ev_dualrecord0001]]\ndrive overheating"}
+    output = DiagnosticChunkOutput(schema_version="1.1", source_language="en", records=[DiagnosticBundleCandidate.model_validate(payload)])
+    bound = _bind_candidates_to_record_windows(output, _record_windows({"record_windows": [window]}))
+    span = bound.records[0].indicators[0].claim_evidence[0]
+    assert (span.source_anchor, span.source_page, span.quote) == ("ev_root", 6, "Machine stops.")
+
+
+def test_noun_fragment_from_inspection_cannot_invent_observed_indicator():
+    payload = _dual_indicator_candidate().model_dump(mode="json")
+    payload["indicators"] = [payload["indicators"][0]]
+    payload["indicators"][0].update(name="Belt wear", description="The belt shows wear", claim_evidence=[_span("ev_dualrecord0001", "wear")], failure_link_evidence=[_span("ev_dualrecord0001", "Check belt for wear. Replace if required.")])
+    payload["failure"].update(name="Worn belt", description="The belt is worn", claim_evidence=[_span("ev_dualrecord0001", "wear")])
+    payload["actions"] = [_action(anchor="ev_dualrecord0001", name="Replace belt", description="Replace the worn belt", instruction="Replace if required.", edge_quote="Check belt for wear. Replace if required.")]
+    result = compile_diagnostic_bundles([payload], source_type="manual", source_title="Maintenance", text_with_pages="--- PAGE 7 ---\n[[EVIDENCE_ID: ev_dualrecord0001]]\n3. Check belt for wear. Replace if required.")
+    assert result.report.entries[0].disposition is BundleDisposition.REVIEW
+    assert "indicator_inferred_from_inspection" in {r.code for r in result.report.entries[0].drop_reasons}
+    assert not result.ontology.relations
+
+
+def test_probe_to_see_if_is_an_inspection_until_a_remedy_is_explicit():
+    from backend.services.diagnostic_bundle_compiler import _inspection_only_instruction
+    assert _inspection_only_instruction("Touch the screen to see if it turns on.", None)
+    assert not _inspection_only_instruction("Reset the controller, then check the display.", None)
 
 
 def test_explicit_component_without_source_category_gets_neutral_schema_value() -> None:
@@ -712,6 +834,7 @@ def test_exact_composite_quote_splits_only_across_contiguous_units() -> None:
         _span("ev_split_action0001", "Clean the ventilation path", 8)
     ]
     payload["actions"][0]["resolution_link_evidence"] = [
+        _span("ev_split_cause0001", "Cause: drive overheating", 8),
         _span("ev_split_action0001", "Clean the ventilation path", 8)
     ]
     text = """--- PAGE 8 ---
@@ -1152,6 +1275,7 @@ def test_composite_quote_relocation_is_unique_contiguous_and_window_bounded() ->
         _span("ev_compositeaction01", "Clean the ventilation path", 8)
     ]
     payload["actions"][0]["resolution_link_evidence"] = [
+        _span("ev_compositecause001", "Cause: drive overheating", 8),
         _span("ev_compositeaction01", "Clean the ventilation path", 8)
     ]
     candidate = DiagnosticBundleCandidate.model_validate(payload)
@@ -1218,3 +1342,27 @@ Clean the ventilation path
     assert "quote_not_in_anchored_evidence" in {
         reason.code for reason in ambiguous_result.report.entries[0].drop_reasons
     }
+
+
+def test_failure_cannot_be_inferred_only_from_an_inspection_or_repair():
+    candidate = _dual_indicator_candidate().model_dump(mode="json")
+    candidate["failure"]["name"] = "Clogged ventilation"
+    candidate["failure"]["claim_evidence"] = [_span("ev_dualrecord0001", "Clean the drive ventilation path.")]
+    result = compile_diagnostic_bundles([candidate], source_type="manual", source_title="synthetic", text_with_pages=DUAL_TEXT)
+    assert result.report.disposition_counts["publish"] == 0
+    assert result.report.dropped_items_by_reason["failure_inferred_from_instruction"] == 1
+
+
+def test_condition_targets_and_step_order_survive_compilation():
+    candidate = _dual_indicator_candidate().model_dump(mode="json")
+    text = DUAL_TEXT + "\nIf the fault persists, replace the drive. Check voltage.\n"
+    candidate["actions"].append(_action(anchor="ev_dualrecord0001", name="Replace drive", description="Replace only if the fault persists", instruction="If the fault persists, replace the drive.", edge_quote="If the fault persists, replace the drive."))
+    candidate["inspection_steps"] = [{"instruction_text": "Check voltage.", "claim_evidence": [_span("ev_dualrecord0001", "Check voltage.")]}]
+    candidate["conditions"] = [{"text": "If the fault persists", "applies_to": "action", "step_index": 1, "claim_evidence": [_span("ev_dualrecord0001", "If the fault persists")]}]
+    result = compile_diagnostic_bundles([candidate], source_type="manual", source_title="synthetic", text_with_pages=text)
+    bundle = result.report.entries[0].validated_record
+    assert bundle.conditions[0].step_index == 1
+    assert bundle.actions[0].name == "Clean ventilation path"
+    assert bundle.actions[1].name == "Replace drive"
+    assert bundle.inspection_steps[0].instruction_text == "Check voltage."
+    assert set(result.ontology.nodes) <= {"Asset", "Component", "Symptom", "FailureMode", "CorrectiveAction", "ErrorCode"}

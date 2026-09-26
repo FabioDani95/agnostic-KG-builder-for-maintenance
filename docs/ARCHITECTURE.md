@@ -78,6 +78,43 @@ Repositories own SQL access; routers should not introduce domain rules.
 - Validation fails closed on required properties, extra properties,
   domain/range, endpoints, provenance, unresolved mapping and knowledge gaps.
 
+## Current PDF diagnostic compilation and record correction
+
+The workspace PDF builder in `backend/services/pdf_source_subgraph_generation.py`
+uses generator identity `pdf-g3-structured-recovery-v22` and the all-pages evidence
+inventory. `ontology_workflow.py` builds diagnostic context, including bounded
+continuations of numbered procedures rooted on a diagnostic page. Layout and
+record windows constrain evidence but do not prove that two bullet lists pair.
+
+`ontology_pipeline.py` and `diagnostic_response_parsing.py` produce typed candidates;
+`diagnostic_bundle_compiler.py` checks canonical source spans, relation support,
+branch identity and selected condition errors. `diagnostic_recovery.py` prepares
+bounded retries for recoverable errors. Repair feedback is separate from source
+evidence. Escalation must retain previously published branches and cannot win
+merely by repeating records. `diagnostic_reconciliation.py` performs conservative
+consolidation while retaining conditions and occurrence identity.
+
+The fixed ontology is unchanged. Inspection steps, conditions and ordered raw
+`procedure_context` are branch-linked metadata. The latter is not a verified
+execution path: `procedure_path_verified` remains false. Literal grounding and
+schema compliance do not establish complete diagnostic meaning.
+
+`llm_response_archive.py` preserves provider requests, responses and usage before
+local parsing. `real_call_budget_ledger.py` reserves and finalizes actual call
+costs across retries and failures. Run configuration and source snapshots are
+frozen separately; archived usage reused in replay is not additional API spend.
+
+The graph UI in `frontend/app/graph.js` exposes record correction and evidence.
+`POST /api/g3/subgraphs/{revision_id}/records/{branch_id}/correction` delegates to
+`diagnostic_record_review.py`: source-bound candidate validation, replacement of
+the selected record, recompilation, before/after history and a new revision.
+Current-revision checks and repository compare-and-swap reject stale writes.
+Unrelated relations and residual blockers are preserved. A correction is not an
+approval and does not enable cross-source publication.
+
+See [current document results](PDF_DIAGNOSTIC_STATUS.md) and
+[reproduction instructions](../paper/experiments/robustness_continuation_20260926/REPRODUCE.md).
+
 ## Retained PDF flow
 
 ~~~text

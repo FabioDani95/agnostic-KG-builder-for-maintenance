@@ -90,6 +90,7 @@ def _normalize_relationships(raw_relations: Any) -> list[ExportOntologyRelations
                 from_id=from_id,
                 to_id=to_id,
                 evidence=rel.get("evidence", []),
+                branch_lineage_id=_as_string(rel.get("branch_lineage_id")),
             )
         )
     return relationships

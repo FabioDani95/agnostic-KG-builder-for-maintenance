@@ -301,6 +301,8 @@ def normalize_severity(value: str) -> str:
     normalized = normalize_semantic_text(value)
     if not normalized:
         return ""
+    if normalized == "unknown":
+        return "Unknown"
     tokens = set(normalized.split())
     for keywords, canonical in _SEVERITY_KEYWORD_MAP:
         if tokens & set(keywords):

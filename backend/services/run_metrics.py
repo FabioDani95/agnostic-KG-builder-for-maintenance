@@ -10,6 +10,16 @@ from backend.runstore import append_trace_step
 # Standard USD rates; GPT-6 Luna verified against OpenAI pricing on 2026-09-25.
 # Historical campaign artifacts retain their original pricing snapshots.
 MODEL_PRICING = {
+    "gpt-6-sol": {
+        "label": "GPT-6 Sol",
+        "input_per_million": 2.00,
+        "cached_input_per_million": 0.20,
+        "output_per_million": 10.00,
+        "cache_write_multiplier": 1.25,
+        "long_context_threshold_tokens": 272000,
+        "long_context_input_multiplier": 2.0,
+        "long_context_output_multiplier": 1.5,
+    },
     "gpt-6-luna": {
         "label": "GPT-6 Luna",
         "input_per_million": 0.10,
@@ -22,9 +32,9 @@ MODEL_PRICING = {
     },
     "gpt-5.6-sol": {
         "label": "GPT-5.6 Sol",
-        "input_per_million": 5.00,
-        "cached_input_per_million": 0.50,
-        "output_per_million": 30.00,
+        "input_per_million": 4.00,
+        "cached_input_per_million": 0.40,
+        "output_per_million": 20.00,
         "cache_write_multiplier": 1.25,
         "long_context_threshold_tokens": 272000,
         "long_context_input_multiplier": 2.0,
@@ -94,6 +104,7 @@ def normalize_model_pricing_key(model_name: str | None) -> str:
     if raw in {"gpt-5.6", "gpt-5.6-sol"} or raw.startswith("gpt-5.6-sol-"):
         return "gpt-5.6-sol"
     for candidate in (
+        "gpt-6-sol",
         "gpt-6-luna",
         "gpt-5.6-terra",
         "gpt-5.6-luna",

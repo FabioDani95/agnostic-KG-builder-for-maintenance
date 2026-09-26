@@ -1,0 +1,71 @@
+{
+  "protected_unchanged": {
+    "ontology_schema.JSON": true,
+    "docs/README.md": true,
+    "docs/PIPELINE_SPIEGAZIONE_IT.md": true,
+    "artifacts/acceptance/g3/diagnostic_benchmark_20260812/golden.json": true
+  },
+  "independent_forms": {
+    "paper/evaluation/gold_review_v1/graco_check_mate_200/annotation_B.json": {
+      "validation_status": "unannotated",
+      "branches": 0
+    },
+    "paper/evaluation/gold_review_v1/graco_check_mate_200/annotation_A.json": {
+      "validation_status": "unannotated",
+      "branches": 0
+    },
+    "paper/evaluation/gold_review_v1/hypertherm_powermax30_air/annotation_B.json": {
+      "validation_status": "unannotated",
+      "branches": 0
+    },
+    "paper/evaluation/gold_review_v1/hypertherm_powermax30_air/annotation_A.json": {
+      "validation_status": "unannotated",
+      "branches": 0
+    },
+    "paper/evaluation/gold_review_v1/danfoss_apf/annotation_B.json": {
+      "validation_status": "unannotated",
+      "branches": 0
+    },
+    "paper/evaluation/gold_review_v1/danfoss_apf/annotation_A.json": {
+      "validation_status": "unannotated",
+      "branches": 0
+    },
+    "paper/evaluation/gold_review_v1/eastman_e554/annotation_B.json": {
+      "validation_status": "unannotated",
+      "branches": 0
+    },
+    "paper/evaluation/gold_review_v1/eastman_e554/annotation_A.json": {
+      "validation_status": "unannotated",
+      "branches": 0
+    }
+  },
+  "initial_source_files_missing": [],
+  "initial_source_files_changed": [
+    "backend/domain/diagnostic_bundles.py",
+    "backend/domain/subgraphs.py",
+    "backend/prompts/diagnostic_bundle_prompt.py",
+    "backend/routers/subgraphs.py",
+    "backend/services/diagnostic_bundle_compiler.py",
+    "backend/services/diagnostic_reconciliation.py",
+    "backend/services/diagnostic_recovery.py",
+    "backend/services/ontology_pipeline.py",
+    "backend/services/ontology_semantics.py",
+    "backend/services/ontology_workflow.py",
+    "backend/services/pdf_source_subgraph_generation.py",
+    "backend/services/source_subgraph_generation.py",
+    "backend/storage/repositories/subgraphs.py",
+    "frontend/app/graph.js",
+    "scripts/replay_extraction_experiment.py"
+  ],
+  "c7_c8_manifest_files_verified": 307,
+  "c7_c8_manifest_mismatches": [],
+  "original_baseline_archive_hash_valid": true,
+  "ledger_original_prefix_unchanged": true,
+  "changes_since_c12": [
+    "scripts/continue_extraction_experiment.py",
+    "scripts/replay_extraction_experiment.py"
+  ],
+  "backend_and_frontend_identical_to_c12": true,
+  "source_archive_sha256": "77b70a24421bfd511578f01cbc92acfe4ef635a76001c9b609dbda1022760fd3",
+  "note": "Final changes since C12 are analysis/replay scripts only. The frozen extraction code produced C12 and the exact offline replays. Initial dirty changes are retained in source_before.tar.gz."
+}

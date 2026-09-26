@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "c11_full_graco_check_mate_200:217997c07ed74247850a17b18757eb9e",
+  "run_id": "c11_full_graco_check_mate_200",
+  "started_utc": "2026-09-26T14:52:41.526937+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "max_completion_tokens": 24000,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You extract diagnostic records from a technical manual into a typed contract.\n\nSource type: technical PDF\nSource title: 03_graco_check_mate_200_pumps_manual.pdf\n\nThe input contains physical page markers and opaque [[EVIDENCE_ID: ...]] anchors. It can be\na complete scoped manual section or a system-owned RECORD_WINDOW block. For a RECORD_WINDOW,\necho its window_id and allowed_source_anchors on every candidate; the system overwrites and\nverifies both fields and no evidence outside that block is allowed. For a section chunk, set\nrecord_window_id=\"\" and set allowed_source_anchors to exactly the anchors referenced by that\ncandidate. Never use an anchor that is not printed in the input. In a window, ROOT CELL\ncontext may support only its repeated record indicator; only CURRENT ATOMIC RECORD fields\nbelong to the current cause/remedy branch. Each displayed FIELD value is one exact source\nspan. Quote the value only: never include the \"FIELD n:\" label, join separate fields, or\nrestore a sibling field omitted by the system.\nReturn every explicit diagnostic record and every distinct cause/remedy branch in the input.\nThe contract is an intermediate record representation, not the final graph. Use schema_version=\"1.1\".\n\nRules:\n1. Never emit graph IDs or ontology relation names. The system owns them.\n2. A diagnostic record has one or more indicators. An indicator is either an observable\n   symptom or an asset-generated error/alarm code. A record may explicitly contain both;\n   keep both. For a symptom set code=null and severity=\"Unknown\" unless the source explicitly\n   states its severity; never invent a risk rating. For an error_code set its\n   code and severity=null. Only an explicit not_diagnostic page disposition may use an empty\n   indicator list.\n3. Keep one candidate per source branch. Do not pair an indicator, cause, component or action\n   from different table rows, flowchart branches or unrelated paragraphs.\n4. A FailureMode is an explicit technical cause or faulty state, not a restatement of the\n   symptom, an inspection result or an invented explanation. Use null when none is stated.\n5. A CorrectiveAction is an explicitly restorative remedy for that failure. Checks and tests\n   are not restorative unless the source says the check itself resolves the fault. Preserve\n   a non-restorative check/test/inspection in inspection_steps, never in actions.\n6. Set resolution_status:\n   - action_stated: at least one restorative action is explicitly linked to the failure;\n   - no_action_stated: the diagnostic record states a failure but no remedy;\n   - check_only: it gives only diagnostic checks/verification;\n   - ambiguous: the row/branch pairing cannot be established safely;\n   - not_diagnostic: a candidate-looking passage is actually preventive/generic content.\n7. An affected component is optional. Include it only if the branch explicitly identifies the\n   affected component. category and failure.material_context are required-but-nullable: use\n   null rather than manufacturing a category/context. A null category does not invalidate a\n   grounded branch; the deterministic compiler supplies a neutral schema category. Do not use\n   a product name as a component.\n8. Evidence is edge-specific. claim_evidence proves only the claim. Each edge evidence list is\n   a support set: one span may explicitly state the whole link, or several spans from the same\n   record/branch may collectively establish it when a manual separates Problem, Cause and\n   Remedy across blocks or pages. failure_link_evidence supports only that exact indicator to\n   failure; resolution_link_evidence supports only that exact failure to action;\n   affects_link_evidence supports only that exact failure to component. Include every span\n   needed to establish the link and no unrelated nearby heading. Never use an action-only span\n   as the sole proof of an indicator-to-failure edge.\n   In a system-owned atomic table row, use the exact endpoint FIELD spans as the edge support\n   set; the deterministic compiler verifies the table structure and completes their union.\n9. Every quote is a short verbatim span contained in the EvidenceUnit named by source_anchor,\n   on source_page. Prefer one span per EvidenceUnit. If wording crosses adjacent units, emit\n   separate exact spans; never concatenate or paraphrase cells. Copy the opaque anchor exactly.\n   Do not include page/anchor marker text in a quote.\n10. record_anchor must be one of this candidate's claim-evidence anchors. branch_anchor must be\n    one of this candidate's evidence anchors (prefer a causal edge anchor). For an explicit\n    not_diagnostic disposition with no claims, set both to the candidate page's EvidenceUnit\n    anchor. These anchors are source locators, not freely generated IDs.\n11. Preserve source language in human-readable values and set source_language accordingly.\n12. Duplicate records caused by overlapping pages must be returned identically; deterministic\n    lineage and compilation will deduplicate them.\n13. Account for candidate-looking passages. If one is actually generic/preventive content,\n    emit a not_diagnostic candidate with empty indicators and no diagnostic claims. Return an\n    empty records list only when the input contains no candidate-looking passage at all. Never\n    fill a missing cause/action simply to make a complete record.\n14. Every anchored candidate-looking passage in the input must occur in a record's claim/edge\n    evidence, or have its own explicit not_diagnostic disposition. Do not cover only the first\n    row or branch of a troubleshooting table.\n15. For check_only, actions must be empty and inspection_steps must preserve each stated check\n    with exact evidence. For not_diagnostic, inspection_steps and all diagnostic claims are empty.\n16. Preserve every stated precondition, test outcome, negation, threshold and alternative in\n    conditions with exact evidence. applies_to is branch (step_index=null), action or inspection\n    (step_index is the zero-based index in the corresponding ordered list). Do not infer a test\n    result. Retain conditions in instruction_text too, so an isolated action is not unconditional.\n    Keep inspection_steps and actions in source order; do not sort steps alphabetically.\n17. Preserve the actual error CODE separately from its fault name, including a numerical code\n    in a separate table column. Never substitute the name for a printed numeric code.\n18. For a numbered diagnostic procedure, carry the introductory symptom and explicitly listed\n    possible failures forward to the test outcomes only when the procedure identifies that\n    component. Cite the introduction as well as the outcome. Preserve prerequisites and the\n    ordered checks needed to reach each outcome, including preceding pages and conditional\n    jumps. A replacement instruction alone does not establish a named failure.\n19. A negative answer to a compound question is the negation of the whole question. For\n    'A and B?' followed by 'no', retain 'not (A and B)' or 'not A or not B', never 'not A\n    and not B'. Keep the literal question and answer together in condition evidence.\n20. Unnumbered cause/solution lists do not pair by position or equal length. Preserve unresolved\n    alternatives as ambiguous. Do not attach every solution to every cause. A page reference\n    preserves a dependency; it is not evidence for details on an unavailable page.\n"
+      },
+      {
+        "role": "user",
+        "content": "## DOCUMENT CONTEXT\nThese pages come from the following manual sections:\n- Service (pp. 11-11, source: rule)\n- Troubleshooting (pp. 11-11, source: rule)\n- Reconnecting the Displacement Pump (pp. 13-13, source: rule)\n\nUse this context to better interpret the content. Extract all ontology-relevant information from these sections, including components, error codes, symptoms, failure modes, and corrective actions.\n\n--- PAGE 10 ---\n\n[[EVIDENCE_ID: a0001]]\nOperation\n\n[[EVIDENCE_ID: a0002]]\nShutdown and Care of the Pump\n\n[[EVIDENCE_ID: a0003]]\nFor overnight shutdown, stop the pump at the bottom\nof the stroke to prevent fluid from drying on the ex-\nposed displacement rod and damaging the throat\npackings. Relieve the pressure.\n\n[[EVIDENCE_ID: a0004]]\nAlways flush the pump before the fluid dries on the\ndisplacement rod. Refer to Flushing below.\n\n[[EVIDENCE_ID: a0005]]\nFlushing\n\n[[EVIDENCE_ID: a0006]]\nWARNING\n\n[[EVIDENCE_ID: a0007]]\nFIRE AND EXPLOSION HAZARD\nBefore operating the pump, read the\nsection FIRE AND EXPLOSION HAZ-\nARD on page 4. Be sure the entire\nsystem and flushing pails are properly\ngrounded. Refer to Grounding on page\n6.\n\n[[EVIDENCE_ID: a0008]]\nFlush with a fluid that is compatible with the fluid you\nare pumping and with the wetted parts in your system.\nCheck with your fluid manufacturer or supplier for\nrecommended flushing fluids and flushing frequency.\nAlways flush the pump before fluid dries on the dis-\nplacement rod.\n\n[[EVIDENCE_ID: a0009]]\nWARNING\n\n[[EVIDENCE_ID: a0010]]\nTo reduce the risk of serious injury whenever you\nare instructed to relieve pressure, always follow the\nPressure Relief Procedure on page 8.\n\n[[EVIDENCE_ID: a0011]]\n1.\nRelieve the pressure.\n\n[[EVIDENCE_ID: a0012]]\n2.\nRemove the spray tip/nozzle from the gun/valve.\n\n[[EVIDENCE_ID: a0013]]\n3.\nHold a metal part of the gun/valve firmly to the side\nof a grounded metal pail.\n\n[[EVIDENCE_ID: a0014]]\n4.\nStart the pump. Always use the lowest possible\nfluid pressure when flushing.\n\n[[EVIDENCE_ID: a0015]]\n5.\nTrigger the gun/valve.\n\n[[EVIDENCE_ID: a0016]]\n6.\nFlush the system until clear solvent flows from the\ngun/valve.\n\n[[EVIDENCE_ID: a0017]]\n7.\nRelieve the pressure.\n\n[[EVIDENCE_ID: a0018]]\n10\n308200\n\n--- PAGE 11 ---\n\n[[EVIDENCE_ID: a0019]]\nTroubleshooting\n\n[[EVIDENCE_ID: a0020]]\nWARNING\n\n[[EVIDENCE_ID: a0021]]\nTo reduce the risk of serious injury whenever you\nare instructed to relieve pressure, always follow the\nPressure Relief Procedure on page 8.\n\n[[EVIDENCE_ID: a0022]]\n1.\nRelieve the pressure.\n\n[[EVIDENCE_ID: a0023]]\n2.\nCheck all possible problems and causes before\ndisassembling the pump.\n\n[[EVIDENCE_ID: a0024]]\n* To determine if the fluid hose or gun is obstructed, follow the Pressure Relief Procedure on page 8. Disconnect\nthe fluid hose and place a container at the pump fluid outlet to catch any fluid. Turn on the air just enough to start\nthe pump (about 20–40 psi [0.14–0.3 MPa, 1.4–2.8 bar]). If the pump starts when the air is turned on, the obstruc-\ntion is in the fluid hose or gun.\n\n[[EVIDENCE_ID: a0025]]\nNOTE: If you experience air motor icing, contact your Graco distributor for assistance.\n\n[[EVIDENCE_ID: a0026]]\n308200\n11\n\n[[EVIDENCE_ID: a0027]]\nPROBLEM | CAUSE | SOLUTION\n\n[[EVIDENCE_ID: a0028]]\nPump fails to operate. | Restricted line or inadequate air supply | Clear*; see Technical Data on pages 24–27.\n\n[[EVIDENCE_ID: a0029]]\n| Obstructed fluid hose or gun/valve; fluid hose ID is too small. | Clear*; use a hose with a larger ID.\n\n[[EVIDENCE_ID: a0030]]\n| Fluid dried on the displacement rod. | Clean; see Service on pages 12–19.\n\n[[EVIDENCE_ID: a0031]]\n| Dirty or worn air motor parts. | Clean or repair; see separate air motor manual.\n\n[[EVIDENCE_ID: a0032]]\nPump operates, but output is low on both strokes. | Restricted line or inadequate air supply. | Clear*; see Technical Data on pages 24–27.\n\n[[EVIDENCE_ID: a0033]]\n| Obstructed fluid hose or gun/valve; fluid hose ID is too small. | Clear*; use a hose with a larger ID.\n\n[[EVIDENCE_ID: a0034]]\n| Bleeder valve is open. | Close.\n\n[[EVIDENCE_ID: a0035]]\n| Air is leaking into the supply container. | Check wiper plate seal.\n\n[[EVIDENCE_ID: a0036]]\n| Fluid is too heavy for pump priming. | Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.\n\n[[EVIDENCE_ID: a0037]]\n| Worn packings in displacement pump. | Replace packings.\n\n[[EVIDENCE_ID: a0038]]\nPump operates, but output is low on down- stroke. | Fluid too heavy for pump priming. | Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.\n\n[[EVIDENCE_ID: a0039]]\n| Held open or worn intake valve or seals. | Clear valve; replace seals.\n\n[[EVIDENCE_ID: a0040]]\nPump operates, but output is low on up- stroke. | Held open or worn piston valve or seals. | Clear valve; replace seals.\n\n[[EVIDENCE_ID: a0041]]\nErratic or accelerated pump speed. | Exhausted fluid supply. | Refill and prime.\n\n[[EVIDENCE_ID: a0042]]\n| Fluid is too heavy for pump priming. | Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.\n\n[[EVIDENCE_ID: a0043]]\n| Held open or worn piston valve or seals. | Clear valve; replace seals.\n\n[[EVIDENCE_ID: a0044]]\n| Held open or worn priming piston. | Clear; service.\n\n[[EVIDENCE_ID: a0045]]\n| Worn packings in displacement pump. | Replace packings.\n\n--- PAGE 12 ---\n\n[[EVIDENCE_ID: a0046]]\nService\n\n[[EVIDENCE_ID: a0047]]\nRequired Tools\n\n[[EVIDENCE_ID: a0048]]\n\u0002\nTorque wrench\n\u0002\nBench vise, with soft jaws\n\u0002\nRubber mallet\n\u0002\nHammer\n\u0002\nRazor or other sharp tool\n\u0002\n8 mm (5/16 in.) dia. brass rod\n\u0002\n8 mm, 11 mm, 15 mm, 25 mm, 3/4 in., and 7/8 in.\nopen–end wrenches\n\u0002\n17 mm box or socket wrench\n\u0002\n22 mm crow’s–foot wrench\n\u0002\nAdjustable wrenches\n\u0002\n24 in. adjustable wrench\n\u0002\nThread lubricant\n\n[[EVIDENCE_ID: a0049]]\n\u0002\nAnaerobic thread sealant\n\n[[EVIDENCE_ID: a0050]]\nDisconnecting the Displacement Pump\n1.\nFlush the pump, if possible. Stop the pump at the\nbottom of its stroke.\n\n[[EVIDENCE_ID: a0051]]\nWARNING\n\n[[EVIDENCE_ID: a0052]]\nTo reduce the risk of serious injury whenever you\nare instructed to relieve pressure, always follow the\nPressure Relief Procedure on page 8.\n\n[[EVIDENCE_ID: a0053]]\nKeep hands and fingers away from the priming\npiston during operation and whenever the pump is\ncharged with air. On the pump downstroke the\npriming piston extends beyond the intake cylinder\nto pull the material into the pump. The priming\npiston works under extreme force. During operation\nand whenever the pump is charged with air, the\npriming piston can severely injure or amputate a\nhand or finger, or break a tool, caught between it\nand the intake cylinder.\n\n[[EVIDENCE_ID: a0054]]\nThe air motor piston (located behind the air motor\nplates) also moves when air is supplied to the\nmotor. NEVER operate the pump with the air motor\nplates removed.\n\n[[EVIDENCE_ID: a0055]]\n2.\nRelieve the pressure.\n\n[[EVIDENCE_ID: a0056]]\n3.\nDisconnect the air hose. Hold the fluid outlet fitting\n(7) with an adjustable wrench to keep it from being\nloosened while you disconnect the fluid hose.\nRemove the pump from its mounting. Note the\nrelative position of the pump’s fluid outlet to the air\ninlet.\n\n[[EVIDENCE_ID: a0057]]\n4.\nUsing an adjustable wrench, unscrew the coupling\nnut (104) from the connecting rod (103). Remove\nthe coupling collars (105). Take care not to lose or\ndrop them. See Fig. 4.\n\n[[EVIDENCE_ID: a0058]]\n5.\nHold the tie rod flats with an 11 mm wrench to\nkeep them from turning. Use the wrench (113)\nprovided with the pump (or a 17 mm box or socket\nwrench) to unscrew the locknuts (106) from the tie\nrods (102). Carefully pull the displacement pump\n(107) off the air motor (101).\n\n[[EVIDENCE_ID: a0059]]\n6.\nRefer to page 14 for displacement pump service.\nTo service the air motor, refer to the separate air\nmotor manual, supplied.\n\n[[EVIDENCE_ID: a0060]]\n12\n308200\n\n--- PAGE 13 ---\n\n[[EVIDENCE_ID: a0061]]\nService\n\n[[EVIDENCE_ID: a0062]]\nReconnecting the Displacement Pump\n\n[[EVIDENCE_ID: a0063]]\nWARNING\n\n[[EVIDENCE_ID: a0064]]\nTo reduce the risk of serious injury whenever you\nare instructed to relieve pressure, always follow the\nPressure Relief Procedure on page 8.\n\n[[EVIDENCE_ID: a0065]]\n1.\nOrient the pump’s fluid outlet to the air motor’s air\ninlet as was noted in step 3 under Disconnecting\nthe Displacement Pump. Position the displace-\nment pump (107) on the tie rods (102). See Fig. 4.\n\n[[EVIDENCE_ID: a0066]]\nNOTE: If you removed the tie rods (102) from the air\nmotor (101) or air motor adapter plate, reinstall them\nusing an 11 mm wrench. Torque the rods to 20-25 N.m\n(15-18 ft-lb) on Model 222907, and 34-41 N.m (25-30\nft-lb) on Model 222839.\n\n[[EVIDENCE_ID: a0067]]\n2.\nScrew the locknuts (106) onto the tie rods (102)\nand torque to 34-41 N.m (25-30 ft-lb), using the\nwrench (113) provided (or a 17 mm box or socket\nwrench).\n\n[[EVIDENCE_ID: a0068]]\n3.\nPlace the coupling nut (104) on the displacement\nrod (1), then place the collars (105) in the nut.\nScrew the nut onto the connecting rod (103)\nloosely. Hold the connecting rod flats with an\nadjustable wrench to keep it from turning. Using an\nadjustable wrench, torque the nut to 41-48 N.m\n(30-35 ft-lb).\n\n[[EVIDENCE_ID: a0069]]\n4.\nUsing a torque wrench in the square hole of the\nsupplied wrench (113), torque the packing nut (2)\nto 27-34 N.m (20-25 ft-lb).\n\n[[EVIDENCE_ID: a0070]]\n5.\nMount the pump and reconnect all hoses. Recon-\nnect the ground wire if it was disconnected during\nrepair. Turn on the air and run the pump slowly.\n\n[[EVIDENCE_ID: a0071]]\n6.\nFill the packing nut/wet-cup 1/3 full of Graco\nThroat Seal Liquid or compatible solvent.\n\n[[EVIDENCE_ID: a0072]]\n101\n\n[[EVIDENCE_ID: a0073]]\n108\n\n[[EVIDENCE_ID: a0074]]\n103\n\n[[EVIDENCE_ID: a0075]]\n102\n\n[[EVIDENCE_ID: a0076]]\n2\n\n[[EVIDENCE_ID: a0077]]\n105\n\n[[EVIDENCE_ID: a0078]]\n104\n\n[[EVIDENCE_ID: a0079]]\n1\n\n[[EVIDENCE_ID: a0080]]\n1\n\n[[EVIDENCE_ID: a0081]]\n2\n\n[[EVIDENCE_ID: a0082]]\n3\n\n[[EVIDENCE_ID: a0083]]\n106\n\n[[EVIDENCE_ID: a0084]]\n7\n\n[[EVIDENCE_ID: a0085]]\n113\n\n[[EVIDENCE_ID: a0086]]\n4\n\n[[EVIDENCE_ID: a0087]]\n107\n\n[[EVIDENCE_ID: a0088]]\nTorque to 30–35 ft–lb (41–48 N\u0005m).\n\n[[EVIDENCE_ID: a0089]]\n1\n\n[[EVIDENCE_ID: a0090]]\nTorque to 15–18 ft–lb (20–25 N\u0005m) on model 222907; 25–30\nft–lb (34–41 N\u0005m) on model 222839.\n\n[[EVIDENCE_ID: a0091]]\n2\n\n[[EVIDENCE_ID: a0092]]\n3\n\n[[EVIDENCE_ID: a0093]]\nTorque to 20–25 ft–lb (27–34 N\u0005m).\n\n[[EVIDENCE_ID: a0094]]\n4\n\n[[EVIDENCE_ID: a0095]]\nTorque to 25–30 ft–lb (34–41 N\u0005m).\n\n[[EVIDENCE_ID: a0096]]\n01059\n\n[[EVIDENCE_ID: a0097]]\nFig. 4\n\n[[EVIDENCE_ID: a0098]]\n308200\n13"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "DiagnosticChunkOutput",
+        "strict": true,
+        "schema": {
+          "$defs": {
+            "AffectedComponentCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "category": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Category"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "affects_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Affects Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "category",
+                "claim_evidence",
+                "affects_link_evidence"
+              ],
+              "title": "AffectedComponentCandidate",
+              "type": "object"
+            },
+            "CorrectiveActionCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "action_kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Action Kind"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "resolution_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Resolution Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "instruction_text",
+                "action_kind",
+                "claim_evidence",
+                "resolution_link_evidence"
+              ],
+              "title": "CorrectiveActionCandidate",
+              "type": "object"
+            },
+            "DiagnosticBundleCandidate": {
+              "additionalProperties": false,
+              "description": "One source record, potentially containing several observed indicators.",
+              "properties": {
+                "record_window_id": {
+                  "title": "Record Window Id",
+                  "type": "string"
+                },
+                "allowed_source_anchors": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Allowed Source Anchors",
+                  "type": "array"
+                },
+                "record_anchor": {
+                  "minLength": 1,
+                  "title": "Record Anchor",
+                  "type": "string"
+                },
+                "branch_anchor": {
+                  "minLength": 1,
+                  "title": "Branch Anchor",
+                  "type": "string"
+                },
+                "indicators": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticIndicatorCandidate"
+                  },
+                  "title": "Indicators",
+                  "type": "array"
+                },
+                "failure": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FailureModeCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actions": {
+                  "items": {
+                    "$ref": "#/$defs/CorrectiveActionCandidate"
+                  },
+                  "title": "Actions",
+                  "type": "array"
+                },
+                "inspection_steps": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticInspectionStepCandidate"
+                  },
+                  "title": "Inspection Steps",
+                  "type": "array"
+                },
+                "conditions": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticConditionCandidate"
+                  },
+                  "title": "Conditions",
+                  "type": "array"
+                },
+                "affected_component": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/AffectedComponentCandidate"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolution_status": {
+                  "$ref": "#/$defs/ResolutionStatus"
+                }
+              },
+              "required": [
+                "record_window_id",
+                "allowed_source_anchors",
+                "record_anchor",
+                "branch_anchor",
+                "indicators",
+                "failure",
+                "actions",
+                "inspection_steps",
+                "conditions",
+                "affected_component",
+                "resolution_status"
+              ],
+              "title": "DiagnosticBundleCandidate",
+              "type": "object"
+            },
+            "DiagnosticConditionCandidate": {
+              "additionalProperties": false,
+              "description": "Source-stated condition attached to a branch or a zero-based step.",
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "title": "Text",
+                  "type": "string"
+                },
+                "applies_to": {
+                  "enum": [
+                    "branch",
+                    "action",
+                    "inspection"
+                  ],
+                  "title": "Applies To",
+                  "type": "string"
+                },
+                "step_index": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Step Index"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "text",
+                "applies_to",
+                "step_index",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticConditionCandidate",
+              "type": "object"
+            },
+            "DiagnosticEvidenceSpan": {
+              "additionalProperties": false,
+              "description": "A verbatim source span emitted by the extraction model.\n\n``source_anchor`` is the opaque evidence identifier printed in the model's\ninput.  It is intentionally not a graph node identifier.",
+              "properties": {
+                "source_anchor": {
+                  "minLength": 1,
+                  "title": "Source Anchor",
+                  "type": "string"
+                },
+                "source_page": {
+                  "minimum": 1,
+                  "title": "Source Page",
+                  "type": "integer"
+                },
+                "quote": {
+                  "minLength": 1,
+                  "title": "Quote",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source_anchor",
+                "source_page",
+                "quote"
+              ],
+              "title": "DiagnosticEvidenceSpan",
+              "type": "object"
+            },
+            "DiagnosticIndicatorCandidate": {
+              "additionalProperties": false,
+              "description": "Provider-safe flat indicator contract.\n\nOpenAI strict Structured Outputs does not accept the ``oneOf`` emitted by\nPydantic for a discriminated model union inside an array.  Keep the wire\nshape flat and enforce the same symptom/error-code invariants locally.\nNullable fields remain required so the provider schema is strict.",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "symptom",
+                    "error_code"
+                  ],
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "code": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code"
+                },
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "severity": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Low",
+                        "Medium",
+                        "High",
+                        "Critical",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Severity"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                },
+                "failure_link_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "title": "Failure Link Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "code",
+                "name",
+                "description",
+                "severity",
+                "claim_evidence",
+                "failure_link_evidence"
+              ],
+              "title": "DiagnosticIndicatorCandidate",
+              "type": "object"
+            },
+            "DiagnosticInspectionStepCandidate": {
+              "additionalProperties": false,
+              "description": "A diagnostic check that is useful but does not itself restore operation.",
+              "properties": {
+                "instruction_text": {
+                  "minLength": 1,
+                  "title": "Instruction Text",
+                  "type": "string"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "instruction_text",
+                "claim_evidence"
+              ],
+              "title": "DiagnosticInspectionStepCandidate",
+              "type": "object"
+            },
+            "FailureModeCandidate": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "material_context": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Material Context"
+                },
+                "claim_evidence": {
+                  "items": {
+                    "$ref": "#/$defs/DiagnosticEvidenceSpan"
+                  },
+                  "minItems": 1,
+                  "title": "Claim Evidence",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "material_context",
+                "claim_evidence"
+              ],
+              "title": "FailureModeCandidate",
+              "type": "object"
+            },
+            "ResolutionStatus": {
+              "description": "The extractor's explicit assessment of diagnostic completeness.",
+              "enum": [
+                "action_stated",
+                "no_action_stated",
+                "check_only",
+                "ambiguous",
+                "not_diagnostic"
+              ],
+              "title": "ResolutionStatus",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Provider structured-output envelope for one diagnostic PDF chunk.\n\nAll fields are required, including nullable/list fields.  This avoids the\noptional-property mismatch of strict provider JSON Schema implementations.",
+          "properties": {
+            "schema_version": {
+              "enum": [
+                "1.0",
+                "1.1"
+              ],
+              "title": "Schema Version",
+              "type": "string"
+            },
+            "source_language": {
+              "minLength": 1,
+              "title": "Source Language",
+              "type": "string"
+            },
+            "records": {
+              "items": {
+                "$ref": "#/$defs/DiagnosticBundleCandidate"
+              },
+              "title": "Records",
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "source_language",
+            "records"
+          ],
+          "title": "DiagnosticChunkOutput",
+          "type": "object"
+        }
+      }
+    },
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 33.47226483299164,
+  "response": {
+    "id": "chatcmpl-ESO3WZ9oChv7ayMNDJN06f5pfCf5B",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"schema_version\":\"1.1\",\"source_language\":\"en\",\"records\":[\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0028\",\"a0029\"],\"record_anchor\":\"a0028\",\"branch_anchor\":\"a0029\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Pump fails to operate\",\"description\":\"Pump fails to operate.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0028\",\"source_page\":11,\"quote\":\"Pump fails to operate.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0028\",\"source_page\":11,\"quote\":\"Pump fails to operate.\"},{\"source_anchor\":\"a0029\",\"source_page\":11,\"quote\":\"Restricted line or inadequate air supply\"}]}],\"failure\":{\"name\":\"Restricted line or inadequate air supply\",\"description\":\"Restricted line or inadequate air supply.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0029\",\"source_page\":11,\"quote\":\"Restricted line or inadequate air supply\"}]},\"actions\":[{\"name\":\"Clear the restriction\",\"description\":\"Clear the restricted line or address inadequate air supply.\",\"instruction_text\":\"Clear; see Technical Data on pages 24–27.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0029\",\"source_page\":11,\"quote\":\"Clear*; see Technical Data on pages 24–27.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0029\",\"source_page\":11,\"quote\":\"Restricted line or inadequate air supply\"},{\"source_anchor\":\"a0029\",\"source_page\":11,\"quote\":\"Clear*; see Technical Data on pages 24–27.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0028\",\"a0029\"],\"record_anchor\":\"a0028\",\"branch_anchor\":\"a0029\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Pump fails to operate\",\"description\":\"Pump fails to operate.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0028\",\"source_page\":11,\"quote\":\"Pump fails to operate.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0028\",\"source_page\":11,\"quote\":\"Pump fails to operate.\"},{\"source_anchor\":\"a0029\",\"source_page\":11,\"quote\":\"Obstructed fluid hose or gun/valve; fluid hose ID is too small.\"}]}],\"failure\":{\"name\":\"Obstructed fluid hose or gun/valve; fluid hose ID is too small\",\"description\":\"Obstructed fluid hose or gun/valve; fluid hose ID is too small.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0029\",\"source_page\":11,\"quote\":\"Obstructed fluid hose or gun/valve; fluid hose ID is too small.\"}]},\"actions\":[{\"name\":\"Clear obstruction or use larger-ID hose\",\"description\":\"Clear the obstruction and use a hose with a larger ID.\",\"instruction_text\":\"Clear*; use a hose with a larger ID.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0029\",\"source_page\":11,\"quote\":\"Clear*; use a hose with a larger ID.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0029\",\"source_page\":11,\"quote\":\"Obstructed fluid hose or gun/valve; fluid hose ID is too small.\"},{\"source_anchor\":\"a0029\",\"source_page\":11,\"quote\":\"Clear*; use a hose with a larger ID.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0028\",\"a0030\"],\"record_anchor\":\"a0028\",\"branch_anchor\":\"a0030\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Pump fails to operate\",\"description\":\"Pump fails to operate.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0028\",\"source_page\":11,\"quote\":\"Pump fails to operate.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0028\",\"source_page\":11,\"quote\":\"Pump fails to operate.\"},{\"source_anchor\":\"a0030\",\"source_page\":11,\"quote\":\"Fluid dried on the displacement rod.\"}]}],\"failure\":{\"name\":\"Fluid dried on the displacement rod\",\"description\":\"Fluid dried on the displacement rod.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0030\",\"source_page\":11,\"quote\":\"Fluid dried on the displacement rod.\"}]},\"actions\":[{\"name\":\"Clean displacement rod\",\"description\":\"Clean the displacement rod.\",\"instruction_text\":\"Clean; see Service on pages 12–19.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0030\",\"source_page\":11,\"quote\":\"Clean; see Service on pages 12–19.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0030\",\"source_page\":11,\"quote\":\"Fluid dried on the displacement rod.\"},{\"source_anchor\":\"a0030\",\"source_page\":11,\"quote\":\"Clean; see Service on pages 12–19.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"displacement rod\",\"description\":\"Displacement rod on which fluid has dried.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0030\",\"source_page\":11,\"quote\":\"Fluid dried on the displacement rod.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0030\",\"source_page\":11,\"quote\":\"Fluid dried on the displacement rod.\"}]},\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0028\",\"a0031\"],\"record_anchor\":\"a0028\",\"branch_anchor\":\"a0031\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Pump fails to operate\",\"description\":\"Pump fails to operate.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0028\",\"source_page\":11,\"quote\":\"Pump fails to operate.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0028\",\"source_page\":11,\"quote\":\"Pump fails to operate.\"},{\"source_anchor\":\"a0031\",\"source_page\":11,\"quote\":\"Dirty or worn air motor parts.\"}]}],\"failure\":{\"name\":\"Dirty or worn air motor parts\",\"description\":\"Dirty or worn air motor parts.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0031\",\"source_page\":11,\"quote\":\"Dirty or worn air motor parts.\"}]},\"actions\":[{\"name\":\"Clean or repair air motor parts\",\"description\":\"Clean or repair the air motor parts.\",\"instruction_text\":\"Clean or repair; see separate air motor manual.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0031\",\"source_page\":11,\"quote\":\"Clean or repair; see separate air motor manual.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0031\",\"source_page\":11,\"quote\":\"Dirty or worn air motor parts.\"},{\"source_anchor\":\"a0031\",\"source_page\":11,\"quote\":\"Clean or repair; see separate air motor manual.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"air motor parts\",\"description\":\"Air motor parts that are dirty or worn.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0031\",\"source_page\":11,\"quote\":\"Dirty or worn air motor parts.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0031\",\"source_page\":11,\"quote\":\"Dirty or worn air motor parts.\"}]},\"resolution_status\":\"action_stated\"},\n\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0032\",\"a0033\",\"a0034\",\"a0035\",\"a0036\",\"a0037\"],\"record_anchor\":\"a0032\",\"branch_anchor\":\"a0032\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Pump operates, but output is low on both strokes\",\"description\":\"Pump operates, but output is low on both strokes.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on both strokes.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on both strokes.\"},{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Restricted line or inadequate air supply.\"}]}],\"failure\":{\"name\":\"Restricted line or inadequate air supply\",\"description\":\"Restricted line or inadequate air supply.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Restricted line or inadequate air supply.\"}]},\"actions\":[{\"name\":\"Clear the restriction\",\"description\":\"Clear the restricted line or address inadequate air supply.\",\"instruction_text\":\"Clear*; see Technical Data on pages 24–27.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Clear*; see Technical Data on pages 24–27.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Restricted line or inadequate air supply.\"},{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Clear*; see Technical Data on pages 24–27.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0032\",\"a0033\"],\"record_anchor\":\"a0032\",\"branch_anchor\":\"a0033\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Pump operates, but output is low on both strokes\",\"description\":\"Pump operates, but output is low on both strokes.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on both strokes.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on both strokes.\"},{\"source_anchor\":\"a0033\",\"source_page\":11,\"quote\":\"Obstructed fluid hose or gun/valve; fluid hose ID is too small.\"}]}],\"failure\":{\"name\":\"Obstructed fluid hose or gun/valve; fluid hose ID is too small\",\"description\":\"Obstructed fluid hose or gun/valve; fluid hose ID is too small.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0033\",\"source_page\":11,\"quote\":\"Obstructed fluid hose or gun/valve; fluid hose ID is too small.\"}]},\"actions\":[{\"name\":\"Clear obstruction or use larger-ID hose\",\"description\":\"Clear the obstruction and use a hose with a larger ID.\",\"instruction_text\":\"Clear*; use a hose with a larger ID.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0033\",\"source_page\":11,\"quote\":\"Clear*; use a hose with a larger ID.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0033\",\"source_page\":11,\"quote\":\"Obstructed fluid hose or gun/valve; fluid hose ID is too small.\"},{\"source_anchor\":\"a0033\",\"source_page\":11,\"quote\":\"Clear*; use a hose with a larger ID.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0032\",\"a0034\"],\"record_anchor\":\"a0032\",\"branch_anchor\":\"a0034\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Pump operates, but output is low on both strokes\",\"description\":\"Pump operates, but output is low on both strokes.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on both strokes.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on both strokes.\"},{\"source_anchor\":\"a0034\",\"source_page\":11,\"quote\":\"Bleeder valve is open.\"}]}],\"failure\":{\"name\":\"Bleeder valve is open\",\"description\":\"Bleeder valve is open.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0034\",\"source_page\":11,\"quote\":\"Bleeder valve is open.\"}]},\"actions\":[{\"name\":\"Close bleeder valve\",\"description\":\"Close the bleeder valve.\",\"instruction_text\":\"Close.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0034\",\"source_page\":11,\"quote\":\"Close.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0034\",\"source_page\":11,\"quote\":\"Bleeder valve is open.\"},{\"source_anchor\":\"a0034\",\"source_page\":11,\"quote\":\"Close.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"bleeder valve\",\"description\":\"Bleeder valve that is open.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0034\",\"source_page\":11,\"quote\":\"Bleeder valve is open.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0034\",\"source_page\":11,\"quote\":\"Bleeder valve is open.\"}]},\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0032\",\"a0035\"],\"record_anchor\":\"a0032\",\"branch_anchor\":\"a0035\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Pump operates, but output is low on both strokes\",\"description\":\"Pump operates, but output is low on both strokes.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on both strokes.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on both strokes.\"},{\"source_anchor\":\"a0035\",\"source_page\":11,\"quote\":\"Air is leaking into the supply container.\"}]}],\"failure\":{\"name\":\"Air is leaking into the supply container\",\"description\":\"Air is leaking into the supply container.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0035\",\"source_page\":11,\"quote\":\"Air is leaking into the supply container.\"}]},\"actions\":[],\"inspection_steps\":[{\"instruction_text\":\"Check wiper plate seal.\",\"claim_evidence\":[{\"source_anchor\":\"a0035\",\"source_page\":11,\"quote\":\"Check wiper plate seal.\"}]}],\"conditions\":[],\"affected_component\":{\"name\":\"wiper plate seal\",\"description\":\"Wiper plate seal to check in connection with air leaking into the supply container.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0035\",\"source_page\":11,\"quote\":\"Check wiper plate seal.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0035\",\"source_page\":11,\"quote\":\"Check wiper plate seal.\"}]},\"resolution_status\":\"check_only\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0032\",\"a0036\"],\"record_anchor\":\"a0032\",\"branch_anchor\":\"a0036\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Pump operates, but output is low on both strokes\",\"description\":\"Pump operates, but output is low on both strokes.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on both strokes.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on both strokes.\"},{\"source_anchor\":\"a0036\",\"source_page\":11,\"quote\":\"Fluid is too heavy for pump priming.\"}]}],\"failure\":{\"name\":\"Fluid is too heavy for pump priming\",\"description\":\"Fluid is too heavy for pump priming.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0036\",\"source_page\":11,\"quote\":\"Fluid is too heavy for pump priming.\"}]},\"actions\":[{\"name\":\"Use bleeder valve and wiper plate with ram or pneumatic elevator cart\",\"description\":\"Use the bleeder valve and a wiper plate with a ram or pneumatic elevator cart.\",\"instruction_text\":\"Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0036\",\"source_page\":11,\"quote\":\"Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0036\",\"source_page\":11,\"quote\":\"Fluid is too heavy for pump priming.\"},{\"source_anchor\":\"a0036\",\"source_page\":11,\"quote\":\"Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0032\",\"a0037\"],\"record_anchor\":\"a0032\",\"branch_anchor\":\"a0037\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Pump operates, but output is low on both strokes\",\"description\":\"Pump operates, but output is low on both strokes.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on both strokes.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0032\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on both strokes.\"},{\"source_anchor\":\"a0037\",\"source_page\":11,\"quote\":\"Worn packings in displacement pump.\"}]}],\"failure\":{\"name\":\"Worn packings in displacement pump\",\"description\":\"Worn packings in displacement pump.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0037\",\"source_page\":11,\"quote\":\"Worn packings in displacement pump.\"}]},\"actions\":[{\"name\":\"Replace packings\",\"description\":\"Replace the packings.\",\"instruction_text\":\"Replace packings.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0037\",\"source_page\":11,\"quote\":\"Replace packings.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0037\",\"source_page\":11,\"quote\":\"Worn packings in displacement pump.\"},{\"source_anchor\":\"a0037\",\"source_page\":11,\"quote\":\"Replace packings.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"packings in displacement pump\",\"description\":\"Packings in the displacement pump that are worn.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0037\",\"source_page\":11,\"quote\":\"Worn packings in displacement pump.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0037\",\"source_page\":11,\"quote\":\"Worn packings in displacement pump.\"}]},\"resolution_status\":\"action_stated\"},\n\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0038\",\"a0039\"],\"record_anchor\":\"a0038\",\"branch_anchor\":\"a0038\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Pump operates, but output is low on down-stroke\",\"description\":\"Pump operates, but output is low on down-stroke.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0038\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on down- stroke.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0038\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on down- stroke.\"},{\"source_anchor\":\"a0038\",\"source_page\":11,\"quote\":\"Fluid too heavy for pump priming.\"}]}],\"failure\":{\"name\":\"Fluid too heavy for pump priming\",\"description\":\"Fluid too heavy for pump priming.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0038\",\"source_page\":11,\"quote\":\"Fluid too heavy for pump priming.\"}]},\"actions\":[{\"name\":\"Use bleeder valve and wiper plate with ram or pneumatic elevator cart\",\"description\":\"Use the bleeder valve and a wiper plate with a ram or pneumatic elevator cart.\",\"instruction_text\":\"Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0038\",\"source_page\":11,\"quote\":\"Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0038\",\"source_page\":11,\"quote\":\"Fluid too heavy for pump priming.\"},{\"source_anchor\":\"a0038\",\"source_page\":11,\"quote\":\"Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0038\",\"a0039\"],\"record_anchor\":\"a0038\",\"branch_anchor\":\"a0039\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Pump operates, but output is low on down-stroke\",\"description\":\"Pump operates, but output is low on down-stroke.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0038\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on down- stroke.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0038\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on down- stroke.\"},{\"source_anchor\":\"a0039\",\"source_page\":11,\"quote\":\"Held open or worn intake valve or seals.\"}]}],\"failure\":{\"name\":\"Held open or worn intake valve or seals\",\"description\":\"Held open or worn intake valve or seals.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0039\",\"source_page\":11,\"quote\":\"Held open or worn intake valve or seals.\"}]},\"actions\":[{\"name\":\"Clear valve and replace seals\",\"description\":\"Clear the valve and replace the seals.\",\"instruction_text\":\"Clear valve; replace seals.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0039\",\"source_page\":11,\"quote\":\"Clear valve; replace seals.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0039\",\"source_page\":11,\"quote\":\"Held open or worn intake valve or seals.\"},{\"source_anchor\":\"a0039\",\"source_page\":11,\"quote\":\"Clear valve; replace seals.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"intake valve or seals\",\"description\":\"Intake valve or seals that are held open or worn.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0039\",\"source_page\":11,\"quote\":\"Held open or worn intake valve or seals.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0039\",\"source_page\":11,\"quote\":\"Held open or worn intake valve or seals.\"}]},\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0040\"],\"record_anchor\":\"a0040\",\"branch_anchor\":\"a0040\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Pump operates, but output is low on up-stroke\",\"description\":\"Pump operates, but output is low on up-stroke.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0040\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on up- stroke.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0040\",\"source_page\":11,\"quote\":\"Pump operates, but output is low on up- stroke.\"},{\"source_anchor\":\"a0040\",\"source_page\":11,\"quote\":\"Held open or worn piston valve or seals.\"}]}],\"failure\":{\"name\":\"Held open or worn piston valve or seals\",\"description\":\"Held open or worn piston valve or seals.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0040\",\"source_page\":11,\"quote\":\"Held open or worn piston valve or seals.\"}]},\"actions\":[{\"name\":\"Clear valve and replace seals\",\"description\":\"Clear the valve and replace the seals.\",\"instruction_text\":\"Clear valve; replace seals.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0040\",\"source_page\":11,\"quote\":\"Clear valve; replace seals.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0040\",\"source_page\":11,\"quote\":\"Held open or worn piston valve or seals.\"},{\"source_anchor\":\"a0040\",\"source_page\":11,\"quote\":\"Clear valve; replace seals.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"piston valve or seals\",\"description\":\"Piston valve or seals that are held open or worn.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0040\",\"source_page\":11,\"quote\":\"Held open or worn piston valve or seals.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0040\",\"source_page\":11,\"quote\":\"Held open or worn piston valve or seals.\"}]},\"resolution_status\":\"action_stated\"},\n\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0041\",\"a0042\",\"a0043\",\"a0044\",\"a0045\"],\"record_anchor\":\"a0041\",\"branch_anchor\":\"a0041\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Erratic or accelerated pump speed\",\"description\":\"Erratic or accelerated pump speed.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Erratic or accelerated pump speed.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Erratic or accelerated pump speed.\"},{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Exhausted fluid supply.\"}]}],\"failure\":{\"name\":\"Exhausted fluid supply\",\"description\":\"Exhausted fluid supply.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Exhausted fluid supply.\"}]},\"actions\":[{\"name\":\"Refill and prime\",\"description\":\"Refill the fluid supply and prime the pump.\",\"instruction_text\":\"Refill and prime.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Refill and prime.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Exhausted fluid supply.\"},{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Refill and prime.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0041\",\"a0042\"],\"record_anchor\":\"a0041\",\"branch_anchor\":\"a0042\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Erratic or accelerated pump speed\",\"description\":\"Erratic or accelerated pump speed.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Erratic or accelerated pump speed.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Erratic or accelerated pump speed.\"},{\"source_anchor\":\"a0042\",\"source_page\":11,\"quote\":\"Fluid is too heavy for pump priming.\"}]}],\"failure\":{\"name\":\"Fluid is too heavy for pump priming\",\"description\":\"Fluid is too heavy for pump priming.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0042\",\"source_page\":11,\"quote\":\"Fluid is too heavy for pump priming.\"}]},\"actions\":[{\"name\":\"Use bleeder valve and wiper plate with ram or pneumatic elevator cart\",\"description\":\"Use the bleeder valve and a wiper plate with a ram or pneumatic elevator cart.\",\"instruction_text\":\"Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0042\",\"source_page\":11,\"quote\":\"Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0042\",\"source_page\":11,\"quote\":\"Fluid is too heavy for pump priming.\"},{\"source_anchor\":\"a0042\",\"source_page\":11,\"quote\":\"Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":null,\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0041\",\"a0043\"],\"record_anchor\":\"a0041\",\"branch_anchor\":\"a0043\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Erratic or accelerated pump speed\",\"description\":\"Erratic or accelerated pump speed.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Erratic or accelerated pump speed.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Erratic or accelerated pump speed.\"},{\"source_anchor\":\"a0043\",\"source_page\":11,\"quote\":\"Held open or worn piston valve or seals.\"}]}],\"failure\":{\"name\":\"Held open or worn piston valve or seals\",\"description\":\"Held open or worn piston valve or seals.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0043\",\"source_page\":11,\"quote\":\"Held open or worn piston valve or seals.\"}]},\"actions\":[{\"name\":\"Clear valve and replace seals\",\"description\":\"Clear the valve and replace the seals.\",\"instruction_text\":\"Clear valve; replace seals.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0043\",\"source_page\":11,\"quote\":\"Clear valve; replace seals.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0043\",\"source_page\":11,\"quote\":\"Held open or worn piston valve or seals.\"},{\"source_anchor\":\"a0043\",\"source_page\":11,\"quote\":\"Clear valve; replace seals.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"piston valve or seals\",\"description\":\"Piston valve or seals that are held open or worn.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0043\",\"source_page\":11,\"quote\":\"Held open or worn piston valve or seals.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0043\",\"source_page\":11,\"quote\":\"Held open or worn piston valve or seals.\"}]},\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0041\",\"a0044\"],\"record_anchor\":\"a0041\",\"branch_anchor\":\"a0044\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Erratic or accelerated pump speed\",\"description\":\"Erratic or accelerated pump speed.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Erratic or accelerated pump speed.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Erratic or accelerated pump speed.\"},{\"source_anchor\":\"a0044\",\"source_page\":11,\"quote\":\"Held open or worn priming piston.\"}]}],\"failure\":{\"name\":\"Held open or worn priming piston\",\"description\":\"Held open or worn priming piston.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0044\",\"source_page\":11,\"quote\":\"Held open or worn priming piston.\"}]},\"actions\":[{\"name\":\"Clear and service priming piston\",\"description\":\"Clear and service the priming piston.\",\"instruction_text\":\"Clear; service.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0044\",\"source_page\":11,\"quote\":\"Clear; service.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0044\",\"source_page\":11,\"quote\":\"Held open or worn priming piston.\"},{\"source_anchor\":\"a0044\",\"source_page\":11,\"quote\":\"Clear; service.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"priming piston\",\"description\":\"Priming piston that is held open or worn.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0044\",\"source_page\":11,\"quote\":\"Held open or worn priming piston.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0044\",\"source_page\":11,\"quote\":\"Held open or worn priming piston.\"}]},\"resolution_status\":\"action_stated\"},\n{\"record_window_id\":\"\",\"allowed_source_anchors\":[\"a0041\",\"a0045\"],\"record_anchor\":\"a0041\",\"branch_anchor\":\"a0045\",\"indicators\":[{\"kind\":\"symptom\",\"code\":null,\"name\":\"Erratic or accelerated pump speed\",\"description\":\"Erratic or accelerated pump speed.\",\"severity\":\"Unknown\",\"claim_evidence\":[{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Erratic or accelerated pump speed.\"}],\"failure_link_evidence\":[{\"source_anchor\":\"a0041\",\"source_page\":11,\"quote\":\"Erratic or accelerated pump speed.\"},{\"source_anchor\":\"a0045\",\"source_page\":11,\"quote\":\"Worn packings in displacement pump.\"}]}],\"failure\":{\"name\":\"Worn packings in displacement pump\",\"description\":\"Worn packings in displacement pump.\",\"material_context\":null,\"claim_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":11,\"quote\":\"Worn packings in displacement pump.\"}]},\"actions\":[{\"name\":\"Replace packings\",\"description\":\"Replace the packings.\",\"instruction_text\":\"Replace packings.\",\"action_kind\":null,\"claim_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":11,\"quote\":\"Replace packings.\"}],\"resolution_link_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":11,\"quote\":\"Worn packings in displacement pump.\"},{\"source_anchor\":\"a0045\",\"source_page\":11,\"quote\":\"Replace packings.\"}]}],\"inspection_steps\":[],\"conditions\":[],\"affected_component\":{\"name\":\"packings in displacement pump\",\"description\":\"Packings in the displacement pump that are worn.\",\"category\":null,\"claim_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":11,\"quote\":\"Worn packings in displacement pump.\"}],\"affects_link_evidence\":[{\"source_anchor\":\"a0045\",\"source_page\":11,\"quote\":\"Worn packings in displacement pump.\"}]},\"resolution_status\":\"action_stated\"}\n]}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790434362,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 7655,
+      "prompt_tokens": 5980,
+      "total_tokens": 13635,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 279,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cached_tokens": 2814,
+        "cache_write_tokens": 3163
+      }
+    }
+  },
+  "provider_request_id": "req_d4f29065d0aa4148a6d52a2c791a2a68",
+  "error": null
+}

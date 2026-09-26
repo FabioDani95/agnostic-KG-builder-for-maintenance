@@ -1,0 +1,234 @@
+{
+  "status": "historical_lexical_probe_not_validated_quality",
+  "gold_total": 8,
+  "autonomous_probe": 5,
+  "expected_gap_probe": 0,
+  "one_to_one_source_page_branch_probe": 5,
+  "one_to_one_assignments": {
+    "dbranch_24758efc57802ed1ec1e52f20f236a95ab1bc7c54cefa0a145f35b5caccd6609": "E1",
+    "dbranch_01f44924cb203a39a9e42a505ff3e34dd3df4279ae88f32309c13ce9b80131f8": "E5",
+    "dbranch_0f96656779e05d59052cb1ebb1030c08ee3423d4e96ad3ed6a4fa3ac745c7929": "E6",
+    "dbranch_07c4f8ea09ec8c9475002fefc5f64af1bf59a8389f5183a6bbe9b7d0a6ce43c3": "E7",
+    "dbranch_336655119c2dbd0646c954b34ad1eceadb6d358a45e690bf1a5e238e530add6b": "E8"
+  },
+  "witnesses": [
+    {
+      "claim_id": "E1",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.845455,
+      "field_scores": {
+        "indicator": 0.85,
+        "failure_mode": 1.0,
+        "corrective_action": 0.845455
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Machine Stop during Cut Due to Unintentional pause",
+        "failure_mode": "Intermittent pause circuit",
+        "corrective_action": "Adjust pause plunger activation pressure",
+        "indicator_context": "Machine Stop during Cut Due to Unintentional pause The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. Machine Stop during Cut Due to Unintentional pause High sym_machine_stop_during_cut_due_to_unintentional_pau_14b1cff855672753ae137634eefa4786e408252a4378d84da64422c2c781bde5 This is typically caused by an intermittent pause circuit, usually in thestop discs.",
+        "failure_mode_context": "Intermittent pause circuit Intermittent pause circuit, usually in the stop discs. Intermittent pause circuit, usually in the stop discs. fm_intermittent_pause_circuit_ff0e39fd23ffea7b2dc125f9dc2218331fea89767455fb2bb43eb0c007aac882 comp_stop_discs_7f9402670652c286e8e5a29d967943895ca7f014ba7361907275a94c19d8d35b Intermittent pause circuit This is typically caused by an intermittent pause circuit, usually in thestop discs. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure. This is typically caused by an intermittent pause circuit, usually in thestop discs.",
+        "corrective_action_context": "Adjust pause plunger activation pressure Tighten the plunger to increase activation pressure and loosen to decrease activation pressure. ca_adjust_pause_plunger_activation_pressure_7d6dc25f40838bc1953b9d1c80638f6250e63d3cfcdb5291e45fcf0b821b879c Tighten the plunger to increase activation pressure and loosen to decrease activation pressure. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure. Adjust pause plunger activation pressure typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Tighten the plunger to increase activation pressure and loosen to decrease activation pressure. This is typically caused by an intermittent pause circuit, usually in thestop discs.",
+        "pages": [
+          37
+        ],
+        "indicator_id": "sym_machine_stop_during_cut_due_to_unintentional_pau_14b1cff855672753ae137634eefa4786e408252a4378d84da64422c2c781bde5",
+        "failure_mode_id": "fm_intermittent_pause_circuit_ff0e39fd23ffea7b2dc125f9dc2218331fea89767455fb2bb43eb0c007aac882",
+        "corrective_action_id": "ca_adjust_pause_plunger_activation_pressure_7d6dc25f40838bc1953b9d1c80638f6250e63d3cfcdb5291e45fcf0b821b879c",
+        "branch_lineage_id": "dbranch_24758efc57802ed1ec1e52f20f236a95ab1bc7c54cefa0a145f35b5caccd6609"
+      }
+    },
+    {
+      "claim_id": "E2",
+      "kind": "published_path",
+      "present": false,
+      "score": 0.0,
+      "field_scores": {
+        "indicator": 0.0,
+        "failure_mode": 0.0,
+        "corrective_action": 0.0
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Electronic controls may malfunction",
+        "failure_mode": "High levels of RF emissions",
+        "corrective_action": "Keep RF-emitting equipment at least 70 feet away",
+        "indicator_context": "Electronic controls may malfunction High levels of RF emissions may cause the electronic controls in the system to malfunction. High levels of RF emissions may cause the electronic controls in the system to malfunction. Electronic controls may malfunction Medium sym_electronic_controls_may_malfunction_cea3119625bb8aed611041dbdf49cde235afb20a20561bb0bba086d06c8fb884 High levels of RF emissions may cause the electronic controls in the system to malfunction.",
+        "failure_mode_context": "High levels of RF emissions RF emissions from RF welders or other equipment may interfere with the system when equipment is not kept at least 70 feet away. RF emissions from RF welders or other equipment may interfere with the system when equipment is not kept at least 70 feet away. fm_high_levels_of_rf_emissions_f2c8b23714372a7e1eb91b59dfebb6d7f9ce68fc0c963573610c7d588ee5c64a comp_electronic_controls_b58249f4fd544e1db860a9a455b238a3c76a2b3957ac34741d8c13543423171c High levels of RF emissions High levels of RF emissions may cause the electronic controls in the system to malfunction. this equipment be kept at least 70 feet away from the Eastman cutting system",
+        "corrective_action_context": "Keep RF-emitting equipment at least 70 feet away Keep RF welders or other equipment that emits RF at least 70 feet away from the Eastman cutting system. ca_keep_rf_emitting_equipment_at_least_70_feet_away_2106dfc9f4635690c7ea823ac64d00a9f3a0f0a444da54ce4644f88668794b7a Keep RF welders or other equipment that emits RF at least 70 feet away from the Eastman cutting system. this equipment be kept at least 70 feet away from the Eastman cutting system Keep RF-emitting equipment at least 70 feet away typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF this equipment be kept at least 70 feet away from the Eastman cutting system",
+        "pages": [
+          13
+        ],
+        "indicator_id": "sym_electronic_controls_may_malfunction_cea3119625bb8aed611041dbdf49cde235afb20a20561bb0bba086d06c8fb884",
+        "failure_mode_id": "fm_high_levels_of_rf_emissions_f2c8b23714372a7e1eb91b59dfebb6d7f9ce68fc0c963573610c7d588ee5c64a",
+        "corrective_action_id": "ca_keep_rf_emitting_equipment_at_least_70_feet_away_2106dfc9f4635690c7ea823ac64d00a9f3a0f0a444da54ce4644f88668794b7a",
+        "branch_lineage_id": "dbranch_80cca144968667c84ffd6f7c22e914825db08c5cdcd80bd2c82d181a820b5eef"
+      }
+    },
+    {
+      "claim_id": "E3",
+      "kind": "published_path",
+      "present": false,
+      "score": 0.0,
+      "field_scores": {
+        "indicator": 0.0,
+        "failure_mode": 0.166897,
+        "corrective_action": 0.0
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Electronic controls may malfunction",
+        "failure_mode": "High levels of RF emissions",
+        "corrective_action": "Keep RF-emitting equipment at least 70 feet away",
+        "indicator_context": "Electronic controls may malfunction High levels of RF emissions may cause the electronic controls in the system to malfunction. High levels of RF emissions may cause the electronic controls in the system to malfunction. Electronic controls may malfunction Medium sym_electronic_controls_may_malfunction_cea3119625bb8aed611041dbdf49cde235afb20a20561bb0bba086d06c8fb884 High levels of RF emissions may cause the electronic controls in the system to malfunction.",
+        "failure_mode_context": "High levels of RF emissions RF emissions from RF welders or other equipment may interfere with the system when equipment is not kept at least 70 feet away. RF emissions from RF welders or other equipment may interfere with the system when equipment is not kept at least 70 feet away. fm_high_levels_of_rf_emissions_f2c8b23714372a7e1eb91b59dfebb6d7f9ce68fc0c963573610c7d588ee5c64a comp_electronic_controls_b58249f4fd544e1db860a9a455b238a3c76a2b3957ac34741d8c13543423171c High levels of RF emissions High levels of RF emissions may cause the electronic controls in the system to malfunction. this equipment be kept at least 70 feet away from the Eastman cutting system",
+        "corrective_action_context": "Keep RF-emitting equipment at least 70 feet away Keep RF welders or other equipment that emits RF at least 70 feet away from the Eastman cutting system. ca_keep_rf_emitting_equipment_at_least_70_feet_away_2106dfc9f4635690c7ea823ac64d00a9f3a0f0a444da54ce4644f88668794b7a Keep RF welders or other equipment that emits RF at least 70 feet away from the Eastman cutting system. this equipment be kept at least 70 feet away from the Eastman cutting system Keep RF-emitting equipment at least 70 feet away typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF this equipment be kept at least 70 feet away from the Eastman cutting system",
+        "pages": [
+          13
+        ],
+        "indicator_id": "sym_electronic_controls_may_malfunction_cea3119625bb8aed611041dbdf49cde235afb20a20561bb0bba086d06c8fb884",
+        "failure_mode_id": "fm_high_levels_of_rf_emissions_f2c8b23714372a7e1eb91b59dfebb6d7f9ce68fc0c963573610c7d588ee5c64a",
+        "corrective_action_id": "ca_keep_rf_emitting_equipment_at_least_70_feet_away_2106dfc9f4635690c7ea823ac64d00a9f3a0f0a444da54ce4644f88668794b7a",
+        "branch_lineage_id": "dbranch_80cca144968667c84ffd6f7c22e914825db08c5cdcd80bd2c82d181a820b5eef"
+      }
+    },
+    {
+      "claim_id": "E4",
+      "kind": "published_path",
+      "present": false,
+      "score": 0.124812,
+      "field_scores": {
+        "indicator": 0.124812,
+        "failure_mode": 0.209091,
+        "corrective_action": 0.274667
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Loss of laser cutting power",
+        "failure_mode": "Damaged or dirty lens",
+        "corrective_action": "Clean or replace lens",
+        "indicator_context": "Loss of laser cutting power The laser cutting power decreases causing non-cut edges. The laser cutting power decreases causing non-cut edges. Loss of laser cutting power Medium sym_loss_of_laser_cutting_power_28cf72a72b772045b3cdb6ebad05271326238d1f2a15faa11acddb344251d13c Damaged or dirty lens.",
+        "failure_mode_context": "Damaged or dirty lens Damaged or dirty focusing lens. Damaged or dirty focusing lens. fm_damaged_or_dirty_lens_acaad48fc04d89efe1f21d2b0a3151c261f854d3248ee279b6f4d280a52dccbf comp_focusing_lens_458592791e7dabea84c9ff443fbb10e8aba8bc894e527448090fde97a0332590 Damaged or dirty lens Damaged or dirty lens. The laser cutting power decreases causing non-cut edges. Damaged or dirty lens. Check for damage or dirt on the focusing lens. Clean or replace lens as required.",
+        "corrective_action_context": "Clean or replace lens Clean or replace the focusing lens as required. ca_clean_or_replace_lens_06197f1f4c594ca28c110d54467ada7b97c033aed92c7156a07cba027a7ef7b4 cleaning_or_replacement Clean or replace the focusing lens as required. Clean or replace lens as required. Clean or replace lens typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF The laser cutting power decreases causing non-cut edges. Damaged or dirty lens. Check for damage or dirt on the focusing lens. Clean or replace lens as required.",
+        "pages": [
+          39
+        ],
+        "indicator_id": "sym_loss_of_laser_cutting_power_28cf72a72b772045b3cdb6ebad05271326238d1f2a15faa11acddb344251d13c",
+        "failure_mode_id": "fm_damaged_or_dirty_lens_acaad48fc04d89efe1f21d2b0a3151c261f854d3248ee279b6f4d280a52dccbf",
+        "corrective_action_id": "ca_clean_or_replace_lens_06197f1f4c594ca28c110d54467ada7b97c033aed92c7156a07cba027a7ef7b4",
+        "branch_lineage_id": "dbranch_5841a25afc1fed608b585ca843b7895dff6712b291fbc5ed36219a39285a4bb1"
+      }
+    },
+    {
+      "claim_id": "E5",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.84,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 0.84,
+        "corrective_action": 0.84
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Laser cutting path is too wide",
+        "failure_mode": "Damaged or bent brass laser nozzle",
+        "corrective_action": "Replace damaged nozzle",
+        "indicator_context": "Laser cutting path is too wide The laser cutting path increases to an undesirable width. The laser cutting path increases to an undesirable width. Laser cutting path is too wide Medium sym_laser_cutting_path_is_too_wide_39a821b772b32622994fec261980119efb9e894908b0c1e5b53b3ac140a62a2e If the tube or nozzle is bent, the laser beam will reflect off the inside wall of the nozzle causing a wide path.",
+        "failure_mode_context": "Damaged or bent brass laser nozzle A damaged nozzle should be replaced; a bent tube or nozzle causes the laser beam to reflect off the inside wall of the nozzle, causing a wide path. A damaged nozzle should be replaced; a bent tube or nozzle causes the laser beam to reflect off the inside wall of the nozzle, causing a wide path. fm_damaged_or_bent_brass_laser_nozzle_ae459235b114a29b658c04788337cd75b81a277fa0e7058af36351760fbdded4 comp_brass_laser_nozzle_23b5888547085462009631d200c17515b08d080445c6cdbb1fc69a91721fd35e Damaged or bent brass laser nozzle If the tube or nozzle is bent, the laser beam will reflect off the inside wall of the nozzle causing a wide path. Check for damage to brass laser nozzle. Replace nozzle if any damage is present.",
+        "corrective_action_context": "Replace damaged nozzle Replace nozzle if any damage is present. ca_replace_damaged_nozzle_544df5a3d2ae913bfcb83cdc25540de8c335cea053ad04be769c98dd0fe1292f Replace nozzle if any damage is present. Replace nozzle if any damage is present. Replace damaged nozzle typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Check for damage to brass laser nozzle. Replace nozzle if any damage is present.",
+        "pages": [
+          39
+        ],
+        "indicator_id": "sym_laser_cutting_path_is_too_wide_39a821b772b32622994fec261980119efb9e894908b0c1e5b53b3ac140a62a2e",
+        "failure_mode_id": "fm_damaged_or_bent_brass_laser_nozzle_ae459235b114a29b658c04788337cd75b81a277fa0e7058af36351760fbdded4",
+        "corrective_action_id": "ca_replace_damaged_nozzle_544df5a3d2ae913bfcb83cdc25540de8c335cea053ad04be769c98dd0fe1292f",
+        "branch_lineage_id": "dbranch_4eaa3d9e04142c5957d31e29b80f6935268cf0fa4675b78a9f2f4bc7f9aeb995"
+      }
+    },
+    {
+      "claim_id": "E6",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.9,
+      "field_scores": {
+        "indicator": 0.9,
+        "failure_mode": 1.0,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Loss of laser cutting power",
+        "failure_mode": "Damaged or dirty lens",
+        "corrective_action": "Clean or replace lens",
+        "indicator_context": "Loss of laser cutting power The laser cutting power decreases causing non-cut edges. The laser cutting power decreases causing non-cut edges. Loss of laser cutting power Medium sym_loss_of_laser_cutting_power_28cf72a72b772045b3cdb6ebad05271326238d1f2a15faa11acddb344251d13c Problem: Loss of laser cutting power Damaged or dirty lens.",
+        "failure_mode_context": "Damaged or dirty lens The focusing lens is damaged or dirty. The focusing lens is damaged or dirty. fm_damaged_or_dirty_lens_ef6028c54cb61fe909122aa207b554bd75ce162d140a928511fd833bcabb44db comp_focusing_lens_458592791e7dabea84c9ff443fbb10e8aba8bc894e527448090fde97a0332590 Damaged or dirty lens Problem: Loss of laser cutting power Damaged or dirty lens. Check for damage or dirt on the focusing lens. Clean or replace lens as required.",
+        "corrective_action_context": "Clean or replace lens Clean or replace the focusing lens as required. ca_clean_or_replace_lens_06197f1f4c594ca28c110d54467ada7b97c033aed92c7156a07cba027a7ef7b4 cleaning_or_replacement Clean or replace the focusing lens as required. Clean or replace lens as required. Clean or replace lens typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Check for damage or dirt on the focusing lens. Clean or replace lens as required.",
+        "pages": [
+          39
+        ],
+        "indicator_id": "sym_loss_of_laser_cutting_power_28cf72a72b772045b3cdb6ebad05271326238d1f2a15faa11acddb344251d13c",
+        "failure_mode_id": "fm_damaged_or_dirty_lens_ef6028c54cb61fe909122aa207b554bd75ce162d140a928511fd833bcabb44db",
+        "corrective_action_id": "ca_clean_or_replace_lens_06197f1f4c594ca28c110d54467ada7b97c033aed92c7156a07cba027a7ef7b4",
+        "branch_lineage_id": "dbranch_0f96656779e05d59052cb1ebb1030c08ee3423d4e96ad3ed6a4fa3ac745c7929"
+      }
+    },
+    {
+      "claim_id": "E7",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.845455,
+      "field_scores": {
+        "indicator": 0.9,
+        "failure_mode": 0.845455,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Loss of laser cutting power",
+        "failure_mode": "Damaged or dirty mirror",
+        "corrective_action": "Clean or replace mirrors",
+        "indicator_context": "Loss of laser cutting power The laser cutting power decreases causing non-cut edges. The laser cutting power decreases causing non-cut edges. Loss of laser cutting power Medium sym_loss_of_laser_cutting_power_28cf72a72b772045b3cdb6ebad05271326238d1f2a15faa11acddb344251d13c Problem: Loss of laser cutting power Damaged or dirty Mirror.",
+        "failure_mode_context": "Damaged or dirty mirror A beam-deflecting mirror is damaged, has a burn mark, or is dirty. A beam-deflecting mirror is damaged, has a burn mark, or is dirty. fm_damaged_or_dirty_mirror_ae4adbbe2cf3d32b5ce4f91a66a92aa5faf195ae7f725d7e64e7577ebcdb2f59 comp_beam_deflecting_mirrors_320607f5ad2eb717666e4b21d0f10b3d2e491b448e4bbe3f8aad41b5e65d3cc1 Damaged or dirty mirror Problem: Loss of laser cutting power Damaged or dirty Mirror. Check for damage, burn mark or dirt on the beam deflecting mirrors. Clean or replace mirrors as required.",
+        "corrective_action_context": "Clean or replace mirrors Clean or replace the mirrors as required. ca_clean_or_replace_mirrors_3e510da1b16438a839f5fc63896968c58ce96c569ee8adeb627847446b6a2b71 cleaning_or_replacement Clean or replace the mirrors as required. Clean or replace mirrors as required. Clean or replace mirrors typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Check for damage, burn mark or dirt on the beam deflecting mirrors. Clean or replace mirrors as required.",
+        "pages": [
+          39
+        ],
+        "indicator_id": "sym_loss_of_laser_cutting_power_28cf72a72b772045b3cdb6ebad05271326238d1f2a15faa11acddb344251d13c",
+        "failure_mode_id": "fm_damaged_or_dirty_mirror_ae4adbbe2cf3d32b5ce4f91a66a92aa5faf195ae7f725d7e64e7577ebcdb2f59",
+        "corrective_action_id": "ca_clean_or_replace_mirrors_3e510da1b16438a839f5fc63896968c58ce96c569ee8adeb627847446b6a2b71",
+        "branch_lineage_id": "dbranch_9bebaa65c0c40cf51b881da72d719841bbf7cdabec9acd770a16bd44ba80006f"
+      }
+    },
+    {
+      "claim_id": "E8",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.8625,
+      "field_scores": {
+        "indicator": 0.9,
+        "failure_mode": 0.8625,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Loss of laser cutting power",
+        "failure_mode": "Damage or debris in laser nozzle",
+        "corrective_action": "Clean or replace laser nozzle",
+        "indicator_context": "Loss of laser cutting power The laser cutting power decreases causing non-cut edges. The laser cutting power decreases causing non-cut edges. Loss of laser cutting power Medium sym_loss_of_laser_cutting_power_28cf72a72b772045b3cdb6ebad05271326238d1f2a15faa11acddb344251d13c Damage or debris in laser nozzle. Problem: Loss of laser cutting power",
+        "failure_mode_context": "Damage or debris in laser nozzle The laser nozzle is damaged or contains debris. The laser nozzle is damaged or contains debris. fm_damage_or_debris_in_laser_nozzle_5609105aa01c68cf9bd81e768ea1dd476425ed38fe21f72d2b39dc9bb512ec1a comp_laser_nozzle_2c8658e468420829e72d07c91459a5927bba67870a57a35b9d47869472faf006 Damage or debris in laser nozzle Damage or debris in laser nozzle. Problem: Loss of laser cutting power Check for damage or debris in laser nozzle. Clean or replace laser nozzle as required.",
+        "corrective_action_context": "Clean or replace laser nozzle Clean or replace the laser nozzle as required. ca_clean_or_replace_laser_nozzle_45ad02de4f8610eb176e79e16c077fdbaaa9eeb74b1eeb53e20cbbbe58ffd457 cleaning_or_replacement Clean or replace the laser nozzle as required. Clean or replace laser nozzle as required. Clean or replace laser nozzle typed_diagnostic_edge_evidence 01_eastman_e554_service_manual.pdf technical PDF Check for damage or debris in laser nozzle. Clean or replace laser nozzle as required.",
+        "pages": [
+          39
+        ],
+        "indicator_id": "sym_loss_of_laser_cutting_power_28cf72a72b772045b3cdb6ebad05271326238d1f2a15faa11acddb344251d13c",
+        "failure_mode_id": "fm_damage_or_debris_in_laser_nozzle_5609105aa01c68cf9bd81e768ea1dd476425ed38fe21f72d2b39dc9bb512ec1a",
+        "corrective_action_id": "ca_clean_or_replace_laser_nozzle_45ad02de4f8610eb176e79e16c077fdbaaa9eeb74b1eeb53e20cbbbe58ffd457",
+        "branch_lineage_id": "dbranch_336655119c2dbd0646c954b34ad1eceadb6d358a45e690bf1a5e238e530add6b"
+      }
+    }
+  ],
+  "semantic_precision": null,
+  "semantic_recall": null
+}

@@ -1,0 +1,496 @@
+{
+  "status": "historical_lexical_probe_not_validated_quality",
+  "gold_total": 18,
+  "autonomous_probe": 17,
+  "expected_gap_probe": 1,
+  "one_to_one_source_page_branch_probe": 17,
+  "one_to_one_assignments": {
+    "dbranch_417e10875ca7f4a9aa85724901105c98b2f63147030c679742d65e0349232b63": "G1",
+    "dbranch_4a06d88a33a203ae4035ceddca139dff4dc399147115a06094869c761abf2dbd": "G2",
+    "dbranch_39b13f5266f324e4608f8eb94e01536159f3388af6912c5b0dc0f461b7c3702f": "G3",
+    "dbranch_0f073cbfe74045f16b13ede9ed3aa02b17cafe5f65f996098a7c3146470af94c": "G4",
+    "dbranch_f68233b1275b5b233aebc536945175456844dc4d539f5673a9b47c476682af80": "G5",
+    "dbranch_36bfc9c031942b5a14d926b562925b9ca431c77369d85199cca23b973dea0c78": "G6",
+    "dbranch_0086a1b15a16144286adaad7c4db14d8340aaf186fee8692bbb91b96128d670a": "G11",
+    "dbranch_3be5905040f4f644d4bb107fea280ce0eefcf5d7dd4e40fc71bf729099795c1e": "G7",
+    "dbranch_7d76270bba07202fe68b052de5ae1ddef992793b523aee785b2bf332b7d6037f": "G10",
+    "dbranch_2943c4ea15ed79ed60e2a4a07e982ded6cd3d73b17dd874465e8196a4f0e9539": "G9",
+    "dbranch_162980f5480e11600a81f9c8f238c38044405c63cfe01203418d517dad2f04ce": "G13",
+    "dbranch_a6e7c70e94a702e0b6ade581c6023afbbf5e24890d38b9dc9fd76336ae4aa083": "G12",
+    "dbranch_0448313a2a6c8bc0fb24c42566fe385c77f2c9e41d787761cabc4d69c98f6d0a": "G14",
+    "dbranch_169da383954d29849810873b85e186714a81f16a55eeb6eaa95fc7986c90c826": "G15",
+    "dbranch_a2f3238969d6059de5cbd7dffb94e391e76a2131e427bc109fc041014c64234e": "G16",
+    "dbranch_81eb1f78b999da69bf305a87e170879904a66a12c1e946a634e3b9b07266cba2": "G17",
+    "dbranch_d77f492607c8f88bf1998514601ab0bf2846a2fed4d54fe031092b488b42df56": "G18"
+  },
+  "witnesses": [
+    {
+      "claim_id": "G1",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.823529,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 0.823529
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Pump fails to operate",
+        "failure_mode": "Restricted line or inadequate air supply",
+        "corrective_action": "Clear",
+        "indicator_context": "Pump fails to operate Pump fails to operate. sym_pump_fails_to_operate_aefafd562ad7c161d8443f46506d2a1d1dfe297f413b3deef186be5b49bd7d67 Pump fails to operate Pump fails to operate. Medium Pump fails to operate. Restricted line or inadequate air supply",
+        "failure_mode_context": "Restricted line or inadequate air supply Restricted line or inadequate air supply. fm_restricted_line_or_inadequate_air_supply_74391a8f7d92923c1f2cd59a162b3d91176ae3798a190a355a113632b33623ce Restricted line or inadequate air supply Restricted line or inadequate air supply. not_stated Pump fails to operate. Restricted line or inadequate air supply Clear*; see Technical Data on pages 24–27. Restricted line or inadequate air supply",
+        "corrective_action_context": "Clear Clear the restricted line or address the inadequate air supply. ca_clear_60ac380032476af5b177840163870caaad54de20cad8b53756f5d81804a13943 Clear Clear the restricted line or address the inadequate air supply. Clear*; see Technical Data on pages 24–27. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Clear*; see Technical Data on pages 24–27. Restricted line or inadequate air supply",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_pump_fails_to_operate_aefafd562ad7c161d8443f46506d2a1d1dfe297f413b3deef186be5b49bd7d67",
+        "failure_mode_id": "fm_restricted_line_or_inadequate_air_supply_74391a8f7d92923c1f2cd59a162b3d91176ae3798a190a355a113632b33623ce",
+        "corrective_action_id": "ca_clear_60ac380032476af5b177840163870caaad54de20cad8b53756f5d81804a13943",
+        "branch_lineage_id": "dbranch_6ffc9d879b567ba52d9268bc1076792313a6f64562cfcb2c3414f7772822b7bb"
+      }
+    },
+    {
+      "claim_id": "G2",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.875,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 0.9,
+        "corrective_action": 0.875
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Pump fails to operate.",
+        "failure_mode": "Obstructed fluid hose or gun/valve; fluid hose ID is too small",
+        "corrective_action": "Clear*; use a hose with a larger ID.",
+        "indicator_context": "Pump fails to operate. Pump fails to operate. sym_pump_fails_to_operate_b6ee56848126ba1f03242c35a4c18fcc98a4f12f655359f69edb5d553a7f9a13 Pump fails to operate. Pump fails to operate. Medium Pump fails to operate. Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+        "failure_mode_context": "Obstructed fluid hose or gun/valve; fluid hose ID is too small Obstructed fluid hose or gun/valve; fluid hose ID is too small. fm_obstructed_fluid_hose_or_gun_valve_fluid_hose_id_1cd1a30b84598b3bbc11ee38da763b10c6824ffa775025510667c6b8b4b2a82f Obstructed fluid hose or gun/valve; fluid hose ID is too small Obstructed fluid hose or gun/valve; fluid hose ID is too small. not_stated Pump fails to operate. Obstructed fluid hose or gun/valve; fluid hose ID is too small. Clear*; use a hose with a larger ID. Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+        "corrective_action_context": "Clear*; use a hose with a larger ID. Clear*; use a hose with a larger ID. ca_clear_use_a_hose_with_a_larger_id_1e5ae5da1e188fddabc4e21a0c3f988aa42ee9469d7be94546e929859342ff61 Clear*; use a hose with a larger ID. Clear*; use a hose with a larger ID. Clear*; use a hose with a larger ID. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Clear*; use a hose with a larger ID. Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_pump_fails_to_operate_b6ee56848126ba1f03242c35a4c18fcc98a4f12f655359f69edb5d553a7f9a13",
+        "failure_mode_id": "fm_obstructed_fluid_hose_or_gun_valve_fluid_hose_id_1cd1a30b84598b3bbc11ee38da763b10c6824ffa775025510667c6b8b4b2a82f",
+        "corrective_action_id": "ca_clear_use_a_hose_with_a_larger_id_1e5ae5da1e188fddabc4e21a0c3f988aa42ee9469d7be94546e929859342ff61",
+        "branch_lineage_id": "dbranch_4a06d88a33a203ae4035ceddca139dff4dc399147115a06094869c761abf2dbd"
+      }
+    },
+    {
+      "claim_id": "G3",
+      "kind": "published_path",
+      "present": true,
+      "score": 1.0,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Pump fails to operate",
+        "failure_mode": "Fluid dried on the displacement rod",
+        "corrective_action": "Clean",
+        "indicator_context": "Pump fails to operate Pump fails to operate. sym_pump_fails_to_operate_aefafd562ad7c161d8443f46506d2a1d1dfe297f413b3deef186be5b49bd7d67 Pump fails to operate Pump fails to operate. Medium Pump fails to operate. Fluid dried on the displacement rod.",
+        "failure_mode_context": "Fluid dried on the displacement rod Fluid dried on the displacement rod. fm_fluid_dried_on_the_displacement_rod_eead61c0319f7fccff0e87900c348a7218a33563a1a65442c525a7a5c05cbf64 Fluid dried on the displacement rod Fluid dried on the displacement rod. not_stated Pump fails to operate. Fluid dried on the displacement rod. Clean; see Service on pages 12–19. Fluid dried on the displacement rod.",
+        "corrective_action_context": "Clean Clean the displacement rod. ca_clean_d5e0a9af7e61ce08e27709a1fa7f85ffc4f2a04cf28093e48c8b542ac61bf6a3 Clean Clean the displacement rod. Clean; see Service on pages 12–19. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Clean; see Service on pages 12–19. Fluid dried on the displacement rod.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_pump_fails_to_operate_aefafd562ad7c161d8443f46506d2a1d1dfe297f413b3deef186be5b49bd7d67",
+        "failure_mode_id": "fm_fluid_dried_on_the_displacement_rod_eead61c0319f7fccff0e87900c348a7218a33563a1a65442c525a7a5c05cbf64",
+        "corrective_action_id": "ca_clean_d5e0a9af7e61ce08e27709a1fa7f85ffc4f2a04cf28093e48c8b542ac61bf6a3",
+        "branch_lineage_id": "dbranch_39b13f5266f324e4608f8eb94e01536159f3388af6912c5b0dc0f461b7c3702f"
+      }
+    },
+    {
+      "claim_id": "G4",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.866667,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 0.866667
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Pump fails to operate",
+        "failure_mode": "Dirty or worn air motor parts",
+        "corrective_action": "Clean or repair",
+        "indicator_context": "Pump fails to operate Pump fails to operate. sym_pump_fails_to_operate_aefafd562ad7c161d8443f46506d2a1d1dfe297f413b3deef186be5b49bd7d67 Pump fails to operate Pump fails to operate. Medium Pump fails to operate. Dirty or worn air motor parts.",
+        "failure_mode_context": "Dirty or worn air motor parts Dirty or worn air motor parts. fm_dirty_or_worn_air_motor_parts_a1abaf9aa652b50071a4ab05b43170ac5d7865b6a23ad31567ab2eeeeee2593b Dirty or worn air motor parts Dirty or worn air motor parts. not_stated Pump fails to operate. Dirty or worn air motor parts. Clean or repair; see separate air motor manual. Dirty or worn air motor parts.",
+        "corrective_action_context": "Clean or repair Clean or repair; see separate air motor manual. ca_clean_or_repair_4e13da685aebb01cb368daa703596b97ee6547ea799c50b98d52ce66f3dfd553 Clean or repair Clean or repair; see separate air motor manual. Clean or repair; see separate air motor manual. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Clean or repair; see separate air motor manual. Dirty or worn air motor parts.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_pump_fails_to_operate_aefafd562ad7c161d8443f46506d2a1d1dfe297f413b3deef186be5b49bd7d67",
+        "failure_mode_id": "fm_dirty_or_worn_air_motor_parts_a1abaf9aa652b50071a4ab05b43170ac5d7865b6a23ad31567ab2eeeeee2593b",
+        "corrective_action_id": "ca_clean_or_repair_4e13da685aebb01cb368daa703596b97ee6547ea799c50b98d52ce66f3dfd553",
+        "branch_lineage_id": "dbranch_0f073cbfe74045f16b13ede9ed3aa02b17cafe5f65f996098a7c3146470af94c"
+      }
+    },
+    {
+      "claim_id": "G5",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.823529,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 0.823529
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Pump operates, but output is low on both strokes",
+        "failure_mode": "Restricted line or inadequate air supply",
+        "corrective_action": "Clear",
+        "indicator_context": "Pump operates, but output is low on both strokes Pump operates, but output is low on both strokes. sym_pump_operates_but_output_is_low_on_both_strokes_e45216fbb6ba86fb8d6d938068c86bd616fe9d20aa58e4b3730bd9589aff6f71 Pump operates, but output is low on both strokes Pump operates, but output is low on both strokes. Medium Pump operates, but output is low on both strokes. Restricted line or inadequate air supply.",
+        "failure_mode_context": "Restricted line or inadequate air supply Restricted line or inadequate air supply. fm_restricted_line_or_inadequate_air_supply_74391a8f7d92923c1f2cd59a162b3d91176ae3798a190a355a113632b33623ce Restricted line or inadequate air supply Restricted line or inadequate air supply. not_stated Pump operates, but output is low on both strokes. Restricted line or inadequate air supply. Clear*; see Technical Data on pages 24–27. Restricted line or inadequate air supply.",
+        "corrective_action_context": "Clear Clear the restricted line or address the inadequate air supply. ca_clear_60ac380032476af5b177840163870caaad54de20cad8b53756f5d81804a13943 Clear Clear the restricted line or address the inadequate air supply. Clear*; see Technical Data on pages 24–27. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Clear*; see Technical Data on pages 24–27. Restricted line or inadequate air supply.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_e45216fbb6ba86fb8d6d938068c86bd616fe9d20aa58e4b3730bd9589aff6f71",
+        "failure_mode_id": "fm_restricted_line_or_inadequate_air_supply_74391a8f7d92923c1f2cd59a162b3d91176ae3798a190a355a113632b33623ce",
+        "corrective_action_id": "ca_clear_60ac380032476af5b177840163870caaad54de20cad8b53756f5d81804a13943",
+        "branch_lineage_id": "dbranch_f68233b1275b5b233aebc536945175456844dc4d539f5673a9b47c476682af80"
+      }
+    },
+    {
+      "claim_id": "G6",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.875,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 0.88,
+        "corrective_action": 0.875
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Pump operates, but output is low on both strokes.",
+        "failure_mode": "Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+        "corrective_action": "Clear obstruction or use a hose with a larger ID.",
+        "indicator_context": "Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. sym_pump_operates_but_output_is_low_on_both_strokes_8f17d3e20c013c400901427bebf614725431110ca86ee507ff7f9100c9fc44aa Pump operates, but output is low on both strokes. Pump operates, but output is low on both strokes. Medium Pump operates, but output is low on both strokes. Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+        "failure_mode_context": "Obstructed fluid hose or gun/valve; fluid hose ID is too small. Obstructed fluid hose or gun/valve; fluid hose ID is too small. fm_obstructed_fluid_hose_or_gun_valve_fluid_hose_id_abc515d4d7e6b01523c2e3676baa44fd737adfaea3bb6729aac1eafebe46a500 Obstructed fluid hose or gun/valve; fluid hose ID is too small. Obstructed fluid hose or gun/valve; fluid hose ID is too small. not_stated Pump operates, but output is low on both strokes. Obstructed fluid hose or gun/valve; fluid hose ID is too small. Clear*; use a hose with a larger ID. Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+        "corrective_action_context": "Clear obstruction or use a hose with a larger ID. Clear*; use a hose with a larger ID. ca_clear_obstruction_or_use_a_hose_with_a_larger_id_30cb126380257d86f50d41e005d596e32c46d6f8668cbdaab60c03aac4bfcf31 Clear obstruction or use a hose with a larger ID. Clear*; use a hose with a larger ID. Clear*; use a hose with a larger ID. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Clear*; use a hose with a larger ID. Obstructed fluid hose or gun/valve; fluid hose ID is too small.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_8f17d3e20c013c400901427bebf614725431110ca86ee507ff7f9100c9fc44aa",
+        "failure_mode_id": "fm_obstructed_fluid_hose_or_gun_valve_fluid_hose_id_abc515d4d7e6b01523c2e3676baa44fd737adfaea3bb6729aac1eafebe46a500",
+        "corrective_action_id": "ca_clear_obstruction_or_use_a_hose_with_a_larger_id_30cb126380257d86f50d41e005d596e32c46d6f8668cbdaab60c03aac4bfcf31",
+        "branch_lineage_id": "dbranch_36bfc9c031942b5a14d926b562925b9ca431c77369d85199cca23b973dea0c78"
+      }
+    },
+    {
+      "claim_id": "G7",
+      "kind": "published_path",
+      "present": true,
+      "score": 1.0,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Pump operates, but output is low on both strokes",
+        "failure_mode": "Bleeder valve is open",
+        "corrective_action": "Close",
+        "indicator_context": "Pump operates, but output is low on both strokes Pump operates, but output is low on both strokes. sym_pump_operates_but_output_is_low_on_both_strokes_e45216fbb6ba86fb8d6d938068c86bd616fe9d20aa58e4b3730bd9589aff6f71 Pump operates, but output is low on both strokes Pump operates, but output is low on both strokes. Medium Pump operates, but output is low on both strokes. Bleeder valve is open.",
+        "failure_mode_context": "Bleeder valve is open Bleeder valve is open. fm_bleeder_valve_is_open_73a68621f895230f599a8ad3b19136ff4cc8fa0e963d8d01ddbb3faa94a2a0af Bleeder valve is open Bleeder valve is open. not_stated Pump operates, but output is low on both strokes. Bleeder valve is open. Bleeder valve is open. Close.",
+        "corrective_action_context": "Close Close the bleeder valve. ca_close_ac864e77d95fbcab2212ef5ada1f246b3ea6d003b505dc0b54d8f70715a4719e Close Close the bleeder valve. Close. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Bleeder valve is open. Close.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_e45216fbb6ba86fb8d6d938068c86bd616fe9d20aa58e4b3730bd9589aff6f71",
+        "failure_mode_id": "fm_bleeder_valve_is_open_73a68621f895230f599a8ad3b19136ff4cc8fa0e963d8d01ddbb3faa94a2a0af",
+        "corrective_action_id": "ca_close_ac864e77d95fbcab2212ef5ada1f246b3ea6d003b505dc0b54d8f70715a4719e",
+        "branch_lineage_id": "dbranch_534716a04d125208ac675232e8be68b8ef15b7a454212cbae8b8018839a1e11a"
+      }
+    },
+    {
+      "claim_id": "G8",
+      "kind": "expected_gap",
+      "present": true,
+      "score": 1.0,
+      "target_id": "diagwin_24119fd310125d8feebc3377"
+    },
+    {
+      "claim_id": "G9",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.885714,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 0.885714
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Pump operates, but output is low on both strokes",
+        "failure_mode": "Fluid is too heavy for pump priming",
+        "corrective_action": "Use bleeder valve; use wiper plate with ram or pneumatic elevator cart",
+        "indicator_context": "Pump operates, but output is low on both strokes Pump operates, but output is low on both strokes. sym_pump_operates_but_output_is_low_on_both_strokes_e45216fbb6ba86fb8d6d938068c86bd616fe9d20aa58e4b3730bd9589aff6f71 Pump operates, but output is low on both strokes Pump operates, but output is low on both strokes. Medium Pump operates, but output is low on both strokes. Fluid is too heavy for pump priming.",
+        "failure_mode_context": "Fluid is too heavy for pump priming Fluid is too heavy for pump priming. fm_fluid_is_too_heavy_for_pump_priming_86eb1aa5d37b2c94ff581a2ff7cca10f13ec8219d90ef0268b0de412f651a0fc Fluid is too heavy for pump priming Fluid is too heavy for pump priming. not_stated Pump operates, but output is low on both strokes. Fluid is too heavy for pump priming. Fluid is too heavy for pump priming. Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+        "corrective_action_context": "Use bleeder valve; use wiper plate with ram or pneumatic elevator cart Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. ca_use_bleeder_valve_use_wiper_plate_with_ram_or_pn_1fb80b0df0a9409cf582858cb89a5be1b845e03d305be55cefc58b351f611360 Use bleeder valve; use wiper plate with ram or pneumatic elevator cart Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Fluid is too heavy for pump priming. Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_e45216fbb6ba86fb8d6d938068c86bd616fe9d20aa58e4b3730bd9589aff6f71",
+        "failure_mode_id": "fm_fluid_is_too_heavy_for_pump_priming_86eb1aa5d37b2c94ff581a2ff7cca10f13ec8219d90ef0268b0de412f651a0fc",
+        "corrective_action_id": "ca_use_bleeder_valve_use_wiper_plate_with_ram_or_pn_1fb80b0df0a9409cf582858cb89a5be1b845e03d305be55cefc58b351f611360",
+        "branch_lineage_id": "dbranch_2943c4ea15ed79ed60e2a4a07e982ded6cd3d73b17dd874465e8196a4f0e9539"
+      }
+    },
+    {
+      "claim_id": "G10",
+      "kind": "published_path",
+      "present": true,
+      "score": 1.0,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Pump operates, but output is low on both strokes",
+        "failure_mode": "Worn packings in displacement pump",
+        "corrective_action": "Replace packings",
+        "indicator_context": "Pump operates, but output is low on both strokes Pump operates, but output is low on both strokes. sym_pump_operates_but_output_is_low_on_both_strokes_e45216fbb6ba86fb8d6d938068c86bd616fe9d20aa58e4b3730bd9589aff6f71 Pump operates, but output is low on both strokes Pump operates, but output is low on both strokes. Medium Pump operates, but output is low on both strokes. Worn packings in displacement pump.",
+        "failure_mode_context": "Worn packings in displacement pump Worn packings in displacement pump. fm_worn_packings_in_displacement_pump_1279c15a343444918387a850d2d6f309e5e6938530773fb324cc2f1cb1bfaa4b Worn packings in displacement pump Worn packings in displacement pump. comp_displacement_pump_packings_3a31e9a0f43421fc7aa2abe64847b5c90522ea8351033c4e2b38bcc36f4cb9a1 Pump operates, but output is low on both strokes. Worn packings in displacement pump. Replace packings. Worn packings in displacement pump.",
+        "corrective_action_context": "Replace packings Replace packings. ca_replace_packings_f501381ce01637b95b0a6dffb20d57753675f40820070649fb3cdfbd088b0ba3 Replace packings Replace packings. Replace packings. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Replace packings. Worn packings in displacement pump.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_pump_operates_but_output_is_low_on_both_strokes_e45216fbb6ba86fb8d6d938068c86bd616fe9d20aa58e4b3730bd9589aff6f71",
+        "failure_mode_id": "fm_worn_packings_in_displacement_pump_1279c15a343444918387a850d2d6f309e5e6938530773fb324cc2f1cb1bfaa4b",
+        "corrective_action_id": "ca_replace_packings_f501381ce01637b95b0a6dffb20d57753675f40820070649fb3cdfbd088b0ba3",
+        "branch_lineage_id": "dbranch_7d76270bba07202fe68b052de5ae1ddef992793b523aee785b2bf332b7d6037f"
+      }
+    },
+    {
+      "claim_id": "G11",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.843478,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 0.843478,
+        "corrective_action": 0.885714
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Pump operates, but output is low on down-stroke",
+        "failure_mode": "Fluid too heavy for pump priming",
+        "corrective_action": "Use bleeder valve; use wiper plate with ram or pneumatic elevator cart",
+        "indicator_context": "Pump operates, but output is low on down-stroke Pump operates, but output is low on down-stroke. sym_pump_operates_but_output_is_low_on_down_stroke_7a71e4605ece51ad68cb01432b4c85d39db1dcb9034a97e75eb44ca863597335 Pump operates, but output is low on down-stroke Pump operates, but output is low on down-stroke. Medium Fluid too heavy for pump priming. Pump operates, but output is low on down- stroke.",
+        "failure_mode_context": "Fluid too heavy for pump priming Fluid too heavy for pump priming. fm_fluid_too_heavy_for_pump_priming_c925351f4c7466ce87ef2d9fe62273a27b433d1cc344531e39070e542c9e983f Fluid too heavy for pump priming Fluid too heavy for pump priming. not_stated Fluid too heavy for pump priming. Pump operates, but output is low on down- stroke. Fluid too heavy for pump priming. Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+        "corrective_action_context": "Use bleeder valve; use wiper plate with ram or pneumatic elevator cart Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. ca_use_bleeder_valve_use_wiper_plate_with_ram_or_pn_1fb80b0df0a9409cf582858cb89a5be1b845e03d305be55cefc58b351f611360 Use bleeder valve; use wiper plate with ram or pneumatic elevator cart Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Fluid too heavy for pump priming. Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_pump_operates_but_output_is_low_on_down_stroke_7a71e4605ece51ad68cb01432b4c85d39db1dcb9034a97e75eb44ca863597335",
+        "failure_mode_id": "fm_fluid_too_heavy_for_pump_priming_c925351f4c7466ce87ef2d9fe62273a27b433d1cc344531e39070e542c9e983f",
+        "corrective_action_id": "ca_use_bleeder_valve_use_wiper_plate_with_ram_or_pn_1fb80b0df0a9409cf582858cb89a5be1b845e03d305be55cefc58b351f611360",
+        "branch_lineage_id": "dbranch_3be5905040f4f644d4bb107fea280ce0eefcf5d7dd4e40fc71bf729099795c1e"
+      }
+    },
+    {
+      "claim_id": "G12",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.861538,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 0.861538
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Pump operates, but output is low on down-stroke",
+        "failure_mode": "Held open or worn intake valve or seals",
+        "corrective_action": "Clear valve; replace seals",
+        "indicator_context": "Pump operates, but output is low on down-stroke Pump operates, but output is low on down-stroke. sym_pump_operates_but_output_is_low_on_down_stroke_7a71e4605ece51ad68cb01432b4c85d39db1dcb9034a97e75eb44ca863597335 Pump operates, but output is low on down-stroke Pump operates, but output is low on down-stroke. Medium Pump operates, but output is low on down- stroke. Held open or worn intake valve or seals.",
+        "failure_mode_context": "Held open or worn intake valve or seals Held open or worn intake valve or seals. fm_held_open_or_worn_intake_valve_or_seals_5d4dc25bd73a597999a200e44dd09a75b4bdb362113876cf7da406a7f1e9a618 Held open or worn intake valve or seals Held open or worn intake valve or seals. not_stated Pump operates, but output is low on down- stroke. Held open or worn intake valve or seals. Clear valve; replace seals. Held open or worn intake valve or seals.",
+        "corrective_action_context": "Clear valve; replace seals Clear the intake valve and replace seals. ca_clear_valve_replace_seals_395e532b29c5ff2a8bf75772b6fff85331ce59c181802f1940ecf34a321e3311 Clear valve; replace seals Clear the intake valve and replace seals. Clear valve; replace seals. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Clear valve; replace seals. Held open or worn intake valve or seals.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_pump_operates_but_output_is_low_on_down_stroke_7a71e4605ece51ad68cb01432b4c85d39db1dcb9034a97e75eb44ca863597335",
+        "failure_mode_id": "fm_held_open_or_worn_intake_valve_or_seals_5d4dc25bd73a597999a200e44dd09a75b4bdb362113876cf7da406a7f1e9a618",
+        "corrective_action_id": "ca_clear_valve_replace_seals_395e532b29c5ff2a8bf75772b6fff85331ce59c181802f1940ecf34a321e3311",
+        "branch_lineage_id": "dbranch_a6e7c70e94a702e0b6ade581c6023afbbf5e24890d38b9dc9fd76336ae4aa083"
+      }
+    },
+    {
+      "claim_id": "G13",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.857143,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 0.857143
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Pump operates, but output is low on up-stroke",
+        "failure_mode": "Held open or worn piston valve or seals",
+        "corrective_action": "Clear valve; replace seals",
+        "indicator_context": "Pump operates, but output is low on up-stroke Pump operates, but output is low on up-stroke. sym_pump_operates_but_output_is_low_on_up_stroke_f5c8b3f908b48c7dff861714bc527642ae0ff553d5727b18c2114187d9d667a4 Pump operates, but output is low on up-stroke Pump operates, but output is low on up-stroke. Medium Held open or worn piston valve or seals. Pump operates, but output is low on up- stroke.",
+        "failure_mode_context": "Held open or worn piston valve or seals Held open or worn piston valve or seals. fm_held_open_or_worn_piston_valve_or_seals_d66152b4e1f2be39e129640a3e8c4e878ae4f61c56792b9097dde5ed96f259c5 Held open or worn piston valve or seals Held open or worn piston valve or seals. not_stated Held open or worn piston valve or seals. Pump operates, but output is low on up- stroke. Clear valve; replace seals. Held open or worn piston valve or seals.",
+        "corrective_action_context": "Clear valve; replace seals Clear the intake valve and replace seals. ca_clear_valve_replace_seals_395e532b29c5ff2a8bf75772b6fff85331ce59c181802f1940ecf34a321e3311 Clear valve; replace seals Clear the intake valve and replace seals. Clear valve; replace seals. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Clear valve; replace seals. Held open or worn piston valve or seals.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_pump_operates_but_output_is_low_on_up_stroke_f5c8b3f908b48c7dff861714bc527642ae0ff553d5727b18c2114187d9d667a4",
+        "failure_mode_id": "fm_held_open_or_worn_piston_valve_or_seals_d66152b4e1f2be39e129640a3e8c4e878ae4f61c56792b9097dde5ed96f259c5",
+        "corrective_action_id": "ca_clear_valve_replace_seals_395e532b29c5ff2a8bf75772b6fff85331ce59c181802f1940ecf34a321e3311",
+        "branch_lineage_id": "dbranch_162980f5480e11600a81f9c8f238c38044405c63cfe01203418d517dad2f04ce"
+      }
+    },
+    {
+      "claim_id": "G14",
+      "kind": "published_path",
+      "present": true,
+      "score": 1.0,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Erratic or accelerated pump speed",
+        "failure_mode": "Exhausted fluid supply",
+        "corrective_action": "Refill and prime",
+        "indicator_context": "Erratic or accelerated pump speed Erratic or accelerated pump speed. sym_erratic_or_accelerated_pump_speed_aeef195c39ec7a067b66b38caed9928a5589878a2433e68d57810cfaf93bd750 Erratic or accelerated pump speed Erratic or accelerated pump speed. Medium Erratic or accelerated pump speed. Exhausted fluid supply.",
+        "failure_mode_context": "Exhausted fluid supply Exhausted fluid supply. fm_exhausted_fluid_supply_a47013bc646001ef31c770795f46a52a72f39024269e1ea5ad890ae25ca339b7 Exhausted fluid supply Exhausted fluid supply. not_stated Erratic or accelerated pump speed. Exhausted fluid supply. Exhausted fluid supply. Refill and prime.",
+        "corrective_action_context": "Refill and prime Refill and prime. ca_refill_and_prime_9607b26b2122526ad490cd1cc011c3ef2dd26caef063ec1793d87f1e94f371b7 Refill and prime Refill and prime. Refill and prime. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Exhausted fluid supply. Refill and prime.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_erratic_or_accelerated_pump_speed_aeef195c39ec7a067b66b38caed9928a5589878a2433e68d57810cfaf93bd750",
+        "failure_mode_id": "fm_exhausted_fluid_supply_a47013bc646001ef31c770795f46a52a72f39024269e1ea5ad890ae25ca339b7",
+        "corrective_action_id": "ca_refill_and_prime_9607b26b2122526ad490cd1cc011c3ef2dd26caef063ec1793d87f1e94f371b7",
+        "branch_lineage_id": "dbranch_0448313a2a6c8bc0fb24c42566fe385c77f2c9e41d787761cabc4d69c98f6d0a"
+      }
+    },
+    {
+      "claim_id": "G15",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.885714,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 0.885714
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Erratic or accelerated pump speed",
+        "failure_mode": "Fluid is too heavy for pump priming",
+        "corrective_action": "Use bleeder valve; use wiper plate with ram or pneumatic elevator cart",
+        "indicator_context": "Erratic or accelerated pump speed Erratic or accelerated pump speed. sym_erratic_or_accelerated_pump_speed_aeef195c39ec7a067b66b38caed9928a5589878a2433e68d57810cfaf93bd750 Erratic or accelerated pump speed Erratic or accelerated pump speed. Medium Erratic or accelerated pump speed. Fluid is too heavy for pump priming.",
+        "failure_mode_context": "Fluid is too heavy for pump priming Fluid is too heavy for pump priming. fm_fluid_is_too_heavy_for_pump_priming_86eb1aa5d37b2c94ff581a2ff7cca10f13ec8219d90ef0268b0de412f651a0fc Fluid is too heavy for pump priming Fluid is too heavy for pump priming. not_stated Erratic or accelerated pump speed. Fluid is too heavy for pump priming. Fluid is too heavy for pump priming. Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+        "corrective_action_context": "Use bleeder valve; use wiper plate with ram or pneumatic elevator cart Use the bleeder valve and use a wiper plate with a ram or pneumatic elevator cart. ca_use_bleeder_valve_use_wiper_plate_with_ram_or_pn_ae0236d4a2e30fe949c0ac7f982eb213e43f915d988897afd632999480e1c9f2 Use bleeder valve; use wiper plate with ram or pneumatic elevator cart Use the bleeder valve and use a wiper plate with a ram or pneumatic elevator cart. Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Fluid is too heavy for pump priming. Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_erratic_or_accelerated_pump_speed_aeef195c39ec7a067b66b38caed9928a5589878a2433e68d57810cfaf93bd750",
+        "failure_mode_id": "fm_fluid_is_too_heavy_for_pump_priming_86eb1aa5d37b2c94ff581a2ff7cca10f13ec8219d90ef0268b0de412f651a0fc",
+        "corrective_action_id": "ca_use_bleeder_valve_use_wiper_plate_with_ram_or_pn_ae0236d4a2e30fe949c0ac7f982eb213e43f915d988897afd632999480e1c9f2",
+        "branch_lineage_id": "dbranch_9c05ae3fe7195356b8e654290bdca9c18989684846054ce7e726c72fd102d7ae"
+      }
+    },
+    {
+      "claim_id": "G16",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.857143,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 0.857143
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Erratic or accelerated pump speed",
+        "failure_mode": "Held open or worn piston valve or seals",
+        "corrective_action": "Clear valve; replace seals",
+        "indicator_context": "Erratic or accelerated pump speed Erratic or accelerated pump speed. sym_erratic_or_accelerated_pump_speed_aeef195c39ec7a067b66b38caed9928a5589878a2433e68d57810cfaf93bd750 Erratic or accelerated pump speed Erratic or accelerated pump speed. Medium Erratic or accelerated pump speed. Held open or worn piston valve or seals.",
+        "failure_mode_context": "Held open or worn piston valve or seals Held open or worn piston valve or seals. fm_held_open_or_worn_piston_valve_or_seals_d66152b4e1f2be39e129640a3e8c4e878ae4f61c56792b9097dde5ed96f259c5 Held open or worn piston valve or seals Held open or worn piston valve or seals. not_stated Erratic or accelerated pump speed. Held open or worn piston valve or seals. Clear valve; replace seals. Held open or worn piston valve or seals.",
+        "corrective_action_context": "Clear valve; replace seals Clear the intake valve and replace seals. ca_clear_valve_replace_seals_395e532b29c5ff2a8bf75772b6fff85331ce59c181802f1940ecf34a321e3311 Clear valve; replace seals Clear the intake valve and replace seals. Clear valve; replace seals. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Clear valve; replace seals. Held open or worn piston valve or seals.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_erratic_or_accelerated_pump_speed_aeef195c39ec7a067b66b38caed9928a5589878a2433e68d57810cfaf93bd750",
+        "failure_mode_id": "fm_held_open_or_worn_piston_valve_or_seals_d66152b4e1f2be39e129640a3e8c4e878ae4f61c56792b9097dde5ed96f259c5",
+        "corrective_action_id": "ca_clear_valve_replace_seals_395e532b29c5ff2a8bf75772b6fff85331ce59c181802f1940ecf34a321e3311",
+        "branch_lineage_id": "dbranch_a2f3238969d6059de5cbd7dffb94e391e76a2131e427bc109fc041014c64234e"
+      }
+    },
+    {
+      "claim_id": "G17",
+      "kind": "published_path",
+      "present": true,
+      "score": 0.866667,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 0.866667
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Erratic or accelerated pump speed",
+        "failure_mode": "Held open or worn priming piston",
+        "corrective_action": "Clear; service",
+        "indicator_context": "Erratic or accelerated pump speed Erratic or accelerated pump speed. sym_erratic_or_accelerated_pump_speed_aeef195c39ec7a067b66b38caed9928a5589878a2433e68d57810cfaf93bd750 Erratic or accelerated pump speed Erratic or accelerated pump speed. Medium Erratic or accelerated pump speed. Held open or worn priming piston.",
+        "failure_mode_context": "Held open or worn priming piston Held open or worn priming piston. fm_held_open_or_worn_priming_piston_c70eed3b94244201908843e2440fa3e4ccbf6a613d5b84f0f3e557e5dccf0f5b Held open or worn priming piston Held open or worn priming piston. not_stated Erratic or accelerated pump speed. Held open or worn priming piston. Clear; service. Held open or worn priming piston.",
+        "corrective_action_context": "Clear; service Clear; service. ca_clear_service_54bead872f0f40d8b276170aa38fb6dd5c2e51363f4650bfd829eab9bd3a9a05 Clear; service Clear; service. Clear; service. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Clear; service. Held open or worn priming piston.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_erratic_or_accelerated_pump_speed_aeef195c39ec7a067b66b38caed9928a5589878a2433e68d57810cfaf93bd750",
+        "failure_mode_id": "fm_held_open_or_worn_priming_piston_c70eed3b94244201908843e2440fa3e4ccbf6a613d5b84f0f3e557e5dccf0f5b",
+        "corrective_action_id": "ca_clear_service_54bead872f0f40d8b276170aa38fb6dd5c2e51363f4650bfd829eab9bd3a9a05",
+        "branch_lineage_id": "dbranch_81eb1f78b999da69bf305a87e170879904a66a12c1e946a634e3b9b07266cba2"
+      }
+    },
+    {
+      "claim_id": "G18",
+      "kind": "published_path",
+      "present": true,
+      "score": 1.0,
+      "field_scores": {
+        "indicator": 1.0,
+        "failure_mode": 1.0,
+        "corrective_action": 1.0
+      },
+      "best_path": {
+        "indicator_type": "Symptom",
+        "indicator": "Erratic or accelerated pump speed.",
+        "failure_mode": "Worn packings in displacement pump.",
+        "corrective_action": "Replace packings.",
+        "indicator_context": "Erratic or accelerated pump speed. Erratic or accelerated pump speed. sym_erratic_or_accelerated_pump_speed_dc80d987f359853c321689ee7e053e955dbd41fd92068f3b94953b1a5c837601 Erratic or accelerated pump speed. Erratic or accelerated pump speed. Medium Worn packings in displacement pump. Erratic or accelerated pump speed.",
+        "failure_mode_context": "Worn packings in displacement pump. Worn packings in displacement pump. fm_worn_packings_in_displacement_pump_8594e918a0ed7d62cb8f37006e9f1338e47386a11c08bfcb5a848c2b033e667c Worn packings in displacement pump. Worn packings in displacement pump. not_stated Worn packings in displacement pump. Erratic or accelerated pump speed. Replace packings. Worn packings in displacement pump.",
+        "corrective_action_context": "Replace packings. Replace packings. ca_replace_packings_e484c8562307587682d5e5aeb696da4733d151b98383e91576605b46c644edce Replace packings. Replace packings. Replace packings. technical PDF 03_graco_check_mate_200_pumps_manual.pdf typed_diagnostic_edge_evidence Replace packings. Worn packings in displacement pump.",
+        "pages": [
+          11
+        ],
+        "indicator_id": "sym_erratic_or_accelerated_pump_speed_dc80d987f359853c321689ee7e053e955dbd41fd92068f3b94953b1a5c837601",
+        "failure_mode_id": "fm_worn_packings_in_displacement_pump_8594e918a0ed7d62cb8f37006e9f1338e47386a11c08bfcb5a848c2b033e667c",
+        "corrective_action_id": "ca_replace_packings_e484c8562307587682d5e5aeb696da4733d151b98383e91576605b46c644edce",
+        "branch_lineage_id": "dbranch_d77f492607c8f88bf1998514601ab0bf2846a2fed4d54fe031092b488b42df56"
+      }
+    }
+  ],
+  "semantic_precision": null,
+  "semantic_recall": null
+}

@@ -1,0 +1,318 @@
+{
+  "ontology_name": "Core_Ontology",
+  "version": "2.0",
+  "language": "en",
+  "source_type": "technical PDF",
+  "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+  "nodes": {
+    "Asset": [
+      {
+        "asset_id": "ASSET-001",
+        "name": "Danfoss Active Power Filter",
+        "description": "Danfoss Active Power Filter documented by operating guide 130R1375.",
+        "brand": "Danfoss",
+        "model": "Active Power Filter",
+        "asset_type": "active power filter"
+      }
+    ],
+    "Component": [],
+    "Symptom": [],
+    "FailureMode": [
+      {
+        "failure_mode_id": "fm_air_vents_are_blocked_1d0b510db8840e2362ab94c46310f74179b76396b7d4aee6b63850160b14ea60",
+        "name": "Air vents are blocked",
+        "description": "The source states that the air vents ate blocked.",
+        "material_context": "not_stated"
+      },
+      {
+        "failure_mode_id": "fm_bus_capacitor_failure_221619cb2fa396e8605854985a45ee23a793c2c85bb91126b9991d6c09a41a2e",
+        "name": "BUS capacitor failure",
+        "description": "BUS capacitor failure.",
+        "material_context": "not_stated"
+      },
+      {
+        "failure_mode_id": "fm_fan_failure_fde643dc3b2050675de4008ef6eb02a7d301f742cd9da724ed085262652e7ae4",
+        "name": "Fan failure",
+        "description": "Fan failure.",
+        "material_context": "not_stated"
+      },
+      {
+        "failure_mode_id": "fm_fans_do_not_work_3c6ee452edb01d5b5dac5b24e60fa1a697cc3ffc8cf488f94829656107a2b91e",
+        "name": "Fans do not work",
+        "description": "The fans do not work.",
+        "material_context": "not_stated"
+      },
+      {
+        "failure_mode_id": "fm_input_fuse_is_broken_d881caea847557afdd208f868b6b2285a8e7e6a3bedb9f685429bdb818219265",
+        "name": "Input fuse is broken",
+        "description": "The input fuse is broken.",
+        "material_context": "not_stated"
+      }
+    ],
+    "CorrectiveAction": [
+      {
+        "action_id": "ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4",
+        "name": "Contact service personnel",
+        "description": "Contact service personnel.",
+        "instruction_text": "Contact service personnel.",
+        "source_type": "technical PDF",
+        "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+        "source_reference": "typed_diagnostic_edge_evidence"
+      }
+    ],
+    "ErrorCode": [
+      {
+        "error_code_id": "err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1",
+        "name": "Fuse blowout",
+        "description": "Fuse blowout",
+        "code": "2"
+      },
+      {
+        "error_code_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+        "name": "Ambient OTP",
+        "description": "Ambient OTP",
+        "code": "3"
+      },
+      {
+        "error_code_id": "err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f",
+        "name": "BUS OVP/UVP",
+        "description": "BUS OVP/UVP",
+        "code": "4"
+      },
+      {
+        "error_code_id": "err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad",
+        "name": "Fan Fail",
+        "description": "Fan Fail",
+        "code": "5"
+      }
+    ]
+  },
+  "relations": [
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1",
+      "to_type": "FailureMode",
+      "to_id": "fm_input_fuse_is_broken_d881caea847557afdd208f868b6b2285a8e7e6a3bedb9f685429bdb818219265",
+      "evidence": [
+        {
+          "source_page": 64,
+          "source_reference": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+          "quote": "The input fuse is broken.",
+          "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2"
+        }
+      ],
+      "branch_lineage_id": "dbranch_b67882b77a3733761d5fcbd92e3c6f91be06c73855f262c9b94089b18486665b"
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+      "to_type": "FailureMode",
+      "to_id": "fm_air_vents_are_blocked_1d0b510db8840e2362ab94c46310f74179b76396b7d4aee6b63850160b14ea60",
+      "evidence": [
+        {
+          "source_page": 64,
+          "source_reference": "ev_be36fe564a699168bb8b6df2af8d",
+          "quote": "1 The air vents ate blocked.",
+          "source_anchor": "ev_be36fe564a699168bb8b6df2af8d"
+        }
+      ],
+      "branch_lineage_id": "dbranch_14f79432dac3e6a62f9dfcaf7982c22883bbae2379e095fb95eabf7d369d3b98"
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+      "to_type": "FailureMode",
+      "to_id": "fm_fans_do_not_work_3c6ee452edb01d5b5dac5b24e60fa1a697cc3ffc8cf488f94829656107a2b91e",
+      "evidence": [
+        {
+          "source_page": 64,
+          "source_reference": "ev_be36fe564a699168bb8b6df2af8d",
+          "quote": "2 The fans do not work.",
+          "source_anchor": "ev_be36fe564a699168bb8b6df2af8d"
+        }
+      ],
+      "branch_lineage_id": "dbranch_4bb17bf6238dbbf71787a25c83e48d707318dbebd6d29a442f915ccf3ecbf843"
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f",
+      "to_type": "FailureMode",
+      "to_id": "fm_bus_capacitor_failure_221619cb2fa396e8605854985a45ee23a793c2c85bb91126b9991d6c09a41a2e",
+      "evidence": [
+        {
+          "source_page": 64,
+          "source_reference": "ev_96ed605696bfbeb932e90a8ead5c",
+          "quote": "BUS capacitor failure.",
+          "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c"
+        }
+      ],
+      "branch_lineage_id": "dbranch_1e3f2f74b070791d301dec5ae257151806f7d91c93ecc3278f33798fe3f3a6de"
+    },
+    {
+      "name": "INDICATES",
+      "from_type": "ErrorCode",
+      "from_id": "err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad",
+      "to_type": "FailureMode",
+      "to_id": "fm_fan_failure_fde643dc3b2050675de4008ef6eb02a7d301f742cd9da724ed085262652e7ae4",
+      "evidence": [
+        {
+          "source_page": 64,
+          "source_reference": "ev_e8f5ccbf7b758fa29edb98bffd92",
+          "quote": "Fan failure.",
+          "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92"
+        }
+      ],
+      "branch_lineage_id": "dbranch_9dc2cb3d5655a177451eb2bbdec2a78998982dfb94944662defc6628d1ffe307"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_air_vents_are_blocked_1d0b510db8840e2362ab94c46310f74179b76396b7d4aee6b63850160b14ea60",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4",
+      "evidence": [
+        {
+          "source_page": 64,
+          "source_reference": "ev_be36fe564a699168bb8b6df2af8d",
+          "quote": "1 The air vents ate blocked.",
+          "source_anchor": "ev_be36fe564a699168bb8b6df2af8d"
+        },
+        {
+          "source_page": 64,
+          "source_reference": "ev_be36fe564a699168bb8b6df2af8d",
+          "quote": "Contact service personnel.",
+          "source_anchor": "ev_be36fe564a699168bb8b6df2af8d"
+        }
+      ],
+      "branch_lineage_id": "dbranch_14f79432dac3e6a62f9dfcaf7982c22883bbae2379e095fb95eabf7d369d3b98"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_bus_capacitor_failure_221619cb2fa396e8605854985a45ee23a793c2c85bb91126b9991d6c09a41a2e",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4",
+      "evidence": [
+        {
+          "source_page": 64,
+          "source_reference": "ev_96ed605696bfbeb932e90a8ead5c",
+          "quote": "BUS capacitor failure.",
+          "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c"
+        },
+        {
+          "source_page": 64,
+          "source_reference": "ev_96ed605696bfbeb932e90a8ead5c",
+          "quote": "Contact service personnel.",
+          "source_anchor": "ev_96ed605696bfbeb932e90a8ead5c"
+        }
+      ],
+      "branch_lineage_id": "dbranch_1e3f2f74b070791d301dec5ae257151806f7d91c93ecc3278f33798fe3f3a6de"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_fan_failure_fde643dc3b2050675de4008ef6eb02a7d301f742cd9da724ed085262652e7ae4",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4",
+      "evidence": [
+        {
+          "source_page": 64,
+          "source_reference": "ev_e8f5ccbf7b758fa29edb98bffd92",
+          "quote": "Contact service personnel.",
+          "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92"
+        },
+        {
+          "source_page": 64,
+          "source_reference": "ev_e8f5ccbf7b758fa29edb98bffd92",
+          "quote": "Fan failure.",
+          "source_anchor": "ev_e8f5ccbf7b758fa29edb98bffd92"
+        }
+      ],
+      "branch_lineage_id": "dbranch_9dc2cb3d5655a177451eb2bbdec2a78998982dfb94944662defc6628d1ffe307"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_fans_do_not_work_3c6ee452edb01d5b5dac5b24e60fa1a697cc3ffc8cf488f94829656107a2b91e",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4",
+      "evidence": [
+        {
+          "source_page": 64,
+          "source_reference": "ev_be36fe564a699168bb8b6df2af8d",
+          "quote": "2 The fans do not work.",
+          "source_anchor": "ev_be36fe564a699168bb8b6df2af8d"
+        },
+        {
+          "source_page": 64,
+          "source_reference": "ev_be36fe564a699168bb8b6df2af8d",
+          "quote": "Contact service personnel.",
+          "source_anchor": "ev_be36fe564a699168bb8b6df2af8d"
+        }
+      ],
+      "branch_lineage_id": "dbranch_4bb17bf6238dbbf71787a25c83e48d707318dbebd6d29a442f915ccf3ecbf843"
+    },
+    {
+      "name": "RESOLVED_BY",
+      "from_type": "FailureMode",
+      "from_id": "fm_input_fuse_is_broken_d881caea847557afdd208f868b6b2285a8e7e6a3bedb9f685429bdb818219265",
+      "to_type": "CorrectiveAction",
+      "to_id": "ca_contact_service_personnel_c837e958e896b2805cb47e34cc861aad642ee3ca2472296397f7cd796486c0d4",
+      "evidence": [
+        {
+          "source_page": 64,
+          "source_reference": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+          "quote": "Contact service personnel.",
+          "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2"
+        },
+        {
+          "source_page": 64,
+          "source_reference": "ev_2a7fb8b57f32637cd9b1debcd3d2",
+          "quote": "The input fuse is broken.",
+          "source_anchor": "ev_2a7fb8b57f32637cd9b1debcd3d2"
+        }
+      ],
+      "branch_lineage_id": "dbranch_b67882b77a3733761d5fcbd92e3c6f91be06c73855f262c9b94089b18486665b"
+    },
+    {
+      "name": "GENERATES_ERROR",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "ErrorCode",
+      "to_id": "err_2_0518e39db57cc32e242835bbdd55341f1b5f8764e489197a9f1fab2cfa07f7c1",
+      "evidence": [],
+      "branch_lineage_id": ""
+    },
+    {
+      "name": "GENERATES_ERROR",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "ErrorCode",
+      "to_id": "err_3_882b5ae25b1ac6459560e189dd24ac16c1a9c5b80233dac096098087f3921b0a",
+      "evidence": [],
+      "branch_lineage_id": ""
+    },
+    {
+      "name": "GENERATES_ERROR",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "ErrorCode",
+      "to_id": "err_4_42772cf41978665debf9ef75f9909969d5400fabc414b39a2824959745ea0c4f",
+      "evidence": [],
+      "branch_lineage_id": ""
+    },
+    {
+      "name": "GENERATES_ERROR",
+      "from_type": "Asset",
+      "from_id": "ASSET-001",
+      "to_type": "ErrorCode",
+      "to_id": "err_5_72dbae6e7bdb45c63d9fcfbca39c13457dc6f4d38a7ab5a138298b00837255ad",
+      "evidence": [],
+      "branch_lineage_id": ""
+    }
+  ]
+}

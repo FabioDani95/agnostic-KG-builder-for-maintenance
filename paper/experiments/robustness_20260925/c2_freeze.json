@@ -1,0 +1,22 @@
+{
+  "variant": "c2",
+  "archive_sha256": "0c3d952a203d0559d61bb2d4c83540da6f33f4a7b4deb78df3db7a78504660dc",
+  "model": "gpt-6-luna",
+  "reasoning": "low",
+  "output_cap": 24000,
+  "strategy": "hybrid",
+  "escalation": false,
+  "per_run_conservative_ceiling_usd": 15,
+  "campaign_cap_usd": 20,
+  "gold_used_in_generation": false,
+  "manual_execution": "sequential; chunk concurrency 3",
+  "critical_tests_passed": true,
+  "differences_from_c1": [
+    "scoped cell union grounding",
+    "source candidate table-header check",
+    "literal inherited-root quote binding",
+    "unique window binding with source fragments",
+    "conservative duplicate reconciliation",
+    "gap review flag consistency"
+  ]
+}

@@ -398,11 +398,16 @@ def test_pdf_high_recall_candidates_without_typed_records_fail_closed(
     graph = generated.json()["sources"][0]["subgraph"]
 
     assert graph["publication_metrics"]["diagnostic_candidate_pages"] >= 1
-    assert graph["publication_metrics"]["diagnostic_candidate_records"] == 1
+    assert graph["publication_metrics"]["diagnostic_candidate_records"] >= 1
     assert graph["publication_metrics"]["diagnostic_unresolved_records"] == 1
     # The source window is now durably disposed to review even when the mock
     # provider omits it. Accounting completeness is distinct from approval.
     assert graph["publication_metrics"]["diagnostic_accounting_complete"] is True
+    ledger = graph["diagnostic_compilation_ledger"]
+    assert ledger["diagnostic_input_coverage_complete"] is True
+    assert ledger["diagnostic_extraction_complete"] is False
+    assert ledger["pending_diagnostic_records"] >= 1
+    assert ledger["semantic_completeness_validated"] is False
     gap = next(
         item for item in graph["knowledge_gaps"]
         if item["code"] == "pdf_diagnostic_record_review"
@@ -1119,3 +1124,52 @@ def test_pdf_review_disposition_is_persisted_and_accounted_but_not_approvable(
     )
     assert review_gap.blocking is True
     assert review_gap.disposition == "review"
+
+
+@pytest.mark.parametrize('invalid_second_quote', [False, True])
+def test_pdf_preserves_each_required_quote_and_distinct_branch_occurrence(
+    foundation_client, machine_payload, invalid_second_quote,
+):
+    from backend.services.ontology_pipeline_coercion import _normalize_ontology_instance
+    from backend.services.ontology_schema_service import load_ontology_schema
+
+    workspace_payload = _workspace(foundation_client, machine_payload)
+    source_payload = upload_pdf(
+        foundation_client, workspace_payload['workspace_id'], 'branch-evidence.pdf',
+        'SERIAL: HP7-000042\nPump vibration indicates a loose coupling. Tighten the coupling to specification.',
+    ).json()['source']
+    workspace = WorkspaceRepository().get_by_id(workspace_payload['workspace_id'])
+    source = SourceRepository().get(source_payload['source_id'])
+    evidence = EvidenceRepository().list_evidence(workspace_id=workspace.workspace_id)
+    unit = next(e for e in evidence if e.source_id == source.source_id)
+    result = _pipeline_result(
+        {'asset_identity': workspace.asset.model_dump(mode='json'), 'source_title': source.file_name},
+        quote=unit.locator.quote, source_anchor=unit.evidence_id,
+    )
+    relations = []
+    for relation in result.ontology.relations:
+        if relation.name == 'HAS_COMPONENT':
+            relations.append(relation)
+            continue
+        refs = [OntologyEvidence(source_page=1, source_reference='PAGE 1', source_anchor=unit.evidence_id, quote=q)
+                for q in ['Pump vibration', 'Invented clause' if invalid_second_quote else 'loose coupling']]
+        for branch in ['branch-a', 'branch-b']:
+            relations.append(relation.model_copy(update={'branch_lineage_id': branch, 'evidence': refs}))
+    result.ontology.relations = relations
+    result.ontology = _normalize_ontology_instance(
+        result.ontology, load_ontology_schema(), 'technical PDF', source.file_name,
+        workspace.asset.model_dump(mode='json'),
+    )
+    assert len([r for r in result.ontology.relations if r.name == 'RESOLVED_BY']) == 2
+    revision = PdfSourceSubgraphBuilder()._to_revision(
+        workspace=workspace, source=source, result=result, evidence=evidence,
+        fingerprint='4' * 64, config_hash='5' * 64, supersedes=None,
+    )
+    diagnostic = [r for r in revision.relations if r.relation_type in {'MAY_INDICATE', 'RESOLVED_BY'}]
+    if invalid_second_quote:
+        assert diagnostic == []
+        assert any(g.code == 'pdf_required_relation_evidence_unresolved' and g.blocking for g in revision.knowledge_gaps)
+    else:
+        assert len(diagnostic) == 4
+        assert {r.branch_lineage_id for r in diagnostic} == {'branch-a', 'branch-b'}
+        assert all({ref.quote for ref in r.evidence_refs} == {'Pump vibration', 'loose coupling'} for r in diagnostic)

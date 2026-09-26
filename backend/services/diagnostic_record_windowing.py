@@ -62,6 +62,7 @@ class DiagnosticRecordWindow(BaseModel):
         "prose_direct",
         "table_atomic_endpoint_union",
         "prose_layout_endpoint_union",
+        "prose_structural_endpoint_union",
     ] = "prose_direct"
 
 
@@ -128,11 +129,27 @@ def _unit_text(unit: EvidenceUnit) -> str:
 
 
 def _table_cells(unit: EvidenceUnit) -> list[str]:
+    cells = (unit.attributes.get("table_layout") or {}).get("cells")
+    if isinstance(cells, list):
+        return [str(cell or "").strip() for cell in cells]
     return [cell.strip() for cell in _unit_text(unit).split("|")]
 
 
+def _normalized_header(value: str) -> str:
+    normalized = _normalized(value)
+    return {
+        "possible causes": "possible cause",
+        "causes": "cause",
+        "possible solution": "solution",
+        "possible solutions": "solution",
+        "solutions": "solution",
+        "remedies": "remedy",
+        "corrective actions": "corrective action",
+    }.get(normalized, normalized)
+
+
 def _looks_like_header(cells: Sequence[str]) -> bool:
-    nonempty = [_normalized(cell) for cell in cells if _normalized(cell)]
+    nonempty = [_normalized_header(cell) for cell in cells if _normalized(cell)]
     if len(nonempty) < 2:
         return False
     matches = sum(
@@ -144,7 +161,7 @@ def _looks_like_header(cells: Sequence[str]) -> bool:
 
 
 def _header_signature(cells: Sequence[str]) -> str:
-    return "|".join(_normalized(cell) for cell in cells)
+    return "|".join(_normalized_header(cell) for cell in cells)
 
 
 def _stable_window_id(
@@ -229,7 +246,7 @@ def _header_column_index(
     terms: Sequence[str],
 ) -> int | None:
     for index, cell in enumerate(header_cells):
-        value = _normalized(cell)
+        value = _normalized_header(cell)
         if any(value == term or value.startswith(f"{term} ") for term in terms):
             return index
     return None
@@ -275,6 +292,12 @@ def _atomic_table_branches(
 
     causes = _split_numbered_items(cells[cause_index])
     actions = _split_numbered_items(cells[action_index])
+    # Unnumbered alternatives do not establish positional cause/remedy pairs,
+    # even when both columns contain the same number of bullet points.
+    cause_text = cells[cause_index].strip()
+    bullets = r"[\u2022\u25a0\u25a1\u25aa\u25cf\uf071\uf06c]"
+    if re.match(bullets, cause_text) and len(re.findall(bullets, cause_text)) > 1:
+        return [(list(cells), "ambiguous_pairing")]
     if len(causes) <= 1:
         return [(list(cells), "atomic")]
     if len(actions) not in {1, len(causes)}:
@@ -331,6 +354,29 @@ def _table_windows(units: Sequence[EvidenceUnit]) -> list[DiagnosticRecordWindow
         assert isinstance(first_locator, PdfLocator)
         first_cells = _table_cells(rows[0])
         has_header = _looks_like_header(first_cells)
+        title_root = None
+        header_offset = 0
+        # Some diagnostic tables have a spanning symptom title, followed by
+        # the actual Cause / Solution header. Require canonical cell geometry
+        # and those two explicit roles; a heading above an arbitrary table
+        # must not create diagnostic relations.
+        if not has_header and len(rows) >= 3:
+            layout = rows[0].attributes.get("table_layout") or {}
+            boxes = layout.get("cell_bboxes") or []
+            table_box = layout.get("table_bbox") or []
+            next_cells = _table_cells(rows[1])
+            spanning = (
+                len(first_cells) == 2 and bool(first_cells[0]) and not first_cells[1]
+                and len(boxes) == 2 and boxes[0] is not None and boxes[1] is None
+                and len(boxes[0]) == 4 and len(table_box) == 4
+                and abs(boxes[0][0] - table_box[0]) <= 1
+                and abs(boxes[0][2] - table_box[2]) <= 1
+            )
+            if (spanning and _looks_like_header(next_cells) and len(next_cells) == 2
+                    and _header_column_index(next_cells, _CAUSE_HEADER_TERMS) == 0
+                    and _header_column_index(next_cells, _ACTION_HEADER_TERMS) == 1):
+                title_root = (rows[0], [first_cells[0]])
+                first_cells, has_header, header_offset = next_cells, True, 1
         # A table locator is structural evidence, not proof that the table is
         # troubleshooting.  Without a diagnostic header, turning every row in
         # parts/specification/maintenance tables into an LLM call recreates the
@@ -343,7 +389,7 @@ def _table_windows(units: Sequence[EvidenceUnit]) -> list[DiagnosticRecordWindow
             continue
         header_cells = first_cells if has_header else []
         cause_index = _header_column_index(header_cells, _CAUSE_HEADER_TERMS)
-        data_rows = rows[1:] if has_header else rows
+        data_rows = rows[header_offset + 1:] if has_header else rows
         if not data_rows:
             previous_source = source_id
             previous_page = first_locator.page
@@ -367,7 +413,7 @@ def _table_windows(units: Sequence[EvidenceUnit]) -> list[DiagnosticRecordWindow
             and signature == previous_header_signature
             and first_data_has_blank_root
         )
-        active_root = previous_root if is_cross_page_continuation else None
+        active_root = title_root or (previous_root if is_cross_page_continuation else None)
 
         for row in data_rows:
             locator = row.locator
@@ -483,6 +529,7 @@ def _looks_like_section_boundary(text: str) -> bool:
         and not first_line.endswith((".", ":", ";", ","))
         and len(stripped.splitlines()) > 1
         and any(character.isalpha() for character in first_line)
+        and all(word.isupper() or word.istitle() for word in re.findall(r"[A-Za-z]+", first_line))
         and _explicit_step_number(first_line) is None
         and not _looks_like_alpha_substep(first_line)
         and not first_line.casefold().startswith("troubleshooting")
@@ -545,10 +592,11 @@ def _split_prose_record(
     root: EvidenceUnit,
     supports: Sequence[EvidenceUnit],
 ) -> tuple[list[list[EvidenceUnit]], str]:
-    groups = _step_groups(supports)
-    if len(groups) <= 1:
-        return [[root, *supports]], "prose_direct"
-
+    # Wrapped headings and lead-in prose belong to every alternative branch,
+    # not just to the first numbered step.
+    first_numbered = next((i for i, unit in enumerate(supports) if _explicit_step_number(_unit_text(unit)) is not None), len(supports))
+    prefix = list(supports[:first_numbered])
+    groups = _step_groups(supports[first_numbered:])
     root_text = _unit_text(root)
     record_text = "\n".join(_unit_text(unit) for unit in (root, *supports))
     numbered = [
@@ -565,14 +613,15 @@ def _split_prose_record(
         r"(?i)\b(?:procedure|proceed\s+as\s+follows)\b",
         record_text,
     ))
-    if procedure or len(numbered) <= 1:
-        return [[root, *supports]], "prose_direct"
-    edge_policy = (
-        "prose_direct"
-        if _root_declares_explicit_causes(root_text)
-        else "prose_layout_endpoint_union"
+    explicit_structure = bool(
+        _ROOT_LABEL_RE.search(root_text)
+        and re.search(r"(?im)^\s*(?:troubleshooting|remedy|solution|corrective action)\s*:", record_text)
     )
-    return [[root, *group] for group in groups], edge_policy
+    if procedure or len(numbered) <= 1:
+        policy = "prose_structural_endpoint_union" if explicit_structure and (procedure or _root_declares_explicit_causes(record_text)) else "prose_direct"
+        return [[root, *supports]], policy
+    edge_policy = "prose_structural_endpoint_union" if explicit_structure else "prose_direct"
+    return [[root, *prefix, *group] for group in groups], edge_policy
 
 
 def _block_is_contiguous(previous: EvidenceUnit, current: EvidenceUnit) -> bool:

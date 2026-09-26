@@ -1,0 +1,108 @@
+........................................................................ [ 11%]
+........F............................................................... [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 47%]
+........................................................................ [ 59%]
+........................................................................ [ 70%]
+........................................................................ [ 82%]
+........................................................................ [ 94%]
+......................F...........                                       [100%]
+=================================== FAILURES ===================================
+_____________ test_i05_started_server_enforces_origin_on_loopback ______________
+
+tmp_path = PosixPath('/private/var/folders/fh/hnq2zbvd53b5xqvf44clmfyw0000gp/T/pytest-of-fabio.daniele/pytest-213/test_i05_started_server_enforc0')
+
+    def test_i05_started_server_enforces_origin_on_loopback(tmp_path):
+        with socket.socket() as probe:
+>           probe.bind(("127.0.0.1", 0))
+E           PermissionError: [Errno 1] Operation not permitted
+
+tests/planned/test_sec_acceptance.py:164: PermissionError
+_ test_typed_record_crosses_page_8_9_chunk_boundary_via_real_workflow_overlap __
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x13830acc0>
+
+    def test_typed_record_crosses_page_8_9_chunk_boundary_via_real_workflow_overlap(
+        monkeypatch,
+    ):
+        _configure_fixture(monkeypatch)
+        pages = [
+            {
+                "page_number": page,
+                "text": (
+                    PAGE_8_TEXT
+                    if page == 8
+                    else PAGE_9_TEXT
+                    if page == 9
+                    else f"[[EVIDENCE_ID: ev_typed_page_{page}]]\nReference page {page}."
+                ),
+                "text_source": "native_text",
+            }
+            for page in range(1, 11)
+        ]
+        store = {
+            "pdf_id": "pdf_typed_boundary",
+            "filename": "typed-boundary.pdf",
+            "pages": pages,
+            "asset_identity": ASSET_IDENTITY,
+            "asset_identity_is_canonical": True,
+            "cut_plan": {
+                "pages_to_keep": list(range(1, 11)),
+                "sections": [
+                    {
+                        "name": "Troubleshooting",
+                        "start": 1,
+                        "end": 10,
+                        "source": "fixture",
+                    }
+                ],
+            },
+            "pdf_extraction_roles": {
+                "diagnostic_pages": list(range(1, 11)),
+                "structural_pages": [],
+            },
+            # This deliberately incomplete advisory inventory must never reduce
+            # the semantic scope to page 8.
+            "diagnostic_record_windows": [{
+                "window_id": "window_only_page_8",
+                "record_anchor": "ev_typed_page_8",
+                "branch_anchor": "ev_typed_page_8",
+                "allowed_source_anchors": ["ev_typed_page_8"],
+                "page_numbers": [8],
+                "text_with_pages": f"--- PAGE 8 ---\n{PAGE_8_TEXT}",
+            }],
+        }
+    
+        result = asyncio.run(draft_ontology_workflow(
+            store,
+            OntologyDraftRequest(
+                pdf_id="pdf_typed_boundary",
+                source_type="technical PDF",
+                source_title="Typed boundary manual",
+                # The gateway remains in deterministic mock mode; Luna pricing keeps
+                # the real production cost guard representative and below its cap.
+                model_name="gpt-5.6-luna",
+                pages_to_keep=list(range(1, 11)),
+                target_language="en",
+            ),
+        ))
+    
+>       _assert_compiled_typed_chain(result)
+
+tests/test_typed_diagnostic_integration.py:248: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = OntologyPipelineResponse(status='needs_human_review', ontology=OntologyInstance(ontology_name='Core_Ontology', version...ew_summary={'requires_human_review': True, 'total': 1, 'by_kind': {'low_confidence': 1}, 'by_severity': {'review': 1}})
+
+    def _assert_compiled_typed_chain(result) -> None:
+        report = result.diagnostic_contract_report
+        assert report["schema_version"] == "1.0"
+>       assert report["candidate_count"] == 1
+E       assert 3 == 1
+
+tests/test_typed_diagnostic_integration.py:44: AssertionError
+=========================== short test summary info ============================
+FAILED tests/planned/test_sec_acceptance.py::test_i05_started_server_enforces_origin_on_loopback
+FAILED tests/test_typed_diagnostic_integration.py::test_typed_record_crosses_page_8_9_chunk_boundary_via_real_workflow_overlap
+2 failed, 608 passed, 5 warnings in 57.10s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

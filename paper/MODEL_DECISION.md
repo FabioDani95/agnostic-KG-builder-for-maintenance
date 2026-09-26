@@ -41,15 +41,17 @@ integration behaviour, not provider access or extraction quality.
 
 ## Promotion gate
 
-Before the scientific campaign, run a real structured-output smoke test and an
-A/B pilot against GPT-5.6 Luna on development material using identical inputs,
+The real structured-output smoke test has passed. Before the scientific campaign,
+complete an A/B pilot against GPT-5.6 Luna on development material using identical inputs,
 prompts, schema and scoring. Record actual returned model, truncations, retries,
 quality, review rate and costs. Freeze reasoning effort after the pilot. Preserve
 historical results unchanged and do not label this configuration scientifically
 validated until this gate passes.
 
-No new paid extraction or API smoke test has been executed in this increment.
-The first live run follows the gold/scoring preparation described in the protocol.
+A first paid development pilot has now completed on four manuals. See
+[the report](experiments/dev_luna_20260925/REPORT.md). This is a single run per
+manual with the current profile, not an A/B comparison. Truncations and evidence
+anchor errors make the current profile unsuitable for the final campaign.
 
 ## Verification record
 
