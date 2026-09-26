@@ -1,0 +1,396 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u001:A.R4",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p38.b4",
+     "page": 38,
+     "text": "Problem: The Cutting Tool or Pen does not move down Description of Problem: The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. This can be caused by an electrical short, tool mapping in software or a problem with the power supply."
+    },
+    {
+     "segment_id": "p38.b13",
+     "page": 38,
+     "text": "5.Check tool connections."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Electrical short' -> RESOLVED_BY -> CorrectiveAction 'Check tool connections' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything)."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u001.c35"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:B.R6",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p39.b3",
+     "page": 39,
+     "text": "2. Check for brass laser nozzle alignment. If the tube or nozzle is bent, the laser beam will reflect off the inside wall of the nozzle causing a wide path. To verify, perform a test pulse on a piece of card board. If the dot has a ring or partial ring around it, the nuzzle is bent or the mirrors may need to be adjusted."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Laser mirrors need adjustment' -> RESOLVED_BY -> CorrectiveAction 'Adjust the laser mirrors' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: If test pulse shows a ring or partial ring and mirrors need adjustment."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u001.c107"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:A.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p37.b5",
+     "page": 37,
+     "text": "Problem: UIT Does Not Power Up Description of Problem: The UIT does not power. Screen is blank and not lit up."
+    },
+    {
+     "segment_id": "p37.b7",
+     "page": 37,
+     "text": "2.Make sure your cutting software is open on the cutting system computer."
+    },
+    {
+     "segment_id": "p37.b8",
+     "page": 37,
+     "text": "4.Find the black ethernet power supply (PoE) located next to the computer. Verify the green LED is illuminated."
+    },
+    {
+     "segment_id": "p37.b9",
+     "page": 37,
+     "text": "5.If there is no green LED lit, check the AC outlets located on the back of the diagnostic cabinet. If there is no AC power, check the AC power cord and fuses F3 and F4 in the diagnostic cabinet."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'UIT screen is blank and does not power up' -> MAY_INDICATE -> FailureMode 'Cutting software is not open'. Meaning: The symptom may indicate the specified failure mode.",
+    "2. Symptom 'UIT screen is blank and does not power up' -> MAY_INDICATE -> FailureMode 'PoE power supply has no green LED'. Meaning: The symptom may indicate the specified failure mode.",
+    "3. Symptom 'UIT screen is blank and does not power up' -> MAY_INDICATE -> FailureMode 'No AC power at diagnostic cabinet outlets'. Meaning: The symptom may indicate the specified failure mode. Conditions: If the PoE green LED is not lit.",
+    "4. Symptom 'UIT screen is blank and does not power up' -> MAY_INDICATE -> FailureMode 'AC power cord or fuse F3 or F4 fault'. Meaning: The symptom may indicate the specified failure mode. Conditions: If there is no AC power at the outlets."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 24,
+   "target": {
+    "assertion_ids": [
+     "u001.c3",
+     "u001.c5",
+     "u001.c8",
+     "u001.c11"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3,
+     4
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:A.R5",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p38.b25",
+     "page": 38,
+     "text": "Problem: Laser Fume Extractor has reduced vacuum"
+    },
+    {
+     "segment_id": "p38.b28",
+     "page": 38,
+     "text": "2. Increase vacuum pressure using the fume extractor control panel."
+    },
+    {
+     "segment_id": "p38.b30",
+     "page": 38,
+     "text": "4) Clean vacuum hose and funnel."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Laser fume extractor has reduced or no vacuum' -> MAY_INDICATE -> FailureMode 'Fume extractor vacuum pressure is too low'. Meaning: The symptom may indicate the specified failure mode.",
+    "2. Symptom 'Laser fume extractor has reduced or no vacuum' -> MAY_INDICATE -> FailureMode 'Vacuum hose or funnel requires cleaning'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 22,
+   "target": {
+    "assertion_ids": [
+     "u001.c51",
+     "u001.c58"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:A.R6",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p39.b1",
+     "page": 39,
+     "text": "Problem: Laser cutting path is too wide Description of Problem: The laser cutting path increases to an undesirable width."
+    },
+    {
+     "segment_id": "p39.b4",
+     "page": 39,
+     "text": "3. Check laser power and cutting speed. Settings may vary when changing materials. Testing will yield best results."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Laser cutting path is too wide' -> MAY_INDICATE -> FailureMode 'Laser power or cutting speed setting is unsuitable'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u001.c73"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "merge:Component|brass laser nozzle|Component|laser nozzle",
+   "kind": "merge_check",
+   "title": "Do 'Brass laser nozzle' and 'Laser nozzle' denote the same Component?",
+   "source": [
+    {
+     "segment_id": "p39.b2",
+     "page": 39,
+     "text": "Troubleshooting: 1. Check for damage to brass laser nozzle. Replace nozzle if any damage is present."
+    },
+    {
+     "segment_id": "p39.b14",
+     "page": 39,
+     "text": "3. Damage or debris in laser nozzle. Check for damage or debris in laser nozzle. Clean or replace laser nozzle as required."
+    }
+   ],
+   "proposal": [
+    "Keep 'Brass laser nozzle' and 'Laser nozzle' as two separate Component nodes."
+   ],
+   "options": [
+    {
+     "option_id": "same",
+     "label": "Same thing",
+     "effect": "the two nodes become one, both names kept as aliases"
+    },
+    {
+     "option_id": "different",
+     "label": "Different things",
+     "effect": "the two nodes stay separate"
+    }
+   ],
+   "default_option_id": "different",
+   "priority": 5,
+   "target": {
+    "left": "Component|brass laser nozzle",
+    "right": "Component|laser nozzle"
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u001:B.R6",
+   "option_id": "reject",
+   "text": "The manual says the mirrors may need adjustment if the test pulse shows a ring or partial ring, but it does not state that adjusting them resolves the failure mode.",
+   "edits": {},
+   "rationale": "The excerpt identifies mirror adjustment as a possible cause indicated by the test, not as a prescribed corrective action.",
+   "cited_segment_ids": [
+    "p39.b3"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:19:42.099357Z"
+  },
+  {
+   "question_id": "rel:u001:A.R1",
+   "option_id": "reject",
+   "text": "None of the proposed MAY_INDICATE relationships is explicitly stated; the excerpt prescribes checks but does not identify these conditions as failure modes indicated by the symptom.",
+   "edits": {},
+   "rationale": "The manual says to check that the cutting software is open, verify the PoE green LED, and conditionally check cabinet AC power, the cord, and fuses, but it does not state that any of these conditions may cause or indicate the blank UIT symptom.",
+   "cited_segment_ids": [
+    "p37.b5",
+    "p37.b7",
+    "p37.b8",
+    "p37.b9"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:19:43.946996Z"
+  },
+  {
+   "question_id": "rel:u001:A.R5",
+   "option_id": "reject",
+   "text": "The excerpts list increasing vacuum pressure and cleaning the hose and funnel as actions for reduced vacuum; they do not state that either is a failure mode the symptom may indicate.",
+   "edits": {},
+   "rationale": "The cited entries prescribe remedies for reduced vacuum, not symptom-to-failure-mode relationships.",
+   "cited_segment_ids": [
+    "p38.b25",
+    "p38.b28",
+    "p38.b30"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:19:42.545964Z"
+  },
+  {
+   "question_id": "rel:u001:A.R6",
+   "option_id": "reject",
+   "text": "The excerpt instructs checking laser power and cutting speed, but does not state that unsuitable settings may cause the overly wide cutting path.",
+   "edits": {},
+   "rationale": "The symptom is stated, but the accompanying instruction is a check and does not establish the proposed causal relationship.",
+   "cited_segment_ids": [
+    "p39.b1",
+    "p39.b4"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:19:45.500886Z"
+  },
+  {
+   "question_id": "merge:Component|brass laser nozzle|Component|laser nozzle",
+   "option_id": "same",
+   "text": "Merge as one Component, retaining “Brass laser nozzle” and “Laser nozzle” as aliases.",
+   "edits": {},
+   "rationale": "Both excerpts refer to the laser nozzle, with “brass” specifying the nozzle in one reference rather than identifying a distinct component.",
+   "cited_segment_ids": [
+    "p39.b2",
+    "p39.b14"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:19:45.693356Z"
+  }
+ ],
+ "pending": [
+  "rel:u001:A.R4"
+ ]
+}

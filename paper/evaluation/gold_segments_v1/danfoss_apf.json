@@ -1,0 +1,191 @@
+{
+ "manual_id": "danfoss_apf",
+ "status": "agent_mapped_and_checked",
+ "note": "Segment IDs located from the historical gold text and checked by the agent (E5 action corrected by hand); a technician must confirm.",
+ "claims": [
+  {
+   "claim_id": "D1",
+   "pages": [
+    64
+   ],
+   "indicator": "SYS 485 comm loss",
+   "code": "1",
+   "failure": "communication wire is not well connected",
+   "action": "check if the communication wire is firmly connected",
+   "action_kind": "inspection",
+   "indicator_segments": [
+    "p64.t1.r2"
+   ],
+   "indicator_score": 1.003,
+   "failure_segments": [
+    "p64.t1.r2"
+   ],
+   "failure_score": 1.003,
+   "action_segments": [
+    "p64.t1.r2"
+   ],
+   "action_score": 1.003
+  },
+  {
+   "claim_id": "D2",
+   "pages": [
+    64
+   ],
+   "indicator": "SYS 485 comm loss",
+   "code": "1",
+   "failure": "Active Power Filter modules have repeated IDs",
+   "action": "check the DIP switches of the individual modules",
+   "action_kind": "inspection",
+   "indicator_segments": [
+    "p64.t1.r2"
+   ],
+   "indicator_score": 1.003,
+   "failure_segments": [
+    "p64.t1.r2"
+   ],
+   "failure_score": 1.003,
+   "action_segments": [
+    "p64.t1.r2"
+   ],
+   "action_score": 1.003
+  },
+  {
+   "claim_id": "D3",
+   "pages": [
+    64
+   ],
+   "indicator": "Fuse blowout",
+   "code": "2",
+   "failure": "input fuse is broken",
+   "action": "contact service personnel",
+   "action_kind": "repair",
+   "indicator_segments": [
+    "p64.t1.r3"
+   ],
+   "indicator_score": 1.005,
+   "failure_segments": [
+    "p64.t1.r3"
+   ],
+   "failure_score": 1.005,
+   "action_segments": [
+    "p64.t1.r3"
+   ],
+   "action_score": 1.005
+  },
+  {
+   "claim_id": "D4",
+   "pages": [
+    64
+   ],
+   "indicator": "Ambient OTP",
+   "code": "3",
+   "failure": "air vents are blocked",
+   "action": "contact service personnel",
+   "action_kind": "repair",
+   "indicator_segments": [
+    "p64.t1.r4"
+   ],
+   "indicator_score": 1.003,
+   "failure_segments": [
+    "p64.t1.r4"
+   ],
+   "failure_score": 1.003,
+   "action_segments": [
+    "p64.t1.r4"
+   ],
+   "action_score": 1.003
+  },
+  {
+   "claim_id": "D5",
+   "pages": [
+    64
+   ],
+   "indicator": "Ambient OTP",
+   "code": "3",
+   "failure": "fans do not work",
+   "action": "contact service personnel",
+   "action_kind": "repair",
+   "indicator_segments": [
+    "p64.t1.r4"
+   ],
+   "indicator_score": 1.003,
+   "failure_segments": [
+    "p64.t1.r4"
+   ],
+   "failure_score": 1.003,
+   "action_segments": [
+    "p64.t1.r4"
+   ],
+   "action_score": 1.003
+  },
+  {
+   "claim_id": "D6",
+   "pages": [
+    64
+   ],
+   "indicator": "BUS OVP/UVP",
+   "code": "4",
+   "failure": "BUS capacitor failure",
+   "action": "contact service personnel",
+   "action_kind": "repair",
+   "indicator_segments": [
+    "p64.t1.r5"
+   ],
+   "indicator_score": 1.005,
+   "failure_segments": [
+    "p64.t1.r5"
+   ],
+   "failure_score": 1.005,
+   "action_segments": [
+    "p64.t1.r5"
+   ],
+   "action_score": 1.005
+  },
+  {
+   "claim_id": "D7",
+   "pages": [
+    64
+   ],
+   "indicator": "Fan Fail",
+   "code": "5",
+   "failure": "fan failure",
+   "action": "contact service personnel",
+   "action_kind": "repair",
+   "indicator_segments": [
+    "p64.t1.r6"
+   ],
+   "indicator_score": 1.004,
+   "failure_segments": [
+    "p64.t1.r6"
+   ],
+   "failure_score": 1.004,
+   "action_segments": [
+    "p64.t1.r6"
+   ],
+   "action_score": 1.004
+  },
+  {
+   "claim_id": "D8",
+   "pages": [
+    64
+   ],
+   "indicator": "No current compensation or bad current compensation",
+   "code": "6",
+   "failure": "CT is not well connected",
+   "action": "check if the CT wiring is correct",
+   "action_kind": "inspection",
+   "indicator_segments": [
+    "p64.t1.r7"
+   ],
+   "indicator_score": 0.921,
+   "failure_segments": [
+    "p64.t1.r7"
+   ],
+   "failure_score": 0.921,
+   "action_segments": [
+    "p64.t1.r7"
+   ],
+   "action_score": 0.921
+  }
+ ]
+}

@@ -1,0 +1,296 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u001:A.R5",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p38.b25",
+     "page": 38,
+     "text": "Problem: Laser Fume Extractor has reduced vacuum"
+    },
+    {
+     "segment_id": "p38.b26",
+     "page": 38,
+     "text": "or no vacuum. Description of Problem: An odor is present when cutting with the laser tool or Laser cutting path is wider than normal"
+    },
+    {
+     "segment_id": "p38.b27",
+     "page": 38,
+     "text": "Troubleshooting: 1. Check the laser fume extractor for power and is turned ON."
+    },
+    {
+     "segment_id": "p38.b28",
+     "page": 38,
+     "text": "2. Increase vacuum pressure using the fume extractor control panel."
+    },
+    {
+     "segment_id": "p38.b29",
+     "page": 38,
+     "text": "3) Replace vacuum filters."
+    },
+    {
+     "segment_id": "p38.b30",
+     "page": 38,
+     "text": "4) Clean vacuum hose and funnel."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Laser fume extractor has reduced or no vacuum' -> MAY_INDICATE -> FailureMode 'Unspecified cause of reduced or absent fume-extractor vacuum'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u001.c44"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:B.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p37.b5",
+     "page": 37,
+     "text": "Problem: UIT Does Not Power Up Description of Problem: The UIT does not power. Screen is blank and not lit up."
+    },
+    {
+     "segment_id": "p37.b7",
+     "page": 37,
+     "text": "2.Make sure your cutting software is open on the cutting system computer."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'UIT does not power up; screen is blank and unlit' -> MAY_INDICATE -> FailureMode 'Cutting software is not open'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u001.c84"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:B.R4",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p38.b4",
+     "page": 38,
+     "text": "Problem: The Cutting Tool or Pen does not move down Description of Problem: The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. This can be caused by an electrical short, tool mapping in software or a problem with the power supply."
+    },
+    {
+     "segment_id": "p38.b20",
+     "page": 38,
+     "text": "6.The Pen or Tool delays coming down and misses the beginning of marker or cut."
+    },
+    {
+     "segment_id": "p38.b24",
+     "page": 38,
+     "text": "c) Check flow control valves on the pen air cylinder."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Cutting tool or pen does not move down, or is delayed coming down at the beginning of a cut' -> MAY_INDICATE -> FailureMode 'Pen air-cylinder flow control valves require checking'. Meaning: The symptom may indicate the specified failure mode. Conditions: When the pen or tool is delayed and misses the beginning of the marker or cut."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u001.c89"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:A.R4",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p38.b4",
+     "page": 38,
+     "text": "Problem: The Cutting Tool or Pen does not move down Description of Problem: The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. This can be caused by an electrical short, tool mapping in software or a problem with the power supply."
+    },
+    {
+     "segment_id": "p38.b23",
+     "page": 38,
+     "text": "b) Check the 24 VDC power supply fuse."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Power-supply problem affecting tool or pen movement' -> AFFECTS -> Component '24 VDC power-supply fuse'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u001.c30"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u001:A.R5",
+   "option_id": "reject",
+   "text": "The manual lists reduced or no vacuum as the problem; it does not say this symptom may indicate an unspecified failure mode.",
+   "edits": {},
+   "rationale": "The excerpt identifies reduced or no vacuum as the problem and gives troubleshooting steps, but does not state that it may indicate an unspecified cause.",
+   "cited_segment_ids": [
+    "p38.b25",
+    "p38.b27",
+    "p38.b28",
+    "p38.b29",
+    "p38.b30"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:29:39.538919Z"
+  },
+  {
+   "question_id": "rel:u001:B.R1",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The troubleshooting entry identifies the UIT’s blank, unlit screen and instructs the user to make sure the cutting software is open, supporting that software not being open may indicate the problem.",
+   "cited_segment_ids": [
+    "p37.b5",
+    "p37.b7"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:29:44.988064Z"
+  },
+  {
+   "question_id": "rel:u001:B.R4",
+   "option_id": "reject",
+   "text": "The manual lists checking the pen air-cylinder flow control valves, but does not state that the symptom indicates those valves are faulty.",
+   "edits": {},
+   "rationale": "The manual names possible causes for the broader symptom and separately directs checking the flow-control valves; that check does not establish the valves as a failure mode.",
+   "cited_segment_ids": [
+    "p38.b4",
+    "p38.b20",
+    "p38.b24"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:29:44.530555Z"
+  },
+  {
+   "question_id": "rel:u001:A.R4",
+   "option_id": "reject",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual identifies a power-supply problem as a possible cause and separately instructs checking the 24 VDC power-supply fuse, but it does not state that the failure mode affects the fuse.",
+   "cited_segment_ids": [
+    "p38.b4",
+    "p38.b23"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:29:44.195596Z"
+  }
+ ],
+ "pending": []
+}

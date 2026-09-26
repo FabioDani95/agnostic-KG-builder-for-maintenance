@@ -1,0 +1,3602 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u007:C.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p86.t2.r1",
+     "page": 86,
+     "text": "column 1: CAUTION!"
+    },
+    {
+     "segment_id": "p86.t2.r2",
+     "page": 86,
+     "text": "column 1: Use only the test point types identified in Table 7. Follow the instructions in this procedure to correctly attach to the test point openings in the power board. Do not use a multimeter with standard test leads for this test. This can cause a short-circuit between the BUS and the heatsink. Do not use -VBUS (test point W) as ground. Doing so could destroy the power supply. | CAUTION! (same as row above): CAUTION!"
+    },
+    {
+     "segment_id": "p87.t1.r1",
+     "page": 87,
+     "text": "column 1: Current power board design (CSA models: revision E and later) (CE/CCC models: revision D and later) | column 2: Prior power board design (CSA models: revision D and earlier) (CE/CCC models: revision C and earlier)"
+    },
+    {
+     "segment_id": "p87.t1.r2",
+     "page": 87,
+     "text": "column 1: Each test point lined with copper ring | column 2: No metal ring around test points"
+    },
+    {
+     "segment_id": "p87.t1.r3",
+     "page": 87,
+     "text": "column 1: Use miniature banana plugs* (Pamona® 2945 plugs or similar) | column 2: Use test hooks"
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Short circuit between BUS and heatsink from using standard multimeter test leads' -> RESOLVED_BY -> CorrectiveAction 'Use only the test point types identified in Table 7'. Meaning: The failure mode may be resolved by the specified corrective action.",
+    "2. FailureMode 'Short circuit between BUS and heatsink from using standard multimeter test leads' -> RESOLVED_BY -> CorrectiveAction 'Attach to the test point openings as instructed'. Meaning: The failure mode may be resolved by the specified corrective action.",
+    "3. FailureMode 'Short circuit between BUS and heatsink from using standard multimeter test leads' -> RESOLVED_BY -> CorrectiveAction 'Do not use a multimeter with standard test leads for this test'. Meaning: The failure mode may be resolved by the specified corrective action.",
+    "4. FailureMode 'Short circuit between BUS and heatsink from using standard multimeter test leads' -> RESOLVED_BY -> CorrectiveAction 'Use miniature banana plugs or similar for current power board designs'. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: Current power board design: CSA revision E and later; CE/CCC revision D and later.",
+    "5. FailureMode 'Short circuit between BUS and heatsink from using standard multimeter test leads' -> RESOLVED_BY -> CorrectiveAction 'Use test hooks for prior power board designs'. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: Prior power board design: CSA revision D and earlier; CE/CCC revision C and earlier."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 35,
+   "target": {
+    "assertion_ids": [
+     "u007.c48",
+     "u007.c49",
+     "u007.c50",
+     "u007.c53",
+     "u007.c54"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u008:B.R6",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p96.b3",
+     "page": 96,
+     "text": "If the internal compressor fault LED and temperature fault LED both illuminate, the root cause may be:"
+    },
+    {
+     "segment_id": "p96.b4",
+     "page": 96,
+     "text": " Faulty internal compressor"
+    },
+    {
+     "segment_id": "p96.b5",
+     "page": 96,
+     "text": " Faulty compressor-driver board (PCB3)"
+    },
+    {
+     "segment_id": "p96.b6",
+     "page": 96,
+     "text": " Faulty power board (PCB2)"
+    },
+    {
+     "segment_id": "p96.b14",
+     "page": 96,
+     "text": "4. Reconnect the power cord, and set the power switch to ON (I)."
+    },
+    {
+     "segment_id": "p96.b15",
+     "page": 96,
+     "text": "5. Quickly tap the torch trigger to force gas flow without firing an arc, then watch the green diagnostic LED (D5) on the compressor-driver board. Does the LED illuminate while the torch is being fired?"
+    },
+    {
+     "segment_id": "p96.b17",
+     "page": 96,
+     "text": "a. If yes, check the internal compressor. Skip to"
+    },
+    {
+     "segment_id": "p96.b19",
+     "page": 96,
+     "text": "b. If no, continue with the next step."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Internal compressor fault LED and temperature fault LED both illuminate' -> MAY_INDICATE -> FailureMode 'Faulty compressor-driver board'. Meaning: The symptom may indicate the specified failure mode.",
+    "2. Symptom 'Internal compressor fault LED and temperature fault LED both illuminate' -> MAY_INDICATE -> FailureMode 'Faulty power board'. Meaning: The symptom may indicate the specified failure mode.",
+    "3. FailureMode 'Faulty internal compressor' -> RESOLVED_BY -> CorrectiveAction 'Check the compressor-driver board diagnostic LED D5 during gas flow' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: If D5 illuminates, check the internal compressor.",
+    "4. FailureMode 'Faulty compressor-driver board' -> RESOLVED_BY -> CorrectiveAction 'Check the compressor-driver board diagnostic LED D5 during gas flow' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: If D5 does not illuminate, continue with the next step.",
+    "5. Symptom 'Diagnostic LED D5 does not illuminate while the torch is being fired' -> MAY_INDICATE -> FailureMode 'Faulty compressor-driver board'. Meaning: The symptom may indicate the specified failure mode. Conditions: D5 indicates whether the compressor-driver board supplies 15 VDC to the internal compressor."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 35,
+   "target": {
+    "assertion_ids": [
+     "u008.c66",
+     "u008.c68",
+     "u008.c70",
+     "u008.c71",
+     "u008.c72"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u003:B.R2",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p65.t2.r1",
+     "page": 65,
+     "text": "column 1: The power ON LED illuminates, but no fault LEDs illuminate, and no gas AC flows when you pull the torch trigger."
+    },
+    {
+     "segment_id": "p65.t2.r3",
+     "page": 65,
+     "text": "column 1:  The start signal is not reaching the control board due to:  Damaged torch or torch lead  Faulty power board OR  Faulty control board | column 2:  Inspect the torch and torch lead, and replace if necessary.  Make sure the control board start LED illuminates when you pull the torch trigger. If it does not, perform Test 6 – plasma start on page 92."
+    },
+    {
+     "segment_id": "p65.b10",
+     "page": 65,
+     "text": "The power ON LED illuminates, but no fault LEDs illuminate, and no gas flows when you pull the torch trigger."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Power ON LED illuminates, but no fault LEDs illuminate and no gas flows when the torch trigger is pulled' -> MAY_INDICATE -> FailureMode 'Torch is damaged'. Meaning: The symptom may indicate the specified failure mode.",
+    "2. Symptom 'Power ON LED illuminates, but no fault LEDs illuminate and no gas flows when the torch trigger is pulled' -> MAY_INDICATE -> FailureMode 'Torch lead is damaged'. Meaning: The symptom may indicate the specified failure mode.",
+    "3. FailureMode 'Power board is faulty' -> RESOLVED_BY -> CorrectiveAction 'Perform Test 6 – plasma start' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything).",
+    "4. FailureMode 'Control board is faulty' -> RESOLVED_BY -> CorrectiveAction 'Perform Test 6 – plasma start' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything)."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 34,
+   "target": {
+    "assertion_ids": [
+     "u003.c46",
+     "u003.c47",
+     "u003.c52",
+     "u003.c53"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3,
+     4
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u008:B.R4",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p94.b10",
+     "page": 94,
+     "text": "6. Measure the resistance from the blue wire (pin 1) to the orange wire (pin 2) . It should measure less than 10 Ω. If it measures high resistance, the cap-sensor switch circuit is open."
+    },
+    {
+     "segment_id": "p94.b13",
+     "page": 94,
+     "text": "7. Make sure the torch plunger moves smoothly. If it does not, replace the torch body. See Replace the torch body on page 201."
+    },
+    {
+     "segment_id": "p94.b14",
+     "page": 94,
+     "text": "8. Make sure the consumables are correctly installed. Adjust the consumables if necessary."
+    },
+    {
+     "segment_id": "p94.b15",
+     "page": 94,
+     "text": "9. If the torch parts mentioned in step 7 and step 8 are working properly, the cap-sensor switch is faulty or the torch lead has a broken wire. Replace the faulty part. See Replace the cap-sensor switch on page 204 or Replace the torch lead and strain relief on page 153."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Cap-sensor switch circuit is open' -> RESOLVED_BY -> CorrectiveAction 'Replace the torch body if the plunger does not move smoothly' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: If the plunger does not move smoothly.",
+    "2. FailureMode 'Cap-sensor switch circuit is open' -> RESOLVED_BY -> CorrectiveAction 'Adjust the consumables if necessary' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: If consumables are not correctly installed.",
+    "3. Symptom 'High resistance between cap-sensor blue wire pin 1 and orange wire pin 2' -> MAY_INDICATE -> FailureMode 'Faulty cap-sensor switch'. Meaning: The symptom may indicate the specified failure mode. Conditions: If the plunger and consumables are working properly.",
+    "4. Symptom 'High resistance between cap-sensor blue wire pin 1 and orange wire pin 2' -> MAY_INDICATE -> FailureMode 'Broken wire in the torch lead'. Meaning: The symptom may indicate the specified failure mode. Conditions: If the plunger and consumables are working properly."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 34,
+   "target": {
+    "assertion_ids": [
+     "u008.c61",
+     "u008.c63",
+     "u008.c64",
+     "u008.c65"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3,
+     4
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u008:B.R3",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p93.b15",
+     "page": 93,
+     "text": "8. If this test fails, check the torch start switch and the torch wires. Replace if necessary. See Replace the start switch on page 203 or Replace the torch lead and strain relief on page 153."
+    },
+    {
+     "segment_id": "p93.b17",
+     "page": 93,
+     "text": "10. Measure pin 16 of J7 to ground. See Test 2 – power board voltage checks on page 84."
+    },
+    {
+     "segment_id": "p93.b18",
+     "page": 93,
+     "text": "a. With the trigger pulled, it should measure as 0 VDC for an open circuit."
+    },
+    {
+     "segment_id": "p93.b19",
+     "page": 93,
+     "text": "b. With the trigger released, it should measure 3.2 VDC for a closed circuit."
+    },
+    {
+     "segment_id": "p93.b20",
+     "page": 93,
+     "text": "11. Are the values correct?"
+    },
+    {
+     "segment_id": "p93.b21",
+     "page": 93,
+     "text": " If yes, replace the control board. See Replace the control board on page 126."
+    },
+    {
+     "segment_id": "p93.b22",
+     "page": 93,
+     "text": " If no, replace the power board. See Replace the power board on page 135."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Fault in the torch start switch or torch wires' -> RESOLVED_BY -> CorrectiveAction 'Measure pin 16 of J7 to ground' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: After the torch start switch and wires have been checked; trigger pulled should measure 0 VDC, trigger released should measure 3.2 VDC.",
+    "2. Symptom 'Pin 16 of J7 voltage values are incorrect' -> MAY_INDICATE -> FailureMode 'Faulty control board'. Meaning: The symptom may indicate the specified failure mode. Conditions: If values are correct.",
+    "3. Symptom 'Pin 16 of J7 voltage values are incorrect' -> MAY_INDICATE -> FailureMode 'Faulty power board'. Meaning: The symptom may indicate the specified failure mode. Conditions: If values are not correct."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 33,
+   "target": {
+    "assertion_ids": [
+     "u008.c56",
+     "u008.c57",
+     "u008.c58"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u003:A.R2",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p65.t2.r1",
+     "page": 65,
+     "text": "column 1: The power ON LED illuminates, but no fault LEDs illuminate, and no gas AC flows when you pull the torch trigger."
+    },
+    {
+     "segment_id": "p65.t2.r3",
+     "page": 65,
+     "text": "column 1:  The start signal is not reaching the control board due to:  Damaged torch or torch lead  Faulty power board OR  Faulty control board | column 2:  Inspect the torch and torch lead, and replace if necessary.  Make sure the control board start LED illuminates when you pull the torch trigger. If it does not, perform Test 6 – plasma start on page 92."
+    },
+    {
+     "segment_id": "p65.b10",
+     "page": 65,
+     "text": "The power ON LED illuminates, but no fault LEDs illuminate, and no gas flows when you pull the torch trigger."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'No gas flows when the torch trigger is pulled, with power ON LED lit and no fault LEDs lit' -> MAY_INDICATE -> FailureMode 'Start signal does not reach the control board because the torch lead is damaged'. Meaning: The symptom may indicate the specified failure mode.",
+    "2. FailureMode 'Faulty power board' -> RESOLVED_BY -> CorrectiveAction 'Inspect the torch and torch lead and replace if necessary' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything)."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u003.c15",
+     "u003.c28"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u003:B.R7",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p61.b5",
+     "page": 61,
+     "text": "3. Inspect the consumables for damage or wear."
+    },
+    {
+     "segment_id": "p61.b6",
+     "page": 61,
+     "text": "4. Repair or replace components as necessary."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Consumables are damaged or worn' -> MAY_INDICATE -> FailureMode 'Unspecified cause of damaged or worn consumables'. Meaning: The symptom may indicate the specified failure mode.",
+    "2. FailureMode 'Unspecified cause of damaged or worn consumables' -> RESOLVED_BY -> CorrectiveAction 'Repair or replace damaged or worn consumables as necessary' [repair]. Meaning: The failure mode may be resolved by the specified corrective action."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u003.c59",
+     "u003.c61"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u005:B.R5",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p73.t1.r1",
+     "page": 73,
+     "text": "TABLE COLUMNS: Problem | Possible causes | Possible solutions"
+    },
+    {
+     "segment_id": "p73.t1.r2",
+     "page": 73,
+     "text": "Problem: The arc blows out but re-ignites when the torch trigger is pulled again, or the arc sputters and hisses. | Possible causes: • Too much moisture is present in the consumables. • The consumables are worn or damaged. | Possible solutions: • Inspect the consumables for signs of excess moisture. A small amount of moisture at the torch nozzle is normal for this system and should not prevent the torch from firing. If excess moisture is present, fire the torch approximately 5 times in succession. Fire the torch in the air, not on the workpiece. • If the problem persists and excess moisture is not an issue, inspect and replace the consumable parts if they are worn or damaged. • If firing the torch does not clear out the excess moisture, examine the air filter inside the power supply. It is normal to see water in the filter bowl. The filter purges water when the water level in the bowl is high enough to engage the float mechanism. If the water level in the filter bowl is approximately half full (or more), the air filter may not be purging water properly. • Make sure the drain hose connected to the bottom of the air filter bowl is not twisted or clogged. • Water purged from the air filter exits through a hole in bottom of the of the power supply. Make sure this hole is not blocked. • Replace the air filter bowl. See Replace the air filter bowl and air filter element on page 160. • If the problem persists, replace the whole air filter assembly. See Replace the air filter assembly on page 157."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Excess moisture in consumables' -> RESOLVED_BY -> CorrectiveAction 'Replace the air filter bowl' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.",
+    "2. FailureMode 'Excess moisture in consumables' -> RESOLVED_BY -> CorrectiveAction 'Replace the whole air filter assembly' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: if the problem persists."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u005.c111",
+     "u005.c112"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u007:A.R3",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p89.b9",
+     "page": 89,
+     "text": "6. Turn the power ON (I). The valve should click."
+    },
+    {
+     "segment_id": "p89.b11",
+     "page": 89,
+     "text": "7. Remove the valve’s connector from J6 on the power board."
+    },
+    {
+     "segment_id": "p89.b12",
+     "page": 89,
+     "text": "8. Measure the voltage between pin 1 of J6 (red wire) and ground."
+    },
+    {
+     "segment_id": "p89.b13",
+     "page": 89,
+     "text": "9. If you do not hear the valve click and the voltage check reads 24 VDC, replace the solenoid valve. See Replace the solenoid valve on page 151."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Solenoid valve does not click' -> MAY_INDICATE -> FailureMode 'Solenoid valve failure'. Meaning: The symptom may indicate the specified failure mode. Conditions: If the valve does not click and the voltage check reads 24 VDC..",
+    "2. FailureMode 'Solenoid valve failure' -> RESOLVED_BY -> CorrectiveAction 'Measure voltage between pin 1 of J6 and ground' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: Measure after removing the valve connector from J6; a reading of 24 VDC together with no click is the stated replacement condition.."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u007.c9",
+     "u007.c12"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u007:B.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p85.t2.r1",
+     "page": 85,
+     "text": "J7 pin number to\nground: J7 pin number to ground | Test: Test | Expected value: Expected value"
+    },
+    {
+     "segment_id": "p84.b7",
+     "page": 84,
+     "text": "5. Use a multimeter to verify the voltages at the J7 pins listed in Table 6 on page 85 to make sure the power board (PCB2) is functioning correctly. If any of the values are incorrect, replace the power board. See Replace the power board on page 135."
+    },
+    {
+     "segment_id": "p85.t2.r2",
+     "page": 85,
+     "text": "J7 pin number to\nground: 19 | Test: VACR (rectified AC line voltage) | Expected value: 0.86 V at 120 line voltage 1.87 V at 230 line voltage"
+    },
+    {
+     "segment_id": "p85.t2.r3",
+     "page": 85,
+     "text": "J7 pin number to\nground: 21 | Test: VBUS (DC bus voltage) | Expected value: 2.28 VDC at 375 VBUS"
+    },
+    {
+     "segment_id": "p85.t2.r4",
+     "page": 85,
+     "text": "J7 pin number to\nground: 18 | Test: IPFC (input current) | Expected value: < 0.1 VDC"
+    },
+    {
+     "segment_id": "p85.t2.r5",
+     "page": 85,
+     "text": "J7 pin number to\nground: 20 | Test: IFB (output current) | Expected value: < 0.1 VDC"
+    },
+    {
+     "segment_id": "p85.t2.r6",
+     "page": 85,
+     "text": "J7 pin number to\nground: 22 | Test: ITF (transfer current) | Expected value: < 0.1 VDC"
+    },
+    {
+     "segment_id": "p85.t2.r7",
+     "page": 85,
+     "text": "J7 pin number to\nground: 5 | Test: 3.3 VDC | Expected value: 3.3 VDC ±10%"
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Power board (PCB2) is not functioning correctly' -> RESOLVED_BY -> CorrectiveAction 'Verify voltages at the listed J7 pins with a multimeter' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: Verify listed J7 pin values against Table 6.",
+    "2. Symptom 'J7 voltage values are incorrect' -> MAY_INDICATE -> FailureMode 'Unspecified cause of incorrect J7 voltage values'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u007.c28",
+     "u007.c30"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u007:B.R2",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p89.b9",
+     "page": 89,
+     "text": "6. Turn the power ON (I). The valve should click."
+    },
+    {
+     "segment_id": "p89.b11",
+     "page": 89,
+     "text": "7. Remove the valve’s connector from J6 on the power board."
+    },
+    {
+     "segment_id": "p89.b12",
+     "page": 89,
+     "text": "8. Measure the voltage between pin 1 of J6 (red wire) and ground."
+    },
+    {
+     "segment_id": "p89.b13",
+     "page": 89,
+     "text": "9. If you do not hear the valve click and the voltage check reads 24 VDC, replace the solenoid valve. See Replace the solenoid valve on page 151."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Solenoid valve does not click' -> MAY_INDICATE -> FailureMode 'Solenoid valve (V1) is faulty'. Meaning: The symptom may indicate the specified failure mode. Conditions: If the voltage check reads 24 VDC.",
+    "2. FailureMode 'Solenoid valve (V1) is faulty' -> RESOLVED_BY -> CorrectiveAction 'Check voltage between J6 pin 1 (red wire) and ground' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: After removing the valve connector from J6."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u007.c31",
+     "u007.c33"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u007:B.R4",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p90.b3",
+     "page": 90,
+     "text": "If the nozzle and electrode are not in contact before the torch trigger is pulled, the power supply detects a “torch stuck open” fault. If the nozzle and electrode remain in contact after the torch trigger is pulled, the power supply detects a “torch stuck closed” fault."
+    },
+    {
+     "segment_id": "p90.b4",
+     "page": 90,
+     "text": "Use the following test to determine if the torch is stuck in either position."
+    },
+    {
+     "segment_id": "p90.b8",
+     "page": 90,
+     "text": "4. Measure the resistance between the torch lead’s white wire group and red wire . The resistance should read very low, a closed circuit."
+    },
+    {
+     "segment_id": "p90.b10",
+     "page": 90,
+     "text": " If the resistance reads as open with the power OFF, the nozzle and electrode are not in contact, or one of the wires in the lead is broken. Make sure that the torch plunger moves freely in the torch head."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Unspecified cause of torch stuck closed' -> RESOLVED_BY -> CorrectiveAction 'Measure resistance between the torch lead white wire group and red wire' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: Resistance should read very low, indicating a closed circuit.",
+    "2. FailureMode 'Unspecified cause of torch stuck closed' -> RESOLVED_BY -> CorrectiveAction 'Make sure the torch plunger moves freely in the torch head' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: Check that the plunger moves freely."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u007.c36",
+     "u007.c37"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u007:B.R5",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p90.b8",
+     "page": 90,
+     "text": "4. Measure the resistance between the torch lead’s white wire group and red wire . The resistance should read very low, a closed circuit."
+    },
+    {
+     "segment_id": "p90.b10",
+     "page": 90,
+     "text": " If the resistance reads as open with the power OFF, the nozzle and electrode are not in contact, or one of the wires in the lead is broken. Make sure that the torch plunger moves freely in the torch head."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Torch resistance reads open with power OFF' -> MAY_INDICATE -> FailureMode 'Nozzle and electrode are not in contact, or a torch-lead wire is broken'. Meaning: The symptom may indicate the specified failure mode. Conditions: With power OFF.",
+    "2. FailureMode 'Nozzle and electrode are not in contact, or a torch-lead wire is broken' -> RESOLVED_BY -> CorrectiveAction 'Measure resistance between the torch lead white wire group and red wire' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: If resistance reads open with power OFF."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u007.c35",
+     "u007.c38"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u007:B.R7",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p87.b3",
+     "page": 87,
+     "text": "6. Measure the voltage from W to R. See Figure 13."
+    },
+    {
+     "segment_id": "p87.b4",
+     "page": 87,
+     "text": "a. Position the banana plugs or test hooks at W and R on the power board."
+    },
+    {
+     "segment_id": "p87.b5",
+     "page": 87,
+     "text": "b. Turn the power ON (I)."
+    },
+    {
+     "segment_id": "p87.b6",
+     "page": 87,
+     "text": "c. The multimeter should read 375 VDC."
+    },
+    {
+     "segment_id": "p87.b7",
+     "page": 87,
+     "text": "If you get a value other than 375 VDC, multiply the reading by 0.00601 to convert it to millivolts. Test pin 21 on J7. See Test 2 – power board voltage checks on page 84. If the values match, it is a normal reading."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'W-to-R voltage is not 375 VDC' -> MAY_INDICATE -> FailureMode 'Unspecified cause of W-to-R voltage other than 375 VDC'. Meaning: The symptom may indicate the specified failure mode.",
+    "2. FailureMode 'Unspecified cause of W-to-R voltage other than 375 VDC' -> RESOLVED_BY -> CorrectiveAction 'Measure voltage from W to R on the power board' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: If the converted reading matches the J7 pin 21 value, the reading is normal."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u007.c43",
+     "u007.c46"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u007:C.R2",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p85.t1.r1",
+     "page": 85,
+     "text": "column 1: CAUTION!"
+    },
+    {
+     "segment_id": "p86.t2.r1",
+     "page": 86,
+     "text": "column 1: CAUTION!"
+    },
+    {
+     "segment_id": "p85.t1.r2",
+     "page": 85,
+     "text": "column 1: Do not use -VBUS (test point W) as ground. Doing so could destroy the power supply. Instead ground to either the ground wire clip on the rear panel or to the heatsink. See Figure 5 on page 77. | CAUTION! (same as row above): CAUTION!"
+    },
+    {
+     "segment_id": "p86.t2.r2",
+     "page": 86,
+     "text": "column 1: Use only the test point types identified in Table 7. Follow the instructions in this procedure to correctly attach to the test point openings in the power board. Do not use a multimeter with standard test leads for this test. This can cause a short-circuit between the BUS and the heatsink. Do not use -VBUS (test point W) as ground. Doing so could destroy the power supply. | CAUTION! (same as row above): CAUTION!"
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Power supply destroyed by using -VBUS as ground' -> AFFECTS -> Component 'Power supply'. Meaning: The failure mode affects the specified component.",
+    "2. FailureMode 'Power supply destroyed by using -VBUS as ground' -> RESOLVED_BY -> CorrectiveAction 'Ground to the rear-panel ground wire clip or heatsink instead of -VBUS'. Meaning: The failure mode may be resolved by the specified corrective action."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u007.c51",
+     "u007.c52"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u008:B.R2",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p91.b5",
+     "page": 91,
+     "text": "If the resistance reads as very low (closed circuit) with the gas flowing, the nozzle and electrode are in contact or a short-circuit occurred in one of the wires in the torch lead. Continue with step 6."
+    },
+    {
+     "segment_id": "p91.b7",
+     "page": 91,
+     "text": "6. Does the torch plunger move freely in the torch head?"
+    },
+    {
+     "segment_id": "p91.b9",
+     "page": 91,
+     "text": " If no, replace the torch body. See Replace the torch body on page 201."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Short circuit in a torch lead wire' -> RESOLVED_BY -> CorrectiveAction 'Check whether the torch plunger moves freely' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: Continue to step 6 after a low-resistance reading.",
+    "2. FailureMode 'Torch plunger does not move freely' -> RESOLVED_BY -> CorrectiveAction 'Replace the torch body' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: If the plunger does not move freely."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u008.c53",
+     "u008.c54"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u009:A.R4",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p99.b10",
+     "page": 99,
+     "text": "b. If no, check the power board. Skip to step 23."
+    },
+    {
+     "segment_id": "p99.b16",
+     "page": 99,
+     "text": "22. Quickly tap the torch trigger, then check the compressor-enable voltage on the J9 connector on the power board. (The J9 connector may look different from the one shown in Figure 20.) Is compressor-enable voltage present (3 VDC)?"
+    },
+    {
+     "segment_id": "p99.b19",
+     "page": 99,
+     "text": "b. If no, check the power board. Continue with the next step."
+    },
+    {
+     "segment_id": "p100.b13",
+     "page": 100,
+     "text": "28. Are VBUS and compressor-enable voltage present on the power board?"
+    },
+    {
+     "segment_id": "p100.b16",
+     "page": 100,
+     "text": "b. If neither VBUS nor compressor-enable voltage are present on the power board, replace the power board."
+    },
+    {
+     "segment_id": "p100.b17",
+     "page": 100,
+     "text": "See Replace the power board on page 135."
+    },
+    {
+     "segment_id": "p100.b18",
+     "page": 100,
+     "text": "c. If VBUS or compressor-enable voltage is present on the power board but the other is not, replace the power"
+    },
+    {
+     "segment_id": "p100.b19",
+     "page": 100,
+     "text": "board. See Replace the power board on page 135."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Power board failure' -> AFFECTS -> Component 'Power board'. Meaning: The failure mode affects the specified component.",
+    "2. FailureMode 'Power board failure' -> RESOLVED_BY -> CorrectiveAction 'Replace the power board' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: If neither voltage is present, or if one is present and the other is not."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u009.c15",
+     "u009.c18"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u002:B.R8",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p56.b25",
+     "page": 56,
+     "text": " Dross is more likely to form on warm or hot metal than on cool metal. For example, the first cut in a series of cuts is likely to produce the least dross. As the workpiece heats up, more dross may form on subsequent cuts."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Workpiece metal warm or hot' -> RESOLVED_BY -> CorrectiveAction 'Make the cut on cool metal' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: cool metal is less likely to produce dross."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u002.c28"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u003:B.R11",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p60.b18",
+     "page": 60,
+     "text": "After the problem has been located and repaired, refer to Sequence of operation on page 58 to test the power supply for proper operation."
+    },
+    {
+     "segment_id": "p61.b19",
+     "page": 61,
+     "text": " After the problem is located and repaired, see Sequence of operation on page 58 to test the power supply for proper operation."
+    },
+    {
+     "segment_id": "p63.b16",
+     "page": 63,
+     "text": "6. If you do not find any problems during the visual inspection or the initial resistance check, and the power supply is still not operating correctly, see Troubleshooting guide on page 65."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Unspecified cause of incorrect power supply operation' -> RESOLVED_BY -> CorrectiveAction 'Test the power supply for proper operation after locating and repairing the problem' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: After the problem is located and repaired."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u003.c73"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u008:A.R4",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p91.b7",
+     "page": 91,
+     "text": "6. Does the torch plunger move freely in the torch head?"
+    },
+    {
+     "segment_id": "p91.b10",
+     "page": 91,
+     "text": "7. Because “torch stuck open” and “torch stuck closed” failures can be intermittent, repeat the test several times."
+    },
+    {
+     "segment_id": "p94.b13",
+     "page": 94,
+     "text": "7. Make sure the torch plunger moves smoothly. If it does not, replace the torch body. See Replace the torch body on page 201."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Torch plunger does not move freely' -> RESOLVED_BY -> CorrectiveAction 'Repeat the torch stuck-open or stuck-closed test several times' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: Because failures can be intermittent."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u008.c11"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u008:A.R5",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p93.b2",
+     "page": 93,
+     "text": "7. Check the resistance at the 2 torch-start test points on the power board. See Figure 16."
+    },
+    {
+     "segment_id": "p93.b3",
+     "page": 93,
+     "text": "a. With the trigger pulled, the resistance should read 10 Ω or less."
+    },
+    {
+     "segment_id": "p93.b4",
+     "page": 93,
+     "text": "b. With the trigger released, the circuit should read approximately 3 kΩ."
+    },
+    {
+     "segment_id": "p93.b15",
+     "page": 93,
+     "text": "8. If this test fails, check the torch start switch and the torch wires. Replace if necessary. See Replace the start switch on page 203 or Replace the torch lead and strain relief on page 153."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Unspecified cause of torch-start test failure' -> RESOLVED_BY -> CorrectiveAction 'Check the torch-start resistance at the power-board test points' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: Trigger pulled: 10 Ω or less; trigger released: approximately 3 kΩ."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u008.c13"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u008:A.R8",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p95.b9",
+     "page": 95,
+     "text": "6. If the fan does not operate, replace the fan. See Replace the fan on page 164."
+    },
+    {
+     "segment_id": "p95.b11",
+     "page": 95,
+     "text": " Because of protection features on the fan driver chip, this test can trigger a fault. You can disregard this fault if it occurs as a result of a fan test. The purpose of the fan test is to verify that the fan is operating properly, not to test the fan drive circuit."
+    }
+   ],
+   "proposal": [
+    "1. ErrorCode 'Fan test fault' -> INDICATES -> FailureMode 'Fan does not operate'. Meaning: The error code indicates the specified failure mode. Conditions: A fan test may trigger this fault due to fan-driver-chip protection; disregard if caused by the fan test."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u008.c42"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u009:A.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p97.b15",
+     "page": 97,
+     "text": "13. Hold down the gas shut-off override button on top of the solenoid valve, then quickly tap the torch trigger. Is the compressor running, and is air blowing from the torch?"
+    },
+    {
+     "segment_id": "p97.b17",
+     "page": 97,
+     "text": "b. If no, replace the internal compressor. See Replace the internal compressor on page 169. Be sure to push"
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Internal compressor failure' -> RESOLVED_BY -> CorrectiveAction 'Replace the internal compressor' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: If the compressor does not run and air is not blowing from the torch during the test."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u009.c3"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u009:B.R5",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p99.b14",
+     "page": 99,
+     "text": "b. If no, check the twisted pair wires that connect the compressor-driver board to the power board. Continue with"
+    },
+    {
+     "segment_id": "p99.b16",
+     "page": 99,
+     "text": "22. Quickly tap the torch trigger, then check the compressor-enable voltage on the J9 connector on the power board. (The J9 connector may look different from the one shown in Figure 20.) Is compressor-enable voltage present (3 VDC)?"
+    },
+    {
+     "segment_id": "p99.b18",
+     "page": 99,
+     "text": "a. If yes, replace the J1-to-J9 twisted pair wires. See Replace the wire group on page 146."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'J1-to-J9 twisted pair wires faulty' -> RESOLVED_BY -> CorrectiveAction 'Replace the J1-to-J9 twisted pair wires' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: If compressor-enable voltage is present at J9."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u009.c42"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u010:A.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p103.b8",
+     "page": 103,
+     "text": "16. If the air pressure was low, check the air compressor for proper voltage (15 V). See Test 9a – Check the diagnostic LED (D5) on the compressor-driver board on page 96."
+    },
+    {
+     "segment_id": "p103.b9",
+     "page": 103,
+     "text": "17. Apply leak detector solution (for example, Snoop®) to check for leaks at the following points on the gas supply line. Quickly tap the torch trigger to force gas flow without firing an arc. See Figure 23 on page 104."
+    },
+    {
+     "segment_id": "p103.b14",
+     "page": 103,
+     "text": " The fan may cause the appearance of a leak on some fittings even if there is not one. To avoid this, disconnect the fan from J5 on the power board before performing the leak test above. Make sure to reconnect the fan before using the system."
+    },
+    {
+     "segment_id": "p103.b16",
+     "page": 103,
+     "text": "18. Also check for leaks where the drain hose connects to the base of the power supply . Tilt the power supply so that you can feel if air is escaping through the hole in the base where the drain hose lets out."
+    },
+    {
+     "segment_id": "p103.b18",
+     "page": 103,
+     "text": "19. Install a different torch to see if the low pressure issue persists. See page 153."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Unspecified cause of low air pressure' -> RESOLVED_BY -> CorrectiveAction 'Reconnect the fan before using the system' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: Before using the system."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u010.c12"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u005:A.R7",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p74.t1.r1",
+     "page": 74,
+     "text": "TABLE COLUMNS: Problem | Possible causes | Possible solutions"
+    },
+    {
+     "segment_id": "p74.t1.r3",
+     "page": 74,
+     "text": "Problem: The circuit breaker trips frequently while you are cutting. | Possible causes: • The amperage adjustment knob is set too high for the input circuit. • The wrong consumables are being used. • The input circuit is not delivering sufficient power to the power supply. • The operator is stretching the arc by holding the torch too far from the workpiece when cutting. • The extension cord is too long, is damaged, or is not capable of delivering sufficient power to the power supply. | Possible solutions: • Turn down the cutting current. See Step 3 – Adjust the output current on page 47. • Make sure the correct consumables are installed for this power supply and torch. See Consumable use on page 37. • Operate the system on a 240 VAC input circuit whenever possible. • Avoid stretching the arc. Drag the torch on the workpiece. See Edge start on a workpiece on page 54. • Operate the system without using an extension cord. If you must use an extension cord, use a heavy conductor cord of the shortest possible length. See Extension cord recommendations on page 33. • Make sure nothing else is drawing power on the same circuit."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Circuit breaker trips frequently while cutting' -> MAY_INDICATE -> FailureMode 'Other equipment is drawing power on the same circuit'. Meaning: The symptom may indicate the specified failure mode.",
+    "2. FailureMode 'Input circuit is not delivering sufficient power' -> AFFECTS -> Component 'Input circuit'. Meaning: The failure mode affects the specified component.",
+    "3. FailureMode 'Other equipment is drawing power on the same circuit' -> AFFECTS -> Component 'Input circuit'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 23,
+   "target": {
+    "assertion_ids": [
+     "u005.c89",
+     "u005.c92",
+     "u005.c94"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u004:A.R4",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p68.t1.r1",
+     "page": 68,
+     "text": "column 1: The internal compressor LED and the temperature LED illuminate while the machine is powered ON and the torch trigger is pulled."
+    },
+    {
+     "segment_id": "p68.t1.r4",
+     "page": 68,
+     "text": "column 1:  Environmental conditions or worn consumables are adversely affecting the power supply’s performance. | column 2: 2. Make sure the louvers in the cover are not blocked. Blocking the louvers in the cover can prevent proper air circulation needed to cool internal components. 3. Place the power supply right-side up on a level surface. Do NOT lay the power supply on its side. Laying the power supply on its side can cause the air filter to divert air away from the torch. 4. Inspect and replace the consumables if they are worn or damaged. Always replace the nozzle and electrode together. 5. Was the system stored in temperatures below freezing? If so, ice might have formed in the air-flow system inside the power supply. Move the power supply to a warmer location to allow the ice to melt."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Internal compressor and temperature LEDs illuminate while powered ON with torch trigger pulled' -> MAY_INDICATE -> FailureMode 'Cover louvers are blocked'. Meaning: The symptom may indicate the specified failure mode.",
+    "2. Symptom 'Internal compressor and temperature LEDs illuminate while powered ON with torch trigger pulled' -> MAY_INDICATE -> FailureMode 'Ice formed in the internal power-supply air-flow system'. Meaning: The symptom may indicate the specified failure mode. Conditions: If system was stored below freezing."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 22,
+   "target": {
+    "assertion_ids": [
+     "u004.c22",
+     "u004.c28"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u004:A.R6",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p68.t1.r1",
+     "page": 68,
+     "text": "column 1: The internal compressor LED and the temperature LED illuminate while the machine is powered ON and the torch trigger is pulled."
+    },
+    {
+     "segment_id": "p69.t1.r1",
+     "page": 69,
+     "text": "column 1: The internal compressor LED and the temperature LED illuminate while the machine is powered ON and the torch trigger is pulled."
+    },
+    {
+     "segment_id": "p69.t1.r4",
+     "page": 69,
+     "text": "column 1:  One of the following internal components is faulty and needs to be replaced:  Internal compressor  Compressor-driver board  Power board | column 2: 7. Systematically check the internal compressor, the compressor-driver board, and the power board to determine which component needs to be replaced. Perform Test 9 – internal compressor, compressor-driver board, and power board on page 96."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Internal compressor and temperature LEDs illuminate while powered ON with torch trigger pulled' -> MAY_INDICATE -> FailureMode 'Compressor-driver board is faulty'. Meaning: The symptom may indicate the specified failure mode.",
+    "2. Symptom 'Internal compressor and temperature LEDs illuminate while powered ON with torch trigger pulled' -> MAY_INDICATE -> FailureMode 'Power board is faulty'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 22,
+   "target": {
+    "assertion_ids": [
+     "u004.c35",
+     "u004.c36"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u005:A.R4",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p72.t1.r1",
+     "page": 72,
+     "text": "TABLE COLUMNS: Problem | Possible causes | Possible solutions"
+    },
+    {
+     "segment_id": "p73.t1.r1",
+     "page": 73,
+     "text": "TABLE COLUMNS: Problem | Possible causes | Possible solutions"
+    },
+    {
+     "segment_id": "p72.t1.r2",
+     "page": 72,
+     "text": "Problem: Moisture exits the torch nozzle. | Possible causes: • A small amount of moisture at the torch nozzle is normal for this system, particularly in very humid environments. • A larger amount of moisture at the torch nozzle may indicate that the air filter is not properly removing moisture from the system. | Possible solutions: • A small amount of moisture should not prevent the torch from firing or degrade cut quality or performance. • In case of excess moisture, examine the air filter inside the power supply. It is normal to see water in the filter bowl. The filter purges water when the water level in the bowl is high enough to engage the float mechanism. If the water level in the filter bowl is approximately half full (or more), the air filter may not be purging water properly. • Make sure the drain hose connected to the bottom of the air filter bowl is not twisted or clogged. • Water purged from the air filter exits through a hole in bottom of the of the power supply. Make sure this hole is not blocked. • Replace the air filter bowl. See Replace the air filter bowl and air filter element on page 160. • If the problem persists, replace the whole air filter assembly. See Replace the air filter assembly on page 157."
+    },
+    {
+     "segment_id": "p73.t1.r2",
+     "page": 73,
+     "text": "Problem: The arc blows out but re-ignites when the torch trigger is pulled again, or the arc sputters and hisses. | Possible causes: • Too much moisture is present in the consumables. • The consumables are worn or damaged. | Possible solutions: • Inspect the consumables for signs of excess moisture. A small amount of moisture at the torch nozzle is normal for this system and should not prevent the torch from firing. If excess moisture is present, fire the torch approximately 5 times in succession. Fire the torch in the air, not on the workpiece. • If the problem persists and excess moisture is not an issue, inspect and replace the consumable parts if they are worn or damaged. • If firing the torch does not clear out the excess moisture, examine the air filter inside the power supply. It is normal to see water in the filter bowl. The filter purges water when the water level in the bowl is high enough to engage the float mechanism. If the water level in the filter bowl is approximately half full (or more), the air filter may not be purging water properly. • Make sure the drain hose connected to the bottom of the air filter bowl is not twisted or clogged. • Water purged from the air filter exits through a hole in bottom of the of the power supply. Make sure this hole is not blocked. • Replace the air filter bowl. See Replace the air filter bowl and air filter element on page 160. • If the problem persists, replace the whole air filter assembly. See Replace the air filter assembly on page 157."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Moisture exits the torch nozzle' -> MAY_INDICATE -> FailureMode 'Drain hose is twisted or clogged'. Meaning: The symptom may indicate the specified failure mode. Conditions: Possible drain obstruction.",
+    "2. Symptom 'Moisture exits the torch nozzle' -> MAY_INDICATE -> FailureMode 'Power-supply drain hole is blocked'. Meaning: The symptom may indicate the specified failure mode. Conditions: Possible blocked exit hole."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 22,
+   "target": {
+    "assertion_ids": [
+     "u005.c35",
+     "u005.c36"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u005:A.R5",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p72.t1.r1",
+     "page": 72,
+     "text": "TABLE COLUMNS: Problem | Possible causes | Possible solutions"
+    },
+    {
+     "segment_id": "p73.t1.r1",
+     "page": 73,
+     "text": "TABLE COLUMNS: Problem | Possible causes | Possible solutions"
+    },
+    {
+     "segment_id": "p72.t1.r2",
+     "page": 72,
+     "text": "Problem: Moisture exits the torch nozzle. | Possible causes: • A small amount of moisture at the torch nozzle is normal for this system, particularly in very humid environments. • A larger amount of moisture at the torch nozzle may indicate that the air filter is not properly removing moisture from the system. | Possible solutions: • A small amount of moisture should not prevent the torch from firing or degrade cut quality or performance. • In case of excess moisture, examine the air filter inside the power supply. It is normal to see water in the filter bowl. The filter purges water when the water level in the bowl is high enough to engage the float mechanism. If the water level in the filter bowl is approximately half full (or more), the air filter may not be purging water properly. • Make sure the drain hose connected to the bottom of the air filter bowl is not twisted or clogged. • Water purged from the air filter exits through a hole in bottom of the of the power supply. Make sure this hole is not blocked. • Replace the air filter bowl. See Replace the air filter bowl and air filter element on page 160. • If the problem persists, replace the whole air filter assembly. See Replace the air filter assembly on page 157."
+    },
+    {
+     "segment_id": "p73.t1.r2",
+     "page": 73,
+     "text": "Problem: The arc blows out but re-ignites when the torch trigger is pulled again, or the arc sputters and hisses. | Possible causes: • Too much moisture is present in the consumables. • The consumables are worn or damaged. | Possible solutions: • Inspect the consumables for signs of excess moisture. A small amount of moisture at the torch nozzle is normal for this system and should not prevent the torch from firing. If excess moisture is present, fire the torch approximately 5 times in succession. Fire the torch in the air, not on the workpiece. • If the problem persists and excess moisture is not an issue, inspect and replace the consumable parts if they are worn or damaged. • If firing the torch does not clear out the excess moisture, examine the air filter inside the power supply. It is normal to see water in the filter bowl. The filter purges water when the water level in the bowl is high enough to engage the float mechanism. If the water level in the filter bowl is approximately half full (or more), the air filter may not be purging water properly. • Make sure the drain hose connected to the bottom of the air filter bowl is not twisted or clogged. • Water purged from the air filter exits through a hole in bottom of the of the power supply. Make sure this hole is not blocked. • Replace the air filter bowl. See Replace the air filter bowl and air filter element on page 160. • If the problem persists, replace the whole air filter assembly. See Replace the air filter assembly on page 157."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Arc blows out but re-ignites on pulling the trigger again, or arc sputters and hisses' -> MAY_INDICATE -> FailureMode 'Drain hose is twisted or clogged'. Meaning: The symptom may indicate the specified failure mode.",
+    "2. Symptom 'Arc blows out but re-ignites on pulling the trigger again, or arc sputters and hisses' -> MAY_INDICATE -> FailureMode 'Power-supply drain hole is blocked'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 22,
+   "target": {
+    "assertion_ids": [
+     "u005.c50",
+     "u005.c51"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u006:A.R5",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p83.b10",
+     "page": 83,
+     "text": "6. If the AC voltage is incorrect, make sure you have power to the unit. If you do have power, inspect the power cord for damage, and replace if necessary. See Replace the power cord and strain relief on page 115."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Incoming AC voltage is incorrect' -> MAY_INDICATE -> FailureMode 'Power cord is damaged'. Meaning: The symptom may indicate the specified failure mode. Conditions: If the unit has power and the power cord is damaged.",
+    "2. FailureMode 'Power cord is damaged' -> AFFECTS -> Component 'Power cord'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 22,
+   "target": {
+    "assertion_ids": [
+     "u006.c34",
+     "u006.c35"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u008:A.R6",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p93.b15",
+     "page": 93,
+     "text": "8. If this test fails, check the torch start switch and the torch wires. Replace if necessary. See Replace the start switch on page 203 or Replace the torch lead and strain relief on page 153."
+    },
+    {
+     "segment_id": "p93.b17",
+     "page": 93,
+     "text": "10. Measure pin 16 of J7 to ground. See Test 2 – power board voltage checks on page 84."
+    },
+    {
+     "segment_id": "p93.b18",
+     "page": 93,
+     "text": "a. With the trigger pulled, it should measure as 0 VDC for an open circuit."
+    },
+    {
+     "segment_id": "p93.b19",
+     "page": 93,
+     "text": "b. With the trigger released, it should measure 3.2 VDC for a closed circuit."
+    },
+    {
+     "segment_id": "p93.b20",
+     "page": 93,
+     "text": "11. Are the values correct?"
+    },
+    {
+     "segment_id": "p93.b21",
+     "page": 93,
+     "text": " If yes, replace the control board. See Replace the control board on page 126."
+    },
+    {
+     "segment_id": "p93.b22",
+     "page": 93,
+     "text": " If no, replace the power board. See Replace the power board on page 135."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Torch-start test fails' -> MAY_INDICATE -> FailureMode 'Faulty control board'. Meaning: The symptom may indicate the specified failure mode. Conditions: Pin 16 measures 0 VDC with trigger pulled and 3.2 VDC with trigger released.",
+    "2. Symptom 'Torch-start test fails' -> MAY_INDICATE -> FailureMode 'Faulty power board'. Meaning: The symptom may indicate the specified failure mode. Conditions: If measured values are not correct."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 22,
+   "target": {
+    "assertion_ids": [
+     "u008.c18",
+     "u008.c22"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u008:A.R9",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p96.b3",
+     "page": 96,
+     "text": "If the internal compressor fault LED and temperature fault LED both illuminate, the root cause may be:"
+    },
+    {
+     "segment_id": "p96.b5",
+     "page": 96,
+     "text": " Faulty compressor-driver board (PCB3)"
+    },
+    {
+     "segment_id": "p96.b6",
+     "page": 96,
+     "text": " Faulty power board (PCB2)"
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Internal compressor fault LED and temperature fault LED both illuminate' -> MAY_INDICATE -> FailureMode 'Faulty compressor-driver board (PCB3)'. Meaning: The symptom may indicate the specified failure mode. Conditions: Both internal compressor fault and temperature fault LEDs illuminate.",
+    "2. Symptom 'Internal compressor fault LED and temperature fault LED both illuminate' -> MAY_INDICATE -> FailureMode 'Faulty power board (PCB2)'. Meaning: The symptom may indicate the specified failure mode. Conditions: Both internal compressor fault and temperature fault LEDs illuminate."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 22,
+   "target": {
+    "assertion_ids": [
+     "u008.c45",
+     "u008.c47"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u002:A.R3",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p56.b12",
+     "page": 56,
+     "text": " Cut quality is poor. The causes can be:"
+    },
+    {
+     "segment_id": "p56.b15",
+     "page": 56,
+     "text": " Cut speed is too fast or too slow"
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Poor cut quality' -> MAY_INDICATE -> FailureMode 'Cut speed is too slow'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u002.c13"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u003:B.R9",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p61.b13",
+     "page": 61,
+     "text": " Fan side: Check for leaks and loose connections at each pneumatic (air) connection point on the internal compressor, air filter, and solenoid valve."
+    },
+    {
+     "segment_id": "p61.b14",
+     "page": 61,
+     "text": "5. Repair or replace components as necessary."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Leaks or loose connections at internal pneumatic connection points' -> MAY_INDICATE -> FailureMode 'Unspecified cause of leaks or loose pneumatic connections'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u003.c65"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u007:B.R6",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p88.b7",
+     "page": 88,
+     "text": "9. The values found in step 7 and step 8 should be approximately equal. If they differ by more than 30 V, replace the power board."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'W-to-B and R-to-B voltage readings differ by more than 30 V' -> MAY_INDICATE -> FailureMode 'Unspecified cause of unequal W-to-B and R-to-B voltage readings'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u007.c42"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u008:A.R7",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p94.b10",
+     "page": 94,
+     "text": "6. Measure the resistance from the blue wire (pin 1) to the orange wire (pin 2) . It should measure less than 10 Ω. If it measures high resistance, the cap-sensor switch circuit is open."
+    },
+    {
+     "segment_id": "p94.b14",
+     "page": 94,
+     "text": "8. Make sure the consumables are correctly installed. Adjust the consumables if necessary."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'High resistance between cap-sensor wires' -> MAY_INDICATE -> FailureMode 'Consumables incorrectly installed'. Meaning: The symptom may indicate the specified failure mode. Conditions: If consumables are not correctly installed."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u008.c30"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u009:A.R10",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p101.b2",
+     "page": 101,
+     "text": "Test 10 – check air pressure"
+    },
+    {
+     "segment_id": "p101.b3",
+     "page": 101,
+     "text": "Use this test to determine if low air pressure is affecting system performance."
+    },
+    {
+     "segment_id": "p101.b17",
+     "page": 101,
+     "text": "3. Install new consumables. Make sure they are the correct consumables for this system and torch and that they are installed correctly. See page 45."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Low air pressure affecting system performance' -> MAY_INDICATE -> FailureMode 'Incorrect or incorrectly installed consumables'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u009.c38"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u004:B.R3",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p68.t1.r1",
+     "page": 68,
+     "text": "column 1: The internal compressor LED and the temperature LED illuminate while the machine is powered ON and the torch trigger is pulled."
+    },
+    {
+     "segment_id": "p69.t1.r1",
+     "page": 69,
+     "text": "column 1: The internal compressor LED and the temperature LED illuminate while the machine is powered ON and the torch trigger is pulled."
+    },
+    {
+     "segment_id": "p68.t1.r4",
+     "page": 68,
+     "text": "column 1:  Environmental conditions or worn consumables are adversely affecting the power supply’s performance. | column 2: 2. Make sure the louvers in the cover are not blocked. Blocking the louvers in the cover can prevent proper air circulation needed to cool internal components. 3. Place the power supply right-side up on a level surface. Do NOT lay the power supply on its side. Laying the power supply on its side can cause the air filter to divert air away from the torch. 4. Inspect and replace the consumables if they are worn or damaged. Always replace the nozzle and electrode together. 5. Was the system stored in temperatures below freezing? If so, ice might have formed in the air-flow system inside the power supply. Move the power supply to a warmer location to allow the ice to melt."
+    },
+    {
+     "segment_id": "p69.t1.r4",
+     "page": 69,
+     "text": "column 1:  One of the following internal components is faulty and needs to be replaced:  Internal compressor  Compressor-driver board  Power board | column 2: 7. Systematically check the internal compressor, the compressor-driver board, and the power board to determine which component needs to be replaced. Perform Test 9 – internal compressor, compressor-driver board, and power board on page 96."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Environmental conditions or worn consumables adversely affect power-supply performance' -> AFFECTS -> Component 'Cover louvers'. Meaning: The failure mode affects the specified component. Conditions: If the cover louvers are blocked.",
+    "2. FailureMode 'Environmental conditions or worn consumables adversely affect power-supply performance' -> AFFECTS -> Component 'Consumables'. Meaning: The failure mode affects the specified component. Conditions: If consumables are worn or damaged.",
+    "3. FailureMode 'Internal compressor, compressor-driver board, or power board is faulty' -> AFFECTS -> Component 'Power board'. Meaning: The failure mode affects the specified component. Conditions: If the power board is the faulty component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 13,
+   "target": {
+    "assertion_ids": [
+     "u004.c73",
+     "u004.c74",
+     "u004.c77"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u004:A.R2",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p67.t2.r1",
+     "page": 67,
+     "text": "column 1: The temperature LED blinks while the machine is powered ON."
+    },
+    {
+     "segment_id": "p67.t2.r3",
+     "page": 67,
+     "text": "column 1: This fault occurs when the system continuously draws too much input current for too long. The fault protects the power switch and power cord from damage caused by overheating. This fault most often occurs when:  You are operating the system on a 120 VAC input circuit and the cutting current is set above 20 A.  You are operating the system on a 120 V / 15 A circuit.  You are operating the system on a 120 VAC input circuit and are frequently stretching the arc while cutting.  You are using an extension cord that is too long. The maximum length for an extension cord on a 120 VAC input circuit is 16 m (53 feet). The maximum length for an extension cord on a 240 VAC input circuit is 40.5 m (133 feet). | column 2: Let the system cool for 3 minutes before using it. Leave the system on to allow the fan to cool the power supply. To prevent the fault from occurring:  Operate the system on a 240 VAC input circuit whenever possible.  Turn down the cutting current. See Step 3 – Adjust the output current on page 47.  If you do operate the system on a120 VAC input circuit, use a 20 A circuit and set the cutting current below 20 A.  Avoid stretching the arc. Drag the torch on the workpiece. See Edge start on a workpiece on page 54.  Operate the system without using an extension cord. If you must use an extension cord, use a heavy conductor cord of the shortest possible length. See Extension cord recommendations on page 33."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'System continuously draws too much input current for too long' -> AFFECTS -> Component 'Power switch'. Meaning: The failure mode affects the specified component.",
+    "2. FailureMode 'System continuously draws too much input current for too long' -> AFFECTS -> Component 'Power cord'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 12,
+   "target": {
+    "assertion_ids": [
+     "u004.c8",
+     "u004.c9"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u005:A.R8",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p75.b9",
+     "page": 75,
+     "text": " Error – This LED illuminates when the internal compressor, torch cap, or temperature LEDs on the front of the power supply illuminate. If all four LEDs on the front of the power supply are blinking, the Error LED also blinks. The number of blinks between pauses indicates which component may have failed."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Component may have failed, identified by Error LED blink count' -> AFFECTS -> Component 'Error LED'. Meaning: The failure mode affects the specified component.",
+    "2. FailureMode 'Component may have failed, identified by Error LED blink count' -> AFFECTS -> Component 'Front-panel LEDs'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 12,
+   "target": {
+    "assertion_ids": [
+     "u005.c102",
+     "u005.c103"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u005:A.R3",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p71.t1.r1",
+     "page": 71,
+     "text": "TABLE COLUMNS: Problem | Possible causes | Possible solutions"
+    },
+    {
+     "segment_id": "p71.t1.r4",
+     "page": 71,
+     "text": "Problem: The pilot arc extinguishes when you move the plasma arc off the workpiece while still pulling the torch trigger. | Possible causes: • The consumables are worn or damaged. • The system is connected to a generator and is running on low input voltage (for example, less than 100 V). • The continuous pilot arc is not functioning correctly. The power board may be faulty. | Possible solutions: • Inspect the consumables and replace if necessary. • If you use a generator, make sure it is properly rated for this system. See Generator recommendations on page 33. • Perform Test 2 – power board voltage checks on page 84 and Test 3 – VBUS and voltage balance on power board on page 86."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Continuous pilot arc is not functioning correctly; power board may be faulty' -> AFFECTS -> Component 'Continuous pilot arc'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u005.c27"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u005:B.R6",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p74.t1.r1",
+     "page": 74,
+     "text": "TABLE COLUMNS: Problem | Possible causes | Possible solutions"
+    },
+    {
+     "segment_id": "p74.t1.r2",
+     "page": 74,
+     "text": "Problem: The cut quality is poor, or the cut does not sever the metal. | Possible causes: • The consumables are worn or damaged. • The work lead connection is poor. The work lead may be damaged or not properly connected to the workpiece. • The amperage adjustment knob is set too low. • The air pressure to the torch is too low. • The power board is producing low current and may be faulty. • The extension cord is too long, is damaged, or is not capable of delivering sufficient power to the power supply. | Possible solutions: • Inspect the consumables and replace if necessary. • Reposition the work lead on the workpiece. • Clean the workpiece surface to make a better connection with the work lead. • Inspect the work lead and replace if necessary. • If your input circuit is capable, turn the amperage adjustment knob to a higher setting. • Check the gas supply line for leaks or defective parts. Perform Test 10 – check air pressure on page 101. • Perform Test 2 – power board voltage checks on page 84 and Test 3 – VBUS and voltage balance on power board on page 86. • Operate the system without using an extension cord. If you must use an extension cord, use a heavy conductor cord of the shortest possible length. See Extension cord recommendations on page 33."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Air pressure to torch too low' -> AFFECTS -> Component 'Gas supply line'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u005.c113"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u005:B.R7",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p74.t1.r1",
+     "page": 74,
+     "text": "TABLE COLUMNS: Problem | Possible causes | Possible solutions"
+    },
+    {
+     "segment_id": "p74.t1.r2",
+     "page": 74,
+     "text": "Problem: The cut quality is poor, or the cut does not sever the metal. | Possible causes: • The consumables are worn or damaged. • The work lead connection is poor. The work lead may be damaged or not properly connected to the workpiece. • The amperage adjustment knob is set too low. • The air pressure to the torch is too low. • The power board is producing low current and may be faulty. • The extension cord is too long, is damaged, or is not capable of delivering sufficient power to the power supply. | Possible solutions: • Inspect the consumables and replace if necessary. • Reposition the work lead on the workpiece. • Clean the workpiece surface to make a better connection with the work lead. • Inspect the work lead and replace if necessary. • If your input circuit is capable, turn the amperage adjustment knob to a higher setting. • Check the gas supply line for leaks or defective parts. Perform Test 10 – check air pressure on page 101. • Perform Test 2 – power board voltage checks on page 84 and Test 3 – VBUS and voltage balance on power board on page 86. • Operate the system without using an extension cord. If you must use an extension cord, use a heavy conductor cord of the shortest possible length. See Extension cord recommendations on page 33."
+    },
+    {
+     "segment_id": "p74.t1.r3",
+     "page": 74,
+     "text": "Problem: The circuit breaker trips frequently while you are cutting. | Possible causes: • The amperage adjustment knob is set too high for the input circuit. • The wrong consumables are being used. • The input circuit is not delivering sufficient power to the power supply. • The operator is stretching the arc by holding the torch too far from the workpiece when cutting. • The extension cord is too long, is damaged, or is not capable of delivering sufficient power to the power supply. | Possible solutions: • Turn down the cutting current. See Step 3 – Adjust the output current on page 47. • Make sure the correct consumables are installed for this power supply and torch. See Consumable use on page 37. • Operate the system on a 240 VAC input circuit whenever possible. • Avoid stretching the arc. Drag the torch on the workpiece. See Edge start on a workpiece on page 54. • Operate the system without using an extension cord. If you must use an extension cord, use a heavy conductor cord of the shortest possible length. See Extension cord recommendations on page 33. • Make sure nothing else is drawing power on the same circuit."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Amperage adjustment set too high for input circuit' -> AFFECTS -> Component 'Amperage adjustment knob'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u005.c115"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u009:A.R2",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p97.b5",
+     "page": 97,
+     "text": "9. Quickly tap the torch trigger, then watch the green diagnostic LED (D5) on the compressor-driver board. Does the LED illuminate while the torch is being fired?"
+    },
+    {
+     "segment_id": "p97.b9",
+     "page": 97,
+     "text": "b. If no, check the compressor-driver board. Skip to step 16."
+    },
+    {
+     "segment_id": "p99.b11",
+     "page": 99,
+     "text": "21. Quickly tap the torch trigger, then check the compressor-enable voltage on the J1 connector on the compressor-driver board. (The J1 connector may look different from the one shown in Figure 20.) Is compressor-enable voltage present (3 VDC)?"
+    },
+    {
+     "segment_id": "p99.b13",
+     "page": 99,
+     "text": "a. If yes, replace the compressor-driver board. See Replace the compressor-driver board on page 129."
+    },
+    {
+     "segment_id": "p100.b14",
+     "page": 100,
+     "text": "a. If VBUS and compressor-enable voltage are both present on the power board, replace the"
+    },
+    {
+     "segment_id": "p100.b15",
+     "page": 100,
+     "text": "compressor-driver board. See Replace the compressor-driver board on page 129."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Compressor-driver board failure' -> AFFECTS -> Component 'Compressor-driver board'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u009.c4"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u009:A.R3",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p99.b14",
+     "page": 99,
+     "text": "b. If no, check the twisted pair wires that connect the compressor-driver board to the power board. Continue with"
+    },
+    {
+     "segment_id": "p99.b18",
+     "page": 99,
+     "text": "a. If yes, replace the J1-to-J9 twisted pair wires. See Replace the wire group on page 146."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Faulty J1-to-J9 twisted pair wires' -> AFFECTS -> Component 'J1-to-J9 twisted pair wires'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u009.c12"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u009:A.R9",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p98.b5",
+     "page": 98,
+     "text": "14. Push the solenoid valve back into place between both clips from the center panel."
+    },
+    {
+     "segment_id": "p98.b6",
+     "page": 98,
+     "text": "15. Make sure both of the solenoid valve’s gas supply hoses are connected securely to their fittings."
+    },
+    {
+     "segment_id": "p101.b24",
+     "page": 101,
+     "text": "7. Examine the 2 gas supply hoses that connect to the solenoid valve. Make sure the hoses are fully seated in each 90° fitting. If the hoses are kinked or damaged, replace them. See page 142."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Gas supply hoses not fully seated, kinked, or damaged' -> AFFECTS -> Component 'Solenoid valve'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u009.c35"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u007:C.R1",
+   "option_id": "reject",
+   "text": "",
+   "edits": {},
+   "rationale": "The excerpts warn that standard test leads can cause a short circuit and prescribe safe test-point connections to prevent that hazard; they do not state that these actions resolve an already-existing short circuit.",
+   "cited_segment_ids": [
+    "p86.t2.r2",
+    "p87.t1.r1",
+    "p87.t1.r2",
+    "p87.t1.r3"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:33:55.693599Z"
+  },
+  {
+   "question_id": "rel:u008:B.R6",
+   "option_id": "correct",
+   "text": "Keep statements 1 and 2 only; the excerpt lists both boards as possible causes, but does not link the D5 check or its result to a faulty compressor-driver board as proposed.",
+   "edits": {
+    "keep": [
+     1,
+     2
+    ]
+   },
+   "rationale": "The two boards are listed as possible causes of both LEDs illuminating, while the D5 procedure only directs the next troubleshooting step and does not state that a failed D5 indicates a faulty compressor-driver board.",
+   "cited_segment_ids": [
+    "p96.b3",
+    "p96.b5",
+    "p96.b6",
+    "p96.b15",
+    "p96.b17",
+    "p96.b19"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:33:55.908495Z"
+  },
+  {
+   "question_id": "rel:u003:B.R2",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The symptom’s troubleshooting row lists damaged torch/torch lead and faulty power/control boards as possible causes, and prescribes the start-LED check followed by Test 6 if the LED does not illuminate.",
+   "cited_segment_ids": [
+    "p65.t2.r1",
+    "p65.t2.r3",
+    "p65.b10"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:33:58.413998Z"
+  },
+  {
+   "question_id": "rel:u008:B.R4",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The excerpt identifies high resistance as an open cap-sensor circuit, then gives the conditional plunger and consumable remedies and states that, if those parts are working properly, the switch is faulty or the torch lead has a broken wire.",
+   "cited_segment_ids": [
+    "p94.b10",
+    "p94.b13",
+    "p94.b14",
+    "p94.b15"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:33:55.618393Z"
+  },
+  {
+   "question_id": "rel:u008:B.R3",
+   "option_id": "correct",
+   "text": "Keep only statement 3. The manual directs checking/replacing the torch start switch and wires at step 8; it does not state that measuring pin 16 resolves that fault. For pin 16, correct values lead to replacing the control board, while incorrect values lead to replacing the power board.",
+   "edits": {
+    "keep": [
+     3
+    ]
+   },
+   "rationale": "The pin 16 decision states that incorrect values lead to replacing the power board; correct values lead to the control board, so statement 2 has the wrong condition, while statement 1 links the switch/wire fault to a check not assigned to that step.",
+   "cited_segment_ids": [
+    "p93.b15",
+    "p93.b17",
+    "p93.b18",
+    "p93.b19",
+    "p93.b20",
+    "p93.b21",
+    "p93.b22"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:04.060095Z"
+  },
+  {
+   "question_id": "rel:u003:A.R2",
+   "option_id": "correct",
+   "text": "Statement 1 is supported; statement 2 is not. The torch/torch-lead inspection is not prescribed for the faulty power board cause.",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "The row lists a damaged torch or torch lead as one possible reason the start signal is not reaching the control board, but the torch and torch-lead inspection is not tied to the separate faulty power board cause.",
+   "cited_segment_ids": [
+    "p65.t2.r3",
+    "p65.t2.r1"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:33:59.340124Z"
+  },
+  {
+   "question_id": "rel:u003:B.R7",
+   "option_id": "reject",
+   "text": "Neither proposed relationship is stated in the excerpts.",
+   "edits": {},
+   "rationale": "The manual directs inspection of consumables for damage or wear and repair or replacement of components as necessary, but it does not state that damaged or worn consumables indicate an unspecified failure mode or that they specifically should be repaired or replaced.",
+   "cited_segment_ids": [
+    "p61.b5",
+    "p61.b6"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:33:59.246023Z"
+  },
+  {
+   "question_id": "rel:u005:B.R5",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "Both replacements are listed as solutions in the same troubleshooting entry for the arc problem attributed in part to excess moisture; the whole-assembly replacement is explicitly conditional on the problem persisting.",
+   "cited_segment_ids": [
+    "p73.t1.r2"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:03.241314Z"
+  },
+  {
+   "question_id": "rel:u007:A.R3",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual links no click plus a 24 VDC reading to replacing the solenoid valve, and prescribes removing the connector and measuring voltage between J6 pin 1 and ground as the check.",
+   "cited_segment_ids": [
+    "p89.b9",
+    "p89.b11",
+    "p89.b12",
+    "p89.b13"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:03.309241Z"
+  },
+  {
+   "question_id": "rel:u007:B.R1",
+   "option_id": "correct",
+   "text": "Keep statement 1 only. The manual prescribes checking the listed J7 voltages to assess whether PCB2 is functioning; it does not state that incorrect J7 readings indicate an unspecified cause.",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "The manual directs a multimeter check of the Table 6 J7 voltages and says to replace PCB2 if any values are incorrect, but does not support the proposed unspecified-cause relation.",
+   "cited_segment_ids": [
+    "p84.b7",
+    "p85.t2.r2",
+    "p85.t2.r3",
+    "p85.t2.r4",
+    "p85.t2.r5",
+    "p85.t2.r6",
+    "p85.t2.r7"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:03.400144Z"
+  },
+  {
+   "question_id": "rel:u007:B.R2",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual checks voltage at J6 pin 1 after the connector is removed, and directs replacement of the solenoid valve if it does not click and the reading is 24 VDC.",
+   "cited_segment_ids": [
+    "p89.b9",
+    "p89.b11",
+    "p89.b12",
+    "p89.b13"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:07.301940Z"
+  },
+  {
+   "question_id": "rel:u007:B.R4",
+   "option_id": "correct",
+   "text": "Keep statement 1 only; the resistance test is prescribed to determine whether the torch is stuck in either position. The plunger check is stated for the open-circuit condition, not for torch stuck closed.",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "The manual prescribes the resistance test for either stuck position, but ties the plunger check to an open-circuit condition where the nozzle and electrode are not in contact or a lead wire is broken.",
+   "cited_segment_ids": [
+    "p90.b4",
+    "p90.b8",
+    "p90.b10"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:07.221735Z"
+  },
+  {
+   "question_id": "rel:u007:B.R5",
+   "option_id": "correct",
+   "text": "Keep statement 1 only; statement 2 reverses the diagnostic sequence—the resistance measurement is the test, and an open reading identifies the possible causes.",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "The manual says an open resistance reading with power OFF may indicate loss of nozzle-electrode contact or a broken lead wire; it does not prescribe that same measurement as a check for those already identified causes.",
+   "cited_segment_ids": [
+    "p90.b8",
+    "p90.b10"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:08.459520Z"
+  },
+  {
+   "question_id": "rel:u007:B.R7",
+   "option_id": "correct",
+   "text": "Keep statement 2 only; the excerpt prescribes measuring W-to-R voltage and, if it is not 375 VDC, comparing the converted reading with the J7 pin 21 value. It does not say the symptom may indicate an unspecified failure mode.",
+   "edits": {
+    "keep": [
+     2
+    ]
+   },
+   "rationale": "The manual directs the W-to-R voltage measurement and gives the follow-up comparison for a non-375 VDC reading, but it does not state that the symptom indicates an unspecified failure mode.",
+   "cited_segment_ids": [
+    "p87.b3",
+    "p87.b6",
+    "p87.b7"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:10.340053Z"
+  },
+  {
+   "question_id": "rel:u007:C.R2",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual says using -VBUS as ground could destroy the power supply and directs the user to ground to the rear-panel clip or heatsink instead.",
+   "cited_segment_ids": [
+    "p85.t1.r2",
+    "p86.t2.r2"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:11.356304Z"
+  },
+  {
+   "question_id": "rel:u008:B.R2",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "After the low-resistance finding, the manual directs continuing to step 6 to check plunger movement, and says to replace the torch body if the plunger does not move freely.",
+   "cited_segment_ids": [
+    "p91.b5",
+    "p91.b7",
+    "p91.b9"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:10.270502Z"
+  },
+  {
+   "question_id": "rel:u009:A.R4",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual directs replacing the power board when neither voltage is present or when one is present and the other is not, supporting both the component association and the stated remedy conditions.",
+   "cited_segment_ids": [
+    "p100.b16",
+    "p100.b18",
+    "p100.b19"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:15.488390Z"
+  },
+  {
+   "question_id": "rel:u002:B.R8",
+   "option_id": "reject",
+   "text": "",
+   "edits": {},
+   "rationale": "The excerpt says cool metal is less likely to produce dross, but it does not state that cutting on cool metal is a corrective action that resolves the failure mode.",
+   "cited_segment_ids": [
+    "p56.b25"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:15.278710Z"
+  },
+  {
+   "question_id": "rel:u003:B.R11",
+   "option_id": "accept",
+   "text": "",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "The manual prescribes testing the power supply for proper operation after the problem has been located and repaired, matching the proposed inspection.",
+   "cited_segment_ids": [
+    "p60.b18",
+    "p61.b19"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:14.813076Z"
+  },
+  {
+   "question_id": "rel:u008:A.R4",
+   "option_id": "reject",
+   "text": "The manual says to repeat the torch stuck-open or stuck-closed test because those failures can be intermittent; it does not prescribe that test for the separate finding that the torch plunger does not move freely.",
+   "edits": {},
+   "rationale": "The repeat-test instruction applies to intermittent torch stuck-open or stuck-closed failures, while the plunger finding is addressed by replacing the torch body if it does not move smoothly.",
+   "cited_segment_ids": [
+    "p91.b7",
+    "p91.b10",
+    "p94.b13"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:16.693037Z"
+  },
+  {
+   "question_id": "rel:u008:A.R5",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual explicitly prescribes checking resistance at the two torch-start test points and gives the trigger-pulled and trigger-released readings, so the inspection statement is supported.",
+   "cited_segment_ids": [
+    "p93.b2",
+    "p93.b3",
+    "p93.b4"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:22.189960Z"
+  },
+  {
+   "question_id": "rel:u008:A.R8",
+   "option_id": "reject",
+   "text": "The excerpts do not state that a “Fan test fault” indicates that the fan does not operate; they say the fan test can trigger a fault that may be disregarded if caused by the test.",
+   "edits": {},
+   "rationale": "The manual separately directs replacing a fan that does not operate and explains that a fan test can trigger a fault, without identifying that fault as an indication of fan failure.",
+   "cited_segment_ids": [
+    "p95.b9",
+    "p95.b11"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:18.954421Z"
+  },
+  {
+   "question_id": "rel:u009:A.R1",
+   "option_id": "accept",
+   "text": "",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "The manual asks whether the compressor runs and air blows from the torch, then directs replacement of the internal compressor if the answer is no.",
+   "cited_segment_ids": [
+    "p97.b15",
+    "p97.b17"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:21.891281Z"
+  },
+  {
+   "question_id": "rel:u009:B.R5",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "After checking for compressor-enable voltage at J9, the manual directs replacement of the J1-to-J9 twisted pair wires if voltage is present, supporting the stated condition and remedy.",
+   "cited_segment_ids": [
+    "p99.b16",
+    "p99.b18"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:22.614383Z"
+  },
+  {
+   "question_id": "rel:u010:A.R1",
+   "option_id": "reject",
+   "text": "The instruction to reconnect the fan is part of the leak-test procedure, not a corrective action for the low-air-pressure fault.",
+   "edits": {},
+   "rationale": "The manual says to reconnect the fan before using the system after disconnecting it for the leak test; it does not state that reconnecting the fan resolves low air pressure.",
+   "cited_segment_ids": [
+    "p103.b14",
+    "p103.b9"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:23.197606Z"
+  },
+  {
+   "question_id": "rel:u005:A.R7",
+   "option_id": "correct",
+   "text": "Keep statement 2 only; the manual identifies insufficient power from the input circuit as a possible cause, but lists other equipment drawing power as something to check for in the solution, not as a failure mode affecting the input circuit.",
+   "edits": {
+    "keep": [
+     2
+    ]
+   },
+   "rationale": "The table names insufficient input-circuit power as a possible cause, while it only advises ensuring nothing else draws power on the circuit and does not state that this is a failure mode.",
+   "cited_segment_ids": [
+    "p74.t1.r3"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:27.350160Z"
+  },
+  {
+   "question_id": "rel:u004:A.R4",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The symptom is stated in [p68.t1.r1], and the troubleshooting entry [p68.t1.r4] links adverse environmental conditions to that performance issue, including checking for blocked louvers and possible ice after storage below freezing.",
+   "cited_segment_ids": [
+    "p68.t1.r1",
+    "p68.t1.r4"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:28.013321Z"
+  },
+  {
+   "question_id": "rel:u004:A.R6",
+   "option_id": "accept",
+   "text": "",
+   "edits": {
+    "keep": [
+     1,
+     2
+    ]
+   },
+   "rationale": "The symptom entry states that one of the listed internal components is faulty, and both the compressor-driver board and power board are listed alternatives to be checked.",
+   "cited_segment_ids": [
+    "p69.t1.r1",
+    "p69.t1.r4"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:27.281873Z"
+  },
+  {
+   "question_id": "rel:u005:A.R4",
+   "option_id": "reject",
+   "text": "Neither statement is stated as a possible cause or as something the moisture symptom may indicate; the manual lists the drain hose and power-supply drain hole as items to check in the solutions.",
+   "edits": {},
+   "rationale": "For this problem, the manual says excess moisture may indicate that the air filter is not properly removing moisture, while the hose and exit hole appear only as solution-side checks.",
+   "cited_segment_ids": [
+    "p72.t1.r2"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:28.722928Z"
+  },
+  {
+   "question_id": "rel:u005:A.R5",
+   "option_id": "reject",
+   "text": "Neither statement is supported: the listed possible causes for this symptom are excess moisture in the consumables or worn or damaged consumables; the drain hose and power-supply drain hole are checks listed among the solutions, not stated causes.",
+   "edits": {},
+   "rationale": "The manual lists the drain hose and drain hole as items to check in the solution steps, but does not say either condition may cause this symptom.",
+   "cited_segment_ids": [
+    "p73.t1.r2"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:31.515979Z"
+  },
+  {
+   "question_id": "rel:u006:A.R5",
+   "option_id": "accept",
+   "text": "",
+   "edits": {
+    "keep": [
+     1,
+     2
+    ]
+   },
+   "rationale": "When incoming AC voltage is incorrect and the unit has power, the manual directs inspection of the power cord for damage and replacement if needed, supporting both the suspected damaged-cord failure mode and its association with the power cord.",
+   "cited_segment_ids": [
+    "p83.b10"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:33.818473Z"
+  },
+  {
+   "question_id": "rel:u008:A.R6",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual directs replacing the control board when the measured values are correct and the power board when they are not; these match both proposed conditions.",
+   "cited_segment_ids": [
+    "p93.b17",
+    "p93.b18",
+    "p93.b19",
+    "p93.b20",
+    "p93.b21",
+    "p93.b22"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:33.358396Z"
+  },
+  {
+   "question_id": "rel:u008:A.R9",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual says that when both LEDs illuminate, the root cause may be either a faulty compressor-driver board (PCB3) or a faulty power board (PCB2).",
+   "cited_segment_ids": [
+    "p96.b3",
+    "p96.b5",
+    "p96.b6"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:31.772092Z"
+  },
+  {
+   "question_id": "rel:u002:A.R3",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual lists cut speed that is too fast or too slow as a cause of poor cut quality, so the proposed failure mode is included.",
+   "cited_segment_ids": [
+    "p56.b12",
+    "p56.b15"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:35.408269Z"
+  },
+  {
+   "question_id": "rel:u003:B.R9",
+   "option_id": "reject",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual instructs checking for leaks or loose connections and repairing or replacing components as necessary; it does not state that this symptom may indicate an unspecified failure mode.",
+   "cited_segment_ids": [
+    "p61.b13",
+    "p61.b14"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:35.822695Z"
+  },
+  {
+   "question_id": "rel:u007:B.R6",
+   "option_id": "reject",
+   "text": "The manual states that if the step 7 and step 8 values differ by more than 30 V, replace the power board; it does not say this symptom may indicate an unspecified failure mode.",
+   "edits": {},
+   "rationale": "The excerpt gives a replacement instruction for readings differing by more than 30 V, but does not state the proposed MAY_INDICATE relationship.",
+   "cited_segment_ids": [
+    "p88.b7"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:36.642991Z"
+  },
+  {
+   "question_id": "rel:u008:A.R7",
+   "option_id": "reject",
+   "text": "The manual says high resistance indicates an open cap-sensor switch circuit; it does not state that incorrectly installed consumables may cause the high resistance.",
+   "edits": {},
+   "rationale": "The resistance test links high resistance to an open cap-sensor switch circuit, while the consumables instruction is a separate check and adjustment step.",
+   "cited_segment_ids": [
+    "p94.b10",
+    "p94.b14"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:37.349142Z"
+  },
+  {
+   "question_id": "rel:u009:A.R10",
+   "option_id": "reject",
+   "text": "",
+   "edits": {},
+   "rationale": "The excerpts identify Test 10 as checking whether low air pressure affects performance, but do not state that incorrect or improperly installed consumables may indicate that symptom.",
+   "cited_segment_ids": [
+    "p101.b2",
+    "p101.b3",
+    "p101.b17"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:40.850035Z"
+  },
+  {
+   "question_id": "rel:u004:B.R3",
+   "option_id": "correct",
+   "text": "Keep statement 3 only; statements 1 and 2 are checks or conditions in the troubleshooting entry, not claims that the failure mode affects those components.",
+   "edits": {
+    "keep": [
+     3
+    ]
+   },
+   "rationale": "The manual lists the power board as one of the internal components that may be faulty, while the louvers and consumables are mentioned as checks or conditions in a different troubleshooting entry.",
+   "cited_segment_ids": [
+    "p68.t1.r4",
+    "p69.t1.r4"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:44.917230Z"
+  },
+  {
+   "question_id": "rel:u004:A.R2",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual says this fault protects both the power switch and power cord from damage caused by overheating, supporting both component relations.",
+   "cited_segment_ids": [
+    "p67.t2.r3"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:41.229066Z"
+  },
+  {
+   "question_id": "rel:u005:A.R8",
+   "option_id": "reject",
+   "text": "",
+   "edits": {},
+   "rationale": "The blink count indicates which component may have failed; the excerpt does not state that the failure affects the Error LED or the front-panel LEDs.",
+   "cited_segment_ids": [
+    "p75.b9"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:42.915785Z"
+  },
+  {
+   "question_id": "rel:u005:A.R3",
+   "option_id": "accept",
+   "text": "",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "The manual identifies the continuous pilot arc as not functioning correctly, supporting that this failure mode affects the continuous pilot arc.",
+   "cited_segment_ids": [
+    "p71.t1.r4"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:44.405630Z"
+  },
+  {
+   "question_id": "rel:u005:B.R6",
+   "option_id": "reject",
+   "text": "The manual recommends checking the gas supply line for leaks or defective parts; it does not state that low torch air pressure affects the gas supply line.",
+   "edits": {},
+   "rationale": "The troubleshooting row links low torch air pressure to a gas-supply-line check, not to an AFFECTS relationship.",
+   "cited_segment_ids": [
+    "p74.t1.r2"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:45.377297Z"
+  },
+  {
+   "question_id": "rel:u005:B.R7",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual identifies the amperage adjustment knob being set too high for the input circuit as a cause of frequent circuit-breaker trips, supporting the stated connection to that component.",
+   "cited_segment_ids": [
+    "p74.t1.r3"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:47.328705Z"
+  },
+  {
+   "question_id": "rel:u009:A.R2",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual directs checking the compressor-driver board and replacing it under the stated diagnostic conditions, supporting that a compressor-driver board failure affects that board.",
+   "cited_segment_ids": [
+    "p97.b9",
+    "p99.b13",
+    "p100.b14",
+    "p100.b15"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:47.892014Z"
+  },
+  {
+   "question_id": "rel:u009:A.R3",
+   "option_id": "reject",
+   "text": "",
+   "edits": {},
+   "rationale": "The excerpt directs replacement of the J1-to-J9 twisted pair wires only if an unspecified condition is met; it does not state that those wires are faulty or that this failure mode affects them.",
+   "cited_segment_ids": [
+    "p99.b18"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:51.129682Z"
+  },
+  {
+   "question_id": "rel:u009:A.R9",
+   "option_id": "accept",
+   "text": "",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "The manual identifies the hoses as gas supply hoses connected to the solenoid valve and directs checking their seating and condition, supporting the stated relationship.",
+   "cited_segment_ids": [
+    "p101.b24",
+    "p98.b6"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:34:48.227390Z"
+  }
+ ],
+ "pending": []
+}

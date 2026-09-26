@@ -1,0 +1,351 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u001:A.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r2",
+     "page": 11,
+     "text": "PROBLEM: Pump fails to operate. | CAUSE: Restricted line or inadequate air supply | SOLUTION: Clear*; see Technical Data on pages 24–27."
+    },
+    {
+     "segment_id": "p11.t1.r6",
+     "page": 11,
+     "text": "PROBLEM: Pump operates, but output is low on both strokes. | CAUSE: Restricted line or inadequate air supply. | SOLUTION: Clear*; see Technical Data on pages 24–27."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Restricted line or inadequate air supply' -> RESOLVED_BY -> CorrectiveAction 'See Technical Data on pages 24–27' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything)."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u001.c4",
+     "u001.c23"
+    ],
+    "statement_of": [
+     1,
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:B.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r2",
+     "page": 11,
+     "text": "PROBLEM: Pump fails to operate. | CAUSE: Restricted line or inadequate air supply | SOLUTION: Clear*; see Technical Data on pages 24–27."
+    },
+    {
+     "segment_id": "p11.t1.r6",
+     "page": 11,
+     "text": "PROBLEM: Pump operates, but output is low on both strokes. | CAUSE: Restricted line or inadequate air supply. | SOLUTION: Clear*; see Technical Data on pages 24–27."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Restricted line or inadequate air supply' -> RESOLVED_BY -> CorrectiveAction 'Check the air supply against Technical Data' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything)."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u001.c70",
+     "u001.c72"
+    ],
+    "statement_of": [
+     1,
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:A.R19",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r18",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Erratic or accelerated pump speed. | CAUSE: Held open or worn priming piston. | SOLUTION: Clear; service."
+    },
+    {
+     "segment_id": "p11.b7",
+     "page": 11,
+     "text": "NOTE: If you experience air motor icing, contact your Graco distributor for assistance."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Priming piston held open or worn' -> RESOLVED_BY -> CorrectiveAction 'Contact your Graco distributor for assistance with air motor icing' [escalation]. Meaning: For this problem or cause the manual says to contact service or the dealer. Conditions: If air motor icing is experienced."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u001.c69"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:A.R3",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r4",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Pump fails to operate. | CAUSE: Fluid dried on the displacement rod. | SOLUTION: Clean; see Service on pages 12–19."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Fluid dried on the displacement rod' -> RESOLVED_BY -> CorrectiveAction 'See Service on pages 12–19' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything)."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u001.c15"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001:B.R8",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r9",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Air is leaking into the supply container. | SOLUTION: Check wiper plate seal."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Air leaking into the supply container' -> AFFECTS -> Component 'Wiper plate seal'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u001.c73"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u001:A.R1",
+   "option_id": "reject",
+   "text": "The manual lists “Clear*; see Technical Data on pages 24–27” as the solution; it does not state that consulting those pages is a prescribed inspection or test.",
+   "edits": {},
+   "rationale": "Both troubleshooting rows give clearing the restriction as the solution and refer to Technical Data, but neither describes that reference as a check or test.",
+   "cited_segment_ids": [
+    "p11.t1.r1",
+    "p11.t1.r2",
+    "p11.t1.r6"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:24:38.189187Z"
+  },
+  {
+   "question_id": "rel:u001:B.R1",
+   "option_id": "reject",
+   "text": "The manual says to clear the restriction and refers to Technical Data on pages 24–27; it does not prescribe checking the air supply against that data.",
+   "edits": {},
+   "rationale": "The cited rows give “Clear*; see Technical Data,” which does not state the proposed air-supply check.",
+   "cited_segment_ids": [
+    "p11.t1.r2",
+    "p11.t1.r6"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:24:37.244372Z"
+  },
+  {
+   "question_id": "rel:u001:A.R19",
+   "option_id": "reject",
+   "text": "The priming-piston cause has the solution “Clear; service.” The distributor-contact note applies only if air motor icing is experienced.",
+   "edits": {},
+   "rationale": "The proposal joins the priming-piston troubleshooting row with a separate conditional note about air motor icing.",
+   "cited_segment_ids": [
+    "p11.t1.r18",
+    "p11.b7"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:24:37.173887Z"
+  },
+  {
+   "question_id": "rel:u001:A.R3",
+   "option_id": "reject",
+   "text": "The manual’s solution is to clean the dried fluid and refer to Service on pages 12–19; it does not state that referring to those pages is an inspection or test.",
+   "edits": {},
+   "rationale": "The cited solution prescribes cleaning and points to the Service section, not a check or test as the proposed [inspection] relation claims.",
+   "cited_segment_ids": [
+    "p11.t1.r1",
+    "p11.t1.r4"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:24:37.683893Z"
+  },
+  {
+   "question_id": "rel:u001:B.R8",
+   "option_id": "reject",
+   "text": "The manual says to check the wiper plate seal as the solution; it does not state that air leaking into the supply container affects that component.",
+   "edits": {},
+   "rationale": "The row links air leaking into the supply container to checking the wiper plate seal, not to an AFFECTS relationship.",
+   "cited_segment_ids": [
+    "p11.t1.r9"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:24:39.504400Z"
+  }
+ ],
+ "pending": []
+}

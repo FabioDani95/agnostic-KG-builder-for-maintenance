@@ -1,0 +1,121 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u004:B.R9",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p64.b12",
+     "page": 64,
+     "text": "Some components like power capacitors and fans become worn out due to long term usage, and increase the risk of failure on the Active"
+    },
+    {
+     "segment_id": "p64.b14",
+     "page": 64,
+     "text": "Contact Danfoss for further information regarding maintenance and service."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Power capacitors worn out due to long-term use' -> RESOLVED_BY -> CorrectiveAction 'Contact Danfoss for maintenance and service information' [escalation]. Meaning: For this problem or cause the manual says to contact service or the dealer.",
+    "2. FailureMode 'Fans worn out due to long-term use' -> RESOLVED_BY -> CorrectiveAction 'Contact Danfoss for maintenance and service information' [escalation]. Meaning: For this problem or cause the manual says to contact service or the dealer."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u004.c48",
+     "u004.c49"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "page:65",
+   "kind": "unreadable_page",
+   "title": "Page 65 has no readable text next to diagnostic pages: should it be transcribed?",
+   "source": [],
+   "proposal": [
+    "Page 65 is probably a figure or a scan; the system could not read it."
+   ],
+   "options": [
+    {
+     "option_id": "skip",
+     "label": "Skip it",
+     "effect": "the page stays out of the graph"
+    },
+    {
+     "option_id": "transcribe",
+     "label": "Transcribe it",
+     "effect": "your transcription is kept in the run report for the next extraction"
+    }
+   ],
+   "default_option_id": "skip",
+   "priority": 4,
+   "target": {
+    "page": 65
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u004:B.R9",
+   "option_id": "accept",
+   "text": "",
+   "edits": {
+    "keep": [
+     1,
+     2
+    ]
+   },
+   "rationale": "The manual identifies power capacitors and fans as components that wear with long-term use, then directs readers to contact Danfoss for further maintenance and service information, supporting the escalation for both. (p64.b12, p64.b14)",
+   "cited_segment_ids": [
+    "p64.b12",
+    "p64.b14"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:20:48.965067Z"
+  },
+  {
+   "question_id": "page:65",
+   "option_id": "skip",
+   "text": "No readable text is provided to transcribe, so leave page 65 out of the graph.",
+   "edits": {},
+   "rationale": "The page is identified as unreadable and no page content is available to support a transcription.",
+   "cited_segment_ids": [],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:20:43.551463Z"
+  }
+ ],
+ "pending": []
+}

@@ -1,0 +1,66 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u001:B.R19",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.b7",
+     "page": 11,
+     "text": "NOTE: If you experience air motor icing, contact your Graco distributor for assistance."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Air motor icing' -> MAY_INDICATE -> FailureMode 'Unspecified cause of air motor icing'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u001.c69"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u001:B.R19",
+   "option_id": "reject",
+   "text": "The manual advises contacting a Graco distributor for assistance if air motor icing occurs; it does not state a cause.",
+   "edits": {},
+   "rationale": "The note gives an action to take for air motor icing but does not say the symptom may indicate an unspecified failure mode.",
+   "cited_segment_ids": [
+    "p11.b7"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "c8431a28c98309163cc509a52e4d4e7e3a12b00ad3ca95c150e0115537bf9b87"
+   },
+   "answered_at": "2026-09-26T22:18:11.713447Z"
+  }
+ ],
+ "pending": []
+}

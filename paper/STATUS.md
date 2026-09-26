@@ -233,5 +233,12 @@ contro 4/8 della v22, Danfoss 8/8 contro 5/8, Graco 16/18 contro 16/18; domande
 rimaste per una persona 0–1 per manuale contro 26–157 segnalazioni; tempi da 5 a
 13 volte inferiori. Sono misure di sviluppo sui manuali usati per costruire il
 sistema, con gold non validato da tecnici: non sono risultati per il paper. Costo
-cumulativo del registro: 2,0138 USD su 20. Questa analisi non modifica codice del generatore, gold o
+cumulativo del registro: 2,0138 USD su 20.
+
+Misura rivista per posizione e significato (giudice LLM a tre voti, gold storico
+riscritto come segmenti e controllato dall'agente, non da tecnici): v22 contro V3
+con codice corretto (r3, r4) Eastman 6 contro 7/8, Danfoss 5 contro 8/8, Graco 17
+contro 18/18. Corretto un bug di fusione dei nodi che in r2 faceva perdere azioni.
+Preparata la revisione cieca della precisione in `evaluation/v3_precision_review/`,
+da compilare da parte di un tecnico. Questa analisi non modifica codice del generatore, gold o
 ledger e non effettua chiamate API.

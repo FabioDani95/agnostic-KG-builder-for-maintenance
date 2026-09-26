@@ -1,0 +1,170 @@
+{
+ "status": "approved",
+ "pages": 231,
+ "page_labels": {
+  "other": 58,
+  "procedure": 102,
+  "diagnostic": 54,
+  "parts": 17
+ },
+ "diagnostic_pages": [
+  44,
+  56,
+  57,
+  58,
+  59,
+  60,
+  61,
+  62,
+  63,
+  64,
+  65,
+  66,
+  67,
+  68,
+  69,
+  70,
+  71,
+  72,
+  73,
+  74,
+  75,
+  76,
+  77,
+  78,
+  79,
+  80,
+  81,
+  82,
+  83,
+  84,
+  85,
+  86,
+  87,
+  88,
+  89,
+  90,
+  91,
+  92,
+  93,
+  94,
+  95,
+  96,
+  97,
+  98,
+  99,
+  100,
+  101,
+  102,
+  103,
+  104,
+  228,
+  229,
+  230,
+  231
+ ],
+ "units": 11,
+ "failed_reads": 0,
+ "proposals": 874,
+ "unclear_passages": 7,
+ "extraction_notes": [
+  "coverage: 16 unused table row(s) read again",
+  "coverage: 8 unused table row(s) read again",
+  "coverage: 8 unused table row(s) read again",
+  "coverage: 12 unused table row(s) read again",
+  "coverage: 16 unused table row(s) read again",
+  "coverage: 11 unused table row(s) read again",
+  "coverage: 8 unused table row(s) read again",
+  "coverage: 3 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 510,
+  "red": 41
+ },
+ "witnesses": {
+  "structure": 445,
+  "agreement": 323,
+  "verifier": 238,
+  "reviewer": 51
+ },
+ "verifier_verdicts": {
+  "not_called": 262,
+  "supported": 238,
+  "not_supported": 51
+ },
+ "graph": {
+  "nodes": 361,
+  "nodes_by_type": {
+   "Symptom": 64,
+   "FailureMode": 108,
+   "Component": 50,
+   "CorrectiveAction": 135,
+   "ErrorCode": 4
+  },
+  "edges": 444,
+  "edges_by_tier": {
+   "green": 406,
+   "red": 38
+  },
+  "merged_aliases": 182
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 47,
+   "answered": 47,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 48,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 51,
+ "usage": {
+  "calls": 55,
+  "failed_calls": 0,
+  "prompt_tokens": 223393,
+  "completion_tokens": 105461,
+  "estimated_cost_usd": 0.067431,
+  "by_operation": {
+   "kg_v3_extract": 30,
+   "kg_v3_map": 4,
+   "kg_v3_merge": 9,
+   "kg_v3_verify": 12
+  }
+ },
+ "agent_usage": {
+  "calls": 48,
+  "failed_calls": 0,
+  "prompt_tokens": 58432,
+  "completion_tokens": 19287,
+  "estimated_cost_usd": 0.016203,
+  "by_operation": {
+   "AgentDecision": 48
+  }
+ },
+ "seconds": {
+  "map": 14.245,
+  "gate_map": 18.498,
+  "extract": 84.003,
+  "check": 23.089,
+  "merge": 16.39,
+  "gate_doubts": 62.722,
+  "gate_approval": 0.001,
+  "total": 221.722
+ },
+ "prompt_ids": {
+  "extraction": "0061a7f6cd8d5407"
+ }
+}

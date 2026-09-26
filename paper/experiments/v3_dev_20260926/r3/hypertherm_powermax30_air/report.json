@@ -1,0 +1,169 @@
+{
+ "status": "approved",
+ "pages": 231,
+ "page_labels": {
+  "other": 55,
+  "procedure": 111,
+  "diagnostic": 48,
+  "parts": 17
+ },
+ "diagnostic_pages": [
+  56,
+  60,
+  61,
+  62,
+  63,
+  64,
+  65,
+  66,
+  67,
+  68,
+  69,
+  70,
+  71,
+  72,
+  73,
+  74,
+  75,
+  76,
+  77,
+  78,
+  79,
+  80,
+  81,
+  82,
+  83,
+  84,
+  85,
+  86,
+  87,
+  88,
+  89,
+  90,
+  91,
+  92,
+  93,
+  94,
+  95,
+  96,
+  97,
+  98,
+  99,
+  100,
+  101,
+  102,
+  103,
+  104,
+  228,
+  229
+ ],
+ "units": 10,
+ "failed_reads": 0,
+ "proposals": 796,
+ "unclear_passages": 5,
+ "extraction_notes": [
+  "coverage: 7 unused table row(s) read again",
+  "coverage: 10 unused table row(s) read again",
+  "B: relation 41 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "coverage: 12 unused table row(s) read again",
+  "coverage: 15 unused table row(s) read again",
+  "coverage: 11 unused table row(s) read again",
+  "A: relation 31 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "A: relation 32 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "coverage: 8 unused table row(s) read again",
+  "coverage: 3 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 453,
+  "red": 36,
+  "yellow": 6
+ },
+ "witnesses": {
+  "structure": 395,
+  "agreement": 301,
+  "verifier": 215,
+  "reviewer": 33
+ },
+ "verifier_verdicts": {
+  "not_called": 250,
+  "supported": 215,
+  "not_supported": 29,
+  "unclear": 1
+ },
+ "graph": {
+  "nodes": 365,
+  "nodes_by_type": {
+   "Symptom": 56,
+   "FailureMode": 112,
+   "Component": 52,
+   "CorrectiveAction": 142,
+   "ErrorCode": 3
+  },
+  "edges": 423,
+  "edges_by_tier": {
+   "green": 387,
+   "red": 31,
+   "yellow": 5
+  },
+  "merged_aliases": 154
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 45,
+   "answered": 43,
+   "pending": 2
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 44,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 33,
+ "usage": {
+  "calls": 50,
+  "failed_calls": 0,
+  "prompt_tokens": 200596,
+  "completion_tokens": 96266,
+  "estimated_cost_usd": 0.068511,
+  "by_operation": {
+   "kg_v3_extract": 27,
+   "kg_v3_map": 4,
+   "kg_v3_merge": 9,
+   "kg_v3_verify": 10
+  }
+ },
+ "agent_usage": {
+  "calls": 46,
+  "failed_calls": 0,
+  "prompt_tokens": 56679,
+  "completion_tokens": 18744,
+  "estimated_cost_usd": 0.015734,
+  "by_operation": {
+   "AgentDecision": 46
+  }
+ },
+ "seconds": {
+  "map": 12.378,
+  "gate_map": 7.672,
+  "extract": 67.805,
+  "check": 14.386,
+  "merge": 7.793,
+  "gate_doubts": 43.432,
+  "gate_approval": 0.001,
+  "total": 155.994
+ },
+ "prompt_ids": {
+  "extraction": "0061a7f6cd8d5407"
+ }
+}

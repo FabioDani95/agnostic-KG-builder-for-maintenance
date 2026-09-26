@@ -24,6 +24,7 @@ from backend.kg_v3.prompts import MERGE_PROMPT
 logger = logging.getLogger(__name__)
 
 JUDGE_THRESHOLD = 0.8
+ALIAS_SIMILARITY = 0.75
 JUDGE_BATCH = 40
 MAX_JUDGED_PAIRS = 400
 _TIER_RANK = {Tier.GREEN: 0, Tier.YELLOW: 1, Tier.RED: 2}
@@ -188,12 +189,16 @@ def assemble(relations: list[CheckedRelation], same_pairs: list[MergePair]) -> M
         groups.find(key)
     for pair in same_pairs:
         groups.union(pair.left, pair.right)
-    # Reads that agree on a relation name its ends in their own words: one node each.
+    # Reads that agree on a relation may name its ends in their own words. Their
+    # names become one node only when they are close, or one end is unnamed: a
+    # compound name ("clear the valve and replace the seals") must not bridge
+    # two separate actions into one node.
     for relation in relations:
         lead = relation.proposals[0]
         for other in relation.proposals[1:]:
-            groups.union(identity(lead.source), identity(other.source))
-            groups.union(identity(lead.target), identity(other.target))
+            for mine, theirs in ((lead.source, other.source), (lead.target, other.target)):
+                if not (mine.stated and theirs.stated) or similarity(mine.name, theirs.name) >= ALIAS_SIMILARITY:
+                    groups.union(identity(mine), identity(theirs))
 
     members: dict[str, list[Endpoint]] = {}
     for key, items in endpoints.items():

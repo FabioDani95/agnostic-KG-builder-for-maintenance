@@ -73,3 +73,24 @@ def test_map_safety_net_reads_continuations_of_diagnostic_pages():
 def test_names_that_only_add_words_go_to_the_merge_judge():
     assert _contained("Clean displacement rod", "Clean displacement rod; see Service on pages 12-19")
     assert not _contained("Close", "Close bleeder valve")
+
+
+def test_a_compound_name_never_bridges_two_actions_into_one_node():
+    from backend.kg_v3.checker import CheckedRelation
+    from backend.kg_v3.contracts import Assertion, Certificate
+    from backend.kg_v3.merger import assemble
+
+    def relation(action_a, action_b, cite):
+        a = Proposal(unit_id="u1", read="A", relation_type="RESOLVED_BY",
+                     source=Endpoint(type="FailureMode", name="Worn piston valve", cites=[cite]),
+                     target=Endpoint(type="CorrectiveAction", name=action_a, cites=[cite]), record="R1", cites=[cite])
+        b = a.model_copy(update={"read": "B", "target": Endpoint(type="CorrectiveAction", name=action_b, cites=[cite])})
+        assertion = Assertion(assertion_id=action_a, relation_type="RESOLVED_BY", source_key="s", target_key="t",
+                              record_key="u1:A.R1", certificate=Certificate(segment_ids=[cite]))
+        return CheckedRelation(assertion=assertion, proposals=[a, b])
+
+    compound = "Clear the piston valve and replace the piston valve seals"
+    graph = assemble([relation("Clear the piston valve", compound, "p11.t1.r14"),
+                      relation("Replace the piston valve seals", compound, "p11.t1.r14")], [])
+    assert {graph.nodes_by_id[edge.target].name for edge in graph.edges} == {
+        "Clear the piston valve", "Replace the piston valve seals"}

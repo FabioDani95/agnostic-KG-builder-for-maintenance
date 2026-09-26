@@ -1,0 +1,194 @@
+{
+ "manual_id": "eastman_e554",
+ "status": "agent_mapped_and_checked",
+ "note": "Segment IDs located from the historical gold text and checked by the agent (E5 action corrected by hand); a technician must confirm.",
+ "claims": [
+  {
+   "claim_id": "E1",
+   "pages": [
+    37
+   ],
+   "indicator": "Machine stops in middle of cut and displays Machine Paused",
+   "code": "",
+   "failure": "intermittent pause circuit, usually in the stop discs",
+   "action": "adjust the pause plunger activation pressure",
+   "action_kind": "repair",
+   "indicator_segments": [
+    "p37.b11"
+   ],
+   "indicator_score": 1.003,
+   "failure_segments": [
+    "p37.b11"
+   ],
+   "failure_score": 0.836,
+   "action_segments": [
+    "p37.b12"
+   ],
+   "action_score": 0.802
+  },
+  {
+   "claim_id": "E2",
+   "pages": [
+    37,
+    38
+   ],
+   "indicator": "Touch Screen buttons are out of alignment",
+   "code": "",
+   "failure": "Touch screen calibration is required",
+   "action": "complete touch screen calibration and save and exit",
+   "action_kind": "repair",
+   "indicator_segments": [
+    "p37.b13",
+    "p37.b14"
+   ],
+   "indicator_score": 0.808,
+   "failure_segments": [
+    "p37.b15"
+   ],
+   "failure_score": 1.005,
+   "action_segments": [
+    "p38.b2"
+   ],
+   "action_score": 0.84
+  },
+  {
+   "claim_id": "E3",
+   "pages": [
+    38
+   ],
+   "indicator": "Cutting Tool or Pen does not move down",
+   "code": "",
+   "failure": "tool or layer is not mapped properly",
+   "action": "map the tool to the spindle or the layer to the tool",
+   "action_kind": "repair",
+   "indicator_segments": [
+    "p38.b4"
+   ],
+   "indicator_score": 1.003,
+   "failure_segments": [
+    "p38.b9",
+    "p38.b6"
+   ],
+   "failure_score": 0.757,
+   "action_segments": [
+    "p38.b10"
+   ],
+   "action_score": 0.754
+  },
+  {
+   "claim_id": "E4",
+   "pages": [
+    38
+   ],
+   "indicator": "Laser Fume Extractor has reduced vacuum or no vacuum",
+   "code": "",
+   "failure": "vacuum filters require replacement",
+   "action": "replace vacuum filters",
+   "action_kind": "repair",
+   "indicator_segments": [
+    "p38.b25"
+   ],
+   "indicator_score": 0.865,
+   "failure_segments": [
+    "p38.b29"
+   ],
+   "failure_score": 0.505,
+   "action_segments": [
+    "p38.b29"
+   ],
+   "action_score": 1.009
+  },
+  {
+   "claim_id": "E5",
+   "pages": [
+    39
+   ],
+   "indicator": "Laser cutting path is too wide",
+   "code": "",
+   "failure": "brass laser nozzle is damaged or bent",
+   "action": "replace the damaged nozzle",
+   "action_kind": "repair",
+   "indicator_segments": [
+    "p39.b1"
+   ],
+   "indicator_score": 1.005,
+   "failure_segments": [
+    "p39.b3"
+   ],
+   "failure_score": 0.802,
+   "action_segments": [
+    "p39.b2"
+   ],
+   "action_score": 0.669
+  },
+  {
+   "claim_id": "E6",
+   "pages": [
+    39
+   ],
+   "indicator": "Loss of laser cutting power causing non-cut edges",
+   "code": "",
+   "failure": "focusing lens is damaged or dirty",
+   "action": "clean or replace the focusing lens",
+   "action_kind": "repair",
+   "indicator_segments": [
+    "p39.b11"
+   ],
+   "indicator_score": 1.007,
+   "failure_segments": [
+    "p39.b12"
+   ],
+   "failure_score": 1.004,
+   "action_segments": [
+    "p39.b12"
+   ],
+   "action_score": 1.004
+  },
+  {
+   "claim_id": "E7",
+   "pages": [
+    39
+   ],
+   "indicator": "Loss of laser cutting power causing non-cut edges",
+   "code": "",
+   "failure": "beam deflecting mirror is damaged or dirty",
+   "action": "clean or replace the mirrors",
+   "action_kind": "repair",
+   "indicator_segments": [
+    "p39.b11"
+   ],
+   "indicator_score": 1.007,
+   "failure_segments": [
+    "p39.b13"
+   ],
+   "failure_score": 1.005,
+   "action_segments": [
+    "p39.b13"
+   ],
+   "action_score": 1.003
+  },
+  {
+   "claim_id": "E8",
+   "pages": [
+    39
+   ],
+   "indicator": "Loss of laser cutting power causing non-cut edges",
+   "code": "",
+   "failure": "laser nozzle contains damage or debris",
+   "action": "clean or replace the laser nozzle",
+   "action_kind": "repair",
+   "indicator_segments": [
+    "p39.b11"
+   ],
+   "indicator_score": 1.007,
+   "failure_segments": [
+    "p39.b14"
+   ],
+   "failure_score": 0.804,
+   "action_segments": [
+    "p39.b14"
+   ],
+   "action_score": 1.004
+  }
+ ]
+}

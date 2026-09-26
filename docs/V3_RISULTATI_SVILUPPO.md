@@ -12,7 +12,45 @@ Sono misure di sviluppo sugli stessi quattro manuali usati per costruire il
 sistema, non una valutazione indipendente: il gold storico copre 34 casi scelti,
 non è stato validato da tecnici, e il confronto è lessicale.
 
-## In breve
+## Misura rivista: posizione e significato
+
+Il primo confronto contava le parole in comune con il gold e sottostimava i
+risultati: "Clear the restricted line" contro "clear the restriction" risultava
+un errore. [kg_v3_evaluate.py](../scripts/kg_v3_evaluate.py) misura invece così:
+
+1. **Posizione.** I 34 casi del gold storico sono stati riscritti come segmenti del
+   manuale ([gold_segments_v1](../paper/evaluation/gold_segments_v1/)): mappati in
+   automatico, controllati dall'agente, con una correzione a mano (E5). Un tecnico
+   deve ancora confermarli. Una relazione è candidata se cita quei segmenti.
+2. **Significato.** Un giudice LLM separato decide se candidata e gold dicono la
+   stessa cosa. Vota tre volte e vince la maggioranza. I rimedi di una stessa causa
+   si giudicano insieme, perché la V3 divide "clear valve; replace seals" in due azioni.
+
+Un caso è recuperato quando problema → causa e causa → rimedio corrispondono
+attraverso la stessa causa. Stesso gold, candidati e giudice per entrambi i sistemi
+([evaluation_v2.json](../paper/experiments/v3_dev_20260926/evaluation_v2.json)).
+
+| Manuale | v22 | V3 r1 | V3 r2 | V3 r3 | V3 r4 |
+| --- | --- | --- | --- | --- | --- |
+| Eastman (8) | 6 | 6 | 7 | 7 | 7 |
+| Danfoss (8) | 5 | 8 | 8 | 8 | 8 |
+| Graco (18) | 17 | 18 | 11 | 18 | 18 |
+
+r1 e r2 usano il codice del primo commit. La caduta di Graco r2 non era un errore
+del modello. Una lettura aveva scritto "clear the piston valve and replace the
+seals" come azione unica; nell'unione dei nodi quel nome composto ha fuso due
+azioni distinte e "Replace the piston valve seals" è sparita dal grafo. Il bug è
+corretto (nomi uniti solo se davvero simili, un'azione per rimedio nel prompt) e
+coperto da un test. r3 e r4 usano il codice corretto.
+
+Eastman E4 manca sempre alla V3: il manuale non nomina la causa e la V3 scrive
+"causa non specificata", mentre il gold la deduce dal rimedio.
+
+La **precisione**, cioè quante relazioni del grafo sono giuste, richiede un tecnico:
+[revisione cieca](../paper/evaluation/v3_precision_review/README.md) di 96
+affermazioni, 12 per sistema e per manuale, campionate da V3 r3 e dalla v22.
+
+## In breve (prima misura, lessicale)
 
 | Manuale | Casi gold recuperati v22 → V3 (r1, r2) | Cose per una persona v22 → V3 | Tempo v22 → V3 | Costo API v22 → V3 (USD) |
 | --- | --- | --- | --- | --- |

@@ -1,0 +1,116 @@
+{
+ "status": "approved",
+ "pages": 66,
+ "page_labels": {
+  "other": 45,
+  "unreadable": 2,
+  "diagnostic": 5,
+  "procedure": 14
+ },
+ "diagnostic_pages": [
+  17,
+  20,
+  41,
+  42,
+  64
+ ],
+ "units": 4,
+ "failed_reads": 0,
+ "proposals": 77,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "coverage: 5 unused table row(s) read again",
+  "coverage: 13 unused table row(s) read again",
+  "coverage: 6 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 56,
+  "red": 2
+ },
+ "witnesses": {
+  "structure": 54,
+  "verifier": 37,
+  "agreement": 19,
+  "reviewer": 2
+ },
+ "verifier_verdicts": {
+  "supported": 37,
+  "not_called": 19,
+  "not_supported": 2
+ },
+ "graph": {
+  "nodes": 63,
+  "nodes_by_type": {
+   "Symptom": 7,
+   "FailureMode": 23,
+   "Component": 10,
+   "ErrorCode": 12,
+   "CorrectiveAction": 11
+  },
+  "edges": 58,
+  "edges_by_tier": {
+   "green": 56,
+   "red": 2
+  },
+  "merged_aliases": 2
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 2,
+   "answered": 2,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 3,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 2,
+ "usage": {
+  "calls": 16,
+  "failed_calls": 0,
+  "prompt_tokens": 37785,
+  "completion_tokens": 13210,
+  "estimated_cost_usd": 0.010288,
+  "by_operation": {
+   "kg_v3_extract": 11,
+   "kg_v3_map": 2,
+   "kg_v3_merge": 1,
+   "kg_v3_verify": 2
+  }
+ },
+ "agent_usage": {
+  "calls": 3,
+  "failed_calls": 0,
+  "prompt_tokens": 6150,
+  "completion_tokens": 2542,
+  "estimated_cost_usd": 0.002002,
+  "by_operation": {
+   "AgentDecision": 3
+  }
+ },
+ "seconds": {
+  "map": 6.885,
+  "gate_map": 11.742,
+  "extract": 19.909,
+  "check": 5.714,
+  "merge": 5.215,
+  "gate_doubts": 8.251,
+  "gate_approval": 0.001,
+  "total": 57.768
+ },
+ "prompt_ids": {
+  "extraction": "1a52861560884c42"
+ }
+}
