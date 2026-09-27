@@ -69,6 +69,9 @@ Rules:
 5. For an error or alarm code, put the printed code in "code" and a short meaning in "name". An
    entry about a code is an ErrorCode linked with its own relation; do not add a Symptom for the
    same indication unless the manual describes a separate observation (a lamp, a noise, a behaviour).
+   A number indexing a numbered cause list referenced by a matrix is not an ErrorCode.
+   Resolve it to the cited list entry and connect the matrix symptom to that cause.
+   Never invent the contents of a missing numbered entry; report it in unclear.
 6. When one entry lists several remedies or checks ("clear the valve; replace the seals"), create
    one action per remedy or check, each linked to the failure. For a corrective action set "kind": repair for actions that fix the fault, inspection for
    checks, tests and measurements, escalation for contacting service or a dealer. Link checks to

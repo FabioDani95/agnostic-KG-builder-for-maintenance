@@ -313,6 +313,8 @@ class Pipeline:
             "units": len(units),
             "failed_reads": sum(item.failed_reads for item in extractions),
             "proposals": sum(len(item.proposals) for item in extractions),
+            "unresolved_references": list({(ref["segment_id"], ref["reference"]): ref
+                                           for item in extractions for ref in item.unresolved_references}.values()),
             "unclear_passages": sum(len(item.unclear) for item in extractions),
             "extraction_notes": [note for item in extractions for note in item.notes][:200],
             "assertions_by_tier": dict(tiers),

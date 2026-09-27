@@ -71,6 +71,7 @@ class UnitExtraction(BaseModel):
     unclear: list[dict[str, Any]] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
     failed_reads: int = 0
+    unresolved_references: list[dict[str, Any]] = Field(default_factory=list)
 
 
 def extraction_prompt(spec: OntologySpec, asset_name: str) -> str:
@@ -206,6 +207,7 @@ class Extractor:
                 result.proposals.extend(part.proposals)
                 result.unclear.extend(part.unclear)
                 result.notes.extend(part.notes)
+                result.unresolved_references.extend(part.unresolved_references)
                 result.failed_reads += part.failed_reads
             result.notes.append(f"{read}: unit split after a truncated answer")
             return result
@@ -215,6 +217,9 @@ class Extractor:
             result.notes.append(f"{read}: read failed ({type(exc).__name__})")
             return result
         proposals, unclear, notes = parse_read(data, unit=unit, read=read, spec=self.spec, allowed=set(allowed))
+        from backend.kg_v3.references import resolve_references
+
+        proposals, result.unresolved_references = resolve_references(doc, unit, proposals)
         result.proposals, result.unclear, result.notes = proposals, unclear, notes
         return result
 
@@ -226,6 +231,7 @@ class Extractor:
             merged.proposals.extend(item.proposals)
             merged.unclear.extend(item.unclear)
             merged.notes.extend(item.notes)
+            merged.unresolved_references.extend(item.unresolved_references)
             merged.failed_reads += item.failed_reads
         missing = uncovered_rows(doc, unit, merged)
         if missing:
@@ -237,6 +243,7 @@ class Extractor:
             coverage = await self._read(doc, focus, "C")
             merged.proposals.extend(proposal.model_copy(update={"unit_id": unit.unit_id}) for proposal in coverage.proposals)
             merged.unclear.extend(coverage.unclear)
+            merged.unresolved_references.extend(coverage.unresolved_references)
             merged.notes.extend(coverage.notes)
             merged.notes.append(f"coverage: {len(missing)} unused table row(s) read again")
         return merged
