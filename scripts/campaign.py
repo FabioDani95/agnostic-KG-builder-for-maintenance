@@ -248,7 +248,8 @@ def cmd_precision(args) -> None:
     from scripts.kg_v3_precision_sheet import score, write_sheet
 
     target = CAMPAIGN / "results" / "precision"
-    sheet, key = target / "REVISIONE_PRECISIONE.md", target / "chiave_non_aprire.json"
+    suffix = "_2" if args.new else ""
+    sheet, key = target / f"REVISIONE_PRECISIONE{suffix}.md", target / f"chiave_non_aprire{suffix}.json"
     if args.score:
         score(sheet, key)
         return
@@ -257,7 +258,11 @@ def cmd_precision(args) -> None:
     ids = args.ids or [path.parent.parent.name for path in sorted(CAMPAIGN.glob("*/runs/v3_r1/graph.json"))]
     sources = [(manual, folder(manual) / "runs" / "v3_r1" / "graph.json", folder(manual) / "runs" / "v22" / "graph.json")
                for manual in ids]
-    write_sheet(sources, args.per_system, sheet, key, {manual: asset(manual)["name"] for manual in ids}, "campaign")
+    sources = [(manual, v3, v22 if v22.exists() else folder(manual) / "runs_C/v22/graph.json")
+               for manual, v3, v22 in sources]
+    gold_pages = {manual: json.loads((folder(manual) / "gold/gold.json").read_text())["pages"] for manual in ids}
+    write_sheet(sources, args.per_system, sheet, key, {manual: asset(manual)["name"] for manual in ids},
+                "campaign", gold_pages)
 
 
 def cmd_status(_args) -> None:
@@ -305,6 +310,7 @@ def main() -> int:
     precision = commands.add_parser("precision")
     precision.add_argument("ids", nargs="*")
     precision.add_argument("--score", action="store_true")
+    precision.add_argument("--new", action="store_true", help="use the second blind sheet; preserve the original")
     precision.add_argument("--force", action="store_true")
     precision.add_argument("--per-system", type=int, default=12)
     args = parser.parse_args()

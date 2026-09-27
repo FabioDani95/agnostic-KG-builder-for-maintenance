@@ -70,13 +70,14 @@ def v3_items(graph: Path, manual: str) -> list[dict]:
     for edge in data["edges"]:
         if edge.get("derived") or edge["type"] not in DIAGNOSTIC or not edge["trusted"]:
             continue
-        evidence = edge["occurrences"][0]["evidence"]
+        evidence = [item for occurrence in edge["occurrences"] for item in occurrence["evidence"]]
         target = nodes[edge["to"]]
         items.append({
             "system": "v3", "manual": manual, "edge": edge["id"], "relation": edge["type"],
             "source": nodes[edge["from"]]["name"], "target": target["name"],
             "kind": target.get("properties", {}).get("action_kind", ""), "conditions": edge["conditions"],
             "evidence": _evidence((item["page"], item["text"]) for item in evidence),
+            "evidence_pages": sorted({item["page"] for item in evidence if item.get("page")}),
         })
     return items
 
@@ -95,6 +96,7 @@ def v22_items(graph: Path, manual: str) -> list[dict]:
             "source": nodes[relation["from_id"]]["label"], "target": target["label"],
             "kind": (target.get("attributes") or {}).get("action_kind", "") or "", "conditions": [],
             "evidence": _evidence((ref["locator"].get("page"), ref["locator"].get("quote") or ref["quote"]) for ref in refs),
+            "evidence_pages": sorted({ref["locator"]["page"] for ref in refs if ref["locator"].get("page")}),
         })
     return items
 
@@ -107,9 +109,11 @@ def generate(run: Path, per_system: int) -> None:
 
 
 def write_sheet(sources: list[tuple[str, Path, Path | None]], per_system: int, sheet: Path, key_path: Path,
-                titles: dict[str, str], origin: str) -> None:
+                titles: dict[str, str], origin: str, gold_pages: dict[str, list[int]] | None = None) -> None:
     """Blind sheet sampling V3 and v22 relations of each manual; the key goes to a separate file."""
 
+    if sheet.exists() or key_path.exists():
+        raise FileExistsError("Refusing to overwrite a precision sheet or its key; choose new paths.")
     rng = random.Random(SEED)
     chosen = []
     for manual, v3_graph, v22_graph in sources:
@@ -117,7 +121,14 @@ def write_sheet(sources: list[tuple[str, Path, Path | None]], per_system: int, s
         if v22_graph is not None and v22_graph.exists():
             groups.append(v22_items(v22_graph, manual))
         for items in groups:
-            chosen.extend(rng.sample(items, min(per_system, len(items))))
+            for item in items:
+                pages = set(item.get("evidence_pages", []))
+                item["outside_gold_pages"] = (bool(pages) and manual in (gold_pages or {})
+                                               and not (pages & set(gold_pages[manual])))
+            outside = [item for item in items if item["outside_gold_pages"]]
+            selected = rng.sample(outside, min((per_system + 1) // 2, len(outside)))
+            rest = [item for item in items if item not in selected]
+            chosen.extend(selected + rng.sample(rest, min(per_system - len(selected), len(rest))))
     rng.shuffle(chosen)
     sheet.parent.mkdir(parents=True, exist_ok=True)
     key = {}
@@ -126,7 +137,7 @@ def write_sheet(sources: list[tuple[str, Path, Path | None]], per_system: int, s
         "",
         f"{len(chosen)} affermazioni estratte da manuali di manutenzione, in ordine casuale. Per ognuna leggi",
         "cosa dice il manuale e cosa afferma il grafo, poi scrivi il giudizio tra i due accenti gravi",
-        "al posto di `?`. Le istruzioni complete sono in fondo al file. Non aprire `chiave_non_aprire.json`:",
+        f"al posto di `?`. Le istruzioni complete sono in fondo al file. Non aprire `{key_path.name}`:",
         "contiene il sistema che ha prodotto ogni affermazione e renderebbe la revisione non cieca.",
         "",
         "Revisore: ",
@@ -136,7 +147,7 @@ def write_sheet(sources: list[tuple[str, Path, Path | None]], per_system: int, s
     ]
     for number, item in enumerate(chosen, start=1):
         item_id = f"R{number:03d}"
-        key[item_id] = {name: item[name] for name in ("system", "manual", "edge", "relation")}
+        key[item_id] = {name: item[name] for name in ("system", "manual", "edge", "relation", "outside_gold_pages")}
         pages = sorted({page for page, _ in item["evidence"] if page})
         kind = f" ({KINDS[item['kind']]})" if item.get("kind") in KINDS else ""
         lines += [f"### {item_id} · {titles.get(item['manual'], item['manual'])}, pagina {', '.join(map(str, pages)) or '?'}", "",
@@ -164,7 +175,7 @@ def write_sheet(sources: list[tuple[str, Path, Path | None]], per_system: int, s
     ]
     sheet.write_text("\n".join(lines) + "\n", encoding="utf-8")
     key_path.write_text(json.dumps({"seed": SEED, "run": origin, "items": key}, indent=1) + "\n")
-    print(f"{len(chosen)} items -> {sheet.relative_to(ROOT)}")
+    print(f"{len(chosen)} items -> {sheet}")
 
 
 def wilson(successes: int, total: int) -> tuple[float, float]:
