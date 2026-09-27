@@ -76,7 +76,9 @@ async def evaluate(manuals: list[str], runs_root: Path) -> dict:
         # measured as code coverage, not as a diagnostic chain.
         indicator_only = [claim for claim in claims if not claim.get("failure") and not claim.get("action")]
         claims = [claim for claim in claims if claim not in indicator_only]
-        positions_valid = not (CAMPAIGN / manual / "gold" / "remap_ids.json").exists()
+        # A gold re-linked from another reading of the PDF is valid for positions only once verified.
+        gold_dir = CAMPAIGN / manual / "gold"
+        positions_valid = not (gold_dir / "remap_ids.json").exists() or (gold_dir / "remap_ids_verified.json").exists()
         pdf, asset = manual_source(manual)
         evidence, page_count, _ = load_evidence(pdf, asset)
         doc = read_document(list(evidence), page_count=page_count)
