@@ -61,7 +61,9 @@ def v3_run_facts(run: Path) -> dict:
     usage = report["usage"]["estimated_cost_usd"] + ((report.get("agent_usage") or {}).get("estimated_cost_usd") or 0)
     return {
         "diagnostic_pages": report.get("diagnostic_pages", []),
-        "person_questions": sum(report["gates"].get(gate, {}).get("pending", 0) for gate in ("map", "doubts")),
+        "person_questions": report.get("human_questions_offered", sum(
+            report["gates"].get(gate, {}).get("pending", 0) for gate in ("map", "doubts"))),
+        "unresolved_questions": sum(report["gates"].get(gate, {}).get("pending", 0) for gate in ("map", "doubts")),
         "agent_answers": report.get("answers_by_reviewer", {}).get("agent", 0),
         "failed_reads": report.get("failed_reads", 0),
         "seconds": report["seconds"]["total"], "cost_usd": round(usage, 5),

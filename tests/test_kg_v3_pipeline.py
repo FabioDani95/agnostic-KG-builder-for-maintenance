@@ -172,7 +172,9 @@ def test_people_get_only_the_budgeted_questions(doc, tmp_path):
                           gates={"map": ["auto"], "doubts": ["human"], "approval": ["human"]},
                           human_question_budget=1)
     result = asyncio.run(run.run())
-    assert len(store.open_questions()) == 2  # one doubt within the budget, then the approval
+    assert len(store.open_questions()) == 1  # shared budget across doubts and approval
+    assert result.report["human_questions_offered"] == 1
+    assert result.report["deferred_questions"]
     assert result.status == "awaiting_approval"
     assert result.report["gates"]["doubts"]["pending"] == 2
     unverified = [edge for edge in result.graph.edges if edge.tier is Tier.YELLOW]

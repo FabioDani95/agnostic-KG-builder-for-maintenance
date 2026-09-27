@@ -63,7 +63,7 @@ class RunConfig(BaseModel):
     reads: int = 2
     unit_max_chars: int = 9000
     concurrency: int = 6
-    human_question_budget: int = 15
+    human_question_budget: int = 10
     gates: dict[str, list[str]] = Field(default_factory=lambda: {
         "map": ["agent"], "doubts": ["agent", "human"], "approval": ["human"],
     })
@@ -99,9 +99,13 @@ class _HumanBudget:
         self.inner = inner
         self.identity = inner.identity
         self.budget = max(0, budget)
+        self.asked: set[str] = set()
 
     async def review(self, questions: Sequence[Question]) -> list[Answer]:
-        chosen = sorted(questions, key=lambda item: -item.priority)[: self.budget]
+        existing = [item for item in questions if item.question_id in self.asked]
+        new = sorted((item for item in questions if item.question_id not in self.asked), key=lambda item: -item.priority)
+        chosen = existing + new[:max(0, self.budget - len(self.asked))]
+        self.asked.update(item.question_id for item in chosen)
         return await self.inner.review(chosen)
 
 
@@ -128,6 +132,7 @@ class Pipeline:
         self.script = script or {}
         self.workdir = workdir
         self.spec = spec or load_ontology()
+        self.human_reviewer = _HumanBudget(HumanReviewer(self.human_store), self.config.human_question_budget)
         self.timings: dict[str, float] = {}
         # Confirmed diagnostic pages a map correction tried to drop (kept, reported).
         self.map_kept: list[int] = []
@@ -158,7 +163,7 @@ class Pipeline:
                 raise ValueError("an agent reviewer needs a model client")
             return AgentReviewer(self.agent_llm, model=self.config.agent_model)
         if name == "human":
-            return _HumanBudget(HumanReviewer(self.human_store), self.config.human_question_budget)
+            return self.human_reviewer
         if name == "auto":
             return AutoReviewer()
         if name == "script":
@@ -297,6 +302,13 @@ class Pipeline:
         ]
 
     def _result(self, status, page_map, units, relations, graph, gates, started, extractions) -> RunResult:
+        # Unanswered agent questions also produce a bounded human review artifact.
+        pending_questions = [q for record in gates.values() for q in record.questions
+                             if q.question_id in record.pending and q.question_id not in self.human_reviewer.asked]
+        selected = sorted(pending_questions, key=lambda q: -q.priority)[:max(
+            0, self.config.human_question_budget - len(self.human_reviewer.asked))]
+        self.human_store.publish(selected)
+        self.human_reviewer.asked.update(q.question_id for q in selected)
         tiers = Counter(item.assertion.tier.value for item in relations)
         witnesses = Counter(w.value for item in relations for w in item.assertion.certificate.witnesses)
         verdicts = Counter((item.assertion.certificate.verifier_verdict or "not_called") for item in relations)
@@ -333,6 +345,9 @@ class Pipeline:
                 for name, record in gates.items()
             },
             "answers_by_reviewer": dict(answered_by),
+            "human_questions_offered": len(self.human_reviewer.asked),
+            "deferred_questions": sorted({qid for record in gates.values() for qid in record.pending}
+                                         - self.human_reviewer.asked),
             "human_questions": len(self.human_store.open_questions())
             if isinstance(self.human_store, InMemoryQuestionStore) else None,
             "reviewer_confirmed": witnesses.get(Witness.REVIEWER.value, 0),
