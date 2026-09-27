@@ -1,0 +1,111 @@
+{
+ "status": "approved",
+ "pages": 50,
+ "page_labels": {
+  "other": 26,
+  "unreadable": 1,
+  "procedure": 21,
+  "diagnostic": 2
+ },
+ "diagnostic_pages": [
+  43,
+  44
+ ],
+ "units": 1,
+ "failed_reads": 0,
+ "proposals": 292,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "A: relation 126 skipped (Symptom to Symptom is not in the ontology)",
+  "A: relation 128 skipped (Symptom to CorrectiveAction is not in the ontology)"
+ ],
+ "assertions_by_tier": {
+  "green": 153,
+  "red": 1
+ },
+ "witnesses": {
+  "structure": 132,
+  "agreement": 138,
+  "verifier": 31,
+  "reviewer": 6
+ },
+ "verifier_verdicts": {
+  "not_called": 122,
+  "supported": 31,
+  "not_supported": 1
+ },
+ "graph": {
+  "nodes": 109,
+  "nodes_by_type": {
+   "Symptom": 10,
+   "FailureMode": 43,
+   "Component": 28,
+   "CorrectiveAction": 28
+  },
+  "edges": 136,
+  "edges_by_tier": {
+   "green": 135,
+   "red": 1
+  },
+  "merged_aliases": 22
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 4,
+   "answered": 4,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 5,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 6,
+ "usage": {
+  "calls": 6,
+  "failed_calls": 0,
+  "prompt_tokens": 28412,
+  "completion_tokens": 23942,
+  "estimated_cost_usd": 0.013921,
+  "by_operation": {
+   "kg_v3_extract": 2,
+   "kg_v3_map": 1,
+   "kg_v3_merge": 1,
+   "kg_v3_verify": 2
+  }
+ },
+ "agent_usage": {
+  "calls": 5,
+  "failed_calls": 0,
+  "prompt_tokens": 8282,
+  "completion_tokens": 1578,
+  "estimated_cost_usd": 0.001803,
+  "by_operation": {
+   "AgentDecision": 5
+  }
+ },
+ "seconds": {
+  "map": 22.701,
+  "gate_map": 5.43,
+  "extract": 48.79,
+  "check": 4.682,
+  "merge": 6.881,
+  "gate_doubts": 3.716,
+  "gate_approval": 0.001,
+  "total": 92.343
+ },
+ "prompt_ids": {
+  "extraction": "513ae7a32282a887"
+ }
+}

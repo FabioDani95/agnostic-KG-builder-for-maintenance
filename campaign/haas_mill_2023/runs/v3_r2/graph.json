@@ -1,0 +1,1705 @@
+{
+ "version": "kg-v3-graph-1",
+ "status": "approved",
+ "source_title": "manual.pdf",
+ "nodes": [
+  {
+   "id": "v3n_asset_4cc345a05b7f",
+   "type": "Asset",
+   "name": "Haas vertical mill (2023 operator's manual)",
+   "properties": {
+    "name": "Haas vertical mill (2023 operator's manual)",
+    "description": "Haas vertical mill (2023 operator's manual)",
+    "brand": "Haas Automation",
+    "model": "Mill 2023",
+    "asset_type": "CNC vertical milling machine",
+    "asset_id": "v3n_asset_4cc345a05b7f"
+   },
+   "evidence": []
+  },
+  {
+   "id": "v3n_3480011d3caa741649df",
+   "type": "Component",
+   "name": "Umbrella tool changer",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_3480011d3caa741649df",
+    "name": "Umbrella tool changer",
+    "description": "Umbrella tool changer",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p86.b1",
+     "page": 86,
+     "evidence_id": "ev_30aa9332920a149f8cba2db9e5eb",
+     "bbox": [
+      34.56,
+      67.972,
+      301.767,
+      86.452
+     ],
+     "text": "9.3 | MILL - UMBRELLA TOOL CHANGER RECOVERY"
+    },
+    {
+     "segment_id": "p86.b3",
+     "page": 86,
+     "evidence_id": "ev_805c4d0c31174f3b9b89245c2406",
+     "bbox": [
+      36.0,
+      168.689,
+      281.903,
+      193.889
+     ],
+     "text": "If the tool changer jams, the control will automatically come to an alarm state. To correct this:"
+    }
+   ]
+  },
+  {
+   "id": "v3n_dd69a41ba8070e2f8f5e",
+   "type": "CorrectiveAction",
+   "name": "Attempt automatic recovery",
+   "aliases": [
+    "Begin automatic recovery",
+    "Press A to begin automatic recovery",
+    "Press ENTER to attempt automatic recovery"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_dd69a41ba8070e2f8f5e",
+    "name": "Attempt automatic recovery",
+    "description": "Attempt automatic recovery",
+    "instruction_text": "Attempt automatic recovery",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 94"
+   },
+   "evidence": [
+    {
+     "segment_id": "p94.b5",
+     "page": 94,
+     "evidence_id": "ev_7e546ef4601f90a2d1a364e95ee7",
+     "bbox": [
+      36.44,
+      239.848,
+      262.308,
+      277.048
+     ],
+     "text": "Press ENTER. If there is no Alarm, the control first attempts an automatic recovery. If there is an alarm press RESET to clear the alarms and repeat from step 1."
+    },
+    {
+     "segment_id": "p94.b6",
+     "page": 94,
+     "evidence_id": "ev_40d6a6b369c761b7ce13f4cd7e72",
+     "bbox": [
+      36.44,
+      283.048,
+      262.341,
+      308.249
+     ],
+     "text": "At the VMSTC TOOL RECOVERY screen, press A to begin automatic recovery or E to exit."
+    }
+   ]
+  },
+  {
+   "id": "v3n_70edcef235c3822c1b3a",
+   "type": "CorrectiveAction",
+   "name": "Complete the tool changer recovery before exiting",
+   "aliases": [
+    "Complete the tool changer recovery process before exiting"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_70edcef235c3822c1b3a",
+    "name": "Complete the tool changer recovery before exiting",
+    "description": "Complete the tool changer recovery before exiting",
+    "instruction_text": "Complete the tool changer recovery before exiting",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 94"
+   },
+   "evidence": [
+    {
+     "segment_id": "p94.b9",
+     "page": 94,
+     "evidence_id": "ev_3ea8a40461ef7490933520fb5724",
+     "bbox": [
+      36.44,
+      376.648,
+      251.646,
+      415.048
+     ],
+     "text": "The entire tool changer recovery process must be completed before exiting. Start the routine from the beginning if you exit the routine early."
+    }
+   ]
+  },
+  {
+   "id": "v3n_b17f6082776bb08067fc",
+   "type": "CorrectiveAction",
+   "name": "Enter tool changer recovery mode",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_b17f6082776bb08067fc",
+    "name": "Enter tool changer recovery mode",
+    "description": "Enter tool changer recovery mode",
+    "instruction_text": "Enter tool changer recovery mode",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 94"
+   },
+   "evidence": [
+    {
+     "segment_id": "p94.b3",
+     "page": 94,
+     "evidence_id": "ev_9700a47aa882a80eba5408aa3123",
+     "bbox": [
+      36.44,
+      165.449,
+      266.487,
+      202.649
+     ],
+     "text": "If a problem occurred during a tool change, a tool changer recovery needs to be performed. Enter the tool changer recovery mode by:"
+    },
+    {
+     "segment_id": "p94.b4",
+     "page": 94,
+     "evidence_id": "ev_d64ecd1f93c2c2837a318a65c7b3",
+     "bbox": [
+      36.44,
+      208.648,
+      249.033,
+      233.848
+     ],
+     "text": "Press RECOVER and navigate to the TOOL CHANGER RECOVERY tab."
+    }
+   ]
+  },
+  {
+   "id": "v3n_3891dfd73046442ba4d7",
+   "type": "CorrectiveAction",
+   "name": "Follow manual recovery instructions and answer the questions",
+   "aliases": [
+    "Follow the instructions and answer the questions for manual recovery"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_3891dfd73046442ba4d7",
+    "name": "Follow manual recovery instructions and answer the questions",
+    "description": "Follow manual recovery instructions and answer the questions",
+    "instruction_text": "Follow manual recovery instructions and answer the questions",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 94"
+   },
+   "evidence": [
+    {
+     "segment_id": "p94.b8",
+     "page": 94,
+     "evidence_id": "ev_7edd1a7cf1780b7b2dec5ad14259",
+     "bbox": [
+      36.44,
+      345.448,
+      267.43,
+      370.648
+     ],
+     "text": "In manual mode, follow the instructions and answer the questions to perform a proper tool changer recovery."
+    }
+   ]
+  },
+  {
+   "id": "v3n_11c9d376eb3b4bfbaf9a",
+   "type": "CorrectiveAction",
+   "name": "Press M to continue with manual recovery",
+   "aliases": [
+    "Continue with manual recovery"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_11c9d376eb3b4bfbaf9a",
+    "name": "Press M to continue with manual recovery",
+    "description": "Press M to continue with manual recovery",
+    "instruction_text": "Press M to continue with manual recovery",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 94"
+   },
+   "evidence": [
+    {
+     "segment_id": "p94.b7",
+     "page": 94,
+     "evidence_id": "ev_47265670055c56156c5c229084e5",
+     "bbox": [
+      36.44,
+      314.248,
+      266.78,
+      339.448
+     ],
+     "text": "If the automatic recovery fails, press M to continue for a manual recovery."
+    }
+   ]
+  },
+  {
+   "id": "v3n_5304402afc086cacdb26",
+   "type": "CorrectiveAction",
+   "name": "Press RECOVER and follow the directions to reset the tool changer",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_5304402afc086cacdb26",
+    "name": "Press RECOVER and follow the directions to reset the tool changer",
+    "description": "Press RECOVER and follow the directions to reset the tool changer",
+    "instruction_text": "Press RECOVER and follow the directions to reset the tool changer",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 86"
+   },
+   "evidence": [
+    {
+     "segment_id": "p86.b7",
+     "page": 86,
+     "evidence_id": "ev_1debacf6afc35166c66d8d436c65",
+     "bbox": [
+      36.0,
+      269.488,
+      271.051,
+      294.688
+     ],
+     "text": "3. Press RECOVER and follow the directions to reset the tool changer."
+    }
+   ]
+  },
+  {
+   "id": "v3n_89731744e28687565d77",
+   "type": "CorrectiveAction",
+   "name": "Press RESET to clear alarms and repeat from step 1",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_89731744e28687565d77",
+    "name": "Press RESET to clear alarms and repeat from step 1",
+    "description": "Press RESET to clear alarms and repeat from step 1",
+    "instruction_text": "Press RESET to clear alarms and repeat from step 1",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 94"
+   },
+   "evidence": [
+    {
+     "segment_id": "p94.b5",
+     "page": 94,
+     "evidence_id": "ev_7e546ef4601f90a2d1a364e95ee7",
+     "bbox": [
+      36.44,
+      239.848,
+      262.308,
+      277.048
+     ],
+     "text": "Press ENTER. If there is no Alarm, the control first attempts an automatic recovery. If there is an alarm press RESET to clear the alarms and repeat from step 1."
+    }
+   ]
+  },
+  {
+   "id": "v3n_968e55c31fc34cc40ff5",
+   "type": "CorrectiveAction",
+   "name": "Press RESET to clear the alarms",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_968e55c31fc34cc40ff5",
+    "name": "Press RESET to clear the alarms",
+    "description": "Press RESET to clear the alarms",
+    "instruction_text": "Press RESET to clear the alarms",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 86"
+   },
+   "evidence": [
+    {
+     "segment_id": "p86.b6",
+     "page": 86,
+     "evidence_id": "ev_2be5d0a4f90bb6a476efc12f75e7",
+     "bbox": [
+      36.0,
+      250.288,
+      184.078,
+      263.488
+     ],
+     "text": "2. Press RESET to clear the alarms."
+    },
+    {
+     "segment_id": "p94.b5",
+     "page": 94,
+     "evidence_id": "ev_7e546ef4601f90a2d1a364e95ee7",
+     "bbox": [
+      36.44,
+      239.848,
+      262.308,
+      277.048
+     ],
+     "text": "Press ENTER. If there is no Alarm, the control first attempts an automatic recovery. If there is an alarm press RESET to clear the alarms and repeat from step 1."
+    }
+   ]
+  },
+  {
+   "id": "v3n_c316969db24740f49ad3",
+   "type": "CorrectiveAction",
+   "name": "Remove the cause of the tool changer jam",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_c316969db24740f49ad3",
+    "name": "Remove the cause of the tool changer jam",
+    "description": "Remove the cause of the tool changer jam",
+    "instruction_text": "Remove the cause of the tool changer jam",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 86"
+   },
+   "evidence": [
+    {
+     "segment_id": "p86.b5",
+     "page": 86,
+     "evidence_id": "ev_0d2dad57b1c49333b6a27a07a6c1",
+     "bbox": [
+      36.0,
+      231.088,
+      174.208,
+      244.288
+     ],
+     "text": "1. Remove the cause of the jam."
+    }
+   ]
+  },
+  {
+   "id": "v3n_87d728157421d7f7194e",
+   "type": "CorrectiveAction",
+   "name": "Restart the tool changer recovery routine from the beginning",
+   "aliases": [
+    "Restart the recovery routine from the beginning"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_87d728157421d7f7194e",
+    "name": "Restart the tool changer recovery routine from the beginning",
+    "description": "Restart the tool changer recovery routine from the beginning",
+    "instruction_text": "Restart the tool changer recovery routine from the beginning",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 94"
+   },
+   "evidence": [
+    {
+     "segment_id": "p94.b9",
+     "page": 94,
+     "evidence_id": "ev_3ea8a40461ef7490933520fb5724",
+     "bbox": [
+      36.44,
+      376.648,
+      251.646,
+      415.048
+     ],
+     "text": "The entire tool changer recovery process must be completed before exiting. Start the routine from the beginning if you exit the routine early."
+    }
+   ]
+  },
+  {
+   "id": "v3n_e2ea3859d25a48aa9bba",
+   "type": "FailureMode",
+   "name": "Unspecified cause of problem during a tool change",
+   "aliases": [
+    "Unspecified cause of a problem during a tool change"
+   ],
+   "stated_in_source": false,
+   "properties": {
+    "failure_mode_id": "v3n_e2ea3859d25a48aa9bba",
+    "name": "Unspecified cause of problem during a tool change",
+    "description": "Unspecified cause of problem during a tool change",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p94.b3",
+     "page": 94,
+     "evidence_id": "ev_9700a47aa882a80eba5408aa3123",
+     "bbox": [
+      36.44,
+      165.449,
+      266.487,
+      202.649
+     ],
+     "text": "If a problem occurred during a tool change, a tool changer recovery needs to be performed. Enter the tool changer recovery mode by:"
+    }
+   ]
+  },
+  {
+   "id": "v3n_93ead94d5e4d0b907b84",
+   "type": "FailureMode",
+   "name": "Unspecified cause of tool changer jam",
+   "aliases": [],
+   "stated_in_source": false,
+   "properties": {
+    "failure_mode_id": "v3n_93ead94d5e4d0b907b84",
+    "name": "Unspecified cause of tool changer jam",
+    "description": "Unspecified cause of tool changer jam",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p86.b3",
+     "page": 86,
+     "evidence_id": "ev_805c4d0c31174f3b9b89245c2406",
+     "bbox": [
+      36.0,
+      168.689,
+      281.903,
+      193.889
+     ],
+     "text": "If the tool changer jams, the control will automatically come to an alarm state. To correct this:"
+    },
+    {
+     "segment_id": "p86.b5",
+     "page": 86,
+     "evidence_id": "ev_0d2dad57b1c49333b6a27a07a6c1",
+     "bbox": [
+      36.0,
+      231.088,
+      174.208,
+      244.288
+     ],
+     "text": "1. Remove the cause of the jam."
+    }
+   ]
+  },
+  {
+   "id": "v3n_e096dc5cf089b8b2a00a",
+   "type": "Symptom",
+   "name": "Control enters an alarm state",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "symptom_id": "v3n_e096dc5cf089b8b2a00a",
+    "name": "Control enters an alarm state",
+    "description": "Control enters an alarm state",
+    "severity": "Unknown"
+   },
+   "evidence": [
+    {
+     "segment_id": "p86.b3",
+     "page": 86,
+     "evidence_id": "ev_805c4d0c31174f3b9b89245c2406",
+     "bbox": [
+      36.0,
+      168.689,
+      281.903,
+      193.889
+     ],
+     "text": "If the tool changer jams, the control will automatically come to an alarm state. To correct this:"
+    }
+   ]
+  },
+  {
+   "id": "v3n_b7061c9ea775fa1f765b",
+   "type": "Symptom",
+   "name": "Problem during a tool change",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "symptom_id": "v3n_b7061c9ea775fa1f765b",
+    "name": "Problem during a tool change",
+    "description": "Problem during a tool change",
+    "severity": "Unknown"
+   },
+   "evidence": [
+    {
+     "segment_id": "p94.b3",
+     "page": 94,
+     "evidence_id": "ev_9700a47aa882a80eba5408aa3123",
+     "bbox": [
+      36.44,
+      165.449,
+      266.487,
+      202.649
+     ],
+     "text": "If a problem occurred during a tool change, a tool changer recovery needs to be performed. Enter the tool changer recovery mode by:"
+    }
+   ]
+  },
+  {
+   "id": "v3n_f935c88d92e7acd58e74",
+   "type": "Symptom",
+   "name": "Tool changer jams",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "symptom_id": "v3n_f935c88d92e7acd58e74",
+    "name": "Tool changer jams",
+    "description": "Tool changer jams",
+    "severity": "Unknown"
+   },
+   "evidence": [
+    {
+     "segment_id": "p86.b3",
+     "page": 86,
+     "evidence_id": "ev_805c4d0c31174f3b9b89245c2406",
+     "bbox": [
+      36.0,
+      168.689,
+      281.903,
+      193.889
+     ],
+     "text": "If the tool changer jams, the control will automatically come to an alarm state. To correct this:"
+    }
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "v3e_0b5afc4f29f3b8280942",
+   "type": "MAY_INDICATE",
+   "from": "v3n_f935c88d92e7acd58e74",
+   "to": "v3n_93ead94d5e4d0b907b84",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u002-09a34b:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p86.b3",
+       "p86.b5"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p86.b3",
+       "page": 86,
+       "evidence_id": "ev_805c4d0c31174f3b9b89245c2406",
+       "bbox": [
+        36.0,
+        168.689,
+        281.903,
+        193.889
+       ],
+       "text": "If the tool changer jams, the control will automatically come to an alarm state. To correct this:"
+      },
+      {
+       "segment_id": "p86.b5",
+       "page": 86,
+       "evidence_id": "ev_0d2dad57b1c49333b6a27a07a6c1",
+       "bbox": [
+        36.0,
+        231.088,
+        174.208,
+        244.288
+       ],
+       "text": "1. Remove the cause of the jam."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_a996e8078edf66060ac5",
+   "type": "MAY_INDICATE",
+   "from": "v3n_e096dc5cf089b8b2a00a",
+   "to": "v3n_93ead94d5e4d0b907b84",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u002-09a34b:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p86.b3",
+       "p86.b5"
+      ],
+      "witnesses": [
+       "structure",
+       "reviewer"
+      ],
+      "verifier_verdict": "not_supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+      },
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p86.b3",
+       "page": 86,
+       "evidence_id": "ev_805c4d0c31174f3b9b89245c2406",
+       "bbox": [
+        36.0,
+        168.689,
+        281.903,
+        193.889
+       ],
+       "text": "If the tool changer jams, the control will automatically come to an alarm state. To correct this:"
+      },
+      {
+       "segment_id": "p86.b5",
+       "page": 86,
+       "evidence_id": "ev_0d2dad57b1c49333b6a27a07a6c1",
+       "bbox": [
+        36.0,
+        231.088,
+        174.208,
+        244.288
+       ],
+       "text": "1. Remove the cause of the jam."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_a11f61c7b30d770e79f0",
+   "type": "AFFECTS",
+   "from": "v3n_93ead94d5e4d0b907b84",
+   "to": "v3n_3480011d3caa741649df",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u002-09a34b:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p86.b1",
+       "p86.b3",
+       "p86.b5"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p86.b1",
+       "page": 86,
+       "evidence_id": "ev_30aa9332920a149f8cba2db9e5eb",
+       "bbox": [
+        34.56,
+        67.972,
+        301.767,
+        86.452
+       ],
+       "text": "9.3 | MILL - UMBRELLA TOOL CHANGER RECOVERY"
+      },
+      {
+       "segment_id": "p86.b3",
+       "page": 86,
+       "evidence_id": "ev_805c4d0c31174f3b9b89245c2406",
+       "bbox": [
+        36.0,
+        168.689,
+        281.903,
+        193.889
+       ],
+       "text": "If the tool changer jams, the control will automatically come to an alarm state. To correct this:"
+      },
+      {
+       "segment_id": "p86.b5",
+       "page": 86,
+       "evidence_id": "ev_0d2dad57b1c49333b6a27a07a6c1",
+       "bbox": [
+        36.0,
+        231.088,
+        174.208,
+        244.288
+       ],
+       "text": "1. Remove the cause of the jam."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_c96763c26ecb2e24bab5",
+   "type": "RESOLVED_BY",
+   "from": "v3n_93ead94d5e4d0b907b84",
+   "to": "v3n_c316969db24740f49ad3",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "After the tool changer jams"
+   ],
+   "occurrences": [
+    {
+     "record": "u002-09a34b:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p86.b3",
+       "p86.b5"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p86.b3",
+       "page": 86,
+       "evidence_id": "ev_805c4d0c31174f3b9b89245c2406",
+       "bbox": [
+        36.0,
+        168.689,
+        281.903,
+        193.889
+       ],
+       "text": "If the tool changer jams, the control will automatically come to an alarm state. To correct this:"
+      },
+      {
+       "segment_id": "p86.b5",
+       "page": 86,
+       "evidence_id": "ev_0d2dad57b1c49333b6a27a07a6c1",
+       "bbox": [
+        36.0,
+        231.088,
+        174.208,
+        244.288
+       ],
+       "text": "1. Remove the cause of the jam."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_caae67d6953588bbd172",
+   "type": "RESOLVED_BY",
+   "from": "v3n_93ead94d5e4d0b907b84",
+   "to": "v3n_968e55c31fc34cc40ff5",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "After removing the cause of the jam"
+   ],
+   "occurrences": [
+    {
+     "record": "u002-09a34b:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p86.b3",
+       "p86.b5",
+       "p86.b6"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p86.b3",
+       "page": 86,
+       "evidence_id": "ev_805c4d0c31174f3b9b89245c2406",
+       "bbox": [
+        36.0,
+        168.689,
+        281.903,
+        193.889
+       ],
+       "text": "If the tool changer jams, the control will automatically come to an alarm state. To correct this:"
+      },
+      {
+       "segment_id": "p86.b5",
+       "page": 86,
+       "evidence_id": "ev_0d2dad57b1c49333b6a27a07a6c1",
+       "bbox": [
+        36.0,
+        231.088,
+        174.208,
+        244.288
+       ],
+       "text": "1. Remove the cause of the jam."
+      },
+      {
+       "segment_id": "p86.b6",
+       "page": 86,
+       "evidence_id": "ev_2be5d0a4f90bb6a476efc12f75e7",
+       "bbox": [
+        36.0,
+        250.288,
+        184.078,
+        263.488
+       ],
+       "text": "2. Press RESET to clear the alarms."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_f057488a7effb3694170",
+   "type": "RESOLVED_BY",
+   "from": "v3n_93ead94d5e4d0b907b84",
+   "to": "v3n_5304402afc086cacdb26",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "After pressing RESET to clear the alarms"
+   ],
+   "occurrences": [
+    {
+     "record": "u002-09a34b:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p86.b3",
+       "p86.b5",
+       "p86.b6",
+       "p86.b7"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p86.b3",
+       "page": 86,
+       "evidence_id": "ev_805c4d0c31174f3b9b89245c2406",
+       "bbox": [
+        36.0,
+        168.689,
+        281.903,
+        193.889
+       ],
+       "text": "If the tool changer jams, the control will automatically come to an alarm state. To correct this:"
+      },
+      {
+       "segment_id": "p86.b5",
+       "page": 86,
+       "evidence_id": "ev_0d2dad57b1c49333b6a27a07a6c1",
+       "bbox": [
+        36.0,
+        231.088,
+        174.208,
+        244.288
+       ],
+       "text": "1. Remove the cause of the jam."
+      },
+      {
+       "segment_id": "p86.b6",
+       "page": 86,
+       "evidence_id": "ev_2be5d0a4f90bb6a476efc12f75e7",
+       "bbox": [
+        36.0,
+        250.288,
+        184.078,
+        263.488
+       ],
+       "text": "2. Press RESET to clear the alarms."
+      },
+      {
+       "segment_id": "p86.b7",
+       "page": 86,
+       "evidence_id": "ev_1debacf6afc35166c66d8d436c65",
+       "bbox": [
+        36.0,
+        269.488,
+        271.051,
+        294.688
+       ],
+       "text": "3. Press RECOVER and follow the directions to reset the tool changer."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_9c26a291ef1ba523d5b4",
+   "type": "MAY_INDICATE",
+   "from": "v3n_b7061c9ea775fa1f765b",
+   "to": "v3n_e2ea3859d25a48aa9bba",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u003-feca47:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p94.b3"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p94.b3",
+       "page": 94,
+       "evidence_id": "ev_9700a47aa882a80eba5408aa3123",
+       "bbox": [
+        36.44,
+        165.449,
+        266.487,
+        202.649
+       ],
+       "text": "If a problem occurred during a tool change, a tool changer recovery needs to be performed. Enter the tool changer recovery mode by:"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_970f89e468aac0b9fdc8",
+   "type": "RESOLVED_BY",
+   "from": "v3n_e2ea3859d25a48aa9bba",
+   "to": "v3n_b17f6082776bb08067fc",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u003-feca47:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p94.b3",
+       "p94.b4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p94.b3",
+       "page": 94,
+       "evidence_id": "ev_9700a47aa882a80eba5408aa3123",
+       "bbox": [
+        36.44,
+        165.449,
+        266.487,
+        202.649
+       ],
+       "text": "If a problem occurred during a tool change, a tool changer recovery needs to be performed. Enter the tool changer recovery mode by:"
+      },
+      {
+       "segment_id": "p94.b4",
+       "page": 94,
+       "evidence_id": "ev_d64ecd1f93c2c2837a318a65c7b3",
+       "bbox": [
+        36.44,
+        208.648,
+        249.033,
+        233.848
+       ],
+       "text": "Press RECOVER and navigate to the TOOL CHANGER RECOVERY tab."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_61c078aefbb9444f41e4",
+   "type": "RESOLVED_BY",
+   "from": "v3n_e2ea3859d25a48aa9bba",
+   "to": "v3n_dd69a41ba8070e2f8f5e",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "After entering recovery mode; if there is no alarm",
+    "At the VMSTC TOOL RECOVERY screen, to begin automatic recovery",
+    "If there is no alarm"
+   ],
+   "occurrences": [
+    {
+     "record": "u003-feca47:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p94.b3",
+       "p94.b5"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p94.b3",
+       "page": 94,
+       "evidence_id": "ev_9700a47aa882a80eba5408aa3123",
+       "bbox": [
+        36.44,
+        165.449,
+        266.487,
+        202.649
+       ],
+       "text": "If a problem occurred during a tool change, a tool changer recovery needs to be performed. Enter the tool changer recovery mode by:"
+      },
+      {
+       "segment_id": "p94.b5",
+       "page": 94,
+       "evidence_id": "ev_7e546ef4601f90a2d1a364e95ee7",
+       "bbox": [
+        36.44,
+        239.848,
+        262.308,
+        277.048
+       ],
+       "text": "Press ENTER. If there is no Alarm, the control first attempts an automatic recovery. If there is an alarm press RESET to clear the alarms and repeat from step 1."
+      }
+     ]
+    },
+    {
+     "record": "u003-feca47:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p94.b3",
+       "p94.b6"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p94.b3",
+       "page": 94,
+       "evidence_id": "ev_9700a47aa882a80eba5408aa3123",
+       "bbox": [
+        36.44,
+        165.449,
+        266.487,
+        202.649
+       ],
+       "text": "If a problem occurred during a tool change, a tool changer recovery needs to be performed. Enter the tool changer recovery mode by:"
+      },
+      {
+       "segment_id": "p94.b6",
+       "page": 94,
+       "evidence_id": "ev_40d6a6b369c761b7ce13f4cd7e72",
+       "bbox": [
+        36.44,
+        283.048,
+        262.341,
+        308.249
+       ],
+       "text": "At the VMSTC TOOL RECOVERY screen, press A to begin automatic recovery or E to exit."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_66807f1826dafc8839ab",
+   "type": "RESOLVED_BY",
+   "from": "v3n_e2ea3859d25a48aa9bba",
+   "to": "v3n_89731744e28687565d77",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "After clearing the alarms",
+    "If there is an alarm"
+   ],
+   "occurrences": [
+    {
+     "record": "u003-feca47:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p94.b3",
+       "p94.b5"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p94.b3",
+       "page": 94,
+       "evidence_id": "ev_9700a47aa882a80eba5408aa3123",
+       "bbox": [
+        36.44,
+        165.449,
+        266.487,
+        202.649
+       ],
+       "text": "If a problem occurred during a tool change, a tool changer recovery needs to be performed. Enter the tool changer recovery mode by:"
+      },
+      {
+       "segment_id": "p94.b5",
+       "page": 94,
+       "evidence_id": "ev_7e546ef4601f90a2d1a364e95ee7",
+       "bbox": [
+        36.44,
+        239.848,
+        262.308,
+        277.048
+       ],
+       "text": "Press ENTER. If there is no Alarm, the control first attempts an automatic recovery. If there is an alarm press RESET to clear the alarms and repeat from step 1."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_d71ccd205058773af30f",
+   "type": "RESOLVED_BY",
+   "from": "v3n_e2ea3859d25a48aa9bba",
+   "to": "v3n_11c9d376eb3b4bfbaf9a",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "If automatic recovery fails"
+   ],
+   "occurrences": [
+    {
+     "record": "u003-feca47:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p94.b3",
+       "p94.b7"
+      ],
+      "witnesses": [
+       "verifier",
+       "reviewer"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+      },
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source",
+       "reviewer: Keep statement 2 only. Exiting recovery is not stated as resolving the problem; continuing with manual recovery is prescribed if automatic recovery fails."
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p94.b3",
+       "page": 94,
+       "evidence_id": "ev_9700a47aa882a80eba5408aa3123",
+       "bbox": [
+        36.44,
+        165.449,
+        266.487,
+        202.649
+       ],
+       "text": "If a problem occurred during a tool change, a tool changer recovery needs to be performed. Enter the tool changer recovery mode by:"
+      },
+      {
+       "segment_id": "p94.b7",
+       "page": 94,
+       "evidence_id": "ev_47265670055c56156c5c229084e5",
+       "bbox": [
+        36.44,
+        314.248,
+        266.78,
+        339.448
+       ],
+       "text": "If the automatic recovery fails, press M to continue for a manual recovery."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_7a27c4524e5fd78e4ef7",
+   "type": "RESOLVED_BY",
+   "from": "v3n_e2ea3859d25a48aa9bba",
+   "to": "v3n_3891dfd73046442ba4d7",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "In manual mode"
+   ],
+   "occurrences": [
+    {
+     "record": "u003-feca47:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p94.b3",
+       "p94.b8"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p94.b3",
+       "page": 94,
+       "evidence_id": "ev_9700a47aa882a80eba5408aa3123",
+       "bbox": [
+        36.44,
+        165.449,
+        266.487,
+        202.649
+       ],
+       "text": "If a problem occurred during a tool change, a tool changer recovery needs to be performed. Enter the tool changer recovery mode by:"
+      },
+      {
+       "segment_id": "p94.b8",
+       "page": 94,
+       "evidence_id": "ev_7edd1a7cf1780b7b2dec5ad14259",
+       "bbox": [
+        36.44,
+        345.448,
+        267.43,
+        370.648
+       ],
+       "text": "In manual mode, follow the instructions and answer the questions to perform a proper tool changer recovery."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_461b823d0637d44facdd",
+   "type": "RESOLVED_BY",
+   "from": "v3n_e2ea3859d25a48aa9bba",
+   "to": "v3n_70edcef235c3822c1b3a",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "Before exiting",
+    "Before exiting the recovery process"
+   ],
+   "occurrences": [
+    {
+     "record": "u003-feca47:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p94.b3",
+       "p94.b9"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p94.b3",
+       "page": 94,
+       "evidence_id": "ev_9700a47aa882a80eba5408aa3123",
+       "bbox": [
+        36.44,
+        165.449,
+        266.487,
+        202.649
+       ],
+       "text": "If a problem occurred during a tool change, a tool changer recovery needs to be performed. Enter the tool changer recovery mode by:"
+      },
+      {
+       "segment_id": "p94.b9",
+       "page": 94,
+       "evidence_id": "ev_3ea8a40461ef7490933520fb5724",
+       "bbox": [
+        36.44,
+        376.648,
+        251.646,
+        415.048
+       ],
+       "text": "The entire tool changer recovery process must be completed before exiting. Start the routine from the beginning if you exit the routine early."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_1acd1bc7a7313be112ee",
+   "type": "RESOLVED_BY",
+   "from": "v3n_e2ea3859d25a48aa9bba",
+   "to": "v3n_87d728157421d7f7194e",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "If the routine is exited early",
+    "If you exit the routine early"
+   ],
+   "occurrences": [
+    {
+     "record": "u003-feca47:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p94.b3",
+       "p94.b9"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:e7ce2deb269f527a",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p94.b3",
+       "page": 94,
+       "evidence_id": "ev_9700a47aa882a80eba5408aa3123",
+       "bbox": [
+        36.44,
+        165.449,
+        266.487,
+        202.649
+       ],
+       "text": "If a problem occurred during a tool change, a tool changer recovery needs to be performed. Enter the tool changer recovery mode by:"
+      },
+      {
+       "segment_id": "p94.b9",
+       "page": 94,
+       "evidence_id": "ev_3ea8a40461ef7490933520fb5724",
+       "bbox": [
+        36.44,
+        376.648,
+        251.646,
+        415.048
+       ],
+       "text": "The entire tool changer recovery process must be completed before exiting. Start the routine from the beginning if you exit the routine early."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_c2ce83f56d0c88a91f6a",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_4cc345a05b7f",
+   "to": "v3n_3480011d3caa741649df",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p86.b1",
+       "page": 86,
+       "evidence_id": "ev_30aa9332920a149f8cba2db9e5eb",
+       "bbox": [
+        34.56,
+        67.972,
+        301.767,
+        86.452
+       ],
+       "text": "9.3 | MILL - UMBRELLA TOOL CHANGER RECOVERY"
+      },
+      {
+       "segment_id": "p86.b3",
+       "page": 86,
+       "evidence_id": "ev_805c4d0c31174f3b9b89245c2406",
+       "bbox": [
+        36.0,
+        168.689,
+        281.903,
+        193.889
+       ],
+       "text": "If the tool changer jams, the control will automatically come to an alarm state. To correct this:"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "excluded_relations": [
+  {
+   "relation": "RESOLVED_BY",
+   "source": "FailureMode:Unspecified cause of problem during a tool change",
+   "target": "CorrectiveAction:Exit tool changer recovery",
+   "certificate": {
+    "segment_ids": [
+     "p94.b3",
+     "p94.b6",
+     "p94.b7"
+    ],
+    "witnesses": [
+     "agreement"
+    ],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+    },
+    "extractor": "gpt-6-luna:e7ce2deb269f527a",
+    "notes": [
+     "one end is not named in the source",
+     "reviewer: Keep statement 2 only. Exiting recovery is not stated as resolving the problem; continuing with manual recovery is prescribed if automatic recovery fails."
+    ]
+   }
+  },
+  {
+   "relation": "RESOLVED_BY",
+   "source": "FailureMode:Unspecified cause of a problem during a tool change",
+   "target": "CorrectiveAction:Press RESET to clear the alarms",
+   "certificate": {
+    "segment_ids": [
+     "p94.b3",
+     "p94.b5"
+    ],
+    "witnesses": [
+     "verifier"
+    ],
+    "verifier_verdict": "supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+    },
+    "extractor": "gpt-6-luna:e7ce2deb269f527a",
+    "notes": [
+     "one end is not named in the source",
+     "reviewer: Press RESET to clear the alarms and repeat step 1 when an alarm is present; the excerpt does not state that this resolves the tool-change problem."
+    ]
+   }
+  }
+ ],
+ "report": {
+  "status": "approved",
+  "pages": 187,
+  "page_labels": {
+   "other": 156,
+   "diagnostic": 5,
+   "procedure": 26
+  },
+  "diagnostic_pages": [
+   59,
+   86,
+   94,
+   101,
+   160
+  ],
+  "units": 5,
+  "failed_reads": 0,
+  "proposals": 30,
+  "unclear_passages": 0,
+  "extraction_notes": [],
+  "assertions_by_tier": {
+   "green": 15,
+   "red": 2
+  },
+  "witnesses": {
+   "structure": 6,
+   "agreement": 13,
+   "reviewer": 2,
+   "verifier": 11
+  },
+  "verifier_verdicts": {
+   "not_called": 4,
+   "not_supported": 2,
+   "supported": 11
+  },
+  "graph": {
+   "nodes": 18,
+   "nodes_by_type": {
+    "Symptom": 3,
+    "FailureMode": 2,
+    "Component": 1,
+    "CorrectiveAction": 12
+   },
+   "edges": 16,
+   "edges_by_tier": {
+    "green": 14,
+    "red": 2
+   },
+   "merged_aliases": 8
+  },
+  "gates": {
+   "map": {
+    "questions": 1,
+    "answered": 1,
+    "pending": 0
+   },
+   "doubts": {
+    "questions": 3,
+    "answered": 3,
+    "pending": 0
+   },
+   "approval": {
+    "questions": 1,
+    "answered": 1,
+    "pending": 0
+   }
+  },
+  "answers_by_reviewer": {
+   "agent": 4,
+   "auto": 1
+  },
+  "human_questions": 0,
+  "reviewer_confirmed": 2,
+  "usage": {
+   "calls": 16,
+   "failed_calls": 0,
+   "prompt_tokens": 47271,
+   "completion_tokens": 11085,
+   "estimated_cost_usd": 0.006387,
+   "by_operation": {
+    "kg_v3_extract": 10,
+    "kg_v3_map": 4,
+    "kg_v3_merge": 1,
+    "kg_v3_verify": 1
+   }
+  },
+  "agent_usage": {
+   "calls": 4,
+   "failed_calls": 0,
+   "prompt_tokens": 13745,
+   "completion_tokens": 2321,
+   "estimated_cost_usd": 0.002816,
+   "by_operation": {
+    "AgentDecision": 4
+   }
+  },
+  "seconds": {
+   "map": 9.982,
+   "gate_map": 12.44,
+   "extract": 9.659,
+   "check": 5.481,
+   "merge": 2.604,
+   "gate_doubts": 4.166,
+   "gate_approval": 0.0,
+   "total": 44.355
+  },
+  "prompt_ids": {
+   "extraction": "e7ce2deb269f527a"
+  }
+ }
+}

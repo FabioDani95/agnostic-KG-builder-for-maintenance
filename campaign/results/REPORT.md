@@ -5,8 +5,51 @@ cancelli gestiti dall'agente (`--gates agent`), tre esecuzioni V3 per manuale e 
 Protocollo: [PROTOCOLLO_V3.md](../../paper/evaluation/PROTOCOLLO_V3.md). Gold annotato a mano
 da Fabio Daniele, senza assistenti AI, prima di ogni esecuzione.
 
-Sono **misure di sviluppo**: i tre manuali sono stati usati per correggere il codice e
+Sono **misure di sviluppo**: i manuali sono stati usati per correggere il codice e
 restano di sviluppo per sempre. Non sono risultati di generalizzazione per il paper.
+
+**Decisione di Fabio (2026-09-27, sera):** Trane è eliminato (gold e cartella); Atlas Copco,
+Graco GTX e Haas passano da test a sviluppo. La campagna non ha più manuali di test: per il
+paper servirà un nuovo insieme di manuali mai eseguiti, annotati prima delle esecuzioni.
+
+## Quadro complessivo: sei manuali, codice del tag `v3-freeze-2026-09-27`
+
+Tre esecuzioni V3 e una v22 per manuale ([kpi_B.md](kpi_B.md)). Rami ritrovati:
+
+| Manuale | Rami gold | V3 r1, r2, r3 | v22 | Asserzioni V3 | Mappa (pagine gold lette) |
+| --- | --- | --- | --- | --- | --- |
+| Grundfos Paco (matrice sintomo/causa) | 146 | 139, 137, 140 | 0 | 137–140/146 | 1/1 |
+| Atlas Copco DrB (tabella) | 49 | 44, 42, 43 | 0 | 58–60/66 | 2/2 |
+| Graco GTX (tabella) | 19 | 15, 13, 18 | 10 | 39–44/45 | 2/2 |
+| Haas mill (procedure e allarmi) | 45 | 32, **1**, 31 | 8 | 3–38/57 | 8, **2**, 8/9 |
+| Lincoln POWER MIG (tabella con colonna unita) | 22 | 1, 5, 7 | 1 | 12–29/47 | 3/3 |
+| ABB ACS580 (406 pagine, righe sparse) | 19 | 6, 6, 2 | 0 | 6–12/38 | 4–5/11 |
+| Totale micro | 900 (3 esecuzioni) | 682 | 19/300 | | |
+
+Recall micro dei rami: V3 682/900 = 75,8%, IC95 Wilson [0,729; 0,785]; v22 19/300 = 6,3%,
+IC95 [0,041; 0,097]. Domande arrivate a una persona: 0–1 per esecuzione. Costo V3
+0,006–0,028 USD per esecuzione. Spesa del registro dopo questo giro: 1,231 USD su 10.
+
+Letture principali:
+
+- **Le tabelle diagnostiche funzionano** (Grundfos, Atlas Copco, Graco): 70–95% dei rami,
+  stabili entro 2–5 rami tra esecuzioni.
+- **Il problema più grave è la mappa.** Haas r2 non ha etichettato come diagnostiche le
+  pagine 141–146 (tutta la sezione troubleshooting) e ritrova 1 ramo su 45 contro 31–32 delle
+  altre esecuzioni; ABB legge 4–5 pagine gold su 11. È anche la prima causa di instabilità.
+- **Lincoln**: la cella unita "se il problema persiste, contattare l'assistenza" non viene
+  collegata a tutte le righe; un ramo completo richiede anche quell'azione.
+- **Prove sul gold** più basse su Haas (0,70–0,75): relazioni giuste citate in segmenti
+  diversi da quelli del gold (procedure lunghe).
+- **Rumore del giudice:** rivalutando le stesse esecuzioni A2, alcuni valori cambiano di
+  0–4 rami (ABB r2 8→6, Lincoln r1 2→1, r2 4→5). Le differenze tra esecuzioni inferiori a
+  qualche ramo non vanno interpretate.
+- Graco r2 ha impiegato 233 s invece di circa 40 per un ricontrollo lento del fornitore
+  (184 s nella verifica), senza effetti sul risultato.
+
+Possibili correzioni ancora strutturali, non applicate: doppia lettura della mappa con
+unione delle pagine diagnostiche (una chiamata in più, colpisce direttamente Haas r2 e
+ABB); propagazione esplicita delle celle unite di una colonna di rimedio a tutte le righe.
 
 ## Manuali
 

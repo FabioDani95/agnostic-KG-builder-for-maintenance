@@ -271,3 +271,8 @@ per manuale ABB 2–8/19, Grundfos 136–141/146, Lincoln 2–7/22. Nessun manua
 test. Precisione non ancora misurata: foglio cieco in attesa di Fabio. Costo del registro
 della campagna 0,876 USD su 10. Codice congelato con il tag `v3-freeze-2026-09-27` per la
 fase C; nessuna esecuzione sui quattro manuali di test.
+
+Decisione di Fabio: Trane eliminato; Atlas Copco, Graco GTX e Haas diventano di sviluppo.
+Sei manuali di sviluppo con il codice del tag: recall micro dei rami V3 682/900 (IC95
+0,729–0,785), v22 19/300. Tabelle stabili al 70–95%; mappa instabile (Haas r2 1/45). Nessun
+manuale di test rimasto: per il paper serve un nuovo insieme mai eseguito. Spesa 1,231 USD.

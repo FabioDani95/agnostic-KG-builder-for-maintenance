@@ -1,0 +1,130 @@
+{
+ "status": "approved",
+ "pages": 187,
+ "page_labels": {
+  "other": 143,
+  "procedure": 33,
+  "diagnostic": 11
+ },
+ "diagnostic_pages": [
+  59,
+  86,
+  94,
+  101,
+  141,
+  142,
+  143,
+  144,
+  145,
+  146,
+  160
+ ],
+ "units": 7,
+ "failed_reads": 0,
+ "proposals": 215,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "B: cause 'Tool changer jam' repeats its problem, marked unnamed",
+  "A: cause 'Low rotary brake oil level' repeats its problem, marked unnamed",
+  "A: cause 'Low coolant level' repeats its problem, marked unnamed",
+  "A: cause 'Low PulseJet oil level' repeats its problem, marked unnamed",
+  "A: cause 'Low HPU oil level' repeats its problem, marked unnamed",
+  "A: cause 'HPU oil temperature too high for reliable operation' repeats its problem, marked unnamed",
+  "A: cause 'Spindle fan stopped operating' repeats its problem, marked unnamed",
+  "A: cause 'Electronics overheat' repeats its problem, marked unnamed",
+  "A: cause 'Transformer overheated for more than 1 second' repeats its problem, marked unnamed",
+  "B: cause 'Low coolant concentrate' repeats its problem, marked unnamed",
+  "coverage: 32 unused table row(s) read again",
+  "coverage: 17 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 115,
+  "red": 10
+ },
+ "witnesses": {
+  "structure": 101,
+  "agreement": 89,
+  "verifier": 37,
+  "reviewer": 11
+ },
+ "verifier_verdicts": {
+  "not_called": 78,
+  "supported": 37,
+  "not_supported": 10
+ },
+ "graph": {
+  "nodes": 164,
+  "nodes_by_type": {
+   "Symptom": 50,
+   "FailureMode": 41,
+   "Component": 25,
+   "CorrectiveAction": 47,
+   "ErrorCode": 1
+  },
+  "edges": 120,
+  "edges_by_tier": {
+   "green": 110,
+   "red": 10
+  },
+  "merged_aliases": 45
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 12,
+   "answered": 12,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 13,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 11,
+ "usage": {
+  "calls": 25,
+  "failed_calls": 0,
+  "prompt_tokens": 79169,
+  "completion_tokens": 31432,
+  "estimated_cost_usd": 0.023297,
+  "by_operation": {
+   "kg_v3_extract": 16,
+   "kg_v3_map": 4,
+   "kg_v3_merge": 3,
+   "kg_v3_verify": 2
+  }
+ },
+ "agent_usage": {
+  "calls": 13,
+  "failed_calls": 0,
+  "prompt_tokens": 22192,
+  "completion_tokens": 4208,
+  "estimated_cost_usd": 0.004663,
+  "by_operation": {
+   "AgentDecision": 13
+  }
+ },
+ "seconds": {
+  "map": 9.206,
+  "gate_map": 11.877,
+  "extract": 32.198,
+  "check": 7.536,
+  "merge": 6.291,
+  "gate_doubts": 9.052,
+  "gate_approval": 0.001,
+  "total": 76.535
+ },
+ "prompt_ids": {
+  "extraction": "e7ce2deb269f527a"
+ }
+}
