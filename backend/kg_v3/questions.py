@@ -28,15 +28,17 @@ from backend.kg_v3.ontology import OntologySpec
 from backend.kg_v3.reader import DocumentText, render_segment
 
 _PRIORITY = {"RESOLVED_BY": 3, "INDICATES": 3, "MAY_INDICATE": 2, "AFFECTS": 1}
-MAX_EXCERPTS = 8
+MAX_HEADERS = 4
 
 
 def _excerpts(doc: DocumentText, cites: list[str]) -> list[SourceExcerpt]:
+    # Every cited segment is shown: a reviewer cannot confirm a statement it does not see.
     segments = doc.segments(cites)
     headers = [f"p{item.page}.t{item.table.table}.r1" for item in segments if item.table and item.table.row > 1]
-    ordered = [*dict.fromkeys(item for item in headers if doc.segment(item) and item not in cites), *cites]
+    headers = list(dict.fromkeys(item for item in headers if doc.segment(item) and item not in cites))
+    ordered = [*headers[:MAX_HEADERS], *cites]
     excerpts = []
-    for segment in doc.segments(ordered)[:MAX_EXCERPTS]:
+    for segment in doc.segments(ordered):
         text = render_segment(segment).split("] ", 1)[-1]
         excerpts.append(SourceExcerpt(segment_id=segment.segment_id, page=segment.page, text=text))
     return excerpts
