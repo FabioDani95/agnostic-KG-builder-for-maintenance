@@ -1,0 +1,644 @@
+{
+  "definition": "Offline structural diagnostics; no gold, no semantic precision estimate.",
+  "runs_directory": "runs",
+  "manuals": {
+    "abb_acs580_01": {
+      "runs": {
+        "v3_r1": {
+          "status": "approved",
+          "graph_sha256": "e5d06c207fead38d702dcdee4a03e9b62bcedb4246b4c46f155a3c770dc632fd",
+          "nodes": 83,
+          "diagnostic_edges": 68,
+          "fusion_violations": 2,
+          "fusion_violation_details": [
+            {
+              "node_id": "v3n_dedd384e7b62f28fde13",
+              "name": "Measure insulation resistance between the resistor cable conductors and PE using 1000 V DC",
+              "reasons": [
+                "different_numbers"
+              ]
+            },
+            {
+              "node_id": "v3n_8198e6fd3b8a72d9b51f",
+              "name": "Switch off drive power to reset the fault",
+              "reasons": [
+                {
+                  "different": [
+                    "Cycle the drive power to reset the fault",
+                    "Switch off drive power to reset the fault"
+                  ]
+                }
+              ]
+            }
+          ],
+          "orphan_causes": 9,
+          "problems_without_action": 6,
+          "orphan_cause_ids": [
+            "v3n_213040a70b32e38ca48b",
+            "v3n_4a605d7a4a0043af0a20",
+            "v3n_54e4c189c6f89f995c7c",
+            "v3n_64553e60189ee0fdfb7b",
+            "v3n_86149d2a18e792a81f78",
+            "v3n_96d464b08351a621673f",
+            "v3n_9da71e2c42f11483d81e",
+            "v3n_d60c1a8fe8f0f4269334",
+            "v3n_fa768dd5096e47766a2e"
+          ],
+          "problem_without_action_ids": [
+            "v3n_2a9059953ed95d65ff63",
+            "v3n_7063723bf01e77d4cc1f",
+            "v3n_a452161dbd74138958cf",
+            "v3n_b51f4cd58c38a3ed6086",
+            "v3n_e7da917a0f8a3ba8d31a",
+            "v3n_f45bb8d49715f6682009"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 8
+        },
+        "v3_r2": {
+          "status": "approved",
+          "graph_sha256": "2ce539a8ca6f7454b3054449a2458dc1dae49b36ff6ea9efa845cd87a2d773d5",
+          "nodes": 42,
+          "diagnostic_edges": 42,
+          "fusion_violations": 1,
+          "fusion_violation_details": [
+            {
+              "node_id": "v3n_276dd17549d489c62397",
+              "name": "Moisture inside the motor",
+              "reasons": [
+                "different_numbers"
+              ]
+            }
+          ],
+          "orphan_causes": 3,
+          "problems_without_action": 1,
+          "orphan_cause_ids": [
+            "v3n_151cea5f72e84f1a35dd",
+            "v3n_a7011fa4c09666d6de4f",
+            "v3n_fd8e586f579f77496e2a"
+          ],
+          "problem_without_action_ids": [
+            "v3n_e7da917a0f8a3ba8d31a"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 2
+        },
+        "v3_r3": {
+          "status": "approved",
+          "graph_sha256": "e22fb605002f75e9abbab3c61100e596680221261e388596719066336820db41",
+          "nodes": 98,
+          "diagnostic_edges": 76,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 4,
+          "problems_without_action": 10,
+          "orphan_cause_ids": [
+            "v3n_2da13b12f25e93bac92e",
+            "v3n_4a605d7a4a0043af0a20",
+            "v3n_763f112ef46d84090aa7",
+            "v3n_7648e202fa3e88ee86c5"
+          ],
+          "problem_without_action_ids": [
+            "v3n_2a9059953ed95d65ff63",
+            "v3n_3e821816feedc5b0b7a1",
+            "v3n_60d5cac040b2aaf9edb7",
+            "v3n_65223519abfdfa878d7a",
+            "v3n_7063723bf01e77d4cc1f",
+            "v3n_b51f4cd58c38a3ed6086",
+            "v3n_c9ef392c8eb227811fde",
+            "v3n_ce1a515959a766cd87b1",
+            "v3n_e7da917a0f8a3ba8d31a",
+            "v3n_f98b0e025e6a76a0d7a6"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 4
+        }
+      },
+      "relation_jaccard": {
+        "v3_r1/v3_r2": 0.0577,
+        "v3_r1/v3_r3": 0.0667,
+        "v3_r2/v3_r3": 0.0727
+      },
+      "mean_jaccard": 0.0657
+    },
+    "atlascopco_drb_booster": {
+      "runs": {
+        "v3_r1": {
+          "status": "approved",
+          "graph_sha256": "99f31c644008b7b2098836de74571b11846c9b7895d64d945e560aff2f22edcd",
+          "nodes": 116,
+          "diagnostic_edges": 133,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        },
+        "v3_r2": {
+          "status": "approved",
+          "graph_sha256": "1692f65aab5c1be41bb9617b49f6ffaedc1b8ed18ad8017beffe72c1b4010622",
+          "nodes": 119,
+          "diagnostic_edges": 133,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 3,
+          "problems_without_action": 1,
+          "orphan_cause_ids": [
+            "v3n_3eff3ed74178a7acccc7",
+            "v3n_77d8787ea1276588ae8b",
+            "v3n_dcd1d2ec45a1d57b7688"
+          ],
+          "problem_without_action_ids": [
+            "v3n_e494f70f447e68d81b77"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        },
+        "v3_r3": {
+          "status": "approved",
+          "graph_sha256": "62c483833a31329d9f4d39f6480c20911eab774e978a9bf7d203d89d15751ffd",
+          "nodes": 100,
+          "diagnostic_edges": 131,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        }
+      },
+      "relation_jaccard": {
+        "v3_r1/v3_r2": 0.3711,
+        "v3_r1/v3_r3": 0.3538,
+        "v3_r2/v3_r3": 0.3679
+      },
+      "mean_jaccard": 0.3643
+    },
+    "graco_gtx_2000ex": {
+      "runs": {
+        "v3_r1": {
+          "status": "approved",
+          "graph_sha256": "8dc9e7f093571a97677980bef32b46ff19d3fd050b33e48338a1a5577ad614db",
+          "nodes": 55,
+          "diagnostic_edges": 59,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        },
+        "v3_r2": {
+          "status": "approved",
+          "graph_sha256": "5b55a12e45452f65af1757c49ec9155b317e5f3a7d623871e9988f7afc288f78",
+          "nodes": 50,
+          "diagnostic_edges": 51,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        },
+        "v3_r3": {
+          "status": "approved",
+          "graph_sha256": "86e5297099fd1ecff1dfad39dd7be7ec1b7cda37311128c93d963a2db5ebb7e7",
+          "nodes": 47,
+          "diagnostic_edges": 48,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        }
+      },
+      "relation_jaccard": {
+        "v3_r1/v3_r2": 0.5942,
+        "v3_r1/v3_r3": 0.5286,
+        "v3_r2/v3_r3": 0.5968
+      },
+      "mean_jaccard": 0.5732
+    },
+    "grundfos_paco_vl": {
+      "runs": {
+        "v3_r1": {
+          "status": "approved",
+          "graph_sha256": "73f8fc5202a7152264a95bd03bdcec0d169bcf1618c4b0324d90511dd55a66d2",
+          "nodes": 74,
+          "diagnostic_edges": 175,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 10,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [
+            "v3n_0de0784fc9b3de8f8216",
+            "v3n_1a7bb6c7d337d7a13105",
+            "v3n_2d77287e5cbd0a5ee2fa",
+            "v3n_2d78c134dd25ccc9e8e5",
+            "v3n_33eff8ce23a55aecdea3",
+            "v3n_34db1a9b238beb4005d5",
+            "v3n_4191b0a05364100964f3",
+            "v3n_44186ac7c4ddc8ccaffe",
+            "v3n_4e48ad76bf7b08213d50",
+            "v3n_e54698b60e5b0418ce56"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        },
+        "v3_r2": {
+          "status": "approved",
+          "graph_sha256": "67ec08eb32763c6266e390fcfa6dc290e86b617f0fed32fa39741f082ce7716e",
+          "nodes": 113,
+          "diagnostic_edges": 215,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 50,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [
+            "v3n_0119cb3f0ce0fe040a20",
+            "v3n_014f71d79a500cc2ccb1",
+            "v3n_0de0784fc9b3de8f8216",
+            "v3n_10bf0a5523cbf820eeeb",
+            "v3n_117dd2e2511f119080eb",
+            "v3n_1a7bb6c7d337d7a13105",
+            "v3n_224a98d2b56955b2d81d",
+            "v3n_2d77287e5cbd0a5ee2fa",
+            "v3n_2d78c134dd25ccc9e8e5",
+            "v3n_2f76b52a68906520bbdd",
+            "v3n_34db1a9b238beb4005d5",
+            "v3n_3b4ca66d6559557431f8",
+            "v3n_3d3148c7e178caafd53c",
+            "v3n_3d89e654b060a0a45897",
+            "v3n_401c9f76e614f170f2fb",
+            "v3n_40783792e544e7d8776d",
+            "v3n_4191b0a05364100964f3",
+            "v3n_44186ac7c4ddc8ccaffe",
+            "v3n_472c4a59ccfe4e35c61c",
+            "v3n_4980e78d7a4e0ae65cbd",
+            "v3n_4e48ad76bf7b08213d50",
+            "v3n_4fb46d4ca4b153aa1265",
+            "v3n_52d91d86d74c68ff4b43",
+            "v3n_58d58c86471d79444a61",
+            "v3n_6892b048fd81789ce848",
+            "v3n_6908bf681d4380326e19",
+            "v3n_69571dc2094f03948713",
+            "v3n_72868be656005d4f052d",
+            "v3n_75a7ce4ee7e2fd2b3305",
+            "v3n_7eafe4f3657ceef422fd",
+            "v3n_910924a489f900caf3da",
+            "v3n_988ebd828eef577360f7",
+            "v3n_9a57604f231833d53093",
+            "v3n_9b06b028adbde0c4a258",
+            "v3n_9cba474919cda256c36c",
+            "v3n_9e4c51f99e6ea71b9369",
+            "v3n_a3605d91dc33eb7ace19",
+            "v3n_ac27589a65ed3e0230ce",
+            "v3n_bb654658cda095cf45e1",
+            "v3n_c186e9169d1ed21bb8c4",
+            "v3n_c460f64718a3708cff95",
+            "v3n_c6e63f1991740af7325a",
+            "v3n_cb5c06ba49c9817571e2",
+            "v3n_d1c592e9408a955b6433",
+            "v3n_d1e282cbf82fe64e3554",
+            "v3n_d93b0a929356c6333db3",
+            "v3n_e136fe50d8e1f728404e",
+            "v3n_e54698b60e5b0418ce56",
+            "v3n_e6709f17a60a39fa11b9",
+            "v3n_fcaccaa9243b2a426665"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        },
+        "v3_r3": {
+          "status": "approved",
+          "graph_sha256": "baa799491d599d4e94f9b74d1cf4d5832781912123baa4c7792c8c34e61758ea",
+          "nodes": 67,
+          "diagnostic_edges": 167,
+          "fusion_violations": 1,
+          "fusion_violation_details": [
+            {
+              "node_id": "v3n_16b76ed57e018a2f1fca",
+              "name": "Installation total head is below pump rated total head",
+              "reasons": [
+                {
+                  "different": [
+                    "Installation total head exceeds pump rated total head",
+                    "Installation total head is below pump rated total head"
+                  ]
+                },
+                {
+                  "different": [
+                    "Installation total head exceeds pump rated total head",
+                    "Installation total head lower than pump rated total head"
+                  ]
+                },
+                {
+                  "different": [
+                    "Installation total head higher than pump rated total head",
+                    "Installation total head is below pump rated total head"
+                  ]
+                }
+              ]
+            }
+          ],
+          "orphan_causes": 0,
+          "problems_without_action": 10,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [
+            "v3n_0de0784fc9b3de8f8216",
+            "v3n_1a7bb6c7d337d7a13105",
+            "v3n_2d77287e5cbd0a5ee2fa",
+            "v3n_2d78c134dd25ccc9e8e5",
+            "v3n_34db1a9b238beb4005d5",
+            "v3n_4191b0a05364100964f3",
+            "v3n_44186ac7c4ddc8ccaffe",
+            "v3n_4e48ad76bf7b08213d50",
+            "v3n_e54698b60e5b0418ce56",
+            "v3n_e6709f17a60a39fa11b9"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 1
+        }
+      },
+      "relation_jaccard": {
+        "v3_r1/v3_r2": 0.2581,
+        "v3_r1/v3_r3": 0.4016,
+        "v3_r2/v3_r3": 0.3692
+      },
+      "mean_jaccard": 0.343
+    },
+    "haas_mill_2023": {
+      "runs": {
+        "v3_r1": {
+          "status": "approved",
+          "graph_sha256": "8aa207eadc54b12c16f45dc53586b678e81cf97daf4c736cef03660a2714a757",
+          "nodes": 195,
+          "diagnostic_edges": 159,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 10,
+          "problems_without_action": 18,
+          "orphan_cause_ids": [
+            "v3n_34eda34eec81e084d102",
+            "v3n_61c88fa7708cb7690218",
+            "v3n_66844bf340804b269567",
+            "v3n_7556494377a7ed950aed",
+            "v3n_84ac129fcda8d91375b7",
+            "v3n_92f1e23322e96964410f",
+            "v3n_c1506ef133ab2c2ab37f",
+            "v3n_c5028f71a72fb6a52cde",
+            "v3n_d2782102c8e895b79341",
+            "v3n_ed7fd0c16640c00e4b44"
+          ],
+          "problem_without_action_ids": [
+            "v3n_0b9fe18f6f456466fd42",
+            "v3n_22daf3d2fa715fa8e4a1",
+            "v3n_273dfee3a063ba222cb7",
+            "v3n_37aecc324a7084fcd4c7",
+            "v3n_49fd3ab3ffe7a1f6a9e4",
+            "v3n_58baaa6f8d8615bd81e8",
+            "v3n_6246d570ae23907c6e29",
+            "v3n_6987e900ad7477035ba2",
+            "v3n_713333c17b14bc300338",
+            "v3n_73d5b043cd9c6faac479",
+            "v3n_99e42ff0b13374062157",
+            "v3n_a60e7f2c56d48d49b97e",
+            "v3n_b3582e8cbf871d9b1e76",
+            "v3n_b79c33634105aa7f7c18",
+            "v3n_c049b759b4925198626b",
+            "v3n_c3df4e706600f7d9c1f5",
+            "v3n_d404af52aa82422043a9",
+            "v3n_d544e49a8cd434cd2f59"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 11
+        },
+        "v3_r2": {
+          "status": "approved",
+          "graph_sha256": "2f0fa622eef5763f0401625dcc90092e5cf8ca0b25b7acfca2cc36a56e221fc4",
+          "nodes": 120,
+          "diagnostic_edges": 86,
+          "fusion_violations": 1,
+          "fusion_violation_details": [
+            {
+              "node_id": "v3n_6e40e8cc62ccc5120596",
+              "name": "Generate an error report with SHIFT + F3",
+              "reasons": [
+                "different_numbers"
+              ]
+            }
+          ],
+          "orphan_causes": 0,
+          "problems_without_action": 22,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [
+            "v3n_04a5e97075989ba1cbc8",
+            "v3n_22daf3d2fa715fa8e4a1",
+            "v3n_37aecc324a7084fcd4c7",
+            "v3n_3c8cf5effb0c0ac2ae0f",
+            "v3n_43081d6ac6ba78778cfb",
+            "v3n_6987e900ad7477035ba2",
+            "v3n_6c4aaed86462e4b6f46a",
+            "v3n_703c7ea2171f7df11100",
+            "v3n_75038d9e96db3bd42114",
+            "v3n_799e301e811a7c6cde51",
+            "v3n_7aa1646b309e513ed222",
+            "v3n_7d548de3df5a2d2f9f0e",
+            "v3n_9b3be0727d1385c370e5",
+            "v3n_a7d0f78a3b3319a8389e",
+            "v3n_bc14e827ec97a418feff",
+            "v3n_c3295dfb84f6b4312403",
+            "v3n_cbf8bda76e1f244e4d4c",
+            "v3n_d544e49a8cd434cd2f59",
+            "v3n_d716b03bc74991e1d6a9",
+            "v3n_dcac68ee79a1efd5cde0",
+            "v3n_e60c614fce478cd5666e",
+            "v3n_ee51e36aa73939163cbe"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 4
+        },
+        "v3_r3": {
+          "status": "approved",
+          "graph_sha256": "bfdd7bf89630918eef5f13e7b0e00a547f6bf365aabeb53d5eaf366db880814c",
+          "nodes": 171,
+          "diagnostic_edges": 136,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 2,
+          "problems_without_action": 22,
+          "orphan_cause_ids": [
+            "v3n_c1506ef133ab2c2ab37f",
+            "v3n_c5028f71a72fb6a52cde"
+          ],
+          "problem_without_action_ids": [
+            "v3n_0b9fe18f6f456466fd42",
+            "v3n_22daf3d2fa715fa8e4a1",
+            "v3n_37aecc324a7084fcd4c7",
+            "v3n_39668193cc9422675758",
+            "v3n_49fd3ab3ffe7a1f6a9e4",
+            "v3n_4aa814ff01c9d97241e0",
+            "v3n_6987e900ad7477035ba2",
+            "v3n_6c4aaed86462e4b6f46a",
+            "v3n_713333c17b14bc300338",
+            "v3n_7352d7014a0fea9b1cd8",
+            "v3n_75038d9e96db3bd42114",
+            "v3n_7fada598d74578a26c92",
+            "v3n_986f7d8e5260c5d74ecc",
+            "v3n_a60e7f2c56d48d49b97e",
+            "v3n_a652783414007bf80dbd",
+            "v3n_b3582e8cbf871d9b1e76",
+            "v3n_b79c33634105aa7f7c18",
+            "v3n_bd79d1a0d778cde55efa",
+            "v3n_bfff2a8d8e4478b3df17",
+            "v3n_c3df4e706600f7d9c1f5",
+            "v3n_d404af52aa82422043a9",
+            "v3n_d544e49a8cd434cd2f59"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 6
+        }
+      },
+      "relation_jaccard": {
+        "v3_r1/v3_r2": 0.0166,
+        "v3_r1/v3_r3": 0.0846,
+        "v3_r2/v3_r3": 0.0673
+      },
+      "mean_jaccard": 0.0562
+    },
+    "lincoln_powermig_215mp": {
+      "runs": {
+        "v3_r1": {
+          "status": "approved",
+          "graph_sha256": "7a257154f12cb4e97fa9fbf4b3704cebcf05a511804eda243fb524bb98bfa288",
+          "nodes": 70,
+          "diagnostic_edges": 87,
+          "fusion_violations": 1,
+          "fusion_violation_details": [
+            {
+              "node_id": "v3n_8bdfbdaba19665cc6515",
+              "name": "Contact an authorized field service facility",
+              "reasons": [
+                {
+                  "different": [
+                    "Contact a Lincoln authorized field service facility",
+                    "Contact an authorized field service facility"
+                  ]
+                }
+              ]
+            }
+          ],
+          "orphan_causes": 1,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [
+            "v3n_cf6fcdde62112e173723"
+          ],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 14
+        },
+        "v3_r2": {
+          "status": "approved",
+          "graph_sha256": "e5734a42b5f2a28509cdfdcc6a63ed65da8997acf676db8bed5876c845faa618",
+          "nodes": 76,
+          "diagnostic_edges": 94,
+          "fusion_violations": 1,
+          "fusion_violation_details": [
+            {
+              "node_id": "v3n_4423498300795b7fa2ea",
+              "name": "Obstruction or leak at the gun connection to the machine",
+              "reasons": [
+                {
+                  "different": [
+                    "Cable liner or contact tip is clogged",
+                    "Cable liner or contact tip is the wrong size"
+                  ]
+                },
+                {
+                  "different": [
+                    "Clogged cable liner or contact tip",
+                    "Incorrect cable liner or contact tip size"
+                  ]
+                }
+              ]
+            }
+          ],
+          "orphan_causes": 2,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [
+            "v3n_956fea304dc541435aac",
+            "v3n_a13476d1912d33c9d1c3"
+          ],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 2,
+          "edges_without_evidence": 0,
+          "derived_causes": 17
+        },
+        "v3_r3": {
+          "status": "approved",
+          "graph_sha256": "68c0c9a245df818cafbd09eb46c33011a008f4602bc091c6f865f611aeb63b58",
+          "nodes": 70,
+          "diagnostic_edges": 87,
+          "fusion_violations": 1,
+          "fusion_violation_details": [
+            {
+              "node_id": "v3n_4253a505d8fd1dd79062",
+              "name": "Faulty gun trigger",
+              "reasons": [
+                {
+                  "different": [
+                    "Faulty gun trigger",
+                    "Faulty gun trigger connections"
+                  ]
+                }
+              ]
+            }
+          ],
+          "orphan_causes": 0,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 2,
+          "edges_without_evidence": 0,
+          "derived_causes": 9
+        }
+      },
+      "relation_jaccard": {
+        "v3_r1/v3_r2": 0.1753,
+        "v3_r1/v3_r3": 0.0875,
+        "v3_r2/v3_r3": 0.0585
+      },
+      "mean_jaccard": 0.1071
+    }
+  }
+}

@@ -278,10 +278,19 @@ def cmd_status(_args) -> None:
     print(f"campaign spend: {spent:.3f} of {BUDGET} USD")
 
 
+def cmd_quality(args) -> None:
+    from scripts.kg_v3_quality import markdown, write_results
+
+    print(markdown(write_results(CAMPAIGN, ROOT / args.out, args.runs_name)))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("status")
+    quality = commands.add_parser("quality", help="offline graph quality without gold or model calls")
+    quality.add_argument("--runs-name", default="runs")
+    quality.add_argument("--out", default="campaign/results/quality.json")
     for name in ("new", "prepare", "gold"):
         command = commands.add_parser(name)
         command.add_argument("id")
@@ -301,7 +310,7 @@ def main() -> int:
     args = parser.parse_args()
     CAMPAIGN.mkdir(exist_ok=True)
     {"status": cmd_status, "new": cmd_new, "prepare": cmd_prepare, "gold": cmd_gold, "run": cmd_run,
-     "kpi": cmd_kpi, "precision": cmd_precision}[args.command](args)
+     "kpi": cmd_kpi, "precision": cmd_precision, "quality": cmd_quality}[args.command](args)
     return 0
 
 
