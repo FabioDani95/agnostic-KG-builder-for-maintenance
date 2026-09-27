@@ -15,11 +15,12 @@ from itertools import combinations
 
 from pydantic import BaseModel, Field
 
-from backend.kg_v3.checker import CheckedRelation, normalize_name, similarity
-from backend.kg_v3.contracts import Assertion, Tier
-from backend.kg_v3.extractor import Endpoint
+from backend.kg_v3.checker import CheckedRelation, normalize_name, restates, similarity, structurally_supported
+from backend.kg_v3.contracts import Assertion, Certificate, Tier, Witness
+from backend.kg_v3.extractor import UNSPECIFIED_CAUSE, Endpoint, Proposal
 from backend.kg_v3.llm import ModelClient
 from backend.kg_v3.prompts import MERGE_PROMPT
+from backend.kg_v3.reader import DocumentText
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +129,77 @@ def merge_candidates(relations: list[CheckedRelation]) -> list[MergePair]:
                     left_cites=sorted({c for item in endpoints[left] for c in item.cites})[:3],
                     right_cites=sorted({c for item in endpoints[right] for c in item.cites})[:3],
                 ))
+    # Two reads that name one end of the same relation differently are always judged:
+    # their names would otherwise be joined without asking whether they mean the same.
+    seen = {(pair.left, pair.right) for pair in pairs}
+    for relation in relations:
+        lead = relation.proposals[0]
+        for other in relation.proposals[1:]:
+            for mine, theirs in ((lead.source, other.source), (lead.target, other.target)):
+                left, right = sorted((identity(mine), identity(theirs)))
+                if (left == right or (left, right) in seen or not (mine.stated and theirs.stated)
+                        or "|code:" in left or similarity(mine.name, theirs.name) < ALIAS_SIMILARITY):
+                    continue
+                seen.add((left, right))
+                a, b = (mine, theirs) if identity(mine) == left else (theirs, mine)
+                pairs.append(MergePair(left=left, right=right, left_name=a.name, right_name=b.name, type=a.type,
+                                       left_cites=sorted(a.cites)[:3], right_cites=sorted(b.cites)[:3]))
     return pairs[:MAX_JUDGED_PAIRS]
+
+
+def _regroup(doc: DocumentText, relation: CheckedRelation, proposals: list[Proposal], suffix: str) -> CheckedRelation:
+    """Part of a relation whose reads disagree: its own witnesses, never agreement across the split."""
+
+    original = relation.assertion.certificate
+    lead = proposals[0]
+    witnesses = []
+    if (Witness.STRUCTURE in original.witnesses
+            and any(structurally_supported(doc, item) for item in proposals) and not restates(lead)):
+        witnesses.append(Witness.STRUCTURE)
+    if len({item.read for item in proposals} & {"A", "B"}) >= 2 and Witness.AGREEMENT in original.witnesses:
+        witnesses.append(Witness.AGREEMENT)
+    # The verifier judged the lead statement only.
+    verdict = original.verifier_verdict if not suffix else None
+    if verdict is not None and Witness.VERIFIER in original.witnesses:
+        witnesses.append(Witness.VERIFIER)
+    certificate = Certificate(
+        segment_ids=sorted({cite for item in proposals for cite in item.all_cites}) or original.segment_ids,
+        witnesses=witnesses, verifier_verdict=verdict, extractor=original.extractor,
+        notes=[*original.notes, "the reads name an end of this relation differently and the names differ in meaning"],
+    )
+    assertion = Assertion(
+        assertion_id=f"{relation.assertion.assertion_id}{'.' + suffix if suffix else ''}",
+        relation_type=lead.relation_type,
+        source_key=f"{lead.source.type}:{lead.source.name}", target_key=f"{lead.target.type}:{lead.target.name}",
+        record_key=f"{lead.unit_id}:{lead.read}.{lead.record}",
+        conditions=sorted({condition for item in proposals for condition in item.conditions}),
+        certificate=certificate,
+    )
+    return CheckedRelation(assertion=assertion, proposals=proposals)
+
+
+def split_disagreements(doc: DocumentText, relations: list[CheckedRelation],
+                        different: list[MergePair]) -> list[CheckedRelation]:
+    """A relation whose reads name an end with names judged different becomes one relation per name.
+
+    Each part keeps only its own witnesses, so the disagreement is asked about
+    instead of one name silently replacing the other.
+    """
+
+    apart_keys = {frozenset((pair.left, pair.right)) for pair in different}
+    result: list[CheckedRelation] = []
+    for relation in relations:
+        lead, others = relation.proposals[0], relation.proposals[1:]
+        apart = [other for other in others
+                 if any(frozenset((identity(mine), identity(theirs))) in apart_keys
+                        for mine, theirs in ((lead.source, other.source), (lead.target, other.target)))]
+        if not apart:
+            result.append(relation)
+            continue
+        together = [lead, *(other for other in others if other not in apart)]
+        result.append(_regroup(doc, relation, together, ""))
+        result.extend(_regroup(doc, relation, [other], f"s{index}") for index, other in enumerate(apart, start=1))
+    return result
 
 
 async def judge_pairs(llm: ModelClient | None, pairs: list[MergePair]) -> MergePlan:
@@ -180,6 +251,18 @@ class _UnionFind:
         a, b = self.find(left), self.find(right)
         if a != b:
             self.parent[max(a, b)] = min(a, b)
+
+
+def _stated(items: list[Endpoint]) -> bool:
+    """A node is written in the source only if no read names it as derived from a check or remedy.
+
+    A placeholder ("Unspecified cause of ...") names nothing and does not vote.
+    """
+
+    if items[0].type != "FailureMode":
+        return any(item.stated for item in items)
+    named = [item for item in items if not item.name.startswith(UNSPECIFIED_CAUSE)]
+    return bool(named) and all(item.stated for item in named)
 
 
 def assemble(relations: list[CheckedRelation], same_pairs: list[MergePair]) -> MergedGraph:
@@ -240,7 +323,7 @@ def assemble(relations: list[CheckedRelation], same_pairs: list[MergePair]) -> M
             node_id=node_id(root), type=items[0].type, name=name,
             code=codes.most_common(1)[0][0] if codes else "",
             kind=kinds.most_common(1)[0][0] if kinds else "",
-            stated=any(item.stated for item in items),
+            stated=_stated(items),
             aliases=sorted({item.name for item in items} - {name}),
             cites=sorted({cite for item in items for cite in item.cites}),
         )

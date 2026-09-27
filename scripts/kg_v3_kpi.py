@@ -53,6 +53,10 @@ def load_gold(manual: str) -> tuple[list[dict], list[int]]:
 
 def v3_run_facts(run: Path) -> dict:
     report = json.loads((run / "report.json").read_text())
+    graph = json.loads((run / "graph.json").read_text())
+    # Causes the system names from a check or remedy, marked as not written in the manual.
+    derived = sum(node["type"] == "FailureMode" and not node.get("stated_in_source", True)
+                  and not node["name"].startswith("Unspecified cause of") for node in graph["nodes"])
     usage = report["usage"]["estimated_cost_usd"] + ((report.get("agent_usage") or {}).get("estimated_cost_usd") or 0)
     return {
         "diagnostic_pages": report.get("diagnostic_pages", []),
@@ -61,6 +65,7 @@ def v3_run_facts(run: Path) -> dict:
         "failed_reads": report.get("failed_reads", 0),
         "seconds": report["seconds"]["total"], "cost_usd": round(usage, 5),
         "green": report["graph"]["edges_by_tier"].get("green", 0),
+        "derived_causes": derived,
     }
 
 

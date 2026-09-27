@@ -83,6 +83,8 @@ class PageMapEntry(_Contract):
     label: PageLabel
     section: str = ""
     unsure: bool = False
+    # Every independent map reading labelled the page diagnostic: a gate may not drop it.
+    confirmed: bool = False
 
 
 class DocumentMap(_Contract):

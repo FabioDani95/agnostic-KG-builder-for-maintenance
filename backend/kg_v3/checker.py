@@ -175,9 +175,84 @@ def statement(spec: OntologySpec, proposal: Proposal) -> str:
     code = f" (code {proposal.source.code})" if proposal.source.code else ""
     kind = f" [{proposal.target.kind}]" if proposal.target.kind else ""
     condition = f" Conditions: {'; '.join(proposal.conditions)}." if proposal.conditions else ""
-    return (f"{proposal.source.type} '{proposal.source.name}'{code} -> {proposal.relation_type} -> "
-            f"{proposal.target.type} '{proposal.target.name}'{kind}. Meaning: {verb}{condition}")
 
+    def unwritten(end) -> str:
+        return " (not written in the manual)" if end.type == "FailureMode" and not end.stated else ""
+
+    return (f"{proposal.source.type} '{proposal.source.name}'{unwritten(proposal.source)}{code} -> "
+            f"{proposal.relation_type} -> {proposal.target.type} '{proposal.target.name}'"
+            f"{unwritten(proposal.target)}{kind}. Meaning: {verb}{condition}")
+
+
+
+STRUCTURE_READ = "S"
+MAX_INHERITED_PROPOSALS = 300
+
+
+def _origin_row(doc: DocumentText, segment, column: int):
+    """The row whose cell a merged cell repeats: the nearest row above that does not inherit it."""
+
+    row = segment.table.row - 1
+    while row >= 1:
+        above = doc.segment(f"p{segment.page}.t{segment.table.table}.r{row}")
+        if above is None or above.table is None:
+            return None
+        if column not in above.table.inherited_columns:
+            return above
+        row -= 1
+    return None
+
+
+def inherited_cell_proposals(doc: DocumentText, proposals: list[Proposal]) -> list[Proposal]:
+    """Hypotheses from merged cells: a remedy of the row a merged cell starts in, for each row repeating it.
+
+    A merged cell holds one text for several rows; the reads often link its remedy to the
+    first row only. The code proposes the remedy for the causes of every row that
+    repeats the cell, and the checker keeps a proposal only when the verifier, reading
+    that row, confirms it. The remedies of the first row's own cells are rejected there.
+    """
+
+    by_segment: dict[str, list[Proposal]] = {}
+    for proposal in proposals:
+        for cite in proposal.all_cites:
+            by_segment.setdefault(cite, []).append(proposal)
+    existing = {(item.unit_id, normalize_name(item.source.name), normalize_name(item.target.name))
+                for item in proposals if item.relation_type == "RESOLVED_BY"}
+    added: list[Proposal] = []
+    for segment in doc.segments(sorted(by_segment)):
+        if segment.table is None or not segment.table.inherited_columns:
+            continue
+        unit_id = by_segment[segment.segment_id][0].unit_id
+        causes: dict[str, object] = {}
+        for item in by_segment[segment.segment_id]:
+            if item.unit_id != unit_id:
+                continue
+            for end in (item.source, item.target):
+                if end.type == "FailureMode":
+                    causes.setdefault(normalize_name(end.name), end)
+        for column in segment.table.inherited_columns:
+            origin = _origin_row(doc, segment, column)
+            if origin is None:
+                continue
+            actions: list = []
+            for item in by_segment.get(origin.segment_id, []):
+                if (item.unit_id == unit_id and item.relation_type == "RESOLVED_BY"
+                        and not any(similarity(item.target.name, other.name) >= 0.75 for other in actions)):
+                    actions.append(item.target)
+            for cause_key, cause in causes.items():
+                for action in actions:
+                    key = (unit_id, cause_key, normalize_name(action.name))
+                    if key in existing or len(added) >= MAX_INHERITED_PROPOSALS:
+                        continue
+                    existing.add(key)
+                    added.append(Proposal(
+                        unit_id=unit_id, read=STRUCTURE_READ, relation_type="RESOLVED_BY",
+                        source=cause.model_copy(update={"cites": sorted({*cause.cites, segment.segment_id})}),
+                        target=action.model_copy(update={"cites": [segment.segment_id]}),
+                        record=f"inherited:{segment.segment_id}", cites=[segment.segment_id],
+                        notes=["remedy of a merged cell this row repeats; kept only when the verifier confirms it"],
+                    ))
+    return added
 
 
 class CheckedRelation(BaseModel):
@@ -228,6 +303,8 @@ class Checker:
         by_unit: dict[str, list[Proposal]] = {}
         for proposal in proposals:
             by_unit.setdefault(proposal.unit_id, []).append(proposal)
+        for proposal in inherited_cell_proposals(doc, proposals):
+            by_unit.setdefault(proposal.unit_id, []).append(proposal)
         candidates = [candidate for items in by_unit.values() for candidate in group_candidates(items)]
         for candidate in candidates:
             candidate.structure = (any(structurally_supported(doc, item) for item in candidate.proposals)
@@ -235,6 +312,9 @@ class Checker:
         pending = [item for item in candidates if not (item.structure and item.agreement) or restates(item.lead)]
         batches = [pending[index:index + VERIFY_BATCH] for index in range(0, len(pending), VERIFY_BATCH)]
         await asyncio.gather(*(self._verify(doc, batch) for batch in batches))
+        # A structural hypothesis no read made survives only with the verifier's support.
+        candidates = [candidate for candidate in candidates
+                      if candidate.reads != {STRUCTURE_READ} or candidate.verdict is VerifierVerdict.SUPPORTED]
         return [CheckedRelation(assertion=self._assertion(candidate), proposals=candidate.proposals)
                 for candidate in candidates]
 

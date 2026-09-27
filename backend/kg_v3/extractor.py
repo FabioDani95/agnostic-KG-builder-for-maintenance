@@ -24,6 +24,8 @@ from backend.kg_v3.reader import DocumentText, render_segments
 logger = logging.getLogger(__name__)
 
 EXTRACTION_OUTPUT_TOKENS = 16000
+# Name of a cause the source does not name and no check points to.
+UNSPECIFIED_CAUSE = "Unspecified cause of"
 MAX_SPLIT_DEPTH = 3
 
 
@@ -108,7 +110,7 @@ def parse_read(data: dict[str, Any], *, unit: ReadingUnit, read: str, spec: Onto
         if (source and target and target.type == "FailureMode" and source.type != "FailureMode"
                 and target.stated and _repeats(source.name, target.name)):
             entities[str(item["target"])] = target.model_copy(update={
-                "name": f"Unspecified cause of {source.name[:1].lower()}{source.name[1:]}", "stated": False})
+                "name": f"{UNSPECIFIED_CAUSE} {source.name[:1].lower()}{source.name[1:]}", "stated": False})
             notes.append(f"{read}: cause '{target.name}' repeats its problem, marked unnamed")
     proposals: list[Proposal] = []
     for index, item in enumerate(data.get("relations") or []):

@@ -19,12 +19,19 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from backend.kg_v3.checker import CheckedRelation, Checker
+from backend.kg_v3.checker import STRUCTURE_READ, CheckedRelation, Checker
 from backend.kg_v3.contracts import Answer, DocumentMap, PageLabel, Question, ReadingUnit, Tier, Witness
 from backend.kg_v3.extractor import Extractor, UnitExtraction, prompt_hash
 from backend.kg_v3.llm import ModelClient
-from backend.kg_v3.mapper import apply_map_answer, build_units, map_pages, map_question
-from backend.kg_v3.merger import MergedGraph, MergePlan, assemble, judge_pairs, merge_candidates
+from backend.kg_v3.mapper import apply_map_answer, build_units, map_pages, map_question, protected_demotions
+from backend.kg_v3.merger import (
+    MergedGraph,
+    MergePlan,
+    assemble,
+    judge_pairs,
+    merge_candidates,
+    split_disagreements,
+)
 from backend.kg_v3.ontology import OntologySpec, load_ontology
 from backend.kg_v3.questions import (
     apply_relation_answers,
@@ -121,6 +128,8 @@ class Pipeline:
         self.workdir = workdir
         self.spec = spec or load_ontology()
         self.timings: dict[str, float] = {}
+        # Confirmed diagnostic pages a map correction tried to drop (kept, reported).
+        self.map_kept: list[int] = []
 
     # Persistence ---------------------------------------------------------
 
@@ -193,6 +202,7 @@ class Pipeline:
         record = await self._timed("gate_map", self._gate("map", [map_question(self.doc, page_map)]))
         for answer in record.answers:
             if answer.option_id == "correct":
+                self.map_kept.extend(protected_demotions(page_map, answer.edits))
                 page_map = apply_map_answer(page_map, answer.edits)
         return page_map, record
 
@@ -240,6 +250,7 @@ class Pipeline:
         else:
             plan = await self._timed("merge", judge_pairs(self.llm, merge_candidates(relations)))
             self._save(f"merge_plan_{stamp}", plan)
+        relations = split_disagreements(self.doc, relations, plan.different)
 
         doubts = [
             *relation_questions(self.doc, self.spec, relations),
@@ -278,6 +289,8 @@ class Pipeline:
             "pages": self.doc.page_count,
             "page_labels": dict(Counter(entry.label.value for entry in page_map.entries)),
             "diagnostic_pages": page_map.pages_with(PageLabel.DIAGNOSTIC),
+            "confirmed_pages": [entry.page for entry in page_map.entries if entry.confirmed],
+            "map_demotions_refused": sorted(set(self.map_kept)),
             "units": len(units),
             "failed_reads": sum(item.failed_reads for item in extractions),
             "proposals": sum(len(item.proposals) for item in extractions),
@@ -302,6 +315,8 @@ class Pipeline:
             "human_questions": len(self.human_store.open_questions())
             if isinstance(self.human_store, InMemoryQuestionStore) else None,
             "reviewer_confirmed": witnesses.get(Witness.REVIEWER.value, 0),
+            "merged_cell_relations": sum(any(proposal.read == STRUCTURE_READ for proposal in item.proposals)
+                                         for item in relations),
             "usage": self.llm.usage.as_dict(),
             "agent_usage": self.agent_llm.usage.as_dict() if hasattr(self.agent_llm, "usage") else None,
             "seconds": {**self.timings, "total": round(time.perf_counter() - started, 3)},

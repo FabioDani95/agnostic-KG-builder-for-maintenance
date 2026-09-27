@@ -1,9 +1,12 @@
 """Station 2, map: label every page, then cut diagnostic pages into reading units.
 
-One model call per batch of pages labels them from a compact outline. Pages
-without any text are unreadable by construction. Units are consecutive
-diagnostic pages of one section, cut only between segments, so that every
-segment is owned by exactly one unit.
+Two independent model readings label each batch of pages from a compact
+outline. A page either reading calls diagnostic is read; a page both call
+diagnostic is confirmed and a gate cannot drop it, because an extra page costs
+little and a dropped one loses its branches. Pages without any text are
+unreadable by construction. Units are consecutive diagnostic pages of one
+section, cut only between segments, so that every segment is owned by exactly
+one unit.
 """
 
 from __future__ import annotations
@@ -11,6 +14,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import logging
+from collections import Counter
 from typing import Any
 
 from backend.kg_v3.contracts import (
@@ -34,6 +38,7 @@ logger = logging.getLogger(__name__)
 OUTLINE_CHARS = 480
 SHORT_LINE = 80
 MAP_BATCH_PAGES = 60
+MAP_READS = 2
 UNIT_MAX_CHARS = 9000
 UNIT_MAX_SEGMENTS = 160
 CONTEXT_SEGMENTS = 2
@@ -87,18 +92,37 @@ def _map_schema(pages: list[int]) -> dict[str, Any]:
             "properties": {"pages": {"type": "array", "items": entry}}}
 
 
-async def map_pages(llm: ModelClient, doc: DocumentText, *, batch_pages: int = MAP_BATCH_PAGES) -> DocumentMap:
+def combine_readings(page: int, readings: list[PageMapEntry], reads: int) -> PageMapEntry:
+    """One entry from the independent readings of a page: any diagnostic vote is read."""
+
+    diagnostic = [entry for entry in readings if entry.label is PageLabel.DIAGNOSTIC]
+    if diagnostic:
+        confirmed = len(diagnostic) == reads
+        return PageMapEntry(page=page, label=PageLabel.DIAGNOSTIC,
+                            section=next((entry.section for entry in diagnostic if entry.section), ""),
+                            unsure=not confirmed or any(entry.unsure for entry in diagnostic),
+                            confirmed=confirmed)
+    labels = Counter(entry.label for entry in readings)
+    label = labels.most_common(1)[0][0]
+    return PageMapEntry(page=page, label=label,
+                        section=next((entry.section for entry in readings if entry.section), ""),
+                        unsure=len(labels) > 1 or any(entry.unsure for entry in readings))
+
+
+async def map_pages(llm: ModelClient, doc: DocumentText, *, batch_pages: int = MAP_BATCH_PAGES,
+                    reads: int = MAP_READS) -> DocumentMap:
     readable = sorted(doc.pages)
     batches = [readable[index:index + batch_pages] for index in range(0, len(readable), batch_pages)]
+    reads = max(1, reads)
 
-    async def label(batch: list[int]) -> dict[int, PageMapEntry]:
+    async def label(batch: list[int]) -> dict[int, PageMapEntry] | None:
         text = "\n".join(page_outline(doc, page) for page in batch)
         try:
             data = await llm.json(system=MAP_PROMPT, user=text, schema=_map_schema(batch),
                                   name="kg_v3_map", max_output_tokens=12000)
-        except Exception as exc:  # a failed batch is kept for reading, never silently dropped
+        except Exception as exc:
             logger.warning("Page map batch %s-%s failed: %s", batch[0], batch[-1], exc)
-            return {page: PageMapEntry(page=page, label=PageLabel.DIAGNOSTIC, unsure=True) for page in batch}
+            return None
         entries: dict[int, PageMapEntry] = {}
         for item in data.get("pages") or []:
             try:
@@ -110,15 +134,28 @@ async def map_pages(llm: ModelClient, doc: DocumentText, *, batch_pages: int = M
                 continue
         return entries
 
-    labelled: dict[int, PageMapEntry] = {}
-    for result in await asyncio.gather(*(label(batch) for batch in batches)):
-        labelled.update(result)
+    jobs = [(batch, read) for batch in batches for read in range(reads)]
+    results = await asyncio.gather(*(label(batch) for batch, _ in jobs))
+    readings: dict[int, list[PageMapEntry]] = {}
+    failed: set[int] = set()
+    for (batch, _), result in zip(jobs, results):
+        if result is None:
+            failed.update(batch)
+            continue
+        for page, entry in result.items():
+            readings.setdefault(page, []).append(entry)
     entries = []
     for page in range(1, doc.page_count + 1):
         if page not in doc.pages:
             entries.append(PageMapEntry(page=page, label=PageLabel.UNREADABLE))
+        elif page in readings:
+            entry = combine_readings(page, readings[page], reads)
+            # A reading that failed is not a vote: without it the page cannot be confirmed.
+            entries.append(entry.model_copy(update={"confirmed": False}) if page in failed else entry)
+        elif page in failed:  # every reading failed: kept for reading, never silently dropped
+            entries.append(PageMapEntry(page=page, label=PageLabel.DIAGNOSTIC, unsure=True))
         else:
-            entries.append(labelled.get(page) or PageMapEntry(page=page, label=PageLabel.OTHER, unsure=True))
+            entries.append(PageMapEntry(page=page, label=PageLabel.OTHER, unsure=True))
     return fill_gaps(DocumentMap(entries=entries))
 
 
@@ -140,8 +177,10 @@ def map_question(doc: DocumentText, page_map: DocumentMap) -> Question:
     """Gate 1: the whole map in one question, with the outline of every page."""
 
     diagnostic = page_map.pages_with(PageLabel.DIAGNOSTIC)
+    confirmed = [entry.page for entry in page_map.entries if entry.confirmed]
     proposal = [
         f"Diagnostic pages to read in detail: {_ranges(diagnostic)}.",
+        f"Pages both map readings label diagnostic (always read, a change cannot drop them): {_ranges(confirmed)}.",
         f"Pages labelled diagnostic with doubt: {_ranges([e.page for e in page_map.entries if e.unsure])}.",
         f"Unreadable pages (no text): {_ranges(page_map.pages_with(PageLabel.UNREADABLE))}.",
         "Label and outline of every page follow.",
@@ -159,7 +198,8 @@ def map_question(doc: DocumentText, page_map: DocumentMap) -> Question:
             AnswerOption(option_id="confirm", label="Yes, the map is right",
                          effect="the labelled diagnostic pages are read in detail"),
             AnswerOption(option_id="correct", label="Change some page labels",
-                         effect="the listed pages get the new labels before reading"),
+                         effect="the listed pages get the new labels before reading; pages both map "
+                                "readings label diagnostic stay diagnostic"),
         ],
         default_option_id="confirm",
         priority=100,
@@ -167,14 +207,29 @@ def map_question(doc: DocumentText, page_map: DocumentMap) -> Question:
     )
 
 
-def apply_map_answer(page_map: DocumentMap, edits: dict[str, Any]) -> DocumentMap:
+def _map_changes(page_map: DocumentMap, edits: dict[str, Any]) -> dict[int, PageLabel]:
+    pages = {entry.page for entry in page_map.entries}
     changes: dict[int, PageLabel] = {}
     for page, label in dict(edits.get("pages") or {}).items():
         try:
-            if int(page) in {entry.page for entry in page_map.entries}:
+            if int(page) in pages:
                 changes[int(page)] = PageLabel(label)
         except ValueError:
             continue
+    return changes
+
+
+def protected_demotions(page_map: DocumentMap, edits: dict[str, Any]) -> list[int]:
+    """Confirmed diagnostic pages a correction tried to drop; they stay diagnostic."""
+
+    confirmed = {entry.page for entry in page_map.entries if entry.confirmed}
+    return sorted(page for page, label in _map_changes(page_map, edits).items()
+                  if page in confirmed and label is not PageLabel.DIAGNOSTIC)
+
+
+def apply_map_answer(page_map: DocumentMap, edits: dict[str, Any]) -> DocumentMap:
+    protected = set(protected_demotions(page_map, edits))
+    changes = {page: label for page, label in _map_changes(page_map, edits).items() if page not in protected}
     return page_map.relabel(changes) if changes else page_map
 
 

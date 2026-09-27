@@ -175,6 +175,7 @@ def v22_edges_from(path: Path, doc, evidence) -> list[dict]:
 def v3_edges(run: Path) -> list[dict]:
     data = json.loads((run / "graph.json").read_text())
     names = {node["id"]: node["name"] for node in data["nodes"]}
+    stated = {node["id"]: node.get("stated_in_source", True) for node in data["nodes"]}
     edges = []
     for edge in data["edges"]:
         if edge.get("derived"):
@@ -182,6 +183,7 @@ def v3_edges(run: Path) -> list[dict]:
         segments = {item["segment_id"] for occurrence in edge["occurrences"] for item in occurrence["evidence"]}
         edges.append({"type": edge["type"], "source": edge["from"], "target": edge["to"],
                       "source_name": names[edge["from"]], "target_name": names[edge["to"]],
+                      "source_stated": stated[edge["from"]], "target_stated": stated[edge["to"]],
                       "segments": segments, "trusted": edge["trusted"]})
     return edges
 
@@ -209,6 +211,31 @@ def candidates(relation: dict, edges: list[dict]) -> list[int]:
     return [index for _, _, index in scored[:MAX_CANDIDATES]]
 
 
+def pair_line(pair_id: str, relation: dict, group: list[dict]) -> str:
+    """One reference fact and the extracted fact it is compared with.
+
+    Where the manual names no cause (the reference) and the system marks its cause
+    as not written in the manual, the extracted cause is shown unnamed too: the
+    pair is then judged on the problem and the remedy. A cause the system presents
+    as written in the manual keeps its name and is judged as such.
+    """
+
+    if relation["kind"] == "indicator":
+        edge = group[0]
+        cause = f"the cause '{relation['right']}'" if relation["right"] else "a cause the manual does not name"
+        extracted = ("a cause the manual does not name" if not relation["right"] and not edge.get("target_stated", True)
+                     else f"'{edge['target_name']}'")
+        return (f"{pair_id}: reference '{relation['left']}' may indicate {cause} | "
+                f"extracted '{edge['source_name']}' may indicate {extracted}")
+    remedies = "; ".join(f"'{edge['target_name']}'" for edge in group)
+    reference_cause = relation["left"] or "(not named in the manual)"
+    extracted_cause = ("(not named in the manual)" if not relation["left"] and not group[0].get("source_stated", True)
+                       else group[0]["source_name"])
+    return (f"{pair_id}: reference cause {reference_cause!r} is resolved or checked by "
+            f"'{relation['right']}' | extracted cause {extracted_cause!r} is resolved or "
+            f"checked by these steps together: {remedies}")
+
+
 async def judge(llm, pairs: list[tuple[dict, list[dict]]]) -> list[bool]:
     """One verdict per pair; a pair holds one extracted relation or all remedies of one cause."""
 
@@ -216,19 +243,7 @@ async def judge(llm, pairs: list[tuple[dict, list[dict]]]) -> list[bool]:
     for start in range(0, len(pairs), 40):
         batch = pairs[start:start + 40]
         ids = [f"P{index}" for index in range(1, len(batch) + 1)]
-        lines = []
-        for pair_id, (relation, group) in zip(ids, batch):
-            if relation["kind"] == "indicator":
-                edge = group[0]
-                cause = f"the cause '{relation['right']}'" if relation["right"] else "a cause the manual does not name"
-                lines.append(f"{pair_id}: reference '{relation['left']}' may indicate {cause} | "
-                             f"extracted '{edge['source_name']}' may indicate '{edge['target_name']}'")
-            else:
-                remedies = "; ".join(f"'{edge['target_name']}'" for edge in group)
-                reference_cause = relation["left"] or "(not named in the manual)"
-                lines.append(f"{pair_id}: reference cause {reference_cause!r} is resolved or checked by "
-                             f"'{relation['right']}' | extracted cause '{group[0]['source_name']}' is resolved or "
-                             f"checked by these steps together: {remedies}")
+        lines = [pair_line(pair_id, relation, group) for pair_id, (relation, group) in zip(ids, batch)]
         schema = {"type": "object", "additionalProperties": False, "required": ["answers"], "properties": {
             "answers": {"type": "array", "items": {"type": "object", "additionalProperties": False,
                                                    "required": ["id", "answer"], "properties": {

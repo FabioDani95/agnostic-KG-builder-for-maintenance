@@ -16,7 +16,9 @@ system proposes. Answer as an experienced maintenance engineer would.
    that problem or cause; it does not need to repair anything. A statement without that mark
    claims a remedy: a check alone does not support it.
 5. Conditions, negations, numbers, units and codes must keep the meaning they have in the source.
-   A cause that only repeats the problem, or a check presented as a cause, is not correct.
+   A cause that only repeats the problem, or a check presented as a cause, is not correct. A cause
+   marked (not written in the manual) is correct when the manual gives that problem with that check
+   or remedy; its name is the system's reading of the check, not a claim that the manual states it.
 6. For a page map, a page is diagnostic when it helps find or fix a fault (troubleshooting tables,
    fault or alarm codes, tests); procedure pages hold steps that diagnostic pages rely on.
 7. Choose exactly one listed option ID. If only some numbered statements are right, choose
@@ -71,16 +73,18 @@ Rules:
    one action per remedy or check, each linked to the failure. For a corrective action set "kind": repair for actions that fix the fault, inspection for
    checks, tests and measurements, escalation for contacting service or a dealer. Link checks to
    the failure with the same relation as repairs, with kind inspection. Other types use "".
-7. If the manual gives an action or check for a symptom without naming a cause, create a failure
-   mode named "Unspecified cause of <symptom>" with stated false. Otherwise stated is true.
+7. stated is true only for a cause the manual writes as a cause. If the manual gives an action or
+   check for a symptom without naming a cause, create a failure mode with stated false: name it
+   after the fault the check or remedy points to when that is clear ("Incorrect input voltage" for
+   "make sure the correct voltage is applied"), otherwise "Unspecified cause of <symptom>".
 8. Put conditions (if, when, only if, test outcomes, thresholds, order of steps) as short phrases
    in the relation's "conditions".
 9. A failure mode is a faulty state or cause the manual names (worn, blocked, loose, not mapped,
    out of adjustment). A check to perform is never a failure mode: "the valves need checking" is
-   a check. When the manual lists only checks for a problem, link them to "Unspecified cause of
-   <problem>". A cause that only repeats the problem is not a cause. Never derive a cause from a
-   check or remedy by turning it around: "check for the proper size liner" names a check, not the
-   cause "liner of the wrong size". Such an entry links the check to "Unspecified cause of <problem>".
+   a check. When the manual lists only checks for a problem, link them to a failure mode with
+   stated false as in rule 7. A cause that only repeats the problem is not a cause. A cause derived
+   from a check or remedy is never stated: "check for the proper size liner" names a check, so
+   "liner of the wrong size" may only appear with stated false.
 10. Numbered steps are marked (step 5), sub-steps (step 5a). A sub-step belongs to its parent
    step: link it only to the problem or cause of that step, never to another step's cause.
    Parts of one sentence may be split across several IDs on the same line; cite all of them.
@@ -105,7 +109,9 @@ shown with the problem they belong to are remedies or checks for the cause that 
 a step or its parent step points to another cause. A numbered sub-step belongs to its parent step only. Answer not_supported when a statement marked [inspection] actually repairs,
 replaces, cleans or adjusts, when a remedy statement only checks, and when the cause is a check to
 perform, only repeats the problem, or is a check or remedy turned around into a fault that the text
-never states as a cause.
+never states as a cause. A cause marked (not written in the manual) only claims that the manual gives
+this problem, check or remedy without naming a cause: judge the problem and the check or remedy, not
+the cause name.
 """
 
 MERGE_PROMPT = """You decide whether two names extracted from the same maintenance manual denote the same thing.
