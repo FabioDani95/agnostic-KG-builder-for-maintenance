@@ -194,3 +194,32 @@ def test_a_merged_cell_remedy_reaches_every_row_that_repeats_it():
             if item.proposals[0].read == STRUCTURE_READ}
     # Only the verified hypothesis survives; the first row's own remedy is not copied.
     assert kept == {("Damaged cable", "Contact service")}
+
+
+def test_inherited_actions_preserve_distinct_immediate_and_conditional_occurrences():
+    from backend.kg_v3.checker import Checker, group_candidates, inherited_cell_proposals
+    from backend.kg_v3.contracts import ContextItem
+    from backend.kg_v3.ontology import load_ontology
+
+    proposals = _read_a()
+    immediate = proposals[2]
+    conditional = immediate.model_copy(update={"read": "B", "conditions": [
+        ContextItem(kind="if", text="Checks failed and problem persists", cite=("p28.t1.r2",))]})
+    proposals.append(conditional)
+    assert len(group_candidates([immediate, conditional])) == 2
+    inherited = [p for p in inherited_cell_proposals(_merged_cell_doc(), proposals)
+                 if p.target.name == "Contact service"]
+    assert len(inherited) == 2
+    assert {tuple(c.kind for c in p.conditions) for p in inherited} == {(), ("if",)}
+    assert next(p for p in inherited if p.conditions).conditions == conditional.conditions
+    checker = Checker(None, load_ontology(), extractor_id="test")
+    checked = []
+    for candidate in group_candidates([immediate, conditional, *inherited]):
+        candidate.structure = True
+        checked.append(CheckedRelation(assertion=checker._assertion(candidate), proposals=candidate.proposals))
+    graph = assemble(checked, [])
+    assert len(graph.edges) == 2
+    for edge in graph.edges:
+        assert len(edge.assertions) == 2
+        assert edge.conditions == []  # no invented conjunction of alternatives
+        assert {bool(a.conditions) for a in edge.assertions} == {False, True}

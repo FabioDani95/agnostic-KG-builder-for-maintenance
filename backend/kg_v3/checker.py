@@ -62,6 +62,11 @@ def _ends_match(left: Proposal, right: Proposal, threshold: float) -> bool:
             and _end_matches(left.target, right.target, threshold))
 
 
+def context_key(proposal: Proposal) -> tuple:
+    """Context identity excludes citation spelling, but never drops typed constraints."""
+    return tuple(sorted((c.kind, normalize_name(c.text)) for c in proposal.conditions))
+
+
 def same_relation(left: Proposal, right: Proposal) -> bool:
     """Same relation in two reads: equal names, or similar names cited at the same place.
 
@@ -69,6 +74,8 @@ def same_relation(left: Proposal, right: Proposal) -> bool:
     down-stroke' look alike but sit in different table rows.
     """
 
+    if context_key(left) != context_key(right):
+        return False
     if left.relation_type != right.relation_type:
         return False
     if left.source.code and right.source.code and normalize_name(left.source.code) != normalize_name(right.source.code):
@@ -246,7 +253,7 @@ def inherited_cell_proposals(doc: DocumentText, proposals: list[Proposal]) -> li
     for proposal in proposals:
         for cite in proposal.all_cites:
             by_segment.setdefault(cite, []).append(proposal)
-    existing = {(item.unit_id, normalize_name(item.source.name), normalize_name(item.target.name))
+    existing = {(item.unit_id, normalize_name(item.source.name), normalize_name(item.target.name), context_key(item))
                 for item in proposals if item.relation_type == "RESOLVED_BY"}
     added: list[Proposal] = []
     for segment in doc.segments(sorted(by_segment)):
@@ -267,11 +274,13 @@ def inherited_cell_proposals(doc: DocumentText, proposals: list[Proposal]) -> li
             actions: list = []
             for item in by_segment.get(origin.segment_id, []):
                 if (item.unit_id == unit_id and item.relation_type == "RESOLVED_BY"
-                        and not any(similarity(item.target.name, other.name) >= 0.75 for other in actions)):
-                    actions.append(item.target)
+                        and not any(similarity(item.target.name, other.target.name) >= 0.75
+                                    and context_key(item) == context_key(other) for other in actions)):
+                    actions.append(item)
             for cause_key, cause in causes.items():
-                for action in actions:
-                    key = (unit_id, cause_key, normalize_name(action.name))
+                for original in actions:
+                    action = original.target
+                    key = (unit_id, cause_key, normalize_name(action.name), context_key(original))
                     if key in existing or len(added) >= MAX_INHERITED_PROPOSALS:
                         continue
                     existing.add(key)
@@ -280,6 +289,7 @@ def inherited_cell_proposals(doc: DocumentText, proposals: list[Proposal]) -> li
                         source=cause.model_copy(update={"cites": sorted({*cause.cites, segment.segment_id})}),
                         target=action.model_copy(update={"cites": [segment.segment_id]}),
                         record=f"inherited:{segment.segment_id}", cites=[segment.segment_id],
+                        conditions=list(original.conditions),
                         notes=["remedy of a merged cell this row repeats; kept only when the verifier confirms it"],
                     ))
     return added

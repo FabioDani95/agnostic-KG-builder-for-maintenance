@@ -84,7 +84,10 @@ class GraphEdge(BaseModel):
 
     @property
     def conditions(self) -> list[ContextItem]:
-        return sorted({condition for item in self.assertions if item.tier is not Tier.RED for condition in item.conditions})
+        # Edge-level context contains only constraints common to every occurrence.
+        # Alternatives (including immediate vs conditional) live on each assertion.
+        contexts = [set(item.conditions) for item in self.assertions if item.tier is not Tier.RED]
+        return sorted(set.intersection(*contexts)) if contexts else []
 
 
 class MergedGraph(BaseModel):
