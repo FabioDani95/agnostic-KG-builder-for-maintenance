@@ -51,6 +51,13 @@ if the extracted problem is the same and the extracted cause is only a placehold
 When context is supplied, respect antecedents, prerequisites, prohibitions, expected outcomes
 and sequence. An expected outcome is not a precondition. Extra compatible context is allowed;
 contradictory context or missing required context is different.
+A prohibition represented as a typed [warning] on an action can match the same prohibition
+represented as a separate reference action, provided its cause, scope and polarity agree.
+Never match an affirmative command to a prohibition. Never borrow a remedy or context from
+another entry. Extracted occurrences are alternatives: do not conjoin their conditions or
+use a condition on one occurrence to repair a missing condition on another. Reference context
+is typed; legacy untyped reference conditions are [if]. A missing [if] is not unconditional
+permission. Only steps in the same source record can jointly express a reference action.
 """
 
 
@@ -184,12 +191,15 @@ def v3_edges(run: Path) -> list[dict]:
     for edge in data["edges"]:
         if edge.get("derived"):
             continue
-        segments = {item["segment_id"] for occurrence in edge["occurrences"] for item in occurrence["evidence"]}
-        edges.append({"type": edge["type"], "source": edge["from"], "target": edge["to"],
-                      "source_name": names[edge["from"]], "target_name": names[edge["to"]],
-                      "source_stated": stated[edge["from"]], "target_stated": stated[edge["to"]],
-                      "conditions": edge.get('conditions', []),
-                      "segments": segments, "trusted": edge["trusted"]})
+        for occurrence in edge["occurrences"]:
+            segments = {item["segment_id"] for item in occurrence["evidence"]}
+            edges.append({"type": edge["type"], "source": edge["from"], "target": edge["to"],
+                          "source_name": names[edge["from"]], "target_name": names[edge["to"]],
+                          "source_stated": stated[edge["from"]], "target_stated": stated[edge["to"]],
+                          "conditions": occurrence.get('conditions', edge.get('conditions', [])),
+                          "record": occurrence.get('record', ''),
+                          "segments": segments,
+                          "trusted": occurrence.get('tier', edge.get('tier')) == 'green'})
     return edges
 
 
@@ -211,7 +221,8 @@ def candidates(relation: dict, edges: list[dict]) -> list[int]:
         if edge["type"] not in relation["types"] or not edge["trusted"]:
             continue
         positional = bool(edge["segments"] & relation["segments"])
-        lexical = min(token_f1(edge["source_name"], relation["left"]), token_f1(edge["target_name"], relation["right"]))
+        lexical = min(token_f1(edge["source_name"], relation["left"]),
+                      token_f1(edge["target_name"] + " " + context_text(edge.get("conditions", [])), relation["right"]))
         if positional or lexical >= 0.3:
             scored.append((positional, lexical, index))
     scored.sort(reverse=True)
@@ -227,7 +238,10 @@ def pair_line(pair_id: str, relation: dict, group: list[dict]) -> str:
     as written in the manual keeps its name and is judged as such.
     """
 
-    context = f" Reference context: {relation['conditions']}." if relation.get('conditions') else ''
+    raw_context = relation.get('conditions') or []
+    context = f" Reference context: {context_text([raw_context] if isinstance(raw_context, str) else raw_context) or '(none)'}."
+    location = f" Reference segments: {', '.join(sorted(relation.get('segments', [])))}."
+    context += location
     if relation["kind"] == "indicator":
         edge = group[0]
         cause = f"the cause '{relation['right']}'" if relation["right"] else "a cause the manual does not name"
@@ -235,8 +249,11 @@ def pair_line(pair_id: str, relation: dict, group: list[dict]) -> str:
                      else f"'{edge['target_name']}'")
         return (f"{pair_id}: reference '{relation['left']}' may indicate {cause} | "
                 f"extracted '{edge['source_name']}' may indicate {extracted}" +
-                (f". Extracted context: {context_text(edge['conditions'])}." if edge.get('conditions') else '') + context)
-    remedies = "; ".join(f"'{edge['target_name']}' ({context_text(edge.get('conditions', []))})" for edge in group)
+                (f". Extracted context: {context_text(edge.get('conditions', [])) or '(none)'}. "
+                 f"Extracted segments: {', '.join(sorted(edge.get('segments', [])))}.") + context)
+    remedies = "; ".join(f"'{edge['target_name']}' (typed context: {context_text(edge.get('conditions', [])) or '(none)'}; "
+                         f"source record: {edge.get('record', '')}; segments: {', '.join(sorted(edge.get('segments', [])))})"
+                         for edge in group)
     reference_cause = relation["left"] or "(not named in the manual)"
     extracted_cause = ("(not named in the manual)" if not relation["left"] and not group[0].get("source_stated", True)
                        else group[0]["source_name"])
@@ -277,12 +294,12 @@ async def score_system(llm, claims: list[dict], edges: list[dict]) -> dict:
             found = candidates(relation, edges)
             if relation["kind"] == "indicator":
                 groups = [[index] for index in found]
-            else:  # every remedy of the same cause is judged together
+            else:  # Only remedies on the same source occurrence can form a compound action.
                 by_cause: dict[str, list[int]] = defaultdict(list)
                 for index in found:
-                    by_cause[edges[index]["source"]].append(index)
+                    by_cause[(edges[index]["source"], edges[index].get("record", ""))].append(index)
                 groups = [sorted({i for i, edge in enumerate(edges) if edge["type"] == "RESOLVED_BY"
-                                  and edge["trusted"] and edge["source"] == cause}) for cause in by_cause]
+                                  and edge["trusted"] and (edge["source"], edge.get("record", "")) == cause}) for cause in by_cause]
             for group in groups:
                 pairs.append((relation, [edges[index] for index in group]))
                 keys.append((claim["claim_id"], relation["kind"], group))

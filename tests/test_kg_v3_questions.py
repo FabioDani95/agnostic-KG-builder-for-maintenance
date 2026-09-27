@@ -57,8 +57,8 @@ def test_the_kpi_judge_sees_a_derived_cause_unnamed_only_where_the_manual_names_
     edge = {"source_name": "No wire feed", "target_name": "Incorrect input voltage", "target_stated": False}
     unstated_gold = {"kind": "indicator", "left": "No wire feed", "right": ""}
     stated_gold = {"kind": "indicator", "left": "No wire feed", "right": "Wrong voltage"}
-    assert pair_line("P1", unstated_gold, [edge]).endswith("may indicate a cause the manual does not name")
-    assert pair_line("P1", stated_gold, [edge]).endswith("may indicate 'Incorrect input voltage'")
+    assert pair_line("P1", unstated_gold, [edge]).split(". Extracted context:")[0].endswith("may indicate a cause the manual does not name")
+    assert pair_line("P1", stated_gold, [edge]).split(". Extracted context:")[0].endswith("may indicate 'Incorrect input voltage'")
     # A cause presented as written in the manual keeps its name and is judged as such.
     claimed = {**edge, "target_stated": True}
-    assert pair_line("P1", unstated_gold, [claimed]).endswith("may indicate 'Incorrect input voltage'")
+    assert pair_line("P1", unstated_gold, [claimed]).split(". Extracted context:")[0].endswith("may indicate 'Incorrect input voltage'")
