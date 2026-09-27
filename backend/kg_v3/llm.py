@@ -107,7 +107,7 @@ class ModelClient:
         reasoning_effort: str | None = None,
     ) -> dict[str, Any]:
         from backend.services.llm_gateway import chat_reasoning_kwargs
-        from backend.services.run_metrics import usage_from_response
+        from backend.services.model_pricing import usage_from_response
 
         response_format = {"type": "json_schema", "json_schema": {"name": name, "strict": True, "schema": schema}}
         effort = reasoning_effort if reasoning_effort is not None else self.reasoning_effort

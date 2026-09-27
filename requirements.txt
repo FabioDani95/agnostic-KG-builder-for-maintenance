@@ -1,19 +1,8 @@
-# <0.130: starting with 0.130, include_router wraps routes in _IncludedRouter
-# and breaks the APIRoute introspection used by tests and tooling.
-fastapi<0.130
-uvicorn[standard]
-python-multipart
-# Native text-block boundaries changed between recent releases and directly
-# affect deterministic EvidenceUnit/window inventories.  Pin the runtime used
-# by the v9 campaign so replay digests are reproducible.
-pymupdf==1.27.1
-# Strict schema conversion/local parsing are isolated in llm_response_archive and llm_gateway.
-# Pin the tested adapter API; upgrades require replay tests.
-openai==2.54.0
-pydantic-settings
-pyyaml
-langgraph
-jsonschema
-networkx
-json-repair
-openpyxl>=3.1,<4
+# PDF reading. The segment IDs of every campaign gold (campaign/*/gold/TESTO.md)
+# depend on the reader version: change it only together with new gold IDs.
+pymupdf==1.28.0
+# Model calls through the archived, budgeted gateway; the campaign ran on this version.
+openai==2.44.0
+pydantic>=2.13,<3
+pydantic-settings>=2.14,<3
+pyyaml>=6

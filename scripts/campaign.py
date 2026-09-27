@@ -4,9 +4,10 @@
     new <id>            create campaign/<id>/ with info.yaml to fill in
     prepare <id>        read manual.pdf: write gold/TESTO.md and an empty gold/ANNOTAZIONE.md
     gold <id>           read gold/ANNOTAZIONE.md into gold/gold.json and report mistakes
-    run <id>            3 V3 runs (runs/v3_r1..r3) and the v22 baseline (runs/v22); skips done runs
+    run <id>            3 V3 runs (runs/v3_r1..r3); skips done runs
     kpi [ids]           protocol KPIs for annotated manuals -> campaign/results/kpi.json and kpi.md
-    precision [ids]     blind precision sheet (V3 run 1 and v22 mixed) -> campaign/results/precision/
+    precision [ids]     blind precision sheet (V3 run 1, mixed with the saved v22 graph where one exists)
+                        -> campaign/results/precision/
     precision --score   precision of the filled sheet
 
 The campaign has its own ledger, campaign/real_call_budget.jsonl, capped at 10 USD.
@@ -235,9 +236,6 @@ def cmd_run(args) -> None:
             continue
         subprocess.run([sys.executable, str(ROOT / "scripts/kg_v3.py"), "--manual", args.id, "--out", str(out),
                         "--gates", "agent", "--run-id", f"campaign_{args.id}_v3_r{number}"], check=True)
-    if not args.skip_v22 and not (runs / "v22" / "graph.json").exists():
-        subprocess.run([sys.executable, str(ROOT / "scripts/kg_v3_v22_baseline.py"), "--manual", args.id,
-                        "--out", str((runs / "v22").relative_to(ROOT))], check=False)
 
 
 def cmd_kpi(args) -> None:
@@ -292,7 +290,6 @@ def main() -> int:
     run = commands.add_parser("run")
     run.add_argument("id")
     run.add_argument("--reps", type=int, default=3)
-    run.add_argument("--skip-v22", action="store_true")
     run.add_argument("--without-gold", action="store_true", help="only for development checks")
     kpi = commands.add_parser("kpi")
     kpi.add_argument("ids", nargs="*")

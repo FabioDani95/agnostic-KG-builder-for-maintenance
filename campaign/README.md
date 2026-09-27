@@ -18,7 +18,7 @@ campaign/
     gold/ANNOTAZIONE.md        il gold, scritto a mano
     gold/gold.json             il gold letto dal foglio
     runs/v3_r1 … v3_r3/        grafo (graph.json), rapporto, domande per le persone
-    runs/v22/                  grafo della versione precedente, per confronto
+    runs/v22/                  grafo della v22 dove esiste (solo i sei manuali già eseguiti), per confronto
 ```
 
 ## Passi
@@ -30,7 +30,7 @@ campaign/
 | 3. Genera testo e foglio vuoto | Claude | `campaign.py prepare <id>` |
 | 4. Annota `gold/ANNOTAZIONE.md` guardando il PDF e `TESTO.md` | Fabio | — |
 | 5. Leggi il gold e controlla gli errori | Claude | `campaign.py gold <id>` |
-| 6. Esegui 3 volte la V3 e una volta la v22 | Claude | `campaign.py run <id>` |
+| 6. Esegui 3 volte la V3 | Claude | `campaign.py run <id>` |
 | 7. Calcola i KPI | Claude | `campaign.py kpi` |
 | 8. Revisione cieca della precisione | Fabio | `campaign.py precision`, poi `precision --score` |
 

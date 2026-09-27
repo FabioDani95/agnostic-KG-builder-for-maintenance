@@ -285,3 +285,9 @@ delle relazioni con nomi giudicati diversi, rimedi delle celle unite verificati 
 cause dedotte ammesse ma marcate come non scritte (scelta di Fabio). Sei manuali, tre esecuzioni:
 V3 da 682 a 732/900 rami (81,3%, IC95 0,787–0,837). Numeri di sviluppo: le correzioni derivano
 da tutti e sei i manuali. Spesa 2,196 USD su 10.
+
+Pulizia del codice (2026-09-27, richiesta di Fabio): rimossi la pipeline v22, l'applicazione web e
+il frontend; resta la sola pipeline V3 con gli strumenti della campagna. Ultimo commit con il
+codice precedente: tag `legacy-v22`. I grafi v22 già salvati nella campagna restano come confronto;
+non si possono più generare nuove esecuzioni v22 senza tornare a quel tag. Le versioni fissate in
+`requirements.txt` (PyMuPDF 1.28.0, openai 2.44.0) sono ora quelle usate per gold ed esecuzioni.

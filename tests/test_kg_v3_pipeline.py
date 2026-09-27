@@ -222,43 +222,6 @@ def test_truncated_answers_split_the_unit(doc):
         asyncio.run(llm.json(system="s", user="\n".join(["x"] * 9), schema={}, name="kg_v3_extract"))
 
 
-def test_application_builder_emits_a_valid_revision(tmp_path, monkeypatch):
-    from backend.kg_v3 import app_builder
-    from scripts.kg_v3 import synthetic_workspace
-
-    pdf = tmp_path / "manual.pdf"
-    troubleshooting_pdf(pdf)
-    workspace, source, _ = synthetic_workspace(pdf, ASSET)
-    evidence, page_count, _ = load_evidence(pdf, ASSET)
-    provider = ScriptedProvider()
-    monkeypatch.setenv("KG_PDF_GENERATOR", "v3")
-    monkeypatch.setattr(app_builder, "ModelClient",
-                        lambda **kwargs: ModelClient(client_factory=lambda: provider, **kwargs))
-    monkeypatch.setattr(app_builder, "run_config", lambda: RunConfig(
-        gates={"map": ["agent"], "doubts": ["agent", "human"], "approval": []}))
-    assert app_builder.kg_v3_enabled()
-
-    from backend.domain.sources import SourceKind
-
-    # In the application this is the operator's attestation of the asset identity.
-    attestation = evidence[0].model_copy(update={"evidence_id": "ev_operator_asset",
-                                                 "source_kind": SourceKind.OPERATOR_INPUT})
-    revision = asyncio.run(app_builder.V3PdfSubgraphBuilder().build_revision(
-        workspace=workspace, source=source, scope={"included_pages": [1]}, evidence=list(evidence),
-        fingerprint="0" * 64, config_hash=app_builder.kg_v3_config_hash(), supersedes=None,
-        operator_evidence=[attestation]))
-
-    assert revision.validation.passed, revision.validation.issues
-    assert revision.approval_eligible and revision.pipeline_version.startswith("kg-v3")
-    assert revision.review_queue == []  # the agent settled every doubt
-    resolved = [item for item in revision.relations if item.relation_type == "RESOLVED_BY"]
-    assert len(resolved) == 3 and all(item.attributes["tier"] == "green" for item in resolved)
-    assert all(ref.quote in ref.locator["quote"] for item in resolved for ref in item.evidence_refs)
-    assert resolved[0].attributes["certificates"][0]["segment_ids"]
-    asset = next(node for node in revision.nodes if node.node_type == "Asset")
-    assert asset.node_id == workspace.asset.asset_id and asset.evidence_ids == ["ev_operator_asset"]
-
-
 def test_oversized_readings_stop_before_spending(doc, tmp_path):
     run, _ = pipeline(doc, ScriptedProvider(), tmp_path / "run", max_units=0)
     with pytest.raises(ValueError, match="max_units"):

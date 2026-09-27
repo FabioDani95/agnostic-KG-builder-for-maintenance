@@ -20,7 +20,7 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any, Callable, Iterator, Mapping
 
-from backend.services.run_metrics import pricing_for_model
+from backend.services.model_pricing import pricing_for_model
 
 _SCHEMA_VERSION = 1
 _MONEY_QUANTUM = Decimal("0.000000000001")

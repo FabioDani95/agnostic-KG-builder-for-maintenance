@@ -4,7 +4,7 @@ Stato: **implementato (2026-09-26)**. Le sei stazioni, i tre cancelli, lo stato
 salvato, la CLI e il builder per l'applicazione sono in [backend/kg_v3](../backend/kg_v3/);
 `kg_v3.pdf_generator: v3` in `config.yaml` lo rende il generatore PDF del workspace.
 Risultati sui quattro manuali di sviluppo in [V3_RISULTATI_SVILUPPO.md](V3_RISULTATI_SVILUPPO.md).
-Restano: API per rispondere alle domande dall'interfaccia, nuova interfaccia, rimozione della v22.
+La v22, l'applicazione web e la vecchia interfaccia sono state rimosse il 2026-09-27 (tag `legacy-v22`). Restano: API per rispondere alle domande e nuova interfaccia.
 
 ## 1. Perché cambiare
 
@@ -222,7 +222,6 @@ Nuovo pacchetto `backend/kg_v3/`, moduli piccoli e senza framework di orchestraz
 | `llm.py` | adattatore unico sul gateway con archivio, budget, nuovi tentativi |
 | `run.py` | esecuzione con stato salvato, stazioni e cancelli |
 | `export.py` | export JSON per l'agente a valle |
-| `app_builder.py` | `SourceSubgraphRevision` per il workspace, stesso contratto della v22 |
 
 Strumenti:
 
@@ -267,7 +266,7 @@ Stato: passi 0–8 fatti, tranne le API per rispondere dall'interfaccia (passo 6
    tabelle diagnostiche usata o spiegata, domande per la persona entro il budget,
    meno di 10 minuti e 0,25 USD per un manuale di circa 230 pagine. Sono obiettivi,
    non risultati: se mancano si riporta e si analizza senza togliere controlli.
-9. Rimozione del codice v22, con OK.
+9. Rimozione del codice v22, con OK: fatta il 2026-09-27 (tag `legacy-v22`).
 
 Dopo ogni passo: ruff e test verdi, rapporto breve dei risultati, anche negativi.
 

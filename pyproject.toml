@@ -1,9 +1,9 @@
 [project]
 name = "agnostic-kg-builder-for-maintenance"
 version = "0.1.0"
-description = "Agentic neurosymbolic knowledge-graph builder for maintenance diagnostics"
+description = "Evidence-bound maintenance knowledge graphs from PDF manuals (V3 pipeline)"
 requires-python = ">=3.12"
-# Runtime dependencies are managed in requirements.txt (installed by run.sh).
+# Runtime dependencies are managed in requirements.txt.
 dynamic = ["dependencies"]
 
 [tool.setuptools]
@@ -13,9 +13,8 @@ packages = []
 [tool.ruff]
 line-length = 120
 target-version = "py312"
-# Frozen experiment programs are evidence, not active source to reformat.
-# Runtime, maintained runners and tests remain covered by `ruff check .`.
-extend-exclude = ["node_modules", "output", "output_e2e", "runs_e2e", "batch_runs", "benchmark_runs", "eval_runs", "data", "manuals", "artifacts/acceptance", "paper/experiments"]
+# Frozen experiment programs under paper/ are evidence, not active source to reformat.
+extend-exclude = ["eval_runs", "data", "paper/experiments"]
 
 [tool.ruff.lint]
 # F: pyflakes (dead imports/variables, undefined names)
