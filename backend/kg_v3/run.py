@@ -74,6 +74,8 @@ class RunConfig(BaseModel):
     wait_for_map: bool = False
     # Stop with a clear error instead of spending on an unexpectedly large reading.
     max_units: int = 150
+    omission_review: bool = False
+    omission_max_units: int = 3
 
 
 class GateRecord(BaseModel):
@@ -253,6 +255,17 @@ class Pipeline:
             relations = await self._timed("check", checker.check(self.doc, proposals))
             self._save(f"checked_{stamp}", [item.model_dump(mode="json") for item in relations])
 
+        if self.config.omission_review:
+            from backend.kg_v3.omissions import review_omissions
+
+            saved = self._load(f"omissions_{stamp}")
+            if saved is None:
+                added, attempted = await self._timed("omissions", review_omissions(
+                    self.llm, self.doc, units, relations, self.spec, limit=self.config.omission_max_units))
+                saved = {"attempted_units": attempted, "relations": [r.model_dump(mode="json") for r in added]}
+                self._save(f"omissions_{stamp}", saved)
+            relations.extend(CheckedRelation.model_validate(r) for r in saved["relations"])
+
         saved = self._load(f"merge_plan_{stamp}")
         if saved is not None:
             plan = MergePlan.model_validate(saved)
@@ -369,6 +382,8 @@ class Pipeline:
             "units": len(units),
             "failed_reads": sum(item.failed_reads for item in extractions),
             "proposals": sum(len(item.proposals) for item in extractions),
+            "omission_review_enabled": self.config.omission_review,
+            "omission_relations": sum(r.assertion.assertion_id.startswith("omission.") for r in relations),
             "unresolved_references": list({(ref["segment_id"], ref["reference"]): ref
                                            for item in extractions for ref in item.unresolved_references}.values()),
             "unclear_passages": sum(len(item.unclear) for item in extractions),
