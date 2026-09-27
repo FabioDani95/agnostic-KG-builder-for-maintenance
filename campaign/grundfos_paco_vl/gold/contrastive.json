@@ -1,0 +1,73 @@
+{
+  "status": "candidates_for_Fabio_review",
+  "threshold": 0.72,
+  "note": "Lexical neighbours are not necessarily semantically different. Set review to keep/drop after checking the PDF.",
+  "pairs": [
+    {
+      "id": "C1",
+      "type": "FailureMode",
+      "left": {
+        "name": "Total head of installation (back pressure) higher than rated total head of the pump.",
+        "claim_ids": [
+          "R14.1",
+          "R62.1",
+          "R134.1"
+        ]
+      },
+      "right": {
+        "name": "Total head of installation (back pressure) lower than rated total head of the pump.",
+        "claim_ids": [
+          "R72.1",
+          "R78.1",
+          "R110.1",
+          "R135.1"
+        ]
+      },
+      "lexical_similarity": 0.9565,
+      "review": "pending"
+    },
+    {
+      "id": "C2",
+      "type": "FailureMode",
+      "left": {
+        "name": "Viscosity of fluid pumped differs from that specified when the pump was purchased.",
+        "claim_ids": [
+          "R63.1",
+          "R73.1",
+          "R79.1",
+          "R112.1"
+        ]
+      },
+      "right": {
+        "name": "Density of fluid pumped differs from that specified when the pump was purchased.",
+        "claim_ids": [
+          "R111.1"
+        ]
+      },
+      "lexical_similarity": 0.95,
+      "review": "pending"
+    },
+    {
+      "id": "C3",
+      "type": "FailureMode",
+      "left": {
+        "name": "Pump drive rotational speed too low.",
+        "claim_ids": [
+          "R12.1",
+          "R60.1",
+          "R76.1"
+        ]
+      },
+      "right": {
+        "name": "Pump drive rotational speed too high.",
+        "claim_ids": [
+          "R71.1",
+          "R108.1",
+          "R133.1"
+        ]
+      },
+      "lexical_similarity": 0.9014,
+      "review": "pending"
+    }
+  ]
+}

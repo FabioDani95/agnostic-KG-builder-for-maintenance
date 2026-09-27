@@ -1,0 +1,743 @@
+{
+  "status": "candidates_for_Fabio_review",
+  "threshold": 0.72,
+  "note": "Lexical neighbours are not necessarily semantically different. Set review to keep/drop after checking the PDF.",
+  "pairs": [
+    {
+      "id": "C1",
+      "type": "FailureMode",
+      "left": {
+        "name": "Air pressure to the machine is too low to reliably operate pneumatic systems.",
+        "claim_ids": [
+          "R38.1"
+        ]
+      },
+      "right": {
+        "name": "Air pressure to the machine is too high to reliably operate pneumatic systems.",
+        "claim_ids": [
+          "R40.1",
+          "R40.2"
+        ]
+      },
+      "lexical_similarity": 0.9542,
+      "review": "pending"
+    },
+    {
+      "id": "C2",
+      "type": "FailureMode",
+      "left": {
+        "name": "Air pressure to the machine is too low to operate pneumatic systems.",
+        "claim_ids": [
+          "R39.1"
+        ]
+      },
+      "right": {
+        "name": "Air pressure to the machine is too high to operate pneumatic systems.",
+        "claim_ids": [
+          "R41.1"
+        ]
+      },
+      "lexical_similarity": 0.9481,
+      "review": "pending"
+    },
+    {
+      "id": "C3",
+      "type": "FailureMode",
+      "left": {
+        "name": "The PFDM detects incoming voltage that is too low to operate.",
+        "claim_ids": [
+          "R33.1"
+        ]
+      },
+      "right": {
+        "name": "The PFDM detects incoming voltage that is too high to operate.",
+        "claim_ids": [
+          "R35.1"
+        ]
+      },
+      "lexical_similarity": 0.9421,
+      "review": "pending"
+    },
+    {
+      "id": "C4",
+      "type": "FailureMode",
+      "left": {
+        "name": "Air pressure to the machine is too high to reliably operate pneumatic systems.",
+        "claim_ids": [
+          "R40.1",
+          "R40.2"
+        ]
+      },
+      "right": {
+        "name": "Air pressure to the machine is too high to operate pneumatic systems.",
+        "claim_ids": [
+          "R41.1"
+        ]
+      },
+      "lexical_similarity": 0.9379,
+      "review": "pending"
+    },
+    {
+      "id": "C5",
+      "type": "FailureMode",
+      "left": {
+        "name": "Air pressure to the machine is too low to reliably operate pneumatic systems.",
+        "claim_ids": [
+          "R38.1"
+        ]
+      },
+      "right": {
+        "name": "Air pressure to the machine is too low to operate pneumatic systems.",
+        "claim_ids": [
+          "R39.1"
+        ]
+      },
+      "lexical_similarity": 0.9371,
+      "review": "pending"
+    },
+    {
+      "id": "C6",
+      "type": "Symptom",
+      "left": {
+        "name": "Check that the tool probe operates correctly.",
+        "claim_ids": [
+          "R4.1",
+          "R4.2",
+          "R4.3"
+        ]
+      },
+      "right": {
+        "name": "Check that the work probe operates correctly.",
+        "claim_ids": [
+          "R5.1",
+          "R5.2",
+          "R5.3",
+          "R5.4",
+          "R5.5"
+        ]
+      },
+      "lexical_similarity": 0.9318,
+      "review": "pending"
+    },
+    {
+      "id": "C7",
+      "type": "Symptom",
+      "left": {
+        "name": "Air pressure to the machine is too low to reliably operate pneumatic systems (Low Air warning).",
+        "claim_ids": [
+          "R38.1"
+        ]
+      },
+      "right": {
+        "name": "Air pressure to the machine is too high to reliably operate pneumatic systems (High Air warning).",
+        "claim_ids": [
+          "R40.1",
+          "R40.2"
+        ]
+      },
+      "lexical_similarity": 0.9247,
+      "review": "pending"
+    },
+    {
+      "id": "C8",
+      "type": "Symptom",
+      "left": {
+        "name": "Air pressure is too low to operate pneumatic systems (Low Air alarm).",
+        "claim_ids": [
+          "R39.1"
+        ]
+      },
+      "right": {
+        "name": "Air pressure is too high to operate pneumatic systems (High Air alarm).",
+        "claim_ids": [
+          "R41.1"
+        ]
+      },
+      "lexical_similarity": 0.8955,
+      "review": "pending"
+    },
+    {
+      "id": "C9",
+      "type": "FailureMode",
+      "left": {
+        "name": "Air pressure to the machine is too low to operate pneumatic systems.",
+        "claim_ids": [
+          "R39.1"
+        ]
+      },
+      "right": {
+        "name": "Air pressure to the machine is too high to reliably operate pneumatic systems.",
+        "claim_ids": [
+          "R40.1",
+          "R40.2"
+        ]
+      },
+      "lexical_similarity": 0.8889,
+      "review": "pending"
+    },
+    {
+      "id": "C10",
+      "type": "FailureMode",
+      "left": {
+        "name": "Air pressure to the machine is too low to reliably operate pneumatic systems.",
+        "claim_ids": [
+          "R38.1"
+        ]
+      },
+      "right": {
+        "name": "Air pressure to the machine is too high to operate pneumatic systems.",
+        "claim_ids": [
+          "R41.1"
+        ]
+      },
+      "lexical_similarity": 0.8889,
+      "review": "pending"
+    },
+    {
+      "id": "C11",
+      "type": "FailureMode",
+      "left": {
+        "name": "The Emergency Stop on the pallet changer has been pressed.",
+        "claim_ids": [
+          "R43.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the tool changer cage has been pressed.",
+        "claim_ids": [
+          "R44.1"
+        ]
+      },
+      "lexical_similarity": 0.8889,
+      "review": "pending"
+    },
+    {
+      "id": "C12",
+      "type": "Symptom",
+      "left": {
+        "name": "The Emergency Stop on the pallet changer has been pressed.",
+        "claim_ids": [
+          "R43.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the tool changer cage has been pressed.",
+        "claim_ids": [
+          "R44.1"
+        ]
+      },
+      "lexical_similarity": 0.8889,
+      "review": "pending"
+    },
+    {
+      "id": "C13",
+      "type": "FailureMode",
+      "left": {
+        "name": "The Emergency Stop on the pendant has been pressed.",
+        "claim_ids": [
+          "R42.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the pallet changer has been pressed.",
+        "claim_ids": [
+          "R43.1"
+        ]
+      },
+      "lexical_similarity": 0.8785,
+      "review": "pending"
+    },
+    {
+      "id": "C14",
+      "type": "Symptom",
+      "left": {
+        "name": "The Emergency Stop on the pendant has been pressed.",
+        "claim_ids": [
+          "R42.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the pallet changer has been pressed.",
+        "claim_ids": [
+          "R43.1"
+        ]
+      },
+      "lexical_similarity": 0.8785,
+      "review": "pending"
+    },
+    {
+      "id": "C15",
+      "type": "FailureMode",
+      "left": {
+        "name": "The Emergency Stop on the pendant has been pressed.",
+        "claim_ids": [
+          "R42.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the RJH-XL has been pressed.",
+        "claim_ids": [
+          "R46.1"
+        ]
+      },
+      "lexical_similarity": 0.8687,
+      "review": "pending"
+    },
+    {
+      "id": "C16",
+      "type": "Symptom",
+      "left": {
+        "name": "The Emergency Stop on the pendant has been pressed.",
+        "claim_ids": [
+          "R42.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the RJH-XL has been pressed.",
+        "claim_ids": [
+          "R46.1"
+        ]
+      },
+      "lexical_similarity": 0.8687,
+      "review": "pending"
+    },
+    {
+      "id": "C17",
+      "type": "Symptom",
+      "left": {
+        "name": "The PulseJet oil level is low.",
+        "claim_ids": [
+          "R23.1"
+        ]
+      },
+      "right": {
+        "name": "The HPU oil level is low.",
+        "claim_ids": [
+          "R25.1",
+          "R25.2"
+        ]
+      },
+      "lexical_similarity": 0.8679,
+      "review": "pending"
+    },
+    {
+      "id": "C18",
+      "type": "FailureMode",
+      "left": {
+        "name": "The Emergency Stop on the auxiliary device has been pressed.",
+        "claim_ids": [
+          "R45.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the RJH-XL has been pressed.",
+        "claim_ids": [
+          "R46.1"
+        ]
+      },
+      "lexical_similarity": 0.8333,
+      "review": "pending"
+    },
+    {
+      "id": "C19",
+      "type": "Symptom",
+      "left": {
+        "name": "The Emergency Stop on the auxiliary device has been pressed.",
+        "claim_ids": [
+          "R45.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the RJH-XL has been pressed.",
+        "claim_ids": [
+          "R46.1"
+        ]
+      },
+      "lexical_similarity": 0.8333,
+      "review": "pending"
+    },
+    {
+      "id": "C20",
+      "type": "FailureMode",
+      "left": {
+        "name": "The Emergency Stop on the pallet changer has been pressed.",
+        "claim_ids": [
+          "R43.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the RJH-XL has been pressed.",
+        "claim_ids": [
+          "R46.1"
+        ]
+      },
+      "lexical_similarity": 0.8302,
+      "review": "pending"
+    },
+    {
+      "id": "C21",
+      "type": "Symptom",
+      "left": {
+        "name": "The Emergency Stop on the pallet changer has been pressed.",
+        "claim_ids": [
+          "R43.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the RJH-XL has been pressed.",
+        "claim_ids": [
+          "R46.1"
+        ]
+      },
+      "lexical_similarity": 0.8302,
+      "review": "pending"
+    },
+    {
+      "id": "C22",
+      "type": "FailureMode",
+      "left": {
+        "name": "The Emergency Stop on the pallet changer has been pressed.",
+        "claim_ids": [
+          "R43.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the auxiliary device has been pressed.",
+        "claim_ids": [
+          "R45.1"
+        ]
+      },
+      "lexical_similarity": 0.8276,
+      "review": "pending"
+    },
+    {
+      "id": "C23",
+      "type": "Symptom",
+      "left": {
+        "name": "The Emergency Stop on the pallet changer has been pressed.",
+        "claim_ids": [
+          "R43.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the auxiliary device has been pressed.",
+        "claim_ids": [
+          "R45.1"
+        ]
+      },
+      "lexical_similarity": 0.8276,
+      "review": "pending"
+    },
+    {
+      "id": "C24",
+      "type": "FailureMode",
+      "left": {
+        "name": "The Emergency Stop on the pendant has been pressed.",
+        "claim_ids": [
+          "R42.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the tool changer cage has been pressed.",
+        "claim_ids": [
+          "R44.1"
+        ]
+      },
+      "lexical_similarity": 0.8182,
+      "review": "pending"
+    },
+    {
+      "id": "C25",
+      "type": "Symptom",
+      "left": {
+        "name": "The Emergency Stop on the pendant has been pressed.",
+        "claim_ids": [
+          "R42.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the tool changer cage has been pressed.",
+        "claim_ids": [
+          "R44.1"
+        ]
+      },
+      "lexical_similarity": 0.8182,
+      "review": "pending"
+    },
+    {
+      "id": "C26",
+      "type": "FailureMode",
+      "left": {
+        "name": "The electronics remain in the overheat state too long.",
+        "claim_ids": [
+          "R29.1"
+        ]
+      },
+      "right": {
+        "name": "The transformer remains in the overheat state for too long.",
+        "claim_ids": [
+          "R31.1"
+        ]
+      },
+      "lexical_similarity": 0.8108,
+      "review": "pending"
+    },
+    {
+      "id": "C27",
+      "type": "FailureMode",
+      "left": {
+        "name": "The Emergency Stop on the pendant has been pressed.",
+        "claim_ids": [
+          "R42.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the auxiliary device has been pressed.",
+        "claim_ids": [
+          "R45.1"
+        ]
+      },
+      "lexical_similarity": 0.8073,
+      "review": "pending"
+    },
+    {
+      "id": "C28",
+      "type": "FailureMode",
+      "left": {
+        "name": "The Emergency Stop on the tool changer cage has been pressed.",
+        "claim_ids": [
+          "R44.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the RJH-XL has been pressed.",
+        "claim_ids": [
+          "R46.1"
+        ]
+      },
+      "lexical_similarity": 0.8073,
+      "review": "pending"
+    },
+    {
+      "id": "C29",
+      "type": "Symptom",
+      "left": {
+        "name": "The Emergency Stop on the pendant has been pressed.",
+        "claim_ids": [
+          "R42.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the auxiliary device has been pressed.",
+        "claim_ids": [
+          "R45.1"
+        ]
+      },
+      "lexical_similarity": 0.8073,
+      "review": "pending"
+    },
+    {
+      "id": "C30",
+      "type": "Symptom",
+      "left": {
+        "name": "The Emergency Stop on the tool changer cage has been pressed.",
+        "claim_ids": [
+          "R44.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the RJH-XL has been pressed.",
+        "claim_ids": [
+          "R46.1"
+        ]
+      },
+      "lexical_similarity": 0.8073,
+      "review": "pending"
+    },
+    {
+      "id": "C31",
+      "type": "Symptom",
+      "left": {
+        "name": "Air pressure to the machine is too high to reliably operate pneumatic systems (High Air warning).",
+        "claim_ids": [
+          "R40.1",
+          "R40.2"
+        ]
+      },
+      "right": {
+        "name": "Air pressure is too high to operate pneumatic systems (High Air alarm).",
+        "claim_ids": [
+          "R41.1"
+        ]
+      },
+      "lexical_similarity": 0.8025,
+      "review": "pending"
+    },
+    {
+      "id": "C32",
+      "type": "Symptom",
+      "left": {
+        "name": "The coolant concentrate level is low.",
+        "claim_ids": [
+          "R15.1"
+        ]
+      },
+      "right": {
+        "name": "The coolant level is low.",
+        "claim_ids": [
+          "R22.1"
+        ]
+      },
+      "lexical_similarity": 0.8,
+      "review": "pending"
+    },
+    {
+      "id": "C33",
+      "type": "Symptom",
+      "left": {
+        "name": "Air pressure to the machine is too low to reliably operate pneumatic systems (Low Air warning).",
+        "claim_ids": [
+          "R38.1"
+        ]
+      },
+      "right": {
+        "name": "Air pressure is too low to operate pneumatic systems (Low Air alarm).",
+        "claim_ids": [
+          "R39.1"
+        ]
+      },
+      "lexical_similarity": 0.7975,
+      "review": "pending"
+    },
+    {
+      "id": "C34",
+      "type": "Symptom",
+      "left": {
+        "name": "The coolant level is low.",
+        "claim_ids": [
+          "R22.1"
+        ]
+      },
+      "right": {
+        "name": "The HPU oil level is low.",
+        "claim_ids": [
+          "R25.1",
+          "R25.2"
+        ]
+      },
+      "lexical_similarity": 0.7917,
+      "review": "pending"
+    },
+    {
+      "id": "C35",
+      "type": "FailureMode",
+      "left": {
+        "name": "The Emergency Stop on the tool changer cage has been pressed.",
+        "claim_ids": [
+          "R44.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the auxiliary device has been pressed.",
+        "claim_ids": [
+          "R45.1"
+        ]
+      },
+      "lexical_similarity": 0.7899,
+      "review": "pending"
+    },
+    {
+      "id": "C36",
+      "type": "Symptom",
+      "left": {
+        "name": "The Emergency Stop on the tool changer cage has been pressed.",
+        "claim_ids": [
+          "R44.1"
+        ]
+      },
+      "right": {
+        "name": "The Emergency Stop on the auxiliary device has been pressed.",
+        "claim_ids": [
+          "R45.1"
+        ]
+      },
+      "lexical_similarity": 0.7899,
+      "review": "pending"
+    },
+    {
+      "id": "C37",
+      "type": "FailureMode",
+      "left": {
+        "name": "PulseJet oil level is low.",
+        "claim_ids": [
+          "R23.1"
+        ]
+      },
+      "right": {
+        "name": "The HPU oil level is low.",
+        "claim_ids": [
+          "R25.1",
+          "R25.2"
+        ]
+      },
+      "lexical_similarity": 0.7755,
+      "review": "pending"
+    },
+    {
+      "id": "C38",
+      "type": "Symptom",
+      "left": {
+        "name": "Incoming voltage is low (Low Voltage warning).",
+        "claim_ids": [
+          "R32.1"
+        ]
+      },
+      "right": {
+        "name": "Incoming voltage is too low to operate (Low Voltage alarm).",
+        "claim_ids": [
+          "R33.1"
+        ]
+      },
+      "lexical_similarity": 0.7677,
+      "review": "pending"
+    },
+    {
+      "id": "C39",
+      "type": "FailureMode",
+      "left": {
+        "name": "The rotary brake oil level is low.",
+        "claim_ids": [
+          "R19.1"
+        ]
+      },
+      "right": {
+        "name": "The HPU oil level is low.",
+        "claim_ids": [
+          "R25.1",
+          "R25.2"
+        ]
+      },
+      "lexical_similarity": 0.7368,
+      "review": "pending"
+    },
+    {
+      "id": "C40",
+      "type": "Symptom",
+      "left": {
+        "name": "The rotary brake oil level is low.",
+        "claim_ids": [
+          "R19.1"
+        ]
+      },
+      "right": {
+        "name": "The HPU oil level is low.",
+        "claim_ids": [
+          "R25.1",
+          "R25.2"
+        ]
+      },
+      "lexical_similarity": 0.7368,
+      "review": "pending"
+    }
+  ]
+}

@@ -301,10 +301,20 @@ async def score_system(llm, claims: list[dict], edges: list[dict]) -> dict:
             return bool(causes)
         return any(edges[index]["source"] in causes for index in table[(claim["claim_id"], "action")])
 
+    witnesses = {}
+    for claim in claims:
+        cid = claim["claim_id"]
+        causes = {edges[i]["target"] for i in same[(cid, "indicator")]}
+        if claim.get("action"):
+            causes &= {edges[i]["source"] for i in same[(cid, "action")]}
+        witnesses[cid] = {"FailureMode": sorted(causes), "Symptom": sorted({
+            edges[i]["source"] for i in same[(cid, "indicator")] if edges[i]["target"] in causes})}
+
     matched = [(relation, edge) for (_, _, group), verdict, (relation, group_edges) in zip(keys, verdicts, pairs)
                if verdict for edge in group_edges]
     return {
         "judged_pairs": len(pairs),
+        "matched_nodes_with_own_actions": witnesses,
         # Of the relations judged right, the share citing where the gold says the fact is written.
         "evidence_on_gold_segments": round(sum(bool(edge["segments"] & relation["segments"])
                                                for relation, edge in matched) / len(matched), 3) if matched else None,

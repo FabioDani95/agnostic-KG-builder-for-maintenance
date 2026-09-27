@@ -26,6 +26,7 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.kg_v3 import DEFAULT_BUDGET, DEFAULT_LEDGER, load_evidence, manual_source  # noqa: E402
 from scripts.kg_v3_compare import token_f1  # noqa: E402
+from scripts.kg_v3_contrastive import score_contrasts, write_candidates  # noqa: E402
 from scripts.kg_v3_evaluate import score_system, v3_edges, v22_edges_from  # noqa: E402
 
 CAMPAIGN = ROOT / "campaign"
@@ -69,7 +70,7 @@ def v3_run_facts(run: Path) -> dict:
     }
 
 
-async def evaluate(manuals: list[str], runs_root: Path) -> dict:
+async def evaluate(manuals: list[str], runs_root: Path, runs_name: str = "runs") -> dict:
     from backend.kg_v3.llm import ModelClient
     from backend.kg_v3.reader import read_document
 
@@ -84,13 +85,17 @@ async def evaluate(manuals: list[str], runs_root: Path) -> dict:
         # A gold re-linked from another reading of the PDF is valid for positions only once verified.
         gold_dir = CAMPAIGN / manual / "gold"
         positions_valid = not (gold_dir / "remap_ids.json").exists() or (gold_dir / "remap_ids_verified.json").exists()
-        pdf, asset = manual_source(manual)
-        evidence, page_count, _ = load_evidence(pdf, asset)
-        doc = read_document(list(evidence), page_count=page_count)
+        folder = runs_root / manual / runs_name
+        if not folder.exists():
+            folder = runs_root / manual
+        if (folder / "v22/graph.json").exists():
+            pdf, asset = manual_source(manual)
+            evidence, page_count, _ = load_evidence(pdf, asset)
+            doc = read_document(list(evidence), page_count=page_count)
+        contrasts = write_candidates(gold_dir / "contrastive.json", claims)
         branches = defaultdict(list)
         for claim in claims:
             branches[claim["branch_id"]].append(claim["claim_id"])
-        folder = runs_root / manual / "runs" if (runs_root / manual / "runs").exists() else runs_root / manual
         systems = {}
         for run in sorted(item for item in folder.iterdir() if item.is_dir()) if folder.exists() else []:
             if run.name == "v22" and (run / "graph.json").exists():
@@ -108,6 +113,9 @@ async def evaluate(manuals: list[str], runs_root: Path) -> dict:
             covered = sum(any(token_f1(claim["indicator"], name) >= 0.5 or (claim.get("code") and claim["code"] in name)
                               for name in names) for claim in indicator_only)
             row = {
+                **score_contrasts(contrasts, score["matched_nodes_with_own_actions"]),
+                "judged_pairs": score["judged_pairs"],
+                "matched_nodes_with_own_actions": score["matched_nodes_with_own_actions"],
                 "branch_recall": [branch_hits, len(branches)], "claim_recall": [len(found), len(claims)],
                 "code_coverage": [covered, len(indicator_only)],
                 "evidence_on_gold_segments": score["evidence_on_gold_segments"] if positions_valid else "not valid",
@@ -149,6 +157,10 @@ def markdown(results: dict) -> str:
             lines.append(f"| {manual} | {name} | {branch[0]}/{branch[1]} | {claim[0]}/{claim[1]} | {codes[0]}/{codes[1]} | "
                          f"{row['evidence_on_gold_segments']} | {mapping} | {row.get('person_questions', '-')} | "
                          f"{row.get('seconds', '-')} | {row.get('cost_usd', '-')} |")
+    lines += ["", "Coppie contrastive (provvisorie fino alla revisione di Fabio):", ""]
+    for manual, data in results["manuals"].items():
+        for name, row in data["systems"].items():
+            lines.append(f"- {manual} {name}: {row['contrastive_pairs_kept']}; {row['contrastive_status']}")
     for name, total in results["micro_branch_recall"].items():
         lines.append(f"\nRecall dei rami {name}: {total['value'][0]}/{total['value'][1]}, IC95 {total['wilson95']}")
     return "\n".join(lines) + "\n"
@@ -159,6 +171,7 @@ def main() -> int:
     parser.add_argument("--manuals", required=True, help="comma-separated manual IDs")
     parser.add_argument("--runs", required=True, help="folder with one sub-folder per manual")
     parser.add_argument("--out", required=True)
+    parser.add_argument("--runs-name", default="runs")
     parser.add_argument("--ledger", default=str(DEFAULT_LEDGER))
     parser.add_argument("--budget", default=DEFAULT_BUDGET)
     args = parser.parse_args()
@@ -169,7 +182,7 @@ def main() -> int:
                        "KG_REAL_CALL_PDF_ID": "evaluation",
                        "KG_LLM_TRACE_DIR": str(ROOT / "eval_runs/v3_kpi/provider")})
     results = asyncio.run(evaluate([item.strip() for item in args.manuals.split(",") if item.strip()],
-                                   (ROOT / args.runs).resolve()))
+                                   (ROOT / args.runs).resolve(), args.runs_name))
     out = ROOT / args.out
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(results, indent=1) + "\n")

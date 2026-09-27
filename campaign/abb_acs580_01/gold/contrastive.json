@@ -1,0 +1,59 @@
+{
+  "status": "candidates_for_Fabio_review",
+  "threshold": 0.72,
+  "note": "Lexical neighbours are not necessarily semantically different. Set review to keep/drop after checking the PDF.",
+  "pairs": [
+    {
+      "id": "C1",
+      "type": "FailureMode",
+      "left": {
+        "name": "The 1st channel of the STO circuit is opened during the failure-detection test.",
+        "claim_ids": [
+          "R19.1",
+          "R19.2",
+          "R19.3",
+          "R19.4",
+          "R19.5"
+        ]
+      },
+      "right": {
+        "name": "The 2nd channel of the STO circuit is opened during the failure-detection test.",
+        "claim_ids": [
+          "R20.1",
+          "R20.2",
+          "R20.3",
+          "R20.4",
+          "R20.5"
+        ]
+      },
+      "lexical_similarity": 0.9615,
+      "review": "pending"
+    },
+    {
+      "id": "C2",
+      "type": "Symptom",
+      "left": {
+        "name": "There is an active fault in the drive.",
+        "claim_ids": [
+          "R7.1",
+          "R7.2",
+          "R8.1",
+          "R14.1",
+          "R14.2",
+          "R16.1"
+        ]
+      },
+      "right": {
+        "name": "There is an active fault in another drive on the panel bus.",
+        "claim_ids": [
+          "R15.1",
+          "R15.2",
+          "R15.3",
+          "R15.4"
+        ]
+      },
+      "lexical_similarity": 0.7789,
+      "review": "pending"
+    }
+  ]
+}

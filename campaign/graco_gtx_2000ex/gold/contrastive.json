@@ -1,0 +1,95 @@
+{
+  "status": "candidates_for_Fabio_review",
+  "threshold": 0.72,
+  "note": "Lexical neighbours are not necessarily semantically different. Set review to keep/drop after checking the PDF.",
+  "pairs": [
+    {
+      "id": "C1",
+      "type": "FailureMode",
+      "left": {
+        "name": "Material too thick.",
+        "claim_ids": [
+          "R2.1",
+          "R2.2",
+          "R10.1",
+          "R10.2",
+          "R17.1",
+          "R17.2"
+        ]
+      },
+      "right": {
+        "name": "Material too thin.",
+        "claim_ids": [
+          "R14.1",
+          "R14.2"
+        ]
+      },
+      "lexical_similarity": 0.9143,
+      "review": "pending"
+    },
+    {
+      "id": "C2",
+      "type": "FailureMode",
+      "left": {
+        "name": "Air pressure at gun too high.",
+        "claim_ids": [
+          "R15.1"
+        ]
+      },
+      "right": {
+        "name": "Air pressure at gun too low.",
+        "claim_ids": [
+          "R18.1"
+        ]
+      },
+      "lexical_similarity": 0.8727,
+      "review": "pending"
+    },
+    {
+      "id": "C3",
+      "type": "FailureMode",
+      "left": {
+        "name": "Fluid delivery too low.",
+        "claim_ids": [
+          "R16.1",
+          "R16.2",
+          "R16.3",
+          "R16.4"
+        ]
+      },
+      "right": {
+        "name": "Fluid delivery too high.",
+        "claim_ids": [
+          "R19.1",
+          "R19.2",
+          "R19.3",
+          "R19.4"
+        ]
+      },
+      "lexical_similarity": 0.8444,
+      "review": "pending"
+    },
+    {
+      "id": "C4",
+      "type": "FailureMode",
+      "left": {
+        "name": "Plugged hose, or hose too small.",
+        "claim_ids": [
+          "R5.1",
+          "R5.2",
+          "R5.3"
+        ]
+      },
+      "right": {
+        "name": "Hose plugged or too small.",
+        "claim_ids": [
+          "R12.1",
+          "R12.2",
+          "R12.3"
+        ]
+      },
+      "lexical_similarity": 0.7273,
+      "review": "pending"
+    }
+  ]
+}
