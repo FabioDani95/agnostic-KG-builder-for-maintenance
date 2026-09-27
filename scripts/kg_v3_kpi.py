@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from scripts.kg_v3 import DEFAULT_BUDGET, DEFAULT_LEDGER, load_evidence, manual_source  # noqa: E402
+from scripts.kg_v3_compare import token_f1  # noqa: E402
 from scripts.kg_v3_evaluate import score_system, v3_edges, v22_edges_from  # noqa: E402
 
 CAMPAIGN = ROOT / "campaign"
@@ -71,6 +72,11 @@ async def evaluate(manuals: list[str], runs_root: Path) -> dict:
     results: dict = {"manuals": {}}
     for manual in manuals:
         claims, gold_pages = load_gold(manual)
+        # A branch with neither cause nor action only defines a code or indication: it is
+        # measured as code coverage, not as a diagnostic chain.
+        indicator_only = [claim for claim in claims if not claim.get("failure") and not claim.get("action")]
+        claims = [claim for claim in claims if claim not in indicator_only]
+        positions_valid = not (CAMPAIGN / manual / "gold" / "remap_ids.json").exists()
         pdf, asset = manual_source(manual)
         evidence, page_count, _ = load_evidence(pdf, asset)
         doc = read_document(list(evidence), page_count=page_count)
@@ -91,9 +97,13 @@ async def evaluate(manuals: list[str], runs_root: Path) -> dict:
             score = await score_system(llm, claims, edges)
             found = set(score["recovered_meaning"])
             branch_hits = sum(all(claim in found for claim in members) for members in branches.values())
+            names = [" ".join([edge["source_name"], edge["target_name"]]) for edge in edges]
+            covered = sum(any(token_f1(claim["indicator"], name) >= 0.5 or (claim.get("code") and claim["code"] in name)
+                              for name in names) for claim in indicator_only)
             row = {
                 "branch_recall": [branch_hits, len(branches)], "claim_recall": [len(found), len(claims)],
-                "evidence_on_gold_segments": score["evidence_on_gold_segments"],
+                "code_coverage": [covered, len(indicator_only)],
+                "evidence_on_gold_segments": score["evidence_on_gold_segments"] if positions_valid else "not valid",
                 "missing_claims": sorted(set(claim["claim_id"] for claim in claims) - found),
             }
             if name.startswith("v3_"):
@@ -122,13 +132,14 @@ async def evaluate(manuals: list[str], runs_root: Path) -> dict:
 
 
 def markdown(results: dict) -> str:
-    lines = ["| Manuale | Sistema | Rami | Asserzioni | Prove sul gold | Mappa | Domande a persona | Secondi | USD |",
-             "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
+    lines = ["| Manuale | Sistema | Rami | Asserzioni | Codici | Prove sul gold | Mappa | Domande a persona | Secondi | USD |",
+             "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
     for manual, data in results["manuals"].items():
         for name, row in data["systems"].items():
             branch, claim = row["branch_recall"], row["claim_recall"]
             mapping = f"{row['map_coverage'][0]}/{row['map_coverage'][1]}" if "map_coverage" in row else "-"
-            lines.append(f"| {manual} | {name} | {branch[0]}/{branch[1]} | {claim[0]}/{claim[1]} | "
+            codes = row["code_coverage"]
+            lines.append(f"| {manual} | {name} | {branch[0]}/{branch[1]} | {claim[0]}/{claim[1]} | {codes[0]}/{codes[1]} | "
                          f"{row['evidence_on_gold_segments']} | {mapping} | {row.get('person_questions', '-')} | "
                          f"{row.get('seconds', '-')} | {row.get('cost_usd', '-')} |")
     for name, total in results["micro_branch_recall"].items():

@@ -1,0 +1,1328 @@
+{
+ "annotator": "Fabio Daniele",
+ "date": "2026-09-27",
+ "minutes": "circa 24",
+ "pages": [
+  32,
+  86,
+  141,
+  142,
+  143,
+  144,
+  145,
+  146,
+  160
+ ],
+ "branches": 51,
+ "claims": [
+  {
+   "branch_id": "R1",
+   "indicator": "The beacon light is flashing red.",
+   "code": "",
+   "failure": "A fault has occurred.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p32.t2.r5"
+   ],
+   "failure_segments": [
+    "p32.t2.r5"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "Flashing red beacon light.",
+   "claim_id": "R1.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R2",
+   "indicator": "The beacon light is flashing red.",
+   "code": "",
+   "failure": "The machine is in Emergency Stop.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p32.t2.r5"
+   ],
+   "failure_segments": [
+    "p32.t2.r5"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "Flashing red beacon light.",
+   "claim_id": "R2.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R3",
+   "indicator": "The umbrella tool changer is jammed.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p86.b3"
+   ],
+   "failure_segments": [],
+   "component": "umbrella tool changer",
+   "component_segments": [
+    "p86.b3"
+   ],
+   "conditions": "Do not put hands near the tool changer unless an alarm is displayed first.",
+   "claim_id": "R3.1",
+   "action": "Remove the cause of the jam.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p86.b5"
+   ]
+  },
+  {
+   "branch_id": "R3",
+   "indicator": "The umbrella tool changer is jammed.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p86.b3"
+   ],
+   "failure_segments": [],
+   "component": "umbrella tool changer",
+   "component_segments": [
+    "p86.b3"
+   ],
+   "conditions": "Do not put hands near the tool changer unless an alarm is displayed first.",
+   "claim_id": "R3.2",
+   "action": "Press RESET to clear the alarms.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p86.b6"
+   ]
+  },
+  {
+   "branch_id": "R3",
+   "indicator": "The umbrella tool changer is jammed.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p86.b3"
+   ],
+   "failure_segments": [],
+   "component": "umbrella tool changer",
+   "component_segments": [
+    "p86.b3"
+   ],
+   "conditions": "Do not put hands near the tool changer unless an alarm is displayed first.",
+   "claim_id": "R3.3",
+   "action": "Press RECOVER and follow the directions to reset the tool changer.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p86.b7"
+   ]
+  },
+  {
+   "branch_id": "R4",
+   "indicator": "Check that the tool probe operates correctly.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p160.b5"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The probe LED flashes green after activation; touching the stylus produces a beep and red LED; RESET turns the probe LED off.",
+   "claim_id": "R4.1",
+   "action": "In MDI mode, run M59 P2; G04 P1.0; M59 P3.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p160.b6",
+    "p160.b8",
+    "p160.b10",
+    "p160.b12"
+   ]
+  },
+  {
+   "branch_id": "R4",
+   "indicator": "Check that the tool probe operates correctly.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p160.b5"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The probe LED flashes green after activation; touching the stylus produces a beep and red LED; RESET turns the probe LED off.",
+   "claim_id": "R4.2",
+   "action": "Touch the tool-probe stylus.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p160.b7"
+   ]
+  },
+  {
+   "branch_id": "R4",
+   "indicator": "Check that the tool probe operates correctly.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p160.b5"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The probe LED flashes green after activation; touching the stylus produces a beep and red LED; RESET turns the probe LED off.",
+   "claim_id": "R4.3",
+   "action": "Press RESET to deactivate the probe.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p160.b18"
+   ]
+  },
+  {
+   "branch_id": "R5",
+   "indicator": "Check that the work probe operates correctly.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p160.b24"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The probe LED flashes green after activation; touching the stylus produces a beep and red LED; RESET turns the work-probe LED off.",
+   "claim_id": "R5.1",
+   "action": "Select the work probe with a tool change, or manually insert it into the spindle.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p160.b25"
+   ]
+  },
+  {
+   "branch_id": "R5",
+   "indicator": "Check that the work probe operates correctly.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p160.b24"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The probe LED flashes green after activation; touching the stylus produces a beep and red LED; RESET turns the work-probe LED off.",
+   "claim_id": "R5.2",
+   "action": "In MDI mode, run M69 P2 to start communication with the work probe.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p160.b29"
+   ]
+  },
+  {
+   "branch_id": "R5",
+   "indicator": "Check that the work probe operates correctly.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p160.b24"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The probe LED flashes green after activation; touching the stylus produces a beep and red LED; RESET turns the work-probe LED off.",
+   "claim_id": "R5.3",
+   "action": "In MDI mode, run M59 P3.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p160.b32"
+   ]
+  },
+  {
+   "branch_id": "R5",
+   "indicator": "Check that the work probe operates correctly.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p160.b24"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The probe LED flashes green after activation; touching the stylus produces a beep and red LED; RESET turns the work-probe LED off.",
+   "claim_id": "R5.4",
+   "action": "Touch the work-probe stylus.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p160.b26"
+   ]
+  },
+  {
+   "branch_id": "R5",
+   "indicator": "Check that the work probe operates correctly.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p160.b24"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The probe LED flashes green after activation; touching the stylus produces a beep and red LED; RESET turns the work-probe LED off.",
+   "claim_id": "R5.5",
+   "action": "Press RESET to deactivate the probe.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p160.b31"
+   ]
+  },
+  {
+   "branch_id": "R6",
+   "indicator": "The door has not yet been cycled after power-up, so the door sensor has not been confirmed to work.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p141.t1.r3"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The Cycle Door icon appears after [POWER UP] if the user has not yet cycled the door.",
+   "claim_id": "R6.1",
+   "action": "Cycle the door at least once.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p141.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R7",
+   "indicator": "The door is open.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p141.t1.r4"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "Door Open warning icon.",
+   "claim_id": "R7.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R8",
+   "indicator": "The pallet load station is open.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p141.t1.r5"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R8.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R9",
+   "indicator": "The light curtain is triggered.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p141.t1.r6"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The icon appears when the machine is idle or a program is running and the light curtain is triggered.",
+   "claim_id": "R9.1",
+   "action": "Remove the obstacle from the light-curtain line of sight.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p141.t1.r6"
+   ]
+  },
+  {
+   "branch_id": "R10",
+   "indicator": "The Light Curtain Hold icon appears while the light curtain is triggered during a running program.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p141.t1.r7"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "Program is running.",
+   "claim_id": "R10.1",
+   "action": "Press [CYCLE START] to clear the icon.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p141.t1.r7"
+   ]
+  },
+  {
+   "branch_id": "R11",
+   "indicator": "Low gearbox oil flow has persisted for one minute.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p142.t2.r1"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "Low gearbox oil flow persists for 1 minute.",
+   "claim_id": "R11.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R12",
+   "indicator": "The control detected a low gearbox oil level.",
+   "code": "",
+   "failure": "The control detected a low gearbox oil level.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p142.t2.r2"
+   ],
+   "failure_segments": [
+    "p142.t2.r2"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "In software version 100.19.000.1100 and higher, monitoring occurs when the spindle fan is off, after a delay.",
+   "claim_id": "R12.1",
+   "action": "Press [RESET] to clear the low gearbox oil icon.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p142.t2.r2"
+   ]
+  },
+  {
+   "branch_id": "R13",
+   "indicator": "The rotary table lubrication reservoir requires checking and filling.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p142.t2.r3"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R13.1",
+   "action": "Check the rotary-table lubrication oil reservoir.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p142.t2.r3"
+   ]
+  },
+  {
+   "branch_id": "R13",
+   "indicator": "The rotary table lubrication reservoir requires checking and filling.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p142.t2.r3"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R13.2",
+   "action": "Fill the reservoir.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p142.t2.r3"
+   ]
+  },
+  {
+   "branch_id": "R14",
+   "indicator": "The Through-Spindle Coolant or High-Pressure Flood Coolant filter is dirty.",
+   "code": "",
+   "failure": "The TSC/HPFC filter is dirty.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p142.t2.r4"
+   ],
+   "failure_segments": [
+    "p142.t2.r4"
+   ],
+   "component": "TSC/HPFC filter",
+   "component_segments": [
+    "p142.t2.r4"
+   ],
+   "conditions": "",
+   "claim_id": "R14.1",
+   "action": "Clean the filter.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p142.t2.r4"
+   ]
+  },
+  {
+   "branch_id": "R15",
+   "indicator": "The coolant concentrate level is low.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p142.t2.r5"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R15.1",
+   "action": "Fill the concentrate reservoir for the coolant refill system.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p142.t2.r5"
+   ]
+  },
+  {
+   "branch_id": "R16",
+   "indicator": "The system detects a low-oil condition in the PulseJet reservoir.",
+   "code": "",
+   "failure": "The PulseJet oil reservoir has a low-oil condition.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p142.t2.r6"
+   ],
+   "failure_segments": [
+    "p142.t2.r6"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R16.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R17",
+   "indicator": "The Low Lube icon appears.",
+   "code": "",
+   "failure": "The spindle lubrication oil system detected a low-oil condition.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p142.t2.r7"
+   ],
+   "failure_segments": [
+    "p142.t2.r7"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R17.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R18",
+   "indicator": "The Low Lube icon appears.",
+   "code": "",
+   "failure": "The axis ball-screw lubrication system detected low grease or low pressure.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p142.t2.r7"
+   ],
+   "failure_segments": [
+    "p142.t2.r7"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R18.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R19",
+   "indicator": "The rotary brake oil level is low.",
+   "code": "",
+   "failure": "The rotary brake oil level is low.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p143.t1.r1"
+   ],
+   "failure_segments": [
+    "p143.t1.r1"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R19.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R20",
+   "indicator": "Residual pressure is detected before a lubrication cycle.",
+   "code": "",
+   "failure": "An obstruction in the axes grease lubrication system can cause the residual pressure.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p143.t1.r2"
+   ],
+   "failure_segments": [
+    "p143.t1.r2"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "Detected by the grease pressure sensor before a lubrication cycle.",
+   "claim_id": "R20.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R21",
+   "indicator": "The mist extractor filter needs cleaning.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p143.t1.r3"
+   ],
+   "failure_segments": [],
+   "component": "mist extractor filter",
+   "component_segments": [
+    "p143.t1.r3"
+   ],
+   "conditions": "",
+   "claim_id": "R21.1",
+   "action": "Clean the mist extractor filter.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p143.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R22",
+   "indicator": "The coolant level is low.",
+   "code": "",
+   "failure": "Coolant level is low.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p143.t1.r5"
+   ],
+   "failure_segments": [
+    "p143.t1.r5"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R22.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R23",
+   "indicator": "The PulseJet oil level is low.",
+   "code": "",
+   "failure": "PulseJet oil level is low.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p143.t1.r6"
+   ],
+   "failure_segments": [
+    "p143.t1.r6"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R23.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R24",
+   "indicator": "Air flow is not sufficient for correct machine operation.",
+   "code": "",
+   "failure": "Air flow is not sufficient for correct machine operation.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p143.t1.r8"
+   ],
+   "failure_segments": [
+    "p143.t1.r8",
+    "p143.t2.r1"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The icon applies in Inch Mode and Metric Mode.",
+   "claim_id": "R24.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R25",
+   "indicator": "The HPU oil level is low.",
+   "code": "",
+   "failure": "The HPU oil level is low.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p144.t1.r1"
+   ],
+   "failure_segments": [
+    "p144.t1.r1"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R25.1",
+   "action": "Check the oil level.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p144.t1.r1"
+   ]
+  },
+  {
+   "branch_id": "R25",
+   "indicator": "The HPU oil level is low.",
+   "code": "",
+   "failure": "The HPU oil level is low.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p144.t1.r1"
+   ],
+   "failure_segments": [
+    "p144.t1.r1"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R25.2",
+   "action": "Add the recommended oil for the machine.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p144.t1.r1"
+   ]
+  },
+  {
+   "branch_id": "R26",
+   "indicator": "The HPU oil temperature is too high for reliable operation.",
+   "code": "",
+   "failure": "The oil temperature is too high to reliably operate the HPU.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p144.t1.r2"
+   ],
+   "failure_segments": [
+    "p144.t1.r2"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R26.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R27",
+   "indicator": "The spindle fan has failed.",
+   "code": "",
+   "failure": "The spindle fan has stopped operating.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p144.t1.r3"
+   ],
+   "failure_segments": [
+    "p144.t1.r3"
+   ],
+   "component": "spindle fan",
+   "component_segments": [
+    "p144.t1.r3"
+   ],
+   "conditions": "",
+   "claim_id": "R27.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R28",
+   "indicator": "Cabinet temperatures are approaching levels that may be dangerous to the electronics (Electronics Overheat warning).",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p144.t1.r4"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "If temperature reaches or exceeds the recommended level, alarm 253 ELECTRONICS OVERHEAT is generated.",
+   "claim_id": "R28.1",
+   "action": "Inspect the cabinet for clogged air filters and correctly operating fans.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p144.t1.r4"
+   ]
+  },
+  {
+   "branch_id": "R29",
+   "indicator": "The electronics remain in the overheat state too long; the machine will not operate until corrected.",
+   "code": "253 ELECTRONICS OVERHEAT",
+   "failure": "The electronics remain in the overheat state too long.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p144.t1.r5"
+   ],
+   "failure_segments": [
+    "p144.t1.r5"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R29.1",
+   "action": "Inspect the cabinet for clogged air filters and correctly operating fans.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p144.t1.r5"
+   ]
+  },
+  {
+   "branch_id": "R30",
+   "indicator": "The transformer is overheated for more than one second (Transformer Overheat warning).",
+   "code": "",
+   "failure": "The transformer is detected to be overheated for more than 1 second.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p144.t1.r6"
+   ],
+   "failure_segments": [
+    "p144.t1.r6"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R30.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R31",
+   "indicator": "The transformer remains overheated too long; the machine will not operate until corrected.",
+   "code": "",
+   "failure": "The transformer remains in the overheat state for too long.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p144.t2.r1"
+   ],
+   "failure_segments": [
+    "p144.t2.r1"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R31.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R32",
+   "indicator": "Incoming voltage is low (Low Voltage warning).",
+   "code": "",
+   "failure": "The PFDM detects low incoming voltage.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p144.t2.r2"
+   ],
+   "failure_segments": [
+    "p144.t2.r2"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "If the condition continues, the machine cannot continue to operate.",
+   "claim_id": "R32.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R33",
+   "indicator": "Incoming voltage is too low to operate (Low Voltage alarm).",
+   "code": "",
+   "failure": "The PFDM detects incoming voltage that is too low to operate.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p144.t2.r3"
+   ],
+   "failure_segments": [
+    "p144.t2.r3"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The machine will not operate until the condition is corrected.",
+   "claim_id": "R33.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R34",
+   "indicator": "Incoming voltage is above the set limit but remains within operating parameters (High Voltage warning).",
+   "code": "",
+   "failure": "The PFDM detects incoming voltage above a set limit but within operating parameters.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p144.t2.r4"
+   ],
+   "failure_segments": [
+    "p144.t2.r4"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R34.1",
+   "action": "Correct the condition to prevent damage to machine components.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p144.t2.r4"
+   ]
+  },
+  {
+   "branch_id": "R35",
+   "indicator": "Incoming voltage is too high to operate and could damage the machine (High Voltage alarm).",
+   "code": "",
+   "failure": "The PFDM detects incoming voltage that is too high to operate.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p144.t2.r5"
+   ],
+   "failure_segments": [
+    "p144.t2.r5"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The machine will not operate until the condition is corrected.",
+   "claim_id": "R35.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R36",
+   "indicator": "A Surge Protector fault has been detected.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p144.t2.r6"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The icon remains active until the fault is cleared. Continuing to use the machine in this state could allow an electrical surge to damage the electronics.",
+   "claim_id": "R36.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R37",
+   "indicator": "The robot battery is low.",
+   "code": "",
+   "failure": "The pulse-coder batteries are low.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p144.t2.r7"
+   ],
+   "failure_segments": [
+    "p144.t2.r7"
+   ],
+   "component": "pulse-coder batteries",
+   "component_segments": [
+    "p144.t2.r7"
+   ],
+   "conditions": "If the robot is turned off, it may require remastering.",
+   "claim_id": "R37.1",
+   "action": "Replace the pulse-coder batteries as soon as possible.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p144.t2.r7"
+   ]
+  },
+  {
+   "branch_id": "R37",
+   "indicator": "The robot battery is low.",
+   "code": "",
+   "failure": "The pulse-coder batteries are low.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p144.t2.r7"
+   ],
+   "failure_segments": [
+    "p144.t2.r7"
+   ],
+   "component": "pulse-coder batteries",
+   "component_segments": [
+    "p144.t2.r7"
+   ],
+   "conditions": "If the robot is turned off, it may require remastering.",
+   "claim_id": "R37.2",
+   "action": "Do not turn off the robot.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p144.t2.r7"
+   ]
+  },
+  {
+   "branch_id": "R38",
+   "indicator": "Air pressure to the machine is too low to reliably operate pneumatic systems (Low Air warning).",
+   "code": "",
+   "failure": "Air pressure to the machine is too low to reliably operate pneumatic systems.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p145.t1.r1"
+   ],
+   "failure_segments": [
+    "p145.t1.r1"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R38.1",
+   "action": "Correct the condition to prevent damage to or incorrect operation of pneumatic systems.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p145.t1.r1"
+   ]
+  },
+  {
+   "branch_id": "R39",
+   "indicator": "Air pressure is too low to operate pneumatic systems (Low Air alarm).",
+   "code": "",
+   "failure": "Air pressure to the machine is too low to operate pneumatic systems.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p145.t1.r2"
+   ],
+   "failure_segments": [
+    "p145.t1.r2"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The machine will not operate until corrected.",
+   "claim_id": "R39.1",
+   "action": "A higher-capacity air compressor may be needed.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p145.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R40",
+   "indicator": "Air pressure to the machine is too high to reliably operate pneumatic systems (High Air warning).",
+   "code": "",
+   "failure": "Air pressure to the machine is too high to reliably operate pneumatic systems.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p145.t1.r3"
+   ],
+   "failure_segments": [
+    "p145.t1.r3"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R40.1",
+   "action": "Correct the condition to prevent damage to or incorrect operation of pneumatic systems.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p145.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R40",
+   "indicator": "Air pressure to the machine is too high to reliably operate pneumatic systems (High Air warning).",
+   "code": "",
+   "failure": "Air pressure to the machine is too high to reliably operate pneumatic systems.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p145.t1.r3"
+   ],
+   "failure_segments": [
+    "p145.t1.r3"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R40.2",
+   "action": "Install a regulator at the machine air input if needed.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p145.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R41",
+   "indicator": "Air pressure is too high to operate pneumatic systems (High Air alarm).",
+   "code": "",
+   "failure": "Air pressure to the machine is too high to operate pneumatic systems.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p145.t1.r4"
+   ],
+   "failure_segments": [
+    "p145.t1.r4"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The machine will not operate until corrected.",
+   "claim_id": "R41.1",
+   "action": "Install a regulator at the machine air input if needed.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p145.t1.r4"
+   ]
+  },
+  {
+   "branch_id": "R42",
+   "indicator": "The Emergency Stop on the pendant has been pressed.",
+   "code": "",
+   "failure": "The Emergency Stop on the pendant has been pressed.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p145.t1.r5"
+   ],
+   "failure_segments": [
+    "p145.t1.r5"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R42.1",
+   "action": "Release the Emergency Stop on the pendant to clear the icon.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p145.t1.r5"
+   ]
+  },
+  {
+   "branch_id": "R43",
+   "indicator": "The Emergency Stop on the pallet changer has been pressed.",
+   "code": "",
+   "failure": "The Emergency Stop on the pallet changer has been pressed.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p145.t1.r6"
+   ],
+   "failure_segments": [
+    "p145.t1.r6"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R43.1",
+   "action": "Release the Emergency Stop on the pallet changer to clear the icon.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p145.t1.r6"
+   ]
+  },
+  {
+   "branch_id": "R44",
+   "indicator": "The Emergency Stop on the tool changer cage has been pressed.",
+   "code": "",
+   "failure": "The Emergency Stop on the tool changer cage has been pressed.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p145.t1.r7"
+   ],
+   "failure_segments": [
+    "p145.t1.r7"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R44.1",
+   "action": "Release the Emergency Stop on the tool changer cage to clear the icon.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p145.t1.r7"
+   ]
+  },
+  {
+   "branch_id": "R45",
+   "indicator": "The Emergency Stop on the auxiliary device has been pressed.",
+   "code": "",
+   "failure": "The Emergency Stop on the auxiliary device has been pressed.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p145.t2.r1"
+   ],
+   "failure_segments": [
+    "p145.t2.r1"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R45.1",
+   "action": "Release the Emergency Stop on the auxiliary device to clear the icon.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p145.t2.r1"
+   ]
+  },
+  {
+   "branch_id": "R46",
+   "indicator": "The Emergency Stop on the RJH-XL has been pressed.",
+   "code": "",
+   "failure": "The Emergency Stop on the RJH-XL has been pressed.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p145.t2.r2"
+   ],
+   "failure_segments": [
+    "p145.t2.r2"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R46.1",
+   "action": "Release the Emergency Stop on the RJH-XL to clear the icon.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p145.t2.r2"
+   ]
+  },
+  {
+   "branch_id": "R47",
+   "indicator": "Tool life remaining is below Setting 240, or the current tool is the last one in its tool group.",
+   "code": "",
+   "failure": "Tool life remaining is below Setting 240 or the current tool is the last one in its tool group.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p145.t2.r4"
+   ],
+   "failure_segments": [
+    "p145.t2.r4"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R47.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R48",
+   "indicator": "The tool or tool group has expired and no replacement tools are available.",
+   "code": "",
+   "failure": "The tool or tool group has expired, and no replacement tools are available.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p145.t2.r5"
+   ],
+   "failure_segments": [
+    "p145.t2.r5"
+   ],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R48.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R49",
+   "indicator": "The side-mount tool-changer door is open.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p146.t1.r1"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "",
+   "claim_id": "R49.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R50",
+   "indicator": "The tool in the spindle is unclamped.",
+   "code": "",
+   "failure": "The tool in the spindle is unclamped.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p146.t1.r6"
+   ],
+   "failure_segments": [
+    "p146.t1.r6"
+   ],
+   "component": "tool in spindle",
+   "component_segments": [
+    "p146.t1.r6"
+   ],
+   "conditions": "",
+   "claim_id": "R50.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R51",
+   "indicator": "The optional High Intensity Lighting is on while the doors are open.",
+   "code": "",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p146.t2.r5"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [],
+   "conditions": "The optional HIL is turned on and the doors are open; duration is determined by Setting 238.",
+   "claim_id": "R51.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  }
+ ],
+ "manual_id": "haas_mill_2023",
+ "split": "test",
+ "status": "annotated"
+}
