@@ -1,0 +1,113 @@
+{
+ "status": "approved",
+ "pages": 36,
+ "page_labels": {
+  "other": 31,
+  "parts": 1,
+  "procedure": 1,
+  "diagnostic": 3
+ },
+ "diagnostic_pages": [
+  27,
+  28,
+  29
+ ],
+ "units": 1,
+ "failed_reads": 0,
+ "proposals": 150,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "A: cause 'Communication error between display P.C. board and power control board' repeats its problem, marked unnamed",
+  "coverage: 12 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 85,
+  "red": 2
+ },
+ "witnesses": {
+  "structure": 87,
+  "agreement": 63,
+  "verifier": 19,
+  "reviewer": 3
+ },
+ "verifier_verdicts": {
+  "not_called": 63,
+  "supported": 19,
+  "not_supported": 5
+ },
+ "graph": {
+  "nodes": 73,
+  "nodes_by_type": {
+   "Symptom": 6,
+   "FailureMode": 27,
+   "CorrectiveAction": 23,
+   "Component": 13,
+   "ErrorCode": 4
+  },
+  "edges": 77,
+  "edges_by_tier": {
+   "green": 76,
+   "red": 1
+  },
+  "merged_aliases": 18
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 4,
+   "answered": 4,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 5,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 3,
+ "usage": {
+  "calls": 6,
+  "failed_calls": 0,
+  "prompt_tokens": 20652,
+  "completion_tokens": 16130,
+  "estimated_cost_usd": 0.010183,
+  "by_operation": {
+   "kg_v3_extract": 3,
+   "kg_v3_map": 1,
+   "kg_v3_merge": 1,
+   "kg_v3_verify": 1
+  }
+ },
+ "agent_usage": {
+  "calls": 5,
+  "failed_calls": 0,
+  "prompt_tokens": 6136,
+  "completion_tokens": 2137,
+  "estimated_cost_usd": 0.001746,
+  "by_operation": {
+   "AgentDecision": 5
+  }
+ },
+ "seconds": {
+  "map": 6.773,
+  "gate_map": 4.273,
+  "extract": 47.528,
+  "check": 7.569,
+  "merge": 5.933,
+  "gate_doubts": 6.507,
+  "gate_approval": 0.001,
+  "total": 78.722
+ },
+ "prompt_ids": {
+  "extraction": "c439b5053d9ce274"
+ }
+}

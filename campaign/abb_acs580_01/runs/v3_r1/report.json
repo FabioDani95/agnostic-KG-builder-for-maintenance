@@ -1,0 +1,124 @@
+{
+ "status": "approved",
+ "pages": 406,
+ "page_labels": {
+  "other": 257,
+  "unreadable": 2,
+  "procedure": 137,
+  "diagnostic": 10
+ },
+ "diagnostic_pages": [
+  118,
+  119,
+  169,
+  231,
+  232,
+  360,
+  361,
+  365,
+  375,
+  396
+ ],
+ "units": 7,
+ "failed_reads": 0,
+ "proposals": 112,
+ "unclear_passages": 2,
+ "extraction_notes": [
+  "coverage: 2 unused table row(s) read again",
+  "coverage: 9 unused table row(s) read again",
+  "coverage: 1 unused table row(s) read again",
+  "A: cause 'Extension I/O configuration failure' repeats its problem, marked unnamed",
+  "B: cause 'Extension I/O configuration failure' repeats its problem, marked unnamed",
+  "coverage: 1 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 62,
+  "red": 8
+ },
+ "witnesses": {
+  "structure": 57,
+  "agreement": 42,
+  "verifier": 28,
+  "reviewer": 2
+ },
+ "verifier_verdicts": {
+  "not_called": 34,
+  "supported": 28,
+  "not_supported": 8
+ },
+ "graph": {
+  "nodes": 74,
+  "nodes_by_type": {
+   "Symptom": 18,
+   "FailureMode": 23,
+   "Component": 11,
+   "CorrectiveAction": 18,
+   "ErrorCode": 4
+  },
+  "edges": 62,
+  "edges_by_tier": {
+   "green": 56,
+   "red": 6
+  },
+  "merged_aliases": 23
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 5,
+   "answered": 5,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 6,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 2,
+ "usage": {
+  "calls": 28,
+  "failed_calls": 0,
+  "prompt_tokens": 111674,
+  "completion_tokens": 29838,
+  "estimated_cost_usd": 0.027173,
+  "by_operation": {
+   "kg_v3_extract": 18,
+   "kg_v3_map": 7,
+   "kg_v3_merge": 1,
+   "kg_v3_verify": 2
+  }
+ },
+ "agent_usage": {
+  "calls": 6,
+  "failed_calls": 0,
+  "prompt_tokens": 32467,
+  "completion_tokens": 4525,
+  "estimated_cost_usd": 0.006223,
+  "by_operation": {
+   "AgentDecision": 6
+  }
+ },
+ "seconds": {
+  "map": 15.622,
+  "gate_map": 21.15,
+  "extract": 22.455,
+  "check": 11.458,
+  "merge": 7.152,
+  "gate_doubts": 8.114,
+  "gate_approval": 0.002,
+  "total": 86.07
+ },
+ "prompt_ids": {
+  "extraction": "2ab514d1a971778e"
+ }
+}

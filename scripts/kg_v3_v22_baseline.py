@@ -38,6 +38,8 @@ def main() -> int:
     Path(args.ledger).resolve().parent.mkdir(parents=True, exist_ok=True)
     os.environ.update({
         "KG_PDF_GENERATOR": "legacy_v22", "KG_LLM_MODE": "real",
+        # Campaign PDFs can exceed the 50 MB upload limit of the web app (ABB ACS580 is 55 MB).
+        "KG_MAX_UPLOAD_BYTES": str(512 * 1024 * 1024), "KG_MAX_REQUEST_BYTES": str(520 * 1024 * 1024),
         "KG_OPERATIONAL_DB": str(out / "operational.db"), "KG_RAW_DIR": str(out / "raw"),
         "KG_INCOMING_DIR": str(out / "incoming"), "KG_LLM_TRACE_DIR": str(out / "provider_responses"),
         "KG_REAL_CALL_BUDGET_LEDGER": str(Path(args.ledger).resolve()), "KG_REAL_CALL_BUDGET_USD": args.budget,

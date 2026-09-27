@@ -1,0 +1,117 @@
+{
+ "status": "approved",
+ "pages": 406,
+ "page_labels": {
+  "other": 266,
+  "unreadable": 2,
+  "procedure": 127,
+  "parts": 6,
+  "diagnostic": 5
+ },
+ "diagnostic_pages": [
+  231,
+  232,
+  365,
+  375,
+  381
+ ],
+ "units": 4,
+ "failed_reads": 0,
+ "proposals": 72,
+ "unclear_passages": 2,
+ "extraction_notes": [
+  "coverage: 3 unused table row(s) read again",
+  "coverage: 1 unused table row(s) read again",
+  "coverage: 26 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 43,
+  "red": 3
+ },
+ "witnesses": {
+  "structure": 40,
+  "agreement": 26,
+  "verifier": 20,
+  "reviewer": 3
+ },
+ "verifier_verdicts": {
+  "not_called": 23,
+  "supported": 20,
+  "not_supported": 3
+ },
+ "graph": {
+  "nodes": 60,
+  "nodes_by_type": {
+   "Symptom": 17,
+   "FailureMode": 24,
+   "Component": 5,
+   "CorrectiveAction": 13,
+   "ErrorCode": 1
+  },
+  "edges": 45,
+  "edges_by_tier": {
+   "green": 42,
+   "red": 3
+  },
+  "merged_aliases": 16
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 6,
+   "answered": 5,
+   "pending": 1
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 6,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 3,
+ "usage": {
+  "calls": 20,
+  "failed_calls": 0,
+  "prompt_tokens": 92751,
+  "completion_tokens": 20169,
+  "estimated_cost_usd": 0.011804,
+  "by_operation": {
+   "kg_v3_extract": 11,
+   "kg_v3_map": 7,
+   "kg_v3_merge": 1,
+   "kg_v3_verify": 1
+  }
+ },
+ "agent_usage": {
+  "calls": 7,
+  "failed_calls": 0,
+  "prompt_tokens": 32485,
+  "completion_tokens": 2946,
+  "estimated_cost_usd": 0.005403,
+  "by_operation": {
+   "AgentDecision": 7
+  }
+ },
+ "seconds": {
+  "map": 13.871,
+  "gate_map": 13.739,
+  "extract": 23.065,
+  "check": 2.225,
+  "merge": 8.503,
+  "gate_doubts": 6.541,
+  "gate_approval": 0.001,
+  "total": 68.053
+ },
+ "prompt_ids": {
+  "extraction": "2ab514d1a971778e"
+ }
+}
