@@ -1,0 +1,165 @@
+{
+ "status": "approved",
+ "pages": 231,
+ "page_labels": {
+  "other": 58,
+  "procedure": 110,
+  "diagnostic": 47,
+  "parts": 16
+ },
+ "diagnostic_pages": [
+  56,
+  60,
+  61,
+  62,
+  63,
+  64,
+  65,
+  66,
+  67,
+  68,
+  69,
+  70,
+  71,
+  72,
+  73,
+  74,
+  75,
+  76,
+  77,
+  78,
+  79,
+  80,
+  81,
+  82,
+  83,
+  84,
+  85,
+  86,
+  87,
+  88,
+  89,
+  90,
+  91,
+  92,
+  93,
+  94,
+  95,
+  96,
+  97,
+  98,
+  99,
+  100,
+  101,
+  102,
+  103,
+  104,
+  228
+ ],
+ "units": 10,
+ "failed_reads": 0,
+ "proposals": 839,
+ "unclear_passages": 2,
+ "extraction_notes": [
+  "A: relation 0 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "A: relation 1 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "A: relation 2 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "coverage: 7 unused table row(s) read again",
+  "coverage: 9 unused table row(s) read again",
+  "A: cause 'Inverter saturation' repeats its problem, marked unnamed",
+  "B: cause 'Inverter saturation' repeats its problem, marked unnamed",
+  "coverage: 12 unused table row(s) read again",
+  "coverage: 16 unused table row(s) read again",
+  "B: cause 'Consumables incorrectly installed' repeats its problem, marked unnamed",
+  "coverage: 11 unused table row(s) read again",
+  "coverage: 8 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 459,
+  "red": 50
+ },
+ "witnesses": {
+  "structure": 387,
+  "agreement": 330,
+  "verifier": 202,
+  "reviewer": 37
+ },
+ "verifier_verdicts": {
+  "not_called": 267,
+  "supported": 202,
+  "not_supported": 35,
+  "unclear": 5
+ },
+ "graph": {
+  "nodes": 396,
+  "nodes_by_type": {
+   "Symptom": 62,
+   "FailureMode": 105,
+   "Component": 57,
+   "CorrectiveAction": 167,
+   "ErrorCode": 5
+  },
+  "edges": 446,
+  "edges_by_tier": {
+   "green": 401,
+   "red": 45
+  },
+  "merged_aliases": 117
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 49,
+   "answered": 49,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 50,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 37,
+ "usage": {
+  "calls": 18,
+  "failed_calls": 0,
+  "prompt_tokens": 77302,
+  "completion_tokens": 9860,
+  "estimated_cost_usd": 0.013413,
+  "by_operation": {
+   "kg_v3_merge": 8,
+   "kg_v3_verify": 10
+  }
+ },
+ "agent_usage": {
+  "calls": 49,
+  "failed_calls": 0,
+  "prompt_tokens": 48336,
+  "completion_tokens": 17675,
+  "estimated_cost_usd": 0.012491,
+  "by_operation": {
+   "AgentDecision": 49
+  }
+ },
+ "seconds": {
+  "gate_map": 0.014,
+  "extract": 0.01,
+  "check": 8.202,
+  "merge": 7.371,
+  "gate_doubts": 43.825,
+  "gate_approval": 0.001,
+  "total": 61.869
+ },
+ "prompt_ids": {
+  "extraction": "1135a450662d37de"
+ }
+}

@@ -1,7 +1,7 @@
 {
  "manual_id": "eastman_e554",
- "status": "agent_mapped_and_checked",
- "note": "Segment IDs located from the historical gold text and checked by the agent (E5 action corrected by hand); a technician must confirm.",
+ "status": "reviewed_by_author",
+ "note": "Positions and cases reviewed by Fabio Daniele with CONFERMA_GOLD.md (2026-09-27). Single reviewer, also the system author: a second independent technician remains advisable.",
  "claims": [
   {
    "claim_id": "E1",
@@ -24,7 +24,16 @@
    "action_segments": [
     "p37.b12"
    ],
-   "action_score": 0.802
+   "action_score": 0.802,
+   "excluded": false,
+   "review": {
+    "position": "S",
+    "verdict": "C",
+    "correction": "",
+    "corrected_ids": "",
+    "note": "La regolazione segue il controllo dei dischi e del pistoncino: stringere aumenta la pressione di attivazione, allentare la riduce.",
+    "reviewer": "Fabio Daniele"
+   }
   },
   {
    "claim_id": "E2",
@@ -34,7 +43,7 @@
    ],
    "indicator": "Touch Screen buttons are out of alignment",
    "code": "",
-   "failure": "Touch screen calibration is required",
+   "failure": "",
    "action": "complete touch screen calibration and save and exit",
    "action_kind": "repair",
    "indicator_segments": [
@@ -42,14 +51,27 @@
     "p37.b14"
    ],
    "indicator_score": 0.808,
-   "failure_segments": [
-    "p37.b15"
-   ],
+   "failure_segments": [],
    "failure_score": 1.005,
    "action_segments": [
+    "p37.b15",
+    "p37.b16",
+    "p37.b17",
+    "p37.b18",
+    "p38.b1",
     "p38.b2"
    ],
-   "action_score": 0.84
+   "action_score": 0.84,
+   "failure_stated": false,
+   "excluded": false,
+   "review": {
+    "position": "N",
+    "verdict": "M",
+    "correction": "causa=non indicata nel manuale",
+    "corrected_ids": "problema=p37.b13,p37.b14 causa=non indicata nel manuale azione=p37.b15,p37.b16,p37.b17,p37.b18,p38.b1,p38.b2",
+    "note": "La calibrazione richiesta è il rimedio, non una causa esplicita; p38.b2 contiene solo il passo finale della procedura, seguito dalla verifica in p38.b3.",
+    "reviewer": "Fabio Daniele"
+   }
   },
   {
    "claim_id": "E3",
@@ -73,7 +95,16 @@
    "action_segments": [
     "p38.b10"
    ],
-   "action_score": 0.754
+   "action_score": 0.754,
+   "excluded": false,
+   "review": {
+    "position": "S",
+    "verdict": "C",
+    "correction": "",
+    "corrected_ids": "",
+    "note": "La frase condizionale iniziata in p38.b9 prosegue in p38.b10; la mappatura va corretta prima di inviare il file al cutter.",
+    "reviewer": "Fabio Daniele"
+   }
   },
   {
    "claim_id": "E4",
@@ -82,21 +113,30 @@
    ],
    "indicator": "Laser Fume Extractor has reduced vacuum or no vacuum",
    "code": "",
-   "failure": "vacuum filters require replacement",
+   "failure": "",
    "action": "replace vacuum filters",
    "action_kind": "repair",
    "indicator_segments": [
-    "p38.b25"
+    "p38.b25",
+    "p38.b26"
    ],
    "indicator_score": 0.865,
-   "failure_segments": [
-    "p38.b29"
-   ],
+   "failure_segments": [],
    "failure_score": 0.505,
    "action_segments": [
     "p38.b29"
    ],
-   "action_score": 1.009
+   "action_score": 1.009,
+   "failure_stated": false,
+   "excluded": false,
+   "review": {
+    "position": "N",
+    "verdict": "M",
+    "correction": "causa=non indicata nel manuale",
+    "corrected_ids": "problema=p38.b25,p38.b26 causa=non indicata nel manuale azione=p38.b29",
+    "note": "p38.b29 prescrive la sostituzione, senza dichiarare un guasto dei filtri; p38.b26 completa il problema con «or no vacuum».",
+    "reviewer": "Fabio Daniele"
+   }
   },
   {
    "claim_id": "E5",
@@ -105,21 +145,30 @@
    ],
    "indicator": "Laser cutting path is too wide",
    "code": "",
-   "failure": "brass laser nozzle is damaged or bent",
-   "action": "replace the damaged nozzle",
+   "failure": "damage to the brass laser nozzle",
+   "action": "check the brass laser nozzle for damage and replace it if any damage is present",
    "action_kind": "repair",
    "indicator_segments": [
     "p39.b1"
    ],
    "indicator_score": 1.005,
    "failure_segments": [
-    "p39.b3"
+    "p39.b2"
    ],
    "failure_score": 0.802,
    "action_segments": [
     "p39.b2"
    ],
-   "action_score": 0.669
+   "action_score": 0.669,
+   "excluded": false,
+   "review": {
+    "position": "N",
+    "verdict": "M",
+    "correction": "causa=damage to the brass laser nozzle; azione=check the brass laser nozzle for damage and replace it if any damage is present",
+    "corrected_ids": "problema=p39.b1 causa=p39.b2 azione=p39.b2",
+    "note": "Il caso unisce due rami: p39.b2 prescrive la sostituzione per danni; p39.b3 verifica piegatura/allineamento con un test e contempla anche gli specchi.",
+    "reviewer": "Fabio Daniele"
+   }
   },
   {
    "claim_id": "E6",
@@ -142,7 +191,16 @@
    "action_segments": [
     "p39.b12"
    ],
-   "action_score": 1.004
+   "action_score": 1.004,
+   "excluded": false,
+   "review": {
+    "position": "S",
+    "verdict": "C",
+    "correction": "",
+    "corrected_ids": "",
+    "note": "Pulizia o sostituzione sono alternative da scegliere secondo necessità dopo il controllo indicato nello stesso segmento.",
+    "reviewer": "Fabio Daniele"
+   }
   },
   {
    "claim_id": "E7",
@@ -165,7 +223,16 @@
    "action_segments": [
     "p39.b13"
    ],
-   "action_score": 1.003
+   "action_score": 1.003,
+   "excluded": false,
+   "review": {
+    "position": "S",
+    "verdict": "C",
+    "correction": "",
+    "corrected_ids": "",
+    "note": "Pulizia o sostituzione sono alternative da scegliere secondo necessità dopo il controllo indicato nello stesso segmento.",
+    "reviewer": "Fabio Daniele"
+   }
   },
   {
    "claim_id": "E8",
@@ -188,7 +255,17 @@
    "action_segments": [
     "p39.b14"
    ],
-   "action_score": 1.004
+   "action_score": 1.004,
+   "excluded": false,
+   "review": {
+    "position": "S",
+    "verdict": "C",
+    "correction": "",
+    "corrected_ids": "",
+    "note": "Pulizia o sostituzione sono alternative da scegliere secondo necessità dopo il controllo indicato nello stesso segmento.",
+    "reviewer": "Fabio Daniele"
+   }
   }
- ]
+ ],
+ "reviewer": "Fabio Daniele"
 }

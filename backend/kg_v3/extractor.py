@@ -74,6 +74,12 @@ def prompt_hash(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
+def _repeats(problem: str, cause: str) -> bool:
+    from backend.kg_v3.checker import similarity
+
+    return similarity(problem, cause) >= 0.9
+
+
 def parse_read(data: dict[str, Any], *, unit: ReadingUnit, read: str, spec: OntologySpec,
                allowed: set[str]) -> tuple[list[Proposal], list[dict[str, Any]], list[str]]:
     """Turn one raw answer into proposals, repairing what is clear and noting the rest."""
@@ -94,6 +100,16 @@ def parse_read(data: dict[str, Any], *, unit: ReadingUnit, read: str, spec: Onto
             stated=bool(item.get("stated", True)),
             cites=[cite for cite in item.get("cite") or [] if cite in allowed],
         )
+    # A cause that only repeats its problem is no cause: keep the chain with an unnamed one.
+    for item in data.get("relations") or []:
+        if not isinstance(item, dict):
+            continue
+        source, target = entities.get(str(item.get("source") or "")), entities.get(str(item.get("target") or ""))
+        if (source and target and target.type == "FailureMode" and source.type != "FailureMode"
+                and target.stated and _repeats(source.name, target.name)):
+            entities[str(item["target"])] = target.model_copy(update={
+                "name": f"Unspecified cause of {source.name[:1].lower()}{source.name[1:]}", "stated": False})
+            notes.append(f"{read}: cause '{target.name}' repeats its problem, marked unnamed")
     proposals: list[Proposal] = []
     for index, item in enumerate(data.get("relations") or []):
         if not isinstance(item, dict):
@@ -147,7 +163,7 @@ class Extractor:
     async def _read(self, doc: DocumentText, unit: ReadingUnit, read: str, depth: int = 0) -> UnitExtraction:
         allowed = [*unit.context_segment_ids, *unit.segment_ids]
         ordered = sorted(doc.segments(allowed), key=lambda item: doc.position(item.segment_id) or 0)
-        text = render_segments(ordered, context=set(unit.context_segment_ids))
+        text = render_segments(ordered, context=set(unit.context_segment_ids), doc=doc)
         result = UnitExtraction(unit_id=unit.unit_id)
         try:
             async with self._limit:

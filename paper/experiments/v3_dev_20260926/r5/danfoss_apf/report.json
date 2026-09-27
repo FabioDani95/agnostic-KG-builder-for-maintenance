@@ -1,0 +1,115 @@
+{
+ "status": "approved",
+ "pages": 66,
+ "page_labels": {
+  "other": 44,
+  "unreadable": 2,
+  "diagnostic": 5,
+  "procedure": 15
+ },
+ "diagnostic_pages": [
+  17,
+  20,
+  41,
+  42,
+  64
+ ],
+ "units": 4,
+ "failed_reads": 0,
+ "proposals": 70,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "coverage: 3 unused table row(s) read again",
+  "coverage: 13 unused table row(s) read again",
+  "coverage: 6 unused table row(s) read again",
+  "A: cause 'Fan failure' repeats its problem, marked unnamed",
+  "B: cause 'Fan failure' repeats its problem, marked unnamed"
+ ],
+ "assertions_by_tier": {
+  "green": 37,
+  "red": 3
+ },
+ "witnesses": {
+  "structure": 38,
+  "verifier": 8,
+  "agreement": 30,
+  "reviewer": 1
+ },
+ "verifier_verdicts": {
+  "supported": 8,
+  "not_supported": 2,
+  "not_called": 30
+ },
+ "graph": {
+  "nodes": 42,
+  "nodes_by_type": {
+   "Symptom": 4,
+   "FailureMode": 13,
+   "ErrorCode": 6,
+   "Component": 9,
+   "CorrectiveAction": 10
+  },
+  "edges": 38,
+  "edges_by_tier": {
+   "green": 35,
+   "red": 3
+  },
+  "merged_aliases": 13
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 5,
+   "answered": 4,
+   "pending": 1
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 5,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 1,
+ "usage": {
+  "calls": 2,
+  "failed_calls": 0,
+  "prompt_tokens": 2052,
+  "completion_tokens": 1055,
+  "estimated_cost_usd": 0.000773,
+  "by_operation": {
+   "kg_v3_merge": 1,
+   "kg_v3_verify": 1
+  }
+ },
+ "agent_usage": {
+  "calls": 5,
+  "failed_calls": 0,
+  "prompt_tokens": 3872,
+  "completion_tokens": 1705,
+  "estimated_cost_usd": 0.001241,
+  "by_operation": {
+   "AgentDecision": 5
+  }
+ },
+ "seconds": {
+  "gate_map": 0.014,
+  "extract": 0.003,
+  "check": 5.797,
+  "merge": 3.519,
+  "gate_doubts": 5.721,
+  "gate_approval": 0.0,
+  "total": 15.089
+ },
+ "prompt_ids": {
+  "extraction": "676355100223eac6"
+ }
+}

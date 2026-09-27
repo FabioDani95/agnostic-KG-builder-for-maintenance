@@ -1,0 +1,369 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u001-1b41be:B.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r2",
+     "page": 11,
+     "text": "PROBLEM: Pump fails to operate. | CAUSE: Restricted line or inadequate air supply | SOLUTION: Clear*; see Technical Data on pages 24–27."
+    },
+    {
+     "segment_id": "p11.t1.r6",
+     "page": 11,
+     "text": "PROBLEM: Pump operates, but output is low on both strokes. | CAUSE: Restricted line or inadequate air supply. | SOLUTION: Clear*; see Technical Data on pages 24–27."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Restricted line or inadequate air supply' -> AFFECTS -> Component 'Line'. Meaning: The failure mode affects the specified component.",
+    "2. FailureMode 'Restricted line or inadequate air supply' -> RESOLVED_BY -> CorrectiveAction 'Consult Technical Data on pages 24–27' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything)."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 34,
+   "target": {
+    "assertion_ids": [
+     "u001-1b41be.c62",
+     "u001-1b41be.c72",
+     "u001-1b41be.c63",
+     "u001-1b41be.c73"
+    ],
+    "statement_of": [
+     1,
+     2,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-1b41be:A.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r2",
+     "page": 11,
+     "text": "PROBLEM: Pump fails to operate. | CAUSE: Restricted line or inadequate air supply | SOLUTION: Clear*; see Technical Data on pages 24–27."
+    },
+    {
+     "segment_id": "p11.t1.r6",
+     "page": 11,
+     "text": "PROBLEM: Pump operates, but output is low on both strokes. | CAUSE: Restricted line or inadequate air supply. | SOLUTION: Clear*; see Technical Data on pages 24–27."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Restricted line or inadequate air supply' -> RESOLVED_BY -> CorrectiveAction 'Check the technical data for air supply requirements' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything)."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u001-1b41be.c32",
+     "u001-1b41be.c40"
+    ],
+    "statement_of": [
+     1,
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-1b41be:B.R3",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r4",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Pump fails to operate. | CAUSE: Fluid dried on the displacement rod. | SOLUTION: Clean; see Service on pages 12–19."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Fluid dried on the displacement rod' -> RESOLVED_BY -> CorrectiveAction 'Consult Service on pages 12–19' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything)."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u001-1b41be.c76"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-1b41be:B.R6",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r3",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Pump fails to operate. | CAUSE: Obstructed fluid hose or gun/valve; fluid hose ID is too small. | SOLUTION: Clear*; use a hose with a larger ID."
+    },
+    {
+     "segment_id": "p11.t1.r7",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Obstructed fluid hose or gun/valve; fluid hose ID is too small. | SOLUTION: Clear*; use a hose with a larger ID."
+    },
+    {
+     "segment_id": "p11.b6",
+     "page": 11,
+     "text": "* To determine if the fluid hose or gun is obstructed, follow the Pressure Relief Procedure on page 8. Disconnect the fluid hose and place a container at the pump fluid outlet to catch any fluid. Turn on the air just enough to start the pump (about 20–40 psi [0.14–0.3 MPa, 1.4–2.8 bar]). If the pump starts when the air is turned on, the obstruc- tion is in the fluid hose or gun."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Obstructed fluid hose or gun/valve, or fluid hose ID too small' -> RESOLVED_BY -> CorrectiveAction 'Test for fluid hose or gun obstruction' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: If the pump starts when air is turned on, the obstruction is in the fluid hose or gun.."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u001-1b41be.c75"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-1b41be:A.R8",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r9",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Air is leaking into the supply container. | SOLUTION: Check wiper plate seal."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Air leaking into supply container' -> AFFECTS -> Component 'Wiper plate seal'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u001-1b41be.c24"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u001-1b41be:B.R1",
+   "option_id": "correct",
+   "text": "Keep statement 1 only; the manual does not establish consulting the referenced Technical Data as a prescribed inspection or test.",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "The cause explicitly includes a restricted line, supporting the link to Line, while “see Technical Data” is only a reference and does not prescribe a check or test.",
+   "cited_segment_ids": [
+    "p11.t1.r2",
+    "p11.t1.r6"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:54:25.544666Z"
+  },
+  {
+   "question_id": "rel:u001-1b41be:A.R1",
+   "option_id": "accept",
+   "text": "",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "Both rows prescribe clearing the restriction and referring to Technical Data, supporting consultation of that data for an inadequate-air-supply cause.",
+   "cited_segment_ids": [
+    "p11.t1.r2",
+    "p11.t1.r6"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:54:23.982522Z"
+  },
+  {
+   "question_id": "rel:u001-1b41be:B.R3",
+   "option_id": "reject",
+   "text": "",
+   "edits": {},
+   "rationale": "The solution says to clean the displacement rod and refer to the Service section, but it does not prescribe consulting that section as a check or test.",
+   "cited_segment_ids": [
+    "p11.t1.r4"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:54:22.986116Z"
+  },
+  {
+   "question_id": "rel:u001-1b41be:B.R6",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The table’s asterisked “Clear” solution points to the prescribed test, which determines whether the fluid hose or gun is obstructed; this supports the proposed inspection relation for the obstruction cause.",
+   "cited_segment_ids": [
+    "p11.t1.r3",
+    "p11.t1.r7",
+    "p11.b6"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:54:29.607731Z"
+  },
+  {
+   "question_id": "rel:u001-1b41be:A.R8",
+   "option_id": "reject",
+   "text": "The manual says to check the wiper plate seal as the solution; it does not state that the air leak affects the seal.",
+   "edits": {},
+   "rationale": "The row lists air leaking into the supply container as the cause and checking the wiper plate seal as the solution, not an affected-component relationship.",
+   "cited_segment_ids": [
+    "p11.t1.r1",
+    "p11.t1.r9"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:54:25.252475Z"
+  }
+ ],
+ "pending": []
+}

@@ -1,7 +1,7 @@
 {
  "manual_id": "danfoss_apf",
- "status": "agent_mapped_and_checked",
- "note": "Segment IDs located from the historical gold text and checked by the agent (E5 action corrected by hand); a technician must confirm.",
+ "status": "reviewed_by_author",
+ "note": "Positions and cases reviewed by Fabio Daniele with CONFERMA_GOLD.md (2026-09-27). Single reviewer, also the system author: a second independent technician remains advisable.",
  "claims": [
   {
    "claim_id": "D1",
@@ -24,7 +24,16 @@
    "action_segments": [
     "p64.t1.r2"
    ],
-   "action_score": 1.003
+   "action_score": 1.003,
+   "excluded": false,
+   "review": {
+    "position": "S",
+    "verdict": "C",
+    "correction": "",
+    "corrected_ids": "",
+    "note": "",
+    "reviewer": "Fabio Daniele"
+   }
   },
   {
    "claim_id": "D2",
@@ -47,7 +56,16 @@
    "action_segments": [
     "p64.t1.r2"
    ],
-   "action_score": 1.003
+   "action_score": 1.003,
+   "excluded": false,
+   "review": {
+    "position": "S",
+    "verdict": "C",
+    "correction": "",
+    "corrected_ids": "",
+    "note": "Nella tabella entrambe le verifiche sono numerate «1»; il controllo dei DIP switch è il secondo suggerimento, associato agli ID ripetuti.",
+    "reviewer": "Fabio Daniele"
+   }
   },
   {
    "claim_id": "D3",
@@ -58,7 +76,7 @@
    "code": "2",
    "failure": "input fuse is broken",
    "action": "contact service personnel",
-   "action_kind": "repair",
+   "action_kind": "escalation",
    "indicator_segments": [
     "p64.t1.r3"
    ],
@@ -70,7 +88,16 @@
    "action_segments": [
     "p64.t1.r3"
    ],
-   "action_score": 1.005
+   "action_score": 1.005,
+   "excluded": false,
+   "review": {
+    "position": "S",
+    "verdict": "M",
+    "correction": "azione=contact service personnel (contatto con l'assistenza)",
+    "corrected_ids": "",
+    "note": "Il testo e la posizione sono corretti, ma contattare l'assistenza non è una riparazione.",
+    "reviewer": "Fabio Daniele"
+   }
   },
   {
    "claim_id": "D4",
@@ -81,7 +108,7 @@
    "code": "3",
    "failure": "air vents are blocked",
    "action": "contact service personnel",
-   "action_kind": "repair",
+   "action_kind": "escalation",
    "indicator_segments": [
     "p64.t1.r4"
    ],
@@ -93,7 +120,16 @@
    "action_segments": [
     "p64.t1.r4"
    ],
-   "action_score": 1.003
+   "action_score": 1.003,
+   "excluded": false,
+   "review": {
+    "position": "S",
+    "verdict": "M",
+    "correction": "azione=contact service personnel (contatto con l'assistenza)",
+    "corrected_ids": "",
+    "note": "Il testo e la posizione sono corretti, ma contattare l'assistenza non è una riparazione.",
+    "reviewer": "Fabio Daniele"
+   }
   },
   {
    "claim_id": "D5",
@@ -104,7 +140,7 @@
    "code": "3",
    "failure": "fans do not work",
    "action": "contact service personnel",
-   "action_kind": "repair",
+   "action_kind": "escalation",
    "indicator_segments": [
     "p64.t1.r4"
    ],
@@ -116,7 +152,16 @@
    "action_segments": [
     "p64.t1.r4"
    ],
-   "action_score": 1.003
+   "action_score": 1.003,
+   "excluded": false,
+   "review": {
+    "position": "S",
+    "verdict": "M",
+    "correction": "azione=contact service personnel (contatto con l'assistenza)",
+    "corrected_ids": "",
+    "note": "Il testo e la posizione sono corretti, ma contattare l'assistenza non è una riparazione.",
+    "reviewer": "Fabio Daniele"
+   }
   },
   {
    "claim_id": "D6",
@@ -127,7 +172,7 @@
    "code": "4",
    "failure": "BUS capacitor failure",
    "action": "contact service personnel",
-   "action_kind": "repair",
+   "action_kind": "escalation",
    "indicator_segments": [
     "p64.t1.r5"
    ],
@@ -139,7 +184,16 @@
    "action_segments": [
     "p64.t1.r5"
    ],
-   "action_score": 1.005
+   "action_score": 1.005,
+   "excluded": false,
+   "review": {
+    "position": "S",
+    "verdict": "M",
+    "correction": "azione=contact service personnel (contatto con l'assistenza)",
+    "corrected_ids": "",
+    "note": "Il testo e la posizione sono corretti, ma contattare l'assistenza non è una riparazione.",
+    "reviewer": "Fabio Daniele"
+   }
   },
   {
    "claim_id": "D7",
@@ -150,7 +204,7 @@
    "code": "5",
    "failure": "fan failure",
    "action": "contact service personnel",
-   "action_kind": "repair",
+   "action_kind": "escalation",
    "indicator_segments": [
     "p64.t1.r6"
    ],
@@ -162,7 +216,16 @@
    "action_segments": [
     "p64.t1.r6"
    ],
-   "action_score": 1.004
+   "action_score": 1.004,
+   "excluded": false,
+   "review": {
+    "position": "S",
+    "verdict": "M",
+    "correction": "azione=contact service personnel (contatto con l'assistenza)",
+    "corrected_ids": "",
+    "note": "Il testo e la posizione sono corretti, ma contattare l'assistenza non è una riparazione.",
+    "reviewer": "Fabio Daniele"
+   }
   },
   {
    "claim_id": "D8",
@@ -185,7 +248,17 @@
    "action_segments": [
     "p64.t1.r7"
    ],
-   "action_score": 0.921
+   "action_score": 0.921,
+   "excluded": false,
+   "review": {
+    "position": "S",
+    "verdict": "C",
+    "correction": "",
+    "corrected_ids": "",
+    "note": "",
+    "reviewer": "Fabio Daniele"
+   }
   }
- ]
+ ],
+ "reviewer": "Fabio Daniele"
 }

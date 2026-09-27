@@ -44,7 +44,9 @@ For each pair answer same when the extracted fact states the same thing as the r
 same problem (or code) with the same cause, or the same cause with the same remedy or check.
 Different wording, extra detail or a shorter name are fine. Answer different when the problem,
 the cause, the remedy, a number, a direction or a negation differs, or when it only partly
-overlaps with a different meaning.
+overlaps with a different meaning. When the reference says the manual names no cause, answer same
+if the extracted problem is the same and the extracted cause is only a placeholder (such as
+"unspecified cause of ...") rather than a specific cause the manual does not state.
 """
 
 
@@ -212,11 +214,13 @@ async def judge(llm, pairs: list[tuple[dict, list[dict]]]) -> list[bool]:
         for pair_id, (relation, group) in zip(ids, batch):
             if relation["kind"] == "indicator":
                 edge = group[0]
-                lines.append(f"{pair_id}: reference '{relation['left']}' may indicate the cause '{relation['right']}' | "
+                cause = f"the cause '{relation['right']}'" if relation["right"] else "a cause the manual does not name"
+                lines.append(f"{pair_id}: reference '{relation['left']}' may indicate {cause} | "
                              f"extracted '{edge['source_name']}' may indicate '{edge['target_name']}'")
             else:
                 remedies = "; ".join(f"'{edge['target_name']}'" for edge in group)
-                lines.append(f"{pair_id}: reference cause '{relation['left']}' is resolved or checked by "
+                reference_cause = relation["left"] or "(not named in the manual)"
+                lines.append(f"{pair_id}: reference cause {reference_cause!r} is resolved or checked by "
                              f"'{relation['right']}' | extracted cause '{group[0]['source_name']}' is resolved or "
                              f"checked by these steps together: {remedies}")
         schema = {"type": "object", "additionalProperties": False, "required": ["answers"], "properties": {
@@ -281,7 +285,8 @@ async def evaluate(v3_runs: list[Path]) -> list[dict]:
     gold = {item["manual_id"]: item["expected_claims"] for item in json.loads(GOLD.read_text())["manuals"]}
     rows = []
     for manual in GOLD_MANUALS:
-        claims = json.loads((GOLD_SEGMENTS / f"{manual}.json").read_text())["claims"]
+        claims = [claim for claim in json.loads((GOLD_SEGMENTS / f"{manual}.json").read_text())["claims"]
+                  if not claim.get("excluded")]
         doc, evidence = load_doc(manual)
         systems = {"v22": (v22_edges(manual, doc, evidence), load_v22(manual))}
         for run in v3_runs:
@@ -292,7 +297,8 @@ async def evaluate(v3_runs: list[Path]) -> list[dict]:
             result = await score_system(llm, claims, edges)
             result["recovered_lexical"] = sorted(
                 item["claim_id"] for item in gold[manual]
-                if lexical_graph.recovered(item, trusted_only=name != "v22"))
+                if item["claim_id"] in {claim["claim_id"] for claim in claims}
+                and lexical_graph.recovered(item, trusted_only=name != "v22"))
             row["systems"][name] = result
         rows.append(row)
     rows.append({"judge_usage": llm.usage.as_dict()})

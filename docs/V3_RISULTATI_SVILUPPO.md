@@ -12,6 +12,45 @@ Sono misure di sviluppo sugli stessi quattro manuali usati per costruire il
 sistema, non una valutazione indipendente: il gold storico copre 34 casi scelti,
 non è stato validato da tecnici, e il confronto è lessicale.
 
+## Risultato attuale: gold rivisto e procedure numerate (r5, r6)
+
+Il gold dei 34 casi è stato rivisto da Fabio Daniele con
+[CONFERMA_GOLD.md](../paper/evaluation/gold_segments_v1/CONFERMA_GOLD.md). E2 ed E4
+non hanno una causa scritta nel manuale; E5 riguarda il danno all'ugello; in Danfoss
+"contattare l'assistenza" è un'escalation. Revisore unico e autore del sistema: resta
+consigliata una seconda conferma indipendente.
+
+Casi recuperati per significato ([evaluation_r5_r6_reviewed_gold.json](../paper/experiments/v3_dev_20260926/evaluation_r5_r6_reviewed_gold.json)):
+
+| Manuale | v22 | V3 r5 | V3 r6 |
+| --- | --- | --- | --- |
+| Eastman (8) | 4 | 8 | 7 |
+| Danfoss (8) | 5 | 8 | 8 |
+| Graco (18) | 15–17 | 18 | 18 |
+| Totale (34) | 24–26 | 34 | 33 |
+
+Il valore v22 su Graco oscilla tra esecuzioni del giudice (tre voti). Tempo delle
+esecuzioni complete r5/r6: Graco 50/52 s, Eastman 75/81 s, Danfoss 52/49 s, Hypertherm
+157/178 s. I `report.json` di r5/r6 riportano invece il tempo del solo ricontrollo,
+rifatto sulle stesse letture dopo le correzioni sotto.
+
+Correzioni degli errori ricorrenti, tutte basate su struttura e non su parole:
+
+- frasi spezzate su più blocchi mostrate su una riga, passi numerati marcati
+  "(step 5a)" dal solo numero o lettera;
+- testimone "struttura" solo se entrambi gli estremi stanno nella stessa riga (anche
+  con celle unite), nello stesso passo numerato o in blocchi vicini;
+- una causa che ripete il problema diventa "causa non specificata";
+- una causa non nominata si fonde con una nominata solo se ne tocca una sola (prima
+  faceva da ponte tra "mappatura errata" e "alimentatore 24 V");
+- il verificatore legge un passo con il problema che lo introduce e il passo padre;
+- regole nel prompt: un controllo non è una causa, un sotto-passo appartiene al suo
+  passo, riparazione e controllo distinti.
+
+Difetto residuo osservato: in r6 i passi di "UIT non si accende" (Eastman p. 37) sono
+attaccati tutti alla prima causa, "software non aperto". Costo cumulativo del
+registro: 2,78 USD su 20.
+
 ## Misura rivista: posizione e significato
 
 Il primo confronto contava le parole in comune con il gold e sottostimava i

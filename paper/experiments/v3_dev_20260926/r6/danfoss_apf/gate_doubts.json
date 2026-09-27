@@ -1,0 +1,229 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u004-fd152e:B.R9",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p64.b12",
+     "page": 64,
+     "text": "Some components like power capacitors and fans become worn out due to long term usage, and increase the risk of failure on the Active"
+    },
+    {
+     "segment_id": "p64.b14",
+     "page": 64,
+     "text": "Contact Danfoss for further information regarding maintenance and service."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Fans worn out from long-term use' -> RESOLVED_BY -> CorrectiveAction 'Contact Danfoss for maintenance and service information' [escalation]. Meaning: For this problem or cause the manual says to contact service or the dealer. Conditions: For further maintenance and service information."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u004-fd152e.c36"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-027e19:B.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p17.t1.r1",
+     "page": 17,
+     "text": "TABLE COLUMNS: Position number | Item | Description"
+    },
+    {
+     "segment_id": "p17.t1.r4",
+     "page": 17,
+     "text": "Position number: 3 | Item: Fault (Red) | Description: When the indicator light is on, the Active Power Filter is malfunctioning"
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Red fault indicator is on' -> MAY_INDICATE -> FailureMode 'Unspecified cause of red fault indicator being on'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u001-027e19.c1"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-027e19:B.R2",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p17.t1.r1",
+     "page": 17,
+     "text": "TABLE COLUMNS: Position number | Item | Description"
+    },
+    {
+     "segment_id": "p17.t1.r6",
+     "page": 17,
+     "text": "Position number: 5 | Item: Buzzer | Description: Alarm sounding to warn user."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Alarm is sounding' -> MAY_INDICATE -> FailureMode 'Unspecified cause of alarm sounding'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u001-027e19.c2"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "page:65",
+   "kind": "unreadable_page",
+   "title": "Page 65 has no readable text next to diagnostic pages: should it be transcribed?",
+   "source": [],
+   "proposal": [
+    "Page 65 is probably a figure or a scan; the system could not read it."
+   ],
+   "options": [
+    {
+     "option_id": "skip",
+     "label": "Skip it",
+     "effect": "the page stays out of the graph"
+    },
+    {
+     "option_id": "transcribe",
+     "label": "Transcribe it",
+     "effect": "your transcription is kept in the run report for the next extraction"
+    }
+   ],
+   "default_option_id": "skip",
+   "priority": 4,
+   "target": {
+    "page": 65
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u004-fd152e:B.R9",
+   "option_id": "reject",
+   "text": "The excerpts state that fans can wear out with long-term use and separately advise contacting Danfoss for maintenance and service information, but do not state that contacting Danfoss resolves or addresses fan wear.",
+   "edits": {},
+   "rationale": "The proposed relation links facts from separate statements without an explicit connection between fan wear and contacting Danfoss.",
+   "cited_segment_ids": [
+    "p64.b12",
+    "p64.b14"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:55:32.490830Z"
+  },
+  {
+   "question_id": "rel:u001-027e19:B.R1",
+   "option_id": "reject",
+   "text": "The manual states that an illuminated Fault (Red) indicator means the Active Power Filter is malfunctioning; it does not state an unspecified cause of the indicator being on.",
+   "edits": {},
+   "rationale": "The proposed failure mode merely restates the symptom instead of matching the stated malfunctioning condition.",
+   "cited_segment_ids": [
+    "p17.t1.r4"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:55:27.935692Z"
+  },
+  {
+   "question_id": "rel:u001-027e19:B.R2",
+   "option_id": "reject",
+   "text": "The excerpt identifies the buzzer as an alarm sounding to warn the user; it does not state that this symptom may indicate an unspecified failure mode.",
+   "edits": {},
+   "rationale": "The parts description explains the buzzer’s warning function, not a troubleshooting symptom-to-failure relationship.",
+   "cited_segment_ids": [
+    "p17.t1.r1",
+    "p17.t1.r6"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:55:27.386702Z"
+  }
+ ],
+ "pending": [
+  "page:65"
+ ]
+}

@@ -10,7 +10,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import logging
-from collections import Counter
+from collections import Counter, defaultdict
 from itertools import combinations
 
 from pydantic import BaseModel, Field
@@ -193,12 +193,37 @@ def assemble(relations: list[CheckedRelation], same_pairs: list[MergePair]) -> M
     # names become one node only when they are close, or one end is unnamed: a
     # compound name ("clear the valve and replace the seals") must not bridge
     # two separate actions into one node.
+    # An unnamed cause joins a named one only when it matches exactly one named
+    # cause in the whole document; otherwise it would bridge different causes.
+    partners: dict[str, set[str]] = defaultdict(set)
     for relation in relations:
         lead = relation.proposals[0]
         for other in relation.proposals[1:]:
             for mine, theirs in ((lead.source, other.source), (lead.target, other.target)):
-                if not (mine.stated and theirs.stated) or similarity(mine.name, theirs.name) >= ALIAS_SIMILARITY:
-                    groups.union(identity(mine), identity(theirs))
+                if mine.stated and theirs.stated:
+                    if similarity(mine.name, theirs.name) >= ALIAS_SIMILARITY:
+                        groups.union(identity(mine), identity(theirs))
+                elif mine.stated != theirs.stated and mine.type == theirs.type == "FailureMode":
+                    named, unnamed = (mine, theirs) if mine.stated else (theirs, mine)
+                    partners[identity(unnamed)].add(identity(named))
+    for unnamed, named in partners.items():
+        if len(named) == 1:
+            groups.union(unnamed, next(iter(named)))
+
+    # Two unnamed causes in one unit with mostly the same remedies are one cause
+    # described twice ("unspecified cause of X" and "... of Y" for one entry).
+    remedies: dict[str, set[str]] = defaultdict(set)
+    units: dict[str, set[str]] = defaultdict(set)
+    for relation in relations:
+        for proposal in relation.proposals:
+            if proposal.relation_type == "RESOLVED_BY" and not proposal.source.stated:
+                remedies[identity(proposal.source)].add(identity(proposal.target))
+                units[identity(proposal.source)].add(proposal.unit_id)
+    for left, right in combinations(sorted(remedies), 2):
+        shared = remedies[left] & remedies[right]
+        if (units[left] & units[right] and len(shared) >= 2
+                and len(shared) / len(remedies[left] | remedies[right]) >= 0.6):
+            groups.union(left, right)
 
     members: dict[str, list[Endpoint]] = {}
     for key, items in endpoints.items():

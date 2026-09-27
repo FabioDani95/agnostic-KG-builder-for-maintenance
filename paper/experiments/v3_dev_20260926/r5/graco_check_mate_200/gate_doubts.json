@@ -1,0 +1,302 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u001-1b41be:B.R2",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r3",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Pump fails to operate. | CAUSE: Obstructed fluid hose or gun/valve; fluid hose ID is too small. | SOLUTION: Clear*; use a hose with a larger ID."
+    },
+    {
+     "segment_id": "p11.t1.r7",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Obstructed fluid hose or gun/valve; fluid hose ID is too small. | SOLUTION: Clear*; use a hose with a larger ID."
+    },
+    {
+     "segment_id": "p11.b6",
+     "page": 11,
+     "text": "* To determine if the fluid hose or gun is obstructed, follow the Pressure Relief Procedure on page 8. Disconnect the fluid hose and place a container at the pump fluid outlet to catch any fluid. Turn on the air just enough to start the pump (about 20–40 psi [0.14–0.3 MPa, 1.4–2.8 bar]). If the pump starts when the air is turned on, the obstruc- tion is in the fluid hose or gun."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Obstructed fluid hose or gun/valve; fluid hose ID too small' -> RESOLVED_BY -> CorrectiveAction 'Disconnect the fluid hose and place a container at the pump fluid outlet' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: To determine if the fluid hose or gun is obstructed.",
+    "2. FailureMode 'Obstructed fluid hose or gun/valve; fluid hose ID too small' -> RESOLVED_BY -> CorrectiveAction 'Turn on the air just enough to start the pump (about 20–40 psi [0.14–0.3 MPa, 1.4–2.8 bar])' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: Turn on air just enough to start the pump; about 20–40 psi [0.14–0.3 MPa, 1.4–2.8 bar].",
+    "3. FailureMode 'Obstructed fluid hose or gun/valve; fluid hose ID too small' -> RESOLVED_BY -> CorrectiveAction 'Check whether the pump starts when the air is turned on' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: If the pump starts when the air is turned on, the obstruction is in the fluid hose or gun."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 33,
+   "target": {
+    "assertion_ids": [
+     "u001-1b41be.c74",
+     "u001-1b41be.c75",
+     "u001-1b41be.c76"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-1b41be:B.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r2",
+     "page": 11,
+     "text": "PROBLEM: Pump fails to operate. | CAUSE: Restricted line or inadequate air supply | SOLUTION: Clear*; see Technical Data on pages 24–27."
+    },
+    {
+     "segment_id": "p11.t1.r6",
+     "page": 11,
+     "text": "PROBLEM: Pump operates, but output is low on both strokes. | CAUSE: Restricted line or inadequate air supply. | SOLUTION: Clear*; see Technical Data on pages 24–27."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Restricted line or inadequate air supply' -> RESOLVED_BY -> CorrectiveAction 'Consult Technical Data on pages 24–27' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything)."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 32,
+   "target": {
+    "assertion_ids": [
+     "u001-1b41be.c71",
+     "u001-1b41be.c73"
+    ],
+    "statement_of": [
+     1,
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-1b41be:A.R2",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r3",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Pump fails to operate. | CAUSE: Obstructed fluid hose or gun/valve; fluid hose ID is too small. | SOLUTION: Clear*; use a hose with a larger ID."
+    },
+    {
+     "segment_id": "p11.t1.r7",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Obstructed fluid hose or gun/valve; fluid hose ID is too small. | SOLUTION: Clear*; use a hose with a larger ID."
+    },
+    {
+     "segment_id": "p11.b6",
+     "page": 11,
+     "text": "* To determine if the fluid hose or gun is obstructed, follow the Pressure Relief Procedure on page 8. Disconnect the fluid hose and place a container at the pump fluid outlet to catch any fluid. Turn on the air just enough to start the pump (about 20–40 psi [0.14–0.3 MPa, 1.4–2.8 bar]). If the pump starts when the air is turned on, the obstruc- tion is in the fluid hose or gun."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Obstructed fluid hose or gun/valve, or fluid hose ID too small' -> RESOLVED_BY -> CorrectiveAction 'Test for a fluid hose or gun obstruction' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: If the pump starts when air is turned on, the obstruction is in the fluid hose or gun.."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u001-1b41be.c65"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-1b41be:B.R3",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p11.t1.r1",
+     "page": 11,
+     "text": "TABLE COLUMNS: PROBLEM | CAUSE | SOLUTION"
+    },
+    {
+     "segment_id": "p11.t1.r4",
+     "page": 11,
+     "text": "PROBLEM (same as row above): Pump fails to operate. | CAUSE: Fluid dried on the displacement rod. | SOLUTION: Clean; see Service on pages 12–19."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Fluid dried on the displacement rod' -> RESOLVED_BY -> CorrectiveAction 'Consult Service on pages 12–19' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything)."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u001-1b41be.c72"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u001-1b41be:B.R2",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The footnote prescribes disconnecting the hose and placing a container, applying about 20–40 psi air, and checking whether the pump starts to determine whether the fluid hose or gun is obstructed, matching all three inspection statements.",
+   "cited_segment_ids": [
+    "p11.t1.r3",
+    "p11.t1.r7",
+    "p11.b6"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:51:34.121174Z"
+  },
+  {
+   "question_id": "rel:u001-1b41be:B.R1",
+   "option_id": "reject",
+   "text": "The listed solution is “Clear*; see Technical Data on pages 24–27”; the excerpt does not prescribe consulting the Technical Data as an inspection or test.",
+   "edits": {},
+   "rationale": "The manual lists clearing as the solution and merely refers to the Technical Data, so it does not support the proposed inspection action.",
+   "cited_segment_ids": [
+    "p11.t1.r2",
+    "p11.t1.r6"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:51:32.801010Z"
+  },
+  {
+   "question_id": "rel:u001-1b41be:A.R2",
+   "option_id": "reject",
+   "text": "The prescribed test checks whether the fluid hose or gun is obstructed; it does not check whether the hose ID is too small.",
+   "edits": {},
+   "rationale": "The manual prescribes the obstruction test for the obstruction cause, but the proposed failure mode also includes a too-small hose ID, which that test does not assess.",
+   "cited_segment_ids": [
+    "p11.t1.r3",
+    "p11.t1.r7",
+    "p11.b6"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:51:36.761615Z"
+  },
+  {
+   "question_id": "rel:u001-1b41be:B.R3",
+   "option_id": "reject",
+   "text": "",
+   "edits": {},
+   "rationale": "The row prescribes cleaning and refers to the Service pages; it does not prescribe consulting those pages as a check or test.",
+   "cited_segment_ids": [
+    "p11.t1.r1",
+    "p11.t1.r4"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:51:32.373919Z"
+  }
+ ],
+ "pending": []
+}

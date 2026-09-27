@@ -1,0 +1,184 @@
+{
+ "status": "approved",
+ "pages": 231,
+ "page_labels": {
+  "other": 49,
+  "procedure": 112,
+  "diagnostic": 53,
+  "parts": 17
+ },
+ "diagnostic_pages": [
+  56,
+  57,
+  58,
+  59,
+  60,
+  61,
+  62,
+  63,
+  64,
+  65,
+  66,
+  67,
+  68,
+  69,
+  70,
+  71,
+  72,
+  73,
+  74,
+  75,
+  76,
+  77,
+  78,
+  79,
+  80,
+  81,
+  82,
+  83,
+  84,
+  85,
+  86,
+  87,
+  88,
+  89,
+  90,
+  91,
+  92,
+  93,
+  94,
+  95,
+  96,
+  97,
+  98,
+  99,
+  100,
+  101,
+  102,
+  103,
+  104,
+  228,
+  229,
+  230,
+  231
+ ],
+ "units": 10,
+ "failed_reads": 0,
+ "proposals": 856,
+ "unclear_passages": 2,
+ "extraction_notes": [
+  "coverage: 16 unused table row(s) read again",
+  "A: cause 'Torch consumables are damaged or worn' repeats its problem, marked unnamed",
+  "B: cause 'Power supply cover or external component is damaged' repeats its problem, marked unnamed",
+  "B: cause 'Torch or torch lead is damaged' repeats its problem, marked unnamed",
+  "B: cause 'Consumables are damaged or worn' repeats its problem, marked unnamed",
+  "B: cause 'Internal component is damaged' repeats its problem, marked unnamed",
+  "B: cause 'Internal pneumatic connection is loose' repeats its problem, marked unnamed",
+  "B: relation 46 skipped (Symptom to Component is not in the ontology)",
+  "B: relation 47 skipped (Symptom to Component is not in the ontology)",
+  "B: relation 48 skipped (Symptom to Component is not in the ontology)",
+  "B: relation 49 skipped (Symptom to Component is not in the ontology)",
+  "coverage: 9 unused table row(s) read again",
+  "coverage: 8 unused table row(s) read again",
+  "A: cause 'Faulty power board or control board' repeats its problem, marked unnamed",
+  "A: cause 'Faulty fan, solenoid valve, or power board' repeats its problem, marked unnamed",
+  "A: cause 'Inverter saturation' repeats its problem, marked unnamed",
+  "B: cause 'Inverter saturation' repeats its problem, marked unnamed",
+  "coverage: 12 unused table row(s) read again",
+  "coverage: 16 unused table row(s) read again",
+  "A: cause 'Intermittent torch stuck-open or stuck-closed failure' repeats its problem, marked unnamed",
+  "A: cause 'Torch consumables incorrectly installed' repeats its problem, marked unnamed",
+  "coverage: 11 unused table row(s) read again",
+  "B: relation 19 skipped (FailureMode to FailureMode is not in the ontology)",
+  "coverage: 8 unused table row(s) read again",
+  "coverage: 3 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 484,
+  "red": 52
+ },
+ "witnesses": {
+  "structure": 367,
+  "verifier": 258,
+  "reviewer": 57,
+  "agreement": 320
+ },
+ "verifier_verdicts": {
+  "supported": 258,
+  "not_called": 238,
+  "unclear": 4,
+  "not_supported": 36
+ },
+ "graph": {
+  "nodes": 412,
+  "nodes_by_type": {
+   "Symptom": 68,
+   "FailureMode": 114,
+   "Component": 59,
+   "CorrectiveAction": 168,
+   "ErrorCode": 3
+  },
+  "edges": 472,
+  "edges_by_tier": {
+   "green": 423,
+   "red": 49
+  },
+  "merged_aliases": 128
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 54,
+   "answered": 53,
+   "pending": 1
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 54,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 57,
+ "usage": {
+  "calls": 21,
+  "failed_calls": 0,
+  "prompt_tokens": 90876,
+  "completion_tokens": 11632,
+  "estimated_cost_usd": 0.015991,
+  "by_operation": {
+   "kg_v3_merge": 9,
+   "kg_v3_verify": 12
+  }
+ },
+ "agent_usage": {
+  "calls": 54,
+  "failed_calls": 0,
+  "prompt_tokens": 52399,
+  "completion_tokens": 22761,
+  "estimated_cost_usd": 0.015599,
+  "by_operation": {
+   "AgentDecision": 54
+  }
+ },
+ "seconds": {
+  "gate_map": 0.014,
+  "extract": 0.009,
+  "check": 12.329,
+  "merge": 6.696,
+  "gate_doubts": 55.189,
+  "gate_approval": 0.001,
+  "total": 76.952
+ },
+ "prompt_ids": {
+  "extraction": "1135a450662d37de"
+ }
+}

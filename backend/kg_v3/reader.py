@@ -20,6 +20,10 @@ MAX_SEGMENT_CHARS = 700
 MAX_HEADER_CHARS = 40
 _SENTENCE_END = re.compile(r"(?<=[.!?;:])\s+")
 _GENERIC_HEADER = re.compile(r"^col\d+$", re.IGNORECASE)
+# Numbered steps and lettered sub-steps, recognised by digits and letters only.
+_STEP = re.compile(r"^\s*(?:[^\d:]{1,30}:\s*)?(\d{1,2})\s*[.)](?!\d)")
+_SUB_STEP = re.compile(r"^\s*([a-h])(?:\)|\.(?=\s))")
+_SENTENCE_OPEN = re.compile(r"[^.!?:;)\]]$")
 CELL_SEPARATOR = " | "
 
 
@@ -33,10 +37,59 @@ class DocumentText:
     def __post_init__(self) -> None:
         self._by_id: dict[str, Segment] = {}
         self._position: dict[str, int] = {}
+        # Layout facts derived from the text itself: a block that continues the
+        # sentence of the previous one, and the numbered step a block belongs to.
+        self.continuation: set[str] = set()
+        self.step: dict[str, tuple[int, str]] = {}
+        # The block that introduces a numbered sequence (a problem description).
+        self.sequence_head: dict[int, str] = {}
+        self._step_segment: dict[tuple[int, str], str] = {}
+        sequence, number, letter = 0, 0, ""
         for page in sorted(self.pages):
+            previous: Segment | None = None
             for segment in self.pages[page]:
                 self._position[segment.segment_id] = len(self._by_id)
                 self._by_id[segment.segment_id] = segment
+                if segment.table is not None:
+                    previous = None
+                    continue
+                top, sub = _STEP.match(segment.text), _SUB_STEP.match(segment.text)
+                if (previous is not None and _SENTENCE_OPEN.search(previous.text)
+                        and segment.text[:1].islower() and not sub):
+                    self.continuation.add(segment.segment_id)
+                    if previous.segment_id in self.step:
+                        self.step[segment.segment_id] = self.step[previous.segment_id]
+                elif top:
+                    value = int(top.group(1))
+                    if value == 1 or value < number or not number:
+                        sequence += 1
+                        if previous is not None and previous.segment_id not in self.step:
+                            self.sequence_head[sequence] = previous.segment_id
+                    number, letter = value, ""
+                    self.step[segment.segment_id] = (sequence, f"{number}")
+                    self._step_segment.setdefault((sequence, f"{number}"), segment.segment_id)
+                elif sub and number:
+                    letter = sub.group(1)
+                    self.step[segment.segment_id] = (sequence, f"{number}{letter}")
+                previous = segment
+
+    def step_context(self, segment_id: str) -> list[str]:
+        """For a numbered step: the block introducing its sequence and its parent step."""
+
+        step = self.step.get(segment_id)
+        if step is None:
+            return []
+        context = [self.sequence_head.get(step[0], "")]
+        parent = re.match(r"\d+", step[1]).group(0)
+        if parent != step[1]:
+            context.append(self._step_segment.get((step[0], parent), ""))
+        return [item for item in context if item and item != segment_id]
+
+    def step_group(self, segment_id: str) -> tuple[int, int] | None:
+        """(sequence, top-level step number) of a numbered step or sub-step."""
+
+        step = self.step.get(segment_id)
+        return (step[0], int(re.match(r"\d+", step[1]).group(0))) if step else None
 
     def segment(self, segment_id: str) -> Segment | None:
         return self._by_id.get(segment_id)
@@ -205,8 +258,13 @@ def render_segment(segment: Segment, *, marker: str = "") -> str:
     return prefix + CELL_SEPARATOR.join(parts)
 
 
-def render_segments(segments: list[Segment], *, context: set[str] | None = None) -> str:
-    """Page-separated text; context segments are marked read-only."""
+def render_segments(segments: list[Segment], *, context: set[str] | None = None,
+                    doc: DocumentText | None = None) -> str:
+    """Page-separated text; context segments are marked read-only.
+
+    With the document, a sentence broken across blocks stays on one line and
+    numbered steps show their place, for example "(step 5a)".
+    """
 
     context = context or set()
     lines: list[str] = []
@@ -215,5 +273,12 @@ def render_segments(segments: list[Segment], *, context: set[str] | None = None)
         if segment.page != current_page:
             current_page = segment.page
             lines.append(f"=== page {segment.page} ===")
-        lines.append(render_segment(segment, marker=" (context)" if segment.segment_id in context else ""))
+        marker = " (context)" if segment.segment_id in context else ""
+        if doc is not None and segment.segment_id in doc.step and segment.segment_id not in doc.continuation:
+            marker += f" (step {doc.step[segment.segment_id][1]})"
+        text = render_segment(segment, marker=marker)
+        if doc is not None and segment.segment_id in doc.continuation and lines and not lines[-1].startswith("==="):
+            lines[-1] = f"{lines[-1]} {text}"
+        else:
+            lines.append(text)
     return "\n".join(lines)

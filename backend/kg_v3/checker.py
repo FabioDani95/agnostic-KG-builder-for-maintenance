@@ -16,12 +16,12 @@ from difflib import SequenceMatcher
 
 from pydantic import BaseModel, Field
 
-from backend.kg_v3.contracts import Assertion, Certificate, SegmentKind, VerifierVerdict, Witness
+from backend.kg_v3.contracts import Assertion, Certificate, VerifierVerdict, Witness
 from backend.kg_v3.extractor import Proposal
 from backend.kg_v3.llm import ModelClient
 from backend.kg_v3.ontology import OntologySpec, verification_schema
 from backend.kg_v3.prompts import VERIFY_PROMPT
-from backend.kg_v3.reader import DocumentText, render_segment
+from backend.kg_v3.reader import DocumentText, render_segments
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ def similarity(left: str, right: str) -> float:
 
 def _end_matches(left, right, threshold: float) -> bool:
     # An end the source does not name ("Unspecified cause of ...") matches the named one.
-    if left.type == right.type and not (left.stated and right.stated):
+    if left.type == right.type == "FailureMode" and not (left.stated and right.stated):
         return True
     return similarity(left.name, right.name) >= threshold
 
@@ -121,17 +121,48 @@ def group_candidates(proposals: list[Proposal]) -> list[Candidate]:
     return candidates
 
 
-def structurally_supported(doc: DocumentText, proposal: Proposal) -> bool:
-    """Both ends are written in one table row or block, or in two neighbouring blocks."""
+def same_record(doc: DocumentText, left: str, right: str) -> bool:
+    """Two segments of one source entry: one row (merged cells included), one step, or neighbours."""
 
-    cites = proposal.cites or sorted({*proposal.source.cites, *proposal.target.cites})
-    segments = doc.segments(cites)
-    if len(segments) == 1:
+    if left == right:
         return True
-    if len(segments) != 2 or any(item.kind is SegmentKind.TABLE_ROW for item in segments):
+    a, b = doc.segment(left), doc.segment(right)
+    if a is None or b is None or a.page != b.page:
         return False
-    first, second = (doc.position(item.segment_id) for item in segments)
-    return first is not None and second is not None and abs(first - second) == 1 and segments[0].page == segments[1].page
+    if a.table and b.table:
+        if a.table.table != b.table.table:
+            return False
+        low, high = sorted((a, b), key=lambda item: item.table.row)
+        # Rows below a merged cell repeat it: they stay in the entry the cell starts.
+        rows = range(low.table.row + 1, high.table.row + 1)
+        return all((segment := doc.segment(f"p{a.page}.t{a.table.table}.r{row}")) is not None
+                   and segment.table.inherited_columns for row in rows)
+    if a.table or b.table:
+        return False
+    group_a, group_b = doc.step_group(left), doc.step_group(right)
+    if group_a is not None or group_b is not None:
+        return group_a == group_b
+    first, second = doc.position(left), doc.position(right)
+    return first is not None and second is not None and abs(first - second) == 1
+
+
+def structurally_supported(doc: DocumentText, proposal: Proposal) -> bool:
+    """Both ends are written in the entry that states the relation."""
+
+    anchors = proposal.cites or sorted({*proposal.source.cites, *proposal.target.cites})
+    for anchor in anchors:
+        if not all(same_record(doc, anchor, other) for other in proposal.cites):
+            continue
+        if all(any(same_record(doc, anchor, cite) for cite in end.cites) or not end.cites
+               for end in (proposal.source, proposal.target)):
+            return True
+    return False
+
+
+def restates(proposal: Proposal) -> bool:
+    """A problem-to-cause relation whose cause only repeats the problem."""
+
+    return proposal.target.type == "FailureMode" and similarity(proposal.source.name, proposal.target.name) >= 0.9
 
 
 def statement(spec: OntologySpec, proposal: Proposal) -> str:
@@ -166,8 +197,11 @@ class Checker:
     def _evidence_text(self, doc: DocumentText, cites: list[str]) -> str:
         segments = doc.segments(cites)
         headers = {f"p{item.page}.t{item.table.table}.r1" for item in segments if item.table and item.table.row > 1}
-        extra = [doc.segment(item) for item in sorted(headers) if doc.segment(item) and item not in cites]
-        return "\n".join(render_segment(item) for item in [*extra, *segments])
+        # A numbered step is read with the problem it belongs to and its parent step.
+        steps = {context for item in segments for context in doc.step_context(item.segment_id)}
+        extra = [doc.segment(item) for item in sorted(headers | steps) if doc.segment(item) and item not in cites]
+        ordered = sorted([*extra, *segments], key=lambda item: doc.position(item.segment_id) or 0)
+        return render_segments(ordered, doc=doc)
 
     async def _verify(self, doc: DocumentText, batch: list[Candidate]) -> None:
         blocks = []
@@ -196,8 +230,9 @@ class Checker:
             by_unit.setdefault(proposal.unit_id, []).append(proposal)
         candidates = [candidate for items in by_unit.values() for candidate in group_candidates(items)]
         for candidate in candidates:
-            candidate.structure = any(structurally_supported(doc, item) for item in candidate.proposals)
-        pending = [item for item in candidates if not (item.structure and item.agreement)]
+            candidate.structure = (any(structurally_supported(doc, item) for item in candidate.proposals)
+                                   and not restates(candidate.lead))
+        pending = [item for item in candidates if not (item.structure and item.agreement) or restates(item.lead)]
         batches = [pending[index:index + VERIFY_BATCH] for index in range(0, len(pending), VERIFY_BATCH)]
         await asyncio.gather(*(self._verify(doc, batch) for batch in batches))
         return [CheckedRelation(assertion=self._assertion(candidate), proposals=candidate.proposals)
@@ -207,13 +242,16 @@ class Checker:
         witnesses = []
         if candidate.structure:
             witnesses.append(Witness.STRUCTURE)
-        if candidate.agreement:
+        # A cause that repeats its problem adds no knowledge: never green on its own.
+        if candidate.agreement and not restates(candidate.lead):
             witnesses.append(Witness.AGREEMENT)
         if candidate.verdict is VerifierVerdict.SUPPORTED:
             witnesses.append(Witness.VERIFIER)
         notes = sorted({note for proposal in candidate.proposals for note in proposal.notes})
         if not candidate.lead.source.stated or not candidate.lead.target.stated:
             notes.append("one end is not named in the source")
+        if restates(candidate.lead):
+            notes.append("the cause repeats the problem")
         lead = candidate.lead
         return Assertion(
             assertion_id=candidate.candidate_id,

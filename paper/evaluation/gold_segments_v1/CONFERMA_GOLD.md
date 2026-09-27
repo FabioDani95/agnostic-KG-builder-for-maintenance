@@ -4,9 +4,9 @@ Ogni caso del vecchio gold è stato ritrovato automaticamente nel manuale e coll
 segmenti (paragrafi o righe di tabella, con ID come `p11.t1.r3`). Per ogni caso conferma
 se la posizione è giusta e se il caso stesso è corretto. Istruzioni in fondo al file.
 
-Revisore: 
-Data: 
-Tempo totale impiegato (minuti): 
+Revisore: Fabio Daniele
+Data: 2026-09-27
+Tempo totale impiegato (minuti): 3,5
 
 ## Eastman E-554
 
@@ -20,11 +20,11 @@ Tempo totale impiegato (minuti):
 - causa → `p37.b11`: tional pause Description of Problem: The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. When pressing NEXT on the keypad, the machine will continue to cut where it left off. This is typically caused by an intermittent pause circuit, usually in thestop discs.
 - azione → `p37.b12`: Troubleshooting: 1.Check stop disc activation. The stop discs should not activate by a slight touch or vibration. They should activate only when moved by minimum pressure. Remove gantry side cover. Check the pause plunger. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota: La regolazione segue il controllo dei dischi e del pistoncino: stringere aumenta la pressione di attivazione, allentare la riduce.
 
 ### E2 · Eastman E-554, pagina 37, 38
 
@@ -37,11 +37,11 @@ Tempo totale impiegato (minuti):
 - causa → `p37.b15`: Troubleshooting: Touch screen calibration in required. Proceed as follows. 1) Power down the cutting system.
 - azione → `p38.b2`: 6) Navigate to screen page 3. Select save and exit to complete calibration.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `N`
+- ID corretti: problema=p37.b13,p37.b14 causa=non indicata nel manuale azione=p37.b15,p37.b16,p37.b17,p37.b18,p38.b1,p38.b2
+- Caso: `M`
+- Correzione: causa=non indicata nel manuale
+- Nota: La calibrazione richiesta è il rimedio, non una causa esplicita; p38.b2 contiene solo il passo finale della procedura, seguito dalla verifica in p38.b3.
 
 ### E3 · Eastman E-554, pagina 38
 
@@ -54,11 +54,11 @@ Tempo totale impiegato (minuti):
 - causa → `p38.b6`: 2.Verify the mapping of your tools and layers are mapped properly under each tool.
 - azione → `p38.b10`: tool holder then just click and drag the tool to the spindle or the layer to the tool before sending the file to the cutter.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota: La frase condizionale iniziata in p38.b9 prosegue in p38.b10; la mappatura va corretta prima di inviare il file al cutter.
 
 ### E4 · Eastman E-554, pagina 38
 
@@ -70,11 +70,11 @@ Tempo totale impiegato (minuti):
 - causa → `p38.b29`: 3) Replace vacuum filters.
 - azione → `p38.b29`: 3) Replace vacuum filters.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `N`
+- ID corretti: problema=p38.b25,p38.b26 causa=non indicata nel manuale azione=p38.b29
+- Caso: `M`
+- Correzione: causa=non indicata nel manuale
+- Nota: p38.b29 prescrive la sostituzione, senza dichiarare un guasto dei filtri; p38.b26 completa il problema con «or no vacuum».
 
 ### E5 · Eastman E-554, pagina 39
 
@@ -86,11 +86,11 @@ Tempo totale impiegato (minuti):
 - causa → `p39.b3`: 2. Check for brass laser nozzle alignment. If the tube or nozzle is bent, the laser beam will reflect off the inside wall of the nozzle causing a wide path. To verify, perform a test pulse on a piece of card board. If the dot has a ring or partial ring around it, the nuzzle is bent or the mirrors may need to be adjusted.
 - azione → `p39.b2`: Troubleshooting: 1. Check for damage to brass laser nozzle. Replace nozzle if any damage is present.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `N`
+- ID corretti: problema=p39.b1 causa=p39.b2 azione=p39.b2
+- Caso: `M`
+- Correzione: causa=damage to the brass laser nozzle; azione=check the brass laser nozzle for damage and replace it if any damage is present
+- Nota: Il caso unisce due rami: p39.b2 prescrive la sostituzione per danni; p39.b3 verifica piegatura/allineamento con un test e contempla anche gli specchi.
 
 ### E6 · Eastman E-554, pagina 39
 
@@ -102,11 +102,11 @@ Tempo totale impiegato (minuti):
 - causa → `p39.b12`: Troubleshooting: 1. Damaged or dirty lens. Check for damage or dirt on the focusing lens. Clean or replace lens as required.
 - azione → `p39.b12`: Troubleshooting: 1. Damaged or dirty lens. Check for damage or dirt on the focusing lens. Clean or replace lens as required.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota: Pulizia o sostituzione sono alternative da scegliere secondo necessità dopo il controllo indicato nello stesso segmento.
 
 ### E7 · Eastman E-554, pagina 39
 
@@ -118,11 +118,11 @@ Tempo totale impiegato (minuti):
 - causa → `p39.b13`: 2. Damaged or dirty Mirror. Check for damage, burn mark or dirt on the beam deflecting mirrors. Clean or replace mirrors as required.
 - azione → `p39.b13`: 2. Damaged or dirty Mirror. Check for damage, burn mark or dirt on the beam deflecting mirrors. Clean or replace mirrors as required.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota: Pulizia o sostituzione sono alternative da scegliere secondo necessità dopo il controllo indicato nello stesso segmento.
 
 ### E8 · Eastman E-554, pagina 39
 
@@ -134,11 +134,11 @@ Tempo totale impiegato (minuti):
 - causa → `p39.b14`: 3. Damage or debris in laser nozzle. Check for damage or debris in laser nozzle. Clean or replace laser nozzle as required.
 - azione → `p39.b14`: 3. Damage or debris in laser nozzle. Check for damage or debris in laser nozzle. Clean or replace laser nozzle as required.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota: Pulizia o sostituzione sono alternative da scegliere secondo necessità dopo il controllo indicato nello stesso segmento.
 
 ## Danfoss APF
 
@@ -152,11 +152,11 @@ Tempo totale impiegato (minuti):
 - causa → `p64.t1.r2`: Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.
 - azione → `p64.t1.r2`: Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ### D2 · Danfoss APF, pagina 64
 
@@ -168,11 +168,11 @@ Tempo totale impiegato (minuti):
 - causa → `p64.t1.r2`: Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.
 - azione → `p64.t1.r2`: Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota: Nella tabella entrambe le verifiche sono numerate «1»; il controllo dei DIP switch è il secondo suggerimento, associato agli ID ripetuti.
 
 ### D3 · Danfoss APF, pagina 64
 
@@ -184,11 +184,11 @@ Tempo totale impiegato (minuti):
 - causa → `p64.t1.r3`: Fault number: 2 | Fault name: Fuse blowout | Possible fault: The input fuse is broken. | Troubleshooting: Contact service personnel.
 - azione → `p64.t1.r3`: Fault number: 2 | Fault name: Fuse blowout | Possible fault: The input fuse is broken. | Troubleshooting: Contact service personnel.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `M`
+- Correzione: azione=contact service personnel (contatto con l'assistenza)
+- Nota: Il testo e la posizione sono corretti, ma contattare l'assistenza non è una riparazione.
 
 ### D4 · Danfoss APF, pagina 64
 
@@ -200,11 +200,11 @@ Tempo totale impiegato (minuti):
 - causa → `p64.t1.r4`: Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel.
 - azione → `p64.t1.r4`: Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `M`
+- Correzione: azione=contact service personnel (contatto con l'assistenza)
+- Nota: Il testo e la posizione sono corretti, ma contattare l'assistenza non è una riparazione.
 
 ### D5 · Danfoss APF, pagina 64
 
@@ -216,11 +216,11 @@ Tempo totale impiegato (minuti):
 - causa → `p64.t1.r4`: Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel.
 - azione → `p64.t1.r4`: Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `M`
+- Correzione: azione=contact service personnel (contatto con l'assistenza)
+- Nota: Il testo e la posizione sono corretti, ma contattare l'assistenza non è una riparazione.
 
 ### D6 · Danfoss APF, pagina 64
 
@@ -232,11 +232,11 @@ Tempo totale impiegato (minuti):
 - causa → `p64.t1.r5`: Fault number: 4 | Fault name: BUS OVP/UVP | Possible fault: BUS capacitor failure. | Troubleshooting: Contact service personnel.
 - azione → `p64.t1.r5`: Fault number: 4 | Fault name: BUS OVP/UVP | Possible fault: BUS capacitor failure. | Troubleshooting: Contact service personnel.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `M`
+- Correzione: azione=contact service personnel (contatto con l'assistenza)
+- Nota: Il testo e la posizione sono corretti, ma contattare l'assistenza non è una riparazione.
 
 ### D7 · Danfoss APF, pagina 64
 
@@ -248,11 +248,11 @@ Tempo totale impiegato (minuti):
 - causa → `p64.t1.r6`: Fault number: 5 | Fault name: Fan Fail | Possible fault: Fan failure. | Troubleshooting: Contact service personnel.
 - azione → `p64.t1.r6`: Fault number: 5 | Fault name: Fan Fail | Possible fault: Fan failure. | Troubleshooting: Contact service personnel.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `M`
+- Correzione: azione=contact service personnel (contatto con l'assistenza)
+- Nota: Il testo e la posizione sono corretti, ma contattare l'assistenza non è una riparazione.
 
 ### D8 · Danfoss APF, pagina 64
 
@@ -264,11 +264,11 @@ Tempo totale impiegato (minuti):
 - causa → `p64.t1.r7`: Fault number: 6 | Fault name: No current compensation/Bad current compensation | Possible fault: The CT is not well connected. | Troubleshooting: Check if the CT wiring is cor- rect.
 - azione → `p64.t1.r7`: Fault number: 6 | Fault name: No current compensation/Bad current compensation | Possible fault: The CT is not well connected. | Troubleshooting: Check if the CT wiring is cor- rect.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ## Graco Check-Mate 200
 
@@ -282,11 +282,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r2`: PROBLEM: Pump fails to operate. | CAUSE: Restricted line or inadequate air supply | SOLUTION: Clear*; see Technical Data on pages 24–27.
 - azione → `p11.t1.r2`: PROBLEM: Pump fails to operate. | CAUSE: Restricted line or inadequate air supply | SOLUTION: Clear*; see Technical Data on pages 24–27.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota: La riga riporta «Clear*» e rinvia ai dati tecnici (pp. 24–27); non specifica una riparazione distinta per alimentazione d’aria insufficiente.
 
 ### G2 · Graco Check-Mate 200, pagina 11
 
@@ -298,11 +298,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r3`: PROBLEM (same as row above): Pump fails to operate. | CAUSE: Obstructed fluid hose or gun/valve; fluid hose ID is too small. | SOLUTION: Clear*; use a hose with a larger ID.
 - azione → `p11.t1.r3`: PROBLEM (same as row above): Pump fails to operate. | CAUSE: Obstructed fluid hose or gun/valve; fluid hose ID is too small. | SOLUTION: Clear*; use a hose with a larger ID.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota: L’asterisco rinvia al controllo dell’ostruzione in p11.b6; liberare il passaggio e aumentare il diametro rispondono ai rispettivi difetti della riga.
 
 ### G3 · Graco Check-Mate 200, pagina 11
 
@@ -314,11 +314,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r4`: PROBLEM (same as row above): Pump fails to operate. | CAUSE: Fluid dried on the displacement rod. | SOLUTION: Clean; see Service on pages 12–19.
 - azione → `p11.t1.r4`: PROBLEM (same as row above): Pump fails to operate. | CAUSE: Fluid dried on the displacement rod. | SOLUTION: Clean; see Service on pages 12–19.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ### G4 · Graco Check-Mate 200, pagina 11
 
@@ -330,11 +330,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r5`: PROBLEM (same as row above): Pump fails to operate. | CAUSE: Dirty or worn air motor parts. | SOLUTION: Clean or repair; see separate air motor manual.
 - azione → `p11.t1.r5`: PROBLEM (same as row above): Pump fails to operate. | CAUSE: Dirty or worn air motor parts. | SOLUTION: Clean or repair; see separate air motor manual.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ### G5 · Graco Check-Mate 200, pagina 11
 
@@ -346,11 +346,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r6`: PROBLEM: Pump operates, but output is low on both strokes. | CAUSE: Restricted line or inadequate air supply. | SOLUTION: Clear*; see Technical Data on pages 24–27.
 - azione → `p11.t1.r6`: PROBLEM: Pump operates, but output is low on both strokes. | CAUSE: Restricted line or inadequate air supply. | SOLUTION: Clear*; see Technical Data on pages 24–27.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota: La riga riporta «Clear*» e rinvia ai dati tecnici (pp. 24–27); non specifica una riparazione distinta per alimentazione d’aria insufficiente.
 
 ### G6 · Graco Check-Mate 200, pagina 11
 
@@ -362,11 +362,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r7`: PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Obstructed fluid hose or gun/valve; fluid hose ID is too small. | SOLUTION: Clear*; use a hose with a larger ID.
 - azione → `p11.t1.r7`: PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Obstructed fluid hose or gun/valve; fluid hose ID is too small. | SOLUTION: Clear*; use a hose with a larger ID.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota: L’asterisco rinvia al controllo dell’ostruzione in p11.b6; liberare il passaggio e aumentare il diametro rispondono ai rispettivi difetti della riga.
 
 ### G7 · Graco Check-Mate 200, pagina 11
 
@@ -378,11 +378,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r8`: PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Bleeder valve is open. | SOLUTION: Close.
 - azione → `p11.t1.r8`: PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Bleeder valve is open. | SOLUTION: Close.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ### G8 · Graco Check-Mate 200, pagina 11
 
@@ -394,11 +394,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r9`: PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Air is leaking into the supply container. | SOLUTION: Check wiper plate seal.
 - azione → `p11.t1.r9`: PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Air is leaking into the supply container. | SOLUTION: Check wiper plate seal.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota: «Check wiper plate seal» è un controllo: la riga non prescrive la sostituzione della tenuta.
 
 ### G9 · Graco Check-Mate 200, pagina 11
 
@@ -410,11 +410,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r10`: PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Fluid is too heavy for pump priming. | SOLUTION: Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.
 - azione → `p11.t1.r10`: PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Fluid is too heavy for pump priming. | SOLUTION: Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ### G10 · Graco Check-Mate 200, pagina 11
 
@@ -426,11 +426,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r11`: PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Worn packings in displacement pump. | SOLUTION: Replace packings.
 - azione → `p11.t1.r11`: PROBLEM (same as row above): Pump operates, but output is low on both strokes. | CAUSE: Worn packings in displacement pump. | SOLUTION: Replace packings.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ### G11 · Graco Check-Mate 200, pagina 11
 
@@ -442,11 +442,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r12`: PROBLEM: Pump operates, but output is low on down- stroke. | CAUSE: Fluid too heavy for pump priming. | SOLUTION: Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.
 - azione → `p11.t1.r12`: PROBLEM: Pump operates, but output is low on down- stroke. | CAUSE: Fluid too heavy for pump priming. | SOLUTION: Use bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ### G12 · Graco Check-Mate 200, pagina 11
 
@@ -458,11 +458,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r13`: PROBLEM (same as row above): Pump operates, but output is low on down- stroke. | CAUSE: Held open or worn intake valve or seals. | SOLUTION: Clear valve; replace seals.
 - azione → `p11.t1.r13`: PROBLEM (same as row above): Pump operates, but output is low on down- stroke. | CAUSE: Held open or worn intake valve or seals. | SOLUTION: Clear valve; replace seals.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ### G13 · Graco Check-Mate 200, pagina 11
 
@@ -474,11 +474,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r14`: PROBLEM: Pump operates, but output is low on up- stroke. | CAUSE: Held open or worn piston valve or seals. | SOLUTION: Clear valve; replace seals.
 - azione → `p11.t1.r14`: PROBLEM: Pump operates, but output is low on up- stroke. | CAUSE: Held open or worn piston valve or seals. | SOLUTION: Clear valve; replace seals.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ### G14 · Graco Check-Mate 200, pagina 11
 
@@ -490,11 +490,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r15`: PROBLEM: Erratic or accelerated pump speed. | CAUSE: Exhausted fluid supply. | SOLUTION: Refill and prime.
 - azione → `p11.t1.r15`: PROBLEM: Erratic or accelerated pump speed. | CAUSE: Exhausted fluid supply. | SOLUTION: Refill and prime.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ### G15 · Graco Check-Mate 200, pagina 11
 
@@ -506,11 +506,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r16`: PROBLEM (same as row above): Erratic or accelerated pump speed. | CAUSE: Fluid is too heavy for pump priming. | SOLUTION: Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.
 - azione → `p11.t1.r16`: PROBLEM (same as row above): Erratic or accelerated pump speed. | CAUSE: Fluid is too heavy for pump priming. | SOLUTION: Use the bleeder valve (see page 9); use wiper plate with ram or pneumatic elevator cart.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ### G16 · Graco Check-Mate 200, pagina 11
 
@@ -522,11 +522,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r17`: PROBLEM (same as row above): Erratic or accelerated pump speed. | CAUSE: Held open or worn piston valve or seals. | SOLUTION: Clear valve; replace seals.
 - azione → `p11.t1.r17`: PROBLEM (same as row above): Erratic or accelerated pump speed. | CAUSE: Held open or worn piston valve or seals. | SOLUTION: Clear valve; replace seals.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ### G17 · Graco Check-Mate 200, pagina 11
 
@@ -538,11 +538,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r18`: PROBLEM (same as row above): Erratic or accelerated pump speed. | CAUSE: Held open or worn priming piston. | SOLUTION: Clear; service.
 - azione → `p11.t1.r18`: PROBLEM (same as row above): Erratic or accelerated pump speed. | CAUSE: Held open or worn priming piston. | SOLUTION: Clear; service.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ### G18 · Graco Check-Mate 200, pagina 11
 
@@ -554,11 +554,11 @@ Tempo totale impiegato (minuti):
 - causa → `p11.t1.r19`: PROBLEM (same as row above): Erratic or accelerated pump speed. | CAUSE: Worn packings in displacement pump. | SOLUTION: Replace packings.
 - azione → `p11.t1.r19`: PROBLEM (same as row above): Erratic or accelerated pump speed. | CAUSE: Worn packings in displacement pump. | SOLUTION: Replace packings.
 
-- Posizione: `?`
-- ID corretti: 
-- Caso: `?`
-- Correzione: 
-- Nota: 
+- Posizione: `S`
+- ID corretti:
+- Caso: `C`
+- Correzione:
+- Nota:
 
 ## Istruzioni
 

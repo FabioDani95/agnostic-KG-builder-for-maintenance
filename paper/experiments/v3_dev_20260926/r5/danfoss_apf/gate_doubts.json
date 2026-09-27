@@ -1,0 +1,304 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u004-fd152e:A.R9",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p64.b12",
+     "page": 64,
+     "text": "Some components like power capacitors and fans become worn out due to long term usage, and increase the risk of failure on the Active"
+    },
+    {
+     "segment_id": "p64.b14",
+     "page": 64,
+     "text": "Contact Danfoss for further information regarding maintenance and service."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Power capacitors and fans become worn out through long-term use' -> RESOLVED_BY -> CorrectiveAction 'Contact Danfoss for maintenance and service information' [escalation]. Meaning: For this problem or cause the manual says to contact service or the dealer."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u004-fd152e.c33"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-027e19:A.R2",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p17.t1.r1",
+     "page": 17,
+     "text": "TABLE COLUMNS: Position number | Item | Description"
+    },
+    {
+     "segment_id": "p17.t1.r6",
+     "page": 17,
+     "text": "Position number: 5 | Item: Buzzer | Description: Alarm sounding to warn user."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Alarm is sounding' -> MAY_INDICATE -> FailureMode 'Unspecified cause of alarm sounding'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u001-027e19.c2"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u004-fd152e:B.R9",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p64.b12",
+     "page": 64,
+     "text": "Some components like power capacitors and fans become worn out due to long term usage, and increase the risk of failure on the Active"
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Increased risk of Active Power Filter failure' -> MAY_INDICATE -> FailureMode 'Power capacitors and fans become worn out through long-term use'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u004-fd152e.c38"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u004-fd152e:B.R8",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p64.t1.r1",
+     "page": 64,
+     "text": "TABLE COLUMNS: Fault number | Fault name | Possible fault | Troubleshooting"
+    },
+    {
+     "segment_id": "p64.b10",
+     "page": 64,
+     "text": "Check if all fans work properly when the Active Power Filter is running, and ensure that air can move freely around and through the"
+    },
+    {
+     "segment_id": "p64.b11",
+     "page": 64,
+     "text": "Active Power Filter. Replace the fan if it is not working properly."
+    },
+    {
+     "segment_id": "p64.t1.r4",
+     "page": 64,
+     "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Fan is not working properly' -> AFFECTS -> Component 'Fans'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 11,
+   "target": {
+    "assertion_ids": [
+     "u004-fd152e.c37"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "page:65",
+   "kind": "unreadable_page",
+   "title": "Page 65 has no readable text next to diagnostic pages: should it be transcribed?",
+   "source": [],
+   "proposal": [
+    "Page 65 is probably a figure or a scan; the system could not read it."
+   ],
+   "options": [
+    {
+     "option_id": "skip",
+     "label": "Skip it",
+     "effect": "the page stays out of the graph"
+    },
+    {
+     "option_id": "transcribe",
+     "label": "Transcribe it",
+     "effect": "your transcription is kept in the run report for the next extraction"
+    }
+   ],
+   "default_option_id": "skip",
+   "priority": 4,
+   "target": {
+    "page": 65
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u004-fd152e:A.R9",
+   "option_id": "reject",
+   "text": "The manual says these components can wear with long-term use and increase failure risk, and separately advises contacting Danfoss for further maintenance and service information; it does not state that contacting Danfoss resolves this specific problem.",
+   "edits": {},
+   "rationale": "The contact instruction requests further information generally and is not stated as a resolution for the component wear or resulting failure risk.",
+   "cited_segment_ids": [
+    "p64.b12",
+    "p64.b14"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:52:38.346495Z"
+  },
+  {
+   "question_id": "rel:u001-027e19:A.R2",
+   "option_id": "reject",
+   "text": "The manual identifies the buzzer as an alarm sounding to warn the user; it does not state that alarm sounding indicates a failure mode.",
+   "edits": {},
+   "rationale": "The cited table describes the buzzer’s warning function, not a symptom-to-failure relationship.",
+   "cited_segment_ids": [
+    "p17.t1.r1",
+    "p17.t1.r6"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:52:34.624289Z"
+  },
+  {
+   "question_id": "rel:u004-fd152e:B.R9",
+   "option_id": "reject",
+   "text": "The excerpt says worn power capacitors and fans increase the risk of Active Power Filter failure; it does not state that increased failure risk may indicate those worn components.",
+   "edits": {},
+   "rationale": "The proposed MAY_INDICATE relation reverses the direction of the stated relationship, which runs from component wear to increased failure risk.",
+   "cited_segment_ids": [
+    "p64.b12"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:52:36.751845Z"
+  },
+  {
+   "question_id": "rel:u004-fd152e:B.R8",
+   "option_id": "accept",
+   "text": "",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "The manual identifies nonworking fans as a possible fault and directs replacing a fan that is not working properly, supporting the failure mode as affecting the fans.",
+   "cited_segment_ids": [
+    "p64.t1.r4",
+    "p64.b10",
+    "p64.b11"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:52:36.225091Z"
+  }
+ ],
+ "pending": [
+  "page:65"
+ ]
+}

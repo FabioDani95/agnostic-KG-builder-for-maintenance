@@ -1,0 +1,621 @@
+{
+ "questions": [
+  {
+   "question_id": "rel:u001-3c94ed:B.R3",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p37.b13",
+     "page": 37,
+     "text": "Problem: The buttons on the Touch Screen are out of"
+    },
+    {
+     "segment_id": "p37.b14",
+     "page": 37,
+     "text": "alignment Description of Problem: The touch screen buttons do not match where the screen needs to be touched to activate the command. Operator needs to push above, below, right or left of the button for the command to take effect."
+    },
+    {
+     "segment_id": "p37.b15",
+     "page": 37,
+     "text": "Troubleshooting: Touch screen calibration in required. Proceed as follows. 1) Power down the cutting system."
+    },
+    {
+     "segment_id": "p37.b17",
+     "page": 37,
+     "text": "3) Remove finger after the \"Power On Setup\" screen appears."
+    },
+    {
+     "segment_id": "p37.b18",
+     "page": 37,
+     "text": "4) Using the left and right arrows to navigate, go to the Calibration Screen (screen page 2). Press Touch screen to begin calibrating."
+    },
+    {
+     "segment_id": "p38.b1",
+     "page": 38,
+     "text": "5) Using a paper clip or fine tip object, press the center of the cross as shown. The cross will reappear in the lower right corner. Press the center of the cross."
+    },
+    {
+     "segment_id": "p38.b2",
+     "page": 38,
+     "text": "6) Navigate to screen page 3. Select save and exit to complete calibration."
+    },
+    {
+     "segment_id": "p38.b3",
+     "page": 38,
+     "text": "The touch screen will restart in normal mode. Check for proper screen operation and begin your normal start-up procedure."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Unspecified cause of touchscreen button misalignment' -> RESOLVED_BY -> CorrectiveAction 'Remove the finger after the Power On Setup screen appears' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: After the Power On Setup screen appears.",
+    "2. FailureMode 'Unspecified cause of touchscreen button misalignment' -> RESOLVED_BY -> CorrectiveAction 'Power down the cutting system' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: First.",
+    "3. FailureMode 'Unspecified cause of touchscreen button misalignment' -> RESOLVED_BY -> CorrectiveAction 'Navigate to Calibration Screen page 2 and press Touch screen' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: Use the left and right arrows; Calibration Screen is page 2.",
+    "4. FailureMode 'Unspecified cause of touchscreen button misalignment' -> RESOLVED_BY -> CorrectiveAction 'Press the center of each calibration cross with a paper clip or fine-tip object' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: Repeat at the lower-right cross when it reappears.",
+    "5. FailureMode 'Unspecified cause of touchscreen button misalignment' -> RESOLVED_BY -> CorrectiveAction 'Navigate to screen page 3 and select Save and Exit' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: On screen page 3.",
+    "6. FailureMode 'Unspecified cause of touchscreen button misalignment' -> RESOLVED_BY -> CorrectiveAction 'Check touchscreen operation after restart' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: After touchscreen restarts in normal mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 36,
+   "target": {
+    "assertion_ids": [
+     "u001-3c94ed.c15",
+     "u001-3c94ed.c91",
+     "u001-3c94ed.c92",
+     "u001-3c94ed.c93",
+     "u001-3c94ed.c94",
+     "u001-3c94ed.c95"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-3c94ed:B.R4",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p38.b4",
+     "page": 38,
+     "text": "Problem: The Cutting Tool or Pen does not move down Description of Problem: The tool or Pen does not move down when cutting a file or they are delayed coming down at the beginning of a cut. This can be caused by an electrical short, tool mapping in software or a problem with the power supply."
+    },
+    {
+     "segment_id": "p38.b5",
+     "page": 38,
+     "text": "Troubleshooting: 1.Make sure the gantry Tools ON switch is turned on. This can be verified by making sure the laser pointer is on."
+    },
+    {
+     "segment_id": "p38.b6",
+     "page": 38,
+     "text": "2.Verify the mapping of your tools and layers are mapped properly under each tool."
+    },
+    {
+     "segment_id": "p38.b9",
+     "page": 38,
+     "text": "b)If the layer is not mapped to a tool or the tool is not on the"
+    },
+    {
+     "segment_id": "p38.b11",
+     "page": 38,
+     "text": "3.With E-Suite closed, check tool holder to see if it moves freely and is not damaged or bent."
+    },
+    {
+     "segment_id": "p38.b12",
+     "page": 38,
+     "text": "4.Make sure you have pressure at the tools. Try pulling tool the holder down by hand to see if it has pressure."
+    },
+    {
+     "segment_id": "p38.b13",
+     "page": 38,
+     "text": "5.Check tool connections."
+    },
+    {
+     "segment_id": "p38.b18",
+     "page": 38,
+     "text": "c) Check cable connection at air manifold for proper"
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Cutting tool or pen does not move down or is delayed coming down' -> MAY_INDICATE -> FailureMode 'Tool holder is damaged or bent'. Meaning: The symptom may indicate the specified failure mode.",
+    "2. Symptom 'Cutting tool or pen does not move down or is delayed coming down' -> MAY_INDICATE -> FailureMode 'Insufficient pressure at the tools'. Meaning: The symptom may indicate the specified failure mode.",
+    "3. Symptom 'Cutting tool or pen does not move down or is delayed coming down' -> MAY_INDICATE -> FailureMode 'Tool connection problem'. Meaning: The symptom may indicate the specified failure mode.",
+    "4. FailureMode 'Tool mapping is incorrect in software' -> RESOLVED_BY -> CorrectiveAction 'Turn on the gantry Tools ON switch and verify the laser pointer is on' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: Verify by checking that the laser pointer is on.",
+    "5. FailureMode 'Insufficient pressure at the tools' -> AFFECTS -> Component 'Tool pressure system'. Meaning: The failure mode affects the specified component.",
+    "6. FailureMode 'Tool connection problem' -> AFFECTS -> Component 'Tool connections'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 36,
+   "target": {
+    "assertion_ids": [
+     "u001-3c94ed.c19",
+     "u001-3c94ed.c20",
+     "u001-3c94ed.c21",
+     "u001-3c94ed.c27",
+     "u001-3c94ed.c97",
+     "u001-3c94ed.c98"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-3c94ed:B.R1",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p37.b7",
+     "page": 37,
+     "text": "2.Make sure your cutting software is open on the cutting system computer."
+    },
+    {
+     "segment_id": "p37.b9",
+     "page": 37,
+     "text": "5.If there is no green LED lit, check the AC outlets located on the back of the diagnostic cabinet. If there is no AC power, check the AC power cord and fuses F3 and F4 in the diagnostic cabinet."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Cutting software is not open' -> AFFECTS -> Component 'Cutting system computer'. Meaning: The failure mode affects the specified component.",
+    "2. FailureMode 'No AC power at diagnostic cabinet outlets' -> AFFECTS -> Component 'Diagnostic cabinet AC outlets'. Meaning: The failure mode affects the specified component.",
+    "3. FailureMode 'AC power cord or fuse F3 or F4 fault' -> AFFECTS -> Component 'AC power cord and fuses F3 and F4'. Meaning: The failure mode affects the specified component.",
+    "4. FailureMode 'No AC power at diagnostic cabinet outlets' -> RESOLVED_BY -> CorrectiveAction 'Check diagnostic cabinet AC outlets for AC power' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Conditions: If there is no green LED."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 34,
+   "target": {
+    "assertion_ids": [
+     "u001-3c94ed.c83",
+     "u001-3c94ed.c85",
+     "u001-3c94ed.c86",
+     "u001-3c94ed.c87"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3,
+     4
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-3c94ed:B.R2",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p37.b11",
+     "page": 37,
+     "text": "tional pause Description of Problem: The machine stops in middle of cut and displays message “Machine Paused, Press Zero, Next or Abort” on Touch Screen. When pressing NEXT on the keypad, the machine will continue to cut where it left off. This is typically caused by an intermittent pause circuit, usually in thestop discs."
+    },
+    {
+     "segment_id": "p37.b12",
+     "page": 37,
+     "text": "Troubleshooting: 1.Check stop disc activation. The stop discs should not activate by a slight touch or vibration. They should activate only when moved by minimum pressure. Remove gantry side cover. Check the pause plunger. Tighten the plunger to increase activation pressure and loosen to decrease activation pressure."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Intermittent pause circuit, usually in the stop discs' -> RESOLVED_BY -> CorrectiveAction 'Remove the gantry side cover' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.",
+    "2. FailureMode 'Intermittent pause circuit, usually in the stop discs' -> RESOLVED_BY -> CorrectiveAction 'Tighten the pause plunger to increase activation pressure' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: To increase activation pressure.",
+    "3. FailureMode 'Intermittent pause circuit, usually in the stop discs' -> RESOLVED_BY -> CorrectiveAction 'Loosen the pause plunger to decrease activation pressure' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Conditions: To decrease activation pressure."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 33,
+   "target": {
+    "assertion_ids": [
+     "u001-3c94ed.c10",
+     "u001-3c94ed.c88",
+     "u001-3c94ed.c89"
+    ],
+    "statement_of": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-3c94ed:B.R7",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p39.b5",
+     "page": 39,
+     "text": "RF/EMI Interference Some factory environments may have equipment that gener- ates Radio Frequency (RF) or Electro-Magnetic Interference (EMI). These signals in close proximity to the Eastman cutting system can generate electrical noise and cause problems for the machine and computer (Eastman does offer a shielded mouse). It is recommended that any RF Welders or other equipment generating RF or EMI noise be a mini- mum of 75 feet (23 meter) from the Eastman cutting system."
+    },
+    {
+     "segment_id": "p39.b6",
+     "page": 39,
+     "text": "Problems of this nature are typically difficult to resolve and must be approached in a systematic manner. To reduce the effects of electrical noise generated by RF, Eastman Ma- chine Company has the following recommendations:"
+    },
+    {
+     "segment_id": "p39.b8",
+     "page": 39,
+     "text": "Step 2) Enclose all AC power cables in rigid conduit and secure to the earth ground. Route the four power cables for the computer controls around the end of the conveyor instead of under the unit."
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'RF or EMI interference from nearby equipment' -> RESOLVED_BY -> CorrectiveAction 'Route the four computer-control power cables around the conveyor end instead of under the unit' [repair]. Meaning: The failure mode may be resolved by the specified corrective action."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 31,
+   "target": {
+    "assertion_ids": [
+     "u001-3c94ed.c103"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-3c94ed:B.R6",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p39.b1",
+     "page": 39,
+     "text": "Problem: Laser cutting path is too wide Description of Problem: The laser cutting path increases to an undesirable width."
+    },
+    {
+     "segment_id": "p39.b4",
+     "page": 39,
+     "text": "3. Check laser power and cutting speed. Settings may vary when changing materials. Testing will yield best results."
+    }
+   ],
+   "proposal": [
+    "1. Symptom 'Laser cutting path is too wide' -> MAY_INDICATE -> FailureMode 'Laser power or cutting speed setting is unsuitable for the material'. Meaning: The symptom may indicate the specified failure mode."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 21,
+   "target": {
+    "assertion_ids": [
+     "u001-3c94ed.c55"
+    ],
+    "statement_of": [
+     1
+    ]
+   }
+  },
+  {
+   "question_id": "rel:u001-3c94ed:A.R4",
+   "kind": "relation_check",
+   "title": "Does the manual state these troubleshooting facts?",
+   "source": [
+    {
+     "segment_id": "p38.b11",
+     "page": 38,
+     "text": "3.With E-Suite closed, check tool holder to see if it moves freely and is not damaged or bent."
+    },
+    {
+     "segment_id": "p38.b12",
+     "page": 38,
+     "text": "4.Make sure you have pressure at the tools. Try pulling tool the holder down by hand to see if it has pressure."
+    },
+    {
+     "segment_id": "p38.b13",
+     "page": 38,
+     "text": "5.Check tool connections."
+    },
+    {
+     "segment_id": "p38.b15",
+     "page": 38,
+     "text": "corresponding green LED light is on. Located on the slice output cards (non-operator gantry side plate)."
+    },
+    {
+     "segment_id": "p38.b17",
+     "page": 38,
+     "text": "solenoid block. Each solenoid can be manually fired by pressing the individual button."
+    },
+    {
+     "segment_id": "p38.b18",
+     "page": 38,
+     "text": "c) Check cable connection at air manifold for proper"
+    }
+   ],
+   "proposal": [
+    "1. FailureMode 'Insufficient pressure at the tools' -> AFFECTS -> Component 'Tool holder'. Meaning: The failure mode affects the specified component.",
+    "2. FailureMode 'Tool connection problem' -> AFFECTS -> Component 'Tool connections, slice output cards, solenoid block, and air manifold cable'. Meaning: The failure mode affects the specified component."
+   ],
+   "options": [
+    {
+     "option_id": "accept",
+     "label": "Yes, all correct",
+     "effect": "all statements enter the graph as verified"
+    },
+    {
+     "option_id": "reject",
+     "label": "No, none is stated",
+     "effect": "the statements stay out of the graph"
+    },
+    {
+     "option_id": "correct",
+     "label": "Only some are correct",
+     "effect": "only the statement numbers you list enter the graph"
+    }
+   ],
+   "default_option_id": "accept",
+   "priority": 12,
+   "target": {
+    "assertion_ids": [
+     "u001-3c94ed.c25",
+     "u001-3c94ed.c26"
+    ],
+    "statement_of": [
+     1,
+     2
+    ]
+   }
+  }
+ ],
+ "answers": [
+  {
+   "question_id": "rel:u001-3c94ed:B.R3",
+   "option_id": "accept",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual requires touchscreen calibration for the misalignment problem, gives these steps as the calibration procedure, and directs checking screen operation after restart.",
+   "cited_segment_ids": [
+    "p37.b15",
+    "p37.b17",
+    "p37.b18",
+    "p38.b1",
+    "p38.b2",
+    "p38.b3"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:52:12.529484Z"
+  },
+  {
+   "question_id": "rel:u001-3c94ed:B.R4",
+   "option_id": "reject",
+   "text": "",
+   "edits": {},
+   "rationale": "The manual identifies electrical short, software tool mapping, and power supply as possible causes, while the holder, pressure, and connection items are checks rather than stated failure modes or component relationships; the Tools ON check is also separate from the mapping check.",
+   "cited_segment_ids": [
+    "p38.b4",
+    "p38.b5",
+    "p38.b6",
+    "p38.b11",
+    "p38.b12",
+    "p38.b13"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:52:12.611616Z"
+  },
+  {
+   "question_id": "rel:u001-3c94ed:B.R1",
+   "option_id": "correct",
+   "text": "Keep statements 1, 2, and 4; omit statement 3.",
+   "edits": {
+    "keep": [
+     1,
+     2,
+     4
+    ]
+   },
+   "rationale": "The manual directs checking that the software is open and, if there is no green LED, checking the cabinet outlets; it only directs checking the cord and fuses if there is no AC power, without stating that they are faulty.",
+   "cited_segment_ids": [
+    "p37.b7",
+    "p37.b9"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:52:11.218039Z"
+  },
+  {
+   "question_id": "rel:u001-3c94ed:B.R2",
+   "option_id": "correct",
+   "text": "Keep statements 2 and 3; removing the gantry side cover is an access step, not a remedy.",
+   "edits": {
+    "keep": [
+     2,
+     3
+    ]
+   },
+   "rationale": "The troubleshooting entry prescribes tightening or loosening the pause plunger to adjust activation pressure, but removing the cover only enables access to the check and is not stated as a remedy.",
+   "cited_segment_ids": [
+    "p37.b11",
+    "p37.b12"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:52:11.860115Z"
+  },
+  {
+   "question_id": "rel:u001-3c94ed:B.R7",
+   "option_id": "correct",
+   "text": "The manual recommends routing the four computer-control power cables around the conveyor end to reduce the effects of electrical noise; it does not state that this will resolve the interference.",
+   "edits": {
+    "keep": [
+     1
+    ]
+   },
+   "rationale": "The cable-routing instruction is explicitly one of the recommendations for reducing electrical noise effects, but the excerpt does not claim it will resolve the problem.",
+   "cited_segment_ids": [
+    "p39.b6",
+    "p39.b8"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:52:16.498973Z"
+  },
+  {
+   "question_id": "rel:u001-3c94ed:B.R6",
+   "option_id": "reject",
+   "text": "The manual describes the problem and advises checking laser power and cutting speed, but does not state that an unsuitable setting may cause the path to be too wide.",
+   "edits": {},
+   "rationale": "The excerpt prescribes checking the settings and notes that they may vary by material; it does not identify an unsuitable setting as a cause of this symptom.",
+   "cited_segment_ids": [
+    "p39.b1",
+    "p39.b4"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:52:14.493540Z"
+  },
+  {
+   "question_id": "rel:u001-3c94ed:A.R4",
+   "option_id": "reject",
+   "text": "",
+   "edits": {},
+   "rationale": "The excerpts prescribe checks of pressure, tool connections, LEDs, solenoids, and an air-manifold cable, but do not state that either failure mode affects the proposed components.",
+   "cited_segment_ids": [
+    "p38.b12",
+    "p38.b13",
+    "p38.b15",
+    "p38.b17",
+    "p38.b18"
+   ],
+   "confident": true,
+   "answered_by": {
+    "kind": "agent",
+    "name": "gpt-6-luna",
+    "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+   },
+   "answered_at": "2026-09-27T07:52:17.625432Z"
+  }
+ ],
+ "pending": []
+}

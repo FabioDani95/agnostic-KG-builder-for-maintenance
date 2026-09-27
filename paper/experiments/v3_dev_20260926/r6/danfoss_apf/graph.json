@@ -1,0 +1,3471 @@
+{
+ "version": "kg-v3-graph-1",
+ "status": "approved",
+ "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+ "nodes": [
+  {
+   "id": "v3n_asset_4470fb9bdedd",
+   "type": "Asset",
+   "name": "Danfoss Active Power Filter",
+   "properties": {
+    "name": "Danfoss Active Power Filter",
+    "description": "Danfoss Active Power Filter documented by operating guide 130R1375.",
+    "brand": "Danfoss",
+    "model": "Active Power Filter",
+    "asset_type": "active power filter",
+    "asset_id": "v3n_asset_4470fb9bdedd"
+   },
+   "evidence": []
+  },
+  {
+   "id": "v3n_bfce7a6d4ac09356e799",
+   "type": "Component",
+   "name": "Active Power Filter fan",
+   "aliases": [],
+   "stated_in_source": false,
+   "properties": {
+    "component_id": "v3n_bfce7a6d4ac09356e799",
+    "name": "Active Power Filter fan",
+    "description": "Active Power Filter fan",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.b10",
+     "page": 64,
+     "evidence_id": "ev_16c226ebf5095fd9ba762b272b95",
+     "bbox": [
+      27.846,
+      248.148,
+      515.349,
+      257.148
+     ],
+     "text": "Check if all fans work properly when the Active Power Filter is running, and ensure that air can move freely around and through the"
+    },
+    {
+     "segment_id": "p64.b11",
+     "page": 64,
+     "evidence_id": "ev_62e31c73c78c62f662549e6ddb7f",
+     "bbox": [
+      27.846,
+      263.148,
+      262.449,
+      272.148
+     ],
+     "text": "Active Power Filter. Replace the fan if it is not working properly."
+    }
+   ]
+  },
+  {
+   "id": "v3n_22def2bac921c79a1098",
+   "type": "Component",
+   "name": "Active Power Filter modules",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_22def2bac921c79a1098",
+    "name": "Active Power Filter modules",
+    "description": "Active Power Filter modules",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r2",
+     "page": 64,
+     "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+     "bbox": null,
+     "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+    }
+   ]
+  },
+  {
+   "id": "v3n_2d7baebd38792be2ab4d",
+   "type": "Component",
+   "name": "Air vents",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_2d7baebd38792be2ab4d",
+    "name": "Air vents",
+    "description": "Air vents",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r4",
+     "page": 64,
+     "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+     "bbox": null,
+     "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_dc3cc905adba5467c3f0",
+   "type": "Component",
+   "name": "BUS capacitor",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_dc3cc905adba5467c3f0",
+    "name": "BUS capacitor",
+    "description": "BUS capacitor",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r5",
+     "page": 64,
+     "evidence_id": "ev_8528f41c2bb493e8e2d3d9b50b64",
+     "bbox": null,
+     "text": "Fault number: 4 | Fault name: BUS OVP/UVP | Possible fault: BUS capacitor failure. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_8eaf96c0400300a2f0dd",
+   "type": "Component",
+   "name": "CT",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_8eaf96c0400300a2f0dd",
+    "name": "CT",
+    "description": "CT",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r7",
+     "page": 64,
+     "evidence_id": "ev_56837f070b4b02c2001ff9b251f7",
+     "bbox": null,
+     "text": "Fault number: 6 | Fault name: No current compensation/Bad current compensation | Possible fault: The CT is not well connected. | Troubleshooting: Check if the CT wiring is cor- rect."
+    }
+   ]
+  },
+  {
+   "id": "v3n_b783952ef9b8378c45db",
+   "type": "Component",
+   "name": "Communication wire",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_b783952ef9b8378c45db",
+    "name": "Communication wire",
+    "description": "Communication wire",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r2",
+     "page": 64,
+     "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+     "bbox": null,
+     "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+    }
+   ]
+  },
+  {
+   "id": "v3n_1d53591ab51a59c1d44b",
+   "type": "Component",
+   "name": "Fans",
+   "aliases": [
+    "Fan"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_1d53591ab51a59c1d44b",
+    "name": "Fans",
+    "description": "Fans",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r4",
+     "page": 64,
+     "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+     "bbox": null,
+     "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+    },
+    {
+     "segment_id": "p64.t1.r6",
+     "page": 64,
+     "evidence_id": "ev_40a4785925f562dde0f86c27bd9e",
+     "bbox": null,
+     "text": "Fault number: 5 | Fault name: Fan Fail | Possible fault: Fan failure. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_8df112dcb795235bc1b9",
+   "type": "Component",
+   "name": "Input fuse",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_8df112dcb795235bc1b9",
+    "name": "Input fuse",
+    "description": "Input fuse",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r3",
+     "page": 64,
+     "evidence_id": "ev_eb7b0a69c51d189e617079fe56a4",
+     "bbox": null,
+     "text": "Fault number: 2 | Fault name: Fuse blowout | Possible fault: The input fuse is broken. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_fb3fb62831bab5b09311",
+   "type": "Component",
+   "name": "Power capacitors and fans",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_fb3fb62831bab5b09311",
+    "name": "Power capacitors and fans",
+    "description": "Power capacitors and fans",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.b12",
+     "page": 64,
+     "evidence_id": "ev_83ca7b3c4e7870df0bf437364a90",
+     "bbox": [
+      27.846,
+      283.486,
+      537.912,
+      292.486
+     ],
+     "text": "Some components like power capacitors and fans become worn out due to long term usage, and increase the risk of failure on the Active"
+    }
+   ]
+  },
+  {
+   "id": "v3n_fe5d74cbe8310932778c",
+   "type": "Component",
+   "name": "Slits, openings, and filters",
+   "aliases": [
+    "Active Power Filter slits, openings, and filters"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_fe5d74cbe8310932778c",
+    "name": "Slits, openings, and filters",
+    "description": "Slits, openings, and filters",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.b7",
+     "page": 64,
+     "evidence_id": "ev_f84b0e4fdb9d1cd56edd51f9886a",
+     "bbox": [
+      27.846,
+      197.811,
+      528.948,
+      206.811
+     ],
+     "text": "Regularly clean the Active Power Filter, especially the slits, openings, and filters, to ensure that the air freely flows into the Active Power"
+    },
+    {
+     "segment_id": "p64.b8",
+     "page": 64,
+     "evidence_id": "ev_5f327d3311fc5a0b273a390917e5",
+     "bbox": [
+      27.846,
+      212.811,
+      512.198,
+      221.811
+     ],
+     "text": "Filter to avoid overheating. If necessary, use an air blower or vacuum cleaner to clean the slits, and openings and replace the filters"
+    },
+    {
+     "segment_id": "p64.b9",
+     "page": 64,
+     "evidence_id": "ev_a82c43b1b7702f87898562dd1918",
+     "bbox": [
+      27.846,
+      227.811,
+      279.161,
+      236.811
+     ],
+     "text": "regularly to avoid any object from blocking or covering these areas."
+    }
+   ]
+  },
+  {
+   "id": "v3n_f6cdace8cfc7984d56c8",
+   "type": "CorrectiveAction",
+   "name": "Check that all fans work properly while the filter is running",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_f6cdace8cfc7984d56c8",
+    "name": "Check that all fans work properly while the filter is running",
+    "description": "Check that all fans work properly while the filter is running",
+    "instruction_text": "Check that all fans work properly while the filter is running",
+    "action_kind": "inspection",
+    "source_type": "technical PDF",
+    "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+    "source_reference": "page 64"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.b10",
+     "page": 64,
+     "evidence_id": "ev_16c226ebf5095fd9ba762b272b95",
+     "bbox": [
+      27.846,
+      248.148,
+      515.349,
+      257.148
+     ],
+     "text": "Check if all fans work properly when the Active Power Filter is running, and ensure that air can move freely around and through the"
+    }
+   ]
+  },
+  {
+   "id": "v3n_c87579149ab52c1cfbda",
+   "type": "CorrectiveAction",
+   "name": "Check that the communication wire is firmly connected",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_c87579149ab52c1cfbda",
+    "name": "Check that the communication wire is firmly connected",
+    "description": "Check that the communication wire is firmly connected",
+    "instruction_text": "Check that the communication wire is firmly connected",
+    "action_kind": "inspection",
+    "source_type": "technical PDF",
+    "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+    "source_reference": "page 64"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r2",
+     "page": 64,
+     "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+     "bbox": null,
+     "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+    }
+   ]
+  },
+  {
+   "id": "v3n_b23b2c685283f8373cc5",
+   "type": "CorrectiveAction",
+   "name": "Check the DIP switches of the individual modules",
+   "aliases": [
+    "Check the individual module DIP switches"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_b23b2c685283f8373cc5",
+    "name": "Check the DIP switches of the individual modules",
+    "description": "Check the DIP switches of the individual modules",
+    "instruction_text": "Check the DIP switches of the individual modules",
+    "action_kind": "inspection",
+    "source_type": "technical PDF",
+    "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+    "source_reference": "page 64"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r2",
+     "page": 64,
+     "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+     "bbox": null,
+     "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+    }
+   ]
+  },
+  {
+   "id": "v3n_40d4e6bb67d7ac8e4e81",
+   "type": "CorrectiveAction",
+   "name": "Check whether the CT wiring is correct",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_40d4e6bb67d7ac8e4e81",
+    "name": "Check whether the CT wiring is correct",
+    "description": "Check whether the CT wiring is correct",
+    "instruction_text": "Check whether the CT wiring is correct",
+    "action_kind": "inspection",
+    "source_type": "technical PDF",
+    "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+    "source_reference": "page 64"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r7",
+     "page": 64,
+     "evidence_id": "ev_56837f070b4b02c2001ff9b251f7",
+     "bbox": null,
+     "text": "Fault number: 6 | Fault name: No current compensation/Bad current compensation | Possible fault: The CT is not well connected. | Troubleshooting: Check if the CT wiring is cor- rect."
+    }
+   ]
+  },
+  {
+   "id": "v3n_5e94439f92a88d18becb",
+   "type": "CorrectiveAction",
+   "name": "Clean the slits and openings with an air blower or vacuum cleaner",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_5e94439f92a88d18becb",
+    "name": "Clean the slits and openings with an air blower or vacuum cleaner",
+    "description": "Clean the slits and openings with an air blower or vacuum cleaner",
+    "instruction_text": "Clean the slits and openings with an air blower or vacuum cleaner",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+    "source_reference": "page 64"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.b8",
+     "page": 64,
+     "evidence_id": "ev_5f327d3311fc5a0b273a390917e5",
+     "bbox": [
+      27.846,
+      212.811,
+      512.198,
+      221.811
+     ],
+     "text": "Filter to avoid overheating. If necessary, use an air blower or vacuum cleaner to clean the slits, and openings and replace the filters"
+    }
+   ]
+  },
+  {
+   "id": "v3n_d65242ba1fb984262842",
+   "type": "CorrectiveAction",
+   "name": "Contact Danfoss for maintenance and service information",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_d65242ba1fb984262842",
+    "name": "Contact Danfoss for maintenance and service information",
+    "description": "Contact Danfoss for maintenance and service information",
+    "instruction_text": "Contact Danfoss for maintenance and service information",
+    "action_kind": "escalation",
+    "source_type": "technical PDF",
+    "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+    "source_reference": "page 64"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.b14",
+     "page": 64,
+     "evidence_id": "ev_f2c7546426bd59d825fcbedb29cf",
+     "bbox": [
+      27.846,
+      318.825,
+      311.724,
+      327.825
+     ],
+     "text": "Contact Danfoss for further information regarding maintenance and service."
+    }
+   ]
+  },
+  {
+   "id": "v3n_aa8d22ca89d99a4c7fb7",
+   "type": "CorrectiveAction",
+   "name": "Contact service personnel about the BUS capacitor failure",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_aa8d22ca89d99a4c7fb7",
+    "name": "Contact service personnel about the BUS capacitor failure",
+    "description": "Contact service personnel about the BUS capacitor failure",
+    "instruction_text": "Contact service personnel about the BUS capacitor failure",
+    "action_kind": "escalation",
+    "source_type": "technical PDF",
+    "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+    "source_reference": "page 64"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r5",
+     "page": 64,
+     "evidence_id": "ev_8528f41c2bb493e8e2d3d9b50b64",
+     "bbox": null,
+     "text": "Fault number: 4 | Fault name: BUS OVP/UVP | Possible fault: BUS capacitor failure. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_cd591c0392e472e1d5e9",
+   "type": "CorrectiveAction",
+   "name": "Contact service personnel about the blocked air vents",
+   "aliases": [
+    "Contact service personnel about blocked air vents"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_cd591c0392e472e1d5e9",
+    "name": "Contact service personnel about the blocked air vents",
+    "description": "Contact service personnel about the blocked air vents",
+    "instruction_text": "Contact service personnel about the blocked air vents",
+    "action_kind": "escalation",
+    "source_type": "technical PDF",
+    "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+    "source_reference": "page 64"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r4",
+     "page": 64,
+     "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+     "bbox": null,
+     "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_f488316cbf2fcf4adfb1",
+   "type": "CorrectiveAction",
+   "name": "Contact service personnel about the broken input fuse",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_f488316cbf2fcf4adfb1",
+    "name": "Contact service personnel about the broken input fuse",
+    "description": "Contact service personnel about the broken input fuse",
+    "instruction_text": "Contact service personnel about the broken input fuse",
+    "action_kind": "escalation",
+    "source_type": "technical PDF",
+    "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+    "source_reference": "page 64"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r3",
+     "page": 64,
+     "evidence_id": "ev_eb7b0a69c51d189e617079fe56a4",
+     "bbox": null,
+     "text": "Fault number: 2 | Fault name: Fuse blowout | Possible fault: The input fuse is broken. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_bb84be125ea411bac4f1",
+   "type": "CorrectiveAction",
+   "name": "Contact service personnel about the nonworking fans",
+   "aliases": [
+    "Contact service personnel about fans that do not work",
+    "Contact service personnel about the fan failure"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_bb84be125ea411bac4f1",
+    "name": "Contact service personnel about the nonworking fans",
+    "description": "Contact service personnel about the nonworking fans",
+    "instruction_text": "Contact service personnel about the nonworking fans",
+    "action_kind": "escalation",
+    "source_type": "technical PDF",
+    "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+    "source_reference": "page 64"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r4",
+     "page": 64,
+     "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+     "bbox": null,
+     "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+    },
+    {
+     "segment_id": "p64.t1.r6",
+     "page": 64,
+     "evidence_id": "ev_40a4785925f562dde0f86c27bd9e",
+     "bbox": null,
+     "text": "Fault number: 5 | Fault name: Fan Fail | Possible fault: Fan failure. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_fabaa6f17b144abbb3a2",
+   "type": "CorrectiveAction",
+   "name": "Ensure air moves freely around and through the Active Power Filter",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_fabaa6f17b144abbb3a2",
+    "name": "Ensure air moves freely around and through the Active Power Filter",
+    "description": "Ensure air moves freely around and through the Active Power Filter",
+    "instruction_text": "Ensure air moves freely around and through the Active Power Filter",
+    "action_kind": "inspection",
+    "source_type": "technical PDF",
+    "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+    "source_reference": "page 64"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.b10",
+     "page": 64,
+     "evidence_id": "ev_16c226ebf5095fd9ba762b272b95",
+     "bbox": [
+      27.846,
+      248.148,
+      515.349,
+      257.148
+     ],
+     "text": "Check if all fans work properly when the Active Power Filter is running, and ensure that air can move freely around and through the"
+    }
+   ]
+  },
+  {
+   "id": "v3n_b6774a7a6285f744395c",
+   "type": "CorrectiveAction",
+   "name": "Replace the fan that is not working properly",
+   "aliases": [
+    "Replace a fan that is not working properly"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_b6774a7a6285f744395c",
+    "name": "Replace the fan that is not working properly",
+    "description": "Replace the fan that is not working properly",
+    "instruction_text": "Replace the fan that is not working properly",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+    "source_reference": "page 64"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.b11",
+     "page": 64,
+     "evidence_id": "ev_62e31c73c78c62f662549e6ddb7f",
+     "bbox": [
+      27.846,
+      263.148,
+      262.449,
+      272.148
+     ],
+     "text": "Active Power Filter. Replace the fan if it is not working properly."
+    }
+   ]
+  },
+  {
+   "id": "v3n_031bac892bc7eed08bd3",
+   "type": "CorrectiveAction",
+   "name": "Replace the filters regularly",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_031bac892bc7eed08bd3",
+    "name": "Replace the filters regularly",
+    "description": "Replace the filters regularly",
+    "instruction_text": "Replace the filters regularly",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "02_danfoss_active_power_filter_operating_guide.pdf",
+    "source_reference": "page 64"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.b8",
+     "page": 64,
+     "evidence_id": "ev_5f327d3311fc5a0b273a390917e5",
+     "bbox": [
+      27.846,
+      212.811,
+      512.198,
+      221.811
+     ],
+     "text": "Filter to avoid overheating. If necessary, use an air blower or vacuum cleaner to clean the slits, and openings and replace the filters"
+    },
+    {
+     "segment_id": "p64.b9",
+     "page": 64,
+     "evidence_id": "ev_a82c43b1b7702f87898562dd1918",
+     "bbox": [
+      27.846,
+      227.811,
+      279.161,
+      236.811
+     ],
+     "text": "regularly to avoid any object from blocking or covering these areas."
+    }
+   ]
+  },
+  {
+   "id": "v3n_81977da24a194f98adb3",
+   "type": "ErrorCode",
+   "name": "Ambient over-temperature",
+   "aliases": [
+    "Ambient overtemperature"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "error_code_id": "v3n_81977da24a194f98adb3",
+    "name": "Ambient over-temperature",
+    "description": "Ambient over-temperature",
+    "code": "Ambient OTP"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r4",
+     "page": 64,
+     "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+     "bbox": null,
+     "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_46461f33565167e0f384",
+   "type": "ErrorCode",
+   "name": "BUS overvoltage/undervoltage",
+   "aliases": [
+    "BUS overvoltage or undervoltage"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "error_code_id": "v3n_46461f33565167e0f384",
+    "name": "BUS overvoltage/undervoltage",
+    "description": "BUS overvoltage/undervoltage",
+    "code": "BUS OVP/UVP"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r5",
+     "page": 64,
+     "evidence_id": "ev_8528f41c2bb493e8e2d3d9b50b64",
+     "bbox": null,
+     "text": "Fault number: 4 | Fault name: BUS OVP/UVP | Possible fault: BUS capacitor failure. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_1788eed647a1973531eb",
+   "type": "ErrorCode",
+   "name": "Fan failure",
+   "aliases": [
+    "Fan failure alert"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "error_code_id": "v3n_1788eed647a1973531eb",
+    "name": "Fan failure",
+    "description": "Fan failure",
+    "code": "Fan Fail"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r6",
+     "page": 64,
+     "evidence_id": "ev_40a4785925f562dde0f86c27bd9e",
+     "bbox": null,
+     "text": "Fault number: 5 | Fault name: Fan Fail | Possible fault: Fan failure. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_244e6d341b5285520ea7",
+   "type": "ErrorCode",
+   "name": "Fuse blowout",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "error_code_id": "v3n_244e6d341b5285520ea7",
+    "name": "Fuse blowout",
+    "description": "Fuse blowout",
+    "code": "Fuse blowout"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r3",
+     "page": 64,
+     "evidence_id": "ev_eb7b0a69c51d189e617079fe56a4",
+     "bbox": null,
+     "text": "Fault number: 2 | Fault name: Fuse blowout | Possible fault: The input fuse is broken. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_314d2f5dbfd5eaa6bf00",
+   "type": "ErrorCode",
+   "name": "No or bad current compensation",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "error_code_id": "v3n_314d2f5dbfd5eaa6bf00",
+    "name": "No or bad current compensation",
+    "description": "No or bad current compensation",
+    "code": "No current compensation/Bad current compensation"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r7",
+     "page": 64,
+     "evidence_id": "ev_56837f070b4b02c2001ff9b251f7",
+     "bbox": null,
+     "text": "Fault number: 6 | Fault name: No current compensation/Bad current compensation | Possible fault: The CT is not well connected. | Troubleshooting: Check if the CT wiring is cor- rect."
+    }
+   ]
+  },
+  {
+   "id": "v3n_5a763fb643859bf0fb1b",
+   "type": "ErrorCode",
+   "name": "SYS 485 communication loss",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "error_code_id": "v3n_5a763fb643859bf0fb1b",
+    "name": "SYS 485 communication loss",
+    "description": "SYS 485 communication loss",
+    "code": "SYS 485 comm loss"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r2",
+     "page": 64,
+     "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+     "bbox": null,
+     "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+    }
+   ]
+  },
+  {
+   "id": "v3n_84f69a42a50b3e9de2b7",
+   "type": "FailureMode",
+   "name": "Active Power Filter modules have repeated IDs",
+   "aliases": [
+    "Repeated IDs on Active Power Filter modules"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_84f69a42a50b3e9de2b7",
+    "name": "Active Power Filter modules have repeated IDs",
+    "description": "Active Power Filter modules have repeated IDs",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r2",
+     "page": 64,
+     "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+     "bbox": null,
+     "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+    }
+   ]
+  },
+  {
+   "id": "v3n_b79ffb51e1c0cec30e76",
+   "type": "FailureMode",
+   "name": "Air vents are blocked",
+   "aliases": [
+    "Air vents blocked"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_b79ffb51e1c0cec30e76",
+    "name": "Air vents are blocked",
+    "description": "Air vents are blocked",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r4",
+     "page": 64,
+     "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+     "bbox": null,
+     "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_1df48709f0856dffeb4a",
+   "type": "FailureMode",
+   "name": "Airflow openings are blocked or covered",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_1df48709f0856dffeb4a",
+    "name": "Airflow openings are blocked or covered",
+    "description": "Airflow openings are blocked or covered",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.b7",
+     "page": 64,
+     "evidence_id": "ev_f84b0e4fdb9d1cd56edd51f9886a",
+     "bbox": [
+      27.846,
+      197.811,
+      528.948,
+      206.811
+     ],
+     "text": "Regularly clean the Active Power Filter, especially the slits, openings, and filters, to ensure that the air freely flows into the Active Power"
+    },
+    {
+     "segment_id": "p64.b8",
+     "page": 64,
+     "evidence_id": "ev_5f327d3311fc5a0b273a390917e5",
+     "bbox": [
+      27.846,
+      212.811,
+      512.198,
+      221.811
+     ],
+     "text": "Filter to avoid overheating. If necessary, use an air blower or vacuum cleaner to clean the slits, and openings and replace the filters"
+    },
+    {
+     "segment_id": "p64.b9",
+     "page": 64,
+     "evidence_id": "ev_a82c43b1b7702f87898562dd1918",
+     "bbox": [
+      27.846,
+      227.811,
+      279.161,
+      236.811
+     ],
+     "text": "regularly to avoid any object from blocking or covering these areas."
+    }
+   ]
+  },
+  {
+   "id": "v3n_11e9220480ba616ebe38",
+   "type": "FailureMode",
+   "name": "Airflow restricted by blocked or covered slits, openings, or filters",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_11e9220480ba616ebe38",
+    "name": "Airflow restricted by blocked or covered slits, openings, or filters",
+    "description": "Airflow restricted by blocked or covered slits, openings, or filters",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.b7",
+     "page": 64,
+     "evidence_id": "ev_f84b0e4fdb9d1cd56edd51f9886a",
+     "bbox": [
+      27.846,
+      197.811,
+      528.948,
+      206.811
+     ],
+     "text": "Regularly clean the Active Power Filter, especially the slits, openings, and filters, to ensure that the air freely flows into the Active Power"
+    },
+    {
+     "segment_id": "p64.b8",
+     "page": 64,
+     "evidence_id": "ev_5f327d3311fc5a0b273a390917e5",
+     "bbox": [
+      27.846,
+      212.811,
+      512.198,
+      221.811
+     ],
+     "text": "Filter to avoid overheating. If necessary, use an air blower or vacuum cleaner to clean the slits, and openings and replace the filters"
+    },
+    {
+     "segment_id": "p64.b9",
+     "page": 64,
+     "evidence_id": "ev_a82c43b1b7702f87898562dd1918",
+     "bbox": [
+      27.846,
+      227.811,
+      279.161,
+      236.811
+     ],
+     "text": "regularly to avoid any object from blocking or covering these areas."
+    }
+   ]
+  },
+  {
+   "id": "v3n_79958341a7e8ec74f6d3",
+   "type": "FailureMode",
+   "name": "BUS capacitor failure",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_79958341a7e8ec74f6d3",
+    "name": "BUS capacitor failure",
+    "description": "BUS capacitor failure",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r5",
+     "page": 64,
+     "evidence_id": "ev_8528f41c2bb493e8e2d3d9b50b64",
+     "bbox": null,
+     "text": "Fault number: 4 | Fault name: BUS OVP/UVP | Possible fault: BUS capacitor failure. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_fe29330e557561478a1c",
+   "type": "FailureMode",
+   "name": "CT is not well connected",
+   "aliases": [
+    "CT not well connected"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_fe29330e557561478a1c",
+    "name": "CT is not well connected",
+    "description": "CT is not well connected",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r7",
+     "page": 64,
+     "evidence_id": "ev_56837f070b4b02c2001ff9b251f7",
+     "bbox": null,
+     "text": "Fault number: 6 | Fault name: No current compensation/Bad current compensation | Possible fault: The CT is not well connected. | Troubleshooting: Check if the CT wiring is cor- rect."
+    }
+   ]
+  },
+  {
+   "id": "v3n_b6a3bd9c94422eb351d3",
+   "type": "FailureMode",
+   "name": "Communication wire not well connected",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_b6a3bd9c94422eb351d3",
+    "name": "Communication wire not well connected",
+    "description": "Communication wire not well connected",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r2",
+     "page": 64,
+     "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+     "bbox": null,
+     "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+    }
+   ]
+  },
+  {
+   "id": "v3n_961bd594213006c77bdc",
+   "type": "FailureMode",
+   "name": "Fan failure",
+   "aliases": [
+    "Unspecified cause of fan failure"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_961bd594213006c77bdc",
+    "name": "Fan failure",
+    "description": "Fan failure",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r6",
+     "page": 64,
+     "evidence_id": "ev_40a4785925f562dde0f86c27bd9e",
+     "bbox": null,
+     "text": "Fault number: 5 | Fault name: Fan Fail | Possible fault: Fan failure. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_449163b1d9fc45a9591a",
+   "type": "FailureMode",
+   "name": "Fan is not working properly",
+   "aliases": [
+    "Fan not working properly"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_449163b1d9fc45a9591a",
+    "name": "Fan is not working properly",
+    "description": "Fan is not working properly",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.b10",
+     "page": 64,
+     "evidence_id": "ev_16c226ebf5095fd9ba762b272b95",
+     "bbox": [
+      27.846,
+      248.148,
+      515.349,
+      257.148
+     ],
+     "text": "Check if all fans work properly when the Active Power Filter is running, and ensure that air can move freely around and through the"
+    },
+    {
+     "segment_id": "p64.b11",
+     "page": 64,
+     "evidence_id": "ev_62e31c73c78c62f662549e6ddb7f",
+     "bbox": [
+      27.846,
+      263.148,
+      262.449,
+      272.148
+     ],
+     "text": "Active Power Filter. Replace the fan if it is not working properly."
+    }
+   ]
+  },
+  {
+   "id": "v3n_27f4c690840c9efe03cb",
+   "type": "FailureMode",
+   "name": "Fans do not work",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_27f4c690840c9efe03cb",
+    "name": "Fans do not work",
+    "description": "Fans do not work",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r4",
+     "page": 64,
+     "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+     "bbox": null,
+     "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_c2322dab978c103de8c3",
+   "type": "FailureMode",
+   "name": "Input fuse is broken",
+   "aliases": [
+    "Input fuse broken"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_c2322dab978c103de8c3",
+    "name": "Input fuse is broken",
+    "description": "Input fuse is broken",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.t1.r3",
+     "page": 64,
+     "evidence_id": "ev_eb7b0a69c51d189e617079fe56a4",
+     "bbox": null,
+     "text": "Fault number: 2 | Fault name: Fuse blowout | Possible fault: The input fuse is broken. | Troubleshooting: Contact service personnel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_78e5e46a30bf2ff50bb2",
+   "type": "FailureMode",
+   "name": "Power capacitors and fans become worn out due to long-term use",
+   "aliases": [
+    "Power capacitors worn out from long-term use"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_78e5e46a30bf2ff50bb2",
+    "name": "Power capacitors and fans become worn out due to long-term use",
+    "description": "Power capacitors and fans become worn out due to long-term use",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.b12",
+     "page": 64,
+     "evidence_id": "ev_83ca7b3c4e7870df0bf437364a90",
+     "bbox": [
+      27.846,
+      283.486,
+      537.912,
+      292.486
+     ],
+     "text": "Some components like power capacitors and fans become worn out due to long term usage, and increase the risk of failure on the Active"
+    }
+   ]
+  },
+  {
+   "id": "v3n_4651dff282ca364736d2",
+   "type": "Symptom",
+   "name": "Risk of Active Power Filter overheating",
+   "aliases": [],
+   "stated_in_source": false,
+   "properties": {
+    "symptom_id": "v3n_4651dff282ca364736d2",
+    "name": "Risk of Active Power Filter overheating",
+    "description": "Risk of Active Power Filter overheating",
+    "severity": "Unknown"
+   },
+   "evidence": [
+    {
+     "segment_id": "p64.b7",
+     "page": 64,
+     "evidence_id": "ev_f84b0e4fdb9d1cd56edd51f9886a",
+     "bbox": [
+      27.846,
+      197.811,
+      528.948,
+      206.811
+     ],
+     "text": "Regularly clean the Active Power Filter, especially the slits, openings, and filters, to ensure that the air freely flows into the Active Power"
+    }
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "v3e_9bbaed20c9c4ccbcab9e",
+   "type": "INDICATES",
+   "from": "v3n_5a763fb643859bf0fb1b",
+   "to": "v3n_b6a3bd9c94422eb351d3",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r2"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r2",
+       "page": 64,
+       "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+       "bbox": null,
+       "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_566026e546afbeeba4e1",
+   "type": "INDICATES",
+   "from": "v3n_5a763fb643859bf0fb1b",
+   "to": "v3n_84f69a42a50b3e9de2b7",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r2"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r2",
+       "page": 64,
+       "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+       "bbox": null,
+       "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_5797fc3c6c7c5e333a9d",
+   "type": "AFFECTS",
+   "from": "v3n_b6a3bd9c94422eb351d3",
+   "to": "v3n_b783952ef9b8378c45db",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r2"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r2",
+       "page": 64,
+       "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+       "bbox": null,
+       "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_e2ded981b6c5f0eff3e6",
+   "type": "AFFECTS",
+   "from": "v3n_84f69a42a50b3e9de2b7",
+   "to": "v3n_22def2bac921c79a1098",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r2"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r2",
+       "page": 64,
+       "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+       "bbox": null,
+       "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_e49fe49493e29756e360",
+   "type": "RESOLVED_BY",
+   "from": "v3n_b6a3bd9c94422eb351d3",
+   "to": "v3n_c87579149ab52c1cfbda",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r2"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r2",
+       "page": 64,
+       "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+       "bbox": null,
+       "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_1d060cb9717bdbe66eda",
+   "type": "RESOLVED_BY",
+   "from": "v3n_84f69a42a50b3e9de2b7",
+   "to": "v3n_b23b2c685283f8373cc5",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r2"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r2",
+       "page": 64,
+       "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+       "bbox": null,
+       "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_b5bfd5fa137543767512",
+   "type": "INDICATES",
+   "from": "v3n_244e6d341b5285520ea7",
+   "to": "v3n_c2322dab978c103de8c3",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R2",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r3"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r3",
+       "page": 64,
+       "evidence_id": "ev_eb7b0a69c51d189e617079fe56a4",
+       "bbox": null,
+       "text": "Fault number: 2 | Fault name: Fuse blowout | Possible fault: The input fuse is broken. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_cfc10fd82558daf68319",
+   "type": "AFFECTS",
+   "from": "v3n_c2322dab978c103de8c3",
+   "to": "v3n_8df112dcb795235bc1b9",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R2",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r3"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r3",
+       "page": 64,
+       "evidence_id": "ev_eb7b0a69c51d189e617079fe56a4",
+       "bbox": null,
+       "text": "Fault number: 2 | Fault name: Fuse blowout | Possible fault: The input fuse is broken. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_4cd6333cdcd6f4ad0244",
+   "type": "RESOLVED_BY",
+   "from": "v3n_c2322dab978c103de8c3",
+   "to": "v3n_f488316cbf2fcf4adfb1",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R2",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r3"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r3",
+       "page": 64,
+       "evidence_id": "ev_eb7b0a69c51d189e617079fe56a4",
+       "bbox": null,
+       "text": "Fault number: 2 | Fault name: Fuse blowout | Possible fault: The input fuse is broken. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_568d39a428b9110cd3b7",
+   "type": "INDICATES",
+   "from": "v3n_81977da24a194f98adb3",
+   "to": "v3n_b79ffb51e1c0cec30e76",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R3",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r4",
+       "page": 64,
+       "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+       "bbox": null,
+       "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_eac42d74ec7835387640",
+   "type": "INDICATES",
+   "from": "v3n_81977da24a194f98adb3",
+   "to": "v3n_27f4c690840c9efe03cb",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R3",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r4",
+       "page": 64,
+       "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+       "bbox": null,
+       "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_adcce0cbd89816f7c9b2",
+   "type": "AFFECTS",
+   "from": "v3n_b79ffb51e1c0cec30e76",
+   "to": "v3n_2d7baebd38792be2ab4d",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R3",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r4",
+       "page": 64,
+       "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+       "bbox": null,
+       "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_b700849f651b8f8e5b56",
+   "type": "AFFECTS",
+   "from": "v3n_27f4c690840c9efe03cb",
+   "to": "v3n_1d53591ab51a59c1d44b",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R3",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r4",
+       "page": 64,
+       "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+       "bbox": null,
+       "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_932d2765f79c5067815e",
+   "type": "RESOLVED_BY",
+   "from": "v3n_b79ffb51e1c0cec30e76",
+   "to": "v3n_cd591c0392e472e1d5e9",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R3",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r4",
+       "page": 64,
+       "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+       "bbox": null,
+       "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_f9c2613ca7f1d84f0541",
+   "type": "RESOLVED_BY",
+   "from": "v3n_27f4c690840c9efe03cb",
+   "to": "v3n_bb84be125ea411bac4f1",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R3",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r4",
+       "page": 64,
+       "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+       "bbox": null,
+       "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_deaf4666064b84a74827",
+   "type": "INDICATES",
+   "from": "v3n_46461f33565167e0f384",
+   "to": "v3n_79958341a7e8ec74f6d3",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R4",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r5",
+       "page": 64,
+       "evidence_id": "ev_8528f41c2bb493e8e2d3d9b50b64",
+       "bbox": null,
+       "text": "Fault number: 4 | Fault name: BUS OVP/UVP | Possible fault: BUS capacitor failure. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_391e9173c6c4f398b508",
+   "type": "AFFECTS",
+   "from": "v3n_79958341a7e8ec74f6d3",
+   "to": "v3n_dc3cc905adba5467c3f0",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R4",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r5",
+       "page": 64,
+       "evidence_id": "ev_8528f41c2bb493e8e2d3d9b50b64",
+       "bbox": null,
+       "text": "Fault number: 4 | Fault name: BUS OVP/UVP | Possible fault: BUS capacitor failure. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_5d3890055dd02650e68b",
+   "type": "RESOLVED_BY",
+   "from": "v3n_79958341a7e8ec74f6d3",
+   "to": "v3n_aa8d22ca89d99a4c7fb7",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R4",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r5",
+       "page": 64,
+       "evidence_id": "ev_8528f41c2bb493e8e2d3d9b50b64",
+       "bbox": null,
+       "text": "Fault number: 4 | Fault name: BUS OVP/UVP | Possible fault: BUS capacitor failure. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_3b42a46dbfbb461745e5",
+   "type": "INDICATES",
+   "from": "v3n_1788eed647a1973531eb",
+   "to": "v3n_961bd594213006c77bdc",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R5",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r6"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r6",
+       "page": 64,
+       "evidence_id": "ev_40a4785925f562dde0f86c27bd9e",
+       "bbox": null,
+       "text": "Fault number: 5 | Fault name: Fan Fail | Possible fault: Fan failure. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_09ca5515e210dd84059a",
+   "type": "AFFECTS",
+   "from": "v3n_961bd594213006c77bdc",
+   "to": "v3n_1d53591ab51a59c1d44b",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R5",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r6"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r6",
+       "page": 64,
+       "evidence_id": "ev_40a4785925f562dde0f86c27bd9e",
+       "bbox": null,
+       "text": "Fault number: 5 | Fault name: Fan Fail | Possible fault: Fan failure. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_11300b683d4989b61b5e",
+   "type": "RESOLVED_BY",
+   "from": "v3n_961bd594213006c77bdc",
+   "to": "v3n_bb84be125ea411bac4f1",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R5",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r6"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r6",
+       "page": 64,
+       "evidence_id": "ev_40a4785925f562dde0f86c27bd9e",
+       "bbox": null,
+       "text": "Fault number: 5 | Fault name: Fan Fail | Possible fault: Fan failure. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_f36cc6255908ed4364a3",
+   "type": "INDICATES",
+   "from": "v3n_314d2f5dbfd5eaa6bf00",
+   "to": "v3n_fe29330e557561478a1c",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R6",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r7"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r7",
+       "page": 64,
+       "evidence_id": "ev_56837f070b4b02c2001ff9b251f7",
+       "bbox": null,
+       "text": "Fault number: 6 | Fault name: No current compensation/Bad current compensation | Possible fault: The CT is not well connected. | Troubleshooting: Check if the CT wiring is cor- rect."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_a4f2291b3d8ffc612233",
+   "type": "AFFECTS",
+   "from": "v3n_fe29330e557561478a1c",
+   "to": "v3n_8eaf96c0400300a2f0dd",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R6",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r7"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r7",
+       "page": 64,
+       "evidence_id": "ev_56837f070b4b02c2001ff9b251f7",
+       "bbox": null,
+       "text": "Fault number: 6 | Fault name: No current compensation/Bad current compensation | Possible fault: The CT is not well connected. | Troubleshooting: Check if the CT wiring is cor- rect."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_d83a4996e53bb0448b21",
+   "type": "RESOLVED_BY",
+   "from": "v3n_fe29330e557561478a1c",
+   "to": "v3n_40d4e6bb67d7ac8e4e81",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R6",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.t1.r7"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r7",
+       "page": 64,
+       "evidence_id": "ev_56837f070b4b02c2001ff9b251f7",
+       "bbox": null,
+       "text": "Fault number: 6 | Fault name: No current compensation/Bad current compensation | Possible fault: The CT is not well connected. | Troubleshooting: Check if the CT wiring is cor- rect."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_dcb627dddd71f8e2c44f",
+   "type": "AFFECTS",
+   "from": "v3n_1df48709f0856dffeb4a",
+   "to": "v3n_fe5d74cbe8310932778c",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R7",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.b7",
+       "p64.b8",
+       "p64.b9"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.b7",
+       "page": 64,
+       "evidence_id": "ev_f84b0e4fdb9d1cd56edd51f9886a",
+       "bbox": [
+        27.846,
+        197.811,
+        528.948,
+        206.811
+       ],
+       "text": "Regularly clean the Active Power Filter, especially the slits, openings, and filters, to ensure that the air freely flows into the Active Power"
+      },
+      {
+       "segment_id": "p64.b8",
+       "page": 64,
+       "evidence_id": "ev_5f327d3311fc5a0b273a390917e5",
+       "bbox": [
+        27.846,
+        212.811,
+        512.198,
+        221.811
+       ],
+       "text": "Filter to avoid overheating. If necessary, use an air blower or vacuum cleaner to clean the slits, and openings and replace the filters"
+      },
+      {
+       "segment_id": "p64.b9",
+       "page": 64,
+       "evidence_id": "ev_a82c43b1b7702f87898562dd1918",
+       "bbox": [
+        27.846,
+        227.811,
+        279.161,
+        236.811
+       ],
+       "text": "regularly to avoid any object from blocking or covering these areas."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_60f4b732074bc87a89af",
+   "type": "RESOLVED_BY",
+   "from": "v3n_1df48709f0856dffeb4a",
+   "to": "v3n_5e94439f92a88d18becb",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "If necessary"
+   ],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R7",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.b7",
+       "p64.b8",
+       "p64.b9"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.b7",
+       "page": 64,
+       "evidence_id": "ev_f84b0e4fdb9d1cd56edd51f9886a",
+       "bbox": [
+        27.846,
+        197.811,
+        528.948,
+        206.811
+       ],
+       "text": "Regularly clean the Active Power Filter, especially the slits, openings, and filters, to ensure that the air freely flows into the Active Power"
+      },
+      {
+       "segment_id": "p64.b8",
+       "page": 64,
+       "evidence_id": "ev_5f327d3311fc5a0b273a390917e5",
+       "bbox": [
+        27.846,
+        212.811,
+        512.198,
+        221.811
+       ],
+       "text": "Filter to avoid overheating. If necessary, use an air blower or vacuum cleaner to clean the slits, and openings and replace the filters"
+      },
+      {
+       "segment_id": "p64.b9",
+       "page": 64,
+       "evidence_id": "ev_a82c43b1b7702f87898562dd1918",
+       "bbox": [
+        27.846,
+        227.811,
+        279.161,
+        236.811
+       ],
+       "text": "regularly to avoid any object from blocking or covering these areas."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_596c5566f4dce2641c1f",
+   "type": "RESOLVED_BY",
+   "from": "v3n_1df48709f0856dffeb4a",
+   "to": "v3n_031bac892bc7eed08bd3",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "Regularly, to avoid objects blocking or covering the areas",
+    "Regularly, to prevent objects blocking or covering the areas"
+   ],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R7",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.b7",
+       "p64.b8",
+       "p64.b9"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.b7",
+       "page": 64,
+       "evidence_id": "ev_f84b0e4fdb9d1cd56edd51f9886a",
+       "bbox": [
+        27.846,
+        197.811,
+        528.948,
+        206.811
+       ],
+       "text": "Regularly clean the Active Power Filter, especially the slits, openings, and filters, to ensure that the air freely flows into the Active Power"
+      },
+      {
+       "segment_id": "p64.b8",
+       "page": 64,
+       "evidence_id": "ev_5f327d3311fc5a0b273a390917e5",
+       "bbox": [
+        27.846,
+        212.811,
+        512.198,
+        221.811
+       ],
+       "text": "Filter to avoid overheating. If necessary, use an air blower or vacuum cleaner to clean the slits, and openings and replace the filters"
+      },
+      {
+       "segment_id": "p64.b9",
+       "page": 64,
+       "evidence_id": "ev_a82c43b1b7702f87898562dd1918",
+       "bbox": [
+        27.846,
+        227.811,
+        279.161,
+        236.811
+       ],
+       "text": "regularly to avoid any object from blocking or covering these areas."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_c17adf7219987507b75f",
+   "type": "AFFECTS",
+   "from": "v3n_449163b1d9fc45a9591a",
+   "to": "v3n_1d53591ab51a59c1d44b",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R8",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.b10",
+       "p64.b11",
+       "p64.b12",
+       "p64.t1.r4"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.b10",
+       "page": 64,
+       "evidence_id": "ev_16c226ebf5095fd9ba762b272b95",
+       "bbox": [
+        27.846,
+        248.148,
+        515.349,
+        257.148
+       ],
+       "text": "Check if all fans work properly when the Active Power Filter is running, and ensure that air can move freely around and through the"
+      },
+      {
+       "segment_id": "p64.b11",
+       "page": 64,
+       "evidence_id": "ev_62e31c73c78c62f662549e6ddb7f",
+       "bbox": [
+        27.846,
+        263.148,
+        262.449,
+        272.148
+       ],
+       "text": "Active Power Filter. Replace the fan if it is not working properly."
+      },
+      {
+       "segment_id": "p64.b12",
+       "page": 64,
+       "evidence_id": "ev_83ca7b3c4e7870df0bf437364a90",
+       "bbox": [
+        27.846,
+        283.486,
+        537.912,
+        292.486
+       ],
+       "text": "Some components like power capacitors and fans become worn out due to long term usage, and increase the risk of failure on the Active"
+      },
+      {
+       "segment_id": "p64.t1.r4",
+       "page": 64,
+       "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+       "bbox": null,
+       "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_c0cb4433dd6a02b0a3fd",
+   "type": "RESOLVED_BY",
+   "from": "v3n_449163b1d9fc45a9591a",
+   "to": "v3n_f6cdace8cfc7984d56c8",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "When the Active Power Filter is running",
+    "While the Active Power Filter is running"
+   ],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R8",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.b10",
+       "p64.b11"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.b10",
+       "page": 64,
+       "evidence_id": "ev_16c226ebf5095fd9ba762b272b95",
+       "bbox": [
+        27.846,
+        248.148,
+        515.349,
+        257.148
+       ],
+       "text": "Check if all fans work properly when the Active Power Filter is running, and ensure that air can move freely around and through the"
+      },
+      {
+       "segment_id": "p64.b11",
+       "page": 64,
+       "evidence_id": "ev_62e31c73c78c62f662549e6ddb7f",
+       "bbox": [
+        27.846,
+        263.148,
+        262.449,
+        272.148
+       ],
+       "text": "Active Power Filter. Replace the fan if it is not working properly."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_b6964a7f65d709576a55",
+   "type": "RESOLVED_BY",
+   "from": "v3n_449163b1d9fc45a9591a",
+   "to": "v3n_fabaa6f17b144abbb3a2",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R8",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.b10",
+       "p64.b11"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.b10",
+       "page": 64,
+       "evidence_id": "ev_16c226ebf5095fd9ba762b272b95",
+       "bbox": [
+        27.846,
+        248.148,
+        515.349,
+        257.148
+       ],
+       "text": "Check if all fans work properly when the Active Power Filter is running, and ensure that air can move freely around and through the"
+      },
+      {
+       "segment_id": "p64.b11",
+       "page": 64,
+       "evidence_id": "ev_62e31c73c78c62f662549e6ddb7f",
+       "bbox": [
+        27.846,
+        263.148,
+        262.449,
+        272.148
+       ],
+       "text": "Active Power Filter. Replace the fan if it is not working properly."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_ef1ab574e647e92cb347",
+   "type": "RESOLVED_BY",
+   "from": "v3n_449163b1d9fc45a9591a",
+   "to": "v3n_b6774a7a6285f744395c",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "If the fan is not working properly"
+   ],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R8",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.b10",
+       "p64.b11"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.b10",
+       "page": 64,
+       "evidence_id": "ev_16c226ebf5095fd9ba762b272b95",
+       "bbox": [
+        27.846,
+        248.148,
+        515.349,
+        257.148
+       ],
+       "text": "Check if all fans work properly when the Active Power Filter is running, and ensure that air can move freely around and through the"
+      },
+      {
+       "segment_id": "p64.b11",
+       "page": 64,
+       "evidence_id": "ev_62e31c73c78c62f662549e6ddb7f",
+       "bbox": [
+        27.846,
+        263.148,
+        262.449,
+        272.148
+       ],
+       "text": "Active Power Filter. Replace the fan if it is not working properly."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_cee37e396f9e2b5b3f13",
+   "type": "AFFECTS",
+   "from": "v3n_78e5e46a30bf2ff50bb2",
+   "to": "v3n_fb3fb62831bab5b09311",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "Due to long-term usage"
+   ],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R9",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.b12"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.b12",
+       "page": 64,
+       "evidence_id": "ev_83ca7b3c4e7870df0bf437364a90",
+       "bbox": [
+        27.846,
+        283.486,
+        537.912,
+        292.486
+       ],
+       "text": "Some components like power capacitors and fans become worn out due to long term usage, and increase the risk of failure on the Active"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_e9466fa909b41d108290",
+   "type": "RESOLVED_BY",
+   "from": "v3n_78e5e46a30bf2ff50bb2",
+   "to": "v3n_d65242ba1fb984262842",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "For further maintenance and service information"
+   ],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:A.R9",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.b12",
+       "p64.b14"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.b12",
+       "page": 64,
+       "evidence_id": "ev_83ca7b3c4e7870df0bf437364a90",
+       "bbox": [
+        27.846,
+        283.486,
+        537.912,
+        292.486
+       ],
+       "text": "Some components like power capacitors and fans become worn out due to long term usage, and increase the risk of failure on the Active"
+      },
+      {
+       "segment_id": "p64.b14",
+       "page": 64,
+       "evidence_id": "ev_f2c7546426bd59d825fcbedb29cf",
+       "bbox": [
+        27.846,
+        318.825,
+        311.724,
+        327.825
+       ],
+       "text": "Contact Danfoss for further information regarding maintenance and service."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_ae1b847d04e16fbc0342",
+   "type": "MAY_INDICATE",
+   "from": "v3n_4651dff282ca364736d2",
+   "to": "v3n_11e9220480ba616ebe38",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "To avoid overheating"
+   ],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:B.R7",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.b7",
+       "p64.b8",
+       "p64.b9"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.b7",
+       "page": 64,
+       "evidence_id": "ev_f84b0e4fdb9d1cd56edd51f9886a",
+       "bbox": [
+        27.846,
+        197.811,
+        528.948,
+        206.811
+       ],
+       "text": "Regularly clean the Active Power Filter, especially the slits, openings, and filters, to ensure that the air freely flows into the Active Power"
+      },
+      {
+       "segment_id": "p64.b8",
+       "page": 64,
+       "evidence_id": "ev_5f327d3311fc5a0b273a390917e5",
+       "bbox": [
+        27.846,
+        212.811,
+        512.198,
+        221.811
+       ],
+       "text": "Filter to avoid overheating. If necessary, use an air blower or vacuum cleaner to clean the slits, and openings and replace the filters"
+      },
+      {
+       "segment_id": "p64.b9",
+       "page": 64,
+       "evidence_id": "ev_a82c43b1b7702f87898562dd1918",
+       "bbox": [
+        27.846,
+        227.811,
+        279.161,
+        236.811
+       ],
+       "text": "regularly to avoid any object from blocking or covering these areas."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_01352ecafad23c580752",
+   "type": "AFFECTS",
+   "from": "v3n_449163b1d9fc45a9591a",
+   "to": "v3n_bfce7a6d4ac09356e799",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-fd152e:B.R8",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p64.b10",
+       "p64.b11"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:676355100223eac6",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p64.b10",
+       "page": 64,
+       "evidence_id": "ev_16c226ebf5095fd9ba762b272b95",
+       "bbox": [
+        27.846,
+        248.148,
+        515.349,
+        257.148
+       ],
+       "text": "Check if all fans work properly when the Active Power Filter is running, and ensure that air can move freely around and through the"
+      },
+      {
+       "segment_id": "p64.b11",
+       "page": 64,
+       "evidence_id": "ev_62e31c73c78c62f662549e6ddb7f",
+       "bbox": [
+        27.846,
+        263.148,
+        262.449,
+        272.148
+       ],
+       "text": "Active Power Filter. Replace the fan if it is not working properly."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_d4c0dfe84ffbf0d4396d",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_b783952ef9b8378c45db",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r2",
+       "page": 64,
+       "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+       "bbox": null,
+       "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_60b2eaa6ccf5ec8b2eaf",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_22def2bac921c79a1098",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r2",
+       "page": 64,
+       "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+       "bbox": null,
+       "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_24656f1ae3478e7b803b",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_8df112dcb795235bc1b9",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r3",
+       "page": 64,
+       "evidence_id": "ev_eb7b0a69c51d189e617079fe56a4",
+       "bbox": null,
+       "text": "Fault number: 2 | Fault name: Fuse blowout | Possible fault: The input fuse is broken. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_ac33320e01b338320fe6",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_2d7baebd38792be2ab4d",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r4",
+       "page": 64,
+       "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+       "bbox": null,
+       "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_2ae494efe0ce3ce81e3e",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_1d53591ab51a59c1d44b",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r4",
+       "page": 64,
+       "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+       "bbox": null,
+       "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+      },
+      {
+       "segment_id": "p64.t1.r6",
+       "page": 64,
+       "evidence_id": "ev_40a4785925f562dde0f86c27bd9e",
+       "bbox": null,
+       "text": "Fault number: 5 | Fault name: Fan Fail | Possible fault: Fan failure. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_05c4b8c9f9be27001431",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_dc3cc905adba5467c3f0",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r5",
+       "page": 64,
+       "evidence_id": "ev_8528f41c2bb493e8e2d3d9b50b64",
+       "bbox": null,
+       "text": "Fault number: 4 | Fault name: BUS OVP/UVP | Possible fault: BUS capacitor failure. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_de0eac64ce6379c5464a",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_8eaf96c0400300a2f0dd",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r7",
+       "page": 64,
+       "evidence_id": "ev_56837f070b4b02c2001ff9b251f7",
+       "bbox": null,
+       "text": "Fault number: 6 | Fault name: No current compensation/Bad current compensation | Possible fault: The CT is not well connected. | Troubleshooting: Check if the CT wiring is cor- rect."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_433ed81961542cd662e5",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_fe5d74cbe8310932778c",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.b7",
+       "page": 64,
+       "evidence_id": "ev_f84b0e4fdb9d1cd56edd51f9886a",
+       "bbox": [
+        27.846,
+        197.811,
+        528.948,
+        206.811
+       ],
+       "text": "Regularly clean the Active Power Filter, especially the slits, openings, and filters, to ensure that the air freely flows into the Active Power"
+      },
+      {
+       "segment_id": "p64.b8",
+       "page": 64,
+       "evidence_id": "ev_5f327d3311fc5a0b273a390917e5",
+       "bbox": [
+        27.846,
+        212.811,
+        512.198,
+        221.811
+       ],
+       "text": "Filter to avoid overheating. If necessary, use an air blower or vacuum cleaner to clean the slits, and openings and replace the filters"
+      },
+      {
+       "segment_id": "p64.b9",
+       "page": 64,
+       "evidence_id": "ev_a82c43b1b7702f87898562dd1918",
+       "bbox": [
+        27.846,
+        227.811,
+        279.161,
+        236.811
+       ],
+       "text": "regularly to avoid any object from blocking or covering these areas."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_ac8c943ef1bc8099a1ff",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_fb3fb62831bab5b09311",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.b12",
+       "page": 64,
+       "evidence_id": "ev_83ca7b3c4e7870df0bf437364a90",
+       "bbox": [
+        27.846,
+        283.486,
+        537.912,
+        292.486
+       ],
+       "text": "Some components like power capacitors and fans become worn out due to long term usage, and increase the risk of failure on the Active"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_092b8d5408a577f9d346",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_bfce7a6d4ac09356e799",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.b10",
+       "page": 64,
+       "evidence_id": "ev_16c226ebf5095fd9ba762b272b95",
+       "bbox": [
+        27.846,
+        248.148,
+        515.349,
+        257.148
+       ],
+       "text": "Check if all fans work properly when the Active Power Filter is running, and ensure that air can move freely around and through the"
+      },
+      {
+       "segment_id": "p64.b11",
+       "page": 64,
+       "evidence_id": "ev_62e31c73c78c62f662549e6ddb7f",
+       "bbox": [
+        27.846,
+        263.148,
+        262.449,
+        272.148
+       ],
+       "text": "Active Power Filter. Replace the fan if it is not working properly."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_d456dc5e250d9f0f8fdf",
+   "type": "GENERATES_ERROR",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_5a763fb643859bf0fb1b",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r2",
+       "page": 64,
+       "evidence_id": "ev_268734285806703f57f7acc0dfb6",
+       "bbox": null,
+       "text": "Fault number: 1 | Fault name: SYS 485 comm loss | Possible fault: 1 The communication wire is not well connected. 2 The Active Power Filter modules have repeated IDs. | Troubleshooting: 1 Check if the communication wire is firmly connected. 1 Check the DIP switches of the individual modules."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_d9309234d32496d4b24c",
+   "type": "GENERATES_ERROR",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_244e6d341b5285520ea7",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r3",
+       "page": 64,
+       "evidence_id": "ev_eb7b0a69c51d189e617079fe56a4",
+       "bbox": null,
+       "text": "Fault number: 2 | Fault name: Fuse blowout | Possible fault: The input fuse is broken. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_7c7ae2fdeba986f85c32",
+   "type": "GENERATES_ERROR",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_81977da24a194f98adb3",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r4",
+       "page": 64,
+       "evidence_id": "ev_bfdc78c0655063f686394f9b22c2",
+       "bbox": null,
+       "text": "Fault number: 3 | Fault name: Ambient OTP | Possible fault: 1 The air vents ate blocked. 2 The fans do not work. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_753c45121d453517b8aa",
+   "type": "GENERATES_ERROR",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_46461f33565167e0f384",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r5",
+       "page": 64,
+       "evidence_id": "ev_8528f41c2bb493e8e2d3d9b50b64",
+       "bbox": null,
+       "text": "Fault number: 4 | Fault name: BUS OVP/UVP | Possible fault: BUS capacitor failure. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_96c05ff5c0995ce97830",
+   "type": "GENERATES_ERROR",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_1788eed647a1973531eb",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r6",
+       "page": 64,
+       "evidence_id": "ev_40a4785925f562dde0f86c27bd9e",
+       "bbox": null,
+       "text": "Fault number: 5 | Fault name: Fan Fail | Possible fault: Fan failure. | Troubleshooting: Contact service personnel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_1f59d3281ff406f4ef59",
+   "type": "GENERATES_ERROR",
+   "from": "v3n_asset_4470fb9bdedd",
+   "to": "v3n_314d2f5dbfd5eaa6bf00",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p64.t1.r7",
+       "page": 64,
+       "evidence_id": "ev_56837f070b4b02c2001ff9b251f7",
+       "bbox": null,
+       "text": "Fault number: 6 | Fault name: No current compensation/Bad current compensation | Possible fault: The CT is not well connected. | Troubleshooting: Check if the CT wiring is cor- rect."
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "excluded_relations": [
+  {
+   "relation": "MAY_INDICATE",
+   "source": "Symptom:Red fault indicator is on",
+   "target": "FailureMode:Unspecified cause of red fault indicator being on",
+   "certificate": {
+    "segment_ids": [
+     "p17.t1.r4"
+    ],
+    "witnesses": [
+     "structure"
+    ],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+    },
+    "extractor": "gpt-6-luna:676355100223eac6",
+    "notes": [
+     "one end is not named in the source",
+     "reviewer: The manual states that an illuminated Fault (Red) indicator means the Active Power Filter is malfunctioning; it does not state an unspecified cause of the indicator being on."
+    ]
+   }
+  },
+  {
+   "relation": "MAY_INDICATE",
+   "source": "Symptom:Alarm is sounding",
+   "target": "FailureMode:Unspecified cause of alarm sounding",
+   "certificate": {
+    "segment_ids": [
+     "p17.t1.r6"
+    ],
+    "witnesses": [
+     "structure"
+    ],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+    },
+    "extractor": "gpt-6-luna:676355100223eac6",
+    "notes": [
+     "one end is not named in the source",
+     "reviewer: The excerpt identifies the buzzer as an alarm sounding to warn the user; it does not state that this symptom may indicate an unspecified failure mode."
+    ]
+   }
+  },
+  {
+   "relation": "RESOLVED_BY",
+   "source": "FailureMode:Fans worn out from long-term use",
+   "target": "CorrectiveAction:Contact Danfoss for maintenance and service information",
+   "certificate": {
+    "segment_ids": [
+     "p64.b12",
+     "p64.b14"
+    ],
+    "witnesses": [
+     "verifier"
+    ],
+    "verifier_verdict": "supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+    },
+    "extractor": "gpt-6-luna:676355100223eac6",
+    "notes": [
+     "one end is not named in the source",
+     "reviewer: The excerpts state that fans can wear out with long-term use and separately advise contacting Danfoss for maintenance and service information, but do not state that contacting Danfoss resolves or addresses fan wear."
+    ]
+   }
+  }
+ ],
+ "report": {
+  "status": "approved",
+  "pages": 66,
+  "page_labels": {
+   "other": 44,
+   "unreadable": 2,
+   "diagnostic": 5,
+   "procedure": 15
+  },
+  "diagnostic_pages": [
+   17,
+   20,
+   41,
+   42,
+   64
+  ],
+  "units": 4,
+  "failed_reads": 0,
+  "proposals": 70,
+  "unclear_passages": 1,
+  "extraction_notes": [
+   "coverage: 3 unused table row(s) read again",
+   "coverage: 13 unused table row(s) read again",
+   "coverage: 6 unused table row(s) read again",
+   "A: cause 'Fan failure' repeats its problem, marked unnamed"
+  ],
+  "assertions_by_tier": {
+   "red": 3,
+   "green": 35
+  },
+  "witnesses": {
+   "structure": 35,
+   "agreement": 32,
+   "verifier": 6
+  },
+  "verifier_verdicts": {
+   "not_supported": 2,
+   "not_called": 30,
+   "supported": 6
+  },
+  "graph": {
+   "nodes": 48,
+   "nodes_by_type": {
+    "Symptom": 3,
+    "FailureMode": 15,
+    "ErrorCode": 6,
+    "Component": 11,
+    "CorrectiveAction": 13
+   },
+   "edges": 38,
+   "edges_by_tier": {
+    "red": 3,
+    "green": 35
+   },
+   "merged_aliases": 8
+  },
+  "gates": {
+   "map": {
+    "questions": 1,
+    "answered": 1,
+    "pending": 0
+   },
+   "doubts": {
+    "questions": 4,
+    "answered": 3,
+    "pending": 1
+   },
+   "approval": {
+    "questions": 1,
+    "answered": 1,
+    "pending": 0
+   }
+  },
+  "answers_by_reviewer": {
+   "agent": 4,
+   "auto": 1
+  },
+  "human_questions": 0,
+  "reviewer_confirmed": 0,
+  "usage": {
+   "calls": 2,
+   "failed_calls": 0,
+   "prompt_tokens": 1993,
+   "completion_tokens": 1227,
+   "estimated_cost_usd": 0.000846,
+   "by_operation": {
+    "kg_v3_merge": 1,
+    "kg_v3_verify": 1
+   }
+  },
+  "agent_usage": {
+   "calls": 4,
+   "failed_calls": 0,
+   "prompt_tokens": 3046,
+   "completion_tokens": 1720,
+   "estimated_cost_usd": 0.001165,
+   "by_operation": {
+    "AgentDecision": 4
+   }
+  },
+  "seconds": {
+   "gate_map": 0.02,
+   "extract": 0.003,
+   "check": 6.83,
+   "merge": 3.269,
+   "gate_doubts": 7.455,
+   "gate_approval": 0.001,
+   "total": 17.622
+  },
+  "prompt_ids": {
+   "extraction": "676355100223eac6"
+  }
+ }
+}

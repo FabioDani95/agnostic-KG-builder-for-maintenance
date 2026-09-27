@@ -16,6 +16,7 @@ system proposes. Answer as an experienced maintenance engineer would.
    that problem or cause; it does not need to repair anything. A statement without that mark
    claims a remedy: a check alone does not support it.
 5. Conditions, negations, numbers, units and codes must keep the meaning they have in the source.
+   A cause that only repeats the problem, or a check presented as a cause, is not correct.
 6. For a page map, a page is diagnostic when it helps find or fix a fault (troubleshooting tables,
    fault or alarm codes, tests); procedure pages hold steps that diagnostic pages rely on.
 7. Choose exactly one listed option ID. If only some numbered statements are right, choose
@@ -74,10 +75,20 @@ Rules:
    mode named "Unspecified cause of <symptom>" with stated false. Otherwise stated is true.
 8. Put conditions (if, when, only if, test outcomes, thresholds, order of steps) as short phrases
    in the relation's "conditions".
-9. Link a component with AFFECTS only when the source says that this part is worn, damaged,
+9. A failure mode is a faulty state or cause the manual names (worn, blocked, loose, not mapped,
+   out of adjustment). A check to perform is never a failure mode: "the valves need checking" is
+   a check. When the manual lists only checks for a problem, link them to "Unspecified cause of
+   <problem>". A cause that only repeats the problem is not a cause.
+10. Numbered steps are marked (step 5), sub-steps (step 5a). A sub-step belongs to its parent
+   step: link it only to the problem or cause of that step, never to another step's cause.
+   Parts of one sentence may be split across several IDs on the same line; cite all of them.
+11. kind repair: the step changes the machine (repair, replace, clean, adjust, tighten, refill).
+   kind inspection: it only observes, measures or tests. A test that decides between possible
+   causes is linked to each cause it confirms, with the condition it checks.
+12. Link a component with AFFECTS only when the source says that this part is worn, damaged,
    blocked, faulty or out of adjustment in that fault. A part that is only used in the remedy
    is not affected.
-10. Ignore general warnings, specifications and part lists unless they state a fault, its cause
+13. Ignore general warnings, specifications and part lists unless they state a fault, its cause
     or its remedy. List passages you cannot interpret in "unclear".
 """
 
@@ -87,7 +98,11 @@ even in different words; not_supported when the text does not say it or says som
 (another entry, opposite condition, different code or number); unclear when the text is not
 enough to decide. A statement marked [inspection] only claims that the manual prescribes that check
 or test for that problem or cause. A cause listed among several causes of a problem supports that
-problem-cause link; a remedy supports only the cause it is written for.
+problem-cause link; a remedy supports only the cause it is written for. Numbered troubleshooting steps
+shown with the problem they belong to are remedies or checks for the cause that problem names, unless
+a step or its parent step points to another cause. A numbered sub-step belongs to its parent step only. Answer not_supported when a statement marked [inspection] actually repairs,
+replaces, cleans or adjusts, when a remedy statement only checks, and when the cause is a check to
+perform or only repeats the problem.
 """
 
 MERGE_PROMPT = """You decide whether two names extracted from the same maintenance manual denote the same thing.

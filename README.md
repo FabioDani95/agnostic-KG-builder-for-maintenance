@@ -20,8 +20,8 @@ The default PDF generator is **V3 "Cite, Check, Ask"** (`backend/kg_v3`,
 text; each relation gets a certificate of independent witnesses and a
 green/yellow/red tier; doubts become grouped questions that an agent reviewer
 answers first, so a person sees only what it cannot settle. On the four
-development manuals V3 recovers as many or more reference cases than v22
-(by meaning: Eastman 7 vs 6 of 8, Danfoss 8 vs 5 of 8, Graco 18 vs 17 of 18),
+development manuals V3 recovers 33–34 of 34 reference cases by meaning against
+24–26 for v22 (reference reviewed by the author),
 leaves 0–2 questions per manual for a person instead of 26–157 review items, and
 runs 2–13 times faster at lower API cost. These are development measurements on
 the manuals used to build the system, with a reference not yet validated by

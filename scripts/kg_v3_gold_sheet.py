@@ -101,10 +101,24 @@ def generate() -> None:
           f"{SHEET.relative_to(ROOT)}")
 
 
+KIND_WORDS = {"assistenza": "escalation", "escalation": "escalation", "controllo": "inspection",
+              "riparazione": "repair"}
+NOT_STATED = "non indicata nel manuale"
+
+
+def _field_values(text: str) -> dict[str, str]:
+    """``problema=...; causa=...; azione=...`` into field names and values."""
+
+    labels = {label: name for name, label in FIELDS.items()}
+    pattern = r"(problema|causa|azione)=(.*?)(?=[;\s]+(?:problema|causa|azione)=|;?\s*$)"
+    return {labels[key]: value.strip(" ;") for key, value in re.findall(pattern, text)}
+
+
 def apply() -> None:
-    reviewed = {match.group(1): match.group(0) for match in BLOCK.finditer(SHEET.read_text())}
-    header = SHEET.read_text().split("## ", 1)[0]
-    reviewer = re.search(r"^Revisore:[ \t]*(.*)$", header, re.M)
+    text = SHEET.read_text()
+    reviewed = {match.group(1): match.group(0) for match in BLOCK.finditer(text)}
+    header = text.split("## ", 1)[0]
+    reviewer = (re.search(r"^Revisore:[ \t]*(.*)$", header, re.M) or [None, ""])[1].strip()
     total = done = 0
     for manual in MANUALS:
         path = GOLD_SEGMENTS / f"{manual}.json"
@@ -119,19 +133,37 @@ def apply() -> None:
                 continue
             done += 1
             review = {"position": position, "verdict": verdict, "correction": _value(block, "Correzione"),
-                      "note": _value(block, "Nota"), "reviewer": reviewer.group(1).strip() if reviewer else ""}
-            for key, value in re.findall(r"(problema|causa|azione)=([\w.]+)", _value(block, "ID corretti")):
-                if not re.match(SEGMENT_ID_PATTERN, value):
-                    print(f"{claim['claim_id']}: '{value}' is not a segment ID, ignored")
+                      "corrected_ids": _value(block, "ID corretti"), "note": _value(block, "Nota"),
+                      "reviewer": reviewer}
+            for field, value in _field_values(review["corrected_ids"]).items():
+                ids = [item.strip() for item in value.split(",") if item.strip()]
+                if value.strip() == NOT_STATED:
+                    claim[f"{field}_segments"] = []
                     continue
-                field = {label: name for name, label in FIELDS.items()}[key]
-                claim[f"{field}_segments"] = [value]
-            claim["technician_review"] = review
-        claims = data["claims"]
-        if all("technician_review" in claim for claim in claims):
-            data["status"] = "technician_confirmed"
+                valid = [item for item in ids if re.match(SEGMENT_ID_PATTERN, item)]
+                if len(valid) != len(ids):
+                    print(f"{claim['claim_id']}: ignored IDs {sorted(set(ids) - set(valid))}")
+                if valid:
+                    claim[f"{field}_segments"] = valid
+            for field, value in _field_values(review["correction"]).items():
+                kind = re.search(r"\(([^)]*)\)\s*$", value)
+                if kind:
+                    value = value[:kind.start()].strip()
+                    matched = next((code for word, code in KIND_WORDS.items() if word in kind.group(1).lower()), "")
+                    if field == "action" and matched:
+                        claim["action_kind"] = matched
+                if value == NOT_STATED:
+                    claim[field], claim[f"{field}_stated"] = "", False
+                elif value:
+                    claim[field] = value
+            claim["excluded"] = verdict == "X"
+            claim["review"] = review
+        if all("review" in claim for claim in data["claims"]):
+            data["status"] = "reviewed"
+            data["reviewer"] = reviewer
+            data["note"] = "Positions and cases reviewed with CONFERMA_GOLD.md; the reviewer is recorded."
         path.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n")
-    print(f"applied {done}/{total} reviewed cases")
+    print(f"applied {done}/{total} reviewed cases (reviewer: {reviewer or 'not given'})")
 
 
 def main() -> int:

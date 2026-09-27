@@ -94,3 +94,142 @@ def test_a_compound_name_never_bridges_two_actions_into_one_node():
                       relation("Replace the piston valve seals", compound, "p11.t1.r14")], [])
     assert {graph.nodes_by_id[edge.target].name for edge in graph.edges} == {
         "Clear the piston valve", "Replace the piston valve seals"}
+
+
+def _eastman_like_doc() -> DocumentText:
+    texts = [
+        ("p38.b1", "Problem: The tool does not move down"),
+        ("p38.b2", "5.Check tool connections."),
+        ("p38.b3", "a) Hit the Cut Down button to verify the"),
+        ("p38.b4", "corresponding green LED light is on."),
+        ("p38.b5", "6.The tool delays coming down."),
+        ("p38.b6", "a) Check the 24 VDC power supply."),
+    ]
+    segments = [Segment(segment_id=key, page=38, kind=SegmentKind.TEXT, text=text, evidence_id=f"e{index}")
+                for index, (key, text) in enumerate(texts)]
+    return DocumentText(page_count=38, pages={38: segments})
+
+
+def test_numbered_steps_and_broken_sentences_are_explicit():
+    from backend.kg_v3.reader import render_segments
+
+    doc = _eastman_like_doc()
+    assert doc.step["p38.b3"] == doc.step["p38.b4"] and doc.step["p38.b3"][1] == "5a"
+    assert "p38.b4" in doc.continuation and doc.step_group("p38.b6") != doc.step_group("p38.b3")
+    text = render_segments(doc.segments(), doc=doc)
+    assert "[p38.b3] (step 5a) a) Hit the Cut Down button to verify the [p38.b4] corresponding" in text
+    assert "[p38.b6] (step 6a)" in text
+
+
+def test_structure_joins_one_numbered_step_but_not_two():
+    doc = _eastman_like_doc()
+
+    def cited(*ids):
+        item = proposal("A", "x", "y", ids[0])
+        return item.model_copy(update={"cites": list(ids)})
+
+    assert structurally_supported(doc, cited("p38.b5", "p38.b6"))
+    assert not structurally_supported(doc, cited("p38.b3", "p38.b6"))
+
+
+def test_a_cause_that_repeats_the_problem_is_never_green_alone():
+    from backend.kg_v3.checker import restates
+
+    assert restates(proposal("A", "Fan failure", "Fan failure", "p64.t1.r5"))
+    assert not restates(proposal("A", "Fan failure", "Fan blocked by dust", "p64.t1.r5"))
+
+
+def test_unnamed_causes_with_the_same_remedies_become_one():
+    from backend.kg_v3.checker import CheckedRelation
+    from backend.kg_v3.contracts import Assertion, Certificate
+    from backend.kg_v3.merger import assemble
+
+    def remedy(cause, action):
+        item = Proposal(unit_id="u1", read="A", relation_type="RESOLVED_BY",
+                        source=Endpoint(type="FailureMode", name=cause, stated=False, cites=["p38.b25"]),
+                        target=Endpoint(type="CorrectiveAction", name=action, cites=["p38.b29"]),
+                        record="R1", cites=["p38.b29"])
+        return CheckedRelation(assertion=Assertion(assertion_id=cause + action, relation_type="RESOLVED_BY",
+                                                   source_key="s", target_key="t", record_key="u1:A.R1",
+                                                   certificate=Certificate(segment_ids=["p38.b29"])),
+                               proposals=[item])
+
+    relations = [remedy(cause, action) for cause in ("Unspecified cause of reduced vacuum",
+                                                     "Unspecified cause of odor while cutting")
+                 for action in ("Replace the vacuum filters", "Clean the vacuum hose")]
+    graph = assemble(relations, [])
+    assert len({edge.source for edge in graph.edges}) == 1 and len(graph.edges) == 2
+
+
+def test_structure_needs_both_ends_in_the_entry_that_states_the_link():
+    doc = _eastman_like_doc()
+    cause_in_step_5 = Proposal(
+        unit_id="u1", read="A", relation_type="RESOLVED_BY",
+        source=Endpoint(type="FailureMode", name="Tool connection fault", cites=["p38.b2"]),
+        target=Endpoint(type="CorrectiveAction", name="Check the power supply", cites=["p38.b6"]),
+        record="R1", cites=["p38.b6"])
+    assert not structurally_supported(doc, cause_in_step_5)
+    same_step = cause_in_step_5.model_copy(update={
+        "target": Endpoint(type="CorrectiveAction", name="Hit Cut Down", cites=["p38.b3"]), "cites": ["p38.b3"]})
+    assert structurally_supported(doc, same_step)
+
+
+def test_rows_under_a_merged_cell_belong_to_its_entry():
+    from backend.kg_v3.checker import same_record
+
+    def row(number, inherited):
+        return Segment(segment_id=f"p11.t1.r{number}", page=11, kind=SegmentKind.TABLE_ROW, text=f"r{number}",
+                       evidence_id=f"e{number}", table=TableCoordinates(table=1, row=number, inherited_columns=inherited))
+
+    doc = DocumentText(page_count=11, pages={11: [row(2, []), row(3, [0]), row(4, [0]), row(5, [])]})
+    assert same_record(doc, "p11.t1.r2", "p11.t1.r4")
+    assert not same_record(doc, "p11.t1.r4", "p11.t1.r5")
+
+
+def test_a_cause_repeating_its_problem_becomes_unnamed():
+    from backend.kg_v3.contracts import ReadingUnit
+    from backend.kg_v3.extractor import parse_read
+    from backend.kg_v3.ontology import load_ontology
+
+    unit = ReadingUnit(unit_id="u1", pages=[64], segment_ids=["p64.t1.r5"])
+    data = {"entities": [
+        {"key": "E1", "type": "ErrorCode", "name": "Fan failure", "code": "3", "kind": "", "stated": True, "cite": ["p64.t1.r5"]},
+        {"key": "E2", "type": "FailureMode", "name": "Fan failure", "code": "", "kind": "", "stated": True, "cite": ["p64.t1.r5"]},
+        {"key": "E3", "type": "CorrectiveAction", "name": "Contact service", "code": "", "kind": "escalation", "stated": True, "cite": ["p64.t1.r5"]}],
+        "relations": [{"type": "INDICATES", "source": "E1", "target": "E2", "record": "R1", "conditions": [], "cite": ["p64.t1.r5"]},
+                      {"type": "RESOLVED_BY", "source": "E2", "target": "E3", "record": "R1", "conditions": [], "cite": ["p64.t1.r5"]}],
+        "unclear": []}
+    proposals, _, notes = parse_read(data, unit=unit, read="A", spec=load_ontology(), allowed={"p64.t1.r5"})
+    causes = {item.target.name for item in proposals if item.relation_type == "INDICATES"}
+    assert causes == {"Unspecified cause of fan failure"}
+    assert all(not item.source.stated for item in proposals if item.relation_type == "RESOLVED_BY")
+
+
+def test_an_unnamed_cause_never_bridges_two_named_causes():
+    from backend.kg_v3.checker import CheckedRelation
+    from backend.kg_v3.contracts import Assertion, Certificate
+    from backend.kg_v3.merger import assemble
+
+    unnamed = Endpoint(type="FailureMode", name="Unspecified cause of tool not moving", stated=False, cites=["p38.b4"])
+    symptom = Endpoint(type="Symptom", name="Tool does not move down", cites=["p38.b4"])
+
+    def agreed(named_cause, cite):
+        a = Proposal(unit_id="u1", read="A", relation_type="MAY_INDICATE", source=symptom,
+                     target=Endpoint(type="FailureMode", name=named_cause, cites=[cite]), record="R1", cites=[cite])
+        b = a.model_copy(update={"read": "B", "target": unnamed})
+        return CheckedRelation(assertion=Assertion(assertion_id=named_cause, relation_type="MAY_INDICATE",
+                                                   source_key="s", target_key="t", record_key="u1:A.R1",
+                                                   certificate=Certificate(segment_ids=[cite])), proposals=[a, b])
+
+    graph = assemble([agreed("Tool mapping is incorrect", "p38.b6"), agreed("24 VDC power supply fault", "p38.b21")], [])
+    assert {graph.nodes_by_id[edge.target].name for edge in graph.edges} == {
+        "Tool mapping is incorrect", "24 VDC power supply fault"}
+    single = assemble([agreed("Tool mapping is incorrect", "p38.b6")], [])
+    assert len(single.nodes) == 2  # the unnamed cause joins its only named partner
+
+
+def test_a_step_is_verified_with_its_problem_and_parent_step():
+    doc = _eastman_like_doc()
+    assert doc.step_context("p38.b6") == ["p38.b1", "p38.b5"]
+    assert doc.step_context("p38.b2") == ["p38.b1"]
+    assert doc.step_context("p38.b1") == []
