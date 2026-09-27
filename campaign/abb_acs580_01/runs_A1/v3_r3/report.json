@@ -1,0 +1,117 @@
+{
+ "status": "approved",
+ "pages": 406,
+ "page_labels": {
+  "other": 264,
+  "unreadable": 2,
+  "procedure": 137,
+  "diagnostic": 3
+ },
+ "diagnostic_pages": [
+  232,
+  365,
+  375
+ ],
+ "units": 3,
+ "failed_reads": 0,
+ "proposals": 47,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "A: relation 5 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "A: relation 6 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "A: relation 7 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "A: relation 8 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "A: relation 9 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "A: relation 10 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "coverage: 1 unused table row(s) read again",
+  "coverage: 1 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 37
+ },
+ "witnesses": {
+  "structure": 33,
+  "verifier": 27,
+  "agreement": 9,
+  "reviewer": 5
+ },
+ "verifier_verdicts": {
+  "supported": 27,
+  "not_called": 7,
+  "not_supported": 3
+ },
+ "graph": {
+  "nodes": 32,
+  "nodes_by_type": {
+   "FailureMode": 11,
+   "Component": 5,
+   "CorrectiveAction": 9,
+   "Symptom": 6,
+   "ErrorCode": 1
+  },
+  "edges": 35,
+  "edges_by_tier": {
+   "green": 35
+  },
+  "merged_aliases": 3
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 3,
+   "answered": 3,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 4,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 5,
+ "usage": {
+  "calls": 18,
+  "failed_calls": 0,
+  "prompt_tokens": 81484,
+  "completion_tokens": 19418,
+  "estimated_cost_usd": 0.01135,
+  "by_operation": {
+   "kg_v3_extract": 8,
+   "kg_v3_map": 7,
+   "kg_v3_merge": 1,
+   "kg_v3_verify": 2
+  }
+ },
+ "agent_usage": {
+  "calls": 4,
+  "failed_calls": 0,
+  "prompt_tokens": 30074,
+  "completion_tokens": 2778,
+  "estimated_cost_usd": 0.005079,
+  "by_operation": {
+   "AgentDecision": 4
+  }
+ },
+ "seconds": {
+  "map": 12.765,
+  "gate_map": 13.187,
+  "extract": 20.944,
+  "check": 6.503,
+  "merge": 2.325,
+  "gate_doubts": 4.356,
+  "gate_approval": 0.0,
+  "total": 60.112
+ },
+ "prompt_ids": {
+  "extraction": "2ab514d1a971778e"
+ }
+}

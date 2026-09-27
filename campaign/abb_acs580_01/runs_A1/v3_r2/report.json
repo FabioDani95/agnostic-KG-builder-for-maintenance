@@ -1,0 +1,122 @@
+{
+ "status": "approved",
+ "pages": 406,
+ "page_labels": {
+  "other": 273,
+  "unreadable": 2,
+  "procedure": 124,
+  "diagnostic": 7
+ },
+ "diagnostic_pages": [
+  231,
+  232,
+  360,
+  361,
+  365,
+  375,
+  381
+ ],
+ "units": 5,
+ "failed_reads": 0,
+ "proposals": 81,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "B: relation 26 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "B: relation 27 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "coverage: 2 unused table row(s) read again",
+  "coverage: 9 unused table row(s) read again",
+  "coverage: 1 unused table row(s) read again",
+  "coverage: 26 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 42,
+  "red": 6
+ },
+ "witnesses": {
+  "structure": 43,
+  "agreement": 33,
+  "verifier": 11,
+  "reviewer": 2
+ },
+ "verifier_verdicts": {
+  "not_called": 31,
+  "supported": 11,
+  "unclear": 1,
+  "not_supported": 5
+ },
+ "graph": {
+  "nodes": 56,
+  "nodes_by_type": {
+   "Symptom": 14,
+   "FailureMode": 18,
+   "Component": 5,
+   "CorrectiveAction": 16,
+   "ErrorCode": 3
+  },
+  "edges": 48,
+  "edges_by_tier": {
+   "green": 42,
+   "red": 6
+  },
+  "merged_aliases": 15
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 4,
+   "answered": 4,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 5,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 2,
+ "usage": {
+  "calls": 23,
+  "failed_calls": 0,
+  "prompt_tokens": 100379,
+  "completion_tokens": 22278,
+  "estimated_cost_usd": 0.014793,
+  "by_operation": {
+   "kg_v3_extract": 14,
+   "kg_v3_map": 7,
+   "kg_v3_merge": 1,
+   "kg_v3_verify": 1
+  }
+ },
+ "agent_usage": {
+  "calls": 5,
+  "failed_calls": 0,
+  "prompt_tokens": 31426,
+  "completion_tokens": 4101,
+  "estimated_cost_usd": 0.005931,
+  "by_operation": {
+   "AgentDecision": 5
+  }
+ },
+ "seconds": {
+  "map": 9.145,
+  "gate_map": 16.496,
+  "extract": 21.179,
+  "check": 6.275,
+  "merge": 5.099,
+  "gate_doubts": 9.539,
+  "gate_approval": 0.001,
+  "total": 67.801
+ },
+ "prompt_ids": {
+  "extraction": "2ab514d1a971778e"
+ }
+}

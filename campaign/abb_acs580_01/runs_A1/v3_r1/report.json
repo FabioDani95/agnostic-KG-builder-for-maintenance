@@ -1,0 +1,143 @@
+{
+ "status": "approved",
+ "pages": 406,
+ "page_labels": {
+  "other": 269,
+  "unreadable": 2,
+  "procedure": 115,
+  "diagnostic": 20
+ },
+ "diagnostic_pages": [
+  122,
+  123,
+  124,
+  168,
+  169,
+  170,
+  171,
+  172,
+  173,
+  174,
+  232,
+  360,
+  361,
+  362,
+  365,
+  374,
+  375,
+  390,
+  391,
+  396
+ ],
+ "units": 9,
+ "failed_reads": 0,
+ "proposals": 106,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "coverage: 9 unused table row(s) read again",
+  "coverage: 10 unused table row(s) read again",
+  "coverage: 7 unused table row(s) read again",
+  "coverage: 2 unused table row(s) read again",
+  "coverage: 9 unused table row(s) read again",
+  "A: cause 'Extension I/O configuration failure' repeats its problem, marked unnamed",
+  "coverage: 14 unused table row(s) read again",
+  "A: cause 'Extension I/O configuration failure' repeats its problem, marked unnamed",
+  "B: cause 'Extension I/O configuration failure' repeats its problem, marked unnamed",
+  "coverage: 17 unused table row(s) read again",
+  "A: cause 'Extension I/O configuration failure' repeats its problem, marked unnamed",
+  "B: cause 'Extension I/O configuration failure' repeats its problem, marked unnamed",
+  "B: relation 3 skipped (CorrectiveAction to CorrectiveAction is not in the ontology)",
+  "coverage: 1 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 54,
+  "red": 20
+ },
+ "witnesses": {
+  "structure": 55,
+  "agreement": 31,
+  "verifier": 35,
+  "reviewer": 4
+ },
+ "verifier_verdicts": {
+  "not_called": 21,
+  "supported": 35,
+  "not_supported": 16,
+  "unclear": 2
+ },
+ "graph": {
+  "nodes": 76,
+  "nodes_by_type": {
+   "FailureMode": 20,
+   "Component": 9,
+   "CorrectiveAction": 31,
+   "Symptom": 12,
+   "ErrorCode": 4
+  },
+  "edges": 68,
+  "edges_by_tier": {
+   "green": 50,
+   "red": 18
+  },
+  "merged_aliases": 11
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 0,
+   "pending": 1
+  },
+  "doubts": {
+   "questions": 12,
+   "answered": 12,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 12,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 4,
+ "usage": {
+  "calls": 37,
+  "failed_calls": 0,
+  "prompt_tokens": 150663,
+  "completion_tokens": 28108,
+  "estimated_cost_usd": 0.029308,
+  "by_operation": {
+   "kg_v3_extract": 26,
+   "kg_v3_map": 7,
+   "kg_v3_merge": 1,
+   "kg_v3_verify": 3
+  }
+ },
+ "agent_usage": {
+  "calls": 13,
+  "failed_calls": 0,
+  "prompt_tokens": 38714,
+  "completion_tokens": 6905,
+  "estimated_cost_usd": 0.008063,
+  "by_operation": {
+   "AgentDecision": 13
+  }
+ },
+ "seconds": {
+  "map": 9.553,
+  "gate_map": 22.742,
+  "extract": 25.541,
+  "check": 2.321,
+  "merge": 2.77,
+  "gate_doubts": 11.275,
+  "gate_approval": 0.001,
+  "total": 74.271
+ },
+ "prompt_ids": {
+  "extraction": "2ab514d1a971778e"
+ }
+}
