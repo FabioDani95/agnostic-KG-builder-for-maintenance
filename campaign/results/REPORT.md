@@ -5,12 +5,30 @@ cancelli gestiti dall'agente (`--gates agent`), tre esecuzioni V3 per manuale e 
 Protocollo: [PROTOCOLLO_V3.md](../../paper/evaluation/PROTOCOLLO_V3.md). Gold annotato a mano
 da Fabio Daniele, senza assistenti AI, prima di ogni esecuzione.
 
-Sono **misure di sviluppo**: i manuali sono stati usati per correggere il codice e
-restano di sviluppo per sempre. Non sono risultati di generalizzazione per il paper.
+Nessun manuale è mai stato visto dal modello prima di queste esecuzioni. La distinzione che
+conta è un'altra: se il **codice** è stato corretto guardando i risultati di quel manuale.
 
-**Decisione di Fabio (2026-09-27, sera):** Trane è eliminato (gold e cartella); Atlas Copco,
-Graco GTX e Haas passano da test a sviluppo. La campagna non ha più manuali di test: per il
-paper servirà un nuovo insieme di manuali mai eseguiti, annotati prima delle esecuzioni.
+- **Manuali di messa a punto: ABB, Grundfos, Lincoln.** Le due correzioni sono nate dai loro
+  errori; i loro numeri dopo le correzioni sono ottimisti.
+- **Manuali nuovi per la pipeline: Atlas Copco, Graco GTX, Haas.** Eseguiti per la prima
+  volta con il codice già congelato (tag `v3-freeze-2026-09-27`), gold scritto prima, nessuna
+  correzione derivata da loro. Queste prime esecuzioni sono una prova su manuali mai visti e
+  restano valide anche se il codice cambierà. Limiti: tre manuali, un solo annotatore, e
+  Graco è un produttore già presente tra i quattro manuali storici di sviluppo (altro
+  prodotto: Check-Mate).
+
+**Decisione di Fabio (2026-09-27, sera):** Trane è eliminato (gold e cartella). Atlas Copco,
+Graco GTX e Haas diventano di sviluppo **da ora**: una correzione ricavata dai loro errori
+renderà di sviluppo le esecuzioni successive, non queste prime.
+
+### Prima esecuzione su manuali nuovi (codice congelato)
+
+| Gruppo | V3, rami | v22, rami |
+| --- | --- | --- |
+| Nuovi: Atlas Copco, Graco GTX, Haas | 239/339 = 70,5%, IC95 [0,654; 0,751]; macro 72,0% | 18/113 = 15,9%, IC95 [0,103; 0,238] |
+| Messa a punto: ABB, Grundfos, Lincoln | 443/561 = 79,0%, IC95 [0,754; 0,821] | 1/187 = 0,5% |
+
+Tre esecuzioni V3 per manuale nel denominatore, compresa Haas r2 fallita per la mappa.
 
 ## Quadro complessivo: sei manuali, codice del tag `v3-freeze-2026-09-27`
 
@@ -125,7 +143,10 @@ Foglio cieco in [precision/REVISIONE_PRECISIONE.md](precision/REVISIONE_PRECISIO
 48 voci da V3 r1 e v22 di A0 mescolate. Da compilare da Fabio; poi `campaign.py precision
 --score`. La precisione non è ancora misurata.
 
-## Trane (test): gold ricollegato
+## Trane: gold ricollegato, poi eliminato
+
+Per decisione di Fabio la cartella di Trane è stata eliminata dopo questo lavoro; resta la
+cronologia in git (commit `af2b7a0`).
 
 Gli ID del gold Trane sono stati ricollegati e verificati riga per riga
 ([remap_ids_verified.json](../trane_rtac_chiller/gold/remap_ids_verified.json)). Limite

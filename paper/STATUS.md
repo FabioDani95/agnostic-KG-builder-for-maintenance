@@ -273,6 +273,9 @@ della campagna 0,876 USD su 10. Codice congelato con il tag `v3-freeze-2026-09-2
 fase C; nessuna esecuzione sui quattro manuali di test.
 
 Decisione di Fabio: Trane eliminato; Atlas Copco, Graco GTX e Haas diventano di sviluppo.
-Sei manuali di sviluppo con il codice del tag: recall micro dei rami V3 682/900 (IC95
-0,729–0,785), v22 19/300. Tabelle stabili al 70–95%; mappa instabile (Haas r2 1/45). Nessun
-manuale di test rimasto: per il paper serve un nuovo insieme mai eseguito. Spesa 1,231 USD.
+Sei manuali con il codice del tag: recall micro dei rami V3 682/900 (IC95 0,729–0,785),
+v22 19/300. Atlas Copco, Graco GTX e Haas sono stati eseguiti per la prima volta con il codice
+già congelato e nessuna correzione deriva da loro: su questi tre V3 239/339 = 70,5% (IC95
+0,654–0,751), v22 18/113. Sono la prova su manuali mai visti disponibile oggi; da ora sono
+di sviluppo, quindi solo queste prime esecuzioni restano valide come tali. Tabelle stabili
+al 70–95%; mappa instabile (Haas r2 1/45). Spesa 1,231 USD.
