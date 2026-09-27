@@ -337,6 +337,7 @@ class RealCallBudgetLedger:
         path: str | Path,
         *,
         absolute_budget_usd: Decimal | float | int | str,
+        spend_ceiling_usd: Decimal | float | int | str | None = None,
         envelope_cost_estimator: EnvelopeCostEstimator = conservative_envelope_cost_usd,
         clock: Callable[[], str] = _utc_now,
     ) -> None:
@@ -348,6 +349,10 @@ class RealCallBudgetLedger:
         )
         if self.absolute_budget_usd <= 0:
             raise ValueError("absolute_budget_usd must be positive")
+        self.spend_ceiling_usd = (_as_decimal(spend_ceiling_usd, field="spend_ceiling_usd")
+                                  if spend_ceiling_usd is not None else self.absolute_budget_usd)
+        if not 0 < self.spend_ceiling_usd <= self.absolute_budget_usd:
+            raise ValueError("spend_ceiling_usd must be positive and at most the ledger budget")
         self._envelope_cost_estimator = envelope_cost_estimator
         self._clock = clock
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -609,9 +614,9 @@ class RealCallBudgetLedger:
             if resolved_call_id in state["reservations"]:
                 raise DuplicateCallIdError(f"Call id already reserved: {resolved_call_id}")
             projected = state["committed_usd"] + state["active_reserved_usd"] + worst_case
-            if projected > self.absolute_budget_usd:
+            if projected > self.spend_ceiling_usd:
                 raise BudgetExceededError(
-                    budget_usd=self.absolute_budget_usd,
+                    budget_usd=self.spend_ceiling_usd,
                     committed_usd=state["committed_usd"],
                     active_reserved_usd=state["active_reserved_usd"],
                     requested_usd=worst_case,
@@ -632,6 +637,7 @@ class RealCallBudgetLedger:
                 "worst_case_cost_usd": _money_json(worst_case),
                 "committed_before_usd": _money_json(state["committed_usd"]),
                 "active_reserved_before_usd": _money_json(state["active_reserved_usd"]),
+                "spend_ceiling_usd": _money_json(self.spend_ceiling_usd),
                 "absolute_budget_usd": _money_json(self.absolute_budget_usd),
             }
             # This durable append and fsync complete before the reservation is

@@ -439,3 +439,19 @@ def test_real_call_stage_prefers_ontology_over_embedded_toc_context() -> None:
     )
 
     assert stage == "chat.create:ontology"
+
+
+def test_task_ceiling_enforces_reservations_without_rewriting_campaign_budget(tmp_path):
+    import json
+
+    from backend.services.real_call_budget_ledger import BudgetExceededError, RealCallBudgetLedger, TokenEnvelope
+
+    path = tmp_path / "ledger.jsonl"
+    RealCallBudgetLedger(path, absolute_budget_usd=10)
+    scoped = RealCallBudgetLedger(path, absolute_budget_usd=10, spend_ceiling_usd=2)
+    fields = dict(stage="test", run_id="run", pdf_id="pdf", model="gpt-6-luna", reasoning_effort="low",
+                  token_envelope=TokenEnvelope(1, 1))
+    scoped.reserve(**fields, worst_case_cost_usd="1.5")
+    with pytest.raises(BudgetExceededError):
+        scoped.reserve(**fields, worst_case_cost_usd="0.6")
+    assert float(json.loads(path.read_text().splitlines()[0])["absolute_budget_usd"]) == 10

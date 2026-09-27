@@ -236,7 +236,8 @@ def cmd_run(args) -> None:
             continue
         cmd_status(args)
         subprocess.run([sys.executable, str(ROOT / "scripts/kg_v3.py"), "--manual", args.id, "--out", str(out),
-                        "--gates", "agent", "--budget", args.budget, "--run-id", f"campaign_D_{args.id}_v3_r{number}"], check=True)
+                        "--gates", "agent", "--budget", args.budget, "--run-id", f"campaign_D_{args.id}_v3_r{number}",
+                        *(["--spend-ceiling", args.spend_ceiling] if args.spend_ceiling else [])], check=True)
         cmd_status(args)
 
 
@@ -244,7 +245,8 @@ def cmd_kpi(args) -> None:
     ids = args.ids or [path.parent.parent.name for path in sorted(CAMPAIGN.glob("*/gold/gold.json"))]
     subprocess.run([sys.executable, str(ROOT / "scripts/kg_v3_kpi.py"), "--manuals", ",".join(ids),
                     "--runs", "campaign", "--runs-name", args.runs_name, "--out", args.out, "--budget", args.budget,
-                    *(["--v3-only"] if args.v3_only else [])], check=True)
+                    *(["--v3-only"] if args.v3_only else []),
+                    *(["--spend-ceiling", args.spend_ceiling] if args.spend_ceiling else [])], check=True)
 
 
 def cmd_precision(args) -> None:
@@ -307,6 +309,7 @@ def main() -> int:
     run = commands.add_parser("run")
     run.add_argument("id")
     run.add_argument("--budget", default=BUDGET)
+    run.add_argument("--spend-ceiling")
     run.add_argument("--reps", type=int, default=3)
     run.add_argument("--without-gold", action="store_true", help="only for development checks")
     kpi = commands.add_parser("kpi")
@@ -314,6 +317,7 @@ def main() -> int:
     kpi.add_argument("--runs-name", default="runs")
     kpi.add_argument("--out", default="campaign/results/kpi.json")
     kpi.add_argument("--budget", default=BUDGET)
+    kpi.add_argument("--spend-ceiling")
     kpi.add_argument("--v3-only", action="store_true")
     precision = commands.add_parser("precision")
     precision.add_argument("ids", nargs="*")

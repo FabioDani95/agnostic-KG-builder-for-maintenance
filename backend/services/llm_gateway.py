@@ -16,7 +16,7 @@ from backend.config import settings
 
 logger = logging.getLogger(__name__)
 
-_BUDGET_LEDGERS: dict[tuple[str, str], Any] = {}
+_BUDGET_LEDGERS: dict[tuple[str, str, str], Any] = {}
 _BUDGET_LEDGERS_LOCK = threading.Lock()
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
@@ -123,13 +123,14 @@ def _configured_budget_ledger() -> Any | None:
         raise RuntimeError(
             "Real-call budget instrumentation requires BUDGET_USD, RUN_ID and PDF_ID"
         )
-    key = (str(Path(path).resolve()), budget)
+    ceiling = str(os.environ.get("KG_REAL_CALL_SPEND_CEILING_USD", "") or "").strip()
+    key = (str(Path(path).resolve()), budget, ceiling)
     with _BUDGET_LEDGERS_LOCK:
         ledger = _BUDGET_LEDGERS.get(key)
         if ledger is None:
             from backend.services.real_call_budget_ledger import RealCallBudgetLedger
 
-            ledger = RealCallBudgetLedger(key[0], absolute_budget_usd=budget)
+            ledger = RealCallBudgetLedger(key[0], absolute_budget_usd=budget, spend_ceiling_usd=ceiling or None)
             _BUDGET_LEDGERS[key] = ledger
     return ledger
 

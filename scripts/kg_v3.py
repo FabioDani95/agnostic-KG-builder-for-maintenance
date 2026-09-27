@@ -150,7 +150,10 @@ def main() -> int:
     parser.add_argument("--ledger", default=str(DEFAULT_LEDGER))
     parser.add_argument("--budget", default=DEFAULT_BUDGET)
     parser.add_argument("--run-id", default="")
+    parser.add_argument("--spend-ceiling", help="stricter cumulative cap without changing the campaign ledger budget")
     args = parser.parse_args()
+    if args.spend_ceiling:
+        os.environ["KG_REAL_CALL_SPEND_CEILING_USD"] = args.spend_ceiling
     os.chdir(ROOT)  # settings read the API key from .env in the repository root
     report = asyncio.run(run(args))
     print(json.dumps({key: report[key] for key in ("status", "units", "failed_reads", "graph", "gates", "usage", "seconds")},
