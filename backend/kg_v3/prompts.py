@@ -78,7 +78,9 @@ Rules:
 9. A failure mode is a faulty state or cause the manual names (worn, blocked, loose, not mapped,
    out of adjustment). A check to perform is never a failure mode: "the valves need checking" is
    a check. When the manual lists only checks for a problem, link them to "Unspecified cause of
-   <problem>". A cause that only repeats the problem is not a cause.
+   <problem>". A cause that only repeats the problem is not a cause. Never derive a cause from a
+   check or remedy by turning it around: "check for the proper size liner" names a check, not the
+   cause "liner of the wrong size". Such an entry links the check to "Unspecified cause of <problem>".
 10. Numbered steps are marked (step 5), sub-steps (step 5a). A sub-step belongs to its parent
    step: link it only to the problem or cause of that step, never to another step's cause.
    Parts of one sentence may be split across several IDs on the same line; cite all of them.
@@ -102,7 +104,8 @@ problem-cause link; a remedy supports only the cause it is written for. Numbered
 shown with the problem they belong to are remedies or checks for the cause that problem names, unless
 a step or its parent step points to another cause. A numbered sub-step belongs to its parent step only. Answer not_supported when a statement marked [inspection] actually repairs,
 replaces, cleans or adjusts, when a remedy statement only checks, and when the cause is a check to
-perform or only repeats the problem.
+perform, only repeats the problem, or is a check or remedy turned around into a fault that the text
+never states as a cause.
 """
 
 MERGE_PROMPT = """You decide whether two names extracted from the same maintenance manual denote the same thing.

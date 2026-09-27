@@ -16,3 +16,11 @@ def test_every_cited_segment_reaches_the_reviewer():
     cites = [segment.segment_id for segment in segments]
     shown = [excerpt.segment_id for excerpt in _excerpts(doc, cites)]
     assert shown == cites
+
+
+def test_prompts_forbid_causes_derived_from_remedies():
+    # The gold never deduces a cause from its remedy; extraction and verification follow the same rule.
+    from backend.kg_v3.prompts import EXTRACTION_PROMPT, VERIFY_PROMPT
+
+    assert "Never derive a cause from a\n   check or remedy" in EXTRACTION_PROMPT
+    assert "check or remedy turned around into a fault" in VERIFY_PROMPT
