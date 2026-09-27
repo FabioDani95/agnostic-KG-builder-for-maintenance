@@ -52,3 +52,23 @@ def test_the_sheet_becomes_one_claim_per_action():
 def test_an_empty_template_is_not_a_branch():
     gold, problems = parse_sheet("Pagine annotate: \n## Istruzioni\n## Rami\n" + BRANCH)
     assert gold["claims"] == [] and problems == ["write the annotated pages at the top"]
+
+
+def test_run_ledger_label_is_explicit_and_status_surrounds_each_run(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+
+    from scripts import campaign
+
+    manual = tmp_path / "manual"
+    (manual / "gold").mkdir(parents=True)
+    (manual / "gold/gold.json").write_text('{}')
+    events = []
+    monkeypatch.setattr(campaign, 'folder', lambda _: manual)
+    monkeypatch.setattr(campaign, 'info', lambda _: {})
+    monkeypatch.setattr(campaign, 'cmd_status', lambda _: events.append('status'))
+    monkeypatch.setattr(campaign.subprocess, 'run', lambda args, **kwargs: events.append(args))
+    campaign.cmd_run(SimpleNamespace(id='manual', without_gold=False, reps=1, budget='10',
+                                    spend_ceiling='6.317599975', run_prefix='campaign_E'))
+    assert events[0] == events[2] == 'status'
+    assert events[1][events[1].index('--run-id')+1] == 'campaign_E_manual_v3_r1'
+    assert events[1][-2:] == ['--spend-ceiling', '6.317599975']

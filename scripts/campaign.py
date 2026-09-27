@@ -240,7 +240,7 @@ def cmd_run(args) -> None:
             continue
         cmd_status(args)
         subprocess.run([sys.executable, str(ROOT / "scripts/kg_v3.py"), "--manual", args.id, "--out", str(out),
-                        "--gates", "agent", "--budget", args.budget, "--run-id", f"campaign_D_{args.id}_v3_r{number}",
+                        "--gates", "agent", "--budget", args.budget, "--run-id", f"{args.run_prefix}_{args.id}_v3_r{number}",
                         *(["--spend-ceiling", args.spend_ceiling] if args.spend_ceiling else [])], check=True)
         cmd_status(args)
 
@@ -315,6 +315,7 @@ def main() -> int:
     run.add_argument("--budget", default=BUDGET)
     run.add_argument("--spend-ceiling")
     run.add_argument("--reps", type=int, default=3)
+    run.add_argument("--run-prefix", default="campaign", help="ledger label for this frozen iteration")
     run.add_argument("--without-gold", action="store_true", help="only for development checks")
     kpi = commands.add_parser("kpi")
     kpi.add_argument("ids", nargs="*")
