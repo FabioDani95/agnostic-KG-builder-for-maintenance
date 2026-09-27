@@ -69,6 +69,37 @@ Possibili correzioni ancora strutturali, non applicate: doppia lettura della map
 unione delle pagine diagnostiche (una chiamata in più, colpisce direttamente Haas r2 e
 ABB); propagazione esplicita delle celle unite di una colonna di rimedio a tutte le righe.
 
+## Dove si perdono i rami (sei manuali, 18 esecuzioni V3)
+
+Ogni asserzione del gold non ritrovata, classificata dai grafi e dai rapporti delle
+esecuzioni (categorie assegnate in ordine: mappa, nulla estratto, poi confronto tra gold e archi vicini). Sono 313 perdite su
+1.179 asserzioni-esecuzione.
+
+| Causa della perdita | Perdite | Dove |
+| --- | --- | --- |
+| Mappa: la pagina non viene letta | 86 (27%) | Haas r2 (46), ABB (36) |
+| Estratto ma diverso: fusioni di cause simili, rimedio di un'altra riga, azione diversa | 82 (26%) | ABB, Haas, Atlas Copco, Graco |
+| Causa non scritta nel manuale, ma la V3 ne scrive una | 64 (20%) | Lincoln (36), ABB (22) |
+| Cella unita "se persiste, contattare l'assistenza" non collegata a ogni riga | 35 (11%) | Lincoln |
+| Incrocio sintomo-causa della matrice mancante | 23 (7%) | Grundfos |
+| Pagina letta ma nulla estratto nei segmenti del gold | 16 (5%) | Haas, ABB |
+| Nel gold la causa ripete il problema | 7 (2%) | Haas |
+
+Casi verificati a mano:
+
+- **Fusione di cause diverse.** Atlas Copco: "la valvola della linea di bilanciamento non si
+  chiude" diventa "non si apre"; "gioco troppo piccolo per deformazione" diventa "...per
+  contaminazione". Il giudice delle fusioni aveva risposto "diversi"; la regola che unisce i
+  nomi scelti dalle due letture per la stessa relazione li unisce comunque
+  ([merger.py](../../backend/kg_v3/merger.py), `assemble`).
+- **Rimedi di righe diverse sulla stessa causa.** Graco: "Material too thick" è un solo nodo
+  con i rimedi di tre righe diverse; il contesto del sintomo si perde.
+- **Cause dedotte.** Lincoln: "Make sure correct voltage is applied" diventa la causa
+  "Incorrect input voltage" anche dopo la correzione 2, verde perché le due letture e il
+  verificatore concordano: lo stesso modello sbaglia allo stesso modo nei tre testimoni.
+- **Errori del testo del PDF.** Atlas Copco p. 44: "alfunction: ump does not tain its pumping
+  eed", lettere perse nello strato di testo.
+
 ## Manuali
 
 | Manuale | Pagine | Pagine gold | Rami con causa o azione | Asserzioni | Rami solo codice |
