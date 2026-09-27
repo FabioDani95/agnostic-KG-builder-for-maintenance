@@ -258,8 +258,8 @@ def cmd_precision(args) -> None:
     if args.score:
         score(sheet, key)
         return
-    if sheet.exists() and not args.force:
-        raise SystemExit(f"{sheet.relative_to(ROOT)} exists and may hold answers; use --force to replace it")
+    if sheet.exists() or key.exists():
+        raise SystemExit(f"{sheet.relative_to(ROOT)} or its key exists; preserved. Use --new for the second sheet.")
     ids = args.ids or [path.parent.parent.name for path in sorted(CAMPAIGN.glob("*/runs/v3_r1/graph.json"))]
     sources = [(manual, folder(manual) / "runs" / "v3_r1" / "graph.json", folder(manual) / "runs" / "v22" / "graph.json")
                for manual in ids]
@@ -323,7 +323,7 @@ def main() -> int:
     precision.add_argument("ids", nargs="*")
     precision.add_argument("--score", action="store_true")
     precision.add_argument("--new", action="store_true", help="use the second blind sheet; preserve the original")
-    precision.add_argument("--force", action="store_true")
+    precision.add_argument("--force", action="store_true", help="deprecated; existing sheets are always preserved")
     precision.add_argument("--per-system", type=int, default=12)
     args = parser.parse_args()
     CAMPAIGN.mkdir(exist_ok=True)
