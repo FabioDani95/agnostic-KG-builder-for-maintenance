@@ -39,3 +39,19 @@ def test_quality_includes_differences_decided_at_review_gate(tmp_path):
     (state / "gate_doubts.json").write_text(json.dumps({"answers": [
         {"question_id": "merge:a|b", "option_id": "different"}]}))
     assert different_pairs(tmp_path) == [pair]
+
+
+def test_two_empty_graphs_do_not_claim_perfect_stability(tmp_path):
+    import json
+
+    from scripts.kg_v3_quality import measure
+
+    graph = {'nodes': [{'id': 'root', 'type': 'Asset', 'name': 'machine'}], 'edges': []}
+    for name in ('v3_r1', 'v3_r2'):
+        folder = tmp_path / 'manual' / 'runs' / name
+        folder.mkdir(parents=True)
+        (folder / 'graph.json').write_text(json.dumps(graph))
+    measured = measure(tmp_path)['manuals']['manual']
+    assert measured['runs']['v3_r1']['empty_diagnostic_graph']
+    assert measured['relation_jaccard']['v3_r1/v3_r2'] is None
+    assert measured['mean_jaccard'] is None

@@ -302,6 +302,17 @@ class Pipeline:
         ]
 
     def _result(self, status, page_map, units, relations, graph, gates, started, extractions) -> RunResult:
+        empty_units = [item.unit_id for item in extractions if not item.proposals]
+        incomplete_reasons = []
+        if empty_units:
+            incomplete_reasons.append("reading_units_without_relations")
+        if sum(item.failed_reads for item in extractions):
+            incomplete_reasons.append("failed_extraction_reads")
+        if units and not any(edge.tier is not Tier.RED for edge in graph.edges):
+            incomplete_reasons.append("empty_diagnostic_graph")
+        # Automatic approval is a workflow decision, not evidence of completeness.
+        if status == "approved" and incomplete_reasons:
+            status = "incomplete"
         # Unanswered agent questions also produce a bounded human review artifact.
         pending_questions = [q for record in gates.values() for q in record.questions
                              if q.question_id in record.pending and q.question_id not in self.human_reviewer.asked]
@@ -315,6 +326,8 @@ class Pipeline:
         answered_by = Counter(answer.answered_by.kind.value for record in gates.values() for answer in record.answers)
         report = {
             "status": status,
+            "incomplete_reasons": incomplete_reasons,
+            "empty_extraction_units": empty_units,
             "pages": self.doc.page_count,
             "page_labels": dict(Counter(entry.label.value for entry in page_map.entries)),
             "diagnostic_pages": page_map.pages_with(PageLabel.DIAGNOSTIC),

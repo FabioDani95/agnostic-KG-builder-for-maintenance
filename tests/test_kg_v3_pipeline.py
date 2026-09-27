@@ -235,3 +235,34 @@ def test_a_changed_graph_asks_for_approval_again():
 
     first, second = approval_question(["10 relations"]), approval_question(["11 relations"])
     assert first.question_id != second.question_id and first.question_id.startswith("approval:")
+
+
+@pytest.mark.parametrize('coverage_result', ['facts', 'empty', 'error'])
+def test_unclear_only_reads_get_one_recovery_and_cannot_silently_approve(doc, tmp_path, coverage_result):
+    class EmptyRelations(ScriptedProvider):
+        async def create(self, **kwargs):
+            response = await super().create(**kwargs)
+            if kwargs['response_format']['json_schema']['name'] == 'kg_v3_extract':
+                attempt = self.calls.count('kg_v3_extract')
+                if attempt <= 2 or coverage_result == 'empty':
+                    response.choices[0].message.content = json.dumps({
+                        'entities': READ_A['entities'], 'relations': [],
+                        'unclear': [{'note': 'Ambiguous layout', 'cite': ['p1.t1.r2', 'p1.t1.r3', 'p1.t1.r4']}],
+                    })
+                elif coverage_result == 'error':
+                    raise RuntimeError('coverage unavailable')
+            return response
+
+    provider = EmptyRelations()
+    run, _ = pipeline(doc, provider, tmp_path / 'run')
+    result = asyncio.run(run.run())
+    assert provider.calls.count('kg_v3_extract') == 3
+    if coverage_result == 'facts':
+        assert result.graph.edges and result.status == 'approved'
+        assert result.report['empty_extraction_units'] == []
+    else:
+        assert result.status == 'incomplete'
+        assert result.report['empty_extraction_units']
+        assert 'empty_diagnostic_graph' in result.report['incomplete_reasons']
+        assert result.report['failed_reads'] == (coverage_result == 'error')
+    assert any('without usable relations' in note for note in result.report['extraction_notes'])

@@ -220,6 +220,8 @@ class Extractor:
         from backend.kg_v3.references import resolve_references
 
         proposals, result.unresolved_references = resolve_references(doc, unit, proposals)
+        if data.get("entities") and not proposals:
+            notes.append(f"{read}: entities returned without usable relations; not counted as extraction coverage")
         result.proposals, result.unclear, result.notes = proposals, unclear, notes
         return result
 
@@ -245,6 +247,7 @@ class Extractor:
             merged.unclear.extend(coverage.unclear)
             merged.unresolved_references.extend(coverage.unresolved_references)
             merged.notes.extend(coverage.notes)
+            merged.failed_reads += coverage.failed_reads
             merged.notes.append(f"coverage: {len(missing)} unused table row(s) read again")
         return merged
 
@@ -253,7 +256,10 @@ def uncovered_rows(doc: DocumentText, unit: ReadingUnit, extraction: UnitExtract
     """Owned data rows of tables that no proposal cites."""
 
     cited = {cite for proposal in extraction.proposals for cite in proposal.all_cites}
-    cited.update(cite for item in extraction.unclear for cite in item.get("cites") or [])
+    # An all-unclear response must not suppress the single bounded coverage read.
+    # After some facts are extracted, explicitly ambiguous rows remain abstentions.
+    if extraction.proposals:
+        cited.update(cite for item in extraction.unclear for cite in item.get("cites") or [])
     rows = []
     for segment in doc.segments(unit.segment_ids):
         if segment.kind is not SegmentKind.TABLE_ROW or segment.segment_id in cited:

@@ -41,7 +41,7 @@ def graph_metrics(graph: dict, different: list[dict] = ()) -> dict:
         if reasons:
             violations.append({'node_id': n['id'], 'name': n['name'], 'reasons': reasons})
     return {
-        'nodes': len(nodes), 'diagnostic_edges': len(edges),
+        'nodes': len(nodes), 'diagnostic_edges': len(edges), 'empty_diagnostic_graph': not edges,
         'fusion_violations': len(violations), 'fusion_violation_details': violations,
         **navigation(nodes, edges),
         'duplicate_nodes': sum(count - 1 for count in duplicates.values()),
@@ -89,10 +89,11 @@ def measure(root: Path, runs_name: str = 'runs') -> dict:
         stability = {}
         for a, b in combinations(signatures, 2):
             union = signatures[a] | signatures[b]
-            stability[f'{a}/{b}'] = round(len(signatures[a] & signatures[b]) / len(union), 4) if union else 1.0
+            stability[f'{a}/{b}'] = round(len(signatures[a] & signatures[b]) / len(union), 4) if union else None
+        observed = [value for value in stability.values() if value is not None]
         result['manuals'][directory.parent.name] = {'runs': runs, 'relation_jaccard': stability,
-                                                    'mean_jaccard': round(sum(stability.values()) / len(stability), 4)
-                                                    if stability else None}
+                                                    'mean_jaccard': round(sum(observed) / len(observed), 4)
+                                                    if observed else None}
     return result
 
 
@@ -102,11 +103,16 @@ def markdown(result: dict) -> str:
              'Jaccard confronta relazioni con nomi normalizzati: risente anche delle parafrasi.', '',
              '| Manuale | Run | Fusioni vietate | Cause orfane | Problemi senza azione | Doppioni | Senza prove | Dedotte |',
              '| --- | --- | --- | --- | --- | --- | --- | --- |']
+    empty_graphs = []
     for manual, data in result['manuals'].items():
         for run, row in data['runs'].items():
             values = [row.get(k, 'n/d') for k in ('fusion_violations', 'orphan_causes', 'problems_without_action',
                                                 'duplicate_nodes', 'edges_without_evidence', 'derived_causes')]
             lines.append(f'| {manual} | {run} | ' + ' | '.join(map(str, values)) + ' |')
+            if row.get('empty_diagnostic_graph'):
+                empty_graphs.append(f'{manual} {run}')
+    if empty_graphs:
+        lines += ['', '**Grafi vuoti: ' + ', '.join(empty_graphs) + '. Zero difetti strutturali non indica qualità.**', '']
     for manual, data in result['manuals'].items():
         lines.append(f"\nJaccard {manual}: {data['relation_jaccard']}; media {data['mean_jaccard']}.\n")
     return '\n'.join(lines) + '\n'
