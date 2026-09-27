@@ -259,7 +259,10 @@ class Pipeline:
         ]
         doubt_record = await self._timed("gate_doubts", self._gate("doubts", doubts))
         relations = apply_relation_answers(relations, doubts, doubt_record.answers)
-        graph = assemble(relations, [*plan.same, *merge_decisions(doubts, doubt_record.answers, plan.unsure)])
+        rejected_merges = {answer.question_id for answer in doubt_record.answers if answer.option_id == "different"}
+        different = [*plan.different, *(pair for pair in plan.unsure
+                     if f"merge:{pair.left}|{pair.right}" in rejected_merges)]
+        graph = assemble(relations, [*plan.same, *merge_decisions(doubts, doubt_record.answers, plan.unsure)], different)
 
         gates = {"map": map_record, "doubts": doubt_record}
         summary = self._summary(graph, relations, doubt_record)
@@ -291,6 +294,7 @@ class Pipeline:
             "diagnostic_pages": page_map.pages_with(PageLabel.DIAGNOSTIC),
             "confirmed_pages": [entry.page for entry in page_map.entries if entry.confirmed],
             "map_demotions_refused": sorted(set(self.map_kept)),
+            "blocked_merges": graph.blocked_merges,
             "units": len(units),
             "failed_reads": sum(item.failed_reads for item in extractions),
             "proposals": sum(len(item.proposals) for item in extractions),

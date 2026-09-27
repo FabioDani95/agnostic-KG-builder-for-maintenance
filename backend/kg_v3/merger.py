@@ -10,6 +10,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import logging
+import re
 from collections import Counter, defaultdict
 from itertools import combinations
 
@@ -89,6 +90,7 @@ class MergedGraph(BaseModel):
     nodes: dict[str, GraphNode] = Field(default_factory=dict)
     edges: list[GraphEdge] = Field(default_factory=list)
     merged_aliases: int = 0
+    blocked_merges: list[dict[str, str]] = Field(default_factory=list)
 
     @property
     def nodes_by_id(self) -> dict[str, GraphNode]:
@@ -237,20 +239,40 @@ async def judge_pairs(llm: ModelClient | None, pairs: list[MergePair]) -> MergeP
 
 
 class _UnionFind:
-    def __init__(self) -> None:
+    def __init__(self, endpoints: dict[str, list[Endpoint]], different: list[MergePair]) -> None:
         self.parent: dict[str, str] = {}
+        self.members: dict[str, set[str]] = {}
+        self.endpoints = endpoints
+        self.apart = {frozenset((p.left, p.right)) for p in different}
+        self.blocked: list[dict[str, str]] = []
 
     def find(self, key: str) -> str:
         self.parent.setdefault(key, key)
+        self.members.setdefault(key, {key})
         while self.parent[key] != key:
             self.parent[key] = self.parent[self.parent[key]]
             key = self.parent[key]
         return key
 
     def union(self, left: str, right: str) -> None:
+        if left not in self.endpoints or right not in self.endpoints:
+            return
         a, b = self.find(left), self.find(right)
         if a != b:
-            self.parent[max(a, b)] = min(a, b)
+            for x in sorted(self.members[a]):
+                for y in sorted(self.members[b]):
+                    ex, ey = self.endpoints[x][0], self.endpoints[y][0]
+                    reason = ('different' if frozenset((x, y)) in self.apart else
+                              'different_numbers' if set(re.findall(r'\d+', ex.code or ex.name)) !=
+                              set(re.findall(r'\d+', ey.code or ey.name)) else
+                              'different_types' if ex.type != ey.type else '')
+                    if reason:
+                        self.blocked.append({'left': left, 'right': right, 'reason': reason,
+                                             'constraint_left': x, 'constraint_right': y})
+                        return
+            root, child = min(a, b), max(a, b)
+            self.parent[child] = root
+            self.members[root].update(self.members[child])
 
 
 def _stated(items: list[Endpoint]) -> bool:
@@ -265,9 +287,10 @@ def _stated(items: list[Endpoint]) -> bool:
     return bool(named) and all(item.stated for item in named)
 
 
-def assemble(relations: list[CheckedRelation], same_pairs: list[MergePair]) -> MergedGraph:
+def assemble(relations: list[CheckedRelation], same_pairs: list[MergePair],
+             different_pairs: list[MergePair] = ()) -> MergedGraph:
     endpoints = _endpoints(relations)
-    groups = _UnionFind()
+    groups = _UnionFind(endpoints, different_pairs)
     for key in endpoints:
         groups.find(key)
     for pair in same_pairs:
@@ -311,7 +334,7 @@ def assemble(relations: list[CheckedRelation], same_pairs: list[MergePair]) -> M
     members: dict[str, list[Endpoint]] = {}
     for key, items in endpoints.items():
         members.setdefault(groups.find(key), []).extend(items)
-    graph = MergedGraph()
+    graph = MergedGraph(blocked_merges=groups.blocked)
     for root, items in members.items():
         named = [item for item in items if item.stated] or items
         names = Counter(item.name for item in named)

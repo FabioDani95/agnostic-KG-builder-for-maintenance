@@ -72,6 +72,32 @@ def test_names_not_judged_different_stay_one_relation():
     assert split_disagreements(DOC, [relation], []) == [relation]
 
 
+def test_transitive_merge_cannot_cross_a_different_constraint():
+    base = _agreed_relation()
+    ends = [Endpoint(type="FailureMode", name=name, cites=[ROW]) for name in ('alpha', 'beta', 'gamma')]
+    relations = [base.model_copy(update={'proposals': [base.proposals[0].model_copy(update={'target': end})]})
+                 for end in ends]
+
+    def pair(a, b):
+        return MergePair(left=identity(ends[a]), right=identity(ends[b]), left_name=ends[a].name,
+                         right_name=ends[b].name, type='FailureMode')
+
+    graph = assemble(relations, [pair(0, 1), pair(1, 2)], [pair(0, 2)])
+    assert len([n for n in graph.nodes.values() if n.type == 'FailureMode']) == 2
+    assert all(not {'alpha', 'gamma'} <= {n.name, *n.aliases} for n in graph.nodes.values())
+    assert graph.blocked_merges[0]['reason'] == 'different'
+
+
+def test_numeric_conflict_blocks_judge_and_alias_unions():
+    base = _agreed_relation()
+    a, b = [Endpoint(type='FailureMode', name=f'pressure {number}', cites=[ROW]) for number in (10, 20)]
+    base.proposals[0].target, base.proposals[1].target = a, b
+    pair = MergePair(left=identity(a), right=identity(b), left_name=a.name, right_name=b.name, type='FailureMode')
+    graph = assemble([base], [pair])
+    assert len([n for n in graph.nodes.values() if n.type == 'FailureMode']) == 2
+    assert graph.blocked_merges[0]['reason'] == 'different_numbers'
+
+
 # Merged cells ---------------------------------------------------------------
 
 def _merged_cell_doc() -> DocumentText:
