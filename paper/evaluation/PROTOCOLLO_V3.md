@@ -1,6 +1,6 @@
 # Protocollo di valutazione V3
 
-Stato: **bozza da decidere con Fabio**. Riprende [PROTOCOL.md](PROTOCOL.md) e lo rende
+Stato: **approvato da Fabio il 2026-09-27** (KPI, budget, un solo annotatore). Riprende [PROTOCOL.md](PROTOCOL.md) e lo rende
 operativo per l'architettura V3 ([piano](../../docs/PIANO_V3.md)). Nessun risultato è
 contenuto qui: solo come si costruisce il gold, cosa si misura e in che ordine.
 
@@ -58,18 +58,18 @@ non rivela nulla degli output. Chi annota non vede grafi né estrazioni.
 | condizioni | "se…", "solo quando…", valori, esiti dei test |
 | ID | i segmenti dove ciascun elemento è scritto |
 
-**Chi annota.** Ideale: due persone indipendenti e un terzo che decide i disaccordi,
-con misura dell'accordo. Minimo accettabile: una persona più una seconda che ricontrolla
-il 20% dei rami scelti a caso. Si registrano nome, data e minuti.
+**Chi annota.** In questa campagna c'è **un solo annotatore**. Per ridurre il rischio
+di errori non visti: annota prima di qualsiasi esecuzione, ricontrolla a distanza di
+almeno un giorno il 20% dei rami scelti a caso, e registra nome, data e minuti. Il
+paper dichiarerà il limite: nessuna misura di accordo tra annotatori.
 
-**Strumento.** Un foglio Markdown generato dal PDF, come
-[CONFERMA_GOLD.md](gold_segments_v1/CONFERMA_GOLD.md) ma vuoto: l'annotatore scrive i
-rami, uno script li legge e produce il gold JSON (da costruire: estensione di
-`scripts/kg_v3_gold_sheet.py`).
+**Strumento.** `scripts/kg_v3_annotate.py`: `register` registra il PDF e la macchina,
+`sheet` genera `paper/evaluation/gold_v3/<manuale>/ANNOTAZIONE.md` per le pagine scelte,
+`parse` produce `gold.json` e segnala ID sbagliati o azioni senza tipo.
 
 ## 4. KPI
 
-| KPI | Definizione | Come si misura | Obiettivo di sviluppo |
+| KPI | Definizione | Come si misura | Obiettivo (confermato) |
 | --- | --- | --- | --- |
 | Recall dei rami | rami del gold con catena problema → causa → azioni ritrovata | posizione + giudice di significato a tre voti | ≥ 90% |
 | Recall delle asserzioni | asserzioni del gold ritrovate | come sopra, relazione per relazione | ≥ 90% |
@@ -86,21 +86,26 @@ Esecuzioni fallite e domande senza risposta restano nel denominatore.
 
 ## 5. Procedura per ogni manuale
 
-1. Registrare il manuale e fissarne lo split.
-2. Annotare il gold (sezione 3) **prima** di qualsiasi esecuzione sul manuale.
-3. Eseguire la V3 3 volte con i cancelli gestiti dall'agente (`scripts/kg_v3.py --gates agent`)
-   e la v22 una volta come confronto.
-4. Valutazione automatica: recall, prove, mappa, lavoro, costo (`scripts/kg_v3_evaluate.py`,
-   da generalizzare oltre i 3 manuali storici).
+1. Registrare il manuale e fissarne lo split (`kg_v3_annotate.py register`).
+2. Annotare il gold **prima** di qualsiasi esecuzione (`sheet`, poi `parse`).
+3. Eseguire la V3 3 volte con i cancelli gestiti dall'agente
+   (`kg_v3.py --manual <id> --out eval_runs/v3_campaign/<id>/r1`, poi r2, r3) e la v22 una
+   volta (`kg_v3_v22_baseline.py --manual <id> --out eval_runs/v3_campaign/<id>/v22`).
+4. KPI automatici: `kg_v3_kpi.py --manuals <id,...> --runs eval_runs/v3_campaign --out
+   paper/experiments/v3_campaign/kpi.json` (scrive anche `kpi.md`).
 5. Revisione cieca della precisione su un campione mescolato V3/v22
-   (`scripts/kg_v3_precision_sheet.py`).
+   (`kg_v3_precision_sheet.py`).
 6. Solo in fase A: analisi degli errori e correzioni dell'architettura, sempre con regole
    strutturali e non legate a un produttore; ogni correzione con un test.
 
-## 6. Decisioni aperte
+## Budget
+
+Tetto di **10 USD per l'intera campagna** (fasi A e C, esecuzioni, v22 e giudice), su un
+registro separato: `paper/experiments/v3_campaign/real_call_budget.jsonl`. Gli script lo
+usano per impostazione predefinita; il registro blocca ogni chiamata oltre il tetto.
+Stima: circa 0,15 USD per un'esecuzione V3 di un manuale di 200 pagine, fino a 0,12 USD
+per la v22, pochi centesimi per il giudice.
+
+## Decisioni aperte
 
 1. Quali manuali in sviluppo esteso e quali nel test.
-2. Chi annota, e se è possibile avere due annotatori.
-3. Obiettivi di sviluppo della sezione 4: confermarli o cambiarli.
-4. Budget API per le fasi A e C. Stima: circa 0,15 USD per esecuzione completa della V3
-   su un manuale di 200 pagine, meno sui manuali brevi.

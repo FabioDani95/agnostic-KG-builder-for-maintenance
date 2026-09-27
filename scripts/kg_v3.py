@@ -23,7 +23,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 MANIFEST = ROOT / "paper/experiments/robustness_20260925/manifest.json"
-DEFAULT_LEDGER = ROOT / "paper/experiments/robustness_20260925/real_call_budget.jsonl"
+CAMPAIGN_REGISTRY = ROOT / "paper/manuals/v3_campaign_manuals.json"
+# The V3 test campaign has its own ledger and a 10 USD cap for every call it makes.
+DEFAULT_LEDGER = ROOT / "paper/experiments/v3_campaign/real_call_budget.jsonl"
+DEFAULT_BUDGET = "10"
 GATE_PRESETS = {
     # An agent cannot judge a whole graph from its summary: in unattended runs
     # the approval is automatic and recorded as such.
@@ -67,6 +70,17 @@ def load_evidence(pdf: Path, asset: dict):
     return PdfAdapter().inspect(path=pdf, workspace=workspace, source=source).evidence_units, page_count, sha
 
 
+def manual_source(manual_id: str) -> tuple[Path, dict]:
+    """PDF and machine identity of a development manual or a registered campaign manual."""
+
+    campaign = json.loads(CAMPAIGN_REGISTRY.read_text())["manuals"] if CAMPAIGN_REGISTRY.exists() else []
+    found = next((item for item in campaign if item["manual_id"] == manual_id), None)
+    if found:
+        return ROOT / found["file"], found["asset"]
+    spec = next(item for item in json.loads(MANIFEST.read_text())["manuals"] if item["manual_id"] == manual_id)
+    return ROOT / "paper/manuals/files" / spec["file_name"], spec["asset"]
+
+
 async def run(args) -> dict:
     from backend.kg_v3.export import graph_json
     from backend.kg_v3.llm import ModelClient
@@ -75,8 +89,7 @@ async def run(args) -> dict:
     from backend.kg_v3.run import Pipeline, RunConfig
 
     if args.manual:
-        spec = next(item for item in json.loads(MANIFEST.read_text())["manuals"] if item["manual_id"] == args.manual)
-        pdf, asset = ROOT / "paper/manuals/files" / spec["file_name"], spec["asset"]
+        pdf, asset = manual_source(args.manual)
     else:
         pdf = Path(args.pdf).resolve()
         asset = {"name": args.asset_name or pdf.stem, "description": args.asset_name or pdf.stem,
@@ -84,6 +97,7 @@ async def run(args) -> dict:
     out = Path(args.out)
     out = (out if out.is_absolute() else ROOT / out).resolve()
     out.mkdir(parents=True, exist_ok=True)
+    Path(args.ledger).resolve().parent.mkdir(parents=True, exist_ok=True)
     evidence, page_count, sha = load_evidence(pdf, asset)
     os.environ.update({
         "KG_LLM_MODE": "real", "KG_LLM_TRACE_DIR": str(out / "provider_responses"),
@@ -123,7 +137,7 @@ def main() -> int:
     parser.add_argument("--agent-model", default="gpt-6-luna")
     parser.add_argument("--agent-reasoning", default="medium")
     parser.add_argument("--ledger", default=str(DEFAULT_LEDGER))
-    parser.add_argument("--budget", default="20")
+    parser.add_argument("--budget", default=DEFAULT_BUDGET)
     parser.add_argument("--run-id", default="")
     args = parser.parse_args()
     os.chdir(ROOT)  # settings read the API key from .env in the repository root

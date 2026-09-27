@@ -139,9 +139,15 @@ def _locator_index(evidence) -> dict:
 
 
 def v22_edges(manual: str, doc, evidence) -> list[dict]:
-    """v22 relations with their evidence located on the same segments V3 uses."""
+    """v22 relations of the frozen C12 graphs, located on the segments V3 uses."""
 
-    data = json.loads((V22 / f"c12r1_{manual}" / "graph.json").read_text())
+    return v22_edges_from(V22 / f"c12r1_{manual}" / "graph.json", doc, evidence)
+
+
+def v22_edges_from(path: Path, doc, evidence) -> list[dict]:
+    """v22 relations of any revision file, located on the same segments V3 uses."""
+
+    data = json.loads(Path(path).read_text())
     names = {node["node_id"]: node["label"] for node in data["nodes"]}
     by_evidence = defaultdict(list)
     for segment in doc.segments():
@@ -271,8 +277,13 @@ async def score_system(llm, claims: list[dict], edges: list[dict]) -> dict:
             return bool(causes)
         return any(edges[index]["source"] in causes for index in table[(claim["claim_id"], "action")])
 
+    matched = [(relation, edge) for (_, _, group), verdict, (relation, group_edges) in zip(keys, verdicts, pairs)
+               if verdict for edge in group_edges]
     return {
         "judged_pairs": len(pairs),
+        # Of the relations judged right, the share citing where the gold says the fact is written.
+        "evidence_on_gold_segments": round(sum(bool(edge["segments"] & relation["segments"])
+                                               for relation, edge in matched) / len(matched), 3) if matched else None,
         "recovered_meaning": sorted(claim["claim_id"] for claim in claims if recovered(claim, same)),
         "recovered_position_only": sorted(claim["claim_id"] for claim in claims if recovered(claim, positional)),
     }
