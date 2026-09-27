@@ -1,0 +1,3656 @@
+{
+ "version": "kg-v3-graph-1",
+ "status": "approved",
+ "source_title": "manual.pdf",
+ "nodes": [
+  {
+   "id": "v3n_asset_766cd4bc1445",
+   "type": "Asset",
+   "name": "ABB ACS580-01 variable speed drive",
+   "properties": {
+    "name": "ABB ACS580-01 variable speed drive",
+    "description": "ABB ACS580-01 variable speed drive",
+    "brand": "ABB",
+    "model": "ACS580-01",
+    "asset_type": "variable frequency drive",
+    "asset_id": "v3n_asset_766cd4bc1445"
+   },
+   "evidence": []
+  },
+  {
+   "id": "v3n_8315f093e867c6bbcb9d",
+   "type": "Component",
+   "name": "Connection between drive and control panel",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_8315f093e867c6bbcb9d",
+    "name": "Connection between drive and control panel",
+    "description": "Connection between drive and control panel",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r3",
+     "page": 232,
+     "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+     "bbox": null,
+     "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+    }
+   ]
+  },
+  {
+   "id": "v3n_9a8d7c5a81c5b239724d",
+   "type": "Component",
+   "name": "Control panel",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_9a8d7c5a81c5b239724d",
+    "name": "Control panel",
+    "description": "Control panel",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r1",
+     "page": 232,
+     "evidence_id": "ev_5d01c365639580672ab4834f210b",
+     "bbox": null,
+     "text": "column 1: Control panel LED, at the left edge of the control panel"
+    },
+    {
+     "segment_id": "p232.t1.r3",
+     "page": 232,
+     "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+     "bbox": null,
+     "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+    },
+    {
+     "segment_id": "p232.t1.r4",
+     "page": 232,
+     "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+    }
+   ]
+  },
+  {
+   "id": "v3n_b46ef344b5393106a156",
+   "type": "Component",
+   "name": "Drive",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_b46ef344b5393106a156",
+    "name": "Drive",
+    "description": "Drive",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r3",
+     "page": 232,
+     "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+     "bbox": null,
+     "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+    },
+    {
+     "segment_id": "p232.t1.r4",
+     "page": 232,
+     "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+    },
+    {
+     "segment_id": "p232.t1.r5",
+     "page": 232,
+     "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_6548f0da72b3a6281ab4",
+   "type": "Component",
+   "name": "Other drive on the panel bus",
+   "aliases": [],
+   "stated_in_source": false,
+   "properties": {
+    "component_id": "v3n_6548f0da72b3a6281ab4",
+    "name": "Other drive on the panel bus",
+    "description": "Other drive on the panel bus",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r5",
+     "page": 232,
+     "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_1a69b0301769162662c9",
+   "type": "Component",
+   "name": "STO circuit 1st channel",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_1a69b0301769162662c9",
+    "name": "STO circuit 1st channel",
+    "description": "STO circuit 1st channel",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p361.t1.r4",
+     "page": 361,
+     "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+     "bbox": null,
+     "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+    }
+   ]
+  },
+  {
+   "id": "v3n_bd70c722d7151b3ba30e",
+   "type": "Component",
+   "name": "STO circuit 2nd channel",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "component_id": "v3n_bd70c722d7151b3ba30e",
+    "name": "STO circuit 2nd channel",
+    "description": "STO circuit 2nd channel",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p361.t1.r4",
+     "page": 361,
+     "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+     "bbox": null,
+     "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+    }
+   ]
+  },
+  {
+   "id": "v3n_20367866d7df3dbbd55f",
+   "type": "CorrectiveAction",
+   "name": "Check that the motor runs normally",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_20367866d7df3dbbd55f",
+    "name": "Check that the motor runs normally",
+    "description": "Check that the motor runs normally",
+    "instruction_text": "Check that the motor runs normally",
+    "action_kind": "inspection",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 361"
+   },
+   "evidence": [
+    {
+     "segment_id": "p361.t1.r4",
+     "page": 361,
+     "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+     "bbox": null,
+     "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+    }
+   ]
+  },
+  {
+   "id": "v3n_ceef7e8ccbd063de26a9",
+   "type": "CorrectiveAction",
+   "name": "Check the control panel display to locate the fault",
+   "aliases": [
+    "Check the control panel display",
+    "Check the display to locate the fault"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_ceef7e8ccbd063de26a9",
+    "name": "Check the control panel display to locate the fault",
+    "description": "Check the control panel display to locate the fault",
+    "instruction_text": "Check the control panel display to locate the fault",
+    "action_kind": "inspection",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 232"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r3",
+     "page": 232,
+     "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+     "bbox": null,
+     "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+    },
+    {
+     "segment_id": "p232.t1.r4",
+     "page": 232,
+     "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+    },
+    {
+     "segment_id": "p232.t1.r5",
+     "page": 232,
+     "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_d0bc536396e015b05106",
+   "type": "CorrectiveAction",
+   "name": "Check the fault in the other drive",
+   "aliases": [
+    "Check the active fault in the other drive"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_d0bc536396e015b05106",
+    "name": "Check the fault in the other drive",
+    "description": "Check the fault in the other drive",
+    "instruction_text": "Check the fault in the other drive",
+    "action_kind": "inspection",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 232"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r4",
+     "page": 232,
+     "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+    },
+    {
+     "segment_id": "p232.t1.r5",
+     "page": 232,
+     "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_d87171b1d866a0cd07e6",
+   "type": "CorrectiveAction",
+   "name": "Cycle the drive power to reset the fault",
+   "aliases": [
+    "Cycle drive power to reset the fault"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_d87171b1d866a0cd07e6",
+    "name": "Cycle the drive power to reset the fault",
+    "description": "Cycle the drive power to reset the fault",
+    "instruction_text": "Cycle the drive power to reset the fault",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 232"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r4",
+     "page": 232,
+     "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+    }
+   ]
+  },
+  {
+   "id": "v3n_2bef16fe5b36c56cc607",
+   "type": "CorrectiveAction",
+   "name": "Report Safe torque off function failures to ABB",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_2bef16fe5b36c56cc607",
+    "name": "Report Safe torque off function failures to ABB",
+    "description": "Report Safe torque off function failures to ABB",
+    "instruction_text": "Report Safe torque off function failures to ABB",
+    "action_kind": "escalation",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 365"
+   },
+   "evidence": [
+    {
+     "segment_id": "p365.b6",
+     "page": 365,
+     "evidence_id": "ev_595699b86a4d82b6564c78ea9a6b",
+     "bbox": [
+      48.189,
+      194.024,
+      318.945,
+      203.024
+     ],
+     "text": "Any failures of the Safe torque off function must be reported to ABB."
+    }
+   ]
+  },
+  {
+   "id": "v3n_d65616ab3545e385beb6",
+   "type": "CorrectiveAction",
+   "name": "Reset active faults",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_d65616ab3545e385beb6",
+    "name": "Reset active faults",
+    "description": "Reset active faults",
+    "instruction_text": "Reset active faults",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 361"
+   },
+   "evidence": [
+    {
+     "segment_id": "p361.t1.r4",
+     "page": 361,
+     "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+     "bbox": null,
+     "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+    }
+   ]
+  },
+  {
+   "id": "v3n_35df56957b004ab69701",
+   "type": "CorrectiveAction",
+   "name": "Reset the drive fault",
+   "aliases": [
+    "Reset the active drive fault",
+    "Reset the active fault in the drive"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_35df56957b004ab69701",
+    "name": "Reset the drive fault",
+    "description": "Reset the drive fault",
+    "instruction_text": "Reset the drive fault",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 232"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r4",
+     "page": 232,
+     "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+    },
+    {
+     "segment_id": "p232.t1.r5",
+     "page": 232,
+     "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_5ea1c9610f32c73bd8ef",
+   "type": "CorrectiveAction",
+   "name": "Reset the fault in the other drive",
+   "aliases": [
+    "Reset the active fault in the other drive"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_5ea1c9610f32c73bd8ef",
+    "name": "Reset the fault in the other drive",
+    "description": "Reset the fault in the other drive",
+    "instruction_text": "Reset the fault in the other drive",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 232"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r4",
+     "page": 232,
+     "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+    },
+    {
+     "segment_id": "p232.t1.r5",
+     "page": 232,
+     "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_73aff2ec9ba587401d39",
+   "type": "CorrectiveAction",
+   "name": "Restart the drive",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_73aff2ec9ba587401d39",
+    "name": "Restart the drive",
+    "description": "Restart the drive",
+    "instruction_text": "Restart the drive",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 361"
+   },
+   "evidence": [
+    {
+     "segment_id": "p361.t1.r4",
+     "page": 361,
+     "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+     "bbox": null,
+     "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+    }
+   ]
+  },
+  {
+   "id": "v3n_1dca5f2ea56c2bf7c2f5",
+   "type": "CorrectiveAction",
+   "name": "Switch to the drive with the panel bus fault",
+   "aliases": [
+    "Switch to the drive with the active fault"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "action_id": "v3n_1dca5f2ea56c2bf7c2f5",
+    "name": "Switch to the drive with the panel bus fault",
+    "description": "Switch to the drive with the panel bus fault",
+    "instruction_text": "Switch to the drive with the panel bus fault",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 232"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r4",
+     "page": 232,
+     "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+    },
+    {
+     "segment_id": "p232.t1.r5",
+     "page": 232,
+     "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_f81cb87bf311d44d6424",
+   "type": "ErrorCode",
+   "name": "STO hardware failure",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "error_code_id": "v3n_f81cb87bf311d44d6424",
+    "name": "STO hardware failure",
+    "description": "STO hardware failure",
+    "code": "STO hardware failure"
+   },
+   "evidence": [
+    {
+     "segment_id": "p365.b4",
+     "page": 365,
+     "evidence_id": "ev_070433fe90966b9423602ebca8d9",
+     "bbox": [
+      48.189,
+      96.286,
+      389.787,
+      148.486
+     ],
+     "text": "The diagnostics of the Safe torque off function cross-compare the status of the two STO channels. In case the channels are not in the same state, a fault reaction function is performed and the drive trips on an “STO hardware failure” fault. An attempt to use the STO in a non-redundant manner, for example activating only one channel, will trigger the same reaction."
+    }
+   ]
+  },
+  {
+   "id": "v3n_25ddcc1663487cb87022",
+   "type": "ErrorCode",
+   "name": "Safe Torque Off 1 loss",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "error_code_id": "v3n_25ddcc1663487cb87022",
+    "name": "Safe Torque Off 1 loss",
+    "description": "Safe Torque Off 1 loss",
+    "code": "FA81"
+   },
+   "evidence": [
+    {
+     "segment_id": "p361.t1.r4",
+     "page": 361,
+     "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+     "bbox": null,
+     "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+    }
+   ]
+  },
+  {
+   "id": "v3n_774801901b3b502a1f42",
+   "type": "ErrorCode",
+   "name": "Safe Torque Off 2 loss",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "error_code_id": "v3n_774801901b3b502a1f42",
+    "name": "Safe Torque Off 2 loss",
+    "description": "Safe Torque Off 2 loss",
+    "code": "FA82"
+   },
+   "evidence": [
+    {
+     "segment_id": "p361.t1.r4",
+     "page": 361,
+     "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+     "bbox": null,
+     "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+    }
+   ]
+  },
+  {
+   "id": "v3n_783fe0232b91f024066a",
+   "type": "FailureMode",
+   "name": "Active fault in another drive in the panel bus",
+   "aliases": [
+    "Active fault in another drive on the panel bus",
+    "Unspecified cause of active fault in another drive on the panel bus"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_783fe0232b91f024066a",
+    "name": "Active fault in another drive in the panel bus",
+    "description": "Active fault in another drive in the panel bus",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r4",
+     "page": 232,
+     "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+    },
+    {
+     "segment_id": "p232.t1.r5",
+     "page": 232,
+     "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_c81a6510fac4dcef41ac",
+   "type": "FailureMode",
+   "name": "Active fault in the drive",
+   "aliases": [
+    "Unspecified cause of active fault in the drive",
+    "Unspecified cause of active fault in the drive with red LED blinking"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_c81a6510fac4dcef41ac",
+    "name": "Active fault in the drive",
+    "description": "Active fault in the drive",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r4",
+     "page": 232,
+     "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+    },
+    {
+     "segment_id": "p232.t1.r5",
+     "page": 232,
+     "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_9f64e985e8164ffef859",
+   "type": "FailureMode",
+   "name": "Active warning in the drive",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_9f64e985e8164ffef859",
+    "name": "Active warning in the drive",
+    "description": "Active warning in the drive",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r3",
+     "page": 232,
+     "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+     "bbox": null,
+     "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+    }
+   ]
+  },
+  {
+   "id": "v3n_e7487dafbe78022467d8",
+   "type": "FailureMode",
+   "name": "Adapter module has detected an error",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_e7487dafbe78022467d8",
+    "name": "Adapter module has detected an error",
+    "description": "Adapter module has detected an error",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p375.b7",
+     "page": 375,
+     "evidence_id": "ev_3d741fdbe4b5feb66f860ee8717c",
+     "bbox": [
+      50.472,
+      132.724,
+      385.851,
+      150.324
+     ],
+     "text": "There is no communication with the drive control unit or the adapter module has detected an error. Red"
+    },
+    {
+     "segment_id": "p375.t1.r3",
+     "page": 375,
+     "evidence_id": "ev_b4b4917beed11a52489bfd20bac4",
+     "bbox": null,
+     "text": "Color: Red | Description: There is no communication with the drive control unit or the adapter module has detected an error."
+    }
+   ]
+  },
+  {
+   "id": "v3n_8b4a310c620ec41064ae",
+   "type": "FailureMode",
+   "name": "Control panel and drive incompatible",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_8b4a310c620ec41064ae",
+    "name": "Control panel and drive incompatible",
+    "description": "Control panel and drive incompatible",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r3",
+     "page": 232,
+     "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+     "bbox": null,
+     "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+    }
+   ]
+  },
+  {
+   "id": "v3n_edcea7a05c3d817a0599",
+   "type": "FailureMode",
+   "name": "Control panel and drive may be incompatible",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_edcea7a05c3d817a0599",
+    "name": "Control panel and drive may be incompatible",
+    "description": "Control panel and drive may be incompatible",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r3",
+     "page": 232,
+     "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+     "bbox": null,
+     "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+    }
+   ]
+  },
+  {
+   "id": "v3n_e03afd5b5ea76e0ceb3d",
+   "type": "FailureMode",
+   "name": "Faulty or lost connection between drive and control panel",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_e03afd5b5ea76e0ceb3d",
+    "name": "Faulty or lost connection between drive and control panel",
+    "description": "Faulty or lost connection between drive and control panel",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r3",
+     "page": 232,
+     "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+     "bbox": null,
+     "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+    }
+   ]
+  },
+  {
+   "id": "v3n_dd5d5b13027e237f356e",
+   "type": "FailureMode",
+   "name": "No communication with the drive control unit",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_dd5d5b13027e237f356e",
+    "name": "No communication with the drive control unit",
+    "description": "No communication with the drive control unit",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p375.b7",
+     "page": 375,
+     "evidence_id": "ev_3d741fdbe4b5feb66f860ee8717c",
+     "bbox": [
+      50.472,
+      132.724,
+      385.851,
+      150.324
+     ],
+     "text": "There is no communication with the drive control unit or the adapter module has detected an error. Red"
+    },
+    {
+     "segment_id": "p375.t1.r3",
+     "page": 375,
+     "evidence_id": "ev_b4b4917beed11a52489bfd20bac4",
+     "bbox": null,
+     "text": "Color: Red | Description: There is no communication with the drive control unit or the adapter module has detected an error."
+    }
+   ]
+  },
+  {
+   "id": "v3n_0ed3b786a646cdab9f0e",
+   "type": "FailureMode",
+   "name": "STO channels are in different states",
+   "aliases": [
+    "STO channels are not in the same state",
+    "Unspecified failure of the Safe torque off function"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_0ed3b786a646cdab9f0e",
+    "name": "STO channels are in different states",
+    "description": "STO channels are in different states",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p365.b4",
+     "page": 365,
+     "evidence_id": "ev_070433fe90966b9423602ebca8d9",
+     "bbox": [
+      48.189,
+      96.286,
+      389.787,
+      148.486
+     ],
+     "text": "The diagnostics of the Safe torque off function cross-compare the status of the two STO channels. In case the channels are not in the same state, a fault reaction function is performed and the drive trips on an “STO hardware failure” fault. An attempt to use the STO in a non-redundant manner, for example activating only one channel, will trigger the same reaction."
+    },
+    {
+     "segment_id": "p365.b6",
+     "page": 365,
+     "evidence_id": "ev_595699b86a4d82b6564c78ea9a6b",
+     "bbox": [
+      48.189,
+      194.024,
+      318.945,
+      203.024
+     ],
+     "text": "Any failures of the Safe torque off function must be reported to ABB."
+    }
+   ]
+  },
+  {
+   "id": "v3n_8b7147a9b6b36f4d732c",
+   "type": "FailureMode",
+   "name": "STO is used non-redundantly",
+   "aliases": [
+    "STO used in a non-redundant manner"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_8b7147a9b6b36f4d732c",
+    "name": "STO is used non-redundantly",
+    "description": "STO is used non-redundantly",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p365.b4",
+     "page": 365,
+     "evidence_id": "ev_070433fe90966b9423602ebca8d9",
+     "bbox": [
+      48.189,
+      96.286,
+      389.787,
+      148.486
+     ],
+     "text": "The diagnostics of the Safe torque off function cross-compare the status of the two STO channels. In case the channels are not in the same state, a fault reaction function is performed and the drive trips on an “STO hardware failure” fault. An attempt to use the STO in a non-redundant manner, for example activating only one channel, will trigger the same reaction."
+    }
+   ]
+  },
+  {
+   "id": "v3n_0c8b202eb21eac08c4e2",
+   "type": "FailureMode",
+   "name": "Safe Torque Off 1 channel loss",
+   "aliases": [
+    "Safe Torque Off 2 channel loss",
+    "Unspecified cause of safe Torque Off 1 loss",
+    "Unspecified cause of safe Torque Off 2 loss"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_0c8b202eb21eac08c4e2",
+    "name": "Safe Torque Off 1 channel loss",
+    "description": "Safe Torque Off 1 channel loss",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p361.t1.r4",
+     "page": 361,
+     "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+     "bbox": null,
+     "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+    }
+   ]
+  },
+  {
+   "id": "v3n_1717366bfcfbe5871ce4",
+   "type": "Symptom",
+   "name": "Active fault in another drive on the panel bus",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "symptom_id": "v3n_1717366bfcfbe5871ce4",
+    "name": "Active fault in another drive on the panel bus",
+    "description": "Active fault in another drive on the panel bus",
+    "severity": "Unknown"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r4",
+     "page": 232,
+     "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+    }
+   ]
+  },
+  {
+   "id": "v3n_ab7b8b6b89194df58b23",
+   "type": "Symptom",
+   "name": "Active fault in the drive",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "symptom_id": "v3n_ab7b8b6b89194df58b23",
+    "name": "Active fault in the drive",
+    "description": "Active fault in the drive",
+    "severity": "Unknown"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r4",
+     "page": 232,
+     "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+    }
+   ]
+  },
+  {
+   "id": "v3n_e7da917a0f8a3ba8d31a",
+   "type": "Symptom",
+   "name": "Adapter module diagnostic LED is red",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "symptom_id": "v3n_e7da917a0f8a3ba8d31a",
+    "name": "Adapter module diagnostic LED is red",
+    "description": "Adapter module diagnostic LED is red",
+    "severity": "Unknown"
+   },
+   "evidence": [
+    {
+     "segment_id": "p375.b7",
+     "page": 375,
+     "evidence_id": "ev_3d741fdbe4b5feb66f860ee8717c",
+     "bbox": [
+      50.472,
+      132.724,
+      385.851,
+      150.324
+     ],
+     "text": "There is no communication with the drive control unit or the adapter module has detected an error. Red"
+    },
+    {
+     "segment_id": "p375.t1.r3",
+     "page": 375,
+     "evidence_id": "ev_b4b4917beed11a52489bfd20bac4",
+     "bbox": null,
+     "text": "Color: Red | Description: There is no communication with the drive control unit or the adapter module has detected an error."
+    }
+   ]
+  },
+  {
+   "id": "v3n_031aebd03991131d3cbd",
+   "type": "Symptom",
+   "name": "Control panel LED lit steady green",
+   "aliases": [
+    "Green control panel LED lit and steady"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "symptom_id": "v3n_031aebd03991131d3cbd",
+    "name": "Control panel LED lit steady green",
+    "description": "Control panel LED lit steady green",
+    "severity": "Unknown"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r2",
+     "page": 232,
+     "evidence_id": "ev_59f3d5b8bac8f14ba76ab7fa6b33",
+     "bbox": null,
+     "text": "column 1: LED off | column 2: LED lit and steady | column 3:  | column 4: LED blinking/flickering"
+    },
+    {
+     "segment_id": "p232.t1.r3",
+     "page": 232,
+     "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+     "bbox": null,
+     "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+    }
+   ]
+  },
+  {
+   "id": "v3n_8b4019c615204f713168",
+   "type": "Symptom",
+   "name": "Green control panel LED blinking",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "symptom_id": "v3n_8b4019c615204f713168",
+    "name": "Green control panel LED blinking",
+    "description": "Green control panel LED blinking",
+    "severity": "Unknown"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r2",
+     "page": 232,
+     "evidence_id": "ev_59f3d5b8bac8f14ba76ab7fa6b33",
+     "bbox": null,
+     "text": "column 1: LED off | column 2: LED lit and steady | column 3:  | column 4: LED blinking/flickering"
+    },
+    {
+     "segment_id": "p232.t1.r3",
+     "page": 232,
+     "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+     "bbox": null,
+     "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+    }
+   ]
+  },
+  {
+   "id": "v3n_3899fa6741cfbddd9130",
+   "type": "Symptom",
+   "name": "Panel has no power",
+   "aliases": [],
+   "stated_in_source": false,
+   "properties": {
+    "symptom_id": "v3n_3899fa6741cfbddd9130",
+    "name": "Panel has no power",
+    "description": "Panel has no power",
+    "severity": "Unknown"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r5",
+     "page": 232,
+     "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+    }
+   ]
+  },
+  {
+   "id": "v3n_5304f395908d9e50aa41",
+   "type": "Symptom",
+   "name": "Red control panel LED blinking",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "symptom_id": "v3n_5304f395908d9e50aa41",
+    "name": "Red control panel LED blinking",
+    "description": "Red control panel LED blinking",
+    "severity": "Unknown"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r2",
+     "page": 232,
+     "evidence_id": "ev_59f3d5b8bac8f14ba76ab7fa6b33",
+     "bbox": null,
+     "text": "column 1: LED off | column 2: LED lit and steady | column 3:  | column 4: LED blinking/flickering"
+    },
+    {
+     "segment_id": "p232.t1.r4",
+     "page": 232,
+     "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+    }
+   ]
+  },
+  {
+   "id": "v3n_02234aaa9ed0706dce2a",
+   "type": "Symptom",
+   "name": "Red control panel LED lit and steady",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "symptom_id": "v3n_02234aaa9ed0706dce2a",
+    "name": "Red control panel LED lit and steady",
+    "description": "Red control panel LED lit and steady",
+    "severity": "Unknown"
+   },
+   "evidence": [
+    {
+     "segment_id": "p232.t1.r2",
+     "page": 232,
+     "evidence_id": "ev_59f3d5b8bac8f14ba76ab7fa6b33",
+     "bbox": null,
+     "text": "column 1: LED off | column 2: LED lit and steady | column 3:  | column 4: LED blinking/flickering"
+    },
+    {
+     "segment_id": "p232.t1.r4",
+     "page": 232,
+     "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+     "bbox": null,
+     "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+    }
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "v3e_72ed6d318e041bcf380a",
+   "type": "MAY_INDICATE",
+   "from": "v3n_031aebd03991131d3cbd",
+   "to": "v3n_e03afd5b5ea76e0ceb3d",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r2",
+       "p232.t1.r3"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r2",
+       "page": 232,
+       "evidence_id": "ev_59f3d5b8bac8f14ba76ab7fa6b33",
+       "bbox": null,
+       "text": "column 1: LED off | column 2: LED lit and steady | column 3:  | column 4: LED blinking/flickering"
+      },
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_7e36751117ab61ecf9c4",
+   "type": "AFFECTS",
+   "from": "v3n_e03afd5b5ea76e0ceb3d",
+   "to": "v3n_8315f093e867c6bbcb9d",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r3"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_88c7e308157335115062",
+   "type": "MAY_INDICATE",
+   "from": "v3n_031aebd03991131d3cbd",
+   "to": "v3n_edcea7a05c3d817a0599",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r2",
+       "p232.t1.r3"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r2",
+       "page": 232,
+       "evidence_id": "ev_59f3d5b8bac8f14ba76ab7fa6b33",
+       "bbox": null,
+       "text": "column 1: LED off | column 2: LED lit and steady | column 3:  | column 4: LED blinking/flickering"
+      },
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_8d9fd3465abb907cf1d9",
+   "type": "AFFECTS",
+   "from": "v3n_edcea7a05c3d817a0599",
+   "to": "v3n_9a8d7c5a81c5b239724d",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r1",
+       "p232.t1.r3",
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r1",
+       "page": 232,
+       "evidence_id": "ev_5d01c365639580672ab4834f210b",
+       "bbox": null,
+       "text": "column 1: Control panel LED, at the left edge of the control panel"
+      },
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      },
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_f5c9762f6a4700fad7dd",
+   "type": "AFFECTS",
+   "from": "v3n_edcea7a05c3d817a0599",
+   "to": "v3n_b46ef344b5393106a156",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r3",
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      },
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_d49dc40245bf527a6aa1",
+   "type": "MAY_INDICATE",
+   "from": "v3n_ab7b8b6b89194df58b23",
+   "to": "v3n_c81a6510fac4dcef41ac",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "LED lit steady red"
+   ],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:A.R2",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_e15df2ada7d584ae3cba",
+   "type": "AFFECTS",
+   "from": "v3n_c81a6510fac4dcef41ac",
+   "to": "v3n_b46ef344b5393106a156",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:A.R2",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r3",
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      },
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    },
+    {
+     "record": "u001-8c2714:A.R4",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r3",
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      },
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    },
+    {
+     "record": "u001-8c2714:C.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r5",
+       "page": 232,
+       "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_64b0de8e98c74d6ce080",
+   "type": "RESOLVED_BY",
+   "from": "v3n_c81a6510fac4dcef41ac",
+   "to": "v3n_ceef7e8ccbd063de26a9",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "Check the display to see where the fault is",
+    "To see where the fault is"
+   ],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:B.R4",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r3",
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      },
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    },
+    {
+     "record": "u001-8c2714:C.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r5",
+       "page": 232,
+       "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_fb1700c5ba38bbb18c6b",
+   "type": "RESOLVED_BY",
+   "from": "v3n_c81a6510fac4dcef41ac",
+   "to": "v3n_35df56957b004ab69701",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "Active fault in the drive"
+   ],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:B.R4",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    },
+    {
+     "record": "u001-8c2714:C.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r5",
+       "page": 232,
+       "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_318837903d2a84ae23ca",
+   "type": "MAY_INDICATE",
+   "from": "v3n_1717366bfcfbe5871ce4",
+   "to": "v3n_783fe0232b91f024066a",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "LED lit steady red"
+   ],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:A.R3",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_d83c7e54c6583107c561",
+   "type": "AFFECTS",
+   "from": "v3n_783fe0232b91f024066a",
+   "to": "v3n_b46ef344b5393106a156",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "The affected drive is another drive on the panel bus"
+   ],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:A.R3",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r3",
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      },
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_4eb771e6e23878d707d5",
+   "type": "RESOLVED_BY",
+   "from": "v3n_783fe0232b91f024066a",
+   "to": "v3n_ceef7e8ccbd063de26a9",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "Check the display to see where the fault is",
+    "To see where the fault is"
+   ],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:B.R5",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r3",
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      },
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    },
+    {
+     "record": "u001-8c2714:C.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r5",
+       "page": 232,
+       "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_e24f9aa7bd517661470b",
+   "type": "RESOLVED_BY",
+   "from": "v3n_783fe0232b91f024066a",
+   "to": "v3n_1dca5f2ea56c2bf7c2f5",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "Active fault in another drive on the panel bus"
+   ],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:B.R5",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    },
+    {
+     "record": "u001-8c2714:C.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r5",
+       "page": 232,
+       "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_d3d8683b450bd21b51e8",
+   "type": "RESOLVED_BY",
+   "from": "v3n_783fe0232b91f024066a",
+   "to": "v3n_d0bc536396e015b05106",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "After switching to the drive in question"
+   ],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:B.R5",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    },
+    {
+     "record": "u001-8c2714:C.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r5",
+       "page": 232,
+       "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_00d3775c7cc2f88f146f",
+   "type": "RESOLVED_BY",
+   "from": "v3n_783fe0232b91f024066a",
+   "to": "v3n_5ea1c9610f32c73bd8ef",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "After switching to the drive in question"
+   ],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:B.R5",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    },
+    {
+     "record": "u001-8c2714:C.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r5",
+       "page": 232,
+       "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_3061c17ae9d8c7d415e1",
+   "type": "RESOLVED_BY",
+   "from": "v3n_c81a6510fac4dcef41ac",
+   "to": "v3n_d87171b1d866a0cd07e6",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "To reset the fault"
+   ],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:B.R6",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_b6acd2b8e2c8b7693513",
+   "type": "MAY_INDICATE",
+   "from": "v3n_031aebd03991131d3cbd",
+   "to": "v3n_8b4a310c620ec41064ae",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:B.R2",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r2",
+       "p232.t1.r3"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r2",
+       "page": 232,
+       "evidence_id": "ev_59f3d5b8bac8f14ba76ab7fa6b33",
+       "bbox": null,
+       "text": "column 1: LED off | column 2: LED lit and steady | column 3:  | column 4: LED blinking/flickering"
+      },
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_cd6b379b3ff6662b0b4e",
+   "type": "AFFECTS",
+   "from": "v3n_8b4a310c620ec41064ae",
+   "to": "v3n_9a8d7c5a81c5b239724d",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:B.R2",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r1",
+       "p232.t1.r3",
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r1",
+       "page": 232,
+       "evidence_id": "ev_5d01c365639580672ab4834f210b",
+       "bbox": null,
+       "text": "column 1: Control panel LED, at the left edge of the control panel"
+      },
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      },
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_acbfe7636e36cf430ebf",
+   "type": "MAY_INDICATE",
+   "from": "v3n_8b4019c615204f713168",
+   "to": "v3n_9f64e985e8164ffef859",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:B.R3",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r2",
+       "p232.t1.r3"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r2",
+       "page": 232,
+       "evidence_id": "ev_59f3d5b8bac8f14ba76ab7fa6b33",
+       "bbox": null,
+       "text": "column 1: LED off | column 2: LED lit and steady | column 3:  | column 4: LED blinking/flickering"
+      },
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_0fe5f79e60feda8dfe31",
+   "type": "MAY_INDICATE",
+   "from": "v3n_02234aaa9ed0706dce2a",
+   "to": "v3n_c81a6510fac4dcef41ac",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:B.R4",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r2",
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r2",
+       "page": 232,
+       "evidence_id": "ev_59f3d5b8bac8f14ba76ab7fa6b33",
+       "bbox": null,
+       "text": "column 1: LED off | column 2: LED lit and steady | column 3:  | column 4: LED blinking/flickering"
+      },
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_3e24684442952491fcc5",
+   "type": "MAY_INDICATE",
+   "from": "v3n_02234aaa9ed0706dce2a",
+   "to": "v3n_783fe0232b91f024066a",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:B.R5",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r2",
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r2",
+       "page": 232,
+       "evidence_id": "ev_59f3d5b8bac8f14ba76ab7fa6b33",
+       "bbox": null,
+       "text": "column 1: LED off | column 2: LED lit and steady | column 3:  | column 4: LED blinking/flickering"
+      },
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_5ac85f982f3c2e1b08e3",
+   "type": "MAY_INDICATE",
+   "from": "v3n_5304f395908d9e50aa41",
+   "to": "v3n_c81a6510fac4dcef41ac",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:B.R6",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r2",
+       "p232.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "reviewer"
+      ],
+      "verifier_verdict": "not_supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+      },
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "reviewer: Keep statement 1 only; the manual associates a blinking/flickering red LED with an active fault in the drive, but does not state that the fault affects the control panel."
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r2",
+       "page": 232,
+       "evidence_id": "ev_59f3d5b8bac8f14ba76ab7fa6b33",
+       "bbox": null,
+       "text": "column 1: LED off | column 2: LED lit and steady | column 3:  | column 4: LED blinking/flickering"
+      },
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_82643f633687c139b712",
+   "type": "MAY_INDICATE",
+   "from": "v3n_3899fa6741cfbddd9130",
+   "to": "v3n_c81a6510fac4dcef41ac",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:C.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "reviewer"
+      ],
+      "verifier_verdict": "not_supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+      },
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r5",
+       "page": 232,
+       "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_d2f4d53afc0cfb616815",
+   "type": "MAY_INDICATE",
+   "from": "v3n_3899fa6741cfbddd9130",
+   "to": "v3n_783fe0232b91f024066a",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:C.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "reviewer"
+      ],
+      "verifier_verdict": "not_supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+      },
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r5",
+       "page": 232,
+       "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_16c9495302ae4dc4fef5",
+   "type": "AFFECTS",
+   "from": "v3n_783fe0232b91f024066a",
+   "to": "v3n_6548f0da72b3a6281ab4",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-8c2714:C.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p232.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r5",
+       "page": 232,
+       "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_c5102a6b646d1a4fc921",
+   "type": "INDICATES",
+   "from": "v3n_25ddcc1663487cb87022",
+   "to": "v3n_0c8b202eb21eac08c4e2",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u002-ed8dc5:B.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p361.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p361.t1.r4",
+       "page": 361,
+       "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+       "bbox": null,
+       "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_7b1e5ebf16b4e1610951",
+   "type": "RESOLVED_BY",
+   "from": "v3n_0c8b202eb21eac08c4e2",
+   "to": "v3n_d65616ab3545e385beb6",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "After closing the STO circuit"
+   ],
+   "occurrences": [
+    {
+     "record": "u002-ed8dc5:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p361.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p361.t1.r4",
+       "page": 361,
+       "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+       "bbox": null,
+       "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+      }
+     ]
+    },
+    {
+     "record": "u002-ed8dc5:A.R2",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p361.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p361.t1.r4",
+       "page": 361,
+       "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+       "bbox": null,
+       "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_b43687246f4ccd392037",
+   "type": "RESOLVED_BY",
+   "from": "v3n_0c8b202eb21eac08c4e2",
+   "to": "v3n_73aff2ec9ba587401d39",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "After resetting active faults"
+   ],
+   "occurrences": [
+    {
+     "record": "u002-ed8dc5:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p361.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p361.t1.r4",
+       "page": 361,
+       "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+       "bbox": null,
+       "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+      }
+     ]
+    },
+    {
+     "record": "u002-ed8dc5:A.R2",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p361.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p361.t1.r4",
+       "page": 361,
+       "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+       "bbox": null,
+       "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_f03e7a9073c5aa24f0c5",
+   "type": "RESOLVED_BY",
+   "from": "v3n_0c8b202eb21eac08c4e2",
+   "to": "v3n_20367866d7df3dbbd55f",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "After restarting the drive"
+   ],
+   "occurrences": [
+    {
+     "record": "u002-ed8dc5:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p361.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p361.t1.r4",
+       "page": 361,
+       "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+       "bbox": null,
+       "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+      }
+     ]
+    },
+    {
+     "record": "u002-ed8dc5:A.R2",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p361.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p361.t1.r4",
+       "page": 361,
+       "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+       "bbox": null,
+       "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_ec538d3330a1d3ea5a28",
+   "type": "INDICATES",
+   "from": "v3n_774801901b3b502a1f42",
+   "to": "v3n_0c8b202eb21eac08c4e2",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u002-ed8dc5:B.R2",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p361.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p361.t1.r4",
+       "page": 361,
+       "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+       "bbox": null,
+       "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_2b5d2cf3b21c91b5638e",
+   "type": "AFFECTS",
+   "from": "v3n_0c8b202eb21eac08c4e2",
+   "to": "v3n_1a69b0301769162662c9",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u002-ed8dc5:B.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p361.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "reviewer"
+      ],
+      "verifier_verdict": "not_supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+      },
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p361.t1.r4",
+       "page": 361,
+       "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+       "bbox": null,
+       "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_cba49c0eb27dd14c466a",
+   "type": "AFFECTS",
+   "from": "v3n_0c8b202eb21eac08c4e2",
+   "to": "v3n_bd70c722d7151b3ba30e",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u002-ed8dc5:B.R2",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p361.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "reviewer"
+      ],
+      "verifier_verdict": "not_supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+      },
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p361.t1.r4",
+       "page": 361,
+       "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+       "bbox": null,
+       "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_44cf8808cc0fa7749f88",
+   "type": "INDICATES",
+   "from": "v3n_f81cb87bf311d44d6424",
+   "to": "v3n_0ed3b786a646cdab9f0e",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "The two STO channels are not in the same state",
+    "When the two STO channels are not in the same state"
+   ],
+   "occurrences": [
+    {
+     "record": "u003-550172:A.R6",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p365.b4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p365.b4",
+       "page": 365,
+       "evidence_id": "ev_070433fe90966b9423602ebca8d9",
+       "bbox": [
+        48.189,
+        96.286,
+        389.787,
+        148.486
+       ],
+       "text": "The diagnostics of the Safe torque off function cross-compare the status of the two STO channels. In case the channels are not in the same state, a fault reaction function is performed and the drive trips on an “STO hardware failure” fault. An attempt to use the STO in a non-redundant manner, for example activating only one channel, will trigger the same reaction."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_534ecc310d52e575e746",
+   "type": "INDICATES",
+   "from": "v3n_f81cb87bf311d44d6424",
+   "to": "v3n_8b7147a9b6b36f4d732c",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "STO is used non-redundantly, for example by activating only one channel",
+    "When STO is used non-redundantly, such as activating only one channel"
+   ],
+   "occurrences": [
+    {
+     "record": "u003-550172:A.R6",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p365.b4"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p365.b4",
+       "page": 365,
+       "evidence_id": "ev_070433fe90966b9423602ebca8d9",
+       "bbox": [
+        48.189,
+        96.286,
+        389.787,
+        148.486
+       ],
+       "text": "The diagnostics of the Safe torque off function cross-compare the status of the two STO channels. In case the channels are not in the same state, a fault reaction function is performed and the drive trips on an “STO hardware failure” fault. An attempt to use the STO in a non-redundant manner, for example activating only one channel, will trigger the same reaction."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_a1d56c433648cf3db18a",
+   "type": "RESOLVED_BY",
+   "from": "v3n_0ed3b786a646cdab9f0e",
+   "to": "v3n_2bef16fe5b36c56cc607",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    "For any failure of the Safe torque off function"
+   ],
+   "occurrences": [
+    {
+     "record": "u003-550172:A.R7",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p365.b4",
+       "p365.b6"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p365.b4",
+       "page": 365,
+       "evidence_id": "ev_070433fe90966b9423602ebca8d9",
+       "bbox": [
+        48.189,
+        96.286,
+        389.787,
+        148.486
+       ],
+       "text": "The diagnostics of the Safe torque off function cross-compare the status of the two STO channels. In case the channels are not in the same state, a fault reaction function is performed and the drive trips on an “STO hardware failure” fault. An attempt to use the STO in a non-redundant manner, for example activating only one channel, will trigger the same reaction."
+      },
+      {
+       "segment_id": "p365.b6",
+       "page": 365,
+       "evidence_id": "ev_595699b86a4d82b6564c78ea9a6b",
+       "bbox": [
+        48.189,
+        194.024,
+        318.945,
+        203.024
+       ],
+       "text": "Any failures of the Safe torque off function must be reported to ABB."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_422237d10c3f486076be",
+   "type": "MAY_INDICATE",
+   "from": "v3n_e7da917a0f8a3ba8d31a",
+   "to": "v3n_dd5d5b13027e237f356e",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-62d9f8:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p375.b7",
+       "p375.t1.r3"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p375.b7",
+       "page": 375,
+       "evidence_id": "ev_3d741fdbe4b5feb66f860ee8717c",
+       "bbox": [
+        50.472,
+        132.724,
+        385.851,
+        150.324
+       ],
+       "text": "There is no communication with the drive control unit or the adapter module has detected an error. Red"
+      },
+      {
+       "segment_id": "p375.t1.r3",
+       "page": 375,
+       "evidence_id": "ev_b4b4917beed11a52489bfd20bac4",
+       "bbox": null,
+       "text": "Color: Red | Description: There is no communication with the drive control unit or the adapter module has detected an error."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_3c37d927d1f5caf7dad1",
+   "type": "MAY_INDICATE",
+   "from": "v3n_e7da917a0f8a3ba8d31a",
+   "to": "v3n_e7487dafbe78022467d8",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u004-62d9f8:A.R1",
+     "tier": "green",
+     "certificate": {
+      "segment_ids": [
+       "p375.b7",
+       "p375.t1.r3"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:394a5ec622e1f302",
+      "notes": []
+     },
+     "evidence": [
+      {
+       "segment_id": "p375.b7",
+       "page": 375,
+       "evidence_id": "ev_3d741fdbe4b5feb66f860ee8717c",
+       "bbox": [
+        50.472,
+        132.724,
+        385.851,
+        150.324
+       ],
+       "text": "There is no communication with the drive control unit or the adapter module has detected an error. Red"
+      },
+      {
+       "segment_id": "p375.t1.r3",
+       "page": 375,
+       "evidence_id": "ev_b4b4917beed11a52489bfd20bac4",
+       "bbox": null,
+       "text": "Color: Red | Description: There is no communication with the drive control unit or the adapter module has detected an error."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_78154d9c5531f8b9a6c7",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_766cd4bc1445",
+   "to": "v3n_8315f093e867c6bbcb9d",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_5a5cd9358f7c6afcc045",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_766cd4bc1445",
+   "to": "v3n_9a8d7c5a81c5b239724d",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r1",
+       "page": 232,
+       "evidence_id": "ev_5d01c365639580672ab4834f210b",
+       "bbox": null,
+       "text": "column 1: Control panel LED, at the left edge of the control panel"
+      },
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      },
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_cdd35f855db6395baf38",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_766cd4bc1445",
+   "to": "v3n_b46ef344b5393106a156",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r3",
+       "page": 232,
+       "evidence_id": "ev_6f1e67de580375dd561c2d1c2b1c",
+       "bbox": null,
+       "text": "column 1: Panel has no power | column 2: Green | column 3: Drive functioning normally. Connection between the drive and control panel may be faulty or lost, or the panel and drive may be incompatible. Check the control panel display. | column 4: Green | column 5: Blinking: Active warning in the drive Flickering: Data transferred between the PC tool and drive through the USB connection of the control panel"
+      },
+      {
+       "segment_id": "p232.t1.r4",
+       "page": 232,
+       "evidence_id": "ev_12b4c81496b0e158d41aebbbd018",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2: Red | column 3: Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Red | column 5: Active fault in the drive. To reset the fault, cycle the drive power."
+      },
+      {
+       "segment_id": "p232.t1.r5",
+       "page": 232,
+       "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_d7728619dcb2ee19090a",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_766cd4bc1445",
+   "to": "v3n_6548f0da72b3a6281ab4",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p232.t1.r5",
+       "page": 232,
+       "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+       "bbox": null,
+       "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3 (same as row above): Check the display to see where the fault is. • Active fault in the drive. Reset the fault. • Active fault in another drive in the panel bus. Switch to the drive in question and check and reset the fault. | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_897a2d3ab89ce720b414",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_766cd4bc1445",
+   "to": "v3n_1a69b0301769162662c9",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p361.t1.r4",
+       "page": 361,
+       "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+       "bbox": null,
+       "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_11fdd711c23b95f724bd",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_766cd4bc1445",
+   "to": "v3n_bd70c722d7151b3ba30e",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p361.t1.r4",
+       "page": 361,
+       "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+       "bbox": null,
+       "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_c8da0ce5b5b5e9befb57",
+   "type": "GENERATES_ERROR",
+   "from": "v3n_asset_766cd4bc1445",
+   "to": "v3n_25ddcc1663487cb87022",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p361.t1.r4",
+       "page": 361,
+       "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+       "bbox": null,
+       "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_acfd12b67199f3e681f2",
+   "type": "GENERATES_ERROR",
+   "from": "v3n_asset_766cd4bc1445",
+   "to": "v3n_774801901b3b502a1f42",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p361.t1.r4",
+       "page": 361,
+       "evidence_id": "ev_43717aa40bf4cd593a64fd606767",
+       "bbox": null,
+       "text": "Action: Test the operation of the failure detection of the drive. The motor can be stopped or running. • Open the 1st channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA81 Safe Torque Off 1 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. • Open the 2nd channel of the STO circuit. If the motor was running, it should coast to a stop. The drive generates a FA82 Safe Torque Off 2 loss fault indication (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_92aa8975efbb452429ac",
+   "type": "GENERATES_ERROR",
+   "from": "v3n_asset_766cd4bc1445",
+   "to": "v3n_f81cb87bf311d44d6424",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p365.b4",
+       "page": 365,
+       "evidence_id": "ev_070433fe90966b9423602ebca8d9",
+       "bbox": [
+        48.189,
+        96.286,
+        389.787,
+        148.486
+       ],
+       "text": "The diagnostics of the Safe torque off function cross-compare the status of the two STO channels. In case the channels are not in the same state, a fault reaction function is performed and the drive trips on an “STO hardware failure” fault. An attempt to use the STO in a non-redundant manner, for example activating only one channel, will trigger the same reaction."
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "excluded_relations": [
+  {
+   "relation": "MAY_INDICATE",
+   "source": "Symptom:Active fault in the drive with red LED blinking",
+   "target": "FailureMode:Unspecified cause of active fault in the drive with red LED blinking",
+   "certificate": {
+    "segment_ids": [
+     "p232.t1.r4"
+    ],
+    "witnesses": [
+     "structure"
+    ],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+    },
+    "extractor": "gpt-6-luna:394a5ec622e1f302",
+    "notes": [
+     "one end is not named in the source"
+    ]
+   }
+  },
+  {
+   "relation": "AFFECTS",
+   "source": "FailureMode:Active fault in the drive",
+   "target": "Component:Control panel",
+   "certificate": {
+    "segment_ids": [
+     "p232.t1.r1",
+     "p232.t1.r3",
+     "p232.t1.r4"
+    ],
+    "witnesses": [
+     "structure"
+    ],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+    },
+    "extractor": "gpt-6-luna:394a5ec622e1f302",
+    "notes": []
+   }
+  },
+  {
+   "relation": "AFFECTS",
+   "source": "FailureMode:Active fault in another drive in the panel bus",
+   "target": "Component:Panel bus",
+   "certificate": {
+    "segment_ids": [
+     "p232.t1.r4"
+    ],
+    "witnesses": [
+     "structure"
+    ],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+    },
+    "extractor": "gpt-6-luna:394a5ec622e1f302",
+    "notes": [
+     "reviewer: The excerpt says the active fault is in another drive on the panel bus; it does not state that the fault affects the panel bus."
+    ]
+   }
+  },
+  {
+   "relation": "AFFECTS",
+   "source": "FailureMode:Active fault in the drive",
+   "target": "Component:Control panel",
+   "certificate": {
+    "segment_ids": [
+     "p232.t1.r1",
+     "p232.t1.r3",
+     "p232.t1.r4"
+    ],
+    "witnesses": [
+     "structure"
+    ],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "4590d682ff5bb46d5095e151360eeff6a260de3e3bafe3f849041a094a2c5670"
+    },
+    "extractor": "gpt-6-luna:394a5ec622e1f302",
+    "notes": [
+     "reviewer: Keep statement 1 only; the manual associates a blinking/flickering red LED with an active fault in the drive, but does not state that the fault affects the control panel."
+    ]
+   }
+  },
+  {
+   "relation": "RESOLVED_BY",
+   "source": "FailureMode:STO channels are in different states",
+   "target": "CorrectiveAction:Perform the STO validation test procedure",
+   "certificate": {
+    "segment_ids": [
+     "p364.b3",
+     "p365.b4"
+    ],
+    "witnesses": [],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": null,
+    "extractor": "gpt-6-luna:394a5ec622e1f302",
+    "notes": []
+   }
+  },
+  {
+   "relation": "RESOLVED_BY",
+   "source": "FailureMode:STO channels are in different states",
+   "target": "CorrectiveAction:Check Safe torque off operation during other machinery maintenance",
+   "certificate": {
+    "segment_ids": [
+     "p364.b8",
+     "p365.b4"
+    ],
+    "witnesses": [],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": null,
+    "extractor": "gpt-6-luna:394a5ec622e1f302",
+    "notes": []
+   }
+  },
+  {
+   "relation": "RESOLVED_BY",
+   "source": "FailureMode:STO channels are in different states",
+   "target": "CorrectiveAction:Include the Safe torque off operation test in routine machinery maintenance",
+   "certificate": {
+    "segment_ids": [
+     "p364.b9",
+     "p365.b4"
+    ],
+    "witnesses": [],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": null,
+    "extractor": "gpt-6-luna:394a5ec622e1f302",
+    "notes": []
+   }
+  },
+  {
+   "relation": "RESOLVED_BY",
+   "source": "FailureMode:STO channels are in different states",
+   "target": "CorrectiveAction:Perform the validation test after wiring or component changes or parameter restoration",
+   "certificate": {
+    "segment_ids": [
+     "p364.b10",
+     "p365.b4"
+    ],
+    "witnesses": [],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": null,
+    "extractor": "gpt-6-luna:394a5ec622e1f302",
+    "notes": []
+   }
+  },
+  {
+   "relation": "RESOLVED_BY",
+   "source": "FailureMode:STO channels are in different states",
+   "target": "CorrectiveAction:Use only ABB-approved spare parts",
+   "certificate": {
+    "segment_ids": [
+     "p364.b11",
+     "p365.b4"
+    ],
+    "witnesses": [],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": null,
+    "extractor": "gpt-6-luna:394a5ec622e1f302",
+    "notes": []
+   }
+  }
+ ],
+ "report": {
+  "status": "approved",
+  "pages": 406,
+  "page_labels": {
+   "other": 275,
+   "unreadable": 2,
+   "procedure": 123,
+   "diagnostic": 6
+  },
+  "diagnostic_pages": [
+   232,
+   360,
+   361,
+   364,
+   365,
+   375
+  ],
+  "units": 4,
+  "failed_reads": 0,
+  "proposals": 75,
+  "unclear_passages": 0,
+  "extraction_notes": [
+   "coverage: 1 unused table row(s) read again",
+   "A: cause 'Safe Torque Off 1 loss' repeats its problem, marked unnamed",
+   "A: cause 'Safe Torque Off 2 loss' repeats its problem, marked unnamed",
+   "coverage: 9 unused table row(s) read again",
+   "coverage: 1 unused table row(s) read again"
+  ],
+  "assertions_by_tier": {
+   "green": 48,
+   "red": 9
+  },
+  "witnesses": {
+   "structure": 50,
+   "agreement": 18,
+   "verifier": 27,
+   "reviewer": 5
+  },
+  "verifier_verdicts": {
+   "not_called": 16,
+   "supported": 27,
+   "not_supported": 14
+  },
+  "graph": {
+   "nodes": 49,
+   "nodes_by_type": {
+    "Symptom": 10,
+    "FailureMode": 13,
+    "Component": 8,
+    "CorrectiveAction": 15,
+    "ErrorCode": 3
+   },
+   "edges": 45,
+   "edges_by_tier": {
+    "green": 37,
+    "red": 8
+   },
+   "merged_aliases": 9
+  },
+  "gates": {
+   "map": {
+    "questions": 1,
+    "answered": 1,
+    "pending": 0
+   },
+   "doubts": {
+    "questions": 7,
+    "answered": 7,
+    "pending": 0
+   },
+   "approval": {
+    "questions": 1,
+    "answered": 1,
+    "pending": 0
+   }
+  },
+  "answers_by_reviewer": {
+   "agent": 8,
+   "auto": 1
+  },
+  "human_questions": 0,
+  "reviewer_confirmed": 5,
+  "usage": {
+   "calls": 22,
+   "failed_calls": 0,
+   "prompt_tokens": 96064,
+   "completion_tokens": 22266,
+   "estimated_cost_usd": 0.014008,
+   "by_operation": {
+    "kg_v3_extract": 11,
+    "kg_v3_map": 7,
+    "kg_v3_merge": 2,
+    "kg_v3_verify": 2
+   }
+  },
+  "agent_usage": {
+   "calls": 8,
+   "failed_calls": 0,
+   "prompt_tokens": 33843,
+   "completion_tokens": 4138,
+   "estimated_cost_usd": 0.006163,
+   "by_operation": {
+    "AgentDecision": 8
+   }
+  },
+  "seconds": {
+   "map": 13.475,
+   "gate_map": 13.443,
+   "extract": 24.594,
+   "check": 2.362,
+   "merge": 7.791,
+   "gate_doubts": 7.78,
+   "gate_approval": 0.001,
+   "total": 69.502
+  },
+  "prompt_ids": {
+   "extraction": "394a5ec622e1f302"
+  }
+ }
+}

@@ -258,3 +258,16 @@ umano reale a parità di qualità, trasferimento tra produttori. Da ottenere pri
 scrittura: Liu e Lu 2024 e gli alberi di troubleshooting ICPHM 2024/2025. Protocollo della
 campagna approvato: [evaluation/PROTOCOLLO_V3.md](evaluation/PROTOCOLLO_V3.md), un solo
 annotatore, tetto di 10 USD. Solo i numeri della fase di test potranno entrare nel paper.
+
+## Campagna V3, fase A (sviluppo esteso)
+
+[Rapporto](../campaign/results/REPORT.md). Gold annotati a mano da Fabio Daniele per sette
+manuali; gli ID del gold Trane (test) sono stati ricollegati e verificati riga per riga dopo
+una lettura del PDF fatta fuori flusso. Tre manuali di sviluppo (ABB ACS580, Grundfos Paco,
+Lincoln POWER MIG), tre esecuzioni V3 e una v22 per manuale, due correzioni strutturali con
+test. Recall micro dei rami con il codice finale: V3 446/561 (IC95 0,760–0,826), v22 1/187;
+per manuale ABB 2–8/19, Grundfos 136–141/146, Lincoln 2–7/22. Nessun manuale raggiunge il
+90% e ABB resta instabile per la mappa. Misure di sviluppo, non trasferibili ai manuali di
+test. Precisione non ancora misurata: foglio cieco in attesa di Fabio. Costo del registro
+della campagna 0,876 USD su 10. Codice congelato con il tag `v3-freeze-2026-09-27` per la
+fase C; nessuna esecuzione sui quattro manuali di test.

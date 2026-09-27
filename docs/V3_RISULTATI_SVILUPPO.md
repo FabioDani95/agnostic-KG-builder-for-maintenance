@@ -8,6 +8,10 @@ confronto in [comparison.json](../paper/experiments/v3_dev_20260926/comparison.j
 script [kg_v3_compare.py](../scripts/kg_v3_compare.py). La v22 di riferimento è la
 campagna congelata C11/C12 ([report](../paper/experiments/robustness_continuation_20260926/REPORT.md)).
 
+**Aggiornamento 2026-09-27:** fase A della campagna su tre nuovi manuali di sviluppo
+(ABB ACS580, Grundfos Paco, Lincoln POWER MIG) con gold annotato a mano: risultati,
+correzioni ed errori rimasti in [campaign/results/REPORT.md](../campaign/results/REPORT.md).
+
 Sono misure di sviluppo sugli stessi quattro manuali usati per costruire il
 sistema, non una valutazione indipendente: il gold storico copre 34 casi scelti,
 non è stato validato da tecnici, e il confronto è lessicale.

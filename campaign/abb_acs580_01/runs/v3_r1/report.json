@@ -1,0 +1,121 @@
+{
+ "status": "approved",
+ "pages": 406,
+ "page_labels": {
+  "other": 264,
+  "unreadable": 2,
+  "procedure": 131,
+  "diagnostic": 5,
+  "parts": 4
+ },
+ "diagnostic_pages": [
+  231,
+  232,
+  365,
+  375,
+  381
+ ],
+ "units": 4,
+ "failed_reads": 0,
+ "proposals": 79,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "A: relation 27 skipped (Symptom to Symptom is not in the ontology)",
+  "A: relation 28 skipped (Symptom to Symptom is not in the ontology)",
+  "A: relation 29 skipped (Symptom to Symptom is not in the ontology)",
+  "B: relation 28 skipped (Symptom to Symptom is not in the ontology)",
+  "coverage: 2 unused table row(s) read again",
+  "coverage: 1 unused table row(s) read again",
+  "coverage: 26 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 49,
+  "red": 1
+ },
+ "witnesses": {
+  "structure": 42,
+  "agreement": 29,
+  "verifier": 20,
+  "reviewer": 8
+ },
+ "verifier_verdicts": {
+  "not_called": 25,
+  "supported": 20,
+  "not_supported": 5
+ },
+ "graph": {
+  "nodes": 57,
+  "nodes_by_type": {
+   "Symptom": 17,
+   "FailureMode": 16,
+   "Component": 9,
+   "CorrectiveAction": 14,
+   "ErrorCode": 1
+  },
+  "edges": 47,
+  "edges_by_tier": {
+   "green": 46,
+   "red": 1
+  },
+  "merged_aliases": 19
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 7,
+   "answered": 7,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 8,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 8,
+ "usage": {
+  "calls": 21,
+  "failed_calls": 0,
+  "prompt_tokens": 94353,
+  "completion_tokens": 21166,
+  "estimated_cost_usd": 0.014256,
+  "by_operation": {
+   "kg_v3_extract": 11,
+   "kg_v3_map": 7,
+   "kg_v3_merge": 2,
+   "kg_v3_verify": 1
+  }
+ },
+ "agent_usage": {
+  "calls": 8,
+  "failed_calls": 0,
+  "prompt_tokens": 33521,
+  "completion_tokens": 3984,
+  "estimated_cost_usd": 0.00608,
+  "by_operation": {
+   "AgentDecision": 8
+  }
+ },
+ "seconds": {
+  "map": 12.106,
+  "gate_map": 12.718,
+  "extract": 24.341,
+  "check": 2.114,
+  "merge": 6.278,
+  "gate_doubts": 9.505,
+  "gate_approval": 0.0,
+  "total": 67.135
+ },
+ "prompt_ids": {
+  "extraction": "394a5ec622e1f302"
+ }
+}

@@ -1,0 +1,119 @@
+{
+ "status": "approved",
+ "pages": 406,
+ "page_labels": {
+  "other": 275,
+  "unreadable": 2,
+  "procedure": 123,
+  "diagnostic": 6
+ },
+ "diagnostic_pages": [
+  232,
+  360,
+  361,
+  364,
+  365,
+  375
+ ],
+ "units": 4,
+ "failed_reads": 0,
+ "proposals": 75,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "coverage: 1 unused table row(s) read again",
+  "A: cause 'Safe Torque Off 1 loss' repeats its problem, marked unnamed",
+  "A: cause 'Safe Torque Off 2 loss' repeats its problem, marked unnamed",
+  "coverage: 9 unused table row(s) read again",
+  "coverage: 1 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 48,
+  "red": 9
+ },
+ "witnesses": {
+  "structure": 50,
+  "agreement": 18,
+  "verifier": 27,
+  "reviewer": 5
+ },
+ "verifier_verdicts": {
+  "not_called": 16,
+  "supported": 27,
+  "not_supported": 14
+ },
+ "graph": {
+  "nodes": 49,
+  "nodes_by_type": {
+   "Symptom": 10,
+   "FailureMode": 13,
+   "Component": 8,
+   "CorrectiveAction": 15,
+   "ErrorCode": 3
+  },
+  "edges": 45,
+  "edges_by_tier": {
+   "green": 37,
+   "red": 8
+  },
+  "merged_aliases": 9
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 7,
+   "answered": 7,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 8,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 5,
+ "usage": {
+  "calls": 22,
+  "failed_calls": 0,
+  "prompt_tokens": 96064,
+  "completion_tokens": 22266,
+  "estimated_cost_usd": 0.014008,
+  "by_operation": {
+   "kg_v3_extract": 11,
+   "kg_v3_map": 7,
+   "kg_v3_merge": 2,
+   "kg_v3_verify": 2
+  }
+ },
+ "agent_usage": {
+  "calls": 8,
+  "failed_calls": 0,
+  "prompt_tokens": 33843,
+  "completion_tokens": 4138,
+  "estimated_cost_usd": 0.006163,
+  "by_operation": {
+   "AgentDecision": 8
+  }
+ },
+ "seconds": {
+  "map": 13.475,
+  "gate_map": 13.443,
+  "extract": 24.594,
+  "check": 2.362,
+  "merge": 7.791,
+  "gate_doubts": 7.78,
+  "gate_approval": 0.001,
+  "total": 69.502
+ },
+ "prompt_ids": {
+  "extraction": "394a5ec622e1f302"
+ }
+}
