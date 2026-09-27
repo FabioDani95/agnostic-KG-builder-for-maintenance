@@ -69,6 +69,57 @@ Possibili correzioni ancora strutturali, non applicate: doppia lettura della map
 unione delle pagine diagnostiche (una chiamata in più, colpisce direttamente Haas r2 e
 ABB); propagazione esplicita delle celle unite di una colonna di rimedio a tutte le righe.
 
+## Livello 1: prima e dopo (2026-09-27, sera)
+
+Correzioni del commit `5f94c6a`, scelte con Fabio dopo l'analisi delle perdite: mappa letta due
+volte con pagine confermate che il cancello non può togliere; relazioni con nomi giudicati
+diversi dalle due letture separate invece che fuse; rimedio della cella unita proposto per ogni
+riga che la ripete e tenuto solo se il verificatore lo conferma; cause dedotte da un controllo
+ammesse ma marcate "non scritte nel manuale" (opzione b di Fabio), con il giudice dei KPI che le
+mostra senza nome dove il gold non nomina la causa. Prima: `runs_B` (codice del tag
+`v3-freeze-2026-09-27`, [kpi_B.md](kpi_B.md)); dopo: `runs` ([kpi_C.md](kpi_C.md)). La v22 non è
+stata rieseguita.
+
+| Manuale | Rami gold | Prima (r1, r2, r3) | Dopo (r1, r2, r3) | Asserzioni prima | Asserzioni dopo | Mappa prima | Mappa dopo | Cause dedotte dopo | v22 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Atlas Copco | 49 | 44, 42, 43 | 43, 41, 44 | 58–60/66 | 57–60/66 | 2/2 | 2/2 | 0 | 0 |
+| Graco GTX | 19 | 15, 13, 18 | 17, 17, 17 | 39–44/45 | 43/45 | 2/2 | 2/2 | 0 | 10 |
+| Haas | 45 | 32, 1, 31 | 35, 28, 35 | 3–38/57 | 33–41/57 | 2–8/9 | 6–8/9 | 4–11 | 8 |
+| ABB | 19 | 6, 6, 2 | 7, 4, 7 | 6–12/38 | 6–16/38 | 4–5/11 | 3–7/11 | 2–8 | 0 |
+| Grundfos | 146 | 139, 137, 140 | 141, 143, 140 | 137–140/146 | 140–143/146 | 1/1 | 1/1 | 0–1 | 0 |
+| Lincoln | 22 | 1, 5, 7 | 5, 3, 5 | 12–29/47 | 24–29/47 | 3/3 | 3/3 | 9–17 | 1 |
+
+| Rami, tre esecuzioni per manuale | Prima | Dopo |
+| --- | --- | --- |
+| Tutti i sei manuali | 682/900 = 75,8% [0,729; 0,785] | 732/900 = 81,3% [0,787; 0,837] |
+| Atlas Copco, Graco, Haas | 239/339 = 70,5% [0,654; 0,751] | 277/339 = 81,7% [0,772; 0,855] |
+| ABB, Grundfos, Lincoln | 443/561 = 79,0% [0,754; 0,821] | 455/561 = 81,1% [0,777; 0,841] |
+
+IC95 Wilson. Domande arrivate a una persona dopo: 0–1 per esecuzione. Costo V3 dopo: 0,028–0,114
+USD per manuale per tre esecuzioni (la mappa letta due volte costa poco). Spesa del registro dopo
+il giro e i KPI: 2,196 USD su 10.
+
+Attenzione nella lettura:
+
+- **Da ora anche Atlas Copco, Graco e Haas sono di messa a punto**: il livello 1 è nato anche
+  dai loro errori. I numeri "dopo" sono di sviluppo; restano valide come prova su manuali nuovi
+  solo le prime esecuzioni (prima, 70,5%).
+- **Il giudice cambia di 0–4 rami** tra una valutazione e l'altra delle stesse esecuzioni:
+  Atlas Copco e Grundfos sono invariati entro il rumore.
+- **Il guadagno viene soprattutto da Haas** (esecuzione peggiore da 1 a 28 rami), da Graco
+  (stabile a 17/19) e da Lincoln sulle asserzioni.
+
+Limiti rimasti:
+
+- **Mappa di Haas r2**: solo una delle due letture ha segnato le pp. 141–142 come diagnostiche e
+  il revisore agente le ha tolte; la protezione vale solo per le pagine confermate da entrambe.
+- **ABB**: la mappa legge ancora 3–7 pagine gold su 11.
+- **Lincoln**: 11 asserzioni per esecuzione restano perse. Il manuale scrive due volte
+  "contattare l'assistenza" (subito, oppure "se il problema persiste"); la V3 le tiene come
+  un'azione sola con la condizione sulla relazione, e il giudice dei KPI non vede le condizioni.
+- Perdite dopo il livello 1, stesse categorie: 173 estratte ma diverse o incomplete, 56 per la
+  mappa, 13 nulla estratto (erano 211, 86 e 16).
+
 ## Dove si perdono i rami (sei manuali, 18 esecuzioni V3)
 
 Ogni asserzione del gold non ritrovata, classificata dai grafi e dai rapporti delle

@@ -1,0 +1,131 @@
+{
+ "status": "approved",
+ "pages": 22,
+ "page_labels": {
+  "other": 12,
+  "unreadable": 1,
+  "procedure": 6,
+  "parts": 2,
+  "diagnostic": 1
+ },
+ "diagnostic_pages": [
+  15
+ ],
+ "confirmed_pages": [
+  15
+ ],
+ "map_demotions_refused": [],
+ "units": 1,
+ "failed_reads": 0,
+ "proposals": 373,
+ "unclear_passages": 1,
+ "extraction_notes": [
+  "A: cause 'Pump not properly bled of air' repeats its problem, marked unnamed",
+  "A: cause 'Pump suction line not completely primed' repeats its problem, marked unnamed",
+  "A: cause 'Required NPSH too high or available NPSH too low' repeats its problem, marked unnamed",
+  "A: cause 'Air pockets in suction line' repeats its problem, marked unnamed",
+  "A: cause 'Sudden air entry in suction line' repeats its problem, marked unnamed",
+  "A: cause 'Suction-line inlet insufficiently submerged' repeats its problem, marked unnamed",
+  "A: cause 'Suction valve closed or partly open' repeats its problem, marked unnamed",
+  "A: cause 'Foot valve clogged or undersized' repeats its problem, marked unnamed",
+  "A: cause 'Pumped-fluid density differs from purchase specification' repeats its problem, marked unnamed",
+  "A: cause 'Pumped-fluid viscosity differs from purchase specification' repeats its problem, marked unnamed",
+  "A: cause 'Pump characteristics may be unsuitable for parallel operation' repeats its problem, marked unnamed",
+  "A: cause 'Impeller clogged with debris' repeats its problem, marked unnamed",
+  "A: cause 'Impeller damaged' repeats its problem, marked unnamed",
+  "A: cause 'Pump shaft misaligned' repeats its problem, marked unnamed",
+  "A: cause 'Impeller improperly balanced' repeats its problem, marked unnamed",
+  "A: cause 'Pump misaligned during installation' repeats its problem, marked unnamed",
+  "A: cause 'Mechanical seal damaged by dry running' repeats its problem, marked unnamed"
+ ],
+ "assertions_by_tier": {
+  "green": 215,
+  "red": 3
+ },
+ "witnesses": {
+  "agreement": 155,
+  "verifier": 194,
+  "reviewer": 15,
+  "structure": 68
+ },
+ "verifier_verdicts": {
+  "supported": 194,
+  "not_supported": 4,
+  "not_called": 20
+ },
+ "graph": {
+  "nodes": 113,
+  "nodes_by_type": {
+   "Symptom": 10,
+   "FailureMode": 44,
+   "Component": 19,
+   "ErrorCode": 40
+  },
+  "edges": 218,
+  "edges_by_tier": {
+   "green": 215,
+   "red": 3
+  },
+  "merged_aliases": 8
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 14,
+   "answered": 14,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 15,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 15,
+ "merged_cell_relations": 0,
+ "usage": {
+  "calls": 13,
+  "failed_calls": 0,
+  "prompt_tokens": 41629,
+  "completion_tokens": 26164,
+  "estimated_cost_usd": 0.016735,
+  "by_operation": {
+   "kg_v3_extract": 2,
+   "kg_v3_map": 2,
+   "kg_v3_merge": 1,
+   "kg_v3_verify": 8
+  }
+ },
+ "agent_usage": {
+  "calls": 15,
+  "failed_calls": 0,
+  "prompt_tokens": 13877,
+  "completion_tokens": 4740,
+  "estimated_cost_usd": 0.003807,
+  "by_operation": {
+   "AgentDecision": 15
+  }
+ },
+ "seconds": {
+  "map": 6.034,
+  "gate_map": 6.473,
+  "extract": 52.835,
+  "check": 7.999,
+  "merge": 2.384,
+  "gate_doubts": 12.525,
+  "gate_approval": 0.001,
+  "total": 88.459
+ },
+ "prompt_ids": {
+  "extraction": "3d1ff56f74b95928"
+ }
+}

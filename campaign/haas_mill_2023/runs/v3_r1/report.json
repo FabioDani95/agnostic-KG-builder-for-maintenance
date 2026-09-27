@@ -1,0 +1,152 @@
+{
+ "status": "approved",
+ "pages": 187,
+ "page_labels": {
+  "other": 149,
+  "diagnostic": 15,
+  "procedure": 23
+ },
+ "diagnostic_pages": [
+  20,
+  59,
+  70,
+  75,
+  86,
+  94,
+  97,
+  101,
+  141,
+  142,
+  143,
+  144,
+  145,
+  146,
+  160
+ ],
+ "confirmed_pages": [
+  59,
+  70,
+  75,
+  86,
+  94,
+  97,
+  101,
+  141,
+  142,
+  143,
+  144,
+  145,
+  146,
+  160
+ ],
+ "map_demotions_refused": [
+  97
+ ],
+ "units": 11,
+ "failed_reads": 0,
+ "proposals": 283,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "A: relation 33 skipped (CorrectiveAction to CorrectiveAction is not in the ontology)",
+  "coverage: 4 unused table row(s) read again",
+  "B: cause 'TSC/HPFC filter is dirty' repeats its problem, marked unnamed",
+  "B: cause 'Rotary brake oil level is low' repeats its problem, marked unnamed",
+  "coverage: 29 unused table row(s) read again",
+  "B: cause 'Pallet changer emergency stop is engaged' repeats its problem, marked unnamed",
+  "B: cause 'Tool changer cage emergency stop is engaged' repeats its problem, marked unnamed",
+  "B: cause 'Auxiliary device emergency stop is engaged' repeats its problem, marked unnamed",
+  "coverage: 17 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 172,
+  "red": 16
+ },
+ "witnesses": {
+  "structure": 160,
+  "agreement": 95,
+  "verifier": 79,
+  "reviewer": 23
+ },
+ "verifier_verdicts": {
+  "not_called": 92,
+  "supported": 79,
+  "not_supported": 14,
+  "unclear": 3
+ },
+ "graph": {
+  "nodes": 215,
+  "nodes_by_type": {
+   "Symptom": 53,
+   "FailureMode": 62,
+   "Component": 30,
+   "CorrectiveAction": 68,
+   "ErrorCode": 2
+  },
+  "edges": 175,
+  "edges_by_tier": {
+   "green": 159,
+   "red": 16
+  },
+  "merged_aliases": 57
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 27,
+   "answered": 27,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 28,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 23,
+ "merged_cell_relations": 0,
+ "usage": {
+  "calls": 41,
+  "failed_calls": 0,
+  "prompt_tokens": 130925,
+  "completion_tokens": 46213,
+  "estimated_cost_usd": 0.033866,
+  "by_operation": {
+   "kg_v3_extract": 25,
+   "kg_v3_map": 8,
+   "kg_v3_merge": 4,
+   "kg_v3_verify": 4
+  }
+ },
+ "agent_usage": {
+  "calls": 28,
+  "failed_calls": 0,
+  "prompt_tokens": 35879,
+  "completion_tokens": 10611,
+  "estimated_cost_usd": 0.009274,
+  "by_operation": {
+   "AgentDecision": 28
+  }
+ },
+ "seconds": {
+  "map": 11.198,
+  "gate_map": 14.032,
+  "extract": 38.646,
+  "check": 11.876,
+  "merge": 7.773,
+  "gate_doubts": 26.244,
+  "gate_approval": 0.001,
+  "total": 110.459
+ },
+ "prompt_ids": {
+  "extraction": "21f6ca4b202caa7d"
+ }
+}

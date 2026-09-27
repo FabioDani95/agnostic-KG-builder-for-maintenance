@@ -1,0 +1,121 @@
+{
+ "status": "approved",
+ "pages": 36,
+ "page_labels": {
+  "other": 24,
+  "procedure": 8,
+  "parts": 1,
+  "diagnostic": 3
+ },
+ "diagnostic_pages": [
+  27,
+  28,
+  29
+ ],
+ "confirmed_pages": [
+  27,
+  28,
+  29
+ ],
+ "map_demotions_refused": [],
+ "units": 1,
+ "failed_reads": 0,
+ "proposals": 202,
+ "unclear_passages": 1,
+ "extraction_notes": [
+  "B: cause 'Communication error between display P.C. board and power control board' repeats its problem, marked unnamed",
+  "coverage: 12 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 141,
+  "red": 7
+ },
+ "witnesses": {
+  "structure": 148,
+  "agreement": 78,
+  "reviewer": 21,
+  "verifier": 42
+ },
+ "verifier_verdicts": {
+  "not_called": 96,
+  "supported": 42,
+  "not_supported": 3,
+  "unclear": 7
+ },
+ "graph": {
+  "nodes": 72,
+  "nodes_by_type": {
+   "Symptom": 6,
+   "FailureMode": 13,
+   "CorrectiveAction": 32,
+   "Component": 18,
+   "ErrorCode": 3
+  },
+  "edges": 89,
+  "edges_by_tier": {
+   "green": 87,
+   "red": 2
+  },
+  "merged_aliases": 20
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 7,
+   "answered": 7,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 8,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 21,
+ "merged_cell_relations": 38,
+ "usage": {
+  "calls": 10,
+  "failed_calls": 0,
+  "prompt_tokens": 37956,
+  "completion_tokens": 19860,
+  "estimated_cost_usd": 0.012485,
+  "by_operation": {
+   "kg_v3_extract": 3,
+   "kg_v3_map": 2,
+   "kg_v3_merge": 1,
+   "kg_v3_verify": 4
+  }
+ },
+ "agent_usage": {
+  "calls": 8,
+  "failed_calls": 0,
+  "prompt_tokens": 10383,
+  "completion_tokens": 5191,
+  "estimated_cost_usd": 0.00385,
+  "by_operation": {
+   "AgentDecision": 8
+  }
+ },
+ "seconds": {
+  "map": 4.953,
+  "gate_map": 6.02,
+  "extract": 50.132,
+  "check": 4.702,
+  "merge": 5.783,
+  "gate_doubts": 14.447,
+  "gate_approval": 0.0,
+  "total": 86.172
+ },
+ "prompt_ids": {
+  "extraction": "7043718fc598089f"
+ }
+}

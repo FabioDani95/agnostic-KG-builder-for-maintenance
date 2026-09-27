@@ -1,0 +1,146 @@
+{
+ "status": "approved",
+ "pages": 187,
+ "page_labels": {
+  "other": 154,
+  "procedure": 20,
+  "diagnostic": 13
+ },
+ "diagnostic_pages": [
+  59,
+  70,
+  75,
+  86,
+  94,
+  96,
+  97,
+  101,
+  143,
+  144,
+  145,
+  146,
+  160
+ ],
+ "confirmed_pages": [
+  59,
+  70,
+  75,
+  86,
+  94,
+  97,
+  101,
+  143,
+  144,
+  145,
+  160
+ ],
+ "map_demotions_refused": [],
+ "units": 10,
+ "failed_reads": 0,
+ "proposals": 146,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "coverage: 4 unused table row(s) read again",
+  "A: cause 'Tool changer jam' repeats its problem, marked unnamed",
+  "A: cause 'Tool changer cage emergency stop engaged' repeats its problem, marked unnamed",
+  "A: cause 'Tool or tool group expired and no replacement tools are available' repeats its problem, marked unnamed",
+  "A: cause 'Side-mount tool changer door open' repeats its problem, marked unnamed",
+  "A: cause 'Tool unclamped in spindle' repeats its problem, marked unnamed",
+  "B: cause 'Low rotary brake oil level' repeats its problem, marked unnamed",
+  "coverage: 17 unused table row(s) read again",
+  "coverage: 6 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 93,
+  "yellow": 1,
+  "red": 9
+ },
+ "witnesses": {
+  "structure": 86,
+  "agreement": 43,
+  "reviewer": 10,
+  "verifier": 57
+ },
+ "verifier_verdicts": {
+  "not_called": 44,
+  "supported": 57,
+  "not_supported": 2
+ },
+ "graph": {
+  "nodes": 133,
+  "nodes_by_type": {
+   "ErrorCode": 2,
+   "FailureMode": 39,
+   "Component": 12,
+   "Symptom": 50,
+   "CorrectiveAction": 30
+  },
+  "edges": 95,
+  "edges_by_tier": {
+   "green": 85,
+   "yellow": 1,
+   "red": 9
+  },
+  "merged_aliases": 31
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 15,
+   "answered": 14,
+   "pending": 1
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 15,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 10,
+ "merged_cell_relations": 0,
+ "usage": {
+  "calls": 37,
+  "failed_calls": 0,
+  "prompt_tokens": 115733,
+  "completion_tokens": 30669,
+  "estimated_cost_usd": 0.019908,
+  "by_operation": {
+   "kg_v3_extract": 23,
+   "kg_v3_map": 8,
+   "kg_v3_merge": 3,
+   "kg_v3_verify": 3
+  }
+ },
+ "agent_usage": {
+  "calls": 16,
+  "failed_calls": 0,
+  "prompt_tokens": 24998,
+  "completion_tokens": 7876,
+  "estimated_cost_usd": 0.006754,
+  "by_operation": {
+   "AgentDecision": 16
+  }
+ },
+ "seconds": {
+  "map": 11.823,
+  "gate_map": 25.655,
+  "extract": 39.688,
+  "check": 2.863,
+  "merge": 8.452,
+  "gate_doubts": 18.02,
+  "gate_approval": 0.0,
+  "total": 106.75
+ },
+ "prompt_ids": {
+  "extraction": "21f6ca4b202caa7d"
+ }
+}

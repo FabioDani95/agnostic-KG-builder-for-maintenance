@@ -1,0 +1,142 @@
+{
+ "status": "approved",
+ "pages": 187,
+ "page_labels": {
+  "other": 153,
+  "procedure": 19,
+  "diagnostic": 15
+ },
+ "diagnostic_pages": [
+  59,
+  60,
+  70,
+  75,
+  86,
+  94,
+  97,
+  101,
+  141,
+  142,
+  143,
+  144,
+  145,
+  146,
+  160
+ ],
+ "confirmed_pages": [
+  59,
+  60,
+  70,
+  75,
+  86,
+  97,
+  101,
+  143,
+  144,
+  145,
+  146,
+  160
+ ],
+ "map_demotions_refused": [],
+ "units": 10,
+ "failed_reads": 0,
+ "proposals": 246,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "coverage: 4 unused table row(s) read again",
+  "coverage: 32 unused table row(s) read again",
+  "A: cause 'Tool or tool group has expired and no replacement tools are available' repeats its problem, marked unnamed",
+  "coverage: 17 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 149,
+  "red": 7
+ },
+ "witnesses": {
+  "structure": 141,
+  "agreement": 90,
+  "verifier": 59,
+  "reviewer": 14
+ },
+ "verifier_verdicts": {
+  "not_called": 85,
+  "supported": 59,
+  "not_supported": 12
+ },
+ "graph": {
+  "nodes": 179,
+  "nodes_by_type": {
+   "ErrorCode": 2,
+   "FailureMode": 45,
+   "Component": 37,
+   "Symptom": 46,
+   "CorrectiveAction": 49
+  },
+  "edges": 140,
+  "edges_by_tier": {
+   "green": 136,
+   "red": 4
+  },
+  "merged_aliases": 33
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 15,
+   "answered": 15,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 16,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 14,
+ "merged_cell_relations": 0,
+ "usage": {
+  "calls": 36,
+  "failed_calls": 0,
+  "prompt_tokens": 120954,
+  "completion_tokens": 39532,
+  "estimated_cost_usd": 0.023475,
+  "by_operation": {
+   "kg_v3_extract": 23,
+   "kg_v3_map": 8,
+   "kg_v3_merge": 2,
+   "kg_v3_verify": 3
+  }
+ },
+ "agent_usage": {
+  "calls": 16,
+  "failed_calls": 0,
+  "prompt_tokens": 25147,
+  "completion_tokens": 6140,
+  "estimated_cost_usd": 0.005897,
+  "by_operation": {
+   "AgentDecision": 16
+  }
+ },
+ "seconds": {
+  "map": 11.219,
+  "gate_map": 13.658,
+  "extract": 42.046,
+  "check": 7.495,
+  "merge": 8.552,
+  "gate_doubts": 16.176,
+  "gate_approval": 0.0,
+  "total": 99.468
+ },
+ "prompt_ids": {
+  "extraction": "21f6ca4b202caa7d"
+ }
+}

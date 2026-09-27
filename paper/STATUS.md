@@ -279,3 +279,9 @@ già congelato e nessuna correzione deriva da loro: su questi tre V3 239/339 = 7
 0,654–0,751), v22 18/113. Sono la prova su manuali mai visti disponibile oggi; da ora sono
 di sviluppo, quindi solo queste prime esecuzioni restano valide come tali. Tabelle stabili
 al 70–95%; mappa instabile (Haas r2 1/45). Spesa 1,231 USD.
+
+Livello 1 (commit `5f94c6a`): mappa letta due volte con pagine confermate protette, separazione
+delle relazioni con nomi giudicati diversi, rimedi delle celle unite verificati riga per riga,
+cause dedotte ammesse ma marcate come non scritte (scelta di Fabio). Sei manuali, tre esecuzioni:
+V3 da 682 a 732/900 rami (81,3%, IC95 0,787–0,837). Numeri di sviluppo: le correzioni derivano
+da tutti e sei i manuali. Spesa 2,196 USD su 10.

@@ -1,0 +1,138 @@
+{
+ "status": "approved",
+ "pages": 406,
+ "page_labels": {
+  "other": 276,
+  "unreadable": 2,
+  "procedure": 107,
+  "parts": 10,
+  "diagnostic": 11
+ },
+ "diagnostic_pages": [
+  169,
+  170,
+  231,
+  232,
+  360,
+  361,
+  365,
+  375,
+  381,
+  386,
+  396
+ ],
+ "confirmed_pages": [
+  169,
+  232,
+  360,
+  361,
+  365,
+  375,
+  386
+ ],
+ "map_demotions_refused": [],
+ "units": 8,
+ "failed_reads": 0,
+ "proposals": 124,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "coverage: 2 unused table row(s) read again",
+  "coverage: 9 unused table row(s) read again",
+  "coverage: 1 unused table row(s) read again",
+  "coverage: 26 unused table row(s) read again",
+  "B: cause 'Extension I/O configuration failure' repeats its problem, marked unnamed",
+  "coverage: 17 unused table row(s) read again"
+ ],
+ "assertions_by_tier": {
+  "green": 77,
+  "red": 11
+ },
+ "witnesses": {
+  "structure": 76,
+  "verifier": 39,
+  "agreement": 37,
+  "reviewer": 10
+ },
+ "verifier_verdicts": {
+  "supported": 39,
+  "not_called": 43,
+  "not_supported": 3,
+  "unclear": 3
+ },
+ "graph": {
+  "nodes": 108,
+  "nodes_by_type": {
+   "Symptom": 24,
+   "FailureMode": 37,
+   "Component": 14,
+   "CorrectiveAction": 29,
+   "ErrorCode": 4
+  },
+  "edges": 86,
+  "edges_by_tier": {
+   "green": 76,
+   "red": 10
+  },
+  "merged_aliases": 21
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 15,
+   "answered": 15,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 16,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 10,
+ "merged_cell_relations": 2,
+ "usage": {
+  "calls": 40,
+  "failed_calls": 0,
+  "prompt_tokens": 192359,
+  "completion_tokens": 40202,
+  "estimated_cost_usd": 0.025371,
+  "by_operation": {
+   "kg_v3_extract": 21,
+   "kg_v3_map": 14,
+   "kg_v3_merge": 2,
+   "kg_v3_verify": 3
+  }
+ },
+ "agent_usage": {
+  "calls": 16,
+  "failed_calls": 0,
+  "prompt_tokens": 41556,
+  "completion_tokens": 8593,
+  "estimated_cost_usd": 0.009243,
+  "by_operation": {
+   "AgentDecision": 16
+  }
+ },
+ "seconds": {
+  "map": 12.469,
+  "gate_map": 19.771,
+  "extract": 28.019,
+  "check": 6.277,
+  "merge": 7.808,
+  "gate_doubts": 18.64,
+  "gate_approval": 0.001,
+  "total": 93.118
+ },
+ "prompt_ids": {
+  "extraction": "16524272560db425"
+ }
+}
