@@ -16,7 +16,7 @@ from difflib import SequenceMatcher
 
 from pydantic import BaseModel, Field
 
-from backend.kg_v3.contracts import Assertion, Certificate, VerifierVerdict, Witness, context_text
+from backend.kg_v3.contracts import Assertion, Certificate, Tier, VerifierVerdict, Witness, context_text
 from backend.kg_v3.extractor import Proposal
 from backend.kg_v3.llm import ModelClient
 from backend.kg_v3.ontology import OntologySpec, verification_schema
@@ -357,6 +357,73 @@ class Checker:
                       if candidate.reads != {STRUCTURE_READ} or candidate.verdict is VerifierVerdict.SUPPORTED]
         return [CheckedRelation(assertion=self._assertion(candidate), proposals=candidate.proposals)
                 for candidate in candidates]
+
+    async def recheck_split(self, doc: DocumentText, before: list[CheckedRelation],
+                            after: list[CheckedRelation]) -> list[CheckedRelation]:
+        old = {r.assertion.assertion_id: r for r in before}
+        changed = [r for r in after if r.assertion.assertion_id not in old
+                   or r.assertion.certificate != old[r.assertion.assertion_id].assertion.certificate]
+        candidates = [Candidate(candidate_id=r.assertion.assertion_id, proposals=r.proposals,
+                                structure=Witness.STRUCTURE in r.assertion.certificate.witnesses) for r in changed]
+        for start in range(0, len(candidates), VERIFY_BATCH):
+            await self._verify(doc, candidates[start:start + VERIFY_BATCH])
+        updates = {c.candidate_id: CheckedRelation(assertion=self._assertion(c), proposals=c.proposals)
+                   for c in candidates}
+        return [updates.get(r.assertion.assertion_id, r) for r in after]
+
+    async def repair_actions(self, doc: DocumentText, relations: list[CheckedRelation],
+                             *, limit: int = 12) -> list[CheckedRelation]:
+        """One bounded attempt to salvage only a supported portion of a rejected action.
+
+        Originals remain auditable. A reduction is a new, independently verified
+        assertion with the original typed context, never a reviewer override.
+        """
+        selected = [r for r in relations if r.assertion.relation_type == "RESOLVED_BY"
+                    and (r.assertion.certificate.verifier_verdict is VerifierVerdict.NOT_SUPPORTED
+                         or r.assertion.certificate.rejected_by is not None)][:max(0, limit)]
+        if not selected:
+            return []
+        ids = [r.assertion.assertion_id for r in selected]
+        schema = {"type": "object", "additionalProperties": False, "required": ["repairs"], "properties": {
+            "repairs": {"type": "array", "items": {"type": "object", "additionalProperties": False,
+                "required": ["id", "action", "cites"], "properties": {
+                    "id": {"type": "string", "enum": ids}, "action": {"type": "string"},
+                    "cites": {"type": "array", "items": {"type": "string"}}}}}}}
+        blocks = [f"{r.assertion.assertion_id}: {statement(self.spec, r.proposals[0])}\n"
+                  f"{self._evidence_text(doc, r.assertion.certificate.segment_ids)}" for r in selected]
+        try:
+            data = await self.llm.json(name="kg_v3_reduce_action", schema=schema, max_output_tokens=3000,
+                system="""For each rejected compound action retain only a strictly smaller portion supported
+by its own source entry. Do not add any new instruction. Never borrow a neighbour's remedy.
+Keep its cause and all typed conditions, warnings and prerequisites unchanged; if those are
+wrong, return no repair. Return at most one reduction per id, with source segment citations.
+If the entire action is unsupported or cannot be reduced, omit it.""", user="\n\n".join(blocks))
+        except Exception as exc:
+            logger.warning("Action reduction failed: %s", exc)
+            return []
+        by_id = {r.assertion.assertion_id: r for r in selected}
+        proposals = []
+        seen = set()
+        for item in data.get("repairs", []):
+            original = by_id.get(item.get("id"))
+            if original is None or item["id"] in seen:
+                continue
+            lead = original.proposals[0]
+            name = str(item.get("action") or "").strip()
+            cites = sorted(set(item.get("cites", [])) & set(original.assertion.certificate.segment_ids))
+            if not name or not cites or normalize_name(name) == normalize_name(lead.target.name):
+                continue
+            seen.add(item["id"])
+            proposals.append((item["id"], lead.model_copy(update={
+                "read": "repair", "target": lead.target.model_copy(update={"name": name, "cites": cites}),
+                "cites": cites, "conditions": list(original.assertion.conditions),
+                "notes": lead.notes + ["supported portion proposed from " + item["id"]]})))
+        candidates = [Candidate(candidate_id=key + ".reduced", proposals=[p],
+                                structure=structurally_supported(doc, p)) for key, p in proposals]
+        if candidates:
+            await self._verify(doc, candidates)
+        return [CheckedRelation(assertion=self._assertion(c), proposals=c.proposals) for c in candidates
+                if c.verdict is VerifierVerdict.SUPPORTED and self._assertion(c).tier is not Tier.RED]
 
     def _assertion(self, candidate: Candidate) -> Assertion:
         witnesses = []

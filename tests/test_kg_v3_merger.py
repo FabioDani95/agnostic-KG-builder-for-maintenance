@@ -248,3 +248,63 @@ def test_merge_judge_gets_source_and_branches_and_unmotivated_same_cannot_merge(
     assert not plan.same and plan.unsure
     graph = assemble([relation], plan.same, plan.different)
     assert len([n for n in graph.nodes.values() if n.type == "FailureMode"]) == 2
+
+
+def test_reduced_action_keeps_warning_and_is_verified_again():
+    import asyncio
+
+    from backend.kg_v3.checker import Checker
+    from backend.kg_v3.contracts import ContextItem
+    from backend.kg_v3.ontology import load_ontology
+
+    context = ContextItem(kind="warning", text="Keep power on", cite=(ROW,))
+    p = Proposal(unit_id="u", read="A", relation_type="RESOLVED_BY", record="R1", cites=[ROW],
+                 source=Endpoint(type="FailureMode", name="Disc contacts housing", cites=[ROW]),
+                 target=Endpoint(type="CorrectiveAction", name="Contact service and stop immediately", cites=[ROW]),
+                 conditions=[context])
+    original = CheckedRelation(proposals=[p], assertion=Assertion(assertion_id="c1", relation_type="RESOLVED_BY",
+        source_key="f", target_key="a", record_key="u:A.R1", conditions=[context], certificate=Certificate(
+            segment_ids=[ROW], verifier_verdict=VerifierVerdict.NOT_SUPPORTED)))
+
+    class Repair:
+        calls = []
+
+        async def json(self, **kwargs):
+            self.calls.append(kwargs['name'])
+            if kwargs['name'] == 'kg_v3_reduce_action':
+                return {"repairs": [{"id": "c1", "action": "Contact service", "cites": [ROW]}]}
+            assert "'Contact service'" in kwargs['user'] and "[warning] Keep power on" in kwargs['user']
+            assert "stop immediately" not in kwargs['user']
+            return {"verdicts": [{"id": "S1", "verdict": "supported"}]}
+
+    llm = Repair()
+    reduced = asyncio.run(Checker(llm, load_ontology(), extractor_id="test").repair_actions(DOC, [original]))
+    assert len(reduced) == 1 and reduced[0].proposals[0].target.name == "Contact service"
+    assert reduced[0].assertion.conditions == [context]
+    assert reduced[0].assertion.certificate.segment_ids == [ROW]
+    assert reduced[0].assertion.tier is Tier.GREEN
+    assert llm.calls == ['kg_v3_reduce_action', 'kg_v3_verify']
+    assert original.proposals[0].target.name.endswith("stop immediately")
+
+
+def test_a_split_losing_witnesses_gets_targeted_verification_with_own_context():
+    import asyncio
+
+    from backend.kg_v3.checker import Checker
+    from backend.kg_v3.contracts import ContextItem
+    from backend.kg_v3.ontology import load_ontology
+
+    relation = _agreed_relation()
+    relation.proposals[1].conditions = [ContextItem(kind="warning", text="Do not power off", cite=(ROW,))]
+    pairs = merge_candidates([relation])
+    parts = split_disagreements(DOC, [relation], pairs)
+
+    class Verifier:
+        async def json(self, **kwargs):
+            assert "[warning] Do not power off" in kwargs['user']
+            return {"verdicts": [{"id": "S1", "verdict": "not_supported"},
+                                 {"id": "S2", "verdict": "supported"}]}
+
+    checked = asyncio.run(Checker(Verifier(), load_ontology(), extractor_id="test").recheck_split(DOC, [relation], parts))
+    assert checked[1].assertion.tier is Tier.GREEN
+    assert checked[1].assertion.conditions == relation.proposals[1].conditions

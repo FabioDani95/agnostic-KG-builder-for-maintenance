@@ -177,7 +177,7 @@ class Pipeline:
         answered = {answer.question_id for answer in record.answers}
         todo = [question for question in questions if question.question_id not in answered]
         record.questions = questions
-        names = list(self.config.gates.get(gate, ["auto"]))
+        names = list(self.config.gates.get("doubts" if gate == "recovery" else gate, ["auto"]))
         if todo and not names:
             # No reviewer configured: questions stay open (map: the model's map is used).
             record.pending = [question.question_id for question in todo]
@@ -259,7 +259,14 @@ class Pipeline:
         else:
             plan = await self._timed("merge", judge_pairs(self.llm, merge_candidates(relations), self.doc, relations))
             self._save(f"merge_plan_{stamp}", plan)
-        relations = split_disagreements(self.doc, relations, plan.different)
+        checker = Checker(self.llm, self.spec, extractor_id=f"{self.config.model}:{extractor.prompt_id}")
+        saved = self._load(f"rechecked_{stamp}")
+        if saved is None:
+            parts = split_disagreements(self.doc, relations, plan.different)
+            relations = await self._timed("split_recheck", checker.recheck_split(self.doc, relations, parts))
+            self._save(f"rechecked_{stamp}", [r.model_dump(mode="json") for r in relations])
+        else:
+            relations = [CheckedRelation.model_validate(r) for r in saved]
         preliminary = assemble(relations, plan.same, plan.different)
         repairs = reconnect_proposals(self.doc, preliminary, relations)
         if repairs:
@@ -284,9 +291,23 @@ class Pipeline:
         rejected_merges = {answer.question_id for answer in doubt_record.answers if answer.option_id == "different"}
         different = [*plan.different, *(pair for pair in plan.unsure
                      if f"merge:{pair.left}|{pair.right}" in rejected_merges)]
+        saved = self._load(f"recovery_{stamp}")
+        if saved is None:
+            parts = split_disagreements(self.doc, relations, different)
+            recovered = await self._timed("split_recheck", checker.recheck_split(self.doc, relations, parts))
+            additions = await self._timed("action_reduction", checker.repair_actions(self.doc, recovered))
+            recovered.extend(additions)
+            self._save(f"recovery_{stamp}", [r.model_dump(mode="json") for r in recovered])
+        else:
+            recovered = [CheckedRelation.model_validate(r) for r in saved]
+        previous = {r.assertion.assertion_id: r.assertion for r in relations}
+        changed = [r for r in recovered if previous.get(r.assertion.assertion_id) != r.assertion]
+        recovery_questions = relation_questions(self.doc, self.spec, changed)
+        recovery_record = await self._timed("gate_recovery", self._gate("recovery", recovery_questions))
+        relations = apply_relation_answers(recovered, recovery_questions, recovery_record.answers)
         graph = assemble(relations, [*plan.same, *merge_decisions(doubts, doubt_record.answers, plan.unsure)], different)
 
-        gates = {"map": map_record, "doubts": doubt_record}
+        gates = {"map": map_record, "doubts": doubt_record, "recovery": recovery_record}
         summary = self._summary(graph, relations, doubt_record)
         approval = await self._timed("gate_approval", self._gate("approval", [approval_question(summary)]))
         gates["approval"] = approval
