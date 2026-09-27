@@ -64,3 +64,25 @@ def test_combined_label_without_diagnostic_votes_follows_the_majority():
     entry = combine_readings(5, [PageMapEntry(page=5, label=PageLabel.PROCEDURE),
                                  PageMapEntry(page=5, label=PageLabel.PROCEDURE)], 2)
     assert entry.label is PageLabel.PROCEDURE and not entry.unsure and not entry.confirmed
+
+
+def test_confirmed_section_sandwich_cannot_be_demoted():
+    page_map = DocumentMap(entries=[
+        PageMapEntry(page=1, label=PageLabel.DIAGNOSTIC, confirmed=True, section="4.2"),
+        PageMapEntry(page=2, label=PageLabel.DIAGNOSTIC, unsure=True, section="4.2"),
+        PageMapEntry(page=3, label=PageLabel.DIAGNOSTIC, confirmed=True, section="4.2"),
+    ])
+    assert protected_demotions(page_map, {"pages": {"2": "other"}}) == [2]
+    assert apply_map_answer(page_map, {"pages": {"2": "other"}}).entries[1].label is PageLabel.DIAGNOSTIC
+
+
+def test_confident_sections_are_not_reread_and_questions_are_small():
+    from backend.kg_v3.mapper import map_questions, section_batches
+
+    doc = _doc(45)
+    doc.section_titles = {p: "A" if p < 25 else "B" for p in doc.pages}
+    assert [len(b) for b in section_batches(doc, 20)] == [20, 4, 20, 1]
+    llm = _TwoReadings([{p: "other" for p in batch} for batch in section_batches(doc, 20)])
+    page_map = asyncio.run(map_pages(llm, doc))
+    assert not llm.labellings
+    assert all(len(q.proposal) <= 25 for q in map_questions(doc, page_map))

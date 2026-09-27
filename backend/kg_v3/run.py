@@ -23,7 +23,7 @@ from backend.kg_v3.checker import STRUCTURE_READ, CheckedRelation, Checker
 from backend.kg_v3.contracts import Answer, DocumentMap, PageLabel, Question, ReadingUnit, Tier, Witness
 from backend.kg_v3.extractor import Extractor, UnitExtraction, prompt_hash
 from backend.kg_v3.llm import ModelClient
-from backend.kg_v3.mapper import apply_map_answer, build_units, map_pages, map_question, protected_demotions
+from backend.kg_v3.mapper import apply_map_answer, build_units, map_pages, map_questions, protected_demotions
 from backend.kg_v3.merger import (
     MergedGraph,
     MergePlan,
@@ -136,6 +136,7 @@ class Pipeline:
         self.timings: dict[str, float] = {}
         # Confirmed diagnostic pages a map correction tried to drop (kept, reported).
         self.map_kept: list[int] = []
+        self.map_removed: list[int] = []
 
     # Persistence ---------------------------------------------------------
 
@@ -205,11 +206,13 @@ class Pipeline:
         saved = self._load("map")
         page_map = DocumentMap.model_validate(saved) if saved else await self._timed("map", map_pages(self.llm, self.doc))
         self._save("map", page_map)
-        record = await self._timed("gate_map", self._gate("map", [map_question(self.doc, page_map)]))
+        record = await self._timed("gate_map", self._gate("map", map_questions(self.doc, page_map)))
         for answer in record.answers:
             if answer.option_id == "correct":
                 self.map_kept.extend(protected_demotions(page_map, answer.edits))
+                before = set(page_map.pages_with(PageLabel.DIAGNOSTIC))
                 page_map = apply_map_answer(page_map, answer.edits)
+                self.map_removed.extend(before - set(page_map.pages_with(PageLabel.DIAGNOSTIC)))
         return page_map, record
 
     async def _extract(self, units: list[ReadingUnit], extractor: Extractor) -> list[UnitExtraction]:
@@ -338,6 +341,8 @@ class Pipeline:
             "diagnostic_pages": page_map.pages_with(PageLabel.DIAGNOSTIC),
             "confirmed_pages": [entry.page for entry in page_map.entries if entry.confirmed],
             "map_demotions_refused": sorted(set(self.map_kept)),
+            "map_removed_pages": sorted(set(self.map_removed)),
+            "read_pages": sorted({p for unit in units for p in unit.pages}),
             "blocked_merges": graph.blocked_merges,
             **graph_navigation(graph),
             "units": len(units),

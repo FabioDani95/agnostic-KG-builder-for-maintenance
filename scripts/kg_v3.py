@@ -109,6 +109,9 @@ async def run(args) -> dict:
         "KG_REAL_CALL_PDF_ID": f"sha256:{sha}",
     })
     doc = read_document(list(evidence), page_count=page_count)
+    from backend.kg_v3.mapper import attach_pdf_sections
+
+    attach_pdf_sections(doc, pdf)
     read_seconds = time.perf_counter() - started
     config = RunConfig(model=args.model, reasoning_effort=args.reasoning, reads=args.reads,
                        gates=GATE_PRESETS[args.gates], agent_model=args.agent_model,

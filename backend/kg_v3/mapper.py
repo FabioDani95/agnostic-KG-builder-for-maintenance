@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 OUTLINE_CHARS = 480
 SHORT_LINE = 80
-MAP_BATCH_PAGES = 60
+MAP_BATCH_PAGES = 20
 MAP_READS = 2
 UNIT_MAX_CHARS = 9000
 UNIT_MAX_SEGMENTS = 160
@@ -54,7 +54,8 @@ def page_outline(doc: DocumentText, page: int, *, chars: int = OUTLINE_CHARS) ->
     opening = " / ".join(segment.text for segment in segments)[: chars // 2]
     labels = [segment.text for segment in segments[1:] if segment.table is None and len(segment.text) <= SHORT_LINE]
     later = " / ".join(dict.fromkeys(labels))[: chars - len(opening)]
-    return f"p{page}{table_note}: {opening}" + (f" ... {later}" if later else "")
+    section = f" [section: {doc.section_titles[page]}]" if page in doc.section_titles else ""
+    return f"p{page}{section}{table_note}: {opening}" + (f" ... {later}" if later else "")
 
 
 def fill_gaps(page_map: DocumentMap) -> DocumentMap:
@@ -109,17 +110,40 @@ def combine_readings(page: int, readings: list[PageMapEntry], reads: int) -> Pag
                         unsure=len(labels) > 1 or any(entry.unsure for entry in readings))
 
 
+def attach_pdf_sections(doc: DocumentText, pdf) -> None:
+    """PDF bookmarks supply section boundaries without touching citable segments."""
+    import fitz
+
+    with fitz.open(pdf) as source:
+        toc = source.get_toc()
+    headings = {page: title for _level, title, page in toc if 1 <= page <= doc.page_count}
+    current = ""
+    for page in range(1, doc.page_count + 1):
+        current = headings.get(page, current)
+        if current:
+            doc.section_titles[page] = current
+
+
+def section_batches(doc: DocumentText, batch_pages: int) -> list[list[int]]:
+    batches: list[list[int]] = []
+    for page in sorted(doc.pages):
+        if (not batches or len(batches[-1]) >= batch_pages
+                or doc.section_titles.get(page, '') != doc.section_titles.get(batches[-1][-1], '')):
+            batches.append([])
+        batches[-1].append(page)
+    return batches
+
+
 async def map_pages(llm: ModelClient, doc: DocumentText, *, batch_pages: int = MAP_BATCH_PAGES,
                     reads: int = MAP_READS) -> DocumentMap:
-    readable = sorted(doc.pages)
-    batches = [readable[index:index + batch_pages] for index in range(0, len(readable), batch_pages)]
+    batches = section_batches(doc, batch_pages)
     reads = max(1, reads)
 
     async def label(batch: list[int]) -> dict[int, PageMapEntry] | None:
         text = "\n".join(page_outline(doc, page) for page in batch)
         try:
             data = await llm.json(system=MAP_PROMPT, user=text, schema=_map_schema(batch),
-                                  name="kg_v3_map", max_output_tokens=12000)
+                                  name="kg_v3_map", max_output_tokens=4000)
         except Exception as exc:
             logger.warning("Page map batch %s-%s failed: %s", batch[0], batch[-1], exc)
             return None
@@ -128,22 +152,30 @@ async def map_pages(llm: ModelClient, doc: DocumentText, *, batch_pages: int = M
             try:
                 page = int(item["page"])
                 entries[page] = PageMapEntry(page=page, label=PageLabel(item["label"]),
-                                             section=str(item.get("section") or "")[:120],
+                                             section=doc.section_titles.get(page, str(item.get("section") or "")[:120]),
                                              unsure=bool(item.get("unsure")))
             except (KeyError, ValueError, TypeError):
                 continue
         return entries
 
-    jobs = [(batch, read) for batch in batches for read in range(reads)]
-    results = await asyncio.gather(*(label(batch) for batch, _ in jobs))
+    first = await asyncio.gather(*(label(batch) for batch in batches))
+    jobs = [(batch, result) for batch, result in zip(batches, first)]
+    # A section is uncertain if incomplete, explicitly doubtful, mixed in label,
+    # or lacking section evidence. Confident homogeneous sections need no second call.
+    uncertain = [batch for batch, result in jobs if result is None or set(result) != set(batch)
+                 or any(e.unsure or not e.section for e in result.values())
+                 or len({e.label for e in result.values()}) > 1]
+    for _ in range(1, reads):
+        jobs.extend(zip(uncertain, await asyncio.gather(*(label(batch) for batch in uncertain))))
     readings: dict[int, list[PageMapEntry]] = {}
     failed: set[int] = set()
-    for (batch, _), result in zip(jobs, results):
+    for batch, result in jobs:
         if result is None:
             failed.update(batch)
             continue
         for page, entry in result.items():
-            readings.setdefault(page, []).append(entry)
+            if page in batch:
+                readings.setdefault(page, []).append(entry)
     entries = []
     for page in range(1, doc.page_count + 1):
         if page not in doc.pages:
@@ -207,6 +239,16 @@ def map_question(doc: DocumentText, page_map: DocumentMap) -> Question:
     )
 
 
+def map_questions(doc: DocumentText, page_map: DocumentMap) -> list[Question]:
+    groups: list[list[PageMapEntry]] = []
+    for entry in page_map.entries:
+        if not groups or len(groups[-1]) >= MAP_BATCH_PAGES or groups[-1][-1].section != entry.section:
+            groups.append([])
+        groups[-1].append(entry)
+    return [map_question(doc, DocumentMap(entries=entries)).model_copy(update={
+        "question_id": f"map:{entries[0].page}-{entries[-1].page}"}) for entries in groups]
+
+
 def _map_changes(page_map: DocumentMap, edits: dict[str, Any]) -> dict[int, PageLabel]:
     pages = {entry.page for entry in page_map.entries}
     changes: dict[int, PageLabel] = {}
@@ -223,6 +265,17 @@ def protected_demotions(page_map: DocumentMap, edits: dict[str, Any]) -> list[in
     """Confirmed diagnostic pages a correction tried to drop; they stay diagnostic."""
 
     confirmed = {entry.page for entry in page_map.entries if entry.confirmed}
+    sections: dict[str, list[int]] = {}
+    for entry in page_map.entries:
+        if entry.confirmed and entry.section:
+            sections.setdefault(entry.section, []).append(entry.page)
+    for entry in page_map.entries:
+        anchors = sections.get(entry.section, [])
+        if len(anchors) >= 2 and min(anchors) < entry.page < max(anchors):
+            # Do not bridge a different intervening section.
+            if all(e.section == entry.section for e in page_map.entries
+                   if min(anchors) <= e.page <= max(anchors)):
+                confirmed.add(entry.page)
     return sorted(page for page, label in _map_changes(page_map, edits).items()
                   if page in confirmed and label is not PageLabel.DIAGNOSTIC)
 
@@ -248,7 +301,7 @@ def build_units(
     diagnostic = [page for page in page_map.pages_with(PageLabel.DIAGNOSTIC) if page in doc.pages]
     runs: list[list[int]] = []
     for page in diagnostic:
-        if runs and page == runs[-1][-1] + 1:
+        if runs and page == runs[-1][-1] + 1 and sections.get(page) == sections.get(runs[-1][-1]):
             runs[-1].append(page)
         else:
             runs.append([page])

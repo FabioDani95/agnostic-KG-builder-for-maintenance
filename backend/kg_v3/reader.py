@@ -33,6 +33,7 @@ class DocumentText:
 
     page_count: int
     pages: dict[int, list[Segment]] = field(default_factory=dict)
+    section_titles: dict[int, str] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         self._by_id: dict[str, Segment] = {}

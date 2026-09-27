@@ -81,7 +81,11 @@ def read_manual(manual: str):
     if not pdf.exists():
         raise SystemExit(f"{manual}: put the PDF in {pdf.relative_to(ROOT)}")
     evidence, page_count, sha = load_evidence(pdf, asset(manual))
-    return read_document(list(evidence), page_count=page_count), evidence, sha
+    from backend.kg_v3.mapper import attach_pdf_sections
+
+    doc = read_document(list(evidence), page_count=page_count)
+    attach_pdf_sections(doc, pdf)
+    return doc, evidence, sha
 
 
 # Commands -----------------------------------------------------------------
