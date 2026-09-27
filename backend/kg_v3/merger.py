@@ -309,25 +309,26 @@ def assemble(relations: list[CheckedRelation], same_pairs: list[MergePair],
                 if mine.stated and theirs.stated:
                     if similarity(mine.name, theirs.name) >= ALIAS_SIMILARITY:
                         groups.union(identity(mine), identity(theirs))
-                elif mine.stated != theirs.stated and mine.type == theirs.type == "FailureMode":
-                    named, unnamed = (mine, theirs) if mine.stated else (theirs, mine)
+                elif mine.placeholder != theirs.placeholder and mine.type == theirs.type == "FailureMode":
+                    named, unnamed = (theirs, mine) if mine.placeholder else (mine, theirs)
                     partners[identity(unnamed)].add(identity(named))
     for unnamed, named in partners.items():
         if len(named) == 1:
             groups.union(unnamed, next(iter(named)))
 
-    # Two unnamed causes in one unit with mostly the same remedies are one cause
-    # described twice ("unspecified cause of X" and "... of Y" for one entry).
+    # Only actual placeholders from the same source entry may use shared remedies.
+    # A named, inferred cause has exactly the same identity rules as a stated cause.
     remedies: dict[str, set[str]] = defaultdict(set)
-    units: dict[str, set[str]] = defaultdict(set)
+    origins: dict[str, set[tuple]] = defaultdict(set)
     for relation in relations:
         for proposal in relation.proposals:
-            if proposal.relation_type == "RESOLVED_BY" and not proposal.source.stated:
+            if proposal.relation_type == "RESOLVED_BY" and proposal.source.placeholder:
                 remedies[identity(proposal.source)].add(identity(proposal.target))
-                units[identity(proposal.source)].add(proposal.unit_id)
+                anchors = proposal.source.cites or proposal.cites
+                origins[identity(proposal.source)].update((proposal.unit_id, cite) for cite in anchors)
     for left, right in combinations(sorted(remedies), 2):
         shared = remedies[left] & remedies[right]
-        if (units[left] & units[right] and len(shared) >= 2
+        if (origins[left] & origins[right] and len(shared) >= 2
                 and len(shared) / len(remedies[left] | remedies[right]) >= 0.6):
             groups.union(left, right)
 

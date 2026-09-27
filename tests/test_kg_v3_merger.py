@@ -98,6 +98,38 @@ def test_numeric_conflict_blocks_judge_and_alias_unions():
     assert graph.blocked_merges[0]['reason'] == 'different_numbers'
 
 
+def test_named_inferred_causes_do_not_merge_through_common_remedies():
+    from backend.kg_v3.checker import _end_matches
+
+    ends = [Endpoint(type='FailureMode', name=name, stated=False, cites=[ROW]) for name in
+            ['Power switch is not ON', 'Clogged cable liner or contact tip', 'Spool gun switch set incorrectly']]
+    assert not _end_matches(ends[0], ends[1], .5)
+    relations = []
+    for end in ends:
+        for action in ['Check the machine', 'Contact service']:
+            base = _agreed_relation()
+            base.proposals = [Proposal(unit_id='u001', read='A', record='R1', relation_type='RESOLVED_BY',
+                                       source=end, target=Endpoint(type='CorrectiveAction', name=action, cites=[ROW]),
+                                       cites=[ROW])]
+            relations.append(base)
+    graph = assemble(relations, [])
+    assert {n.name for n in graph.nodes.values() if n.type == 'FailureMode'} == {e.name for e in ends}
+
+
+def test_placeholders_in_different_rows_do_not_merge_through_shared_remedies():
+    relations = []
+    for number, name in enumerate(['Unspecified cause of alpha', 'Unspecified cause of beta'], 2):
+        for action in ['Check the machine', 'Contact service']:
+            base = _agreed_relation()
+            base.proposals = [Proposal(unit_id='u001', read='A', record=f'R{number}', relation_type='RESOLVED_BY',
+                                       source=Endpoint(type='FailureMode', name=name, stated=False,
+                                                       cites=[f'p1.t1.r{number}']),
+                                       target=Endpoint(type='CorrectiveAction', name=action))]
+            relations.append(base)
+    graph = assemble(relations, [])
+    assert len([n for n in graph.nodes.values() if n.type == 'FailureMode']) == 2
+
+
 # Merged cells ---------------------------------------------------------------
 
 def _merged_cell_doc() -> DocumentText:

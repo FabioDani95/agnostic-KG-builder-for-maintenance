@@ -37,6 +37,10 @@ class Endpoint(BaseModel):
     stated: bool = True
     cites: list[str] = Field(default_factory=list)
 
+    @property
+    def placeholder(self) -> bool:
+        return self.type == "FailureMode" and self.name.startswith(UNSPECIFIED_CAUSE)
+
 
 class Proposal(BaseModel):
     """One relation proposed by one read, with both ends resolved."""

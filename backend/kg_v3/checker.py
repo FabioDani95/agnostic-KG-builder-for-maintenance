@@ -50,8 +50,10 @@ def similarity(left: str, right: str) -> float:
 
 def _end_matches(left, right, threshold: float) -> bool:
     # An end the source does not name ("Unspecified cause of ...") matches the named one.
-    if left.type == right.type == "FailureMode" and not (left.stated and right.stated):
+    if left.type == right.type == "FailureMode" and (left.placeholder or right.placeholder):
         return True
+    if left.type == right.type == "FailureMode" and not (left.stated and right.stated):
+        return normalize_name(left.name) == normalize_name(right.name)
     return similarity(left.name, right.name) >= threshold
 
 
