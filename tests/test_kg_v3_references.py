@@ -8,8 +8,10 @@ def test_matrix_references_resolve_to_causes_and_report_missing_entry():
     segments = [Segment(segment_id=f"p1.b{i}", page=1, kind=SegmentKind.TEXT,
                         evidence_id=str(i), text=text) for i, text in enumerate([
                             "Vibration 1*2*41", "1. Alpha faulty", "2. Beta faulty"], 1)]
-    doc = DocumentText(page_count=1, pages={1: segments})
-    unit = ReadingUnit(unit_id="u1", pages=[1], segment_ids=[s.segment_id for s in segments])
+    heading = Segment(segment_id="p1.b0", page=1, kind=SegmentKind.TEXT, evidence_id="heading",
+                      text="1. Section 1.1")
+    doc = DocumentText(page_count=1, pages={1: [heading, *segments]})
+    unit = ReadingUnit(unit_id="u1", pages=[1], segment_ids=[heading.segment_id, *[s.segment_id for s in segments]])
     proposals = [Proposal(unit_id="u1", read="A", relation_type="INDICATES", record="R1",
                           source=Endpoint(type="ErrorCode", code=str(n), name=f"Code {n}", cites=["p1.b1"]),
                           target=Endpoint(type="FailureMode", name="Alpha faulty", cites=["p1.b2"])) for n in (1, 41)]

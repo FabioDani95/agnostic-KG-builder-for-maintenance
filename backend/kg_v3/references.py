@@ -24,6 +24,17 @@ def reference_index(doc, unit):
                 matrices.append((segment.segment_id, label, numbers))
     # A matrix must refer to a list actually present, not merely contain numbers.
     matrices = [row for row in matrices if len(set(row[2]) & definitions.keys()) >= 2]
+    if matrices:
+        # Prefer the coherent numbered list on one side of the matrix over an
+        # unrelated numbered heading on the other side. No heading words used.
+        first = min(doc.position(row[0]) for row in matrices)
+        last = max(doc.position(row[0]) for row in matrices)
+        before = {n: [e for e in entries if doc.position(e[0]) < first] for n, entries in definitions.items()}
+        after = {n: [e for e in entries if doc.position(e[0]) > last] for n, entries in definitions.items()}
+        referenced = {n for _, _, numbers in matrices for n in numbers}
+        scores = [sum(bool(group.get(n)) for n in referenced) for group in (before, after)]
+        if scores[0] != scores[1]:
+            definitions = before if scores[0] > scores[1] else after
     definitions = {number: entries[0] for number, entries in definitions.items() if len(entries) == 1}
     return definitions, matrices
 
