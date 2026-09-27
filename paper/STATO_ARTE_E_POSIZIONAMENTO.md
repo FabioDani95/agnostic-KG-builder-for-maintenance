@@ -1,7 +1,9 @@
 # Stato dell'arte e posizionamento del paper
 
-Nota di coordinamento del 2026-09-27, scritta dopo una ricerca mirata (non una revisione
-sistematica). Le fonti marcate **[verificata]** hanno autori e sede controllati sulla
+Nota di coordinamento del 2026-09-27. L'analisi completa, con 20 lavori letti per intero
+e 8 rischi da ottenere, è in [state_of_the_art_maintenance_kg.md](state_of_the_art_maintenance_kg.md)
+(in inglese, con BibTeX verificato alla sezione 10); questa nota ne riassume le
+conseguenze e aggiunge una ricerca mirata sui lavori più recenti. Le fonti marcate **[verificata]** hanno autori e sede controllati sulla
 pagina originale e sono in `references.bib`; le altre sono **[da verificare]** prima di
 citarle. Nessuna affermazione qui è un risultato: i numeri della V3 sono in
 [docs/V3_RISULTATI_SVILUPPO.md](../docs/V3_RISULTATI_SVILUPPO.md).
@@ -64,22 +66,32 @@ vendesse uno di questi pezzi come novità verrebbe respinto.
 
 ## 3. Dove possiamo distinguerci davvero
 
-La novità difendibile è **la combinazione, resa misurabile**: un'architettura in cui
-la fiducia in ogni fatto è decisa da testimoni indipendenti, e l'uomo interviene solo
-dove i testimoni non bastano, con uno sforzo limitato, tracciato e sostituibile da un
-agente. Tre contributi, ognuno con una prova:
+L'analisi completa corregge un eccesso di ottimismo: anche i due contributi che sembravano
+più nostri hanno precedenti diretti. La struttura dei documenti formattati come fonte di
+prova c'è già in **Fonduer** (SIGMOD 2018); la divisione del lavoro tra persona e LLM guidata
+dall'incertezza c'è già in **CoAnnotating** (EMNLP 2023). Estrazione di procedure da
+manuali e flowchart di manutenzione: Rula e D'Souza (K-CAP 2023), **FlowExtract** (APMS
+2026). Rischi ancora da leggere per intero: grafo di manutenzione "task-centric"
+multimodale (Liu e Lu, Engineering Reports 2024) e **alberi di troubleshooting generati
+con LLM** (Vidyaratne et al., IEEE ICPHM 2024 e 2025): vanno ottenuti prima di scrivere
+qualsiasi frase sulla novità.
 
-1. **Testimoni strutturali di layout.** La struttura della pagina (stessa riga, stessa
-   cella unita, stesso passo numerato) è una prova indipendente dal modello, valida per
-   ogni lingua e produttore. Prova: ablation con e senza testimone strutturale.
-2. **Verifica umana limitata e sostituibile ("bounded human verification").** Ogni
-   cancello ha lo stesso contratto per persona, agente o script; le persone ricevono al
-   massimo K domande raggruppate per ramo, ognuna con risposta attesa. Prova: curva
-   qualità–sforzo (K = 0, 5, 10, illimitato) e confronto agente contro persona sulle
-   stesse domande.
-3. **Certificato per ogni arco.** Pagina, segmento, testimoni, verdetto e chi ha deciso
-   viaggiano con il fatto fino all'agente a valle. Prova: correttezza delle prove sul gold
-   e, se possibile, un piccolo esperimento a valle in cui l'agente cita le fonti.
+Il contributo difendibile è quindi **empirico e integrato**, non un singolo algoritmo:
+
+1. **Preservazione dei rami diagnostici a parità di copertura.** Quanto bene un sistema
+   mantiene insieme problema, causa e rimedio dello stesso ramo del manuale (tabelle a
+   celle unite, procedure numerate), con provenienza per occorrenza. Prova: recall dei rami
+   per significato sul gold, contro baseline e ablation.
+2. **Sforzo umano reale a parità di qualità finale.** Non "meno segnalazioni", ma minuti
+   reali di un esperto per arrivare alla stessa qualità del grafo, con domande raggruppate
+   per ramo e un budget, e con il confronto agente-persona sulle stesse domande. Prova: curva
+   qualità-sforzo e tempo cronometrato. Nessun lavoro letto misura questo per grafi di
+   manutenzione da manuali.
+3. **Trasferimento tra produttori e settori** con gold cieco e congelamento del codice:
+   la fase C del protocollo.
+
+Le singole tecniche (testimoni strutturali, accordo tra letture, verificatore, certificati)
+si presentano come scelte di progetto con ablation, citando i precedenti, non come novità.
 
 ## 4. Come inquadrarlo: HITL, simbiosi o altro?
 
@@ -112,7 +124,7 @@ Information Integration. Da scegliere con i coautori.
 | --- | --- | --- |
 | Test su manuali nuovi, produttori diversi | pianificato | fase C del [protocollo](evaluation/PROTOCOLLO_V3.md), 6–8 manuali |
 | Gold serio | 34 casi rivisti dall'autore | un annotatore per la campagna, ricontrollo a distanza, limite dichiarato |
-| Baseline forti | solo v22 | aggiungere estrazione diretta con lo stesso modello e una baseline tipo AEVS (vincolo di citazione senza testimoni e senza domande) |
+| Baseline forti | solo v22 | estrazione diretta con lo stesso modello; baseline tipo AEVS o EDC (vincolo di citazione o canonicalizzazione senza testimoni e senza domande); vedi sezione 7.3 dell'analisi completa |
 | Ablation | assenti | senza struttura, senza accordo, senza verificatore, senza agente revisore, K variabile |
 | Precisione umana cieca | foglio pronto | compilarlo sui manuali della campagna |
 | Sforzo umano misurato | domande contate | cronometrare le risposte; confronto agente–persona |
@@ -127,9 +139,10 @@ Information Integration. Da scegliere con i coautori.
   revisione cieca separata della precisione.
 - **Contaminazione sviluppo–test**: i manuali del test non si aprono prima che il gold
   sia chiuso e il codice congelato.
-- **Lavori concorrenti** che escono nel frattempo: aggiornare questa nota prima della
-  scrittura; il nostro spazio è documenti reali, sforzo umano misurato e generalizzazione
-  tra produttori, non la singola tecnica.
+- **Lavori concorrenti**: ottenere per intero Liu e Lu 2024 e gli alberi di troubleshooting
+  ICPHM 2024/2025 prima di scrivere; aggiornare questa nota prima della scrittura. Il nostro
+  spazio è documenti reali, sforzo umano misurato e generalizzazione tra produttori, non la
+  singola tecnica.
 - **Numeri di sviluppo gonfiati**: nel paper vanno solo i numeri della fase C.
 
 ## Fonti consultate

@@ -250,9 +250,11 @@ ledger e non effettua chiamate API.
 
 ## Stato dell'arte e posizionamento
 
-Nota critica in [STATO_ARTE_E_POSIZIONAMENTO.md](STATO_ARTE_E_POSIZIONAMENTO.md): i singoli
-componenti della V3 hanno precedenti (in particolare AEVS per le citazioni vincolate); la
-novità difendibile è la combinazione misurata di testimoni strutturali di layout, verifica
-umana limitata e sostituibile da un agente, e certificati per arco. Protocollo della
+Nota critica in [STATO_ARTE_E_POSIZIONAMENTO.md](STATO_ARTE_E_POSIZIONAMENTO.md), basata
+sull'analisi completa [state_of_the_art_maintenance_kg.md](state_of_the_art_maintenance_kg.md):
+i componenti della V3 hanno precedenti (Fonduer, CoAnnotating, AEVS, FlowExtract e altri);
+il contributo difendibile è empirico: preservazione dei rami a parità di copertura, sforzo
+umano reale a parità di qualità, trasferimento tra produttori. Da ottenere prima della
+scrittura: Liu e Lu 2024 e gli alberi di troubleshooting ICPHM 2024/2025. Protocollo della
 campagna approvato: [evaluation/PROTOCOLLO_V3.md](evaluation/PROTOCOLLO_V3.md), un solo
 annotatore, tetto di 10 USD. Solo i numeri della fase di test potranno entrare nel paper.
