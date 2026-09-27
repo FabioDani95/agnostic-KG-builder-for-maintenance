@@ -34,7 +34,8 @@ _TIER_RANK = {Tier.GREEN: 0, Tier.YELLOW: 1, Tier.RED: 2}
 
 def identity(endpoint: Endpoint) -> str:
     if endpoint.code and endpoint.type == "ErrorCode":
-        return f"{endpoint.type}|code:{normalize_name(endpoint.code)}"
+        numbers = ",".join(sorted(set(re.findall(r"\d+", endpoint.name))))
+        return f"{endpoint.type}|code:{normalize_name(endpoint.code)}|name_numbers:{numbers}"
     return f"{endpoint.type}|{normalize_name(endpoint.name)}"
 
 
@@ -263,8 +264,9 @@ class _UnionFind:
                 for y in sorted(self.members[b]):
                     ex, ey = self.endpoints[x][0], self.endpoints[y][0]
                     reason = ('different' if frozenset((x, y)) in self.apart else
-                              'different_numbers' if set(re.findall(r'\d+', ex.code or ex.name)) !=
-                              set(re.findall(r'\d+', ey.code or ey.name)) else
+                              'different_codes' if ex.code and ey.code and normalize_name(ex.code) != normalize_name(ey.code) else
+                              'different_numbers' if set(re.findall(r'\d+', ex.name)) !=
+                              set(re.findall(r'\d+', ey.name)) else
                               'different_types' if ex.type != ey.type else '')
                     if reason:
                         self.blocked.append({'left': left, 'right': right, 'reason': reason,

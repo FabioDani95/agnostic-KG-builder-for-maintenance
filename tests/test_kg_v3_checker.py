@@ -249,3 +249,15 @@ def test_structural_witness_respects_positions_inside_multilist_cells():
         "target": pair.target.model_copy(update={"name": "Delta"})}))
     assert not structurally_supported(doc, pair.model_copy(update={
         "source": pair.source.model_copy(update={"name": "paraphrase without literal alignment"})}))
+
+
+def test_equal_code_does_not_bypass_numeric_name_constraints():
+    from backend.kg_v3.merger import _UnionFind, identity
+
+    a = Endpoint(type="ErrorCode", code="E10", name="Channel 1 faulty")
+    b = Endpoint(type="ErrorCode", code="E10", name="Channel 2 faulty")
+    assert identity(a) != identity(b)
+    union = _UnionFind({identity(a): [a], identity(b): [b]}, [])
+    union.union(identity(a), identity(b))
+    assert union.find(identity(a)) != union.find(identity(b))
+    assert union.blocked[0]["reason"] == "different_numbers"
