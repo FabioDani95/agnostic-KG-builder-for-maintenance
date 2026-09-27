@@ -32,6 +32,7 @@ from backend.kg_v3.merger import (
     merge_candidates,
     split_disagreements,
 )
+from backend.kg_v3.navigation import graph_navigation, reconnect_proposals
 from backend.kg_v3.ontology import OntologySpec, load_ontology
 from backend.kg_v3.questions import (
     apply_relation_answers,
@@ -251,6 +252,19 @@ class Pipeline:
             plan = await self._timed("merge", judge_pairs(self.llm, merge_candidates(relations)))
             self._save(f"merge_plan_{stamp}", plan)
         relations = split_disagreements(self.doc, relations, plan.different)
+        preliminary = assemble(relations, plan.same, plan.different)
+        repairs = reconnect_proposals(self.doc, preliminary, relations)
+        if repairs:
+            repaired = self._load(f"navigation_{stamp}")
+            if repaired is None:
+                checker = Checker(self.llm, self.spec, extractor_id=f"{self.config.model}:{extractor.prompt_id}")
+                added = await self._timed("navigation", checker.check(self.doc, repairs))
+                added = [item.model_copy(update={'assertion': item.assertion.model_copy(
+                    update={'assertion_id': f'navigation.{item.assertion.assertion_id}'})}) for item in added]
+                self._save(f"navigation_{stamp}", [item.model_dump(mode="json") for item in added])
+            else:
+                added = [CheckedRelation.model_validate(item) for item in repaired]
+            relations.extend(added)
 
         doubts = [
             *relation_questions(self.doc, self.spec, relations),
@@ -295,6 +309,7 @@ class Pipeline:
             "confirmed_pages": [entry.page for entry in page_map.entries if entry.confirmed],
             "map_demotions_refused": sorted(set(self.map_kept)),
             "blocked_merges": graph.blocked_merges,
+            **graph_navigation(graph),
             "units": len(units),
             "failed_reads": sum(item.failed_reads for item in extractions),
             "proposals": sum(len(item.proposals) for item in extractions),

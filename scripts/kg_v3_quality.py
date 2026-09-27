@@ -11,7 +11,7 @@ import hashlib
 import json
 import re
 import sys
-from collections import Counter, defaultdict
+from collections import Counter
 from itertools import combinations
 from pathlib import Path
 
@@ -20,38 +20,7 @@ sys.path.insert(0, str(ROOT))
 
 from backend.kg_v3.checker import normalize_name  # noqa: E402
 from backend.kg_v3.extractor import UNSPECIFIED_CAUSE  # noqa: E402
-
-
-def navigation(nodes: list[dict], edges: list[dict]) -> dict:
-    """Reachability in the exported diagnostic graph; root links do not count."""
-    by_id = {n['id']: n for n in nodes}
-    outgoing = defaultdict(set)
-    incoming = defaultdict(set)
-    for e in edges:
-        if e.get('derived') or e.get('tier') == 'red':
-            continue
-        outgoing[e['from']].add(e['to'])
-        if e['type'] in {'MAY_INDICATE', 'INDICATES'}:
-            incoming[e['to']].add(e['from'])
-
-    def reaches_action(start):
-        todo, seen = [start], set()
-        while todo:
-            current = todo.pop()
-            if current in seen:
-                continue
-            seen.add(current)
-            if by_id.get(current, {}).get('type') == 'CorrectiveAction':
-                return True
-            todo.extend(outgoing[current] - seen)
-        return False
-
-    orphan = [n['id'] for n in nodes if n['type'] == 'FailureMode'
-              and reaches_action(n['id']) and not incoming[n['id']]]
-    no_action = [n['id'] for n in nodes if n['type'] in {'Symptom', 'ErrorCode'}
-                 and not reaches_action(n['id'])]
-    return {'orphan_causes': len(orphan), 'problems_without_action': len(no_action),
-            'orphan_cause_ids': sorted(orphan), 'problem_without_action_ids': sorted(no_action)}
+from backend.kg_v3.navigation import navigation  # noqa: E402
 
 
 def graph_metrics(graph: dict, different: list[dict] = ()) -> dict:
