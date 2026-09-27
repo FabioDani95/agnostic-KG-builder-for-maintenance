@@ -129,5 +129,9 @@ expected=test outcome, order=sequence. Check each item's role and scope against 
 MERGE_PROMPT = """You decide whether two names extracted from the same maintenance manual denote the same thing.
 Answer same only when they mean the same fault, symptom, component or action. Different numbers,
 codes, directions (for example up and down), sides, polarities or negations mean different.
-Answer unsure when you cannot tell.
+The supplied branches and cited source determine identity. Different entries with different
+remedies normally denote different entities, even when their names resemble each other.
+Answer same only with positive evidence of equivalence; explain that evidence in rationale
+and cite its segment IDs in cited_segments. Explain why differing branches are compatible
+before proposing same. Answer unsure when you cannot tell.
 """

@@ -16,18 +16,26 @@ from itertools import combinations
 
 from pydantic import BaseModel, Field
 
-from backend.kg_v3.checker import CheckedRelation, normalize_name, restates, similarity, structurally_supported
+from backend.kg_v3.checker import (
+    CheckedRelation,
+    normalize_name,
+    restates,
+    similarity,
+    statement,
+    structurally_supported,
+)
 from backend.kg_v3.contracts import Assertion, Certificate, ContextItem, Tier, Witness
 from backend.kg_v3.extractor import UNSPECIFIED_CAUSE, Endpoint, Proposal
 from backend.kg_v3.llm import ModelClient
+from backend.kg_v3.ontology import load_ontology
 from backend.kg_v3.prompts import MERGE_PROMPT
-from backend.kg_v3.reader import DocumentText
+from backend.kg_v3.reader import DocumentText, render_segments
 
 logger = logging.getLogger(__name__)
 
 JUDGE_THRESHOLD = 0.8
 ALIAS_SIMILARITY = 0.75
-JUDGE_BATCH = 40
+JUDGE_BATCH = 12
 MAX_JUDGED_PAIRS = 400
 _TIER_RANK = {Tier.GREEN: 0, Tier.YELLOW: 1, Tier.RED: 2}
 
@@ -52,6 +60,8 @@ class MergePair(BaseModel):
     left_cites: list[str] = Field(default_factory=list)
     right_cites: list[str] = Field(default_factory=list)
     verdict: str = ""
+    rationale: str = ""
+    cited_segments: list[str] = Field(default_factory=list)
 
 
 class MergePlan(BaseModel):
@@ -208,7 +218,21 @@ def split_disagreements(doc: DocumentText, relations: list[CheckedRelation],
     return result
 
 
-async def judge_pairs(llm: ModelClient | None, pairs: list[MergePair]) -> MergePlan:
+def merge_context(key: str, cites: list[str], doc: DocumentText | None,
+                  relations: list[CheckedRelation]) -> str:
+    spec = load_ontology()
+    direct = [p for r in relations for p in r.proposals if key in {identity(p.source), identity(p.target)}]
+    causes = {identity(e) for p in direct for e in (p.source, p.target) if e.type == "FailureMode"}
+    connected = direct + [p for r in relations for p in r.proposals
+                          if identity(p.source) in causes or identity(p.target) in causes]
+    lines = list(dict.fromkeys(statement(spec, p) for p in connected))[:16]
+    evidence = sorted({*cites, *(c for p in direct for c in p.all_cites)})[:8]
+    source = render_segments(doc.segments(evidence), doc=doc) if doc else "(source unavailable)"
+    return "Connected problem/remedy branches:\n" + "\n".join(lines) + "\nCited source:\n" + source
+
+
+async def judge_pairs(llm: ModelClient | None, pairs: list[MergePair],
+                      doc: DocumentText | None = None, relations: list[CheckedRelation] = ()) -> MergePlan:
     plan = MergePlan()
     if not pairs:
         return plan
@@ -218,23 +242,32 @@ async def judge_pairs(llm: ModelClient | None, pairs: list[MergePair]) -> MergeP
 
     async def judge(batch: list[MergePair]) -> None:
         ids = [f"M{index}" for index in range(1, len(batch) + 1)]
-        text = "\n".join(f"{pair_id}: {pair.type} '{pair.left_name}' vs '{pair.right_name}'"
-                         for pair_id, pair in zip(ids, batch))
+        text = "\n\n".join(f"{pair_id}: {pair.type} '{pair.left_name}' vs '{pair.right_name}'\n"
+                             f"LEFT {merge_context(pair.left, pair.left_cites, doc, relations)}\n"
+                             f"RIGHT {merge_context(pair.right, pair.right_cites, doc, relations)}"
+                             for pair_id, pair in zip(ids, batch))
         schema = {"type": "object", "additionalProperties": False, "required": ["answers"], "properties": {
             "answers": {"type": "array", "items": {
-                "type": "object", "additionalProperties": False, "required": ["id", "answer"],
+                "type": "object", "additionalProperties": False, "required": ["id", "answer", "rationale", "cited_segments"],
                 "properties": {"id": {"type": "string", "enum": ids},
-                               "answer": {"type": "string", "enum": ["same", "different", "unsure"]}},
+                               "answer": {"type": "string", "enum": ["same", "different", "unsure"]},
+                               "rationale": {"type": "string"},
+                               "cited_segments": {"type": "array", "items": {"type": "string"}}},
             }}}}
         try:
             data = await llm.json(system=MERGE_PROMPT, user=text, schema=schema, name="kg_v3_merge",
                                   max_output_tokens=3000)
-            answers = {str(item.get("id")): str(item.get("answer")) for item in data.get("answers") or []}
+            answers = {str(item.get("id")): item for item in data.get("answers") or []}
         except Exception as exc:
             logger.warning("Merge judge failed: %s", exc)
             answers = {}
         for pair_id, pair in zip(ids, batch):
-            pair.verdict = answers.get(pair_id, "unsure")
+            answer = answers.get(pair_id, {})
+            pair.rationale = str(answer.get("rationale") or "").strip()
+            pair.cited_segments = [c for c in answer.get("cited_segments", []) if doc and doc.segment(c)]
+            verdict = answer.get("answer", "unsure")
+            pair.verdict = ("unsure" if verdict == "same" and not (pair.rationale and pair.cited_segments)
+                            else verdict if verdict in {"same", "different", "unsure"} else "unsure")
 
     await asyncio.gather(*(judge(pairs[index:index + JUDGE_BATCH]) for index in range(0, len(pairs), JUDGE_BATCH)))
     for pair in pairs:
@@ -311,10 +344,7 @@ def assemble(relations: list[CheckedRelation], same_pairs: list[MergePair],
         lead = relation.proposals[0]
         for other in relation.proposals[1:]:
             for mine, theirs in ((lead.source, other.source), (lead.target, other.target)):
-                if mine.stated and theirs.stated:
-                    if similarity(mine.name, theirs.name) >= ALIAS_SIMILARITY:
-                        groups.union(identity(mine), identity(theirs))
-                elif mine.placeholder != theirs.placeholder and mine.type == theirs.type == "FailureMode":
+                if mine.placeholder != theirs.placeholder and mine.type == theirs.type == "FailureMode":
                     named, unnamed = (theirs, mine) if mine.placeholder else (mine, theirs)
                     partners[identity(unnamed)].add(identity(named))
     for unnamed, named in partners.items():

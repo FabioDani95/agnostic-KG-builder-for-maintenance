@@ -257,7 +257,7 @@ class Pipeline:
         if saved is not None:
             plan = MergePlan.model_validate(saved)
         else:
-            plan = await self._timed("merge", judge_pairs(self.llm, merge_candidates(relations)))
+            plan = await self._timed("merge", judge_pairs(self.llm, merge_candidates(relations), self.doc, relations))
             self._save(f"merge_plan_{stamp}", plan)
         relations = split_disagreements(self.doc, relations, plan.different)
         preliminary = assemble(relations, plan.same, plan.different)

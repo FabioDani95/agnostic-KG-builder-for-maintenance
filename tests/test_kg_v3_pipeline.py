@@ -92,7 +92,8 @@ class ScriptedProvider:
             content = {"verdicts": [{"id": item, "verdict": "unclear"} for item in ids]}
         elif name == "kg_v3_merge":
             ids = schema["properties"]["answers"]["items"]["properties"]["id"]["enum"]
-            content = {"answers": [{"id": item, "answer": "same"} for item in ids]}
+            content = {"answers": [{"id": item, "answer": "same", "rationale": "Same cited entry and remedy",
+                                              "cited_segments": ["p1.t1.r2"]} for item in ids]}
         else:  # AgentDecision: confirm the map, accept doubts
             option = "confirm" if "(map_review)" in kwargs["messages"][1]["content"] else "accept"
             content = {"option_id": option, "correction": "", "keep_statements": [], "page_label_changes": [],

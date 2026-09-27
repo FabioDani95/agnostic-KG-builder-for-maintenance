@@ -223,3 +223,28 @@ def test_inherited_actions_preserve_distinct_immediate_and_conditional_occurrenc
         assert len(edge.assertions) == 2
         assert edge.conditions == []  # no invented conjunction of alternatives
         assert {bool(a.conditions) for a in edge.assertions} == {False, True}
+
+
+def test_merge_judge_gets_source_and_branches_and_unmotivated_same_cannot_merge():
+    import asyncio
+
+    from backend.kg_v3.merger import judge_pairs
+
+    a, b = _proposal("A", "Blue LED blinking"), _proposal("B", "Blue LED flickering")
+    a.source.name = "Bluetooth pairing available"
+    b.source.name = "Bluetooth data transfer"
+    relation = _agreed_relation().model_copy(update={"proposals": [a, b]})
+    pair = MergePair(left=identity(a.target), right=identity(b.target), left_name=a.target.name,
+                     right_name=b.target.name, type="FailureMode", left_cites=[ROW], right_cites=[ROW])
+
+    class Judge:
+        async def json(self, **kwargs):
+            assert "Bluetooth pairing available" in kwargs['user']
+            assert "Bluetooth data transfer" in kwargs['user']
+            assert DOC.segment(ROW).text in kwargs['user']
+            return {"answers": [{"id": "M1", "answer": "same", "rationale": "", "cited_segments": []}]}
+
+    plan = asyncio.run(judge_pairs(Judge(), [pair], DOC, [relation]))
+    assert not plan.same and plan.unsure
+    graph = assemble([relation], plan.same, plan.different)
+    assert len([n for n in graph.nodes.values() if n.type == "FailureMode"]) == 2
