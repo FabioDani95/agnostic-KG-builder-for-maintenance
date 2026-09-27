@@ -18,7 +18,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from datetime import datetime, timezone
 from enum import StrEnum
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -27,6 +27,25 @@ SEGMENT_ID_PATTERN = r"^p[1-9]\d*\.(?:b\d+(?:\.\d+)?|t\d+\.r\d+|o\d+)$"
 
 class _Contract(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
+
+
+class ContextItem(_Contract):
+    kind: Literal['if', 'prerequisite', 'warning', 'expected', 'order'] = 'if'
+    text: str = Field(min_length=1)
+    cite: tuple[str, ...] = ()
+
+    @model_validator(mode='before')
+    @classmethod
+    def legacy_string(cls, value):
+        return {'kind': 'if', 'text': value} if isinstance(value, str) else value
+
+    def __lt__(self, other):
+        return (self.kind, self.text, self.cite) < (other.kind, other.text, other.cite)
+
+
+def context_text(items) -> str:
+    return '; '.join(f'[{item.kind}] {item.text}' for value in items
+                     for item in [ContextItem.model_validate(value)])
 
 
 # Reading ------------------------------------------------------------------
@@ -241,7 +260,7 @@ class Assertion(_Contract):
     target_key: str = Field(min_length=1)
     # Source occurrence (table row, list entry, paragraph) the relation comes from.
     record_key: str = Field(min_length=1)
-    conditions: list[str] = Field(default_factory=list)
+    conditions: list[ContextItem] = Field(default_factory=list)
     certificate: Certificate
 
     @property

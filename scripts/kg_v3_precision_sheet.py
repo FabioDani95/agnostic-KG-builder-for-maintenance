@@ -145,7 +145,9 @@ def write_sheet(sources: list[tuple[str, Path, Path | None]], per_system: int, s
             lines += [_quote(text), ""]
         lines += [f"**Il grafo afferma:** «{item['source']}» **{VERBS[item['relation']]}** «{item['target']}»{kind}", ""]
         if item["conditions"]:
-            lines += [f"Condizioni: {'; '.join(item['conditions'])}", ""]
+            from backend.kg_v3.contracts import context_text
+
+            lines += [f"Contesto: {context_text(item['conditions'])}", ""]
         lines += ["- Giudizio: `?`", "- Nota: ", ""]
     lines += [
         "## Istruzioni",

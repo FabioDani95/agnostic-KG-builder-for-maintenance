@@ -285,6 +285,16 @@ def build_units(
                 continue
             first = doc.position(chunk[0].segment_id) or 0
             context = [item.segment_id for item in ordered[max(0, first - CONTEXT_SEGMENTS):first]]
+            # Keep the blocks introducing this table even when it is split over units.
+            if chunk[0].table:
+                table_first = next((i for i, s in enumerate(ordered) if s.page == chunk[0].page
+                                    and s.table and s.table.table == chunk[0].table.table), first)
+                i = table_first - 1
+                while i >= 0 and ordered[i].page == chunk[0].page and ordered[i].table is None:
+                    context.append(ordered[i].segment_id)
+                    i -= 1
+            context.extend(c for segment in chunk for c in doc.step_context(segment.segment_id))
+            context = list(dict.fromkeys(context))
             if chunk[0].table and chunk[0].table.row > 1:
                 header = f"p{chunk[0].page}.t{chunk[0].table.table}.r1"
                 if doc.segment(header) and header not in context:

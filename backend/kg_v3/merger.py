@@ -17,7 +17,7 @@ from itertools import combinations
 from pydantic import BaseModel, Field
 
 from backend.kg_v3.checker import CheckedRelation, normalize_name, restates, similarity, structurally_supported
-from backend.kg_v3.contracts import Assertion, Certificate, Tier, Witness
+from backend.kg_v3.contracts import Assertion, Certificate, ContextItem, Tier, Witness
 from backend.kg_v3.extractor import UNSPECIFIED_CAUSE, Endpoint, Proposal
 from backend.kg_v3.llm import ModelClient
 from backend.kg_v3.prompts import MERGE_PROMPT
@@ -82,8 +82,8 @@ class GraphEdge(BaseModel):
         return min((item.tier for item in self.assertions), key=_TIER_RANK.__getitem__)
 
     @property
-    def conditions(self) -> list[str]:
-        return sorted({condition for item in self.assertions for condition in item.conditions})
+    def conditions(self) -> list[ContextItem]:
+        return sorted({condition for item in self.assertions if item.tier is not Tier.RED for condition in item.conditions})
 
 
 class MergedGraph(BaseModel):

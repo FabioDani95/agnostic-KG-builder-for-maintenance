@@ -50,8 +50,8 @@ fixed ontology; the asset itself ({asset}) already exists, never create it.
 {ontology}
 
 The input is a part of the manual split into segments, each starting with its ID in brackets.
-Lines marked (context) are only there to help you understand; do not extract facts that appear
-only in context lines.
+Lines marked (context) are read-only: do not create standalone branches from them. Preserve
+prerequisites and warnings from them when they govern actions in the owned section.
 
 Rules:
 1. Extract every troubleshooting fact the text states: observed symptoms or error codes, their
@@ -77,8 +77,14 @@ Rules:
    check for a symptom without naming a cause, create a failure mode with stated false: name it
    after the fault the check or remedy points to when that is clear ("Incorrect input voltage" for
    "make sure the correct voltage is applied"), otherwise "Unspecified cause of <symptom>".
-8. Put conditions (if, when, only if, test outcomes, thresholds, order of steps) as short phrases
-   in the relation's "conditions".
+8. Every relation's conditions are objects with kind, text and cite. Use kind "if" for a
+   conditional antecedent or threshold, "prerequisite" for something required before the action,
+   "warning" for a prohibition or constraint during it, "expected" for the result of a test,
+   and "order" for its place in a sequence. Never turn a test outcome into a prerequisite.
+   Preserve prohibitions even when the main corrective action is already extracted.
+   In section_context list prerequisites/warnings governing a whole table or procedure,
+   including those in preceding read-only context. Cite the original block and list every
+   applicable record label in records. The code attaches this context to those records' actions.
 9. A failure mode is a faulty state or cause the manual names (worn, blocked, loose, not mapped,
    out of adjustment). A check to perform is never a failure mode: "the valves need checking" is
    a check. When the manual lists only checks for a problem, link them to a failure mode with
@@ -94,8 +100,9 @@ Rules:
 12. Link a component with AFFECTS only when the source says that this part is worn, damaged,
    blocked, faulty or out of adjustment in that fault. A part that is only used in the remedy
    is not affected.
-13. Ignore general warnings, specifications and part lists unless they state a fault, its cause
-    or its remedy. List passages you cannot interpret in "unclear".
+13. Ignore specifications and part lists unless they state a fault, its cause or its remedy.
+    Preserve warnings that govern the extracted actions as typed context, not standalone faults.
+    List passages you cannot interpret in "unclear".
 """
 
 VERIFY_PROMPT = """You check statements extracted from a technical maintenance manual. For each statement you
@@ -112,6 +119,8 @@ perform, only repeats the problem, or is a check or remedy turned around into a 
 never states as a cause. A cause marked (not written in the manual) only claims that the manual gives
 this problem, check or remedy without naming a cause: judge the problem and the check or remedy, not
 the cause name.
+Context is typed: if=antecedent, prerequisite=before, warning=constraint/prohibition,
+expected=test outcome, order=sequence. Check each item's role and scope against the cited source.
 """
 
 MERGE_PROMPT = """You decide whether two names extracted from the same maintenance manual denote the same thing.

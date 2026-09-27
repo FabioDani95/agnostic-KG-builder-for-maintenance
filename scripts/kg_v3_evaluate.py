@@ -30,6 +30,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from backend.kg_v3.contracts import context_text  # noqa: E402
 from scripts.kg_v3_compare import GOLD, V22, load_v3, load_v22, token_f1, words  # noqa: E402
 
 MANIFEST = ROOT / "paper/experiments/robustness_20260925/manifest.json"
@@ -47,6 +48,9 @@ the cause, the remedy, a number, a direction or a negation differs, or when it o
 overlaps with a different meaning. When the reference says the manual names no cause, answer same
 if the extracted problem is the same and the extracted cause is only a placeholder (such as
 "unspecified cause of ...") rather than a specific cause the manual does not state.
+When context is supplied, respect antecedents, prerequisites, prohibitions, expected outcomes
+and sequence. An expected outcome is not a precondition. Extra compatible context is allowed;
+contradictory context or missing required context is different.
 """
 
 
@@ -184,16 +188,19 @@ def v3_edges(run: Path) -> list[dict]:
         edges.append({"type": edge["type"], "source": edge["from"], "target": edge["to"],
                       "source_name": names[edge["from"]], "target_name": names[edge["to"]],
                       "source_stated": stated[edge["from"]], "target_stated": stated[edge["to"]],
+                      "conditions": edge.get('conditions', []),
                       "segments": segments, "trusted": edge["trusted"]})
     return edges
 
 
 def gold_relations(claim: dict) -> list[dict]:
     relations = [{"kind": "indicator", "types": INDICATOR_TYPES, "left": claim["indicator"], "right": claim["failure"],
-                  "segments": set(claim.get("indicator_segments", []) + claim.get("failure_segments", []))}]
+                  "segments": set(claim.get("indicator_segments", []) + claim.get("failure_segments", [])),
+                  "conditions": claim.get('conditions', '')}]
     if claim.get("action"):
         relations.append({"kind": "action", "types": {"RESOLVED_BY"}, "left": claim["failure"],
                           "right": claim["action"],
+                          "conditions": claim.get('conditions', ''),
                           "segments": set(claim.get("failure_segments", []) + claim.get("action_segments", []))})
     return relations
 
@@ -220,20 +227,22 @@ def pair_line(pair_id: str, relation: dict, group: list[dict]) -> str:
     as written in the manual keeps its name and is judged as such.
     """
 
+    context = f" Reference context: {relation['conditions']}." if relation.get('conditions') else ''
     if relation["kind"] == "indicator":
         edge = group[0]
         cause = f"the cause '{relation['right']}'" if relation["right"] else "a cause the manual does not name"
         extracted = ("a cause the manual does not name" if not relation["right"] and not edge.get("target_stated", True)
                      else f"'{edge['target_name']}'")
         return (f"{pair_id}: reference '{relation['left']}' may indicate {cause} | "
-                f"extracted '{edge['source_name']}' may indicate {extracted}")
-    remedies = "; ".join(f"'{edge['target_name']}'" for edge in group)
+                f"extracted '{edge['source_name']}' may indicate {extracted}" +
+                (f". Extracted context: {context_text(edge['conditions'])}." if edge.get('conditions') else '') + context)
+    remedies = "; ".join(f"'{edge['target_name']}' ({context_text(edge.get('conditions', []))})" for edge in group)
     reference_cause = relation["left"] or "(not named in the manual)"
     extracted_cause = ("(not named in the manual)" if not relation["left"] and not group[0].get("source_stated", True)
                        else group[0]["source_name"])
     return (f"{pair_id}: reference cause {reference_cause!r} is resolved or checked by "
             f"'{relation['right']}' | extracted cause {extracted_cause!r} is resolved or "
-            f"checked by these steps together: {remedies}")
+            f"checked by these steps together: {remedies}.{context}")
 
 
 async def judge(llm, pairs: list[tuple[dict, list[dict]]]) -> list[bool]:

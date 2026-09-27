@@ -15,7 +15,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from backend.kg_v3.contracts import ReadingUnit, SegmentKind
+from backend.kg_v3.contracts import ContextItem, ReadingUnit, SegmentKind
 from backend.kg_v3.llm import ModelClient, TruncatedResponse
 from backend.kg_v3.ontology import ACTION_KINDS, OntologySpec, extraction_schema, ontology_brief
 from backend.kg_v3.prompts import EXTRACTION_PROMPT
@@ -51,7 +51,7 @@ class Proposal(BaseModel):
     source: Endpoint
     target: Endpoint
     record: str
-    conditions: list[str] = Field(default_factory=list)
+    conditions: list[ContextItem] = Field(default_factory=list)
     cites: list[str] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
 
@@ -61,7 +61,8 @@ class Proposal(BaseModel):
 
     @property
     def all_cites(self) -> list[str]:
-        return sorted({*self.cites, *self.source.cites, *self.target.cites})
+        return sorted({*self.cites, *self.source.cites, *self.target.cites,
+                       *(cite for condition in self.conditions for cite in condition.cite)})
 
 
 class UnitExtraction(BaseModel):
@@ -141,10 +142,24 @@ def parse_read(data: dict[str, Any], *, unit: ReadingUnit, read: str, spec: Onto
         if not cites and not (source.cites or target.cites):
             cites = unit.segment_ids[:1]
             item_notes.append("approximate evidence: no citation given, unit start used")
+        record = str(item.get("record") or f"R{index + 1}")
+        context = list(item.get('conditions') or [])
+        if relation.name == 'RESOLVED_BY':
+            for shared in data.get('section_context') or []:
+                if (isinstance(shared, dict) and record in shared.get('records', [])
+                        and shared.get('kind') in {'warning', 'prerequisite'}):
+                    context.append({k: shared[k] for k in ('kind', 'text', 'cite') if k in shared})
+        conditions = []
+        for value in context:
+            try:
+                condition = ContextItem.model_validate(value)
+                conditions.append(condition.model_copy(update={'cite': tuple(c for c in condition.cite if c in allowed)}))
+            except (ValueError, TypeError):
+                item_notes.append('malformed context item; other facts retained')
         proposals.append(Proposal(
             unit_id=unit.unit_id, read=read, relation_type=relation.name, source=source, target=target,
-            record=str(item.get("record") or f"R{index + 1}"),
-            conditions=[" ".join(str(value).split()) for value in item.get("conditions") or [] if str(value).strip()],
+            record=record,
+            conditions=sorted(set(conditions)),
             cites=cites, notes=item_notes,
         ))
     unclear = [

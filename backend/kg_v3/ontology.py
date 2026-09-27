@@ -116,12 +116,14 @@ def extraction_schema(spec: OntologySpec, segment_ids: list[str]) -> dict[str, A
         "stated": {"type": "boolean"},
         "cite": cite,
     })
+    context = _object({'kind': {'type': 'string', 'enum': ['if', 'prerequisite', 'warning', 'expected', 'order']},
+                       'text': {'type': 'string'}, 'cite': cite})
     relation = _object({
         "type": {"type": "string", "enum": [item.name for item in spec.extractable_relations]},
         "source": {"type": "string"},
         "target": {"type": "string"},
         "record": {"type": "string"},
-        "conditions": {"type": "array", "items": {"type": "string"}},
+        "conditions": {"type": "array", "items": context},
         "cite": cite,
     })
     unclear = _object({"note": {"type": "string"}, "cite": cite})
@@ -129,6 +131,11 @@ def extraction_schema(spec: OntologySpec, segment_ids: list[str]) -> dict[str, A
         "entities": {"type": "array", "items": entity},
         "relations": {"type": "array", "items": relation},
         "unclear": {"type": "array", "items": unclear},
+        "section_context": {'type': 'array', 'items': _object({
+            'kind': {'type': 'string', 'enum': ['prerequisite', 'warning']},
+            'text': {'type': 'string'}, 'cite': cite,
+            'records': {'type': 'array', 'items': {'type': 'string'}},
+        })},
     })
 
 

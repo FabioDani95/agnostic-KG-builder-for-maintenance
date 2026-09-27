@@ -16,7 +16,7 @@ from backend.kg_v3.ontology import OntologySpec, load_ontology
 from backend.kg_v3.reader import DocumentText, render_segment
 from backend.kg_v3.run import RunResult
 
-EXPORT_VERSION = "kg-v3-graph-1"
+EXPORT_VERSION = "kg-v3-graph-2"
 
 
 def _evidence(doc: DocumentText, segment_ids: list[str]) -> list[dict[str, Any]]:
@@ -72,10 +72,12 @@ def graph_json(result: RunResult, doc: DocumentText, *, asset: dict[str, Any], s
     for edge in kept:
         edges.append({
             "id": edge.edge_id, "type": edge.relation_type, "from": edge.source, "to": edge.target,
-            "tier": edge.tier.value, "trusted": edge.tier is Tier.GREEN, "conditions": edge.conditions,
+            "tier": edge.tier.value, "trusted": edge.tier is Tier.GREEN,
+            "conditions": [c.model_dump(mode='json') for c in edge.conditions],
             "occurrences": [{
                 "record": item.record_key,
                 "tier": item.tier.value,
+                "conditions": [c.model_dump(mode='json') for c in item.conditions],
                 "certificate": item.certificate.model_dump(mode="json"),
                 "evidence": _evidence(doc, item.certificate.segment_ids),
             } for item in edge.assertions],

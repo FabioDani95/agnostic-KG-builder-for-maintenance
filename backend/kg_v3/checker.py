@@ -16,7 +16,7 @@ from difflib import SequenceMatcher
 
 from pydantic import BaseModel, Field
 
-from backend.kg_v3.contracts import Assertion, Certificate, VerifierVerdict, Witness
+from backend.kg_v3.contracts import Assertion, Certificate, VerifierVerdict, Witness, context_text
 from backend.kg_v3.extractor import Proposal
 from backend.kg_v3.llm import ModelClient
 from backend.kg_v3.ontology import OntologySpec, verification_schema
@@ -176,7 +176,7 @@ def statement(spec: OntologySpec, proposal: Proposal) -> str:
         verb = "For this problem or cause the manual says to contact service or the dealer."
     code = f" (code {proposal.source.code})" if proposal.source.code else ""
     kind = f" [{proposal.target.kind}]" if proposal.target.kind else ""
-    condition = f" Conditions: {'; '.join(proposal.conditions)}." if proposal.conditions else ""
+    condition = f" Context: {context_text(proposal.conditions)}." if proposal.conditions else ""
 
     def unwritten(end) -> str:
         return " (not written in the manual)" if end.type == "FailureMode" and not end.stated else ""
