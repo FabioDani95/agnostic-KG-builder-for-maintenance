@@ -234,14 +234,17 @@ def cmd_run(args) -> None:
         if (out / "graph.json").exists():
             print(f"{out.relative_to(ROOT)} already done")
             continue
+        cmd_status(args)
         subprocess.run([sys.executable, str(ROOT / "scripts/kg_v3.py"), "--manual", args.id, "--out", str(out),
-                        "--gates", "agent", "--run-id", f"campaign_{args.id}_v3_r{number}"], check=True)
+                        "--gates", "agent", "--budget", args.budget, "--run-id", f"campaign_D_{args.id}_v3_r{number}"], check=True)
+        cmd_status(args)
 
 
 def cmd_kpi(args) -> None:
     ids = args.ids or [path.parent.parent.name for path in sorted(CAMPAIGN.glob("*/gold/gold.json"))]
     subprocess.run([sys.executable, str(ROOT / "scripts/kg_v3_kpi.py"), "--manuals", ",".join(ids),
-                    "--runs", "campaign", "--out", "campaign/results/kpi.json"], check=True)
+                    "--runs", "campaign", "--runs-name", args.runs_name, "--out", args.out, "--budget", args.budget,
+                    *(["--v3-only"] if args.v3_only else [])], check=True)
 
 
 def cmd_precision(args) -> None:
@@ -303,10 +306,15 @@ def main() -> int:
             command.add_argument("--force", action="store_true")
     run = commands.add_parser("run")
     run.add_argument("id")
+    run.add_argument("--budget", default=BUDGET)
     run.add_argument("--reps", type=int, default=3)
     run.add_argument("--without-gold", action="store_true", help="only for development checks")
     kpi = commands.add_parser("kpi")
     kpi.add_argument("ids", nargs="*")
+    kpi.add_argument("--runs-name", default="runs")
+    kpi.add_argument("--out", default="campaign/results/kpi.json")
+    kpi.add_argument("--budget", default=BUDGET)
+    kpi.add_argument("--v3-only", action="store_true")
     precision = commands.add_parser("precision")
     precision.add_argument("ids", nargs="*")
     precision.add_argument("--score", action="store_true")

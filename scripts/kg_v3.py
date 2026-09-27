@@ -16,7 +16,9 @@ import asyncio
 import hashlib
 import json
 import os
+import subprocess
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -88,6 +90,7 @@ async def run(args) -> dict:
     from backend.kg_v3.reviewers import InMemoryQuestionStore, render_question
     from backend.kg_v3.run import Pipeline, RunConfig
 
+    started = time.perf_counter()
     if args.manual:
         pdf, asset = manual_source(args.manual)
     else:
@@ -106,6 +109,7 @@ async def run(args) -> dict:
         "KG_REAL_CALL_PDF_ID": f"sha256:{sha}",
     })
     doc = read_document(list(evidence), page_count=page_count)
+    read_seconds = time.perf_counter() - started
     config = RunConfig(model=args.model, reasoning_effort=args.reasoning, reads=args.reads,
                        gates=GATE_PRESETS[args.gates], agent_model=args.agent_model,
                        agent_reasoning_effort=args.agent_reasoning)
@@ -114,6 +118,13 @@ async def run(args) -> dict:
     store = InMemoryQuestionStore()
     result = await Pipeline(doc=doc, asset_name=asset["name"], llm=llm, config=config, agent_llm=agent_llm,
                             human_store=store, workdir=out).run()
+    result.report["seconds"].update(pdf_read=round(read_seconds, 3),
+                                    end_to_end=round(time.perf_counter() - started, 3))
+    result.report["provenance"] = {
+        "commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+        "pdf_sha256": sha, "config": config.model_dump(mode="json"),
+        "segment_ids": [segment.segment_id for segment in doc.segments()],
+    }
     graph = graph_json(result, doc, asset=asset, source_title=pdf.name)
     (out / "graph.json").write_text(json.dumps(graph, ensure_ascii=False, indent=1), encoding="utf-8")
     (out / "report.json").write_text(json.dumps(result.report, ensure_ascii=False, indent=1), encoding="utf-8")

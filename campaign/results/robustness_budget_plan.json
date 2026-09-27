@@ -1,0 +1,27 @@
+{
+  "starting_spend_usd": 2.204403,
+  "additional_cap_usd": 2,
+  "ledger_cap_usd": 4.204403,
+  "historical_18_build_cost_usd": 0.40054,
+  "historical_kpi_cost_usd": 0.29193,
+  "before_judge_workload": {
+    "pairs": 9039,
+    "calls": 708,
+    "prompt_characters": 8796375.375
+  },
+  "estimated_one_context_aware_kpi_usd": 0.5361,
+  "contrastive_additional_calls": 0,
+  "contrastive_note": "Uses the exact same candidate/majority-vote witnesses as KPI; no repeated calls.",
+  "estimated_work_usd": 2.0347,
+  "method": "18 builds at 1.6x historical cost plus before/after context-aware KPI at 1.3x workload estimate. Not a guarantee; gateway cap is enforced.",
+  "prices_snapshot": {
+    "label": "GPT-6 Luna",
+    "input_per_million": 0.1,
+    "cached_input_per_million": 0.01,
+    "output_per_million": 0.5,
+    "cache_write_multiplier": 1.25,
+    "long_context_threshold_tokens": 272000,
+    "long_context_input_multiplier": 2.0,
+    "long_context_output_multiplier": 1.5
+  }
+}

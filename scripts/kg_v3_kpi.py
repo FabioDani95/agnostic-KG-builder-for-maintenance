@@ -72,12 +72,13 @@ def v3_run_facts(run: Path) -> dict:
     }
 
 
-async def evaluate(manuals: list[str], runs_root: Path, runs_name: str = "runs") -> dict:
+async def evaluate(manuals: list[str], runs_root: Path, runs_name: str = "runs", v3_only: bool = False) -> dict:
     from backend.kg_v3.llm import ModelClient
     from backend.kg_v3.reader import read_document
 
     llm = ModelClient(model="gpt-6-luna", reasoning_effort="low")
-    results: dict = {"manuals": {}}
+    results: dict = {"manuals": {}, "runs_directory": runs_name, "judge_model": "gpt-6-luna",
+                     "judge_reasoning": "low", "judge_votes": 3}
     for manual in manuals:
         claims, gold_pages = load_gold(manual)
         # A branch with neither cause nor action only defines a code or indication: it is
@@ -90,7 +91,7 @@ async def evaluate(manuals: list[str], runs_root: Path, runs_name: str = "runs")
         folder = runs_root / manual / runs_name
         if not folder.exists():
             folder = runs_root / manual
-        if (folder / "v22/graph.json").exists():
+        if not v3_only and (folder / "v22/graph.json").exists():
             pdf, asset = manual_source(manual)
             evidence, page_count, _ = load_evidence(pdf, asset)
             doc = read_document(list(evidence), page_count=page_count)
@@ -100,6 +101,8 @@ async def evaluate(manuals: list[str], runs_root: Path, runs_name: str = "runs")
             branches[claim["branch_id"]].append(claim["claim_id"])
         systems = {}
         for run in sorted(item for item in folder.iterdir() if item.is_dir()) if folder.exists() else []:
+            if run.name == "v22" and v3_only:
+                continue
             if run.name == "v22" and (run / "graph.json").exists():
                 systems["v22"] = (v22_edges_from(run / "graph.json", doc, evidence), json.loads(
                     (run / "timing.json").read_text()) if (run / "timing.json").exists() else {})
@@ -174,6 +177,7 @@ def main() -> int:
     parser.add_argument("--runs", required=True, help="folder with one sub-folder per manual")
     parser.add_argument("--out", required=True)
     parser.add_argument("--runs-name", default="runs")
+    parser.add_argument("--v3-only", action="store_true")
     parser.add_argument("--ledger", default=str(DEFAULT_LEDGER))
     parser.add_argument("--budget", default=DEFAULT_BUDGET)
     args = parser.parse_args()
@@ -184,7 +188,7 @@ def main() -> int:
                        "KG_REAL_CALL_PDF_ID": "evaluation",
                        "KG_LLM_TRACE_DIR": str(ROOT / "eval_runs/v3_kpi/provider")})
     results = asyncio.run(evaluate([item.strip() for item in args.manuals.split(",") if item.strip()],
-                                   (ROOT / args.runs).resolve(), args.runs_name))
+                                   (ROOT / args.runs).resolve(), args.runs_name, args.v3_only))
     out = ROOT / args.out
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(results, indent=1) + "\n")

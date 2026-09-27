@@ -96,6 +96,7 @@ def markdown(result: dict) -> str:
             values = [row.get(k, 'n/d') for k in ('fusion_violations', 'orphan_causes', 'problems_without_action',
                                                 'duplicate_nodes', 'edges_without_evidence', 'derived_causes')]
             lines.append(f'| {manual} | {run} | ' + ' | '.join(map(str, values)) + ' |')
+    for manual, data in result['manuals'].items():
         lines.append(f"\nJaccard {manual}: {data['relation_jaccard']}; media {data['mean_jaccard']}.\n")
     return '\n'.join(lines) + '\n'
 

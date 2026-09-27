@@ -10,7 +10,9 @@ def test_quality_detects_constraints_orphans_and_missing_evidence():
     row = graph_metrics(graph)
     assert row['fusion_violations'] == row['orphan_causes'] == row['problems_without_action'] == 1
     assert row['edges_without_evidence'] == 1
-    assert relations(graph) == relations(graph)
+    renamed = {**graph, "nodes": [{**node, "name": " STATE 1 "} if node["id"] == "f" else node
+                                  for node in graph["nodes"]]}
+    assert relations(graph) == relations(renamed)
 
 
 def test_quality_detects_judge_difference_and_ignores_root_navigation():
