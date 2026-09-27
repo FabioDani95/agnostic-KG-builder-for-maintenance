@@ -153,21 +153,29 @@ def _low_quality(evidence: EvidenceUnit) -> bool:
 def _table_segments(page: int, ordinal: int, rows: list[EvidenceUnit]) -> list[Segment]:
     segments: list[Segment] = []
     previous: list[str] = []
+    legacy_previous: list[str] = []
     headers: list[str] = []
     for evidence in sorted(rows, key=lambda item: item.locator.row_index or 0):
         cells, boxes, row_headers = _cells(evidence)
+        # Preserve historical row slots/IDs even if a formerly invented span
+        # becomes empty. This inventory rule never supplies citation content.
+        legacy = [legacy_previous[col] if not value and col < len(boxes) and boxes[col] is None
+                  and col < len(legacy_previous) else value for col, value in enumerate(cells)]
+        legacy_previous = legacy
         headers = headers or row_headers
         inherited: list[int] = []
+        confirmed = evidence.attributes.get("table_layout", {}).get("confirmed_inherited_columns", [])
         filled = list(cells)
         for column, value in enumerate(cells):
-            merged = column < len(boxes) and boxes[column] is None
+            merged = column in confirmed and column < len(boxes) and boxes[column] is None
             if not value and merged and column < len(previous) and previous[column]:
                 filled[column] = previous[column]
                 inherited.append(column)
         previous = filled
-        text = CELL_SEPARATOR.join(filled).strip(" |")
-        if not text:
+        text = CELL_SEPARATOR.join(filled)
+        if not CELL_SEPARATOR.join(legacy).strip(" |"):
             continue
+        text = text or " "
         segments.append(Segment(
             segment_id=f"p{page}.t{ordinal}.r{evidence.locator.row_index}",
             page=page,
@@ -175,7 +183,8 @@ def _table_segments(page: int, ordinal: int, rows: list[EvidenceUnit]) -> list[S
             text=text,
             evidence_id=evidence.evidence_id,
             table=TableCoordinates(table=ordinal, row=evidence.locator.row_index or 1,
-                                   headers=headers, inherited_columns=inherited),
+                                   headers=headers, inherited_columns=inherited,
+                                   confirmed_inherited_columns=inherited),
             low_quality=_low_quality(evidence),
         ))
     return segments

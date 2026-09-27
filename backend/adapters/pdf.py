@@ -33,6 +33,48 @@ ADAPTER_VERSION = f"pdf-v4-layout-{fitz.VersionBind}"
 EVIDENCE_ANCHOR_PREFIX = "EVIDENCE_ID"
 
 
+def _confirmed_merged_columns(page, table, tolerance: float = 2.0) -> dict[int, list[int]]:
+    """Confirm vertical spans using cell extents and the original page's rules.
+
+    A missing box alone also represents horizontal spans and blank cells. Require
+    a box above that actually spans this row boundary, and no horizontal rule
+    across that column. Unknown geometry never permits inheritance.
+    """
+    try:
+        drawings = page.get_drawings()
+    except Exception:
+        return {}
+    rules = []
+    for drawing in drawings:
+        for item in drawing.get('items', []):
+            if item[0] == 'l':
+                a, b = item[1:3]
+                if abs(a.y - b.y) <= tolerance:
+                    rules.append((min(a.x, b.x), max(a.x, b.x), (a.y + b.y) / 2))
+            elif item[0] == 're':
+                box = item[1]
+                rules.extend([(box.x0, box.x1, box.y0), (box.x0, box.x1, box.y1)])
+    previous = {}
+    result = {}
+    for index, row in enumerate(getattr(table, 'rows', []) or [], 1):
+        boxes = row.cells
+        top = min((b[1] for b in boxes if b is not None), default=None)
+        confirmed = []
+        for col, box in enumerate(boxes):
+            if box is not None:
+                previous[col] = box
+                continue
+            above = previous.get(col)
+            if above is None or top is None or above[3] <= top + tolerance:
+                continue
+            separated = any(abs(y - top) <= tolerance and x0 <= above[0] + tolerance
+                            and x1 >= above[2] - tolerance for x0, x1, y in rules)
+            if not separated:
+                confirmed.append(col)
+        result[index] = confirmed
+    return result
+
+
 def _top_left_order(
     indexed_blocks: list[tuple[int, tuple]],
 ) -> list[tuple[int, tuple]]:
@@ -312,6 +354,7 @@ class PdfAdapter:
                         rows = list(table.extract() or [])
                     except Exception:
                         rows = []
+                    inherited_columns = _confirmed_merged_columns(page, table)
                     normalized_rows = [
                         [str(cell or "").replace("\r", " ").replace("\n", " ").strip() for cell in row]
                         for row in rows
@@ -401,6 +444,7 @@ class PdfAdapter:
                                     flags=flags,
                                 ).model_copy(update={"attributes": {"table_layout": {
                                     "cells": row,
+                                    "confirmed_inherited_columns": inherited_columns.get(row_index, []),
                                     "cell_bboxes": [list(box) if box is not None else None for box in (getattr(geometry, "cells", []) or [])],
                                     "row_bbox": list(getattr(geometry, "bbox", []) or []),
                                     "table_bbox": list(getattr(table, "bbox", []) or []),

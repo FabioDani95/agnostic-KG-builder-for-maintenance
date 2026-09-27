@@ -3,6 +3,23 @@ from __future__ import annotations
 from backend.adapters.pdf import _layout_reading_order
 
 
+def test_missing_cells_need_spanning_geometry_and_no_horizontal_rule():
+    from types import SimpleNamespace
+
+    import fitz
+
+    from backend.adapters.pdf import _confirmed_merged_columns
+
+    table = SimpleNamespace(rows=[
+        SimpleNamespace(cells=[(0, 0, 50, 60), (50, 0, 100, 60), (100, 0, 150, 30)]),
+        SimpleNamespace(cells=[None, None, (100, 30, 150, 60)]),
+    ])
+    for item in [('l', fitz.Point(50, 30), fitz.Point(100, 30)),
+                 ('re', fitz.Rect(50, 29.5, 100, 30.5), 1)]:
+        page = SimpleNamespace(get_drawings=lambda: [{'items': [item]}])
+        assert _confirmed_merged_columns(page, table)[2] == [0]
+
+
 def _block(x0: float, y0: float, x1: float, y1: float, text: str) -> tuple:
     return (x0, y0, x1, y1, text, 0, 0)
 

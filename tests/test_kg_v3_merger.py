@@ -140,7 +140,8 @@ def _merged_cell_doc() -> DocumentText:
     def row(number: int, text: str, inherited: list[int]) -> Segment:
         return Segment(segment_id=f"p28.t1.r{number}", page=28, kind=SegmentKind.TABLE_ROW, text=text,
                        evidence_id=f"ev{number}",
-                       table=TableCoordinates(table=1, row=number, headers=headers, inherited_columns=inherited))
+                       table=TableCoordinates(table=1, row=number, headers=headers, inherited_columns=inherited,
+                                              confirmed_inherited_columns=inherited))
 
     return DocumentText(page_count=28, pages={28: [
         row(1, "Problem | Checks | Escalation", []),

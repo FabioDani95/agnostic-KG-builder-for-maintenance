@@ -222,7 +222,7 @@ def inherited_cell_proposals(doc: DocumentText, proposals: list[Proposal]) -> li
                 for item in proposals if item.relation_type == "RESOLVED_BY"}
     added: list[Proposal] = []
     for segment in doc.segments(sorted(by_segment)):
-        if segment.table is None or not segment.table.inherited_columns:
+        if segment.table is None or not segment.table.confirmed_inherited_columns:
             continue
         unit_id = by_segment[segment.segment_id][0].unit_id
         causes: dict[str, object] = {}
@@ -232,7 +232,7 @@ def inherited_cell_proposals(doc: DocumentText, proposals: list[Proposal]) -> li
             for end in (item.source, item.target):
                 if end.type == "FailureMode":
                     causes.setdefault(normalize_name(end.name), end)
-        for column in segment.table.inherited_columns:
+        for column in segment.table.confirmed_inherited_columns:
             origin = _origin_row(doc, segment, column)
             if origin is None:
                 continue

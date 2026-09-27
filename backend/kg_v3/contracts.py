@@ -44,6 +44,7 @@ class TableCoordinates(_Contract):
     headers: list[str] = Field(default_factory=list)
     # Columns whose value was repeated from the row above (merged cells).
     inherited_columns: list[int] = Field(default_factory=list)
+    confirmed_inherited_columns: list[int] = Field(default_factory=list)
 
 
 class Segment(_Contract):
