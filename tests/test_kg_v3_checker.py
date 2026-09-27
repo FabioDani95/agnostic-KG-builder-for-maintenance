@@ -233,3 +233,19 @@ def test_a_step_is_verified_with_its_problem_and_parent_step():
     assert doc.step_context("p38.b6") == ["p38.b1", "p38.b5"]
     assert doc.step_context("p38.b2") == ["p38.b1"]
     assert doc.step_context("p38.b1") == []
+
+
+def test_structural_witness_respects_positions_inside_multilist_cells():
+    cite = "p1.t1.r2"
+    row = Segment(segment_id=cite, page=1, kind=SegmentKind.TABLE_ROW, evidence_id="e",
+                  text="Alpha Beta | Gamma Delta", table=TableCoordinates(
+                      table=1, row=2, cell_items=[["Alpha", "Beta"], ["Gamma", "Delta"]]))
+    doc = DocumentText(page_count=1, pages={1: [row]})
+    pair = Proposal(unit_id="u1", read="A", record="R1", relation_type="RESOLVED_BY", cites=[cite],
+                    source=Endpoint(type="FailureMode", name="Alpha", cites=[cite]),
+                    target=Endpoint(type="CorrectiveAction", name="Gamma", cites=[cite]))
+    assert structurally_supported(doc, pair)
+    assert not structurally_supported(doc, pair.model_copy(update={
+        "target": pair.target.model_copy(update={"name": "Delta"})}))
+    assert not structurally_supported(doc, pair.model_copy(update={
+        "source": pair.source.model_copy(update={"name": "paraphrase without literal alignment"})}))

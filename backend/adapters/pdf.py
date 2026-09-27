@@ -444,6 +444,8 @@ class PdfAdapter:
                                     flags=flags,
                                 ).model_copy(update={"attributes": {"table_layout": {
                                     "cells": row,
+                                    "cell_lines": [[line.strip() for line in (cell or "").splitlines() if line.strip()]
+                                                   for cell in rows[row_index - 1]],
                                     "confirmed_inherited_columns": inherited_columns.get(row_index, []),
                                     "cell_bboxes": [list(box) if box is not None else None for box in (getattr(geometry, "cells", []) or [])],
                                     "row_bbox": list(getattr(geometry, "bbox", []) or []),

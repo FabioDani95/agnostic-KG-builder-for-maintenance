@@ -148,9 +148,37 @@ def same_record(doc: DocumentText, left: str, right: str) -> bool:
     return first is not None and second is not None and abs(first - second) == 1
 
 
+def _aligned_list_support(segment, proposal: Proposal) -> bool:
+    """Multiple lists require a unique literal position match; wrapping is ambiguous.
+
+    This grants a structural witness, not a semantic judgement. Paraphrases or
+    uncertain line breaks must obtain another witness from the verifier.
+    """
+    if not segment.table or proposal.relation_type != "RESOLVED_BY":
+        return True
+    cells = segment.table.cell_items or [[cell] for cell in segment.text.split(" | ")]
+    lists = [[piece.strip() for line in cell for piece in
+              re.split(r"\n|[•●▪]|(?:^|\s)\d+[.)]\s+", line) if piece.strip()] for cell in cells]
+    multiple = {column: values for column, values in enumerate(lists) if len(values) > 1}
+    if len(multiple) < 2:
+        return True
+
+    def positions(name):
+        key = normalize_name(name)
+        return [(col, index) for col, values in multiple.items() for index, text in enumerate(values)
+                if key and (key == normalize_name(text) or key in normalize_name(text))]
+
+    left, right = positions(proposal.source.name), positions(proposal.target.name)
+    return (len(left) == len(right) == 1 and left[0][0] != right[0][0]
+            and left[0][1] == right[0][1]
+            and len(multiple[left[0][0]]) == len(multiple[right[0][0]]))
+
+
 def structurally_supported(doc: DocumentText, proposal: Proposal) -> bool:
     """Both ends are written in the entry that states the relation."""
 
+    if any(not _aligned_list_support(segment, proposal) for segment in doc.segments(proposal.all_cites)):
+        return False
     anchors = proposal.cites or sorted({*proposal.source.cites, *proposal.target.cites})
     for anchor in anchors:
         if not all(same_record(doc, anchor, other) for other in proposal.cites):

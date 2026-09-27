@@ -154,6 +154,7 @@ def _table_segments(page: int, ordinal: int, rows: list[EvidenceUnit]) -> list[S
     segments: list[Segment] = []
     previous: list[str] = []
     legacy_previous: list[str] = []
+    previous_items: list[list[str]] = []
     headers: list[str] = []
     for evidence in sorted(rows, key=lambda item: item.locator.row_index or 0):
         cells, boxes, row_headers = _cells(evidence)
@@ -166,12 +167,17 @@ def _table_segments(page: int, ordinal: int, rows: list[EvidenceUnit]) -> list[S
         inherited: list[int] = []
         confirmed = evidence.attributes.get("table_layout", {}).get("confirmed_inherited_columns", [])
         filled = list(cells)
+        items = evidence.attributes.get("table_layout", {}).get("cell_lines") or [[v] for v in cells]
+        items = [list(values) for values in items]
         for column, value in enumerate(cells):
             merged = column in confirmed and column < len(boxes) and boxes[column] is None
             if not value and merged and column < len(previous) and previous[column]:
                 filled[column] = previous[column]
                 inherited.append(column)
+                if column < len(previous_items):
+                    items[column] = previous_items[column]
         previous = filled
+        previous_items = items
         text = CELL_SEPARATOR.join(filled)
         if not CELL_SEPARATOR.join(legacy).strip(" |"):
             continue
@@ -184,7 +190,7 @@ def _table_segments(page: int, ordinal: int, rows: list[EvidenceUnit]) -> list[S
             evidence_id=evidence.evidence_id,
             table=TableCoordinates(table=ordinal, row=evidence.locator.row_index or 1,
                                    headers=headers, inherited_columns=inherited,
-                                   confirmed_inherited_columns=inherited),
+                                   confirmed_inherited_columns=inherited, cell_items=items),
             low_quality=_low_quality(evidence),
         ))
     return segments
