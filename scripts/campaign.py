@@ -260,7 +260,7 @@ def cmd_precision(args) -> None:
         return
     if sheet.exists() or key.exists():
         raise SystemExit(f"{sheet.relative_to(ROOT)} or its key exists; preserved. Use --new for the second sheet.")
-    ids = args.ids or [path.parent.parent.name for path in sorted(CAMPAIGN.glob("*/runs/v3_r1/graph.json"))]
+    ids = args.ids or [path.parents[2].name for path in sorted(CAMPAIGN.glob("*/runs/v3_r1/graph.json"))]
     sources = [(manual, folder(manual) / "runs" / "v3_r1" / "graph.json", folder(manual) / "runs" / "v22" / "graph.json")
                for manual in ids]
     sources = [(manual, v3, v22 if v22.exists() else folder(manual) / "runs_C/v22/graph.json")
