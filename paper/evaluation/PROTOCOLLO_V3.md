@@ -17,7 +17,7 @@ andare nel paper come risultato di generalizzazione.
 
 ## 2. Scelta dei manuali
 
-Dalla ricognizione dei candidati (`paper/manuals/candidate_troubleshooting_manuals.md`),
+Dalla [ricognizione dei candidati](../manuals/candidate_troubleshooting_manuals.md),
 proposta da confermare:
 
 - **Sviluppo esteso (A):** 2–3 manuali con strutture che i 4 attuali non coprono bene,

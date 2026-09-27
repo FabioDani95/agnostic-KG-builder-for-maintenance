@@ -247,3 +247,12 @@ Dopo le correzioni sulle procedure numerate, per significato: v22 24–26/34, V3
 r5 34/34 e r6 33/34 (Eastman 8 e 7/8, Danfoss 8/8, Graco 18/18). Misure di
 sviluppo sugli stessi quattro manuali: non trasferibili a manuali nuovi. Questa analisi non modifica codice del generatore, gold o
 ledger e non effettua chiamate API.
+
+## Stato dell'arte e posizionamento
+
+Nota critica in [STATO_ARTE_E_POSIZIONAMENTO.md](STATO_ARTE_E_POSIZIONAMENTO.md): i singoli
+componenti della V3 hanno precedenti (in particolare AEVS per le citazioni vincolate); la
+novità difendibile è la combinazione misurata di testimoni strutturali di layout, verifica
+umana limitata e sostituibile da un agente, e certificati per arco. Protocollo della
+campagna approvato: [evaluation/PROTOCOLLO_V3.md](evaluation/PROTOCOLLO_V3.md), un solo
+annotatore, tetto di 10 USD. Solo i numeri della fase di test potranno entrare nel paper.

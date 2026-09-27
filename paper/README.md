@@ -15,6 +15,8 @@ richiamati attraverso manifest con hash e configurazioni. Nessun risultato nuovo
 6. [Perché un grafo](sections/02_maintenance_graph_rationale.md): prima sezione in prosa con fonti.
 7. [Bibliografia](references.bib) e [mappa delle fonti](SOURCES.md).
 8. [Migrazione modello](MODEL_DECISION.md): GPT-6 Luna, compatibilità e verifiche.
+9. [Stato dell'arte e posizionamento](STATO_ARTE_E_POSIZIONAMENTO.md): lavori vicini, lettura critica e idee per il paper.
+10. [Protocollo della campagna V3](evaluation/PROTOCOLLO_V3.md): gold, KPI e fasi; input e output in [campaign](../campaign/README.md).
 
 Le istruzioni per gli assistenti sono in [AGENTS.md](AGENTS.md), richiamate anche
 dalla radice della repository. Funzionano nei client che supportano AGENTS.md;
