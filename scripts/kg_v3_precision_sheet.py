@@ -63,8 +63,8 @@ def _quote(text: str) -> str:
     return "\n".join(f"> {line}" for line in text.strip().splitlines() if line.strip())
 
 
-def v3_items(run: Path, manual: str) -> list[dict]:
-    data = json.loads((run / manual / "graph.json").read_text())
+def v3_items(graph: Path, manual: str) -> list[dict]:
+    data = json.loads(graph.read_text())
     nodes = {node["id"]: node for node in data["nodes"]}
     items = []
     for edge in data["edges"]:
@@ -81,8 +81,8 @@ def v3_items(run: Path, manual: str) -> list[dict]:
     return items
 
 
-def v22_items(manual: str) -> list[dict]:
-    data = json.loads((V22 / f"c12r1_{manual}" / "graph.json").read_text())
+def v22_items(graph: Path, manual: str) -> list[dict]:
+    data = json.loads(graph.read_text())
     nodes = {node["node_id"]: node for node in data["nodes"]}
     items = []
     for relation in data["relations"]:
@@ -100,13 +100,26 @@ def v22_items(manual: str) -> list[dict]:
 
 
 def generate(run: Path, per_system: int) -> None:
+    """Development sheet: a V3 run of the four manuals against the frozen v22 graphs."""
+
+    sources = [(manual, run / manual / "graph.json", V22 / f"c12r1_{manual}" / "graph.json") for manual in MANUALS]
+    write_sheet(sources, per_system, SHEET, KEY, MANUALS, str(run.relative_to(ROOT)))
+
+
+def write_sheet(sources: list[tuple[str, Path, Path | None]], per_system: int, sheet: Path, key_path: Path,
+                titles: dict[str, str], origin: str) -> None:
+    """Blind sheet sampling V3 and v22 relations of each manual; the key goes to a separate file."""
+
     rng = random.Random(SEED)
     chosen = []
-    for manual in MANUALS:
-        for items in (v3_items(run, manual), v22_items(manual)):
+    for manual, v3_graph, v22_graph in sources:
+        groups = [v3_items(v3_graph, manual)]
+        if v22_graph is not None and v22_graph.exists():
+            groups.append(v22_items(v22_graph, manual))
+        for items in groups:
             chosen.extend(rng.sample(items, min(per_system, len(items))))
     rng.shuffle(chosen)
-    OUT.mkdir(parents=True, exist_ok=True)
+    sheet.parent.mkdir(parents=True, exist_ok=True)
     key = {}
     lines = [
         "# Revisione della precisione del grafo",
@@ -126,7 +139,7 @@ def generate(run: Path, per_system: int) -> None:
         key[item_id] = {name: item[name] for name in ("system", "manual", "edge", "relation")}
         pages = sorted({page for page, _ in item["evidence"] if page})
         kind = f" ({KINDS[item['kind']]})" if item.get("kind") in KINDS else ""
-        lines += [f"### {item_id} · {MANUALS[item['manual']]}, pagina {', '.join(map(str, pages)) or '?'}", "",
+        lines += [f"### {item_id} · {titles.get(item['manual'], item['manual'])}, pagina {', '.join(map(str, pages)) or '?'}", "",
                   "**Il manuale dice:**", ""]
         for _, text in item["evidence"]:
             lines += [_quote(text), ""]
@@ -147,9 +160,9 @@ def generate(run: Path, per_system: int) -> None:
         "",
         "Giudica solo il fatto mostrato, non se il grafo è completo. Una nota breve è utile per `P`, `S` e `N`.",
     ]
-    SHEET.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    KEY.write_text(json.dumps({"seed": SEED, "run": str(run.relative_to(ROOT)), "items": key}, indent=1) + "\n")
-    print(f"{len(chosen)} items -> {SHEET.relative_to(ROOT)}")
+    sheet.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    key_path.write_text(json.dumps({"seed": SEED, "run": origin, "items": key}, indent=1) + "\n")
+    print(f"{len(chosen)} items -> {sheet.relative_to(ROOT)}")
 
 
 def wilson(successes: int, total: int) -> tuple[float, float]:
@@ -161,8 +174,8 @@ def wilson(successes: int, total: int) -> tuple[float, float]:
     return (round(centre - margin, 3), round(centre + margin, 3))
 
 
-def score(sheet: Path = SHEET) -> None:
-    key = json.loads(KEY.read_text())["items"]
+def score(sheet: Path = SHEET, key_path: Path = KEY) -> None:
+    key = json.loads(key_path.read_text())["items"]
     judgements = {item: value.strip().upper() for item, value in JUDGEMENT.findall(sheet.read_text())}
     counts: dict[tuple[str, str], Counter] = defaultdict(Counter)
     for item_id, value in judgements.items():
@@ -183,11 +196,12 @@ def main() -> int:
     parser.add_argument("--v3", help="V3 run directory holding one folder per manual")
     parser.add_argument("--per-system", type=int, default=PER_SYSTEM)
     parser.add_argument("--sheet", default=str(SHEET), help="filled sheet to score")
+    parser.add_argument("--key", default=str(KEY), help="key of that sheet")
     args = parser.parse_args()
     if args.action == "generate":
         generate(Path(args.v3).resolve(), args.per_system)
     else:
-        score(Path(args.sheet))
+        score(Path(args.sheet), Path(args.key))
     return 0
 
 

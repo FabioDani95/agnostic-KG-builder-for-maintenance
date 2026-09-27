@@ -1,12 +1,13 @@
 """KPI of the V3 evaluation protocol for any annotated manual (paper/evaluation/PROTOCOLLO_V3.md).
 
-Expected layout: <runs>/<manual>/r1, r2, ... are V3 runs (scripts/kg_v3.py --out) and
-<runs>/<manual>/v22 is the optional v22 baseline (scripts/kg_v3_v22_baseline.py). The gold
-is paper/evaluation/gold_v3/<manual>/gold.json, or gold_segments_v1 for the historical cases.
+Layout: <runs>/<manual>/runs/ (campaign) or <runs>/<manual>/ holds V3 runs (v3_r1, ...)
+and the optional v22 baseline (v22). The gold is campaign/<manual>/gold/gold.json, or
+paper/evaluation/gold_segments_v1 for the historical cases. Usually called through
+scripts/campaign.py kpi.
 
 Usage:
-    .venv/bin/python scripts/kg_v3_kpi.py --manuals genie_scissor,grundfos_paco --runs eval_runs/v3_campaign \\
-        --out paper/experiments/v3_campaign/kpi.json
+    .venv/bin/python scripts/kg_v3_kpi.py --manuals genie_scissor,grundfos_paco --runs campaign \\
+        --out campaign/results/kpi.json
 """
 
 from __future__ import annotations
@@ -26,7 +27,7 @@ sys.path.insert(0, str(ROOT))
 from scripts.kg_v3 import DEFAULT_BUDGET, DEFAULT_LEDGER, load_evidence, manual_source  # noqa: E402
 from scripts.kg_v3_evaluate import score_system, v3_edges, v22_edges_from  # noqa: E402
 
-GOLD_V3 = ROOT / "paper/evaluation/gold_v3"
+CAMPAIGN = ROOT / "campaign"
 GOLD_V1 = ROOT / "paper/evaluation/gold_segments_v1"
 
 
@@ -40,7 +41,7 @@ def wilson(successes: int, total: int) -> list[float]:
 
 
 def load_gold(manual: str) -> tuple[list[dict], list[int]]:
-    path = GOLD_V3 / manual / "gold.json"
+    path = CAMPAIGN / manual / "gold" / "gold.json"
     if path.exists():
         data = json.loads(path.read_text())
         return data["claims"], data.get("pages", [])
@@ -76,14 +77,15 @@ async def evaluate(manuals: list[str], runs_root: Path) -> dict:
         branches = defaultdict(list)
         for claim in claims:
             branches[claim["branch_id"]].append(claim["claim_id"])
-        folder = runs_root / manual
+        folder = runs_root / manual / "runs" if (runs_root / manual / "runs").exists() else runs_root / manual
         systems = {}
         for run in sorted(item for item in folder.iterdir() if item.is_dir()) if folder.exists() else []:
             if run.name == "v22" and (run / "graph.json").exists():
                 systems["v22"] = (v22_edges_from(run / "graph.json", doc, evidence), json.loads(
                     (run / "timing.json").read_text()) if (run / "timing.json").exists() else {})
             elif (run / "graph.json").exists() and (run / "report.json").exists():
-                systems[f"v3_{run.name}"] = (v3_edges(run), v3_run_facts(run))
+                name = run.name if run.name.startswith("v3_") else f"v3_{run.name}"
+                systems[name] = (v3_edges(run), v3_run_facts(run))
         rows = {}
         for name, (edges, facts) in systems.items():
             score = await score_system(llm, claims, edges)

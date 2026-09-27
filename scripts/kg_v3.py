@@ -23,9 +23,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 MANIFEST = ROOT / "paper/experiments/robustness_20260925/manifest.json"
-CAMPAIGN_REGISTRY = ROOT / "paper/manuals/v3_campaign_manuals.json"
-# The V3 test campaign has its own ledger and a 10 USD cap for every call it makes.
-DEFAULT_LEDGER = ROOT / "paper/experiments/v3_campaign/real_call_budget.jsonl"
+CAMPAIGN = ROOT / "campaign"
+# The V3 campaign has its own ledger and a 10 USD cap for every call it makes.
+DEFAULT_LEDGER = CAMPAIGN / "real_call_budget.jsonl"
 DEFAULT_BUDGET = "10"
 GATE_PRESETS = {
     # An agent cannot judge a whole graph from its summary: in unattended runs
@@ -71,12 +71,12 @@ def load_evidence(pdf: Path, asset: dict):
 
 
 def manual_source(manual_id: str) -> tuple[Path, dict]:
-    """PDF and machine identity of a development manual or a registered campaign manual."""
+    """PDF and machine identity of a campaign manual (campaign/<id>) or a development manual."""
 
-    campaign = json.loads(CAMPAIGN_REGISTRY.read_text())["manuals"] if CAMPAIGN_REGISTRY.exists() else []
-    found = next((item for item in campaign if item["manual_id"] == manual_id), None)
-    if found:
-        return ROOT / found["file"], found["asset"]
+    if (CAMPAIGN / manual_id / "info.yaml").exists():
+        from scripts.campaign import asset
+
+        return CAMPAIGN / manual_id / "manual.pdf", asset(manual_id)
     spec = next(item for item in json.loads(MANIFEST.read_text())["manuals"] if item["manual_id"] == manual_id)
     return ROOT / "paper/manuals/files" / spec["file_name"], spec["asset"]
 

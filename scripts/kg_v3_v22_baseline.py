@@ -4,7 +4,7 @@ The manual goes through the real workspace API with an isolated database and the
 campaign ledger. The v22 graph is written to <out>/graph.json with its timing.
 
 Usage:
-    .venv/bin/python scripts/kg_v3_v22_baseline.py --manual genie_scissor --out eval_runs/v3_campaign/genie_scissor/v22
+    .venv/bin/python scripts/kg_v3_v22_baseline.py --manual genie_scissor --out campaign/genie_scissor/runs/v22
 """
 
 from __future__ import annotations

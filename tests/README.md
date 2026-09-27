@@ -44,6 +44,7 @@ generation and repository behavior.
 and the whole pipeline with a scripted provider (resume without calls, budgeted
 questions, truncation splitting, application revision). `tests/conftest.py` pins
 the retained PDF tests to `legacy_v22`; V3 tests opt in explicitly.
+`tests/test_campaign.py` covers reading the campaign annotation sheet.
 
 ### Contract tests
 

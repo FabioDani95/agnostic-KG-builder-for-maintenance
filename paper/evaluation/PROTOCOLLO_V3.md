@@ -63,9 +63,10 @@ di errori non visti: annota prima di qualsiasi esecuzione, ricontrolla a distanz
 almeno un giorno il 20% dei rami scelti a caso, e registra nome, data e minuti. Il
 paper dichiarerà il limite: nessuna misura di accordo tra annotatori.
 
-**Strumento.** `scripts/kg_v3_annotate.py`: `register` registra il PDF e la macchina,
-`sheet` genera `paper/evaluation/gold_v3/<manuale>/ANNOTAZIONE.md` per le pagine scelte,
-`parse` produce `gold.json` e segnala ID sbagliati o azioni senza tipo.
+**Strumento.** Tutto passa da `scripts/campaign.py` e dalla cartella
+[campaign](../../campaign/README.md): `prepare` scrive il testo del manuale in segmenti
+(`gold/TESTO.md`) e il foglio vuoto (`gold/ANNOTAZIONE.md`), `gold` legge il foglio in
+`gold/gold.json` e segnala ID inesistenti o azioni senza tipo.
 
 ## 4. KPI
 
@@ -86,22 +87,16 @@ Esecuzioni fallite e domande senza risposta restano nel denominatore.
 
 ## 5. Procedura per ogni manuale
 
-1. Registrare il manuale e fissarne lo split (`kg_v3_annotate.py register`).
-2. Annotare il gold **prima** di qualsiasi esecuzione (`sheet`, poi `parse`).
-3. Eseguire la V3 3 volte con i cancelli gestiti dall'agente
-   (`kg_v3.py --manual <id> --out eval_runs/v3_campaign/<id>/r1`, poi r2, r3) e la v22 una
-   volta (`kg_v3_v22_baseline.py --manual <id> --out eval_runs/v3_campaign/<id>/v22`).
-4. KPI automatici: `kg_v3_kpi.py --manuals <id,...> --runs eval_runs/v3_campaign --out
-   paper/experiments/v3_campaign/kpi.json` (scrive anche `kpi.md`).
-5. Revisione cieca della precisione su un campione mescolato V3/v22
-   (`kg_v3_precision_sheet.py`).
-6. Solo in fase A: analisi degli errori e correzioni dell'architettura, sempre con regole
-   strutturali e non legate a un produttore; ogni correzione con un test.
+I passi e i comandi sono nel [README della campagna](../../campaign/README.md):
+cartella del manuale, PDF e `info.yaml`, testo e foglio, gold scritto **prima** di
+qualsiasi esecuzione, 3 esecuzioni V3 e una v22, KPI, revisione cieca della precisione.
+Solo in fase A seguono l'analisi degli errori e le correzioni dell'architettura, sempre
+con regole strutturali e non legate a un produttore, e ogni correzione con un test.
 
 ## Budget
 
 Tetto di **10 USD per l'intera campagna** (fasi A e C, esecuzioni, v22 e giudice), su un
-registro separato: `paper/experiments/v3_campaign/real_call_budget.jsonl`. Gli script lo
+registro separato: `campaign/real_call_budget.jsonl`. Gli script lo
 usano per impostazione predefinita; il registro blocca ogni chiamata oltre il tetto.
 Stima: circa 0,15 USD per un'esecuzione V3 di un manuale di 200 pagine, fino a 0,12 USD
 per la v22, pochi centesimi per il giudice.

@@ -15,6 +15,8 @@ not work that is still pending.
   correction, document verification, reproducibility and unresolved limitations.
 - [Piano V3](PIANO_V3.md) — approved target architecture replacing the v22 PDF
   path: six stations, tolerant checks, and gates answered by a person or an agent.
+- [V3 evaluation campaign](../campaign/README.md) — where new manuals, gold
+  annotations, generated graphs and KPIs live, and the command for each step.
 - [V3 risultati di sviluppo](V3_RISULTATI_SVILUPPO.md) — V3 versus v22 on the four
   development manuals: recovered cases, human load, time and cost.
 - [Scientific status](../paper/STATUS.md) — evidence supporting paper claims,
