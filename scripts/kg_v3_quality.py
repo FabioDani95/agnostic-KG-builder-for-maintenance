@@ -57,6 +57,18 @@ def relations(graph: dict) -> set[tuple]:
     return {(e['type'], names[e['from']], names[e['to']]) for e in graph['edges'] if not e.get('derived')}
 
 
+def different_pairs(run: Path) -> list[dict]:
+    gate_path = run / "state/gate_doubts.json"
+    gate = json.loads(gate_path.read_text()) if gate_path.exists() else {}
+    rejected = {a["question_id"] for a in gate.get("answers", []) if a.get("option_id") == "different"}
+    pairs = []
+    for path in sorted((run / "state").glob("merge_plan_*.json")):
+        plan = json.loads(path.read_text())
+        pairs.extend(plan.get("different", []))
+        pairs.extend(p for p in plan.get("unsure", []) if f"merge:{p['left']}|{p['right']}" in rejected)
+    return pairs
+
+
 def measure(root: Path, runs_name: str = 'runs') -> dict:
     result = {'definition': 'Offline structural diagnostics; no gold, no semantic precision estimate.',
               'runs_directory': runs_name, 'manuals': {}}
@@ -68,8 +80,7 @@ def measure(root: Path, runs_name: str = 'runs') -> dict:
                 runs[run.name] = {'status': 'missing_graph'}
                 continue
             graph = json.loads(path.read_text())
-            different = [pair for plan in sorted((run / 'state').glob('merge_plan_*.json'))
-                         for pair in json.loads(plan.read_text()).get('different', [])]
+            different = different_pairs(run)
             runs[run.name] = {'status': graph.get('status'), 'graph_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
                               **graph_metrics(graph, different)}
             signatures[run.name] = relations(graph)

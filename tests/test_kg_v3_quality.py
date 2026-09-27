@@ -25,3 +25,17 @@ def test_quality_detects_judge_difference_and_ignores_root_navigation():
     assert row['fusion_violations'] == 1
     assert row['orphan_causes'] == 1
     assert row['edges_without_evidence'] == 0
+
+
+def test_quality_includes_differences_decided_at_review_gate(tmp_path):
+    import json
+
+    from scripts.kg_v3_quality import different_pairs
+
+    state = tmp_path / "state"
+    state.mkdir()
+    pair = {"left": "a", "right": "b", "left_name": "high", "right_name": "low", "type": "FailureMode"}
+    (state / "merge_plan_x.json").write_text(json.dumps({"unsure": [pair]}))
+    (state / "gate_doubts.json").write_text(json.dumps({"answers": [
+        {"question_id": "merge:a|b", "option_id": "different"}]}))
+    assert different_pairs(tmp_path) == [pair]
