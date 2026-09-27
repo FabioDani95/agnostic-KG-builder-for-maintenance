@@ -1,0 +1,119 @@
+{
+ "status": "approved",
+ "pages": 50,
+ "page_labels": {
+  "other": 24,
+  "unreadable": 1,
+  "procedure": 22,
+  "diagnostic": 3
+ },
+ "diagnostic_pages": [
+  28,
+  43,
+  44
+ ],
+ "confirmed_pages": [
+  43,
+  44
+ ],
+ "map_demotions_refused": [],
+ "units": 2,
+ "failed_reads": 0,
+ "proposals": 172,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "coverage: 2 unused table row(s) read again",
+  "B: relation 103 skipped (Symptom to Symptom is not in the ontology)",
+  "B: relation 105 skipped (Symptom to CorrectiveAction is not in the ontology)"
+ ],
+ "assertions_by_tier": {
+  "green": 143,
+  "red": 5
+ },
+ "witnesses": {
+  "structure": 144,
+  "reviewer": 12,
+  "verifier": 110,
+  "agreement": 24
+ },
+ "verifier_verdicts": {
+  "not_called": 28,
+  "supported": 110,
+  "not_supported": 10
+ },
+ "graph": {
+  "nodes": 121,
+  "nodes_by_type": {
+   "Symptom": 13,
+   "FailureMode": 49,
+   "Component": 24,
+   "CorrectiveAction": 35
+  },
+  "edges": 138,
+  "edges_by_tier": {
+   "green": 133,
+   "red": 5
+  },
+  "merged_aliases": 5
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 10,
+   "answered": 10,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 11,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 12,
+ "merged_cell_relations": 0,
+ "usage": {
+  "calls": 13,
+  "failed_calls": 0,
+  "prompt_tokens": 67681,
+  "completion_tokens": 23031,
+  "estimated_cost_usd": 0.017386,
+  "by_operation": {
+   "kg_v3_extract": 5,
+   "kg_v3_map": 2,
+   "kg_v3_merge": 1,
+   "kg_v3_verify": 5
+  }
+ },
+ "agent_usage": {
+  "calls": 11,
+  "failed_calls": 0,
+  "prompt_tokens": 14478,
+  "completion_tokens": 5112,
+  "estimated_cost_usd": 0.004225,
+  "by_operation": {
+   "AgentDecision": 11
+  }
+ },
+ "seconds": {
+  "map": 9.194,
+  "gate_map": 17.322,
+  "extract": 42.88,
+  "check": 9.346,
+  "merge": 2.014,
+  "gate_doubts": 10.647,
+  "gate_approval": 0.001,
+  "total": 91.536
+ },
+ "prompt_ids": {
+  "extraction": "b647d14f75837e79"
+ }
+}

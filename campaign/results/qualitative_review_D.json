@@ -1,0 +1,1211 @@
+[
+  {
+    "manual": "abb_acs580_01",
+    "run": "v3_r1",
+    "finding": "Blinking and flickering are distinct in the source but merged as synonyms. Normal Bluetooth states also appear as FailureMode nodes.",
+    "severity": "semantic error despite zero fusion_violations",
+    "node": {
+      "id": "v3n_bdd62e2294084118b9d5",
+      "type": "Symptom",
+      "name": "Control panel blue LED blinking",
+      "aliases": [
+        "Control panel blue LED flickering"
+      ],
+      "stated_in_source": false,
+      "properties": {
+        "symptom_id": "v3n_bdd62e2294084118b9d5",
+        "name": "Control panel blue LED blinking",
+        "description": "Control panel blue LED blinking",
+        "severity": "Unknown"
+      },
+      "evidence": [
+        {
+          "segment_id": "p232.t1.r5",
+          "page": 232,
+          "evidence_id": "ev_65589aff2b39454a84eac1855b02",
+          "bbox": null,
+          "text": "column 1 (same as row above): Panel has no power | column 2:  | column 3:  | column 4: Blue | column 5: Panels with a Bluetooth interface only. Blinking: Bluetooth interface is enabled. It is in discoverable mode and ready for pairing. Flickering: Data is transfered through the Bluetooth interface of the control panel."
+        }
+      ]
+    },
+    "judge_same": [
+      {
+        "left": "Symptom|control panel blue led blinking",
+        "right": "Symptom|control panel blue led flickering",
+        "left_name": "Control panel blue LED blinking",
+        "right_name": "Control panel blue LED flickering",
+        "type": "Symptom",
+        "left_cites": [
+          "p232.t1.r5"
+        ],
+        "right_cites": [
+          "p232.t1.r5"
+        ],
+        "verdict": "same"
+      }
+    ],
+    "scope": "targeted audit, not a precision estimate",
+    "pdf_visual_check": {
+      "pdf_page": 232,
+      "printed_page": 228,
+      "section": "Control panel LEDs",
+      "confirmed": "Blue: Blinking = discoverable for pairing; Flickering = data transfer. Left steady-red area is blank in the blue row."
+    }
+  },
+  {
+    "manual": "abb_acs580_01",
+    "run": "v3_r1",
+    "finding": "A context item labelled expected combines the instruction Use 1000 V DC with an expected insulation-resistance threshold. Typed fields do not guarantee correct semantic typing.",
+    "segment": "p169.b4",
+    "scope": "targeted audit, not a precision estimate"
+  },
+  {
+    "manual": "atlascopco_drb_booster",
+    "run": "v3_r1",
+    "source": "p43.t1.r6",
+    "finding": "Oil-slinger cause has no exported action. Extraction proposed immediate shutdown plus service; verifier supported it, but F6 withheld structure and the reviewer rejected the compound remedy. Neighbouring rotor-untrue cause retains immediate shutdown plus service. Correct service-only remedy is still missing.",
+    "scope": "targeted audit, not a precision estimate",
+    "review_answers": [
+      {
+        "question_id": "rel:u001-3b7557:B.R5",
+        "option_id": "correct",
+        "text": "Statement 7 is not supported as written: the remedy for the oil slinger disc contacting the gear housing or oil pipe is only to contact Atlas Copco Service; it does not say to shut down the pump immediately.",
+        "edits": {
+          "keep": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            8
+          ]
+        },
+        "rationale": "The pump-too-loud row pairs statements 1\u20136 and 8 with the stated remedies, but pairs the oil slinger disc fault only with Atlas Copco Service, without an immediate-shutdown instruction.",
+        "cited_segment_ids": [
+          "p43.t1.r6"
+        ],
+        "confident": true,
+        "answered_by": {
+          "kind": "agent",
+          "name": "gpt-6-luna",
+          "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+        },
+        "answered_at": "2026-09-27T19:26:18.577296Z"
+      }
+    ]
+  },
+  {
+    "manual": "graco_gtx_2000ex",
+    "finding": "Pressure-relief prerequisite is attached to every exported action edge in all three new runs, including page-9 continuation. Counts per evidence page overlap when section context cites page 8.",
+    "scope": "targeted source-context audit, not semantic precision estimate",
+    "runs": [
+      {
+        "run": "v3_r1",
+        "action_edges": 24,
+        "by_evidence_page": {
+          "8": {
+            "actions": 24,
+            "with_pressure_prerequisite": 24
+          },
+          "9": {
+            "actions": 13,
+            "with_pressure_prerequisite": 13
+          }
+        },
+        "contexts": [
+          {
+            "cite": [
+              "p8.b3"
+            ],
+            "kind": "prerequisite",
+            "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6."
+          },
+          {
+            "cite": [
+              "p8.t1.r5"
+            ],
+            "kind": "prerequisite",
+            "text": "Relieve pressure before removing the gun from the material hose"
+          },
+          {
+            "cite": [
+              "p8.t1.r14"
+            ],
+            "kind": "prerequisite",
+            "text": "Relieve pressure before cleaning the hose"
+          },
+          {
+            "cite": [
+              "p8.t1.r6"
+            ],
+            "kind": "prerequisite",
+            "text": "Relieve pressure before flushing the hose"
+          },
+          {
+            "cite": [
+              "p8.b3"
+            ],
+            "kind": "prerequisite",
+            "text": "Before performing troubleshooting procedures, follow the Pressure Relief procedure on page 6."
+          }
+        ]
+      },
+      {
+        "run": "v3_r2",
+        "action_edges": 21,
+        "by_evidence_page": {
+          "8": {
+            "actions": 21,
+            "with_pressure_prerequisite": 21
+          },
+          "9": {
+            "actions": 11,
+            "with_pressure_prerequisite": 11
+          }
+        },
+        "contexts": [
+          {
+            "cite": [
+              "p8.b3"
+            ],
+            "kind": "prerequisite",
+            "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6."
+          }
+        ]
+      },
+      {
+        "run": "v3_r3",
+        "action_edges": 27,
+        "by_evidence_page": {
+          "8": {
+            "actions": 27,
+            "with_pressure_prerequisite": 27
+          },
+          "9": {
+            "actions": 15,
+            "with_pressure_prerequisite": 15
+          }
+        },
+        "contexts": [
+          {
+            "cite": [
+              "p8.b3"
+            ],
+            "kind": "prerequisite",
+            "text": "Follow the Pressure Relief procedure on page 6 before performing any troubleshooting procedures."
+          },
+          {
+            "cite": [
+              "p8.b3"
+            ],
+            "kind": "prerequisite",
+            "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "manual": "atlascopco_drb_booster",
+    "run": "v3_r3",
+    "finding": "Both reads returned many entities (118/121) but zero relations; their unclear citations covered all table rows and suppressed the coverage read. The empty graph was automatically approved. This failed run remains in the main comparison.",
+    "scope": "Observed output and saved model traces; not attributed uniquely to F1\u2013F7 without ablation."
+  },
+  {
+    "manual": "haas_mill_2023",
+    "finding": "Battery replacement warning: missing in r1 export, battery action absent in r2, preserved as warning in r3. Beep/red LED correctly typed expected in r2/r3; page 160 produces no relation in r1 despite map selection. In r3 the G04 delay is wrongly ordered after touching the stylus; the PDF puts all three MDI commands in step 1, before touching in step 2. Typed context is representable but still semantically unstable.",
+    "mechanism_r1": "The warning-bearing B battery proposal is split from A after a different verdict. It loses its agreement/verifier witnesses, becomes red without another review, and is excluded; A survives without the warning.",
+    "runs": [
+      {
+        "run": "v3_r1",
+        "selected_action_edges": [
+          {
+            "id": "v3e_a8dbac9abcc0227ad116",
+            "cause": "Robot pulse coder batteries are low",
+            "action": "Replace the robot pulse coder batteries",
+            "context": [
+              {
+                "kind": "if",
+                "text": "Replace the batteries as soon as possible.",
+                "cite": [
+                  "p144.t2.r7"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "run": "v3_r2",
+        "selected_action_edges": [
+          {
+            "id": "v3e_3361afef022cf2232206",
+            "cause": "Unspecified cause of incorrect tool probe operation",
+            "action": "Run M59 P2, G04 P1.0, and M59 P3 in MDI mode",
+            "context": [
+              {
+                "kind": "expected",
+                "text": "The probe LED flashes green.",
+                "cite": [
+                  "p160.b19",
+                  "p160.b21"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_88820b6e5e49d2edd540",
+            "cause": "Unspecified cause of incorrect tool probe operation",
+            "action": "Touch the tool probe stylus",
+            "context": [
+              {
+                "kind": "expected",
+                "text": "The machine beeps and the LED becomes red, indicating that the tool probe has started.",
+                "cite": [
+                  "p160.b9",
+                  "p160.b11",
+                  "p160.b13"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_84bbdab614b8ccf90bb7",
+            "cause": "Unspecified cause of incorrect tool probe operation",
+            "action": "Press RESET to deactivate the tool probe",
+            "context": [
+              {
+                "kind": "expected",
+                "text": "The probe LED turns off.",
+                "cite": [
+                  "p160.b22"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_81c7556d8db5d1df9976",
+            "cause": "Unspecified cause of incorrect work probe operation",
+            "action": "Select or manually insert the work probe into the spindle",
+            "context": []
+          },
+          {
+            "id": "v3e_15c801571a795dd6038f",
+            "cause": "Unspecified cause of incorrect work probe operation",
+            "action": "Run M69 P2 in MDI mode",
+            "context": []
+          },
+          {
+            "id": "v3e_ed39221c174eea51c658",
+            "cause": "Unspecified cause of incorrect work probe operation",
+            "action": "Run M59 P3 in MDI mode",
+            "context": [
+              {
+                "kind": "expected",
+                "text": "The probe LED flashes green.",
+                "cite": [
+                  "p160.b33"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_057319e479bfde44dc8b",
+            "cause": "Unspecified cause of incorrect work probe operation",
+            "action": "Touch the work probe stylus",
+            "context": [
+              {
+                "kind": "expected",
+                "text": "The machine beeps and the LED becomes red, indicating that the work probe has started.",
+                "cite": [
+                  "p160.b27",
+                  "p160.b28"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_b776ce8bac6fc4b97b64",
+            "cause": "Unspecified cause of incorrect work probe operation",
+            "action": "Press RESET to deactivate the work probe",
+            "context": [
+              {
+                "kind": "expected",
+                "text": "The work probe LED turns off.",
+                "cite": [
+                  "p160.b34"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "run": "v3_r3",
+        "selected_action_edges": [
+          {
+            "id": "v3e_5b961a6e8782190df4f6",
+            "cause": "Pulse coder batteries low",
+            "action": "Replace the pulse coder batteries as soon as possible",
+            "context": [
+              {
+                "kind": "warning",
+                "text": "Do NOT turn off the robot; otherwise it may require remastering.",
+                "cite": [
+                  "p144.t2.r7"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_821dd68e93484f93bdbb",
+            "cause": "Unspecified cause of tool probe malfunction",
+            "action": "Run the tool-probe activation commands in MDI",
+            "context": [
+              {
+                "kind": "order",
+                "text": "Perform after running M59 P2 ;",
+                "cite": [
+                  "p160.b6",
+                  "p160.b7",
+                  "p160.b8"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_29c1ba32619e31cca918",
+            "cause": "Unspecified cause of tool probe malfunction",
+            "action": "Touch the tool probe stylus",
+            "context": [
+              {
+                "kind": "expected",
+                "text": "The machine beeps and the tool-probe LED becomes red.",
+                "cite": [
+                  "p160.b9",
+                  "p160.b11",
+                  "p160.b13"
+                ]
+              },
+              {
+                "kind": "order",
+                "text": "Press RESET after the probe is started",
+                "cite": [
+                  "p160.b14",
+                  "p160.b18"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_49692402d429f740a11b",
+            "cause": "Unspecified cause of work probe malfunction",
+            "action": "Start communication with the work probe in MDI",
+            "context": [
+              {
+                "kind": "order",
+                "text": "Touch the stylus after selecting or inserting the work probe",
+                "cite": [
+                  "p160.b25",
+                  "p160.b26"
+                ]
+              },
+              {
+                "kind": "prerequisite",
+                "text": "Select the work probe with a tool change, or manually insert it into the spindle.",
+                "cite": [
+                  "p160.b25"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_f2082fa43f7da8237519",
+            "cause": "Unspecified cause of work probe malfunction",
+            "action": "Run M59 P3 in MDI to turn on the work probe",
+            "context": [
+              {
+                "kind": "expected",
+                "text": "The work-probe LED flashes green.",
+                "cite": [
+                  "p160.b33"
+                ]
+              },
+              {
+                "kind": "order",
+                "text": "Run after M69 P2 ;",
+                "cite": [
+                  "p160.b29",
+                  "p160.b32"
+                ]
+              },
+              {
+                "kind": "prerequisite",
+                "text": "Select the work probe with a tool change, or manually insert it into the spindle.",
+                "cite": [
+                  "p160.b25"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_dde020954eb67afc8081",
+            "cause": "Unspecified cause of work probe malfunction",
+            "action": "Touch the work probe stylus",
+            "context": [
+              {
+                "kind": "expected",
+                "text": "The machine beeps and the work-probe LED becomes red.",
+                "cite": [
+                  "p160.b27",
+                  "p160.b28"
+                ]
+              },
+              {
+                "kind": "order",
+                "text": "Press RESET after the probe is started",
+                "cite": [
+                  "p160.b28",
+                  "p160.b31"
+                ]
+              },
+              {
+                "kind": "prerequisite",
+                "text": "Select the work probe with a tool change, or manually insert it into the spindle.",
+                "cite": [
+                  "p160.b25"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_dce7401dbc41d03c81c2",
+            "cause": "Unspecified cause of tool probe malfunction",
+            "action": "Run M59 P2 ; in MDI mode",
+            "context": [
+              {
+                "kind": "order",
+                "text": "First step of the tool probe operating check",
+                "cite": [
+                  "p160.b6",
+                  "p160.b8"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_eab0406608c43e7b254a",
+            "cause": "Unspecified cause of tool probe malfunction",
+            "action": "Run G04 P1.0 ; in MDI mode",
+            "context": [
+              {
+                "kind": "order",
+                "text": "Run after touching the stylus",
+                "cite": [
+                  "p160.b7",
+                  "p160.b10"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_78d7517fe39a0ccd713a",
+            "cause": "Unspecified cause of tool probe malfunction",
+            "action": "Run M59 P3 ; in MDI mode",
+            "context": [
+              {
+                "kind": "order",
+                "text": "Run after the one-second delay",
+                "cite": [
+                  "p160.b10",
+                  "p160.b12"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_15d0e8e5bbd346d2f789",
+            "cause": "Unspecified cause of work probe malfunction",
+            "action": "Select the work probe with a tool change or manually insert it into the spindle",
+            "context": [
+              {
+                "kind": "order",
+                "text": "Select or insert the work probe before running the MDI commands",
+                "cite": [
+                  "p160.b24",
+                  "p160.b25"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3e_e949c44702d3221fd39e",
+            "cause": "Unspecified cause of work probe malfunction",
+            "action": "Run M69 P2 ; in MDI mode",
+            "context": [
+              {
+                "kind": "order",
+                "text": "Run in MDI mode after selecting or inserting the work probe",
+                "cite": [
+                  "p160.b25",
+                  "p160.b29"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "scope": "Targeted visual PDF check at pages 144 and 160, not a random precision sample.",
+    "metric_disagreement": {
+      "run": "v3_r3",
+      "claim": "R37.2",
+      "gold_representation": "Do not turn off robot as an inspection action",
+      "graph_representation": "warning on battery replacement",
+      "kpi_verdict": "missing",
+      "source_audit": "Prohibition and remastering consequence are present in the exported warning. Leave frozen KPI unchanged; representation-sensitive false negative in this targeted case."
+    }
+  },
+  {
+    "manual": "lincoln_powermig_215mp",
+    "finding": "Inspect source-linked identities after removing the placeholder treatment of named inferred causes. Distinct power-switch, cable-liner and spool-switch causes are preserved when extracted. Duplicated paraphrases of shared warnings remain.",
+    "scope": "Targeted identity/context audit, not semantic precision estimate.",
+    "runs": [
+      {
+        "run": "v3_r1",
+        "causes": [
+          {
+            "id": "v3n_afd0c6061973952d88f5",
+            "name": "Clogged cable liner or contact tip",
+            "aliases": [],
+            "actions": [
+              {
+                "name": "Check the cable liner and contact tip for clogging",
+                "conditions": [
+                  {
+                    "kind": "warning",
+                    "text": "Do not operate with panels removed. Before servicing or installing kits, disconnect the machine from power and wait at least two minutes before removing sheet metal.",
+                    "cite": [
+                      "p27.b5",
+                      "p27.b6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Do not operate with panels removed. Before servicing or installing kits, disconnect the machine from power and wait at least two minutes before removing sheet metal.",
+                    "cite": [
+                      "p27.b6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If test procedures are not understood or tests/repairs cannot be performed safely, contact the local Lincoln Authorized Field Service Facility for troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p27.b15",
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If you do not understand the test procedures or cannot perform tests or repairs safely, contact the Local Lincoln Authorized Field Service Facility for technical troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p27.b15",
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Observe all safety guidelines detailed throughout the manual.",
+                    "cite": [
+                      "p28.t1.r1",
+                      "p29.t1.r1"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric Factory Trained Personnel. Unauthorized repairs may endanger the technician and machine operator and invalidate the factory warranty; observe the manual's safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric Factory Trained Personnel; unauthorized repairs may endanger the technician and operator and invalidate the factory warranty. Observe all safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Contact a Lincoln Authorized Field Service Facility if the problem persists",
+                "conditions": [
+                  {
+                    "kind": "if",
+                    "text": "If all recommended possible areas of misadjustment have been checked and the problem persists.",
+                    "cite": [
+                      "p28.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Do not operate with panels removed. Before servicing or installing kits, disconnect the machine from power and wait at least two minutes before removing sheet metal.",
+                    "cite": [
+                      "p27.b6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If test procedures are not understood or tests/repairs cannot be performed safely, contact the local Lincoln Authorized Field Service Facility for troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p27.b15",
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Observe all safety guidelines detailed throughout the manual.",
+                    "cite": [
+                      "p28.t1.r1",
+                      "p29.t1.r1"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric Factory Trained Personnel; unauthorized repairs may endanger the technician and operator and invalidate the factory warranty. Observe all safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3n_0835e6294af14017238d",
+            "name": "Power switch is not ON",
+            "aliases": [
+              "Power switch is not in the ON position"
+            ],
+            "actions": [
+              {
+                "name": "Set the power switch to ON",
+                "conditions": [
+                  {
+                    "kind": "warning",
+                    "text": "Do not operate with panels removed. Before servicing or installing kits, disconnect the machine from power and wait at least two minutes before removing sheet metal.",
+                    "cite": [
+                      "p27.b5",
+                      "p27.b6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Do not operate with panels removed. Before servicing or installing kits, disconnect the machine from power and wait at least two minutes before removing sheet metal.",
+                    "cite": [
+                      "p27.b6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If test procedures are not understood or tests/repairs cannot be performed safely, contact the local Lincoln Authorized Field Service Facility for troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p27.b15",
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If you do not understand the test procedures or cannot perform tests or repairs safely, contact the Local Lincoln Authorized Field Service Facility for technical troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p27.b15",
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Observe all safety guidelines detailed throughout the manual.",
+                    "cite": [
+                      "p28.t1.r1",
+                      "p29.t1.r1"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric Factory Trained Personnel. Unauthorized repairs may endanger the technician and machine operator and invalidate the factory warranty; observe the manual's safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric Factory Trained Personnel; unauthorized repairs may endanger the technician and operator and invalidate the factory warranty. Observe all safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3n_ddeb3438e372773f5c16",
+            "name": "Spool gun switch is not set to the desired location",
+            "aliases": [
+              "Spool gun switch is set to the undesired location"
+            ],
+            "actions": [
+              {
+                "name": "Check the spool gun switch setting in the wire drive compartment",
+                "conditions": [
+                  {
+                    "kind": "warning",
+                    "text": "Do not operate with panels removed. Before servicing or installing kits, disconnect the machine from power and wait at least two minutes before removing sheet metal.",
+                    "cite": [
+                      "p27.b6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If test procedures are not understood or tests/repairs cannot be performed safely, contact the local Lincoln Authorized Field Service Facility for troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p27.b15",
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Observe all safety guidelines detailed throughout the manual.",
+                    "cite": [
+                      "p28.t1.r1",
+                      "p29.t1.r1"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric Factory Trained Personnel; unauthorized repairs may endanger the technician and operator and invalidate the factory warranty. Observe all safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Contact a Lincoln Authorized Field Service Facility if the problem persists",
+                "conditions": [
+                  {
+                    "kind": "if",
+                    "text": "If all recommended possible areas of misadjustment have been checked and the problem persists.",
+                    "cite": [
+                      "p28.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Do not operate with panels removed. Before servicing or installing kits, disconnect the machine from power and wait at least two minutes before removing sheet metal.",
+                    "cite": [
+                      "p27.b6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If test procedures are not understood or tests/repairs cannot be performed safely, contact the local Lincoln Authorized Field Service Facility for troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p27.b15",
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Observe all safety guidelines detailed throughout the manual.",
+                    "cite": [
+                      "p28.t1.r1",
+                      "p29.t1.r1"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric Factory Trained Personnel; unauthorized repairs may endanger the technician and operator and invalidate the factory warranty. Observe all safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "run": "v3_r2",
+        "causes": [
+          {
+            "id": "v3n_58bfbd66f6272fd71a77",
+            "name": "Clogged cable liner",
+            "aliases": [],
+            "actions": [
+              {
+                "name": "Check the cable liner and contact tip for clogging",
+                "conditions": [
+                  {
+                    "kind": "warning",
+                    "text": "Do not operate with panels removed. Before servicing or installing kits, disconnect the machine from power and wait at least two minutes before removing sheet metal.",
+                    "cite": [
+                      "p27.b5",
+                      "p27.b6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If the test procedures are not understood or tests and repairs cannot be performed safely, contact the local Lincoln Authorized Field Service Facility for technical troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p27.b15",
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Observe all safety guidelines detailed throughout the manual.",
+                    "cite": [
+                      "p28.t1.r1",
+                      "p29.t1.r1"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric factory-trained personnel; unauthorized repairs may endanger the technician and operator and invalidate the factory warranty. Observe the manual's safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Contact Lincoln field service if the problem persists after checking misadjustments",
+                "conditions": []
+              }
+            ]
+          },
+          {
+            "id": "v3n_afd0c6061973952d88f5",
+            "name": "Clogged cable liner or contact tip",
+            "aliases": [],
+            "actions": [
+              {
+                "name": "Check the cable liner and contact tip for clogging",
+                "conditions": [
+                  {
+                    "kind": "warning",
+                    "text": "Do not operate with panels removed. Before servicing or installing kits, disconnect the machine from power and wait at least two minutes before removing sheet metal.",
+                    "cite": [
+                      "p27.b6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If you do not understand the test procedures or cannot perform tests or repairs safely, contact the Local Lincoln Authorized Field Service Facility for technical troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Observe all safety guidelines detailed throughout the manual.",
+                    "cite": [
+                      "p28.t1.r1",
+                      "p29.t1.r1"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric Factory Trained Personnel; unauthorized repairs may endanger the technician and machine operator and invalidate the warranty. Observe the manual's safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Contact Lincoln field service if the problem persists after checking misadjustments",
+                "conditions": []
+              }
+            ]
+          },
+          {
+            "id": "v3n_4abb88fba1026ce16e63",
+            "name": "Power switch is not ON",
+            "aliases": [],
+            "actions": [
+              {
+                "name": "Contact Lincoln field service if the problem persists after checking misadjustments",
+                "conditions": []
+              }
+            ]
+          },
+          {
+            "id": "v3n_5a543147844a4e0bebfd",
+            "name": "Spool gun switch set to an undesired location",
+            "aliases": [
+              "Spool gun switch is set to the undesired location"
+            ],
+            "actions": [
+              {
+                "name": "Check the spool gun switch setting",
+                "conditions": [
+                  {
+                    "kind": "warning",
+                    "text": "Do not operate with panels removed. Before servicing or installing kits, disconnect the machine from power and wait at least two minutes before removing sheet metal.",
+                    "cite": [
+                      "p27.b6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If you do not understand the test procedures or cannot perform tests or repairs safely, contact the Local Lincoln Authorized Field Service Facility for technical troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Observe all safety guidelines detailed throughout the manual.",
+                    "cite": [
+                      "p28.t1.r1",
+                      "p29.t1.r1"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric Factory Trained Personnel; unauthorized repairs may endanger the technician and machine operator and invalidate the warranty. Observe the manual's safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Check that the spool gun switch is set to the desired location",
+                "conditions": [
+                  {
+                    "kind": "warning",
+                    "text": "Do not operate with panels removed. Before servicing or installing kits, disconnect the machine from power and wait at least two minutes before removing sheet metal.",
+                    "cite": [
+                      "p27.b5",
+                      "p27.b6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If the test procedures are not understood or tests and repairs cannot be performed safely, contact the local Lincoln Authorized Field Service Facility for technical troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p27.b15",
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Observe all safety guidelines detailed throughout the manual.",
+                    "cite": [
+                      "p28.t1.r1",
+                      "p29.t1.r1"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric factory-trained personnel; unauthorized repairs may endanger the technician and operator and invalidate the factory warranty. Observe the manual's safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Contact Lincoln field service if the problem persists after checking misadjustments",
+                "conditions": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "run": "v3_r3",
+        "causes": [
+          {
+            "id": "v3n_afd0c6061973952d88f5",
+            "name": "Clogged cable liner or contact tip",
+            "aliases": [],
+            "actions": [
+              {
+                "name": "Check the cable liner and contact tip for clogging",
+                "conditions": [
+                  {
+                    "kind": "warning",
+                    "text": "Do not operate with panels removed. Before servicing or installing kits, disconnect the machine from power and wait at least two minutes before removing sheet metal.",
+                    "cite": [
+                      "p27.b6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If you do not understand the test procedures or cannot safely perform tests or repairs, contact the Local Lincoln Authorized Field Service Facility for technical troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Observe all safety guidelines detailed throughout the manual.",
+                    "cite": [
+                      "p28.t1.r1",
+                      "p29.t1.r1"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric Factory Trained Personnel. Unauthorized repairs may endanger the technician and machine operator and invalidate the factory warranty; observe the manual's safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3n_0835e6294af14017238d",
+            "name": "Power switch is not in the ON position",
+            "aliases": [],
+            "actions": [
+              {
+                "name": "Check that the power switch is in the ON position",
+                "conditions": [
+                  {
+                    "kind": "warning",
+                    "text": "Do not operate with panels removed. Before servicing or installing kits, disconnect the machine from power and wait at least two minutes before removing sheet metal.",
+                    "cite": [
+                      "p27.b6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If you do not understand test procedures or cannot safely perform tests or repairs, contact the Local Lincoln Authorized Field Service Facility for technical troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p27.b15",
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If you do not understand the test procedures or cannot safely perform tests or repairs, contact the Local Lincoln Authorized Field Service Facility for technical troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Observe all safety guidelines detailed throughout the manual.",
+                    "cite": [
+                      "p28.t1.r1",
+                      "p29.t1.r1"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric Factory Trained Personnel. Unauthorized repairs may endanger the technician and machine operator and invalidate the factory warranty; observe the manual's safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric Factory Trained Personnel; unauthorized repairs may endanger the technician and operator and invalidate the factory warranty. Observe the manual's safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "v3n_ddeb3438e372773f5c16",
+            "name": "Spool gun switch is not set to the desired location",
+            "aliases": [],
+            "actions": [
+              {
+                "name": "Check that the spool gun switch is set to the desired location",
+                "conditions": [
+                  {
+                    "kind": "warning",
+                    "text": "Do not operate with panels removed. Before servicing or installing kits, disconnect the machine from power and wait at least two minutes before removing sheet metal.",
+                    "cite": [
+                      "p27.b6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If you do not understand test procedures or cannot safely perform tests or repairs, contact the Local Lincoln Authorized Field Service Facility for technical troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p27.b15",
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "If you do not understand the test procedures or cannot safely perform tests or repairs, contact the Local Lincoln Authorized Field Service Facility for technical troubleshooting assistance before proceeding.",
+                    "cite": [
+                      "p28.t1.r9",
+                      "p29.t1.r6"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Observe all safety guidelines detailed throughout the manual.",
+                    "cite": [
+                      "p28.t1.r1",
+                      "p29.t1.r1"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric Factory Trained Personnel. Unauthorized repairs may endanger the technician and machine operator and invalidate the factory warranty; observe the manual's safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  },
+                  {
+                    "kind": "warning",
+                    "text": "Service and repair should only be performed by Lincoln Electric Factory Trained Personnel; unauthorized repairs may endanger the technician and operator and invalidate the factory warranty. Observe the manual's safety notes and precautions to avoid electrical shock.",
+                    "cite": [
+                      "p27.b4"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Contact an Authorized Field Service Facility about the damage",
+                "conditions": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

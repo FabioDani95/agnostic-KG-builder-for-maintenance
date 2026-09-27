@@ -291,3 +291,16 @@ il frontend; resta la sola pipeline V3 con gli strumenti della campagna. Ultimo 
 codice precedente: tag `legacy-v22`. I grafi v22 già salvati nella campagna restano come confronto;
 non si possono più generare nuove esecuzioni v22 senza tornare a quel tag. Le versioni fissate in
 `requirements.txt` (PyMuPDF 1.28.0, openai 2.44.0) sono ora quelle usate per gold ed esecuzioni.
+
+## Robustezza V3, fasi 1–2
+
+[Report C→D](../campaign/results/REPORT.md): F1–F7 e metriche oltre il gold implementati;
+18 run congelati a `8abec90`, originali preservati in `runs_C`. Con lo stesso giudice
+aggiornato: 733→684/900 rami; fusioni vietate 8→0, cause orfane 34→35. Sui soli rami
+con azioni: 260→209/396. Il controllo dei PDF trova ancora fusioni semantiche e contesti
+errati: accettazione non raggiunta. Tutti i manuali sono sviluppo; precisione cieca
+ancora non misurata, 61 contrasti da rivedere e nuovo foglio di 108 voci non compilato.
+Atlas D/r3 è vuoto ma automaticamente approvato: correzione successiva `bec1e7c`,
+verificata su replay controllato delle stesse risposte (34/49 rami), distinta dal confronto
+D e non sostituita al fallimento. Spesa aggiuntiva 1,113197 USD entro 5 autorizzati;
+116 test e Ruff verdi. Nessun risultato trasferito al codice finale o al test indipendente.

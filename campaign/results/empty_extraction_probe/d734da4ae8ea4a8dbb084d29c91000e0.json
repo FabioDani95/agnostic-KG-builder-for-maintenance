@@ -1,0 +1,460 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "campaign_D_atlascopco_drb_booster_v3_r3:90c0e1e176dd47a0b2d7b7d1fd18fe22",
+  "run_id": "campaign_D_atlascopco_drb_booster_v3_r3",
+  "started_utc": "2026-09-27T19:28:15.421225+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You build a maintenance knowledge graph from a technical manual. The graph follows this\nfixed ontology; the asset itself (Atlas Copco DRB 250-2000 vacuum booster pump) already exists, never create it.\n\nNode types:\n- Component: A physical or software component or subsystem of the asset involved in troubleshooting.\n- Symptom: An observed issue, anomaly, or visible manifestation detected by the user or system.\n- FailureMode: The underlying technical cause or failure mechanism that may explain one or more symptoms.\n- CorrectiveAction: An action, procedure, or remediation step intended to resolve a failure mode. A corrective action may be an operational procedure the technician performs (action_kind 'procedure') or a documented escalation the manual prescribes when it provides no on-site fix, e.g. 'contact your factory outlet / dealer / service' (action_kind 'escalation').\n- ErrorCode: A machine-generated error code or alert code produced by the asset and linked to troubleshooting knowledge.\nRelations (source type -> target type):\n- Symptom -[MAY_INDICATE]-> FailureMode: The symptom may indicate the specified failure mode.\n- FailureMode -[AFFECTS]-> Component: The failure mode affects the specified component.\n- FailureMode -[RESOLVED_BY]-> CorrectiveAction: The failure mode may be resolved by the specified corrective action.\n- ErrorCode -[INDICATES]-> FailureMode: The error code indicates the specified failure mode.\n\nThe input is a part of the manual split into segments, each starting with its ID in brackets.\nLines marked (context) are read-only: do not create standalone branches from them. Preserve\nprerequisites and warnings from them when they govern actions in the owned section.\n\nRules:\n1. Extract every troubleshooting fact the text states: observed symptoms or error codes, their\n   possible causes (failure modes), the affected components, and the actions that fix them or\n   the checks to perform.\n2. Every entity and relation lists in \"cite\" the IDs of the segments where it is written. Give IDs\n   only, never copy text.\n3. Names are short English phrases with the same meaning as the source. Keep numbers, units,\n   codes, directions and negations. Each name must make sense on its own: an action says what it\n   acts on (\"Clear the restricted air line\", not \"Clear\"), taking the object from the entry.\n   Entity keys are local labels such as E1, E2.\n4. Give one \"record\" label (R1, R2, ...) per source entry: a table row, a list item or a passage\n   about one problem. Relations from the same entry share it. Never join a cause, check or remedy\n   to a problem from another entry.\n5. For an error or alarm code, put the printed code in \"code\" and a short meaning in \"name\". An\n   entry about a code is an ErrorCode linked with its own relation; do not add a Symptom for the\n   same indication unless the manual describes a separate observation (a lamp, a noise, a behaviour).\n   A number indexing a numbered cause list referenced by a matrix is not an ErrorCode.\n   Resolve it to the cited list entry and connect the matrix symptom to that cause.\n   Never invent the contents of a missing numbered entry; report it in unclear.\n6. When one entry lists several remedies or checks (\"clear the valve; replace the seals\"), create\n   one action per remedy or check, each linked to the failure. For a corrective action set \"kind\": repair for actions that fix the fault, inspection for\n   checks, tests and measurements, escalation for contacting service or a dealer. Link checks to\n   the failure with the same relation as repairs, with kind inspection. Other types use \"\".\n7. stated is true only for a cause the manual writes as a cause. If the manual gives an action or\n   check for a symptom without naming a cause, create a failure mode with stated false: name it\n   after the fault the check or remedy points to when that is clear (\"Incorrect input voltage\" for\n   \"make sure the correct voltage is applied\"), otherwise \"Unspecified cause of <symptom>\".\n8. Every relation's conditions are objects with kind, text and cite. Use kind \"if\" for a\n   conditional antecedent or threshold, \"prerequisite\" for something required before the action,\n   \"warning\" for a prohibition or constraint during it, \"expected\" for the result of a test,\n   and \"order\" for its place in a sequence. Never turn a test outcome into a prerequisite.\n   Preserve prohibitions even when the main corrective action is already extracted.\n   In section_context list prerequisites/warnings governing a whole table or procedure,\n   including those in preceding read-only context. Cite the original block and list every\n   applicable record label in records. The code attaches this context to those records' actions.\n9. A failure mode is a faulty state or cause the manual names (worn, blocked, loose, not mapped,\n   out of adjustment). A check to perform is never a failure mode: \"the valves need checking\" is\n   a check. When the manual lists only checks for a problem, link them to a failure mode with\n   stated false as in rule 7. A cause that only repeats the problem is not a cause. A cause derived\n   from a check or remedy is never stated: \"check for the proper size liner\" names a check, so\n   \"liner of the wrong size\" may only appear with stated false.\n10. Numbered steps are marked (step 5), sub-steps (step 5a). A sub-step belongs to its parent\n   step: link it only to the problem or cause of that step, never to another step's cause.\n   Parts of one sentence may be split across several IDs on the same line; cite all of them.\n11. kind repair: the step changes the machine (repair, replace, clean, adjust, tighten, refill).\n   kind inspection: it only observes, measures or tests. A test that decides between possible\n   causes is linked to each cause it confirms, with the condition it checks.\n12. Link a component with AFFECTS only when the source says that this part is worn, damaged,\n   blocked, faulty or out of adjustment in that fault. A part that is only used in the remedy\n   is not affected.\n13. Ignore specifications and part lists unless they state a fault, its cause or its remedy.\n    Preserve warnings that govern the extracted actions as typed context, not standalone faults.\n    List passages you cannot interpret in \"unclear\".\n"
+      },
+      {
+        "role": "user",
+        "content": "=== page 42 ===\n[p42.b3.2] (context) Before packaging (respectively shipping) the pump it should, if possible, be purged with inert gas, but as a minimum requirement it should be completely emptied of all pumped substances. The pump must be packed in such a way, that it will not be damaged during shipping and so that any contaminants are not released from the package. Atlas Copco is not in a position to perform servicing (repairs) and waste disposal of radioactively contaminated pumps. Both needs to be ensured from the side of the user.\n[p42.b4] (context) 40 1625 2135 10 Issue A2\n=== page 43 ===\n[p43.b1] Instruction book\n[p43.b2] 7 Troubleshooting\n[p43.t1.r1] TABLE COLUMNS: Malfunction | Likely cause | Remedy R | epair\n[p43.t1.r2] Malfunction: Pump does not start up. | Likely cause: Motor incorrectly connected. Pressure switch is defective. Oil is too thick. Motor defective. Pump has seized: defective rotors, bearings or toothed gears. | Remedy R: Connect motor correctly. 4 Replace the pressure switch. 4 Exchange the oil or warm up oil and pump. 6 Replace the motor. 4 Atlas Copco Service. - | epair: .4 .4 .3 .5\n[p43.t1.r3] Malfunction: Motor protection switch trips. | Likely cause: Motor defective. Motor protection switch incorrectly set. Pump seizes mechanically. | Remedy R: Replace the motor. 4 Set Motor protection correctly. 4 Atlas Copco Service. - | epair: .5 .3\n[p43.t1.r4] Malfunction: Pump gets too hot. | Likely cause: Ambient temperature is too high or cooling air flow is obstructed. Pump is operating in the wrong pressure range. Pressure differences too high. Gas temperature is too high. Clearance between housing and rotors are too small due to - contamination - distortion of the pump Friction resistance is too high due to contaminated bearings and/or contaminated oil. Oil level is too high. Oil level is too low. Wrong oil filled in. Bearing is defective. Valve of the pressure balance line does not open. | Remedy R: Install the pump at a suitable place or ensure a 4 sufficient flow of cooling air. Check the pressure levels within the system. - Check the pressure levels within the system. - Check system. - Clean pumping chamber. 6 Affix and connect the pump free of tension. 4 Change oil. 6 Drain oil down to the correct level. 6 Top up oil to the correct level. 6 Drain oil, fill in correct oil. 6 Atlas Copco Service. - Clean the valve or have it repaired. 6 | epair: .1 .5 .1/4.5 .3 .3 .3 .3 .7\n[p43.t1.r5] Malfunction: Power consumption of the motor is too high. | Likely cause: Like “Pump gets too hot”. Incorrect mains voltage for the motor. | Remedy R: Like malfunction “Pump gets too hot”. - Connect the motor to the correct mains 2 voltage. | epair: .4/4.4\n[p43.t1.r6] Malfunction: Pump is too loud. | Likely cause: Motor defective. Distances between housing and rotors is too small due to - contamination - distortion of the pump Bearing or gear damage. Pistons make contact with the housing. Rotor is running untrue. Oil slinger disc makes contact with the gear housing or the oil pipe. Oil pump is blocked or defective. | Remedy R: Replace the motor. 4 Clean pumping chamber. 6 Affix and connect the pump free of tensions. 4 Atlas Copco Service, shutdown pump - immediately. Atlas Copco Service, shutdown pump - immediately. Atlas Copco Service, shutdown pump - immediately. Atlas Copco Service. - Atlas Copco Service, shutdown pump - immediately. | epair: .5 .5 .1/4.5\n[p43.b3] Connect motor correctly. Replace the pressure switch. Exchange the oil or warm up oil and pump. Replace the motor. Atlas Copco Service.\n[p43.b4] 4.4 4.4 6.3 4.5 -\n[p43.b5] Replace the motor. Set Motor protection correctly. Atlas Copco Service.\n[p43.b6] 4.5 4.3 -\n[p43.b7] Install the pump at a suitable place or ensure a sufficient flow of cooling air. Check the pressure levels within the system. Check the pressure levels within the system. Check system. Clean pumping chamber. Affix and connect the pump free of tension. Change oil. Drain oil down to the correct level. Top up oil to the correct level. Drain oil, fill in correct oil. Atlas Copco Service. Clean the valve or have it repaired.\n[p43.b8] 4.1 - - - 6.5 4.1/4.5 6.3 6.3 6.3 6.3 - 6.7\n[p43.b9] Like malfunction “Pump gets too hot”. Connect the motor to the correct mains voltage.\n[p43.b10] - 2.4/4.4\n[p43.b11] Replace the motor. Clean pumping chamber. Affix and connect the pump free of tensions. Atlas Copco Service, shutdown pump immediately. Atlas Copco Service, shutdown pump immediately. Atlas Copco Service, shutdown pump immediately. Atlas Copco Service. Atlas Copco Service, shutdown pump immediately.\n[p43.b12] 4.5 6.5 4.1/4.5 - - - - -\n[p43.b13] 1625 2135 10 Issue A2 41\n=== page 44 ===\n[p44.b1] Instruction book\n[p44.t1.r1] TABLE COLUMNS: alfunction | Likely cause | Remedy | Repair\n[p44.t1.r2] alfunction: ump is losing oil. | Likely cause: Oil leak is apparent: Oil drain plug is leaky. Oil level glasses leaky. Gear cover is leaky. Leaky coupling flange No oil leak is apparent: See malfunction “Oil in the pump chamber”. | Remedy: Drain oil, firmly screw in a new oil drain plug with the gasket, fill in correct oil quantity. Atlas Copco Service. Replace the O-ring of the gear cover. Replace the O-ring of the coupling flange. See malfunction “Oil in the pump chamber”. | Repair: 6.3 - - -\n[p44.t1.r3] alfunction: he oil level in the ler drops. | Likely cause: Visible oil leak: Outer shaft sealing ring is defective. No visible oil leak: Inner shaft sealing ring is defective. | Remedy: Replace the shaft sealing rings. In case the oil loss is only slight, the pump may continue to operate providing it is ensured that a sufficient quantity of oil is topped up at the oiler. Replace the shaft sealing rings. Switch the pump off; the draining out oil enters into the bearing chambers, causing there an unacceptably high oil a level. | Repair: 6.9\n[p44.t1.r4] alfunction: il gets too dark. | Likely cause: Oil has been used up. Pump gets too hot. | Remedy: Exchange the oil. See malfunction “Pump gets too hot”; after remedy of the malfunction, exchange the oil. | Repair: 6.3 -\n[p44.t1.r5] alfunction: il in the pump amber. | Likely cause: Oil level is too high. Oil is ejected from the system. Pump is not standing horizontally. Pump has a gas leak towards the outside. Pump has an internal leak. Piston rings are defective. | Remedy: Drain the oil down to the correct level. Check system. Place the pump correctly. Check to see that the oil fill and oil drain plugs are correctly seated, if required replace gaskets. Replace the O-ring of the gear cover. Atlas Copco Service. Atlas Copco Service. | Repair: 6.3 - 4.1 6.3 - -\n[p44.t1.r6] alfunction: ump does not tain its pumping eed. | Likely cause: Intake screen is clogged. Motor incorrectly connected. Vacuum pump system has a gas leak. Valve of the pressure balance line does not close. | Remedy: Clean intake screen. Connect motor correctly. Detect leak and seal it. Clean the valve or have it repaired. | Repair: 6.4 4.4 - 6.7\n[p44.b2] Malfunction Likely cause Remedy Repair\n[p44.b3] Pump is losing oil. Oil leak is apparent:\n[p44.b4] The oil level in the oiler drops.\n[p44.b5] Oil gets too dark. Oil has been used up. Pump gets too hot.\n[p44.b6] Oil in the pump chamber.\n[p44.b7] Pump does not attain its pumping speed.\n[p44.b8] 42 1625 2135 10 Issue A2"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "kg_v3_extract",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "entities",
+            "relations",
+            "unclear",
+            "section_context"
+          ],
+          "properties": {
+            "entities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "key",
+                  "type",
+                  "name",
+                  "code",
+                  "kind",
+                  "stated",
+                  "cite"
+                ],
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "Component",
+                      "Symptom",
+                      "FailureMode",
+                      "CorrectiveAction",
+                      "ErrorCode"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "",
+                      "repair",
+                      "inspection",
+                      "escalation"
+                    ]
+                  },
+                  "stated": {
+                    "type": "boolean"
+                  },
+                  "cite": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "p42.b3.2",
+                        "p42.b4",
+                        "p43.b1",
+                        "p43.b10",
+                        "p43.b11",
+                        "p43.b12",
+                        "p43.b13",
+                        "p43.b2",
+                        "p43.b3",
+                        "p43.b4",
+                        "p43.b5",
+                        "p43.b6",
+                        "p43.b7",
+                        "p43.b8",
+                        "p43.b9",
+                        "p43.t1.r1",
+                        "p43.t1.r2",
+                        "p43.t1.r3",
+                        "p43.t1.r4",
+                        "p43.t1.r5",
+                        "p43.t1.r6",
+                        "p44.b1",
+                        "p44.b2",
+                        "p44.b3",
+                        "p44.b4",
+                        "p44.b5",
+                        "p44.b6",
+                        "p44.b7",
+                        "p44.b8",
+                        "p44.t1.r1",
+                        "p44.t1.r2",
+                        "p44.t1.r3",
+                        "p44.t1.r4",
+                        "p44.t1.r5",
+                        "p44.t1.r6"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "relations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "type",
+                  "source",
+                  "target",
+                  "record",
+                  "conditions",
+                  "cite"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "MAY_INDICATE",
+                      "AFFECTS",
+                      "RESOLVED_BY",
+                      "INDICATES"
+                    ]
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "record": {
+                    "type": "string"
+                  },
+                  "conditions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "kind",
+                        "text",
+                        "cite"
+                      ],
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "if",
+                            "prerequisite",
+                            "warning",
+                            "expected",
+                            "order"
+                          ]
+                        },
+                        "text": {
+                          "type": "string"
+                        },
+                        "cite": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "p42.b3.2",
+                              "p42.b4",
+                              "p43.b1",
+                              "p43.b10",
+                              "p43.b11",
+                              "p43.b12",
+                              "p43.b13",
+                              "p43.b2",
+                              "p43.b3",
+                              "p43.b4",
+                              "p43.b5",
+                              "p43.b6",
+                              "p43.b7",
+                              "p43.b8",
+                              "p43.b9",
+                              "p43.t1.r1",
+                              "p43.t1.r2",
+                              "p43.t1.r3",
+                              "p43.t1.r4",
+                              "p43.t1.r5",
+                              "p43.t1.r6",
+                              "p44.b1",
+                              "p44.b2",
+                              "p44.b3",
+                              "p44.b4",
+                              "p44.b5",
+                              "p44.b6",
+                              "p44.b7",
+                              "p44.b8",
+                              "p44.t1.r1",
+                              "p44.t1.r2",
+                              "p44.t1.r3",
+                              "p44.t1.r4",
+                              "p44.t1.r5",
+                              "p44.t1.r6"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "cite": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "p42.b3.2",
+                        "p42.b4",
+                        "p43.b1",
+                        "p43.b10",
+                        "p43.b11",
+                        "p43.b12",
+                        "p43.b13",
+                        "p43.b2",
+                        "p43.b3",
+                        "p43.b4",
+                        "p43.b5",
+                        "p43.b6",
+                        "p43.b7",
+                        "p43.b8",
+                        "p43.b9",
+                        "p43.t1.r1",
+                        "p43.t1.r2",
+                        "p43.t1.r3",
+                        "p43.t1.r4",
+                        "p43.t1.r5",
+                        "p43.t1.r6",
+                        "p44.b1",
+                        "p44.b2",
+                        "p44.b3",
+                        "p44.b4",
+                        "p44.b5",
+                        "p44.b6",
+                        "p44.b7",
+                        "p44.b8",
+                        "p44.t1.r1",
+                        "p44.t1.r2",
+                        "p44.t1.r3",
+                        "p44.t1.r4",
+                        "p44.t1.r5",
+                        "p44.t1.r6"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "unclear": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "note",
+                  "cite"
+                ],
+                "properties": {
+                  "note": {
+                    "type": "string"
+                  },
+                  "cite": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "p42.b3.2",
+                        "p42.b4",
+                        "p43.b1",
+                        "p43.b10",
+                        "p43.b11",
+                        "p43.b12",
+                        "p43.b13",
+                        "p43.b2",
+                        "p43.b3",
+                        "p43.b4",
+                        "p43.b5",
+                        "p43.b6",
+                        "p43.b7",
+                        "p43.b8",
+                        "p43.b9",
+                        "p43.t1.r1",
+                        "p43.t1.r2",
+                        "p43.t1.r3",
+                        "p43.t1.r4",
+                        "p43.t1.r5",
+                        "p43.t1.r6",
+                        "p44.b1",
+                        "p44.b2",
+                        "p44.b3",
+                        "p44.b4",
+                        "p44.b5",
+                        "p44.b6",
+                        "p44.b7",
+                        "p44.b8",
+                        "p44.t1.r1",
+                        "p44.t1.r2",
+                        "p44.t1.r3",
+                        "p44.t1.r4",
+                        "p44.t1.r5",
+                        "p44.t1.r6"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "section_context": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "text",
+                  "cite",
+                  "records"
+                ],
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "prerequisite",
+                      "warning"
+                    ]
+                  },
+                  "text": {
+                    "type": "string"
+                  },
+                  "cite": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "p42.b3.2",
+                        "p42.b4",
+                        "p43.b1",
+                        "p43.b10",
+                        "p43.b11",
+                        "p43.b12",
+                        "p43.b13",
+                        "p43.b2",
+                        "p43.b3",
+                        "p43.b4",
+                        "p43.b5",
+                        "p43.b6",
+                        "p43.b7",
+                        "p43.b8",
+                        "p43.b9",
+                        "p43.t1.r1",
+                        "p43.t1.r2",
+                        "p43.t1.r3",
+                        "p43.t1.r4",
+                        "p43.t1.r5",
+                        "p43.t1.r6",
+                        "p44.b1",
+                        "p44.b2",
+                        "p44.b3",
+                        "p44.b4",
+                        "p44.b5",
+                        "p44.b6",
+                        "p44.b7",
+                        "p44.b8",
+                        "p44.t1.r1",
+                        "p44.t1.r2",
+                        "p44.t1.r3",
+                        "p44.t1.r4",
+                        "p44.t1.r5",
+                        "p44.t1.r6"
+                      ]
+                    }
+                  },
+                  "records": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "max_completion_tokens": 16000,
+    "reasoning_effort": "low",
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 29.318615541036706,
+  "response": {
+    "id": "chatcmpl-ESopjOrDvgwp2MY7hczclbrEwhaU6",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\n  \"entities\": [\n    {\"key\":\"S1\",\"type\":\"Symptom\",\"name\":\"Pump does not start up\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r2\"]},\n    {\"key\":\"F1\",\"type\":\"FailureMode\",\"name\":\"Motor incorrectly connected\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r2\"]},\n    {\"key\":\"C1\",\"type\":\"Component\",\"name\":\"Motor\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r2\"]},\n    {\"key\":\"A1\",\"type\":\"CorrectiveAction\",\"name\":\"Connect the motor correctly\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r2\",\"p43.b3\"]},\n    {\"key\":\"F2\",\"type\":\"FailureMode\",\"name\":\"Defective pressure switch\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r2\"]},\n    {\"key\":\"C2\",\"type\":\"Component\",\"name\":\"Pressure switch\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r2\"]},\n    {\"key\":\"A2\",\"type\":\"CorrectiveAction\",\"name\":\"Replace the pressure switch\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r2\",\"p43.b3\"]},\n    {\"key\":\"F3\",\"type\":\"FailureMode\",\"name\":\"Oil is too thick\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r2\"]},\n    {\"key\":\"C3\",\"type\":\"Component\",\"name\":\"Oil\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r2\"]},\n    {\"key\":\"A3\",\"type\":\"CorrectiveAction\",\"name\":\"Exchange the oil or warm up the oil and pump\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r2\",\"p43.b3\"]},\n    {\"key\":\"F4\",\"type\":\"FailureMode\",\"name\":\"Motor defective\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r2\"]},\n    {\"key\":\"A4\",\"type\":\"CorrectiveAction\",\"name\":\"Replace the motor\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r2\",\"p43.b3\"]},\n    {\"key\":\"F5\",\"type\":\"FailureMode\",\"name\":\"Pump has seized due to defective rotors, bearings or toothed gears\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r2\"]},\n    {\"key\":\"C4\",\"type\":\"Component\",\"name\":\"Rotors\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r2\"]},\n    {\"key\":\"C5\",\"type\":\"Component\",\"name\":\"Bearings\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r2\"]},\n    {\"key\":\"C6\",\"type\":\"Component\",\"name\":\"Toothed gears\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r2\"]},\n    {\"key\":\"A5\",\"type\":\"CorrectiveAction\",\"name\":\"Contact Atlas Copco Service\",\"code\":\"\",\"kind\":\"escalation\",\"stated\":false,\"cite\":[\"p43.t1.r2\",\"p43.b3\"]},\n    {\"key\":\"S2\",\"type\":\"Symptom\",\"name\":\"Motor protection switch trips\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r3\"]},\n    {\"key\":\"F6\",\"type\":\"FailureMode\",\"name\":\"Motor protection switch incorrectly set\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r3\"]},\n    {\"key\":\"C7\",\"type\":\"Component\",\"name\":\"Motor protection switch\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r3\"]},\n    {\"key\":\"A6\",\"type\":\"CorrectiveAction\",\"name\":\"Set motor protection correctly\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r3\",\"p43.b5\"]},\n    {\"key\":\"F7\",\"type\":\"FailureMode\",\"name\":\"Pump seizes mechanically\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r3\"]},\n    {\"key\":\"S3\",\"type\":\"Symptom\",\"name\":\"Pump gets too hot\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"F8\",\"type\":\"FailureMode\",\"name\":\"Ambient temperature is too high\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"F9\",\"type\":\"FailureMode\",\"name\":\"Cooling air flow is obstructed\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"C8\",\"type\":\"Component\",\"name\":\"Cooling air flow\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"A7\",\"type\":\"CorrectiveAction\",\"name\":\"Install the pump at a suitable place\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r4\",\"p43.b7\"]},\n    {\"key\":\"A8\",\"type\":\"CorrectiveAction\",\"name\":\"Ensure a sufficient flow of cooling air\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r4\",\"p43.b7\"]},\n    {\"key\":\"F10\",\"type\":\"FailureMode\",\"name\":\"Pump operating in the wrong pressure range\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"F11\",\"type\":\"FailureMode\",\"name\":\"Pressure differences too high\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"A9\",\"type\":\"CorrectiveAction\",\"name\":\"Check the pressure levels within the system\",\"code\":\"\",\"kind\":\"inspection\",\"stated\":false,\"cite\":[\"p43.t1.r4\",\"p43.b7\"]},\n    {\"key\":\"F12\",\"type\":\"FailureMode\",\"name\":\"Gas temperature is too high\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"A10\",\"type\":\"CorrectiveAction\",\"name\":\"Check the system\",\"code\":\"\",\"kind\":\"inspection\",\"stated\":false,\"cite\":[\"p43.t1.r4\",\"p43.b7\"]},\n    {\"key\":\"F13\",\"type\":\"FailureMode\",\"name\":\"Clearance between housing and rotors is too small due to contamination\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"C9\",\"type\":\"Component\",\"name\":\"Housing and rotors\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"A11\",\"type\":\"CorrectiveAction\",\"name\":\"Clean the pumping chamber\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r4\",\"p43.b7\"]},\n    {\"key\":\"F14\",\"type\":\"FailureMode\",\"name\":\"Pump distorted, causing clearance between housing and rotors to be too small\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"A12\",\"type\":\"CorrectiveAction\",\"name\":\"Affix and connect the pump free of tension\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r4\",\"p43.b7\"]},\n    {\"key\":\"F15\",\"type\":\"FailureMode\",\"name\":\"Friction resistance too high due to contaminated bearings and/or oil\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"C10\",\"type\":\"Component\",\"name\":\"Oil\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"A13\",\"type\":\"CorrectiveAction\",\"name\":\"Change the oil\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r4\",\"p43.b7\"]},\n    {\"key\":\"F16\",\"type\":\"FailureMode\",\"name\":\"Oil level is too high\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"C11\",\"type\":\"Component\",\"name\":\"Oil level\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"A14\",\"type\":\"CorrectiveAction\",\"name\":\"Drain oil down to the correct level\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r4\",\"p43.b7\"]},\n    {\"key\":\"F17\",\"type\":\"FailureMode\",\"name\":\"Oil level is too low\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"A15\",\"type\":\"CorrectiveAction\",\"name\":\"Top up oil to the correct level\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r4\",\"p43.b7\"]},\n    {\"key\":\"F18\",\"type\":\"FailureMode\",\"name\":\"Wrong oil filled\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"A16\",\"type\":\"CorrectiveAction\",\"name\":\"Drain the oil and fill in the correct oil\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r4\",\"p43.b7\"]},\n    {\"key\":\"F19\",\"type\":\"FailureMode\",\"name\":\"Bearing defective\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"C12\",\"type\":\"Component\",\"name\":\"Bearing\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"A17\",\"type\":\"CorrectiveAction\",\"name\":\"Contact Atlas Copco Service\",\"code\":\"\",\"kind\":\"escalation\",\"stated\":false,\"cite\":[\"p43.t1.r4\",\"p43.b7\"]},\n    {\"key\":\"F20\",\"type\":\"FailureMode\",\"name\":\"Valve of the pressure balance line does not open\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"C13\",\"type\":\"Component\",\"name\":\"Valve of the pressure balance line\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r4\"]},\n    {\"key\":\"A18\",\"type\":\"CorrectiveAction\",\"name\":\"Clean the valve or have it repaired\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r4\",\"p43.b7\"]},\n    {\"key\":\"S4\",\"type\":\"Symptom\",\"name\":\"Power consumption of the motor is too high\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r5\"]},\n    {\"key\":\"F21\",\"type\":\"FailureMode\",\"name\":\"Incorrect mains voltage for the motor\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r5\"]},\n    {\"key\":\"A19\",\"type\":\"CorrectiveAction\",\"name\":\"Connect the motor to the correct mains voltage\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p43.t1.r5\",\"p43.b9\"]},\n    {\"key\":\"S5\",\"type\":\"Symptom\",\"name\":\"Pump is too loud\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r6\"]},\n    {\"key\":\"F22\",\"type\":\"FailureMode\",\"name\":\"Clearance between housing and rotors is too small due to contamination\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r6\"]},\n    {\"key\":\"F23\",\"type\":\"FailureMode\",\"name\":\"Pump distorted, causing clearance between housing and rotors to be too small\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r6\"]},\n    {\"key\":\"F24\",\"type\":\"FailureMode\",\"name\":\"Bearing or gear damage\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r6\"]},\n    {\"key\":\"C14\",\"type\":\"Component\",\"name\":\"Gear\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r6\"]},\n    {\"key\":\"F25\",\"type\":\"FailureMode\",\"name\":\"Pistons make contact with the housing\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r6\"]},\n    {\"key\":\"C15\",\"type\":\"Component\",\"name\":\"Pistons and housing\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r6\"]},\n    {\"key\":\"F26\",\"type\":\"FailureMode\",\"name\":\"Rotor is running untrue\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r6\"]},\n    {\"key\":\"C16\",\"type\":\"Component\",\"name\":\"Rotor\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r6\"]},\n    {\"key\":\"F27\",\"type\":\"FailureMode\",\"name\":\"Oil slinger disc makes contact with the gear housing or oil pipe\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r6\"]},\n    {\"key\":\"C17\",\"type\":\"Component\",\"name\":\"Oil slinger disc, gear housing and oil pipe\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r6\"]},\n    {\"key\":\"F28\",\"type\":\"FailureMode\",\"name\":\"Oil pump is blocked or defective\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p43.t1.r6\"]},\n    {\"key\":\"C18\",\"type\":\"Component\",\"name\":\"Oil pump\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p43.t1.r6\"]},\n    {\"key\":\"A20\",\"type\":\"CorrectiveAction\",\"name\":\"Contact Atlas Copco Service and shut down the pump immediately\",\"code\":\"\",\"kind\":\"escalation\",\"stated\":false,\"cite\":[\"p43.t1.r6\",\"p43.b11\"]},\n    {\"key\":\"S6\",\"type\":\"Symptom\",\"name\":\"Pump is losing oil\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p44.t1.r2\"]},\n    {\"key\":\"F29\",\"type\":\"FailureMode\",\"name\":\"Oil drain plug is leaky\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r2\"]},\n    {\"key\":\"C19\",\"type\":\"Component\",\"name\":\"Oil drain plug\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p44.t1.r2\"]},\n    {\"key\":\"A21\",\"type\":\"CorrectiveAction\",\"name\":\"Drain oil, screw in a new oil drain plug with gasket, and fill in the correct oil quantity\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r2\"]},\n    {\"key\":\"F30\",\"type\":\"FailureMode\",\"name\":\"Oil level glasses are leaky\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r2\"]},\n    {\"key\":\"C20\",\"type\":\"Component\",\"name\":\"Oil level glasses\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p44.t1.r2\"]},\n    {\"key\":\"F31\",\"type\":\"FailureMode\",\"name\":\"Gear cover is leaky\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r2\"]},\n    {\"key\":\"C21\",\"type\":\"Component\",\"name\":\"Gear cover\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p44.t1.r2\"]},\n    {\"key\":\"A22\",\"type\":\"CorrectiveAction\",\"name\":\"Contact Atlas Copco Service\",\"code\":\"\",\"kind\":\"escalation\",\"stated\":false,\"cite\":[\"p44.t1.r2\"]},\n    {\"key\":\"A23\",\"type\":\"CorrectiveAction\",\"name\":\"Replace the O-ring of the gear cover\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r2\"]},\n    {\"key\":\"F32\",\"type\":\"FailureMode\",\"name\":\"Coupling flange is leaky\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r2\"]},\n    {\"key\":\"C22\",\"type\":\"Component\",\"name\":\"Coupling flange\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p44.t1.r2\"]},\n    {\"key\":\"A24\",\"type\":\"CorrectiveAction\",\"name\":\"Replace the O-ring of the coupling flange\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r2\"]},\n    {\"key\":\"S7\",\"type\":\"Symptom\",\"name\":\"Oil level in the oiler drops\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p44.t1.r3\"]},\n    {\"key\":\"F33\",\"type\":\"FailureMode\",\"name\":\"Outer shaft sealing ring is defective\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r3\"]},\n    {\"key\":\"C23\",\"type\":\"Component\",\"name\":\"Outer shaft sealing ring\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p44.t1.r3\"]},\n    {\"key\":\"F34\",\"type\":\"FailureMode\",\"name\":\"Inner shaft sealing ring is defective\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r3\"]},\n    {\"key\":\"C24\",\"type\":\"Component\",\"name\":\"Inner shaft sealing ring\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p44.t1.r3\"]},\n    {\"key\":\"A25\",\"type\":\"CorrectiveAction\",\"name\":\"Replace the shaft sealing rings\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r3\"]},\n    {\"key\":\"A26\",\"type\":\"CorrectiveAction\",\"name\":\"Top up sufficient oil at the oiler\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r3\"]},\n    {\"key\":\"A27\",\"type\":\"CorrectiveAction\",\"name\":\"Switch the pump off\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r3\"]},\n    {\"key\":\"S8\",\"type\":\"Symptom\",\"name\":\"Oil gets too dark\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p44.t1.r4\"]},\n    {\"key\":\"F35\",\"type\":\"FailureMode\",\"name\":\"Oil has been used up\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r4\"]},\n    {\"key\":\"A28\",\"type\":\"CorrectiveAction\",\"name\":\"Exchange the oil\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r4\"]},\n    {\"key\":\"F36\",\"type\":\"FailureMode\",\"name\":\"Pump gets too hot\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r4\"]},\n    {\"key\":\"A29\",\"type\":\"CorrectiveAction\",\"name\":\"Remedy the pump overheating malfunction and exchange the oil afterward\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r4\"]},\n    {\"key\":\"S9\",\"type\":\"Symptom\",\"name\":\"Oil in the pump chamber\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p44.t1.r5\"]},\n    {\"key\":\"F37\",\"type\":\"FailureMode\",\"name\":\"Oil level is too high\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r5\"]},\n    {\"key\":\"A30\",\"type\":\"CorrectiveAction\",\"name\":\"Drain the oil down to the correct level\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r5\"]},\n    {\"key\":\"F38\",\"type\":\"FailureMode\",\"name\":\"Oil is ejected from the system\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r5\"]},\n    {\"key\":\"A31\",\"type\":\"CorrectiveAction\",\"name\":\"Check the system\",\"code\":\"\",\"kind\":\"inspection\",\"stated\":false,\"cite\":[\"p44.t1.r5\"]},\n    {\"key\":\"F39\",\"type\":\"FailureMode\",\"name\":\"Pump is not standing horizontally\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r5\"]},\n    {\"key\":\"A32\",\"type\":\"CorrectiveAction\",\"name\":\"Place the pump correctly\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r5\"]},\n    {\"key\":\"F40\",\"type\":\"FailureMode\",\"name\":\"Pump has a gas leak towards the outside\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r5\"]},\n    {\"key\":\"A33\",\"type\":\"CorrectiveAction\",\"name\":\"Check that the oil fill and oil drain plugs are correctly seated and replace gaskets if required\",\"code\":\"\",\"kind\":\"inspection\",\"stated\":false,\"cite\":[\"p44.t1.r5\"]},\n    {\"key\":\"C25\",\"type\":\"Component\",\"name\":\"Oil fill and oil drain plugs\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p44.t1.r5\"]},\n    {\"key\":\"F41\",\"type\":\"FailureMode\",\"name\":\"Pump has an internal leak\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r5\"]},\n    {\"key\":\"A34\",\"type\":\"CorrectiveAction\",\"name\":\"Replace the O-ring of the gear cover\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r5\"]},\n    {\"key\":\"A35\",\"type\":\"CorrectiveAction\",\"name\":\"Contact Atlas Copco Service\",\"code\":\"\",\"kind\":\"escalation\",\"stated\":false,\"cite\":[\"p44.t1.r5\"]},\n    {\"key\":\"S10\",\"type\":\"Symptom\",\"name\":\"Pump does not attain its pumping speed\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p44.t1.r6\"]},\n    {\"key\":\"F42\",\"type\":\"FailureMode\",\"name\":\"Intake screen is clogged\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r6\"]},\n    {\"key\":\"C26\",\"type\":\"Component\",\"name\":\"Intake screen\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p44.t1.r6\"]},\n    {\"key\":\"A36\",\"type\":\"CorrectiveAction\",\"name\":\"Clean the intake screen\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r6\"]},\n    {\"key\":\"F43\",\"type\":\"FailureMode\",\"name\":\"Motor incorrectly connected\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r6\"]},\n    {\"key\":\"A37\",\"type\":\"CorrectiveAction\",\"name\":\"Connect the motor correctly\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r6\"]},\n    {\"key\":\"F44\",\"type\":\"FailureMode\",\"name\":\"Vacuum pump system has a gas leak\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r6\"]},\n    {\"key\":\"A38\",\"type\":\"CorrectiveAction\",\"name\":\"Detect and seal the leak\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r6\"]},\n    {\"key\":\"F45\",\"type\":\"FailureMode\",\"name\":\"Valve of the pressure balance line does not close\",\"code\":\"\",\"kind\":\"\",\"stated\":true,\"cite\":[\"p44.t1.r6\"]},\n    {\"key\":\"C27\",\"type\":\"Component\",\"name\":\"Valve of the pressure balance line\",\"code\":\"\",\"kind\":\"\",\"stated\":false,\"cite\":[\"p44.t1.r6\"]},\n    {\"key\":\"A39\",\"type\":\"CorrectiveAction\",\"name\":\"Clean the valve or have it repaired\",\"code\":\"\",\"kind\":\"repair\",\"stated\":false,\"cite\":[\"p44.t1.r6\"]}\n  ],\n  \"relations\": [],\n  \"unclear\": [\n    {\"note\":\"The table's Repair-number references for remedies do not provide clear mapping for all entries; no troubleshooting fact is inferred from the numbers.\",\"cite\":[\"p43.t1.r2\",\"p43.t1.r3\",\"p43.t1.r4\",\"p43.t1.r5\",\"p43.t1.r6\",\"p44.t1.r2\",\"p44.t1.r3\",\"p44.t1.r4\",\"p44.t1.r5\",\"p44.t1.r6\"]}\n  ],\n  \"section_context\": []\n}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790537295,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 5145,
+      "prompt_tokens": 4690,
+      "total_tokens": 9835,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 0,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cached_tokens": 4687,
+        "cache_write_tokens": 0
+      }
+    }
+  },
+  "provider_request_id": "req_867fe0841ac74c418f5d3156cb94fb28",
+  "error": null
+}

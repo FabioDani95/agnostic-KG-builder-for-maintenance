@@ -237,3 +237,199 @@ nome di un codice è spezzato in più segmenti, le colonne sono interlacciate, l
 "Level" è incollata alla prima riga e alcune parole sono unite ("1Starter 1A"). Non è stato
 possibile riprodurre la lettura su cui era stato annotato il foglio: unisce il testo di una
 riga visiva tra le colonne e non corrisponde a nessuna modalità di PyMuPDF 1.28 installato.
+
+## Robustezza fasi 1–2: confronto C → D e verifica sui PDF (2026-09-27)
+
+**Esito: implementazione completata, criteri di qualità non tutti raggiunti.** Le fusioni
+che violano vincoli espliciti scendono da 8 a 0, ma il recall passa da 733/900 a
+684/900 (81,4% → 76,0%), le cause orfane da 34 a 35 e restano errori di significato.
+Non è un grafo validato per fornire autonomamente istruzioni di manutenzione.
+
+F1–F7 e M1–M3 sono implementati con prove automatiche. I 18 nuovi run D usano il
+codice congelato `8abec90`, tre per ciascuno dei sei manuali, con GPT-6 Luna e lo
+stesso profilo della campagna. Gli originali sono in `runs_C/`, verificati contro
+gli hash iniziali; i nuovi sono in `runs/`. Il giudice aggiornato, a tre voti,
+rivaluta sia C sia D: [prima](kpi_C_context.json), [dopo](kpi_D.json),
+[manifest](robustness_manifest.json). I 732/900 del precedente giudizio restano
+in `kpi_C.json`; non vengono trasferiti al nuovo valutatore. Non sono confronti
+su manuali mai visti: tutti e sei sono ormai di sviluppo.
+
+### Misure prima e dopo
+
+I conteggi seguenti sommano tre esecuzioni. Zero violazioni significa rispetto
+dei vincoli `different` e numerici, non assenza di fusioni semanticamente errate.
+
+| Manuale | Rami | Asserzioni | Fusioni vietate | Cause orfane | Problemi senza azioni | Jaccard | Domande a persona (r1/r2/r3) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ABB ACS580 | 17/57 → 21/57 | 31/114 → 45/114 | 3 → 0 | 16 → 10 | 17 → 16 | 0.0657 → 0.0795 | 0/0/0 → 0/1/0 |
+| Atlas Copco | 127/147 → 85/147 | 175/198 → 115/198 | 0 → 0 | 3 → 0 | 1 → 0 | 0.3643 → 0.133 | 0/0/0 → 0/0/0 |
+| Graco GTX | 51/57 → 51/57 | 129/135 → 129/135 | 0 → 0 | 0 → 0 | 0 → 0 | 0.5732 → 0.6053 | 0/0/0 → 0/0/0 |
+| Grundfos Paco | 421/438 → 420/438 | 421/438 → 420/438 | 1 → 0 | 0 → 0 | 70 → 30 | 0.343 → 0.4203 | 0/0/0 → 0/0/0 |
+| Haas Mill | 101/135 → 93/135 | 118/171 → 109/171 | 1 → 0 | 12 → 24 | 62 → 71 | 0.0562 → 0.1109 | 0/1/0 → 0/0/0 |
+| Lincoln POWER MIG | 16/66 → 14/66 | 80/141 → 75/141 | 3 → 0 | 3 → 1 | 0 → 0 | 0.1071 → 0.1466 | 0/0/0 → 0/0/0 |
+
+| Manuale | USD costruzione, 3 run C → D | Secondi pipeline, media C → D | Secondi PDF + pipeline, media D |
+| --- | --- | --- | --- |
+| ABB ACS580 | 0.1137 → 0.1337 | 90.5 → 112.6 | 291.2 |
+| Atlas Copco | 0.0567 → 0.0490 | 87.8 → 76.4 | 81.2 |
+| Graco GTX | 0.0278 → 0.0262 | 44.2 → 44.2 | 46.9 |
+| Grundfos Paco | 0.0537 → 0.0488 | 73.0 → 72.3 | 75.5 |
+| Haas Mill | 0.0992 → 0.1230 | 105.6 → 118.0 | 129.6 |
+| Lincoln POWER MIG | 0.0495 → 0.0743 | 77.7 → 82.0 | 89.9 |
+
+Il costo di costruzione esclude la valutazione dei KPI e il lavoro umano. Il tempo PDF non era registrato in C.
+
+
+| Manuale | Rami C, r1/r2/r3 | Rami D, r1/r2/r3 | Denominatore per run |
+| --- | --- | --- | --- |
+| ABB ACS580 | 7, 4, 6 | 8, 7, 6 | 19 |
+| Atlas Copco | 42, 41, 44 | 42, 43, 0 | 49 |
+| Graco GTX | 17, 17, 17 | 18, 18, 15 | 19 |
+| Grundfos Paco | 142, 142, 137 | 142, 141, 137 | 146 |
+| Haas Mill | 36, 28, 37 | 32, 33, 28 | 45 |
+| Lincoln POWER MIG | 8, 2, 6 | 6, 4, 4 | 22 |
+
+Recall macro, con uguale peso ai sei manuali: **66,8% → 61,7%**. Separando i tipi
+di gold, i rami con azioni passano da **260/396 (65,7%) a 209/396 (52,8%)**; quelli
+con sole cause da **473/504 a 475/504**. Grundfos pesa 146 dei 300 rami per singola
+esecuzione e la sua sezione non prescrive rimedi. Il totale micro descrive quindi
+male, da solo, la qualità dei percorsi operativi. Questa scomposizione riusa gli
+stessi giudizi, senza nuove chiamate e senza cambiare il gold.
+
+Le tre repliche non sono 900 osservazioni indipendenti. Gli intervalli di Wilson
+conservati nei KPI non certificano generalizzazione a nuovi produttori. Jaccard
+misura nomi normalizzati: risente delle parafrasi e può essere alto anche per
+errori ripetuti. I problemi senza azioni di Grundfos sono coerenti con la fonte;
+la metrica non distingue automaticamente lacune reali e assenze documentali.
+I sei duplicati nominali di Lincoln sono tre ErrorCode con nomi uguali e codici
+diversi in ciascun run: un altro motivo per non trattare ogni segnalazione come
+errore semantico.
+
+### Correzioni verificate e limiti rimasti
+
+- **Identità.** Il replay offline degli stati C elimina tutte le 8 violazioni
+  misurate senza nuove chiamate. I nomi dedotti di Lincoln — interruttore non ON,
+  guaina/punta ostruita, selettore spool gun errato — restano identità distinte
+  quando presenti nei nuovi run. Vincoli `different` e numerici valgono anche
+  attraverso unioni transitive e codici identici. [Replay](merge_replay_final_summary.json),
+  [esempi](lincoln_identity_replay_examples.json).
+- **Geometria.** Verificati gli ID invariati su tutti e sei i PDF. ABB
+  `p232.t1.r5` non eredita più il testo del LED rosso; Lincoln `p28.t1.r4`
+  conserva la vera cella unita. [Audit del lettore](reader_final_audit.json).
+- **Numeri.** L'applicazione offline a Grundfos C/r2 elimina i 40 falsi ErrorCode
+  dell'elenco. Nei tre nuovi run non rimangono ErrorCode numerici; il riferimento
+  alla voce 41 è segnalato e non inventato. Le voci 17 e 18 (prevalenza maggiore e
+  minore di quella nominale) restano distinte.
+- **Graco, pp. 8–9.** Il prerequisito di scaricare la pressione è presente su
+  tutti i 24/21/27 archi di azione esportati nei tre run, anche nella continuazione
+  a pagina 9. È un miglioramento verificato sul contesto, senza aumento del
+  recall aggregato.
+- **ABB, p. 232.** Rimane una fusione errata: in D/r1 il LED blu *blinking*
+  (disponibile per pairing) e *flickering* (trasferimento dati) sono sinonimi per
+  il giudice. Il vincolo F1 non può correggere un verdetto `same` sbagliato.
+  Stati Bluetooth normali sono inoltre rappresentati come FailureMode.
+- **Atlas, p. 43.** Per il disco paraspruzzi che tocca la carcassa/tubo, la fonte
+  prescrive assistenza, mentre il ramo vicino prescrive anche arresto immediato.
+  In D/r1 il nuovo controllo non dà la prova strutturale alla coppia incrociata e
+  il revisore la rifiuta, malgrado il verificatore l'avesse approvata. Resta però
+  assente anche l'azione corretta di sola assistenza. Il problema ha altre azioni,
+  perciò la sola navigabilità problema→azione non rileva questa lacuna di causa.
+- **Haas, pp. 144 e 160.** Il divieto di spegnere il robot è perso nel grafo r1,
+  benché presente in una proposta: dopo la separazione delle cause, quella
+  proposta perde i testimoni e viene esclusa senza una nuova revisione. In r2
+  manca l'azione sulle batterie; in r3 il divieto è correttamente un `warning`.
+  Beep e LED rosso sono `expected` in r2/r3; r1 non produce relazioni per la
+  procedura selezionata. R3 ordina erroneamente G04 dopo il contatto con lo stilo,
+  mentre il PDF mette tutti i comandi MDI prima. La lettura delle colonne e la
+  propagazione dei testimoni restano punti deboli.
+- **Disaccordo col KPI.** Haas D/r3 conserva il divieto come avvertenza sull'azione,
+  ma `R37.2` risulta mancante perché il gold lo rappresenta come azione separata.
+  È un falso negativo osservato in questo controllo mirato; i punteggi congelati
+  non sono stati corretti a mano. Anche il valutatore deve essere verificato
+  rispetto a rappresentazioni equivalenti.
+
+Questi riscontri derivano dall'ispezione delle pagine PDF complete e degli archi,
+con traccia in [source_checks_D.json](source_checks_D.json) e
+[qualitative_review_D.json](qualitative_review_D.json). Sono controlli mirati,
+esposti alle predizioni, **non una stima cieca della precisione**.
+
+### Regressione Atlas e correzione successiva, separata dal confronto
+
+Atlas D/r3 genera 118 e 121 entità nelle due letture, ma nessuna relazione.
+Le note di ambiguità citano tutte le righe e impediscono la rilettura di copertura;
+il gate automatico restituisce ugualmente `approved`. Il run resta nel totale
+D con **0/49 rami**. Non è rumore del giudice: è un fallimento di estrazione.
+Le due repliche non vuote recuperano 42 e 43/49, ma non si può eliminare la terza
+per presentare un risultato migliore.
+
+La correzione successiva `bec1e7c`, con test prima falliti e poi superati, consente
+una sola rilettura quando non esiste alcuna relazione, contabilizza anche i suoi
+fallimenti e marca `incomplete` un risultato con unità vuote/letture fallite o
+nessun arco esportabile. Le note diventano visibili nel rapporto. Un'unità vuota
+può anche essere una selezione impropria della mappa: la segnalazione chiede una
+verifica, non asserisce che la fonte contenga necessariamente un guasto.
+Il controllo offline trova unità senza proposte in 7 dei 18 run D
+([audit](run_completeness_audit_D.json)); i loro stati storici non sono riscritti.
+
+Un esperimento controllato riutilizza **esattamente le due risposte Atlas vuote**
+e la mappa originale, poi riesegue recupero, verifica, unione e revisione con
+chiamate nuove. Produce 147 proposte, 124 relazioni verdi e **34/49 rami** al
+medesimo valutatore: [manifest e input](empty_extraction_probe/manifest.json),
+[KPI](empty_extraction_probe/kpi.json), codice `bec1e7c`. Costo incrementale di
+costruzione 0,018347 USD, giudice 0,025444 USD. È una prova del recupero del difetto,
+non una nuova replica indipendente e non una dimostrazione di stabilità del
+codice finale sui sei manuali. Non viene sostituito a D/r3 nei KPI né nel campione.
+
+### Accettazione
+
+- Fusioni vietate: **raggiunto, 0 violazioni in 18 run**; non equivale a zero fusioni sbagliate.
+- Numeri di elenco scambiati per ErrorCode: **nessuno nei tre Grundfos nuovi**.
+- Domande a persona: **0–1 per run, entro 10 anche sommando le tre repliche per manuale**;
+  questo conta le domande offerte, non minuti umani o qualità della revisione.
+  L’unica domanda rimasta (ABB/r2) riguarda la mappa delle pagine, dopo una risposta
+  agente troncata: una sola domanda può comportare molto lavoro.
+- Navigabilità: **parziale**. Problemi senza azioni 150→117, ma cause orfane
+  34→35; Haas peggiora 12→24. Zero su Atlas r3 dipende dal grafo vuoto.
+- Recall: **non raggiunto per Atlas**. Haas varia 36/28/37→32/33/28: -8 rami
+  cumulati, con -9 nella terza replica; non va nascosto come semplice rumore.
+  Le perdite riguardano soprattutto gli avvisi di p. 142 (R12–R15, R17 e R18), alcune
+  istruzioni p. 144–145 e il caso di rappresentazione R37.2. Separazione più
+  prudente, selezione/estrazione e giudizi semantici contribuiscono; senza
+  ablation non si attribuisce causalmente tutta la variazione a un singolo fix.
+- Contesto e precisione: **non validati globalmente**; i controesempi sopra
+  impediscono di dichiarare risolta la fedeltà operativa.
+
+### Costo, revisione e prossime prove
+
+Spesa aggiuntiva contabilizzata **1,113197 USD**, entro i **5 USD** autorizzati.
+Il registro passa da 2,204403 a **3,317600 USD**, senza prenotazioni attive.
+La costruzione dei 18 grafi costa circa 0,455122 USD; i giudici prima/dopo circa
+0,307426 e 0,306892 USD. Il resto è il recupero controllato. Valori dei report
+arrotondati; il [registro di chiusura](robustness_budget_close.json) usa il costo
+contabilizzato effettivo per il tetto. I tempi per manuale comprendono ora anche
+la lettura del PDF; su ABB questa spiega gran parte del tempo totale. Nessuna
+misura di minuti umani è stata inventata.
+
+**Fabio deve rivedere le 61 coppie candidate** in `campaign/*/gold/contrastive.json`
+(`keep`/`drop`). I risultati contrastivi attuali sono provvisori e riusano i
+medesimi candidati/voti dei KPI, quindi non aggiungono chiamate. Le coppie
+separate con azioni proprie non escludono ulteriori archi sbagliati.
+
+Preparato il nuovo [foglio cieco 2](precision/REVISIONE_PRECISIONE_2.md): **108 voci**,
+con **20** tratte esclusivamente da pagine fuori dal gold. La provenienza è solo
+nella chiave separata; tutti i giudizi sono `?`. Il foglio originale è preservato.
+Fabio compila i fogli e registra il tempo; non aprire le chiavi prima. Lo strato
+esterno è sovracampionato: un totale non pesato descrive il campione, non tutta
+la popolazione degli archi. La precisione resta non misurata.
+
+Le [note su metriche e letteratura](../../docs/NOTE_VALUTAZIONE_ROBUSTEZZA.md)
+propongono un audit in entrambe le direzioni (manuale→grafo e grafo→manuale),
+prove di esclusione dei rimedi e mutazioni controllate di ordine/condizioni,
+e costo per ramo verificato corretto includendo la revisione umana. RAGChecker,
+KGCQual e FinReflectKG-EvalBench sono riferimenti metodologici, senza trasferire
+qui i loro numeri o rivendicare novità già dimostrata.
+
+Verifica finale del codice: **116 test superati**, Ruff verde. Nessuna modifica
+agli ID, ai gold esistenti o alle risposte umane; [verifica di conservazione](preservation_audit_D.json).
+La correzione successiva al freeze è identificata separatamente: il confronto
+completo D non viene attribuito al codice finale senza una nuova campagna.

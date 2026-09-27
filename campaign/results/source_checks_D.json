@@ -1,0 +1,81 @@
+{
+  "method": "Visual inspection of complete PDF pages; targeted audit, not random precision sample.",
+  "sources": [
+    {
+      "manual": "abb_acs580_01",
+      "pdf_page": 232,
+      "printed_page": 228,
+      "section": "Control panel LEDs",
+      "checks": [
+        "Blue blinking and flickering have distinct meanings.",
+        "Steady-red columns are empty in blue row; left LED-off column is a true vertical span."
+      ]
+    },
+    {
+      "manual": "haas_mill_2023",
+      "pdf_page": 144,
+      "printed_page": 144,
+      "section": "14.1 MILL - CONTROL ICON GUIDE",
+      "checks": [
+        "Robot battery low: replace pulse coder batteries; do not turn off robot, otherwise remastering may be needed.",
+        "Normal indications, warnings and alarms appear on the same page and must retain their distinctions."
+      ]
+    },
+    {
+      "manual": "haas_mill_2023",
+      "pdf_page": 160,
+      "printed_page": 160,
+      "section": "16.8 MILL - PROBING",
+      "checks": [
+        "Touching the stylus produces a beep and red LED: expected result, not prerequisite.",
+        "Tool-probe and work-probe procedures are separate sequences."
+      ]
+    },
+    {
+      "manual": "graco_gtx_2000ex",
+      "pdf_pages": [
+        8,
+        9
+      ],
+      "section": "Troubleshooting",
+      "checks": [
+        "Pressure Relief on page 6 is required before any troubleshooting procedure.",
+        "Requirement introduces the section on page 8 and applies to its continuation on page 9."
+      ]
+    },
+    {
+      "manual": "atlascopco_drb_booster",
+      "pdf_page": 43,
+      "printed_page": 41,
+      "section": "7 Troubleshooting",
+      "checks": [
+        "Oil slinger disc touching gear housing/oil pipe: Atlas Copco Service only.",
+        "Neighbouring rotor running untrue and blocked/defective oil pump: service plus immediate shutdown.",
+        "Cause/remedy positions must respect wrapped lines; raw visual line counts differ."
+      ]
+    },
+    {
+      "manual": "lincoln_powermig_215mp",
+      "pdf_page": 28,
+      "printed_page": 29,
+      "section": "POWER MIG 215 MPi TROUBLE SHOOTING",
+      "checks": [
+        "Right action column is genuinely merged across all five symptom rows.",
+        "Service escalation is conditional on having checked all recommended adjustments and persistence of the problem.",
+        "Immediate no-plug/no-switch-on warning in first row must not be made conditional on failure of previous checks."
+      ]
+    },
+    {
+      "manual": "grundfos_paco_vl",
+      "pdf_page": 15,
+      "printed_page": 15,
+      "section": "12. Troubleshooting",
+      "checks": [
+        "Ten symptom rows refer to a numbered list with entries 1 through 40.",
+        "Overheating row refers to 41, which has no definition on the page.",
+        "Higher-than-rated and lower-than-rated total head are distinct entries 17 and 18.",
+        "No corrective actions are prescribed in this section."
+      ]
+    }
+  ]
+}

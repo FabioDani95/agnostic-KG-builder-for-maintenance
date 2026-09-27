@@ -1,0 +1,117 @@
+{
+ "status": "approved",
+ "pages": 50,
+ "page_labels": {
+  "other": 24,
+  "unreadable": 1,
+  "procedure": 23,
+  "diagnostic": 2
+ },
+ "diagnostic_pages": [
+  43,
+  44
+ ],
+ "confirmed_pages": [
+  43,
+  44
+ ],
+ "map_demotions_refused": [],
+ "units": 1,
+ "failed_reads": 0,
+ "proposals": 263,
+ "unclear_passages": 0,
+ "extraction_notes": [
+  "A: relation 109 skipped (Symptom to Symptom is not in the ontology)",
+  "A: relation 110 skipped (Symptom to CorrectiveAction is not in the ontology)"
+ ],
+ "assertions_by_tier": {
+  "green": 144,
+  "red": 5
+ },
+ "witnesses": {
+  "structure": 144,
+  "agreement": 114,
+  "verifier": 23,
+  "reviewer": 9
+ },
+ "verifier_verdicts": {
+  "not_called": 125,
+  "supported": 23,
+  "not_supported": 1
+ },
+ "graph": {
+  "nodes": 121,
+  "nodes_by_type": {
+   "Symptom": 10,
+   "FailureMode": 47,
+   "Component": 29,
+   "CorrectiveAction": 35
+  },
+  "edges": 138,
+  "edges_by_tier": {
+   "green": 133,
+   "red": 5
+  },
+  "merged_aliases": 22
+ },
+ "gates": {
+  "map": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 8,
+   "answered": 8,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "answers_by_reviewer": {
+  "agent": 9,
+  "auto": 1
+ },
+ "human_questions": 0,
+ "reviewer_confirmed": 9,
+ "merged_cell_relations": 0,
+ "usage": {
+  "calls": 6,
+  "failed_calls": 0,
+  "prompt_tokens": 28931,
+  "completion_tokens": 22693,
+  "estimated_cost_usd": 0.013812,
+  "by_operation": {
+   "kg_v3_extract": 2,
+   "kg_v3_map": 2,
+   "kg_v3_merge": 1,
+   "kg_v3_verify": 1
+  }
+ },
+ "agent_usage": {
+  "calls": 9,
+  "failed_calls": 0,
+  "prompt_tokens": 12154,
+  "completion_tokens": 2180,
+  "estimated_cost_usd": 0.002512,
+  "by_operation": {
+   "AgentDecision": 9
+  }
+ },
+ "seconds": {
+  "map": 5.908,
+  "gate_map": 4.366,
+  "extract": 51.134,
+  "check": 2.431,
+  "merge": 6.108,
+  "gate_doubts": 7.231,
+  "gate_approval": 0.0,
+  "total": 77.346
+ },
+ "prompt_ids": {
+  "extraction": "b647d14f75837e79"
+ }
+}
