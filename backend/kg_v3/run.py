@@ -303,12 +303,16 @@ class Pipeline:
 
     def _result(self, status, page_map, units, relations, graph, gates, started, extractions) -> RunResult:
         empty_units = [item.unit_id for item in extractions if not item.proposals]
+        failed_units = [{"unit_id": item.unit_id, "segments": item.failed_segments}
+                        for item in extractions if not item.proposals or item.failed_segments]
         incomplete_reasons = []
+        if failed_units:
+            incomplete_reasons.append("failed_diagnostic_units")
         if empty_units:
             incomplete_reasons.append("reading_units_without_relations")
         if sum(item.failed_reads for item in extractions):
             incomplete_reasons.append("failed_extraction_reads")
-        if units and not any(edge.tier is not Tier.RED for edge in graph.edges):
+        if not any(edge.tier is not Tier.RED for edge in graph.edges):
             incomplete_reasons.append("empty_diagnostic_graph")
         # Automatic approval is a workflow decision, not evidence of completeness.
         if status == "approved" and incomplete_reasons:
@@ -328,6 +332,7 @@ class Pipeline:
             "status": status,
             "incomplete_reasons": incomplete_reasons,
             "empty_extraction_units": empty_units,
+            "failed_units": failed_units,
             "pages": self.doc.page_count,
             "page_labels": dict(Counter(entry.label.value for entry in page_map.entries)),
             "diagnostic_pages": page_map.pages_with(PageLabel.DIAGNOSTIC),

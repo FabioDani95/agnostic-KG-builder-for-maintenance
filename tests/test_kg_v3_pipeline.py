@@ -256,7 +256,7 @@ def test_unclear_only_reads_get_one_recovery_and_cannot_silently_approve(doc, tm
     provider = EmptyRelations()
     run, _ = pipeline(doc, provider, tmp_path / 'run')
     result = asyncio.run(run.run())
-    assert provider.calls.count('kg_v3_extract') == 3
+    assert provider.calls.count('kg_v3_extract') >= 4
     if coverage_result == 'facts':
         assert result.graph.edges and result.status == 'approved'
         assert result.report['empty_extraction_units'] == []
@@ -264,5 +264,7 @@ def test_unclear_only_reads_get_one_recovery_and_cannot_silently_approve(doc, tm
         assert result.status == 'incomplete'
         assert result.report['empty_extraction_units']
         assert 'empty_diagnostic_graph' in result.report['incomplete_reasons']
-        assert result.report['failed_reads'] == (coverage_result == 'error')
+        assert bool(result.report['failed_reads']) == (coverage_result == 'error')
+        assert result.report['failed_units']
+        assert any('split in halves' in note for note in result.report['extraction_notes'])
     assert any('without usable relations' in note for note in result.report['extraction_notes'])

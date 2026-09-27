@@ -71,6 +71,7 @@ class UnitExtraction(BaseModel):
     unclear: list[dict[str, Any]] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
     failed_reads: int = 0
+    failed_segments: list[str] = Field(default_factory=list)
     unresolved_references: list[dict[str, Any]] = Field(default_factory=list)
 
 
@@ -183,6 +184,35 @@ class Extractor:
         self._limit = asyncio.Semaphore(max(1, concurrency))
 
     async def _read(self, doc: DocumentText, unit: ReadingUnit, read: str, depth: int = 0) -> UnitExtraction:
+        result = await self._read_once(doc, unit, read, depth)
+        structured = [s.segment_id for s in doc.segments(unit.segment_ids)
+                      if s.table or doc.step_group(s.segment_id) is not None]
+        if result.proposals or not structured:
+            return result
+        retry = await self._read_once(doc, unit, read, depth)
+        retry.notes = result.notes + [f"{read}: empty structured reading retried"] + retry.notes
+        if retry.proposals:
+            return retry
+        if depth == 0 and len(unit.segment_ids) >= 2:
+            half = len(unit.segment_ids) // 2
+            retry = UnitExtraction(unit_id=unit.unit_id, notes=retry.notes + [f"{read}: empty unit split in halves"])
+            for ids in (unit.segment_ids[:half], unit.segment_ids[half:]):
+                # Preserve the source window, including headers and merged-cell origins.
+                context = list(dict.fromkeys(unit.context_segment_ids + [s for s in unit.segment_ids if s not in ids]))
+                part = await self._read_once(doc, unit.model_copy(update={
+                    "segment_ids": ids, "context_segment_ids": context}), read, depth + 1)
+                retry.proposals.extend(part.proposals)
+                retry.unclear.extend(part.unclear)
+                retry.notes.extend(part.notes)
+                retry.unresolved_references.extend(part.unresolved_references)
+                retry.failed_reads += part.failed_reads
+                if not part.proposals:
+                    retry.failed_segments.extend(s for s in ids if s in structured)
+        else:
+            retry.failed_segments = structured
+        return retry
+
+    async def _read_once(self, doc: DocumentText, unit: ReadingUnit, read: str, depth: int = 0) -> UnitExtraction:
         allowed = [*unit.context_segment_ids, *unit.segment_ids]
         ordered = sorted(doc.segments(allowed), key=lambda item: doc.position(item.segment_id) or 0)
         text = render_segments(ordered, context=set(unit.context_segment_ids), doc=doc)
@@ -209,6 +239,7 @@ class Extractor:
                 result.notes.extend(part.notes)
                 result.unresolved_references.extend(part.unresolved_references)
                 result.failed_reads += part.failed_reads
+                result.failed_segments.extend(part.failed_segments)
             result.notes.append(f"{read}: unit split after a truncated answer")
             return result
         except Exception as exc:
@@ -235,6 +266,7 @@ class Extractor:
             merged.notes.extend(item.notes)
             merged.unresolved_references.extend(item.unresolved_references)
             merged.failed_reads += item.failed_reads
+            merged.failed_segments.extend(item.failed_segments)
         missing = uncovered_rows(doc, unit, merged)
         if missing:
             header_rows = {f"p{row.page}.t{row.table.table}.r1" for row in doc.segments(missing)}
@@ -248,7 +280,10 @@ class Extractor:
             merged.unresolved_references.extend(coverage.unresolved_references)
             merged.notes.extend(coverage.notes)
             merged.failed_reads += coverage.failed_reads
+            merged.failed_segments.extend(coverage.failed_segments)
             merged.notes.append(f"coverage: {len(missing)} unused table row(s) read again")
+        cited = {c for p in merged.proposals for c in p.all_cites}
+        merged.failed_segments = sorted(set(merged.failed_segments) - cited)
         return merged
 
 
