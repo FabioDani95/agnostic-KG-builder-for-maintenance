@@ -105,10 +105,13 @@ class ModelClient:
         name: str,
         max_output_tokens: int = 8000,
         reasoning_effort: str | None = None,
+        images: list[str] | None = None,
     ) -> dict[str, Any]:
         from backend.services.llm_gateway import chat_reasoning_kwargs
         from backend.services.model_pricing import usage_from_response
 
+        content = ([{"type": "text", "text": user}] + [
+            {"type": "image_url", "image_url": {"url": url, "detail": "high"}} for url in images]) if images else user
         response_format = {"type": "json_schema", "json_schema": {"name": name, "strict": True, "schema": schema}}
         effort = reasoning_effort if reasoning_effort is not None else self.reasoning_effort
         last_error: Exception | None = None
@@ -116,7 +119,7 @@ class ModelClient:
             try:
                 response = await self._client.chat.completions.create(
                     model=self.model,
-                    messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
+                    messages=[{"role": "system", "content": system}, {"role": "user", "content": content}],
                     response_format=response_format,
                     max_completion_tokens=max_output_tokens,
                     **chat_reasoning_kwargs(self.model, effort),

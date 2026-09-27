@@ -76,6 +76,8 @@ class RunConfig(BaseModel):
     max_units: int = 150
     omission_review: bool = False
     omission_max_units: int = 3
+    visual_verification: bool = False
+    visual_max_relations: int = 12
 
 
 class GateRecord(BaseModel):
@@ -124,8 +126,11 @@ class Pipeline:
         script: dict[str, Any] | None = None,
         workdir: Path | None = None,
         spec: OntologySpec | None = None,
+        pdf_path: Path | None = None,
     ) -> None:
         self.doc = doc
+        self.pdf_path = pdf_path
+        self.visual_records: list[dict] = []
         self.asset_name = asset_name
         self.llm = llm
         self.config = config or RunConfig()
@@ -294,6 +299,20 @@ class Pipeline:
                 added = [CheckedRelation.model_validate(item) for item in repaired]
             relations.extend(added)
 
+        if self.config.visual_verification:
+            from backend.kg_v3.vision import visual_check
+
+            if self.pdf_path is None:
+                raise ValueError("visual verification requires pdf_path")
+            saved = self._load(f"visual_{stamp}")
+            if saved is None:
+                relations, self.visual_records = await self._timed("visual", visual_check(
+                    checker, self.doc, relations, self.pdf_path, limit=self.config.visual_max_relations))
+                saved = {"records": self.visual_records, "relations": [r.model_dump(mode="json") for r in relations]}
+                self._save(f"visual_{stamp}", saved)
+            relations = [CheckedRelation.model_validate(r) for r in saved["relations"]]
+            self.visual_records = saved["records"]
+
         doubts = [
             *relation_questions(self.doc, self.spec, relations),
             *merge_questions(self.doc, plan.unsure),
@@ -383,6 +402,8 @@ class Pipeline:
             "failed_reads": sum(item.failed_reads for item in extractions),
             "proposals": sum(len(item.proposals) for item in extractions),
             "omission_review_enabled": self.config.omission_review,
+            "visual_verification_enabled": self.config.visual_verification,
+            "visual_checks": self.visual_records,
             "omission_relations": sum(r.assertion.assertion_id.startswith("omission.") for r in relations),
             "unresolved_references": list({(ref["segment_id"], ref["reference"]): ref
                                            for item in extractions for ref in item.unresolved_references}.values()),

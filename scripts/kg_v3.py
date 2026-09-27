@@ -119,7 +119,7 @@ async def run(args) -> dict:
     llm = ModelClient(model=args.model, reasoning_effort=args.reasoning)
     agent_llm = ModelClient(model=args.agent_model, reasoning_effort=args.agent_reasoning)
     store = InMemoryQuestionStore()
-    result = await Pipeline(doc=doc, asset_name=asset["name"], llm=llm, config=config, agent_llm=agent_llm,
+    result = await Pipeline(doc=doc, pdf_path=pdf, asset_name=asset["name"], llm=llm, config=config, agent_llm=agent_llm,
                             human_store=store, workdir=out).run()
     result.report["seconds"].update(pdf_read=round(read_seconds, 3),
                                     end_to_end=round(time.perf_counter() - started, 3))
