@@ -315,3 +315,8 @@ Primo manuale di test, Grizzly G0872 (tag `v3-freeze-2026-09-28`, gold chiuso pr
 91/186 rami (48,9%, IC95 0,418–0,561) su tre esecuzioni. Tabelle di troubleshooting 85–94%; i rami
 sparsi nelle pagine di manutenzione restano quasi tutti fuori perché la mappa non sceglie quelle
 pagine. 0,07–0,10 USD e 3–4 minuti per esecuzione. Spesa 6,342 USD su 10.
+
+Protocollo aggiornato (decisione di Fabio): valutazione a rotazione. Ogni manuale nuovo si misura una
+volta con il codice congelato (primo contatto) e poi diventa di sviluppo; nel paper la qualità su
+manuali nuovi si dichiara solo con i numeri di primo contatto, più una verifica finale su 3–5
+manuali tenuti da parte. Grizzly G0872 è il primo della serie.
