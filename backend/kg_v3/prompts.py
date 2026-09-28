@@ -11,7 +11,9 @@ system proposes. Answer as an experienced maintenance engineer would.
 1. Judge meaning, not wording. A paraphrase with the same technical logic is correct.
 2. Use only the excerpts shown. Do not add or remove facts from outside knowledge.
 3. A cause, check or remedy belongs to the entry (table row, list item, paragraph) that states
-   it. Reject a proposal that joins parts of different entries.
+   it. Reject a proposal that joins parts of different entries. A flowchart or numbered procedure
+   is one entry: its title, questions, outcomes and actions linked by arrows or numbering belong
+   together, but an action belongs only to the outcome that leads to it.
 4. A statement marked [inspection] is correct when the manual prescribes that check or test for
    that problem or cause; it does not need to repair anything. A statement without that mark
    claims a remedy: a check alone does not support it.
@@ -19,6 +21,7 @@ system proposes. Answer as an experienced maintenance engineer would.
    A cause that only repeats the problem, or a check presented as a cause, is not correct. A cause
    marked (not written in the manual) is correct when the manual gives that problem with that check
    or remedy; its name is the system's reading of the check, not a claim that the manual states it.
+   A problem named "Suspected <component> fault" only states that the manual tests that component.
 6. For a page map, a page is diagnostic when it helps find or fix a fault (troubleshooting tables,
    fault or alarm codes, tests); procedure pages hold steps that diagnostic pages rely on.
 7. Choose exactly one listed option ID. If only some numbered statements are right, choose
@@ -130,6 +133,18 @@ Rules:
 13. Ignore specifications and part lists unless they state a fault, its cause or its remedy.
     Preserve warnings that govern the extracted actions as typed context, not standalone faults.
     List passages you cannot interpret in "unclear".
+14. A question or test with outcomes (yes/no, pass/fail, a reading) is a decision step. Each
+    outcome that prescribes an action is its own record: the problem is the one the flowchart or
+    procedure starts from (its title or first question, also in context lines); the failure mode
+    is what that outcome reveals (stated false unless the manual names it as a cause); the test is
+    an inspection and the prescribed action a repair or escalation, both on that failure mode, with
+    the outcome as an "if" condition. "Go to No. 6" continues the same problem. Cite the problem,
+    the question, the outcome and the action. Never give an action the outcome of another question.
+15. A test or measurement with an expected or normal value is an inspection whose value is
+    "expected" context. The abnormal result reveals the failure mode (stated false unless named)
+    and a prescribed consequence (replace, adjust) is a repair on it. When the manual tests a
+    component without naming a symptom, the problem is "Suspected <component> fault", with the
+    component taken from the test's heading or row; cite that heading or row.
 """
 
 VERIFY_PROMPT = """You check statements extracted from a technical maintenance manual. For each statement you
@@ -145,7 +160,9 @@ replaces, cleans or adjusts, when a remedy statement only checks, and when the c
 perform, only repeats the problem, or is a check or remedy turned around into a fault that the text
 never states as a cause. A cause marked (not written in the manual) only claims that the manual gives
 this problem, check or remedy without naming a cause: judge the problem and the check or remedy, not
-the cause name.
+the cause name. A problem named "Suspected <component> fault" only claims that the manual tests that
+component: judge the test and its result. An outcome of a decision step (a yes/no answer, a reading)
+supports only the action that outcome leads to.
 Context is typed: if=antecedent, prerequisite=before, warning=constraint/prohibition,
 expected=test outcome, order=sequence. Check each item's role and scope against the cited source.
 """

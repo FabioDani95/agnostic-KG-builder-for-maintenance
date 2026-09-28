@@ -62,3 +62,15 @@ def test_the_kpi_judge_sees_a_derived_cause_unnamed_only_where_the_manual_names_
     # A cause presented as written in the manual keeps its name and is judged as such.
     claimed = {**edge, "target_stated": True}
     assert pair_line("P1", unstated_gold, [claimed]).split(". Extracted context:")[0].endswith("may indicate 'Incorrect input voltage'")
+
+
+def test_prompts_turn_flowchart_outcomes_and_expected_values_into_connected_branches():
+    from backend.kg_v3.prompts import EXTRACTION_PROMPT, REVIEWER_BRIEF, VERIFY_PASSAGE_PROMPT
+
+    # Each outcome of a decision step is a branch of the chart's problem, with the outcome as condition.
+    assert "Each\n    outcome that prescribes an action is its own record" in EXTRACTION_PROMPT
+    assert "Never give an action the outcome of another question" in EXTRACTION_PROMPT
+    # A test with a normal value is an inspection with expected context, tied to a problem.
+    assert '"Suspected <component> fault"' in EXTRACTION_PROMPT
+    assert "supports only the action that outcome leads to" in VERIFY_PASSAGE_PROMPT
+    assert "A flowchart or numbered procedure\n   is one entry" in REVIEWER_BRIEF
