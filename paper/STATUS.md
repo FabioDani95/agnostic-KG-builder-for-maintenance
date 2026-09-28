@@ -310,3 +310,8 @@ valutatore prima e dopo: rami 669 → 736/900 (81,8%, IC95 0,791–0,842), nessu
 fusioni vietate 0; cause orfane in aumento (35 → 53) e costo per esecuzione da circa 1,5 a 3–11
 centesimi. Numeri di sviluppo. Primo manuale di test in preparazione: Grizzly G0872 (gold da
 annotare prima di qualsiasi esecuzione). Spesa 5,929 USD su 10.
+
+Primo manuale di test, Grizzly G0872 (tag `v3-freeze-2026-09-28`, gold chiuso prima delle esecuzioni):
+91/186 rami (48,9%, IC95 0,418–0,561) su tre esecuzioni. Tabelle di troubleshooting 85–94%; i rami
+sparsi nelle pagine di manutenzione restano quasi tutti fuori perché la mappa non sceglie quelle
+pagine. 0,07–0,10 USD e 3–4 minuti per esecuzione. Spesa 6,342 USD su 10.

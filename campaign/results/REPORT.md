@@ -238,6 +238,31 @@ nome di un codice è spezzato in più segmenti, le colonne sono interlacciate, l
 possibile riprodurre la lettura su cui era stato annotato il foglio: unisce il testo di una
 riga visiva tra le colonne e non corrisponde a nessuna modalità di PyMuPDF 1.28 installato.
 
+## Primo manuale di test: Grizzly G0872 (2026-09-28)
+
+Codice congelato al tag `v3-freeze-2026-09-28`. Gold di Fabio Daniele, a mano e senza assistenti AI,
+chiuso prima di ogni esecuzione: 66 rami (62 con causa o azione, 4 solo codice), 164 asserzioni,
+20 pagine. Il lettore produce lo stesso `TESTO.md` su cui è stato annotato. Nessuna correzione del
+codice deriva da questo manuale. [KPI](kpi_test_grizzly.md).
+
+| Esecuzione | Rami | Asserzioni | Codici | Pagine gold lette | Domande a persona | USD | Secondi |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| r1 | 29/62 | 86/160 | 3/4 | 8/20 | 5 | 0,099 | 252 |
+| r2 | 32/62 | 88/160 | 1/4 | 6/20 | 0 | 0,080 | 178 |
+| r3 | 30/62 | 87/160 | 3/4 | 6/20 | 0 | 0,066 | 189 |
+
+Rami, tre esecuzioni: 91/186 = 48,9%, IC95 Wilson [0,418; 0,561]. Tempo con la lettura del PDF.
+
+- **Tabelle di troubleshooting (pp. 51–52), 34 rami:** 29, 32 e 29 ritrovati (85–94%).
+- **Altri 32 rami, sparsi nel manuale** (codici a p. 9, allarme del chiller a p. 32, amperometro
+  a p. 37, condizioni di guasto con rimedio nelle pagine di manutenzione 46–64): 4–5 ritrovati.
+  Tra il 58% e il 79% delle perdite (43–58 asserzioni per esecuzione) cade su pagine che la mappa
+  non ha scelto: la mappa legge i test e le tabelle di troubleshooting, non le condizioni di guasto
+  dentro le procedure di manutenzione.
+- Qualità strutturale: fusioni vietate 0, archi senza prova 0, cause orfane 1–5 per esecuzione.
+- È il primo risultato su un manuale non usato per correggere il codice. Un solo manuale: non
+  basta per una conclusione sulla generalizzazione.
+
 ## Iterazione E: completezza dei rami (2026-09-28)
 
 Codice: E1–E8 dell'altro agente ([brief](../../docs/PROMPT_ITERAZIONE_E.md)) più quattro correzioni

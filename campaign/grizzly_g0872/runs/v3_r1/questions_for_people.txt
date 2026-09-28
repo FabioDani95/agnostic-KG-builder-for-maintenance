@@ -1,0 +1,69 @@
+Question merge:FailureMode|mirror 1 and mirror 2 alignment requires adjustment|FailureMode|mirror alignment requires adjustment (merge_check)
+Do 'Mirror #1 and Mirror #2 alignment requires adjustment' and 'Mirror alignment requires adjustment' denote the same FailureMode?
+
+What the manual says:
+  [p61.b33] page 61: — If laser beam is outside center of mirror,
+  [p61.b10] page 61: — If laser beam falls outside center of cross­
+
+What the system proposes:
+  - Keep 'Mirror #1 and Mirror #2 alignment requires adjustment' and 'Mirror alignment requires adjustment' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:FailureMode|mirror alignment requires adjustment|FailureMode|mirror alignment requires adjustment at lower-left table corner (merge_check)
+Do 'Mirror alignment requires adjustment' and 'Mirror alignment requires adjustment at lower-left table corner' denote the same FailureMode?
+
+What the manual says:
+  [p61.b10] page 61: — If laser beam falls outside center of cross­
+  [p61.b21] page 61: — If laser beam falls outside center of cross­
+
+What the system proposes:
+  - Keep 'Mirror alignment requires adjustment' and 'Mirror alignment requires adjustment at lower-left table corner' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:Component|mirror 1 assembly|Component|mirror assembly (merge_check)
+Do 'Mirror #1 assembly' and 'Mirror assembly' denote the same Component?
+
+What the manual says:
+  [p61.b35] page 61: 23. Loosen lock nuts on (3) brass thumbscrews located behind Mirror #1 assembly (see Figure 98 on Page 58).
+  [p61.b1] page 61: 17. Adjust direction of beam path by tightening thumbscrews depending on desired direction of beam travel, as shown in Figure 99.
+
+What the system proposes:
+  - Keep 'Mirror #1 assembly' and 'Mirror assembly' as two separate Component nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:Component|mirror 2 assembly|Component|mirror assembly (merge_check)
+Do 'Mirror #2 assembly' and 'Mirror assembly' denote the same Component?
+
+What the manual says:
+  [p62.b12] page 62: 28. Loosen lock nuts on (3) brass thumbscrews located behind Mirror #2 assembly (see Figure 103).
+  [p61.b1] page 61: 17. Adjust direction of beam path by tightening thumbscrews depending on desired direction of beam travel, as shown in Figure 99.
+
+What the system proposes:
+  - Keep 'Mirror #2 assembly' and 'Mirror assembly' as two separate Component nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:CorrectiveAction|replace the faulty limit switch before operating the machine|CorrectiveAction|replace the faulty x-axis limit switch before operating the machine (merge_check)
+Do 'Replace the faulty limit switch before operating the machine' and 'Replace the faulty x-axis limit switch before operating the machine' denote the same CorrectiveAction?
+
+What the manual says:
+  [p27.b9] page 27: disconnect machine from power. The limit switch safety feature is NOT working prop­ erly and must be replaced before operat­ ing the machine.
+  [p27.b9] page 27: disconnect machine from power. The limit switch safety feature is NOT working prop­ erly and must be replaced before operat­ ing the machine.
+
+What the system proposes:
+  - Keep 'Replace the faulty limit switch before operating the machine' and 'Replace the faulty x-axis limit switch before operating the machine' as two separate CorrectiveAction nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
