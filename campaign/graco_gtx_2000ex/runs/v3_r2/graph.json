@@ -18,15 +18,15 @@
    "evidence": []
   },
   {
-   "id": "v3n_6ee02bfb9961ddf4f97f",
+   "id": "v3n_5d7363b029d20d9e3814",
    "type": "Component",
-   "name": "Checkballs or seats",
+   "name": "Checkballs and seats",
    "aliases": [],
    "stated_in_source": false,
    "properties": {
-    "component_id": "v3n_6ee02bfb9961ddf4f97f",
-    "name": "Checkballs or seats",
-    "description": "Checkballs or seats",
+    "component_id": "v3n_5d7363b029d20d9e3814",
+    "name": "Checkballs and seats",
+    "description": "Checkballs and seats",
     "category": "not_stated"
    },
    "evidence": [
@@ -62,15 +62,15 @@
    ]
   },
   {
-   "id": "v3n_338ec3c2300a2e2daab5",
+   "id": "v3n_77c7aea008346837752d",
    "type": "Component",
-   "name": "Gun or nozzle",
+   "name": "Gun and nozzle",
    "aliases": [],
    "stated_in_source": false,
    "properties": {
-    "component_id": "v3n_338ec3c2300a2e2daab5",
-    "name": "Gun or nozzle",
-    "description": "Gun or nozzle",
+    "component_id": "v3n_77c7aea008346837752d",
+    "name": "Gun and nozzle",
+    "description": "Gun and nozzle",
     "category": "not_stated"
    },
    "evidence": [
@@ -113,6 +113,57 @@
    ]
   },
   {
+   "id": "v3n_621e8543925463be03f4",
+   "type": "Component",
+   "name": "Material hose",
+   "aliases": [],
+   "stated_in_source": false,
+   "properties": {
+    "component_id": "v3n_621e8543925463be03f4",
+    "name": "Material hose",
+    "description": "Material hose",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p8.t1.r6",
+     "page": 8,
+     "evidence_id": "ev_647bfd6281f2455ff60d7cc1eb20",
+     "bbox": null,
+     "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Plugged hose, or hose too small | SOLUTION: Relieve pressure, page 6. Flush hose with clean water, or try a 1-1/4 in. hose."
+    }
+   ]
+  },
+  {
+   "id": "v3n_e776be936e0fc765e5f8",
+   "type": "Component",
+   "name": "Nozzle",
+   "aliases": [],
+   "stated_in_source": false,
+   "properties": {
+    "component_id": "v3n_e776be936e0fc765e5f8",
+    "name": "Nozzle",
+    "description": "Nozzle",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p8.t1.r13",
+     "page": 8,
+     "evidence_id": "ev_7c589487a26e04f3ffeede62cf96",
+     "bbox": null,
+     "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Nozzle too small | SOLUTION: Increase nozzle size."
+    },
+    {
+     "segment_id": "p8.t1.r5",
+     "page": 8,
+     "evidence_id": "ev_abd10ec01fda33a87b3613de6244",
+     "bbox": null,
+     "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Plugged gun or nozzle | SOLUTION: Relieve Pressure, page 6. Remove gun from material hose, and cycle pump. NOTE: A plugged gun or nozzle may cause the hose and pump to plug. If necessary, flush hose and pump with clean water before cycling material through the hose with the gun removed."
+    }
+   ]
+  },
+  {
    "id": "v3n_e98788ff669e30f4eb7e",
    "type": "Component",
    "name": "Pump",
@@ -126,11 +177,25 @@
    },
    "evidence": [
     {
-     "segment_id": "p8.t1.r4",
+     "segment_id": "p8.t1.r11",
      "page": 8,
-     "evidence_id": "ev_dec29e22616ea9569f54b6d05d4f",
+     "evidence_id": "ev_c4572cc26301c5cd96de1d854b4d",
      "bbox": null,
-     "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Damaged checkballs or seats | SOLUTION: Replace checkballs or seats."
+     "text": "PROBLEM: Speed of application too slow | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
+    },
+    {
+     "segment_id": "p8.t1.r15",
+     "page": 8,
+     "evidence_id": "ev_af188516951be57d20c5c315b6c5",
+     "bbox": null,
+     "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Pump in need of repair | SOLUTION: See texture pump instruction manual 308479."
+    },
+    {
+     "segment_id": "p8.t1.r2",
+     "page": 8,
+     "evidence_id": "ev_ca5b2b07115bf423c25077d63619",
+     "bbox": null,
+     "text": "PROBLEM: No material output from pump | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
     },
     {
      "segment_id": "p8.t1.r7",
@@ -197,16 +262,16 @@
    ]
   },
   {
-   "id": "v3n_c9b46e15379f9fa2c8c1",
+   "id": "v3n_a55d9c84cfdb6286cb8e",
    "type": "CorrectiveAction",
-   "name": "Decrease air to gun at gun fitting and/or regulator",
+   "name": "Decrease air to the gun at the gun fitting and/or regulator",
    "aliases": [],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_c9b46e15379f9fa2c8c1",
-    "name": "Decrease air to gun at gun fitting and/or regulator",
-    "description": "Decrease air to gun at gun fitting and/or regulator",
-    "instruction_text": "Decrease air to gun at gun fitting and/or regulator",
+    "action_id": "v3n_a55d9c84cfdb6286cb8e",
+    "name": "Decrease air to the gun at the gun fitting and/or regulator",
+    "description": "Decrease air to the gun at the gun fitting and/or regulator",
+    "instruction_text": "Decrease air to the gun at the gun fitting and/or regulator",
     "action_kind": "repair",
     "source_type": "technical PDF",
     "source_title": "manual.pdf",
@@ -249,16 +314,18 @@
    ]
   },
   {
-   "id": "v3n_0ec99a2ca17f9d66cb91",
+   "id": "v3n_c4bc53aaa1a81009e778",
    "type": "CorrectiveAction",
-   "name": "Decrease pump air pressure or increase air to gun at gun fitting and/or regulator",
-   "aliases": [],
+   "name": "Decrease pump air pressure or increase air to the gun at the gun fitting and/or regulator",
+   "aliases": [
+    "Decrease air pressure to the pump or increase air to the gun at the gun fitting and/or regulator"
+   ],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_0ec99a2ca17f9d66cb91",
-    "name": "Decrease pump air pressure or increase air to gun at gun fitting and/or regulator",
-    "description": "Decrease pump air pressure or increase air to gun at gun fitting and/or regulator",
-    "instruction_text": "Decrease pump air pressure or increase air to gun at gun fitting and/or regulator",
+    "action_id": "v3n_c4bc53aaa1a81009e778",
+    "name": "Decrease pump air pressure or increase air to the gun at the gun fitting and/or regulator",
+    "description": "Decrease pump air pressure or increase air to the gun at the gun fitting and/or regulator",
+    "instruction_text": "Decrease pump air pressure or increase air to the gun at the gun fitting and/or regulator",
     "action_kind": "repair",
     "source_type": "technical PDF",
     "source_title": "manual.pdf",
@@ -275,16 +342,16 @@
    ]
   },
   {
-   "id": "v3n_672b1a5f9aaccb750ed0",
+   "id": "v3n_fcd190835bf2e4611a7b",
    "type": "CorrectiveAction",
-   "name": "Flush hose and pump with clean water before cycling material through hose with gun removed",
+   "name": "Flush the hose and pump with clean water before cycling material through the hose with the gun removed",
    "aliases": [],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_672b1a5f9aaccb750ed0",
-    "name": "Flush hose and pump with clean water before cycling material through hose with gun removed",
-    "description": "Flush hose and pump with clean water before cycling material through hose with gun removed",
-    "instruction_text": "Flush hose and pump with clean water before cycling material through hose with gun removed",
+    "action_id": "v3n_fcd190835bf2e4611a7b",
+    "name": "Flush the hose and pump with clean water before cycling material through the hose with the gun removed",
+    "description": "Flush the hose and pump with clean water before cycling material through the hose with the gun removed",
+    "instruction_text": "Flush the hose and pump with clean water before cycling material through the hose with the gun removed",
     "action_kind": "repair",
     "source_type": "technical PDF",
     "source_title": "manual.pdf",
@@ -301,16 +368,16 @@
    ]
   },
   {
-   "id": "v3n_99afca3459b7af747173",
+   "id": "v3n_7a0f7dc4126e521200a8",
    "type": "CorrectiveAction",
-   "name": "Increase air to gun at gun fitting and/or regulator",
+   "name": "Increase air to the gun at the gun fitting and/or regulator",
    "aliases": [],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_99afca3459b7af747173",
-    "name": "Increase air to gun at gun fitting and/or regulator",
-    "description": "Increase air to gun at gun fitting and/or regulator",
-    "instruction_text": "Increase air to gun at gun fitting and/or regulator",
+    "action_id": "v3n_7a0f7dc4126e521200a8",
+    "name": "Increase air to the gun at the gun fitting and/or regulator",
+    "description": "Increase air to the gun at the gun fitting and/or regulator",
+    "instruction_text": "Increase air to the gun at the gun fitting and/or regulator",
     "action_kind": "repair",
     "source_type": "technical PDF",
     "source_title": "manual.pdf",
@@ -356,20 +423,29 @@
      "evidence_id": "ev_cacebea5e3f616ccbb8e6fd23bc7",
      "bbox": null,
      "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE: Fluid delivery too low | SOLUTION: Increase nozzle size."
+    },
+    {
+     "segment_id": "p9.t1.r5",
+     "page": 9,
+     "evidence_id": "ev_d97642e4c90dbc9b7efa0d820422",
+     "bbox": null,
+     "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE (same as row above): Fluid delivery too low | SOLUTION: Increase air pressure to pump, or decrease air to gun at gun fitting and/or regulator."
     }
    ]
   },
   {
-   "id": "v3n_dd9471adf536e076887a",
+   "id": "v3n_ce17d36dcd793981f37b",
    "type": "CorrectiveAction",
-   "name": "Increase pump air pressure or decrease air to gun at gun fitting and/or regulator",
-   "aliases": [],
+   "name": "Increase pump air pressure or decrease air to the gun at the gun fitting and/or regulator",
+   "aliases": [
+    "Increase air pressure to the pump or decrease air to the gun at the gun fitting and/or regulator"
+   ],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_dd9471adf536e076887a",
-    "name": "Increase pump air pressure or decrease air to gun at gun fitting and/or regulator",
-    "description": "Increase pump air pressure or decrease air to gun at gun fitting and/or regulator",
-    "instruction_text": "Increase pump air pressure or decrease air to gun at gun fitting and/or regulator",
+    "action_id": "v3n_ce17d36dcd793981f37b",
+    "name": "Increase pump air pressure or decrease air to the gun at the gun fitting and/or regulator",
+    "description": "Increase pump air pressure or decrease air to the gun at the gun fitting and/or regulator",
+    "instruction_text": "Increase pump air pressure or decrease air to the gun at the gun fitting and/or regulator",
     "action_kind": "repair",
     "source_type": "technical PDF",
     "source_title": "manual.pdf",
@@ -386,31 +462,24 @@
    ]
   },
   {
-   "id": "v3n_e5e5b8837a6b67b8e8b4",
+   "id": "v3n_42182789cfb59fc3bd0d",
    "type": "CorrectiveAction",
-   "name": "Relieve pressure and flush hose with clean water",
+   "name": "Relieve pressure and flush the hose with clean water",
    "aliases": [
-    "Relieve pressure and clean hose"
+    "Flush the hose with clean water"
    ],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_e5e5b8837a6b67b8e8b4",
-    "name": "Relieve pressure and flush hose with clean water",
-    "description": "Relieve pressure and flush hose with clean water",
-    "instruction_text": "Relieve pressure and flush hose with clean water",
+    "action_id": "v3n_42182789cfb59fc3bd0d",
+    "name": "Relieve pressure and flush the hose with clean water",
+    "description": "Relieve pressure and flush the hose with clean water",
+    "instruction_text": "Relieve pressure and flush the hose with clean water",
     "action_kind": "repair",
     "source_type": "technical PDF",
     "source_title": "manual.pdf",
     "source_reference": "page 8"
    },
    "evidence": [
-    {
-     "segment_id": "p8.t1.r14",
-     "page": 8,
-     "evidence_id": "ev_5517a64fad46ed74c837ba01ca00",
-     "bbox": null,
-     "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Hose plugged or too small. | SOLUTION: Relieve Pressure, page 6. Clean hose, or try a 1-1/4 in. hose."
-    },
     {
      "segment_id": "p8.t1.r6",
      "page": 8,
@@ -421,16 +490,18 @@
    ]
   },
   {
-   "id": "v3n_b2443a508f82e45baad2",
+   "id": "v3n_534f37c21c864c5b907f",
    "type": "CorrectiveAction",
-   "name": "Relieve pressure, remove gun from material hose, and cycle pump",
-   "aliases": [],
+   "name": "Relieve pressure, remove the gun from the material hose, and cycle the pump",
+   "aliases": [
+    "Remove the gun from the material hose and cycle the pump"
+   ],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_b2443a508f82e45baad2",
-    "name": "Relieve pressure, remove gun from material hose, and cycle pump",
-    "description": "Relieve pressure, remove gun from material hose, and cycle pump",
-    "instruction_text": "Relieve pressure, remove gun from material hose, and cycle pump",
+    "action_id": "v3n_534f37c21c864c5b907f",
+    "name": "Relieve pressure, remove the gun from the material hose, and cycle the pump",
+    "description": "Relieve pressure, remove the gun from the material hose, and cycle the pump",
+    "instruction_text": "Relieve pressure, remove the gun from the material hose, and cycle the pump",
     "action_kind": "repair",
     "source_type": "technical PDF",
     "source_title": "manual.pdf",
@@ -447,18 +518,16 @@
    ]
   },
   {
-   "id": "v3n_d99c2d8047f42c952bea",
+   "id": "v3n_4a693c16db4fd2c76cb8",
    "type": "CorrectiveAction",
-   "name": "Replace damaged checkballs or seats",
-   "aliases": [
-    "Replace checkballs or seats"
-   ],
+   "name": "Replace the checkballs or seats",
+   "aliases": [],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_d99c2d8047f42c952bea",
-    "name": "Replace damaged checkballs or seats",
-    "description": "Replace damaged checkballs or seats",
-    "instruction_text": "Replace damaged checkballs or seats",
+    "action_id": "v3n_4a693c16db4fd2c76cb8",
+    "name": "Replace the checkballs or seats",
+    "description": "Replace the checkballs or seats",
+    "instruction_text": "Replace the checkballs or seats",
     "action_kind": "repair",
     "source_type": "technical PDF",
     "source_title": "manual.pdf",
@@ -508,16 +577,16 @@
    ]
   },
   {
-   "id": "v3n_1d1eb1fd463aea49fcbb",
+   "id": "v3n_765374cae393fbc78368",
    "type": "CorrectiveAction",
-   "name": "Shut down system, relieve pressure, and restart",
+   "name": "Shut down the system, relieve pressure, and restart",
    "aliases": [],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_1d1eb1fd463aea49fcbb",
-    "name": "Shut down system, relieve pressure, and restart",
-    "description": "Shut down system, relieve pressure, and restart",
-    "instruction_text": "Shut down system, relieve pressure, and restart",
+    "action_id": "v3n_765374cae393fbc78368",
+    "name": "Shut down the system, relieve pressure, and restart",
+    "description": "Shut down the system, relieve pressure, and restart",
+    "instruction_text": "Shut down the system, relieve pressure, and restart",
     "action_kind": "repair",
     "source_type": "technical PDF",
     "source_title": "manual.pdf",
@@ -534,10 +603,38 @@
    ]
   },
   {
+   "id": "v3n_49352b366850127eb95c",
+   "type": "CorrectiveAction",
+   "name": "Shut off air at the gun and increase pump air pressure to maximum",
+   "aliases": [],
+   "stated_in_source": false,
+   "properties": {
+    "action_id": "v3n_49352b366850127eb95c",
+    "name": "Shut off air at the gun and increase pump air pressure to maximum",
+    "description": "Shut off air at the gun and increase pump air pressure to maximum",
+    "instruction_text": "Shut off air at the gun and increase pump air pressure to maximum",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 8"
+   },
+   "evidence": [
+    {
+     "segment_id": "p8.t1.r2",
+     "page": 8,
+     "evidence_id": "ev_ca5b2b07115bf423c25077d63619",
+     "bbox": null,
+     "text": "PROBLEM: No material output from pump | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
+    }
+   ]
+  },
+  {
    "id": "v3n_95f3fa87decc5a67858a",
    "type": "CorrectiveAction",
    "name": "Shut off air at the gun and increase pump air pressure to maximum; turn regulator clockwise",
-   "aliases": [],
+   "aliases": [
+    "Turn the regulator clockwise to increase air pressure"
+   ],
    "stated_in_source": false,
    "properties": {
     "action_id": "v3n_95f3fa87decc5a67858a",
@@ -558,6 +655,13 @@
      "text": "PROBLEM: Speed of application too slow | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
     },
     {
+     "segment_id": "p8.t1.r12",
+     "page": 8,
+     "evidence_id": "ev_b3b9e8c14ac0cf8b997090115f66",
+     "bbox": null,
+     "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Material too thick | SOLUTION: Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material."
+    },
+    {
      "segment_id": "p8.t1.r13",
      "page": 8,
      "evidence_id": "ev_7c589487a26e04f3ffeede62cf96",
@@ -574,18 +678,16 @@
    ]
   },
   {
-   "id": "v3n_de0afa1ad3298d5bca1a",
+   "id": "v3n_ffa749f580db698e4dcf",
    "type": "CorrectiveAction",
-   "name": "Slowly squeeze trigger to fully open while moving gun quickly in a circular motion",
-   "aliases": [
-    "Slowly squeeze trigger fully open while moving gun quickly in a circular motion"
-   ],
+   "name": "Slowly squeeze the trigger fully open while moving the gun quickly in a circular motion",
+   "aliases": [],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_de0afa1ad3298d5bca1a",
-    "name": "Slowly squeeze trigger to fully open while moving gun quickly in a circular motion",
-    "description": "Slowly squeeze trigger to fully open while moving gun quickly in a circular motion",
-    "instruction_text": "Slowly squeeze trigger to fully open while moving gun quickly in a circular motion",
+    "action_id": "v3n_ffa749f580db698e4dcf",
+    "name": "Slowly squeeze the trigger fully open while moving the gun quickly in a circular motion",
+    "description": "Slowly squeeze the trigger fully open while moving the gun quickly in a circular motion",
+    "instruction_text": "Slowly squeeze the trigger fully open while moving the gun quickly in a circular motion",
     "action_kind": "repair",
     "source_type": "technical PDF",
     "source_title": "manual.pdf",
@@ -602,16 +704,16 @@
    ]
   },
   {
-   "id": "v3n_210cd287f8f80567bef4",
+   "id": "v3n_5645f8c4f1baef31ca42",
    "type": "CorrectiveAction",
-   "name": "Thicken and thoroughly mix material to the specified consistency",
+   "name": "Thicken and thoroughly mix the material to the specified finger-draw consistency",
    "aliases": [],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_210cd287f8f80567bef4",
-    "name": "Thicken and thoroughly mix material to the specified consistency",
-    "description": "Thicken and thoroughly mix material to the specified consistency",
-    "instruction_text": "Thicken and thoroughly mix material to the specified consistency",
+    "action_id": "v3n_5645f8c4f1baef31ca42",
+    "name": "Thicken and thoroughly mix the material to the specified finger-draw consistency",
+    "description": "Thicken and thoroughly mix the material to the specified finger-draw consistency",
+    "instruction_text": "Thicken and thoroughly mix the material to the specified finger-draw consistency",
     "action_kind": "repair",
     "source_type": "technical PDF",
     "source_title": "manual.pdf",
@@ -628,16 +730,42 @@
    ]
   },
   {
-   "id": "v3n_07bee13b09dcb5fca7c6",
+   "id": "v3n_9ce425957e925fd41562",
    "type": "CorrectiveAction",
-   "name": "Thin and thoroughly mix material to the specified consistency",
+   "name": "Thicken and thoroughly mix the material until it immediately folds back when a finger is drawn through its surface",
    "aliases": [],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_07bee13b09dcb5fca7c6",
-    "name": "Thin and thoroughly mix material to the specified consistency",
-    "description": "Thin and thoroughly mix material to the specified consistency",
-    "instruction_text": "Thin and thoroughly mix material to the specified consistency",
+    "action_id": "v3n_9ce425957e925fd41562",
+    "name": "Thicken and thoroughly mix the material until it immediately folds back when a finger is drawn through its surface",
+    "description": "Thicken and thoroughly mix the material until it immediately folds back when a finger is drawn through its surface",
+    "instruction_text": "Thicken and thoroughly mix the material until it immediately folds back when a finger is drawn through its surface",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 9"
+   },
+   "evidence": [
+    {
+     "segment_id": "p9.t1.r2",
+     "page": 9,
+     "evidence_id": "ev_f8095074c8fbadcaa82e40ade702",
+     "bbox": null,
+     "text": "PROBLEM: Pattern too fine or too much overspray | CAUSE: Material too thin | SOLUTION: Thicken material. Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material."
+    }
+   ]
+  },
+  {
+   "id": "v3n_1092e64ea2ad646c6c9f",
+   "type": "CorrectiveAction",
+   "name": "Thin and thoroughly mix the material to the specified finger-draw consistency",
+   "aliases": [],
+   "stated_in_source": false,
+   "properties": {
+    "action_id": "v3n_1092e64ea2ad646c6c9f",
+    "name": "Thin and thoroughly mix the material to the specified finger-draw consistency",
+    "description": "Thin and thoroughly mix the material to the specified finger-draw consistency",
+    "instruction_text": "Thin and thoroughly mix the material to the specified finger-draw consistency",
     "action_kind": "repair",
     "source_type": "technical PDF",
     "source_title": "manual.pdf",
@@ -659,6 +787,13 @@
      "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Material too thick | SOLUTION: Thin the material. Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material."
     },
     {
+     "segment_id": "p9.t1.r10",
+     "page": 9,
+     "evidence_id": "ev_35f2401c036d921e20631c5768f4",
+     "bbox": null,
+     "text": "PROBLEM (same as row above): Pattern too coarse | CAUSE (same as row above): Fluid delivery too high | SOLUTION: Decrease air pressure to pump, or increase air to gun at gun fitting and/or regulator."
+    },
+    {
      "segment_id": "p9.t1.r7",
      "page": 9,
      "evidence_id": "ev_653950a9fb92f200fa89e1554854",
@@ -668,13 +803,48 @@
    ]
   },
   {
-   "id": "v3n_abf70835d3217b1de655",
+   "id": "v3n_964f20e4a0473138e5c0",
    "type": "CorrectiveAction",
-   "name": "Try a 1-1/4 in. hose",
+   "name": "Thin and thoroughly mix the material until it immediately folds back when a finger is drawn through its surface",
    "aliases": [],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_abf70835d3217b1de655",
+    "action_id": "v3n_964f20e4a0473138e5c0",
+    "name": "Thin and thoroughly mix the material until it immediately folds back when a finger is drawn through its surface",
+    "description": "Thin and thoroughly mix the material until it immediately folds back when a finger is drawn through its surface",
+    "instruction_text": "Thin and thoroughly mix the material until it immediately folds back when a finger is drawn through its surface",
+    "action_kind": "repair",
+    "source_type": "technical PDF",
+    "source_title": "manual.pdf",
+    "source_reference": "page 8"
+   },
+   "evidence": [
+    {
+     "segment_id": "p8.t1.r3",
+     "page": 8,
+     "evidence_id": "ev_a512f561510f52dc4e6681fdb452",
+     "bbox": null,
+     "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Material too thick | SOLUTION: Thin the material. Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material."
+    },
+    {
+     "segment_id": "p9.t1.r7",
+     "page": 9,
+     "evidence_id": "ev_653950a9fb92f200fa89e1554854",
+     "bbox": null,
+     "text": "PROBLEM: Pattern too coarse | CAUSE: Material too thick | SOLUTION: Thin material. Material must be mixed thoroughly to a consistency that imme- diately folds back in as you draw your finger through the surface of the mate- rial."
+    }
+   ]
+  },
+  {
+   "id": "v3n_57ddd85ec4c8d1d29140",
+   "type": "CorrectiveAction",
+   "name": "Try a 1-1/4 in. hose",
+   "aliases": [
+    "Clean the hose or try a 1-1/4 in. hose"
+   ],
+   "stated_in_source": false,
+   "properties": {
+    "action_id": "v3n_57ddd85ec4c8d1d29140",
     "name": "Try a 1-1/4 in. hose",
     "description": "Try a 1-1/4 in. hose",
     "instruction_text": "Try a 1-1/4 in. hose",
@@ -701,16 +871,16 @@
    ]
   },
   {
-   "id": "v3n_12c6936942d5be561f04",
+   "id": "v3n_af279f014a1c64cc4690",
    "type": "CorrectiveAction",
-   "name": "Turn fluid knob in on gun; see Spray Techniques in Operation Manual 309915",
+   "name": "Turn the fluid knob in on the gun",
    "aliases": [],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_12c6936942d5be561f04",
-    "name": "Turn fluid knob in on gun; see Spray Techniques in Operation Manual 309915",
-    "description": "Turn fluid knob in on gun; see Spray Techniques in Operation Manual 309915",
-    "instruction_text": "Turn fluid knob in on gun; see Spray Techniques in Operation Manual 309915",
+    "action_id": "v3n_af279f014a1c64cc4690",
+    "name": "Turn the fluid knob in on the gun",
+    "description": "Turn the fluid knob in on the gun",
+    "instruction_text": "Turn the fluid knob in on the gun",
     "action_kind": "repair",
     "source_type": "technical PDF",
     "source_title": "manual.pdf",
@@ -727,22 +897,29 @@
    ]
   },
   {
-   "id": "v3n_4b7ae40070675ffdcfac",
+   "id": "v3n_7be6ec3c18136cbbc28b",
    "type": "CorrectiveAction",
-   "name": "Turn fluid knob out on gun; see Spray Techniques in Operation Manual 309915",
+   "name": "Turn the fluid knob out on the gun",
    "aliases": [],
    "stated_in_source": false,
    "properties": {
-    "action_id": "v3n_4b7ae40070675ffdcfac",
-    "name": "Turn fluid knob out on gun; see Spray Techniques in Operation Manual 309915",
-    "description": "Turn fluid knob out on gun; see Spray Techniques in Operation Manual 309915",
-    "instruction_text": "Turn fluid knob out on gun; see Spray Techniques in Operation Manual 309915",
+    "action_id": "v3n_7be6ec3c18136cbbc28b",
+    "name": "Turn the fluid knob out on the gun",
+    "description": "Turn the fluid knob out on the gun",
+    "instruction_text": "Turn the fluid knob out on the gun",
     "action_kind": "repair",
     "source_type": "technical PDF",
     "source_title": "manual.pdf",
     "source_reference": "page 9"
    },
    "evidence": [
+    {
+     "segment_id": "p9.t1.r5",
+     "page": 9,
+     "evidence_id": "ev_d97642e4c90dbc9b7efa0d820422",
+     "bbox": null,
+     "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE (same as row above): Fluid delivery too low | SOLUTION: Increase air pressure to pump, or decrease air to gun at gun fitting and/or regulator."
+    },
     {
      "segment_id": "p9.t1.r6",
      "page": 9,
@@ -1012,6 +1189,13 @@
    },
    "evidence": [
     {
+     "segment_id": "p8.t1.r12",
+     "page": 8,
+     "evidence_id": "ev_b3b9e8c14ac0cf8b997090115f66",
+     "bbox": null,
+     "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Material too thick | SOLUTION: Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material."
+    },
+    {
      "segment_id": "p8.t1.r13",
      "page": 8,
      "evidence_id": "ev_7c589487a26e04f3ffeede62cf96",
@@ -1034,13 +1218,6 @@
    },
    "evidence": [
     {
-     "segment_id": "p8.t1.r13",
-     "page": 8,
-     "evidence_id": "ev_7c589487a26e04f3ffeede62cf96",
-     "bbox": null,
-     "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Nozzle too small | SOLUTION: Increase nozzle size."
-    },
-    {
      "segment_id": "p8.t1.r5",
      "page": 8,
      "evidence_id": "ev_abd10ec01fda33a87b3613de6244",
@@ -1062,6 +1239,13 @@
     "material_context": "not_stated"
    },
    "evidence": [
+    {
+     "segment_id": "p8.t1.r12",
+     "page": 8,
+     "evidence_id": "ev_b3b9e8c14ac0cf8b997090115f66",
+     "bbox": null,
+     "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Material too thick | SOLUTION: Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material."
+    },
     {
      "segment_id": "p8.t1.r14",
      "page": 8,
@@ -1512,7 +1696,8 @@
      "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
      "cite": [
       "p8.b3"
-     ]
+     ],
+     "scope": "section"
     }
    ],
    "occurrences": [
@@ -1525,24 +1710,28 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
       "segment_ids": [
        "p8.b3",
        "p8.t1.r11",
-       "p8.t1.r2"
+       "p8.t1.r2",
+       "p9.t1.r10",
+       "p9.t1.r8"
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
       "notes": [
+       "remedy of a merged cell this row repeats; kept only when the verifier confirms it",
        "one end is not named in the source"
       ]
      },
@@ -1572,6 +1761,20 @@
        "evidence_id": "ev_ca5b2b07115bf423c25077d63619",
        "bbox": null,
        "text": "PROBLEM: No material output from pump | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
+      },
+      {
+       "segment_id": "p9.t1.r10",
+       "page": 9,
+       "evidence_id": "ev_35f2401c036d921e20631c5768f4",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too coarse | CAUSE (same as row above): Fluid delivery too high | SOLUTION: Decrease air pressure to pump, or increase air to gun at gun fitting and/or regulator."
+      },
+      {
+       "segment_id": "p9.t1.r8",
+       "page": 9,
+       "evidence_id": "ev_57f3fbc6bd897e8a77729e3cf871",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too coarse | CAUSE: Air pressure at gun too low | SOLUTION: Increase air to gun at gun fitting and/or regulator."
       }
      ]
     },
@@ -1584,14 +1787,17 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
       "segment_ids": [
        "p8.b3",
        "p8.t1.r11",
-       "p8.t1.r2"
+       "p8.t1.r2",
+       "p9.t1.r3",
+       "p9.t1.r5"
       ],
       "witnesses": [
        "structure",
@@ -1602,6 +1808,7 @@
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
       "notes": [
+       "remedy of a merged cell this row repeats; kept only when the verifier confirms it",
        "one end is not named in the source"
       ]
      },
@@ -1624,6 +1831,92 @@
        "evidence_id": "ev_c4572cc26301c5cd96de1d854b4d",
        "bbox": null,
        "text": "PROBLEM: Speed of application too slow | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
+      },
+      {
+       "segment_id": "p8.t1.r2",
+       "page": 8,
+       "evidence_id": "ev_ca5b2b07115bf423c25077d63619",
+       "bbox": null,
+       "text": "PROBLEM: No material output from pump | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
+      },
+      {
+       "segment_id": "p9.t1.r3",
+       "page": 9,
+       "evidence_id": "ev_233813dc37dc83b575fe1017e029",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE: Air pressure at gun too high | SOLUTION: Decrease air to gun at gun fitting and/or regulator."
+      },
+      {
+       "segment_id": "p9.t1.r5",
+       "page": 9,
+       "evidence_id": "ev_d97642e4c90dbc9b7efa0d820422",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE (same as row above): Fluid delivery too low | SOLUTION: Increase air pressure to pump, or decrease air to gun at gun fitting and/or regulator."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_5b51ca581a441b927ca5",
+   "type": "RESOLVED_BY",
+   "from": "v3n_151edcbf427aa064024f",
+   "to": "v3n_49352b366850127eb95c",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [
+    {
+     "kind": "prerequisite",
+     "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
+     "cite": [
+      "p8.b3"
+     ],
+     "scope": "section"
+    }
+   ],
+   "occurrences": [
+    {
+     "record": "u001-18c3ef:B.R1",
+     "tier": "green",
+     "conditions": [
+      {
+       "kind": "prerequisite",
+       "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
+       "cite": [
+        "p8.b3"
+       ],
+       "scope": "section"
+      }
+     ],
+     "certificate": {
+      "segment_ids": [
+       "p8.b3",
+       "p8.t1.r2"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p8.b3",
+       "page": 8,
+       "evidence_id": "ev_0092b5fd0b3a3c533af8fba5011a",
+       "bbox": [
+        35.987,
+        102.09,
+        465.967,
+        116.41
+       ],
+       "text": "Before performing any Troubleshooting procedures, follow Pressure Relief procedure on page 6."
       },
       {
        "segment_id": "p8.t1.r2",
@@ -1726,10 +2019,10 @@
    ]
   },
   {
-   "id": "v3e_0bbca3d8babe826120c4",
+   "id": "v3e_25626448af5df5759278",
    "type": "RESOLVED_BY",
    "from": "v3n_e29666283d113d04e708",
-   "to": "v3n_07bee13b09dcb5fca7c6",
+   "to": "v3n_1092e64ea2ad646c6c9f",
    "tier": "green",
    "trusted": true,
    "conditions": [
@@ -1738,7 +2031,8 @@
      "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
      "cite": [
       "p8.b3"
-     ]
+     ],
+     "scope": "section"
     }
    ],
    "occurrences": [
@@ -1751,7 +2045,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -1818,7 +2113,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -1885,7 +2181,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -1897,9 +2194,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -2019,10 +2316,10 @@
    ]
   },
   {
-   "id": "v3e_03620a554206b2a44d73",
+   "id": "v3e_e5dd5c2ebc8352e5c7de",
    "type": "AFFECTS",
    "from": "v3n_dd6017fd39ad1c453c99",
-   "to": "v3n_6ee02bfb9961ddf4f97f",
+   "to": "v3n_5d7363b029d20d9e3814",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -2060,10 +2357,10 @@
    ]
   },
   {
-   "id": "v3e_98108f3be076cda7203e",
+   "id": "v3e_ef4cc13d828722c8ce1a",
    "type": "RESOLVED_BY",
    "from": "v3n_dd6017fd39ad1c453c99",
-   "to": "v3n_d99c2d8047f42c952bea",
+   "to": "v3n_4a693c16db4fd2c76cb8",
    "tier": "green",
    "trusted": true,
    "conditions": [
@@ -2072,7 +2369,8 @@
      "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
      "cite": [
       "p8.b3"
-     ]
+     ],
+     "scope": "section"
     }
    ],
    "occurrences": [
@@ -2085,7 +2383,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -2203,10 +2502,10 @@
    ]
   },
   {
-   "id": "v3e_5f851c1ed06741958c4d",
+   "id": "v3e_e0d6100a8a409700330a",
    "type": "AFFECTS",
    "from": "v3n_46f88634cb6bec4abdcb",
-   "to": "v3n_338ec3c2300a2e2daab5",
+   "to": "v3n_77c7aea008346837752d",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -2217,7 +2516,6 @@
      "conditions": [],
      "certificate": {
       "segment_ids": [
-       "p8.t1.r13",
        "p8.t1.r5"
       ],
       "witnesses": [
@@ -2234,13 +2532,6 @@
      },
      "evidence": [
       {
-       "segment_id": "p8.t1.r13",
-       "page": 8,
-       "evidence_id": "ev_7c589487a26e04f3ffeede62cf96",
-       "bbox": null,
-       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Nozzle too small | SOLUTION: Increase nozzle size."
-      },
-      {
        "segment_id": "p8.t1.r5",
        "page": 8,
        "evidence_id": "ev_abd10ec01fda33a87b3613de6244",
@@ -2252,10 +2543,10 @@
    ]
   },
   {
-   "id": "v3e_2b111fa3bde763e76e48",
+   "id": "v3e_ced0df27a2fe2e29851c",
    "type": "RESOLVED_BY",
    "from": "v3n_46f88634cb6bec4abdcb",
-   "to": "v3n_b2443a508f82e45baad2",
+   "to": "v3n_534f37c21c864c5b907f",
    "tier": "green",
    "trusted": true,
    "conditions": [
@@ -2264,7 +2555,8 @@
      "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
      "cite": [
       "p8.b3"
-     ]
+     ],
+     "scope": "section"
     }
    ],
    "occurrences": [
@@ -2277,20 +2569,23 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
       "segment_ids": [
        "p8.b3",
-       "p8.t1.r13",
-       "p8.t1.r5"
+       "p8.t1.r12",
+       "p8.t1.r14",
+       "p8.t1.r5",
+       "p8.t1.r6"
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -2313,11 +2608,89 @@
        "text": "Before performing any Troubleshooting procedures, follow Pressure Relief procedure on page 6."
       },
       {
-       "segment_id": "p8.t1.r13",
+       "segment_id": "p8.t1.r12",
        "page": 8,
-       "evidence_id": "ev_7c589487a26e04f3ffeede62cf96",
+       "evidence_id": "ev_b3b9e8c14ac0cf8b997090115f66",
        "bbox": null,
-       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Nozzle too small | SOLUTION: Increase nozzle size."
+       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Material too thick | SOLUTION: Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material."
+      },
+      {
+       "segment_id": "p8.t1.r14",
+       "page": 8,
+       "evidence_id": "ev_5517a64fad46ed74c837ba01ca00",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Hose plugged or too small. | SOLUTION: Relieve Pressure, page 6. Clean hose, or try a 1-1/4 in. hose."
+      },
+      {
+       "segment_id": "p8.t1.r5",
+       "page": 8,
+       "evidence_id": "ev_abd10ec01fda33a87b3613de6244",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Plugged gun or nozzle | SOLUTION: Relieve Pressure, page 6. Remove gun from material hose, and cycle pump. NOTE: A plugged gun or nozzle may cause the hose and pump to plug. If necessary, flush hose and pump with clean water before cycling material through the hose with the gun removed."
+      },
+      {
+       "segment_id": "p8.t1.r6",
+       "page": 8,
+       "evidence_id": "ev_647bfd6281f2455ff60d7cc1eb20",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Plugged hose, or hose too small | SOLUTION: Relieve pressure, page 6. Flush hose with clean water, or try a 1-1/4 in. hose."
+      }
+     ]
+    },
+    {
+     "record": "u001-18c3ef:B.R4",
+     "tier": "green",
+     "conditions": [
+      {
+       "kind": "prerequisite",
+       "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
+       "cite": [
+        "p8.b3"
+       ],
+       "scope": "section"
+      },
+      {
+       "kind": "prerequisite",
+       "text": "Relieve pressure before removing the gun from the material hose",
+       "cite": [
+        "p8.t1.r5"
+       ],
+       "scope": "relation"
+      }
+     ],
+     "certificate": {
+      "segment_ids": [
+       "p8.b3",
+       "p8.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "reviewer"
+      ],
+      "verifier_verdict": "not_supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+      },
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p8.b3",
+       "page": 8,
+       "evidence_id": "ev_0092b5fd0b3a3c533af8fba5011a",
+       "bbox": [
+        35.987,
+        102.09,
+        465.967,
+        116.41
+       ],
+       "text": "Before performing any Troubleshooting procedures, follow Pressure Relief procedure on page 6."
       },
       {
        "segment_id": "p8.t1.r5",
@@ -2331,40 +2704,20 @@
    ]
   },
   {
-   "id": "v3e_a3bd411052f45ec0ba94",
+   "id": "v3e_2e8423f406311826a6fa",
    "type": "RESOLVED_BY",
    "from": "v3n_46f88634cb6bec4abdcb",
-   "to": "v3n_672b1a5f9aaccb750ed0",
+   "to": "v3n_fcd190835bf2e4611a7b",
    "tier": "green",
    "trusted": true,
    "conditions": [
-    {
-     "kind": "if",
-     "text": "If necessary",
-     "cite": [
-      "p8.t1.r5"
-     ]
-    },
     {
      "kind": "prerequisite",
      "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
      "cite": [
       "p8.b3"
-     ]
-    },
-    {
-     "kind": "warning",
-     "text": "A plugged gun or nozzle may cause the hose and pump to plug; cycle material through the hose with the gun removed.",
-     "cite": [
-      "p8.t1.r5"
-     ]
-    },
-    {
-     "kind": "warning",
-     "text": "A plugged gun or nozzle may cause the hose and pump to plug; keep the gun removed when cycling material through the hose.",
-     "cite": [
-      "p8.t1.r5"
-     ]
+     ],
+     "scope": "section"
     }
    ],
    "occurrences": [
@@ -2374,31 +2727,19 @@
      "conditions": [
       {
        "kind": "if",
-       "text": "If necessary",
+       "text": "If necessary, flush the hose and pump before cycling material through the hose with the gun removed.",
        "cite": [
         "p8.t1.r5"
-       ]
+       ],
+       "scope": "relation"
       },
       {
        "kind": "prerequisite",
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
-      },
-      {
-       "kind": "warning",
-       "text": "A plugged gun or nozzle may cause the hose and pump to plug; cycle material through the hose with the gun removed.",
-       "cite": [
-        "p8.t1.r5"
-       ]
-      },
-      {
-       "kind": "warning",
-       "text": "A plugged gun or nozzle may cause the hose and pump to plug; keep the gun removed when cycling material through the hose.",
-       "cite": [
-        "p8.t1.r5"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -2408,9 +2749,77 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p8.b3",
+       "page": 8,
+       "evidence_id": "ev_0092b5fd0b3a3c533af8fba5011a",
+       "bbox": [
+        35.987,
+        102.09,
+        465.967,
+        116.41
+       ],
+       "text": "Before performing any Troubleshooting procedures, follow Pressure Relief procedure on page 6."
+      },
+      {
+       "segment_id": "p8.t1.r5",
+       "page": 8,
+       "evidence_id": "ev_abd10ec01fda33a87b3613de6244",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Plugged gun or nozzle | SOLUTION: Relieve Pressure, page 6. Remove gun from material hose, and cycle pump. NOTE: A plugged gun or nozzle may cause the hose and pump to plug. If necessary, flush hose and pump with clean water before cycling material through the hose with the gun removed."
+      }
+     ]
+    },
+    {
+     "record": "u001-18c3ef:B.R4",
+     "tier": "green",
+     "conditions": [
+      {
+       "kind": "if",
+       "text": "Flush the hose and pump if necessary",
+       "cite": [
+        "p8.t1.r5"
+       ],
+       "scope": "relation"
+      },
+      {
+       "kind": "prerequisite",
+       "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
+       "cite": [
+        "p8.b3"
+       ],
+       "scope": "section"
+      },
+      {
+       "kind": "warning",
+       "text": "A plugged gun or nozzle may cause the hose and pump to plug; cycle material through the hose with the gun removed",
+       "cite": [
+        "p8.t1.r5"
+       ],
+       "scope": "relation"
+      }
+     ],
+     "certificate": {
+      "segment_ids": [
+       "p8.b3",
+       "p8.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -2543,9 +2952,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -2611,10 +3020,10 @@
    ]
   },
   {
-   "id": "v3e_775d2c7b47c5942aaedd",
+   "id": "v3e_447e3aa77311acc9c59e",
    "type": "RESOLVED_BY",
    "from": "v3n_be53793fc7c17f419b11",
-   "to": "v3n_e5e5b8837a6b67b8e8b4",
+   "to": "v3n_42182789cfb59fc3bd0d",
    "tier": "green",
    "trusted": true,
    "conditions": [
@@ -2623,7 +3032,8 @@
      "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
      "cite": [
       "p8.b3"
-     ]
+     ],
+     "scope": "section"
     }
    ],
    "occurrences": [
@@ -2636,24 +3046,28 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
       "segment_ids": [
        "p8.b3",
+       "p8.t1.r12",
+       "p8.t1.r13",
        "p8.t1.r14",
        "p8.t1.r6"
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
       "notes": [
+       "remedy of a merged cell this row repeats; kept only when the verifier confirms it",
        "one end is not named in the source"
       ]
      },
@@ -2669,6 +3083,20 @@
         116.41
        ],
        "text": "Before performing any Troubleshooting procedures, follow Pressure Relief procedure on page 6."
+      },
+      {
+       "segment_id": "p8.t1.r12",
+       "page": 8,
+       "evidence_id": "ev_b3b9e8c14ac0cf8b997090115f66",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Material too thick | SOLUTION: Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material."
+      },
+      {
+       "segment_id": "p8.t1.r13",
+       "page": 8,
+       "evidence_id": "ev_7c589487a26e04f3ffeede62cf96",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Nozzle too small | SOLUTION: Increase nozzle size."
       },
       {
        "segment_id": "p8.t1.r14",
@@ -2687,7 +3115,7 @@
      ]
     },
     {
-     "record": "u001-18c3ef:A.R13",
+     "record": "u001-18c3ef:B.R5",
      "tier": "green",
      "conditions": [
       {
@@ -2695,20 +3123,28 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
+      },
+      {
+       "kind": "prerequisite",
+       "text": "Relieve pressure before flushing the hose",
+       "cite": [
+        "p8.t1.r6"
+       ],
+       "scope": "relation"
       }
      ],
      "certificate": {
       "segment_ids": [
        "p8.b3",
-       "p8.t1.r14",
        "p8.t1.r6"
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -2728,13 +3164,6 @@
         116.41
        ],
        "text": "Before performing any Troubleshooting procedures, follow Pressure Relief procedure on page 6."
-      },
-      {
-       "segment_id": "p8.t1.r14",
-       "page": 8,
-       "evidence_id": "ev_5517a64fad46ed74c837ba01ca00",
-       "bbox": null,
-       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Hose plugged or too small. | SOLUTION: Relieve Pressure, page 6. Clean hose, or try a 1-1/4 in. hose."
       },
       {
        "segment_id": "p8.t1.r6",
@@ -2748,10 +3177,10 @@
    ]
   },
   {
-   "id": "v3e_37b2fa4070cdacfa2ec6",
+   "id": "v3e_9de99d30bcb692a8a9f1",
    "type": "RESOLVED_BY",
    "from": "v3n_be53793fc7c17f419b11",
-   "to": "v3n_abf70835d3217b1de655",
+   "to": "v3n_57ddd85ec4c8d1d29140",
    "tier": "green",
    "trusted": true,
    "conditions": [
@@ -2760,7 +3189,8 @@
      "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
      "cite": [
       "p8.b3"
-     ]
+     ],
+     "scope": "section"
     }
    ],
    "occurrences": [
@@ -2773,7 +3203,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -2832,7 +3263,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -2843,9 +3275,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -2951,9 +3383,9 @@
       ],
       "witnesses": [
        "structure",
-       "verifier"
+       "agreement"
       ],
-      "verifier_verdict": "supported",
+      "verifier_verdict": null,
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -2988,10 +3420,91 @@
    ]
   },
   {
-   "id": "v3e_b27d37cac87c50b6f30d",
+   "id": "v3e_36d5bf71eedae3932ddd",
+   "type": "AFFECTS",
+   "from": "v3n_3ae431153413303a6968",
+   "to": "v3n_e98788ff669e30f4eb7e",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-18c3ef:A.R6",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p8.t1.r11",
+       "p8.t1.r15",
+       "p8.t1.r2",
+       "p8.t1.r7",
+       "p8.t1.r8",
+       "p8.t1.r9"
+      ],
+      "witnesses": [
+       "structure",
+       "agreement"
+      ],
+      "verifier_verdict": null,
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p8.t1.r11",
+       "page": 8,
+       "evidence_id": "ev_c4572cc26301c5cd96de1d854b4d",
+       "bbox": null,
+       "text": "PROBLEM: Speed of application too slow | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
+      },
+      {
+       "segment_id": "p8.t1.r15",
+       "page": 8,
+       "evidence_id": "ev_af188516951be57d20c5c315b6c5",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Pump in need of repair | SOLUTION: See texture pump instruction manual 308479."
+      },
+      {
+       "segment_id": "p8.t1.r2",
+       "page": 8,
+       "evidence_id": "ev_ca5b2b07115bf423c25077d63619",
+       "bbox": null,
+       "text": "PROBLEM: No material output from pump | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
+      },
+      {
+       "segment_id": "p8.t1.r7",
+       "page": 8,
+       "evidence_id": "ev_5c2689893b09e04dec9b72f5cf56",
+       "bbox": null,
+       "text": "PROBLEM: Pump stops pumping | CAUSE: Stalled pump | SOLUTION: Shut down system. Relieve Pressure, page 6. Restart."
+      },
+      {
+       "segment_id": "p8.t1.r8",
+       "page": 8,
+       "evidence_id": "ev_e316504da6c732c1dc4ea8bf98ae",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pump stops pumping | CAUSE (same as row above): Stalled pump | SOLUTION: Contact an authorized Graco service center."
+      },
+      {
+       "segment_id": "p8.t1.r9",
+       "page": 8,
+       "evidence_id": "ev_5fe5820aef1ba860687960afb2a6",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pump stops pumping | CAUSE: Pump in need of repair | SOLUTION: See texture pump instruction manual 308479."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_93b14010de17bb74a93d",
    "type": "RESOLVED_BY",
    "from": "v3n_3ae431153413303a6968",
-   "to": "v3n_1d1eb1fd463aea49fcbb",
+   "to": "v3n_765374cae393fbc78368",
    "tier": "green",
    "trusted": true,
    "conditions": [
@@ -3000,7 +3513,8 @@
      "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
      "cite": [
       "p8.b3"
-     ]
+     ],
+     "scope": "section"
     }
    ],
    "occurrences": [
@@ -3013,7 +3527,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -3024,9 +3539,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -3062,6 +3577,66 @@
        "text": "PROBLEM (same as row above): Pump stops pumping | CAUSE (same as row above): Stalled pump | SOLUTION: Contact an authorized Graco service center."
       }
      ]
+    },
+    {
+     "record": "u001-18c3ef:B.R6",
+     "tier": "green",
+     "conditions": [
+      {
+       "kind": "order",
+       "text": "Shut down the system, then relieve pressure, then restart",
+       "cite": [
+        "p8.t1.r7"
+       ],
+       "scope": "relation"
+      },
+      {
+       "kind": "prerequisite",
+       "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
+       "cite": [
+        "p8.b3"
+       ],
+       "scope": "section"
+      }
+     ],
+     "certificate": {
+      "segment_ids": [
+       "p8.b3",
+       "p8.t1.r7"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p8.b3",
+       "page": 8,
+       "evidence_id": "ev_0092b5fd0b3a3c533af8fba5011a",
+       "bbox": [
+        35.987,
+        102.09,
+        465.967,
+        116.41
+       ],
+       "text": "Before performing any Troubleshooting procedures, follow Pressure Relief procedure on page 6."
+      },
+      {
+       "segment_id": "p8.t1.r7",
+       "page": 8,
+       "evidence_id": "ev_5c2689893b09e04dec9b72f5cf56",
+       "bbox": null,
+       "text": "PROBLEM: Pump stops pumping | CAUSE: Stalled pump | SOLUTION: Shut down system. Relieve Pressure, page 6. Restart."
+      }
+     ]
     }
    ]
   },
@@ -3078,7 +3653,8 @@
      "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
      "cite": [
       "p8.b3"
-     ]
+     ],
+     "scope": "section"
     }
    ],
    "occurrences": [
@@ -3091,7 +3667,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -3209,6 +3786,79 @@
    ]
   },
   {
+   "id": "v3e_2bfc89f786668fb84ee0",
+   "type": "AFFECTS",
+   "from": "v3n_c95d22dee5705c704e3b",
+   "to": "v3n_e98788ff669e30f4eb7e",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-18c3ef:A.R8",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p8.t1.r11",
+       "p8.t1.r15",
+       "p8.t1.r2",
+       "p8.t1.r7",
+       "p8.t1.r9"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p8.t1.r11",
+       "page": 8,
+       "evidence_id": "ev_c4572cc26301c5cd96de1d854b4d",
+       "bbox": null,
+       "text": "PROBLEM: Speed of application too slow | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
+      },
+      {
+       "segment_id": "p8.t1.r15",
+       "page": 8,
+       "evidence_id": "ev_af188516951be57d20c5c315b6c5",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Pump in need of repair | SOLUTION: See texture pump instruction manual 308479."
+      },
+      {
+       "segment_id": "p8.t1.r2",
+       "page": 8,
+       "evidence_id": "ev_ca5b2b07115bf423c25077d63619",
+       "bbox": null,
+       "text": "PROBLEM: No material output from pump | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
+      },
+      {
+       "segment_id": "p8.t1.r7",
+       "page": 8,
+       "evidence_id": "ev_5c2689893b09e04dec9b72f5cf56",
+       "bbox": null,
+       "text": "PROBLEM: Pump stops pumping | CAUSE: Stalled pump | SOLUTION: Shut down system. Relieve Pressure, page 6. Restart."
+      },
+      {
+       "segment_id": "p8.t1.r9",
+       "page": 8,
+       "evidence_id": "ev_5fe5820aef1ba860687960afb2a6",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pump stops pumping | CAUSE: Pump in need of repair | SOLUTION: See texture pump instruction manual 308479."
+      }
+     ]
+    }
+   ]
+  },
+  {
    "id": "v3e_d288aa42fb624aa18309",
    "type": "RESOLVED_BY",
    "from": "v3n_c95d22dee5705c704e3b",
@@ -3221,7 +3871,8 @@
      "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
      "cite": [
       "p8.b3"
-     ]
+     ],
+     "scope": "section"
     }
    ],
    "occurrences": [
@@ -3234,7 +3885,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -3293,7 +3945,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -3387,10 +4040,10 @@
    ]
   },
   {
-   "id": "v3e_7d1f798b78808e81a83c",
+   "id": "v3e_0e2c1764d2c9775b3af3",
    "type": "RESOLVED_BY",
    "from": "v3n_9d76c6a23db1cbd50253",
-   "to": "v3n_de0afa1ad3298d5bca1a",
+   "to": "v3n_ffa749f580db698e4dcf",
    "tier": "green",
    "trusted": true,
    "conditions": [
@@ -3399,7 +4052,8 @@
      "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
      "cite": [
       "p8.b3"
-     ]
+     ],
+     "scope": "section"
     }
    ],
    "occurrences": [
@@ -3412,7 +4066,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -3649,9 +4304,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -3700,6 +4355,47 @@
    ]
   },
   {
+   "id": "v3e_6a0a9064984d6255ff64",
+   "type": "AFFECTS",
+   "from": "v3n_14d1d05291f6eff32159",
+   "to": "v3n_e776be936e0fc765e5f8",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-18c3ef:A.R12",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p8.t1.r13"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p8.t1.r13",
+       "page": 8,
+       "evidence_id": "ev_7c589487a26e04f3ffeede62cf96",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Nozzle too small | SOLUTION: Increase nozzle size."
+      }
+     ]
+    }
+   ]
+  },
+  {
    "id": "v3e_21f555407f1ff67ef41c",
    "type": "RESOLVED_BY",
    "from": "v3n_14d1d05291f6eff32159",
@@ -3712,7 +4408,8 @@
      "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
      "cite": [
       "p8.b3"
-     ]
+     ],
+     "scope": "section"
     }
    ],
    "occurrences": [
@@ -3725,7 +4422,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -3736,9 +4434,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -3801,9 +4499,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -4013,10 +4711,10 @@
    ]
   },
   {
-   "id": "v3e_7d337fb4921c33f5aaa0",
+   "id": "v3e_5ef0a9ae3bae81b452f6",
    "type": "RESOLVED_BY",
    "from": "v3n_e157d7eec72a6b80d8e9",
-   "to": "v3n_210cd287f8f80567bef4",
+   "to": "v3n_5645f8c4f1baef31ca42",
    "tier": "green",
    "trusted": true,
    "conditions": [
@@ -4025,7 +4723,8 @@
      "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
      "cite": [
       "p8.b3"
-     ]
+     ],
+     "scope": "section"
     }
    ],
    "occurrences": [
@@ -4038,7 +4737,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -4048,9 +4748,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -4156,21 +4856,13 @@
    ]
   },
   {
-   "id": "v3e_9d856d7efc601128ed49",
+   "id": "v3e_27606fc810fe550084d6",
    "type": "RESOLVED_BY",
    "from": "v3n_a3329a819680b42943c2",
-   "to": "v3n_c9b46e15379f9fa2c8c1",
+   "to": "v3n_a55d9c84cfdb6286cb8e",
    "tier": "green",
    "trusted": true,
-   "conditions": [
-    {
-     "kind": "prerequisite",
-     "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
-     "cite": [
-      "p8.b3"
-     ]
-    }
-   ],
+   "conditions": [],
    "occurrences": [
     {
      "record": "u001-18c3ef:A.R16",
@@ -4181,12 +4873,15 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
       "segment_ids": [
        "p8.b3",
+       "p8.t1.r11",
+       "p8.t1.r2",
        "p9.t1.r3"
       ],
       "witnesses": [
@@ -4198,9 +4893,7 @@
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
       "notes": [
-       "remedy of a merged cell this row repeats; kept only when the verifier confirms it",
-       "one end is not named in the source",
-       "the reads name an end of this relation differently and the names differ in meaning"
+       "one end is not named in the source"
       ]
      },
      "evidence": [
@@ -4217,11 +4910,95 @@
        "text": "Before performing any Troubleshooting procedures, follow Pressure Relief procedure on page 6."
       },
       {
+       "segment_id": "p8.t1.r11",
+       "page": 8,
+       "evidence_id": "ev_c4572cc26301c5cd96de1d854b4d",
+       "bbox": null,
+       "text": "PROBLEM: Speed of application too slow | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
+      },
+      {
+       "segment_id": "p8.t1.r2",
+       "page": 8,
+       "evidence_id": "ev_ca5b2b07115bf423c25077d63619",
+       "bbox": null,
+       "text": "PROBLEM: No material output from pump | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
+      },
+      {
        "segment_id": "p9.t1.r3",
        "page": 9,
        "evidence_id": "ev_233813dc37dc83b575fe1017e029",
        "bbox": null,
        "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE: Air pressure at gun too high | SOLUTION: Decrease air to gun at gun fitting and/or regulator."
+      }
+     ]
+    },
+    {
+     "record": "u001-18c3ef:B.R14",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p9.t1.r3"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p9.t1.r3",
+       "page": 9,
+       "evidence_id": "ev_233813dc37dc83b575fe1017e029",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE: Air pressure at gun too high | SOLUTION: Decrease air to gun at gun fitting and/or regulator."
+      }
+     ]
+    },
+    {
+     "record": "u001-18c3ef:repair.inherited:p9.t1.r5",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p9.t1.r3",
+       "p9.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "remedy of a merged cell this row repeats; kept only when the verifier confirms it",
+       "supported portion proposed from u001-18c3ef.c66.s1",
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p9.t1.r3",
+       "page": 9,
+       "evidence_id": "ev_233813dc37dc83b575fe1017e029",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE: Air pressure at gun too high | SOLUTION: Decrease air to gun at gun fitting and/or regulator."
+      },
+      {
+       "segment_id": "p9.t1.r5",
+       "page": 9,
+       "evidence_id": "ev_d97642e4c90dbc9b7efa0d820422",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE (same as row above): Fluid delivery too low | SOLUTION: Increase air pressure to pump, or decrease air to gun at gun fitting and/or regulator."
       }
      ]
     }
@@ -4312,9 +5089,9 @@
       ],
       "witnesses": [
        "structure",
-       "verifier"
+       "agreement"
       ],
-      "verifier_verdict": "supported",
+      "verifier_verdict": null,
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -4374,9 +5151,9 @@
       ],
       "witnesses": [
        "structure",
-       "verifier"
+       "agreement"
       ],
-      "verifier_verdict": "supported",
+      "verifier_verdict": null,
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -4431,15 +5208,7 @@
    "to": "v3n_8f8bc1cc193dfe2ff9bf",
    "tier": "green",
    "trusted": true,
-   "conditions": [
-    {
-     "kind": "prerequisite",
-     "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
-     "cite": [
-      "p8.b3"
-     ]
-    }
-   ],
+   "conditions": [],
    "occurrences": [
     {
      "record": "u001-18c3ef:A.R17",
@@ -4450,7 +5219,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -4463,10 +5233,14 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "reviewer"
       ],
-      "verifier_verdict": null,
-      "confirmed_by": null,
+      "verifier_verdict": "not_supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+      },
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
       "notes": [
@@ -4515,25 +5289,47 @@
        "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE (same as row above): Fluid delivery too low | SOLUTION: Turn fluid knob out on gun. See Spray Techniques in Operation Manual 309915."
       }
      ]
+    },
+    {
+     "record": "u001-18c3ef:B.R15",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p9.t1.r4"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p9.t1.r4",
+       "page": 9,
+       "evidence_id": "ev_cacebea5e3f616ccbb8e6fd23bc7",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE: Fluid delivery too low | SOLUTION: Increase nozzle size."
+      }
+     ]
     }
    ]
   },
   {
-   "id": "v3e_e30a63076bd7590d5c47",
+   "id": "v3e_bcfea9d4d88a1d625d3d",
    "type": "RESOLVED_BY",
    "from": "v3n_23d05e333fd4df4607df",
-   "to": "v3n_dd9471adf536e076887a",
+   "to": "v3n_ce17d36dcd793981f37b",
    "tier": "green",
    "trusted": true,
-   "conditions": [
-    {
-     "kind": "prerequisite",
-     "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
-     "cite": [
-      "p8.b3"
-     ]
-    }
-   ],
+   "conditions": [],
    "occurrences": [
     {
      "record": "u001-18c3ef:A.R18",
@@ -4544,22 +5340,25 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
       "segment_ids": [
        "p8.b3",
-       "p8.t1.r13",
+       "p8.t1.r12",
+       "p8.t1.r14",
+       "p8.t1.r6",
        "p9.t1.r4",
        "p9.t1.r5",
        "p9.t1.r6"
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -4582,11 +5381,25 @@
        "text": "Before performing any Troubleshooting procedures, follow Pressure Relief procedure on page 6."
       },
       {
-       "segment_id": "p8.t1.r13",
+       "segment_id": "p8.t1.r12",
        "page": 8,
-       "evidence_id": "ev_7c589487a26e04f3ffeede62cf96",
+       "evidence_id": "ev_b3b9e8c14ac0cf8b997090115f66",
        "bbox": null,
-       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Nozzle too small | SOLUTION: Increase nozzle size."
+       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Material too thick | SOLUTION: Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material."
+      },
+      {
+       "segment_id": "p8.t1.r14",
+       "page": 8,
+       "evidence_id": "ev_5517a64fad46ed74c837ba01ca00",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Hose plugged or too small. | SOLUTION: Relieve Pressure, page 6. Clean hose, or try a 1-1/4 in. hose."
+      },
+      {
+       "segment_id": "p8.t1.r6",
+       "page": 8,
+       "evidence_id": "ev_647bfd6281f2455ff60d7cc1eb20",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Plugged hose, or hose too small | SOLUTION: Relieve pressure, page 6. Flush hose with clean water, or try a 1-1/4 in. hose."
       },
       {
        "segment_id": "p9.t1.r4",
@@ -4610,25 +5423,55 @@
        "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE (same as row above): Fluid delivery too low | SOLUTION: Turn fluid knob out on gun. See Spray Techniques in Operation Manual 309915."
       }
      ]
+    },
+    {
+     "record": "u001-18c3ef:B.R16",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p9.t1.r4",
+       "p9.t1.r5"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p9.t1.r4",
+       "page": 9,
+       "evidence_id": "ev_cacebea5e3f616ccbb8e6fd23bc7",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE: Fluid delivery too low | SOLUTION: Increase nozzle size."
+      },
+      {
+       "segment_id": "p9.t1.r5",
+       "page": 9,
+       "evidence_id": "ev_d97642e4c90dbc9b7efa0d820422",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE (same as row above): Fluid delivery too low | SOLUTION: Increase air pressure to pump, or decrease air to gun at gun fitting and/or regulator."
+      }
+     ]
     }
    ]
   },
   {
-   "id": "v3e_8117bb7bb55247e41841",
+   "id": "v3e_0e952994bf364e79f136",
    "type": "RESOLVED_BY",
    "from": "v3n_23d05e333fd4df4607df",
-   "to": "v3n_4b7ae40070675ffdcfac",
+   "to": "v3n_7be6ec3c18136cbbc28b",
    "tier": "green",
    "trusted": true,
-   "conditions": [
-    {
-     "kind": "prerequisite",
-     "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
-     "cite": [
-      "p8.b3"
-     ]
-    }
-   ],
+   "conditions": [],
    "occurrences": [
     {
      "record": "u001-18c3ef:A.R19",
@@ -4639,7 +5482,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -4651,9 +5495,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -4687,6 +5531,44 @@
        "evidence_id": "ev_d97642e4c90dbc9b7efa0d820422",
        "bbox": null,
        "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE (same as row above): Fluid delivery too low | SOLUTION: Increase air pressure to pump, or decrease air to gun at gun fitting and/or regulator."
+      },
+      {
+       "segment_id": "p9.t1.r6",
+       "page": 9,
+       "evidence_id": "ev_ae2e1c8efc448dc35afeb0d664e4",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE (same as row above): Fluid delivery too low | SOLUTION: Turn fluid knob out on gun. See Spray Techniques in Operation Manual 309915."
+      }
+     ]
+    },
+    {
+     "record": "u001-18c3ef:B.R17",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p9.t1.r4",
+       "p9.t1.r6"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p9.t1.r4",
+       "page": 9,
+       "evidence_id": "ev_cacebea5e3f616ccbb8e6fd23bc7",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too fine or too much overspray | CAUSE: Fluid delivery too low | SOLUTION: Increase nozzle size."
       },
       {
        "segment_id": "p9.t1.r6",
@@ -4862,21 +5744,13 @@
    ]
   },
   {
-   "id": "v3e_b5ec9d0d70d344cbfdb0",
+   "id": "v3e_0bd40e23019a0280cf7b",
    "type": "RESOLVED_BY",
    "from": "v3n_1d200f45e43eeed1926d",
-   "to": "v3n_99afca3459b7af747173",
+   "to": "v3n_7a0f7dc4126e521200a8",
    "tier": "green",
    "trusted": true,
-   "conditions": [
-    {
-     "kind": "prerequisite",
-     "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
-     "cite": [
-      "p8.b3"
-     ]
-    }
-   ],
+   "conditions": [],
    "occurrences": [
     {
      "record": "u001-18c3ef:A.R21",
@@ -4887,12 +5761,15 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
       "segment_ids": [
        "p8.b3",
+       "p8.t1.r11",
+       "p8.t1.r2",
        "p9.t1.r8"
       ],
       "witnesses": [
@@ -4904,9 +5781,7 @@
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
       "notes": [
-       "remedy of a merged cell this row repeats; kept only when the verifier confirms it",
-       "one end is not named in the source",
-       "the reads name an end of this relation differently and the names differ in meaning"
+       "one end is not named in the source"
       ]
      },
      "evidence": [
@@ -4921,6 +5796,90 @@
         116.41
        ],
        "text": "Before performing any Troubleshooting procedures, follow Pressure Relief procedure on page 6."
+      },
+      {
+       "segment_id": "p8.t1.r11",
+       "page": 8,
+       "evidence_id": "ev_c4572cc26301c5cd96de1d854b4d",
+       "bbox": null,
+       "text": "PROBLEM: Speed of application too slow | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
+      },
+      {
+       "segment_id": "p8.t1.r2",
+       "page": 8,
+       "evidence_id": "ev_ca5b2b07115bf423c25077d63619",
+       "bbox": null,
+       "text": "PROBLEM: No material output from pump | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
+      },
+      {
+       "segment_id": "p9.t1.r8",
+       "page": 9,
+       "evidence_id": "ev_57f3fbc6bd897e8a77729e3cf871",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too coarse | CAUSE: Air pressure at gun too low | SOLUTION: Increase air to gun at gun fitting and/or regulator."
+      }
+     ]
+    },
+    {
+     "record": "u001-18c3ef:B.R19",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p9.t1.r8"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p9.t1.r8",
+       "page": 9,
+       "evidence_id": "ev_57f3fbc6bd897e8a77729e3cf871",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too coarse | CAUSE: Air pressure at gun too low | SOLUTION: Increase air to gun at gun fitting and/or regulator."
+      }
+     ]
+    },
+    {
+     "record": "u001-18c3ef:repair.inherited:p9.t1.r10",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p9.t1.r10",
+       "p9.t1.r8"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "remedy of a merged cell this row repeats; kept only when the verifier confirms it",
+       "supported portion proposed from u001-18c3ef.c72.s1",
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p9.t1.r10",
+       "page": 9,
+       "evidence_id": "ev_35f2401c036d921e20631c5768f4",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too coarse | CAUSE (same as row above): Fluid delivery too high | SOLUTION: Decrease air pressure to pump, or increase air to gun at gun fitting and/or regulator."
       },
       {
        "segment_id": "p9.t1.r8",
@@ -5018,9 +5977,9 @@
       ],
       "witnesses": [
        "structure",
-       "verifier"
+       "agreement"
       ],
-      "verifier_verdict": "supported",
+      "verifier_verdict": null,
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -5080,9 +6039,9 @@
       ],
       "witnesses": [
        "structure",
-       "verifier"
+       "agreement"
       ],
-      "verifier_verdict": "supported",
+      "verifier_verdict": null,
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -5137,15 +6096,7 @@
    "to": "v3n_3b296e8c14ba01be3e05",
    "tier": "green",
    "trusted": true,
-   "conditions": [
-    {
-     "kind": "prerequisite",
-     "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
-     "cite": [
-      "p8.b3"
-     ]
-    }
-   ],
+   "conditions": [],
    "occurrences": [
     {
      "record": "u001-18c3ef:A.R22",
@@ -5156,7 +6107,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -5168,9 +6120,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -5213,25 +6165,47 @@
        "text": "PROBLEM (same as row above): Pattern too coarse | CAUSE: Fluid delivery too high | SOLUTION: Decrease nozzle size."
       }
      ]
+    },
+    {
+     "record": "u001-18c3ef:B.R20",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p9.t1.r9"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p9.t1.r9",
+       "page": 9,
+       "evidence_id": "ev_24b7cf41b626db77cab2a1969792",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too coarse | CAUSE: Fluid delivery too high | SOLUTION: Decrease nozzle size."
+      }
+     ]
     }
    ]
   },
   {
-   "id": "v3e_a829ebe4395975861ca3",
+   "id": "v3e_3b920082269e0b2446ce",
    "type": "RESOLVED_BY",
    "from": "v3n_21bc6a72408f2171f1d1",
-   "to": "v3n_0ec99a2ca17f9d66cb91",
+   "to": "v3n_c4bc53aaa1a81009e778",
    "tier": "green",
    "trusted": true,
-   "conditions": [
-    {
-     "kind": "prerequisite",
-     "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
-     "cite": [
-      "p8.b3"
-     ]
-    }
-   ],
+   "conditions": [],
    "occurrences": [
     {
      "record": "u001-18c3ef:A.R23",
@@ -5242,7 +6216,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -5254,9 +6229,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -5299,25 +6274,55 @@
        "text": "PROBLEM (same as row above): Pattern too coarse | CAUSE: Fluid delivery too high | SOLUTION: Decrease nozzle size."
       }
      ]
+    },
+    {
+     "record": "u001-18c3ef:B.R21",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p9.t1.r10",
+       "p9.t1.r9"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p9.t1.r10",
+       "page": 9,
+       "evidence_id": "ev_35f2401c036d921e20631c5768f4",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too coarse | CAUSE (same as row above): Fluid delivery too high | SOLUTION: Decrease air pressure to pump, or increase air to gun at gun fitting and/or regulator."
+      },
+      {
+       "segment_id": "p9.t1.r9",
+       "page": 9,
+       "evidence_id": "ev_24b7cf41b626db77cab2a1969792",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too coarse | CAUSE: Fluid delivery too high | SOLUTION: Decrease nozzle size."
+      }
+     ]
     }
    ]
   },
   {
-   "id": "v3e_bca3bc395c3e0998b989",
+   "id": "v3e_5781b5fe183da154b75f",
    "type": "RESOLVED_BY",
    "from": "v3n_21bc6a72408f2171f1d1",
-   "to": "v3n_12c6936942d5be561f04",
+   "to": "v3n_af279f014a1c64cc4690",
    "tier": "green",
    "trusted": true,
-   "conditions": [
-    {
-     "kind": "prerequisite",
-     "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
-     "cite": [
-      "p8.b3"
-     ]
-    }
-   ],
+   "conditions": [],
    "occurrences": [
     {
      "record": "u001-18c3ef:A.R24",
@@ -5328,7 +6333,8 @@
        "text": "Before performing any troubleshooting procedures, follow the Pressure Relief procedure on page 6.",
        "cite": [
         "p8.b3"
-       ]
+       ],
+       "scope": "section"
       }
      ],
      "certificate": {
@@ -5340,9 +6346,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:703ed28e586be6f2",
@@ -5370,6 +6376,44 @@
        "bbox": null,
        "text": "PROBLEM (same as row above): Pattern too coarse | CAUSE (same as row above): Fluid delivery too high | SOLUTION: Decrease air pressure to pump, or increase air to gun at gun fitting and/or regulator."
       },
+      {
+       "segment_id": "p9.t1.r11",
+       "page": 9,
+       "evidence_id": "ev_314705e9f7a47cbce2a38427386f",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too coarse | CAUSE (same as row above): Fluid delivery too high | SOLUTION: Turn fluid knob in on gun. See Spray Techniques in Operation Manual 309915."
+      },
+      {
+       "segment_id": "p9.t1.r9",
+       "page": 9,
+       "evidence_id": "ev_24b7cf41b626db77cab2a1969792",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Pattern too coarse | CAUSE: Fluid delivery too high | SOLUTION: Decrease nozzle size."
+      }
+     ]
+    },
+    {
+     "record": "u001-18c3ef:B.R22",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p9.t1.r11",
+       "p9.t1.r9"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
       {
        "segment_id": "p9.t1.r11",
        "page": 9,
@@ -5471,24 +6515,21 @@
    ]
   },
   {
-   "id": "v3e_36d5bf71eedae3932ddd",
+   "id": "v3e_07890d3d0f4a30232583",
    "type": "AFFECTS",
-   "from": "v3n_3ae431153413303a6968",
-   "to": "v3n_e98788ff669e30f4eb7e",
+   "from": "v3n_be53793fc7c17f419b11",
+   "to": "v3n_621e8543925463be03f4",
    "tier": "green",
    "trusted": true,
    "conditions": [],
    "occurrences": [
     {
-     "record": "u001-18c3ef:B.R6",
+     "record": "u001-18c3ef:B.R5",
      "tier": "green",
      "conditions": [],
      "certificate": {
       "segment_ids": [
-       "p8.t1.r4",
-       "p8.t1.r7",
-       "p8.t1.r8",
-       "p8.t1.r9"
+       "p8.t1.r6"
       ],
       "witnesses": [
        "structure",
@@ -5504,56 +6545,32 @@
      },
      "evidence": [
       {
-       "segment_id": "p8.t1.r4",
+       "segment_id": "p8.t1.r6",
        "page": 8,
-       "evidence_id": "ev_dec29e22616ea9569f54b6d05d4f",
+       "evidence_id": "ev_647bfd6281f2455ff60d7cc1eb20",
        "bbox": null,
-       "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Damaged checkballs or seats | SOLUTION: Replace checkballs or seats."
-      },
-      {
-       "segment_id": "p8.t1.r7",
-       "page": 8,
-       "evidence_id": "ev_5c2689893b09e04dec9b72f5cf56",
-       "bbox": null,
-       "text": "PROBLEM: Pump stops pumping | CAUSE: Stalled pump | SOLUTION: Shut down system. Relieve Pressure, page 6. Restart."
-      },
-      {
-       "segment_id": "p8.t1.r8",
-       "page": 8,
-       "evidence_id": "ev_e316504da6c732c1dc4ea8bf98ae",
-       "bbox": null,
-       "text": "PROBLEM (same as row above): Pump stops pumping | CAUSE (same as row above): Stalled pump | SOLUTION: Contact an authorized Graco service center."
-      },
-      {
-       "segment_id": "p8.t1.r9",
-       "page": 8,
-       "evidence_id": "ev_5fe5820aef1ba860687960afb2a6",
-       "bbox": null,
-       "text": "PROBLEM (same as row above): Pump stops pumping | CAUSE: Pump in need of repair | SOLUTION: See texture pump instruction manual 308479."
+       "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Plugged hose, or hose too small | SOLUTION: Relieve pressure, page 6. Flush hose with clean water, or try a 1-1/4 in. hose."
       }
      ]
     }
    ]
   },
   {
-   "id": "v3e_2bfc89f786668fb84ee0",
-   "type": "AFFECTS",
-   "from": "v3n_c95d22dee5705c704e3b",
-   "to": "v3n_e98788ff669e30f4eb7e",
+   "id": "v3e_6c37d0cb9acc44837e7a",
+   "type": "RESOLVED_BY",
+   "from": "v3n_e157d7eec72a6b80d8e9",
+   "to": "v3n_9ce425957e925fd41562",
    "tier": "green",
    "trusted": true,
    "conditions": [],
    "occurrences": [
     {
-     "record": "u001-18c3ef:B.R7",
+     "record": "u001-18c3ef:B.R13",
      "tier": "green",
      "conditions": [],
      "certificate": {
       "segment_ids": [
-       "p8.t1.r15",
-       "p8.t1.r4",
-       "p8.t1.r7",
-       "p8.t1.r9"
+       "p9.t1.r2"
       ],
       "witnesses": [
        "structure",
@@ -5569,42 +6586,74 @@
      },
      "evidence": [
       {
-       "segment_id": "p8.t1.r15",
-       "page": 8,
-       "evidence_id": "ev_af188516951be57d20c5c315b6c5",
+       "segment_id": "p9.t1.r2",
+       "page": 9,
+       "evidence_id": "ev_f8095074c8fbadcaa82e40ade702",
        "bbox": null,
-       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Pump in need of repair | SOLUTION: See texture pump instruction manual 308479."
-      },
-      {
-       "segment_id": "p8.t1.r4",
-       "page": 8,
-       "evidence_id": "ev_dec29e22616ea9569f54b6d05d4f",
-       "bbox": null,
-       "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Damaged checkballs or seats | SOLUTION: Replace checkballs or seats."
-      },
-      {
-       "segment_id": "p8.t1.r7",
-       "page": 8,
-       "evidence_id": "ev_5c2689893b09e04dec9b72f5cf56",
-       "bbox": null,
-       "text": "PROBLEM: Pump stops pumping | CAUSE: Stalled pump | SOLUTION: Shut down system. Relieve Pressure, page 6. Restart."
-      },
-      {
-       "segment_id": "p8.t1.r9",
-       "page": 8,
-       "evidence_id": "ev_5fe5820aef1ba860687960afb2a6",
-       "bbox": null,
-       "text": "PROBLEM (same as row above): Pump stops pumping | CAUSE: Pump in need of repair | SOLUTION: See texture pump instruction manual 308479."
+       "text": "PROBLEM: Pattern too fine or too much overspray | CAUSE: Material too thin | SOLUTION: Thicken material. Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material."
       }
      ]
     }
    ]
   },
   {
-   "id": "v3e_8817b6af7fb96c900014",
+   "id": "v3e_4511bdca3c4ba7ab00fe",
+   "type": "RESOLVED_BY",
+   "from": "v3n_e29666283d113d04e708",
+   "to": "v3n_964f20e4a0473138e5c0",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-18c3ef:B.R18",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p8.t1.r3",
+       "p9.t1.r7"
+      ],
+      "witnesses": [
+       "verifier",
+       "reviewer"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+      },
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:703ed28e586be6f2",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p8.t1.r3",
+       "page": 8,
+       "evidence_id": "ev_a512f561510f52dc4e6681fdb452",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Material too thick | SOLUTION: Thin the material. Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material."
+      },
+      {
+       "segment_id": "p9.t1.r7",
+       "page": 9,
+       "evidence_id": "ev_653950a9fb92f200fa89e1554854",
+       "bbox": null,
+       "text": "PROBLEM: Pattern too coarse | CAUSE: Material too thick | SOLUTION: Thin material. Material must be mixed thoroughly to a consistency that imme- diately folds back in as you draw your finger through the surface of the mate- rial."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_4f8acfa0c902e63c9aab",
    "type": "HAS_COMPONENT",
    "from": "v3n_asset_9a14b765bb85",
-   "to": "v3n_6ee02bfb9961ddf4f97f",
+   "to": "v3n_5d7363b029d20d9e3814",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -5625,10 +6674,10 @@
    ]
   },
   {
-   "id": "v3e_4968d88dd0cf7b4f23a0",
+   "id": "v3e_e297f688d552ffca6663",
    "type": "HAS_COMPONENT",
    "from": "v3n_asset_9a14b765bb85",
-   "to": "v3n_338ec3c2300a2e2daab5",
+   "to": "v3n_77c7aea008346837752d",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -5637,6 +6686,37 @@
     {
      "record": "asset",
      "evidence": [
+      {
+       "segment_id": "p8.t1.r5",
+       "page": 8,
+       "evidence_id": "ev_abd10ec01fda33a87b3613de6244",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Plugged gun or nozzle | SOLUTION: Relieve Pressure, page 6. Remove gun from material hose, and cycle pump. NOTE: A plugged gun or nozzle may cause the hose and pump to plug. If necessary, flush hose and pump with clean water before cycling material through the hose with the gun removed."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_3f864c3dc9d03bc11cb8",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_9a14b765bb85",
+   "to": "v3n_e776be936e0fc765e5f8",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p8.t1.r13",
+       "page": 8,
+       "evidence_id": "ev_7c589487a26e04f3ffeede62cf96",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Nozzle too small | SOLUTION: Increase nozzle size."
+      },
       {
        "segment_id": "p8.t1.r5",
        "page": 8,
@@ -5674,6 +6754,44 @@
        "evidence_id": "ev_647bfd6281f2455ff60d7cc1eb20",
        "bbox": null,
        "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Plugged hose, or hose too small | SOLUTION: Relieve pressure, page 6. Flush hose with clean water, or try a 1-1/4 in. hose."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_e97c7325ef001c410b47",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_9a14b765bb85",
+   "to": "v3n_e98788ff669e30f4eb7e",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p8.t1.r11",
+       "page": 8,
+       "evidence_id": "ev_c4572cc26301c5cd96de1d854b4d",
+       "bbox": null,
+       "text": "PROBLEM: Speed of application too slow | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
+      },
+      {
+       "segment_id": "p8.t1.r15",
+       "page": 8,
+       "evidence_id": "ev_af188516951be57d20c5c315b6c5",
+       "bbox": null,
+       "text": "PROBLEM (same as row above): Speed of application too slow | CAUSE: Pump in need of repair | SOLUTION: See texture pump instruction manual 308479."
+      },
+      {
+       "segment_id": "p8.t1.r2",
+       "page": 8,
+       "evidence_id": "ev_ca5b2b07115bf423c25077d63619",
+       "bbox": null,
+       "text": "PROBLEM: No material output from pump | CAUSE: Not enough air pressure to pump | SOLUTION: Shut off air at the gun, and increase air pressure to the pump to maximum. Turn regulator clockwise to increase."
       }
      ]
     }
@@ -5728,10 +6846,10 @@
    ]
   },
   {
-   "id": "v3e_e97c7325ef001c410b47",
+   "id": "v3e_f311a4c74d5dc909a13b",
    "type": "HAS_COMPONENT",
    "from": "v3n_asset_9a14b765bb85",
-   "to": "v3n_e98788ff669e30f4eb7e",
+   "to": "v3n_621e8543925463be03f4",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -5741,25 +6859,11 @@
      "record": "asset",
      "evidence": [
       {
-       "segment_id": "p8.t1.r4",
+       "segment_id": "p8.t1.r6",
        "page": 8,
-       "evidence_id": "ev_dec29e22616ea9569f54b6d05d4f",
+       "evidence_id": "ev_647bfd6281f2455ff60d7cc1eb20",
        "bbox": null,
-       "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Damaged checkballs or seats | SOLUTION: Replace checkballs or seats."
-      },
-      {
-       "segment_id": "p8.t1.r7",
-       "page": 8,
-       "evidence_id": "ev_5c2689893b09e04dec9b72f5cf56",
-       "bbox": null,
-       "text": "PROBLEM: Pump stops pumping | CAUSE: Stalled pump | SOLUTION: Shut down system. Relieve Pressure, page 6. Restart."
-      },
-      {
-       "segment_id": "p8.t1.r9",
-       "page": 8,
-       "evidence_id": "ev_5fe5820aef1ba860687960afb2a6",
-       "bbox": null,
-       "text": "PROBLEM (same as row above): Pump stops pumping | CAUSE: Pump in need of repair | SOLUTION: See texture pump instruction manual 308479."
+       "text": "PROBLEM (same as row above): No material output from pump | CAUSE: Plugged hose, or hose too small | SOLUTION: Relieve pressure, page 6. Flush hose with clean water, or try a 1-1/4 in. hose."
       }
      ]
     }
@@ -5769,8 +6873,122 @@
  "excluded_relations": [
   {
    "relation": "RESOLVED_BY",
+   "source": "FailureMode:Fluid delivery too high",
+   "target": "CorrectiveAction:Thin and thoroughly mix the material to the specified finger-draw consistency",
+   "certificate": {
+    "segment_ids": [
+     "p8.b3",
+     "p9.t1.r10",
+     "p9.t1.r11",
+     "p9.t1.r9"
+    ],
+    "witnesses": [
+     "structure"
+    ],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+    },
+    "extractor": "gpt-6-luna:703ed28e586be6f2",
+    "notes": [
+     "remedy of a merged cell this row repeats; kept only when the verifier confirms it",
+     "one end is not named in the source"
+    ]
+   }
+  },
+  {
+   "relation": "RESOLVED_BY",
    "source": "FailureMode:Air pressure at gun too high",
-   "target": "CorrectiveAction:Increase pump air pressure or decrease air to gun at gun fitting and/or regulator",
+   "target": "CorrectiveAction:Increase nozzle size",
+   "certificate": {
+    "segment_ids": [
+     "p8.b3",
+     "p9.t1.r3",
+     "p9.t1.r5"
+    ],
+    "witnesses": [
+     "structure"
+    ],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+    },
+    "extractor": "gpt-6-luna:703ed28e586be6f2",
+    "notes": [
+     "remedy of a merged cell this row repeats; kept only when the verifier confirms it",
+     "one end is not named in the source",
+     "reviewer: None of the proposed remedies is stated for the cause “Air pressure at gun too high”; the manual says to decrease air to the gun at the gun fitting and/or regulator."
+    ]
+   }
+  },
+  {
+   "relation": "RESOLVED_BY",
+   "source": "FailureMode:Fluid delivery too low",
+   "target": "CorrectiveAction:Shut off air at the gun and increase pump air pressure to maximum; turn regulator clockwise",
+   "certificate": {
+    "segment_ids": [
+     "p8.b3",
+     "p8.t1.r13",
+     "p9.t1.r4",
+     "p9.t1.r5",
+     "p9.t1.r6"
+    ],
+    "witnesses": [
+     "structure"
+    ],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+    },
+    "extractor": "gpt-6-luna:703ed28e586be6f2",
+    "notes": [
+     "remedy of a merged cell this row repeats; kept only when the verifier confirms it",
+     "one end is not named in the source",
+     "reviewer: The manual does not state this corrective action; it lists different solutions for fluid delivery too low."
+    ]
+   }
+  },
+  {
+   "relation": "RESOLVED_BY",
+   "source": "FailureMode:Air pressure at gun too high",
+   "target": "CorrectiveAction:Turn the fluid knob out on the gun",
+   "certificate": {
+    "segment_ids": [
+     "p8.b3",
+     "p9.t1.r3",
+     "p9.t1.r5"
+    ],
+    "witnesses": [
+     "structure"
+    ],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+    },
+    "extractor": "gpt-6-luna:703ed28e586be6f2",
+    "notes": [
+     "remedy of a merged cell this row repeats; kept only when the verifier confirms it",
+     "one end is not named in the source",
+     "reviewer: None of the proposed remedies is stated for the cause “Air pressure at gun too high”; the manual says to decrease air to the gun at the gun fitting and/or regulator."
+    ]
+   }
+  },
+  {
+   "relation": "RESOLVED_BY",
+   "source": "FailureMode:Air pressure at gun too high",
+   "target": "CorrectiveAction:Increase air pressure to the pump or decrease air to the gun at the gun fitting and/or regulator",
    "certificate": {
     "segment_ids": [
      "p9.t1.r3",
@@ -5779,7 +6997,7 @@
     "witnesses": [
      "structure"
     ],
-    "verifier_verdict": null,
+    "verifier_verdict": "not_supported",
     "confirmed_by": null,
     "rejected_by": {
      "kind": "agent",
@@ -5790,15 +7008,40 @@
     "notes": [
      "remedy of a merged cell this row repeats; kept only when the verifier confirms it",
      "one end is not named in the source",
-     "the reads name an end of this relation differently and the names differ in meaning",
-     "reviewer: The cause “Air pressure at gun too high” is paired with “Decrease air to gun at gun fitting and/or regulator,” not with increasing pump air pressure."
+     "reviewer: None of the proposed remedies is stated for the cause “Air pressure at gun too high”; the manual says to decrease air to the gun at the gun fitting and/or regulator."
+    ]
+   }
+  },
+  {
+   "relation": "RESOLVED_BY",
+   "source": "FailureMode:Fluid delivery too low",
+   "target": "CorrectiveAction:See Spray Techniques in Operation Manual 309915",
+   "certificate": {
+    "segment_ids": [
+     "p9.t1.r4",
+     "p9.t1.r6"
+    ],
+    "witnesses": [
+     "structure"
+    ],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+    },
+    "extractor": "gpt-6-luna:703ed28e586be6f2",
+    "notes": [
+     "one end is not named in the source",
+     "reviewer: The manual says to turn the fluid knob out and refer to Spray Techniques in Operation Manual 309915; it does not say to contact service or a dealer."
     ]
    }
   },
   {
    "relation": "RESOLVED_BY",
    "source": "FailureMode:Air pressure at gun too low",
-   "target": "CorrectiveAction:Decrease pump air pressure or increase air to gun at gun fitting and/or regulator",
+   "target": "CorrectiveAction:Decrease air pressure to the pump or increase air to the gun at the gun fitting and/or regulator",
    "certificate": {
     "segment_ids": [
      "p9.t1.r10",
@@ -5807,7 +7050,7 @@
     "witnesses": [
      "structure"
     ],
-    "verifier_verdict": null,
+    "verifier_verdict": "not_supported",
     "confirmed_by": null,
     "rejected_by": {
      "kind": "agent",
@@ -5817,19 +7060,46 @@
     "extractor": "gpt-6-luna:703ed28e586be6f2",
     "notes": [
      "remedy of a merged cell this row repeats; kept only when the verifier confirms it",
+     "one end is not named in the source"
+    ]
+   }
+  },
+  {
+   "relation": "RESOLVED_BY",
+   "source": "FailureMode:Fluid delivery too high",
+   "target": "CorrectiveAction:See Spray Techniques in Operation Manual 309915",
+   "certificate": {
+    "segment_ids": [
+     "p9.t1.r11",
+     "p9.t1.r9"
+    ],
+    "witnesses": [
+     "structure"
+    ],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": {
+     "kind": "agent",
+     "name": "gpt-6-luna",
+     "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+    },
+    "extractor": "gpt-6-luna:703ed28e586be6f2",
+    "notes": [
      "one end is not named in the source",
-     "the reads name an end of this relation differently and the names differ in meaning",
-     "reviewer: The solution for “Air pressure at gun too low” is to increase air to the gun at the gun fitting and/or regulator; the proposed solution belongs to the separate “Fluid delivery too high” cause."
+     "reviewer: The manual directs the user to turn the fluid knob in on the gun and see Spray Techniques in Operation Manual 309915; it does not say to contact service or a dealer."
     ]
    }
   }
  ],
  "report": {
   "status": "approved",
+  "incomplete_reasons": [],
+  "empty_extraction_units": [],
+  "failed_units": [],
   "pages": 18,
   "page_labels": {
-   "other": 8,
-   "procedure": 2,
+   "other": 7,
+   "procedure": 3,
    "diagnostic": 2,
    "parts": 6
   },
@@ -5837,11 +7107,15 @@
    8,
    9
   ],
-  "confirmed_pages": [
+  "confirmed_pages": [],
+  "map_demotions_refused": [],
+  "map_removed_pages": [
+   7
+  ],
+  "read_pages": [
    8,
    9
   ],
-  "map_demotions_refused": [],
   "blocked_merges": [],
   "orphan_causes": 0,
   "problems_without_action": 0,
@@ -5849,37 +7123,43 @@
   "problem_without_action_ids": [],
   "units": 1,
   "failed_reads": 0,
-  "proposals": 108,
+  "proposals": 113,
+  "omission_review_enabled": false,
+  "visual_verification_enabled": false,
+  "visual_checks": [],
+  "omission_relations": 0,
   "unresolved_references": [],
   "unclear_passages": 0,
   "extraction_notes": [],
   "assertions_by_tier": {
-   "green": 59,
-   "red": 2
+   "green": 77,
+   "red": 8
   },
   "witnesses": {
-   "structure": 61,
-   "agreement": 49,
-   "verifier": 10
+   "structure": 84,
+   "agreement": 36,
+   "verifier": 39,
+   "reviewer": 3
   },
   "verifier_verdicts": {
-   "not_called": 51,
-   "supported": 10
+   "not_called": 36,
+   "supported": 39,
+   "not_supported": 10
   },
   "graph": {
-   "nodes": 50,
+   "nodes": 53,
    "nodes_by_type": {
     "Symptom": 6,
     "FailureMode": 14,
-    "CorrectiveAction": 22,
-    "Component": 8
+    "CorrectiveAction": 24,
+    "Component": 9
    },
-   "edges": 49,
+   "edges": 60,
    "edges_by_tier": {
-    "green": 47,
-    "red": 2
+    "green": 52,
+    "red": 8
    },
-   "merged_aliases": 3
+   "merged_aliases": 6
   },
   "gates": {
    "map": {
@@ -5888,8 +7168,13 @@
     "pending": 0
    },
    "doubts": {
-    "questions": 2,
-    "answered": 2,
+    "questions": 8,
+    "answered": 8,
+    "pending": 0
+   },
+   "recovery": {
+    "questions": 0,
+    "answered": 0,
     "pending": 0
    },
    "approval": {
@@ -5899,54 +7184,58 @@
    }
   },
   "answers_by_reviewer": {
-   "agent": 3,
+   "agent": 9,
    "auto": 1
   },
   "human_questions_offered": 0,
   "deferred_questions": [],
   "human_questions": 0,
-  "reviewer_confirmed": 0,
-  "merged_cell_relations": 4,
+  "reviewer_confirmed": 3,
+  "merged_cell_relations": 11,
   "usage": {
-   "calls": 7,
+   "calls": 23,
    "failed_calls": 0,
-   "prompt_tokens": 23170,
-   "completion_tokens": 10957,
-   "estimated_cost_usd": 0.00685,
+   "prompt_tokens": 91514,
+   "completion_tokens": 15508,
+   "estimated_cost_usd": 0.018059,
    "by_operation": {
     "kg_v3_extract": 2,
-    "kg_v3_map": 2,
-    "kg_v3_merge": 1,
-    "kg_v3_verify": 2
+    "kg_v3_map": 11,
+    "kg_v3_merge": 3,
+    "kg_v3_reduce_action": 1,
+    "kg_v3_verify": 6
    }
   },
   "agent_usage": {
-   "calls": 3,
+   "calls": 9,
    "failed_calls": 0,
-   "prompt_tokens": 3608,
-   "completion_tokens": 624,
-   "estimated_cost_usd": 0.000515,
+   "prompt_tokens": 9285,
+   "completion_tokens": 2264,
+   "estimated_cost_usd": 0.002074,
    "by_operation": {
-    "AgentDecision": 3
+    "AgentDecision": 9
    }
   },
   "seconds": {
-   "map": 3.041,
-   "gate_map": 3.431,
-   "extract": 21.942,
-   "check": 2.22,
-   "merge": 5.306,
-   "gate_doubts": 2.61,
+   "map": 7.007,
+   "gate_map": 3.995,
+   "extract": 26.797,
+   "check": 4.443,
+   "merge": 12.732,
+   "split_recheck": 7.35,
+   "gate_doubts": 8.044,
+   "action_reduction": 9.505,
+   "gate_recovery": 0.0,
    "gate_approval": 0.0,
-   "total": 38.589,
-   "pdf_read": 2.211,
-   "end_to_end": 41.356
+   "total": 79.939,
+   "pdf_read": 2.227,
+   "end_to_end": 82.794
   },
   "prompt_ids": {
    "extraction": "703ed28e586be6f2"
   },
   "provenance": {
-   "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+   "commit": "79501aecbb19805f3e099118669fef9cc6558794",
    "pdf_sha256": "6fcce36452357f3f38f73b13b88b9b657cbb6eae2c1b7940efb4af376b8461ca",
    "config": {
     "model": "gpt-6-luna",
@@ -5969,7 +7258,11 @@
     "agent_model": "gpt-6-luna",
     "agent_reasoning_effort": "medium",
     "wait_for_map": false,
-    "max_units": 150
+    "max_units": 150,
+    "omission_review": false,
+    "omission_max_units": 3,
+    "visual_verification": false,
+    "visual_max_relations": 12
    },
    "segment_ids": [
     "p1.b1",

@@ -1,19 +1,81 @@
 {
  "status": "approved",
+ "incomplete_reasons": [],
+ "empty_extraction_units": [
+  "u001-690186",
+  "u003-8a0262",
+  "u007-8b4a42"
+ ],
+ "failed_units": [
+  {
+   "unit_id": "u001-690186",
+   "segments": [
+    "p59.b10",
+    "p59.b9"
+   ]
+  },
+  {
+   "unit_id": "u002-294f5d",
+   "segments": [
+    "p70.t1.r2",
+    "p70.t1.r3",
+    "p70.t1.r4",
+    "p70.t1.r5"
+   ]
+  },
+  {
+   "unit_id": "u003-8a0262",
+   "segments": []
+  },
+  {
+   "unit_id": "u007-8b4a42",
+   "segments": [
+    "p101.b11",
+    "p101.b12",
+    "p101.b13",
+    "p101.b4",
+    "p101.b5",
+    "p101.b6",
+    "p101.b7",
+    "p101.b8"
+   ]
+  },
+  {
+   "unit_id": "u009-96e850",
+   "segments": [
+    "p145.t2.r3",
+    "p145.t2.r6",
+    "p145.t2.r7",
+    "p146.t1.r1",
+    "p146.t1.r2",
+    "p146.t1.r3",
+    "p146.t1.r4",
+    "p146.t1.r5",
+    "p146.t1.r6",
+    "p146.t1.r7",
+    "p146.t1.r8",
+    "p146.t2.r1",
+    "p146.t2.r2",
+    "p146.t2.r3",
+    "p146.t2.r4",
+    "p146.t2.r5",
+    "p146.t2.r6"
+   ]
+  }
+ ],
  "pages": 187,
  "page_labels": {
-  "other": 143,
-  "diagnostic": 16,
-  "procedure": 28
+  "other": 152,
+  "procedure": 21,
+  "diagnostic": 14
  },
  "diagnostic_pages": [
-  20,
   59,
   70,
   75,
   86,
   94,
-  97,
+  96,
   101,
   141,
   142,
@@ -21,16 +83,15 @@
   144,
   145,
   146,
-  160,
-  161
+  160
  ],
  "confirmed_pages": [
-  20,
   59,
   70,
+  75,
   86,
   94,
-  97,
+  96,
   101,
   141,
   142,
@@ -41,106 +102,148 @@
   160
  ],
  "map_demotions_refused": [],
- "blocked_merges": [],
- "orphan_causes": 16,
- "problems_without_action": 24,
+ "map_removed_pages": [
+  69,
+  74,
+  85,
+  95,
+  97,
+  100
+ ],
+ "read_pages": [
+  59,
+  70,
+  75,
+  86,
+  94,
+  96,
+  101,
+  141,
+  142,
+  143,
+  144,
+  145,
+  146,
+  160
+ ],
+ "blocked_merges": [
+  {
+   "left": "FailureMode|low gearbox oil flow",
+   "right": "FailureMode|low gearbox oil flow persists for 1 minute",
+   "reason": "different_numbers",
+   "constraint_left": "FailureMode|low gearbox oil flow",
+   "constraint_right": "FailureMode|low gearbox oil flow persists for 1 minute"
+  },
+  {
+   "left": "FailureMode|transformer is overheated",
+   "right": "FailureMode|transformer is overheated for more than 1 second",
+   "reason": "different_numbers",
+   "constraint_left": "FailureMode|transformer is overheated",
+   "constraint_right": "FailureMode|transformer is overheated for more than 1 second"
+  }
+ ],
+ "orphan_causes": 2,
+ "problems_without_action": 21,
  "orphan_cause_ids": [
-  "v3n_0d00c8cd43d6aad7cd95",
-  "v3n_2bd39e9ef512702ca91b",
-  "v3n_3d642510b393ea6a4132",
-  "v3n_405d68b3841bed13a53f",
-  "v3n_4fbe8bbe182548ef8688",
-  "v3n_5974d5c4299914151713",
-  "v3n_5db0261e681721305c49",
-  "v3n_61c88fa7708cb7690218",
-  "v3n_63b4de5729de57235cc8",
-  "v3n_722d4e123f1bc309667b",
-  "v3n_899758547015be713dbb",
-  "v3n_bf74a636c7e0f5f3e39c",
-  "v3n_cdc3c291750bc8d984a2",
-  "v3n_cdee29fd5b6b941e8a5e",
-  "v3n_d000b6b593efc3ff582f",
-  "v3n_d2782102c8e895b79341"
+  "v3n_7dd8a9e84d7be1ec43a3",
+  "v3n_adf270cc1e0a6ae18397"
  ],
  "problem_without_action_ids": [
-  "v3n_05cbdedc3652bb685d87",
+  "v3n_01745d619f9c2c25720c",
   "v3n_0b9fe18f6f456466fd42",
   "v3n_22daf3d2fa715fa8e4a1",
-  "v3n_329e28dc043cb14473be",
-  "v3n_36939bc7357cc62183c2",
-  "v3n_37aecc324a7084fcd4c7",
-  "v3n_49fd3ab3ffe7a1f6a9e4",
-  "v3n_4aa814ff01c9d97241e0",
-  "v3n_6987e900ad7477035ba2",
-  "v3n_703c7ea2171f7df11100",
+  "v3n_274d1836557f017920b7",
+  "v3n_2cfd7b8ab83dc1495964",
+  "v3n_4afe2796e6e04cefd4cb",
+  "v3n_4d099de03eef67ce5ae5",
+  "v3n_4d391b97e23b43d712b0",
+  "v3n_59d8406a4c4f108cb0df",
+  "v3n_6442bcb55a12bfdd19b7",
   "v3n_705513c0050631f23580",
   "v3n_713333c17b14bc300338",
-  "v3n_7352d7014a0fea9b1cd8",
-  "v3n_75038d9e96db3bd42114",
-  "v3n_a23ac0c3c3c32e767b83",
-  "v3n_a60e7f2c56d48d49b97e",
-  "v3n_a652783414007bf80dbd",
-  "v3n_a9ee7432b58077ae4322",
+  "v3n_79d2bcbcd002efba05e8",
+  "v3n_7f46560985b1317ced03",
+  "v3n_8311c7c48c892d774e77",
+  "v3n_948c1f6c7c9084f84efd",
+  "v3n_9f9e58427853c817d0c6",
   "v3n_b3582e8cbf871d9b1e76",
-  "v3n_b498f683cd29a135dc1c",
-  "v3n_c3295dfb84f6b4312403",
-  "v3n_c5826be580969f01d9f9",
-  "v3n_d404af52aa82422043a9",
-  "v3n_df413ea4e06bbadd4c45"
+  "v3n_b459a22327d6e6af07b5",
+  "v3n_bf4ef2cad340919fcb3f",
+  "v3n_e85dfc3802d4959bb207"
  ],
- "units": 11,
+ "units": 10,
  "failed_reads": 0,
- "proposals": 305,
+ "proposals": 236,
+ "omission_review_enabled": false,
+ "visual_verification_enabled": false,
+ "visual_checks": [],
+ "omission_relations": 0,
  "unresolved_references": [],
- "unclear_passages": 0,
+ "unclear_passages": 1,
  "extraction_notes": [
+  "A: empty structured reading retried",
+  "A: empty unit split in halves",
+  "B: empty structured reading retried",
+  "B: empty unit split in halves",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
   "coverage: 4 unused table row(s) read again",
+  "A: empty structured reading retried",
+  "A: empty unit split in halves",
+  "B: empty structured reading retried",
+  "B: empty unit split in halves",
   "coverage: 32 unused table row(s) read again",
-  "B: cause 'Incoming voltage above the set limit' repeats its problem, marked unnamed",
-  "B: cause 'Incoming voltage too high to operate' repeats its problem, marked unnamed",
-  "B: cause 'Tool changer cage emergency stop engaged' repeats its problem, marked unnamed",
-  "coverage: 17 unused table row(s) read again"
+  "C: entities returned without usable relations; not counted as extraction coverage",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
+  "coverage: 17 unused table row(s) read again",
+  "B: empty structured reading retried"
  ],
  "assertions_by_tier": {
-  "green": 198,
-  "red": 31
+  "green": 165,
+  "red": 24
  },
  "witnesses": {
-  "structure": 179,
-  "agreement": 76,
-  "verifier": 118,
-  "reviewer": 46
+  "structure": 109,
+  "agreement": 51,
+  "verifier": 125,
+  "reviewer": 58
  },
  "verifier_verdicts": {
-  "not_called": 79,
-  "supported": 118,
-  "not_supported": 32
+  "not_called": 38,
+  "not_supported": 26,
+  "supported": 125
  },
  "graph": {
-  "nodes": 240,
+  "nodes": 191,
   "nodes_by_type": {
-   "Symptom": 58,
-   "FailureMode": 73,
-   "Component": 46,
-   "CorrectiveAction": 61,
-   "ErrorCode": 2
+   "ErrorCode": 2,
+   "FailureMode": 48,
+   "Component": 27,
+   "Symptom": 56,
+   "CorrectiveAction": 58
   },
-  "edges": 207,
+  "edges": 160,
   "edges_by_tier": {
-   "green": 177,
-   "red": 30
+   "green": 143,
+   "red": 17
   },
-  "merged_aliases": 44
+  "merged_aliases": 38
  },
  "gates": {
   "map": {
-   "questions": 1,
-   "answered": 1,
+   "questions": 3,
+   "answered": 3,
    "pending": 0
   },
   "doubts": {
-   "questions": 48,
-   "answered": 48,
+   "questions": 35,
+   "answered": 35,
+   "pending": 0
+  },
+  "recovery": {
+   "questions": 1,
+   "answered": 1,
    "pending": 0
   },
   "approval": {
@@ -150,54 +253,58 @@
   }
  },
  "answers_by_reviewer": {
-  "agent": 49,
+  "agent": 39,
   "auto": 1
  },
  "human_questions_offered": 0,
  "deferred_questions": [],
  "human_questions": 0,
- "reviewer_confirmed": 46,
+ "reviewer_confirmed": 58,
  "merged_cell_relations": 0,
  "usage": {
-  "calls": 42,
+  "calls": 73,
   "failed_calls": 0,
-  "prompt_tokens": 159469,
-  "completion_tokens": 51095,
-  "estimated_cost_usd": 0.039385,
+  "prompt_tokens": 252919,
+  "completion_tokens": 53868,
+  "estimated_cost_usd": 0.048129,
   "by_operation": {
-   "kg_v3_extract": 25,
-   "kg_v3_map": 8,
-   "kg_v3_merge": 3,
-   "kg_v3_verify": 6
+   "kg_v3_extract": 42,
+   "kg_v3_map": 15,
+   "kg_v3_merge": 7,
+   "kg_v3_reduce_action": 1,
+   "kg_v3_verify": 8
   }
  },
  "agent_usage": {
-  "calls": 49,
+  "calls": 39,
   "failed_calls": 0,
-  "prompt_tokens": 54989,
-  "completion_tokens": 18636,
-  "estimated_cost_usd": 0.015241,
+  "prompt_tokens": 40835,
+  "completion_tokens": 13898,
+  "estimated_cost_usd": 0.01151,
   "by_operation": {
-   "AgentDecision": 49
+   "AgentDecision": 39
   }
  },
  "seconds": {
-  "map": 10.677,
-  "gate_map": 19.803,
-  "extract": 48.937,
-  "check": 11.107,
-  "merge": 5.997,
-  "gate_doubts": 46.611,
+  "map": 14.81,
+  "gate_map": 14.018,
+  "extract": 56.102,
+  "check": 9.331,
+  "merge": 13.082,
+  "split_recheck": 5.597,
+  "gate_doubts": 37.21,
+  "action_reduction": 13.573,
+  "gate_recovery": 4.622,
   "gate_approval": 0.0,
-  "total": 143.862,
-  "pdf_read": 10.906,
-  "end_to_end": 155.419
+  "total": 168.741,
+  "pdf_read": 10.947,
+  "end_to_end": 180.333
  },
  "prompt_ids": {
   "extraction": "711f1b166c488e74"
  },
  "provenance": {
-  "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+  "commit": "79501aecbb19805f3e099118669fef9cc6558794",
   "pdf_sha256": "402f553b6b492e4c898e3a350f177d5067969c82fbf801fb2792015de4077b0c",
   "config": {
    "model": "gpt-6-luna",
@@ -220,7 +327,11 @@
    "agent_model": "gpt-6-luna",
    "agent_reasoning_effort": "medium",
    "wait_for_map": false,
-   "max_units": 150
+   "max_units": 150,
+   "omission_review": false,
+   "omission_max_units": 3,
+   "visual_verification": false,
+   "visual_max_relations": 12
   },
   "segment_ids": [
    "p1.b1",

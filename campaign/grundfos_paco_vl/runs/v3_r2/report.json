@@ -1,10 +1,13 @@
 {
  "status": "approved",
+ "incomplete_reasons": [],
+ "empty_extraction_units": [],
+ "failed_units": [],
  "pages": 22,
  "page_labels": {
-  "other": 12,
+  "other": 15,
   "unreadable": 1,
-  "procedure": 6,
+  "procedure": 3,
   "parts": 2,
   "diagnostic": 1
  },
@@ -15,6 +18,10 @@
   15
  ],
  "map_demotions_refused": [],
+ "map_removed_pages": [],
+ "read_pages": [
+  15
+ ],
  "blocked_merges": [],
  "orphan_causes": 0,
  "problems_without_action": 10,
@@ -33,7 +40,11 @@
  ],
  "units": 1,
  "failed_reads": 0,
- "proposals": 341,
+ "proposals": 321,
+ "omission_review_enabled": false,
+ "visual_verification_enabled": false,
+ "visual_checks": [],
+ "omission_relations": 0,
  "unresolved_references": [
   {
    "unit_id": "u001-d8e3c2",
@@ -44,36 +55,35 @@
  ],
  "unclear_passages": 1,
  "extraction_notes": [
-  "A: relation 47 skipped (unknown entity)"
+  "B: relation 51 skipped (unknown entity)"
  ],
  "assertions_by_tier": {
-  "green": 173,
-  "red": 12
+  "green": 177,
+  "red": 7
  },
  "witnesses": {
-  "agreement": 156,
-  "verifier": 155,
-  "reviewer": 14,
+  "agreement": 137,
+  "verifier": 177,
+  "reviewer": 16,
   "structure": 27
  },
  "verifier_verdicts": {
-  "supported": 155,
-  "not_supported": 8,
-  "not_called": 22
+  "supported": 177,
+  "not_supported": 7
  },
  "graph": {
-  "nodes": 71,
+  "nodes": 73,
   "nodes_by_type": {
    "Symptom": 10,
-   "FailureMode": 40,
-   "Component": 21
+   "FailureMode": 43,
+   "Component": 20
   },
-  "edges": 177,
+  "edges": 181,
   "edges_by_tier": {
-   "green": 169,
-   "red": 8
+   "green": 174,
+   "red": 7
   },
-  "merged_aliases": 13
+  "merged_aliases": 33
  },
  "gates": {
   "map": {
@@ -82,8 +92,13 @@
    "pending": 0
   },
   "doubts": {
-   "questions": 9,
-   "answered": 9,
+   "questions": 10,
+   "answered": 10,
+   "pending": 0
+  },
+  "recovery": {
+   "questions": 0,
+   "answered": 0,
    "pending": 0
   },
   "approval": {
@@ -93,54 +108,57 @@
   }
  },
  "answers_by_reviewer": {
-  "agent": 10,
+  "agent": 11,
   "auto": 1
  },
  "human_questions_offered": 0,
  "deferred_questions": [],
  "human_questions": 0,
- "reviewer_confirmed": 14,
+ "reviewer_confirmed": 16,
  "merged_cell_relations": 0,
  "usage": {
-  "calls": 12,
+  "calls": 34,
   "failed_calls": 0,
-  "prompt_tokens": 40459,
-  "completion_tokens": 21910,
-  "estimated_cost_usd": 0.014231,
+  "prompt_tokens": 82008,
+  "completion_tokens": 25822,
+  "estimated_cost_usd": 0.021832,
   "by_operation": {
    "kg_v3_extract": 2,
-   "kg_v3_map": 2,
-   "kg_v3_merge": 1,
-   "kg_v3_verify": 7
+   "kg_v3_map": 19,
+   "kg_v3_merge": 4,
+   "kg_v3_verify": 9
   }
  },
  "agent_usage": {
-  "calls": 10,
+  "calls": 11,
   "failed_calls": 0,
-  "prompt_tokens": 10713,
-  "completion_tokens": 4187,
-  "estimated_cost_usd": 0.003059,
+  "prompt_tokens": 10265,
+  "completion_tokens": 2638,
+  "estimated_cost_usd": 0.0024,
   "by_operation": {
-   "AgentDecision": 10
+   "AgentDecision": 11
   }
  },
  "seconds": {
-  "map": 3.612,
-  "gate_map": 4.856,
-  "extract": 48.047,
-  "check": 4.005,
-  "merge": 4.38,
-  "gate_doubts": 12.083,
+  "map": 6.984,
+  "gate_map": 3.353,
+  "extract": 53.086,
+  "check": 6.217,
+  "merge": 12.472,
+  "split_recheck": 1.753,
+  "gate_doubts": 8.334,
+  "action_reduction": 0.0,
+  "gate_recovery": 0.0,
   "gate_approval": 0.0,
-  "total": 77.128,
-  "pdf_read": 2.653,
-  "end_to_end": 80.349
+  "total": 92.505,
+  "pdf_read": 2.582,
+  "end_to_end": 95.776
  },
  "prompt_ids": {
   "extraction": "f033b22b4e759f82"
  },
  "provenance": {
-  "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+  "commit": "79501aecbb19805f3e099118669fef9cc6558794",
   "pdf_sha256": "6f50db70738a8340276fdb65cc59204423c13953f7634a997c3be6f4fbc65250",
   "config": {
    "model": "gpt-6-luna",
@@ -163,7 +181,11 @@
    "agent_model": "gpt-6-luna",
    "agent_reasoning_effort": "medium",
    "wait_for_map": false,
-   "max_units": 150
+   "max_units": 150,
+   "omission_review": false,
+   "omission_max_units": 3,
+   "visual_verification": false,
+   "visual_max_relations": 12
   },
   "segment_ids": [
    "p1.b1",

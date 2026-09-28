@@ -166,30 +166,6 @@
    },
    "evidence": [
     {
-     "segment_id": "p15.b21",
-     "page": 15,
-     "evidence_id": "ev_bbc81bf24735a4b740f9b59f9276",
-     "bbox": [
-      317.337,
-      336.893,
-      536.905,
-      355.421
-     ],
-     "text": "29. The pump may run rough due to improper balancing of the impeller."
-    },
-    {
-     "segment_id": "p15.b26",
-     "page": 15,
-     "evidence_id": "ev_64f54dac30b4f7d43e57b8e5f0dd",
-     "bbox": [
-      317.337,
-      377.693,
-      539.569,
-      386.621
-     ],
-     "text": "31. The impeller may be rubbing against the inside of the case."
-    },
-    {
      "segment_id": "p15.b43",
      "page": 15,
      "evidence_id": "ev_d5c7c491d79814e120282e9049ed",
@@ -363,81 +339,6 @@
    ]
   },
   {
-   "id": "v3n_e98788ff669e30f4eb7e",
-   "type": "Component",
-   "name": "Pump",
-   "aliases": [],
-   "stated_in_source": false,
-   "properties": {
-    "component_id": "v3n_e98788ff669e30f4eb7e",
-    "name": "Pump",
-    "description": "Pump",
-    "category": "not_stated"
-   },
-   "evidence": [
-    {
-     "segment_id": "p15.b15",
-     "page": 15,
-     "evidence_id": "ev_3bbc69f5ca98b0020e11b18e7ef9",
-     "bbox": [
-      53.856,
-      280.493,
-      221.408,
-      289.421
-     ],
-     "text": "1. The pump has not been properly bled of air."
-    },
-    {
-     "segment_id": "p15.b19",
-     "page": 15,
-     "evidence_id": "ev_34b9001c597a78d38ee65f1e90e1",
-     "bbox": [
-      53.856,
-      311.693,
-      291.64,
-      339.821
-     ],
-     "text": "3. The suction head (NPSHR) required by the pump is too high, or the net positive suction head available (NPSHA) at your facility is too low."
-    },
-    {
-     "segment_id": "p15.b21",
-     "page": 15,
-     "evidence_id": "ev_bbc81bf24735a4b740f9b59f9276",
-     "bbox": [
-      317.337,
-      336.893,
-      536.905,
-      355.421
-     ],
-     "text": "29. The pump may run rough due to improper balancing of the impeller."
-    },
-    {
-     "segment_id": "p15.b32",
-     "page": 15,
-     "evidence_id": "ev_b3e49d37dd4e62fc99157d9f11a1",
-     "bbox": [
-      317.337,
-      434.093,
-      556.929,
-      452.621
-     ],
-     "text": "34. The operating conditions of the installation do not agree with the data specified when the pump was purchased."
-    },
-    {
-     "segment_id": "p15.b34",
-     "page": 15,
-     "evidence_id": "ev_906d38557964fd0d06fdef34585b",
-     "bbox": [
-      53.856,
-      455.693,
-      208.056,
-      464.621
-     ],
-     "text": "11. The foot valve is clogged or undersized."
-    }
-   ]
-  },
-  {
    "id": "v3n_357bcc5131a61b75b851",
    "type": "Component",
    "name": "Pump case",
@@ -543,6 +444,57 @@
    ]
   },
   {
+   "id": "v3n_e451360ffafc3f271d7f",
+   "type": "Component",
+   "name": "Pump suction line",
+   "aliases": [],
+   "stated_in_source": false,
+   "properties": {
+    "component_id": "v3n_e451360ffafc3f271d7f",
+    "name": "Pump suction line",
+    "description": "Pump suction line",
+    "category": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p15.b17",
+     "page": 15,
+     "evidence_id": "ev_c72c99d0fe64988fd3b181956bfb",
+     "bbox": [
+      53.856,
+      296.093,
+      262.744,
+      305.021
+     ],
+     "text": "2. The pump suction line has not been completely primed."
+    },
+    {
+     "segment_id": "p15.b23",
+     "page": 15,
+     "evidence_id": "ev_223ee1426c87878eec3b3d878bcc",
+     "bbox": [
+      53.856,
+      362.093,
+      208.496,
+      371.021
+     ],
+     "text": "5. There are air pockets in the suction line."
+    },
+    {
+     "segment_id": "p15.b25",
+     "page": 15,
+     "evidence_id": "ev_d0cbc944b8b2327e382b69214efe",
+     "bbox": [
+      53.856,
+      377.693,
+      265.416,
+      386.621
+     ],
+     "text": "6. An entry of air has suddenly occurred in the suction line."
+    }
+   ]
+  },
+  {
    "id": "v3n_2a206d82032968abd8d2",
    "type": "Component",
    "name": "Shaft seal",
@@ -578,7 +530,22 @@
       477.821
      ],
      "text": "35. The shaft seal may be incorrectly installed, or the stuffing box has not been packed correctly."
-    },
+    }
+   ]
+  },
+  {
+   "id": "v3n_e49d53b51232feb517cb",
+   "type": "Component",
+   "name": "Shaft seals",
+   "aliases": [],
+   "stated_in_source": false,
+   "properties": {
+    "component_id": "v3n_e49d53b51232feb517cb",
+    "name": "Shaft seals",
+    "description": "Shaft seals",
+    "category": "not_stated"
+   },
+   "evidence": [
     {
      "segment_id": "p15.b36",
      "page": 15,
@@ -590,18 +557,6 @@
       480.221
      ],
      "text": "12. Little or no cooling fluid supplied to the shaft seals."
-    },
-    {
-     "segment_id": "p15.b45",
-     "page": 15,
-     "evidence_id": "ev_ff00cefb1a33471b69fccb1d555d",
-     "bbox": [
-      317.337,
-      569.693,
-      550.537,
-      578.621
-     ],
-     "text": "39. The mechanical seal may have been damaged by running dry."
     }
    ]
   },
@@ -629,33 +584,6 @@
       503.021
      ],
      "text": "36. The shaft sleeve may be scored or pitted in the region of the packing due to dirt or abrasive matter in the flushing fluid."
-    }
-   ]
-  },
-  {
-   "id": "v3n_b2a51a08a2456261b4aa",
-   "type": "Component",
-   "name": "Stuffing box",
-   "aliases": [],
-   "stated_in_source": false,
-   "properties": {
-    "component_id": "v3n_b2a51a08a2456261b4aa",
-    "name": "Stuffing box",
-    "description": "Stuffing box",
-    "category": "not_stated"
-   },
-   "evidence": [
-    {
-     "segment_id": "p15.b35",
-     "page": 15,
-     "evidence_id": "ev_61d18925cc4cb0dc28916fe0a41d",
-     "bbox": [
-      317.337,
-      459.293,
-      546.977,
-      477.821
-     ],
-     "text": "35. The shaft seal may be incorrectly installed, or the stuffing box has not been packed correctly."
     }
    ]
   },
@@ -714,17 +642,17 @@
    ]
   },
   {
-   "id": "v3n_b397d6335c684af12136",
+   "id": "v3n_233ec706fdf8b7f5599e",
    "type": "FailureMode",
-   "name": "Air entering pump past shaft seal",
+   "name": "Air has entered the pump past the shaft seal",
    "aliases": [
     "Air enters pump past shaft seal"
    ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_b397d6335c684af12136",
-    "name": "Air entering pump past shaft seal",
-    "description": "Air entering pump past shaft seal",
+    "failure_mode_id": "v3n_233ec706fdf8b7f5599e",
+    "name": "Air has entered the pump past the shaft seal",
+    "description": "Air has entered the pump past the shaft seal",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -743,15 +671,46 @@
    ]
   },
   {
-   "id": "v3n_ba568486f4ff1a37ef87",
+   "id": "v3n_5e6008f5d1d6a8cee658",
    "type": "FailureMode",
-   "name": "Air pockets in suction line",
-   "aliases": [],
+   "name": "Air has suddenly entered the suction line",
+   "aliases": [
+    "Sudden air entry in suction line"
+   ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_ba568486f4ff1a37ef87",
-    "name": "Air pockets in suction line",
-    "description": "Air pockets in suction line",
+    "failure_mode_id": "v3n_5e6008f5d1d6a8cee658",
+    "name": "Air has suddenly entered the suction line",
+    "description": "Air has suddenly entered the suction line",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p15.b25",
+     "page": 15,
+     "evidence_id": "ev_d0cbc944b8b2327e382b69214efe",
+     "bbox": [
+      53.856,
+      377.693,
+      265.416,
+      386.621
+     ],
+     "text": "6. An entry of air has suddenly occurred in the suction line."
+    }
+   ]
+  },
+  {
+   "id": "v3n_54bace80ca2564c89ca3",
+   "type": "FailureMode",
+   "name": "Air pockets are present in the suction line",
+   "aliases": [
+    "Air pockets in suction line"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_54bace80ca2564c89ca3",
+    "name": "Air pockets are present in the suction line",
+    "description": "Air pockets are present in the suction line",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -770,44 +729,17 @@
    ]
   },
   {
-   "id": "v3n_6ed6a8eff235dd4aad1f",
+   "id": "v3n_f4ad1d5e7cb8c88947e7",
    "type": "FailureMode",
-   "name": "Bent shaft causing chatter",
+   "name": "Casing and impeller wear rings may be excessively worn",
    "aliases": [
-    "Bent shaft causes chattering"
+    "Casing and impeller wear rings excessively worn"
    ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_6ed6a8eff235dd4aad1f",
-    "name": "Bent shaft causing chatter",
-    "description": "Bent shaft causing chatter",
-    "material_context": "not_stated"
-   },
-   "evidence": [
-    {
-     "segment_id": "p15.b20",
-     "page": 15,
-     "evidence_id": "ev_87b149fd5b91ce65a44e254283ef",
-     "bbox": [
-      317.337,
-      321.293,
-      474.209,
-      330.221
-     ],
-     "text": "28. The shaft may chatter because it is bent."
-    }
-   ]
-  },
-  {
-   "id": "v3n_f4ad1d5e7cb8c88947e7",
-   "type": "FailureMode",
-   "name": "Casing and impeller wear rings excessively worn",
-   "aliases": [],
-   "stated_in_source": true,
-   "properties": {
     "failure_mode_id": "v3n_f4ad1d5e7cb8c88947e7",
-    "name": "Casing and impeller wear rings excessively worn",
-    "description": "Casing and impeller wear rings excessively worn",
+    "name": "Casing and impeller wear rings may be excessively worn",
+    "description": "Casing and impeller wear rings may be excessively worn",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -826,15 +758,15 @@
    ]
   },
   {
-   "id": "v3n_3841b2c186ad3a31441c",
+   "id": "v3n_b45d85f7266c31593bf8",
    "type": "FailureMode",
-   "name": "Concrete pad insufficiently sized for pump stability",
+   "name": "Concrete pad may be too small to provide pump stability",
    "aliases": [],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_3841b2c186ad3a31441c",
-    "name": "Concrete pad insufficiently sized for pump stability",
-    "description": "Concrete pad insufficiently sized for pump stability",
+    "failure_mode_id": "v3n_b45d85f7266c31593bf8",
+    "name": "Concrete pad may be too small to provide pump stability",
+    "description": "Concrete pad may be too small to provide pump stability",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -853,15 +785,17 @@
    ]
   },
   {
-   "id": "v3n_f2edce67d7459b4d8aaf",
+   "id": "v3n_3594127d1877870bc0a1",
    "type": "FailureMode",
-   "name": "Excessive axial thrust from improper impeller central alignment",
-   "aliases": [],
+   "name": "Excessive axial thrust (side loading) may result from improper impeller central alignment",
+   "aliases": [
+    "Excessive axial thrust (side loading) due to improper impeller central alignment"
+   ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_f2edce67d7459b4d8aaf",
-    "name": "Excessive axial thrust from improper impeller central alignment",
-    "description": "Excessive axial thrust from improper impeller central alignment",
+    "failure_mode_id": "v3n_3594127d1877870bc0a1",
+    "name": "Excessive axial thrust (side loading) may result from improper impeller central alignment",
+    "description": "Excessive axial thrust (side loading) may result from improper impeller central alignment",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -882,13 +816,15 @@
   {
    "id": "v3n_aa73045091232bde1f51",
    "type": "FailureMode",
-   "name": "Foot valve clogged or undersized",
-   "aliases": [],
+   "name": "Foot valve is clogged or undersized",
+   "aliases": [
+    "Foot valve clogged or undersized"
+   ],
    "stated_in_source": true,
    "properties": {
     "failure_mode_id": "v3n_aa73045091232bde1f51",
-    "name": "Foot valve clogged or undersized",
-    "description": "Foot valve clogged or undersized",
+    "name": "Foot valve is clogged or undersized",
+    "description": "Foot valve is clogged or undersized",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -909,13 +845,15 @@
   {
    "id": "v3n_a577f88b0d389221eca1",
    "type": "FailureMode",
-   "name": "Impeller clogged with debris",
-   "aliases": [],
+   "name": "Impeller may be clogged with debris",
+   "aliases": [
+    "Impeller clogged with debris"
+   ],
    "stated_in_source": true,
    "properties": {
     "failure_mode_id": "v3n_a577f88b0d389221eca1",
-    "name": "Impeller clogged with debris",
-    "description": "Impeller clogged with debris",
+    "name": "Impeller may be clogged with debris",
+    "description": "Impeller may be clogged with debris",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -936,13 +874,15 @@
   {
    "id": "v3n_8ba7b3b59cd155a3ff5a",
    "type": "FailureMode",
-   "name": "Impeller damaged",
-   "aliases": [],
+   "name": "Impeller may be damaged",
+   "aliases": [
+    "Impeller damaged"
+   ],
    "stated_in_source": true,
    "properties": {
     "failure_mode_id": "v3n_8ba7b3b59cd155a3ff5a",
-    "name": "Impeller damaged",
-    "description": "Impeller damaged",
+    "name": "Impeller may be damaged",
+    "description": "Impeller may be damaged",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -963,13 +903,15 @@
   {
    "id": "v3n_ad803a454509279bb632",
    "type": "FailureMode",
-   "name": "Impeller improperly balanced",
-   "aliases": [],
+   "name": "Impeller may be improperly balanced",
+   "aliases": [
+    "Impeller improperly balanced"
+   ],
    "stated_in_source": true,
    "properties": {
     "failure_mode_id": "v3n_ad803a454509279bb632",
-    "name": "Impeller improperly balanced",
-    "description": "Impeller improperly balanced",
+    "name": "Impeller may be improperly balanced",
+    "description": "Impeller may be improperly balanced",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -988,15 +930,17 @@
    ]
   },
   {
-   "id": "v3n_a5983c2fdbe5991b0987",
+   "id": "v3n_72b34c3cc10b9f59e0ac",
    "type": "FailureMode",
-   "name": "Impeller rubbing against inside of case",
-   "aliases": [],
+   "name": "Impeller may rub against the inside of the case",
+   "aliases": [
+    "Impeller rubbing against inside of case"
+   ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_a5983c2fdbe5991b0987",
-    "name": "Impeller rubbing against inside of case",
-    "description": "Impeller rubbing against inside of case",
+    "failure_mode_id": "v3n_72b34c3cc10b9f59e0ac",
+    "name": "Impeller may rub against the inside of the case",
+    "description": "Impeller may rub against the inside of the case",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1018,7 +962,9 @@
    "id": "v3n_3fc336c72c99ba8f53a9",
    "type": "FailureMode",
    "name": "Installation operating conditions differ from purchase specifications",
-   "aliases": [],
+   "aliases": [
+    "Installation operating conditions do not agree with pump purchase specifications"
+   ],
    "stated_in_source": true,
    "properties": {
     "failure_mode_id": "v3n_3fc336c72c99ba8f53a9",
@@ -1042,46 +988,17 @@
    ]
   },
   {
-   "id": "v3n_7098b7d73f20ddeb00a9",
+   "id": "v3n_3c84fda854e6ff0b0fb9",
    "type": "FailureMode",
-   "name": "Installation total head below pump rated total head",
+   "name": "Installation total head (back pressure) higher than pump rated total head",
    "aliases": [
-    "Installation total head lower than pump rated total head"
+    "Installation total head (back pressure) exceeds pump rated total head"
    ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_7098b7d73f20ddeb00a9",
-    "name": "Installation total head below pump rated total head",
-    "description": "Installation total head below pump rated total head",
-    "material_context": "not_stated"
-   },
-   "evidence": [
-    {
-     "segment_id": "p15.b46",
-     "page": 15,
-     "evidence_id": "ev_e7ffa729bf98a4f8f25372f08169",
-     "bbox": [
-      53.856,
-      584.093,
-      287.2,
-      602.621
-     ],
-     "text": "18. Total head of installation (back pressure) lower than rated total head of the pump."
-    }
-   ]
-  },
-  {
-   "id": "v3n_16b76ed57e018a2f1fca",
-   "type": "FailureMode",
-   "name": "Installation total head higher than pump rated total head",
-   "aliases": [
-    "Installation total head exceeds pump rated total head"
-   ],
-   "stated_in_source": true,
-   "properties": {
-    "failure_mode_id": "v3n_16b76ed57e018a2f1fca",
-    "name": "Installation total head higher than pump rated total head",
-    "description": "Installation total head higher than pump rated total head",
+    "failure_mode_id": "v3n_3c84fda854e6ff0b0fb9",
+    "name": "Installation total head (back pressure) higher than pump rated total head",
+    "description": "Installation total head (back pressure) higher than pump rated total head",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1100,17 +1017,44 @@
    ]
   },
   {
-   "id": "v3n_fdf079188db8b1fa839d",
+   "id": "v3n_7d695ee2f59750bfa7eb",
    "type": "FailureMode",
-   "name": "Internal gasket failure causing discharge-to-suction leakage",
+   "name": "Installation total head (back pressure) lower than pump rated total head",
    "aliases": [
-    "Internal gasket failure causes discharge-to-suction leakage"
+    "Installation total head (back pressure) is below pump rated total head"
    ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_fdf079188db8b1fa839d",
-    "name": "Internal gasket failure causing discharge-to-suction leakage",
-    "description": "Internal gasket failure causing discharge-to-suction leakage",
+    "failure_mode_id": "v3n_7d695ee2f59750bfa7eb",
+    "name": "Installation total head (back pressure) lower than pump rated total head",
+    "description": "Installation total head (back pressure) lower than pump rated total head",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p15.b46",
+     "page": 15,
+     "evidence_id": "ev_e7ffa729bf98a4f8f25372f08169",
+     "bbox": [
+      53.856,
+      584.093,
+      287.2,
+      602.621
+     ],
+     "text": "18. Total head of installation (back pressure) lower than rated total head of the pump."
+    }
+   ]
+  },
+  {
+   "id": "v3n_6c713a0bf5c55723b327",
+   "type": "FailureMode",
+   "name": "Internal leakage from discharge to suction compartments due to internal gasket failure",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_6c713a0bf5c55723b327",
+    "name": "Internal leakage from discharge to suction compartments due to internal gasket failure",
+    "description": "Internal leakage from discharge to suction compartments due to internal gasket failure",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1129,17 +1073,17 @@
    ]
   },
   {
-   "id": "v3n_8dde423d1bdb4564cc4f",
+   "id": "v3n_7f5b75371c2eae2a945e",
    "type": "FailureMode",
-   "name": "Lantern ring mispositioned, restricting fluid flow",
+   "name": "Lantern ring is not opposite the flushing inlet, restricting fluid flow",
    "aliases": [
-    "Lantern ring mispositioned, restricting flushing-fluid flow"
+    "Lantern ring not opposite flushing inlet, restricting fluid flow"
    ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_8dde423d1bdb4564cc4f",
-    "name": "Lantern ring mispositioned, restricting fluid flow",
-    "description": "Lantern ring mispositioned, restricting fluid flow",
+    "failure_mode_id": "v3n_7f5b75371c2eae2a945e",
+    "name": "Lantern ring is not opposite the flushing inlet, restricting fluid flow",
+    "description": "Lantern ring is not opposite the flushing inlet, restricting fluid flow",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1158,15 +1102,17 @@
    ]
   },
   {
-   "id": "v3n_5bb8555932f1efa639b1",
+   "id": "v3n_d071b1aade110bb52f2c",
    "type": "FailureMode",
-   "name": "Little or no cooling fluid supplied to shaft seals",
-   "aliases": [],
+   "name": "Little or no cooling fluid is supplied to the shaft seals",
+   "aliases": [
+    "Little or no cooling fluid supplied to shaft seals"
+   ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_5bb8555932f1efa639b1",
-    "name": "Little or no cooling fluid supplied to shaft seals",
-    "description": "Little or no cooling fluid supplied to shaft seals",
+    "failure_mode_id": "v3n_d071b1aade110bb52f2c",
+    "name": "Little or no cooling fluid is supplied to the shaft seals",
+    "description": "Little or no cooling fluid is supplied to the shaft seals",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1185,17 +1131,17 @@
    ]
   },
   {
-   "id": "v3n_d876854243c3b6c8200e",
+   "id": "v3n_96a0128cb985a9399485",
    "type": "FailureMode",
-   "name": "Mechanical seal damaged by dry running",
+   "name": "Mechanical seal may have been damaged by running dry",
    "aliases": [
     "Mechanical seal damaged by running dry"
    ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_d876854243c3b6c8200e",
-    "name": "Mechanical seal damaged by dry running",
-    "description": "Mechanical seal damaged by dry running",
+    "failure_mode_id": "v3n_96a0128cb985a9399485",
+    "name": "Mechanical seal may have been damaged by running dry",
+    "description": "Mechanical seal may have been damaged by running dry",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1214,17 +1160,17 @@
    ]
   },
   {
-   "id": "v3n_fa1caedb15ce60dd6b07",
+   "id": "v3n_6f8e35880c033be66cdf",
    "type": "FailureMode",
-   "name": "Packing gland overtightened, blocking flushing port and reducing sealing-fluid flow",
+   "name": "Packing gland may be excessively tightened, blocking flushing port and diminishing sealing-fluid flow",
    "aliases": [
-    "Packing gland overtightened, blocking flushing port and diminishing sealing-fluid flow"
+    "Packing gland tightened excessively, blocking flushing port and diminishing sealing-fluid flow"
    ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_fa1caedb15ce60dd6b07",
-    "name": "Packing gland overtightened, blocking flushing port and reducing sealing-fluid flow",
-    "description": "Packing gland overtightened, blocking flushing port and reducing sealing-fluid flow",
+    "failure_mode_id": "v3n_6f8e35880c033be66cdf",
+    "name": "Packing gland may be excessively tightened, blocking flushing port and diminishing sealing-fluid flow",
+    "description": "Packing gland may be excessively tightened, blocking flushing port and diminishing sealing-fluid flow",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1243,17 +1189,17 @@
    ]
   },
   {
-   "id": "v3n_e630903e4cb08e10e0cb",
+   "id": "v3n_a44d27cdd31664af3a0e",
    "type": "FailureMode",
-   "name": "Packing wedged or extruded between shaft and stuffing-housing bottom due to excessive backup-washer clearance",
+   "name": "Packing material may be wedged or extruded between shaft and stuffing-housing bottom due to excessive packing-backup-washer clearance",
    "aliases": [
-    "Packing wedged or extruded due to excessive packing backup-washer clearance"
+    "Packing wedged or extruded between shaft and stuffing-housing bottom due to excessive packing-backup-washer clearance"
    ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_e630903e4cb08e10e0cb",
-    "name": "Packing wedged or extruded between shaft and stuffing-housing bottom due to excessive backup-washer clearance",
-    "description": "Packing wedged or extruded between shaft and stuffing-housing bottom due to excessive backup-washer clearance",
+    "failure_mode_id": "v3n_a44d27cdd31664af3a0e",
+    "name": "Packing material may be wedged or extruded between shaft and stuffing-housing bottom due to excessive packing-backup-washer clearance",
+    "description": "Packing material may be wedged or extruded between shaft and stuffing-housing bottom due to excessive packing-backup-washer clearance",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1272,96 +1218,17 @@
    ]
   },
   {
-   "id": "v3n_586bea690f7c62f8954a",
+   "id": "v3n_ba77d686fd7c846f68d5",
    "type": "FailureMode",
-   "name": "Pump characteristics unsuitable for parallel operation",
-   "aliases": [],
+   "name": "Pump became misaligned during installation",
+   "aliases": [
+    "Pump may have become misaligned during installation"
+   ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_586bea690f7c62f8954a",
-    "name": "Pump characteristics unsuitable for parallel operation",
-    "description": "Pump characteristics unsuitable for parallel operation",
-    "material_context": "not_stated"
-   },
-   "evidence": [
-    {
-     "segment_id": "p15.b51",
-     "page": 15,
-     "evidence_id": "ev_2028fd2e74e589a64bbfe0c9a132",
-     "bbox": [
-      53.856,
-      684.893,
-      291.632,
-      703.421
-     ],
-     "text": "22. If pumps are operating in parallel, the pump characteristics may not be suitable for parallel operation."
-    }
-   ]
-  },
-  {
-   "id": "v3n_5c22c91460e3875180ed",
-   "type": "FailureMode",
-   "name": "Pump drive rotational speed too high",
-   "aliases": [],
-   "stated_in_source": true,
-   "properties": {
-    "failure_mode_id": "v3n_5c22c91460e3875180ed",
-    "name": "Pump drive rotational speed too high",
-    "description": "Pump drive rotational speed too high",
-    "material_context": "not_stated"
-   },
-   "evidence": [
-    {
-     "segment_id": "p15.b41",
-     "page": 15,
-     "evidence_id": "ev_822d4a65a2a2b07a08a78654acc5",
-     "bbox": [
-      53.856,
-      527.693,
-      199.168,
-      536.621
-     ],
-     "text": "15. Pump drive rotational speed too high."
-    }
-   ]
-  },
-  {
-   "id": "v3n_b514f8fce68a49b000cb",
-   "type": "FailureMode",
-   "name": "Pump drive rotational speed too low",
-   "aliases": [],
-   "stated_in_source": true,
-   "properties": {
-    "failure_mode_id": "v3n_b514f8fce68a49b000cb",
-    "name": "Pump drive rotational speed too low",
-    "description": "Pump drive rotational speed too low",
-    "material_context": "not_stated"
-   },
-   "evidence": [
-    {
-     "segment_id": "p15.b40",
-     "page": 15,
-     "evidence_id": "ev_2d5f136b020b7eab0ad9e07f58e1",
-     "bbox": [
-      53.856,
-      512.093,
-      195.608,
-      521.021
-     ],
-     "text": "14. Pump drive rotational speed too low."
-    }
-   ]
-  },
-  {
-   "id": "v3n_3008e4642131bd0baba8",
-   "type": "FailureMode",
-   "name": "Pump misaligned during installation",
-   "aliases": [],
-   "stated_in_source": true,
-   "properties": {
-    "failure_mode_id": "v3n_3008e4642131bd0baba8",
-    "name": "Pump misaligned during installation",
-    "description": "Pump misaligned during installation",
+    "failure_mode_id": "v3n_ba77d686fd7c846f68d5",
+    "name": "Pump became misaligned during installation",
+    "description": "Pump became misaligned during installation",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1380,15 +1247,102 @@
    ]
   },
   {
-   "id": "v3n_5e895ca39aae1f046cfc",
+   "id": "v3n_ed5fed8155bb94daf35e",
    "type": "FailureMode",
-   "name": "Pump not properly bled of air",
+   "name": "Pump characteristics may be unsuitable for parallel operation",
    "aliases": [],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_5e895ca39aae1f046cfc",
-    "name": "Pump not properly bled of air",
-    "description": "Pump not properly bled of air",
+    "failure_mode_id": "v3n_ed5fed8155bb94daf35e",
+    "name": "Pump characteristics may be unsuitable for parallel operation",
+    "description": "Pump characteristics may be unsuitable for parallel operation",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p15.b51",
+     "page": 15,
+     "evidence_id": "ev_2028fd2e74e589a64bbfe0c9a132",
+     "bbox": [
+      53.856,
+      684.893,
+      291.632,
+      703.421
+     ],
+     "text": "22. If pumps are operating in parallel, the pump characteristics may not be suitable for parallel operation."
+    }
+   ]
+  },
+  {
+   "id": "v3n_5896c4b1056e4fb855ec",
+   "type": "FailureMode",
+   "name": "Pump drive rotational speed is too high",
+   "aliases": [
+    "Pump drive rotational speed too high"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_5896c4b1056e4fb855ec",
+    "name": "Pump drive rotational speed is too high",
+    "description": "Pump drive rotational speed is too high",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p15.b41",
+     "page": 15,
+     "evidence_id": "ev_822d4a65a2a2b07a08a78654acc5",
+     "bbox": [
+      53.856,
+      527.693,
+      199.168,
+      536.621
+     ],
+     "text": "15. Pump drive rotational speed too high."
+    }
+   ]
+  },
+  {
+   "id": "v3n_c3232e564959b5762e40",
+   "type": "FailureMode",
+   "name": "Pump drive rotational speed is too low",
+   "aliases": [
+    "Pump drive rotational speed too low"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_c3232e564959b5762e40",
+    "name": "Pump drive rotational speed is too low",
+    "description": "Pump drive rotational speed is too low",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p15.b40",
+     "page": 15,
+     "evidence_id": "ev_2d5f136b020b7eab0ad9e07f58e1",
+     "bbox": [
+      53.856,
+      512.093,
+      195.608,
+      521.021
+     ],
+     "text": "14. Pump drive rotational speed too low."
+    }
+   ]
+  },
+  {
+   "id": "v3n_9f8de7e21cf9c441a1a6",
+   "type": "FailureMode",
+   "name": "Pump has not been properly bled of air",
+   "aliases": [
+    "Pump not properly bled of air"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_9f8de7e21cf9c441a1a6",
+    "name": "Pump has not been properly bled of air",
+    "description": "Pump has not been properly bled of air",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1407,17 +1361,18 @@
    ]
   },
   {
-   "id": "v3n_8b1a1d0f54f8a711e7cb",
+   "id": "v3n_ffa031d9b57819860d33",
    "type": "FailureMode",
-   "name": "Pump operating at too low a flow rate; discharge valve may be over-throttled",
+   "name": "Pump operates at too low a flow rate; discharge valve may be throttled too much",
    "aliases": [
+    "Pump operates at too low a rate of flow; discharge valve may be throttled too much",
     "Pump operating at too low a flow rate; discharge valve may be throttled too much"
    ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_8b1a1d0f54f8a711e7cb",
-    "name": "Pump operating at too low a flow rate; discharge valve may be over-throttled",
-    "description": "Pump operating at too low a flow rate; discharge valve may be over-throttled",
+    "failure_mode_id": "v3n_ffa031d9b57819860d33",
+    "name": "Pump operates at too low a flow rate; discharge valve may be throttled too much",
+    "description": "Pump operates at too low a flow rate; discharge valve may be throttled too much",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1436,15 +1391,17 @@
    ]
   },
   {
-   "id": "v3n_768c5dcadeff40c54aad",
+   "id": "v3n_8a4a857c318e563f56a2",
    "type": "FailureMode",
-   "name": "Pump rotation wrong or impeller installed backwards",
-   "aliases": [],
+   "name": "Pump rotation is wrong or impeller is installed backwards",
+   "aliases": [
+    "Pump rotation wrong or impeller installed backwards"
+   ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_768c5dcadeff40c54aad",
-    "name": "Pump rotation wrong or impeller installed backwards",
-    "description": "Pump rotation wrong or impeller installed backwards",
+    "failure_mode_id": "v3n_8a4a857c318e563f56a2",
+    "name": "Pump rotation is wrong or impeller is installed backwards",
+    "description": "Pump rotation is wrong or impeller is installed backwards",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1463,15 +1420,17 @@
    ]
   },
   {
-   "id": "v3n_b8295c1619803993b550",
+   "id": "v3n_c57534dc153e48c9a1f9",
    "type": "FailureMode",
-   "name": "Pump shaft misaligned",
-   "aliases": [],
+   "name": "Pump shaft may be misaligned",
+   "aliases": [
+    "Pump shaft misaligned"
+   ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_b8295c1619803993b550",
-    "name": "Pump shaft misaligned",
-    "description": "Pump shaft misaligned",
+    "failure_mode_id": "v3n_c57534dc153e48c9a1f9",
+    "name": "Pump shaft may be misaligned",
+    "description": "Pump shaft may be misaligned",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1490,15 +1449,17 @@
    ]
   },
   {
-   "id": "v3n_86acecf94357847000ef",
+   "id": "v3n_8ea1e1a34c5434ea4d8e",
    "type": "FailureMode",
-   "name": "Pump suction line not completely primed",
-   "aliases": [],
+   "name": "Pump suction line has not been completely primed",
+   "aliases": [
+    "Pump suction line not completely primed"
+   ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_86acecf94357847000ef",
-    "name": "Pump suction line not completely primed",
-    "description": "Pump suction line not completely primed",
+    "failure_mode_id": "v3n_8ea1e1a34c5434ea4d8e",
+    "name": "Pump suction line has not been completely primed",
+    "description": "Pump suction line has not been completely primed",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1598,17 +1559,17 @@
    ]
   },
   {
-   "id": "v3n_ee1d9d172998465a3bce",
+   "id": "v3n_31b6b32bba8af0b9ca95",
    "type": "FailureMode",
-   "name": "Required NPSH too high or available NPSH too low",
+   "name": "Required pump suction head (NPSHR) is too high or available facility NPSH (NPSHA) is too low",
    "aliases": [
-    "Required NPSHR too high or available NPSHA too low"
+    "Pump required NPSH too high or available NPSH too low"
    ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_ee1d9d172998465a3bce",
-    "name": "Required NPSH too high or available NPSH too low",
-    "description": "Required NPSH too high or available NPSH too low",
+    "failure_mode_id": "v3n_31b6b32bba8af0b9ca95",
+    "name": "Required pump suction head (NPSHR) is too high or available facility NPSH (NPSHA) is too low",
+    "description": "Required pump suction head (NPSHR) is too high or available facility NPSH (NPSHA) is too low",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1627,15 +1588,71 @@
    ]
   },
   {
-   "id": "v3n_203736c108afed1fdc09",
+   "id": "v3n_b4848615c299c569e83b",
    "type": "FailureMode",
-   "name": "Shaft seal incorrectly installed or stuffing box incorrectly packed",
+   "name": "Shaft may chatter because it is bent",
    "aliases": [],
    "stated_in_source": true,
    "properties": {
+    "failure_mode_id": "v3n_b4848615c299c569e83b",
+    "name": "Shaft may chatter because it is bent",
+    "description": "Shaft may chatter because it is bent",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p15.b20",
+     "page": 15,
+     "evidence_id": "ev_87b149fd5b91ce65a44e254283ef",
+     "bbox": [
+      317.337,
+      321.293,
+      474.209,
+      330.221
+     ],
+     "text": "28. The shaft may chatter because it is bent."
+    }
+   ]
+  },
+  {
+   "id": "v3n_a4153029042d14b0edfd",
+   "type": "FailureMode",
+   "name": "Shaft may not run due to worn bearings",
+   "aliases": [],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_a4153029042d14b0edfd",
+    "name": "Shaft may not run due to worn bearings",
+    "description": "Shaft may not run due to worn bearings",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p15.b24",
+     "page": 15,
+     "evidence_id": "ev_884436969fe7d083416eaa98a097",
+     "bbox": [
+      317.337,
+      362.093,
+      513.345,
+      371.021
+     ],
+     "text": "30. The shaft may not be running due to worn bearings."
+    }
+   ]
+  },
+  {
+   "id": "v3n_203736c108afed1fdc09",
+   "type": "FailureMode",
+   "name": "Shaft seal may be incorrectly installed or stuffing box incorrectly packed",
+   "aliases": [
+    "Shaft seal incorrectly installed or stuffing box incorrectly packed"
+   ],
+   "stated_in_source": true,
+   "properties": {
     "failure_mode_id": "v3n_203736c108afed1fdc09",
-    "name": "Shaft seal incorrectly installed or stuffing box incorrectly packed",
-    "description": "Shaft seal incorrectly installed or stuffing box incorrectly packed",
+    "name": "Shaft seal may be incorrectly installed or stuffing box incorrectly packed",
+    "description": "Shaft seal may be incorrectly installed or stuffing box incorrectly packed",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1654,15 +1671,17 @@
    ]
   },
   {
-   "id": "v3n_a4e788b627c318316604",
+   "id": "v3n_7cfc153fa58178906a79",
    "type": "FailureMode",
-   "name": "Shaft sleeve scored or pitted by dirt or abrasive flushing-fluid matter",
-   "aliases": [],
+   "name": "Shaft sleeve may be scored or pitted in the packing region due to dirt or abrasive matter in flushing fluid",
+   "aliases": [
+    "Shaft sleeve scored or pitted by dirt or abrasive matter in flushing fluid"
+   ],
    "stated_in_source": true,
    "properties": {
-    "failure_mode_id": "v3n_a4e788b627c318316604",
-    "name": "Shaft sleeve scored or pitted by dirt or abrasive flushing-fluid matter",
-    "description": "Shaft sleeve scored or pitted by dirt or abrasive flushing-fluid matter",
+    "failure_mode_id": "v3n_7cfc153fa58178906a79",
+    "name": "Shaft sleeve may be scored or pitted in the packing region due to dirt or abrasive matter in flushing fluid",
+    "description": "Shaft sleeve may be scored or pitted in the packing region due to dirt or abrasive matter in flushing fluid",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1681,15 +1700,46 @@
    ]
   },
   {
+   "id": "v3n_fb4eff6a3da6f9c7492a",
+   "type": "FailureMode",
+   "name": "Suction line inlet is insufficiently submerged",
+   "aliases": [
+    "Suction-line inlet insufficiently submerged"
+   ],
+   "stated_in_source": true,
+   "properties": {
+    "failure_mode_id": "v3n_fb4eff6a3da6f9c7492a",
+    "name": "Suction line inlet is insufficiently submerged",
+    "description": "Suction line inlet is insufficiently submerged",
+    "material_context": "not_stated"
+   },
+   "evidence": [
+    {
+     "segment_id": "p15.b29",
+     "page": 15,
+     "evidence_id": "ev_82359052836eee14ffb1f6c3eeff",
+     "bbox": [
+      53.856,
+      408.893,
+      259.928,
+      417.821
+     ],
+     "text": "8. The inlet of the suction line is insufficiently submerged."
+    }
+   ]
+  },
+  {
    "id": "v3n_2a16c5bc4e611e8403c6",
    "type": "FailureMode",
-   "name": "Suction strainer clogged with dirt or debris",
-   "aliases": [],
+   "name": "Suction strainer is clogged with dirt or debris",
+   "aliases": [
+    "Suction strainer clogged with dirt or debris"
+   ],
    "stated_in_source": true,
    "properties": {
     "failure_mode_id": "v3n_2a16c5bc4e611e8403c6",
-    "name": "Suction strainer clogged with dirt or debris",
-    "description": "Suction strainer clogged with dirt or debris",
+    "name": "Suction strainer is clogged with dirt or debris",
+    "description": "Suction strainer is clogged with dirt or debris",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1710,13 +1760,15 @@
   {
    "id": "v3n_54800e33d03372194799",
    "type": "FailureMode",
-   "name": "Suction valve closed or partially open",
-   "aliases": [],
+   "name": "Suction valve is closed or partially open",
+   "aliases": [
+    "Suction valve closed or partially open"
+   ],
    "stated_in_source": true,
    "properties": {
     "failure_mode_id": "v3n_54800e33d03372194799",
-    "name": "Suction valve closed or partially open",
-    "description": "Suction valve closed or partially open",
+    "name": "Suction valve is closed or partially open",
+    "description": "Suction valve is closed or partially open",
     "material_context": "not_stated"
    },
    "evidence": [
@@ -1731,89 +1783,6 @@
       433.421
      ],
      "text": "9. The suction valve is closed or only partially open."
-    }
-   ]
-  },
-  {
-   "id": "v3n_0949e5013cb1cf116efc",
-   "type": "FailureMode",
-   "name": "Suction-line inlet insufficiently submerged",
-   "aliases": [],
-   "stated_in_source": true,
-   "properties": {
-    "failure_mode_id": "v3n_0949e5013cb1cf116efc",
-    "name": "Suction-line inlet insufficiently submerged",
-    "description": "Suction-line inlet insufficiently submerged",
-    "material_context": "not_stated"
-   },
-   "evidence": [
-    {
-     "segment_id": "p15.b29",
-     "page": 15,
-     "evidence_id": "ev_82359052836eee14ffb1f6c3eeff",
-     "bbox": [
-      53.856,
-      408.893,
-      259.928,
-      417.821
-     ],
-     "text": "8. The inlet of the suction line is insufficiently submerged."
-    }
-   ]
-  },
-  {
-   "id": "v3n_b17e571f59171da98430",
-   "type": "FailureMode",
-   "name": "Sudden air entry in suction line",
-   "aliases": [],
-   "stated_in_source": true,
-   "properties": {
-    "failure_mode_id": "v3n_b17e571f59171da98430",
-    "name": "Sudden air entry in suction line",
-    "description": "Sudden air entry in suction line",
-    "material_context": "not_stated"
-   },
-   "evidence": [
-    {
-     "segment_id": "p15.b25",
-     "page": 15,
-     "evidence_id": "ev_d0cbc944b8b2327e382b69214efe",
-     "bbox": [
-      53.856,
-      377.693,
-      265.416,
-      386.621
-     ],
-     "text": "6. An entry of air has suddenly occurred in the suction line."
-    }
-   ]
-  },
-  {
-   "id": "v3n_488fd2d6cfca23039ebd",
-   "type": "FailureMode",
-   "name": "Worn bearings",
-   "aliases": [
-    "Worn bearings prevent shaft from running"
-   ],
-   "stated_in_source": true,
-   "properties": {
-    "failure_mode_id": "v3n_488fd2d6cfca23039ebd",
-    "name": "Worn bearings",
-    "description": "Worn bearings",
-    "material_context": "not_stated"
-   },
-   "evidence": [
-    {
-     "segment_id": "p15.b24",
-     "page": 15,
-     "evidence_id": "ev_884436969fe7d083416eaa98a097",
-     "bbox": [
-      317.337,
-      362.093,
-      513.345,
-      371.021
-     ],
-     "text": "30. The shaft may not be running due to worn bearings."
     }
    ]
   },
@@ -1901,15 +1870,13 @@
   {
    "id": "v3n_5b85547438836fb0aab2",
    "type": "Symptom",
-   "name": "Pump does not deliver liquid at start-up",
-   "aliases": [
-    "Pump does not deliver any liquid at start-up"
-   ],
+   "name": "Pump does not deliver any liquid at start-up",
+   "aliases": [],
    "stated_in_source": false,
    "properties": {
     "symptom_id": "v3n_5b85547438836fb0aab2",
-    "name": "Pump does not deliver liquid at start-up",
-    "description": "Pump does not deliver liquid at start-up",
+    "name": "Pump does not deliver any liquid at start-up",
+    "description": "Pump does not deliver any liquid at start-up",
     "severity": "Unknown"
    },
    "evidence": [
@@ -2092,10 +2059,10 @@
  ],
  "edges": [
   {
-   "id": "v3e_5d8abad2cab947cd3681",
+   "id": "v3e_a3d3e14efc2de3388879",
    "type": "MAY_INDICATE",
    "from": "v3n_5b85547438836fb0aab2",
-   "to": "v3n_5e895ca39aae1f046cfc",
+   "to": "v3n_9f8de7e21cf9c441a1a6",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -2151,10 +2118,10 @@
    ]
   },
   {
-   "id": "v3e_2a31170c18cf3a01c084",
+   "id": "v3e_aa2699a4fa89ffc6d3e1",
    "type": "MAY_INDICATE",
    "from": "v3n_5b85547438836fb0aab2",
-   "to": "v3n_86acecf94357847000ef",
+   "to": "v3n_8ea1e1a34c5434ea4d8e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -2210,10 +2177,10 @@
    ]
   },
   {
-   "id": "v3e_242722b764fa460f4953",
+   "id": "v3e_3e2bc8a45acf3e50ba12",
    "type": "MAY_INDICATE",
    "from": "v3n_5b85547438836fb0aab2",
-   "to": "v3n_ee1d9d172998465a3bce",
+   "to": "v3n_31b6b32bba8af0b9ca95",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -2328,10 +2295,10 @@
    ]
   },
   {
-   "id": "v3e_489aae55e062970cc39c",
+   "id": "v3e_742735fdcbf224fcf1a1",
    "type": "MAY_INDICATE",
    "from": "v3n_5b85547438836fb0aab2",
-   "to": "v3n_ba568486f4ff1a37ef87",
+   "to": "v3n_54bace80ca2564c89ca3",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -2387,10 +2354,10 @@
    ]
   },
   {
-   "id": "v3e_f1a738f97db9bb3b6dd6",
+   "id": "v3e_c9b01176775341889d91",
    "type": "MAY_INDICATE",
    "from": "v3n_5b85547438836fb0aab2",
-   "to": "v3n_b17e571f59171da98430",
+   "to": "v3n_5e6008f5d1d6a8cee658",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -2446,10 +2413,10 @@
    ]
   },
   {
-   "id": "v3e_e1e07aaa88a8a0937bb7",
+   "id": "v3e_1ce8937ea5f82413eb59",
    "type": "MAY_INDICATE",
    "from": "v3n_5b85547438836fb0aab2",
-   "to": "v3n_b397d6335c684af12136",
+   "to": "v3n_233ec706fdf8b7f5599e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -2505,10 +2472,10 @@
    ]
   },
   {
-   "id": "v3e_6620585f43f85caaebaa",
+   "id": "v3e_47396eb571228a077888",
    "type": "MAY_INDICATE",
    "from": "v3n_5b85547438836fb0aab2",
-   "to": "v3n_0949e5013cb1cf116efc",
+   "to": "v3n_fb4eff6a3da6f9c7492a",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -2741,10 +2708,10 @@
    ]
   },
   {
-   "id": "v3e_cf4666e359dd94e87d57",
+   "id": "v3e_364fda742ddbba108edd",
    "type": "MAY_INDICATE",
    "from": "v3n_5b85547438836fb0aab2",
-   "to": "v3n_b514f8fce68a49b000cb",
+   "to": "v3n_c3232e564959b5762e40",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -2800,10 +2767,10 @@
    ]
   },
   {
-   "id": "v3e_fc4095dcab07919e62be",
+   "id": "v3e_0cfb3f64646037af71dc",
    "type": "MAY_INDICATE",
    "from": "v3n_5b85547438836fb0aab2",
-   "to": "v3n_768c5dcadeff40c54aad",
+   "to": "v3n_8a4a857c318e563f56a2",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -2859,10 +2826,10 @@
    ]
   },
   {
-   "id": "v3e_19f14f496185282de74e",
+   "id": "v3e_ddbc57e7da502e9a8ae9",
    "type": "MAY_INDICATE",
    "from": "v3n_5b85547438836fb0aab2",
-   "to": "v3n_16b76ed57e018a2f1fca",
+   "to": "v3n_3c84fda854e6ff0b0fb9",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -2918,10 +2885,10 @@
    ]
   },
   {
-   "id": "v3e_47e7d4716c185cd4398a",
+   "id": "v3e_5656b97fff289afe28d4",
    "type": "MAY_INDICATE",
    "from": "v3n_5b85547438836fb0aab2",
-   "to": "v3n_586bea690f7c62f8954a",
+   "to": "v3n_ed5fed8155bb94daf35e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -3095,10 +3062,10 @@
    ]
   },
   {
-   "id": "v3e_126fa8be9fe125ffcbcb",
+   "id": "v3e_2f604587c1850cb59c66",
    "type": "MAY_INDICATE",
    "from": "v3n_5b85547438836fb0aab2",
-   "to": "v3n_3fc336c72c99ba8f53a9",
+   "to": "v3n_6c713a0bf5c55723b327",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -3109,15 +3076,19 @@
      "conditions": [],
      "certificate": {
       "segment_ids": [
-       "p15.b32",
+       "p15.b16",
        "p15.b4"
       ],
       "witnesses": [
-       "agreement",
-       "verifier"
+       "verifier",
+       "reviewer"
       ],
       "verifier_verdict": "supported",
-      "confirmed_by": null,
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+      },
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
       "notes": [
@@ -3126,16 +3097,16 @@
      },
      "evidence": [
       {
-       "segment_id": "p15.b32",
+       "segment_id": "p15.b16",
        "page": 15,
-       "evidence_id": "ev_b3e49d37dd4e62fc99157d9f11a1",
+       "evidence_id": "ev_b71fe64296c98457ffbd83122f6e",
        "bbox": [
         317.337,
-        434.093,
-        556.929,
-        452.621
+        280.493,
+        556.465,
+        299.021
        ],
-       "text": "34. The operating conditions of the installation do not agree with the data specified when the pump was purchased."
+       "text": "26. There may be internal leakage from the discharge to the suction compartments as the result of internal gasket failure."
       },
       {
        "segment_id": "p15.b4",
@@ -3154,10 +3125,10 @@
    ]
   },
   {
-   "id": "v3e_567c560eb7d6b4036fba",
+   "id": "v3e_7ca68e163d84d7ef3515",
    "type": "MAY_INDICATE",
    "from": "v3n_e54698b60e5b0418ce56",
-   "to": "v3n_86acecf94357847000ef",
+   "to": "v3n_8ea1e1a34c5434ea4d8e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -3213,10 +3184,10 @@
    ]
   },
   {
-   "id": "v3e_1c8cc709571d969c9402",
+   "id": "v3e_41f7c9d3e35504e598f7",
    "type": "MAY_INDICATE",
    "from": "v3n_e54698b60e5b0418ce56",
-   "to": "v3n_ee1d9d172998465a3bce",
+   "to": "v3n_31b6b32bba8af0b9ca95",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -3331,10 +3302,10 @@
    ]
   },
   {
-   "id": "v3e_8fdcda3e43238b221d1e",
+   "id": "v3e_4fa4d38fd213246c0825",
    "type": "MAY_INDICATE",
    "from": "v3n_e54698b60e5b0418ce56",
-   "to": "v3n_ba568486f4ff1a37ef87",
+   "to": "v3n_54bace80ca2564c89ca3",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -3390,10 +3361,10 @@
    ]
   },
   {
-   "id": "v3e_7d8ed54eb232c7fd2a58",
+   "id": "v3e_fce2f787d5b72c973954",
    "type": "MAY_INDICATE",
    "from": "v3n_e54698b60e5b0418ce56",
-   "to": "v3n_b17e571f59171da98430",
+   "to": "v3n_5e6008f5d1d6a8cee658",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -3449,10 +3420,10 @@
    ]
   },
   {
-   "id": "v3e_f47299736c41d2cf88d6",
+   "id": "v3e_2ad1eadeb03c02d91a08",
    "type": "MAY_INDICATE",
    "from": "v3n_e54698b60e5b0418ce56",
-   "to": "v3n_b397d6335c684af12136",
+   "to": "v3n_233ec706fdf8b7f5599e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -3508,10 +3479,10 @@
    ]
   },
   {
-   "id": "v3e_1289850fb1892224e7a0",
+   "id": "v3e_58571ac0caded6808f32",
    "type": "MAY_INDICATE",
    "from": "v3n_e54698b60e5b0418ce56",
-   "to": "v3n_0949e5013cb1cf116efc",
+   "to": "v3n_fb4eff6a3da6f9c7492a",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -3744,10 +3715,10 @@
    ]
   },
   {
-   "id": "v3e_b68c3a94660b289e877b",
+   "id": "v3e_8ed7cdb740ed3f8e50be",
    "type": "MAY_INDICATE",
    "from": "v3n_e54698b60e5b0418ce56",
-   "to": "v3n_5bb8555932f1efa639b1",
+   "to": "v3n_d071b1aade110bb52f2c",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -3803,10 +3774,10 @@
    ]
   },
   {
-   "id": "v3e_3f078c9bec2d3a4002d0",
+   "id": "v3e_2f8861230238f30cad9e",
    "type": "MAY_INDICATE",
    "from": "v3n_e54698b60e5b0418ce56",
-   "to": "v3n_8dde423d1bdb4564cc4f",
+   "to": "v3n_7f5b75371c2eae2a945e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -3862,10 +3833,10 @@
    ]
   },
   {
-   "id": "v3e_a6f821077a22e2a0b13e",
+   "id": "v3e_bf1bdcacddd724c544bd",
    "type": "MAY_INDICATE",
    "from": "v3n_e54698b60e5b0418ce56",
-   "to": "v3n_586bea690f7c62f8954a",
+   "to": "v3n_ed5fed8155bb94daf35e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -4039,69 +4010,10 @@
    ]
   },
   {
-   "id": "v3e_8da49858dfc6994d9137",
-   "type": "MAY_INDICATE",
-   "from": "v3n_e54698b60e5b0418ce56",
-   "to": "v3n_3fc336c72c99ba8f53a9",
-   "tier": "green",
-   "trusted": true,
-   "conditions": [],
-   "occurrences": [
-    {
-     "record": "u001-d8e3c2:A.R2",
-     "tier": "green",
-     "conditions": [],
-     "certificate": {
-      "segment_ids": [
-       "p15.b32",
-       "p15.b5"
-      ],
-      "witnesses": [
-       "agreement",
-       "verifier"
-      ],
-      "verifier_verdict": "supported",
-      "confirmed_by": null,
-      "rejected_by": null,
-      "extractor": "gpt-6-luna:f033b22b4e759f82",
-      "notes": [
-       "one end is not named in the source"
-      ]
-     },
-     "evidence": [
-      {
-       "segment_id": "p15.b32",
-       "page": 15,
-       "evidence_id": "ev_b3e49d37dd4e62fc99157d9f11a1",
-       "bbox": [
-        317.337,
-        434.093,
-        556.929,
-        452.621
-       ],
-       "text": "34. The operating conditions of the installation do not agree with the data specified when the pump was purchased."
-      },
-      {
-       "segment_id": "p15.b5",
-       "page": 15,
-       "evidence_id": "ev_e498dc695347618939c2fc1a700f",
-       "bbox": [
-        55.855,
-        113.189,
-        418.584,
-        122.117
-       ],
-       "text": "Pump stops delivering liquid after start-up 2*3*4*5*6*7*8*9*10*11*12*13*22*23*24*34"
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": "v3e_e78f65d7027064dee129",
+   "id": "v3e_bbcb8b13203bac6a5fdb",
    "type": "MAY_INDICATE",
    "from": "v3n_44186ac7c4ddc8ccaffe",
-   "to": "v3n_5e895ca39aae1f046cfc",
+   "to": "v3n_9f8de7e21cf9c441a1a6",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -4157,10 +4069,10 @@
    ]
   },
   {
-   "id": "v3e_4f4b009d00d9bdcd650d",
+   "id": "v3e_e187a2919396c71d92e7",
    "type": "MAY_INDICATE",
    "from": "v3n_44186ac7c4ddc8ccaffe",
-   "to": "v3n_ee1d9d172998465a3bce",
+   "to": "v3n_31b6b32bba8af0b9ca95",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -4393,10 +4305,10 @@
    ]
   },
   {
-   "id": "v3e_f78bd10ab3b13d0f2d3b",
+   "id": "v3e_23fcbf200e72049b3ba0",
    "type": "MAY_INDICATE",
    "from": "v3n_44186ac7c4ddc8ccaffe",
-   "to": "v3n_8b1a1d0f54f8a711e7cb",
+   "to": "v3n_ffa031d9b57819860d33",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -4448,14 +4360,67 @@
        "text": "Pump overheats and/or ceases to deliver liquid 1*3*9*10*11*21*22*27*29*30*31*33*34*40*41"
       }
      ]
+    },
+    {
+     "record": "u001-d8e3c2:A.R3",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p15.b50",
+       "p15.b6"
+      ],
+      "witnesses": [
+       "verifier",
+       "reviewer"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+      },
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:f033b22b4e759f82",
+      "notes": [
+       "one end is not named in the source",
+       "reviewer: Keep statements 2, 3, 4, and 5. Statement 1 is unsupported because the damaged-impeller entry is numbered 24, which is not included among the causes listed for this symptom."
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p15.b50",
+       "page": 15,
+       "evidence_id": "ev_db77f2f0a3c2c179c1245e4d4a57",
+       "bbox": [
+        53.856,
+        659.693,
+        285.432,
+        678.221
+       ],
+       "text": "21. The pump is operating at too low a rate of flow. The discharge valve may be throttled too much."
+      },
+      {
+       "segment_id": "p15.b6",
+       "page": 15,
+       "evidence_id": "ev_83812b657c9e8975216c640d6fff",
+       "bbox": [
+        55.855,
+        127.289,
+        428.816,
+        136.217
+       ],
+       "text": "Pump overheats and/or ceases to deliver liquid 1*3*9*10*11*21*22*27*29*30*31*33*34*40*41"
+      }
+     ]
     }
    ]
   },
   {
-   "id": "v3e_804814d997e7375d0cf4",
+   "id": "v3e_3639720d22abe070aece",
    "type": "MAY_INDICATE",
    "from": "v3n_44186ac7c4ddc8ccaffe",
-   "to": "v3n_586bea690f7c62f8954a",
+   "to": "v3n_ed5fed8155bb94daf35e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -4511,10 +4476,10 @@
    ]
   },
   {
-   "id": "v3e_d9315cfd393257c647d6",
+   "id": "v3e_34b846e0dd2c8c4d8ee6",
    "type": "MAY_INDICATE",
    "from": "v3n_44186ac7c4ddc8ccaffe",
-   "to": "v3n_ad803a454509279bb632",
+   "to": "v3n_a577f88b0d389221eca1",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -4583,10 +4548,10 @@
    ]
   },
   {
-   "id": "v3e_c443dc90c5a32ebab32a",
+   "id": "v3e_9bcf6d48e904e4f9443e",
    "type": "MAY_INDICATE",
    "from": "v3n_44186ac7c4ddc8ccaffe",
-   "to": "v3n_488fd2d6cfca23039ebd",
+   "to": "v3n_c57534dc153e48c9a1f9",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -4597,7 +4562,66 @@
      "conditions": [],
      "certificate": {
       "segment_ids": [
-       "p15.b24",
+       "p15.b18",
+       "p15.b6"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:f033b22b4e759f82",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p15.b18",
+       "page": 15,
+       "evidence_id": "ev_46284401b0feaa8c76f3ff0a327f",
+       "bbox": [
+        317.337,
+        305.693,
+        501.769,
+        314.621
+       ],
+       "text": "27. There may be a misalignment of the pump shaft."
+      },
+      {
+       "segment_id": "p15.b6",
+       "page": 15,
+       "evidence_id": "ev_83812b657c9e8975216c640d6fff",
+       "bbox": [
+        55.855,
+        127.289,
+        428.816,
+        136.217
+       ],
+       "text": "Pump overheats and/or ceases to deliver liquid 1*3*9*10*11*21*22*27*29*30*31*33*34*40*41"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_d9315cfd393257c647d6",
+   "type": "MAY_INDICATE",
+   "from": "v3n_44186ac7c4ddc8ccaffe",
+   "to": "v3n_ad803a454509279bb632",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-d8e3c2:A.R3",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p15.b21",
        "p15.b6"
       ],
       "witnesses": [
@@ -4614,119 +4638,7 @@
       "extractor": "gpt-6-luna:f033b22b4e759f82",
       "notes": [
        "one end is not named in the source",
-       "reviewer: Keep statement 1 only."
-      ]
-     },
-     "evidence": [
-      {
-       "segment_id": "p15.b24",
-       "page": 15,
-       "evidence_id": "ev_884436969fe7d083416eaa98a097",
-       "bbox": [
-        317.337,
-        362.093,
-        513.345,
-        371.021
-       ],
-       "text": "30. The shaft may not be running due to worn bearings."
-      },
-      {
-       "segment_id": "p15.b6",
-       "page": 15,
-       "evidence_id": "ev_83812b657c9e8975216c640d6fff",
-       "bbox": [
-        55.855,
-        127.289,
-        428.816,
-        136.217
-       ],
-       "text": "Pump overheats and/or ceases to deliver liquid 1*3*9*10*11*21*22*27*29*30*31*33*34*40*41"
-      }
-     ]
-    },
-    {
-     "record": "u001-d8e3c2:B.R3",
-     "tier": "green",
-     "conditions": [],
-     "certificate": {
-      "segment_ids": [
-       "p15.b24",
-       "p15.b6"
-      ],
-      "witnesses": [
-       "verifier",
-       "reviewer"
-      ],
-      "verifier_verdict": "supported",
-      "confirmed_by": {
-       "kind": "agent",
-       "name": "gpt-6-luna",
-       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
-      },
-      "rejected_by": null,
-      "extractor": "gpt-6-luna:f033b22b4e759f82",
-      "notes": [
-       "one end is not named in the source"
-      ]
-     },
-     "evidence": [
-      {
-       "segment_id": "p15.b24",
-       "page": 15,
-       "evidence_id": "ev_884436969fe7d083416eaa98a097",
-       "bbox": [
-        317.337,
-        362.093,
-        513.345,
-        371.021
-       ],
-       "text": "30. The shaft may not be running due to worn bearings."
-      },
-      {
-       "segment_id": "p15.b6",
-       "page": 15,
-       "evidence_id": "ev_83812b657c9e8975216c640d6fff",
-       "bbox": [
-        55.855,
-        127.289,
-        428.816,
-        136.217
-       ],
-       "text": "Pump overheats and/or ceases to deliver liquid 1*3*9*10*11*21*22*27*29*30*31*33*34*40*41"
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": "v3e_165ab417aa4a49c7d52b",
-   "type": "MAY_INDICATE",
-   "from": "v3n_44186ac7c4ddc8ccaffe",
-   "to": "v3n_a5983c2fdbe5991b0987",
-   "tier": "green",
-   "trusted": true,
-   "conditions": [],
-   "occurrences": [
-    {
-     "record": "u001-d8e3c2:A.R3",
-     "tier": "green",
-     "conditions": [],
-     "certificate": {
-      "segment_ids": [
-       "p15.b21",
-       "p15.b26",
-       "p15.b6"
-      ],
-      "witnesses": [
-       "agreement",
-       "verifier"
-      ],
-      "verifier_verdict": "supported",
-      "confirmed_by": null,
-      "rejected_by": null,
-      "extractor": "gpt-6-luna:f033b22b4e759f82",
-      "notes": [
-       "one end is not named in the source"
+       "reviewer: Keep statements 2, 3, 4, and 5. Statement 1 is unsupported because the damaged-impeller entry is numbered 24, which is not included among the causes listed for this symptom."
       ]
      },
      "evidence": [
@@ -4743,18 +4655,6 @@
        "text": "29. The pump may run rough due to improper balancing of the impeller."
       },
       {
-       "segment_id": "p15.b26",
-       "page": 15,
-       "evidence_id": "ev_64f54dac30b4f7d43e57b8e5f0dd",
-       "bbox": [
-        317.337,
-        377.693,
-        539.569,
-        386.621
-       ],
-       "text": "31. The impeller may be rubbing against the inside of the case."
-      },
-      {
        "segment_id": "p15.b6",
        "page": 15,
        "evidence_id": "ev_83812b657c9e8975216c640d6fff",
@@ -4767,26 +4667,33 @@
        "text": "Pump overheats and/or ceases to deliver liquid 1*3*9*10*11*21*22*27*29*30*31*33*34*40*41"
       }
      ]
-    },
+    }
+   ]
+  },
+  {
+   "id": "v3e_86134f12840ec9188875",
+   "type": "MAY_INDICATE",
+   "from": "v3n_44186ac7c4ddc8ccaffe",
+   "to": "v3n_a4153029042d14b0edfd",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
     {
-     "record": "u001-d8e3c2:B.R3",
+     "record": "u001-d8e3c2:A.R3",
      "tier": "green",
      "conditions": [],
      "certificate": {
       "segment_ids": [
-       "p15.b26",
+       "p15.b24",
        "p15.b6"
       ],
       "witnesses": [
-       "verifier",
-       "reviewer"
+       "agreement",
+       "verifier"
       ],
       "verifier_verdict": "supported",
-      "confirmed_by": {
-       "kind": "agent",
-       "name": "gpt-6-luna",
-       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
-      },
+      "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
       "notes": [
@@ -4795,16 +4702,16 @@
      },
      "evidence": [
       {
-       "segment_id": "p15.b26",
+       "segment_id": "p15.b24",
        "page": 15,
-       "evidence_id": "ev_64f54dac30b4f7d43e57b8e5f0dd",
+       "evidence_id": "ev_884436969fe7d083416eaa98a097",
        "bbox": [
         317.337,
-        377.693,
-        539.569,
-        386.621
+        362.093,
+        513.345,
+        371.021
        ],
-       "text": "31. The impeller may be rubbing against the inside of the case."
+       "text": "30. The shaft may not be running due to worn bearings."
       },
       {
        "segment_id": "p15.b6",
@@ -4823,10 +4730,10 @@
    ]
   },
   {
-   "id": "v3e_e95cda7477dfaabec65a",
+   "id": "v3e_9ff6f49e9d8ba8ac676b",
    "type": "MAY_INDICATE",
    "from": "v3n_44186ac7c4ddc8ccaffe",
-   "to": "v3n_3008e4642131bd0baba8",
+   "to": "v3n_72b34c3cc10b9f59e0ac",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -4837,7 +4744,7 @@
      "conditions": [],
      "certificate": {
       "segment_ids": [
-       "p15.b30",
+       "p15.b26",
        "p15.b6"
       ],
       "witnesses": [
@@ -4854,16 +4761,16 @@
      },
      "evidence": [
       {
-       "segment_id": "p15.b30",
+       "segment_id": "p15.b26",
        "page": 15,
-       "evidence_id": "ev_95c731bedeadb57268f16df84bdb",
+       "evidence_id": "ev_64f54dac30b4f7d43e57b8e5f0dd",
        "bbox": [
         317.337,
-        418.493,
-        540.889,
-        427.421
+        377.693,
+        539.569,
+        386.621
        ],
-       "text": "33. The pump may have become misaligned during installation."
+       "text": "31. The impeller may be rubbing against the inside of the case."
       },
       {
        "segment_id": "p15.b6",
@@ -4897,6 +4804,7 @@
      "certificate": {
       "segment_ids": [
        "p15.b32",
+       "p15.b4",
        "p15.b6"
       ],
       "witnesses": [
@@ -4905,6 +4813,70 @@
       ],
       "verifier_verdict": "supported",
       "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:f033b22b4e759f82",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p15.b32",
+       "page": 15,
+       "evidence_id": "ev_b3e49d37dd4e62fc99157d9f11a1",
+       "bbox": [
+        317.337,
+        434.093,
+        556.929,
+        452.621
+       ],
+       "text": "34. The operating conditions of the installation do not agree with the data specified when the pump was purchased."
+      },
+      {
+       "segment_id": "p15.b4",
+       "page": 15,
+       "evidence_id": "ev_3f968d5dedfdae21bb500838f420",
+       "bbox": [
+        55.855,
+        99.089,
+        438.152,
+        108.017
+       ],
+       "text": "Pump does not deliver any liquid at start-up 1*2*3*4*5*6*7*8*9*10*11*14*16*17*22*23*24*34"
+      },
+      {
+       "segment_id": "p15.b6",
+       "page": 15,
+       "evidence_id": "ev_83812b657c9e8975216c640d6fff",
+       "bbox": [
+        55.855,
+        127.289,
+        428.816,
+        136.217
+       ],
+       "text": "Pump overheats and/or ceases to deliver liquid 1*3*9*10*11*21*22*27*29*30*31*33*34*40*41"
+      }
+     ]
+    },
+    {
+     "record": "u001-d8e3c2:B.R3",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p15.b32",
+       "p15.b6"
+      ],
+      "witnesses": [
+       "verifier",
+       "reviewer"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+      },
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
       "notes": [
@@ -4941,10 +4913,10 @@
    ]
   },
   {
-   "id": "v3e_34bc8496b07a8d44ddde",
+   "id": "v3e_38f3048a3dde2afd23f3",
    "type": "MAY_INDICATE",
    "from": "v3n_44186ac7c4ddc8ccaffe",
-   "to": "v3n_f2edce67d7459b4d8aaf",
+   "to": "v3n_3594127d1877870bc0a1",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -5000,10 +4972,10 @@
    ]
   },
   {
-   "id": "v3e_6051331c45dd01b44d32",
+   "id": "v3e_e2ea7255eb0aad288178",
    "type": "MAY_INDICATE",
    "from": "v3n_4191b0a05364100964f3",
-   "to": "v3n_86acecf94357847000ef",
+   "to": "v3n_8ea1e1a34c5434ea4d8e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -5059,10 +5031,10 @@
    ]
   },
   {
-   "id": "v3e_d3ef07c41f85c0bbee9e",
+   "id": "v3e_d96b778a5f9cd36c2997",
    "type": "MAY_INDICATE",
    "from": "v3n_4191b0a05364100964f3",
-   "to": "v3n_ee1d9d172998465a3bce",
+   "to": "v3n_31b6b32bba8af0b9ca95",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -5177,10 +5149,10 @@
    ]
   },
   {
-   "id": "v3e_7a99b3f2c1d713462282",
+   "id": "v3e_b99b9f86137847f35ca3",
    "type": "MAY_INDICATE",
    "from": "v3n_4191b0a05364100964f3",
-   "to": "v3n_ba568486f4ff1a37ef87",
+   "to": "v3n_54bace80ca2564c89ca3",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -5236,10 +5208,10 @@
    ]
   },
   {
-   "id": "v3e_fa0cf06c268833a2049e",
+   "id": "v3e_016a0216b3fc18469c18",
    "type": "MAY_INDICATE",
    "from": "v3n_4191b0a05364100964f3",
-   "to": "v3n_b17e571f59171da98430",
+   "to": "v3n_5e6008f5d1d6a8cee658",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -5295,10 +5267,10 @@
    ]
   },
   {
-   "id": "v3e_4593b49885460cccf17b",
+   "id": "v3e_0197c2171969c36013a0",
    "type": "MAY_INDICATE",
    "from": "v3n_4191b0a05364100964f3",
-   "to": "v3n_b397d6335c684af12136",
+   "to": "v3n_233ec706fdf8b7f5599e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -5354,10 +5326,10 @@
    ]
   },
   {
-   "id": "v3e_6278af19c0ee5500e5bf",
+   "id": "v3e_f7f5fe1b2195f6c152ba",
    "type": "MAY_INDICATE",
    "from": "v3n_4191b0a05364100964f3",
-   "to": "v3n_0949e5013cb1cf116efc",
+   "to": "v3n_fb4eff6a3da6f9c7492a",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -5590,10 +5562,10 @@
    ]
   },
   {
-   "id": "v3e_a3d63413eab69a303831",
+   "id": "v3e_fce7355e1cf9e81d01af",
    "type": "MAY_INDICATE",
    "from": "v3n_4191b0a05364100964f3",
-   "to": "v3n_b514f8fce68a49b000cb",
+   "to": "v3n_c3232e564959b5762e40",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -5649,10 +5621,10 @@
    ]
   },
   {
-   "id": "v3e_dcc928298b656127fe49",
+   "id": "v3e_671b25f832df652df919",
    "type": "MAY_INDICATE",
    "from": "v3n_4191b0a05364100964f3",
-   "to": "v3n_768c5dcadeff40c54aad",
+   "to": "v3n_8a4a857c318e563f56a2",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -5708,10 +5680,10 @@
    ]
   },
   {
-   "id": "v3e_b82d8776b9cb4aa61611",
+   "id": "v3e_634f386e95ae02de6f4b",
    "type": "MAY_INDICATE",
    "from": "v3n_4191b0a05364100964f3",
-   "to": "v3n_16b76ed57e018a2f1fca",
+   "to": "v3n_3c84fda854e6ff0b0fb9",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -5826,10 +5798,10 @@
    ]
   },
   {
-   "id": "v3e_54be401cdc6e98bbf8af",
+   "id": "v3e_1e91d2b4c864423445fc",
    "type": "MAY_INDICATE",
    "from": "v3n_4191b0a05364100964f3",
-   "to": "v3n_8b1a1d0f54f8a711e7cb",
+   "to": "v3n_ffa031d9b57819860d33",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -5885,10 +5857,10 @@
    ]
   },
   {
-   "id": "v3e_661ccd4fface87a4422b",
+   "id": "v3e_db6746c17fb0568712c6",
    "type": "MAY_INDICATE",
    "from": "v3n_4191b0a05364100964f3",
-   "to": "v3n_586bea690f7c62f8954a",
+   "to": "v3n_ed5fed8155bb94daf35e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -6062,65 +6034,6 @@
    ]
   },
   {
-   "id": "v3e_d2c2778a18836ddd57f8",
-   "type": "MAY_INDICATE",
-   "from": "v3n_4191b0a05364100964f3",
-   "to": "v3n_3fc336c72c99ba8f53a9",
-   "tier": "green",
-   "trusted": true,
-   "conditions": [],
-   "occurrences": [
-    {
-     "record": "u001-d8e3c2:A.R4",
-     "tier": "green",
-     "conditions": [],
-     "certificate": {
-      "segment_ids": [
-       "p15.b32",
-       "p15.b7"
-      ],
-      "witnesses": [
-       "agreement",
-       "verifier"
-      ],
-      "verifier_verdict": "supported",
-      "confirmed_by": null,
-      "rejected_by": null,
-      "extractor": "gpt-6-luna:f033b22b4e759f82",
-      "notes": [
-       "one end is not named in the source"
-      ]
-     },
-     "evidence": [
-      {
-       "segment_id": "p15.b32",
-       "page": 15,
-       "evidence_id": "ev_b3e49d37dd4e62fc99157d9f11a1",
-       "bbox": [
-        317.337,
-        434.093,
-        556.929,
-        452.621
-       ],
-       "text": "34. The operating conditions of the installation do not agree with the data specified when the pump was purchased."
-      },
-      {
-       "segment_id": "p15.b7",
-       "page": 15,
-       "evidence_id": "ev_b1492471cdd929ddcb302392d631",
-       "bbox": [
-        55.855,
-        141.389,
-        478.624,
-        150.317
-       ],
-       "text": "Insufficient flow rate 2*3*4*5*6*7*8*9*10*11*14*16*17*20*21*22*23*24*25*26*34"
-      }
-     ]
-    }
-   ]
-  },
-  {
    "id": "v3e_1af94229584d5e1518d1",
    "type": "MAY_INDICATE",
    "from": "v3n_4191b0a05364100964f3",
@@ -6180,10 +6093,69 @@
    ]
   },
   {
-   "id": "v3e_3f550ff8872ce9cb10bc",
+   "id": "v3e_d2c2778a18836ddd57f8",
+   "type": "MAY_INDICATE",
+   "from": "v3n_4191b0a05364100964f3",
+   "to": "v3n_3fc336c72c99ba8f53a9",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-d8e3c2:A.R4",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p15.b32",
+       "p15.b7"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:f033b22b4e759f82",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p15.b32",
+       "page": 15,
+       "evidence_id": "ev_b3e49d37dd4e62fc99157d9f11a1",
+       "bbox": [
+        317.337,
+        434.093,
+        556.929,
+        452.621
+       ],
+       "text": "34. The operating conditions of the installation do not agree with the data specified when the pump was purchased."
+      },
+      {
+       "segment_id": "p15.b7",
+       "page": 15,
+       "evidence_id": "ev_b1492471cdd929ddcb302392d631",
+       "bbox": [
+        55.855,
+        141.389,
+        478.624,
+        150.317
+       ],
+       "text": "Insufficient flow rate 2*3*4*5*6*7*8*9*10*11*14*16*17*20*21*22*23*24*25*26*34"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_6c664fdb434765f1f2b4",
    "type": "MAY_INDICATE",
    "from": "v3n_4e48ad76bf7b08213d50",
-   "to": "v3n_5c22c91460e3875180ed",
+   "to": "v3n_5896c4b1056e4fb855ec",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -6239,10 +6211,10 @@
    ]
   },
   {
-   "id": "v3e_9d40bfb6d60b4de15e50",
+   "id": "v3e_572ad26ebaf4d14d0707",
    "type": "MAY_INDICATE",
    "from": "v3n_4e48ad76bf7b08213d50",
-   "to": "v3n_7098b7d73f20ddeb00a9",
+   "to": "v3n_7d695ee2f59750bfa7eb",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -6416,10 +6388,69 @@
    ]
   },
   {
-   "id": "v3e_bc585b5501963c60f92f",
+   "id": "v3e_f5d53376e2344e40481b",
    "type": "MAY_INDICATE",
    "from": "v3n_2d78c134dd25ccc9e8e5",
-   "to": "v3n_b514f8fce68a49b000cb",
+   "to": "v3n_54800e33d03372194799",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-d8e3c2:A.R6",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p15.b31",
+       "p15.b9"
+      ],
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:f033b22b4e759f82",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p15.b31",
+       "page": 15,
+       "evidence_id": "ev_bb02a035a6d19b2de24537838dbb",
+       "bbox": [
+        53.856,
+        424.493,
+        240.504,
+        433.421
+       ],
+       "text": "9. The suction valve is closed or only partially open."
+      },
+      {
+       "segment_id": "p15.b9",
+       "page": 15,
+       "evidence_id": "ev_a54a434f955f347a95c24c2cd425",
+       "bbox": [
+        55.855,
+        169.589,
+        390.272,
+        178.517
+       ],
+       "text": "Discharge pressure is too high 4*14*16*18*20*22*23*24*25*26*34"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_9aa9bd2df71ab89ff064",
+   "type": "MAY_INDICATE",
+   "from": "v3n_2d78c134dd25ccc9e8e5",
+   "to": "v3n_c3232e564959b5762e40",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -6475,10 +6506,10 @@
    ]
   },
   {
-   "id": "v3e_f9afff82581ae0ebbd59",
+   "id": "v3e_e173d888610bf5d8f05c",
    "type": "MAY_INDICATE",
    "from": "v3n_2d78c134dd25ccc9e8e5",
-   "to": "v3n_7098b7d73f20ddeb00a9",
+   "to": "v3n_8a4a857c318e563f56a2",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -6489,39 +6520,33 @@
      "conditions": [],
      "certificate": {
       "segment_ids": [
-       "p15.b46",
+       "p15.b43",
        "p15.b9"
       ],
       "witnesses": [
-       "verifier",
-       "reviewer"
+       "agreement",
+       "verifier"
       ],
       "verifier_verdict": "supported",
-      "confirmed_by": {
-       "kind": "agent",
-       "name": "gpt-6-luna",
-       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
-      },
+      "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
       "notes": [
-       "one end is not named in the source",
-       "the reads name an end of this relation differently and the names differ in meaning",
-       "reviewer: Keep statements 3 and 5; statements 1, 2, and 4 are not listed for this symptom."
+       "one end is not named in the source"
       ]
      },
      "evidence": [
       {
-       "segment_id": "p15.b46",
+       "segment_id": "p15.b43",
        "page": 15,
-       "evidence_id": "ev_e7ffa729bf98a4f8f25372f08169",
+       "evidence_id": "ev_d5c7c491d79814e120282e9049ed",
        "bbox": [
         53.856,
-        584.093,
-        287.2,
-        602.621
+        543.293,
+        254.272,
+        552.221
        ],
-       "text": "18. Total head of installation (back pressure) lower than rated total head of the pump."
+       "text": "16. Pump rotation wrong or impeller installed backwards."
       },
       {
        "segment_id": "p15.b9",
@@ -6536,18 +6561,32 @@
        "text": "Discharge pressure is too high 4*14*16*18*20*22*23*24*25*26*34"
       }
      ]
-    },
+    }
+   ]
+  },
+  {
+   "id": "v3e_f20d20d75329a8a7f7e6",
+   "type": "MAY_INDICATE",
+   "from": "v3n_2d78c134dd25ccc9e8e5",
+   "to": "v3n_7d695ee2f59750bfa7eb",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
     {
-     "record": "u001-d8e3c2:B.R6",
-     "tier": "red",
+     "record": "u001-d8e3c2:A.R6",
+     "tier": "green",
      "conditions": [],
      "certificate": {
       "segment_ids": [
        "p15.b46",
        "p15.b9"
       ],
-      "witnesses": [],
-      "verifier_verdict": "not_supported",
+      "witnesses": [
+       "agreement",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -6644,10 +6683,10 @@
    ]
   },
   {
-   "id": "v3e_2410faaccd3a11d0d811",
+   "id": "v3e_16b4767ec885e7e6d876",
    "type": "MAY_INDICATE",
    "from": "v3n_2d78c134dd25ccc9e8e5",
-   "to": "v3n_586bea690f7c62f8954a",
+   "to": "v3n_ed5fed8155bb94daf35e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -6939,10 +6978,10 @@
    ]
   },
   {
-   "id": "v3e_2363fb8287caf20f8f3c",
+   "id": "v3e_97c89d83121f2a55f8c7",
    "type": "MAY_INDICATE",
    "from": "v3n_1a7bb6c7d337d7a13105",
-   "to": "v3n_b8295c1619803993b550",
+   "to": "v3n_c57534dc153e48c9a1f9",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -6998,10 +7037,10 @@
    ]
   },
   {
-   "id": "v3e_0c1497fd21a1d1e19273",
+   "id": "v3e_451fcb50e39aa13983cb",
    "type": "MAY_INDICATE",
    "from": "v3n_1a7bb6c7d337d7a13105",
-   "to": "v3n_6ed6a8eff235dd4aad1f",
+   "to": "v3n_b4848615c299c569e83b",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -7013,7 +7052,6 @@
      "certificate": {
       "segment_ids": [
        "p15.b10",
-       "p15.b11",
        "p15.b20"
       ],
       "witnesses": [
@@ -7040,18 +7078,6 @@
         202.217
        ],
        "text": "Shaft seal leaks appreciably, or the packing leaks excessively 27*28*29*30*33*34*35*36*39"
-      },
-      {
-       "segment_id": "p15.b11",
-       "page": 15,
-       "evidence_id": "ev_681556347d90ba084cd854f1b74b",
-       "bbox": [
-        55.855,
-        207.389,
-        418.736,
-        216.317
-       ],
-       "text": "Shaft seal or packing fails prematurely 12*13*27*28*29*30*33*34*35*36*37*38*39"
       },
       {
        "segment_id": "p15.b20",
@@ -7129,10 +7155,10 @@
    ]
   },
   {
-   "id": "v3e_d3a1904701e7fe790d1b",
+   "id": "v3e_5e118f8bc711d25081bc",
    "type": "MAY_INDICATE",
    "from": "v3n_1a7bb6c7d337d7a13105",
-   "to": "v3n_488fd2d6cfca23039ebd",
+   "to": "v3n_a4153029042d14b0edfd",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -7145,114 +7171,6 @@
       "segment_ids": [
        "p15.b10",
        "p15.b24"
-      ],
-      "witnesses": [
-       "verifier",
-       "reviewer"
-      ],
-      "verifier_verdict": "supported",
-      "confirmed_by": {
-       "kind": "agent",
-       "name": "gpt-6-luna",
-       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
-      },
-      "rejected_by": null,
-      "extractor": "gpt-6-luna:f033b22b4e759f82",
-      "notes": [
-       "one end is not named in the source"
-      ]
-     },
-     "evidence": [
-      {
-       "segment_id": "p15.b10",
-       "page": 15,
-       "evidence_id": "ev_ac8f17c5657948f78dfba2acd878",
-       "bbox": [
-        55.855,
-        183.689,
-        370.704,
-        202.217
-       ],
-       "text": "Shaft seal leaks appreciably, or the packing leaks excessively 27*28*29*30*33*34*35*36*39"
-      },
-      {
-       "segment_id": "p15.b24",
-       "page": 15,
-       "evidence_id": "ev_884436969fe7d083416eaa98a097",
-       "bbox": [
-        317.337,
-        362.093,
-        513.345,
-        371.021
-       ],
-       "text": "30. The shaft may not be running due to worn bearings."
-      }
-     ]
-    },
-    {
-     "record": "u001-d8e3c2:B.R7",
-     "tier": "red",
-     "conditions": [],
-     "certificate": {
-      "segment_ids": [
-       "p15.b10",
-       "p15.b24"
-      ],
-      "witnesses": [],
-      "verifier_verdict": "not_supported",
-      "confirmed_by": null,
-      "rejected_by": null,
-      "extractor": "gpt-6-luna:f033b22b4e759f82",
-      "notes": [
-       "one end is not named in the source"
-      ]
-     },
-     "evidence": [
-      {
-       "segment_id": "p15.b10",
-       "page": 15,
-       "evidence_id": "ev_ac8f17c5657948f78dfba2acd878",
-       "bbox": [
-        55.855,
-        183.689,
-        370.704,
-        202.217
-       ],
-       "text": "Shaft seal leaks appreciably, or the packing leaks excessively 27*28*29*30*33*34*35*36*39"
-      },
-      {
-       "segment_id": "p15.b24",
-       "page": 15,
-       "evidence_id": "ev_884436969fe7d083416eaa98a097",
-       "bbox": [
-        317.337,
-        362.093,
-        513.345,
-        371.021
-       ],
-       "text": "30. The shaft may not be running due to worn bearings."
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": "v3e_991c3b485cbe2be1c8bc",
-   "type": "MAY_INDICATE",
-   "from": "v3n_1a7bb6c7d337d7a13105",
-   "to": "v3n_3008e4642131bd0baba8",
-   "tier": "green",
-   "trusted": true,
-   "conditions": [],
-   "occurrences": [
-    {
-     "record": "u001-d8e3c2:A.R7",
-     "tier": "green",
-     "conditions": [],
-     "certificate": {
-      "segment_ids": [
-       "p15.b10",
-       "p15.b30"
       ],
       "witnesses": [
        "agreement",
@@ -7280,16 +7198,16 @@
        "text": "Shaft seal leaks appreciably, or the packing leaks excessively 27*28*29*30*33*34*35*36*39"
       },
       {
-       "segment_id": "p15.b30",
+       "segment_id": "p15.b24",
        "page": 15,
-       "evidence_id": "ev_95c731bedeadb57268f16df84bdb",
+       "evidence_id": "ev_884436969fe7d083416eaa98a097",
        "bbox": [
         317.337,
-        418.493,
-        540.889,
-        427.421
+        362.093,
+        513.345,
+        371.021
        ],
-       "text": "33. The pump may have become misaligned during installation."
+       "text": "30. The shaft may not be running due to worn bearings."
       }
      ]
     }
@@ -7414,10 +7332,10 @@
    ]
   },
   {
-   "id": "v3e_32be53ace39068e2ca1b",
+   "id": "v3e_c9239f1c24a20bf847bf",
    "type": "MAY_INDICATE",
    "from": "v3n_1a7bb6c7d337d7a13105",
-   "to": "v3n_a4e788b627c318316604",
+   "to": "v3n_7cfc153fa58178906a79",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -7473,10 +7391,10 @@
    ]
   },
   {
-   "id": "v3e_706bdb88627feeda960f",
+   "id": "v3e_8ee30d45680b14345559",
    "type": "MAY_INDICATE",
    "from": "v3n_1a7bb6c7d337d7a13105",
-   "to": "v3n_d876854243c3b6c8200e",
+   "to": "v3n_96a0128cb985a9399485",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -7532,10 +7450,10 @@
    ]
   },
   {
-   "id": "v3e_5fe6cf149e2658ec76fb",
+   "id": "v3e_1253e59e3c014c561b93",
    "type": "MAY_INDICATE",
    "from": "v3n_2d77287e5cbd0a5ee2fa",
-   "to": "v3n_5bb8555932f1efa639b1",
+   "to": "v3n_d071b1aade110bb52f2c",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -7591,10 +7509,10 @@
    ]
   },
   {
-   "id": "v3e_008b727208bdc6a5c198",
+   "id": "v3e_5cd27ca7efc464c17151",
    "type": "MAY_INDICATE",
    "from": "v3n_2d77287e5cbd0a5ee2fa",
-   "to": "v3n_8dde423d1bdb4564cc4f",
+   "to": "v3n_7f5b75371c2eae2a945e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -7650,10 +7568,10 @@
    ]
   },
   {
-   "id": "v3e_951f007c79e2fdaf0d5d",
+   "id": "v3e_8ebce53b49f510e2df9c",
    "type": "MAY_INDICATE",
    "from": "v3n_2d77287e5cbd0a5ee2fa",
-   "to": "v3n_b8295c1619803993b550",
+   "to": "v3n_c57534dc153e48c9a1f9",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -7709,10 +7627,10 @@
    ]
   },
   {
-   "id": "v3e_85b13dabc7bc4f050b06",
+   "id": "v3e_7e23fd51e200e68efe8f",
    "type": "MAY_INDICATE",
    "from": "v3n_2d77287e5cbd0a5ee2fa",
-   "to": "v3n_6ed6a8eff235dd4aad1f",
+   "to": "v3n_b4848615c299c569e83b",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -7727,15 +7645,11 @@
        "p15.b20"
       ],
       "witnesses": [
-       "verifier",
-       "reviewer"
+       "agreement",
+       "verifier"
       ],
       "verifier_verdict": "supported",
-      "confirmed_by": {
-       "kind": "agent",
-       "name": "gpt-6-luna",
-       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
-      },
+      "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
       "notes": [
@@ -7831,10 +7745,10 @@
    ]
   },
   {
-   "id": "v3e_ebb9cea3067e24f304fd",
+   "id": "v3e_c8d5f2f028d1cba1a3cc",
    "type": "MAY_INDICATE",
    "from": "v3n_2d77287e5cbd0a5ee2fa",
-   "to": "v3n_488fd2d6cfca23039ebd",
+   "to": "v3n_a4153029042d14b0edfd",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -7847,114 +7761,6 @@
       "segment_ids": [
        "p15.b11",
        "p15.b24"
-      ],
-      "witnesses": [
-       "verifier",
-       "reviewer"
-      ],
-      "verifier_verdict": "supported",
-      "confirmed_by": {
-       "kind": "agent",
-       "name": "gpt-6-luna",
-       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
-      },
-      "rejected_by": null,
-      "extractor": "gpt-6-luna:f033b22b4e759f82",
-      "notes": [
-       "one end is not named in the source"
-      ]
-     },
-     "evidence": [
-      {
-       "segment_id": "p15.b11",
-       "page": 15,
-       "evidence_id": "ev_681556347d90ba084cd854f1b74b",
-       "bbox": [
-        55.855,
-        207.389,
-        418.736,
-        216.317
-       ],
-       "text": "Shaft seal or packing fails prematurely 12*13*27*28*29*30*33*34*35*36*37*38*39"
-      },
-      {
-       "segment_id": "p15.b24",
-       "page": 15,
-       "evidence_id": "ev_884436969fe7d083416eaa98a097",
-       "bbox": [
-        317.337,
-        362.093,
-        513.345,
-        371.021
-       ],
-       "text": "30. The shaft may not be running due to worn bearings."
-      }
-     ]
-    },
-    {
-     "record": "u001-d8e3c2:B.R8",
-     "tier": "red",
-     "conditions": [],
-     "certificate": {
-      "segment_ids": [
-       "p15.b11",
-       "p15.b24"
-      ],
-      "witnesses": [],
-      "verifier_verdict": "not_supported",
-      "confirmed_by": null,
-      "rejected_by": null,
-      "extractor": "gpt-6-luna:f033b22b4e759f82",
-      "notes": [
-       "one end is not named in the source"
-      ]
-     },
-     "evidence": [
-      {
-       "segment_id": "p15.b11",
-       "page": 15,
-       "evidence_id": "ev_681556347d90ba084cd854f1b74b",
-       "bbox": [
-        55.855,
-        207.389,
-        418.736,
-        216.317
-       ],
-       "text": "Shaft seal or packing fails prematurely 12*13*27*28*29*30*33*34*35*36*37*38*39"
-      },
-      {
-       "segment_id": "p15.b24",
-       "page": 15,
-       "evidence_id": "ev_884436969fe7d083416eaa98a097",
-       "bbox": [
-        317.337,
-        362.093,
-        513.345,
-        371.021
-       ],
-       "text": "30. The shaft may not be running due to worn bearings."
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": "v3e_165bb26fea68aa328f6a",
-   "type": "MAY_INDICATE",
-   "from": "v3n_2d77287e5cbd0a5ee2fa",
-   "to": "v3n_3008e4642131bd0baba8",
-   "tier": "green",
-   "trusted": true,
-   "conditions": [],
-   "occurrences": [
-    {
-     "record": "u001-d8e3c2:A.R8",
-     "tier": "green",
-     "conditions": [],
-     "certificate": {
-      "segment_ids": [
-       "p15.b11",
-       "p15.b30"
       ],
       "witnesses": [
        "agreement",
@@ -7982,16 +7788,16 @@
        "text": "Shaft seal or packing fails prematurely 12*13*27*28*29*30*33*34*35*36*37*38*39"
       },
       {
-       "segment_id": "p15.b30",
+       "segment_id": "p15.b24",
        "page": 15,
-       "evidence_id": "ev_95c731bedeadb57268f16df84bdb",
+       "evidence_id": "ev_884436969fe7d083416eaa98a097",
        "bbox": [
         317.337,
-        418.493,
-        540.889,
-        427.421
+        362.093,
+        513.345,
+        371.021
        ],
-       "text": "33. The pump may have become misaligned during installation."
+       "text": "30. The shaft may not be running due to worn bearings."
       }
      ]
     }
@@ -8116,10 +7922,10 @@
    ]
   },
   {
-   "id": "v3e_d7763382ff5dfb2f9d07",
+   "id": "v3e_4c8087137b1e5ca77d95",
    "type": "MAY_INDICATE",
    "from": "v3n_2d77287e5cbd0a5ee2fa",
-   "to": "v3n_a4e788b627c318316604",
+   "to": "v3n_7cfc153fa58178906a79",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -8175,10 +7981,10 @@
    ]
   },
   {
-   "id": "v3e_c117f1b859811f78546f",
+   "id": "v3e_ba8588c075a1ab362326",
    "type": "MAY_INDICATE",
    "from": "v3n_2d77287e5cbd0a5ee2fa",
-   "to": "v3n_fa1caedb15ce60dd6b07",
+   "to": "v3n_6f8e35880c033be66cdf",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -8234,10 +8040,10 @@
    ]
   },
   {
-   "id": "v3e_c8cf93a0c7bc3f6d335c",
+   "id": "v3e_4cdeabe8a1c1e8f3a1bc",
    "type": "MAY_INDICATE",
    "from": "v3n_2d77287e5cbd0a5ee2fa",
-   "to": "v3n_e630903e4cb08e10e0cb",
+   "to": "v3n_a44d27cdd31664af3a0e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -8293,10 +8099,10 @@
    ]
   },
   {
-   "id": "v3e_743dc68c1e8f524a22eb",
+   "id": "v3e_3ef76094d40e2806c208",
    "type": "MAY_INDICATE",
    "from": "v3n_2d77287e5cbd0a5ee2fa",
-   "to": "v3n_d876854243c3b6c8200e",
+   "to": "v3n_96a0128cb985a9399485",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -8352,10 +8158,10 @@
    ]
   },
   {
-   "id": "v3e_b23bb150119bbadf8b9b",
+   "id": "v3e_cef6257013a8ea992f10",
    "type": "MAY_INDICATE",
    "from": "v3n_0de0784fc9b3de8f8216",
-   "to": "v3n_5c22c91460e3875180ed",
+   "to": "v3n_5896c4b1056e4fb855ec",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -8411,10 +8217,10 @@
    ]
   },
   {
-   "id": "v3e_1e9ec78ae73e42e34c89",
+   "id": "v3e_cf3abe021a059c67feca",
    "type": "MAY_INDICATE",
    "from": "v3n_0de0784fc9b3de8f8216",
-   "to": "v3n_768c5dcadeff40c54aad",
+   "to": "v3n_8a4a857c318e563f56a2",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -8470,10 +8276,10 @@
    ]
   },
   {
-   "id": "v3e_094212dcfc562a0fb968",
+   "id": "v3e_e512379a95d386915c7a",
    "type": "MAY_INDICATE",
    "from": "v3n_0de0784fc9b3de8f8216",
-   "to": "v3n_7098b7d73f20ddeb00a9",
+   "to": "v3n_7d695ee2f59750bfa7eb",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -8765,10 +8571,10 @@
    ]
   },
   {
-   "id": "v3e_805f3040effc1a7bcfcb",
+   "id": "v3e_e2dae53d5b7857c64753",
    "type": "MAY_INDICATE",
    "from": "v3n_0de0784fc9b3de8f8216",
-   "to": "v3n_b8295c1619803993b550",
+   "to": "v3n_c57534dc153e48c9a1f9",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -8824,10 +8630,10 @@
    ]
   },
   {
-   "id": "v3e_f64537ccc91f01cfa26c",
+   "id": "v3e_cc58144ea5469359d071",
    "type": "MAY_INDICATE",
    "from": "v3n_0de0784fc9b3de8f8216",
-   "to": "v3n_6ed6a8eff235dd4aad1f",
+   "to": "v3n_b4848615c299c569e83b",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -8883,10 +8689,10 @@
    ]
   },
   {
-   "id": "v3e_051f17015b23cadd01ea",
+   "id": "v3e_4f7e9ea0c354a3c17226",
    "type": "MAY_INDICATE",
    "from": "v3n_0de0784fc9b3de8f8216",
-   "to": "v3n_a5983c2fdbe5991b0987",
+   "to": "v3n_72b34c3cc10b9f59e0ac",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -8936,65 +8742,6 @@
         386.621
        ],
        "text": "31. The impeller may be rubbing against the inside of the case."
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": "v3e_90a4939bbe6727583f72",
-   "type": "MAY_INDICATE",
-   "from": "v3n_0de0784fc9b3de8f8216",
-   "to": "v3n_3008e4642131bd0baba8",
-   "tier": "green",
-   "trusted": true,
-   "conditions": [],
-   "occurrences": [
-    {
-     "record": "u001-d8e3c2:A.R9",
-     "tier": "green",
-     "conditions": [],
-     "certificate": {
-      "segment_ids": [
-       "p15.b12",
-       "p15.b30"
-      ],
-      "witnesses": [
-       "agreement",
-       "verifier"
-      ],
-      "verifier_verdict": "supported",
-      "confirmed_by": null,
-      "rejected_by": null,
-      "extractor": "gpt-6-luna:f033b22b4e759f82",
-      "notes": [
-       "one end is not named in the source"
-      ]
-     },
-     "evidence": [
-      {
-       "segment_id": "p15.b12",
-       "page": 15,
-       "evidence_id": "ev_58a9289ccaf813973931028ca82d",
-       "bbox": [
-        55.855,
-        221.489,
-        442.752,
-        230.417
-       ],
-       "text": "Pump uses too much power 15*16*18*19*20*23*25*27*28*31*33*34*35*37*38"
-      },
-      {
-       "segment_id": "p15.b30",
-       "page": 15,
-       "evidence_id": "ev_95c731bedeadb57268f16df84bdb",
-       "bbox": [
-        317.337,
-        418.493,
-        540.889,
-        427.421
-       ],
-       "text": "33. The pump may have become misaligned during installation."
       }
      ]
     }
@@ -9079,10 +8826,14 @@
       ],
       "witnesses": [
        "agreement",
-       "verifier"
+       "reviewer"
       ],
-      "verifier_verdict": "supported",
-      "confirmed_by": null,
+      "verifier_verdict": "not_supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+      },
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
       "notes": [
@@ -9119,10 +8870,10 @@
    ]
   },
   {
-   "id": "v3e_fc8ec0f593a236d15938",
+   "id": "v3e_569348151092c34f3a45",
    "type": "MAY_INDICATE",
    "from": "v3n_0de0784fc9b3de8f8216",
-   "to": "v3n_fa1caedb15ce60dd6b07",
+   "to": "v3n_6f8e35880c033be66cdf",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -9182,10 +8933,10 @@
    ]
   },
   {
-   "id": "v3e_9c71f2a7c0c7e169309f",
+   "id": "v3e_d79be174266fb2b9ce48",
    "type": "MAY_INDICATE",
    "from": "v3n_0de0784fc9b3de8f8216",
-   "to": "v3n_e630903e4cb08e10e0cb",
+   "to": "v3n_a44d27cdd31664af3a0e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -9245,10 +8996,10 @@
    ]
   },
   {
-   "id": "v3e_ecf27fe14fdeefb416af",
+   "id": "v3e_c59bff5f513a8cececfc",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_86acecf94357847000ef",
+   "to": "v3n_8ea1e1a34c5434ea4d8e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -9304,10 +9055,10 @@
    ]
   },
   {
-   "id": "v3e_28c9d61b516af70b8279",
+   "id": "v3e_299c6f8fa7ebd56ee151",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_ee1d9d172998465a3bce",
+   "to": "v3n_31b6b32bba8af0b9ca95",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -9422,10 +9173,10 @@
    ]
   },
   {
-   "id": "v3e_7ec6d661baab527e8197",
+   "id": "v3e_286340f4a5b10484ba69",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_ba568486f4ff1a37ef87",
+   "to": "v3n_54bace80ca2564c89ca3",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -9481,10 +9232,10 @@
    ]
   },
   {
-   "id": "v3e_12332db82de45575bb33",
+   "id": "v3e_abb14fa310a7b348ad4e",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_b17e571f59171da98430",
+   "to": "v3n_5e6008f5d1d6a8cee658",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -9540,10 +9291,10 @@
    ]
   },
   {
-   "id": "v3e_0a65acc916321cba56da",
+   "id": "v3e_0c3d8b18c98eb8bdee12",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_b397d6335c684af12136",
+   "to": "v3n_233ec706fdf8b7f5599e",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -9599,10 +9350,10 @@
    ]
   },
   {
-   "id": "v3e_dc276691dcddf1b392a4",
+   "id": "v3e_6f16d720b3ef2c531881",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_0949e5013cb1cf116efc",
+   "to": "v3n_fb4eff6a3da6f9c7492a",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -9835,10 +9586,10 @@
    ]
   },
   {
-   "id": "v3e_9cd46a0276b3048fadb9",
+   "id": "v3e_73c988e5878c670e9476",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_5c22c91460e3875180ed",
+   "to": "v3n_5896c4b1056e4fb855ec",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -9894,10 +9645,10 @@
    ]
   },
   {
-   "id": "v3e_aa662cc69cc7f694f65d",
+   "id": "v3e_c7101cf0bd199d1fec81",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_768c5dcadeff40c54aad",
+   "to": "v3n_8a4a857c318e563f56a2",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -9966,10 +9717,10 @@
    ]
   },
   {
-   "id": "v3e_c20c8ce5236eab12ec3d",
+   "id": "v3e_ebafa263b903e808c5ed",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_16b76ed57e018a2f1fca",
+   "to": "v3n_3c84fda854e6ff0b0fb9",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -9996,8 +9747,7 @@
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
       "notes": [
-       "one end is not named in the source",
-       "the reads name an end of this relation differently and the names differ in meaning"
+       "one end is not named in the source"
       ]
      },
      "evidence": [
@@ -10030,62 +9780,16 @@
    ]
   },
   {
-   "id": "v3e_538d38826f23c5a1b32c",
+   "id": "v3e_dbbb8c7c0e9dba844a61",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_7098b7d73f20ddeb00a9",
+   "to": "v3n_7d695ee2f59750bfa7eb",
    "tier": "green",
    "trusted": true,
    "conditions": [],
    "occurrences": [
     {
      "record": "u001-d8e3c2:B.R10",
-     "tier": "red",
-     "conditions": [],
-     "certificate": {
-      "segment_ids": [
-       "p15.b13",
-       "p15.b46"
-      ],
-      "witnesses": [],
-      "verifier_verdict": null,
-      "confirmed_by": null,
-      "rejected_by": null,
-      "extractor": "gpt-6-luna:f033b22b4e759f82",
-      "notes": [
-       "one end is not named in the source",
-       "the reads name an end of this relation differently and the names differ in meaning"
-      ]
-     },
-     "evidence": [
-      {
-       "segment_id": "p15.b13",
-       "page": 15,
-       "evidence_id": "ev_d3e6502bd8b930df8efb933ada06",
-       "bbox": [
-        55.855,
-        235.589,
-        526.656,
-        244.517
-       ],
-       "text": "Pump runs rough and noisily 2*3*4*5*6*7*8*9*10*11*15*17*18*21*23*24*27*28*29*30*31*32*33*34*40"
-      },
-      {
-       "segment_id": "p15.b46",
-       "page": 15,
-       "evidence_id": "ev_e7ffa729bf98a4f8f25372f08169",
-       "bbox": [
-        53.856,
-        584.093,
-        287.2,
-        602.621
-       ],
-       "text": "18. Total head of installation (back pressure) lower than rated total head of the pump."
-      }
-     ]
-    },
-    {
-     "record": "u001-d8e3c2:A.R10",
      "tier": "green",
      "conditions": [],
      "certificate": {
@@ -10139,10 +9843,10 @@
    ]
   },
   {
-   "id": "v3e_59b64d0d140972072c57",
+   "id": "v3e_c36af566588cfe71af04",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_8b1a1d0f54f8a711e7cb",
+   "to": "v3n_ffa031d9b57819860d33",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -10316,10 +10020,10 @@
    ]
   },
   {
-   "id": "v3e_f49f727834eb2ef34aed",
+   "id": "v3e_ecdd195cb4f07337eb8f",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_b8295c1619803993b550",
+   "to": "v3n_c57534dc153e48c9a1f9",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -10375,10 +10079,10 @@
    ]
   },
   {
-   "id": "v3e_5af6e88b639499a2d22c",
+   "id": "v3e_c24b0217968ee08a391f",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_6ed6a8eff235dd4aad1f",
+   "to": "v3n_b4848615c299c569e83b",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -10493,10 +10197,10 @@
    ]
   },
   {
-   "id": "v3e_4c9ee8c24267cbc58d39",
+   "id": "v3e_9e80ad86573f7208cb20",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_488fd2d6cfca23039ebd",
+   "to": "v3n_a4153029042d14b0edfd",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -10511,67 +10215,11 @@
        "p15.b24"
       ],
       "witnesses": [
-       "verifier",
-       "reviewer"
+       "agreement",
+       "verifier"
       ],
       "verifier_verdict": "supported",
-      "confirmed_by": {
-       "kind": "agent",
-       "name": "gpt-6-luna",
-       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
-      },
-      "rejected_by": null,
-      "extractor": "gpt-6-luna:f033b22b4e759f82",
-      "notes": [
-       "one end is not named in the source"
-      ]
-     },
-     "evidence": [
-      {
-       "segment_id": "p15.b13",
-       "page": 15,
-       "evidence_id": "ev_d3e6502bd8b930df8efb933ada06",
-       "bbox": [
-        55.855,
-        235.589,
-        526.656,
-        244.517
-       ],
-       "text": "Pump runs rough and noisily 2*3*4*5*6*7*8*9*10*11*15*17*18*21*23*24*27*28*29*30*31*32*33*34*40"
-      },
-      {
-       "segment_id": "p15.b24",
-       "page": 15,
-       "evidence_id": "ev_884436969fe7d083416eaa98a097",
-       "bbox": [
-        317.337,
-        362.093,
-        513.345,
-        371.021
-       ],
-       "text": "30. The shaft may not be running due to worn bearings."
-      }
-     ]
-    },
-    {
-     "record": "u001-d8e3c2:B.R10",
-     "tier": "green",
-     "conditions": [],
-     "certificate": {
-      "segment_ids": [
-       "p15.b13",
-       "p15.b24"
-      ],
-      "witnesses": [
-       "verifier",
-       "reviewer"
-      ],
-      "verifier_verdict": "supported",
-      "confirmed_by": {
-       "kind": "agent",
-       "name": "gpt-6-luna",
-       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
-      },
+      "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
       "notes": [
@@ -10608,10 +10256,10 @@
    ]
   },
   {
-   "id": "v3e_bb89e0ab668c32ae008f",
+   "id": "v3e_c9208bc1246ea205cf4e",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_a5983c2fdbe5991b0987",
+   "to": "v3n_72b34c3cc10b9f59e0ac",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -10667,10 +10315,10 @@
    ]
   },
   {
-   "id": "v3e_b61f3cd52e748ad78959",
+   "id": "v3e_502c1b7c647d45453d0c",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_3841b2c186ad3a31441c",
+   "to": "v3n_b45d85f7266c31593bf8",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -10726,10 +10374,10 @@
    ]
   },
   {
-   "id": "v3e_bfc711e56dcad55e700c",
+   "id": "v3e_3a43e166d6afcdffa7a4",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_3008e4642131bd0baba8",
+   "to": "v3n_ba77d686fd7c846f68d5",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -10740,6 +10388,7 @@
      "conditions": [],
      "certificate": {
       "segment_ids": [
+       "p15.b12",
        "p15.b13",
        "p15.b30"
       ],
@@ -10749,6 +10398,70 @@
       ],
       "verifier_verdict": "supported",
       "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:f033b22b4e759f82",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p15.b12",
+       "page": 15,
+       "evidence_id": "ev_58a9289ccaf813973931028ca82d",
+       "bbox": [
+        55.855,
+        221.489,
+        442.752,
+        230.417
+       ],
+       "text": "Pump uses too much power 15*16*18*19*20*23*25*27*28*31*33*34*35*37*38"
+      },
+      {
+       "segment_id": "p15.b13",
+       "page": 15,
+       "evidence_id": "ev_d3e6502bd8b930df8efb933ada06",
+       "bbox": [
+        55.855,
+        235.589,
+        526.656,
+        244.517
+       ],
+       "text": "Pump runs rough and noisily 2*3*4*5*6*7*8*9*10*11*15*17*18*21*23*24*27*28*29*30*31*32*33*34*40"
+      },
+      {
+       "segment_id": "p15.b30",
+       "page": 15,
+       "evidence_id": "ev_95c731bedeadb57268f16df84bdb",
+       "bbox": [
+        317.337,
+        418.493,
+        540.889,
+        427.421
+       ],
+       "text": "33. The pump may have become misaligned during installation."
+      }
+     ]
+    },
+    {
+     "record": "u001-d8e3c2:B.R10",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p15.b13",
+       "p15.b30"
+      ],
+      "witnesses": [
+       "verifier",
+       "reviewer"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+      },
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
       "notes": [
@@ -10844,10 +10557,10 @@
    ]
   },
   {
-   "id": "v3e_4a28858ac9322febdd6e",
+   "id": "v3e_76029a1a27e558d7b612",
    "type": "MAY_INDICATE",
    "from": "v3n_34db1a9b238beb4005d5",
-   "to": "v3n_f2edce67d7459b4d8aaf",
+   "to": "v3n_3594127d1877870bc0a1",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -10903,9 +10616,225 @@
    ]
   },
   {
-   "id": "v3e_92fb117eccaa3ba34760",
+   "id": "v3e_0d3ac6e9421eb3b1b7ed",
    "type": "AFFECTS",
-   "from": "v3n_b397d6335c684af12136",
+   "from": "v3n_8ea1e1a34c5434ea4d8e",
+   "to": "v3n_e451360ffafc3f271d7f",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-d8e3c2:A.R2",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p15.b17",
+       "p15.b23",
+       "p15.b25"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:f033b22b4e759f82",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p15.b17",
+       "page": 15,
+       "evidence_id": "ev_c72c99d0fe64988fd3b181956bfb",
+       "bbox": [
+        53.856,
+        296.093,
+        262.744,
+        305.021
+       ],
+       "text": "2. The pump suction line has not been completely primed."
+      },
+      {
+       "segment_id": "p15.b23",
+       "page": 15,
+       "evidence_id": "ev_223ee1426c87878eec3b3d878bcc",
+       "bbox": [
+        53.856,
+        362.093,
+        208.496,
+        371.021
+       ],
+       "text": "5. There are air pockets in the suction line."
+      },
+      {
+       "segment_id": "p15.b25",
+       "page": 15,
+       "evidence_id": "ev_d0cbc944b8b2327e382b69214efe",
+       "bbox": [
+        53.856,
+        377.693,
+        265.416,
+        386.621
+       ],
+       "text": "6. An entry of air has suddenly occurred in the suction line."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_8517882f522e56f0298d",
+   "type": "AFFECTS",
+   "from": "v3n_54bace80ca2564c89ca3",
+   "to": "v3n_e451360ffafc3f271d7f",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-d8e3c2:A.R4",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p15.b17",
+       "p15.b23",
+       "p15.b25"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:f033b22b4e759f82",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p15.b17",
+       "page": 15,
+       "evidence_id": "ev_c72c99d0fe64988fd3b181956bfb",
+       "bbox": [
+        53.856,
+        296.093,
+        262.744,
+        305.021
+       ],
+       "text": "2. The pump suction line has not been completely primed."
+      },
+      {
+       "segment_id": "p15.b23",
+       "page": 15,
+       "evidence_id": "ev_223ee1426c87878eec3b3d878bcc",
+       "bbox": [
+        53.856,
+        362.093,
+        208.496,
+        371.021
+       ],
+       "text": "5. There are air pockets in the suction line."
+      },
+      {
+       "segment_id": "p15.b25",
+       "page": 15,
+       "evidence_id": "ev_d0cbc944b8b2327e382b69214efe",
+       "bbox": [
+        53.856,
+        377.693,
+        265.416,
+        386.621
+       ],
+       "text": "6. An entry of air has suddenly occurred in the suction line."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_2d5a9e3d93c6fafbacdc",
+   "type": "AFFECTS",
+   "from": "v3n_5e6008f5d1d6a8cee658",
+   "to": "v3n_e451360ffafc3f271d7f",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-d8e3c2:A.R1",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p15.b17",
+       "p15.b23",
+       "p15.b25"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:f033b22b4e759f82",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p15.b17",
+       "page": 15,
+       "evidence_id": "ev_c72c99d0fe64988fd3b181956bfb",
+       "bbox": [
+        53.856,
+        296.093,
+        262.744,
+        305.021
+       ],
+       "text": "2. The pump suction line has not been completely primed."
+      },
+      {
+       "segment_id": "p15.b23",
+       "page": 15,
+       "evidence_id": "ev_223ee1426c87878eec3b3d878bcc",
+       "bbox": [
+        53.856,
+        362.093,
+        208.496,
+        371.021
+       ],
+       "text": "5. There are air pockets in the suction line."
+      },
+      {
+       "segment_id": "p15.b25",
+       "page": 15,
+       "evidence_id": "ev_d0cbc944b8b2327e382b69214efe",
+       "bbox": [
+        53.856,
+        377.693,
+        265.416,
+        386.621
+       ],
+       "text": "6. An entry of air has suddenly occurred in the suction line."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_c977a4e42d1678e219a9",
+   "type": "AFFECTS",
+   "from": "v3n_233ec706fdf8b7f5599e",
    "to": "v3n_2a206d82032968abd8d2",
    "tier": "green",
    "trusted": true,
@@ -10918,15 +10847,13 @@
      "certificate": {
       "segment_ids": [
        "p15.b27",
-       "p15.b35",
-       "p15.b36",
-       "p15.b45"
+       "p15.b35"
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -10958,30 +10885,6 @@
         477.821
        ],
        "text": "35. The shaft seal may be incorrectly installed, or the stuffing box has not been packed correctly."
-      },
-      {
-       "segment_id": "p15.b36",
-       "page": 15,
-       "evidence_id": "ev_da7b1427d8dc254e97a4350aa344",
-       "bbox": [
-        53.856,
-        471.293,
-        245.416,
-        480.221
-       ],
-       "text": "12. Little or no cooling fluid supplied to the shaft seals."
-      },
-      {
-       "segment_id": "p15.b45",
-       "page": 15,
-       "evidence_id": "ev_ff00cefb1a33471b69fccb1d555d",
-       "bbox": [
-        317.337,
-        569.693,
-        550.537,
-        578.621
-       ],
-       "text": "39. The mechanical seal may have been damaged by running dry."
       }
      ]
     }
@@ -11006,9 +10909,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -11052,9 +10955,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -11098,9 +11001,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -11126,9 +11029,55 @@
    ]
   },
   {
-   "id": "v3e_238b36b9346d059dcacf",
+   "id": "v3e_6ce77e51a99b74259ee3",
    "type": "AFFECTS",
-   "from": "v3n_8dde423d1bdb4564cc4f",
+   "from": "v3n_d071b1aade110bb52f2c",
+   "to": "v3n_e49d53b51232feb517cb",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-d8e3c2:A.R2",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p15.b36"
+      ],
+      "witnesses": [
+       "structure",
+       "verifier"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": null,
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:f033b22b4e759f82",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p15.b36",
+       "page": 15,
+       "evidence_id": "ev_da7b1427d8dc254e97a4350aa344",
+       "bbox": [
+        53.856,
+        471.293,
+        245.416,
+        480.221
+       ],
+       "text": "12. Little or no cooling fluid supplied to the shaft seals."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_8915c2e4ada03480f16a",
+   "type": "AFFECTS",
+   "from": "v3n_7f5b75371c2eae2a945e",
    "to": "v3n_83cacd44a7e22da0ddb7",
    "tier": "green",
    "trusted": true,
@@ -11144,9 +11093,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -11172,9 +11121,9 @@
    ]
   },
   {
-   "id": "v3e_65971bf9e8c24749c2e6",
+   "id": "v3e_0083281142d014a74507",
    "type": "AFFECTS",
-   "from": "v3n_b514f8fce68a49b000cb",
+   "from": "v3n_c3232e564959b5762e40",
    "to": "v3n_3323594f447478f1d8d4",
    "tier": "green",
    "trusted": true,
@@ -11231,9 +11180,9 @@
    ]
   },
   {
-   "id": "v3e_8504f142c02fbd9d3843",
+   "id": "v3e_5b83fa13176d782de574",
    "type": "AFFECTS",
-   "from": "v3n_5c22c91460e3875180ed",
+   "from": "v3n_5896c4b1056e4fb855ec",
    "to": "v3n_3323594f447478f1d8d4",
    "tier": "green",
    "trusted": true,
@@ -11290,9 +11239,9 @@
    ]
   },
   {
-   "id": "v3e_8e1ff3daeb9547260293",
+   "id": "v3e_679fb1bfdbcba9e738c2",
    "type": "AFFECTS",
-   "from": "v3n_768c5dcadeff40c54aad",
+   "from": "v3n_8a4a857c318e563f56a2",
    "to": "v3n_ee738e75f4d00577cacc",
    "tier": "green",
    "trusted": true,
@@ -11304,18 +11253,15 @@
      "conditions": [],
      "certificate": {
       "segment_ids": [
-       "p15.b21",
-       "p15.b26",
        "p15.b43",
        "p15.b52",
-       "p15.b53",
-       "p15.b54"
+       "p15.b53"
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -11324,30 +11270,6 @@
       ]
      },
      "evidence": [
-      {
-       "segment_id": "p15.b21",
-       "page": 15,
-       "evidence_id": "ev_bbc81bf24735a4b740f9b59f9276",
-       "bbox": [
-        317.337,
-        336.893,
-        536.905,
-        355.421
-       ],
-       "text": "29. The pump may run rough due to improper balancing of the impeller."
-      },
-      {
-       "segment_id": "p15.b26",
-       "page": 15,
-       "evidence_id": "ev_64f54dac30b4f7d43e57b8e5f0dd",
-       "bbox": [
-        317.337,
-        377.693,
-        539.569,
-        386.621
-       ],
-       "text": "31. The impeller may be rubbing against the inside of the case."
-      },
       {
        "segment_id": "p15.b43",
        "page": 15,
@@ -11383,27 +11305,15 @@
         734.621
        ],
        "text": "24. The impeller may be damaged."
-      },
-      {
-       "segment_id": "p15.b54",
-       "page": 15,
-       "evidence_id": "ev_74787f82fe953cf0ab8170a97fe6",
-       "bbox": [
-        53.856,
-        741.293,
-        284.056,
-        750.221
-       ],
-       "text": "25. The casing and impeller wear rings may be excessively worn."
       }
      ]
     }
    ]
   },
   {
-   "id": "v3e_3269fdea08534ba53d42",
+   "id": "v3e_669a1b2ded7cee26e17b",
    "type": "AFFECTS",
-   "from": "v3n_8b1a1d0f54f8a711e7cb",
+   "from": "v3n_ffa031d9b57819860d33",
    "to": "v3n_a16890331978d3ad42d1",
    "tier": "green",
    "trusted": true,
@@ -11419,9 +11329,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -11461,18 +11371,15 @@
      "conditions": [],
      "certificate": {
       "segment_ids": [
-       "p15.b21",
-       "p15.b26",
        "p15.b43",
        "p15.b52",
-       "p15.b53",
-       "p15.b54"
+       "p15.b53"
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -11481,30 +11388,6 @@
       ]
      },
      "evidence": [
-      {
-       "segment_id": "p15.b21",
-       "page": 15,
-       "evidence_id": "ev_bbc81bf24735a4b740f9b59f9276",
-       "bbox": [
-        317.337,
-        336.893,
-        536.905,
-        355.421
-       ],
-       "text": "29. The pump may run rough due to improper balancing of the impeller."
-      },
-      {
-       "segment_id": "p15.b26",
-       "page": 15,
-       "evidence_id": "ev_64f54dac30b4f7d43e57b8e5f0dd",
-       "bbox": [
-        317.337,
-        377.693,
-        539.569,
-        386.621
-       ],
-       "text": "31. The impeller may be rubbing against the inside of the case."
-      },
       {
        "segment_id": "p15.b43",
        "page": 15,
@@ -11540,18 +11423,6 @@
         734.621
        ],
        "text": "24. The impeller may be damaged."
-      },
-      {
-       "segment_id": "p15.b54",
-       "page": 15,
-       "evidence_id": "ev_74787f82fe953cf0ab8170a97fe6",
-       "bbox": [
-        53.856,
-        741.293,
-        284.056,
-        750.221
-       ],
-       "text": "25. The casing and impeller wear rings may be excessively worn."
       }
      ]
     }
@@ -11572,18 +11443,15 @@
      "conditions": [],
      "certificate": {
       "segment_ids": [
-       "p15.b21",
-       "p15.b26",
        "p15.b43",
        "p15.b52",
-       "p15.b53",
-       "p15.b54"
+       "p15.b53"
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -11592,30 +11460,6 @@
       ]
      },
      "evidence": [
-      {
-       "segment_id": "p15.b21",
-       "page": 15,
-       "evidence_id": "ev_bbc81bf24735a4b740f9b59f9276",
-       "bbox": [
-        317.337,
-        336.893,
-        536.905,
-        355.421
-       ],
-       "text": "29. The pump may run rough due to improper balancing of the impeller."
-      },
-      {
-       "segment_id": "p15.b26",
-       "page": 15,
-       "evidence_id": "ev_64f54dac30b4f7d43e57b8e5f0dd",
-       "bbox": [
-        317.337,
-        377.693,
-        539.569,
-        386.621
-       ],
-       "text": "31. The impeller may be rubbing against the inside of the case."
-      },
       {
        "segment_id": "p15.b43",
        "page": 15,
@@ -11651,18 +11495,6 @@
         734.621
        ],
        "text": "24. The impeller may be damaged."
-      },
-      {
-       "segment_id": "p15.b54",
-       "page": 15,
-       "evidence_id": "ev_74787f82fe953cf0ab8170a97fe6",
-       "bbox": [
-        53.856,
-        741.293,
-        284.056,
-        750.221
-       ],
-       "text": "25. The casing and impeller wear rings may be excessively worn."
       }
      ]
     }
@@ -11687,9 +11519,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -11715,64 +11547,35 @@
    ]
   },
   {
-   "id": "v3e_04098fa2cc90fb98cd38",
+   "id": "v3e_53c785e4cb86e9ac7551",
    "type": "AFFECTS",
-   "from": "v3n_fdf079188db8b1fa839d",
-   "to": "v3n_e98788ff669e30f4eb7e",
+   "from": "v3n_6c713a0bf5c55723b327",
+   "to": "v3n_1ce452e799d26827d9a9",
    "tier": "green",
    "trusted": true,
    "conditions": [],
    "occurrences": [
     {
-     "record": "u001-d8e3c2:A.R6",
+     "record": "u001-d8e3c2:A.R1",
      "tier": "green",
      "conditions": [],
      "certificate": {
       "segment_ids": [
-       "p15.b15",
-       "p15.b16",
-       "p15.b19",
-       "p15.b21",
-       "p15.b32",
-       "p15.b34",
-       "p15.b40",
-       "p15.b41",
-       "p15.b43",
-       "p15.b44",
-       "p15.b46",
-       "p15.b47",
-       "p15.b50"
+       "p15.b16"
       ],
       "witnesses": [
-       "verifier",
-       "reviewer"
+       "structure",
+       "verifier"
       ],
       "verifier_verdict": "supported",
-      "confirmed_by": {
-       "kind": "agent",
-       "name": "gpt-6-luna",
-       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
-      },
+      "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
       "notes": [
-       "one end is not named in the source",
-       "reviewer: Keep statements 3 and 5; statements 1, 2, and 4 are not listed for this symptom."
+       "one end is not named in the source"
       ]
      },
      "evidence": [
-      {
-       "segment_id": "p15.b15",
-       "page": 15,
-       "evidence_id": "ev_3bbc69f5ca98b0020e11b18e7ef9",
-       "bbox": [
-        53.856,
-        280.493,
-        221.408,
-        289.421
-       ],
-       "text": "1. The pump has not been properly bled of air."
-      },
       {
        "segment_id": "p15.b16",
        "page": 15,
@@ -11784,154 +11587,22 @@
         299.021
        ],
        "text": "26. There may be internal leakage from the discharge to the suction compartments as the result of internal gasket failure."
-      },
-      {
-       "segment_id": "p15.b19",
-       "page": 15,
-       "evidence_id": "ev_34b9001c597a78d38ee65f1e90e1",
-       "bbox": [
-        53.856,
-        311.693,
-        291.64,
-        339.821
-       ],
-       "text": "3. The suction head (NPSHR) required by the pump is too high, or the net positive suction head available (NPSHA) at your facility is too low."
-      },
-      {
-       "segment_id": "p15.b21",
-       "page": 15,
-       "evidence_id": "ev_bbc81bf24735a4b740f9b59f9276",
-       "bbox": [
-        317.337,
-        336.893,
-        536.905,
-        355.421
-       ],
-       "text": "29. The pump may run rough due to improper balancing of the impeller."
-      },
-      {
-       "segment_id": "p15.b32",
-       "page": 15,
-       "evidence_id": "ev_b3e49d37dd4e62fc99157d9f11a1",
-       "bbox": [
-        317.337,
-        434.093,
-        556.929,
-        452.621
-       ],
-       "text": "34. The operating conditions of the installation do not agree with the data specified when the pump was purchased."
-      },
-      {
-       "segment_id": "p15.b34",
-       "page": 15,
-       "evidence_id": "ev_906d38557964fd0d06fdef34585b",
-       "bbox": [
-        53.856,
-        455.693,
-        208.056,
-        464.621
-       ],
-       "text": "11. The foot valve is clogged or undersized."
-      },
-      {
-       "segment_id": "p15.b40",
-       "page": 15,
-       "evidence_id": "ev_2d5f136b020b7eab0ad9e07f58e1",
-       "bbox": [
-        53.856,
-        512.093,
-        195.608,
-        521.021
-       ],
-       "text": "14. Pump drive rotational speed too low."
-      },
-      {
-       "segment_id": "p15.b41",
-       "page": 15,
-       "evidence_id": "ev_822d4a65a2a2b07a08a78654acc5",
-       "bbox": [
-        53.856,
-        527.693,
-        199.168,
-        536.621
-       ],
-       "text": "15. Pump drive rotational speed too high."
-      },
-      {
-       "segment_id": "p15.b43",
-       "page": 15,
-       "evidence_id": "ev_d5c7c491d79814e120282e9049ed",
-       "bbox": [
-        53.856,
-        543.293,
-        254.272,
-        552.221
-       ],
-       "text": "16. Pump rotation wrong or impeller installed backwards."
-      },
-      {
-       "segment_id": "p15.b44",
-       "page": 15,
-       "evidence_id": "ev_d5889bc0f98618e1bc7042f82762",
-       "bbox": [
-        53.856,
-        558.893,
-        290.32,
-        577.421
-       ],
-       "text": "17. Total head of installation (back pressure) higher than rated total head of the pump."
-      },
-      {
-       "segment_id": "p15.b46",
-       "page": 15,
-       "evidence_id": "ev_e7ffa729bf98a4f8f25372f08169",
-       "bbox": [
-        53.856,
-        584.093,
-        287.2,
-        602.621
-       ],
-       "text": "18. Total head of installation (back pressure) lower than rated total head of the pump."
-      },
-      {
-       "segment_id": "p15.b47",
-       "page": 15,
-       "evidence_id": "ev_55c5aee19895979c27d68220bd53",
-       "bbox": [
-        317.337,
-        585.293,
-        532.441,
-        603.821
-       ],
-       "text": "40. There may be excessive axial thrust (side loading) due to improper impeller central alignment."
-      },
-      {
-       "segment_id": "p15.b50",
-       "page": 15,
-       "evidence_id": "ev_db77f2f0a3c2c179c1245e4d4a57",
-       "bbox": [
-        53.856,
-        659.693,
-        285.432,
-        678.221
-       ],
-       "text": "21. The pump is operating at too low a rate of flow. The discharge valve may be throttled too much."
       }
      ]
     }
    ]
   },
   {
-   "id": "v3e_6f4e8414f23a831f2469",
+   "id": "v3e_187c7651d0a670bb550f",
    "type": "AFFECTS",
-   "from": "v3n_b8295c1619803993b550",
+   "from": "v3n_c57534dc153e48c9a1f9",
    "to": "v3n_46ec9ce40180cbc82ef3",
    "tier": "green",
    "trusted": true,
    "conditions": [],
    "occurrences": [
     {
-     "record": "u001-d8e3c2:A.R7",
+     "record": "u001-d8e3c2:A.R3",
      "tier": "green",
      "conditions": [],
      "certificate": {
@@ -11941,9 +11612,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -11981,9 +11652,9 @@
    ]
   },
   {
-   "id": "v3e_3a89b636a2800d5a8673",
+   "id": "v3e_4a6afecba804e528a879",
    "type": "AFFECTS",
-   "from": "v3n_6ed6a8eff235dd4aad1f",
+   "from": "v3n_b4848615c299c569e83b",
    "to": "v3n_46ec9ce40180cbc82ef3",
    "tier": "green",
    "trusted": true,
@@ -12000,9 +11671,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -12055,22 +11726,25 @@
      "certificate": {
       "segment_ids": [
        "p15.b21",
-       "p15.b26",
        "p15.b43",
        "p15.b52",
-       "p15.b53",
-       "p15.b54"
+       "p15.b53"
       ],
       "witnesses": [
-       "structure",
-       "verifier"
+       "verifier",
+       "reviewer"
       ],
       "verifier_verdict": "supported",
-      "confirmed_by": null,
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+      },
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
       "notes": [
-       "one end is not named in the source"
+       "one end is not named in the source",
+       "reviewer: Keep statements 2, 3, 4, and 5. Statement 1 is unsupported because the damaged-impeller entry is numbered 24, which is not included among the causes listed for this symptom."
       ]
      },
      "evidence": [
@@ -12085,18 +11759,6 @@
         355.421
        ],
        "text": "29. The pump may run rough due to improper balancing of the impeller."
-      },
-      {
-       "segment_id": "p15.b26",
-       "page": 15,
-       "evidence_id": "ev_64f54dac30b4f7d43e57b8e5f0dd",
-       "bbox": [
-        317.337,
-        377.693,
-        539.569,
-        386.621
-       ],
-       "text": "31. The impeller may be rubbing against the inside of the case."
       },
       {
        "segment_id": "p15.b43",
@@ -12133,27 +11795,15 @@
         734.621
        ],
        "text": "24. The impeller may be damaged."
-      },
-      {
-       "segment_id": "p15.b54",
-       "page": 15,
-       "evidence_id": "ev_74787f82fe953cf0ab8170a97fe6",
-       "bbox": [
-        53.856,
-        741.293,
-        284.056,
-        750.221
-       ],
-       "text": "25. The casing and impeller wear rings may be excessively worn."
       }
      ]
     }
    ]
   },
   {
-   "id": "v3e_bd1a02da182268f21175",
+   "id": "v3e_8a7d38ad0cf9d3784771",
    "type": "AFFECTS",
-   "from": "v3n_488fd2d6cfca23039ebd",
+   "from": "v3n_a4153029042d14b0edfd",
    "to": "v3n_88256bd69074a272b535",
    "tier": "green",
    "trusted": true,
@@ -12193,48 +11843,13 @@
        "text": "30. The shaft may not be running due to worn bearings."
       }
      ]
-    },
-    {
-     "record": "u001-d8e3c2:B.R3",
-     "tier": "green",
-     "conditions": [],
-     "certificate": {
-      "segment_ids": [
-       "p15.b24"
-      ],
-      "witnesses": [
-       "structure",
-       "verifier"
-      ],
-      "verifier_verdict": "supported",
-      "confirmed_by": null,
-      "rejected_by": null,
-      "extractor": "gpt-6-luna:f033b22b4e759f82",
-      "notes": [
-       "one end is not named in the source"
-      ]
-     },
-     "evidence": [
-      {
-       "segment_id": "p15.b24",
-       "page": 15,
-       "evidence_id": "ev_884436969fe7d083416eaa98a097",
-       "bbox": [
-        317.337,
-        362.093,
-        513.345,
-        371.021
-       ],
-       "text": "30. The shaft may not be running due to worn bearings."
-      }
-     ]
     }
    ]
   },
   {
-   "id": "v3e_4a24ddc381e93980f25c",
+   "id": "v3e_93c007a898444783d996",
    "type": "AFFECTS",
-   "from": "v3n_a5983c2fdbe5991b0987",
+   "from": "v3n_72b34c3cc10b9f59e0ac",
    "to": "v3n_ee738e75f4d00577cacc",
    "tier": "green",
    "trusted": true,
@@ -12246,38 +11861,29 @@
      "conditions": [],
      "certificate": {
       "segment_ids": [
-       "p15.b21",
        "p15.b26",
        "p15.b43",
        "p15.b52",
-       "p15.b53",
-       "p15.b54"
+       "p15.b53"
       ],
       "witnesses": [
-       "structure",
-       "verifier"
+       "verifier",
+       "reviewer"
       ],
       "verifier_verdict": "supported",
-      "confirmed_by": null,
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+      },
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
       "notes": [
-       "one end is not named in the source"
+       "one end is not named in the source",
+       "reviewer: Keep statements 2, 3, 4, and 5. Statement 1 is unsupported because the damaged-impeller entry is numbered 24, which is not included among the causes listed for this symptom."
       ]
      },
      "evidence": [
-      {
-       "segment_id": "p15.b21",
-       "page": 15,
-       "evidence_id": "ev_bbc81bf24735a4b740f9b59f9276",
-       "bbox": [
-        317.337,
-        336.893,
-        536.905,
-        355.421
-       ],
-       "text": "29. The pump may run rough due to improper balancing of the impeller."
-      },
       {
        "segment_id": "p15.b26",
        "page": 15,
@@ -12325,27 +11931,15 @@
         734.621
        ],
        "text": "24. The impeller may be damaged."
-      },
-      {
-       "segment_id": "p15.b54",
-       "page": 15,
-       "evidence_id": "ev_74787f82fe953cf0ab8170a97fe6",
-       "bbox": [
-        53.856,
-        741.293,
-        284.056,
-        750.221
-       ],
-       "text": "25. The casing and impeller wear rings may be excessively worn."
       }
      ]
     }
    ]
   },
   {
-   "id": "v3e_1d8f425e896ad94ecc4a",
+   "id": "v3e_19fadcda10225f67ab51",
    "type": "AFFECTS",
-   "from": "v3n_a5983c2fdbe5991b0987",
+   "from": "v3n_72b34c3cc10b9f59e0ac",
    "to": "v3n_357bcc5131a61b75b851",
    "tier": "green",
    "trusted": true,
@@ -12361,9 +11955,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -12389,9 +11983,9 @@
    ]
   },
   {
-   "id": "v3e_95ecba1efb98a946481b",
+   "id": "v3e_5f5f9bc2e3ad23f3d8ca",
    "type": "AFFECTS",
-   "from": "v3n_3841b2c186ad3a31441c",
+   "from": "v3n_b45d85f7266c31593bf8",
    "to": "v3n_e157bbc4189d0cc983ee",
    "tier": "green",
    "trusted": true,
@@ -12407,9 +12001,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -12450,15 +12044,13 @@
      "certificate": {
       "segment_ids": [
        "p15.b27",
-       "p15.b35",
-       "p15.b36",
-       "p15.b45"
+       "p15.b35"
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -12490,85 +12082,15 @@
         477.821
        ],
        "text": "35. The shaft seal may be incorrectly installed, or the stuffing box has not been packed correctly."
-      },
-      {
-       "segment_id": "p15.b36",
-       "page": 15,
-       "evidence_id": "ev_da7b1427d8dc254e97a4350aa344",
-       "bbox": [
-        53.856,
-        471.293,
-        245.416,
-        480.221
-       ],
-       "text": "12. Little or no cooling fluid supplied to the shaft seals."
-      },
-      {
-       "segment_id": "p15.b45",
-       "page": 15,
-       "evidence_id": "ev_ff00cefb1a33471b69fccb1d555d",
-       "bbox": [
-        317.337,
-        569.693,
-        550.537,
-        578.621
-       ],
-       "text": "39. The mechanical seal may have been damaged by running dry."
       }
      ]
     }
    ]
   },
   {
-   "id": "v3e_067828b35c84e087263b",
+   "id": "v3e_9c6aa6045addedb775d6",
    "type": "AFFECTS",
-   "from": "v3n_203736c108afed1fdc09",
-   "to": "v3n_b2a51a08a2456261b4aa",
-   "tier": "green",
-   "trusted": true,
-   "conditions": [],
-   "occurrences": [
-    {
-     "record": "u001-d8e3c2:A.R7",
-     "tier": "green",
-     "conditions": [],
-     "certificate": {
-      "segment_ids": [
-       "p15.b35"
-      ],
-      "witnesses": [
-       "structure",
-       "agreement"
-      ],
-      "verifier_verdict": null,
-      "confirmed_by": null,
-      "rejected_by": null,
-      "extractor": "gpt-6-luna:f033b22b4e759f82",
-      "notes": [
-       "one end is not named in the source"
-      ]
-     },
-     "evidence": [
-      {
-       "segment_id": "p15.b35",
-       "page": 15,
-       "evidence_id": "ev_61d18925cc4cb0dc28916fe0a41d",
-       "bbox": [
-        317.337,
-        459.293,
-        546.977,
-        477.821
-       ],
-       "text": "35. The shaft seal may be incorrectly installed, or the stuffing box has not been packed correctly."
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": "v3e_aaf9ed70756834992dff",
-   "type": "AFFECTS",
-   "from": "v3n_a4e788b627c318316604",
+   "from": "v3n_7cfc153fa58178906a79",
    "to": "v3n_93e6b1e6bb7d7fe9825c",
    "tier": "green",
    "trusted": true,
@@ -12584,9 +12106,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -12612,9 +12134,9 @@
    ]
   },
   {
-   "id": "v3e_900f40247dd81c2a40e7",
+   "id": "v3e_6558b832e585294d55c2",
    "type": "AFFECTS",
-   "from": "v3n_fa1caedb15ce60dd6b07",
+   "from": "v3n_6f8e35880c033be66cdf",
    "to": "v3n_b7470aca5165d08daf96",
    "tier": "green",
    "trusted": true,
@@ -12630,9 +12152,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -12658,9 +12180,9 @@
    ]
   },
   {
-   "id": "v3e_0bc2f8b70024f9e11767",
+   "id": "v3e_64a29d1a17adf0772066",
    "type": "AFFECTS",
-   "from": "v3n_e630903e4cb08e10e0cb",
+   "from": "v3n_a44d27cdd31664af3a0e",
    "to": "v3n_7696498c229fa3412a14",
    "tier": "green",
    "trusted": true,
@@ -12676,9 +12198,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -12704,9 +12226,9 @@
    ]
   },
   {
-   "id": "v3e_2b2ac3c466091b5c4bf2",
+   "id": "v3e_86c60ac77bf327d00bf1",
    "type": "AFFECTS",
-   "from": "v3n_d876854243c3b6c8200e",
+   "from": "v3n_96a0128cb985a9399485",
    "to": "v3n_d505f06e68dd18ac370b",
    "tier": "green",
    "trusted": true,
@@ -12722,9 +12244,9 @@
       ],
       "witnesses": [
        "structure",
-       "agreement"
+       "verifier"
       ],
-      "verifier_verdict": null,
+      "verifier_verdict": "supported",
       "confirmed_by": null,
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
@@ -12750,28 +12272,97 @@
    ]
   },
   {
-   "id": "v3e_717dc4a81e44b4fcb422",
-   "type": "AFFECTS",
-   "from": "v3n_fdf079188db8b1fa839d",
-   "to": "v3n_1ce452e799d26827d9a9",
+   "id": "v3e_8da49858dfc6994d9137",
+   "type": "MAY_INDICATE",
+   "from": "v3n_e54698b60e5b0418ce56",
+   "to": "v3n_3fc336c72c99ba8f53a9",
    "tier": "green",
    "trusted": true,
    "conditions": [],
    "occurrences": [
     {
-     "record": "u001-d8e3c2:B.R1",
+     "record": "u001-d8e3c2:B.R2",
      "tier": "green",
      "conditions": [],
      "certificate": {
       "segment_ids": [
-       "p15.b16"
+       "p15.b32",
+       "p15.b5"
       ],
       "witnesses": [
-       "structure",
-       "verifier"
+       "verifier",
+       "reviewer"
       ],
       "verifier_verdict": "supported",
-      "confirmed_by": null,
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+      },
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:f033b22b4e759f82",
+      "notes": [
+       "one end is not named in the source",
+       "reviewer: Keep statement 2 only; the symptom’s listed causes include item 34, but not item 14."
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p15.b32",
+       "page": 15,
+       "evidence_id": "ev_b3e49d37dd4e62fc99157d9f11a1",
+       "bbox": [
+        317.337,
+        434.093,
+        556.929,
+        452.621
+       ],
+       "text": "34. The operating conditions of the installation do not agree with the data specified when the pump was purchased."
+      },
+      {
+       "segment_id": "p15.b5",
+       "page": 15,
+       "evidence_id": "ev_e498dc695347618939c2fc1a700f",
+       "bbox": [
+        55.855,
+        113.189,
+        418.584,
+        122.117
+       ],
+       "text": "Pump stops delivering liquid after start-up 2*3*4*5*6*7*8*9*10*11*12*13*22*23*24*34"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_02c2ed58aa3410da86af",
+   "type": "MAY_INDICATE",
+   "from": "v3n_44186ac7c4ddc8ccaffe",
+   "to": "v3n_ba77d686fd7c846f68d5",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-d8e3c2:B.R3",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p15.b30",
+       "p15.b6"
+      ],
+      "witnesses": [
+       "verifier",
+       "reviewer"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+      },
       "rejected_by": null,
       "extractor": "gpt-6-luna:f033b22b4e759f82",
       "notes": [
@@ -12780,16 +12371,207 @@
      },
      "evidence": [
       {
-       "segment_id": "p15.b16",
+       "segment_id": "p15.b30",
        "page": 15,
-       "evidence_id": "ev_b71fe64296c98457ffbd83122f6e",
+       "evidence_id": "ev_95c731bedeadb57268f16df84bdb",
        "bbox": [
         317.337,
-        280.493,
-        556.465,
-        299.021
+        418.493,
+        540.889,
+        427.421
        ],
-       "text": "26. There may be internal leakage from the discharge to the suction compartments as the result of internal gasket failure."
+       "text": "33. The pump may have become misaligned during installation."
+      },
+      {
+       "segment_id": "p15.b6",
+       "page": 15,
+       "evidence_id": "ev_83812b657c9e8975216c640d6fff",
+       "bbox": [
+        55.855,
+        127.289,
+        428.816,
+        136.217
+       ],
+       "text": "Pump overheats and/or ceases to deliver liquid 1*3*9*10*11*21*22*27*29*30*31*33*34*40*41"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_7ece1a5094e64ae2d9e8",
+   "type": "MAY_INDICATE",
+   "from": "v3n_1a7bb6c7d337d7a13105",
+   "to": "v3n_ba77d686fd7c846f68d5",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-d8e3c2:B.R7",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p15.b10",
+       "p15.b30"
+      ],
+      "witnesses": [
+       "verifier",
+       "reviewer"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+      },
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:f033b22b4e759f82",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p15.b10",
+       "page": 15,
+       "evidence_id": "ev_ac8f17c5657948f78dfba2acd878",
+       "bbox": [
+        55.855,
+        183.689,
+        370.704,
+        202.217
+       ],
+       "text": "Shaft seal leaks appreciably, or the packing leaks excessively 27*28*29*30*33*34*35*36*39"
+      },
+      {
+       "segment_id": "p15.b30",
+       "page": 15,
+       "evidence_id": "ev_95c731bedeadb57268f16df84bdb",
+       "bbox": [
+        317.337,
+        418.493,
+        540.889,
+        427.421
+       ],
+       "text": "33. The pump may have become misaligned during installation."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_09f437dbb169926a0131",
+   "type": "MAY_INDICATE",
+   "from": "v3n_2d77287e5cbd0a5ee2fa",
+   "to": "v3n_ba77d686fd7c846f68d5",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "occurrences": [
+    {
+     "record": "u001-d8e3c2:B.R8",
+     "tier": "green",
+     "conditions": [],
+     "certificate": {
+      "segment_ids": [
+       "p15.b11",
+       "p15.b30"
+      ],
+      "witnesses": [
+       "verifier",
+       "reviewer"
+      ],
+      "verifier_verdict": "supported",
+      "confirmed_by": {
+       "kind": "agent",
+       "name": "gpt-6-luna",
+       "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
+      },
+      "rejected_by": null,
+      "extractor": "gpt-6-luna:f033b22b4e759f82",
+      "notes": [
+       "one end is not named in the source"
+      ]
+     },
+     "evidence": [
+      {
+       "segment_id": "p15.b11",
+       "page": 15,
+       "evidence_id": "ev_681556347d90ba084cd854f1b74b",
+       "bbox": [
+        55.855,
+        207.389,
+        418.736,
+        216.317
+       ],
+       "text": "Shaft seal or packing fails prematurely 12*13*27*28*29*30*33*34*35*36*37*38*39"
+      },
+      {
+       "segment_id": "p15.b30",
+       "page": 15,
+       "evidence_id": "ev_95c731bedeadb57268f16df84bdb",
+       "bbox": [
+        317.337,
+        418.493,
+        540.889,
+        427.421
+       ],
+       "text": "33. The pump may have become misaligned during installation."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "v3e_82e3cce585bec4bd0756",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_35300d9af406",
+   "to": "v3n_e451360ffafc3f271d7f",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p15.b17",
+       "page": 15,
+       "evidence_id": "ev_c72c99d0fe64988fd3b181956bfb",
+       "bbox": [
+        53.856,
+        296.093,
+        262.744,
+        305.021
+       ],
+       "text": "2. The pump suction line has not been completely primed."
+      },
+      {
+       "segment_id": "p15.b23",
+       "page": 15,
+       "evidence_id": "ev_223ee1426c87878eec3b3d878bcc",
+       "bbox": [
+        53.856,
+        362.093,
+        208.496,
+        371.021
+       ],
+       "text": "5. There are air pockets in the suction line."
+      },
+      {
+       "segment_id": "p15.b25",
+       "page": 15,
+       "evidence_id": "ev_d0cbc944b8b2327e382b69214efe",
+       "bbox": [
+        53.856,
+        377.693,
+        265.416,
+        386.621
+       ],
+       "text": "6. An entry of air has suddenly occurred in the suction line."
       }
      ]
     }
@@ -12831,18 +12613,6 @@
         477.821
        ],
        "text": "35. The shaft seal may be incorrectly installed, or the stuffing box has not been packed correctly."
-      },
-      {
-       "segment_id": "p15.b36",
-       "page": 15,
-       "evidence_id": "ev_da7b1427d8dc254e97a4350aa344",
-       "bbox": [
-        53.856,
-        471.293,
-        245.416,
-        480.221
-       ],
-       "text": "12. Little or no cooling fluid supplied to the shaft seals."
       }
      ]
     }
@@ -12936,6 +12706,35 @@
    ]
   },
   {
+   "id": "v3e_8b5bb5c51bcfc75a35fc",
+   "type": "HAS_COMPONENT",
+   "from": "v3n_asset_35300d9af406",
+   "to": "v3n_e49d53b51232feb517cb",
+   "tier": "green",
+   "trusted": true,
+   "conditions": [],
+   "derived": true,
+   "occurrences": [
+    {
+     "record": "asset",
+     "evidence": [
+      {
+       "segment_id": "p15.b36",
+       "page": 15,
+       "evidence_id": "ev_da7b1427d8dc254e97a4350aa344",
+       "bbox": [
+        53.856,
+        471.293,
+        245.416,
+        480.221
+       ],
+       "text": "12. Little or no cooling fluid supplied to the shaft seals."
+      }
+     ]
+    }
+   ]
+  },
+  {
    "id": "v3e_48b4317563703eb89440",
    "type": "HAS_COMPONENT",
    "from": "v3n_asset_35300d9af406",
@@ -13019,30 +12818,6 @@
      "record": "asset",
      "evidence": [
       {
-       "segment_id": "p15.b21",
-       "page": 15,
-       "evidence_id": "ev_bbc81bf24735a4b740f9b59f9276",
-       "bbox": [
-        317.337,
-        336.893,
-        536.905,
-        355.421
-       ],
-       "text": "29. The pump may run rough due to improper balancing of the impeller."
-      },
-      {
-       "segment_id": "p15.b26",
-       "page": 15,
-       "evidence_id": "ev_64f54dac30b4f7d43e57b8e5f0dd",
-       "bbox": [
-        317.337,
-        377.693,
-        539.569,
-        386.621
-       ],
-       "text": "31. The impeller may be rubbing against the inside of the case."
-      },
-      {
        "segment_id": "p15.b43",
        "page": 15,
        "evidence_id": "ev_d5c7c491d79814e120282e9049ed",
@@ -13053,6 +12828,30 @@
         552.221
        ],
        "text": "16. Pump rotation wrong or impeller installed backwards."
+      },
+      {
+       "segment_id": "p15.b52",
+       "page": 15,
+       "evidence_id": "ev_8288454e64abeb81b757ea717791",
+       "bbox": [
+        53.856,
+        710.093,
+        212.04,
+        719.021
+       ],
+       "text": "23. The impeller may be clogged with debris."
+      },
+      {
+       "segment_id": "p15.b53",
+       "page": 15,
+       "evidence_id": "ev_57a56a81ccd06bdeb4d0e2acac6a",
+       "bbox": [
+        53.856,
+        725.693,
+        176.92,
+        734.621
+       ],
+       "text": "24. The impeller may be damaged."
       }
      ]
     }
@@ -13117,10 +12916,10 @@
    ]
   },
   {
-   "id": "v3e_e97c7325ef001c410b47",
+   "id": "v3e_099112a3790979a48466",
    "type": "HAS_COMPONENT",
    "from": "v3n_asset_35300d9af406",
-   "to": "v3n_e98788ff669e30f4eb7e",
+   "to": "v3n_1ce452e799d26827d9a9",
    "tier": "green",
    "trusted": true,
    "conditions": [],
@@ -13130,40 +12929,16 @@
      "record": "asset",
      "evidence": [
       {
-       "segment_id": "p15.b15",
+       "segment_id": "p15.b16",
        "page": 15,
-       "evidence_id": "ev_3bbc69f5ca98b0020e11b18e7ef9",
-       "bbox": [
-        53.856,
-        280.493,
-        221.408,
-        289.421
-       ],
-       "text": "1. The pump has not been properly bled of air."
-      },
-      {
-       "segment_id": "p15.b19",
-       "page": 15,
-       "evidence_id": "ev_34b9001c597a78d38ee65f1e90e1",
-       "bbox": [
-        53.856,
-        311.693,
-        291.64,
-        339.821
-       ],
-       "text": "3. The suction head (NPSHR) required by the pump is too high, or the net positive suction head available (NPSHA) at your facility is too low."
-      },
-      {
-       "segment_id": "p15.b21",
-       "page": 15,
-       "evidence_id": "ev_bbc81bf24735a4b740f9b59f9276",
+       "evidence_id": "ev_b71fe64296c98457ffbd83122f6e",
        "bbox": [
         317.337,
-        336.893,
-        536.905,
-        355.421
+        280.493,
+        556.465,
+        299.021
        ],
-       "text": "29. The pump may run rough due to improper balancing of the impeller."
+       "text": "26. There may be internal leakage from the discharge to the suction compartments as the result of internal gasket failure."
       }
      ]
     }
@@ -13298,35 +13073,6 @@
    ]
   },
   {
-   "id": "v3e_6104276ec69725b15866",
-   "type": "HAS_COMPONENT",
-   "from": "v3n_asset_35300d9af406",
-   "to": "v3n_b2a51a08a2456261b4aa",
-   "tier": "green",
-   "trusted": true,
-   "conditions": [],
-   "derived": true,
-   "occurrences": [
-    {
-     "record": "asset",
-     "evidence": [
-      {
-       "segment_id": "p15.b35",
-       "page": 15,
-       "evidence_id": "ev_61d18925cc4cb0dc28916fe0a41d",
-       "bbox": [
-        317.337,
-        459.293,
-        546.977,
-        477.821
-       ],
-       "text": "35. The shaft seal may be incorrectly installed, or the stuffing box has not been packed correctly."
-      }
-     ]
-    }
-   ]
-  },
-  {
    "id": "v3e_d582227dd717f9d6fadc",
    "type": "HAS_COMPONENT",
    "from": "v3n_asset_35300d9af406",
@@ -13441,118 +13187,17 @@
      ]
     }
    ]
-  },
-  {
-   "id": "v3e_099112a3790979a48466",
-   "type": "HAS_COMPONENT",
-   "from": "v3n_asset_35300d9af406",
-   "to": "v3n_1ce452e799d26827d9a9",
-   "tier": "green",
-   "trusted": true,
-   "conditions": [],
-   "derived": true,
-   "occurrences": [
-    {
-     "record": "asset",
-     "evidence": [
-      {
-       "segment_id": "p15.b16",
-       "page": 15,
-       "evidence_id": "ev_b71fe64296c98457ffbd83122f6e",
-       "bbox": [
-        317.337,
-        280.493,
-        556.465,
-        299.021
-       ],
-       "text": "26. There may be internal leakage from the discharge to the suction compartments as the result of internal gasket failure."
-      }
-     ]
-    }
-   ]
   }
  ],
  "excluded_relations": [
   {
    "relation": "MAY_INDICATE",
-   "source": "Symptom:Discharge pressure is too high",
-   "target": "FailureMode:Suction valve closed or partially open",
+   "source": "Symptom:Pump stops delivering liquid after start-up",
+   "target": "FailureMode:Internal leakage from discharge to suction compartments due to internal gasket failure",
    "certificate": {
     "segment_ids": [
-     "p15.b31",
-     "p15.b9"
-    ],
-    "witnesses": [
-     "agreement"
-    ],
-    "verifier_verdict": "not_supported",
-    "confirmed_by": null,
-    "rejected_by": {
-     "kind": "agent",
-     "name": "gpt-6-luna",
-     "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
-    },
-    "extractor": "gpt-6-luna:f033b22b4e759f82",
-    "notes": [
-     "one end is not named in the source",
-     "reviewer: Keep statements 3 and 5; statements 1, 2, and 4 are not listed for this symptom."
-    ]
-   }
-  },
-  {
-   "relation": "MAY_INDICATE",
-   "source": "Symptom:Discharge pressure is too high",
-   "target": "FailureMode:Pump drive rotational speed too high",
-   "certificate": {
-    "segment_ids": [
-     "p15.b41",
-     "p15.b9"
-    ],
-    "witnesses": [
-     "agreement"
-    ],
-    "verifier_verdict": "not_supported",
-    "confirmed_by": null,
-    "rejected_by": {
-     "kind": "agent",
-     "name": "gpt-6-luna",
-     "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
-    },
-    "extractor": "gpt-6-luna:f033b22b4e759f82",
-    "notes": [
-     "one end is not named in the source",
-     "reviewer: Keep statements 3 and 5; statements 1, 2, and 4 are not listed for this symptom."
-    ]
-   }
-  },
-  {
-   "relation": "MAY_INDICATE",
-   "source": "Symptom:Discharge pressure is too high",
-   "target": "FailureMode:Installation total head higher than pump rated total head",
-   "certificate": {
-    "segment_ids": [
-     "p15.b44",
-     "p15.b9"
-    ],
-    "witnesses": [],
-    "verifier_verdict": null,
-    "confirmed_by": null,
-    "rejected_by": null,
-    "extractor": "gpt-6-luna:f033b22b4e759f82",
-    "notes": [
-     "one end is not named in the source",
-     "the reads name an end of this relation differently and the names differ in meaning"
-    ]
-   }
-  },
-  {
-   "relation": "MAY_INDICATE",
-   "source": "Symptom:Discharge pressure is too high",
-   "target": "FailureMode:Pump operating at too low a flow rate; discharge valve may be over-throttled",
-   "certificate": {
-    "segment_ids": [
-     "p15.b50",
-     "p15.b9"
+     "p15.b16",
+     "p15.b5"
     ],
     "witnesses": [
      "verifier"
@@ -13566,44 +13211,18 @@
     },
     "extractor": "gpt-6-luna:f033b22b4e759f82",
     "notes": [
-     "one end is not named in the source",
-     "reviewer: Keep statements 3 and 5; statements 1, 2, and 4 are not listed for this symptom."
+     "one end is not named in the source"
     ]
    }
   },
   {
    "relation": "MAY_INDICATE",
-   "source": "Symptom:Pump runs rough and noisily",
-   "target": "FailureMode:Installation total head lower than pump rated total head",
+   "source": "Symptom:Pump overheats and/or ceases to deliver liquid",
+   "target": "FailureMode:Impeller may be damaged",
    "certificate": {
     "segment_ids": [
-     "p15.b13",
-     "p15.b46"
-    ],
-    "witnesses": [],
-    "verifier_verdict": null,
-    "confirmed_by": null,
-    "rejected_by": null,
-    "extractor": "gpt-6-luna:f033b22b4e759f82",
-    "notes": [
-     "one end is not named in the source",
-     "the reads name an end of this relation differently and the names differ in meaning"
-    ]
-   }
-  },
-  {
-   "relation": "AFFECTS",
-   "source": "FailureMode:Excessive axial thrust from improper impeller central alignment",
-   "target": "Component:Impeller",
-   "certificate": {
-    "segment_ids": [
-     "p15.b21",
-     "p15.b26",
-     "p15.b43",
-     "p15.b47",
-     "p15.b52",
      "p15.b53",
-     "p15.b54"
+     "p15.b6"
     ],
     "witnesses": [
      "verifier"
@@ -13618,7 +13237,45 @@
     "extractor": "gpt-6-luna:f033b22b4e759f82",
     "notes": [
      "one end is not named in the source",
-     "reviewer: Keep statement 1 only."
+     "reviewer: Keep statements 2, 3, 4, and 5. Statement 1 is unsupported because the damaged-impeller entry is numbered 24, which is not included among the causes listed for this symptom."
+    ]
+   }
+  },
+  {
+   "relation": "MAY_INDICATE",
+   "source": "Symptom:Shaft seal leaks appreciably, or packing leaks excessively",
+   "target": "FailureMode:Impeller may rub against the inside of the case",
+   "certificate": {
+    "segment_ids": [
+     "p15.b10",
+     "p15.b26"
+    ],
+    "witnesses": [],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": null,
+    "extractor": "gpt-6-luna:f033b22b4e759f82",
+    "notes": [
+     "one end is not named in the source"
+    ]
+   }
+  },
+  {
+   "relation": "MAY_INDICATE",
+   "source": "Symptom:Shaft seal or packing fails prematurely",
+   "target": "FailureMode:Impeller may rub against the inside of the case",
+   "certificate": {
+    "segment_ids": [
+     "p15.b11",
+     "p15.b26"
+    ],
+    "witnesses": [],
+    "verifier_verdict": "not_supported",
+    "confirmed_by": null,
+    "rejected_by": null,
+    "extractor": "gpt-6-luna:f033b22b4e759f82",
+    "notes": [
+     "one end is not named in the source"
     ]
    }
   },
@@ -13643,7 +13300,8 @@
     },
     "extractor": "gpt-6-luna:f033b22b4e759f82",
     "notes": [
-     "one end is not named in the source"
+     "one end is not named in the source",
+     "reviewer: Keep statement 2 only; the symptom’s listed causes include item 34, but not item 14."
     ]
    }
   },
@@ -13656,31 +13314,6 @@
      "p15.b43",
      "p15.b5"
     ],
-    "witnesses": [
-     "verifier"
-    ],
-    "verifier_verdict": "supported",
-    "confirmed_by": null,
-    "rejected_by": {
-     "kind": "agent",
-     "name": "gpt-6-luna",
-     "prompt_hash": "1afab0a783bd90cfe7f07e6d779da2fa5e5a630d9e9db0ee93fd5ae046add460"
-    },
-    "extractor": "gpt-6-luna:f033b22b4e759f82",
-    "notes": [
-     "one end is not named in the source"
-    ]
-   }
-  },
-  {
-   "relation": "MAY_INDICATE",
-   "source": "Symptom:Discharge pressure is too high",
-   "target": "FailureMode:Pump rotation wrong or impeller installed backwards",
-   "certificate": {
-    "segment_ids": [
-     "p15.b43",
-     "p15.b9"
-    ],
     "witnesses": [],
     "verifier_verdict": "not_supported",
     "confirmed_by": null,
@@ -13693,50 +13326,12 @@
   },
   {
    "relation": "MAY_INDICATE",
-   "source": "Symptom:Discharge pressure is too high",
-   "target": "FailureMode:Installation total head lower than pump rated total head",
+   "source": "Symptom:Pump stops delivering liquid after start-up",
+   "target": "FailureMode:Installation total head (back pressure) higher than pump rated total head",
    "certificate": {
     "segment_ids": [
-     "p15.b46",
-     "p15.b9"
-    ],
-    "witnesses": [],
-    "verifier_verdict": "not_supported",
-    "confirmed_by": null,
-    "rejected_by": null,
-    "extractor": "gpt-6-luna:f033b22b4e759f82",
-    "notes": [
-     "one end is not named in the source"
-    ]
-   }
-  },
-  {
-   "relation": "MAY_INDICATE",
-   "source": "Symptom:Shaft seal leaks appreciably, or packing leaks excessively",
-   "target": "FailureMode:Worn bearings prevent shaft from running",
-   "certificate": {
-    "segment_ids": [
-     "p15.b10",
-     "p15.b24"
-    ],
-    "witnesses": [],
-    "verifier_verdict": "not_supported",
-    "confirmed_by": null,
-    "rejected_by": null,
-    "extractor": "gpt-6-luna:f033b22b4e759f82",
-    "notes": [
-     "one end is not named in the source"
-    ]
-   }
-  },
-  {
-   "relation": "MAY_INDICATE",
-   "source": "Symptom:Shaft seal or packing fails prematurely",
-   "target": "FailureMode:Worn bearings prevent shaft from running",
-   "certificate": {
-    "segment_ids": [
-     "p15.b11",
-     "p15.b24"
+     "p15.b44",
+     "p15.b5"
     ],
     "witnesses": [],
     "verifier_verdict": "not_supported",
@@ -13751,11 +13346,14 @@
  ],
  "report": {
   "status": "approved",
+  "incomplete_reasons": [],
+  "empty_extraction_units": [],
+  "failed_units": [],
   "pages": 22,
   "page_labels": {
-   "other": 12,
+   "other": 15,
    "unreadable": 1,
-   "procedure": 6,
+   "procedure": 3,
    "parts": 2,
    "diagnostic": 1
   },
@@ -13766,6 +13364,10 @@
    15
   ],
   "map_demotions_refused": [],
+  "map_removed_pages": [],
+  "read_pages": [
+   15
+  ],
   "blocked_merges": [],
   "orphan_causes": 0,
   "problems_without_action": 10,
@@ -13784,7 +13386,11 @@
   ],
   "units": 1,
   "failed_reads": 0,
-  "proposals": 341,
+  "proposals": 321,
+  "omission_review_enabled": false,
+  "visual_verification_enabled": false,
+  "visual_checks": [],
+  "omission_relations": 0,
   "unresolved_references": [
    {
     "unit_id": "u001-d8e3c2",
@@ -13795,36 +13401,35 @@
   ],
   "unclear_passages": 1,
   "extraction_notes": [
-   "A: relation 47 skipped (unknown entity)"
+   "B: relation 51 skipped (unknown entity)"
   ],
   "assertions_by_tier": {
-   "green": 173,
-   "red": 12
+   "green": 177,
+   "red": 7
   },
   "witnesses": {
-   "agreement": 156,
-   "verifier": 155,
-   "reviewer": 14,
+   "agreement": 137,
+   "verifier": 177,
+   "reviewer": 16,
    "structure": 27
   },
   "verifier_verdicts": {
-   "supported": 155,
-   "not_supported": 8,
-   "not_called": 22
+   "supported": 177,
+   "not_supported": 7
   },
   "graph": {
-   "nodes": 71,
+   "nodes": 73,
    "nodes_by_type": {
     "Symptom": 10,
-    "FailureMode": 40,
-    "Component": 21
+    "FailureMode": 43,
+    "Component": 20
    },
-   "edges": 177,
+   "edges": 181,
    "edges_by_tier": {
-    "green": 169,
-    "red": 8
+    "green": 174,
+    "red": 7
    },
-   "merged_aliases": 13
+   "merged_aliases": 33
   },
   "gates": {
    "map": {
@@ -13833,8 +13438,13 @@
     "pending": 0
    },
    "doubts": {
-    "questions": 9,
-    "answered": 9,
+    "questions": 10,
+    "answered": 10,
+    "pending": 0
+   },
+   "recovery": {
+    "questions": 0,
+    "answered": 0,
     "pending": 0
    },
    "approval": {
@@ -13844,54 +13454,57 @@
    }
   },
   "answers_by_reviewer": {
-   "agent": 10,
+   "agent": 11,
    "auto": 1
   },
   "human_questions_offered": 0,
   "deferred_questions": [],
   "human_questions": 0,
-  "reviewer_confirmed": 14,
+  "reviewer_confirmed": 16,
   "merged_cell_relations": 0,
   "usage": {
-   "calls": 12,
+   "calls": 34,
    "failed_calls": 0,
-   "prompt_tokens": 40459,
-   "completion_tokens": 21910,
-   "estimated_cost_usd": 0.014231,
+   "prompt_tokens": 82008,
+   "completion_tokens": 25822,
+   "estimated_cost_usd": 0.021832,
    "by_operation": {
     "kg_v3_extract": 2,
-    "kg_v3_map": 2,
-    "kg_v3_merge": 1,
-    "kg_v3_verify": 7
+    "kg_v3_map": 19,
+    "kg_v3_merge": 4,
+    "kg_v3_verify": 9
    }
   },
   "agent_usage": {
-   "calls": 10,
+   "calls": 11,
    "failed_calls": 0,
-   "prompt_tokens": 10713,
-   "completion_tokens": 4187,
-   "estimated_cost_usd": 0.003059,
+   "prompt_tokens": 10265,
+   "completion_tokens": 2638,
+   "estimated_cost_usd": 0.0024,
    "by_operation": {
-    "AgentDecision": 10
+    "AgentDecision": 11
    }
   },
   "seconds": {
-   "map": 3.612,
-   "gate_map": 4.856,
-   "extract": 48.047,
-   "check": 4.005,
-   "merge": 4.38,
-   "gate_doubts": 12.083,
+   "map": 6.984,
+   "gate_map": 3.353,
+   "extract": 53.086,
+   "check": 6.217,
+   "merge": 12.472,
+   "split_recheck": 1.753,
+   "gate_doubts": 8.334,
+   "action_reduction": 0.0,
+   "gate_recovery": 0.0,
    "gate_approval": 0.0,
-   "total": 77.128,
-   "pdf_read": 2.653,
-   "end_to_end": 80.349
+   "total": 92.505,
+   "pdf_read": 2.582,
+   "end_to_end": 95.776
   },
   "prompt_ids": {
    "extraction": "f033b22b4e759f82"
   },
   "provenance": {
-   "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+   "commit": "79501aecbb19805f3e099118669fef9cc6558794",
    "pdf_sha256": "6f50db70738a8340276fdb65cc59204423c13953f7634a997c3be6f4fbc65250",
    "config": {
     "model": "gpt-6-luna",
@@ -13914,7 +13527,11 @@
     "agent_model": "gpt-6-luna",
     "agent_reasoning_effort": "medium",
     "wait_for_map": false,
-    "max_units": 150
+    "max_units": 150,
+    "omission_review": false,
+    "omission_max_units": 3,
+    "visual_verification": false,
+    "visual_max_relations": 12
    },
    "segment_ids": [
     "p1.b1",

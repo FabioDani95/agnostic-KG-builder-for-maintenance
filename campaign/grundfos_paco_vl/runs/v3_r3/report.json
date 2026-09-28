@@ -1,10 +1,13 @@
 {
  "status": "approved",
+ "incomplete_reasons": [],
+ "empty_extraction_units": [],
+ "failed_units": [],
  "pages": 22,
  "page_labels": {
-  "other": 12,
+  "other": 16,
   "unreadable": 1,
-  "procedure": 6,
+  "procedure": 2,
   "parts": 2,
   "diagnostic": 1
  },
@@ -15,6 +18,10 @@
   15
  ],
  "map_demotions_refused": [],
+ "map_removed_pages": [],
+ "read_pages": [
+  15
+ ],
  "blocked_merges": [],
  "orphan_causes": 0,
  "problems_without_action": 10,
@@ -24,16 +31,20 @@
   "v3n_1a7bb6c7d337d7a13105",
   "v3n_2d77287e5cbd0a5ee2fa",
   "v3n_2d78c134dd25ccc9e8e5",
-  "v3n_33eff8ce23a55aecdea3",
   "v3n_34db1a9b238beb4005d5",
   "v3n_4191b0a05364100964f3",
   "v3n_44186ac7c4ddc8ccaffe",
   "v3n_4e48ad76bf7b08213d50",
-  "v3n_e54698b60e5b0418ce56"
+  "v3n_e54698b60e5b0418ce56",
+  "v3n_e6709f17a60a39fa11b9"
  ],
  "units": 1,
  "failed_reads": 0,
- "proposals": 145,
+ "proposals": 318,
+ "omission_review_enabled": false,
+ "visual_verification_enabled": false,
+ "visual_checks": [],
+ "omission_relations": 0,
  "unresolved_references": [
   {
    "unit_id": "u001-d8e3c2",
@@ -42,32 +53,36 @@
    "reason": "missing or ambiguous numbered entry"
   }
  ],
- "unclear_passages": 1,
+ "unclear_passages": 0,
  "extraction_notes": [],
  "assertions_by_tier": {
-  "green": 138,
-  "red": 7
+  "green": 172,
+  "red": 4
  },
  "witnesses": {
-  "verifier": 140,
-  "reviewer": 138
+  "agreement": 142,
+  "verifier": 171,
+  "reviewer": 14,
+  "structure": 19
  },
  "verifier_verdicts": {
-  "supported": 140,
-  "not_supported": 5
+  "supported": 171,
+  "not_supported": 4,
+  "unclear": 1
  },
  "graph": {
-  "nodes": 49,
+  "nodes": 70,
   "nodes_by_type": {
    "Symptom": 10,
-   "FailureMode": 39
+   "FailureMode": 41,
+   "Component": 19
   },
-  "edges": 145,
+  "edges": 173,
   "edges_by_tier": {
-   "green": 138,
-   "red": 7
+   "green": 169,
+   "red": 4
   },
-  "merged_aliases": 0
+  "merged_aliases": 11
  },
  "gates": {
   "map": {
@@ -76,8 +91,13 @@
    "pending": 0
   },
   "doubts": {
-   "questions": 10,
-   "answered": 10,
+   "questions": 9,
+   "answered": 9,
+   "pending": 0
+  },
+  "recovery": {
+   "questions": 0,
+   "answered": 0,
    "pending": 0
   },
   "approval": {
@@ -87,54 +107,57 @@
   }
  },
  "answers_by_reviewer": {
-  "agent": 11,
+  "agent": 10,
   "auto": 1
  },
  "human_questions_offered": 0,
  "deferred_questions": [],
  "human_questions": 0,
- "reviewer_confirmed": 138,
+ "reviewer_confirmed": 14,
  "merged_cell_relations": 0,
  "usage": {
-  "calls": 11,
+  "calls": 31,
   "failed_calls": 0,
-  "prompt_tokens": 36749,
-  "completion_tokens": 12485,
-  "estimated_cost_usd": 0.009068,
+  "prompt_tokens": 56740,
+  "completion_tokens": 23191,
+  "estimated_cost_usd": 0.017364,
   "by_operation": {
    "kg_v3_extract": 2,
-   "kg_v3_map": 2,
-   "kg_v3_merge": 1,
-   "kg_v3_verify": 6
+   "kg_v3_map": 19,
+   "kg_v3_merge": 2,
+   "kg_v3_verify": 8
   }
  },
  "agent_usage": {
-  "calls": 11,
+  "calls": 10,
   "failed_calls": 0,
-  "prompt_tokens": 19634,
-  "completion_tokens": 4264,
-  "estimated_cost_usd": 0.004374,
+  "prompt_tokens": 9108,
+  "completion_tokens": 2636,
+  "estimated_cost_usd": 0.002257,
   "by_operation": {
-   "AgentDecision": 11
+   "AgentDecision": 10
   }
  },
  "seconds": {
-  "map": 3.585,
-  "gate_map": 5.451,
-  "extract": 40.864,
-  "check": 3.068,
-  "merge": 1.583,
-  "gate_doubts": 10.237,
+  "map": 7.238,
+  "gate_map": 3.492,
+  "extract": 49.296,
+  "check": 6.349,
+  "merge": 9.299,
+  "split_recheck": 0.0,
+  "gate_doubts": 10.746,
+  "action_reduction": 0.0,
+  "gate_recovery": 0.0,
   "gate_approval": 0.0,
-  "total": 64.86,
-  "pdf_read": 2.653,
-  "end_to_end": 68.069
+  "total": 86.559,
+  "pdf_read": 2.584,
+  "end_to_end": 89.816
  },
  "prompt_ids": {
   "extraction": "f033b22b4e759f82"
  },
  "provenance": {
-  "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+  "commit": "79501aecbb19805f3e099118669fef9cc6558794",
   "pdf_sha256": "6f50db70738a8340276fdb65cc59204423c13953f7634a997c3be6f4fbc65250",
   "config": {
    "model": "gpt-6-luna",
@@ -157,7 +180,11 @@
    "agent_model": "gpt-6-luna",
    "agent_reasoning_effort": "medium",
    "wait_for_map": false,
-   "max_units": 150
+   "max_units": 150,
+   "omission_review": false,
+   "omission_max_units": 3,
+   "visual_verification": false,
+   "visual_max_relations": 12
   },
   "segment_ids": [
    "p1.b1",

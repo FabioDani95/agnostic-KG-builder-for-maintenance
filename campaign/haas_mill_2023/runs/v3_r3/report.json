@@ -1,135 +1,316 @@
 {
  "status": "approved",
+ "incomplete_reasons": [],
+ "empty_extraction_units": [
+  "u001-690186",
+  "u003-8a0262",
+  "u006-84520e",
+  "u007-8b4a42",
+  "u008-225955",
+  "u012-b7f559"
+ ],
+ "failed_units": [
+  {
+   "unit_id": "u001-690186",
+   "segments": [
+    "p59.b10",
+    "p59.b9"
+   ]
+  },
+  {
+   "unit_id": "u002-294f5d",
+   "segments": [
+    "p70.t1.r2",
+    "p70.t1.r3",
+    "p70.t1.r4",
+    "p70.t1.r5"
+   ]
+  },
+  {
+   "unit_id": "u003-8a0262",
+   "segments": []
+  },
+  {
+   "unit_id": "u006-84520e",
+   "segments": [
+    "p100.b11",
+    "p100.b12",
+    "p100.b4",
+    "p100.b5",
+    "p100.b6",
+    "p100.b7",
+    "p100.b8"
+   ]
+  },
+  {
+   "unit_id": "u007-8b4a42",
+   "segments": [
+    "p101.b11",
+    "p101.b12",
+    "p101.b13",
+    "p101.b4",
+    "p101.b5",
+    "p101.b6",
+    "p101.b7",
+    "p101.b8"
+   ]
+  },
+  {
+   "unit_id": "u008-225955",
+   "segments": []
+  },
+  {
+   "unit_id": "u009-84a23e",
+   "segments": [
+    "p142.t1.r1",
+    "p142.t1.r2",
+    "p142.t1.r3",
+    "p142.t1.r4",
+    "p142.t1.r5",
+    "p142.t1.r6",
+    "p142.t1.r7",
+    "p142.t1.r8",
+    "p143.t1.r4",
+    "p143.t1.r7",
+    "p143.t2.r2",
+    "p143.t2.r3",
+    "p143.t2.r4",
+    "p143.t2.r5",
+    "p143.t2.r6",
+    "p143.t2.r7"
+   ]
+  },
+  {
+   "unit_id": "u010-96e850",
+   "segments": [
+    "p145.t2.r3",
+    "p145.t2.r6",
+    "p145.t2.r7",
+    "p146.t1.r1",
+    "p146.t1.r2",
+    "p146.t1.r3",
+    "p146.t1.r4",
+    "p146.t1.r5",
+    "p146.t1.r6",
+    "p146.t1.r7",
+    "p146.t1.r8",
+    "p146.t2.r1",
+    "p146.t2.r2",
+    "p146.t2.r3",
+    "p146.t2.r4",
+    "p146.t2.r5",
+    "p146.t2.r6"
+   ]
+  },
+  {
+   "unit_id": "u012-b7f559",
+   "segments": []
+  }
+ ],
  "pages": 187,
  "page_labels": {
-  "other": 153,
-  "procedure": 22,
-  "diagnostic": 12
+  "other": 160,
+  "procedure": 11,
+  "diagnostic": 16
  },
  "diagnostic_pages": [
   59,
   70,
+  75,
   86,
   94,
-  96,
-  97,
+  100,
   101,
+  132,
+  141,
+  142,
   143,
   144,
   145,
   146,
-  160
+  160,
+  161
  ],
  "confirmed_pages": [
   59,
   70,
-  97,
+  75,
+  86,
+  94,
   101,
+  132,
+  141,
+  142,
   143,
   144,
   145,
-  160
+  146,
+  160,
+  161
  ],
  "map_demotions_refused": [
   70,
+  161
+ ],
+ "map_removed_pages": [
+  85,
+  87,
+  95,
+  96,
   97
  ],
+ "read_pages": [
+  59,
+  70,
+  75,
+  86,
+  94,
+  100,
+  101,
+  132,
+  141,
+  142,
+  143,
+  144,
+  145,
+  146,
+  160,
+  161
+ ],
  "blocked_merges": [
+  {
+   "left": "FailureMode|low gearbox oil flow",
+   "right": "FailureMode|low gearbox oil flow persisting for 1 minute",
+   "reason": "different_numbers",
+   "constraint_left": "FailureMode|low gearbox oil flow",
+   "constraint_right": "FailureMode|low gearbox oil flow persisting for 1 minute"
+  },
   {
    "left": "Symptom|low air flow icon",
    "right": "Symptom|low air flow icon in metric mode",
    "reason": "different",
    "constraint_left": "Symptom|low air flow icon in inch mode",
    "constraint_right": "Symptom|low air flow icon in metric mode"
-  },
-  {
-   "left": "CorrectiveAction|touch the tool-probe stylus",
-   "right": "CorrectiveAction|touch the work-probe stylus",
-   "reason": "different",
-   "constraint_left": "CorrectiveAction|touch the tool probe stylus",
-   "constraint_right": "CorrectiveAction|touch the work-probe stylus"
   }
  ],
- "orphan_causes": 2,
- "problems_without_action": 21,
+ "orphan_causes": 3,
+ "problems_without_action": 29,
  "orphan_cause_ids": [
-  "v3n_08fc3ae1fab319066a9c",
-  "v3n_c3d981c46098ccb2c1fc"
+  "v3n_3004e71ac441467e5933",
+  "v3n_9b645137d77fb88aaca9",
+  "v3n_ac6edfd06b867d40bd9b"
  ],
  "problem_without_action_ids": [
+  "v3n_0465d22172c1dbffe533",
+  "v3n_076814cf8854f194e32a",
   "v3n_0ed159dcf767e02a0f10",
+  "v3n_1387b79b569751b3435b",
   "v3n_22daf3d2fa715fa8e4a1",
   "v3n_329e28dc043cb14473be",
-  "v3n_38f03a74185159760e2e",
-  "v3n_3c8cf5effb0c0ac2ae0f",
-  "v3n_58baaa6f8d8615bd81e8",
-  "v3n_677cbd18100547f0ed85",
+  "v3n_37aecc324a7084fcd4c7",
+  "v3n_49fd3ab3ffe7a1f6a9e4",
   "v3n_6987e900ad7477035ba2",
+  "v3n_6c4aaed86462e4b6f46a",
   "v3n_705513c0050631f23580",
   "v3n_75038d9e96db3bd42114",
-  "v3n_799e301e811a7c6cde51",
-  "v3n_7d548de3df5a2d2f9f0e",
-  "v3n_83e6341cf8bbbc274833",
-  "v3n_9b3be0727d1385c370e5",
-  "v3n_aee1ce8df6231863c275",
+  "v3n_7c1205c56980fb518101",
+  "v3n_8755afe2fb2bac73df2a",
+  "v3n_986f7d8e5260c5d74ecc",
+  "v3n_99e42ff0b13374062157",
+  "v3n_a60e7f2c56d48d49b97e",
+  "v3n_a652783414007bf80dbd",
+  "v3n_a9ee7432b58077ae4322",
+  "v3n_b3582e8cbf871d9b1e76",
+  "v3n_b768179a4c006fa90146",
   "v3n_b79c33634105aa7f7c18",
-  "v3n_bdcdb5b43629d6de47b1",
-  "v3n_cbf8bda76e1f244e4d4c",
+  "v3n_c049b759b4925198626b",
+  "v3n_c3df4e706600f7d9c1f5",
+  "v3n_ca988e366cd840c0a9d3",
   "v3n_d404af52aa82422043a9",
-  "v3n_dcac68ee79a1efd5cde0",
-  "v3n_ee24f14ba63cac416004"
+  "v3n_f2a0d2c688919d550874",
+  "v3n_f3c7e3b3eab6930e7a53",
+  "v3n_ff83aa20fa72bd91aa41"
  ],
- "units": 9,
+ "units": 12,
  "failed_reads": 0,
- "proposals": 203,
+ "proposals": 222,
+ "omission_review_enabled": false,
+ "visual_verification_enabled": false,
+ "visual_checks": [],
+ "omission_relations": 0,
  "unresolved_references": [],
  "unclear_passages": 0,
  "extraction_notes": [
+  "A: empty structured reading retried",
+  "A: empty unit split in halves",
+  "B: empty structured reading retried",
+  "B: empty unit split in halves",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
   "coverage: 4 unused table row(s) read again",
-  "B: cause 'Surge protector fault detected' repeats its problem, marked unnamed",
-  "coverage: 18 unused table row(s) read again",
-  "coverage: 6 unused table row(s) read again"
+  "A: empty structured reading retried",
+  "A: empty unit split in halves",
+  "B: empty structured reading retried",
+  "B: empty unit split in halves",
+  "A: empty structured reading retried",
+  "A: empty unit split in halves",
+  "B: empty structured reading retried",
+  "B: empty unit split in halves",
+  "B: cause 'Low coolant concentrate' repeats its problem, marked unnamed",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
+  "C: cause 'Rotary brake oil level is low' repeats its problem, marked unnamed",
+  "coverage: 32 unused table row(s) read again",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
+  "coverage: 17 unused table row(s) read again"
  ],
  "assertions_by_tier": {
-  "green": 113,
-  "red": 12
+  "green": 167,
+  "red": 18
  },
  "witnesses": {
-  "structure": 84,
-  "agreement": 78,
-  "verifier": 50,
-  "reviewer": 19
+  "structure": 125,
+  "agreement": 39,
+  "verifier": 129,
+  "reviewer": 52
  },
  "verifier_verdicts": {
-  "not_called": 65,
-  "supported": 50,
-  "not_supported": 10
+  "not_called": 32,
+  "supported": 129,
+  "not_supported": 23,
+  "unclear": 1
  },
  "graph": {
-  "nodes": 150,
+  "nodes": 192,
   "nodes_by_type": {
-   "ErrorCode": 2,
-   "FailureMode": 38,
-   "Component": 30,
-   "Symptom": 37,
-   "CorrectiveAction": 43
+   "ErrorCode": 15,
+   "FailureMode": 51,
+   "Component": 36,
+   "Symptom": 44,
+   "CorrectiveAction": 46
   },
-  "edges": 121,
+  "edges": 166,
   "edges_by_tier": {
-   "green": 109,
+   "green": 154,
    "red": 12
   },
-  "merged_aliases": 67
+  "merged_aliases": 33
  },
  "gates": {
   "map": {
-   "questions": 1,
-   "answered": 1,
-   "pending": 0
+   "questions": 3,
+   "answered": 2,
+   "pending": 1
   },
   "doubts": {
-   "questions": 16,
-   "answered": 16,
+   "questions": 35,
+   "answered": 33,
+   "pending": 2
+  },
+  "recovery": {
+   "questions": 3,
+   "answered": 3,
    "pending": 0
   },
   "approval": {
@@ -139,54 +320,59 @@
   }
  },
  "answers_by_reviewer": {
-  "agent": 17,
+  "agent": 38,
   "auto": 1
  },
- "human_questions_offered": 0,
+ "human_questions_offered": 3,
  "deferred_questions": [],
- "human_questions": 0,
- "reviewer_confirmed": 19,
+ "human_questions": 3,
+ "reviewer_confirmed": 52,
  "merged_cell_relations": 0,
  "usage": {
-  "calls": 35,
+  "calls": 89,
   "failed_calls": 0,
-  "prompt_tokens": 124849,
-  "completion_tokens": 39592,
-  "estimated_cost_usd": 0.02491,
+  "prompt_tokens": 294479,
+  "completion_tokens": 51643,
+  "estimated_cost_usd": 0.040132,
   "by_operation": {
-   "kg_v3_extract": 21,
-   "kg_v3_map": 8,
-   "kg_v3_merge": 3,
-   "kg_v3_verify": 3
+   "kg_v3_extract": 54,
+   "kg_v3_map": 17,
+   "kg_v3_merge": 7,
+   "kg_v3_reduce_action": 1,
+   "kg_v3_verify": 10
   }
  },
  "agent_usage": {
-  "calls": 17,
+  "calls": 41,
   "failed_calls": 0,
-  "prompt_tokens": 26733,
-  "completion_tokens": 5963,
-  "estimated_cost_usd": 0.006025,
+  "prompt_tokens": 42119,
+  "completion_tokens": 15400,
+  "estimated_cost_usd": 0.012321,
   "by_operation": {
-   "AgentDecision": 17
+   "AgentDecision": 41
   }
  },
  "seconds": {
-  "map": 11.624,
-  "gate_map": 14.705,
-  "extract": 42.657,
-  "check": 8.48,
-  "merge": 7.633,
-  "gate_doubts": 12.26,
+  "map": 13.938,
+  "gate_map": 18.057,
+  "extract": 58.181,
+  "check": 7.909,
+  "merge": 11.334,
+  "split_recheck": 6.817,
+  "navigation": 1.586,
+  "gate_doubts": 35.304,
+  "action_reduction": 10.991,
+  "gate_recovery": 3.584,
   "gate_approval": 0.0,
-  "total": 97.643,
-  "pdf_read": 11.069,
-  "end_to_end": 109.332
+  "total": 168.067,
+  "pdf_read": 10.898,
+  "end_to_end": 179.662
  },
  "prompt_ids": {
   "extraction": "711f1b166c488e74"
  },
  "provenance": {
-  "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+  "commit": "79501aecbb19805f3e099118669fef9cc6558794",
   "pdf_sha256": "402f553b6b492e4c898e3a350f177d5067969c82fbf801fb2792015de4077b0c",
   "config": {
    "model": "gpt-6-luna",
@@ -209,7 +395,11 @@
    "agent_model": "gpt-6-luna",
    "agent_reasoning_effort": "medium",
    "wait_for_map": false,
-   "max_units": 150
+   "max_units": 150,
+   "omission_review": false,
+   "omission_max_units": 3,
+   "visual_verification": false,
+   "visual_max_relations": 12
   },
   "segment_ids": [
    "p1.b1",

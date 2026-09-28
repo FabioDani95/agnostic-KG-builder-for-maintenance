@@ -1,9 +1,12 @@
 {
  "status": "approved",
+ "incomplete_reasons": [],
+ "empty_extraction_units": [],
+ "failed_units": [],
  "pages": 18,
  "page_labels": {
-  "other": 8,
-  "procedure": 2,
+  "other": 7,
+  "procedure": 3,
   "diagnostic": 2,
   "parts": 6
  },
@@ -11,63 +14,57 @@
   8,
   9
  ],
- "confirmed_pages": [
+ "confirmed_pages": [],
+ "map_demotions_refused": [],
+ "map_removed_pages": [
+  7
+ ],
+ "read_pages": [
   8,
   9
  ],
- "map_demotions_refused": [],
- "blocked_merges": [
-  {
-   "left": "CorrectiveAction|turn fluid knob in on gun",
-   "right": "CorrectiveAction|turn the fluid knob in on the gun see spray techniques in operation manual 309915",
-   "reason": "different_numbers",
-   "constraint_left": "CorrectiveAction|turn fluid knob in on gun",
-   "constraint_right": "CorrectiveAction|turn the fluid knob in on the gun see spray techniques in operation manual 309915"
-  },
-  {
-   "left": "CorrectiveAction|turn fluid knob out on gun",
-   "right": "CorrectiveAction|turn the fluid knob out on the gun see spray techniques in operation manual 309915",
-   "reason": "different_numbers",
-   "constraint_left": "CorrectiveAction|turn fluid knob out on gun",
-   "constraint_right": "CorrectiveAction|turn the fluid knob out on the gun see spray techniques in operation manual 309915"
-  }
- ],
+ "blocked_merges": [],
  "orphan_causes": 0,
  "problems_without_action": 0,
  "orphan_cause_ids": [],
  "problem_without_action_ids": [],
  "units": 1,
  "failed_reads": 0,
- "proposals": 117,
+ "proposals": 116,
+ "omission_review_enabled": false,
+ "visual_verification_enabled": false,
+ "visual_checks": [],
+ "omission_relations": 0,
  "unresolved_references": [],
  "unclear_passages": 0,
  "extraction_notes": [],
  "assertions_by_tier": {
-  "green": 62,
-  "red": 2
+  "green": 89,
+  "red": 12
  },
  "witnesses": {
-  "structure": 62,
-  "agreement": 55,
-  "verifier": 8,
-  "reviewer": 1
+  "structure": 97,
+  "agreement": 24,
+  "verifier": 61,
+  "reviewer": 7
  },
  "verifier_verdicts": {
-  "not_called": 56,
-  "supported": 8
+  "not_called": 24,
+  "supported": 61,
+  "not_supported": 16
  },
  "graph": {
-  "nodes": 56,
+  "nodes": 59,
   "nodes_by_type": {
    "Symptom": 6,
    "FailureMode": 14,
-   "CorrectiveAction": 28,
+   "CorrectiveAction": 31,
    "Component": 8
   },
-  "edges": 52,
+  "edges": 69,
   "edges_by_tier": {
-   "green": 50,
-   "red": 2
+   "green": 62,
+   "red": 7
   },
   "merged_aliases": 11
  },
@@ -78,8 +75,13 @@
    "pending": 0
   },
   "doubts": {
-   "questions": 3,
-   "answered": 3,
+   "questions": 13,
+   "answered": 13,
+   "pending": 0
+  },
+  "recovery": {
+   "questions": 0,
+   "answered": 0,
    "pending": 0
   },
   "approval": {
@@ -89,54 +91,58 @@
   }
  },
  "answers_by_reviewer": {
-  "agent": 4,
+  "agent": 14,
   "auto": 1
  },
  "human_questions_offered": 0,
  "deferred_questions": [],
  "human_questions": 0,
- "reviewer_confirmed": 1,
- "merged_cell_relations": 4,
+ "reviewer_confirmed": 7,
+ "merged_cell_relations": 15,
  "usage": {
-  "calls": 8,
+  "calls": 25,
   "failed_calls": 0,
-  "prompt_tokens": 24989,
-  "completion_tokens": 12063,
-  "estimated_cost_usd": 0.008387,
+  "prompt_tokens": 116815,
+  "completion_tokens": 15976,
+  "estimated_cost_usd": 0.021949,
   "by_operation": {
    "kg_v3_extract": 2,
-   "kg_v3_map": 2,
-   "kg_v3_merge": 2,
-   "kg_v3_verify": 2
+   "kg_v3_map": 11,
+   "kg_v3_merge": 4,
+   "kg_v3_reduce_action": 1,
+   "kg_v3_verify": 7
   }
  },
  "agent_usage": {
-  "calls": 4,
+  "calls": 14,
   "failed_calls": 0,
-  "prompt_tokens": 4531,
-  "completion_tokens": 891,
-  "estimated_cost_usd": 0.000942,
+  "prompt_tokens": 14300,
+  "completion_tokens": 4607,
+  "estimated_cost_usd": 0.00393,
   "by_operation": {
-   "AgentDecision": 4
+   "AgentDecision": 14
   }
  },
  "seconds": {
-  "map": 3.317,
-  "gate_map": 3.745,
-  "extract": 23.875,
-  "check": 2.493,
-  "merge": 7.829,
-  "gate_doubts": 3.179,
-  "gate_approval": 0.0,
-  "total": 44.521,
-  "pdf_read": 2.162,
-  "end_to_end": 47.204
+  "map": 9.09,
+  "gate_map": 3.865,
+  "extract": 26.63,
+  "check": 4.814,
+  "merge": 10.81,
+  "split_recheck": 2.14,
+  "gate_doubts": 15.284,
+  "action_reduction": 10.029,
+  "gate_recovery": 0.001,
+  "gate_approval": 0.001,
+  "total": 82.748,
+  "pdf_read": 2.333,
+  "end_to_end": 85.753
  },
  "prompt_ids": {
   "extraction": "703ed28e586be6f2"
  },
  "provenance": {
-  "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+  "commit": "79501aecbb19805f3e099118669fef9cc6558794",
   "pdf_sha256": "6fcce36452357f3f38f73b13b88b9b657cbb6eae2c1b7940efb4af376b8461ca",
   "config": {
    "model": "gpt-6-luna",
@@ -159,7 +165,11 @@
    "agent_model": "gpt-6-luna",
    "agent_reasoning_effort": "medium",
    "wait_for_map": false,
-   "max_units": 150
+   "max_units": 150,
+   "omission_review": false,
+   "omission_max_units": 3,
+   "visual_verification": false,
+   "visual_max_relations": 12
   },
   "segment_ids": [
    "p1.b1",

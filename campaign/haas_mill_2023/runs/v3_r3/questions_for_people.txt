@@ -1,0 +1,63 @@
+Question map:98-151 (map_review)
+Is this page map right for extracting troubleshooting knowledge?
+
+What the system proposes:
+  - Diagnostic pages to read in detail: 100-101, 132, 141-146.
+  - Pages both map readings label diagnostic (always read, a change cannot drop them): 101, 132, 141-146.
+  - Pages labelled diagnostic with doubt: 100-101, 132, 141-146, 148-151.
+  - Unreadable pages (no text): none.
+  - Label and outline of every page follow.
+  - other | p98: 11.4 | MILL OPERATION - SAFE RUN MODE / Safe Run Mode / The purpose of Safe Run  ... Safe Run Mode / Safe Run does the following: / • Slow down the speed of the moti
+  - other | p99: 11.4 | MILL OPERATION - SAFE RUN MODE / Safe Run is active during jogging as wel ... 2023 Mill Operator’s Manual | 99
+  - diagnostic, unsure | p100: 11.5 | MILL OPERATION - RUN-STOP-JOG-CONTINUE / Run-Stop-Jog-Continue / This fea ... Run-Stop-Jog-Continue / 1. Press FEED HOLD. Axis motion stops. The spindle conti
+  - diagnostic, unsure | p101: 11.6 | MILL OPERATION - GRAPHICS MODE / Graphics Mode / A safe way to troublesho ... Graphics Mode / 4) Graphics Speed Press f3 or f4 to run the desired graphics spe
+  - other | p102: 12.1 | MILL - PROGRAMMING / Basic Programming / A typical CNC program has (3) pa ... Basic Programming / A typical CNC program has (3) parts: / O40001 (Basic program
+  - other | p131 [2 table(s): #1064 = X Axis | #1264 = C axis]: 13.6 | MILL MACRO - VARIABLES / Specific output values can be read, or written t ... Example: / #10000=#12018 ; / Maximum Axis Loads / Tool Offsets / 2023 Mill Opera
+  - diagnostic, unsure | p132: 13.6 | MILL MACRO - VARIABLES / System Variables In-Depth (Cont.) / #3000 Progra ... System Variables In-Depth (Cont.) / #3000 Programmable Alarm Messages / System O
+  - other | p133 [1 table(s): #3004 | FEED HOLD | FEED RATE OVERRIDE | EXACT STOP CHECK]: 13.6 | MILL MACRO - VARIABLES / Variable #3004 / Variable #3004 overrides specif ... Variable #3004 / Variable #3004 overrides specific control features during opera
+  - other | p140: 13.8 | ALIASING / Aliasing / Aliased codes are user defined G and M-codes that r ... Aliasing / G06 X.5 Y.25 Z.05 F10. T10 ; / 140 | 2023 Mill Operator’s Manual
+  - diagnostic, unsure | p141 [2 table(s): Icon Guide | ]: 14.1 | MILL - CONTROL ICON GUIDE / Icon Guide / Setup | Setup mode is locked; th ... Icon Guide / 2023 Mill Operator’s Manual | 141
+  - diagnostic, unsure | p142 [2 table(s): Icon Guide | ]: 14.1 | MILL - CONTROL ICON GUIDE / Icon Guide / Rapid | The machine is executing ... Icon Guide / 142 | 2023 Mill Operator’s Manual
+  - diagnostic, unsure | p143 [2 table(s): Icon Guide | ]: 14.1 | MILL - CONTROL ICON GUIDE / Icon Guide / Low Oil | The rotary brake oil l ... Icon Guide / 2023 Mill Operator’s Manual | 143
+  - diagnostic, unsure | p144 [2 table(s): Icon Guide | ]: 14.1 | MILL - CONTROL ICON GUIDE / Icon Guide / HPU Oil Low | The HPU oil level  ... Icon Guide / 144 | 2023 Mill Operator’s Manual
+  - diagnostic, unsure | p145 [2 table(s): Icon Guide | ]: 14.1 | MILL - CONTROL ICON GUIDE / Icon Guide / Low Air (Warning) | The air pres ... Icon Guide / 2023 Mill Operator’s Manual | 145
+  - diagnostic, unsure | p146 [2 table(s): Icon Guide | ]: 14.1 | MILL - CONTROL ICON GUIDE / Icon Guide / TC Door Open | The side-mount to ... Icon Guide / 146 | 2023 Mill Operator’s Manual
+  - other | p147: 15.1 | MILL - RJH-TOUCH XL OVERVIEW / RJH-Touch XL Overview / The Remote Jog Han ... RJH-Touch XL Overview / The illustration shows these components: / 1. Cycle Star
+  - other, unsure | p148: 15.2 | MILL - RJH-TOUCH XL MANUAL JOGGING / RJH-Touch XL Manual Jogging / 1. Pre ... RJH-Touch XL Manual Jogging / 1. Press [MENU] on the screen. / 2. Press Manual J
+  - other, unsure | p149: 15.3 | MILL - RJH-XL - TOOL OFFSETS / RJH-XL - Tool Offsets / To access this fun ... RJH-XL - Tool Offsets / Press the .001, .0010, .0100, or .1000 on the screen to 
+  - other, unsure | p150: 15.4 | MILL - RJH-TOUCH XL WORK OFFSETS / RJH-XL - Work Offsets / To access this ... RJH-XL - Work Offsets / Press the .0001, .0010, .0100, or .1000 on the screen to
+  - other, unsure | p151: 15.5 | MILL - RJH-TOUCH XL ZERO RETURN / RJH-XL - Work Offsets / To access this  ... RJH-XL - Work Offsets / Press the .0001, .0010, .0100, or .1000 on the screen to
+
+Answer with one option ID:
+  confirm: Yes, the map is right -> the labelled diagnostic pages are read in detail
+  correct: Change some page labels (write the correction) -> the listed pages get the new labels before reading; pages both map readings label diagnostic stay diagnostic
+
+Question merge:FailureMode|low coolant concentrate|FailureMode|unspecified cause of low coolant concentrate icon (merge_check)
+Do 'Low coolant concentrate' and 'Unspecified cause of low coolant concentrate icon' denote the same FailureMode?
+
+What the manual says:
+  [p142.t2.r1] page 142: column 1: Low Gearbox Oil Flow | column 2: This icon appears when low gearbox oil flow persists for 1 minute.
+  [p142.t2.r5] page 142: column 1: Low Coolant Concentrate | column 2: Fill the concentrate reservoir for the coolant refill system.
+  [p142.t2.r5] page 142: column 1: Low Coolant Concentrate | column 2: Fill the concentrate reservoir for the coolant refill system.
+
+What the system proposes:
+  - Keep 'Low coolant concentrate' and 'Unspecified cause of low coolant concentrate icon' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:Component|control cabinet air filters|Component|electronics cabinet air filters (merge_check)
+Do 'Control cabinet air filters' and 'Electronics cabinet air filters' denote the same Component?
+
+What the manual says:
+  [p144.t1.r1] page 144: Icon Guide: HPU Oil Low | column 2: The HPU oil level is low. Check the oil level and add the recommended oil for the machine.
+  [p144.t1.r4] page 144: Icon Guide: Electronics Overheat (Warning) | column 2: This icon appears when the control has detected cabinet temperatures are approaching levels that are potentially dangerous to the electronics. If the temperature reaches or exceeds this recommended level alarm 253 ELECTRONICS OVERHEAT will be generated. Inspect the cabinet for clogged air filters and correctly operating fans.
+  [p144.t1.r5] page 144: Icon Guide: Electronics Overheat (Alarm) | column 2: This icon appears when the electronics remains in the overheat state for too long. The machine will not operate until the con­ dition is corrected. Inspect the cabinet for clogged air filters and correctly operating fans.
+
+What the system proposes:
+  - Keep 'Control cabinet air filters' and 'Electronics cabinet air filters' as two separate Component nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

@@ -1,10 +1,32 @@
 {
  "status": "approved",
+ "incomplete_reasons": [],
+ "empty_extraction_units": [
+  "u001-12d1b9"
+ ],
+ "failed_units": [
+  {
+   "unit_id": "u001-12d1b9",
+   "segments": [
+    "p27.t1.r1",
+    "p27.t2.r1"
+   ]
+  },
+  {
+   "unit_id": "u002-4530a6",
+   "segments": [
+    "p28.t1.r2",
+    "p28.t1.r8",
+    "p29.t1.r2",
+    "p29.t1.r5"
+   ]
+  }
+ ],
  "pages": 36,
  "page_labels": {
-  "other": 25,
-  "procedure": 7,
+  "other": 31,
   "parts": 1,
+  "procedure": 1,
   "diagnostic": 3
  },
  "diagnostic_pages": [
@@ -18,49 +40,69 @@
   29
  ],
  "map_demotions_refused": [],
+ "map_removed_pages": [
+  26
+ ],
+ "read_pages": [
+  27,
+  28,
+  29
+ ],
  "blocked_merges": [],
  "orphan_causes": 0,
  "problems_without_action": 0,
  "orphan_cause_ids": [],
  "problem_without_action_ids": [],
- "units": 1,
+ "units": 2,
  "failed_reads": 0,
- "proposals": 127,
+ "proposals": 158,
+ "omission_review_enabled": false,
+ "visual_verification_enabled": false,
+ "visual_checks": [],
+ "omission_relations": 0,
  "unresolved_references": [],
- "unclear_passages": 0,
+ "unclear_passages": 1,
  "extraction_notes": [
+  "A: empty structured reading retried",
+  "A: empty unit split in halves",
+  "B: empty structured reading retried",
+  "B: empty unit split in halves",
+  "B: cause 'Communication error between display P.C. board and power control board' repeats its problem, marked unnamed",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
   "coverage: 4 unused table row(s) read again"
  ],
  "assertions_by_tier": {
-  "green": 103,
-  "red": 12
+  "green": 110,
+  "red": 47
  },
  "witnesses": {
-  "structure": 49,
-  "agreement": 29,
-  "verifier": 79,
-  "reviewer": 55
+  "structure": 61,
+  "agreement": 32,
+  "verifier": 70,
+  "reviewer": 68
  },
  "verifier_verdicts": {
-  "not_called": 16,
-  "not_supported": 20,
-  "supported": 79
+  "not_called": 32,
+  "not_supported": 53,
+  "supported": 70,
+  "unclear": 2
  },
  "graph": {
-  "nodes": 80,
+  "nodes": 93,
   "nodes_by_type": {
-   "Symptom": 6,
-   "FailureMode": 27,
-   "CorrectiveAction": 34,
-   "Component": 10,
+   "Symptom": 7,
+   "FailureMode": 22,
+   "CorrectiveAction": 40,
+   "Component": 21,
    "ErrorCode": 3
   },
-  "edges": 98,
+  "edges": 119,
   "edges_by_tier": {
-   "green": 89,
-   "red": 9
+   "green": 94,
+   "red": 25
   },
-  "merged_aliases": 21
+  "merged_aliases": 19
  },
  "gates": {
   "map": {
@@ -69,8 +111,13 @@
    "pending": 0
   },
   "doubts": {
-   "questions": 14,
-   "answered": 14,
+   "questions": 17,
+   "answered": 17,
+   "pending": 0
+  },
+  "recovery": {
+   "questions": 5,
+   "answered": 5,
    "pending": 0
   },
   "approval": {
@@ -80,54 +127,58 @@
   }
  },
  "answers_by_reviewer": {
-  "agent": 15,
+  "agent": 23,
   "auto": 1
  },
  "human_questions_offered": 0,
  "deferred_questions": [],
  "human_questions": 0,
- "reviewer_confirmed": 55,
- "merged_cell_relations": 23,
+ "reviewer_confirmed": 68,
+ "merged_cell_relations": 27,
  "usage": {
-  "calls": 12,
+  "calls": 30,
   "failed_calls": 0,
-  "prompt_tokens": 76786,
-  "completion_tokens": 17705,
-  "estimated_cost_usd": 0.016134,
+  "prompt_tokens": 201785,
+  "completion_tokens": 27986,
+  "estimated_cost_usd": 0.034015,
   "by_operation": {
-   "kg_v3_extract": 3,
-   "kg_v3_map": 2,
-   "kg_v3_merge": 1,
-   "kg_v3_verify": 6
+   "kg_v3_extract": 14,
+   "kg_v3_map": 3,
+   "kg_v3_merge": 3,
+   "kg_v3_reduce_action": 1,
+   "kg_v3_verify": 9
   }
  },
  "agent_usage": {
-  "calls": 15,
+  "calls": 23,
   "failed_calls": 0,
-  "prompt_tokens": 27036,
-  "completion_tokens": 7781,
-  "estimated_cost_usd": 0.007243,
+  "prompt_tokens": 33755,
+  "completion_tokens": 10794,
+  "estimated_cost_usd": 0.009588,
   "by_operation": {
-   "AgentDecision": 15
+   "AgentDecision": 23
   }
  },
  "seconds": {
-  "map": 4.932,
-  "gate_map": 4.798,
-  "extract": 33.429,
-  "check": 6.781,
-  "merge": 4.718,
-  "gate_doubts": 22.535,
+  "map": 9.333,
+  "gate_map": 9.545,
+  "extract": 49.095,
+  "check": 11.117,
+  "merge": 11.801,
+  "split_recheck": 9.231,
+  "gate_doubts": 25.266,
+  "action_reduction": 20.55,
+  "gate_recovery": 6.73,
   "gate_approval": 0.0,
-  "total": 77.33,
-  "pdf_read": 5.202,
-  "end_to_end": 83.13
+  "total": 152.801,
+  "pdf_read": 5.503,
+  "end_to_end": 159.033
  },
  "prompt_ids": {
   "extraction": "4dea05d29b008ba2"
  },
  "provenance": {
-  "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+  "commit": "79501aecbb19805f3e099118669fef9cc6558794",
   "pdf_sha256": "0d981135554379c9175510bf670559c50ee9f66db8419aa9d4341ddaf8bba133",
   "config": {
    "model": "gpt-6-luna",
@@ -150,7 +201,11 @@
    "agent_model": "gpt-6-luna",
    "agent_reasoning_effort": "medium",
    "wait_for_map": false,
-   "max_units": 150
+   "max_units": 150,
+   "omission_review": false,
+   "omission_max_units": 3,
+   "visual_verification": false,
+   "visual_max_relations": 12
   },
   "segment_ids": [
    "p1.b1",

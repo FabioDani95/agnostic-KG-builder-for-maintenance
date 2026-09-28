@@ -304,3 +304,9 @@ Atlas D/r3 è vuoto ma automaticamente approvato: correzione successiva `bec1e7c
 verificata su replay controllato delle stesse risposte (34/49 rami), distinta dal confronto
 D e non sostituita al fallimento. Spesa aggiuntiva 1,113197 USD entro 5 autorizzati;
 116 test e Ruff verdi. Nessun risultato trasferito al codice finale o al test indipendente.
+
+Iterazione E (2026-09-28): completezza dei rami con quattro correzioni dopo la code review. Stesso
+valutatore prima e dopo: rami 669 → 736/900 (81,8%, IC95 0,791–0,842), nessuna esecuzione vuota,
+fusioni vietate 0; cause orfane in aumento (35 → 53) e costo per esecuzione da circa 1,5 a 3–11
+centesimi. Numeri di sviluppo. Primo manuale di test in preparazione: Grizzly G0872 (gold da
+annotare prima di qualsiasi esecuzione). Spesa 5,929 USD su 10.

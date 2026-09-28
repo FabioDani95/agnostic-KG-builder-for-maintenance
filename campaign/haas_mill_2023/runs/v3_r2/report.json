@@ -1,14 +1,97 @@
 {
  "status": "approved",
+ "incomplete_reasons": [],
+ "empty_extraction_units": [
+  "u002-690186",
+  "u004-8a0262",
+  "u008-8b4a42"
+ ],
+ "failed_units": [
+  {
+   "unit_id": "u002-690186",
+   "segments": [
+    "p59.b10",
+    "p59.b9"
+   ]
+  },
+  {
+   "unit_id": "u003-294f5d",
+   "segments": [
+    "p70.t1.r2",
+    "p70.t1.r3",
+    "p70.t1.r4",
+    "p70.t1.r5"
+   ]
+  },
+  {
+   "unit_id": "u004-8a0262",
+   "segments": []
+  },
+  {
+   "unit_id": "u008-8b4a42",
+   "segments": [
+    "p101.b11",
+    "p101.b12",
+    "p101.b13",
+    "p101.b4",
+    "p101.b5",
+    "p101.b6",
+    "p101.b7",
+    "p101.b8"
+   ]
+  },
+  {
+   "unit_id": "u009-84a23e",
+   "segments": [
+    "p141.t1.r1",
+    "p141.t1.r2",
+    "p141.t1.r4",
+    "p141.t1.r5",
+    "p141.t1.r8",
+    "p141.t2.r1",
+    "p141.t2.r2",
+    "p141.t2.r3",
+    "p141.t2.r4",
+    "p141.t2.r5",
+    "p141.t2.r6",
+    "p141.t2.r7",
+    "p141.t2.r8",
+    "p142.t1.r1"
+   ]
+  },
+  {
+   "unit_id": "u010-96e850",
+   "segments": [
+    "p145.t2.r3",
+    "p145.t2.r6",
+    "p145.t2.r7",
+    "p146.t1.r1",
+    "p146.t1.r2",
+    "p146.t1.r3",
+    "p146.t1.r4",
+    "p146.t1.r5",
+    "p146.t1.r7",
+    "p146.t1.r8",
+    "p146.t2.r1",
+    "p146.t2.r2",
+    "p146.t2.r3",
+    "p146.t2.r4",
+    "p146.t2.r5",
+    "p146.t2.r6"
+   ]
+  }
+ ],
  "pages": 187,
  "page_labels": {
-  "other": 143,
-  "procedure": 31,
-  "diagnostic": 13
+  "other": 152,
+  "diagnostic": 15,
+  "procedure": 20
  },
  "diagnostic_pages": [
+  20,
   59,
   70,
+  75,
   86,
   94,
   97,
@@ -22,12 +105,16 @@
   160
  ],
  "confirmed_pages": [
+  20,
   59,
   70,
+  75,
   86,
   94,
   97,
   101,
+  141,
+  142,
   143,
   144,
   145,
@@ -35,103 +122,158 @@
   160
  ],
  "map_demotions_refused": [
+  20,
+  70
+ ],
+ "map_removed_pages": [
+  60,
+  85,
+  87,
+  93,
+  95,
+  96,
+  100
+ ],
+ "read_pages": [
+  20,
+  59,
   70,
-  97
+  75,
+  86,
+  94,
+  97,
+  101,
+  141,
+  142,
+  143,
+  144,
+  145,
+  146,
+  160
  ],
  "blocked_merges": [],
  "orphan_causes": 6,
- "problems_without_action": 26,
+ "problems_without_action": 28,
  "orphan_cause_ids": [
-  "v3n_57868f885da798156472",
-  "v3n_a9c78b1cfa25b11d683e",
-  "v3n_ca2bccaad5037d322070",
-  "v3n_d4ec21439a33d98f0479",
-  "v3n_dffb950ebeb2b12d22a0",
-  "v3n_e0a86d927d9616ae5082"
+  "v3n_2678f0a3e5f8828cf14d",
+  "v3n_8b9b3f8a615565472500",
+  "v3n_910a0a610ed98ad1a6f5",
+  "v3n_999d655dbcb6be0c03e6",
+  "v3n_fc95f4cf3da0db48fe02",
+  "v3n_fd0d969fc7e6784f1bc6"
  ],
  "problem_without_action_ids": [
-  "v3n_01745d619f9c2c25720c",
   "v3n_0465d22172c1dbffe533",
   "v3n_076814cf8854f194e32a",
-  "v3n_0b9b5e99c81845779e3b",
+  "v3n_0b9fe18f6f456466fd42",
   "v3n_1387b79b569751b3435b",
   "v3n_22daf3d2fa715fa8e4a1",
-  "v3n_23778005aeb41eafca8a",
-  "v3n_329e28dc043cb14473be",
+  "v3n_3131d7988f9dc98c989d",
   "v3n_37aecc324a7084fcd4c7",
   "v3n_39668193cc9422675758",
-  "v3n_3c8cf5effb0c0ac2ae0f",
-  "v3n_4982583b44f5183ddecb",
   "v3n_49fd3ab3ffe7a1f6a9e4",
   "v3n_6987e900ad7477035ba2",
-  "v3n_703c7ea2171f7df11100",
   "v3n_705513c0050631f23580",
-  "v3n_71d36f5d65c1adc4183e",
   "v3n_75038d9e96db3bd42114",
   "v3n_79d2bcbcd002efba05e8",
-  "v3n_950e458b643c61c93b2b",
-  "v3n_9b3be0727d1385c370e5",
+  "v3n_7c1205c56980fb518101",
+  "v3n_7ef6dbc45e5166b68e21",
+  "v3n_8311c7c48c892d774e77",
+  "v3n_8755afe2fb2bac73df2a",
+  "v3n_99e42ff0b13374062157",
+  "v3n_9f9e58427853c817d0c6",
   "v3n_a60e7f2c56d48d49b97e",
   "v3n_a9ee7432b58077ae4322",
-  "v3n_cbf8bda76e1f244e4d4c",
+  "v3n_b3582e8cbf871d9b1e76",
+  "v3n_bd79d1a0d778cde55efa",
+  "v3n_c049b759b4925198626b",
+  "v3n_c3df4e706600f7d9c1f5",
   "v3n_d404af52aa82422043a9",
+  "v3n_f3c7e3b3eab6930e7a53",
   "v3n_ff83aa20fa72bd91aa41"
  ],
- "units": 9,
+ "units": 11,
  "failed_reads": 0,
- "proposals": 225,
+ "proposals": 304,
+ "omission_review_enabled": false,
+ "visual_verification_enabled": false,
+ "visual_checks": [],
+ "omission_relations": 0,
  "unresolved_references": [],
- "unclear_passages": 0,
+ "unclear_passages": 2,
  "extraction_notes": [
+  "A: cause 'Safety window or enclosure damaged or leaking' repeats its problem, marked unnamed",
+  "A: cause 'Enclosure panels not in place' repeats its problem, marked unnamed",
+  "A: cause 'Door interlock obstructed or misaligned' repeats its problem, marked unnamed",
+  "A: cause 'Enclosure or safety glass distorted, broken, or damaged' repeats its problem, marked unnamed",
+  "A: cause 'Lexan windows 7 years old, damaged, or severely scratched' repeats its problem, marked unnamed",
+  "A: cause 'Safety glass and machine windows dirty' repeats its problem, marked unnamed",
+  "A: empty structured reading retried",
+  "A: empty unit split in halves",
+  "B: empty structured reading retried",
+  "B: empty unit split in halves",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
   "coverage: 4 unused table row(s) read again",
-  "A: cause 'TSC/HPFC filter is dirty' repeats its problem, marked unnamed",
-  "B: cause 'Coolant level is low' repeats its problem, marked unnamed",
-  "B: cause 'HPU oil level is low' repeats its problem, marked unnamed",
-  "B: cause 'HPU oil temperature is too high for reliable operation' repeats its problem, marked unnamed",
-  "coverage: 32 unused table row(s) read again",
-  "coverage: 17 unused table row(s) read again"
+  "B: cause 'Tool changer jam' repeats its problem, marked unnamed",
+  "A: empty structured reading retried",
+  "A: empty unit split in halves",
+  "B: empty structured reading retried",
+  "B: empty unit split in halves",
+  "A: cause 'Rotary brake oil level is low' repeats its problem, marked unnamed",
+  "B: cause 'Rotary brake oil level is low' repeats its problem, marked unnamed",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
+  "coverage: 29 unused table row(s) read again",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
+  "coverage: 16 unused table row(s) read again"
  ],
  "assertions_by_tier": {
-  "green": 161,
-  "red": 23
+  "green": 237,
+  "red": 19
  },
  "witnesses": {
-  "structure": 125,
-  "agreement": 42,
-  "verifier": 130,
-  "reviewer": 39
+  "structure": 188,
+  "agreement": 51,
+  "verifier": 175,
+  "reviewer": 71
  },
  "verifier_verdicts": {
-  "not_called": 34,
-  "supported": 130,
-  "not_supported": 19,
-  "unclear": 1
+  "not_called": 45,
+  "supported": 175,
+  "not_supported": 36
  },
  "graph": {
-  "nodes": 205,
+  "nodes": 260,
   "nodes_by_type": {
-   "ErrorCode": 22,
-   "FailureMode": 51,
-   "Component": 29,
-   "Symptom": 51,
-   "CorrectiveAction": 52
+   "Symptom": 58,
+   "FailureMode": 73,
+   "Component": 37,
+   "CorrectiveAction": 71,
+   "ErrorCode": 21
   },
-  "edges": 172,
+  "edges": 228,
   "edges_by_tier": {
-   "green": 152,
-   "red": 20
+   "green": 211,
+   "red": 17
   },
-  "merged_aliases": 40
+  "merged_aliases": 54
  },
  "gates": {
   "map": {
-   "questions": 1,
-   "answered": 1,
+   "questions": 3,
+   "answered": 3,
    "pending": 0
   },
   "doubts": {
-   "questions": 39,
-   "answered": 39,
+   "questions": 46,
+   "answered": 46,
+   "pending": 0
+  },
+  "recovery": {
+   "questions": 0,
+   "answered": 0,
    "pending": 0
   },
   "approval": {
@@ -141,55 +283,59 @@
   }
  },
  "answers_by_reviewer": {
-  "agent": 40,
+  "agent": 49,
   "auto": 1
  },
  "human_questions_offered": 0,
  "deferred_questions": [],
  "human_questions": 0,
- "reviewer_confirmed": 39,
+ "reviewer_confirmed": 71,
  "merged_cell_relations": 0,
  "usage": {
-  "calls": 39,
+  "calls": 83,
   "failed_calls": 0,
-  "prompt_tokens": 144936,
-  "completion_tokens": 40728,
-  "estimated_cost_usd": 0.025754,
+  "prompt_tokens": 298917,
+  "completion_tokens": 65405,
+  "estimated_cost_usd": 0.051266,
   "by_operation": {
-   "kg_v3_extract": 21,
-   "kg_v3_map": 8,
-   "kg_v3_merge": 3,
-   "kg_v3_verify": 7
+   "kg_v3_extract": 46,
+   "kg_v3_map": 16,
+   "kg_v3_merge": 10,
+   "kg_v3_reduce_action": 1,
+   "kg_v3_verify": 10
   }
  },
  "agent_usage": {
-  "calls": 40,
+  "calls": 49,
   "failed_calls": 0,
-  "prompt_tokens": 47713,
-  "completion_tokens": 12941,
-  "estimated_cost_usd": 0.011704,
+  "prompt_tokens": 50725,
+  "completion_tokens": 17373,
+  "estimated_cost_usd": 0.014219,
   "by_operation": {
-   "AgentDecision": 40
+   "AgentDecision": 49
   }
  },
  "seconds": {
-  "map": 12.33,
-  "gate_map": 15.679,
-  "extract": 38.322,
-  "check": 5.501,
-  "merge": 6.107,
-  "navigation": 1.25,
-  "gate_doubts": 32.848,
-  "gate_approval": 0.0,
-  "total": 112.41,
-  "pdf_read": 10.96,
-  "end_to_end": 124.008
+  "map": 15.608,
+  "gate_map": 19.727,
+  "extract": 66.513,
+  "check": 9.987,
+  "merge": 12.89,
+  "split_recheck": 0.0,
+  "navigation": 5.079,
+  "gate_doubts": 43.659,
+  "action_reduction": 9.243,
+  "gate_recovery": 0.0,
+  "gate_approval": 0.001,
+  "total": 183.523,
+  "pdf_read": 10.865,
+  "end_to_end": 195.117
  },
  "prompt_ids": {
   "extraction": "711f1b166c488e74"
  },
  "provenance": {
-  "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+  "commit": "79501aecbb19805f3e099118669fef9cc6558794",
   "pdf_sha256": "402f553b6b492e4c898e3a350f177d5067969c82fbf801fb2792015de4077b0c",
   "config": {
    "model": "gpt-6-luna",
@@ -212,7 +358,11 @@
    "agent_model": "gpt-6-luna",
    "agent_reasoning_effort": "medium",
    "wait_for_map": false,
-   "max_units": 150
+   "max_units": 150,
+   "omission_review": false,
+   "omission_max_units": 3,
+   "visual_verification": false,
+   "visual_max_relations": 12
   },
   "segment_ids": [
    "p1.b1",

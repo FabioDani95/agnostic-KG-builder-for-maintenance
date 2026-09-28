@@ -1,10 +1,13 @@
 {
  "status": "approved",
+ "incomplete_reasons": [],
+ "empty_extraction_units": [],
+ "failed_units": [],
  "pages": 50,
  "page_labels": {
-  "other": 25,
+  "other": 28,
   "unreadable": 1,
-  "procedure": 22,
+  "procedure": 19,
   "diagnostic": 2
  },
  "diagnostic_pages": [
@@ -16,6 +19,11 @@
   44
  ],
  "map_demotions_refused": [],
+ "map_removed_pages": [],
+ "read_pages": [
+  43,
+  44
+ ],
  "blocked_merges": [],
  "orphan_causes": 0,
  "problems_without_action": 0,
@@ -23,37 +31,43 @@
  "problem_without_action_ids": [],
  "units": 1,
  "failed_reads": 0,
- "proposals": 138,
+ "proposals": 294,
+ "omission_review_enabled": false,
+ "visual_verification_enabled": false,
+ "visual_checks": [],
+ "omission_relations": 0,
  "unresolved_references": [],
- "unclear_passages": 2,
+ "unclear_passages": 1,
  "extraction_notes": [],
  "assertions_by_tier": {
-  "green": 133,
-  "red": 5
+  "green": 169,
+  "red": 18
  },
  "witnesses": {
-  "structure": 74,
-  "verifier": 135,
-  "reviewer": 61
+  "structure": 94,
+  "agreement": 109,
+  "reviewer": 34,
+  "verifier": 104
  },
  "verifier_verdicts": {
-  "supported": 135,
-  "not_supported": 3
+  "not_called": 65,
+  "not_supported": 18,
+  "supported": 104
  },
  "graph": {
-  "nodes": 106,
+  "nodes": 117,
   "nodes_by_type": {
    "Symptom": 10,
-   "FailureMode": 44,
-   "Component": 22,
-   "CorrectiveAction": 30
+   "FailureMode": 45,
+   "Component": 28,
+   "CorrectiveAction": 34
   },
-  "edges": 133,
+  "edges": 157,
   "edges_by_tier": {
-   "green": 128,
-   "red": 5
+   "green": 144,
+   "red": 13
   },
-  "merged_aliases": 2
+  "merged_aliases": 46
  },
  "gates": {
   "map": {
@@ -62,8 +76,13 @@
    "pending": 0
   },
   "doubts": {
-   "questions": 10,
-   "answered": 10,
+   "questions": 11,
+   "answered": 11,
+   "pending": 0
+  },
+  "recovery": {
+   "questions": 2,
+   "answered": 2,
    "pending": 0
   },
   "approval": {
@@ -73,54 +92,58 @@
   }
  },
  "answers_by_reviewer": {
-  "agent": 11,
+  "agent": 14,
   "auto": 1
  },
  "human_questions_offered": 0,
  "deferred_questions": [],
  "human_questions": 0,
- "reviewer_confirmed": 61,
+ "reviewer_confirmed": 34,
  "merged_cell_relations": 0,
  "usage": {
-  "calls": 11,
+  "calls": 23,
   "failed_calls": 0,
-  "prompt_tokens": 62948,
-  "completion_tokens": 20840,
-  "estimated_cost_usd": 0.017041,
+  "prompt_tokens": 169318,
+  "completion_tokens": 33953,
+  "estimated_cost_usd": 0.037359,
   "by_operation": {
    "kg_v3_extract": 2,
-   "kg_v3_map": 2,
-   "kg_v3_merge": 1,
-   "kg_v3_verify": 6
+   "kg_v3_map": 6,
+   "kg_v3_merge": 7,
+   "kg_v3_reduce_action": 1,
+   "kg_v3_verify": 7
   }
  },
  "agent_usage": {
-  "calls": 11,
+  "calls": 14,
   "failed_calls": 0,
-  "prompt_tokens": 17059,
-  "completion_tokens": 4368,
-  "estimated_cost_usd": 0.004291,
+  "prompt_tokens": 17109,
+  "completion_tokens": 6782,
+  "estimated_cost_usd": 0.005384,
   "by_operation": {
-   "AgentDecision": 11
+   "AgentDecision": 14
   }
  },
  "seconds": {
-  "map": 9.71,
-  "gate_map": 6.031,
-  "extract": 62.595,
-  "check": 6.199,
-  "merge": 3.036,
-  "gate_doubts": 13.276,
+  "map": 14.794,
+  "gate_map": 8.124,
+  "extract": 63.195,
+  "check": 7.168,
+  "merge": 13.411,
+  "split_recheck": 4.106,
+  "gate_doubts": 15.321,
+  "action_reduction": 14.358,
+  "gate_recovery": 3.222,
   "gate_approval": 0.0,
-  "total": 100.95,
-  "pdf_read": 4.195,
-  "end_to_end": 105.679
+  "total": 144.042,
+  "pdf_read": 4.361,
+  "end_to_end": 149.15
  },
  "prompt_ids": {
   "extraction": "2c7e114168c52258"
  },
  "provenance": {
-  "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+  "commit": "79501aecbb19805f3e099118669fef9cc6558794",
   "pdf_sha256": "0b187ab4ee8074c3a6241e80c9c68181b9634d4dd6fd81eaead978f76dcd1398",
   "config": {
    "model": "gpt-6-luna",
@@ -143,7 +166,11 @@
    "agent_model": "gpt-6-luna",
    "agent_reasoning_effort": "medium",
    "wait_for_map": false,
-   "max_units": 150
+   "max_units": 150,
+   "omission_review": false,
+   "omission_max_units": 3,
+   "visual_verification": false,
+   "visual_max_relations": 12
   },
   "segment_ids": [
    "p1.t1.r1",

@@ -238,6 +238,45 @@ nome di un codice è spezzato in più segmenti, le colonne sono interlacciate, l
 possibile riprodurre la lettura su cui era stato annotato il foglio: unisce il testo di una
 riga visiva tra le colonne e non corrisponde a nessuna modalità di PyMuPDF 1.28 installato.
 
+## Iterazione E: completezza dei rami (2026-09-28)
+
+Codice: E1–E8 dell'altro agente ([brief](../../docs/PROMPT_ITERAZIONE_E.md)) più quattro correzioni
+dopo la code review: limite di tempo rigido per ogni chiamata al modello (un'esecuzione ABB era
+rimasta bloccata tre ore), cancello della mappa con al massimo otto domande (erano 284 per ABB),
+esecuzione incompleta solo se tutte le unità sono vuote o una lettura fallisce, valutatore che
+tratta la condizione del gold come contesto di ramo e le note di sezione come non vincolanti
+(con la versione precedente Lincoln scendeva a 0/22 sugli stessi grafi). Le due esecuzioni ABB
+fatte prima di queste correzioni sono in `runs_E_aborted/` e non entrano nel confronto.
+
+Prima = esecuzioni D (`runs_D/`), dopo = esecuzioni E (`runs/`), **stesso valutatore** per
+entrambe ([kpi_D_final.json](kpi_D_final.json), [kpi_E.json](kpi_E.json)). E7 ed E8 spenti.
+
+| Manuale | Rami gold | D: rami r1, r2, r3 | **E: rami r1, r2, r3** | Asserzioni D → E | Domande a persona E | USD per esecuzione D → E | Secondi per esecuzione D → E |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Atlas Copco | 49 | 42, 42, 0 | **44, 41, 44** | 0–58 → 57–60 /66 | 0 | 0.016 → 0.035 | 81 → 139 |
+| Graco GTX | 19 | 18, 18, 16 | **19, 17, 15** | 42–44 → 41–45 /45 | 0 | 0.009 → 0.023 | 47 → 85 |
+| Haas | 45 | 30, 33, 28 | **35, 36, 35** | 33–38 → 41 /57 | 0–3 | 0.041 → 0.059 | 130 → 185 |
+| ABB | 19 | 6, 7, 6 | **5, 8, 6** | 12–18 → 8–19 /38 | 0–3 | 0.045 → 0.072 | 291 → 394 |
+| Grundfos | 146 | 141, 140, 135 | **140, 138, 138** | 135–141 → 138–140 /146 | 0 | 0.016 → 0.022 | 75 → 97 |
+| Lincoln | 22 | 3, 3, 1 | **5, 4, 6** | 15–24 → 17–25 /47 | 0–1 | 0.025 → 0.112 | 90 → 187 |
+
+Rami, tre esecuzioni per manuale: **D 669/900 = 74,3% [0,714; 0,771] → E 736/900 = 81,8%
+[0,791; 0,842]** (IC95 Wilson). Costo e tempo sono medie per singola esecuzione, dalla lettura del
+PDF al grafo, senza il valutatore.
+
+- Nessuna esecuzione vuota; tutte approvate. In D Atlas Copco r3 era vuota (0/49).
+- Guadagni oltre il rumore: Haas (+15 rami su 135), Lincoln (+8 su 66), Atlas Copco (+45, quasi
+  tutti per l'esecuzione non più vuota). ABB, Graco e Grundfos invariati entro il rumore.
+- Fusioni vietate 0 in D e in E. Cause orfane da 35 a 53 e problemi senza azione da 117 a 125:
+  peggiorano ([quality_D_final.md](quality_D_final.md), [quality_E.md](quality_E.md)).
+- Costo per esecuzione da circa 1,5 a 3–11 centesimi, tempo circa +40%. Causa principale: la mappa
+  per sezioni spezza le tabelle in più unità (Lincoln da 1 a 6) e le letture ripetute portano
+  tutta l'unità come contesto (Lincoln da 82 mila a 1,5 milioni di token per esecuzione).
+- Domande a una persona: 0–3 per esecuzione.
+- Spesa del registro dopo il giro e i KPI: 5,929 USD su 10, oltre i 3 USD previsti per
+  l'iterazione (fino a 6,3) di circa 0,4 USD compreso il lavoro dell'altro agente.
+- Numeri di sviluppo: tutti e sei i manuali sono ormai di messa a punto.
+
 ## Robustezza fasi 1–2: confronto C → D e verifica sui PDF (2026-09-27)
 
 **Esito: implementazione completata, criteri di qualità non tutti raggiunti.** Le fusioni

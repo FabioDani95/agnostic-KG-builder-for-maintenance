@@ -1,116 +1,228 @@
 {
  "status": "approved",
+ "incomplete_reasons": [],
+ "empty_extraction_units": [
+  "u003-fd1814",
+  "u008-d15c77"
+ ],
+ "failed_units": [
+  {
+   "unit_id": "u003-fd1814",
+   "segments": []
+  },
+  {
+   "unit_id": "u004-f03fbc",
+   "segments": [
+    "p231.t1.r2"
+   ]
+  },
+  {
+   "unit_id": "u007-62d9f8",
+   "segments": [
+    "p375.t1.r2"
+   ]
+  },
+  {
+   "unit_id": "u008-d15c77",
+   "segments": [
+    "p381.t1.r1",
+    "p381.t1.r2",
+    "p381.t2.r1",
+    "p381.t2.r10",
+    "p381.t2.r11",
+    "p381.t2.r12",
+    "p381.t2.r13",
+    "p381.t2.r14",
+    "p381.t2.r15",
+    "p381.t2.r16",
+    "p381.t2.r17",
+    "p381.t2.r18",
+    "p381.t2.r19",
+    "p381.t2.r2",
+    "p381.t2.r20",
+    "p381.t2.r21",
+    "p381.t2.r22",
+    "p381.t2.r24",
+    "p381.t2.r25",
+    "p381.t2.r26",
+    "p381.t2.r3",
+    "p381.t2.r4",
+    "p381.t2.r5",
+    "p381.t2.r6",
+    "p381.t2.r7",
+    "p381.t2.r8",
+    "p381.t2.r9"
+   ]
+  },
+  {
+   "unit_id": "u009-f9535b",
+   "segments": [
+    "p390.t1.r2",
+    "p390.t1.r3",
+    "p390.t1.r4"
+   ]
+  },
+  {
+   "unit_id": "u010-d645eb",
+   "segments": [
+    "p396.t1.r2"
+   ]
+  }
+ ],
  "pages": 406,
  "page_labels": {
-  "other": 283,
+  "other": 296,
   "unreadable": 2,
-  "procedure": 110,
-  "diagnostic": 11
+  "procedure": 95,
+  "parts": 3,
+  "diagnostic": 10
  },
  "diagnostic_pages": [
-  123,
-  169,
-  170,
-  171,
-  173,
+  118,
+  119,
+  168,
   231,
   232,
   365,
   375,
   381,
-  386
+  390,
+  396
  ],
  "confirmed_pages": [
-  123,
-  169,
-  170,
-  171,
-  173,
+  118,
+  168,
   231,
   232,
   365,
   375,
-  386
+  381,
+  390,
+  396
  ],
- "map_demotions_refused": [],
+ "map_demotions_refused": [
+  390
+ ],
+ "map_removed_pages": [
+  117,
+  167,
+  169,
+  230,
+  374,
+  380
+ ],
+ "read_pages": [
+  118,
+  119,
+  168,
+  231,
+  232,
+  365,
+  375,
+  381,
+  390,
+  396
+ ],
  "blocked_merges": [
   {
-   "left": "Symptom|control panel green led blinking",
-   "right": "Symptom|control-panel green led blinking",
-   "reason": "different",
-   "constraint_left": "Symptom|control panel green led flickering",
-   "constraint_right": "Symptom|control-panel green led blinking"
+   "left": "CorrectiveAction|measure insulation resistance between each motor phase conductor and protective earth at 1000 v dc",
+   "right": "CorrectiveAction|measure insulation resistance between each motor phase conductor and protective earth conductor",
+   "reason": "different_numbers",
+   "constraint_left": "CorrectiveAction|measure insulation resistance between each motor phase conductor and protective earth at 1000 v dc",
+   "constraint_right": "CorrectiveAction|measure insulation resistance between each motor phase conductor and protective earth conductor"
   }
  ],
- "orphan_causes": 0,
- "problems_without_action": 8,
- "orphan_cause_ids": [],
+ "orphan_causes": 7,
+ "problems_without_action": 1,
+ "orphan_cause_ids": [
+  "v3n_0fb254cd4dc535d373a8",
+  "v3n_329301c53fe71d3d1948",
+  "v3n_7e052022cd09fdc70b29",
+  "v3n_92c163d9d5b360ca3b21",
+  "v3n_cd2b86e22d400c8b86c7",
+  "v3n_dbec868900e7fb7df3bc",
+  "v3n_edfd06fa47a6ec3e3ee7"
+ ],
  "problem_without_action_ids": [
-  "v3n_2a9059953ed95d65ff63",
-  "v3n_426cb458434bce11950d",
-  "v3n_7063723bf01e77d4cc1f",
-  "v3n_a8789be406280039373e",
-  "v3n_bdd62e2294084118b9d5",
-  "v3n_c9ef392c8eb227811fde",
-  "v3n_cf4b581ee0ca01059eb3",
   "v3n_e7da917a0f8a3ba8d31a"
  ],
- "units": 8,
+ "units": 10,
  "failed_reads": 0,
- "proposals": 92,
+ "proposals": 104,
+ "omission_review_enabled": false,
+ "visual_verification_enabled": false,
+ "visual_checks": [],
+ "omission_relations": 0,
  "unresolved_references": [],
- "unclear_passages": 3,
+ "unclear_passages": 1,
  "extraction_notes": [
-  "coverage: 5 unused table row(s) read again",
-  "coverage: 5 unused table row(s) read again",
-  "A: relation 8 skipped (Symptom to Symptom is not in the ontology)",
-  "A: relation 31 skipped (Symptom to Symptom is not in the ontology)",
-  "A: relation 32 skipped (Symptom to Symptom is not in the ontology)",
+  "C: empty structured reading retried",
+  "C: entities returned without usable relations; not counted as extraction coverage",
   "coverage: 1 unused table row(s) read again",
+  "coverage: 2 unused table row(s) read again",
+  "C: empty structured reading retried",
+  "coverage: 1 unused table row(s) read again",
+  "A: empty structured reading retried",
+  "A: empty unit split in halves",
+  "A: entities returned without usable relations; not counted as extraction coverage",
+  "B: empty structured reading retried",
+  "B: empty unit split in halves",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
   "coverage: 26 unused table row(s) read again",
-  "coverage: 17 unused table row(s) read again"
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
+  "coverage: 3 unused table row(s) read again",
+  "B: cause 'Extension I/O configuration failure' repeats its problem, marked unnamed",
+  "B: relation 8 skipped (FailureMode to FailureMode is not in the ontology)",
+  "C: empty structured reading retried",
+  "coverage: 1 unused table row(s) read again"
  ],
  "assertions_by_tier": {
-  "green": 58,
-  "red": 9
+  "green": 71,
+  "red": 18
  },
  "witnesses": {
-  "structure": 41,
-  "verifier": 42,
-  "reviewer": 12,
-  "agreement": 26
+  "structure": 48,
+  "verifier": 60,
+  "reviewer": 17,
+  "agreement": 22
  },
  "verifier_verdicts": {
-  "supported": 42,
-  "not_called": 18,
-  "not_supported": 4,
-  "unclear": 3
+  "supported": 60,
+  "not_supported": 17,
+  "not_called": 12
  },
  "graph": {
-  "nodes": 72,
+  "nodes": 83,
   "nodes_by_type": {
-   "Symptom": 21,
-   "FailureMode": 24,
-   "Component": 8,
-   "CorrectiveAction": 17,
+   "FailureMode": 21,
+   "CorrectiveAction": 31,
+   "Symptom": 17,
+   "Component": 12,
    "ErrorCode": 2
   },
-  "edges": 63,
+  "edges": 77,
   "edges_by_tier": {
-   "green": 56,
-   "red": 7
+   "green": 62,
+   "red": 15
   },
-  "merged_aliases": 17
+  "merged_aliases": 13
  },
  "gates": {
   "map": {
-   "questions": 1,
-   "answered": 1,
+   "questions": 2,
+   "answered": 2,
    "pending": 0
   },
   "doubts": {
-   "questions": 14,
-   "answered": 14,
+   "questions": 13,
+   "answered": 13,
+   "pending": 0
+  },
+  "recovery": {
+   "questions": 1,
+   "answered": 1,
    "pending": 0
   },
   "approval": {
@@ -120,55 +232,59 @@
   }
  },
  "answers_by_reviewer": {
-  "agent": 15,
+  "agent": 16,
   "auto": 1
  },
  "human_questions_offered": 0,
  "deferred_questions": [],
  "human_questions": 0,
- "reviewer_confirmed": 12,
- "merged_cell_relations": 2,
+ "reviewer_confirmed": 17,
+ "merged_cell_relations": 3,
  "usage": {
-  "calls": 40,
+  "calls": 346,
   "failed_calls": 0,
-  "prompt_tokens": 207300,
-  "completion_tokens": 35343,
-  "estimated_cost_usd": 0.034327,
+  "prompt_tokens": 339782,
+  "completion_tokens": 62278,
+  "estimated_cost_usd": 0.06164,
   "by_operation": {
-   "kg_v3_extract": 21,
-   "kg_v3_map": 14,
-   "kg_v3_merge": 2,
-   "kg_v3_verify": 3
+   "kg_v3_extract": 41,
+   "kg_v3_map": 294,
+   "kg_v3_merge": 4,
+   "kg_v3_reduce_action": 1,
+   "kg_v3_verify": 6
   }
  },
  "agent_usage": {
-  "calls": 15,
+  "calls": 16,
   "failed_calls": 0,
-  "prompt_tokens": 41046,
-  "completion_tokens": 7724,
-  "estimated_cost_usd": 0.008767,
+  "prompt_tokens": 19179,
+  "completion_tokens": 9504,
+  "estimated_cost_usd": 0.006984,
   "by_operation": {
-   "AgentDecision": 15
+   "AgentDecision": 16
   }
  },
  "seconds": {
-  "map": 13.041,
-  "gate_map": 30.451,
-  "extract": 25.058,
-  "check": 2.441,
-  "merge": 5.217,
-  "navigation": 4.064,
-  "gate_doubts": 15.597,
+  "map": 73.878,
+  "gate_map": 15.943,
+  "extract": 45.12,
+  "check": 9.048,
+  "merge": 11.79,
+  "split_recheck": 3.297,
+  "navigation": 4.258,
+  "gate_doubts": 16.323,
+  "action_reduction": 10.383,
+  "gate_recovery": 16.487,
   "gate_approval": 0.0,
-  "total": 95.943,
-  "pdf_read": 174.608,
-  "end_to_end": 271.309
+  "total": 206.605,
+  "pdf_read": 170.37,
+  "end_to_end": 383.997
  },
  "prompt_ids": {
   "extraction": "d305faa43c9daea4"
  },
  "provenance": {
-  "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+  "commit": "79501aecbb19805f3e099118669fef9cc6558794",
   "pdf_sha256": "7e2706e4fb559767af01cf683ab08665882e2437b64a1d785136a3962de43fce",
   "config": {
    "model": "gpt-6-luna",
@@ -191,7 +307,11 @@
    "agent_model": "gpt-6-luna",
    "agent_reasoning_effort": "medium",
    "wait_for_map": false,
-   "max_units": 150
+   "max_units": 150,
+   "omission_review": false,
+   "omission_max_units": 3,
+   "visual_verification": false,
+   "visual_max_relations": 12
   },
   "segment_ids": [
    "p1.b1",

@@ -1,11 +1,15 @@
 {
  "status": "approved",
+ "incomplete_reasons": [],
+ "empty_extraction_units": [],
+ "failed_units": [],
  "pages": 50,
  "page_labels": {
-  "other": 25,
+  "other": 31,
   "unreadable": 1,
-  "procedure": 22,
-  "diagnostic": 2
+  "procedure": 15,
+  "diagnostic": 2,
+  "parts": 1
  },
  "diagnostic_pages": [
   43,
@@ -16,6 +20,11 @@
   44
  ],
  "map_demotions_refused": [],
+ "map_removed_pages": [],
+ "read_pages": [
+  43,
+  44
+ ],
  "blocked_merges": [],
  "orphan_causes": 0,
  "problems_without_action": 0,
@@ -23,43 +32,46 @@
  "problem_without_action_ids": [],
  "units": 1,
  "failed_reads": 0,
- "proposals": 279,
+ "proposals": 262,
+ "omission_review_enabled": false,
+ "visual_verification_enabled": false,
+ "visual_checks": [],
+ "omission_relations": 0,
  "unresolved_references": [],
  "unclear_passages": 3,
  "extraction_notes": [
-  "A: relation 115 skipped (Symptom to Symptom is not in the ontology)",
-  "A: relation 126 skipped (Symptom to Symptom is not in the ontology)",
-  "A: relation 127 skipped (Symptom to CorrectiveAction is not in the ontology)"
+  "B: relation 80 skipped (Symptom to Symptom is not in the ontology)",
+  "B: relation 82 skipped (Symptom to CorrectiveAction is not in the ontology)"
  ],
  "assertions_by_tier": {
-  "green": 148,
-  "red": 15
+  "green": 139,
+  "red": 8
  },
  "witnesses": {
-  "structure": 74,
+  "structure": 88,
   "agreement": 116,
-  "verifier": 75,
-  "reviewer": 34
+  "verifier": 65,
+  "reviewer": 12
  },
  "verifier_verdicts": {
-  "not_called": 75,
-  "supported": 75,
-  "not_supported": 13
+  "not_called": 70,
+  "supported": 65,
+  "not_supported": 12
  },
  "graph": {
-  "nodes": 112,
+  "nodes": 114,
   "nodes_by_type": {
    "Symptom": 10,
-   "FailureMode": 43,
-   "Component": 21,
-   "CorrectiveAction": 38
+   "FailureMode": 47,
+   "Component": 25,
+   "CorrectiveAction": 32
   },
-  "edges": 141,
+  "edges": 137,
   "edges_by_tier": {
-   "green": 128,
-   "red": 13
+   "green": 129,
+   "red": 8
   },
-  "merged_aliases": 14
+  "merged_aliases": 35
  },
  "gates": {
   "map": {
@@ -68,8 +80,13 @@
    "pending": 0
   },
   "doubts": {
-   "questions": 10,
-   "answered": 10,
+   "questions": 8,
+   "answered": 8,
+   "pending": 0
+  },
+  "recovery": {
+   "questions": 0,
+   "answered": 0,
    "pending": 0
   },
   "approval": {
@@ -79,54 +96,59 @@
   }
  },
  "answers_by_reviewer": {
-  "agent": 11,
+  "agent": 9,
   "auto": 1
  },
  "human_questions_offered": 0,
  "deferred_questions": [],
  "human_questions": 0,
- "reviewer_confirmed": 34,
+ "reviewer_confirmed": 12,
  "merged_cell_relations": 0,
  "usage": {
-  "calls": 9,
+  "calls": 19,
   "failed_calls": 0,
-  "prompt_tokens": 57244,
-  "completion_tokens": 24785,
-  "estimated_cost_usd": 0.01708,
+  "prompt_tokens": 115874,
+  "completion_tokens": 29164,
+  "estimated_cost_usd": 0.026446,
   "by_operation": {
    "kg_v3_extract": 2,
-   "kg_v3_map": 2,
-   "kg_v3_merge": 1,
-   "kg_v3_verify": 4
+   "kg_v3_map": 6,
+   "kg_v3_merge": 5,
+   "kg_v3_reduce_action": 1,
+   "kg_v3_verify": 5
   }
  },
  "agent_usage": {
-  "calls": 11,
+  "calls": 9,
   "failed_calls": 0,
-  "prompt_tokens": 16414,
-  "completion_tokens": 3106,
-  "estimated_cost_usd": 0.00351,
+  "prompt_tokens": 12223,
+  "completion_tokens": 5002,
+  "estimated_cost_usd": 0.004028,
   "by_operation": {
-   "AgentDecision": 11
+   "AgentDecision": 9
   }
  },
  "seconds": {
-  "map": 8.942,
-  "gate_map": 3.199,
-  "extract": 60.359,
-  "check": 2.58,
-  "merge": 2.779,
-  "gate_doubts": 9.171,
-  "gate_approval": 0.001,
-  "total": 87.185,
-  "pdf_read": 4.127,
-  "end_to_end": 91.892
+  "map": 11.926,
+  "gate_map": 10.662,
+  "extract": 59.139,
+  "check": 3.253,
+  "merge": 11.711,
+  "split_recheck": 0.0,
+  "navigation": 1.612,
+  "gate_doubts": 13.292,
+  "action_reduction": 8.964,
+  "gate_recovery": 0.0,
+  "gate_approval": 0.0,
+  "total": 120.794,
+  "pdf_read": 4.092,
+  "end_to_end": 125.522
  },
  "prompt_ids": {
   "extraction": "2c7e114168c52258"
  },
  "provenance": {
-  "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+  "commit": "79501aecbb19805f3e099118669fef9cc6558794",
   "pdf_sha256": "0b187ab4ee8074c3a6241e80c9c68181b9634d4dd6fd81eaead978f76dcd1398",
   "config": {
    "model": "gpt-6-luna",
@@ -149,7 +171,11 @@
    "agent_model": "gpt-6-luna",
    "agent_reasoning_effort": "medium",
    "wait_for_map": false,
-   "max_units": 150
+   "max_units": 150,
+   "omission_review": false,
+   "omission_max_units": 3,
+   "visual_verification": false,
+   "visual_max_relations": 12
   },
   "segment_ids": [
    "p1.t1.r1",

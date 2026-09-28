@@ -1,0 +1,548 @@
+{
+  "definition": "Offline structural diagnostics; no gold, no semantic precision estimate.",
+  "runs_directory": "runs",
+  "manuals": {
+    "abb_acs580_01": {
+      "runs": {
+        "v3_r1": {
+          "status": "approved",
+          "graph_sha256": "22b55050f7bc461f43baa8d1667fa48651752a03c2762956e55d98e926eb6b1d",
+          "nodes": 67,
+          "diagnostic_edges": 62,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 7,
+          "problems_without_action": 1,
+          "orphan_cause_ids": [
+            "v3n_0fb254cd4dc535d373a8",
+            "v3n_329301c53fe71d3d1948",
+            "v3n_7e052022cd09fdc70b29",
+            "v3n_92c163d9d5b360ca3b21",
+            "v3n_cd2b86e22d400c8b86c7",
+            "v3n_dbec868900e7fb7df3bc",
+            "v3n_edfd06fa47a6ec3e3ee7"
+          ],
+          "problem_without_action_ids": [
+            "v3n_e7da917a0f8a3ba8d31a"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 9
+        },
+        "v3_r2": {
+          "status": "approved",
+          "graph_sha256": "11b91a35e75fe5d7f99336b3f1360648a2a557f124b1a5a938e28d59e07374e9",
+          "nodes": 101,
+          "diagnostic_edges": 82,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 12,
+          "problems_without_action": 7,
+          "orphan_cause_ids": [
+            "v3n_5d7da23cdfd95b36c616",
+            "v3n_5dcae78f0dd4d1b22046",
+            "v3n_74b67587e1164831a482",
+            "v3n_773271c9b0b91a53b964",
+            "v3n_9245e0df1da5627f7b90",
+            "v3n_9b2cc88be5e242813ab2",
+            "v3n_b562ee1543d6b16612d4",
+            "v3n_d1835fb0eadee982a3ba",
+            "v3n_d71b13d6cd70177f6c67",
+            "v3n_e2b95e63074b0efb1a4f",
+            "v3n_e9d1aedcbaa7ecb6d301",
+            "v3n_f6366f4fcc150d1d5ddd"
+          ],
+          "problem_without_action_ids": [
+            "v3n_1ab90312c2783c35c74d",
+            "v3n_626bb541dd15349160f5",
+            "v3n_67e45420f446821158ec",
+            "v3n_8b4019c615204f713168",
+            "v3n_ce476d131a9bde10eec1",
+            "v3n_e7da917a0f8a3ba8d31a",
+            "v3n_fbdcfe2dff73136a0601"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 13
+        },
+        "v3_r3": {
+          "status": "approved",
+          "graph_sha256": "dee8a3440d92b22eac163fa7447381fa49c8e0404ea13cdf0e66f1f27edca931",
+          "nodes": 109,
+          "diagnostic_edges": 98,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 11,
+          "problems_without_action": 9,
+          "orphan_cause_ids": [
+            "v3n_01a0e53250b19f3a25c9",
+            "v3n_46c88f8180b39ea5fd40",
+            "v3n_4a605d7a4a0043af0a20",
+            "v3n_6075ba4ee1520bd6f3c1",
+            "v3n_68f7033a2714ab686da6",
+            "v3n_92c163d9d5b360ca3b21",
+            "v3n_9a1af4c816c9d4043e26",
+            "v3n_ac4334c819b9d88fda3c",
+            "v3n_af17cc5fa40a435deec3",
+            "v3n_cdc6af44fb396d07cc05",
+            "v3n_d1835fb0eadee982a3ba"
+          ],
+          "problem_without_action_ids": [
+            "v3n_19c4ef2f819bd35f61d4",
+            "v3n_575453e47ceef575b2d5",
+            "v3n_626bb541dd15349160f5",
+            "v3n_67e45420f446821158ec",
+            "v3n_7063723bf01e77d4cc1f",
+            "v3n_8b4019c615204f713168",
+            "v3n_8d3f926de96a510dc10f",
+            "v3n_ce476d131a9bde10eec1",
+            "v3n_d5a9f708390aef90b2b4"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 12
+        }
+      },
+      "relation_jaccard": {
+        "v3_r1/v3_r2": 0.0827,
+        "v3_r1/v3_r3": 0.0667,
+        "v3_r2/v3_r3": 0.0976
+      },
+      "mean_jaccard": 0.0823
+    },
+    "atlascopco_drb_booster": {
+      "runs": {
+        "v3_r1": {
+          "status": "approved",
+          "graph_sha256": "a0f144576cf1b3510e43e6e48368231e39c0da3145019dc8bc6127eff922ea54",
+          "nodes": 114,
+          "diagnostic_edges": 144,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 2
+        },
+        "v3_r2": {
+          "status": "approved",
+          "graph_sha256": "012a517c95fb24f173f2674bb7ab98ff231ecce26f664cd1239ef9a8d5ae734e",
+          "nodes": 108,
+          "diagnostic_edges": 129,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 2
+        },
+        "v3_r3": {
+          "status": "approved",
+          "graph_sha256": "389605cd2791195b66d24909baf9effa06e260c85a2ce39f9ac12f061a9a7539",
+          "nodes": 108,
+          "diagnostic_edges": 130,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        }
+      },
+      "relation_jaccard": {
+        "v3_r1/v3_r2": 0.1519,
+        "v3_r1/v3_r3": 0.2511,
+        "v3_r2/v3_r3": 0.1116
+      },
+      "mean_jaccard": 0.1715
+    },
+    "graco_gtx_2000ex": {
+      "runs": {
+        "v3_r1": {
+          "status": "approved",
+          "graph_sha256": "b0c6cdab24f7cb3e32b10d5e54a96190bfd186e87daa22c0b41b04ef7f964d44",
+          "nodes": 59,
+          "diagnostic_edges": 62,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        },
+        "v3_r2": {
+          "status": "approved",
+          "graph_sha256": "8ebb3dba44272cd4af80f78ce018211a82028a44c57a4e14f15c17b1f0542227",
+          "nodes": 52,
+          "diagnostic_edges": 52,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        },
+        "v3_r3": {
+          "status": "approved",
+          "graph_sha256": "1bdaed3564477b46cc5521ae0e08ccbce5dde11c9f3708d72c2e06cc237bdfd1",
+          "nodes": 50,
+          "diagnostic_edges": 52,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        }
+      },
+      "relation_jaccard": {
+        "v3_r1/v3_r2": 0.52,
+        "v3_r1/v3_r3": 0.4805,
+        "v3_r2/v3_r3": 0.6
+      },
+      "mean_jaccard": 0.5335
+    },
+    "grundfos_paco_vl": {
+      "runs": {
+        "v3_r1": {
+          "status": "approved",
+          "graph_sha256": "ee177220f1d16654d545f2e4dda3a9654ef06a4ab8a184f8b1d64cb1eee53de2",
+          "nodes": 74,
+          "diagnostic_edges": 181,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 10,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [
+            "v3n_0de0784fc9b3de8f8216",
+            "v3n_1a7bb6c7d337d7a13105",
+            "v3n_2d77287e5cbd0a5ee2fa",
+            "v3n_2d78c134dd25ccc9e8e5",
+            "v3n_34db1a9b238beb4005d5",
+            "v3n_4191b0a05364100964f3",
+            "v3n_44186ac7c4ddc8ccaffe",
+            "v3n_4e48ad76bf7b08213d50",
+            "v3n_5b85547438836fb0aab2",
+            "v3n_e54698b60e5b0418ce56"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        },
+        "v3_r2": {
+          "status": "approved",
+          "graph_sha256": "cba462ee4ef380974364c92e4ae3a5d136e517c16dc18e60d5f872a6482a08b7",
+          "nodes": 71,
+          "diagnostic_edges": 174,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 10,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [
+            "v3n_0de0784fc9b3de8f8216",
+            "v3n_1a7bb6c7d337d7a13105",
+            "v3n_2d77287e5cbd0a5ee2fa",
+            "v3n_2d78c134dd25ccc9e8e5",
+            "v3n_34db1a9b238beb4005d5",
+            "v3n_4191b0a05364100964f3",
+            "v3n_44186ac7c4ddc8ccaffe",
+            "v3n_4e48ad76bf7b08213d50",
+            "v3n_5b85547438836fb0aab2",
+            "v3n_e54698b60e5b0418ce56"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        },
+        "v3_r3": {
+          "status": "approved",
+          "graph_sha256": "d1cc20aeb8496626f9185fb7fc907277d1c49dfc023e09ce64d3eca06bb8338a",
+          "nodes": 70,
+          "diagnostic_edges": 169,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 10,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [
+            "v3n_0de0784fc9b3de8f8216",
+            "v3n_1a7bb6c7d337d7a13105",
+            "v3n_2d77287e5cbd0a5ee2fa",
+            "v3n_2d78c134dd25ccc9e8e5",
+            "v3n_34db1a9b238beb4005d5",
+            "v3n_4191b0a05364100964f3",
+            "v3n_44186ac7c4ddc8ccaffe",
+            "v3n_4e48ad76bf7b08213d50",
+            "v3n_e54698b60e5b0418ce56",
+            "v3n_e6709f17a60a39fa11b9"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 0
+        }
+      },
+      "relation_jaccard": {
+        "v3_r1/v3_r2": 0.0725,
+        "v3_r1/v3_r3": 0.4957,
+        "v3_r2/v3_r3": 0.0652
+      },
+      "mean_jaccard": 0.2111
+    },
+    "haas_mill_2023": {
+      "runs": {
+        "v3_r1": {
+          "status": "approved",
+          "graph_sha256": "681048ca60ce47bb336b27efbf51265e1a7e9a620a8ad3afa524900d78a70818",
+          "nodes": 176,
+          "diagnostic_edges": 143,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 2,
+          "problems_without_action": 21,
+          "orphan_cause_ids": [
+            "v3n_7dd8a9e84d7be1ec43a3",
+            "v3n_adf270cc1e0a6ae18397"
+          ],
+          "problem_without_action_ids": [
+            "v3n_01745d619f9c2c25720c",
+            "v3n_0b9fe18f6f456466fd42",
+            "v3n_22daf3d2fa715fa8e4a1",
+            "v3n_274d1836557f017920b7",
+            "v3n_2cfd7b8ab83dc1495964",
+            "v3n_4afe2796e6e04cefd4cb",
+            "v3n_4d099de03eef67ce5ae5",
+            "v3n_4d391b97e23b43d712b0",
+            "v3n_59d8406a4c4f108cb0df",
+            "v3n_6442bcb55a12bfdd19b7",
+            "v3n_705513c0050631f23580",
+            "v3n_713333c17b14bc300338",
+            "v3n_79d2bcbcd002efba05e8",
+            "v3n_7f46560985b1317ced03",
+            "v3n_8311c7c48c892d774e77",
+            "v3n_948c1f6c7c9084f84efd",
+            "v3n_9f9e58427853c817d0c6",
+            "v3n_b3582e8cbf871d9b1e76",
+            "v3n_b459a22327d6e6af07b5",
+            "v3n_bf4ef2cad340919fcb3f",
+            "v3n_e85dfc3802d4959bb207"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 21
+        },
+        "v3_r2": {
+          "status": "approved",
+          "graph_sha256": "b466591837eacb0c058dd003b53cedc0edbad518f133f421eec3c1b5027432e2",
+          "nodes": 246,
+          "diagnostic_edges": 211,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 6,
+          "problems_without_action": 28,
+          "orphan_cause_ids": [
+            "v3n_2678f0a3e5f8828cf14d",
+            "v3n_8b9b3f8a615565472500",
+            "v3n_910a0a610ed98ad1a6f5",
+            "v3n_999d655dbcb6be0c03e6",
+            "v3n_fc95f4cf3da0db48fe02",
+            "v3n_fd0d969fc7e6784f1bc6"
+          ],
+          "problem_without_action_ids": [
+            "v3n_0465d22172c1dbffe533",
+            "v3n_076814cf8854f194e32a",
+            "v3n_0b9fe18f6f456466fd42",
+            "v3n_1387b79b569751b3435b",
+            "v3n_22daf3d2fa715fa8e4a1",
+            "v3n_3131d7988f9dc98c989d",
+            "v3n_37aecc324a7084fcd4c7",
+            "v3n_39668193cc9422675758",
+            "v3n_49fd3ab3ffe7a1f6a9e4",
+            "v3n_6987e900ad7477035ba2",
+            "v3n_705513c0050631f23580",
+            "v3n_75038d9e96db3bd42114",
+            "v3n_79d2bcbcd002efba05e8",
+            "v3n_7c1205c56980fb518101",
+            "v3n_7ef6dbc45e5166b68e21",
+            "v3n_8311c7c48c892d774e77",
+            "v3n_8755afe2fb2bac73df2a",
+            "v3n_99e42ff0b13374062157",
+            "v3n_9f9e58427853c817d0c6",
+            "v3n_a60e7f2c56d48d49b97e",
+            "v3n_a9ee7432b58077ae4322",
+            "v3n_b3582e8cbf871d9b1e76",
+            "v3n_bd79d1a0d778cde55efa",
+            "v3n_c049b759b4925198626b",
+            "v3n_c3df4e706600f7d9c1f5",
+            "v3n_d404af52aa82422043a9",
+            "v3n_f3c7e3b3eab6930e7a53",
+            "v3n_ff83aa20fa72bd91aa41"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 17
+        },
+        "v3_r3": {
+          "status": "approved",
+          "graph_sha256": "c686c07ff0d248168be308c3f1e7001687417d9bc8796aa8417f94a48eb2cefe",
+          "nodes": 183,
+          "diagnostic_edges": 154,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 3,
+          "problems_without_action": 29,
+          "orphan_cause_ids": [
+            "v3n_3004e71ac441467e5933",
+            "v3n_9b645137d77fb88aaca9",
+            "v3n_ac6edfd06b867d40bd9b"
+          ],
+          "problem_without_action_ids": [
+            "v3n_0465d22172c1dbffe533",
+            "v3n_076814cf8854f194e32a",
+            "v3n_0ed159dcf767e02a0f10",
+            "v3n_1387b79b569751b3435b",
+            "v3n_22daf3d2fa715fa8e4a1",
+            "v3n_329e28dc043cb14473be",
+            "v3n_37aecc324a7084fcd4c7",
+            "v3n_49fd3ab3ffe7a1f6a9e4",
+            "v3n_6987e900ad7477035ba2",
+            "v3n_6c4aaed86462e4b6f46a",
+            "v3n_705513c0050631f23580",
+            "v3n_75038d9e96db3bd42114",
+            "v3n_7c1205c56980fb518101",
+            "v3n_8755afe2fb2bac73df2a",
+            "v3n_986f7d8e5260c5d74ecc",
+            "v3n_99e42ff0b13374062157",
+            "v3n_a60e7f2c56d48d49b97e",
+            "v3n_a652783414007bf80dbd",
+            "v3n_a9ee7432b58077ae4322",
+            "v3n_b3582e8cbf871d9b1e76",
+            "v3n_b768179a4c006fa90146",
+            "v3n_b79c33634105aa7f7c18",
+            "v3n_c049b759b4925198626b",
+            "v3n_c3df4e706600f7d9c1f5",
+            "v3n_ca988e366cd840c0a9d3",
+            "v3n_d404af52aa82422043a9",
+            "v3n_f2a0d2c688919d550874",
+            "v3n_f3c7e3b3eab6930e7a53",
+            "v3n_ff83aa20fa72bd91aa41"
+          ],
+          "duplicate_nodes": 0,
+          "edges_without_evidence": 0,
+          "derived_causes": 6
+        }
+      },
+      "relation_jaccard": {
+        "v3_r1/v3_r2": 0.1132,
+        "v3_r1/v3_r3": 0.0421,
+        "v3_r2/v3_r3": 0.0704
+      },
+      "mean_jaccard": 0.0752
+    },
+    "lincoln_powermig_215mp": {
+      "runs": {
+        "v3_r1": {
+          "status": "approved",
+          "graph_sha256": "9497feb98193d2724e79ff44bb0fb247d406f9758861b28fe26bc166777f35e2",
+          "nodes": 135,
+          "diagnostic_edges": 185,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 12,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [
+            "v3n_3d4c6bff6387096cfe72",
+            "v3n_4ce2f62bc4d2cae16251",
+            "v3n_6b0f772af034dccd41f2",
+            "v3n_7971d0db41a33cc5899c",
+            "v3n_8a6d8c66eac71e14a520",
+            "v3n_956fea304dc541435aac",
+            "v3n_9b55635aedc17a98cebd",
+            "v3n_d1292c073b628f5b89ad",
+            "v3n_da7d77905199d50acbf9",
+            "v3n_e75472d75768d24b63ef",
+            "v3n_eb23de2eda90e0f6dca4",
+            "v3n_fa932d6a4fe54ce85640"
+          ],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 2,
+          "edges_without_evidence": 0,
+          "derived_causes": 35
+        },
+        "v3_r2": {
+          "status": "approved",
+          "graph_sha256": "70f55be456a68c8b80ca44929442d00c211557fbf709771e77fae724903bc4a8",
+          "nodes": 77,
+          "diagnostic_edges": 94,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 2,
+          "edges_without_evidence": 0,
+          "derived_causes": 17
+        },
+        "v3_r3": {
+          "status": "approved",
+          "graph_sha256": "f73090fda1bb1fec5351b783f1d1a6a77320180878cff73d69b74bdae80b7151",
+          "nodes": 76,
+          "diagnostic_edges": 95,
+          "empty_diagnostic_graph": false,
+          "fusion_violations": 0,
+          "fusion_violation_details": [],
+          "orphan_causes": 0,
+          "problems_without_action": 0,
+          "orphan_cause_ids": [],
+          "problem_without_action_ids": [],
+          "duplicate_nodes": 2,
+          "edges_without_evidence": 0,
+          "derived_causes": 20
+        }
+      },
+      "relation_jaccard": {
+        "v3_r1/v3_r2": 0.125,
+        "v3_r1/v3_r3": 0.0769,
+        "v3_r2/v3_r3": 0.1053
+      },
+      "mean_jaccard": 0.1024
+    }
+  }
+}

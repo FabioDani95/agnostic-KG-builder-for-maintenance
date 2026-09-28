@@ -1,137 +1,244 @@
 {
  "status": "approved",
+ "incomplete_reasons": [],
+ "empty_extraction_units": [
+  "u003-fd1814",
+  "u009-d15c77"
+ ],
+ "failed_units": [
+  {
+   "unit_id": "u003-fd1814",
+   "segments": []
+  },
+  {
+   "unit_id": "u004-f03fbc",
+   "segments": [
+    "p231.t1.r2"
+   ]
+  },
+  {
+   "unit_id": "u005-8c2714",
+   "segments": [
+    "p232.t1.r1"
+   ]
+  },
+  {
+   "unit_id": "u006-ed8dc5",
+   "segments": [
+    "p360.t1.r1",
+    "p361.t1.r5"
+   ]
+  },
+  {
+   "unit_id": "u008-62d9f8",
+   "segments": [
+    "p375.t1.r2"
+   ]
+  },
+  {
+   "unit_id": "u009-d15c77",
+   "segments": [
+    "p381.t1.r1",
+    "p381.t1.r2",
+    "p381.t2.r1",
+    "p381.t2.r10",
+    "p381.t2.r11",
+    "p381.t2.r12",
+    "p381.t2.r13",
+    "p381.t2.r14",
+    "p381.t2.r15",
+    "p381.t2.r16",
+    "p381.t2.r17",
+    "p381.t2.r18",
+    "p381.t2.r19",
+    "p381.t2.r2",
+    "p381.t2.r20",
+    "p381.t2.r21",
+    "p381.t2.r22",
+    "p381.t2.r24",
+    "p381.t2.r25",
+    "p381.t2.r26",
+    "p381.t2.r3",
+    "p381.t2.r4",
+    "p381.t2.r5",
+    "p381.t2.r6",
+    "p381.t2.r7",
+    "p381.t2.r8",
+    "p381.t2.r9"
+   ]
+  },
+  {
+   "unit_id": "u010-f9535b",
+   "segments": [
+    "p390.t1.r2",
+    "p390.t1.r3",
+    "p390.t1.r4"
+   ]
+  }
+ ],
  "pages": 406,
  "page_labels": {
-  "other": 289,
+  "other": 297,
   "unreadable": 2,
-  "procedure": 89,
-  "diagnostic": 26
+  "procedure": 94,
+  "parts": 1,
+  "diagnostic": 12
  },
  "diagnostic_pages": [
   118,
   119,
-  123,
-  124,
-  169,
-  170,
-  171,
-  172,
-  173,
-  174,
-  219,
-  220,
+  168,
+  231,
   232,
   360,
   361,
-  362,
   365,
-  374,
   375,
-  380,
   381,
-  385,
-  386,
   390,
-  391,
   396
  ],
  "confirmed_pages": [
-  123,
-  169,
-  170,
-  173,
+  118,
+  119,
+  168,
+  231,
   232,
+  365,
+  375,
+  381,
+  390,
+  396
+ ],
+ "map_demotions_refused": [
+  390
+ ],
+ "map_removed_pages": [
+  123,
+  124,
+  169,
+  230,
+  374,
+  391
+ ],
+ "read_pages": [
+  118,
+  119,
+  168,
+  231,
+  232,
+  360,
   361,
   365,
   375,
-  386,
+  381,
+  390,
   396
  ],
- "map_demotions_refused": [],
- "blocked_merges": [
-  {
-   "left": "FailureMode|unspecified cause of extension i o configuration failure",
-   "right": "FailureMode|caio-01 extension i o configuration mismatch",
-   "reason": "different_numbers",
-   "constraint_left": "FailureMode|unspecified cause of extension i o configuration failure",
-   "constraint_right": "FailureMode|caio-01 extension i o configuration mismatch"
-  }
- ],
- "orphan_causes": 5,
- "problems_without_action": 6,
+ "blocked_merges": [],
+ "orphan_causes": 12,
+ "problems_without_action": 7,
  "orphan_cause_ids": [
-  "v3n_1bad6d79a1428316e5bb",
-  "v3n_231824225bfce58f9a06",
-  "v3n_cdc6af44fb396d07cc05",
-  "v3n_d6e67f7eecd1024f4f96",
-  "v3n_d71b13d6cd70177f6c67"
+  "v3n_5d7da23cdfd95b36c616",
+  "v3n_5dcae78f0dd4d1b22046",
+  "v3n_74b67587e1164831a482",
+  "v3n_773271c9b0b91a53b964",
+  "v3n_9245e0df1da5627f7b90",
+  "v3n_9b2cc88be5e242813ab2",
+  "v3n_b562ee1543d6b16612d4",
+  "v3n_d1835fb0eadee982a3ba",
+  "v3n_d71b13d6cd70177f6c67",
+  "v3n_e2b95e63074b0efb1a4f",
+  "v3n_e9d1aedcbaa7ecb6d301",
+  "v3n_f6366f4fcc150d1d5ddd"
  ],
  "problem_without_action_ids": [
-  "v3n_1c7de49d7432c5ca9bb4",
+  "v3n_1ab90312c2783c35c74d",
+  "v3n_626bb541dd15349160f5",
+  "v3n_67e45420f446821158ec",
   "v3n_8b4019c615204f713168",
-  "v3n_8dcf54e1614470f48515",
-  "v3n_cd7826438f7df900af52",
+  "v3n_ce476d131a9bde10eec1",
   "v3n_e7da917a0f8a3ba8d31a",
-  "v3n_e8d75ea42910a82e5c82"
+  "v3n_fbdcfe2dff73136a0601"
  ],
- "units": 13,
+ "units": 11,
  "failed_reads": 0,
- "proposals": 119,
+ "proposals": 132,
+ "omission_review_enabled": false,
+ "visual_verification_enabled": false,
+ "visual_checks": [],
+ "omission_relations": 0,
  "unresolved_references": [],
- "unclear_passages": 1,
+ "unclear_passages": 5,
  "extraction_notes": [
-  "coverage: 5 unused table row(s) read again",
-  "coverage: 4 unused table row(s) read again",
-  "coverage: 5 unused table row(s) read again",
+  "C: empty structured reading retried",
+  "C: entities returned without usable relations; not counted as extraction coverage",
+  "coverage: 1 unused table row(s) read again",
+  "C: empty structured reading retried",
+  "coverage: 1 unused table row(s) read again",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
   "coverage: 2 unused table row(s) read again",
-  "coverage: 9 unused table row(s) read again",
-  "B: cause 'Extension I/O configuration failure' repeats its problem, marked unnamed",
-  "coverage: 14 unused table row(s) read again",
-  "coverage: 37 unused table row(s) read again",
-  "coverage: 17 unused table row(s) read again",
-  "coverage: 17 unused table row(s) read again",
-  "coverage: 1 unused table row(s) read again"
+  "C: empty structured reading retried",
+  "coverage: 1 unused table row(s) read again",
+  "A: empty structured reading retried",
+  "A: empty unit split in halves",
+  "B: empty structured reading retried",
+  "B: empty unit split in halves",
+  "B: entities returned without usable relations; not counted as extraction coverage",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
+  "coverage: 26 unused table row(s) read again",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
+  "coverage: 3 unused table row(s) read again",
+  "B: cause 'Extension I/O configuration failure' repeats its problem, marked unnamed"
  ],
  "assertions_by_tier": {
-  "green": 79,
-  "red": 13
+  "green": 92,
+  "red": 10
  },
  "witnesses": {
-  "structure": 53,
-  "verifier": 60,
-  "agreement": 27,
-  "reviewer": 26
+  "structure": 72,
+  "agreement": 32,
+  "verifier": 73,
+  "reviewer": 14
  },
  "verifier_verdicts": {
-  "supported": 60,
-  "not_called": 23,
+  "not_called": 20,
+  "supported": 73,
   "not_supported": 9
  },
  "graph": {
-  "nodes": 92,
+  "nodes": 113,
   "nodes_by_type": {
-   "Symptom": 12,
-   "FailureMode": 28,
-   "Component": 16,
-   "CorrectiveAction": 32,
+   "Symptom": 19,
+   "FailureMode": 39,
+   "Component": 14,
+   "CorrectiveAction": 37,
    "ErrorCode": 4
   },
-  "edges": 86,
+  "edges": 90,
   "edges_by_tier": {
-   "green": 75,
-   "red": 11
+   "green": 82,
+   "red": 8
   },
-  "merged_aliases": 12
+  "merged_aliases": 14
  },
  "gates": {
   "map": {
-   "questions": 1,
-   "answered": 0,
-   "pending": 1
+   "questions": 3,
+   "answered": 3,
+   "pending": 0
   },
   "doubts": {
-   "questions": 22,
-   "answered": 22,
+   "questions": 18,
+   "answered": 18,
+   "pending": 0
+  },
+  "recovery": {
+   "questions": 1,
+   "answered": 1,
    "pending": 0
   },
   "approval": {
@@ -144,51 +251,55 @@
   "agent": 22,
   "auto": 1
  },
- "human_questions_offered": 1,
+ "human_questions_offered": 0,
  "deferred_questions": [],
- "human_questions": 1,
- "reviewer_confirmed": 26,
- "merged_cell_relations": 0,
+ "human_questions": 0,
+ "reviewer_confirmed": 14,
+ "merged_cell_relations": 2,
  "usage": {
-  "calls": 55,
+  "calls": 358,
   "failed_calls": 0,
-  "prompt_tokens": 284447,
-  "completion_tokens": 47953,
-  "estimated_cost_usd": 0.037922,
+  "prompt_tokens": 364550,
+  "completion_tokens": 64643,
+  "estimated_cost_usd": 0.056897,
   "by_operation": {
-   "kg_v3_extract": 36,
-   "kg_v3_map": 14,
-   "kg_v3_merge": 2,
-   "kg_v3_verify": 3
+   "kg_v3_extract": 46,
+   "kg_v3_map": 300,
+   "kg_v3_merge": 5,
+   "kg_v3_reduce_action": 1,
+   "kg_v3_verify": 6
   }
  },
  "agent_usage": {
-  "calls": 23,
+  "calls": 22,
   "failed_calls": 0,
-  "prompt_tokens": 49455,
-  "completion_tokens": 12568,
-  "estimated_cost_usd": 0.012142,
+  "prompt_tokens": 26333,
+  "completion_tokens": 10367,
+  "estimated_cost_usd": 0.008214,
   "by_operation": {
-   "AgentDecision": 23
+   "AgentDecision": 22
   }
  },
  "seconds": {
-  "map": 15.104,
-  "gate_map": 35.719,
-  "extract": 40.666,
-  "check": 6.149,
-  "merge": 7.313,
-  "gate_doubts": 26.321,
-  "gate_approval": 0.001,
-  "total": 131.355,
-  "pdf_read": 177.642,
-  "end_to_end": 313.955
+  "map": 77.546,
+  "gate_map": 14.212,
+  "extract": 48.559,
+  "check": 8.131,
+  "merge": 9.978,
+  "split_recheck": 4.231,
+  "gate_doubts": 21.189,
+  "action_reduction": 10.925,
+  "gate_recovery": 4.428,
+  "gate_approval": 0.0,
+  "total": 199.328,
+  "pdf_read": 178.468,
+  "end_to_end": 378.588
  },
  "prompt_ids": {
   "extraction": "d305faa43c9daea4"
  },
  "provenance": {
-  "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+  "commit": "79501aecbb19805f3e099118669fef9cc6558794",
   "pdf_sha256": "7e2706e4fb559767af01cf683ab08665882e2437b64a1d785136a3962de43fce",
   "config": {
    "model": "gpt-6-luna",
@@ -211,7 +322,11 @@
    "agent_model": "gpt-6-luna",
    "agent_reasoning_effort": "medium",
    "wait_for_map": false,
-   "max_units": 150
+   "max_units": 150,
+   "omission_review": false,
+   "omission_max_units": 3,
+   "visual_verification": false,
+   "visual_max_relations": 12
   },
   "segment_ids": [
    "p1.b1",

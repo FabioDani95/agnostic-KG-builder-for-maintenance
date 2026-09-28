@@ -1,16 +1,45 @@
 {
  "status": "approved",
+ "incomplete_reasons": [],
+ "empty_extraction_units": [
+  "u004-12d1b9"
+ ],
+ "failed_units": [
+  {
+   "unit_id": "u004-12d1b9",
+   "segments": [
+    "p27.t1.r1",
+    "p27.t2.r1"
+   ]
+  },
+  {
+   "unit_id": "u005-4530a6",
+   "segments": [
+    "p28.t1.r2",
+    "p28.t1.r8",
+    "p29.t1.r2",
+    "p29.t1.r5"
+   ]
+  },
+  {
+   "unit_id": "u006-998db2",
+   "segments": [
+    "p30.t3.r2"
+   ]
+  }
+ ],
  "pages": 36,
  "page_labels": {
-  "other": 22,
-  "procedure": 10,
+  "other": 30,
   "parts": 1,
-  "diagnostic": 3
+  "diagnostic": 5
  },
  "diagnostic_pages": [
+  26,
   27,
   28,
-  29
+  29,
+  30
  ],
  "confirmed_pages": [
   27,
@@ -18,61 +47,100 @@
   29
  ],
  "map_demotions_refused": [],
+ "map_removed_pages": [],
+ "read_pages": [
+  26,
+  27,
+  28,
+  29,
+  30
+ ],
  "blocked_merges": [],
- "orphan_causes": 0,
+ "orphan_causes": 12,
  "problems_without_action": 0,
- "orphan_cause_ids": [],
+ "orphan_cause_ids": [
+  "v3n_3d4c6bff6387096cfe72",
+  "v3n_4ce2f62bc4d2cae16251",
+  "v3n_6b0f772af034dccd41f2",
+  "v3n_7971d0db41a33cc5899c",
+  "v3n_8a6d8c66eac71e14a520",
+  "v3n_956fea304dc541435aac",
+  "v3n_9b55635aedc17a98cebd",
+  "v3n_d1292c073b628f5b89ad",
+  "v3n_da7d77905199d50acbf9",
+  "v3n_e75472d75768d24b63ef",
+  "v3n_eb23de2eda90e0f6dca4",
+  "v3n_fa932d6a4fe54ce85640"
+ ],
  "problem_without_action_ids": [],
- "units": 1,
+ "units": 6,
  "failed_reads": 0,
- "proposals": 151,
+ "proposals": 331,
+ "omission_review_enabled": false,
+ "visual_verification_enabled": false,
+ "visual_checks": [],
+ "omission_relations": 0,
  "unresolved_references": [],
- "unclear_passages": 0,
+ "unclear_passages": 3,
  "extraction_notes": [
+  "A: relation 19 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "coverage: 1 unused table row(s) read again",
+  "A: empty structured reading retried",
+  "A: empty unit split in halves",
+  "B: empty structured reading retried",
+  "B: empty unit split in halves",
   "A: cause 'Communication error between display P.C. board and power control board' repeats its problem, marked unnamed",
-  "B: cause 'Communication error between display P.C. board and power control board' repeats its problem, marked unnamed",
-  "coverage: 4 unused table row(s) read again"
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
+  "coverage: 4 unused table row(s) read again",
+  "C: empty structured reading retried",
+  "coverage: 1 unused table row(s) read again"
  ],
  "assertions_by_tier": {
-  "green": 101,
-  "red": 22
+  "green": 252,
+  "red": 78
  },
  "witnesses": {
-  "structure": 52,
-  "agreement": 40,
-  "verifier": 90,
-  "reviewer": 40
+  "structure": 193,
+  "agreement": 38,
+  "verifier": 203,
+  "reviewer": 116
  },
  "verifier_verdicts": {
-  "not_called": 21,
-  "supported": 90,
-  "not_supported": 12
+  "not_called": 30,
+  "supported": 203,
+  "not_supported": 97
  },
  "graph": {
-  "nodes": 85,
+  "nodes": 151,
   "nodes_by_type": {
-   "Symptom": 6,
-   "FailureMode": 25,
-   "CorrectiveAction": 35,
-   "Component": 16,
+   "Symptom": 10,
+   "FailureMode": 45,
+   "Component": 27,
+   "CorrectiveAction": 66,
    "ErrorCode": 3
   },
-  "edges": 109,
+  "edges": 247,
   "edges_by_tier": {
-   "green": 90,
-   "red": 19
+   "green": 185,
+   "red": 62
   },
-  "merged_aliases": 20
+  "merged_aliases": 67
  },
  "gates": {
   "map": {
    "questions": 1,
-   "answered": 1,
-   "pending": 0
+   "answered": 0,
+   "pending": 1
   },
   "doubts": {
-   "questions": 14,
-   "answered": 14,
+   "questions": 44,
+   "answered": 44,
+   "pending": 0
+  },
+  "recovery": {
+   "questions": 0,
+   "answered": 0,
    "pending": 0
   },
   "approval": {
@@ -82,54 +150,59 @@
   }
  },
  "answers_by_reviewer": {
-  "agent": 15,
+  "agent": 44,
   "auto": 1
  },
- "human_questions_offered": 0,
+ "human_questions_offered": 1,
  "deferred_questions": [],
- "human_questions": 0,
- "reviewer_confirmed": 40,
- "merged_cell_relations": 23,
+ "human_questions": 1,
+ "reviewer_confirmed": 116,
+ "merged_cell_relations": 104,
  "usage": {
-  "calls": 12,
+  "calls": 62,
   "failed_calls": 0,
-  "prompt_tokens": 81886,
-  "completion_tokens": 19663,
-  "estimated_cost_usd": 0.019581,
+  "prompt_tokens": 1476781,
+  "completion_tokens": 72339,
+  "estimated_cost_usd": 0.215454,
   "by_operation": {
-   "kg_v3_extract": 3,
-   "kg_v3_map": 2,
-   "kg_v3_merge": 1,
-   "kg_v3_verify": 6
+   "kg_v3_extract": 25,
+   "kg_v3_map": 3,
+   "kg_v3_merge": 10,
+   "kg_v3_reduce_action": 1,
+   "kg_v3_verify": 23
   }
  },
  "agent_usage": {
-  "calls": 15,
+  "calls": 45,
   "failed_calls": 0,
-  "prompt_tokens": 28789,
-  "completion_tokens": 8476,
-  "estimated_cost_usd": 0.00781,
+  "prompt_tokens": 114784,
+  "completion_tokens": 24994,
+  "estimated_cost_usd": 0.02682,
   "by_operation": {
-   "AgentDecision": 15
+   "AgentDecision": 45
   }
  },
  "seconds": {
-  "map": 4.923,
-  "gate_map": 7.503,
-  "extract": 39.497,
-  "check": 6.886,
-  "merge": 6.448,
-  "gate_doubts": 19.749,
-  "gate_approval": 0.0,
-  "total": 85.159,
-  "pdf_read": 5.13,
-  "end_to_end": 90.873
+  "map": 10.265,
+  "gate_map": 21.845,
+  "extract": 78.532,
+  "check": 28.398,
+  "merge": 18.532,
+  "split_recheck": 2.025,
+  "navigation": 4.546,
+  "gate_doubts": 64.227,
+  "action_reduction": 12.152,
+  "gate_recovery": 0.001,
+  "gate_approval": 0.001,
+  "total": 241.421,
+  "pdf_read": 5.518,
+  "end_to_end": 247.584
  },
  "prompt_ids": {
   "extraction": "4dea05d29b008ba2"
  },
  "provenance": {
-  "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+  "commit": "79501aecbb19805f3e099118669fef9cc6558794",
   "pdf_sha256": "0d981135554379c9175510bf670559c50ee9f66db8419aa9d4341ddaf8bba133",
   "config": {
    "model": "gpt-6-luna",
@@ -152,7 +225,11 @@
    "agent_model": "gpt-6-luna",
    "agent_reasoning_effort": "medium",
    "wait_for_map": false,
-   "max_units": 150
+   "max_units": 150,
+   "omission_review": false,
+   "omission_max_units": 3,
+   "visual_verification": false,
+   "visual_max_relations": 12
   },
   "segment_ids": [
    "p1.b1",

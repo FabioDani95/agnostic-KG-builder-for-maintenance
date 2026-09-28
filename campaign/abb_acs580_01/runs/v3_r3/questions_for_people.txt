@@ -1,0 +1,45 @@
+Question rel:u007-ed8dc5:A.R4 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p360.t1.r1] page 360: column 1: Action | column 2: 
+  [p359.b8] page 359: Note: The loss of only one STO signal always generates a fault as it is interpreted as a malfunction of STO hardware or wiring.
+  [p360.t1.r5] page 360: column 1: Check the STO circuit connections against the wiring diagram. | column 2: 
+
+What the system proposes:
+  - 1. FailureMode 'Loss of STO signal' -> RESOLVED_BY -> CorrectiveAction 'Check STO circuit connections against the wiring diagram' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything).
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u007-ed8dc5:A.R5 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p361.t1.r1] page 361: TABLE COLUMNS: Action | 
+  [p359.b8] page 359: Note: The loss of only one STO signal always generates a fault as it is interpreted as a malfunction of STO hardware or wiring.
+  [p361.t1.r2] page 361: Action: Test the operation of the STO function when the motor is stopped. • Give a stop command for the drive (if running) and wait until the motor shaft is at a standstill. Make sure that the drive operates as follows: • Open the STO circuit. The drive generates an indication if one is defined for the 'stopped' state in parameter 31.22 (see the firmware manual). • Give a start command to verify that the STO function blocks the drive's operation. The drive generates a warning. The motor should not start. • Close the STO circuit. • Reset any active faults. Restart the drive and check that the motor runs normally. | column 2: 
+
+What the system proposes:
+  - 1. FailureMode 'Loss of STO signal' -> RESOLVED_BY -> CorrectiveAction 'Test STO operation with the motor stopped' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). Context: [expected] With the STO circuit open, a start command is blocked; the motor does not start..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question merge:Component|extension i o module|Component|i o extension module (merge_check)
+Do 'Extension I/O module' and 'I/O extension module' denote the same Component?
+
+What the manual says:
+  [p386.b11] page 386: Warning A7AB Extension I/O configuration failure.
+  [p390.b12] page 390: • make sure that the value of both parameters 15.01 Extension module type and 15.02 Detected extension module is CMOD-01.
+
+What the system proposes:
+  - Keep 'Extension I/O module' and 'I/O extension module' as two separate Component nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

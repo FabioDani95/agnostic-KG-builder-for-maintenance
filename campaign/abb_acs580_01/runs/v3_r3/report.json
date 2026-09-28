@@ -1,14 +1,116 @@
 {
  "status": "approved",
+ "incomplete_reasons": [],
+ "empty_extraction_units": [
+  "u003-fd1814",
+  "u010-d15c77"
+ ],
+ "failed_units": [
+  {
+   "unit_id": "u003-fd1814",
+   "segments": []
+  },
+  {
+   "unit_id": "u006-8c2714",
+   "segments": [
+    "p232.t1.r1"
+   ]
+  },
+  {
+   "unit_id": "u007-ed8dc5",
+   "segments": [
+    "p360.t1.r1"
+   ]
+  },
+  {
+   "unit_id": "u009-62d9f8",
+   "segments": [
+    "p375.t1.r2"
+   ]
+  },
+  {
+   "unit_id": "u010-d15c77",
+   "segments": [
+    "p381.t1.r1",
+    "p381.t1.r2",
+    "p381.t2.r1",
+    "p381.t2.r10",
+    "p381.t2.r11",
+    "p381.t2.r12",
+    "p381.t2.r13",
+    "p381.t2.r14",
+    "p381.t2.r15",
+    "p381.t2.r16",
+    "p381.t2.r17",
+    "p381.t2.r18",
+    "p381.t2.r19",
+    "p381.t2.r2",
+    "p381.t2.r20",
+    "p381.t2.r21",
+    "p381.t2.r22",
+    "p381.t2.r24",
+    "p381.t2.r25",
+    "p381.t2.r26",
+    "p381.t2.r3",
+    "p381.t2.r4",
+    "p381.t2.r5",
+    "p381.t2.r6",
+    "p381.t2.r7",
+    "p381.t2.r8",
+    "p381.t2.r9"
+   ]
+  },
+  {
+   "unit_id": "u011-3324c6",
+   "segments": [
+    "p386.t1.r2",
+    "p386.t1.r3",
+    "p386.t1.r4",
+    "p386.t2.r1",
+    "p386.t2.r10",
+    "p386.t2.r11",
+    "p386.t2.r12",
+    "p386.t2.r13",
+    "p386.t2.r14",
+    "p386.t2.r2",
+    "p386.t2.r3",
+    "p386.t2.r4",
+    "p386.t2.r5",
+    "p386.t2.r6",
+    "p386.t2.r7",
+    "p386.t2.r8",
+    "p386.t2.r9"
+   ]
+  },
+  {
+   "unit_id": "u012-f9535b",
+   "segments": [
+    "p390.t1.r2",
+    "p390.t1.r3",
+    "p390.t1.r4"
+   ]
+  },
+  {
+   "unit_id": "u013-d645eb",
+   "segments": [
+    "p396.t1.r2"
+   ]
+  }
+ ],
  "pages": 406,
  "page_labels": {
-  "other": 280,
+  "other": 291,
   "unreadable": 2,
-  "procedure": 113,
-  "diagnostic": 11
+  "procedure": 95,
+  "parts": 4,
+  "diagnostic": 14
  },
  "diagnostic_pages": [
+  118,
+  119,
+  168,
   169,
+  231,
   232,
   360,
   361,
@@ -17,92 +119,169 @@
   381,
   386,
   390,
-  391,
   396
  ],
  "confirmed_pages": [
-  169,
+  118,
+  168,
+  231,
   232,
   365,
   375,
+  381,
   386,
   390,
   396
  ],
- "map_demotions_refused": [
-  169,
-  386
+ "map_demotions_refused": [],
+ "map_removed_pages": [
+  113,
+  230,
+  374,
+  380,
+  385,
+  391
  ],
- "blocked_merges": [],
- "orphan_causes": 5,
- "problems_without_action": 2,
+ "read_pages": [
+  118,
+  119,
+  168,
+  169,
+  231,
+  232,
+  360,
+  361,
+  365,
+  375,
+  381,
+  386,
+  390,
+  396
+ ],
+ "blocked_merges": [
+  {
+   "left": "CorrectiveAction|measure motor insulation resistance between each phase conductor and protective earth",
+   "right": "CorrectiveAction|measure motor insulation resistance between each phase conductor and protective earth at 1000 v dc",
+   "reason": "different_numbers",
+   "constraint_left": "CorrectiveAction|measure motor insulation resistance between each phase conductor and protective earth",
+   "constraint_right": "CorrectiveAction|measure insulation resistance between each phase conductor and protective earth at 1000 v dc"
+  }
+ ],
+ "orphan_causes": 11,
+ "problems_without_action": 9,
  "orphan_cause_ids": [
-  "v3n_372773ee85a3b35f1ea1",
-  "v3n_46ae92cd23dd3d910407",
-  "v3n_54e4c189c6f89f995c7c",
-  "v3n_7e154e96f0647132d7e5",
-  "v3n_d60c1a8fe8f0f4269334"
+  "v3n_01a0e53250b19f3a25c9",
+  "v3n_46c88f8180b39ea5fd40",
+  "v3n_4a605d7a4a0043af0a20",
+  "v3n_6075ba4ee1520bd6f3c1",
+  "v3n_68f7033a2714ab686da6",
+  "v3n_92c163d9d5b360ca3b21",
+  "v3n_9a1af4c816c9d4043e26",
+  "v3n_ac4334c819b9d88fda3c",
+  "v3n_af17cc5fa40a435deec3",
+  "v3n_cdc6af44fb396d07cc05",
+  "v3n_d1835fb0eadee982a3ba"
  ],
  "problem_without_action_ids": [
+  "v3n_19c4ef2f819bd35f61d4",
+  "v3n_575453e47ceef575b2d5",
+  "v3n_626bb541dd15349160f5",
+  "v3n_67e45420f446821158ec",
   "v3n_7063723bf01e77d4cc1f",
-  "v3n_e7da917a0f8a3ba8d31a"
+  "v3n_8b4019c615204f713168",
+  "v3n_8d3f926de96a510dc10f",
+  "v3n_ce476d131a9bde10eec1",
+  "v3n_d5a9f708390aef90b2b4"
  ],
- "units": 9,
+ "units": 13,
  "failed_reads": 0,
- "proposals": 122,
+ "proposals": 159,
+ "omission_review_enabled": false,
+ "visual_verification_enabled": false,
+ "visual_checks": [],
+ "omission_relations": 0,
  "unresolved_references": [],
- "unclear_passages": 0,
+ "unclear_passages": 2,
  "extraction_notes": [
-  "coverage: 2 unused table row(s) read again",
+  "A: relation 5 skipped (CorrectiveAction to CorrectiveAction is not in the ontology)",
+  "B: relation 10 skipped (Symptom to Symptom is not in the ontology)",
+  "B: relation 11 skipped (Symptom to Symptom is not in the ontology)",
+  "B: relation 12 skipped (Symptom to Symptom is not in the ontology)",
+  "B: relation 13 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "B: relation 14 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "B: relation 15 skipped (Symptom to Symptom is not in the ontology)",
+  "B: relation 16 skipped (Symptom to CorrectiveAction is not in the ontology)",
+  "C: empty structured reading retried",
   "coverage: 1 unused table row(s) read again",
+  "C: empty structured reading retried",
   "coverage: 1 unused table row(s) read again",
+  "C: empty structured reading retried",
+  "coverage: 1 unused table row(s) read again",
+  "A: empty structured reading retried",
+  "A: empty unit split in halves",
+  "B: empty structured reading retried",
+  "B: empty unit split in halves",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
   "coverage: 26 unused table row(s) read again",
-  "B: cause 'Extension I/O configuration failure' repeats its problem, marked unnamed",
+  "A: cause 'Extension I/O configuration failure' repeats its problem, marked unnamed",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
   "coverage: 17 unused table row(s) read again",
+  "C: empty structured reading retried",
+  "C: empty unit split in halves",
+  "coverage: 3 unused table row(s) read again",
   "B: cause 'Extension I/O configuration failure' repeats its problem, marked unnamed",
-  "coverage: 17 unused table row(s) read again",
+  "C: empty structured reading retried",
   "coverage: 1 unused table row(s) read again"
  ],
  "assertions_by_tier": {
-  "green": 75,
-  "red": 21
+  "green": 111,
+  "red": 20,
+  "yellow": 2
  },
  "witnesses": {
-  "structure": 48,
-  "agreement": 28,
-  "verifier": 68,
-  "reviewer": 16
+  "structure": 86,
+  "agreement": 31,
+  "verifier": 88,
+  "reviewer": 28
  },
  "verifier_verdicts": {
-  "not_called": 16,
-  "supported": 68,
-  "not_supported": 12
+  "not_called": 21,
+  "supported": 88,
+  "not_supported": 24
  },
  "graph": {
-  "nodes": 85,
+  "nodes": 121,
   "nodes_by_type": {
-   "FailureMode": 25,
-   "Component": 10,
-   "CorrectiveAction": 37,
-   "Symptom": 9,
+   "Symptom": 21,
+   "FailureMode": 41,
+   "Component": 16,
+   "CorrectiveAction": 39,
    "ErrorCode": 4
   },
-  "edges": 92,
+  "edges": 117,
   "edges_by_tier": {
-   "green": 72,
-   "red": 20
+   "green": 96,
+   "red": 19,
+   "yellow": 2
   },
-  "merged_aliases": 18
+  "merged_aliases": 19
  },
  "gates": {
   "map": {
-   "questions": 1,
-   "answered": 1,
+   "questions": 3,
+   "answered": 3,
    "pending": 0
   },
   "doubts": {
-   "questions": 18,
-   "answered": 18,
+   "questions": 35,
+   "answered": 32,
+   "pending": 3
+  },
+  "recovery": {
+   "questions": 0,
+   "answered": 0,
    "pending": 0
   },
   "approval": {
@@ -112,55 +291,59 @@
   }
  },
  "answers_by_reviewer": {
-  "agent": 19,
+  "agent": 35,
   "auto": 1
  },
- "human_questions_offered": 0,
+ "human_questions_offered": 3,
  "deferred_questions": [],
- "human_questions": 0,
- "reviewer_confirmed": 16,
- "merged_cell_relations": 3,
+ "human_questions": 3,
+ "reviewer_confirmed": 28,
+ "merged_cell_relations": 1,
  "usage": {
-  "calls": 45,
+  "calls": 364,
   "failed_calls": 0,
-  "prompt_tokens": 237242,
-  "completion_tokens": 43528,
-  "estimated_cost_usd": 0.029515,
+  "prompt_tokens": 435890,
+  "completion_tokens": 75457,
+  "estimated_cost_usd": 0.06961,
   "by_operation": {
-   "kg_v3_extract": 25,
-   "kg_v3_map": 14,
-   "kg_v3_merge": 1,
-   "kg_v3_verify": 5
+   "kg_v3_extract": 52,
+   "kg_v3_map": 297,
+   "kg_v3_merge": 6,
+   "kg_v3_reduce_action": 1,
+   "kg_v3_verify": 8
   }
  },
  "agent_usage": {
-  "calls": 19,
+  "calls": 38,
   "failed_calls": 0,
-  "prompt_tokens": 49105,
-  "completion_tokens": 10175,
-  "estimated_cost_usd": 0.011024,
+  "prompt_tokens": 43187,
+  "completion_tokens": 15466,
+  "estimated_cost_usd": 0.012803,
   "by_operation": {
-   "AgentDecision": 19
+   "AgentDecision": 38
   }
  },
  "seconds": {
-  "map": 13.508,
-  "gate_map": 23.561,
-  "extract": 30.748,
-  "check": 10.276,
-  "merge": 7.577,
-  "navigation": 1.523,
-  "gate_doubts": 23.108,
+  "map": 78.719,
+  "gate_map": 16.911,
+  "extract": 60.503,
+  "check": 9.505,
+  "merge": 14.938,
+  "split_recheck": 2.461,
+  "navigation": 3.115,
+  "gate_doubts": 38.861,
+  "action_reduction": 15.785,
+  "gate_recovery": 0.0,
   "gate_approval": 0.0,
-  "total": 110.4,
-  "pdf_read": 177.196,
-  "end_to_end": 288.357
+  "total": 240.94,
+  "pdf_read": 171.633,
+  "end_to_end": 419.736
  },
  "prompt_ids": {
   "extraction": "d305faa43c9daea4"
  },
  "provenance": {
-  "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+  "commit": "79501aecbb19805f3e099118669fef9cc6558794",
   "pdf_sha256": "7e2706e4fb559767af01cf683ab08665882e2437b64a1d785136a3962de43fce",
   "config": {
    "model": "gpt-6-luna",
@@ -183,7 +366,11 @@
    "agent_model": "gpt-6-luna",
    "agent_reasoning_effort": "medium",
    "wait_for_map": false,
-   "max_units": 150
+   "max_units": 150,
+   "omission_review": false,
+   "omission_max_units": 3,
+   "visual_verification": false,
+   "visual_max_relations": 12
   },
   "segment_ids": [
    "p1.b1",

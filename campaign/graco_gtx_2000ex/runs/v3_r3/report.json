@@ -1,9 +1,12 @@
 {
  "status": "approved",
+ "incomplete_reasons": [],
+ "empty_extraction_units": [],
+ "failed_units": [],
  "pages": 18,
  "page_labels": {
-  "other": 8,
-  "procedure": 2,
+  "other": 7,
+  "procedure": 3,
   "diagnostic": 2,
   "parts": 6
  },
@@ -11,32 +14,36 @@
   8,
   9
  ],
- "confirmed_pages": [
+ "confirmed_pages": [],
+ "map_demotions_refused": [],
+ "map_removed_pages": [
+  7
+ ],
+ "read_pages": [
   8,
   9
  ],
- "map_demotions_refused": [],
  "blocked_merges": [
   {
-   "left": "CorrectiveAction|clean hose",
-   "right": "CorrectiveAction|relieve pressure and flush hose with clean water",
+   "left": "CorrectiveAction|thoroughly mix material until it immediately folds back when a finger is drawn through its surface",
+   "right": "CorrectiveAction|thoroughly mix the material until it immediately folds back after a finger is drawn through its surface",
    "reason": "different",
-   "constraint_left": "CorrectiveAction|flush hose and pump with clean water",
-   "constraint_right": "CorrectiveAction|relieve pressure and flush hose with clean water"
+   "constraint_left": "CorrectiveAction|thin and thoroughly mix material until it immediately folds back when a finger is drawn through its surface",
+   "constraint_right": "CorrectiveAction|thoroughly mix the material until it immediately folds back after a finger is drawn through its surface"
   },
   {
-   "left": "CorrectiveAction|relieve pressure and clean the hose",
-   "right": "CorrectiveAction|relieve pressure and flush hose with clean water",
-   "reason": "different",
-   "constraint_left": "CorrectiveAction|flush hose and pump with clean water",
-   "constraint_right": "CorrectiveAction|relieve pressure and flush hose with clean water"
+   "left": "CorrectiveAction|turn the fluid knob in on the gun",
+   "right": "CorrectiveAction|turn the fluid knob in on the gun see spray techniques in operation manual 309915",
+   "reason": "different_numbers",
+   "constraint_left": "CorrectiveAction|turn the fluid knob in on the gun",
+   "constraint_right": "CorrectiveAction|turn the fluid knob in on the gun see spray techniques in operation manual 309915"
   },
   {
-   "left": "CorrectiveAction|relieve pressure and flush hose with clean water",
-   "right": "CorrectiveAction|relieve pressure and flush the hose with clean water",
-   "reason": "different",
-   "constraint_left": "CorrectiveAction|relieve pressure and flush hose with clean water",
-   "constraint_right": "CorrectiveAction|flush hose and pump with clean water"
+   "left": "CorrectiveAction|turn the fluid knob out on the gun",
+   "right": "CorrectiveAction|turn the fluid knob out on the gun see spray techniques in operation manual 309915",
+   "reason": "different_numbers",
+   "constraint_left": "CorrectiveAction|turn the fluid knob out on the gun",
+   "constraint_right": "CorrectiveAction|turn the fluid knob out on the gun see spray techniques in operation manual 309915"
   }
  ],
  "orphan_causes": 0,
@@ -45,39 +52,43 @@
  "problem_without_action_ids": [],
  "units": 1,
  "failed_reads": 0,
- "proposals": 120,
+ "proposals": 116,
+ "omission_review_enabled": false,
+ "visual_verification_enabled": false,
+ "visual_checks": [],
+ "omission_relations": 0,
  "unresolved_references": [],
  "unclear_passages": 0,
  "extraction_notes": [],
  "assertions_by_tier": {
-  "green": 66,
-  "red": 2
+  "green": 82,
+  "red": 12
  },
  "witnesses": {
-  "structure": 68,
-  "agreement": 54,
-  "reviewer": 7,
-  "verifier": 5
+  "structure": 94,
+  "agreement": 30,
+  "reviewer": 5,
+  "verifier": 47
  },
  "verifier_verdicts": {
-  "not_called": 62,
-  "supported": 5,
-  "not_supported": 1
+  "not_called": 30,
+  "not_supported": 17,
+  "supported": 47
  },
  "graph": {
-  "nodes": 49,
+  "nodes": 52,
   "nodes_by_type": {
    "Symptom": 6,
    "FailureMode": 14,
-   "Component": 6,
-   "CorrectiveAction": 23
+   "Component": 8,
+   "CorrectiveAction": 24
   },
-  "edges": 55,
+  "edges": 58,
   "edges_by_tier": {
-   "green": 53,
-   "red": 2
+   "green": 52,
+   "red": 6
   },
-  "merged_aliases": 16
+  "merged_aliases": 3
  },
  "gates": {
   "map": {
@@ -88,6 +99,11 @@
   "doubts": {
    "questions": 9,
    "answered": 9,
+   "pending": 0
+  },
+  "recovery": {
+   "questions": 0,
+   "answered": 0,
    "pending": 0
   },
   "approval": {
@@ -103,48 +119,52 @@
  "human_questions_offered": 0,
  "deferred_questions": [],
  "human_questions": 0,
- "reviewer_confirmed": 7,
- "merged_cell_relations": 4,
+ "reviewer_confirmed": 5,
+ "merged_cell_relations": 13,
  "usage": {
-  "calls": 8,
+  "calls": 23,
   "failed_calls": 0,
-  "prompt_tokens": 24265,
-  "completion_tokens": 11972,
-  "estimated_cost_usd": 0.007493,
+  "prompt_tokens": 114837,
+  "completion_tokens": 15873,
+  "estimated_cost_usd": 0.021161,
   "by_operation": {
    "kg_v3_extract": 2,
-   "kg_v3_map": 2,
-   "kg_v3_merge": 2,
-   "kg_v3_verify": 2
+   "kg_v3_map": 11,
+   "kg_v3_merge": 3,
+   "kg_v3_reduce_action": 1,
+   "kg_v3_verify": 6
   }
  },
  "agent_usage": {
   "calls": 10,
   "failed_calls": 0,
-  "prompt_tokens": 10509,
-  "completion_tokens": 2163,
-  "estimated_cost_usd": 0.002056,
+  "prompt_tokens": 10554,
+  "completion_tokens": 2773,
+  "estimated_cost_usd": 0.002483,
   "by_operation": {
    "AgentDecision": 10
   }
  },
  "seconds": {
-  "map": 2.91,
-  "gate_map": 3.141,
-  "extract": 23.45,
-  "check": 3.041,
-  "merge": 8.368,
-  "gate_doubts": 8.393,
-  "gate_approval": 0.0,
-  "total": 49.389,
-  "pdf_read": 2.195,
-  "end_to_end": 52.174
+  "map": 9.196,
+  "gate_map": 3.995,
+  "extract": 27.159,
+  "check": 5.281,
+  "merge": 10.517,
+  "split_recheck": 3.753,
+  "gate_doubts": 10.43,
+  "action_reduction": 6.839,
+  "gate_recovery": 0.0,
+  "gate_approval": 0.001,
+  "total": 77.23,
+  "pdf_read": 2.259,
+  "end_to_end": 85.904
  },
  "prompt_ids": {
   "extraction": "703ed28e586be6f2"
  },
  "provenance": {
-  "commit": "8abec90d59edaca8d99129f5bd24ebb4508efd73",
+  "commit": "79501aecbb19805f3e099118669fef9cc6558794",
   "pdf_sha256": "6fcce36452357f3f38f73b13b88b9b657cbb6eae2c1b7940efb4af376b8461ca",
   "config": {
    "model": "gpt-6-luna",
@@ -167,7 +187,11 @@
    "agent_model": "gpt-6-luna",
    "agent_reasoning_effort": "medium",
    "wait_for_map": false,
-   "max_units": 150
+   "max_units": 150,
+   "omission_review": false,
+   "omission_max_units": 3,
+   "visual_verification": false,
+   "visual_max_relations": 12
   },
   "segment_ids": [
    "p1.b1",
