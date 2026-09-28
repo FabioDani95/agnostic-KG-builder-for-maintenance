@@ -238,6 +238,37 @@ nome di un codice è spezzato in più segmenti, le colonne sono interlacciate, l
 possibile riprodurre la lettura su cui era stato annotato il foglio: unisce il testo di una
 riga visiva tra le colonne e non corrisponde a nessuna modalità di PyMuPDF 1.28 installato.
 
+## Secondo primo contatto: LG LMH2235ST (2026-09-28)
+
+Service manual di un forno a microonde: codici d'errore, tabella dei controlli di base,
+diagrammi di flusso di troubleshooting a bivi sì/no con test di continuità e valori attesi, test
+dei componenti. Gold di Fabio Daniele: 74 rami, 234 asserzioni, 24 pagine. Stesso codice di
+Grizzly (tag `v3-freeze-2026-09-28`, backend identico). [KPI](kpi_first_contact_lg.md).
+
+| Esecuzione | Rami | Asserzioni | Pagine gold lette | Domande a persona | Cause orfane | USD | Secondi |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| r1 | 25/74 | 59/234 | 21/24 | 1 | 37 | 0,145 | 405 |
+| r2 | 22/74 | 44/234 | 22/24 | 6 | 50 | 0,160 | 415 |
+| r3 | 22/74 | 68/234 | 22/24 | 5 | 44 | 0,162 | 390 |
+
+Rami, tre esecuzioni: 69/222 = 31,1%, IC95 Wilson [0,254; 0,374].
+
+| Zona del manuale | Rami ritrovati (r1, r2, r3) |
+| --- | --- |
+| Controlli di base, p. 13 | 5, 5, 5 su 5 |
+| Codici d'errore, p. 12 | 3, 3, 3 su 8 |
+| Diagrammi di flusso, pp. 14–24 | 13, 13, 12 su 35 |
+| Test dei componenti, pp. 25–33 | 4, 0, 1 su 18 |
+
+- **Qui la mappa non è il problema:** legge 21–22 delle 24 pagine; l'85–92% delle perdite è su
+  pagine lette.
+- **Il limite è la struttura a diagramma:** i passi vengono estratti ma non collegati al sintomo
+  del diagramma (37–50 cause orfane per esecuzione, contro 1–5 di Grizzly). Il sintomo che apre il
+  diagramma è spesso in un riquadro o nell'immagine, e i bivi sì/no con "Go to No. N" non
+  diventano rami.
+- **Test dei componenti con valori attesi:** quasi assenti (0–4 su 18).
+- Fusioni vietate 0. Costo e tempo più alti che su Grizzly (0,15–0,16 USD, 6,5–7 minuti).
+
 ## Primo manuale di test: Grizzly G0872 (2026-09-28)
 
 Codice congelato al tag `v3-freeze-2026-09-28`. Gold di Fabio Daniele, a mano e senza assistenti AI,

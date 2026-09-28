@@ -1,0 +1,86 @@
+Question rel:u007-3988d0:B.R6 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p15.b1] page 15: Does the display operate?
+  [p15.b2] page 15: No
+  [p15.b3] page 15: 1 When you push any Key, is there any beeping sound?
+  [p15.b4] page 15: Go to No. 6 of this flow chart.
+
+What the system proposes:
+  - 1. Symptom 'Display does not operate' -> MAY_INDICATE -> FailureMode 'Unspecified cause of display not operating when a key is pressed' (not written in the manual). Meaning: The symptom may indicate the specified failure mode. Context: [if] No beep is heard when any key is pressed; the chart directs to step 6..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question merge:FailureMode|pcb fault|FailureMode|pcb faulty (merge_check)
+Do 'PCB fault' and 'PCB faulty' denote the same FailureMode?
+
+What the manual says:
+  [p17.b11] page 17: 3 When the door is opened, is the voltage of the door sensing part over 4 V? (CN3 Pin1 and Pin2)
+  [p19.b10] page 19: 3 While the product is operating under EZ-ON start, is the voltage of both ends of the D35 over 8 V?
+
+What the system proposes:
+  - Keep 'PCB fault' and 'PCB faulty' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:FailureMode|pcb fault|FailureMode|unspecified pcb fault (merge_check)
+Do 'PCB fault' and 'Unspecified PCB fault' denote the same FailureMode?
+
+What the manual says:
+  [p17.b11] page 17: 3 When the door is opened, is the voltage of the door sensing part over 4 V? (CN3 Pin1 and Pin2)
+  [p19.b14] page 19: 4 Replace the PCB.
+
+What the system proposes:
+  - Keep 'PCB fault' and 'Unspecified PCB fault' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:FailureMode|turntable motor fault|FailureMode|unspecified turntable motor fault (merge_check)
+Do 'Turntable motor fault' and 'Unspecified turntable motor fault' denote the same FailureMode?
+
+What the manual says:
+  [p23.b11] page 23: 3 When the door is closed, does the oven lamp turn on?
+  [p23.b11] page 23: 3 When the door is closed, does the oven lamp turn on?
+
+What the system proposes:
+  - Keep 'Turntable motor fault' and 'Unspecified turntable motor fault' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:FailureMode|unspecified cause of display not operating|FailureMode|unspecified cause of display not operating when a key is pressed (merge_check)
+Do 'Unspecified cause of display not operating' and 'Unspecified cause of display not operating when a key is pressed' denote the same FailureMode?
+
+What the manual says:
+  [p15.b25] page 15: Replace the PCB.
+  [p15.b3] page 15: 1 When you push any Key, is there any beeping sound?
+
+What the system proposes:
+  - Keep 'Unspecified cause of display not operating' and 'Unspecified cause of display not operating when a key is pressed' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:Component|latch board|Component|primary latch board (merge_check)
+Do 'Latch board' and 'Primary latch board' denote the same Component?
+
+What the manual says:
+  [p17.b8] page 17: 2 Is there a beeping sound in the continuity test between the ends of the latch board? - Secondary switch (Door should be closed.)
+  [p22.b8] page 22: Yes Adjust the Primary latch board (refer to section 9-1,9-2)
+
+What the system proposes:
+  - Keep 'Latch board' and 'Primary latch board' as two separate Component nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

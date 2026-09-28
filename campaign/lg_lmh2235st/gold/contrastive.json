@@ -1,0 +1,875 @@
+{
+  "status": "candidates_for_Fabio_review",
+  "threshold": 0.72,
+  "note": "Lexical neighbours are not necessarily semantically different. Set review to keep/drop after checking the PDF.",
+  "pairs": [
+    {
+      "id": "C1",
+      "type": "Symptom",
+      "left": {
+        "name": "No heat / no cook; high-voltage capacitor connector disconnected or disassembled.",
+        "claim_ids": [
+          "R40.1",
+          "R40.2"
+        ]
+      },
+      "right": {
+        "name": "No heat / no cook; high-voltage diode connector disconnected or disassembled.",
+        "claim_ids": [
+          "R42.1",
+          "R42.2"
+        ]
+      },
+      "lexical_similarity": 0.9333,
+      "review": "pending"
+    },
+    {
+      "id": "C2",
+      "type": "FailureMode",
+      "left": {
+        "name": "The connector to the High Voltage capacitor assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R40.1",
+          "R40.2"
+        ]
+      },
+      "right": {
+        "name": "The connector to the high-voltage diode assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R42.1",
+          "R42.2"
+        ]
+      },
+      "lexical_similarity": 0.9268,
+      "review": "pending"
+    },
+    {
+      "id": "C3",
+      "type": "Symptom",
+      "left": {
+        "name": "No heat / no cook; high-voltage transformer connector disconnected or disassembled.",
+        "claim_ids": [
+          "R38.1",
+          "R38.2"
+        ]
+      },
+      "right": {
+        "name": "No heat / no cook; high-voltage diode connector disconnected or disassembled.",
+        "claim_ids": [
+          "R42.1",
+          "R42.2"
+        ]
+      },
+      "lexical_similarity": 0.9211,
+      "review": "pending"
+    },
+    {
+      "id": "C4",
+      "type": "Symptom",
+      "left": {
+        "name": "No heat / no cook; high-voltage capacitor resistance is out of range.",
+        "claim_ids": [
+          "R41.1",
+          "R41.2"
+        ]
+      },
+      "right": {
+        "name": "No heat / no cook; high-voltage diode resistance is out of range.",
+        "claim_ids": [
+          "R43.1",
+          "R43.2"
+        ]
+      },
+      "lexical_similarity": 0.9206,
+      "review": "pending"
+    },
+    {
+      "id": "C5",
+      "type": "FailureMode",
+      "left": {
+        "name": "The connector to the High Voltage Transformer assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R38.1",
+          "R38.2"
+        ]
+      },
+      "right": {
+        "name": "The connector to the High Voltage capacitor assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R40.1",
+          "R40.2"
+        ]
+      },
+      "lexical_similarity": 0.9176,
+      "review": "pending"
+    },
+    {
+      "id": "C6",
+      "type": "FailureMode",
+      "left": {
+        "name": "The connector to the High Voltage Transformer assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R38.1",
+          "R38.2"
+        ]
+      },
+      "right": {
+        "name": "The connector to the high-voltage diode assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R42.1",
+          "R42.2"
+        ]
+      },
+      "lexical_similarity": 0.9157,
+      "review": "pending"
+    },
+    {
+      "id": "C7",
+      "type": "Symptom",
+      "left": {
+        "name": "No heat / no cook; high-voltage transformer connector disconnected or disassembled.",
+        "claim_ids": [
+          "R38.1",
+          "R38.2"
+        ]
+      },
+      "right": {
+        "name": "No heat / no cook; high-voltage capacitor connector disconnected or disassembled.",
+        "claim_ids": [
+          "R40.1",
+          "R40.2"
+        ]
+      },
+      "lexical_similarity": 0.9103,
+      "review": "pending"
+    },
+    {
+      "id": "C8",
+      "type": "Symptom",
+      "left": {
+        "name": "No heat / no cook; high-voltage transformer resistance is out of range.",
+        "claim_ids": [
+          "R39.1",
+          "R39.2"
+        ]
+      },
+      "right": {
+        "name": "No heat / no cook; high-voltage diode resistance is out of range.",
+        "claim_ids": [
+          "R43.1",
+          "R43.2"
+        ]
+      },
+      "lexical_similarity": 0.9062,
+      "review": "pending"
+    },
+    {
+      "id": "C9",
+      "type": "Symptom",
+      "left": {
+        "name": "Primary interlock switch does not operate correctly.",
+        "claim_ids": [
+          "R61.1",
+          "R61.2",
+          "R61.3",
+          "R61.4",
+          "R61.5",
+          "R61.6",
+          "R61.7",
+          "R61.8"
+        ]
+      },
+      "right": {
+        "name": "Secondary interlock switch does not operate correctly.",
+        "claim_ids": [
+          "R62.1",
+          "R62.2",
+          "R62.3",
+          "R62.4",
+          "R62.5",
+          "R62.6",
+          "R62.7"
+        ]
+      },
+      "lexical_similarity": 0.9038,
+      "review": "pending"
+    },
+    {
+      "id": "C10",
+      "type": "Symptom",
+      "left": {
+        "name": "Secondary interlock switch does not operate correctly.",
+        "claim_ids": [
+          "R62.1",
+          "R62.2",
+          "R62.3",
+          "R62.4",
+          "R62.5",
+          "R62.6",
+          "R62.7"
+        ]
+      },
+      "right": {
+        "name": "Monitor interlock switch does not operate correctly.",
+        "claim_ids": [
+          "R63.1",
+          "R63.2",
+          "R63.3",
+          "R63.4",
+          "R63.5"
+        ]
+      },
+      "lexical_similarity": 0.9038,
+      "review": "pending"
+    },
+    {
+      "id": "C11",
+      "type": "Symptom",
+      "left": {
+        "name": "No display or dead; no beep in the fuse continuity test.",
+        "claim_ids": [
+          "R24.1",
+          "R24.2"
+        ]
+      },
+      "right": {
+        "name": "No display or dead; no beep in the noise-filter continuity test.",
+        "claim_ids": [
+          "R25.1",
+          "R25.2"
+        ]
+      },
+      "lexical_similarity": 0.8966,
+      "review": "pending"
+    },
+    {
+      "id": "C12",
+      "type": "Symptom",
+      "left": {
+        "name": "No heat / no cook; high-voltage transformer resistance is out of range.",
+        "claim_ids": [
+          "R39.1",
+          "R39.2"
+        ]
+      },
+      "right": {
+        "name": "No heat / no cook; high-voltage capacitor resistance is out of range.",
+        "claim_ids": [
+          "R41.1",
+          "R41.2"
+        ]
+      },
+      "lexical_similarity": 0.8939,
+      "review": "pending"
+    },
+    {
+      "id": "C13",
+      "type": "Symptom",
+      "left": {
+        "name": "Primary interlock switch does not operate correctly.",
+        "claim_ids": [
+          "R61.1",
+          "R61.2",
+          "R61.3",
+          "R61.4",
+          "R61.5",
+          "R61.6",
+          "R61.7",
+          "R61.8"
+        ]
+      },
+      "right": {
+        "name": "Monitor interlock switch does not operate correctly.",
+        "claim_ids": [
+          "R63.1",
+          "R63.2",
+          "R63.3",
+          "R63.4",
+          "R63.5"
+        ]
+      },
+      "lexical_similarity": 0.8824,
+      "review": "pending"
+    },
+    {
+      "id": "C14",
+      "type": "FailureMode",
+      "left": {
+        "name": "The connector to the high-voltage diode assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R42.1",
+          "R42.2"
+        ]
+      },
+      "right": {
+        "name": "The connector to the magnetron assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R44.1",
+          "R44.2"
+        ]
+      },
+      "lexical_similarity": 0.8742,
+      "review": "pending"
+    },
+    {
+      "id": "C15",
+      "type": "Symptom",
+      "left": {
+        "name": "Product turns on automatically; turntable motor replacement outcome.",
+        "claim_ids": [
+          "R51.1",
+          "R51.2",
+          "R51.3"
+        ]
+      },
+      "right": {
+        "name": "Product turns on automatically; PCB replacement outcome.",
+        "claim_ids": [
+          "R52.1",
+          "R52.2",
+          "R52.3",
+          "R52.4"
+        ]
+      },
+      "lexical_similarity": 0.8667,
+      "review": "pending"
+    },
+    {
+      "id": "C16",
+      "type": "FailureMode",
+      "left": {
+        "name": "The connector to the High Voltage Transformer assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R38.1",
+          "R38.2"
+        ]
+      },
+      "right": {
+        "name": "The connector to the magnetron assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R44.1",
+          "R44.2"
+        ]
+      },
+      "lexical_similarity": 0.8662,
+      "review": "pending"
+    },
+    {
+      "id": "C17",
+      "type": "FailureMode",
+      "left": {
+        "name": "The connector to the High Voltage capacitor assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R40.1",
+          "R40.2"
+        ]
+      },
+      "right": {
+        "name": "The connector to the magnetron assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R44.1",
+          "R44.2"
+        ]
+      },
+      "lexical_similarity": 0.8645,
+      "review": "pending"
+    },
+    {
+      "id": "C18",
+      "type": "Symptom",
+      "left": {
+        "name": "No heat / no cook; high-voltage diode connector disconnected or disassembled.",
+        "claim_ids": [
+          "R42.1",
+          "R42.2"
+        ]
+      },
+      "right": {
+        "name": "No heat / no cook; magnetron connector disconnected or disassembled.",
+        "claim_ids": [
+          "R44.1",
+          "R44.2"
+        ]
+      },
+      "lexical_similarity": 0.8613,
+      "review": "pending"
+    },
+    {
+      "id": "C19",
+      "type": "Symptom",
+      "left": {
+        "name": "No heat / no cook; high-voltage transformer connector disconnected or disassembled.",
+        "claim_ids": [
+          "R38.1",
+          "R38.2"
+        ]
+      },
+      "right": {
+        "name": "No heat / no cook; magnetron connector disconnected or disassembled.",
+        "claim_ids": [
+          "R44.1",
+          "R44.2"
+        ]
+      },
+      "lexical_similarity": 0.8531,
+      "review": "pending"
+    },
+    {
+      "id": "C20",
+      "type": "Symptom",
+      "left": {
+        "name": "No heat / no cook; high-voltage capacitor connector disconnected or disassembled.",
+        "claim_ids": [
+          "R40.1",
+          "R40.2"
+        ]
+      },
+      "right": {
+        "name": "No heat / no cook; magnetron connector disconnected or disassembled.",
+        "claim_ids": [
+          "R44.1",
+          "R44.2"
+        ]
+      },
+      "lexical_similarity": 0.8511,
+      "review": "pending"
+    },
+    {
+      "id": "C21",
+      "type": "FailureMode",
+      "left": {
+        "name": "The connector to the PCB is disconnected or disassembled.",
+        "claim_ids": [
+          "R30.1",
+          "R30.2"
+        ]
+      },
+      "right": {
+        "name": "The connector to the magnetron assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R44.1",
+          "R44.2"
+        ]
+      },
+      "lexical_similarity": 0.8504,
+      "review": "pending"
+    },
+    {
+      "id": "C22",
+      "type": "FailureMode",
+      "left": {
+        "name": "PCB thermistor short",
+        "claim_ids": [
+          "R14.1"
+        ]
+      },
+      "right": {
+        "name": "PCB thermistor open",
+        "claim_ids": [
+          "R15.1"
+        ]
+      },
+      "lexical_similarity": 0.8205,
+      "review": "pending"
+    },
+    {
+      "id": "C23",
+      "type": "FailureMode",
+      "left": {
+        "name": "The connector to the PCB is disconnected or disassembled.",
+        "claim_ids": [
+          "R30.1",
+          "R30.2"
+        ]
+      },
+      "right": {
+        "name": "The connector to the High Voltage capacitor assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R40.1",
+          "R40.2"
+        ]
+      },
+      "lexical_similarity": 0.8,
+      "review": "pending"
+    },
+    {
+      "id": "C24",
+      "type": "FailureMode",
+      "left": {
+        "name": "The connector to the PCB is disconnected or disassembled.",
+        "claim_ids": [
+          "R30.1",
+          "R30.2"
+        ]
+      },
+      "right": {
+        "name": "The connector to the high-voltage diode assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R42.1",
+          "R42.2"
+        ]
+      },
+      "lexical_similarity": 0.7941,
+      "review": "pending"
+    },
+    {
+      "id": "C25",
+      "type": "Symptom",
+      "left": {
+        "name": "Keypad failure; keypad replacement.",
+        "claim_ids": [
+          "R31.1"
+        ]
+      },
+      "right": {
+        "name": "Keypad failure; PCB replacement outcome.",
+        "claim_ids": [
+          "R32.1"
+        ]
+      },
+      "lexical_similarity": 0.7887,
+      "review": "pending"
+    },
+    {
+      "id": "C26",
+      "type": "Symptom",
+      "left": {
+        "name": "No key, not started, or O.L., V.M., or T.T.M. operating with the door closed.",
+        "claim_ids": [
+          "R18.1"
+        ]
+      },
+      "right": {
+        "name": "Not cooking, or V.M. or T.T.M. not operating with the door closed.",
+        "claim_ids": [
+          "R20.1"
+        ]
+      },
+      "lexical_similarity": 0.7786,
+      "review": "pending"
+    },
+    {
+      "id": "C27",
+      "type": "Symptom",
+      "left": {
+        "name": "Ventilation motor component test.",
+        "claim_ids": [
+          "R70.1",
+          "R70.2",
+          "R70.3",
+          "R70.4",
+          "R70.5"
+        ]
+      },
+      "right": {
+        "name": "Turntable motor component test.",
+        "claim_ids": [
+          "R71.1",
+          "R71.2"
+        ]
+      },
+      "lexical_similarity": 0.7742,
+      "review": "pending"
+    },
+    {
+      "id": "C28",
+      "type": "Symptom",
+      "left": {
+        "name": "Capacitor component test.",
+        "claim_ids": [
+          "R67.1",
+          "R67.2",
+          "R67.3"
+        ]
+      },
+      "right": {
+        "name": "Diode component test.",
+        "claim_ids": [
+          "R68.1",
+          "R68.2"
+        ]
+      },
+      "lexical_similarity": 0.7727,
+      "review": "pending"
+    },
+    {
+      "id": "C29",
+      "type": "Symptom",
+      "left": {
+        "name": "Diode component test.",
+        "claim_ids": [
+          "R68.1",
+          "R68.2"
+        ]
+      },
+      "right": {
+        "name": "Relay 2 component test.",
+        "claim_ids": [
+          "R69.1",
+          "R69.2"
+        ]
+      },
+      "lexical_similarity": 0.7619,
+      "review": "pending"
+    },
+    {
+      "id": "C30",
+      "type": "FailureMode",
+      "left": {
+        "name": "The connector to the PCB is disconnected or disassembled.",
+        "claim_ids": [
+          "R30.1",
+          "R30.2"
+        ]
+      },
+      "right": {
+        "name": "The connector to the High Voltage Transformer assembly is disconnected or disassembled.",
+        "claim_ids": [
+          "R38.1",
+          "R38.2"
+        ]
+      },
+      "lexical_similarity": 0.7606,
+      "review": "pending"
+    },
+    {
+      "id": "C31",
+      "type": "Symptom",
+      "left": {
+        "name": "Magnetron component test.",
+        "claim_ids": [
+          "R66.1",
+          "R66.2",
+          "R66.3",
+          "R66.4",
+          "R66.5"
+        ]
+      },
+      "right": {
+        "name": "Capacitor component test.",
+        "claim_ids": [
+          "R67.1",
+          "R67.2",
+          "R67.3"
+        ]
+      },
+      "lexical_similarity": 0.75,
+      "review": "pending"
+    },
+    {
+      "id": "C32",
+      "type": "Symptom",
+      "left": {
+        "name": "Magnetron component test.",
+        "claim_ids": [
+          "R66.1",
+          "R66.2",
+          "R66.3",
+          "R66.4",
+          "R66.5"
+        ]
+      },
+      "right": {
+        "name": "Noise filter component test.",
+        "claim_ids": [
+          "R72.1",
+          "R72.2",
+          "R72.3"
+        ]
+      },
+      "lexical_similarity": 0.7451,
+      "review": "pending"
+    },
+    {
+      "id": "C33",
+      "type": "Symptom",
+      "left": {
+        "name": "Oven with door open.",
+        "claim_ids": [
+          "R1.1"
+        ]
+      },
+      "right": {
+        "name": "Oven operates with the door open.",
+        "claim_ids": [
+          "R56.1",
+          "R56.2"
+        ]
+      },
+      "lexical_similarity": 0.7451,
+      "review": "pending"
+    },
+    {
+      "id": "C34",
+      "type": "Symptom",
+      "left": {
+        "name": "No heat / no cook; PCB replacement outcome.",
+        "claim_ids": [
+          "R36.1"
+        ]
+      },
+      "right": {
+        "name": "Turntable motor does not work; PCB replacement outcome.",
+        "claim_ids": [
+          "R47.1",
+          "R47.2",
+          "R47.3"
+        ]
+      },
+      "lexical_similarity": 0.7391,
+      "review": "pending"
+    },
+    {
+      "id": "C35",
+      "type": "Symptom",
+      "left": {
+        "name": "Transformer component test.",
+        "claim_ids": [
+          "R65.1",
+          "R65.2",
+          "R65.3",
+          "R65.4",
+          "R65.5",
+          "R65.6"
+        ]
+      },
+      "right": {
+        "name": "Diode component test.",
+        "claim_ids": [
+          "R68.1",
+          "R68.2"
+        ]
+      },
+      "lexical_similarity": 0.7391,
+      "review": "pending"
+    },
+    {
+      "id": "C36",
+      "type": "Symptom",
+      "left": {
+        "name": "Microwave energy leakage measurement.",
+        "claim_ids": [
+          "R54.1",
+          "R54.2",
+          "R54.3",
+          "R54.4",
+          "R54.5",
+          "R54.6",
+          "R54.7",
+          "R54.8",
+          "R54.9",
+          "R54.10",
+          "R54.11",
+          "R54.12",
+          "R54.13",
+          "R54.14",
+          "R54.15"
+        ]
+      },
+      "right": {
+        "name": "Microwave energy leakage after interlock adjustment.",
+        "claim_ids": [
+          "R60.1"
+        ]
+      },
+      "lexical_similarity": 0.7356,
+      "review": "pending"
+    },
+    {
+      "id": "C37",
+      "type": "Symptom",
+      "left": {
+        "name": "Magnetron component test.",
+        "claim_ids": [
+          "R66.1",
+          "R66.2",
+          "R66.3",
+          "R66.4",
+          "R66.5"
+        ]
+      },
+      "right": {
+        "name": "Diode component test.",
+        "claim_ids": [
+          "R68.1",
+          "R68.2"
+        ]
+      },
+      "lexical_similarity": 0.7273,
+      "review": "pending"
+    },
+    {
+      "id": "C38",
+      "type": "Symptom",
+      "left": {
+        "name": "Diode component test.",
+        "claim_ids": [
+          "R68.1",
+          "R68.2"
+        ]
+      },
+      "right": {
+        "name": "Noise filter component test.",
+        "claim_ids": [
+          "R72.1",
+          "R72.2",
+          "R72.3"
+        ]
+      },
+      "lexical_similarity": 0.7234,
+      "review": "pending"
+    },
+    {
+      "id": "C39",
+      "type": "Symptom",
+      "left": {
+        "name": "Transformer component test.",
+        "claim_ids": [
+          "R65.1",
+          "R65.2",
+          "R65.3",
+          "R65.4",
+          "R65.5",
+          "R65.6"
+        ]
+      },
+      "right": {
+        "name": "Magnetron component test.",
+        "claim_ids": [
+          "R66.1",
+          "R66.2",
+          "R66.3",
+          "R66.4",
+          "R66.5"
+        ]
+      },
+      "lexical_similarity": 0.72,
+      "review": "pending"
+    },
+    {
+      "id": "C40",
+      "type": "Symptom",
+      "left": {
+        "name": "Transformer component test.",
+        "claim_ids": [
+          "R65.1",
+          "R65.2",
+          "R65.3",
+          "R65.4",
+          "R65.5",
+          "R65.6"
+        ]
+      },
+      "right": {
+        "name": "Capacitor component test.",
+        "claim_ids": [
+          "R67.1",
+          "R67.2",
+          "R67.3"
+        ]
+      },
+      "lexical_similarity": 0.72,
+      "review": "pending"
+    }
+  ]
+}

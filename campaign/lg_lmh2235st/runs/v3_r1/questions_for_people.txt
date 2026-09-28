@@ -1,0 +1,13 @@
+Question merge:FailureMode|faulty pcb|FailureMode|faulty pcb ebr75341201 (merge_check)
+Do 'Faulty PCB' and 'Faulty PCB (EBR75341201)' denote the same FailureMode?
+
+What the manual says:
+  [p17.b11] page 17: 3 When the door is opened, is the voltage of the door sensing part over 4 V? (CN3 Pin1 and Pin2)
+  [p23.b14] page 23: 4 When the door is opened, Is the voltage of the door sensing part over 4 V?
+
+What the system proposes:
+  - Keep 'Faulty PCB' and 'Faulty PCB (EBR75341201)' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

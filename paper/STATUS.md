@@ -320,3 +320,7 @@ Protocollo aggiornato (decisione di Fabio): valutazione a rotazione. Ogni manual
 volta con il codice congelato (primo contatto) e poi diventa di sviluppo; nel paper la qualità su
 manuali nuovi si dichiara solo con i numeri di primo contatto, più una verifica finale su 3–5
 manuali tenuti da parte. Grizzly G0872 è il primo della serie.
+
+Secondo primo contatto, LG LMH2235ST (stesso tag): 69/222 rami (31,1%, IC95 0,254–0,374). La mappa legge
+quasi tutte le pagine; perdite sui diagrammi di flusso (12–13/35) e sui test dei componenti (0–4/18),
+con molte cause scollegate dal sintomo. Spesa 7,075 USD su 20.
