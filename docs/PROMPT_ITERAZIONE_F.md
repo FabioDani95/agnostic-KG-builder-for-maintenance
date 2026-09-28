@@ -83,6 +83,32 @@ sezioni spezza le tabelle in più unità e le letture ripetute portano tutto il 
    accettabile: fino a circa 0,25 USD e 10 minuti per un manuale di 400 pagine. Se ti serve di
    più, motivalo. Correggi anche la regressione di token dell'iterazione E, se puoi.
 
+## 3b. Principio di questa iterazione: più potere al modello, prova come percorso
+
+Oggi una relazione è accettata con facilità solo se i due estremi stanno nello **stesso posto**
+(stessa riga, stesso blocco, passaggio citato), e il verificatore vede solo i segmenti citati. Nelle
+tabelle funziona; nei diagrammi, nelle procedure e nelle condizioni sparse fa perdere conoscenza
+che il modello ha capito. Esempio LG: il sintomo è nel riquadro in cima al diagramma, il rimedio
+cinque passi sotto; il verificatore non vede il sintomo e scarta ("one end is not named in the
+source"). Su LG vengono scartate 44–62 relazioni per esecuzione.
+
+Nuovo principio, da implementare e misurare:
+- **Il modello decide i collegamenti leggendo il contesto intero** (la pagina, il diagramma, la
+  sezione, anche come immagine) e **cita tutti i segmenti** che ha usato, anche sparsi.
+- **La prova è un percorso:** sintomo → domanda → esito → azione, oppure titolo di sezione →
+  condizione → rimedio. Ogni passo ha il suo segmento, collegato dalla struttura della pagina
+  (frecce, posizione, numerazione, gerarchia dei titoli).
+- **Il verificatore giudica con lo stesso contesto**, non solo con il frammento finale: "il manuale,
+  letto così, dice questo?". La regola della stessa riga resta un testimone in più per le tabelle,
+  non una condizione per tutti i formati.
+- **Restano due paletti:** ogni collegamento cita i segmenti da cui viene; non si uniscono parti di
+  voci diverse (il rimedio della riga o del diagramma accanto). Questo lo giudicano il modello e il
+  revisore, non una regola di posizione.
+
+Più potere al modello aumenta il rischio di collegamenti sbagliati: riportalo onestamente. Misura
+anche i collegamenti verdi nuovi rispetto a prima e preparane un campione per la revisione cieca
+della precisione di Fabio (`scripts/campaign.py precision`, in un foglio nuovo).
+
 ## 4. Spunti (liberi di migliorarli)
 
 - **Mappa per pagine calde con l'immagine:** oltre al testo, dare al modello l'immagine
