@@ -23,7 +23,15 @@ from backend.kg_v3.checker import STRUCTURE_READ, CheckedRelation, Checker
 from backend.kg_v3.contracts import Answer, DocumentMap, PageLabel, Question, ReadingUnit, Tier, Witness
 from backend.kg_v3.extractor import Extractor, UnitExtraction, prompt_hash
 from backend.kg_v3.llm import ModelClient
-from backend.kg_v3.mapper import apply_map_answer, build_units, map_pages, map_questions, protected_demotions
+from backend.kg_v3.mapper import (
+    apply_map_answer,
+    build_units,
+    map_pages,
+    map_questions,
+    mark_content,
+    protected_demotions,
+    scan_pages,
+)
 from backend.kg_v3.merger import (
     MergedGraph,
     MergePlan,
@@ -74,6 +82,8 @@ class RunConfig(BaseModel):
     wait_for_map: bool = False
     # Stop with a clear error instead of spending on an unexpectedly large reading.
     max_units: int = 150
+    # One reading of the full text of every page finds troubleshooting knowledge the outline misses.
+    content_scan: bool = True
     omission_review: bool = False
     omission_max_units: int = 3
     visual_verification: bool = False
@@ -211,7 +221,12 @@ class Pipeline:
 
     async def _map(self) -> tuple[DocumentMap, GateRecord]:
         saved = self._load("map")
-        page_map = DocumentMap.model_validate(saved) if saved else await self._timed("map", map_pages(self.llm, self.doc))
+        if saved:
+            page_map = DocumentMap.model_validate(saved)
+        else:
+            page_map = await self._timed("map", map_pages(self.llm, self.doc))
+            if self.config.content_scan:
+                page_map = mark_content(page_map, await self._timed("scan", scan_pages(self.llm, self.doc)))
         self._save("map", page_map)
         record = await self._timed("gate_map", self._gate("map", map_questions(self.doc, page_map)))
         for answer in record.answers:
@@ -385,6 +400,7 @@ class Pipeline:
             "page_labels": dict(Counter(entry.label.value for entry in page_map.entries)),
             "diagnostic_pages": page_map.pages_with(PageLabel.DIAGNOSTIC),
             "confirmed_pages": [entry.page for entry in page_map.entries if entry.confirmed],
+            "content_pages": [entry.page for entry in page_map.entries if entry.evidence],
             "map_demotions_refused": sorted(set(self.map_kept)),
             "map_removed_pages": sorted(set(self.map_removed)),
             "read_pages": sorted({p for unit in units for p in unit.pages}),

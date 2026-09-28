@@ -44,6 +44,25 @@ When a page could be diagnostic, label it diagnostic and set unsure to true. Giv
 short section name taken from its headings. Return one entry for every input page.
 """
 
+SCAN_PROMPT = """You scan the full text of pages of a technical maintenance manual for troubleshooting knowledge,
+wherever it is written: troubleshooting sections, but also operation, maintenance, installation,
+test or glossary pages. Each segment starts with its ID in brackets.
+
+Troubleshooting knowledge names a specific fault or abnormal state of this machine or its parts:
+- a fault, alarm, error or status code, or an abnormal observation (noise, leak, wear, damage,
+  a reading out of range, a lamp or display indication) with its meaning, cause, check or remedy;
+- a condition that requires stopping, adjusting, cleaning, repairing, replacing or contacting
+  service ("if X, do Y", "X may cause Y", "replace if cracked", "inspect for blockage and clean");
+- a test or measurement with an expected value or outcome, or with what to do otherwise;
+- a step of a troubleshooting flowchart or decision procedure.
+Not troubleshooting knowledge: general safety rules and hazard warnings (what may happen if an
+instruction is ignored), installation and environment requirements, routine steps without a
+fault condition, specifications, part lists and descriptions of how the machine works.
+
+Return only the pages that contain troubleshooting knowledge, each with the IDs of the segments
+that state it. Cite only IDs shown in the input.
+"""
+
 EXTRACTION_PROMPT = """You build a maintenance knowledge graph from a technical manual. The graph follows this
 fixed ontology; the asset itself ({asset}) already exists, never create it.
 

@@ -30,8 +30,8 @@ from backend.kg_v3.contracts import (
     assert_single_owner,
 )
 from backend.kg_v3.llm import ModelClient
-from backend.kg_v3.prompts import MAP_PROMPT
-from backend.kg_v3.reader import DocumentText, render_segment
+from backend.kg_v3.prompts import MAP_PROMPT, SCAN_PROMPT
+from backend.kg_v3.reader import DocumentText, render_segment, render_segments
 
 logger = logging.getLogger(__name__)
 
@@ -191,6 +191,83 @@ async def map_pages(llm: ModelClient, doc: DocumentText, *, batch_pages: int = M
     return fill_gaps(DocumentMap(entries=entries))
 
 
+SCAN_BATCH_CHARS = 24000
+SCAN_CONCURRENCY = 8
+
+
+def scan_batches(doc: DocumentText, batch_chars: int = SCAN_BATCH_CHARS) -> list[list[int]]:
+    batches: list[list[int]] = []
+    size = 0
+    for page in sorted(doc.pages):
+        page_size = sum(_rendered_size(segment) for segment in doc.pages[page])
+        if not batches or (batches[-1] and size + page_size > batch_chars):
+            batches.append([])
+            size = 0
+        batches[-1].append(page)
+        size += page_size
+    return batches
+
+
+async def scan_pages(llm: ModelClient, doc: DocumentText, *,
+                     batch_chars: int = SCAN_BATCH_CHARS) -> dict[int, list[str]]:
+    """Read the full text of every page once: segments that state troubleshooting knowledge.
+
+    The outline map sees headings; knowledge written inside operation or maintenance
+    procedures ("inspect the screen for blockage and clean it") is found only here.
+    A page counts only with at least one real segment of that page as evidence.
+    """
+
+    limit = asyncio.Semaphore(SCAN_CONCURRENCY)
+
+    async def scan(batch: list[int]) -> dict[int, list[str]]:
+        segments = [segment for page in batch for segment in doc.pages[page]]
+        ids = [segment.segment_id for segment in segments]
+        schema = {"type": "object", "additionalProperties": False, "required": ["pages"], "properties": {
+            "pages": {"type": "array", "items": {
+                "type": "object", "additionalProperties": False, "required": ["page", "evidence"],
+                "properties": {"page": {"type": "integer", "enum": batch},
+                               "evidence": {"type": "array", "items": {"type": "string", "enum": ids}}}}}}}
+        try:
+            async with limit:
+                data = await llm.json(system=SCAN_PROMPT, user=render_segments(segments), schema=schema,
+                                      name="kg_v3_scan", max_output_tokens=4000)
+        except Exception as exc:
+            logger.warning("Page scan %s-%s failed: %s", batch[0], batch[-1], exc)
+            return {}
+        found: dict[int, list[str]] = {}
+        for item in data.get("pages") or []:
+            try:
+                page = int(item["page"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            evidence = [cite for cite in item.get("evidence") or [] if cite.startswith(f"p{page}.")
+                        and doc.segment(cite) is not None]
+            if page in batch and evidence:
+                found[page] = sorted(set(found.get(page, [])) | set(evidence), key=lambda c: doc.position(c) or 0)
+        return found
+
+    results: dict[int, list[str]] = {}
+    for found in await asyncio.gather(*(scan(batch) for batch in scan_batches(doc, batch_chars))):
+        results.update(found)
+    return results
+
+
+def mark_content(page_map: DocumentMap, found: dict[int, list[str]]) -> DocumentMap:
+    """Pages whose text states troubleshooting knowledge are read, whatever their outline label."""
+
+    entries = []
+    for entry in page_map.entries:
+        evidence = found.get(entry.page, [])
+        if not evidence:
+            entries.append(entry)
+        elif entry.label is PageLabel.DIAGNOSTIC:
+            entries.append(entry.model_copy(update={"evidence": evidence}))
+        else:
+            entries.append(entry.model_copy(update={"label": PageLabel.DIAGNOSTIC, "unsure": True,
+                                                    "evidence": evidence}))
+    return DocumentMap(entries=entries)
+
+
 def _ranges(pages: list[int]) -> str:
     if not pages:
         return "none"
@@ -210,9 +287,12 @@ def map_question(doc: DocumentText, page_map: DocumentMap) -> Question:
 
     diagnostic = page_map.pages_with(PageLabel.DIAGNOSTIC)
     confirmed = [entry.page for entry in page_map.entries if entry.confirmed]
+    content = [entry.page for entry in page_map.entries if entry.evidence]
     proposal = [
         f"Diagnostic pages to read in detail: {_ranges(diagnostic)}.",
         f"Pages both map readings label diagnostic (always read, a change cannot drop them): {_ranges(confirmed)}.",
+        f"Pages whose full text states troubleshooting knowledge (always read, a change cannot drop them): "
+        f"{_ranges(content)}.",
         f"Pages labelled diagnostic with doubt: {_ranges([e.page for e in page_map.entries if e.unsure])}.",
         f"Unreadable pages (no text): {_ranges(page_map.pages_with(PageLabel.UNREADABLE))}.",
         "Label and outline of every page follow.",
@@ -281,7 +361,7 @@ def _map_changes(page_map: DocumentMap, edits: dict[str, Any]) -> dict[int, Page
 def protected_demotions(page_map: DocumentMap, edits: dict[str, Any]) -> list[int]:
     """Confirmed diagnostic pages a correction tried to drop; they stay diagnostic."""
 
-    confirmed = {entry.page for entry in page_map.entries if entry.confirmed}
+    confirmed = {entry.page for entry in page_map.entries if entry.confirmed or entry.evidence}
     sections: dict[str, list[int]] = {}
     for entry in page_map.entries:
         if entry.confirmed and entry.section:

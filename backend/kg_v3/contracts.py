@@ -112,6 +112,9 @@ class PageMapEntry(_Contract):
     unsure: bool = False
     # Every independent map reading labelled the page diagnostic: a gate may not drop it.
     confirmed: bool = False
+    # Segments where a reading of the full page text found troubleshooting knowledge.
+    # Content evidence outranks an outline: a gate may not drop such a page either.
+    evidence: list[str] = Field(default_factory=list)
 
 
 class DocumentMap(_Contract):

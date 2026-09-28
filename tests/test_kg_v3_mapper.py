@@ -141,3 +141,34 @@ def test_a_unit_cut_by_size_starts_at_a_page_rather_than_inside_it():
     assert [unit.pages for unit in units] == [[1], [2]]
     assert "p1.b1" in units[1].context_segment_ids
 
+
+class _Scan:
+    def __init__(self, found: dict[int, list[str]]) -> None:
+        self.found, self.calls = found, []
+
+    async def json(self, *, user, schema, **_kwargs):
+        self.calls.append(user)
+        pages = schema["properties"]["pages"]["items"]["properties"]["page"]["enum"]
+        return {"pages": [{"page": page, "evidence": ids} for page, ids in self.found.items() if page in pages]}
+
+
+def test_the_full_text_scan_reads_maintenance_pages_that_state_faults_and_the_gate_keeps_them():
+    from backend.kg_v3.mapper import mark_content, scan_pages
+
+    doc = _pages({1: ["Maintenance", "Inspect the fan screen for blockage and clean as required."],
+                  2: ["Specifications", "Weight 20 kg"],
+                  3: ["Troubleshooting", "Pump noisy: worn bearing, replace it."]})
+    # Page 2 is cited with a segment of another page: no real evidence, not read.
+    llm = _Scan({1: ["p1.b2"], 2: ["p1.b1"], 3: ["p3.b2"]})
+    found = asyncio.run(scan_pages(llm, doc))
+    assert found == {1: ["p1.b2"], 3: ["p3.b2"]} and "[p1.b2] Inspect the fan screen" in llm.calls[0]
+    page_map = mark_content(DocumentMap(entries=[
+        PageMapEntry(page=1, label=PageLabel.PROCEDURE),
+        PageMapEntry(page=2, label=PageLabel.OTHER),
+        PageMapEntry(page=3, label=PageLabel.DIAGNOSTIC, unsure=True)]), found)
+    entries = {entry.page: entry for entry in page_map.entries}
+    assert entries[1].label is PageLabel.DIAGNOSTIC and entries[1].evidence == ["p1.b2"]
+    assert entries[2].label is PageLabel.OTHER
+    edits = {"pages": {"1": "procedure", "3": "other"}}
+    assert protected_demotions(page_map, edits) == [1, 3]
+    assert apply_map_answer(page_map, edits).pages_with(PageLabel.DIAGNOSTIC) == [1, 3]
