@@ -298,3 +298,29 @@ def test_the_verifier_reads_the_whole_passage_of_a_flowchart_not_only_the_cited_
     assert "whole passage" in system and "[p21.b2] Yes" in user and "[p21.b3] Reconnect" in user
     assert "Cited: p18.b1, p21.b1" in user
     assert checked[0].assertion.certificate.verifier_verdict.value == "supported"
+
+
+def test_a_derived_cause_restating_its_problem_becomes_unnamed_too():
+    from backend.kg_v3.contracts import ReadingUnit
+    from backend.kg_v3.extractor import parse_read
+    from backend.kg_v3.ontology import load_ontology
+
+    # "Inspect ducting for leaks, and patch or replace as required": the leak is the observed problem.
+    unit = ReadingUnit(unit_id="u1", pages=[50], segment_ids=["p50.b6"])
+    data = {"entities": [
+        {"key": "E1", "type": "Symptom", "name": "Inlet or outlet duct screens are dirty", "code": "", "kind": "",
+         "stated": True, "cite": ["p50.b6"]},
+        {"key": "E2", "type": "FailureMode", "name": "Inlet or outlet duct screens obstructed by dirt", "code": "",
+         "kind": "", "stated": False, "cite": ["p50.b6"]},
+        {"key": "E3", "type": "CorrectiveAction", "name": "Clean the duct screens", "code": "", "kind": "repair",
+         "stated": True, "cite": ["p50.b6"]}],
+        "relations": [{"type": "MAY_INDICATE", "source": "E1", "target": "E2", "record": "R1", "conditions": [],
+                       "cite": ["p50.b6"]},
+                      {"type": "RESOLVED_BY", "source": "E2", "target": "E3", "record": "R1", "conditions": [],
+                       "cite": ["p50.b6"]}],
+        "unclear": []}
+    proposals, _, _ = parse_read(data, unit=unit, read="A", spec=load_ontology(), allowed={"p50.b6"})
+    assert {item.target.name for item in proposals if item.relation_type == "MAY_INDICATE"} == {
+        "Unspecified cause of inlet or outlet duct screens are dirty"}
+    assert {item.source.name for item in proposals if item.relation_type == "RESOLVED_BY"} == {
+        "Unspecified cause of inlet or outlet duct screens are dirty"}

@@ -83,10 +83,15 @@ def prompt_hash(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
-def _repeats(problem: str, cause: str) -> bool:
+REPEAT_SIMILARITY = 0.9
+# A cause the manual does not write, named almost like its problem, adds nothing but a restatement.
+DERIVED_REPEAT_SIMILARITY = 0.8
+
+
+def _repeats(problem: str, cause: str, threshold: float = REPEAT_SIMILARITY) -> bool:
     from backend.kg_v3.checker import similarity
 
-    return similarity(problem, cause) >= 0.9
+    return similarity(problem, cause) >= threshold
 
 
 def parse_read(data: dict[str, Any], *, unit: ReadingUnit, read: str, spec: OntologySpec,
@@ -115,7 +120,8 @@ def parse_read(data: dict[str, Any], *, unit: ReadingUnit, read: str, spec: Onto
             continue
         source, target = entities.get(str(item.get("source") or "")), entities.get(str(item.get("target") or ""))
         if (source and target and target.type == "FailureMode" and source.type != "FailureMode"
-                and target.stated and _repeats(source.name, target.name)):
+                and not target.placeholder and _repeats(source.name, target.name, REPEAT_SIMILARITY
+                                                        if target.stated else DERIVED_REPEAT_SIMILARITY)):
             entities[str(item["target"])] = target.model_copy(update={
                 "name": f"{UNSPECIFIED_CAUSE} {source.name[:1].lower()}{source.name[1:]}", "stated": False})
             notes.append(f"{read}: cause '{target.name}' repeats its problem, marked unnamed")
