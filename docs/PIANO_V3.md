@@ -3,7 +3,7 @@
 Stato: **implementato (2026-09-26)**. Le sei stazioni, i tre cancelli, lo stato
 salvato, la CLI e il builder per l'applicazione sono in [backend/kg_v3](../backend/kg_v3/);
 `kg_v3.pdf_generator: v3` in `config.yaml` lo rende il generatore PDF del workspace.
-Risultati sui quattro manuali di sviluppo in [V3_RISULTATI_SVILUPPO.md](V3_RISULTATI_SVILUPPO.md).
+Risultati della campagna di valutazione in [campaign/results/REPORT.md](../campaign/results/REPORT.md).
 La v22, l'applicazione web e la vecchia interfaccia sono state rimosse il 2026-09-27 (tag `legacy-v22`). Restano: API per rispondere alle domande e nuova interfaccia.
 
 ## 1. Perché cambiare
@@ -226,12 +226,13 @@ Nuovo pacchetto `backend/kg_v3/`, moduli piccoli e senza framework di orchestraz
 Strumenti:
 
 - [scripts/kg_v3.py](../scripts/kg_v3.py) esegue un PDF da riga di comando;
-- [scripts/kg_v3_compare.py](../scripts/kg_v3_compare.py) confronta V3 e v22 con il gold lessicale;
-- [scripts/kg_v3_evaluate.py](../scripts/kg_v3_evaluate.py) confronta per posizione e significato;
+- [scripts/campaign.py](../scripts/campaign.py) gestisce la campagna di valutazione (gold, esecuzioni,
+  KPI, qualità, precisione);
+- [scripts/kg_v3_kpi.py](../scripts/kg_v3_kpi.py) e [scripts/kg_v3_evaluate.py](../scripts/kg_v3_evaluate.py)
+  confrontano i grafi con il gold per posizione e significato;
+- [scripts/kg_v3_quality.py](../scripts/kg_v3_quality.py) misura la pulizia del grafo senza gold;
 - [scripts/kg_v3_precision_sheet.py](../scripts/kg_v3_precision_sheet.py) prepara e valuta la
-  revisione cieca della precisione;
-- [scripts/kg_v3_gold_sheet.py](../scripts/kg_v3_gold_sheet.py) prepara e applica la conferma
-  tecnica dei 34 casi di riferimento.
+  revisione cieca della precisione.
 
 Un router minimo espone esecuzioni, domande aperte e risposte; una CLI esegue il
 percorso da riga di comando. Il builder si sceglie in [source_subgraph_generation.py](../backend/services/source_subgraph_generation.py)

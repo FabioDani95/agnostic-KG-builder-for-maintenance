@@ -1,45 +1,46 @@
-"""Evaluate V3 and v22 graphs by position and meaning instead of shared words.
+"""Scoring of a graph against a campaign gold: position candidates and a meaning judge.
 
-1. Position: the historical gold claims are mapped to segment IDs of the manual
-   (``--map-gold`` writes the mapping for review). A predicted relation is a
-   candidate for a gold relation when it has a compatible type and cites the
-   segments where the gold ends are written.
-2. Meaning: a separate model judge decides whether candidate and gold state the
-   same fact; paraphrases count, different causes, remedies or rows do not.
-
-A gold claim is recovered when its problem -> cause relation and its cause ->
-action relation are both matched through the same cause node. The old lexical
-probe is reported alongside. All systems use the same gold, candidates and judge.
-
-Usage:
-    .venv/bin/python scripts/kg_v3_evaluate.py --map-gold
-    .venv/bin/python scripts/kg_v3_evaluate.py --v3 paper/experiments/v3_dev_20260926/r1 \\
-        --v3 paper/experiments/v3_dev_20260926/r2 --out paper/experiments/v3_dev_20260926/evaluation_v2.json
+Used by scripts/kg_v3_kpi.py. A gold relation (problem -> cause, cause -> action)
+is matched to trusted extracted relations cited on the same segments or with
+similar names; an LLM judge with three votes decides whether they state the same
+fact. v22 graphs saved in the campaign can be scored with the same rules.
 """
 
 from __future__ import annotations
 
-import argparse
 import asyncio
 import json
-import os
-import sys
+import re
 from collections import defaultdict
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
+from backend.kg_v3.contracts import context_text
 
-from backend.kg_v3.contracts import context_text  # noqa: E402
-from scripts.kg_v3_compare import GOLD, V22, load_v3, load_v22, token_f1, words  # noqa: E402
+_STOP = {"the", "a", "an", "of", "or", "and", "is", "are", "to", "in", "on", "be", "if", "for", "with", "not"}
 
-MANIFEST = ROOT / "paper/experiments/robustness_20260925/manifest.json"
-GOLD_SEGMENTS = ROOT / "paper/evaluation/gold_segments_v1"
-LEDGER = ROOT / "paper/experiments/robustness_20260925/real_call_budget.jsonl"
-GOLD_MANUALS = ("eastman_e554", "danfoss_apf", "graco_check_mate_200")
+def words(text: str) -> list[str]:
+    return [item for item in re.findall(r"[a-z0-9]+", str(text).lower()) if item not in _STOP]
+
+def token_f1(left: str, right: str) -> float:
+    a, b = words(left), words(right)
+    if not a or not b:
+        return 0.0
+    common = sum(min(a.count(item), b.count(item)) for item in set(a))
+    if not common:
+        return 0.0
+    precision, recall = common / len(a), common / len(b)
+    return 2 * precision * recall / (precision + recall)
+
+
 INDICATOR_TYPES = {"MAY_INDICATE", "INDICATES"}
+
+
 MAX_CANDIDATES = 8
+
+
 JUDGE_VOTES = 3
+
+
 JUDGE_PROMPT = """You compare facts extracted from a maintenance manual with reference facts written by a person.
 For each pair answer same when the extracted fact states the same thing as the reference: the
 same problem (or code) with the same cause, or the same cause with the same remedy or check.
@@ -65,83 +66,6 @@ the same source record can jointly express a reference action.
 """
 
 
-def manual_spec(manual: str) -> dict:
-    return next(item for item in json.loads(MANIFEST.read_text())["manuals"] if item["manual_id"] == manual)
-
-
-def load_doc(manual: str):
-    from backend.kg_v3.reader import read_document
-    from scripts.kg_v3 import load_evidence
-
-    spec = manual_spec(manual)
-    evidence, page_count, _ = load_evidence(ROOT / "paper/manuals/files" / spec["file_name"], spec["asset"])
-    return read_document(list(evidence), page_count=page_count), list(evidence)
-
-
-def _cells(segment) -> list[str]:
-    return segment.text.split(" | ") if segment.table else [segment.text]
-
-
-def containment(text: str, segment_text: str) -> float:
-    """Share of the reference words found in the segment, with a small wording tie-break."""
-
-    reference = set(words(text))
-    if not reference:
-        return 0.0
-    return len(reference & set(words(segment_text))) / len(reference) + 0.01 * token_f1(text, segment_text)
-
-
-def best_segments(doc, pages: list[int], text: str) -> tuple[list[str], float]:
-    scored = sorted(((max(containment(text, cell) for cell in _cells(segment)), segment.segment_id)
-                     for page in pages for segment in doc.pages.get(page, [])), reverse=True)
-    if not scored or scored[0][0] < 0.5:
-        return [], round(scored[0][0], 3) if scored else 0.0
-    top = scored[0][0]
-    return [segment_id for score, segment_id in scored if score >= top - 0.02][:2], round(top, 3)
-
-
-def best_row(doc, pages: list[int], fields: list[str]) -> tuple[str, float] | None:
-    """The single table row that holds all fields of a claim together."""
-
-    rows = [segment for page in pages for segment in doc.pages.get(page, []) if segment.table]
-    scored = sorted(((sum(containment(field, segment.text) for field in fields) / len(fields), segment.segment_id)
-                     for segment in rows), reverse=True)
-    return (scored[0][1], round(scored[0][0], 3)) if scored and scored[0][0] >= 0.6 else None
-
-
-def map_gold() -> None:
-    GOLD_SEGMENTS.mkdir(parents=True, exist_ok=True)
-    gold = {item["manual_id"]: item["expected_claims"] for item in json.loads(GOLD.read_text())["manuals"]}
-    for manual in GOLD_MANUALS:
-        doc, _ = load_doc(manual)
-        claims = []
-        for claim in gold[manual]:
-            pages = list(claim["pages"])
-            action = claim.get("corrective_action") or claim.get("inspection_step") or ""
-            entry = {"claim_id": claim["claim_id"], "pages": pages, "indicator": claim["symptom"],
-                     "code": claim.get("error_code") or "", "failure": claim["failure_mode"], "action": action,
-                     "action_kind": "inspection" if claim.get("inspection_step") else ("repair" if action else "")}
-            fields = [value for value in (entry["indicator"], entry["failure"], entry["action"]) if value]
-            row = best_row(doc, pages, fields)
-            for field in ("indicator", "failure", "action"):
-                if not entry[field]:
-                    continue
-                if row:
-                    entry[f"{field}_segments"], entry[f"{field}_score"] = [row[0]], row[1]
-                else:
-                    entry[f"{field}_segments"], entry[f"{field}_score"] = best_segments(doc, pages, entry[field])
-            claims.append(entry)
-        payload = {
-            "manual_id": manual, "status": "agent_mapped_from_historical_gold",
-            "note": "Segment IDs located automatically from the historical gold text; a technician must confirm.",
-            "claims": claims,
-        }
-        (GOLD_SEGMENTS / f"{manual}.json").write_text(json.dumps(payload, indent=1, ensure_ascii=False) + "\n")
-        for item in claims:
-            print(manual, item["claim_id"], item.get("indicator_segments"), item.get("failure_segments"),
-                  item.get("action_segments"), item.get("failure_score"), item.get("action_score"))
-
-
 def _locator_index(evidence) -> dict:
     index = {}
     for unit in evidence:
@@ -151,12 +75,6 @@ def _locator_index(evidence) -> dict:
         elif locator.block_index is not None:
             index[(locator.page, "b", locator.block_index)] = unit.evidence_id
     return index
-
-
-def v22_edges(manual: str, doc, evidence) -> list[dict]:
-    """v22 relations of the frozen C12 graphs, located on the segments V3 uses."""
-
-    return v22_edges_from(V22 / f"c12r1_{manual}" / "graph.json", doc, evidence)
 
 
 def v22_edges_from(path: Path, doc, evidence) -> list[dict]:
@@ -345,60 +263,3 @@ async def score_system(llm, claims: list[dict], edges: list[dict]) -> dict:
         "recovered_meaning": sorted(claim["claim_id"] for claim in claims if recovered(claim, same)),
         "recovered_position_only": sorted(claim["claim_id"] for claim in claims if recovered(claim, positional)),
     }
-
-
-async def evaluate(v3_runs: list[Path]) -> list[dict]:
-    from backend.kg_v3.llm import ModelClient
-
-    llm = ModelClient(model="gpt-6-luna", reasoning_effort="low")
-    gold = {item["manual_id"]: item["expected_claims"] for item in json.loads(GOLD.read_text())["manuals"]}
-    rows = []
-    for manual in GOLD_MANUALS:
-        claims = [claim for claim in json.loads((GOLD_SEGMENTS / f"{manual}.json").read_text())["claims"]
-                  if not claim.get("excluded")]
-        doc, evidence = load_doc(manual)
-        systems = {"v22": (v22_edges(manual, doc, evidence), load_v22(manual))}
-        for run in v3_runs:
-            graph, _ = load_v3(run / manual)
-            systems[f"v3_{run.name}"] = (v3_edges(run / manual), graph)
-        row = {"manual": manual, "claims": len(claims), "systems": {}}
-        for name, (edges, lexical_graph) in systems.items():
-            result = await score_system(llm, claims, edges)
-            result["recovered_lexical"] = sorted(
-                item["claim_id"] for item in gold[manual]
-                if item["claim_id"] in {claim["claim_id"] for claim in claims}
-                and lexical_graph.recovered(item, trusted_only=name != "v22"))
-            row["systems"][name] = result
-        rows.append(row)
-    rows.append({"judge_usage": llm.usage.as_dict()})
-    return rows
-
-
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--map-gold", action="store_true")
-    parser.add_argument("--v3", action="append", default=[])
-    parser.add_argument("--out")
-    parser.add_argument("--budget", default="20")
-    args = parser.parse_args()
-    os.chdir(ROOT)
-    if args.map_gold:
-        map_gold()
-        return 0
-    os.environ.update({"KG_LLM_MODE": "real", "KG_REAL_CALL_BUDGET_LEDGER": str(LEDGER),
-                       "KG_REAL_CALL_BUDGET_USD": args.budget, "KG_REAL_CALL_RUN_ID": "v3eval_judge",
-                       "KG_REAL_CALL_PDF_ID": "evaluation", "KG_LLM_TRACE_DIR": str(ROOT / "eval_runs/v3_eval/provider")})
-    rows = asyncio.run(evaluate([Path(item).resolve() for item in args.v3]))
-    Path(args.out).write_text(json.dumps(rows, indent=1) + "\n")
-    for row in rows[:-1]:
-        print(row["manual"], row["claims"])
-        for name, result in row["systems"].items():
-            print(f"  {name:10s} lexical {len(result['recovered_lexical']):2d}  position {len(result['recovered_position_only']):2d}"
-                  f"  meaning {len(result['recovered_meaning']):2d}  missing(meaning) "
-                  f"{sorted(set(c['claim_id'] for c in json.loads((GOLD_SEGMENTS / (row['manual'] + '.json')).read_text())['claims']) - set(result['recovered_meaning']))}")
-    print(rows[-1])
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

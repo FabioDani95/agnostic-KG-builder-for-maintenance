@@ -6,7 +6,7 @@ instead of repeating calls. ``--gates agent`` lets agents answer every gate;
 ``--gates interactive`` leaves doubts and approval to a person.
 
 Example:
-    .venv/bin/python scripts/kg_v3.py --manual graco_check_mate_200 --out runs/v3/graco --gates agent
+    .venv/bin/python scripts/kg_v3.py --manual graco_gtx_2000ex --out runs/v3/graco --gates agent
 """
 
 from __future__ import annotations
@@ -24,7 +24,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-MANIFEST = ROOT / "paper/experiments/robustness_20260925/manifest.json"
 CAMPAIGN = ROOT / "campaign"
 # The V3 campaign has its own ledger and a 10 USD cap for every call it makes.
 DEFAULT_LEDGER = CAMPAIGN / "real_call_budget.jsonl"
@@ -73,14 +72,13 @@ def load_evidence(pdf: Path, asset: dict):
 
 
 def manual_source(manual_id: str) -> tuple[Path, dict]:
-    """PDF and machine identity of a campaign manual (campaign/<id>) or a development manual."""
+    """PDF and machine identity of a campaign manual (campaign/<id>)."""
 
-    if (CAMPAIGN / manual_id / "info.yaml").exists():
-        from scripts.campaign import asset
+    from scripts.campaign import asset
 
-        return CAMPAIGN / manual_id / "manual.pdf", asset(manual_id)
-    spec = next(item for item in json.loads(MANIFEST.read_text())["manuals"] if item["manual_id"] == manual_id)
-    return ROOT / "paper/manuals/files" / spec["file_name"], spec["asset"]
+    if not (CAMPAIGN / manual_id / "info.yaml").exists():
+        raise SystemExit(f"unknown manual {manual_id!r}: create it with scripts/campaign.py new")
+    return CAMPAIGN / manual_id / "manual.pdf", asset(manual_id)
 
 
 async def run(args) -> dict:
@@ -140,7 +138,7 @@ async def run(args) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--manual", help="manual_id from the development manifest")
+    source.add_argument("--manual", help="manual ID of a campaign folder (campaign/<id>)")
     source.add_argument("--pdf", help="path to any PDF")
     parser.add_argument("--asset-name", default="")
     parser.add_argument("--out", required=True)

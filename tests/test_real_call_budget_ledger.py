@@ -424,23 +424,6 @@ def test_gateway_attaches_fail_closed_accounting_to_parse_exception(
     assert accounting["actual_cost_usd"] is None
 
 
-def test_real_call_stage_prefers_ontology_over_embedded_toc_context() -> None:
-    stage = llm_gateway._real_call_stage(
-        "create",
-        {
-            "messages": [{
-                "role": "system",
-                "content": (
-                    "You are an ontology extraction agent. "
-                    "The retained context includes a table of contents."
-                ),
-            }],
-        },
-    )
-
-    assert stage == "chat.create:ontology"
-
-
 def test_task_ceiling_enforces_reservations_without_rewriting_campaign_budget(tmp_path):
     import json
 

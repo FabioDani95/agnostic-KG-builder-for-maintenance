@@ -1,18 +1,13 @@
-"""Blind precision review: a technician judges sampled graph relations against the manual.
+"""Blind precision review: a person judges sampled graph relations against the manual.
 
-``generate`` samples extracted relations from a V3 run and from the frozen v22
-graphs, shuffles them without saying which system produced each, and writes a
-Markdown sheet plus a separate key file. ``score`` reads the filled sheet and
-reports precision per system with a 95% Wilson interval.
-
-Usage:
-    .venv/bin/python scripts/kg_v3_precision_sheet.py generate --v3 paper/experiments/v3_dev_20260926/r3
-    .venv/bin/python scripts/kg_v3_precision_sheet.py score
+``write_sheet`` samples relations of each manual, shuffles them without saying which
+system produced each, and writes a Markdown sheet plus a separate key file. ``score``
+reads the filled sheet and reports precision per system with a 95% Wilson interval.
+Driven by ``scripts/campaign.py precision``.
 """
 
 from __future__ import annotations
 
-import argparse
 import json
 import math
 import random
@@ -24,12 +19,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-OUT = ROOT / "paper/evaluation/v3_precision_review"
-SHEET = OUT / "REVISIONE_PRECISIONE.md"
-KEY = OUT / "chiave_non_aprire.json"
-V22 = ROOT / "paper/experiments/robustness_continuation_20260926"
-MANUALS = {"eastman_e554": "Eastman E-554", "danfoss_apf": "Danfoss APF",
-           "graco_check_mate_200": "Graco Check-Mate 200", "hypertherm_powermax30_air": "Hypertherm Powermax30 AIR"}
 DIAGNOSTIC = ("MAY_INDICATE", "INDICATES", "RESOLVED_BY", "AFFECTS")
 VERBS = {"MAY_INDICATE": "può indicare la causa", "INDICATES": "(codice) indica la causa",
          "AFFECTS": "riguarda il componente", "RESOLVED_BY": "si affronta con"}
@@ -99,13 +88,6 @@ def v22_items(graph: Path, manual: str) -> list[dict]:
             "evidence_pages": sorted({ref["locator"]["page"] for ref in refs if ref["locator"].get("page")}),
         })
     return items
-
-
-def generate(run: Path, per_system: int) -> None:
-    """Development sheet: a V3 run of the four manuals against the frozen v22 graphs."""
-
-    sources = [(manual, run / manual / "graph.json", V22 / f"c12r1_{manual}" / "graph.json") for manual in MANUALS]
-    write_sheet(sources, per_system, SHEET, KEY, MANUALS, str(run.relative_to(ROOT)))
 
 
 def write_sheet(sources: list[tuple[str, Path, Path | None]], per_system: int, sheet: Path, key_path: Path,
@@ -187,7 +169,7 @@ def wilson(successes: int, total: int) -> tuple[float, float]:
     return (round(centre - margin, 3), round(centre + margin, 3))
 
 
-def score(sheet: Path = SHEET, key_path: Path = KEY) -> None:
+def score(sheet: Path, key_path: Path) -> None:
     key = json.loads(key_path.read_text())["items"]
     judgements = {item: value.strip().upper() for item, value in JUDGEMENT.findall(sheet.read_text())}
     counts: dict[tuple[str, str], Counter] = defaultdict(Counter)
@@ -201,22 +183,3 @@ def score(sheet: Path = SHEET, key_path: Path = KEY) -> None:
         print(f"{system:4s} {scope:26s} C {count['C']:2d} P {count['P']:2d} S {count['S']:2d} N {count['N']:2d} "
               f"? {count['?']:2d} | precision {strict:.2f} {wilson(count['C'], judged)} | "
               f"with partial {((count['C'] + count['P']) / judged if judged else 0):.2f}")
-
-
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("action", choices=["generate", "score"])
-    parser.add_argument("--v3", help="V3 run directory holding one folder per manual")
-    parser.add_argument("--per-system", type=int, default=PER_SYSTEM)
-    parser.add_argument("--sheet", default=str(SHEET), help="filled sheet to score")
-    parser.add_argument("--key", default=str(KEY), help="key of that sheet")
-    args = parser.parse_args()
-    if args.action == "generate":
-        generate(Path(args.v3).resolve(), args.per_system)
-    else:
-        score(Path(args.sheet), Path(args.key))
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

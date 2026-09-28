@@ -2,85 +2,40 @@
 .env.*
 !.env.example
 
-data/
-manuals/*
-!manuals/.gitkeep
-!manuals/batch_manuals/
-manuals/batch_manuals/*
-!manuals/batch_manuals/.gitkeep
-benchmark_runs/*
-!benchmark_runs/.gitkeep
-batch_runs/*
-!batch_runs/.gitkeep
-output/*
-!output/.gitkeep
-# Ad-hoc generated previews and demo bundles are not project sources.
-outputs/
-output_e2e/
-runs_e2e/
-data/runs/
-eval_runs/
-node_modules/
-test-results/
-playwright-report/
-ontology.json
-# Golden mock fixtures are versioned even though they match patterns above.
-!tests/golden/mock_responses/**
+# Local PDF manuals (candidates for new campaign manuals).
+manuals/
 
 __pycache__/
 *.py[cod]
-*.pyo
-
 .venv/
 venv/
-env/
-
+.pytest_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+tmp/
 .vscode/
 .idea/
+.DS_Store
 
-# Local AI-tool state, generated worktrees, and conversation visualizations.
+# Local AI-tool state.
 .claude/
 .codex/
 
-.DS_Store
-
-.pytest_cache/
-.mypy_cache/
-.coverage.*
-htmlcov/
-.coverage
-
-# Acceptance campaigns version their reports, generation responses, runtime
-# profiles and JSON ledgers. Raw PDF copies, SQLite stores and lock files stay
-# local: they are duplicated per isolated run and would permanently bloat Git.
-artifacts/acceptance/**/operational.db
-artifacts/acceptance/**/operational.db-*
-artifacts/acceptance/**/raw/
-artifacts/acceptance/**/store/raw/
-artifacts/acceptance/**/*.lock
-
-# Isolated development runs retain these files locally; frozen responses,
-# reports, budgets and source snapshots remain available for versioning.
+# Paper workspace: frozen experiment evidence is versioned, local stores are not.
 paper/experiments/**/operational.db
 paper/experiments/**/operational.db-*
 paper/experiments/**/raw/
 paper/experiments/**/incoming/
 paper/experiments/**/*.lock
 
-# Local render/replay scratch space. Preserve it on disk without treating it as
-# source or checkpoint evidence.
-tmp/
-
 # V3 campaign: PDFs and heavy run state stay local; graphs, reports, gold and KPIs are versioned.
 campaign/*/manual.pdf
-campaign/*/runs/*/state/
-campaign/*/runs_*/*/state/
-campaign/*/runs_*/*/provider_responses/
-campaign/*/runs/*/provider_responses/
-campaign/*/runs/v22/operational.db*
-campaign/*/runs/v22/raw/
-campaign/*/runs/v22/incoming/
+campaign/*/runs*/*/state/
+campaign/*/runs*/*/provider_responses/
+campaign/*/runs*/v22/operational.db*
+campaign/*/runs*/v22/raw/
+campaign/*/runs*/v22/incoming/
 campaign/real_call_budget.jsonl.lock
-campaign/*/runs_*/v22/operational.db*
-campaign/*/runs_*/v22/raw/
-campaign/*/runs_*/v22/incoming/
+campaign/results/judge/

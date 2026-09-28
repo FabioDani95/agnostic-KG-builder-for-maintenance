@@ -39,7 +39,4 @@ scritto prima del passo 6: chi annota non deve vedere i grafi di quel manuale.
 
 ## Cosa sta altrove
 
-- Sviluppo sui quattro manuali storici: grafi e rapporti in
-  [paper/experiments/v3_dev_20260926](../paper/experiments/v3_dev_20260926/), gold in
-  [paper/evaluation/gold_segments_v1](../paper/evaluation/gold_segments_v1/).
 - Codice della pipeline: [backend/kg_v3](../backend/kg_v3/); piano: [docs/PIANO_V3.md](../docs/PIANO_V3.md).

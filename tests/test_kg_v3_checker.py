@@ -96,7 +96,7 @@ def test_a_compound_name_never_bridges_two_actions_into_one_node():
         "Clear the piston valve", "Replace the piston valve seals"}
 
 
-def _eastman_like_doc() -> DocumentText:
+def _numbered_procedure_doc() -> DocumentText:
     texts = [
         ("p38.b1", "Problem: The tool does not move down"),
         ("p38.b2", "5.Check tool connections."),
@@ -113,7 +113,7 @@ def _eastman_like_doc() -> DocumentText:
 def test_numbered_steps_and_broken_sentences_are_explicit():
     from backend.kg_v3.reader import render_segments
 
-    doc = _eastman_like_doc()
+    doc = _numbered_procedure_doc()
     assert doc.step["p38.b3"] == doc.step["p38.b4"] and doc.step["p38.b3"][1] == "5a"
     assert "p38.b4" in doc.continuation and doc.step_group("p38.b6") != doc.step_group("p38.b3")
     text = render_segments(doc.segments(), doc=doc)
@@ -122,7 +122,7 @@ def test_numbered_steps_and_broken_sentences_are_explicit():
 
 
 def test_structure_joins_one_numbered_step_but_not_two():
-    doc = _eastman_like_doc()
+    doc = _numbered_procedure_doc()
 
     def cited(*ids):
         item = proposal("A", "x", "y", ids[0])
@@ -162,7 +162,7 @@ def test_unnamed_causes_with_the_same_remedies_become_one():
 
 
 def test_structure_needs_both_ends_in_the_entry_that_states_the_link():
-    doc = _eastman_like_doc()
+    doc = _numbered_procedure_doc()
     cause_in_step_5 = Proposal(
         unit_id="u1", read="A", relation_type="RESOLVED_BY",
         source=Endpoint(type="FailureMode", name="Tool connection fault", cites=["p38.b2"]),
@@ -229,7 +229,7 @@ def test_an_unnamed_cause_never_bridges_two_named_causes():
 
 
 def test_a_step_is_verified_with_its_problem_and_parent_step():
-    doc = _eastman_like_doc()
+    doc = _numbered_procedure_doc()
     assert doc.step_context("p38.b6") == ["p38.b1", "p38.b5"]
     assert doc.step_context("p38.b2") == ["p38.b1"]
     assert doc.step_context("p38.b1") == []

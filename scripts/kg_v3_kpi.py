@@ -1,12 +1,11 @@
 """KPI of the V3 evaluation protocol for any annotated manual (paper/evaluation/PROTOCOLLO_V3.md).
 
 Layout: <runs>/<manual>/runs/ (campaign) or <runs>/<manual>/ holds V3 runs (v3_r1, ...)
-and the optional v22 baseline (v22). The gold is campaign/<manual>/gold/gold.json, or
-paper/evaluation/gold_segments_v1 for the historical cases. Usually called through
-scripts/campaign.py kpi.
+and the optional saved v22 baseline (v22). The gold is campaign/<manual>/gold/gold.json.
+Usually called through scripts/campaign.py kpi.
 
 Usage:
-    .venv/bin/python scripts/kg_v3_kpi.py --manuals genie_scissor,grundfos_paco --runs campaign \\
+    .venv/bin/python scripts/kg_v3_kpi.py --manuals grundfos_paco_vl,lincoln_powermig_215mp --runs campaign \\
         --out campaign/results/kpi.json
 """
 
@@ -25,12 +24,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from scripts.kg_v3 import DEFAULT_BUDGET, DEFAULT_LEDGER, load_evidence, manual_source  # noqa: E402
-from scripts.kg_v3_compare import token_f1  # noqa: E402
 from scripts.kg_v3_contrastive import score_contrasts, write_candidates  # noqa: E402
-from scripts.kg_v3_evaluate import score_system, v3_edges, v22_edges_from  # noqa: E402
+from scripts.kg_v3_evaluate import score_system, token_f1, v3_edges, v22_edges_from  # noqa: E402
 
 CAMPAIGN = ROOT / "campaign"
-GOLD_V1 = ROOT / "paper/evaluation/gold_segments_v1"
 
 
 def wilson(successes: int, total: int) -> list[float]:
@@ -43,13 +40,8 @@ def wilson(successes: int, total: int) -> list[float]:
 
 
 def load_gold(manual: str) -> tuple[list[dict], list[int]]:
-    path = CAMPAIGN / manual / "gold" / "gold.json"
-    if path.exists():
-        data = json.loads(path.read_text())
-        return data["claims"], data.get("pages", [])
-    data = json.loads((GOLD_V1 / f"{manual}.json").read_text())
-    claims = [{**claim, "branch_id": claim["claim_id"]} for claim in data["claims"] if not claim.get("excluded")]
-    return claims, sorted({page for claim in claims for page in claim["pages"]})
+    data = json.loads((CAMPAIGN / manual / "gold" / "gold.json").read_text())
+    return data["claims"], data.get("pages", [])
 
 
 def v3_run_facts(run: Path) -> dict:
@@ -189,7 +181,7 @@ def main() -> int:
     os.environ.update({"KG_LLM_MODE": "real", "KG_REAL_CALL_BUDGET_LEDGER": str(Path(args.ledger).resolve()),
                        "KG_REAL_CALL_BUDGET_USD": args.budget, "KG_REAL_CALL_RUN_ID": "v3_kpi_judge",
                        "KG_REAL_CALL_PDF_ID": "evaluation",
-                       "KG_LLM_TRACE_DIR": str(ROOT / "eval_runs/v3_kpi/provider")})
+                       "KG_LLM_TRACE_DIR": str(ROOT / "campaign/results/judge/provider_responses")})
     results = asyncio.run(evaluate([item.strip() for item in args.manuals.split(",") if item.strip()],
                                    (ROOT / args.runs).resolve(), args.runs_name, args.v3_only))
     out = ROOT / args.out
