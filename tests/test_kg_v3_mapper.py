@@ -86,3 +86,17 @@ def test_confident_sections_are_not_reread_and_questions_are_small():
     page_map = asyncio.run(map_pages(llm, doc))
     assert not llm.labellings
     assert all(len(q.proposal) <= 25 for q in map_questions(doc, page_map))
+
+
+def test_the_map_gate_asks_a_few_questions_only_around_diagnostic_or_doubtful_pages():
+    from backend.kg_v3.mapper import MAX_MAP_QUESTIONS, map_questions
+
+    doc = _doc(400)
+    entries = [PageMapEntry(page=page, label=PageLabel.OTHER, section=f"S{page}") for page in range(1, 401)]
+    for page in (10, 11, 200, 399):
+        entries[page - 1] = PageMapEntry(page=page, label=PageLabel.DIAGNOSTIC, section=f"S{page}")
+    questions = map_questions(doc, DocumentMap(entries=entries))
+    assert 1 <= len(questions) <= MAX_MAP_QUESTIONS
+    shown = {int(line.split("|")[1].split(":")[0].strip()[1:]) for q in questions
+             for line in q.proposal if "|" in line}
+    assert {9, 10, 11, 12, 199, 200, 201, 398, 399, 400} == shown

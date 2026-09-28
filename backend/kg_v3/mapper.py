@@ -239,12 +239,29 @@ def map_question(doc: DocumentText, page_map: DocumentMap) -> Question:
     )
 
 
+MAX_MAP_QUESTIONS = 8
+
+
 def map_questions(doc: DocumentText, page_map: DocumentMap) -> list[Question]:
+    """Map review in a few questions: only around pages labelled diagnostic or doubtful.
+
+    Confident non-diagnostic stretches need no reviewer. A page next to a diagnostic
+    or doubtful one is shown too, so a reviewer can still add a missed continuation.
+    """
+
+    wanted = {entry.page for entry in page_map.entries
+              if entry.label is PageLabel.DIAGNOSTIC or entry.unsure}
+    shown = sorted({page + delta for page in wanted for delta in (-1, 0, 1)}
+                   & {entry.page for entry in page_map.entries})
+    if not shown:
+        return []
+    chunk = max(MAP_BATCH_PAGES, -(-len(shown) // MAX_MAP_QUESTIONS))
+    by_page = {entry.page: entry for entry in page_map.entries}
     groups: list[list[PageMapEntry]] = []
-    for entry in page_map.entries:
-        if not groups or len(groups[-1]) >= MAP_BATCH_PAGES or groups[-1][-1].section != entry.section:
+    for page in shown:
+        if not groups or len(groups[-1]) >= chunk:
             groups.append([])
-        groups[-1].append(entry)
+        groups[-1].append(by_page[page])
     return [map_question(doc, DocumentMap(entries=entries)).model_copy(update={
         "question_id": f"map:{entries[0].page}-{entries[-1].page}"}) for entries in groups]
 
