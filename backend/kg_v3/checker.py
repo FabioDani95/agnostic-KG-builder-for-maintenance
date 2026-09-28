@@ -321,15 +321,17 @@ def unit_batches(candidates: list[Candidate], size: int = VERIFY_BATCH) -> list[
 
 class Checker:
     def __init__(self, llm: ModelClient, spec: OntologySpec, *, extractor_id: str, concurrency: int = 6,
-                 units: list[ReadingUnit] | None = None) -> None:
+                 units: list[ReadingUnit] | None = None, images=None) -> None:
         self.llm = llm
+        self.images = images
         self.spec = spec
         self.extractor_id = extractor_id
         self._limit = asyncio.Semaphore(max(1, concurrency))
         # With the reading units, the verifier reads the passage the extraction read.
         self.units = {unit.unit_id: unit for unit in units or []}
 
-    def _evidence_text(self, doc: DocumentText, cites: list[str], passage: list[str] = ()) -> str:
+    def _evidence_text(self, doc: DocumentText, cites: list[str], passage: list[str] = (),
+                       marks: dict[str, str] | None = None) -> str:
         segments = doc.segments(sorted({*cites, *passage}))
         headers = {f"p{item.page}.t{item.table.table}.r1" for item in segments if item.table and item.table.row > 1}
         # A numbered step is read with the problem it belongs to and its parent step.
@@ -337,30 +339,31 @@ class Checker:
         known = {item.segment_id for item in segments}
         extra = [doc.segment(item) for item in sorted(headers | steps) if doc.segment(item) and item not in known]
         ordered = sorted([*extra, *segments], key=lambda item: doc.position(item.segment_id) or 0)
-        return render_segments(ordered, doc=doc)
+        return render_segments(ordered, doc=doc, marks=marks)
 
-    def _request(self, doc: DocumentText, batch: list[Candidate]) -> tuple[str, str]:
+    def _request(self, doc: DocumentText, batch: list[Candidate]) -> tuple[str, str, list[str]]:
         unit = self.units.get(batch[0].lead.unit_id)
         if unit is not None and all(candidate.lead.unit_id == unit.unit_id for candidate in batch):
             passage = [*unit.context_segment_ids, *unit.segment_ids]
             cites = sorted({cite for candidate in batch for cite in candidate.cites})
+            images, marks = self.images.for_segments(passage) if self.images is not None else ([], {})
             lines = [f"Statement S{index}: {statement(self.spec, candidate.lead)} Cited: {', '.join(candidate.cites)}"
                      for index, candidate in enumerate(batch, start=1)]
-            return VERIFY_PASSAGE_PROMPT, ("Passage:\n" + self._evidence_text(doc, cites, passage)
-                                           + "\n\nStatements:\n" + "\n".join(lines))
+            return VERIFY_PASSAGE_PROMPT, ("Passage:\n" + self._evidence_text(doc, cites, passage, marks)
+                                           + "\n\nStatements:\n" + "\n".join(lines)), images
         blocks = [f"Statement S{index}: {statement(self.spec, candidate.lead)}\n"
                   f"Cited text:\n{self._evidence_text(doc, candidate.cites)}"
                   for index, candidate in enumerate(batch, start=1)]
-        return VERIFY_PROMPT, "\n\n".join(blocks)
+        return VERIFY_PROMPT, "\n\n".join(blocks), []
 
     async def _verify(self, doc: DocumentText, batch: list[Candidate]) -> None:
-        system, user = self._request(doc, batch)
+        system, user, images = self._request(doc, batch)
         ids = [f"S{index}" for index in range(1, len(batch) + 1)]
         try:
             async with self._limit:
                 data = await self.llm.json(system=system, user=user,
                                            schema=verification_schema(ids), name="kg_v3_verify",
-                                           max_output_tokens=4000)
+                                           max_output_tokens=4000, images=images or None)
         except Exception as exc:
             logger.warning("Verification batch failed: %s", exc)
             return

@@ -70,7 +70,12 @@ fixed ontology; the asset itself ({asset}) already exists, never create it.
 
 The input is a part of the manual split into segments, each starting with its ID in brackets.
 Lines marked (context) are read-only: do not create standalone branches from them. Preserve
-prerequisites and warnings from them when they govern actions in the owned section.
+prerequisites and warnings from them when they govern actions in the owned section. A part may
+continue a table, flowchart or procedure whose title is in the context lines: link its facts to
+the problem named there and cite that ID too. Pages whose layout carries meaning (flowcharts,
+labelled diagrams) are also shown as images, in page order; their segments carry their place on
+the page as @x,y (per cent of width and height). Follow boxes, arrows and yes/no branches on the
+image, but cite only segment IDs.
 
 Rules:
 1. Extract every troubleshooting fact the text states: observed symptoms or error codes, their

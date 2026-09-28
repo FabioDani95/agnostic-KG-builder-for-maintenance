@@ -1,8 +1,9 @@
-"""Opt-in visual verification of already-green list/merged-cell relations."""
+"""Page images where the layout carries meaning, and the opt-in visual check of table relations."""
 
 from __future__ import annotations
 
 import base64
+from pathlib import Path
 
 import fitz
 
@@ -10,6 +11,64 @@ from backend.kg_v3.checker import statement
 from backend.kg_v3.contracts import Tier, VerifierVerdict, Witness
 from backend.kg_v3.ontology import verification_schema
 from backend.kg_v3.prompts import VERIFY_PROMPT
+
+LAYOUT_MIN_SEGMENTS = 8
+LAYOUT_SHORT_CHARS = 40
+LAYOUT_SHORT_SHARE = 0.5
+IMAGE_ZOOM = 1.3
+MAX_IMAGES = 6
+
+
+def layout_pages(doc) -> set[int]:
+    """Pages whose text layer is broken into many short pieces: flowcharts, labelled diagrams.
+
+    Tables are read in place by the reader and do not count. The rule looks only at
+    the length of text segments, never at their words.
+    """
+
+    pages = set()
+    for page, segments in doc.pages.items():
+        text = [segment for segment in segments if segment.table is None]
+        short = sum(len(segment.text) <= LAYOUT_SHORT_CHARS for segment in text)
+        if len(text) >= LAYOUT_MIN_SEGMENTS and short >= LAYOUT_SHORT_SHARE * len(text):
+            pages.add(page)
+    return pages
+
+
+class PageImages:
+    """Images of layout pages, and where each text segment sits on them.
+
+    The model reads the arrows and boxes on the image and cites the segments by ID;
+    the position (per cent of width and height) ties an ID to its place on the image.
+    """
+
+    def __init__(self, pdf: Path, doc) -> None:
+        self.pdf = Path(pdf)
+        self.doc = doc
+        self.pages = layout_pages(doc)
+        self._images: dict[int, str] = {}
+        self._sizes: dict[int, tuple[float, float]] = {}
+
+    def _render(self, page: int) -> None:
+        with fitz.open(self.pdf) as source:
+            sheet = source[page - 1]
+            pixmap = sheet.get_pixmap(matrix=fitz.Matrix(IMAGE_ZOOM, IMAGE_ZOOM), alpha=False)
+            self._images[page] = "data:image/png;base64," + base64.b64encode(pixmap.tobytes("png")).decode()
+            self._sizes[page] = (sheet.rect.width, sheet.rect.height)
+
+    def for_segments(self, segment_ids) -> tuple[list[str], dict[str, str]]:
+        segments = self.doc.segments(list(segment_ids))
+        pages = sorted({segment.page for segment in segments} & self.pages)[:MAX_IMAGES]
+        for page in pages:
+            if page not in self._images:
+                self._render(page)
+        marks = {}
+        for segment in segments:
+            if segment.page in pages and segment.bbox:
+                width, height = self._sizes[segment.page]
+                marks[segment.segment_id] = (f" @{round(100 * segment.bbox[0] / width)},"
+                                             f"{round(100 * segment.bbox[1] / height)}")
+        return [self._images[page] for page in pages], marks
 
 
 def table_dependent(doc, relation) -> bool:

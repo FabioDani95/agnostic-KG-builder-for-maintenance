@@ -275,21 +275,23 @@ def render_segment(segment: Segment, *, marker: str = "") -> str:
 
 
 def render_segments(segments: list[Segment], *, context: set[str] | None = None,
-                    doc: DocumentText | None = None) -> str:
+                    doc: DocumentText | None = None, marks: dict[str, str] | None = None) -> str:
     """Page-separated text; context segments are marked read-only.
 
     With the document, a sentence broken across blocks stays on one line and
-    numbered steps show their place, for example "(step 5a)".
+    numbered steps show their place, for example "(step 5a)". Marks add a note
+    after a segment ID, such as its position on a page shown as an image.
     """
 
     context = context or set()
+    marks = marks or {}
     lines: list[str] = []
     current_page = None
     for segment in segments:
         if segment.page != current_page:
             current_page = segment.page
             lines.append(f"=== page {segment.page} ===")
-        marker = " (context)" if segment.segment_id in context else ""
+        marker = marks.get(segment.segment_id, "") + (" (context)" if segment.segment_id in context else "")
         if doc is not None and segment.segment_id in doc.step and segment.segment_id not in doc.continuation:
             marker += f" (step {doc.step[segment.segment_id][1]})"
         text = render_segment(segment, marker=marker)

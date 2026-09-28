@@ -175,8 +175,11 @@ def parse_read(data: dict[str, Any], *, unit: ReadingUnit, read: str, spec: Onto
 
 class Extractor:
     def __init__(self, llm: ModelClient, spec: OntologySpec, *, asset_name: str, reads: int = 2,
-                 output_tokens: int = EXTRACTION_OUTPUT_TOKENS, concurrency: int = 6) -> None:
+                 output_tokens: int = EXTRACTION_OUTPUT_TOKENS, concurrency: int = 6,
+                 images: Any | None = None) -> None:
         self.llm = llm
+        # Page images (backend.kg_v3.vision.PageImages) for pages whose layout carries meaning.
+        self.images = images
         self.spec = spec
         self.reads = max(1, reads)
         self.output_tokens = output_tokens
@@ -216,13 +219,15 @@ class Extractor:
     async def _read_once(self, doc: DocumentText, unit: ReadingUnit, read: str, depth: int = 0) -> UnitExtraction:
         allowed = [*unit.context_segment_ids, *unit.segment_ids]
         ordered = sorted(doc.segments(allowed), key=lambda item: doc.position(item.segment_id) or 0)
-        text = render_segments(ordered, context=set(unit.context_segment_ids), doc=doc)
+        images, marks = self.images.for_segments(allowed) if self.images is not None else ([], {})
+        text = render_segments(ordered, context=set(unit.context_segment_ids), doc=doc, marks=marks)
         result = UnitExtraction(unit_id=unit.unit_id)
         try:
             async with self._limit:
                 data = await self.llm.json(system=self.system, user=text,
                                            schema=extraction_schema(self.spec, allowed),
-                                           name="kg_v3_extract", max_output_tokens=self.output_tokens)
+                                           name="kg_v3_extract", max_output_tokens=self.output_tokens,
+                                           images=images or None)
         except TruncatedResponse:
             if depth >= MAX_SPLIT_DEPTH or len(unit.segment_ids) < 2:
                 result.failed_reads += 1

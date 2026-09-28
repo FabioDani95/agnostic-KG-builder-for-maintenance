@@ -84,6 +84,8 @@ class RunConfig(BaseModel):
     max_units: int = 150
     # One reading of the full text of every page finds troubleshooting knowledge the outline misses.
     content_scan: bool = True
+    # Pages whose text layer is broken into short pieces (flowcharts) are also shown as images.
+    page_images: bool = True
     omission_review: bool = False
     omission_max_units: int = 3
     visual_verification: bool = False
@@ -261,8 +263,13 @@ class Pipeline:
         # Later steps depend on exactly these units: their saved state is keyed by them.
         stamp = hashlib.sha256("|".join(unit.unit_id for unit in units).encode("utf-8")).hexdigest()[:10]
 
+        images = None
+        if self.config.page_images and self.pdf_path is not None:
+            from backend.kg_v3.vision import PageImages
+
+            images = PageImages(self.pdf_path, self.doc)
         extractor = Extractor(self.llm, self.spec, asset_name=self.asset_name, reads=self.config.reads,
-                              concurrency=self.config.concurrency)
+                              concurrency=self.config.concurrency, images=images)
         extractions = await self._extract(units, extractor)
         proposals = [proposal for item in extractions for proposal in item.proposals]
 
@@ -271,7 +278,7 @@ class Pipeline:
             relations = [CheckedRelation.model_validate(item) for item in saved]
         else:
             checker = Checker(self.llm, self.spec, extractor_id=f"{self.config.model}:{extractor.prompt_id}",
-                              concurrency=self.config.concurrency, units=units)
+                              concurrency=self.config.concurrency, units=units, images=images)
             relations = await self._timed("check", checker.check(self.doc, proposals))
             self._save(f"checked_{stamp}", [item.model_dump(mode="json") for item in relations])
 
@@ -293,7 +300,7 @@ class Pipeline:
             plan = await self._timed("merge", judge_pairs(self.llm, merge_candidates(relations), self.doc, relations))
             self._save(f"merge_plan_{stamp}", plan)
         checker = Checker(self.llm, self.spec, extractor_id=f"{self.config.model}:{extractor.prompt_id}",
-                          concurrency=self.config.concurrency, units=units)
+                          concurrency=self.config.concurrency, units=units, images=images)
         saved = self._load(f"rechecked_{stamp}")
         if saved is None:
             parts = split_disagreements(self.doc, relations, plan.different)
