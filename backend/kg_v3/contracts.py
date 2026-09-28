@@ -33,6 +33,9 @@ class ContextItem(_Contract):
     kind: Literal['if', 'prerequisite', 'warning', 'expected', 'order'] = 'if'
     text: str = Field(min_length=1)
     cite: tuple[str, ...] = ()
+    # "section": a note governing a whole table or procedure, copied onto its actions;
+    # "relation": context written for this step.
+    scope: Literal['relation', 'section'] = 'relation'
 
     @model_validator(mode='before')
     @classmethod
@@ -43,9 +46,12 @@ class ContextItem(_Contract):
         return (self.kind, self.text, self.cite) < (other.kind, other.text, other.cite)
 
 
-def context_text(items) -> str:
-    return '; '.join(f'[{item.kind}] {item.text}' for value in items
-                     for item in [ContextItem.model_validate(value)])
+def context_text(items, *, scope: str | None = None) -> str:
+    """Typed context as text; with a scope, only the items of that scope."""
+
+    parsed = [ContextItem.model_validate(value) for value in items]
+    return '; '.join(dict.fromkeys(f'[{item.kind}] {item.text}' for item in parsed
+                                   if scope is None or item.scope == scope))
 
 
 # Reading ------------------------------------------------------------------

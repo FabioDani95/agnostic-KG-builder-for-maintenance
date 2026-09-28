@@ -50,14 +50,18 @@ if the extracted problem is the same and the extracted cause is only a placehold
 "unspecified cause of ...") rather than a specific cause the manual does not state.
 When context is supplied, respect antecedents, prerequisites, prohibitions, expected outcomes
 and sequence. An expected outcome is not a precondition. Extra compatible context is allowed;
-contradictory context or missing required context is different.
+contradictory context is different. The reference context is the annotator's note for the whole
+branch and may concern only one of its steps: do not require it on every extracted step, answer
+different only when the extracted fact contradicts it. Extracted section notes apply to a whole
+table or procedure: they are compatible extra context, never a condition of the step.
 A prohibition represented as a typed [warning] on an action can match the same prohibition
 represented as a separate reference action, provided its cause, scope and polarity agree.
 Never match an affirmative command to a prohibition. Never borrow a remedy or context from
 another entry. Extracted occurrences are alternatives: do not conjoin their conditions or
-use a condition on one occurrence to repair a missing condition on another. Reference context
-is typed; legacy untyped reference conditions are [if]. A missing [if] is not unconditional
-permission. Only steps in the same source record can jointly express a reference action.
+use a condition on one occurrence to repair a missing condition on another. When the
+reference action itself states its condition (for example "if the problem persists, contact
+service"), the extracted action must carry that condition in its own step context. Only steps in
+the same source record can jointly express a reference action.
 """
 
 
@@ -239,7 +243,8 @@ def pair_line(pair_id: str, relation: dict, group: list[dict]) -> str:
     """
 
     raw_context = relation.get('conditions') or []
-    context = f" Reference context: {context_text([raw_context] if isinstance(raw_context, str) else raw_context) or '(none)'}."
+    context = (f" Reference branch context: "
+               f"{context_text([raw_context] if isinstance(raw_context, str) else raw_context) or '(none)'}.")
     location = f" Reference segments: {', '.join(sorted(relation.get('segments', [])))}."
     context += location
     if relation["kind"] == "indicator":
@@ -249,9 +254,11 @@ def pair_line(pair_id: str, relation: dict, group: list[dict]) -> str:
                      else f"'{edge['target_name']}'")
         return (f"{pair_id}: reference '{relation['left']}' may indicate {cause} | "
                 f"extracted '{edge['source_name']}' may indicate {extracted}" +
-                (f". Extracted context: {context_text(edge.get('conditions', [])) or '(none)'}. "
+                (f". Extracted context: {context_text(edge.get('conditions', []), scope='relation') or '(none)'}. "
                  f"Extracted segments: {', '.join(sorted(edge.get('segments', [])))}.") + context)
-    remedies = "; ".join(f"'{edge['target_name']}' (typed context: {context_text(edge.get('conditions', [])) or '(none)'}; "
+    remedies = "; ".join(f"'{edge['target_name']}' (step context: "
+                         f"{context_text(edge.get('conditions', []), scope='relation') or '(none)'}; "
+                         f"section notes: {context_text(edge.get('conditions', []), scope='section') or '(none)'}; "
                          f"source record: {edge.get('record', '')}; segments: {', '.join(sorted(edge.get('segments', [])))})"
                          for edge in group)
     reference_cause = relation["left"] or "(not named in the manual)"

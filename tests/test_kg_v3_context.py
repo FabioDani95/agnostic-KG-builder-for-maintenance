@@ -63,7 +63,7 @@ def test_evaluator_shows_equivalent_warning_and_rejection_contexts():
     assert "[warning] Do not switch off" in line and "[prerequisite] During replacement" in line
     assert "can match" in JUDGE_PROMPT and "affirmative command to a prohibition" in JUDGE_PROMPT
     inverted = pair_line("P2", reference, [{**edge, "conditions": [], "target_name": "Switch off"}])
-    assert "typed context: (none)" in inverted and "'Switch off'" in inverted
+    assert "step context: (none)" in inverted and "'Switch off'" in inverted
     conditional = {**reference, "right": "Contact service", "conditions": "Checks failed"}
     assert "[if] Checks failed" in pair_line("P3", conditional, [{**edge, "conditions": []}])
     neighbour = pair_line("P4", reference, [{**edge, "segments": {"p2.b2"}}])
@@ -82,3 +82,35 @@ def test_evaluator_never_lends_green_status_or_context_to_another_occurrence(tmp
     a, b = v3_edges(tmp_path)
     assert a['trusted'] and not a['conditions'] and a['segments'] == {'p1.b1'}
     assert not b['trusted'] and b['conditions']
+
+
+def test_branch_context_is_informative_and_section_notes_are_not_step_conditions():
+    from scripts.kg_v3_evaluate import JUDGE_PROMPT, pair_line
+
+    reference = {"kind": "action", "left": "", "right": "Let the machine cool",
+                 "conditions": "If all checks are done and the problem persists", "segments": {"p28.t1.r5"}}
+    edge = {"source_name": "Thermostat tripped", "target_name": "Let the machine cool", "record": "u:A.R2",
+            "source_stated": True, "segments": {"p28.t1.r5"},
+            "conditions": [{"kind": "warning", "text": "Do not operate with panels removed", "scope": "section"}]}
+    line = pair_line("P1", reference, [edge])
+    assert "Reference branch context: [if] If all checks are done" in line
+    assert "step context: (none)" in line
+    assert "section notes: [warning] Do not operate with panels removed" in line
+    assert "do not require it on every extracted step" in JUDGE_PROMPT
+
+
+def test_section_context_is_marked_as_section_scope():
+    from backend.kg_v3.contracts import ReadingUnit
+    from backend.kg_v3.extractor import parse_read
+    from backend.kg_v3.ontology import load_ontology
+
+    unit = ReadingUnit(unit_id="u001", section="", pages=[1], segment_ids=["p1.b1", "p1.b2"], context_segment_ids=[])
+    data = {"entities": [
+        {"key": "E1", "type": "FailureMode", "name": "Worn seal", "stated": True, "cite": ["p1.b2"]},
+        {"key": "E2", "type": "CorrectiveAction", "name": "Replace the seal", "kind": "repair", "cite": ["p1.b2"]}],
+        "relations": [{"type": "RESOLVED_BY", "source": "E1", "target": "E2", "record": "R1", "cite": ["p1.b2"]}],
+        "section_context": [{"kind": "prerequisite", "text": "Relieve the pressure first", "cite": ["p1.b1"],
+                             "records": ["R1"]}]}
+    proposals, _, _ = parse_read(data, unit=unit, read="A", spec=load_ontology(), allowed={"p1.b1", "p1.b2"})
+    (proposal,) = proposals
+    assert [(item.kind, item.scope) for item in proposal.conditions] == [("prerequisite", "section")]

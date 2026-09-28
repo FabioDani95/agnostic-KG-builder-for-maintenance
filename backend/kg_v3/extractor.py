@@ -150,7 +150,8 @@ def parse_read(data: dict[str, Any], *, unit: ReadingUnit, read: str, spec: Onto
             for shared in data.get('section_context') or []:
                 if (isinstance(shared, dict) and record in shared.get('records', [])
                         and shared.get('kind') in {'warning', 'prerequisite'}):
-                    context.append({k: shared[k] for k in ('kind', 'text', 'cite') if k in shared})
+                    context.append({**{k: shared[k] for k in ('kind', 'text', 'cite') if k in shared},
+                                    'scope': 'section'})
         conditions = []
         for value in context:
             try:
