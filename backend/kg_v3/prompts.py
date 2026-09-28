@@ -145,6 +145,20 @@ Context is typed: if=antecedent, prerequisite=before, warning=constraint/prohibi
 expected=test outcome, order=sequence. Check each item's role and scope against the cited source.
 """
 
+_VERIFY_RULES = VERIFY_PROMPT.split("enough to decide. ", 1)[1]
+
+VERIFY_PASSAGE_PROMPT = """You check statements extracted from a passage of a technical maintenance manual. You see the
+whole passage the statements were read from (segments with IDs; page images when the layout carries
+meaning) and, for each statement, the IDs it cites. Read the passage as a technician would: titles,
+table columns, numbered steps, and flowchart questions with their yes/no outcomes and arrows
+("go to No. 6") connect facts written in different segments, possibly on different pages.
+Answer supported when the passage, read this way, states the same meaning, even in other words, and
+the cited segments are where its parts are written (the problem, the test and its outcome, the
+action). Answer not_supported when the passage does not say it or says something different
+(opposite outcome or condition, another code or number), or when the statement joins parts of
+different entries: a cause or remedy of a neighbouring table row, list item, flowchart branch or
+procedure. Answer unclear when the passage is not enough to decide. """ + _VERIFY_RULES
+
 MERGE_PROMPT = """You decide whether two names extracted from the same maintenance manual denote the same thing.
 Answer same only when they mean the same fault, symptom, component or action. Different numbers,
 codes, directions (for example up and down), sides, polarities or negations mean different.

@@ -271,7 +271,7 @@ class Pipeline:
             relations = [CheckedRelation.model_validate(item) for item in saved]
         else:
             checker = Checker(self.llm, self.spec, extractor_id=f"{self.config.model}:{extractor.prompt_id}",
-                              concurrency=self.config.concurrency)
+                              concurrency=self.config.concurrency, units=units)
             relations = await self._timed("check", checker.check(self.doc, proposals))
             self._save(f"checked_{stamp}", [item.model_dump(mode="json") for item in relations])
 
@@ -292,7 +292,8 @@ class Pipeline:
         else:
             plan = await self._timed("merge", judge_pairs(self.llm, merge_candidates(relations), self.doc, relations))
             self._save(f"merge_plan_{stamp}", plan)
-        checker = Checker(self.llm, self.spec, extractor_id=f"{self.config.model}:{extractor.prompt_id}")
+        checker = Checker(self.llm, self.spec, extractor_id=f"{self.config.model}:{extractor.prompt_id}",
+                          concurrency=self.config.concurrency, units=units)
         saved = self._load(f"rechecked_{stamp}")
         if saved is None:
             parts = split_disagreements(self.doc, relations, plan.different)
@@ -305,7 +306,6 @@ class Pipeline:
         if repairs:
             repaired = self._load(f"navigation_{stamp}")
             if repaired is None:
-                checker = Checker(self.llm, self.spec, extractor_id=f"{self.config.model}:{extractor.prompt_id}")
                 added = await self._timed("navigation", checker.check(self.doc, repairs))
                 added = [item.model_copy(update={'assertion': item.assertion.model_copy(
                     update={'assertion_id': f'navigation.{item.assertion.assertion_id}'})}) for item in added]

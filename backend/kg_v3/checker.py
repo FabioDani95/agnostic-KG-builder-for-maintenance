@@ -16,11 +16,19 @@ from difflib import SequenceMatcher
 
 from pydantic import BaseModel, Field
 
-from backend.kg_v3.contracts import Assertion, Certificate, Tier, VerifierVerdict, Witness, context_text
+from backend.kg_v3.contracts import (
+    Assertion,
+    Certificate,
+    ReadingUnit,
+    Tier,
+    VerifierVerdict,
+    Witness,
+    context_text,
+)
 from backend.kg_v3.extractor import Proposal
 from backend.kg_v3.llm import ModelClient
 from backend.kg_v3.ontology import OntologySpec, verification_schema
-from backend.kg_v3.prompts import VERIFY_PROMPT
+from backend.kg_v3.prompts import VERIFY_PASSAGE_PROMPT, VERIFY_PROMPT
 from backend.kg_v3.reader import DocumentText, render_segments
 
 logger = logging.getLogger(__name__)
@@ -302,31 +310,55 @@ class CheckedRelation(BaseModel):
     proposals: list[Proposal] = Field(default_factory=list)
 
 
+def unit_batches(candidates: list[Candidate], size: int = VERIFY_BATCH) -> list[list[Candidate]]:
+    """Candidates of one unit together, so each verification reads one passage."""
+
+    by_unit: dict[str, list[Candidate]] = {}
+    for candidate in candidates:
+        by_unit.setdefault(candidate.lead.unit_id, []).append(candidate)
+    return [items[start:start + size] for items in by_unit.values() for start in range(0, len(items), size)]
+
+
 class Checker:
-    def __init__(self, llm: ModelClient, spec: OntologySpec, *, extractor_id: str, concurrency: int = 6) -> None:
+    def __init__(self, llm: ModelClient, spec: OntologySpec, *, extractor_id: str, concurrency: int = 6,
+                 units: list[ReadingUnit] | None = None) -> None:
         self.llm = llm
         self.spec = spec
         self.extractor_id = extractor_id
         self._limit = asyncio.Semaphore(max(1, concurrency))
+        # With the reading units, the verifier reads the passage the extraction read.
+        self.units = {unit.unit_id: unit for unit in units or []}
 
-    def _evidence_text(self, doc: DocumentText, cites: list[str]) -> str:
-        segments = doc.segments(cites)
+    def _evidence_text(self, doc: DocumentText, cites: list[str], passage: list[str] = ()) -> str:
+        segments = doc.segments(sorted({*cites, *passage}))
         headers = {f"p{item.page}.t{item.table.table}.r1" for item in segments if item.table and item.table.row > 1}
         # A numbered step is read with the problem it belongs to and its parent step.
-        steps = {context for item in segments for context in doc.step_context(item.segment_id)}
-        extra = [doc.segment(item) for item in sorted(headers | steps) if doc.segment(item) and item not in cites]
+        steps = {context for item in doc.segments(cites) for context in doc.step_context(item.segment_id)}
+        known = {item.segment_id for item in segments}
+        extra = [doc.segment(item) for item in sorted(headers | steps) if doc.segment(item) and item not in known]
         ordered = sorted([*extra, *segments], key=lambda item: doc.position(item.segment_id) or 0)
         return render_segments(ordered, doc=doc)
 
+    def _request(self, doc: DocumentText, batch: list[Candidate]) -> tuple[str, str]:
+        unit = self.units.get(batch[0].lead.unit_id)
+        if unit is not None and all(candidate.lead.unit_id == unit.unit_id for candidate in batch):
+            passage = [*unit.context_segment_ids, *unit.segment_ids]
+            cites = sorted({cite for candidate in batch for cite in candidate.cites})
+            lines = [f"Statement S{index}: {statement(self.spec, candidate.lead)} Cited: {', '.join(candidate.cites)}"
+                     for index, candidate in enumerate(batch, start=1)]
+            return VERIFY_PASSAGE_PROMPT, ("Passage:\n" + self._evidence_text(doc, cites, passage)
+                                           + "\n\nStatements:\n" + "\n".join(lines))
+        blocks = [f"Statement S{index}: {statement(self.spec, candidate.lead)}\n"
+                  f"Cited text:\n{self._evidence_text(doc, candidate.cites)}"
+                  for index, candidate in enumerate(batch, start=1)]
+        return VERIFY_PROMPT, "\n\n".join(blocks)
+
     async def _verify(self, doc: DocumentText, batch: list[Candidate]) -> None:
-        blocks = []
-        for index, candidate in enumerate(batch, start=1):
-            blocks.append(f"Statement S{index}: {statement(self.spec, candidate.lead)}\n"
-                          f"Cited text:\n{self._evidence_text(doc, candidate.cites)}")
+        system, user = self._request(doc, batch)
         ids = [f"S{index}" for index in range(1, len(batch) + 1)]
         try:
             async with self._limit:
-                data = await self.llm.json(system=VERIFY_PROMPT, user="\n\n".join(blocks),
+                data = await self.llm.json(system=system, user=user,
                                            schema=verification_schema(ids), name="kg_v3_verify",
                                            max_output_tokens=4000)
         except Exception as exc:
@@ -350,8 +382,7 @@ class Checker:
             candidate.structure = (any(structurally_supported(doc, item) for item in candidate.proposals)
                                    and not restates(candidate.lead))
         pending = [item for item in candidates if not (item.structure and item.agreement) or restates(item.lead)]
-        batches = [pending[index:index + VERIFY_BATCH] for index in range(0, len(pending), VERIFY_BATCH)]
-        await asyncio.gather(*(self._verify(doc, batch) for batch in batches))
+        await asyncio.gather(*(self._verify(doc, batch) for batch in unit_batches(pending)))
         # A structural hypothesis no read made survives only with the verifier's support.
         candidates = [candidate for candidate in candidates
                       if candidate.reads != {STRUCTURE_READ} or candidate.verdict is VerifierVerdict.SUPPORTED]
@@ -365,8 +396,7 @@ class Checker:
                    or r.assertion.certificate != old[r.assertion.assertion_id].assertion.certificate]
         candidates = [Candidate(candidate_id=r.assertion.assertion_id, proposals=r.proposals,
                                 structure=Witness.STRUCTURE in r.assertion.certificate.witnesses) for r in changed]
-        for start in range(0, len(candidates), VERIFY_BATCH):
-            await self._verify(doc, candidates[start:start + VERIFY_BATCH])
+        await asyncio.gather(*(self._verify(doc, batch) for batch in unit_batches(candidates)))
         updates = {c.candidate_id: CheckedRelation(assertion=self._assertion(c), proposals=c.proposals)
                    for c in candidates}
         return [updates.get(r.assertion.assertion_id, r) for r in after]
@@ -420,8 +450,7 @@ If the entire action is unsupported or cannot be reduced, omit it.""", user="\n\
                 "notes": lead.notes + ["supported portion proposed from " + item["id"]]})))
         candidates = [Candidate(candidate_id=key + ".reduced", proposals=[p],
                                 structure=structurally_supported(doc, p)) for key, p in proposals]
-        if candidates:
-            await self._verify(doc, candidates)
+        await asyncio.gather(*(self._verify(doc, batch) for batch in unit_batches(candidates)))
         return [CheckedRelation(assertion=self._assertion(c), proposals=c.proposals) for c in candidates
                 if c.verdict is VerifierVerdict.SUPPORTED and self._assertion(c).tier is not Tier.RED]
 

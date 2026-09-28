@@ -261,3 +261,40 @@ def test_equal_code_does_not_bypass_numeric_name_constraints():
     union.union(identity(a), identity(b))
     assert union.find(identity(a)) != union.find(identity(b))
     assert union.blocked[0]["reason"] == "different_numbers"
+
+
+def test_the_verifier_reads_the_whole_passage_of_a_flowchart_not_only_the_cited_segments():
+    import asyncio
+
+    from backend.kg_v3.checker import Checker
+    from backend.kg_v3.contracts import ReadingUnit
+    from backend.kg_v3.ontology import load_ontology
+
+    lines = {18: ["No Heat / No Cook"], 21: ["8 Is the connector disconnected?", "Yes",
+                                            "Reconnect or repair the connector."]}
+    doc = DocumentText(page_count=21, pages={
+        page: [Segment(segment_id=f"p{page}.b{index}", page=page, kind=SegmentKind.TEXT, text=text,
+                       evidence_id=f"e{page}.{index}") for index, text in enumerate(texts, start=1)]
+        for page, texts in lines.items()})
+    unit = ReadingUnit(unit_id="u1", pages=[21], segment_ids=["p21.b1", "p21.b2", "p21.b3"],
+                       context_segment_ids=["p18.b1"])
+    link = Proposal(unit_id="u1", read="A", relation_type="MAY_INDICATE", record="R8",
+                    source=Endpoint(type="Symptom", name="No heat", cites=["p18.b1"]),
+                    target=Endpoint(type="FailureMode", name="Connector disconnected", stated=False,
+                                    cites=["p21.b1"]), cites=["p18.b1", "p21.b1"])
+
+    class Verifier:
+        def __init__(self):
+            self.users = []
+
+        async def json(self, *, system, user, schema, **_kwargs):
+            self.users.append((system, user))
+            return {"verdicts": [{"id": "S1", "verdict": "supported"}]}
+
+    llm = Verifier()
+    checked = asyncio.run(Checker(llm, load_ontology(), extractor_id="t", units=[unit]).check(doc, [link]))
+    system, user = llm.users[0]
+    # The outcome that leads to the remedy is uncited here but the verifier reads it.
+    assert "whole passage" in system and "[p21.b2] Yes" in user and "[p21.b3] Reconnect" in user
+    assert "Cited: p18.b1, p21.b1" in user
+    assert checked[0].assertion.certificate.verifier_verdict.value == "supported"
