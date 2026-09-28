@@ -135,16 +135,22 @@ Rules:
     List passages you cannot interpret in "unclear".
 14. A question or test with outcomes (yes/no, pass/fail, a reading) is a decision step. Each
     outcome that prescribes an action is its own record: the problem is the one the flowchart or
-    procedure starts from (its title or first question, also in context lines); the failure mode
-    is what that outcome reveals (stated false unless the manual names it as a cause); the test is
-    an inspection and the prescribed action a repair or escalation, both on that failure mode, with
-    the outcome as an "if" condition. "Go to No. 6" continues the same problem. Cite the problem,
-    the question, the outcome and the action. Never give an action the outcome of another question.
+    procedure starts from, named by its title (also in context lines); its first question describes
+    the same problem and is not a second one. The failure mode is what that outcome reveals (stated
+    false unless the manual names it as a cause); the test is an inspection and the prescribed
+    action a repair or escalation, both on that failure mode. Put the outcome as an "if" condition
+    on the problem-to-failure link and on the actions. "Go to No. 6" continues the same problem.
+    Cite the problem, the question, the outcome and the action. Never give an action the outcome
+    of another question.
 15. A test or measurement with an expected or normal value is an inspection whose value is
     "expected" context. The abnormal result reveals the failure mode (stated false unless named)
     and a prescribed consequence (replace, adjust) is a repair on it. When the manual tests a
     component without naming a symptom, the problem is "Suspected <component> fault", with the
     component taken from the test's heading or row; cite that heading or row.
+16. Every failure mode needs its problem. When causes, checks or remedies stand under a title or
+    introduction that names the situation they address (a fault, a hazard, a service or test
+    situation), link each failure mode to that problem, a Symptom named from the title, and cite
+    the title. Leave a failure mode without a problem only when the passage names none.
 """
 
 VERIFY_PROMPT = """You check statements extracted from a technical maintenance manual. For each statement you

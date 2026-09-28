@@ -69,7 +69,12 @@ def test_prompts_turn_flowchart_outcomes_and_expected_values_into_connected_bran
 
     # Each outcome of a decision step is a branch of the chart's problem, with the outcome as condition.
     assert "Each\n    outcome that prescribes an action is its own record" in EXTRACTION_PROMPT
-    assert "Never give an action the outcome of another question" in EXTRACTION_PROMPT
+    assert "Never give an action the outcome\n    of another question" in EXTRACTION_PROMPT
+    # One problem per chart, and the outcome also on the problem link, so branches stay apart.
+    assert "its first question describes\n    the same problem and is not a second one" in EXTRACTION_PROMPT
+    assert "on the problem-to-failure link and on the actions" in EXTRACTION_PROMPT
+    # A cause under a title that names its situation is linked to that problem.
+    assert "16. Every failure mode needs its problem." in EXTRACTION_PROMPT
     # A test with a normal value is an inspection with expected context, tied to a problem.
     assert '"Suspected <component> fault"' in EXTRACTION_PROMPT
     assert "supports only the action that outcome leads to" in VERIFY_PASSAGE_PROMPT
