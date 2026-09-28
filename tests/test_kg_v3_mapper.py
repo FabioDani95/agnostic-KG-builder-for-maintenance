@@ -100,3 +100,44 @@ def test_the_map_gate_asks_a_few_questions_only_around_diagnostic_or_doubtful_pa
     shown = {int(line.split("|")[1].split(":")[0].strip()[1:]) for q in questions
              for line in q.proposal if "|" in line}
     assert {9, 10, 11, 12, 199, 200, 201, 398, 399, 400} == shown
+
+
+def _pages(texts: dict[int, list[str]]) -> DocumentText:
+    return DocumentText(page_count=max(texts), pages={
+        page: [Segment(segment_id=f"p{page}.b{index}", page=page, kind=SegmentKind.TEXT, text=text,
+                       evidence_id=f"ev{page}.{index}") for index, text in enumerate(lines, start=1)]
+        for page, lines in texts.items()})
+
+
+def test_a_flowchart_is_not_cut_at_every_page_the_map_names_differently():
+    from backend.kg_v3.mapper import build_units
+
+    doc = _pages({18: ["No Heat / No Cook", "RD", "WH"],
+                  19: ["After power on, does the product operate?", "1 Repeat door open and close."],
+                  20: ["Power Off", "5 Is there any beeping sound?", "No Adjust the latch board"],
+                  21: ["8 Is the connector disconnected?", "Reconnect or repair the connector."]})
+    page_map = DocumentMap(entries=[
+        PageMapEntry(page=18, label=PageLabel.DIAGNOSTIC, section="No Heat / No Cook"),
+        PageMapEntry(page=19, label=PageLabel.DIAGNOSTIC, section="No Heat Troubleshooting"),
+        PageMapEntry(page=20, label=PageLabel.DIAGNOSTIC, section="No Heat Troubleshooting"),
+        PageMapEntry(page=21, label=PageLabel.DIAGNOSTIC, section="High Voltage Troubleshooting"),
+        *[PageMapEntry(page=page, label=PageLabel.OTHER) for page in range(1, 18)]])
+    units = build_units(doc, page_map)
+    assert [unit.pages for unit in units] == [[18, 19, 20, 21]]
+    # Cut by size: the later unit still sees the chart title and the opening question.
+    small = build_units(doc, page_map, max_chars=170)
+    last = next(unit for unit in small if "p21.b1" in unit.segment_ids)
+    assert len(small) > 1 and {"p18.b1", "p19.b1"} <= set(last.context_segment_ids)
+
+
+def test_a_unit_cut_by_size_starts_at_a_page_rather_than_inside_it():
+    from backend.kg_v3.mapper import build_units
+
+    doc = _pages({1: ["Problem A: display dead " * 6, "1 Is the fuse open? " * 6],
+                  2: ["2 Is the filter open?", "No Replace the filter.", "3 Replace the PCB."]})
+    page_map = DocumentMap(entries=[PageMapEntry(page=page, label=PageLabel.DIAGNOSTIC, section="S")
+                                    for page in (1, 2)])
+    units = build_units(doc, page_map, max_chars=330)
+    assert [unit.pages for unit in units] == [[1], [2]]
+    assert "p1.b1" in units[1].context_segment_ids
+

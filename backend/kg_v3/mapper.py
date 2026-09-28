@@ -307,6 +307,24 @@ def _rendered_size(segment: Segment) -> int:
     return len(render_segment(segment)) + 1
 
 
+TRAIL_PAGES = 3
+TRAIL_SEGMENTS = 2
+
+
+def trail_context(doc: DocumentText, run: list[int], first: Segment) -> list[str]:
+    """Opening segments of the earlier pages of a diagnostic run, read-only.
+
+    A flowchart, procedure or table often names its problem on the page where it
+    starts and continues on the next pages; a unit cut later still sees that title.
+    """
+
+    pages = [page for page in run if page < first.page][-TRAIL_PAGES:]
+    if doc.pages[first.page][0].segment_id != first.segment_id:
+        pages.append(first.page)
+    return [segment.segment_id for page in pages for segment in doc.pages[page][:TRAIL_SEGMENTS]
+            if segment.segment_id != first.segment_id]
+
+
 def build_units(
     doc: DocumentText,
     page_map: DocumentMap,
@@ -314,11 +332,17 @@ def build_units(
     max_chars: int = UNIT_MAX_CHARS,
     max_segments: int = UNIT_MAX_SEGMENTS,
 ) -> list[ReadingUnit]:
+    """Consecutive diagnostic pages are read together, cut only by size.
+
+    Section names from the map vary from page to page, so they only suggest where to
+    cut: a section, like a table, starts a new unit when it fits whole in one.
+    """
+
     sections = {entry.page: entry.section for entry in page_map.entries}
     diagnostic = [page for page in page_map.pages_with(PageLabel.DIAGNOSTIC) if page in doc.pages]
     runs: list[list[int]] = []
     for page in diagnostic:
-        if runs and page == runs[-1][-1] + 1 and sections.get(page) == sections.get(runs[-1][-1]):
+        if runs and page == runs[-1][-1] + 1:
             runs[-1].append(page)
         else:
             runs.append([page])
@@ -342,19 +366,38 @@ def build_units(
                     _rendered_size(item) for item in segments[index:]
                     if item.page == segment.page and item.table and item.table.table == segment.table.table
                 )
-            # Keep a table whole when it fits in a unit of its own.
-            wants_break = table_start and chunks[-1] and size + table_rows > max_chars and table_rows <= max_chars
+            section_start = index > 0 and segment.page != segments[index - 1].page and (
+                sections.get(segment.page) != sections.get(segments[index - 1].page))
+            section_size = 0
+            if section_start:
+                pages = [page for page in run if page >= segment.page]
+                span = next((i for i, page in enumerate(pages) if sections.get(page) != sections.get(segment.page)),
+                            len(pages))
+                section_size = sum(_rendered_size(item) for page in pages[:span] for item in doc.pages[page])
+            # Keep a table, or a section, whole when it fits in a unit of its own.
+            wants_break = chunks[-1] and (
+                (table_start and size + table_rows > max_chars and table_rows <= max_chars)
+                or (section_start and size + section_size > max_chars and section_size <= max_chars))
             too_big = chunks[-1] and (size + _rendered_size(segment) > max_chars or len(chunks[-1]) >= max_segments)
+            carried: list[Segment] = []
+            if too_big and not wants_break and segment.table is None:
+                # Cut at the start of the page rather than inside it (a flowchart is one page).
+                head = [item for item in chunks[-1] if item.page == segment.page]
+                if (head and len(head) < len(chunks[-1]) and not any(item.table for item in head)
+                        and sum(map(_rendered_size, head)) <= max_chars // 2):
+                    chunks[-1] = chunks[-1][:-len(head)]
+                    carried = head
             if wants_break or too_big:
-                chunks.append([])
-                size = 0
+                chunks.append(carried)
+                size = sum(map(_rendered_size, carried))
             chunks[-1].append(segment)
             size += _rendered_size(segment)
         for chunk in chunks:
             if not chunk:
                 continue
             first = doc.position(chunk[0].segment_id) or 0
-            context = [item.segment_id for item in ordered[max(0, first - CONTEXT_SEGMENTS):first]]
+            context = trail_context(doc, run, chunk[0])
+            context += [item.segment_id for item in ordered[max(0, first - CONTEXT_SEGMENTS):first]]
             # Keep the blocks introducing this table even when it is split over units.
             if chunk[0].table:
                 table_first = next((i for i, s in enumerate(ordered) if s.page == chunk[0].page
