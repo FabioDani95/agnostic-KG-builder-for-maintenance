@@ -1,0 +1,4019 @@
+{
+ "annotator": "Fabio Daniele",
+ "date": "2026-09-28",
+ "minutes": "150 (stima)",
+ "pages": [
+  9,
+  26,
+  27,
+  32,
+  35,
+  37,
+  39,
+  40,
+  42,
+  46,
+  48,
+  49,
+  50,
+  51,
+  52,
+  54,
+  60,
+  61,
+  62,
+  64
+ ],
+ "branches": 66,
+ "claims": [
+  {
+   "branch_id": "R1",
+   "indicator": "Frame Slop: travel exceeds working envelope of X- and Y-axes.",
+   "code": "Frame Slop",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p9.b19",
+    "p9.b20"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [
+    "p9.b19",
+    "p9.b20"
+   ],
+   "conditions": "",
+   "claim_id": "R1.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R2",
+   "indicator": "Name Over Lap: file with same name is detected in destination memory location.",
+   "code": "Name Over Lap",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p9.b23",
+    "p9.b24",
+    "p35.b2",
+    "p35.b3"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [
+    "p9.b23",
+    "p9.b24"
+   ],
+   "conditions": "file with the same name is detected in machine memory",
+   "claim_id": "R2.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R3",
+   "indicator": "XSlop Over: travel exceeds working envelope of X-axis.",
+   "code": "XSlop Over",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p9.b43",
+    "p9.b44"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [
+    "p9.b43",
+    "p9.b44"
+   ],
+   "conditions": "",
+   "claim_id": "R3.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R4",
+   "indicator": "YSlop Over: travel exceeds working envelope of Y-axis.",
+   "code": "YSlop Over",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p9.b45",
+    "p9.b46"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [
+    "p9.b45",
+    "p9.b46"
+   ],
+   "conditions": "",
+   "claim_id": "R4.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R5",
+   "indicator": "Unusual problem during the test run.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p26.b3"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [
+    "p26.b3"
+   ],
+   "conditions": "during the test run; before operating the machine again",
+   "claim_id": "R5.1",
+   "action": "Immediately stop the machine.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p26.b3"
+   ]
+  },
+  {
+   "branch_id": "R5",
+   "indicator": "Unusual problem during the test run.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p26.b3"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [
+    "p26.b3"
+   ],
+   "conditions": "during the test run; before operating the machine again",
+   "claim_id": "R5.2",
+   "action": "Disconnect the machine from power.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p26.b3"
+   ]
+  },
+  {
+   "branch_id": "R5",
+   "indicator": "Unusual problem during the test run.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p26.b3"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [
+    "p26.b3"
+   ],
+   "conditions": "during the test run; before operating the machine again",
+   "claim_id": "R5.3",
+   "action": "Fix the problem before operating the machine again.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p26.b3"
+   ]
+  },
+  {
+   "branch_id": "R5",
+   "indicator": "Unusual problem during the test run.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p26.b3"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [
+    "p26.b3"
+   ],
+   "conditions": "during the test run; before operating the machine again",
+   "claim_id": "R5.4",
+   "action": "Review the Troubleshooting table in the SERVICE section for help.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p26.b3"
+   ]
+  },
+  {
+   "branch_id": "R6",
+   "indicator": "Laser head assembly moves while the limit switch lever is held in place.",
+   "code": "-",
+   "failure": "The limit switch safety feature is NOT working properly.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p27.b5",
+    "p27.b8"
+   ],
+   "failure_segments": [
+    "p27.b9"
+   ],
+   "component": "limit switch",
+   "component_segments": [
+    "p27.b9",
+    "p27.b10"
+   ],
+   "conditions": "if the laser head assembly moves; before operating the machine",
+   "claim_id": "R6.1",
+   "action": "Test movement by holding the limit switch lever in place and pressing the arrow navigation buttons.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p27.b5"
+   ]
+  },
+  {
+   "branch_id": "R6",
+   "indicator": "Laser head assembly moves while the limit switch lever is held in place.",
+   "code": "-",
+   "failure": "The limit switch safety feature is NOT working properly.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p27.b5",
+    "p27.b8"
+   ],
+   "failure_segments": [
+    "p27.b9"
+   ],
+   "component": "limit switch",
+   "component_segments": [
+    "p27.b9",
+    "p27.b10"
+   ],
+   "conditions": "if the laser head assembly moves; before operating the machine",
+   "claim_id": "R6.2",
+   "action": "Repeat Steps 8–9 on the y-axis limit switch.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p27.b10"
+   ]
+  },
+  {
+   "branch_id": "R6",
+   "indicator": "Laser head assembly moves while the limit switch lever is held in place.",
+   "code": "-",
+   "failure": "The limit switch safety feature is NOT working properly.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p27.b5",
+    "p27.b8"
+   ],
+   "failure_segments": [
+    "p27.b9"
+   ],
+   "component": "limit switch",
+   "component_segments": [
+    "p27.b9",
+    "p27.b10"
+   ],
+   "conditions": "if the laser head assembly moves; before operating the machine",
+   "claim_id": "R6.3",
+   "action": "Disconnect the machine from power.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p27.b9"
+   ]
+  },
+  {
+   "branch_id": "R6",
+   "indicator": "Laser head assembly moves while the limit switch lever is held in place.",
+   "code": "-",
+   "failure": "The limit switch safety feature is NOT working properly.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p27.b5",
+    "p27.b8"
+   ],
+   "failure_segments": [
+    "p27.b9"
+   ],
+   "component": "limit switch",
+   "component_segments": [
+    "p27.b9",
+    "p27.b10"
+   ],
+   "conditions": "if the laser head assembly moves; before operating the machine",
+   "claim_id": "R6.4",
+   "action": "Replace the limit switch before operating the machine.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p27.b9"
+   ]
+  },
+  {
+   "branch_id": "R7",
+   "indicator": "Laser audibly beeps and briefly pulses ON while the top loading door is open.",
+   "code": "-",
+   "failure": "The top loading door interlock switch safety feature is NOT working properly.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p27.b14",
+    "p27.b17"
+   ],
+   "failure_segments": [
+    "p27.b18"
+   ],
+   "component": "top loading door interlock switch",
+   "component_segments": [
+    "p27.b18"
+   ],
+   "conditions": "if the laser audibly beeps and briefly pulses ON; before operating the machine",
+   "claim_id": "R7.1",
+   "action": "Press the Pulse button with the top loading door open to test fire the laser.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p27.b14"
+   ]
+  },
+  {
+   "branch_id": "R7",
+   "indicator": "Laser audibly beeps and briefly pulses ON while the top loading door is open.",
+   "code": "-",
+   "failure": "The top loading door interlock switch safety feature is NOT working properly.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p27.b14",
+    "p27.b17"
+   ],
+   "failure_segments": [
+    "p27.b18"
+   ],
+   "component": "top loading door interlock switch",
+   "component_segments": [
+    "p27.b18"
+   ],
+   "conditions": "if the laser audibly beeps and briefly pulses ON; before operating the machine",
+   "claim_id": "R7.2",
+   "action": "Disconnect the machine from power.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p27.b18"
+   ]
+  },
+  {
+   "branch_id": "R7",
+   "indicator": "Laser audibly beeps and briefly pulses ON while the top loading door is open.",
+   "code": "-",
+   "failure": "The top loading door interlock switch safety feature is NOT working properly.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p27.b14",
+    "p27.b17"
+   ],
+   "failure_segments": [
+    "p27.b18"
+   ],
+   "component": "top loading door interlock switch",
+   "component_segments": [
+    "p27.b18"
+   ],
+   "conditions": "if the laser audibly beeps and briefly pulses ON; before operating the machine",
+   "claim_id": "R7.3",
+   "action": "Replace the top loading door interlock switch before operating the machine.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p27.b18"
+   ]
+  },
+  {
+   "branch_id": "R8",
+   "indicator": "Machine does not turn OFF when the Emergency Stop button is pressed.",
+   "code": "-",
+   "failure": "The safety feature of the Emergency Stop button is NOT working properly.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p27.b19",
+    "p27.b22"
+   ],
+   "failure_segments": [
+    "p27.b23"
+   ],
+   "component": "Emergency Stop button",
+   "component_segments": [
+    "p27.b23"
+   ],
+   "conditions": "if the machine does not turn OFF; before operating the machine",
+   "claim_id": "R8.1",
+   "action": "Press the Emergency Stop button to turn the machine OFF.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p27.b19"
+   ]
+  },
+  {
+   "branch_id": "R8",
+   "indicator": "Machine does not turn OFF when the Emergency Stop button is pressed.",
+   "code": "-",
+   "failure": "The safety feature of the Emergency Stop button is NOT working properly.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p27.b19",
+    "p27.b22"
+   ],
+   "failure_segments": [
+    "p27.b23"
+   ],
+   "component": "Emergency Stop button",
+   "component_segments": [
+    "p27.b23"
+   ],
+   "conditions": "if the machine does not turn OFF; before operating the machine",
+   "claim_id": "R8.2",
+   "action": "Immediately disconnect the machine from power.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p27.b22",
+    "p27.b23"
+   ]
+  },
+  {
+   "branch_id": "R8",
+   "indicator": "Machine does not turn OFF when the Emergency Stop button is pressed.",
+   "code": "-",
+   "failure": "The safety feature of the Emergency Stop button is NOT working properly.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p27.b19",
+    "p27.b22"
+   ],
+   "failure_segments": [
+    "p27.b23"
+   ],
+   "component": "Emergency Stop button",
+   "component_segments": [
+    "p27.b23"
+   ],
+   "conditions": "if the machine does not turn OFF; before operating the machine",
+   "claim_id": "R8.3",
+   "action": "Replace the Emergency Stop button before operating the machine.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p27.b23"
+   ]
+  },
+  {
+   "branch_id": "R9",
+   "indicator": "Water chiller sounds an audible alarm and suspends circulating water.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p32.b4"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [
+    "p32.b4"
+   ],
+   "conditions": "Keep water temperature below 122º F (50º C); a larger system may be required if an overheat alarm occurs regularly; a refrigeration-type chiller may have to be installed in environments susceptible to extreme heat.",
+   "claim_id": "R9.1",
+   "action": "A larger water chiller system may be required.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p32.b4"
+   ]
+  },
+  {
+   "branch_id": "R9",
+   "indicator": "Water chiller sounds an audible alarm and suspends circulating water.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p32.b4"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [
+    "p32.b4"
+   ],
+   "conditions": "Keep water temperature below 122º F (50º C); a larger system may be required if an overheat alarm occurs regularly; a refrigeration-type chiller may have to be installed in environments susceptible to extreme heat.",
+   "claim_id": "R9.2",
+   "action": "A refrigeration-type water chiller may have to be installed.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p32.b4"
+   ]
+  },
+  {
+   "branch_id": "R10",
+   "indicator": "Ammeter indication exceeds the mA rating listed above the ammeter.",
+   "code": "-",
+   "failure": "impending laser tube failure, or electrical faults",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p37.b19",
+    "p37.b20"
+   ],
+   "failure_segments": [
+    "p37.b20"
+   ],
+   "component": "",
+   "component_segments": [
+    "p37.b19",
+    "p37.b20"
+   ],
+   "conditions": "when the indication exceeds the mA rating",
+   "claim_id": "R10.1",
+   "action": "During operation, verify that the ammeter indicator does not exceed the mA rating listed above the ammeter.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p37.b19"
+   ]
+  },
+  {
+   "branch_id": "R11",
+   "indicator": "\"XSlop Over,\" \"YSlop Over,\" or \"Frame slop\" error displayed during TrackFrame.",
+   "code": "XSlop Over; YSlop Over; Frame slop",
+   "failure": "the currently queued image is outside the working envelope, based on current origin",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p40.b8",
+    "p40.b9",
+    "p40.b12"
+   ],
+   "failure_segments": [
+    "p40.b12"
+   ],
+   "component": "laser head assembly; workpiece",
+   "component_segments": [
+    "p40.b1",
+    "p40.b2"
+   ],
+   "conditions": "if one of the listed errors is displayed, repeat Steps 1–6; based on current origin",
+   "claim_id": "R11.1",
+   "action": "Press Menu, select \"File manage+\", and press Enter.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p39.b18"
+   ]
+  },
+  {
+   "branch_id": "R11",
+   "indicator": "\"XSlop Over,\" \"YSlop Over,\" or \"Frame slop\" error displayed during TrackFrame.",
+   "code": "XSlop Over; YSlop Over; Frame slop",
+   "failure": "the currently queued image is outside the working envelope, based on current origin",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p40.b8",
+    "p40.b9",
+    "p40.b12"
+   ],
+   "failure_segments": [
+    "p40.b12"
+   ],
+   "component": "laser head assembly; workpiece",
+   "component_segments": [
+    "p40.b1",
+    "p40.b2"
+   ],
+   "conditions": "if one of the listed errors is displayed, repeat Steps 1–6; based on current origin",
+   "claim_id": "R11.2",
+   "action": "Highlight \"TrackFrame\" in the job setup screen.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p39.b19"
+   ]
+  },
+  {
+   "branch_id": "R11",
+   "indicator": "\"XSlop Over,\" \"YSlop Over,\" or \"Frame slop\" error displayed during TrackFrame.",
+   "code": "XSlop Over; YSlop Over; Frame slop",
+   "failure": "the currently queued image is outside the working envelope, based on current origin",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p40.b8",
+    "p40.b9",
+    "p40.b12"
+   ],
+   "failure_segments": [
+    "p40.b12"
+   ],
+   "component": "laser head assembly; workpiece",
+   "component_segments": [
+    "p40.b1",
+    "p40.b2"
+   ],
+   "conditions": "if one of the listed errors is displayed, repeat Steps 1–6; based on current origin",
+   "claim_id": "R11.3",
+   "action": "Review the .RD file using RDCam.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p40.b1"
+   ]
+  },
+  {
+   "branch_id": "R11",
+   "indicator": "\"XSlop Over,\" \"YSlop Over,\" or \"Frame slop\" error displayed during TrackFrame.",
+   "code": "XSlop Over; YSlop Over; Frame slop",
+   "failure": "the currently queued image is outside the working envelope, based on current origin",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p40.b8",
+    "p40.b9",
+    "p40.b12"
+   ],
+   "failure_segments": [
+    "p40.b12"
+   ],
+   "component": "laser head assembly; workpiece",
+   "component_segments": [
+    "p40.b1",
+    "p40.b2"
+   ],
+   "conditions": "if one of the listed errors is displayed, repeat Steps 1–6; based on current origin",
+   "claim_id": "R11.4",
+   "action": "Position the workpiece so the queued image fits within the working envelope.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p40.b1"
+   ]
+  },
+  {
+   "branch_id": "R11",
+   "indicator": "\"XSlop Over,\" \"YSlop Over,\" or \"Frame slop\" error displayed during TrackFrame.",
+   "code": "XSlop Over; YSlop Over; Frame slop",
+   "failure": "the currently queued image is outside the working envelope, based on current origin",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p40.b8",
+    "p40.b9",
+    "p40.b12"
+   ],
+   "failure_segments": [
+    "p40.b12"
+   ],
+   "component": "laser head assembly; workpiece",
+   "component_segments": [
+    "p40.b1",
+    "p40.b2"
+   ],
+   "conditions": "if one of the listed errors is displayed, repeat Steps 1–6; based on current origin",
+   "claim_id": "R11.5",
+   "action": "Move the laser head assembly to the origin defined in RDCam, in reference to the working envelope.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p40.b2"
+   ]
+  },
+  {
+   "branch_id": "R11",
+   "indicator": "\"XSlop Over,\" \"YSlop Over,\" or \"Frame slop\" error displayed during TrackFrame.",
+   "code": "XSlop Over; YSlop Over; Frame slop",
+   "failure": "the currently queued image is outside the working envelope, based on current origin",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p40.b8",
+    "p40.b9",
+    "p40.b12"
+   ],
+   "failure_segments": [
+    "p40.b12"
+   ],
+   "component": "laser head assembly; workpiece",
+   "component_segments": [
+    "p40.b1",
+    "p40.b2"
+   ],
+   "conditions": "if one of the listed errors is displayed, repeat Steps 1–6; based on current origin",
+   "claim_id": "R11.6",
+   "action": "Press the Origin button.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p40.b4"
+   ]
+  },
+  {
+   "branch_id": "R11",
+   "indicator": "\"XSlop Over,\" \"YSlop Over,\" or \"Frame slop\" error displayed during TrackFrame.",
+   "code": "XSlop Over; YSlop Over; Frame slop",
+   "failure": "the currently queued image is outside the working envelope, based on current origin",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p40.b8",
+    "p40.b9",
+    "p40.b12"
+   ],
+   "failure_segments": [
+    "p40.b12"
+   ],
+   "component": "laser head assembly; workpiece",
+   "component_segments": [
+    "p40.b1",
+    "p40.b2"
+   ],
+   "conditions": "if one of the listed errors is displayed, repeat Steps 1–6; based on current origin",
+   "claim_id": "R11.7",
+   "action": "Press Enter to trace the perimeter of the toolpaths.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p40.b5"
+   ]
+  },
+  {
+   "branch_id": "R11",
+   "indicator": "\"XSlop Over,\" \"YSlop Over,\" or \"Frame slop\" error displayed during TrackFrame.",
+   "code": "XSlop Over; YSlop Over; Frame slop",
+   "failure": "the currently queued image is outside the working envelope, based on current origin",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p40.b8",
+    "p40.b9",
+    "p40.b12"
+   ],
+   "failure_segments": [
+    "p40.b12"
+   ],
+   "component": "laser head assembly; workpiece",
+   "component_segments": [
+    "p40.b1",
+    "p40.b2"
+   ],
+   "conditions": "if one of the listed errors is displayed, repeat Steps 1–6; based on current origin",
+   "claim_id": "R11.8",
+   "action": "Observe the perimeter traced by laser head movement.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p40.b5"
+   ]
+  },
+  {
+   "branch_id": "R11",
+   "indicator": "\"XSlop Over,\" \"YSlop Over,\" or \"Frame slop\" error displayed during TrackFrame.",
+   "code": "XSlop Over; YSlop Over; Frame slop",
+   "failure": "the currently queued image is outside the working envelope, based on current origin",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p40.b8",
+    "p40.b9",
+    "p40.b12"
+   ],
+   "failure_segments": [
+    "p40.b12"
+   ],
+   "component": "laser head assembly; workpiece",
+   "component_segments": [
+    "p40.b1",
+    "p40.b2"
+   ],
+   "conditions": "if one of the listed errors is displayed, repeat Steps 1–6; based on current origin",
+   "claim_id": "R11.9",
+   "action": "Verify the display shows \"Tracking Frame\" during operation.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p40.b5"
+   ]
+  },
+  {
+   "branch_id": "R12",
+   "indicator": "Loose mounting bolts.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p42.b4",
+    "p42.b5"
+   ],
+   "failure_segments": [],
+   "component": "mounting bolts",
+   "component_segments": [
+    "p42.b5"
+   ],
+   "conditions": "if observed",
+   "claim_id": "R12.1",
+   "action": "Shut down the machine immediately.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p42.b4"
+   ]
+  },
+  {
+   "branch_id": "R12",
+   "indicator": "Loose mounting bolts.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p42.b4",
+    "p42.b5"
+   ],
+   "failure_segments": [],
+   "component": "mounting bolts",
+   "component_segments": [
+    "p42.b5"
+   ],
+   "conditions": "if observed",
+   "claim_id": "R12.2",
+   "action": "Fix the problem before continuing operations.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p42.b4"
+   ]
+  },
+  {
+   "branch_id": "R13",
+   "indicator": "Damaged laser optics.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p42.b4",
+    "p42.b5"
+   ],
+   "failure_segments": [],
+   "component": "laser optics",
+   "component_segments": [
+    "p42.b5"
+   ],
+   "conditions": "if observed",
+   "claim_id": "R13.1",
+   "action": "Shut down the machine immediately.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p42.b4"
+   ]
+  },
+  {
+   "branch_id": "R13",
+   "indicator": "Damaged laser optics.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p42.b4",
+    "p42.b5"
+   ],
+   "failure_segments": [],
+   "component": "laser optics",
+   "component_segments": [
+    "p42.b5"
+   ],
+   "conditions": "if observed",
+   "claim_id": "R13.2",
+   "action": "Fix the problem before continuing operations.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p42.b4"
+   ]
+  },
+  {
+   "branch_id": "R14",
+   "indicator": "Worn or damaged wires.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p42.b4",
+    "p42.b5"
+   ],
+   "failure_segments": [],
+   "component": "wires",
+   "component_segments": [
+    "p42.b5"
+   ],
+   "conditions": "if observed",
+   "claim_id": "R14.1",
+   "action": "Shut down the machine immediately.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p42.b4"
+   ]
+  },
+  {
+   "branch_id": "R14",
+   "indicator": "Worn or damaged wires.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p42.b4",
+    "p42.b5"
+   ],
+   "failure_segments": [],
+   "component": "wires",
+   "component_segments": [
+    "p42.b5"
+   ],
+   "conditions": "if observed",
+   "claim_id": "R14.2",
+   "action": "Fix the problem before continuing operations.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p42.b4"
+   ]
+  },
+  {
+   "branch_id": "R15",
+   "indicator": "Any other unsafe condition.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p42.b4",
+    "p42.b5"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [
+    "p42.b5"
+   ],
+   "conditions": "if observed",
+   "claim_id": "R15.1",
+   "action": "Shut down the machine immediately.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p42.b4"
+   ]
+  },
+  {
+   "branch_id": "R15",
+   "indicator": "Any other unsafe condition.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p42.b4",
+    "p42.b5"
+   ],
+   "failure_segments": [],
+   "component": "",
+   "component_segments": [
+    "p42.b5"
+   ],
+   "conditions": "if observed",
+   "claim_id": "R15.2",
+   "action": "Fix the problem before continuing operations.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p42.b4"
+   ]
+  },
+  {
+   "branch_id": "R16",
+   "indicator": "Binding may occur.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p46.b1",
+    "p46.b2"
+   ],
+   "failure_segments": [],
+   "component": "left and right belts",
+   "component_segments": [
+    "p46.b2"
+   ],
+   "conditions": "if left and right belts do not have the same deflection, binding may occur; where left and right belts are used",
+   "claim_id": "R16.1",
+   "action": "Verify that left and right belts (where used) have the same deflection.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p46.b2"
+   ]
+  },
+  {
+   "branch_id": "R17",
+   "indicator": "A bump or notch in a cutting path.",
+   "code": "-",
+   "failure": "Material build-up on cogs or teeth.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p46.b3",
+    "p46.b4"
+   ],
+   "failure_segments": [
+    "p46.b4"
+   ],
+   "component": "cogs; teeth; belt",
+   "component_segments": [
+    "p46.b3",
+    "p46.b4"
+   ],
+   "conditions": "if material has built up on cogs or teeth",
+   "claim_id": "R17.1",
+   "action": "Remove contaminants in the crevices of cogs or teeth using a firm-bristled toothbrush.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p46.b3"
+   ]
+  },
+  {
+   "branch_id": "R17",
+   "indicator": "A bump or notch in a cutting path.",
+   "code": "-",
+   "failure": "Material build-up on cogs or teeth.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p46.b3",
+    "p46.b4"
+   ],
+   "failure_segments": [
+    "p46.b4"
+   ],
+   "component": "cogs; teeth; belt",
+   "component_segments": [
+    "p46.b3",
+    "p46.b4"
+   ],
+   "conditions": "if material has built up on cogs or teeth",
+   "claim_id": "R17.2",
+   "action": "Support the underside of the belt with a finger to prevent stretching while removing contaminants.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p46.b3"
+   ]
+  },
+  {
+   "branch_id": "R18",
+   "indicator": "Belts have cracks or damaged teeth.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p46.b5"
+   ],
+   "failure_segments": [],
+   "component": "belts",
+   "component_segments": [
+    "p46.b5"
+   ],
+   "conditions": "see Adjusting/Replacing Synchronous Belts on Page 51",
+   "claim_id": "R18.1",
+   "action": "Replace the belts.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p46.b5"
+   ]
+  },
+  {
+   "branch_id": "R19",
+   "indicator": "Particulates or surface stains remain on the lens/mirror surface after cleaning.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p48.b2",
+    "p48.b3",
+    "p48.b4"
+   ],
+   "failure_segments": [],
+   "component": "lens; mirror; optics",
+   "component_segments": [
+    "p48.b2",
+    "p48.b6"
+   ],
+   "conditions": "if any particulates or surface stains remain; if they remain after a second cleaning, they are most likely permanently burned into the surface; see Page 61",
+   "claim_id": "R19.1",
+   "action": "Repeat Steps 2–5.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p48.b4"
+   ]
+  },
+  {
+   "branch_id": "R19",
+   "indicator": "Particulates or surface stains remain on the lens/mirror surface after cleaning.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p48.b2",
+    "p48.b3",
+    "p48.b4"
+   ],
+   "failure_segments": [],
+   "component": "lens; mirror; optics",
+   "component_segments": [
+    "p48.b2",
+    "p48.b6"
+   ],
+   "conditions": "if any particulates or surface stains remain; if they remain after a second cleaning, they are most likely permanently burned into the surface; see Page 61",
+   "claim_id": "R19.2",
+   "action": "Replace the optics if particulates or stains are still present after the second cleaning.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p48.b5",
+    "p48.b6"
+   ]
+  },
+  {
+   "branch_id": "R20",
+   "indicator": "Particulates or surface stains remain on removed laser optics after cleaning.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p48.b23",
+    "p48.b24",
+    "p48.b25"
+   ],
+   "failure_segments": [],
+   "component": "lens; mirror; optics",
+   "component_segments": [
+    "p48.b23",
+    "p48.b27"
+   ],
+   "conditions": "if any particulates or surface stains remain; if they remain after a second cleaning, they are most likely permanently burned into the surface; see Page 61",
+   "claim_id": "R20.1",
+   "action": "Repeat Steps 2–4 using a clean sheet of lens cleaning paper for every pass.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p48.b25"
+   ]
+  },
+  {
+   "branch_id": "R20",
+   "indicator": "Particulates or surface stains remain on removed laser optics after cleaning.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p48.b23",
+    "p48.b24",
+    "p48.b25"
+   ],
+   "failure_segments": [],
+   "component": "lens; mirror; optics",
+   "component_segments": [
+    "p48.b23",
+    "p48.b27"
+   ],
+   "conditions": "if any particulates or surface stains remain; if they remain after a second cleaning, they are most likely permanently burned into the surface; see Page 61",
+   "claim_id": "R20.2",
+   "action": "Replace the optics if particulates or stains are still present after the second cleaning.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p48.b26",
+    "p48.b27"
+   ]
+  },
+  {
+   "branch_id": "R21",
+   "indicator": "Radiator fan intake screen is blocked.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p49.b5",
+    "p49.b6"
+   ],
+   "failure_segments": [],
+   "component": "radiator fan intake screen",
+   "component_segments": [
+    "p49.b6"
+   ],
+   "conditions": "clean as required",
+   "claim_id": "R21.1",
+   "action": "Inspect the radiator fan intake screen for blockage.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p49.b6"
+   ]
+  },
+  {
+   "branch_id": "R21",
+   "indicator": "Radiator fan intake screen is blocked.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p49.b5",
+    "p49.b6"
+   ],
+   "failure_segments": [],
+   "component": "radiator fan intake screen",
+   "component_segments": [
+    "p49.b6"
+   ],
+   "conditions": "clean as required",
+   "claim_id": "R21.2",
+   "action": "Clean the intake screen.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p49.b6"
+   ]
+  },
+  {
+   "branch_id": "R22",
+   "indicator": "Leaks or damage in water chiller hoses and connections.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p49.b7"
+   ],
+   "failure_segments": [],
+   "component": "water chiller hoses; connections",
+   "component_segments": [
+    "p49.b7"
+   ],
+   "conditions": "repair or replace as required",
+   "claim_id": "R22.1",
+   "action": "Inspect hoses and connections for leaks or damage.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p49.b7"
+   ]
+  },
+  {
+   "branch_id": "R22",
+   "indicator": "Leaks or damage in water chiller hoses and connections.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p49.b7"
+   ],
+   "failure_segments": [],
+   "component": "water chiller hoses; connections",
+   "component_segments": [
+    "p49.b7"
+   ],
+   "conditions": "repair or replace as required",
+   "claim_id": "R22.2",
+   "action": "Repair the hoses or connections.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p49.b7"
+   ]
+  },
+  {
+   "branch_id": "R22",
+   "indicator": "Leaks or damage in water chiller hoses and connections.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p49.b7"
+   ],
+   "failure_segments": [],
+   "component": "water chiller hoses; connections",
+   "component_segments": [
+    "p49.b7"
+   ],
+   "conditions": "repair or replace as required",
+   "claim_id": "R22.3",
+   "action": "Replace the hoses or connections.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p49.b7"
+   ]
+  },
+  {
+   "branch_id": "R23",
+   "indicator": "Water is discolored or shows evidence of algae; water is contaminated.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p49.b8"
+   ],
+   "failure_segments": [],
+   "component": "water; reservoir",
+   "component_segments": [
+    "p49.b8"
+   ],
+   "conditions": "drain, clean and refill if contaminated",
+   "claim_id": "R23.1",
+   "action": "Inspect the water for discoloration and evidence of algae.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p49.b8"
+   ]
+  },
+  {
+   "branch_id": "R23",
+   "indicator": "Water is discolored or shows evidence of algae; water is contaminated.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p49.b8"
+   ],
+   "failure_segments": [],
+   "component": "water; reservoir",
+   "component_segments": [
+    "p49.b8"
+   ],
+   "conditions": "drain, clean and refill if contaminated",
+   "claim_id": "R23.2",
+   "action": "Drain the water.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p49.b8"
+   ]
+  },
+  {
+   "branch_id": "R23",
+   "indicator": "Water is discolored or shows evidence of algae; water is contaminated.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p49.b8"
+   ],
+   "failure_segments": [],
+   "component": "water; reservoir",
+   "component_segments": [
+    "p49.b8"
+   ],
+   "conditions": "drain, clean and refill if contaminated",
+   "claim_id": "R23.3",
+   "action": "Clean the reservoir.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p49.b8"
+   ]
+  },
+  {
+   "branch_id": "R23",
+   "indicator": "Water is discolored or shows evidence of algae; water is contaminated.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p49.b8"
+   ],
+   "failure_segments": [],
+   "component": "water; reservoir",
+   "component_segments": [
+    "p49.b8"
+   ],
+   "conditions": "drain, clean and refill if contaminated",
+   "claim_id": "R23.4",
+   "action": "Refill the reservoir with distilled water.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p49.b8"
+   ]
+  },
+  {
+   "branch_id": "R24",
+   "indicator": "Foam filter has holes, rips, or tears.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p49.b23"
+   ],
+   "failure_segments": [],
+   "component": "foam filter",
+   "component_segments": [
+    "p49.b23"
+   ],
+   "conditions": "replace as required",
+   "claim_id": "R24.1",
+   "action": "Inspect the foam filter for holes, rips, or tears.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p49.b23"
+   ]
+  },
+  {
+   "branch_id": "R24",
+   "indicator": "Foam filter has holes, rips, or tears.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p49.b23"
+   ],
+   "failure_segments": [],
+   "component": "foam filter",
+   "component_segments": [
+    "p49.b23"
+   ],
+   "conditions": "replace as required",
+   "claim_id": "R24.2",
+   "action": "Replace the foam filter.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p49.b23"
+   ]
+  },
+  {
+   "branch_id": "R25",
+   "indicator": "Tubing or filter cover has cracks or leakage.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p49.b24"
+   ],
+   "failure_segments": [],
+   "component": "tubing; filter cover",
+   "component_segments": [
+    "p49.b24"
+   ],
+   "conditions": "replace as required",
+   "claim_id": "R25.1",
+   "action": "Inspect the tubing and filter cover for cracks and leakage.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p49.b24"
+   ]
+  },
+  {
+   "branch_id": "R25",
+   "indicator": "Tubing or filter cover has cracks or leakage.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p49.b24"
+   ],
+   "failure_segments": [],
+   "component": "tubing; filter cover",
+   "component_segments": [
+    "p49.b24"
+   ],
+   "conditions": "replace as required",
+   "claim_id": "R25.2",
+   "action": "Replace the tubing or filter cover.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p49.b24"
+   ]
+  },
+  {
+   "branch_id": "R26",
+   "indicator": "Exhaust ducting has leaks.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p50.b5",
+    "p50.b6"
+   ],
+   "failure_segments": [],
+   "component": "exhaust ducts",
+   "component_segments": [
+    "p50.b6"
+   ],
+   "conditions": "patch or replace as required",
+   "claim_id": "R26.1",
+   "action": "Inspect ducting for evidence of leaks.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p50.b6"
+   ]
+  },
+  {
+   "branch_id": "R26",
+   "indicator": "Exhaust ducting has leaks.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p50.b5",
+    "p50.b6"
+   ],
+   "failure_segments": [],
+   "component": "exhaust ducts",
+   "component_segments": [
+    "p50.b6"
+   ],
+   "conditions": "patch or replace as required",
+   "claim_id": "R26.2",
+   "action": "Patch the ducts.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p50.b6"
+   ]
+  },
+  {
+   "branch_id": "R26",
+   "indicator": "Exhaust ducting has leaks.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p50.b5",
+    "p50.b6"
+   ],
+   "failure_segments": [],
+   "component": "exhaust ducts",
+   "component_segments": [
+    "p50.b6"
+   ],
+   "conditions": "patch or replace as required",
+   "claim_id": "R26.3",
+   "action": "Replace the ducts.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p50.b6"
+   ]
+  },
+  {
+   "branch_id": "R27",
+   "indicator": "Table is out-of-square with laser head rack.",
+   "code": "-",
+   "failure": "Z-Axis belt becomes loose.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p54.o1"
+   ],
+   "failure_segments": [
+    "p54.o1"
+   ],
+   "component": "Z-Axis belt; leadscrews; table",
+   "component_segments": [
+    "p54.o1"
+   ],
+   "conditions": "if the belt becomes loose; the belt is a low-usage component and is NOT adjustable",
+   "claim_id": "R27.1",
+   "action": "Using a dial indicator at each corner, alternately rotate each leadscrew to square the table with the laser rack.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p54.o1"
+   ]
+  },
+  {
+   "branch_id": "R27",
+   "indicator": "Table is out-of-square with laser head rack.",
+   "code": "-",
+   "failure": "Z-Axis belt becomes loose.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p54.o1"
+   ],
+   "failure_segments": [
+    "p54.o1"
+   ],
+   "component": "Z-Axis belt; leadscrews; table",
+   "component_segments": [
+    "p54.o1"
+   ],
+   "conditions": "if the belt becomes loose; the belt is a low-usage component and is NOT adjustable",
+   "claim_id": "R27.2",
+   "action": "Re-install the synchronous belt on the pulleys once all leadscrews are synced and the table is square.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p54.o1"
+   ]
+  },
+  {
+   "branch_id": "R28",
+   "indicator": "Laser beam falls outside the center of the crosshairs at the upper-left position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p60.b19",
+    "p60.b26"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; alignment gauge; Mirror #1; lock nuts; thumbscrews",
+   "component_segments": [
+    "p60.b3",
+    "p60.b9",
+    "p60.b28",
+    "p61.b1"
+   ],
+   "conditions": "if the beam falls outside the center of the crosshairs, adjustment is required; if it remains outside, repeat Steps 16–18; Pulse operates only with the top loading door closed",
+   "claim_id": "R28.1",
+   "action": "Move the laser head assembly to the upper-left corner of the table.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p60.b3"
+   ]
+  },
+  {
+   "branch_id": "R28",
+   "indicator": "Laser beam falls outside the center of the crosshairs at the upper-left position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p60.b19",
+    "p60.b26"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; alignment gauge; Mirror #1; lock nuts; thumbscrews",
+   "component_segments": [
+    "p60.b3",
+    "p60.b9",
+    "p60.b28",
+    "p61.b1"
+   ],
+   "conditions": "if the beam falls outside the center of the crosshairs, adjustment is required; if it remains outside, repeat Steps 16–18; Pulse operates only with the top loading door closed",
+   "claim_id": "R28.2",
+   "action": "Insert a 1-inch piece of paper or manila folder into the alignment gauge and install the gauge in the laser head beam inlet.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p60.b9"
+   ]
+  },
+  {
+   "branch_id": "R28",
+   "indicator": "Laser beam falls outside the center of the crosshairs at the upper-left position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p60.b19",
+    "p60.b26"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; alignment gauge; Mirror #1; lock nuts; thumbscrews",
+   "component_segments": [
+    "p60.b3",
+    "p60.b9",
+    "p60.b28",
+    "p61.b1"
+   ],
+   "conditions": "if the beam falls outside the center of the crosshairs, adjustment is required; if it remains outside, repeat Steps 16–18; Pulse operates only with the top loading door closed",
+   "claim_id": "R28.3",
+   "action": "Close the top loading door and check alignment by pressing Pulse; compare the result with Figure 97.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p60.b19"
+   ]
+  },
+  {
+   "branch_id": "R28",
+   "indicator": "Laser beam falls outside the center of the crosshairs at the upper-left position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p60.b19",
+    "p60.b26"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; alignment gauge; Mirror #1; lock nuts; thumbscrews",
+   "component_segments": [
+    "p60.b3",
+    "p60.b9",
+    "p60.b28",
+    "p61.b1"
+   ],
+   "conditions": "if the beam falls outside the center of the crosshairs, adjustment is required; if it remains outside, repeat Steps 16–18; Pulse operates only with the top loading door closed",
+   "claim_id": "R28.4",
+   "action": "Loosen the lock nuts on the three brass thumbscrews behind Mirror #1.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p60.b28"
+   ]
+  },
+  {
+   "branch_id": "R28",
+   "indicator": "Laser beam falls outside the center of the crosshairs at the upper-left position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p60.b19",
+    "p60.b26"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; alignment gauge; Mirror #1; lock nuts; thumbscrews",
+   "component_segments": [
+    "p60.b3",
+    "p60.b9",
+    "p60.b28",
+    "p61.b1"
+   ],
+   "conditions": "if the beam falls outside the center of the crosshairs, adjustment is required; if it remains outside, repeat Steps 16–18; Pulse operates only with the top loading door closed",
+   "claim_id": "R28.5",
+   "action": "Adjust beam direction by tightening the thumbscrews for the desired direction of travel.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p61.b1"
+   ]
+  },
+  {
+   "branch_id": "R28",
+   "indicator": "Laser beam falls outside the center of the crosshairs at the upper-left position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p60.b19",
+    "p60.b26"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; alignment gauge; Mirror #1; lock nuts; thumbscrews",
+   "component_segments": [
+    "p60.b3",
+    "p60.b9",
+    "p60.b28",
+    "p61.b1"
+   ],
+   "conditions": "if the beam falls outside the center of the crosshairs, adjustment is required; if it remains outside, repeat Steps 16–18; Pulse operates only with the top loading door closed",
+   "claim_id": "R28.6",
+   "action": "Verify mirror adjustment by pressing Pulse and compare the result with Figure 97.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p61.b7"
+   ]
+  },
+  {
+   "branch_id": "R29",
+   "indicator": "Laser beam falls outside the center of the crosshairs or mirror at the lower-left position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p61.b18",
+    "p61.b21",
+    "p61.b30",
+    "p61.b33"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; Mirror #1; Mirror #2; alignment gauge; masking tape; lock nuts; thumbscrews",
+   "component_segments": [
+    "p61.b12",
+    "p61.b23",
+    "p61.b35",
+    "p61.b36"
+   ],
+   "conditions": "adjust if the beam is outside the crosshairs or outside the center of the mirror; if still outside, repeat Step 22",
+   "claim_id": "R29.1",
+   "action": "Move the laser head assembly to the lower-left corner of the table.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p61.b12"
+   ]
+  },
+  {
+   "branch_id": "R29",
+   "indicator": "Laser beam falls outside the center of the crosshairs or mirror at the lower-left position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p61.b18",
+    "p61.b21",
+    "p61.b30",
+    "p61.b33"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; Mirror #1; Mirror #2; alignment gauge; masking tape; lock nuts; thumbscrews",
+   "component_segments": [
+    "p61.b12",
+    "p61.b23",
+    "p61.b35",
+    "p61.b36"
+   ],
+   "conditions": "adjust if the beam is outside the crosshairs or outside the center of the mirror; if still outside, repeat Step 22",
+   "claim_id": "R29.2",
+   "action": "Check alignment by pressing Pulse and compare the result with Figure 97.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p61.b18"
+   ]
+  },
+  {
+   "branch_id": "R29",
+   "indicator": "Laser beam falls outside the center of the crosshairs or mirror at the lower-left position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p61.b18",
+    "p61.b21",
+    "p61.b30",
+    "p61.b33"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; Mirror #1; Mirror #2; alignment gauge; masking tape; lock nuts; thumbscrews",
+   "component_segments": [
+    "p61.b12",
+    "p61.b23",
+    "p61.b35",
+    "p61.b36"
+   ],
+   "conditions": "adjust if the beam is outside the crosshairs or outside the center of the mirror; if still outside, repeat Step 22",
+   "claim_id": "R29.3",
+   "action": "Place the mirror alignment gauge in front of Mirror #2 and hold it in place with masking tape.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p61.b23"
+   ]
+  },
+  {
+   "branch_id": "R29",
+   "indicator": "Laser beam falls outside the center of the crosshairs or mirror at the lower-left position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p61.b18",
+    "p61.b21",
+    "p61.b30",
+    "p61.b33"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; Mirror #1; Mirror #2; alignment gauge; masking tape; lock nuts; thumbscrews",
+   "component_segments": [
+    "p61.b12",
+    "p61.b23",
+    "p61.b35",
+    "p61.b36"
+   ],
+   "conditions": "adjust if the beam is outside the crosshairs or outside the center of the mirror; if still outside, repeat Step 22",
+   "claim_id": "R29.4",
+   "action": "Verify Mirror #1 and Mirror #2 alignment by pressing Pulse.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p61.b30"
+   ]
+  },
+  {
+   "branch_id": "R29",
+   "indicator": "Laser beam falls outside the center of the crosshairs or mirror at the lower-left position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p61.b18",
+    "p61.b21",
+    "p61.b30",
+    "p61.b33"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; Mirror #1; Mirror #2; alignment gauge; masking tape; lock nuts; thumbscrews",
+   "component_segments": [
+    "p61.b12",
+    "p61.b23",
+    "p61.b35",
+    "p61.b36"
+   ],
+   "conditions": "adjust if the beam is outside the crosshairs or outside the center of the mirror; if still outside, repeat Step 22",
+   "claim_id": "R29.5",
+   "action": "Loosen the lock nuts on the three brass thumbscrews behind the Mirror #1 assembly.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p61.b35"
+   ]
+  },
+  {
+   "branch_id": "R29",
+   "indicator": "Laser beam falls outside the center of the crosshairs or mirror at the lower-left position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p61.b18",
+    "p61.b21",
+    "p61.b30",
+    "p61.b33"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; Mirror #1; Mirror #2; alignment gauge; masking tape; lock nuts; thumbscrews",
+   "component_segments": [
+    "p61.b12",
+    "p61.b23",
+    "p61.b35",
+    "p61.b36"
+   ],
+   "conditions": "adjust if the beam is outside the crosshairs or outside the center of the mirror; if still outside, repeat Step 22",
+   "claim_id": "R29.6",
+   "action": "Adjust beam direction by tightening the thumbscrews for the desired direction of travel.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p61.b36"
+   ]
+  },
+  {
+   "branch_id": "R29",
+   "indicator": "Laser beam falls outside the center of the crosshairs or mirror at the lower-left position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p61.b18",
+    "p61.b21",
+    "p61.b30",
+    "p61.b33"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; Mirror #1; Mirror #2; alignment gauge; masking tape; lock nuts; thumbscrews",
+   "component_segments": [
+    "p61.b12",
+    "p61.b23",
+    "p61.b35",
+    "p61.b36"
+   ],
+   "conditions": "adjust if the beam is outside the crosshairs or outside the center of the mirror; if still outside, repeat Step 22",
+   "claim_id": "R29.7",
+   "action": "Repeat Step 22 to verify alignment.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p61.b37"
+   ]
+  },
+  {
+   "branch_id": "R30",
+   "indicator": "Laser beam falls outside the center of the crosshairs at the lower-right position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p62.b7",
+    "p62.b10"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; Mirror #2; Mirror #3; lock nuts; thumbscrews",
+   "component_segments": [
+    "p62.b1",
+    "p62.b7",
+    "p62.b12",
+    "p62.b17",
+    "p62.b24"
+   ],
+   "conditions": "if the beam falls outside the center of the crosshairs, adjustment is required; after alignment is complete",
+   "claim_id": "R30.1",
+   "action": "Move the laser head assembly to the lower-right corner of the table.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p62.b1"
+   ]
+  },
+  {
+   "branch_id": "R30",
+   "indicator": "Laser beam falls outside the center of the crosshairs at the lower-right position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p62.b7",
+    "p62.b10"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; Mirror #2; Mirror #3; lock nuts; thumbscrews",
+   "component_segments": [
+    "p62.b1",
+    "p62.b7",
+    "p62.b12",
+    "p62.b17",
+    "p62.b24"
+   ],
+   "conditions": "if the beam falls outside the center of the crosshairs, adjustment is required; after alignment is complete",
+   "claim_id": "R30.2",
+   "action": "Verify Mirror #2 and Mirror #3 alignment by pressing Pulse.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p62.b7"
+   ]
+  },
+  {
+   "branch_id": "R30",
+   "indicator": "Laser beam falls outside the center of the crosshairs at the lower-right position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p62.b7",
+    "p62.b10"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; Mirror #2; Mirror #3; lock nuts; thumbscrews",
+   "component_segments": [
+    "p62.b1",
+    "p62.b7",
+    "p62.b12",
+    "p62.b17",
+    "p62.b24"
+   ],
+   "conditions": "if the beam falls outside the center of the crosshairs, adjustment is required; after alignment is complete",
+   "claim_id": "R30.3",
+   "action": "Loosen the lock nuts on the three brass thumbscrews behind the Mirror #2 assembly.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p62.b12"
+   ]
+  },
+  {
+   "branch_id": "R30",
+   "indicator": "Laser beam falls outside the center of the crosshairs at the lower-right position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p62.b7",
+    "p62.b10"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; Mirror #2; Mirror #3; lock nuts; thumbscrews",
+   "component_segments": [
+    "p62.b1",
+    "p62.b7",
+    "p62.b12",
+    "p62.b17",
+    "p62.b24"
+   ],
+   "conditions": "if the beam falls outside the center of the crosshairs, adjustment is required; after alignment is complete",
+   "claim_id": "R30.4",
+   "action": "Adjust beam direction by tightening the thumbscrews for the desired direction of travel.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p62.b17"
+   ]
+  },
+  {
+   "branch_id": "R30",
+   "indicator": "Laser beam falls outside the center of the crosshairs at the lower-right position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p62.b7",
+    "p62.b10"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; Mirror #2; Mirror #3; lock nuts; thumbscrews",
+   "component_segments": [
+    "p62.b1",
+    "p62.b7",
+    "p62.b12",
+    "p62.b17",
+    "p62.b24"
+   ],
+   "conditions": "if the beam falls outside the center of the crosshairs, adjustment is required; after alignment is complete",
+   "claim_id": "R30.5",
+   "action": "Repeat Step 27 to verify alignment.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p62.b23"
+   ]
+  },
+  {
+   "branch_id": "R30",
+   "indicator": "Laser beam falls outside the center of the crosshairs at the lower-right position.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p62.b7",
+    "p62.b10"
+   ],
+   "failure_segments": [],
+   "component": "laser head assembly; Mirror #2; Mirror #3; lock nuts; thumbscrews",
+   "component_segments": [
+    "p62.b1",
+    "p62.b7",
+    "p62.b12",
+    "p62.b17",
+    "p62.b24"
+   ],
+   "conditions": "if the beam falls outside the center of the crosshairs, adjustment is required; after alignment is complete",
+   "claim_id": "R30.6",
+   "action": "Tighten all loose lock nuts on the mirror assemblies; do not tighten the thumbscrews.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p62.b24"
+   ]
+  },
+  {
+   "branch_id": "R31",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Emergency stop button depressed/at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "Emergency stop button",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "replace only if at fault",
+   "claim_id": "R31.1",
+   "action": "Rotate the emergency stop button head to reset.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R31",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Emergency stop button depressed/at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "Emergency stop button",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "replace only if at fault",
+   "claim_id": "R31.2",
+   "action": "Replace the emergency stop button.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R32",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Incorrect power supply voltage or circuit size.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "",
+   "claim_id": "R32.1",
+   "action": "Ensure the correct power supply voltage and circuit size.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R33",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Power supply circuit breaker tripped or fuse blown.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "power supply circuit breaker; fuse",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "reset if tripped; replace if blown",
+   "claim_id": "R33.1",
+   "action": "Ensure the circuit is sized correctly and free of shorts.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R33",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Power supply circuit breaker tripped or fuse blown.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "power supply circuit breaker; fuse",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "reset if tripped; replace if blown",
+   "claim_id": "R33.2",
+   "action": "Reset the circuit breaker.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R33",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Power supply circuit breaker tripped or fuse blown.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "power supply circuit breaker; fuse",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "reset if tripped; replace if blown",
+   "claim_id": "R33.3",
+   "action": "Replace the fuse.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R34",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Air pump, water chiller, or exhaust fan have a short.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "air pump; water chiller; exhaust fan",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "replace if at fault",
+   "claim_id": "R34.1",
+   "action": "Inspect the air pump, water chiller, or exhaust fan.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R34",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Air pump, water chiller, or exhaust fan have a short.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "air pump; water chiller; exhaust fan",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "replace if at fault",
+   "claim_id": "R34.2",
+   "action": "Replace the affected part.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R35",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Wiring broken, disconnected, or corroded.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "wiring; connections",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "",
+   "claim_id": "R35.1",
+   "action": "Fix broken wires or disconnected/corroded connections.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R36",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Machine chassis ground at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "machine chassis ground; ground rod",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "see Page 15",
+   "claim_id": "R36.1",
+   "action": "Connect the machine to a dedicated ground rod at or near the machine.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R37",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Laser tube at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "laser tube; laser tube connections; wire insulation",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "",
+   "claim_id": "R37.1",
+   "action": "Inspect for evidence of arcing at laser tube connections.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R37",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Laser tube at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "laser tube; laser tube connections; wire insulation",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "",
+   "claim_id": "R37.2",
+   "action": "Verify wire insulation is preventing arcing and discharge to the machine frame.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R38",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Power supply or controller at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "power supply; controller",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "only if at fault; see Page 63",
+   "claim_id": "R38.1",
+   "action": "Inspect the power supply or controller.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R38",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Power supply or controller at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "power supply; controller",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "only if at fault; see Page 63",
+   "claim_id": "R38.2",
+   "action": "Replace the power supply or controller.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R39",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Computer board at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "computer board",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "only if at fault; see Page 63",
+   "claim_id": "R39.1",
+   "action": "Inspect the computer board.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R39",
+   "indicator": "Machine does not start, or breaker immediately trips after startup of machine or auxiliary systems.",
+   "code": "-",
+   "failure": "Computer board at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r2"
+   ],
+   "failure_segments": [
+    "p51.t1.r2"
+   ],
+   "component": "computer board",
+   "component_segments": [
+    "p51.t1.r2"
+   ],
+   "conditions": "only if at fault; see Page 63",
+   "claim_id": "R39.2",
+   "action": "Replace the computer board.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R40",
+   "indicator": "Machine has vibration or noisy operation.",
+   "code": "-",
+   "failure": "Stepper motor or component loose.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r3"
+   ],
+   "failure_segments": [
+    "p51.t1.r3"
+   ],
+   "component": "stepper motor or component; bolts/nuts",
+   "component_segments": [
+    "p51.t1.r3"
+   ],
+   "conditions": "tighten if loose",
+   "claim_id": "R40.1",
+   "action": "Replace damaged or missing bolts/nuts.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R40",
+   "indicator": "Machine has vibration or noisy operation.",
+   "code": "-",
+   "failure": "Stepper motor or component loose.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r3"
+   ],
+   "failure_segments": [
+    "p51.t1.r3"
+   ],
+   "component": "stepper motor or component; bolts/nuts",
+   "component_segments": [
+    "p51.t1.r3"
+   ],
+   "conditions": "tighten if loose",
+   "claim_id": "R40.2",
+   "action": "Tighten bolts/nuts if loose.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R41",
+   "indicator": "Machine has vibration or noisy operation.",
+   "code": "-",
+   "failure": "Belt(s) worn, loose, pulleys misaligned or belt slapping cover.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r3"
+   ],
+   "failure_segments": [
+    "p51.t1.r3"
+   ],
+   "component": "belts; pulleys",
+   "component_segments": [
+    "p51.t1.r3"
+   ],
+   "conditions": "realign pulleys if necessary",
+   "claim_id": "R41.1",
+   "action": "Inspect the belts.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p51.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R41",
+   "indicator": "Machine has vibration or noisy operation.",
+   "code": "-",
+   "failure": "Belt(s) worn, loose, pulleys misaligned or belt slapping cover.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r3"
+   ],
+   "failure_segments": [
+    "p51.t1.r3"
+   ],
+   "component": "belts; pulleys",
+   "component_segments": [
+    "p51.t1.r3"
+   ],
+   "conditions": "realign pulleys if necessary",
+   "claim_id": "R41.2",
+   "action": "Replace the belts with a new matched set.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R41",
+   "indicator": "Machine has vibration or noisy operation.",
+   "code": "-",
+   "failure": "Belt(s) worn, loose, pulleys misaligned or belt slapping cover.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r3"
+   ],
+   "failure_segments": [
+    "p51.t1.r3"
+   ],
+   "component": "belts; pulleys",
+   "component_segments": [
+    "p51.t1.r3"
+   ],
+   "conditions": "realign pulleys if necessary",
+   "claim_id": "R41.3",
+   "action": "Realign the pulleys.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R42",
+   "indicator": "Machine has vibration or noisy operation.",
+   "code": "-",
+   "failure": "Incorrectly mounted to workbench.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r3"
+   ],
+   "failure_segments": [
+    "p51.t1.r3"
+   ],
+   "component": "feet; mounting hardware",
+   "component_segments": [
+    "p51.t1.r3"
+   ],
+   "conditions": "",
+   "claim_id": "R42.1",
+   "action": "Adjust the feet.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R42",
+   "indicator": "Machine has vibration or noisy operation.",
+   "code": "-",
+   "failure": "Incorrectly mounted to workbench.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r3"
+   ],
+   "failure_segments": [
+    "p51.t1.r3"
+   ],
+   "component": "feet; mounting hardware",
+   "component_segments": [
+    "p51.t1.r3"
+   ],
+   "conditions": "",
+   "claim_id": "R42.2",
+   "action": "Shim the machine.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R42",
+   "indicator": "Machine has vibration or noisy operation.",
+   "code": "-",
+   "failure": "Incorrectly mounted to workbench.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r3"
+   ],
+   "failure_segments": [
+    "p51.t1.r3"
+   ],
+   "component": "feet; mounting hardware",
+   "component_segments": [
+    "p51.t1.r3"
+   ],
+   "conditions": "",
+   "claim_id": "R42.3",
+   "action": "Tighten the mounting hardware.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R43",
+   "indicator": "Machine has vibration or noisy operation.",
+   "code": "-",
+   "failure": "Workpiece loose.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r3"
+   ],
+   "failure_segments": [
+    "p51.t1.r3"
+   ],
+   "component": "workpiece; holding fixture",
+   "component_segments": [
+    "p51.t1.r3"
+   ],
+   "conditions": "",
+   "claim_id": "R43.1",
+   "action": "Use the correct holding fixture.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R43",
+   "indicator": "Machine has vibration or noisy operation.",
+   "code": "-",
+   "failure": "Workpiece loose.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r3"
+   ],
+   "failure_segments": [
+    "p51.t1.r3"
+   ],
+   "component": "workpiece; holding fixture",
+   "component_segments": [
+    "p51.t1.r3"
+   ],
+   "conditions": "",
+   "claim_id": "R43.2",
+   "action": "Reclamp the workpiece.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R44",
+   "indicator": "Machine has vibration or noisy operation.",
+   "code": "-",
+   "failure": "Stepper motor bearings at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r3"
+   ],
+   "failure_segments": [
+    "p51.t1.r3"
+   ],
+   "component": "stepper motor bearings; shaft",
+   "component_segments": [
+    "p51.t1.r3"
+   ],
+   "conditions": "rotational grinding or loose shaft requires bearing replacement",
+   "claim_id": "R44.1",
+   "action": "Test by rotating the shaft.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p51.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R44",
+   "indicator": "Machine has vibration or noisy operation.",
+   "code": "-",
+   "failure": "Stepper motor bearings at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p51.t1.r3"
+   ],
+   "failure_segments": [
+    "p51.t1.r3"
+   ],
+   "component": "stepper motor bearings; shaft",
+   "component_segments": [
+    "p51.t1.r3"
+   ],
+   "conditions": "rotational grinding or loose shaft requires bearing replacement",
+   "claim_id": "R44.2",
+   "action": "Replace the bearing.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p51.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R45",
+   "indicator": "Flash drive is not read by laser machine, or file unable to load from flash drive.",
+   "code": "-",
+   "failure": "Incorrect file structure or wrong file format.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r2"
+   ],
+   "failure_segments": [
+    "p52.t1.r2"
+   ],
+   "component": "",
+   "component_segments": [
+    "p52.t1.r2"
+   ],
+   "conditions": "file format must be RDCam Ruby Document (.RD)",
+   "claim_id": "R45.1",
+   "action": "Use a formatted flash drive with artwork files saved in RDCam Ruby Document (.RD) format.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R46",
+   "indicator": "Flash drive is not read by laser machine, or file unable to load from flash drive.",
+   "code": "-",
+   "failure": "Artwork file not saved using included RDCam software.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r2"
+   ],
+   "failure_segments": [
+    "p52.t1.r2"
+   ],
+   "component": "",
+   "component_segments": [
+    "p52.t1.r2"
+   ],
+   "conditions": "see Page 28",
+   "claim_id": "R46.1",
+   "action": "Save the artwork file to the flash drive using the included RDCam software.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r2"
+   ]
+  },
+  {
+   "branch_id": "R47",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser speed, path, or other CNC error exists.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "",
+   "claim_id": "R47.1",
+   "action": "Review RDCam path settings.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R47",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser speed, path, or other CNC error exists.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "",
+   "claim_id": "R47.2",
+   "action": "Verify that the software is free of errors.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R48",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Incorrect laser speed or laser power setting.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 28 and 35",
+   "claim_id": "R48.1",
+   "action": "Review RDCam power settings.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R48",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Incorrect laser speed or laser power setting.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 28 and 35",
+   "claim_id": "R48.2",
+   "action": "Verify that speed/power is set as desired.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R48",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Incorrect laser speed or laser power setting.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 28 and 35",
+   "claim_id": "R48.3",
+   "action": "Adjust laser speed/power at the machine.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R49",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Focus is not set to correct height.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "table",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 36 and 52",
+   "claim_id": "R49.1",
+   "action": "Inspect the focal length.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R49",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Focus is not set to correct height.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "table",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 36 and 52",
+   "claim_id": "R49.2",
+   "action": "Adjust the focal length.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R49",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Focus is not set to correct height.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "table",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 36 and 52",
+   "claim_id": "R49.3",
+   "action": "Inspect table parallelism.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R49",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Focus is not set to correct height.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "table",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 36 and 52",
+   "claim_id": "R49.4",
+   "action": "Adjust table parallelism.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R50",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser is skewed or off-center.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "mirrors; laser optics",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 61, 57 and 45",
+   "claim_id": "R50.1",
+   "action": "Verify mirrors are secure.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R50",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser is skewed or off-center.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "mirrors; laser optics",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 61, 57 and 45",
+   "claim_id": "R50.2",
+   "action": "Verify the reflective side of the mirrors is facing outward.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R50",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser is skewed or off-center.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "mirrors; laser optics",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 61, 57 and 45",
+   "claim_id": "R50.3",
+   "action": "Align the laser beam.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R50",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser is skewed or off-center.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "mirrors; laser optics",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 61, 57 and 45",
+   "claim_id": "R50.4",
+   "action": "Clean the laser optics.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R51",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser path is obstructed by smoke or material.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "air supply hose; air nozzle; air pump; exhaust ducting",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Page 22",
+   "claim_id": "R51.1",
+   "action": "Verify the air supply hose is unobstructed and connected to the air nozzle.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R51",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser path is obstructed by smoke or material.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "air supply hose; air nozzle; air pump; exhaust ducting",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Page 22",
+   "claim_id": "R51.2",
+   "action": "Inspect the air pump.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R51",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser path is obstructed by smoke or material.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "air supply hose; air nozzle; air pump; exhaust ducting",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Page 22",
+   "claim_id": "R51.3",
+   "action": "Replace the air pump.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R51",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser path is obstructed by smoke or material.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "air supply hose; air nozzle; air pump; exhaust ducting",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Page 22",
+   "claim_id": "R51.4",
+   "action": "Verify the exhaust ducting is unobstructed and functional.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R52",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser unable to cut or scan workpiece.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "Workpiece material beyond machine capability.",
+   "claim_id": "R52.1",
+   "action": "",
+   "action_kind": "",
+   "action_segments": []
+  },
+  {
+   "branch_id": "R53",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser kerf too wide, and material is poorly cut.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "mirrors; table",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 61, 57, 36 and 52",
+   "claim_id": "R53.1",
+   "action": "Verify mirrors are secure.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R53",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser kerf too wide, and material is poorly cut.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "mirrors; table",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 61, 57, 36 and 52",
+   "claim_id": "R53.2",
+   "action": "Verify the reflective side of the mirrors is facing outward.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R53",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser kerf too wide, and material is poorly cut.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "mirrors; table",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 61, 57, 36 and 52",
+   "claim_id": "R53.3",
+   "action": "Align the laser beam.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R53",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser kerf too wide, and material is poorly cut.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "mirrors; table",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 61, 57, 36 and 52",
+   "claim_id": "R53.4",
+   "action": "Inspect the focal length.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R53",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser kerf too wide, and material is poorly cut.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "mirrors; table",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 61, 57, 36 and 52",
+   "claim_id": "R53.5",
+   "action": "Adjust the focal length.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R53",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser kerf too wide, and material is poorly cut.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "mirrors; table",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 61, 57, 36 and 52",
+   "claim_id": "R53.6",
+   "action": "Inspect table parallelism.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R53",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser kerf too wide, and material is poorly cut.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "mirrors; table",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 61, 57, 36 and 52",
+   "claim_id": "R53.7",
+   "action": "Adjust table parallelism.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R54",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser head has vibration or lash (workpiece path shows distortion/overlap).",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "belts; linkage; tracks; guides",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 51 and 34; inspect/adjust linkage, tracks and guides for loose fasteners or binding",
+   "claim_id": "R54.1",
+   "action": "Adjust the belts.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R54",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser head has vibration or lash (workpiece path shows distortion/overlap).",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "belts; linkage; tracks; guides",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 51 and 34; inspect/adjust linkage, tracks and guides for loose fasteners or binding",
+   "claim_id": "R54.2",
+   "action": "Replace the belts.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R54",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser head has vibration or lash (workpiece path shows distortion/overlap).",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "belts; linkage; tracks; guides",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 51 and 34; inspect/adjust linkage, tracks and guides for loose fasteners or binding",
+   "claim_id": "R54.3",
+   "action": "Inspect the linkage, tracks, and guides for loose fasteners or binding.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R54",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser head has vibration or lash (workpiece path shows distortion/overlap).",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "belts; linkage; tracks; guides",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 51 and 34; inspect/adjust linkage, tracks and guides for loose fasteners or binding",
+   "claim_id": "R54.4",
+   "action": "Adjust the linkage, tracks, and guides.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R54",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser head has vibration or lash (workpiece path shows distortion/overlap).",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "belts; linkage; tracks; guides",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Pages 51 and 34; inspect/adjust linkage, tracks and guides for loose fasteners or binding",
+   "claim_id": "R54.5",
+   "action": "Reset the origin.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R55",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Workpiece buckling or moving.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "workpiece",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "honeycomb table for thin workpieces; clamps for large or irregular workpieces",
+   "claim_id": "R55.1",
+   "action": "Use the honeycomb table for thin workpiece support.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R55",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Workpiece buckling or moving.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "workpiece",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "honeycomb table for thin workpieces; clamps for large or irregular workpieces",
+   "claim_id": "R55.2",
+   "action": "Use clamps to secure large or irregular workpieces.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R56",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser output creating sawtooth pattern on cuts or engravings.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Page 35; workpiece may contain impurities that ignite and eject particles of molten material",
+   "claim_id": "R56.1",
+   "action": "Increase laser power.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R57",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser tube at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "laser tube; laser tube power supply",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Page 52",
+   "claim_id": "R57.1",
+   "action": "Replace the laser tube.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R57",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Laser tube at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "laser tube; laser tube power supply",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "see Page 52",
+   "claim_id": "R57.2",
+   "action": "Replace the laser tube power supply.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R58",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Transformer, power supply, or controller at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "transformer; power supply; controller",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "as required",
+   "claim_id": "R58.1",
+   "action": "Inspect the transformer, power supply, or controller.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R58",
+   "indicator": "Machine laser has poor cutting or engraving results.",
+   "code": "-",
+   "failure": "Transformer, power supply, or controller at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r3"
+   ],
+   "failure_segments": [
+    "p52.t1.r3"
+   ],
+   "component": "transformer; power supply; controller",
+   "component_segments": [
+    "p52.t1.r3"
+   ],
+   "conditions": "as required",
+   "claim_id": "R58.2",
+   "action": "Replace the transformer, power supply, or controller.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r3"
+   ]
+  },
+  {
+   "branch_id": "R59",
+   "indicator": "Laser tube inoperative or laser powers down while machine is operating.",
+   "code": "-",
+   "failure": "Water chiller system not cooling laser tube; thermal kill switch activates or alarm sounds.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r4"
+   ],
+   "failure_segments": [
+    "p52.t1.r4"
+   ],
+   "component": "water chiller system; reservoir",
+   "component_segments": [
+    "p52.t1.r4"
+   ],
+   "conditions": "see Page 21; add ice and additional water chilling equipment as required",
+   "claim_id": "R59.1",
+   "action": "Inspect the water chiller system.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r4"
+   ]
+  },
+  {
+   "branch_id": "R59",
+   "indicator": "Laser tube inoperative or laser powers down while machine is operating.",
+   "code": "-",
+   "failure": "Water chiller system not cooling laser tube; thermal kill switch activates or alarm sounds.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r4"
+   ],
+   "failure_segments": [
+    "p52.t1.r4"
+   ],
+   "component": "water chiller system; reservoir",
+   "component_segments": [
+    "p52.t1.r4"
+   ],
+   "conditions": "see Page 21; add ice and additional water chilling equipment as required",
+   "claim_id": "R59.2",
+   "action": "Replace the water chiller system.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r4"
+   ]
+  },
+  {
+   "branch_id": "R59",
+   "indicator": "Laser tube inoperative or laser powers down while machine is operating.",
+   "code": "-",
+   "failure": "Water chiller system not cooling laser tube; thermal kill switch activates or alarm sounds.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r4"
+   ],
+   "failure_segments": [
+    "p52.t1.r4"
+   ],
+   "component": "water chiller system; reservoir",
+   "component_segments": [
+    "p52.t1.r4"
+   ],
+   "conditions": "see Page 21; add ice and additional water chilling equipment as required",
+   "claim_id": "R59.3",
+   "action": "Reduce ambient temperature of the machine operating environment.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r4"
+   ]
+  },
+  {
+   "branch_id": "R59",
+   "indicator": "Laser tube inoperative or laser powers down while machine is operating.",
+   "code": "-",
+   "failure": "Water chiller system not cooling laser tube; thermal kill switch activates or alarm sounds.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r4"
+   ],
+   "failure_segments": [
+    "p52.t1.r4"
+   ],
+   "component": "water chiller system; reservoir",
+   "component_segments": [
+    "p52.t1.r4"
+   ],
+   "conditions": "see Page 21; add ice and additional water chilling equipment as required",
+   "claim_id": "R59.4",
+   "action": "Add ice to the reservoir.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r4"
+   ]
+  },
+  {
+   "branch_id": "R59",
+   "indicator": "Laser tube inoperative or laser powers down while machine is operating.",
+   "code": "-",
+   "failure": "Water chiller system not cooling laser tube; thermal kill switch activates or alarm sounds.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r4"
+   ],
+   "failure_segments": [
+    "p52.t1.r4"
+   ],
+   "component": "water chiller system; reservoir",
+   "component_segments": [
+    "p52.t1.r4"
+   ],
+   "conditions": "see Page 21; add ice and additional water chilling equipment as required",
+   "claim_id": "R59.5",
+   "action": "Add additional water chilling equipment.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r4"
+   ]
+  },
+  {
+   "branch_id": "R60",
+   "indicator": "Laser tube inoperative or laser powers down while machine is operating.",
+   "code": "-",
+   "failure": "Air pump, water pump, or exhaust fan have a short.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r4"
+   ],
+   "failure_segments": [
+    "p52.t1.r4"
+   ],
+   "component": "air pump; water pump; exhaust fan",
+   "component_segments": [
+    "p52.t1.r4"
+   ],
+   "conditions": "replace if at fault",
+   "claim_id": "R60.1",
+   "action": "Inspect the air pump, water pump, or exhaust fan.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r4"
+   ]
+  },
+  {
+   "branch_id": "R60",
+   "indicator": "Laser tube inoperative or laser powers down while machine is operating.",
+   "code": "-",
+   "failure": "Air pump, water pump, or exhaust fan have a short.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r4"
+   ],
+   "failure_segments": [
+    "p52.t1.r4"
+   ],
+   "component": "air pump; water pump; exhaust fan",
+   "component_segments": [
+    "p52.t1.r4"
+   ],
+   "conditions": "replace if at fault",
+   "claim_id": "R60.2",
+   "action": "Replace the affected part.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r4"
+   ]
+  },
+  {
+   "branch_id": "R61",
+   "indicator": "Laser tube inoperative or laser powers down while machine is operating.",
+   "code": "-",
+   "failure": "One or more laser tube power supply components have failed.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r4"
+   ],
+   "failure_segments": [
+    "p52.t1.r4"
+   ],
+   "component": "laser tube power supply; machine electrical components",
+   "component_segments": [
+    "p52.t1.r4"
+   ],
+   "conditions": "as required; see Page 63",
+   "claim_id": "R61.1",
+   "action": "Replace the laser tube power supply and machine electrical components.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r4"
+   ]
+  },
+  {
+   "branch_id": "R62",
+   "indicator": "Laser tube inoperative or laser powers down while machine is operating.",
+   "code": "-",
+   "failure": "Laser tube electrical connections at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r4"
+   ],
+   "failure_segments": [
+    "p52.t1.r4"
+   ],
+   "component": "laser tube electrical connections",
+   "component_segments": [
+    "p52.t1.r4"
+   ],
+   "conditions": "",
+   "claim_id": "R62.1",
+   "action": "Verify laser tube electrical connections are correct and secure.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r4"
+   ]
+  },
+  {
+   "branch_id": "R63",
+   "indicator": "Laser tube inoperative or laser powers down while machine is operating.",
+   "code": "-",
+   "failure": "Electrical system at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r4"
+   ],
+   "failure_segments": [
+    "p52.t1.r4"
+   ],
+   "component": "electrical system components",
+   "component_segments": [
+    "p52.t1.r4"
+   ],
+   "conditions": "as required; see Page 63",
+   "claim_id": "R63.1",
+   "action": "Test electrical system components.",
+   "action_kind": "inspection",
+   "action_segments": [
+    "p52.t1.r4"
+   ]
+  },
+  {
+   "branch_id": "R63",
+   "indicator": "Laser tube inoperative or laser powers down while machine is operating.",
+   "code": "-",
+   "failure": "Electrical system at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r4"
+   ],
+   "failure_segments": [
+    "p52.t1.r4"
+   ],
+   "component": "electrical system components",
+   "component_segments": [
+    "p52.t1.r4"
+   ],
+   "conditions": "as required; see Page 63",
+   "claim_id": "R63.2",
+   "action": "Replace electrical system components.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r4"
+   ]
+  },
+  {
+   "branch_id": "R64",
+   "indicator": "Laser tube inoperative or laser powers down while machine is operating.",
+   "code": "-",
+   "failure": "Laser tube at fault.",
+   "failure_stated": true,
+   "indicator_segments": [
+    "p52.t1.r4"
+   ],
+   "failure_segments": [
+    "p52.t1.r4"
+   ],
+   "component": "laser tube",
+   "component_segments": [
+    "p52.t1.r4"
+   ],
+   "conditions": "see Page 52",
+   "claim_id": "R64.1",
+   "action": "Replace the laser tube.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p52.t1.r4"
+   ]
+  },
+  {
+   "branch_id": "R65",
+   "indicator": "Wires or components are damaged while performing a wiring task.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p64.b9"
+   ],
+   "failure_segments": [],
+   "component": "wires; components",
+   "component_segments": [
+    "p64.b9"
+   ],
+   "conditions": "if damage is noticed while performing a wiring task",
+   "claim_id": "R65.1",
+   "action": "Replace the damaged wires or components.",
+   "action_kind": "repair",
+   "action_segments": [
+    "p64.b9"
+   ]
+  },
+  {
+   "branch_id": "R66",
+   "indicator": "Wiring differs from what is shown in the manual.",
+   "code": "-",
+   "failure": "",
+   "failure_stated": false,
+   "indicator_segments": [
+    "p64.b3"
+   ],
+   "failure_segments": [],
+   "component": "wiring",
+   "component_segments": [
+    "p64.b3"
+   ],
+   "conditions": "before making any changes; gather the machine serial number and manufacture date before calling",
+   "claim_id": "R66.1",
+   "action": "Call Technical Support at (570) 546-9663 for assistance.",
+   "action_kind": "escalation",
+   "action_segments": [
+    "p64.b3"
+   ]
+  }
+ ],
+ "manual_id": "grizzly_g0872",
+ "split": "test",
+ "status": "annotated"
+}
