@@ -361,15 +361,7 @@ class Pipeline:
         empty_units = [item.unit_id for item in extractions if not item.proposals]
         failed_units = [{"unit_id": item.unit_id, "segments": item.failed_segments}
                         for item in extractions if not item.proposals or item.failed_segments]
-        incomplete_reasons = []
-        if failed_units:
-            incomplete_reasons.append("failed_diagnostic_units")
-        if empty_units:
-            incomplete_reasons.append("reading_units_without_relations")
-        if sum(item.failed_reads for item in extractions):
-            incomplete_reasons.append("failed_extraction_reads")
-        if not any(edge.tier is not Tier.RED for edge in graph.edges):
-            incomplete_reasons.append("empty_diagnostic_graph")
+        incomplete_reasons = run_incomplete_reasons(extractions, graph)
         # Automatic approval is a workflow decision, not evidence of completeness.
         if status == "approved" and incomplete_reasons:
             status = "incomplete"
@@ -442,6 +434,24 @@ class Pipeline:
                            gates=gates, report=report)
         self._save("report", report)
         return result
+
+
+def run_incomplete_reasons(extractions: list[UnitExtraction], graph: MergedGraph) -> list[str]:
+    """Why a run cannot be approved automatically.
+
+    A unit may rightly hold no troubleshooting fact (a wiring table on a page the map
+    kept): it is reported, not a failure. A run fails when every unit came back empty,
+    a read failed, or nothing reached the graph.
+    """
+
+    reasons = []
+    if extractions and all(not item.proposals for item in extractions):
+        reasons.append("all_reading_units_without_relations")
+    if sum(item.failed_reads for item in extractions):
+        reasons.append("failed_extraction_reads")
+    if not any(edge.tier is not Tier.RED for edge in graph.edges):
+        reasons.append("empty_diagnostic_graph")
+    return reasons
 
 
 def red_relations(result: RunResult) -> list[CheckedRelation]:
