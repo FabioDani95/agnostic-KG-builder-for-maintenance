@@ -72,3 +72,15 @@ def test_run_ledger_label_is_explicit_and_status_surrounds_each_run(tmp_path, mo
     assert events[0] == events[2] == 'status'
     assert events[1][events[1].index('--run-id')+1] == 'campaign_E_manual_v3_r1'
     assert events[1][-2:] == ['--spend-ceiling', '6.317599975']
+
+
+def test_header_fields_may_be_list_items():
+    from scripts.campaign import parse_sheet
+
+    sheet = ("# Annotazione\n\n- Annotatore: Fabio\n- Data: 2026-09-28\n- Tempo impiegato (minuti): 150\n"
+             "- Pagine annotate: 9, 26–27, 51\n\n## Rami\n\n### Ramo R1\n"
+             "- problema: Machine does not start. | ID: p51.t1.r2\n- causa: Fuse blown. | ID: p51.t1.r2\n"
+             "- azione: Replace the fuse. | tipo: riparazione | ID: p51.t1.r2\n")
+    gold, problems = parse_sheet(sheet)
+    assert gold["annotator"] == "Fabio" and gold["pages"] == [9, 26, 27, 51] and gold["minutes"] == "150"
+    assert problems == []

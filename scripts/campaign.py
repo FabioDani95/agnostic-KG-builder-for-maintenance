@@ -173,7 +173,8 @@ def parse_sheet(text: str) -> tuple[dict, list[str]]:
     header = text.split("## Istruzioni", 1)[0]
 
     def field(label: str) -> str:
-        return (re.search(rf"^{label}.*?:[ \t]*(.*)$", header, re.M) or [None, ""])[1].strip()
+        # The header line may be written as a list item ("- Annotatore: ...").
+        return (re.search(rf"^(?:[-*][ \t]+)?{label}.*?:[ \t]*(.*)$", header, re.M) or [None, ""])[1].strip()
 
     problems = [] if pages_from(field("Pagine annotate")) else ["write the annotated pages at the top"]
     claims = []
