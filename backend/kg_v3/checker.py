@@ -217,6 +217,14 @@ def statement(spec: OntologySpec, proposal: Proposal) -> str:
         verb = "For this problem or cause the manual prescribes this check or test (it need not repair anything)."
     elif proposal.target.kind == "escalation":
         verb = "For this problem or cause the manual says to contact service or the dealer."
+    # An unnamed cause is the system's reading of a check, outcome or remedy: say what is claimed.
+    if proposal.target.type == "FailureMode" and not proposal.target.stated:
+        verb = ("The manual's entry for this problem (a table row, a list item, or the flowchart or procedure "
+                "that starts from this problem) leads to the check, test outcome or remedy this unnamed cause "
+                "stands for.")
+    elif proposal.source.type == "FailureMode" and not proposal.source.stated and proposal.relation_type == "RESOLVED_BY":
+        verb += (" The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for "
+                 "the problem or test outcome it belongs to.")
     code = f" (code {proposal.source.code})" if proposal.source.code else ""
     kind = f" [{proposal.target.kind}]" if proposal.target.kind else ""
     condition = f" Context: {context_text(proposal.conditions)}." if proposal.conditions else ""

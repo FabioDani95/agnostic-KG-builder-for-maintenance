@@ -74,3 +74,20 @@ def test_prompts_turn_flowchart_outcomes_and_expected_values_into_connected_bran
     assert '"Suspected <component> fault"' in EXTRACTION_PROMPT
     assert "supports only the action that outcome leads to" in VERIFY_PASSAGE_PROMPT
     assert "A flowchart or numbered procedure\n   is one entry" in REVIEWER_BRIEF
+
+
+def test_a_link_to_an_unnamed_cause_says_it_claims_the_path_of_the_problem_entry():
+    from backend.kg_v3.checker import statement
+    from backend.kg_v3.extractor import Endpoint, Proposal
+    from backend.kg_v3.ontology import load_ontology
+    from backend.kg_v3.prompts import VERIFY_PROMPT
+
+    spec = load_ontology()
+    link = Proposal(unit_id="u1", read="A", relation_type="MAY_INDICATE", record="R1", cites=["p18.b1", "p20.b8"],
+                    source=Endpoint(type="Symptom", name="No heat / no cook"),
+                    target=Endpoint(type="FailureMode", name="Faulty high voltage transformer", stated=False))
+    remedy = link.model_copy(update={"relation_type": "RESOLVED_BY", "source": link.target, "target": Endpoint(
+        type="CorrectiveAction", name="Measure transformer winding resistance", kind="inspection")})
+    assert "flowchart or procedure that starts from this problem) leads to the check" in statement(spec, link)
+    assert "the cited entry prescribes this check or remedy" in statement(spec, remedy)
+    assert "the test whose outcome reveals such a cause is a check for it" in VERIFY_PROMPT

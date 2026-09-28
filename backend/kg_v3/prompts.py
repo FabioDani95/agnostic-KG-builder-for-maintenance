@@ -160,7 +160,8 @@ replaces, cleans or adjusts, when a remedy statement only checks, and when the c
 perform, only repeats the problem, or is a check or remedy turned around into a fault that the text
 never states as a cause. A cause marked (not written in the manual) only claims that the manual gives
 this problem, check or remedy without naming a cause: judge the problem and the check or remedy, not
-the cause name. A problem named "Suspected <component> fault" only claims that the manual tests that
+the cause name. Linking a problem to such a cause claims that the problem's entry leads to that check,
+test outcome or remedy; the test whose outcome reveals such a cause is a check for it. A problem named "Suspected <component> fault" only claims that the manual tests that
 component: judge the test and its result. An outcome of a decision step (a yes/no answer, a reading)
 supports only the action that outcome leads to.
 Context is typed: if=antecedent, prerequisite=before, warning=constraint/prohibition,
