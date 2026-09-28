@@ -269,3 +269,36 @@ def test_unclear_only_reads_get_one_recovery_and_cannot_silently_approve(doc, tm
         assert result.report['failed_units']
         assert any('split in halves' in note for note in result.report['extraction_notes'])
     assert any('without usable relations' in note for note in result.report['extraction_notes'])
+
+
+def test_a_model_call_that_never_returns_fails_instead_of_hanging():
+    class NeverAnswers:
+        def __init__(self):
+            self.chat = SimpleNamespace(completions=self)
+            self.calls = 0
+
+        async def create(self, **_kwargs):
+            self.calls += 1
+            await asyncio.sleep(3600)
+
+    provider = NeverAnswers()
+    llm = ModelClient(model="gpt-6-luna", client_factory=lambda: provider, attempts=2, backoff_seconds=0)
+    llm.deadline_seconds = 0.05
+    with pytest.raises(TimeoutError):
+        asyncio.run(llm.json(system="s", user="u", schema={"type": "object"}, name="probe"))
+    assert provider.calls == 2  # a late call is transient: retried once, then reported as failed
+
+
+def test_one_empty_unit_is_reported_but_an_all_empty_run_is_incomplete():
+    from backend.kg_v3.extractor import UnitExtraction
+    from backend.kg_v3.merger import MergedGraph
+    from backend.kg_v3.run import run_incomplete_reasons
+
+    with_facts = UnitExtraction(unit_id="u1", proposals=[parse_read(
+        {"entities": READ_A["entities"], "relations": READ_A["relations"][:1]},
+        unit=SimpleNamespace(unit_id="u1", segment_ids=["p1.t1.r2"]), read="A", spec=load_ontology(),
+        allowed={"p1.t1.r2", "p1.t1.r3"})[0][0]])
+    wiring_table = UnitExtraction(unit_id="u2")
+    graph_with_edge = SimpleNamespace(edges=[SimpleNamespace(tier=Tier.GREEN)])
+    assert run_incomplete_reasons([with_facts, wiring_table], graph_with_edge) == []
+    assert "all_reading_units_without_relations" in run_incomplete_reasons([wiring_table], MergedGraph())

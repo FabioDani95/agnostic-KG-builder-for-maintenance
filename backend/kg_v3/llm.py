@@ -86,6 +86,9 @@ class ModelClient:
     ) -> None:
         self.model = model
         self.reasoning_effort = reasoning_effort
+        # Hard deadline per attempt: the transport timeout alone did not stop a call that
+        # never returned (one campaign run waited three hours). A late call is a failed call.
+        self.deadline_seconds = timeout_seconds + 30
         self.attempts = max(1, attempts)
         self.backoff_seconds = backoff_seconds
         self.usage = UsageTotals()
@@ -117,13 +120,13 @@ class ModelClient:
         last_error: Exception | None = None
         for attempt in range(1, self.attempts + 1):
             try:
-                response = await self._client.chat.completions.create(
+                response = await asyncio.wait_for(self._client.chat.completions.create(
                     model=self.model,
                     messages=[{"role": "system", "content": system}, {"role": "user", "content": content}],
                     response_format=response_format,
                     max_completion_tokens=max_output_tokens,
                     **chat_reasoning_kwargs(self.model, effort),
-                )
+                ), timeout=self.deadline_seconds)
             except Exception as exc:
                 self.usage.failed_calls += 1
                 last_error = exc
