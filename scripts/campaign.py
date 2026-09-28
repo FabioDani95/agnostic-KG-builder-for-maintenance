@@ -10,7 +10,7 @@
                         -> campaign/results/precision/
     precision --score   precision of the filled sheet
 
-The campaign has its own ledger, campaign/real_call_budget.jsonl, capped at 10 USD.
+The campaign has its own ledger, campaign/real_call_budget.jsonl, capped at 20 USD.
 See campaign/README.md and paper/evaluation/PROTOCOLLO_V3.md.
 """
 
@@ -30,7 +30,7 @@ sys.path.insert(0, str(ROOT))
 
 CAMPAIGN = ROOT / "campaign"
 LEDGER = CAMPAIGN / "real_call_budget.jsonl"
-BUDGET = "10"
+BUDGET = "20"
 KINDS = {"riparazione": "repair", "controllo": "inspection", "assistenza": "escalation"}
 NOT_STATED = "non indicata nel manuale"
 INFO_TEMPLATE = """# Compila i campi e metti il PDF in questa cartella con il nome manual.pdf.

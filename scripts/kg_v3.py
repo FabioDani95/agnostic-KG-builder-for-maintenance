@@ -25,9 +25,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 CAMPAIGN = ROOT / "campaign"
-# The V3 campaign has its own ledger and a 10 USD cap for every call it makes.
+# The V3 campaign has its own ledger and a 20 USD cap for every call it makes.
 DEFAULT_LEDGER = CAMPAIGN / "real_call_budget.jsonl"
-DEFAULT_BUDGET = "10"
+DEFAULT_BUDGET = "20"
 GATE_PRESETS = {
     # An agent cannot judge a whole graph from its summary: in unattended runs
     # the approval is automatic and recorded as such.

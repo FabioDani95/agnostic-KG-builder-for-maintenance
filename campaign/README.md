@@ -8,7 +8,7 @@ Un solo comando: `.venv/bin/python scripts/campaign.py <passo>`.
 
 ```text
 campaign/
-  real_call_budget.jsonl       costi di tutta la campagna, tetto 10 USD
+  real_call_budget.jsonl       costi di tutta la campagna, tetto 20 USD
   results/                     KPI di tutti i manuali e foglio della precisione
   <manuale>/
     manual.pdf                 input: il PDF (resta locale, non va in git)

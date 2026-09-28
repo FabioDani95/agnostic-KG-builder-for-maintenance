@@ -111,13 +111,12 @@ correzione con un test.
 
 ## Budget
 
-Tetto di **10 USD per l'intera campagna** (esecuzioni e giudice), su un
+Tetto di **20 USD per l'intera campagna** (esecuzioni e giudice; alzato da 10 a 20 il 2026-09-28 da
+Fabio per la valutazione a rotazione), su un
 registro separato: `campaign/real_call_budget.jsonl`. Gli script lo
 usano per impostazione predefinita; il registro blocca ogni chiamata oltre il tetto.
 Misura attuale: 0,02–0,11 USD per esecuzione V3, circa 0,1 USD di giudice per manuale.
 
 ## Decisioni aperte
 
-1. Il tetto di 10 USD non basta per 15–20 manuali: ogni primo contatto costa circa 0,3–0,4 USD
-   con il valutatore. Da rivedere prima di superare la spesa attuale.
-2. Quali manuali tenere da parte per la verifica finale.
+1. Quali manuali tenere da parte per la verifica finale.
