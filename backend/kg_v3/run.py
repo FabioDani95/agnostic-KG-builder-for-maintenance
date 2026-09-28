@@ -77,6 +77,7 @@ class RunConfig(BaseModel):
     })
     agent_model: str = "gpt-6-luna"
     agent_reasoning_effort: str = "medium"
+    agent_concurrency: int = 8
     # Stop before extraction until the map is confirmed; otherwise the model's
     # map is used and its question stays open.
     wait_for_map: bool = False
@@ -156,6 +157,7 @@ class Pipeline:
         # Confirmed diagnostic pages a map correction tried to drop (kept, reported).
         self.map_kept: list[int] = []
         self.map_removed: list[int] = []
+        self.image_pages: list[int] = []
 
     # Persistence ---------------------------------------------------------
 
@@ -181,7 +183,8 @@ class Pipeline:
         if name == "agent":
             if self.agent_llm is None:
                 raise ValueError("an agent reviewer needs a model client")
-            return AgentReviewer(self.agent_llm, model=self.config.agent_model)
+            return AgentReviewer(self.agent_llm, model=self.config.agent_model,
+                                 max_concurrency=self.config.agent_concurrency)
         if name == "human":
             return self.human_reviewer
         if name == "auto":
@@ -268,6 +271,7 @@ class Pipeline:
             from backend.kg_v3.vision import PageImages
 
             images = PageImages(self.pdf_path, self.doc)
+            self.image_pages = sorted(images.pages & {page for unit in units for page in unit.pages})
         extractor = Extractor(self.llm, self.spec, asset_name=self.asset_name, reads=self.config.reads,
                               concurrency=self.config.concurrency, images=images)
         extractions = await self._extract(units, extractor)
@@ -411,6 +415,7 @@ class Pipeline:
             "map_demotions_refused": sorted(set(self.map_kept)),
             "map_removed_pages": sorted(set(self.map_removed)),
             "read_pages": sorted({p for unit in units for p in unit.pages}),
+            "image_pages": self.image_pages,
             "blocked_merges": graph.blocked_merges,
             **graph_navigation(graph),
             "units": len(units),

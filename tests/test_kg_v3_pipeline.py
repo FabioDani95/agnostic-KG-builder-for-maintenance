@@ -302,3 +302,8 @@ def test_one_empty_unit_is_reported_but_an_all_empty_run_is_incomplete():
     graph_with_edge = SimpleNamespace(edges=[SimpleNamespace(tier=Tier.GREEN)])
     assert run_incomplete_reasons([with_facts, wiring_table], graph_with_edge) == []
     assert "all_reading_units_without_relations" in run_incomplete_reasons([wiring_table], MergedGraph())
+
+
+def test_the_agent_reviewer_answers_eight_questions_at_a_time(doc, tmp_path):
+    run, _ = pipeline(doc, ScriptedProvider(), tmp_path / "run")
+    assert run._reviewer("agent")._limit._value == RunConfig().agent_concurrency == 8
