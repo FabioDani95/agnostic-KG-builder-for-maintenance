@@ -11,6 +11,25 @@ migliori. Quelle suggerite qui sotto sono spunti, non ordini: puoi proporne e im
 migliori. **Puoi aumentare moderatamente costo e tempo per manuale** se la qualità sale in modo
 netto: è una scelta accettata, ma va misurata e giustificata.
 
+## 0. Scopo dell'applicativo e perimetro di questo lavoro
+
+L'applicativo ha **un solo scopo**: da un manuale tecnico in PDF produrre un grafo di conoscenza
+diagnostica **completo, fedele al manuale, connesso e navigabile**, con prove citate per ogni
+arco, a costo e tempo contenuti e con **poche domande a una persona** (al massimo circa 10 per
+manuale). Il grafo serve a un agente di manutenzione a valle: deve poter partire da un sintomo o
+da un codice e arrivare alle cause, ai controlli e alle azioni giuste, con le loro condizioni.
+Conta il significato, non la formulazione esatta dei nomi.
+
+Questo lavoro riguarda **solo la qualità dell'estrazione**. **Non** fare:
+- nuove funzioni, API o interfaccia (il frontend verrà dopo, in un altro lavoro);
+- cambi dell'ontologia, del modello o del fornitore;
+- refactoring non necessari agli obiettivi;
+- modifiche ai gold, ai manuali o al protocollo di valutazione;
+- nuovi manuali o nuovi tag di congelamento;
+- testo del paper (solo poche righe in `paper/STATUS.md`).
+
+Se una soluzione richiede una di queste cose, fermati e proponila a Fabio.
+
 ## 1. Cosa fa il sistema
 
 Da un manuale PDF costruisce un grafo di conoscenza diagnostica: sintomo o codice → causa →
