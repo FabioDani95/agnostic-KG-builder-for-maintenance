@@ -112,6 +112,48 @@ def write_sheet(sources: list[tuple[str, Path, Path | None]], per_system: int, s
             rest = [item for item in items if item not in selected]
             chosen.extend(selected + rng.sample(rest, min(per_system - len(selected), len(rest))))
     rng.shuffle(chosen)
+    _write_blind(chosen, sheet, key_path, titles, origin)
+
+
+def _same_link(item: dict, other: dict) -> bool:
+    from scripts.kg_v3_evaluate import token_f1
+
+    return (item["relation"] == other["relation"] and token_f1(item["source"], other["source"]) >= 0.5
+            and token_f1(item["target"], other["target"]) >= 0.5)
+
+
+def new_link_items(after: Path, before: Path, manual: str) -> list[dict]:
+    """Trusted relations of a run, marked new when no trusted relation of the earlier run says the same."""
+
+    earlier = v3_items(before, manual) if before.exists() else []
+    items = v3_items(after, manual)
+    for item in items:
+        item["system"] = "v3_new" if not any(_same_link(item, other) for other in earlier) else "v3_kept"
+        item["outside_gold_pages"] = False
+    return items
+
+
+def write_new_links_sheet(sources: list[tuple[str, Path, Path]], per_manual: int, sheet: Path, key_path: Path,
+                          titles: dict[str, str], origin: str) -> dict[str, dict[str, int]]:
+    """Blind sheet of new trusted relations, mixed with a third of relations the earlier run had too."""
+
+    if sheet.exists() or key_path.exists():
+        raise FileExistsError("Refusing to overwrite a precision sheet or its key; choose new paths.")
+    rng = random.Random(SEED)
+    chosen, counts = [], {}
+    for manual, after, before in sources:
+        items = new_link_items(after, before, manual)
+        new = [item for item in items if item["system"] == "v3_new"]
+        kept = [item for item in items if item["system"] == "v3_kept"]
+        counts[manual] = {"new": len(new), "kept": len(kept)}
+        picked = rng.sample(new, min(per_manual - per_manual // 3, len(new)))
+        chosen.extend(picked + rng.sample(kept, min(per_manual - len(picked), len(kept))))
+    rng.shuffle(chosen)
+    _write_blind(chosen, sheet, key_path, titles, origin)
+    return counts
+
+
+def _write_blind(chosen: list[dict], sheet: Path, key_path: Path, titles: dict[str, str], origin: str) -> None:
     sheet.parent.mkdir(parents=True, exist_ok=True)
     key = {}
     lines = [

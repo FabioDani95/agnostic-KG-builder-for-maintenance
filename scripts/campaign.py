@@ -7,7 +7,7 @@
     run <id>            3 V3 runs (runs/v3_r1..r3); skips done runs
     kpi [ids]           protocol KPIs for annotated manuals -> campaign/results/kpi.json and kpi.md
     precision [ids]     blind precision sheet (V3 run 1, mixed with the saved v22 graph where one exists)
-                        -> campaign/results/precision/
+                        -> campaign/results/precision/; --links-before samples new trusted relations
     precision --score   precision of the filled sheet
 
 The campaign has its own ledger, campaign/real_call_budget.jsonl, capped at 20 USD.
@@ -258,14 +258,28 @@ def cmd_precision(args) -> None:
     from scripts.kg_v3_precision_sheet import score, write_sheet
 
     target = CAMPAIGN / "results" / "precision"
-    suffix = "_2" if args.new else ""
+    number = getattr(args, "sheet", None) or (2 if args.new else 1)
+    suffix = f"_{number}" if number > 1 else ""
     sheet, key = target / f"REVISIONE_PRECISIONE{suffix}.md", target / f"chiave_non_aprire{suffix}.json"
     if args.score:
         score(sheet, key)
         return
     if sheet.exists() or key.exists():
-        raise SystemExit(f"{sheet.relative_to(ROOT)} or its key exists; preserved. Use --new for the second sheet.")
+        raise SystemExit(f"{sheet.relative_to(ROOT)} or its key exists; preserved. Use --sheet N for another sheet.")
     ids = args.ids or [path.parents[2].name for path in sorted(CAMPAIGN.glob("*/runs/v3_r1/graph.json"))]
+    if getattr(args, "links_before", None):
+        from scripts.kg_v3_precision_sheet import write_new_links_sheet
+
+        # The earlier run of each manual is the first of these folders that holds one.
+        before = [name.strip() for name in args.links_before.split(",") if name.strip()]
+        sources = [(manual, folder(manual) / "runs" / "v3_r1" / "graph.json",
+                    next((folder(manual) / name / "v3_r1" / "graph.json" for name in before
+                          if (folder(manual) / name / "v3_r1" / "graph.json").exists()),
+                         folder(manual) / before[0] / "v3_r1" / "graph.json")) for manual in ids]
+        counts = write_new_links_sheet(sources, args.per_system, sheet, key,
+                                       {manual: asset(manual)["name"] for manual in ids}, "campaign")
+        print(json.dumps(counts, indent=1))
+        return
     sources = [(manual, folder(manual) / "runs" / "v3_r1" / "graph.json", folder(manual) / "runs" / "v22" / "graph.json")
                for manual in ids]
     sources = [(manual, v3, v22 if v22.exists() else folder(manual) / "runs_C/v22/graph.json")
@@ -329,6 +343,9 @@ def main() -> int:
     precision.add_argument("ids", nargs="*")
     precision.add_argument("--score", action="store_true")
     precision.add_argument("--new", action="store_true", help="use the second blind sheet; preserve the original")
+    precision.add_argument("--sheet", type=int, help="number of the blind sheet (1, 2, 3, ...)")
+    precision.add_argument("--links-before", help="earlier run folders (for example runs_E,runs_first_contact): "
+                           "sample trusted relations of runs/v3_r1 that are new against them, with a third kept ones")
     precision.add_argument("--force", action="store_true", help="deprecated; existing sheets are always preserved")
     precision.add_argument("--per-system", type=int, default=12)
     args = parser.parse_args()
