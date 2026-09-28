@@ -103,3 +103,16 @@ def test_gpt_6_luna_rates_used_by_the_campaign():
     assert (pricing["input_per_million"], pricing["output_per_million"]) == (0.10, 0.50)
 
 
+
+
+def test_an_image_is_reserved_by_a_bounded_allowance_not_by_its_base64_length():
+    from backend.services.llm_gateway import _real_call_envelope
+
+    text = {"model": "gpt-6-luna", "messages": [{"role": "user", "content": "Read the flowchart."}],
+            "max_completion_tokens": 4000}
+    image = "data:image/png;base64," + "A" * 400_000
+    with_image = {**text, "messages": [{"role": "user", "content": [
+        {"type": "text", "text": "Read the flowchart."},
+        {"type": "image_url", "image_url": {"url": image, "detail": "high"}}]}]}
+    plain, pictured = _real_call_envelope(text), _real_call_envelope(with_image)
+    assert 6000 <= pictured.max_prompt_tokens - plain.max_prompt_tokens < 6200

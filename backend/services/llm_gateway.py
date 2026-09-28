@@ -130,14 +130,31 @@ def _structured_schema_characters(response_format: Any) -> int:
         return 0
 
 
+def _without_images(value: Any) -> tuple[Any, int]:
+    """The request with image data left out, and how many images it carries."""
+
+    if isinstance(value, dict):
+        if value.get("type") == "image_url":
+            return {"type": "image_url"}, 1
+        items = {key: _without_images(item) for key, item in value.items()}
+        return {key: item for key, (item, _) in items.items()}, sum(count for _, count in items.values())
+    if isinstance(value, list):
+        items = [_without_images(item) for item in value]
+        return [item for item, _ in items], sum(count for _, count in items)
+    return value, 0
+
+
 def _real_call_envelope(kwargs: dict[str, Any]) -> Any:
     from backend.services.real_call_budget_ledger import TokenEnvelope
 
-    serializable = {
+    serializable, images = _without_images({
         key: value
         for key, value in kwargs.items()
         if key not in {"response_format", "api_key"}
-    }
+    })
+    # An image is billed by its size in tiles, not by the length of its base64 text:
+    # counting its characters overstated one flowchart call a hundredfold.
+    image_tokens = images * max(0, int(os.environ.get("KG_REAL_CALL_IMAGE_TOKENS", "6000") or 6000))
     try:
         request_characters = len(
             json.dumps(serializable, ensure_ascii=False, default=str).encode("utf-8")
@@ -159,7 +176,7 @@ def _real_call_envelope(kwargs: dict[str, Any]) -> Any:
     # bound for the request plus strict response schema.  No cache credit is
     # assumed by the durable ledger.
     return TokenEnvelope(
-        max_prompt_tokens=request_characters + schema_characters + fixed_overhead,
+        max_prompt_tokens=request_characters + image_tokens + schema_characters + fixed_overhead,
         max_completion_tokens=max(0, max_completion),
     )
 
