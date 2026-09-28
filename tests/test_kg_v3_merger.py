@@ -308,3 +308,31 @@ def test_a_split_losing_witnesses_gets_targeted_verification_with_own_context():
     checked = asyncio.run(Checker(Verifier(), load_ontology(), extractor_id="test").recheck_split(DOC, [relation], parts))
     assert checked[1].assertion.tier is Tier.GREEN
     assert checked[1].assertion.conditions == relation.proposals[1].conditions
+
+
+def test_a_name_in_several_pairs_sends_its_context_once_per_judge_call():
+    import asyncio
+
+    from backend.kg_v3.merger import judge_pairs
+
+    a, b = _proposal("A", "Blue LED blinking"), _proposal("B", "Blue LED flickering")
+    a.source.name = "Bluetooth pairing available"
+    relation = _agreed_relation().model_copy(update={"proposals": [a, b]})
+    shared, other, third = identity(a.target), identity(b.target), "FailureMode|blue led flashing"
+    pairs = [MergePair(left=shared, right=other, left_name=a.target.name, right_name=b.target.name,
+                       type="FailureMode", left_cites=[ROW], right_cites=[ROW]),
+             MergePair(left=shared, right=third, left_name=a.target.name, right_name="Blue LED flashing",
+                       type="FailureMode", left_cites=[ROW], right_cites=[ROW])]
+
+    class Judge:
+        users = []
+
+        async def json(self, **kwargs):
+            self.users.append(kwargs["user"])
+            return {"answers": []}
+
+    judge = Judge()
+    asyncio.run(judge_pairs(judge, pairs, DOC, [relation]))
+    (user,) = judge.users
+    assert user.count("'Blue LED blinking': Connected problem/remedy branches") == 1
+    assert "M1: FailureMode N1 'Blue LED blinking' vs N2" in user and "M2: FailureMode N1" in user

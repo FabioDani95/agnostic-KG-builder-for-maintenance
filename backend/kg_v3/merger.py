@@ -218,6 +218,10 @@ def split_disagreements(doc: DocumentText, relations: list[CheckedRelation],
     return result
 
 
+MERGE_CONTEXT_STATEMENTS = 10
+MERGE_CONTEXT_SEGMENTS = 3
+
+
 def merge_context(key: str, cites: list[str], doc: DocumentText | None,
                   relations: list[CheckedRelation]) -> str:
     spec = load_ontology()
@@ -225,8 +229,10 @@ def merge_context(key: str, cites: list[str], doc: DocumentText | None,
     causes = {identity(e) for p in direct for e in (p.source, p.target) if e.type == "FailureMode"}
     connected = direct + [p for r in relations for p in r.proposals
                           if identity(p.source) in causes or identity(p.target) in causes]
-    lines = list(dict.fromkeys(statement(spec, p) for p in connected))[:16]
-    evidence = sorted({*cites, *(c for p in direct for c in p.all_cites)})[:8]
+    lines = list(dict.fromkeys(statement(spec, p) for p in connected))[:MERGE_CONTEXT_STATEMENTS]
+    # Where the name itself is written; its branches above carry the rest of the entry.
+    own = cites or sorted({c for p in direct for c in p.all_cites})
+    evidence = sorted(own[:MERGE_CONTEXT_SEGMENTS], key=lambda c: doc.position(c) or 0 if doc else 0)
     source = render_segments(doc.segments(evidence), doc=doc) if doc else "(source unavailable)"
     return "Connected problem/remedy branches:\n" + "\n".join(lines) + "\nCited source:\n" + source
 
@@ -242,10 +248,17 @@ async def judge_pairs(llm: ModelClient | None, pairs: list[MergePair],
 
     async def judge(batch: list[MergePair]) -> None:
         ids = [f"M{index}" for index in range(1, len(batch) + 1)]
-        text = "\n\n".join(f"{pair_id}: {pair.type} '{pair.left_name}' vs '{pair.right_name}'\n"
-                             f"LEFT {merge_context(pair.left, pair.left_cites, doc, relations)}\n"
-                             f"RIGHT {merge_context(pair.right, pair.right_cites, doc, relations)}"
-                             for pair_id, pair in zip(ids, batch))
+        # Each name's context is written once per call, however many pairs it is in.
+        sides: dict[str, tuple[str, list[str]]] = {}
+        for pair in batch:
+            sides.setdefault(pair.left, (pair.left_name, pair.left_cites))
+            sides.setdefault(pair.right, (pair.right_name, pair.right_cites))
+        labels = {key: f"N{index}" for index, key in enumerate(sides, start=1)}
+        contexts = "\n\n".join(f"{labels[key]} '{name}': {merge_context(key, cites, doc, relations)}"
+                                for key, (name, cites) in sides.items())
+        text = ("Names and their context:\n\n" + contexts + "\n\nPairs:\n"
+                + "\n".join(f"{pair_id}: {pair.type} {labels[pair.left]} '{pair.left_name}' vs "
+                            f"{labels[pair.right]} '{pair.right_name}'" for pair_id, pair in zip(ids, batch)))
         schema = {"type": "object", "additionalProperties": False, "required": ["answers"], "properties": {
             "answers": {"type": "array", "items": {
                 "type": "object", "additionalProperties": False, "required": ["id", "answer", "rationale", "cited_segments"],
