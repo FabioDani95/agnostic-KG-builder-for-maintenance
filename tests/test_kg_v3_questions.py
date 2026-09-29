@@ -76,7 +76,8 @@ def test_prompts_turn_flowchart_outcomes_and_expected_values_into_connected_bran
     # A cause under a title that names its situation is linked to that problem.
     assert "16. Every failure mode needs its problem." in EXTRACTION_PROMPT
     # A test with a normal value is an inspection with expected context, tied to a problem.
-    assert '"Suspected <component> fault"' in EXTRACTION_PROMPT
+    assert "A table of normal values is not evidence of a fault" in EXTRACTION_PROMPT
+    assert "Suspected" not in EXTRACTION_PROMPT + VERIFY_PASSAGE_PROMPT + REVIEWER_BRIEF
     assert "supports only the action that outcome leads to" in VERIFY_PASSAGE_PROMPT
     assert "A flowchart or numbered procedure\n   is one entry" in REVIEWER_BRIEF
 
@@ -96,3 +97,15 @@ def test_a_link_to_an_unnamed_cause_says_it_claims_the_path_of_the_problem_entry
     assert "flowchart or procedure that starts from this problem) leads to the check" in statement(spec, link)
     assert "the cited entry prescribes this check or remedy" in statement(spec, remedy)
     assert "the test whose outcome reveals such a cause is a check for it" in VERIFY_PROMPT
+
+
+def test_a_check_joined_to_a_repair_is_two_actions_and_both_parts_are_supported():
+    # Grizzly G0872 writes "Inspect/replace if at fault": read as one action marked inspection, the
+    # verifier rejected it as a check that replaces (Fabio's judge audit A010, A022, A028).
+    from backend.kg_v3.prompts import EXTRACTION_PROMPT, VERIFY_PASSAGE_PROMPT, VERIFY_PROMPT
+
+    assert "is two actions on the same failure: the check (inspection) and the repair" in EXTRACTION_PROMPT
+    assert "Never one action marked inspection" in EXTRACTION_PROMPT
+    for prompt in (VERIFY_PROMPT, VERIFY_PASSAGE_PROMPT):
+        assert "the check alone marked\n[inspection] and the repair alone are each supported" in prompt
+    assert "never name a fault or an\n    abnormal reading the manual does not state" in EXTRACTION_PROMPT
