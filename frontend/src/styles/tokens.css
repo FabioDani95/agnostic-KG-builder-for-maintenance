@@ -1,0 +1,52 @@
+/* Every value of docs/DESIGN.md, once. Screens use only these. */
+:root {
+  /* Document screens */
+  --bg: #f5f5f7;
+  --surface: #ffffff;
+  --text: #1d1d1f;
+  --text-2: #6e6e73;
+  --line: #d2d2d7;
+  --fill: #e8e8ed;
+  --link: #0066cc;
+
+  /* Stage screens (graph) */
+  --stage: #000000;
+  --glass: rgba(28, 28, 30, 0.72);
+  --glass-solid: #1c1c1e;
+  --text-d: #f5f5f7;
+  --text-d2: #a1a1a6;
+  --line-d: rgba(255, 255, 255, 0.12);
+  --fill-d: rgba(255, 255, 255, 0.08);
+  --link-d: #2997ff;
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.32);
+
+  /* The one accent */
+  --accent: #0071e3;
+
+  /* 8 px grid */
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 32px;
+  --s6: 48px;
+  --s8: 64px;
+  --control: 48px;
+  --bar: 64px;
+  --container: 1128px;
+  --gutter: 24px;
+  --panel-left: 288px;
+  --panel-right: 360px;
+
+  --r-panel: 12px;
+  --r-control: 8px;
+
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif;
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --t: 200ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t: 0ms;
+  }
+}

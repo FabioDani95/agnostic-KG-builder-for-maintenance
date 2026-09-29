@@ -29,7 +29,8 @@ una volta sola per il fondo scuro.
 - Schermo minimo: **1280 × 800**. È un prototipo da scrivania, non si progetta per il telefono.
 
 **Documento.** Contenitore centrato largo al massimo **1128 px**: 12 colonne da 72 px con 11
-spazi da 24 px. Margini laterali di almeno 48 px, uguali a sinistra e a destra.
+spazi da 24 px. Margini laterali di almeno 48 px, uguali a sinistra e a destra: sono il resto
+della centratura (a 1280 px valgono 76 px), l'unica misura che non segue la scala.
 
 - Tutti i bordi sinistri cadono sull'inizio di una colonna. Titolo, tabella e pulsanti
   condividono la stessa linea sinistra (colonna 1) e la stessa linea destra (colonna 12).
@@ -85,6 +86,11 @@ niente spaziatura tra lettere aggiunta.
 | `--text-d` | `#f5f5f7` | testo principale |
 | `--text-d2` | `#a1a1a6` | testo secondario (almeno 6:1 su `--glass-solid`) |
 | `--line-d` | `rgba(255, 255, 255, 0.12)` | separatori |
+| `--fill-d` | `rgba(255, 255, 255, 0.08)` | fondo di campi, controlli segmentati e pulsanti secondari sul palco |
+
+**Velature** (non sono colori nuovi, scuriscono o schiariscono quello che c'è): al passaggio del
+puntatore un pulsante riceve `rgba(0, 0, 0, 0.08)` sul chiaro e `rgba(255, 255, 255, 0.08)` sul
+palco; dietro la finestra della pagina del manuale il fondo è `rgba(0, 0, 0, 0.64)`.
 
 ### Accento
 
@@ -144,7 +150,8 @@ Lungo il percorso sintomo, causa, azione i colori vicini differiscono anche per 
 ## 7. Icone
 
 Un solo set lineare: sei tracciati copiati da [Lucide](https://lucide.dev) (licenza ISC) in un
-solo file, tratto 1,5 px, riquadro 24 px, colore del testo. Solo dove sostituiscono una parola
+solo file, tratto 1,5 px, riquadro 24 px (16 px dentro un campo o accanto a un testo), colore del
+testo. Solo dove sostituiscono una parola
 nota:
 
 | Icona | Uso |
@@ -170,7 +177,7 @@ campi, controlli segmentati, righe di tabella. In questo modo il bersaglio è se
 | **Pulsante secondario** | come il principale, fondo `--fill`, testo `--text`. |
 | **Pulsante semplice** | solo testo `#0066cc`, stessa altezza e padding, per azioni minori («Apri la pagina 20»). |
 | **Campo** | 48 px, raggio 8, bordo 1 px `--line`, fondo `--surface`, testo `body`. Etichetta `small` 600 sopra, a 8 px, sempre visibile. |
-| **Controllo segmentato** | 48 px, fondo `--fill`, raggio 8, segmenti uguali; il segmento scelto ha fondo `--surface` e testo 600. Per scelte esclusive: filtro della libreria, chi risponde ai dubbi, filtro per semaforo, velocità del replay. |
+| **Controllo segmentato** | 48 px, fondo `--fill`, raggio 8, segmenti uguali; il segmento scelto ha fondo `--surface`, bordo 1 px `--line` e testo 600. Segmenti con padding 24 px; nei pannelli del palco il controllo occupa tutta la larghezza e il padding scende a 8 px. Per scelte esclusive: filtro della libreria, chi risponde ai dubbi, filtro per semaforo, velocità del replay. |
 | **Tabella** | dentro un pannello `--surface` con raggio 12 e bordo 1 px. Intestazione alta 48 px, `small` 600 `--text-2`. Righe da 48 px separate da una linea 1 px `--line`. Padding orizzontale delle celle 16 px. Numeri a destra. Riga intera cliccabile, con fondo `--bg` al passaggio e contorno di focus. |
 | **Pannello** | `--surface` (chiaro) o vetro (palco), raggio 12, padding 24. Titolo `heading`. Un pannello non contiene altri pannelli. |
 | **Elenco** | righe da 48 px (una riga di testo) o da 72 px (due righe: `body` e `small`), separate da una linea. Niente schede. |

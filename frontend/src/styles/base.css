@@ -1,0 +1,112 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  min-width: 1280px;
+}
+
+h1,
+h2,
+h3,
+p,
+dl,
+dd,
+ol,
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Type scale: 13, 15, 17, 22, 34; weights 400 and 600 */
+.t-title {
+  font-size: 34px;
+  line-height: 40px;
+  font-weight: 600;
+}
+
+.t-heading {
+  font-size: 22px;
+  line-height: 32px;
+  font-weight: 600;
+}
+
+.t-large {
+  font-size: 17px;
+  line-height: 24px;
+}
+
+.t-body {
+  font-size: 15px;
+  line-height: 24px;
+}
+
+.t-small {
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.strong {
+  font-weight: 600;
+}
+
+.secondary {
+  color: var(--text-2);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

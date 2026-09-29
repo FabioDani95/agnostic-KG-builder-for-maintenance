@@ -1,0 +1,312 @@
+/* Stage screens: the graph fills the window, glass panels float above it. */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  background: var(--stage);
+  color: var(--text-d);
+  overflow: hidden;
+}
+
+.stage a {
+  color: var(--link-d);
+}
+
+.stage-graph {
+  position: absolute;
+  inset: 0;
+}
+
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--line-d);
+  border-radius: var(--r-panel);
+  box-shadow: var(--shadow-glass);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--glass-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+.stage-bar {
+  position: absolute;
+  top: var(--s2);
+  left: var(--s2);
+  right: var(--s2);
+  height: var(--bar);
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: 0 var(--s1);
+  z-index: 3;
+}
+
+.stage-bar-title {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stage-left,
+.stage-right {
+  position: absolute;
+  top: calc(var(--s2) + var(--bar) + var(--s2));
+  bottom: var(--s2);
+  overflow-y: auto;
+  padding: var(--s3);
+}
+
+.stage-left {
+  left: var(--s2);
+  width: var(--panel-left);
+}
+
+.stage-right {
+  right: var(--s2);
+  width: var(--panel-right);
+}
+
+.stage-counters {
+  position: absolute;
+  bottom: var(--s2);
+  left: calc(var(--s2) + var(--panel-left) + var(--s2));
+  right: calc(var(--s2) + var(--panel-right) + var(--s2));
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.stage-counters dl {
+  height: var(--control);
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: 0 var(--s3);
+  pointer-events: auto;
+}
+
+.stage-counters div {
+  display: flex;
+  gap: var(--s1);
+}
+
+.stage-counters dt {
+  color: var(--text-d2);
+}
+
+.stage .secondary,
+.stage .message {
+  color: var(--text-d2);
+}
+
+.stage .button-secondary {
+  background: var(--fill-d);
+  color: var(--text-d);
+}
+
+.stage .button:hover {
+  box-shadow: inset 0 0 0 999px rgba(255, 255, 255, 0.08);
+}
+
+.stage .button-plain {
+  color: var(--link-d);
+}
+
+.stage .button-plain:hover {
+  box-shadow: none;
+}
+
+.stage .input {
+  background: var(--fill-d);
+  border-color: var(--line-d);
+  color: var(--text-d);
+}
+
+.stage .input::placeholder {
+  color: var(--text-d2);
+}
+
+.stage .search svg {
+  color: var(--text-d2);
+}
+
+.stage .segmented {
+  background: var(--fill-d);
+}
+
+.stage .segmented button[aria-pressed="true"] {
+  background: var(--glass-solid);
+  border-color: var(--line-d);
+}
+
+.stage .progress {
+  background: var(--line-d);
+}
+
+.stage .progress > span {
+  background: var(--text-d);
+}
+
+.panel-section + .panel-section {
+  margin-top: var(--s3);
+  padding-top: var(--s3);
+  box-shadow: inset 0 1px 0 var(--line-d);
+}
+
+.panel-title {
+  font-size: 17px;
+  line-height: 24px;
+  font-weight: 600;
+  margin-bottom: var(--s2);
+}
+
+.stage-list > li {
+  padding: var(--s1) 0;
+  box-shadow: inset 0 -1px 0 var(--line-d);
+}
+
+.stage-list > li:last-child {
+  box-shadow: none;
+}
+
+.list-button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  min-height: var(--control);
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+  height: 24px;
+}
+
+.legend-mark {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.quote {
+  padding: var(--s1) 0;
+}
+
+.quote-page {
+  color: var(--text-d2);
+}
+
+/* 3d-force-graph tooltip, in the same material as the panels */
+.float-tooltip-kap {
+  background: var(--glass-solid) !important;
+  color: var(--text-d) !important;
+  font-family: var(--font) !important;
+  font-size: 13px !important;
+  line-height: 16px !important;
+  padding: var(--s1) !important;
+  border-radius: var(--r-control) !important;
+  border: 1px solid var(--line-d);
+}
+
+.page-dialog {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  max-width: calc(100vw - 2 * var(--s6));
+  max-height: calc(100vh - 2 * var(--s6));
+}
+
+.page-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.64);
+}
+
+.page-dialog-frame {
+  background: var(--glass-solid);
+  color: var(--text-d);
+  border-radius: var(--r-panel);
+  padding: var(--s2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.page-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-image {
+  position: relative;
+  overflow: auto;
+  max-height: calc(100vh - 2 * var(--s6) - var(--control) - 3 * var(--s2));
+}
+
+.page-image img {
+  display: block;
+}
+
+.page-mark {
+  position: absolute;
+  border: 2px solid var(--accent);
+}
+
+.segmented-fill {
+  display: grid;
+  width: 100%;
+}
+
+.segmented-fill button {
+  padding: 0 var(--s1);
+}
+
+.quote-row {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  column-gap: var(--s1);
+  align-items: baseline;
+  padding: var(--s1) 0;
+}
+
+.search-results {
+  position: absolute;
+  top: calc(var(--control) + var(--s1));
+  left: 0;
+  right: 0;
+  max-height: 384px;
+  overflow-y: auto;
+  padding: var(--s1) 0;
+  z-index: 2;
+}
+
+.search-results button {
+  display: block;
+  width: 100%;
+  min-height: var(--control);
+  padding: var(--s1) var(--s2);
+  background: none;
+  border: 0;
+  color: var(--text-d);
+  text-align: left;
+  cursor: pointer;
+}
+
+.search-results button:hover,
+.search-results button:focus-visible {
+  background: var(--fill-d);
+}
