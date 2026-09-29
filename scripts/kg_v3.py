@@ -34,6 +34,10 @@ GATE_PRESETS = {
     "agent": {"map": ["agent"], "doubts": ["agent"], "approval": ["auto"]},
     "auto": {"map": ["auto"], "doubts": ["auto"], "approval": ["auto"]},
     "interactive": {"map": ["agent"], "doubts": ["agent", "human"], "approval": ["human"]},
+    # Runs started from the interface: the approval is the person's button, never automatic.
+    "ui-agent": {"map": ["agent"], "doubts": ["agent"], "approval": []},
+    "ui-interactive": {"map": ["agent"], "doubts": ["agent", "human"], "approval": []},
+    "ui-human": {"map": ["agent"], "doubts": ["human"], "approval": []},
 }
 
 
@@ -81,13 +85,17 @@ def manual_source(manual_id: str) -> tuple[Path, dict]:
     return CAMPAIGN / manual_id / "manual.pdf", asset(manual_id)
 
 
-async def run(args) -> dict:
-    from backend.kg_v3.export import graph_json
-    from backend.kg_v3.llm import ModelClient
-    from backend.kg_v3.reader import read_document
-    from backend.kg_v3.reviewers import InMemoryQuestionStore, render_question
-    from backend.kg_v3.run import Pipeline, RunConfig
+def info_asset(path: Path) -> dict:
+    """Machine identity from an info.yaml written like the campaign's."""
 
+    import yaml
+
+    machine = yaml.safe_load(path.read_text(encoding="utf-8"))["machine"]
+    return {"name": machine["name"], "description": machine["name"], "brand": machine.get("brand", "not_stated"),
+            "model": machine.get("model", "not_stated"), "asset_type": machine.get("type", "not_stated")}
+
+
+async def run(args) -> dict:
     started = time.perf_counter()
     if args.manual:
         pdf, asset = manual_source(args.manual)
@@ -95,9 +103,36 @@ async def run(args) -> dict:
         pdf = Path(args.pdf).resolve()
         asset = {"name": args.asset_name or pdf.stem, "description": args.asset_name or pdf.stem,
                  "brand": "not_stated", "model": "not_stated", "asset_type": "not_stated"}
+        if args.info:
+            asset = info_asset(Path(args.info))
     out = Path(args.out)
     out = (out if out.is_absolute() else ROOT / out).resolve()
+    resumed = (out / "state").exists()
     out.mkdir(parents=True, exist_ok=True)
+    on_event = None
+    if args.events:
+        from backend.ui.events import EventLog
+
+        on_event = EventLog(out / "events.jsonl")
+        manual_id = args.manual or (Path(args.info).resolve().parent.name if args.info else pdf.stem)
+        on_event("run_started", {"manual_id": manual_id, "version_id": out.name,
+                                 "mode": "resume" if resumed else "live"})
+        on_event("step_started", {"step": "pdf_read"})
+    try:
+        return await _run(args, pdf, asset, out, started, on_event)
+    except BaseException as error:
+        if on_event is not None:
+            on_event("run_failed", {"message": f"{type(error).__name__}: {error}"})
+        raise
+
+
+async def _run(args, pdf: Path, asset: dict, out: Path, started: float, on_event) -> dict:
+    from backend.kg_v3.export import graph_json
+    from backend.kg_v3.llm import ModelClient
+    from backend.kg_v3.reader import read_document
+    from backend.kg_v3.reviewers import InMemoryQuestionStore, render_question
+    from backend.kg_v3.run import Pipeline, RunConfig
+
     Path(args.ledger).resolve().parent.mkdir(parents=True, exist_ok=True)
     evidence, page_count, sha = load_evidence(pdf, asset)
     os.environ.update({
@@ -111,6 +146,8 @@ async def run(args) -> dict:
 
     attach_pdf_sections(doc, pdf)
     read_seconds = time.perf_counter() - started
+    if on_event is not None:
+        on_event("step_finished", {"step": "pdf_read", "seconds": round(read_seconds, 3)})
     config = RunConfig(model=args.model, reasoning_effort=args.reasoning, reads=args.reads,
                        gates=GATE_PRESETS[args.gates], agent_model=args.agent_model,
                        agent_reasoning_effort=args.agent_reasoning)
@@ -118,7 +155,7 @@ async def run(args) -> dict:
     agent_llm = ModelClient(model=args.agent_model, reasoning_effort=args.agent_reasoning)
     store = InMemoryQuestionStore()
     result = await Pipeline(doc=doc, pdf_path=pdf, asset_name=asset["name"], llm=llm, config=config, agent_llm=agent_llm,
-                            human_store=store, workdir=out).run()
+                            human_store=store, workdir=out, on_event=on_event).run()
     result.report["seconds"].update(pdf_read=round(read_seconds, 3),
                                     end_to_end=round(time.perf_counter() - started, 3))
     result.report["provenance"] = {
@@ -132,6 +169,8 @@ async def run(args) -> dict:
     pending = store.open_questions()
     (out / "questions_for_people.txt").write_text(
         "\n\n".join(render_question(question) for question in pending), encoding="utf-8")
+    if on_event is not None:
+        on_event("run_finished", {"graph": graph, "status": result.status, "open_questions": len(pending)})
     return result.report
 
 
@@ -141,6 +180,8 @@ def main() -> int:
     source.add_argument("--manual", help="manual ID of a campaign folder (campaign/<id>)")
     source.add_argument("--pdf", help="path to any PDF")
     parser.add_argument("--asset-name", default="")
+    parser.add_argument("--info", help="info.yaml with the machine identity, for --pdf")
+    parser.add_argument("--events", action="store_true", help="write interface events to <out>/events.jsonl")
     parser.add_argument("--out", required=True)
     parser.add_argument("--gates", choices=sorted(GATE_PRESETS), default="agent")
     parser.add_argument("--model", default="gpt-6-luna")

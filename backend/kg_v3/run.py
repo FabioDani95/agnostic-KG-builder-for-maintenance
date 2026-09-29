@@ -11,9 +11,10 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import logging
 import time
 from collections import Counter
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -63,6 +64,11 @@ from backend.kg_v3.reviewers import (
 )
 
 GATE_NAMES = ("map", "doubts", "approval")
+
+logger = logging.getLogger(__name__)
+
+# Optional progress events (step started/finished, state saved/loaded) for a live view.
+EventSink = Callable[[str, dict[str, Any]], None]
 
 
 class RunConfig(BaseModel):
@@ -140,8 +146,10 @@ class Pipeline:
         workdir: Path | None = None,
         spec: OntologySpec | None = None,
         pdf_path: Path | None = None,
+        on_event: EventSink | None = None,
     ) -> None:
         self.doc = doc
+        self.on_event = on_event
         self.pdf_path = pdf_path
         self.visual_records: list[dict] = []
         self.asset_name = asset_name
@@ -159,6 +167,21 @@ class Pipeline:
         self.map_removed: list[int] = []
         self.image_pages: list[int] = []
 
+    # Events --------------------------------------------------------------
+
+    def _emit(self, kind: str, **data: Any) -> None:
+        """Report progress; a failing listener never changes or stops the run."""
+
+        if self.on_event is None:
+            return
+        cost = self.llm.usage.estimated_cost_usd
+        if hasattr(self.agent_llm, "usage") and self.agent_llm is not self.llm:
+            cost += self.agent_llm.usage.estimated_cost_usd
+        try:
+            self.on_event(kind, {**data, "cost_usd": round(cost, 6)})
+        except Exception:
+            logger.exception("event listener failed on %s", kind)
+
     # Persistence ---------------------------------------------------------
 
     def _path(self, name: str) -> Path | None:
@@ -166,16 +189,19 @@ class Pipeline:
 
     def _load(self, name: str) -> Any | None:
         path = self._path(name)
-        return json.loads(path.read_text(encoding="utf-8")) if path and path.exists() else None
+        value = json.loads(path.read_text(encoding="utf-8")) if path and path.exists() else None
+        if value is not None:
+            self._emit("state_loaded", name=name, value=value)
+        return value
 
     def _save(self, name: str, value: Any) -> None:
-        path = self._path(name)
-        if path is None:
-            return
-        path.parent.mkdir(parents=True, exist_ok=True)
         if isinstance(value, BaseModel):
             value = value.model_dump(mode="json")
-        path.write_text(json.dumps(value, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+        path = self._path(name)
+        if path is not None:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(value, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+        self._emit("state_saved", name=name, value=value)
 
     # Gates ---------------------------------------------------------------
 
@@ -219,10 +245,12 @@ class Pipeline:
 
     async def _timed(self, name: str, coroutine):
         started = time.perf_counter()
+        self._emit("step_started", step=name)
         try:
             return await coroutine
         finally:
             self.timings[name] = round(self.timings.get(name, 0) + time.perf_counter() - started, 3)
+            self._emit("step_finished", step=name, seconds=round(time.perf_counter() - started, 3))
 
     async def _map(self) -> tuple[DocumentMap, GateRecord]:
         saved = self._load("map")
