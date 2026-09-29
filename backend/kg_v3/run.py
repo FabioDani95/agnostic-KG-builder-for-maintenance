@@ -422,9 +422,12 @@ class Pipeline:
 
         gates = {"map": map_record, "doubts": doubt_record, "recovery": recovery_record}
         summary = self._summary(graph, relations, doubt_record)
-        approval = await self._timed("gate_approval", self._gate("approval", [approval_question(summary)]))
+        current = approval_question(summary)
+        approval = await self._timed("gate_approval", self._gate("approval", [current]))
         gates["approval"] = approval
-        decision = next((answer.option_id for answer in approval.answers), None)
+        # Only an answer to this graph's question counts: a changed graph needs a new approval.
+        decision = next((answer.option_id for answer in approval.answers
+                         if answer.question_id == current.question_id), None)
         status = {"approve": "approved", "reject": "rejected"}.get(decision, "awaiting_approval")
         return self._result(status, page_map, units, relations, graph, gates, started, extractions)
 

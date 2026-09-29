@@ -349,3 +349,15 @@ def test_a_persons_answers_stand_when_the_run_resumes(doc, tmp_path):
     assert all(decided[assertion_id].assertion.tier is Tier.RED for assertion_id in rejected if assertion_id in decided)
     assert not any(edge.tier is Tier.YELLOW for edge in second.graph.edges)
     assert second.status == "awaiting_approval"
+
+
+def test_an_approval_of_an_older_graph_does_not_count(doc, tmp_path):
+    run, _ = pipeline(doc, ScriptedProvider(), tmp_path / "run")
+    assert asyncio.run(run.run()).status == "approved"
+    path = tmp_path / "run" / "state" / "gate_approval.json"
+    record = json.loads(path.read_text())
+    record["answers"][0]["question_id"] = "approval:older"  # an answer given to a graph that has changed since
+    path.write_text(json.dumps(record))
+    again, _ = pipeline(doc, FailingProvider(), tmp_path / "run",
+                        gates={"map": ["agent"], "doubts": ["agent"], "approval": []})
+    assert asyncio.run(again.run()).status == "awaiting_approval"

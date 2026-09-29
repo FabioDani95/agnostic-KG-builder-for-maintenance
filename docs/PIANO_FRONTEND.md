@@ -27,10 +27,9 @@ Fasi 1–6 fatte, ciascuna con il suo commit. Differenze dal piano emerse lavora
 - «Applica» e «Approva» rispondono quando la ripresa ha scritto il suo primo evento, e la vista
   segue solo l'ultimo tentativo di un'esecuzione: una ripresa ricarica tutto lo stato, quindi
   racconta l'intera storia.
-- Terza anomalia della pipeline, **aperta**: la decisione di approvazione è la prima risposta nel
-  registro del cancello, anche se appartiene a una domanda vecchia (grafo cambiato). Nell'interfaccia
-  non si presenta perché le copie di versioni della campagna non portano con sé l'approvazione
-  automatica; la correzione in `run.py` aspetta l'ok di Fabio.
+- Terza anomalia della pipeline, **corretta** (ok di Fabio): la decisione di approvazione era la prima
+  risposta nel registro del cancello, anche di una domanda vecchia; ora conta solo la risposta alla
+  domanda del grafo attuale. Le copie della campagna continuano a non portare l'approvazione automatica.
 - Esecuzione reale su Graco dall'interfaccia, in «Solo io»: 99 s, 31 chiamate, 0,0224 USD. Le sue
   10 domande sono per Fabio e non hanno risposta.
 
