@@ -136,12 +136,13 @@ def ledger_costs(run_id: str, ledger: Path, cache_dir: Path | None = None) -> li
     if cache and cache.exists():
         return [tuple(item) for item in json.loads(cache.read_text(encoding="utf-8"))]
     points = []
-    needle = f'"call_id":"{run_id}:'
     with ledger.open(encoding="utf-8") as handle:
         for line in handle:
-            if needle not in line or '"call_finalized"' not in line:
+            if run_id not in line or '"call_finalized"' not in line:
                 continue
             entry = json.loads(line)
+            if not str(entry.get("call_id", "")).startswith(f"{run_id}:"):
+                continue
             stamp = datetime.fromisoformat(entry["timestamp"]).timestamp()
             points.append((stamp, float(entry.get("charged_cost_usd") or 0.0)))
     points.sort()

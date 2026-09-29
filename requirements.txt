@@ -6,3 +6,7 @@ openai==2.44.0
 pydantic>=2.13,<3
 pydantic-settings>=2.14,<3
 pyyaml>=6
+# Local web interface (docs/PIANO_FRONTEND.md): API, server and PDF upload.
+fastapi>=0.129,<1
+uvicorn>=0.50
+python-multipart>=0.0.20
