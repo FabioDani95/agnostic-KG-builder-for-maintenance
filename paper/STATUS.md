@@ -333,3 +333,9 @@ IC95 0,503–0,575); pagine gold lette Grizzly 6–8 → 18/20, ABB 7–8 → 11
 Atlas Copco e Grundfos non giudicati per il tetto di spesa. Da ora Grizzly e LG sono di sviluppo;
 restano validi i loro numeri di primo contatto. Precisione dei collegamenti nuovi non misurata:
 foglio cieco 3 da compilare. Spesa 12,813 USD su 20 (tetto dell'iterazione alzato da Fabio a 13,0).
+
+Dopo la revisione cieca del giudice (Fabio, 40 coppie): i rami mancati mancano per lo più davvero
+(21/32 errori del sistema, 7/32 errori del giudice, 4/32 gold discutibile). Corrette senza nuove
+esecuzioni due regole di estrazione e verifica (azione composta controllo + riparazione, test dei
+componenti senza guasti inventati); resta aperta la fusione di cause dedotte tra diagrammi diversi.
+Backend fermo in attesa del frontend.
