@@ -8,8 +8,11 @@ una cartella di esecuzione completa, per esempio `campaign/lg_lmh2235st/runs/v3_
 (`graph.json`, `report.json`, `state/`, `questions_for_people.txt`).
 
 Prototipo visivo di riferimento (cliccabile, quattro schermate):
-https://claude.ai/artifact/S4zBRjGb6iBs7FMYK4Zif3. È un'indicazione di struttura e di tono, non una
-specifica al pixel.
+https://claude.ai/artifact/S4zBRjGb6iBs7FMYK4Zif3. Vale **solo per la struttura** (quali schermate,
+che cosa contengono, come si passa dall'una all'altra). Il suo aspetto **non** va copiato: Fabio lo
+ha bocciato proprio per i dettagli elencati nella sezione 4 (puntini separatori, scritte piccole sopra
+i titoli, pallini colorati di stato, etichette in maiuscolo, riga di numeri grandi, alone dietro il
+grafo). Le regole della sezione 4 prevalgono sul prototipo.
 
 ## 0. Scopo
 
@@ -18,7 +21,7 @@ da riga di comando. Deve permettere a Fabio di:
 
 1. vedere **tutti i grafi e le loro versioni** (una versione = un'esecuzione);
 2. **caricare un manuale PDF** e avviare una nuova esecuzione;
-3. seguire l'esecuzione dal vivo: al centro un **grafo 3D a pallini** che compaiono man mano che il
+3. seguire l'esecuzione dal vivo: al centro un **grafo 3D a pallini** (i nodi: è l'unico posto dove compaiono cerchi) che compaiono man mano che il
    sistema trova e verifica relazioni, con le stazioni e le relazioni trovate ai lati;
 4. rispondere alle **poche domande per la persona** (cancello dei dubbi e approvazione);
 5. aprire un grafo finito, navigarlo, vedere le prove di ogni arco (segmenti, pagine, semaforo).
@@ -71,10 +74,9 @@ Da costruire, **senza toccare la logica di estrazione**:
 
 ## 3. Schermate
 
-1. **Libreria.** Titolo grande, ricerca, filtro (tutti / da rivedere / approvati), griglia di schede:
-   una per manuale, con tipo di macchina, nome, pagine, nodi e relazioni verificate, stato
-   («Approvato», «3 domande per te»), versioni come piccole pillole (l'ultima evidenziata). Pulsante
-   «Nuovo grafo».
+1. **Libreria.** Titolo, ricerca, filtro (tutti / da rivedere / approvati), tabella dei manuali
+   (vedi sezione 4) e pulsante «Nuovo grafo». Aprendo un manuale: le sue versioni in ordine di data,
+   ciascuna con codice usato, relazioni verificate, domande aperte, stato.
 2. **Nuovo grafo.** Area di trascinamento del PDF, riga del file con pagine lette, campi macchina /
    marca / modello / tipo (come `info.yaml`), scelta di chi risponde ai dubbi (solo agente, agente
    poi io, solo io), stima di tempo e costo (dai dati delle esecuzioni passate, dichiarata come
@@ -82,7 +84,7 @@ Da costruire, **senza toccare la logica di estrazione**:
 3. **Esecuzione dal vivo** (sfondo scuro, come una sala di controllo): a sinistra le sei stazioni con
    stato e dettaglio («unità 4 di 8»); al centro il **grafo 3D** che cresce, con contatori (nodi,
    relazioni, verificate); a destra l'elenco delle relazioni appena trovate. In alto tempo trascorso,
-   costo finora, pausa, «N domande per te». Un pallino compare quando un nodo nasce; un arco
+   costo finora, pausa, «N domande per te». Un nodo del grafo compare quando nasce; un arco
    diventa pieno quando è verificato (verde), tratteggiato se in dubbio, sparisce se scartato.
    Clic su un pallino: pannello con nome, tipo, segmenti citati e pagine.
 4. **Domande per te.** Una domanda per volta, con avanzamento: le parole del manuale (con pagina,
@@ -91,28 +93,74 @@ Da costruire, **senza toccare la logica di estrazione**:
 5. **Grafo finito.** Il grafo 3D navigabile, ricerca per sintomo o codice, percorso sintomo → causa →
    azione evidenziato, pannello delle prove di ogni arco, filtro per semaforo, e cambio di versione.
 
-## 4. Stile: Apple, nella versione attuale
+## 4. Stile: sobrio, geometrico, alla Apple, senza segni da interfaccia generata
 
 Riferimenti: [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines),
-[Liquid Glass](https://developer.apple.com/documentation/technologyoverviews/liquid-glass),
-[Meet Liquid Glass, WWDC25](https://developer.apple.com/videos/play/wwdc2025/219/).
+[Liquid Glass](https://developer.apple.com/documentation/technologyoverviews/liquid-glass). Segni tipici di
+un'interfaccia "vibe coded", da evitare:
+[Fountain Institute](https://www.thefountaininstitute.com/blog/signs-vibe-coded-ui),
+[Developers Digest](https://www.developersdigest.tech/blog/ai-design-slop-and-how-to-spot-it).
 
-- **Principi:** chiarezza, deferenza (il contenuto, cioè il grafo, comanda; l'interfaccia si fa
-  da parte), profondità (la gerarchia si legge dagli strati).
-- **Materiale:** pannelli e barre in vetro traslucido che galleggiano sopra il contenuto
-  (`backdrop-filter: blur(20–30px) saturate(160–180%)`, sfondo bianco o grigio scuro all'80–90%, bordo
-  a 1 px quasi invisibile), angoli molto arrotondati (14–28 px), ombre morbide e larghe. Rispettare
-  «riduci trasparenza» e «riduci movimento» del sistema (`prefers-reduced-transparency`,
-  `prefers-reduced-motion`).
-- **Tipografia:** font di sistema (`-apple-system, "SF Pro Display", "SF Pro Text"`), titoli grandi e
-  pesanti con spaziatura negativa, testo 15–17 px, grigi secondari leggibili (contrasto ≥ 4,5:1).
-- **Colore:** fondo chiaro `#f5f5f7` e testo `#1d1d1f`; schermata dal vivo scura (`#0b0b0f`); un solo
-  accento blu (`#0071e3` chiaro, `#0a84ff` scuro); colori di sistema per i tipi di nodo (sintomo
-  arancio, causa rosso, azione verde, componente azzurro, codice giallo), sempre con legenda.
-- **Movimento:** animazioni brevi e fisiche (molle), mai decorative; i pallini «sbocciano» quando
-  nascono, la scena 3D ruota piano e si ferma quando l'utente la tocca.
-- **Controlli:** pulsanti a pillola, controlli segmentati, niente icone emoji, bersagli ≥ 44 px,
-  elementi veri (`button`, `input`, `label`) e navigazione da tastiera.
+Prima di scrivere componenti, fissa le decisioni una volta sola in `docs/DESIGN.md` (griglia,
+spaziature, scala tipografica, colori, raggi, ombre, movimento, componenti) e fallo approvare da
+Fabio insieme al piano. Ogni schermata usa solo quei valori.
+
+**Principi.** Chiarezza, deferenza (il grafo e i dati comandano, l'interfaccia si fa da parte),
+profondità data dagli strati, non dagli effetti. Ogni elemento deve avere una funzione: se toglierlo
+non fa perdere informazione né un'azione, si toglie.
+
+**Geometria e allineamento.**
+- Griglia a 8 px per tutte le misure; colonne fisse per pagina; margini uguali a sinistra e a destra.
+- Tutto allineato: bordi sinistri su poche linee verticali, testi su linee di base comuni, stesse
+  altezze per gli elementi dello stesso livello (righe di tabella, pulsanti, campi).
+- Forme semplici e coerenti: rettangoli con un solo raggio per livello (per esempio 12 px per i
+  pannelli, 8 px per i controlli), bordi a 1 px o nessun bordo, niente forme decorative.
+- Liste e tabelle allineate in colonne, numeri allineati a destra con cifre tabulari
+  (`font-variant-numeric: tabular-nums`).
+
+**Tipografia.** Font di sistema (`-apple-system, "SF Pro Text", "SF Pro Display"`), scala corta
+(per esempio 13, 15, 17, 22, 34 px), due pesi (regular e semibold). Maiuscole normali ovunque.
+Contrasto del testo almeno 4,5:1, anche per il testo secondario.
+
+**Colore.** Neutri (bianco, `#f5f5f7`, grigi, `#1d1d1f`) più **un solo** colore d'accento per le
+azioni principali. Il colore porta significato solo nel grafo (un colore per tipo di nodo, con
+legenda a testo) e negli stati di verifica degli archi. Fuori dal grafo, niente colore decorativo.
+
+**Materiale.** Il vetro traslucido solo per barre e pannelli che galleggiano sopra il grafo, per
+tenerlo visibile; altrove superfici piene. Rispettare `prefers-reduced-transparency` e
+`prefers-reduced-motion`.
+
+**Movimento.** Transizioni brevi (150–250 ms) che spiegano un cambiamento di stato; nel grafo i nodi
+appaiono quando nascono e la scena resta ferma se l'utente la tocca. Niente animazioni decorative o
+in loop fuori dal grafo.
+
+**Vietato (Fabio lo ha escluso esplicitamente, o è un segno di interfaccia generata):**
+- puntini o altri caratteri usati come separatori nel testo («49 pagine · 330 nodi»): usa colonne,
+  etichette o righe separate;
+- scritte piccole e inutili sopra o sotto i titoli (occhielli, sottotitoli di contorno come «8 manuali
+  · 24 domande aspettano una risposta»): un titolo dice che cosa è la pagina, i dati stanno nel
+  contenuto;
+- pallini colorati di stato («● 10 domande per te»): lo stato si scrive a parole, per esempio una
+  colonna «Domande aperte» con il numero;
+- etichette tutto maiuscolo, badge sopra i titoli, righe di numeri grandi come «banner» di
+  statistiche;
+- gradienti, aloni, bagliori, ombre colorate, sfondi con macchie di colore;
+- schede dentro schede, bordi colorati sul lato sinistro, griglie di schede identiche con un'icona in
+  cima quando una tabella basta;
+- emoji e icone decorative; le icone solo dove sostituiscono una parola nota (chiudi, cerca, indietro),
+  tutte della stessa famiglia (per esempio SF Symbols o un set lineare unico);
+- testi segnaposto, numeri inventati, frasi di marketing.
+
+**Controlli.** Pulsanti con testo chiaro, un solo pulsante principale per schermata, controlli
+segmentati per le scelte esclusive, bersagli di almeno 44 px, elementi veri (`button`, `input`,
+`label`), navigazione da tastiera e focus visibile.
+
+**Libreria (esempio di applicazione).** Una tabella, non una griglia di schede: colonne Manuale,
+Macchina, Pagine, Versione, Relazioni verificate, Domande aperte, Stato; righe della stessa altezza;
+un clic sulla riga apre il grafo; le versioni si vedono aprendo il manuale.
+
+**Controllo prima di ogni consegna.** Fai uno screenshot di ogni schermata e confrontalo con questo
+elenco, voce per voce; correggi prima di mostrarlo a Fabio.
 
 ## 5. Piano (da proporre a Fabio dopo la fase 0, con tutti i dettagli)
 
