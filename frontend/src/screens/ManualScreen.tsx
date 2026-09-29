@@ -6,8 +6,8 @@ import { type Column, Table } from "../components/Table";
 import { formatDate, formatNumber, iterationLabel, statusLabel } from "../text/it";
 
 const COLUMNS: Column<Version>[] = [
-  { key: "date", label: "Data", span: 2, render: (row) => formatDate(row.date) },
-  { key: "iteration", label: "Iterazione", span: 2, render: (row) => iterationLabel(row) },
+  { key: "date", label: "Data", span: 3, render: (row) => formatDate(row.date) },
+  { key: "iteration", label: "Iterazione", span: 3, render: (row) => iterationLabel(row) },
   { key: "run", label: "Ripetizione", span: 1, numeric: true, render: (row) => formatNumber(row.repetition) },
   { key: "commit", label: "Codice", span: 1, render: (row) => row.commit },
   { key: "verified", label: "Relazioni verificate", span: 1, numeric: true, render: (row) => formatNumber(row.verified) },
@@ -18,7 +18,7 @@ const COLUMNS: Column<Version>[] = [
     numeric: true,
     render: (row) => formatNumber(row.open_questions),
   },
-  { key: "status", label: "Esito", span: 4, render: (row) => statusLabel(row.status, row.decided_by) },
+  { key: "status", label: "Esito", span: 2, render: (row) => statusLabel(row.status, row.decided_by) },
 ];
 
 export function ManualScreen() {

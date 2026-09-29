@@ -43,6 +43,6 @@ describe("library", () => {
     await waitFor(() => expect(screen.getAllByRole("link", { name: /Acme/ })).toHaveLength(2));
     expect(screen.getByText("Acme P2")).toBeTruthy();
     expect(screen.getByText("Da approvare")).toBeTruthy();
-    expect(screen.getByText("Approvato in automatico")).toBeTruthy();
+    expect(screen.getByText("Approvato dal sistema")).toBeTruthy();
   });
 });

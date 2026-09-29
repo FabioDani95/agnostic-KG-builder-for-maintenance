@@ -32,6 +32,21 @@ Every model call goes through an archived gateway with a hard cost ceiling
 .venv/bin/ruff check . && .venv/bin/python -m pytest
 ```
 
+## Interface (prototype)
+
+A local web interface over the same pipeline: the library of graphs and their versions,
+upload of a PDF, the run followed live as a growing 3D graph, the questions for a person
+and the finished graph with the evidence of every edge. One command (Node.js is needed):
+
+```bash
+.venv/bin/python scripts/ui.py   # http://127.0.0.1:8765
+```
+
+Campaign runs are only read and can be replayed at no cost; runs started from the interface,
+and copies made to answer questions, live in `workspace/` (not versioned). Real runs go
+through the same ledger with a spend ceiling. Design rules: [docs/DESIGN.md](docs/DESIGN.md);
+plan and API: [docs/PIANO_FRONTEND.md](docs/PIANO_FRONTEND.md).
+
 ## Evaluation
 
 The evaluation campaign lives in [campaign/](campaign/README.md): one folder per manual with
@@ -47,6 +62,7 @@ Scientific status and paper workspace: [paper/STATUS.md](paper/STATUS.md).
 | `backend/adapters/pdf.py`, `backend/services/pdf_service.py` | PDF text, tables and OCR |
 | `backend/services/llm_gateway.py`, `llm_response_archive.py`, `real_call_budget_ledger.py`, `model_pricing.py` | model calls, archive, budget, prices |
 | `scripts/kg_v3.py` | one manual from the command line |
+| `backend/ui/`, `frontend/`, `scripts/ui.py` | local interface: API, events and replay, React app |
 | `scripts/campaign.py`, `kg_v3_kpi.py`, `kg_v3_evaluate.py`, `kg_v3_precision_sheet.py` | evaluation campaign |
 | `campaign/` | manuals, gold, runs and results |
 | `paper/` | manuscript workspace and frozen experiment evidence |

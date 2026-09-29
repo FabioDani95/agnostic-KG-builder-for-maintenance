@@ -8,7 +8,7 @@ export interface Column<T> {
   render: (row: T) => ReactNode;
 }
 
-/** A table on the page grid: rows of 48 px, numbers right-aligned, the whole row opens its item. */
+/** A table on a 12-column grid: rows of 48 px, numbers right-aligned, the whole row opens its item. */
 export function Table<T>({
   label,
   columns,
@@ -24,7 +24,7 @@ export function Table<T>({
   onOpen?: (row: T) => void;
   empty: string;
 }) {
-  const template = columns.map((column) => `${column.span}fr`).join(" ");
+  const template = "repeat(12, minmax(0, 1fr))";
   const keyDown = (row: T) => (event: KeyboardEvent) => {
     if (onOpen && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
@@ -35,7 +35,12 @@ export function Table<T>({
     <div className="table" role="table" aria-label={label}>
       <div className="table-row table-head" role="row" style={{ gridTemplateColumns: template }}>
         {columns.map((column) => (
-          <span key={column.key} role="columnheader" className={column.numeric ? "num" : undefined}>
+          <span
+            key={column.key}
+            role="columnheader"
+            className={column.numeric ? "num" : undefined}
+            style={{ gridColumn: `span ${column.span}` }}
+          >
             {column.label}
           </span>
         ))}
@@ -58,6 +63,7 @@ export function Table<T>({
                 key={column.key}
                 role="cell"
                 className={column.numeric ? "num" : undefined}
+                style={{ gridColumn: `span ${column.span}` }}
                 title={typeof content === "string" ? content : undefined}
               >
                 {content}

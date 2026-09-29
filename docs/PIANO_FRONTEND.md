@@ -19,6 +19,21 @@ Si avvia con un comando:
 .venv/bin/python scripts/ui.py
 ```
 
+## Stato (29 settembre 2026)
+
+Fasi 1–6 fatte, ciascuna con il suo commit. Differenze dal piano emerse lavorando:
+
+- «Ferma» è `POST /manuals/{m}/versions/{v}/stop` invece di `/jobs/{job}/stop`.
+- «Applica» e «Approva» rispondono quando la ripresa ha scritto il suo primo evento, e la vista
+  segue solo l'ultimo tentativo di un'esecuzione: una ripresa ricarica tutto lo stato, quindi
+  racconta l'intera storia.
+- Terza anomalia della pipeline, **aperta**: la decisione di approvazione è la prima risposta nel
+  registro del cancello, anche se appartiene a una domanda vecchia (grafo cambiato). Nell'interfaccia
+  non si presenta perché le copie di versioni della campagna non portano con sé l'approvazione
+  automatica; la correzione in `run.py` aspetta l'ok di Fabio.
+- Esecuzione reale su Graco dall'interfaccia, in «Solo io»: 99 s, 31 chiamate, 0,0224 USD. Le sue
+  10 domande sono per Fabio e non hanno risposta.
+
 ## 1. Decisioni prese (fase 0, 29 settembre 2026)
 
 | # | Tema | Decisione |
@@ -245,7 +260,8 @@ Base `http://127.0.0.1:8765/api`. Solo localhost, nessuna autenticazione.
 | `POST /uploads` | carica un PDF: pagine, dimensione, sha256, eventuale duplicato |
 | `POST /manuals` | crea un manuale in `workspace/` da un caricamento e dai campi |
 | `POST /manuals/{m}/runs` | avvia un'esecuzione reale |
-| `POST /jobs/{job}/stop` | ferma l'esecuzione; lo stato resta e si può riprendere |
+| `POST /manuals/{m}/versions/{v}/stop` | ferma l'esecuzione; lo stato resta e si può riprendere |
+| `GET /jobs/active` | l'esecuzione reale in corso, se c'è |
 | `GET /budget` | spesa dal registro e tetto |
 | `GET /estimate?pages=18` | stima di tempo e costo |
 

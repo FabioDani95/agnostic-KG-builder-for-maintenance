@@ -24,7 +24,7 @@ const COLUMNS: Column<ManualRow>[] = [
   { key: "manual", label: "Manuale", span: 3, render: (row) => `${row.machine.brand} ${row.machine.model}` },
   { key: "machine", label: "Macchina", span: 2, render: (row) => row.machine.type },
   { key: "pages", label: "Pagine", span: 1, numeric: true, render: (row) => formatNumber(row.pages) },
-  { key: "version", label: "Versione", span: 1, render: (row) => (row.latest ? versionLabel(row.latest) : "") },
+  { key: "version", label: "Versione", span: 2, render: (row) => (row.latest ? versionLabel(row.latest) : "") },
   {
     key: "verified",
     label: "Relazioni verificate",
@@ -42,7 +42,7 @@ const COLUMNS: Column<ManualRow>[] = [
   {
     key: "status",
     label: "Stato",
-    span: 3,
+    span: 2,
     render: (row) => (row.latest ? statusLabel(row.latest.status, row.latest.decided_by) : "Nessuna versione"),
   },
 ];

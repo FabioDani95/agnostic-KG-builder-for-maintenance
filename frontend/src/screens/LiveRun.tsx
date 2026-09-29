@@ -40,7 +40,8 @@ export function stationDetail(station: Station, run: RunState): string {
     case "check": {
       const { relations, verified } = counts(run);
       if (run.stations.check.step === "split_recheck" && phase === "running") return "Nuova verifica dopo l'unione";
-      return relations ? `${formatNumber(verified)} verificate su ${formatNumber(relations)}` : "Testimoni per ogni relazione";
+      if (phase === "running" && verified === 0) return "Testimoni per ogni relazione";
+      return `${formatNumber(verified)} verificate su ${formatNumber(relations)}`;
     }
     case "merge":
       return phase === "done" ? `${formatNumber(run.merges)} coppie di nomi unite` : "Un nodo per ogni cosa";

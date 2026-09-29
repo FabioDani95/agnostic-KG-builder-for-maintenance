@@ -131,6 +131,11 @@
   width: 100%;
 }
 
+.input:disabled {
+  background: var(--bg);
+  color: var(--text-2);
+}
+
 .search {
   position: relative;
   display: flex;
@@ -209,9 +214,10 @@
   color: var(--text-2);
 }
 
-/* A header may take two lines inside its 48 px row; cells stay on one line. */
+/* A header may take two lines inside its 48 px row, or run into the gap; cells stay on one line. */
 .table-row.table-head > * {
   white-space: normal;
+  overflow: visible;
 }
 
 .table-row > * {

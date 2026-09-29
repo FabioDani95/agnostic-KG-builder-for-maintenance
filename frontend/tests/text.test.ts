@@ -26,7 +26,7 @@ const version = (overrides: Partial<Version>): Version => ({
 
 describe("Italian labels", () => {
   it("says who approved", () => {
-    expect(statusLabel("approved", "auto")).toBe("Approvato in automatico");
+    expect(statusLabel("approved", "auto")).toBe("Approvato dal sistema");
     expect(statusLabel("approved", "human")).toBe("Approvato");
     expect(statusLabel("awaiting_approval")).toBe("Da approvare");
     expect(statusLabel("failed")).toBe("Non riuscita");

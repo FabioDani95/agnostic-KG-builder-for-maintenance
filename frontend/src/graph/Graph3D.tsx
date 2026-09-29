@@ -182,10 +182,10 @@ export function Graph3D({
       .onLinkClick((link: object) => callbacks.current.onLinkClick?.((link as SimLink).id))
       .onBackgroundClick(() => callbacks.current.onBackgroundClick?.())
       .onEngineStop(() => {
-        // Frame the settled layout once, unless the person already moved the scene.
-        if (!fitted.current && nodeMap.current.size > 0) {
+        // Frame the settled layout, also while a live graph grows, until the person moves the scene.
+        if (nodeMap.current.size > 0 && !touched.current) {
           fitted.current = true;
-          if (!touched.current) instance.zoomToFit(reducedMotion() ? 0 : 400, 48);
+          instance.zoomToFit(reducedMotion() ? 0 : 400, 48);
         }
       });
     // The layout settles in a few seconds; with reduced motion it is computed before showing.

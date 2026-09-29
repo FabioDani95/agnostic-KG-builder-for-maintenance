@@ -54,7 +54,7 @@ export const STATION_LABEL: Record<string, string> = {
 export function statusLabel(status: RunStatus, decidedBy: string | null = null): string {
   switch (status) {
     case "approved":
-      return decidedBy === "auto" ? "Approvato in automatico" : "Approvato";
+      return decidedBy === "auto" ? "Approvato dal sistema" : "Approvato";
     case "awaiting_approval":
       return "Da approvare";
     case "incomplete":
