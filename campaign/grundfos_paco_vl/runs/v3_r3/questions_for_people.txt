@@ -1,0 +1,109 @@
+Question rel:u005-4a93b6:B.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+
+What the system proposes:
+  - 1. Symptom 'Erratic pumping' -> MAY_INDICATE -> FailureMode 'Air pocket in suction piping'. Meaning: The symptom may indicate the specified failure mode.
+  - 2. FailureMode 'Air pocket in suction piping' -> RESOLVED_BY -> CorrectiveAction 'Install an eccentric reducer with the taper down' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+  - 3. FailureMode 'Air pocket in suction piping' -> RESOLVED_BY -> CorrectiveAction 'Avoid high points in suction piping' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u003-74b976:A.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b34] page 7: At no point should suction piping be smaller in diameter than the pump suction opening. Avoid any high points, such as pipe loops, that may create air pockets and throttle the system or produce erratic pumping.
+  [p8.b6] page 8: Eccentric reducer usage
+  [p8.b7] page 8: Pos. Description
+  [p8.b8] page 8: 1 Correct
+  [p8.b9] page 8: 2 Incorrect
+  [p8.b10] page 8: 3 Air pocket
+  [p8.b11.1] page 8: Install a valve in the suction line to isolate the pump during shutdown and maintenance, and facilitate pump removal. Where two or more pumps are connected to the same suction line, install a valve for each pump to isolate pump from the line. Valves should always be installed in positions that avoid air pockets. Globe valves should not be used, particularly when NPSH is critical. During pumping operation, valves on suction line must always be at full open. Properly sized pressure gauges can be installed in gauge taps on pump suction and discharge nozzles. Gauges enable the operator to monitor pump performance and determine that the pump conforms to the parameters of the performance curve.
+
+What the system proposes:
+  - 1. FailureMode 'Air pockets or an undersized suction line' -> RESOLVED_BY -> CorrectiveAction 'Use an eccentric reducer with the tapered side down' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+  - 2. FailureMode 'Air pockets or an undersized suction line' -> RESOLVED_BY -> CorrectiveAction 'Install suction and discharge pressure gauges to monitor pump performance' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:B.R2 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+
+What the system proposes:
+  - 1. Symptom 'Erratic pumping' -> MAY_INDICATE -> FailureMode 'Suction piping diameter smaller than pump suction'. Meaning: The symptom may indicate the specified failure mode.
+  - 2. FailureMode 'Suction piping diameter smaller than pump suction' -> RESOLVED_BY -> CorrectiveAction 'Keep suction piping at least as large in diameter as the pump suction' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:B.R3 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+
+What the system proposes:
+  - 1. Symptom 'Erratic pumping' -> MAY_INDICATE -> FailureMode 'Incorrect eccentric reducer installation'. Meaning: The symptom may indicate the specified failure mode.
+  - 2. FailureMode 'Incorrect eccentric reducer installation' -> RESOLVED_BY -> CorrectiveAction 'Install an eccentric reducer with the taper down' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:B.R4 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+
+What the system proposes:
+  - 1. Symptom 'Erratic pumping' -> MAY_INDICATE -> FailureMode 'Suction piping throttles the system'. Meaning: The symptom may indicate the specified failure mode.
+  - 2. FailureMode 'Suction piping throttles the system' -> RESOLVED_BY -> CorrectiveAction 'Keep suction piping at least as large in diameter as the pump suction' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question merge:CorrectiveAction|install an eccentric reducer with its eccentric side down|CorrectiveAction|install an eccentric reducer with the taper down (merge_check)
+Do 'Install an eccentric reducer with its eccentric side down' and 'Install an eccentric reducer with the taper down' denote the same CorrectiveAction?
+
+What the manual says:
+  [p7.b18.2] page 7: Use an eccentric reducer, with the eccentric side down when reducing the pipe diameter to the diameter of suction opening.
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+
+What the system proposes:
+  - Keep 'Install an eccentric reducer with its eccentric side down' and 'Install an eccentric reducer with the taper down' as two separate CorrectiveAction nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:Component|mechanical shaft seal|Component|shaft seal (merge_check)
+Do 'Mechanical shaft seal' and 'Shaft seal' denote the same Component?
+
+What the manual says:
+  [p8.b18] page 8: Do not run the pump dry or against a closed valve. Dry operation will cause seal failure within minutes.
+  [p15.b27] page 15: 7. An entry of air past the shaft seal into the pump has occurred.
+
+What the system proposes:
+  - Keep 'Mechanical shaft seal' and 'Shaft seal' as two separate Component nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

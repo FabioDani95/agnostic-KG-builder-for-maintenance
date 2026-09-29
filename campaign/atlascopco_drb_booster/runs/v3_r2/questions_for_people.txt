@@ -1,0 +1,28 @@
+Question rel:u007-44ed0b:A.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p35.b2] page 35: 6.5 Cleaning the Fan Cowl and the Cooling Fins
+
+What the system proposes:
+  - 1. FailureMode 'Contamination on the fan cowl grille and cooling fins' -> RESOLVED_BY -> CorrectiveAction 'Clean the fan cowl grille with a clean brush' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Context: [if] When the fan cowl grille is contaminated.
+  - 2. FailureMode 'Contamination on the fan cowl grille and cooling fins' -> RESOLVED_BY -> CorrectiveAction 'Remove coarse dirt from the motor and pump cooling fins' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Context: [if] Remove any coarse dirt from the fins.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question merge:FailureMode|damaged intake dirt trap|FailureMode|intake-screen dirt trap is damaged (merge_check)
+Do 'Damaged intake dirt trap' and 'Intake-screen dirt trap is damaged' denote the same FailureMode?
+
+What the manual says:
+  [p35.b2] page 35: 6.5 Cleaning the Fan Cowl and the Cooling Fins
+  [p35.b2] page 35: 6.5 Cleaning the Fan Cowl and the Cooling Fins
+
+What the system proposes:
+  - Keep 'Damaged intake dirt trap' and 'Intake-screen dirt trap is damaged' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

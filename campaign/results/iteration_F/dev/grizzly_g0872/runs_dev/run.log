@@ -1,0 +1,77 @@
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+{
+ "status": "approved",
+ "units": 19,
+ "failed_reads": 0,
+ "graph": {
+  "nodes": 614,
+  "nodes_by_type": {
+   "ErrorCode": 4,
+   "FailureMode": 168,
+   "Symptom": 95,
+   "Component": 87,
+   "CorrectiveAction": 260
+  },
+  "edges": 667,
+  "edges_by_tier": {
+   "green": 518,
+   "red": 124,
+   "yellow": 25
+  },
+  "merged_aliases": 115
+ },
+ "gates": {
+  "map": {
+   "questions": 3,
+   "answered": 3,
+   "pending": 0
+  },
+  "doubts": {
+   "questions": 117,
+   "answered": 111,
+   "pending": 6
+  },
+  "recovery": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  },
+  "approval": {
+   "questions": 1,
+   "answered": 1,
+   "pending": 0
+  }
+ },
+ "usage": {
+  "calls": 184,
+  "failed_calls": 0,
+  "prompt_tokens": 826637,
+  "completion_tokens": 153731,
+  "estimated_cost_usd": 0.159504,
+  "by_operation": {
+   "kg_v3_extract": 64,
+   "kg_v3_map": 49,
+   "kg_v3_merge": 19,
+   "kg_v3_reduce_action": 1,
+   "kg_v3_scan": 9,
+   "kg_v3_verify": 42
+  }
+ },
+ "seconds": {
+  "map": 22.429,
+  "scan": 8.138,
+  "gate_map": 18.797,
+  "extract": 146.182,
+  "check": 49.381,
+  "merge": 24.84,
+  "split_recheck": 12.549,
+  "navigation": 4.015,
+  "gate_doubts": 93.826,
+  "action_reduction": 14.313,
+  "gate_recovery": 3.228,
+  "gate_approval": 0.0,
+  "total": 404.674,
+  "pdf_read": 8.794,
+  "end_to_end": 414.139
+ }
+}

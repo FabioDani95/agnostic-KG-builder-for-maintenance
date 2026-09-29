@@ -1,0 +1,110 @@
+Question rel:u018-c7f911:A.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p64.b13] page 64: -62- Model G0872 (Mfd. Since 01/19)
+
+What the system proposes:
+  - 1. Symptom 'Laser beam falls outside center of crosshairs' -> MAY_INDICATE -> FailureMode 'Mirrors #2 and #3 out of alignment' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'Mirrors #2 and #3 out of alignment' (not written in the manual) -> AFFECTS -> Component 'Mirror #2'. Meaning: The failure mode affects the specified component.
+  - 3. FailureMode 'Mirrors #2 and #3 out of alignment' (not written in the manual) -> AFFECTS -> Component 'Mirror #3'. Meaning: The failure mode affects the specified component.
+  - 4. FailureMode 'Mirrors #2 and #3 out of alignment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Verify Mirror #2 and Mirror #3 alignment by pressing Pulse' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to.
+  - 5. FailureMode 'Mirrors #2 and #3 out of alignment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Loosen lock nuts on the three brass thumbscrews behind Mirror #2' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] The laser beam falls outside the center of the crosshairs.; [order] Step 28..
+  - 6. FailureMode 'Mirrors #2 and #3 out of alignment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Adjust the beam path by tightening thumbscrews in the desired direction' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] The laser beam falls outside the center of the crosshairs.; [order] Step 29, after loosening the lock nuts in Step 28..
+  - 7. FailureMode 'Mirrors #2 and #3 out of alignment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Repeat the Mirror #2 and Mirror #3 alignment verification' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [order] Repeat the verification after adjusting the beam path..
+  - 8. FailureMode 'Mirrors #2 and #3 out of alignment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Tighten all loose lock nuts on the mirror assemblies' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] After alignment.; [warning] Do not tighten the thumbscrews..
+  - 9. FailureMode 'Mirrors #2 and #3 out of alignment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Re-install the three cap screws and one laser tube cover removed in Step 3, then close all doors opened for alignment' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [order] After tightening the lock nuts..
+  - 10. FailureMode 'Mirrors #2 and #3 out of alignment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Turn off the machine by pressing the Emergency Stop button' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [order] After re-installing the screws and cover and closing the doors..
+  - 11. FailureMode 'Mirrors #2 and #3 out of alignment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Turn off the water chiller system' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [order] After turning off the machine..
+  - 12. FailureMode 'Mirrors #2 and #3 out of alignment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Put tools and gauges away and clean the area for the next operation' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [order] After turning off the water chiller system..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u018-c7f911:B.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p64.b13] page 64: -62- Model G0872 (Mfd. Since 01/19)
+
+What the system proposes:
+  - 1. Symptom 'Laser beam falls outside the center of the crosshairs' -> MAY_INDICATE -> FailureMode 'Mirror alignment requires adjustment' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'Mirror alignment requires adjustment' (not written in the manual) -> AFFECTS -> Component 'Mirror assemblies'. Meaning: The failure mode affects the specified component.
+  - 3. FailureMode 'Mirror alignment requires adjustment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Verify Mirror #2 and Mirror #3 alignment by pressing the Pulse button' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If the laser beam falls outside the center of the crosshairs, alignment is required..
+  - 4. FailureMode 'Mirror alignment requires adjustment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Loosen the lock nuts on the three brass thumbscrews behind Mirror #2' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If the laser beam falls outside the center of the crosshairs.; [order] Step 28, after the alignment verification in Step 27..
+  - 5. FailureMode 'Mirror alignment requires adjustment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Adjust the beam path by tightening thumbscrews in the desired direction' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If the laser beam falls outside the center of the crosshairs.; [order] Adjust the beam path after loosening the lock nuts..
+  - 6. FailureMode 'Mirror alignment requires adjustment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Repeat the Mirror #2 and Mirror #3 alignment verification' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] After adjusting the beam path.; [order] Repeat Step 27 after Step 29..
+  - 7. FailureMode 'Mirror alignment requires adjustment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Tighten all loose lock nuts on the mirror assemblies' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [order] After alignment verification and adjustment; do not tighten the thumbscrews..
+  - 8. FailureMode 'Mirror alignment requires adjustment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Reinstall the three cap screws and one laser tube cover removed during alignment, then close all doors opened for alignment' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [order] After tightening the lock nuts..
+  - 9. FailureMode 'Mirror alignment requires adjustment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Turn off the machine by pressing the Emergency Stop button' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [order] After re-installing the removed screws and cover and closing the doors..
+  - 10. FailureMode 'Mirror alignment requires adjustment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Turn off the water chiller system' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [order] After turning off the machine..
+  - 11. FailureMode 'Mirror alignment requires adjustment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Remove tools and gauges and clean the area for operation' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [order] After turning off the water chiller system..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u006-c840a6:B.R3 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p26.b24] page 26: 7. Open top loading door and locate x- and y-axis limit switches, and top loading door interlock switch (see Figure 28).
+  [p26.b25] page 26: X-Axis
+  [p26.b27] page 26: Limit Switch
+  [p27.b1] page 27: 8. Verify x-axis limit switch is functioning cor­ rectly by pushing in switch lever (see Figure 29) until an audible click is heard.
+  [p27.b5] page 27: 9. With limit switch lever held in place, press arrow nav buttons on control panel to test movement of laser head assembly. The laser head assembly should not move.
+  [p27.b8] page 27: — If the laser head assembly does move,
+
+What the system proposes:
+  - 1. Symptom 'Laser head assembly moves while a limit switch lever is held in' -> MAY_INDICATE -> FailureMode 'Limit switch safety feature not working properly'. Meaning: The symptom may indicate the specified failure mode. Context: [if] If the laser head assembly moves while the switch lever is held in.
+  - 2. FailureMode 'Limit switch safety feature not working properly' -> AFFECTS -> Component 'X-axis limit switch'. Meaning: The failure mode affects the specified component.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question merge:Symptom|particulates or surface stains remain on installed laser optics|Symptom|particulates or surface stains remain on installed laser optics after second cleaning (merge_check)
+Do 'Particulates or surface stains remain on installed laser optics' and 'Particulates or surface stains remain on installed laser optics after second cleaning' denote the same Symptom?
+
+What the manual says:
+  [p47.b16] page 47: To clean installed laser optics:
+  [p47.b16] page 47: To clean installed laser optics:
+
+What the system proposes:
+  - Keep 'Particulates or surface stains remain on installed laser optics' and 'Particulates or surface stains remain on installed laser optics after second cleaning' as two separate Symptom nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:Symptom|particulates or surface stains remain on removed laser optics|Symptom|particulates or surface stains remain on removed laser optics after second cleaning (merge_check)
+Do 'Particulates or surface stains remain on removed laser optics' and 'Particulates or surface stains remain on removed laser optics after second cleaning' denote the same Symptom?
+
+What the manual says:
+  [p48.b23] page 48: 5. Inspect lens/mirror surface:
+  [p48.b26] page 48: — If any particulates or surface stains are
+
+What the system proposes:
+  - Keep 'Particulates or surface stains remain on removed laser optics' and 'Particulates or surface stains remain on removed laser optics after second cleaning' as two separate Symptom nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:Component|water chiller hoses and connections|Component|water hoses (merge_check)
+Do 'Water chiller hoses and connections' and 'Water hoses' denote the same Component?
+
+What the manual says:
+  [p49.b7] page 49: 3. Inspect hoses and connections for leaks or damage, and repair or replace as required.
+  [p56.b15] page 56: 7. Verify inlet and outlet hoses will not interfere with closed access doors or installed laser tube covers, and ensure hoses are free of kinks that could potentially restrict water flow to laser tube.
+
+What the system proposes:
+  - Keep 'Water chiller hoses and connections' and 'Water hoses' as two separate Component nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

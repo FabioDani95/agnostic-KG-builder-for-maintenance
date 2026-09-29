@@ -1,0 +1,173 @@
+Question rel:u005-4a93b6:A.R2 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+  [p8.b1] page 8: English (US)
+
+What the system proposes:
+  - 1. Symptom 'Cavitation, vapor binding, or unstable operation' -> MAY_INDICATE -> FailureMode 'Suction piping too small or restrictive'. Meaning: The symptom may indicate the specified failure mode.
+  - 2. Symptom 'Cavitation, vapor binding, or unstable operation' -> MAY_INDICATE -> FailureMode 'Air pockets in suction piping'. Meaning: The symptom may indicate the specified failure mode.
+  - 3. Symptom 'Cavitation, vapor binding, or unstable operation' -> MAY_INDICATE -> FailureMode 'Suction pressure loss or insufficient liquid flow'. Meaning: The symptom may indicate the specified failure mode.
+  - 4. FailureMode 'Suction piping too small or restrictive' -> RESOLVED_BY -> CorrectiveAction 'Size and install suction piping to minimize pressure loss and provide sufficient liquid flow' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+  - 5. FailureMode 'Suction pressure loss or insufficient liquid flow' -> RESOLVED_BY -> CorrectiveAction 'Keep suction piping at least the same diameter as the pump suction opening' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+  - 6. Symptom 'Throttle of the system' -> MAY_INDICATE -> FailureMode 'Suction piping smaller than the pump suction opening'. Meaning: The symptom may indicate the specified failure mode.
+  - 7. FailureMode 'Suction piping smaller than the pump suction opening' -> AFFECTS -> Component 'Suction piping'. Meaning: The failure mode affects the specified component.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:A.R3 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+  [p8.b1] page 8: English (US)
+
+What the system proposes:
+  - 1. Symptom 'Retarded pump operation' -> MAY_INDICATE -> FailureMode 'Entrained air or gas in discharge piping' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'Entrained air or gas in discharge piping' (not written in the manual) -> AFFECTS -> Component 'Discharge piping'. Meaning: The failure mode affects the specified component.
+  - 3. FailureMode 'Entrained air or gas in discharge piping' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Avoid high points in discharge piping that may entrap air or gas' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to.
+  - 4. Symptom 'Erratic pumping' -> MAY_INDICATE -> FailureMode 'High points in suction piping'. Meaning: The symptom may indicate the specified failure mode.
+  - 5. FailureMode 'High points in suction piping' -> AFFECTS -> Component 'Suction piping'. Meaning: The failure mode affects the specified component.
+  - 6. FailureMode 'High points in suction piping' -> RESOLVED_BY -> CorrectiveAction 'Avoid high points in suction piping' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:A.R4 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+  [p8.b1] page 8: English (US)
+
+What the system proposes:
+  - 1. Symptom 'Rapid mechanical seal failure' -> MAY_INDICATE -> FailureMode 'Pump run dry or against a closed valve'. Meaning: The symptom may indicate the specified failure mode.
+  - 2. FailureMode 'Pump run dry or against a closed valve' -> AFFECTS -> Component 'Mechanical seals'. Meaning: The failure mode affects the specified component.
+  - 3. FailureMode 'Pump run dry or against a closed valve' -> RESOLVED_BY -> CorrectiveAction 'Do not run the pump dry or against a closed valve' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+  - 4. Symptom 'Erratic pumping' -> MAY_INDICATE -> FailureMode 'Incorrect eccentric reducer orientation'. Meaning: The symptom may indicate the specified failure mode.
+  - 5. FailureMode 'Incorrect eccentric reducer orientation' -> AFFECTS -> Component 'Suction piping'. Meaning: The failure mode affects the specified component.
+  - 6. FailureMode 'Incorrect eccentric reducer orientation' -> RESOLVED_BY -> CorrectiveAction 'Install the eccentric reducer with the taper down' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:A.R5 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+  [p8.b1] page 8: English (US)
+
+What the system proposes:
+  - 1. Symptom 'Rapid mechanical seal failure' -> MAY_INDICATE -> FailureMode 'Contaminants in new suction piping'. Meaning: The symptom may indicate the specified failure mode.
+  - 2. FailureMode 'Contaminants in new suction piping' -> AFFECTS -> Component 'Mechanical seals'. Meaning: The failure mode affects the specified component.
+  - 3. FailureMode 'Contaminants in new suction piping' -> RESOLVED_BY -> CorrectiveAction 'Clean and purge new suction piping before installation and operation' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+  - 4. Symptom 'Erratic pumping' -> MAY_INDICATE -> FailureMode 'Suction piping not sized and installed to minimize pressure loss'. Meaning: The symptom may indicate the specified failure mode.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:A.R7 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+  [p8.b1] page 8: English (US)
+
+What the system proposes:
+  - 1. FailureMode 'Cavitation, vapor binding, or other unstable operation' -> AFFECTS -> Component 'Suction piping'. Meaning: The failure mode affects the specified component.
+  - 2. FailureMode 'Cavitation, vapor binding, or other unstable operation' -> RESOLVED_BY -> CorrectiveAction 'Use gauge cocks with pressure gauges for use when pumping' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything).
+  - 3. FailureMode 'Cavitation, vapor binding, or other unstable operation' -> RESOLVED_BY -> CorrectiveAction 'Use gauge cocks to protect gauges from vibration when not in use' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+  - 4. FailureMode 'Cavitation, vapor binding, or other unstable operation' -> RESOLVED_BY -> CorrectiveAction 'Use properly sized pressure gauges on pump suction and discharge nozzles' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:B.R4 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+
+What the system proposes:
+  - 1. Symptom 'Erratic pumping' -> MAY_INDICATE -> FailureMode 'Suction piping size or installation does not provide sufficient liquid flow' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'Suction piping size or installation does not provide sufficient liquid flow' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Size and install suction piping to minimize pressure loss and provide sufficient liquid flow' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to.
+  - 3. FailureMode 'Suction piping size or installation does not provide sufficient liquid flow' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Use suction piping one or two sizes larger for long runs, depending on length' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] For long suction piping runs.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:A.R10 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+  [p8.b1] page 8: English (US)
+
+What the system proposes:
+  - 1. FailureMode 'Air pockets in suction piping' -> RESOLVED_BY -> CorrectiveAction 'Install a suction valve to isolate the pump during shutdown and maintenance' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Context: [if] Where one or more pumps are connected to the same suction line.
+  - 2. FailureMode 'Air pockets in suction piping' -> RESOLVED_BY -> CorrectiveAction 'Keep suction valves fully open during pumping' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Context: [if] During pumping operation.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:A.R9 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+  [p8.b1] page 8: English (US)
+
+What the system proposes:
+  - 1. Symptom 'Erratic pumping' -> MAY_INDICATE -> FailureMode 'Suction piping has high points or air pockets'. Meaning: The symptom may indicate the specified failure mode.
+  - 2. FailureMode 'Suction piping has high points or air pockets' -> RESOLVED_BY -> CorrectiveAction 'Avoid high points in suction piping' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:A.R8 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+  [p8.b1] page 8: English (US)
+
+What the system proposes:
+  - 1. FailureMode 'Suction piping too small for the pump suction opening' -> RESOLVED_BY -> CorrectiveAction 'Use suction piping at least as large in diameter as the pump suction opening' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:A.R6 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+
+What the system proposes:
+  - 1. Symptom 'Throttle of the system' -> MAY_INDICATE -> FailureMode 'Suction piping too small in diameter'. Meaning: The symptom may indicate the specified failure mode.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph

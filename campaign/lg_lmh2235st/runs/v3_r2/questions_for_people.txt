@@ -1,0 +1,154 @@
+Question rel:u006-2f6afd:B.R3 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p20.b10] page 20: Test Point 1. Primary winding: 0.2 ~ 0.5 Ohm
+
+What the system proposes:
+  - 1. Symptom 'Power off' -> MAY_INDICATE -> FailureMode 'Latch board requires adjustment' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] If there is no beeping sound in the continuity test between the ends of the latch board, with the door closed..
+  - 2. FailureMode 'Latch board requires adjustment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Adjust the latch board' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If there is no beeping sound in the continuity test between the ends of the latch board, with the door closed..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:A.R16 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p18.b1] page 18: No Heat / No Cook
+  [p20.b5] page 20: 6 Is the connector connected to High Voltage Transformer assembly disconnected or disassembled?
+
+What the system proposes:
+  - 1. Symptom 'No heat / no cook' -> MAY_INDICATE -> FailureMode 'Disconnected or disassembled high voltage transformer connector' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:A.R18 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p18.b1] page 18: No Heat / No Cook
+  [p21.b1] page 21: 8 Is the connector connected to High Voltage capacitor assembly disconnected or disassembled?
+
+What the system proposes:
+  - 1. Symptom 'No heat / no cook' -> MAY_INDICATE -> FailureMode 'Disconnected or disassembled high voltage capacitor connector' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:A.R20 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p18.b1] page 18: No Heat / No Cook
+  [p21.b11] page 21: 10 Is the connector connected to the high voltage diode assembly disconnected or disassembled?
+
+What the system proposes:
+  - 1. Symptom 'No heat / no cook' -> MAY_INDICATE -> FailureMode 'Disconnected or disassembled high voltage diode connector' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:B.R18 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p18.b1] page 18: No Heat / No Cook
+  [p19.b1] page 19: After power on, does the product operate?
+  [p21.b11] page 21: 10 Is the connector connected to the high voltage diode assembly disconnected or disassembled?
+  [p21.b12] page 21: Reconnect or repair the connector.
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'High-voltage diode connector disconnected or disassembled' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-43f0c6:A.R2 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b2] page 19: No
+  [p20.b10] page 20: Test Point 1. Primary winding: 0.2 ~ 0.5 Ohm
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'High-voltage transformer resistance out of range' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] High-voltage transformer resistance is out of range; primary winding test point: 0.2–0.5 Ohm..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-43f0c6:B.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b2] page 19: No
+  [p20.b2] page 20: 5 Is there any beeping sound in the continuity test between the ends of the latch board? (Door should be closed)
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'Latch board out of adjustment' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] The continuity test between the latch-board ends has no beep with the door closed..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-43f0c6:B.R3 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b2] page 19: No
+  [p20.b10] page 20: Test Point 1. Primary winding: 0.2 ~ 0.5 Ohm
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'High-voltage transformer resistance out of range' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] The high-voltage transformer resistance is out of range..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-43f0c6:B.R4 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b2] page 19: No
+  [p21.b1] page 21: 8 Is the connector connected to High Voltage capacitor assembly disconnected or disassembled?
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'High-voltage capacitor connector disconnected or disassembled' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] The high-voltage capacitor assembly connector is disconnected or disassembled..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question merge:FailureMode|interlock fault|FailureMode|unspecified cause of interlock switch operating fault after door replacement (merge_check)
+Do 'Interlock fault' and 'Unspecified cause of interlock switch operating fault after door replacement' denote the same FailureMode?
+
+What the manual says:
+  [p2.b5] page 2: b. Make the following safety checks on all ovens to be serviced before activating the
+  [p38.b3] page 38: NOTES: • After replacing the door, be sure to check that the primary interlock switch, the secondary interlock switch and the interlock monitor switch are in good operating condition. • After replacing the door, check for microwave energy leakage with a survey meter. Microwave energy leakage must be below the limit of 5mW/cm2
+
+What the system proposes:
+  - Keep 'Interlock fault' and 'Unspecified cause of interlock switch operating fault after door replacement' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

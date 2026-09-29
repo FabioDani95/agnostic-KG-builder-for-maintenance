@@ -1,0 +1,149 @@
+Question rel:u005-43f0c6:A.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b2] page 19: No
+
+What the system proposes:
+  - 1. FailureMode 'Unspecified cause of product not operating after power on' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Repeat door opening and closing at least three times' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to.
+  - 2. FailureMode 'Unspecified cause of product not operating after power on' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Test continuity between TAB1 and TAB2' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If repeating door opening and closing does not make the product operate.
+  - 3. FailureMode 'Unspecified cause of product not operating after power on' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Replace Relay 2' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If continuity beeps between TAB1 and TAB2.
+  - 4. FailureMode 'Unspecified cause of product not operating after power on' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Replace PCB EBR75341201' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If continuity does not beep and voltage across both ends of D35 is over 8 V during EZ-ON operation.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-43f0c6:B.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b2] page 19: No
+  [p20.b2] page 20: 5 Is there any beeping sound in the continuity test between the ends of the latch board? (Door should be closed)
+  [p23.b7] page 23: 2 Is there any beeping sound in the continuity test between the ends of the latch board? - Secondary switch (Door should be closed.)
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'Latch board continuity fault' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] The continuity test between TAB1 and TAB2 does not beep..
+  - 2. FailureMode 'Latch board continuity fault' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Repeat door opening and closing at least three times' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] The product does not operate after power on..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:B.R14 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b7] page 19: 2 Is there any beeping sound in the continuity test between TAB1 and TAB2?
+  [p19.b9] page 19: No
+
+What the system proposes:
+  - 1. FailureMode 'Latch switch continuity fault' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Check continuity between TAB1 and TAB2' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-43f0c6:A.R7 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p23.b1] page 23: Turns on automatically
+  [p23.b2] page 23: Does the product turn on automatically without pushing the start key?
+
+What the system proposes:
+  - 1. Symptom 'Product turns on automatically without pressing the start key' -> MAY_INDICATE -> FailureMode 'Unspecified cause of automatic operation' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question merge:Symptom|no display|Symptom|no display or dead (merge_check)
+Do 'No display' and 'No display or dead' denote the same Symptom?
+
+What the manual says:
+  [p14.b6] page 14: Symptom: No display Check: connection
+  [p14.b1] page 14: 6-4. Troubleshooting
+
+What the system proposes:
+  - Keep 'No display' and 'No display or dead' as two separate Symptom nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:FailureMode|high-voltage transformer connector disconnected or damaged|FailureMode|high-voltage transformer connector disconnected or disassembled (merge_check)
+Do 'High-voltage transformer connector disconnected or damaged' and 'High-voltage transformer connector disconnected or disassembled' denote the same FailureMode?
+
+What the manual says:
+  [p20.b10] page 20: Test Point 1. Primary winding: 0.2 ~ 0.5 Ohm
+  [p20.b1] page 20: Power Off
+
+What the system proposes:
+  - Keep 'High-voltage transformer connector disconnected or damaged' and 'High-voltage transformer connector disconnected or disassembled' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:FailureMode|latch board needs adjustment|FailureMode|latch board out of adjustment (merge_check)
+Do 'Latch board needs adjustment' and 'Latch board out of adjustment' denote the same FailureMode?
+
+What the manual says:
+  [p20.b10] page 20: Test Point 1. Primary winding: 0.2 ~ 0.5 Ohm
+  [p17.b8] page 17: 2 Is there a beeping sound in the continuity test between the ends of the latch board? - Secondary switch (Door should be closed.)
+
+What the system proposes:
+  - Keep 'Latch board needs adjustment' and 'Latch board out of adjustment' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:FailureMode|primary latch board out of adjustment|FailureMode|primary latch board requires adjustment (merge_check)
+Do 'Primary latch board out of adjustment' and 'Primary latch board requires adjustment' denote the same FailureMode?
+
+What the manual says:
+  [p22.b7] page 22: 2 When door is closed, does the oven lamp turn on?
+  [p22.b7] page 22: 2 When door is closed, does the oven lamp turn on?
+
+What the system proposes:
+  - Keep 'Primary latch board out of adjustment' and 'Primary latch board requires adjustment' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:FailureMode|unspecified cause of dead|FailureMode|unspecified cause of no display or dead (merge_check)
+Do 'Unspecified cause of dead' and 'Unspecified cause of no display or dead' denote the same FailureMode?
+
+What the manual says:
+  [p13.b2] page 13: Symptom: Dead Check: Open/Short
+  [p15.b1] page 15: Does the display operate?
+
+What the system proposes:
+  - Keep 'Unspecified cause of dead' and 'Unspecified cause of no display or dead' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:FailureMode|unspecified cause of no display|FailureMode|unspecified cause of no display or dead (merge_check)
+Do 'Unspecified cause of no display' and 'Unspecified cause of no display or dead' denote the same FailureMode?
+
+What the manual says:
+  [p14.b6] page 14: Symptom: No display Check: connection
+  [p15.b1] page 15: Does the display operate?
+
+What the system proposes:
+  - Keep 'Unspecified cause of no display' and 'Unspecified cause of no display or dead' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

@@ -1,0 +1,33 @@
+Question rel:u007-44ed0b:B.R2 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p36.b1] page 36: Instruction book
+
+What the system proposes:
+  - 1. Symptom 'Reduced pumping speed' -> MAY_INDICATE -> FailureMode 'Intake screen contaminated with foreign objects'. Meaning: The symptom may indicate the specified failure mode.
+  - 2. FailureMode 'Intake screen contaminated with foreign objects' -> AFFECTS -> Component 'Intake screen'. Meaning: The failure mode affects the specified component.
+  - 3. FailureMode 'Intake screen contaminated with foreign objects' -> RESOLVED_BY -> CorrectiveAction 'Remove the intake line and take out the dirt trap' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+  - 4. FailureMode 'Intake screen contaminated with foreign objects' -> RESOLVED_BY -> CorrectiveAction 'Rinse the dirt trap with a suitable solvent' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+  - 5. FailureMode 'Intake screen contaminated with foreign objects' -> RESOLVED_BY -> CorrectiveAction 'Thoroughly dry the dirt trap with compressed air' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u007-44ed0b:B.R3 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p36.b1] page 36: Instruction book
+
+What the system proposes:
+  - 1. Symptom 'Reduced pumping speed' -> MAY_INDICATE -> FailureMode 'Dirt trap damaged'. Meaning: The symptom may indicate the specified failure mode. Context: [if] If the dirt trap is damaged.
+  - 2. FailureMode 'Dirt trap damaged' -> AFFECTS -> Component 'Intake screen'. Meaning: The failure mode affects the specified component.
+  - 3. FailureMode 'Dirt trap damaged' -> RESOLVED_BY -> CorrectiveAction 'Replace the damaged dirt trap' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Context: [if] If the dirt trap is damaged.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph

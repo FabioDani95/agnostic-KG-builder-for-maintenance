@@ -1,0 +1,29 @@
+Question rel:u022-ac8b7f:C.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p390.t1.r1] page 390: TABLE COLUMNS: Parameter | Setting
+  [p390.t1.r2] page 390: Parameter: 15.07 RO4 source | Setting: Reverse
+
+What the system proposes:
+  - 1. ErrorCode 'Extension I/O configuration failure' (code 7A7B) -> INDICATES -> FailureMode 'Unspecified cause of extension I/O configuration failure' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'Unspecified cause of extension I/O configuration failure' (not written in the manual) -> AFFECTS -> Component 'Extension I/O module'. Meaning: The failure mode affects the specified component.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question merge:Component|cmod-01 extension module|Component|extension module (merge_check)
+Do 'CMOD-01 extension module' and 'Extension module' denote the same Component?
+
+What the manual says:
+  [p390.b14] page 390: • make sure that the value of parameter 15.02 is CMOD-01.
+  [p396.b14] page 396: • make sure that the value of parameter 15.02 is CMOD-02.
+
+What the system proposes:
+  - Keep 'CMOD-01 extension module' and 'Extension module' as two separate Component nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

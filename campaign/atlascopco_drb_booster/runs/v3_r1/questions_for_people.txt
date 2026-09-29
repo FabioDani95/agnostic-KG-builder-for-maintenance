@@ -1,0 +1,42 @@
+Question rel:u007-44ed0b:B.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p35.b2] page 35: 6.5 Cleaning the Fan Cowl and the Cooling Fins
+
+What the system proposes:
+  - 1. FailureMode 'Contamination on fan cowl grid and cooling fins' -> RESOLVED_BY -> CorrectiveAction 'Clean the fan cowl grid with a clean brush' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Context: [warning] Observe all safety information provided in Sections 0.1 to 0.3 and 6.1..
+  - 2. FailureMode 'Contamination on fan cowl grid and cooling fins' -> RESOLVED_BY -> CorrectiveAction 'Remove coarse dirt from the motor and pump fins' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Context: [warning] Observe all safety information provided in Sections 0.1 to 0.3 and 6.1..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question merge:FailureMode|faulty inner shaft seal requiring exchange|FailureMode|faulty shaft seal (merge_check)
+Do 'Faulty inner shaft seal requiring exchange' and 'Faulty shaft seal' denote the same FailureMode?
+
+What the manual says:
+  [p38.b2] page 38: 6.9 Exchanging the Shaft Seals
+  [p28.b9.2] page 28: Increases in temperature which are not compensated by taking suitable measures may damage the DRB pump and/or the backing pump. Note the labels on the pump. Never open the oil-fill or oil-drain screw in the presence of a vacuum or while the pump is running. There is the danger that oil may squirt out. The oil level for the shaft seal housing must always be visible in the oiler (see Figure 11). The correct oil level is 1/3 of the height of the oil when the pump is cold 1/2 of the height of the oiler when the pump is warm. Top up any oil as required. We recommend our vacuum pump oil Tigol 100. If it is required to top up oil very often, it is quite likely that a shaft seal is faulty.
+
+What the system proposes:
+  - Keep 'Faulty inner shaft seal requiring exchange' and 'Faulty shaft seal' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:CorrectiveAction|replace the damaged dirt trap|CorrectiveAction|replace the damaged intake screen dirt trap (merge_check)
+Do 'Replace the damaged dirt trap' and 'Replace the damaged intake screen dirt trap' denote the same CorrectiveAction?
+
+What the manual says:
+  [p35.b2] page 35: 6.5 Cleaning the Fan Cowl and the Cooling Fins
+  [p35.b2] page 35: 6.5 Cleaning the Fan Cowl and the Cooling Fins
+
+What the system proposes:
+  - Keep 'Replace the damaged dirt trap' and 'Replace the damaged intake screen dirt trap' as two separate CorrectiveAction nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

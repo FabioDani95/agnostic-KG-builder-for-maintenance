@@ -1,0 +1,153 @@
+Question rel:u005-43f0c6:B.R12 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b2] page 19: No
+  [p21.b1] page 21: 8 Is the connector connected to High Voltage capacitor assembly disconnected or disassembled?
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'High-voltage diode resistance out of range' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] The high-voltage diode resistance is out of range..
+  - 2. FailureMode 'High-voltage diode resistance out of range' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Replace the high-voltage diode' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-43f0c6:B.R8 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b2] page 19: No
+  [p20.b10] page 20: Test Point 1. Primary winding: 0.2 ~ 0.5 Ohm
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'High-voltage transformer resistance out of range' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] The high-voltage transformer resistance is out of range..
+  - 2. FailureMode 'High-voltage transformer resistance out of range' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Replace the high-voltage transformer' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u002-3039a9:C.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p4.t1.r1] page 4: column 1: SWITCH MODE | SWITCH CHART: PRIMARY INTERLOCK SWITCH | column 3: SECONDARY INTERLOCK SWITCH | column 4: INTERLOCK MONITOR SWITCH
+
+What the system proposes:
+  - 1. Symptom 'Suspected primary interlock switch fault' -> MAY_INDICATE -> FailureMode 'Unspecified cause of suspected primary interlock switch fault' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:A.R16 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p18.b1] page 18: No Heat / No Cook
+  [p20.b1] page 20: Power Off
+  [p21.b1] page 21: 8 Is the connector connected to High Voltage capacitor assembly disconnected or disassembled?
+  [p21.b2] page 21: Reconnect or repair the connector.
+  [p21.b3] page 21: Yes
+
+What the system proposes:
+  - 1. Symptom 'No heat or no cook' -> MAY_INDICATE -> FailureMode 'Disconnected or disassembled high-voltage capacitor connector' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] Power is off and the high-voltage capacitor connector is disconnected or disassembled..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-43f0c6:B.R9 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b2] page 19: No
+  [p21.b1] page 21: 8 Is the connector connected to High Voltage capacitor assembly disconnected or disassembled?
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'High-voltage capacitor connector disconnected or disassembled' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] The high-voltage capacitor connector is disconnected or disassembled..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u007-15cf56:C.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p33.t2.r1] page 33: When W
+touched to: When W touched to | hen not
+uched: hen not uched
+
+What the system proposes:
+  - 1. Symptom 'Suspected touch key board fault' -> MAY_INDICATE -> FailureMode 'Touch key board resistance is not less than 400 ohms when touched' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] Resistance is 400 ohms or more when touched..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question merge:FailureMode|high-voltage transformer connector disconnected or disassembled|FailureMode|unspecified cause of high-voltage transformer connector disconnected or disassembled (merge_check)
+Do 'High-voltage transformer connector disconnected or disassembled' and 'Unspecified cause of high-voltage transformer connector disconnected or disassembled' denote the same FailureMode?
+
+What the manual says:
+  [p20.b1] page 20: Power Off
+  [p20.b10] page 20: Test Point 1. Primary winding: 0.2 ~ 0.5 Ohm
+
+What the system proposes:
+  - Keep 'High-voltage transformer connector disconnected or disassembled' and 'Unspecified cause of high-voltage transformer connector disconnected or disassembled' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:Component|high-voltage transformer|Component|high-voltage transformer connector (merge_check)
+Do 'High-voltage transformer' and 'High-voltage transformer connector' denote the same Component?
+
+What the manual says:
+  [p20.b10] page 20: Test Point 1. Primary winding: 0.2 ~ 0.5 Ohm
+  [p20.b10] page 20: Test Point 1. Primary winding: 0.2 ~ 0.5 Ohm
+
+What the system proposes:
+  - Keep 'High-voltage transformer' and 'High-voltage transformer connector' as two separate Component nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:Component|high-voltage transformer assembly connector|Component|high-voltage transformer connector (merge_check)
+Do 'High-voltage transformer assembly connector' and 'High-voltage transformer connector' denote the same Component?
+
+What the manual says:
+  [p20.b1] page 20: Power Off
+  [p20.b10] page 20: Test Point 1. Primary winding: 0.2 ~ 0.5 Ohm
+
+What the system proposes:
+  - Keep 'High-voltage transformer assembly connector' and 'High-voltage transformer connector' as two separate Component nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:CorrectiveAction|check pcb|CorrectiveAction|check pwb (merge_check)
+Do 'Check PCB' and 'Check PWB' denote the same CorrectiveAction?
+
+What the manual says:
+  [p15.b12] page 15: Yes Check PCB Go to No. 6 of this flow chart.
+  [p17.b5] page 17: Check PWB Go to No. 4 of this flow chart.
+
+What the system proposes:
+  - Keep 'Check PCB' and 'Check PWB' as two separate CorrectiveAction nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

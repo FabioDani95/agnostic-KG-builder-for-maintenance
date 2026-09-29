@@ -1,0 +1,14 @@
+Question rel:u032-ac8b7f:C.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p391.t3.r1] page 391: TABLE COLUMNS: Color | Description
+
+What the system proposes:
+  - 1. ErrorCode 'Extension I/O configuration failure' (code 7A7B) -> INDICATES -> FailureMode 'Unspecified cause of extension I/O configuration failure' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'Unspecified cause of extension I/O configuration failure' (not written in the manual) -> AFFECTS -> Component 'Extension I/O module'. Meaning: The failure mode affects the specified component.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph

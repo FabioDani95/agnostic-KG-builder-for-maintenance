@@ -1,0 +1,27 @@
+Question merge:FailureMode|file with same name detected in destination memory location|FailureMode|unspecified cause of file with same name detected in destination memory location (merge_check)
+Do 'File with same name detected in destination memory location' and 'Unspecified cause of file with same name detected in destination memory location' denote the same FailureMode?
+
+What the manual says:
+  [p9.b23] page 9: Name Over Lap: Machine error code which
+  [p9.b23] page 9: Name Over Lap: Machine error code which
+
+What the system proposes:
+  - Keep 'File with same name detected in destination memory location' and 'Unspecified cause of file with same name detected in destination memory location' as two separate FailureMode nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:Component|water chiller system reservoir|Component|water reservoir (merge_check)
+Do 'Water chiller system reservoir' and 'Water reservoir' denote the same Component?
+
+What the manual says:
+  [p57.b23] page 57: 15. Remove reservoir cap and verify water level is 3–6" from reservoir opening.
+  [p42.b6] page 42: Daily Maintenance • Wipe down interior cabinet area before and after use. • Clean and vacuum dust buildup on table, inside cabinet, and on shafts and rails. • Verify laser tube connections are secure and no air bubbles are present in tube. • Check auxiliary systems for proper function and fill water reservoir, as required.
+
+What the system proposes:
+  - Keep 'Water chiller system reservoir' and 'Water reservoir' as two separate Component nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

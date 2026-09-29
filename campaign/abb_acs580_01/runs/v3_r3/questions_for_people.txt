@@ -1,0 +1,46 @@
+Question rel:u026-ac8b7f:C.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p390.t1.r1] page 390: TABLE COLUMNS: Parameter | Setting
+  [p391.t3.r1] page 391: TABLE COLUMNS: Color | Description
+  [p390.t1.r2] page 390: Parameter: 15.07 RO4 source | Setting: Reverse
+  [p391.t3.r2] page 391: Color: Green | Description: The extension module is powered up.
+
+What the system proposes:
+  - 1. ErrorCode 'Extension I/O configuration failure' (code 7A7B) -> INDICATES -> FailureMode 'Unspecified cause of extension I/O configuration failure' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u018-a625ce:A.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p347.b3] page 347: ￭Start-up
+  [p347.b4] page 347: Start-up
+  [p347.b7] page 347: • Disable the overvoltage control of the drive by parameter 30.30 Overvoltage control.
+
+What the system proposes:
+  - 1. Symptom 'Brake resistor start-up' -> MAY_INDICATE -> FailureMode 'Drive overvoltage control enabled during resistor braking' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question merge:Component|brake resistor|Component|brake resistor assembly (merge_check)
+Do 'Brake resistor' and 'Brake resistor assembly' denote the same Component?
+
+What the manual says:
+  [p345.b16] page 345: The drive has a brake thermal model which protects the brake resistor against overload. ABB recommends to enable the thermal model at start up.
+  [p169.b13] page 169: ￭Brake resistor assembly for R1…R3
+
+What the system proposes:
+  - Keep 'Brake resistor' and 'Brake resistor assembly' as two separate Component nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

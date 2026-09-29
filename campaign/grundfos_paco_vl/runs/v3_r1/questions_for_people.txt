@@ -1,0 +1,99 @@
+Question rel:u005-4a93b6:A.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+  [p8.b1] page 8: English (US)
+
+What the system proposes:
+  - 1. Symptom 'Inadequate pump flow' -> MAY_INDICATE -> FailureMode 'Suction piping is undersized'. Meaning: The symptom may indicate the specified failure mode.
+  - 2. FailureMode 'Suction piping is undersized' -> AFFECTS -> Component 'Suction piping'. Meaning: The failure mode affects the specified component.
+  - 3. FailureMode 'Suction piping is undersized' -> RESOLVED_BY -> CorrectiveAction 'Use suction piping at least the same diameter as the pump suction opening' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:A.R4 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+  [p8.b1] page 8: English (US)
+
+What the system proposes:
+  - 1. Symptom 'Fluctuating suction and discharge pressures' -> MAY_INDICATE -> FailureMode 'Suction piping is not adequately supported or aligned'. Meaning: The symptom may indicate the specified failure mode.
+  - 2. FailureMode 'Suction piping is not adequately supported or aligned' -> AFFECTS -> Component 'Suction piping'. Meaning: The failure mode affects the specified component.
+  - 3. FailureMode 'Suction piping is not adequately supported or aligned' -> RESOLVED_BY -> CorrectiveAction 'Support and align suction and discharge piping independently' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:A.R5 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p8.b1] page 8: English (US)
+
+What the system proposes:
+  - 1. Symptom 'Mechanical seal failure' -> MAY_INDICATE -> FailureMode 'Pump operated dry or against a closed valve'. Meaning: The symptom may indicate the specified failure mode.
+  - 2. FailureMode 'Pump operated dry or against a closed valve' -> AFFECTS -> Component 'Mechanical seals'. Meaning: The failure mode affects the specified component.
+  - 3. FailureMode 'Pump operated dry or against a closed valve' -> RESOLVED_BY -> CorrectiveAction 'Do not run the pump dry or against a closed valve' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. Context: [warning] Do not run the pump dry or against a closed valve; dry operation causes seal failure..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b26ad9:A.R7 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p9.b23] page 9: 9. Check and record voltage, amperage per phase, and kilowatts, if a wattmeter is available.
+
+What the system proposes:
+  - 1. Symptom 'Voltage or amperage differs from recorded operating values' -> MAY_INDICATE -> FailureMode 'Unspecified cause of abnormal electrical operating readings' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'Unspecified cause of abnormal electrical operating readings' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Check and record voltage, amperage per phase, and kilowatts if a wattmeter is available' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If a wattmeter is available, check and record kilowatts.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-4a93b6:A.R3 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b2] page 7: 5.10 Suction (inlet) piping
+  [p8.b1] page 8: English (US)
+
+What the system proposes:
+  - 1. FailureMode 'Incorrect eccentric reducer installation' -> AFFECTS -> Component 'Suction piping'. Meaning: The failure mode affects the specified component.
+  - 2. FailureMode 'Incorrect eccentric reducer installation' -> RESOLVED_BY -> CorrectiveAction 'Install the suction piping with an eccentric reducer, flat side up' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u003-74b976:A.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p7.b34] page 7: At no point should suction piping be smaller in diameter than the pump suction opening. Avoid any high points, such as pipe loops, that may create air pockets and throttle the system or produce erratic pumping.
+  [p8.b6] page 8: Eccentric reducer usage
+  [p8.b7] page 8: Pos. Description
+  [p8.b8] page 8: 1 Correct
+  [p8.b9] page 8: 2 Incorrect
+  [p8.b10] page 8: 3 Air pocket
+
+What the system proposes:
+  - 1. FailureMode 'Air pocket in suction piping' -> RESOLVED_BY -> CorrectiveAction 'Use an eccentric reducer with the taper down' [repair]. Meaning: The failure mode may be resolved by the specified corrective action.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph

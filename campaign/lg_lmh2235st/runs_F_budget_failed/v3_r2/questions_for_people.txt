@@ -1,0 +1,171 @@
+Question rel:u004-b32fa3:A.R11 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p16.b1] page 16: Keypad Failure
+  [p17.b14] page 17: 4 Is the connector connected to the PCB disconnected or disassembled?
+  [p17.b16] page 17: Yes
+  [p17.b19] page 17: Replace the keypad?
+
+What the system proposes:
+  - 1. Symptom 'Keypad failure' -> MAY_INDICATE -> FailureMode 'Faulty keypad' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'Faulty keypad' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Replace the keypad' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If the PCB connector is connected and the preceding check routes to keypad replacement.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:B.R15 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p18.b1] page 18: No Heat / No Cook
+  [p19.b1] page 19: After power on, does the product operate?
+  [p20.b8] page 20: 7 Is the resistance of the high voltage Transformer out of range?
+  [p20.b9] page 20: Yes Replace the High Voltage Transformer.
+  [p20.b10] page 20: Test Point 1. Primary winding: 0.2 ~ 0.5 Ohm
+  [p20.b11] page 20: 2. Secondary: 50 ~ 120 Ohm
+  [p20.b12] page 20: 3. Filament winding: 0 Ohm
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'High-voltage transformer resistance out of range' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'High-voltage transformer resistance out of range' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Measure high-voltage transformer winding resistance' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:B.R17 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p18.b1] page 18: No Heat / No Cook
+  [p19.b1] page 19: After power on, does the product operate?
+  [p21.b5] page 21: 9 Is the resistance of the high voltage capacitor out of range? (refer to section 10)
+  [p21.b6] page 21: Replace the high voltage capacitor.
+  [p21.b8] page 21: Test Point
+  [p21.b9] page 21: Case(ground) Case(ground) Case(ground)
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'High-voltage capacitor resistance out of range' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'High-voltage capacitor resistance out of range' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Check high-voltage capacitor resistance' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:B.R19 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p18.b1] page 18: No Heat / No Cook
+  [p19.b1] page 19: After power on, does the product operate?
+  [p21.b15] page 21: 11 Is the resistance of the high voltage diode out of range? (refer to section 10)
+  [p21.b16] page 21: Replace the high voltage Diode.
+  [p21.b18] page 21: Forward Forward Forward Forward Forward Forward Forward Forward Forward Forward Forward Forward Forward Forward Forward Forward Forward Forward Forward Forward Forward Forward
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'High-voltage diode resistance out of range' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'High-voltage diode resistance out of range' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Check high-voltage diode resistance' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u006-2f6afd:B.R2 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p20.b10] page 20: Test Point 1. Primary winding: 0.2 ~ 0.5 Ohm
+
+What the system proposes:
+  - 1. Symptom 'Power off' -> MAY_INDICATE -> FailureMode 'High-voltage transformer connector disconnected or disassembled' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] If the connector is disconnected or disassembled..
+  - 2. FailureMode 'High-voltage transformer connector disconnected or disassembled' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Reconnect or repair the high-voltage transformer connector' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If the connector is disconnected or disassembled..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u006-2f6afd:B.R3 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p20.b10] page 20: Test Point 1. Primary winding: 0.2 ~ 0.5 Ohm
+
+What the system proposes:
+  - 1. Symptom 'Power off' -> MAY_INDICATE -> FailureMode 'Latch board requires adjustment' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] If there is no beeping sound in the continuity test between the ends of the latch board, with the door closed..
+  - 2. FailureMode 'Latch board requires adjustment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Adjust the latch board' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If there is no beeping sound in the continuity test between the ends of the latch board, with the door closed..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:B.R20 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p18.b1] page 18: No Heat / No Cook
+  [p19.b1] page 19: After power on, does the product operate?
+  [p21.b20] page 21: 12 Is the connector connected to the magnetron assembly disconnected or disassembled?
+  [p21.b21] page 21: Yes
+  [p21.b22] page 21: Reconnect or repair the connector.
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'Magnetron connector disconnected or disassembled' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'Magnetron connector disconnected or disassembled' (not written in the manual) -> AFFECTS -> Component 'Magnetron assembly'. Meaning: The failure mode affects the specified component.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:A.R10 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p16.b1] page 16: Keypad Failure
+  [p17.b14] page 17: 4 Is the connector connected to the PCB disconnected or disassembled?
+
+What the system proposes:
+  - 1. Symptom 'Keypad failure' -> MAY_INDICATE -> FailureMode 'Disconnected or disassembled PCB connector' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:A.R16 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p18.b1] page 18: No Heat / No Cook
+  [p20.b5] page 20: 6 Is the connector connected to High Voltage Transformer assembly disconnected or disassembled?
+
+What the system proposes:
+  - 1. Symptom 'No heat / no cook' -> MAY_INDICATE -> FailureMode 'Disconnected or disassembled high voltage transformer connector' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:A.R18 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p18.b1] page 18: No Heat / No Cook
+  [p21.b1] page 21: 8 Is the connector connected to High Voltage capacitor assembly disconnected or disassembled?
+
+What the system proposes:
+  - 1. Symptom 'No heat / no cook' -> MAY_INDICATE -> FailureMode 'Disconnected or disassembled high voltage capacitor connector' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph

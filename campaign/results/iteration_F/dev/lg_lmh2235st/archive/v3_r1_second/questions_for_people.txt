@@ -1,0 +1,167 @@
+Question rel:u004-b32fa3:B.R12 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p12.b1] page 12: 6-2. Safety Caution
+  [p12.b2] page 12: A. SINCE NEARLY 4,000 VOLTS EXISTS IN
+  [p15.b12] page 15: Yes Check PCB Go to No. 6 of this flow chart.
+  [p15.b25] page 15: Replace the PCB.
+  [p15.b26] page 15: (EBR75341201)
+  [p17.b12] page 17: No Replace the PCB (EBR75341201)
+  [p17.b20] page 17: No
+  [p17.b22] page 17: Replace the PCB.
+  [p19.b14] page 19: 4 Replace the PCB.
+
+What the system proposes:
+  - 1. FailureMode 'Unspecified PCB fault' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Replace the PCB' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] The keypad replacement branch indicates no; replace the PCB.; [warning] Nearly 4,000 volts exists; the remainder of the safety caution is unavailable, so its specific precautions cannot be stated..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-43f0c6:A.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b2] page 19: No
+
+What the system proposes:
+  - 1. FailureMode 'Unspecified cause of product not operating after power on' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Repeat opening and closing the door at least three times' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-43f0c6:A.R10 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p23.b2] page 23: Does the product turn on automatically without pushing the start key?
+  [p23.b4] page 23: 1 Repeat door open and close at least three times. Does the product operate?
+
+What the system proposes:
+  - 1. FailureMode 'Unspecified cause of product turning on automatically' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Repeat opening and closing the door at least three times' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-43f0c6:A.R6 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p22.b3] page 22: 1 Does the turntable motor operate?
+
+What the system proposes:
+  - 1. FailureMode 'Unspecified cause of turntable motor not working' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Check whether the turntable motor operates' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:A.R22 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p18.b1] page 18: No Heat / No Cook
+  [p21.b20] page 21: 12 Is the connector connected to the magnetron assembly disconnected or disassembled?
+  [p21.b22] page 21: Reconnect or repair the connector.
+
+What the system proposes:
+  - 1. Symptom 'No heat / no cook' -> MAY_INDICATE -> FailureMode 'Disconnected or disassembled magnetron connector' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'Disconnected or disassembled magnetron connector' (not written in the manual) -> AFFECTS -> Component 'Magnetron assembly'. Meaning: The failure mode affects the specified component.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:A.R6 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p14.b2] page 14: No Display or Dead
+  [p15.b1] page 15: Does the display operate?
+  [p15.b12] page 15: Yes Check PCB Go to No. 6 of this flow chart.
+  [p15.b25] page 15: Replace the PCB.
+  [p17.b12] page 17: No Replace the PCB (EBR75341201)
+  [p17.b22] page 17: Replace the PCB.
+  [p19.b14] page 19: 4 Replace the PCB.
+
+What the system proposes:
+  - 1. Symptom 'No display or dead' -> MAY_INDICATE -> FailureMode 'Faulty PCB' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'Faulty PCB' (not written in the manual) -> AFFECTS -> Component 'PCB'. Meaning: The failure mode affects the specified component.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:A.R18 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p18.b1] page 18: No Heat / No Cook
+  [p21.b1] page 21: 8 Is the connector connected to High Voltage capacitor assembly disconnected or disassembled?
+  [p21.b2] page 21: Reconnect or repair the connector.
+
+What the system proposes:
+  - 1. Symptom 'No heat / no cook' -> MAY_INDICATE -> FailureMode 'Disconnected or disassembled high voltage capacitor connector' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:B.R10 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p16.b1] page 16: Keypad Failure
+  [p17.b1] page 17: Do the keys operate?
+  [p17.b14] page 17: 4 Is the connector connected to the PCB disconnected or disassembled?
+  [p17.b15] page 17: Reconnect or repair the connector.
+
+What the system proposes:
+  - 1. Symptom 'Keys do not operate' -> MAY_INDICATE -> FailureMode 'PCB connector disconnected or disassembled' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:B.R14 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b7] page 19: 2 Is there any beeping sound in the continuity test between TAB1 and TAB2?
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'TAB1-to-TAB2 continuity fault' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:B.R15 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b10] page 19: 3 While the product is operating under EZ-ON start, is the voltage of both ends of the D35 over 8 V?
+  [p19.b11] page 19: Yes Replace the
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'Relay 2 fault' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph

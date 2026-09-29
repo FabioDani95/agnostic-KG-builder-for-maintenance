@@ -1,0 +1,61 @@
+Question rel:u018-30a18b:B.R2 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p60.b1] page 60: 12. Press Esc to exit main menu and return to status screen (see Figure 94).
+  [p61.b1] page 61: 17. Adjust direction of beam path by tightening thumbscrews depending on desired direction of beam travel, as shown in Figure 99.
+  [p62.b1] page 62: 26. Move laser head assembly to lower right cor­ ner of table (see Figure 102).
+
+What the system proposes:
+  - 1. Symptom 'Laser beam falls outside center of crosshairs' -> MAY_INDICATE -> FailureMode 'Laser beam alignment is out of adjustment' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] The laser beam falls outside the center of the crosshairs..
+  - 2. FailureMode 'Laser beam alignment is out of adjustment' (not written in the manual) -> AFFECTS -> Component 'Mirror assembly'. Meaning: The failure mode affects the specified component.
+  - 3. FailureMode 'Laser beam alignment is out of adjustment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Loosen the lock nuts on the mirror thumbscrews' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] The laser beam falls outside the center of the crosshairs.; [prerequisite] The top loading door must be closed for the Pulse function to operate.; [warning] Do not tighten the thumbscrews when tightening the lock nuts..
+  - 4. FailureMode 'Laser beam alignment is out of adjustment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Tighten the loose lock nuts on the mirror assemblies' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [prerequisite] The top loading door must be closed for the Pulse function to operate.; [warning] Do not tighten the thumbscrews when tightening the lock nuts..
+  - 5. FailureMode 'Laser beam alignment is out of adjustment' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Check laser beam alignment by pressing the Pulse button' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [prerequisite] The top loading door must be closed for the Pulse function to operate.; [warning] Do not tighten the thumbscrews when tightening the lock nuts..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question merge:CorrectiveAction|loosen the lock nuts on the mirror thumbscrews|CorrectiveAction|loosen the lock nuts on the three brass mirror thumbscrews (merge_check)
+Do 'Loosen the lock nuts on the mirror thumbscrews' and 'Loosen the lock nuts on the three brass mirror thumbscrews' denote the same CorrectiveAction?
+
+What the manual says:
+  [p60.b1] page 60: 12. Press Esc to exit main menu and return to status screen (see Figure 94).
+  [p60.b1] page 60: 12. Press Esc to exit main menu and return to status screen (see Figure 94).
+
+What the system proposes:
+  - Keep 'Loosen the lock nuts on the mirror thumbscrews' and 'Loosen the lock nuts on the three brass mirror thumbscrews' as two separate CorrectiveAction nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:CorrectiveAction|repeat the mirror 1 and mirror 2 alignment check|CorrectiveAction|repeat the mirror 1 and mirror 2 pulse test (merge_check)
+Do 'Repeat the Mirror #1 and Mirror #2 alignment check' and 'Repeat the Mirror #1 and Mirror #2 pulse test' denote the same CorrectiveAction?
+
+What the manual says:
+  [p61.b37] page 61: 25. Repeat Step 22.
+  [p61.b37] page 61: 25. Repeat Step 22.
+
+What the system proposes:
+  - Keep 'Repeat the Mirror #1 and Mirror #2 alignment check' and 'Repeat the Mirror #1 and Mirror #2 pulse test' as two separate CorrectiveAction nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate
+
+Question merge:CorrectiveAction|repeat the mirror 2 and mirror 3 alignment check|CorrectiveAction|repeat the mirror 2 and mirror 3 pulse test (merge_check)
+Do 'Repeat the Mirror #2 and Mirror #3 alignment check' and 'Repeat the Mirror #2 and Mirror #3 pulse test' denote the same CorrectiveAction?
+
+What the manual says:
+  [p62.b23] page 62: 30. Repeat Step 27.
+  [p62.b23] page 62: 30. Repeat Step 27.
+
+What the system proposes:
+  - Keep 'Repeat the Mirror #2 and Mirror #3 alignment check' and 'Repeat the Mirror #2 and Mirror #3 pulse test' as two separate CorrectiveAction nodes.
+
+Answer with one option ID:
+  same: Same thing -> the two nodes become one, both names kept as aliases
+  different: Different things -> the two nodes stay separate

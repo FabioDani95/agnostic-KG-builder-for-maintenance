@@ -1,0 +1,164 @@
+Question rel:u005-43f0c6:B.R1 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b2] page 19: No
+
+What the system proposes:
+  - 1. FailureMode 'Unspecified cause of product not operating after power on' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Repeat door opening and closing at least three times' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If the product does not operate after power on..
+  - 2. FailureMode 'Unspecified cause of product not operating after power on' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Check continuity between TAB1 and TAB2 with the door closed' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If repeating door opening and closing does not make the product operate..
+  - 3. FailureMode 'Unspecified cause of product not operating after power on' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Measure voltage across D35 during EZ-ON operation' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If continuity is absent between TAB1 and TAB2..
+  - 4. FailureMode 'Unspecified cause of product not operating after power on' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Replace Relay 2' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If voltage across D35 is over 8 V during EZ-ON operation..
+  - 5. FailureMode 'Unspecified cause of product not operating after power on' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Replace the PCB' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If voltage across D35 is not over 8 V..
+  - 6. FailureMode 'Unspecified cause of product not operating after power on' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Use the alternate explanation in the note' [inspection]. Meaning: For this problem or cause the manual prescribes this check or test (it need not repair anything). The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to. Context: [if] If repeating door opening and closing makes the product operate..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-43f0c6:A.R6 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p21.b22] page 21: Reconnect or repair the connector.
+
+What the system proposes:
+  - 1. FailureMode 'Disconnected or disassembled high-voltage diode connector' (not written in the manual) -> AFFECTS -> Component 'High-voltage diode assembly'. Meaning: The failure mode affects the specified component.
+  - 2. FailureMode 'Disconnected or disassembled high-voltage diode connector' (not written in the manual) -> RESOLVED_BY -> CorrectiveAction 'Reconnect or repair the high-voltage diode connector' [repair]. Meaning: The failure mode may be resolved by the specified corrective action. The cause is unnamed: the claim is that the cited entry prescribes this check or remedy for the problem or test outcome it belongs to.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u001-acc4f0:B.R2 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p2.b2] page 2: PRECAUTIONS TO BE OBSERVED BEFORE AND DURING SERVICING TO AVOID POSSIBLE EXPOSURE
+  [p2.b3] page 2: TO EXCESSIVE MICROWAVE ENERGY
+  [p2.b5] page 2: b. Make the following safety checks on all ovens to be serviced before activating the
+
+What the system proposes:
+  - 1. Symptom 'Possible exposure to excessive microwave energy' -> MAY_INDICATE -> FailureMode 'Door does not close properly' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+  - 2. FailureMode 'Door does not close properly' (not written in the manual) -> AFFECTS -> Component 'Door'. Meaning: The failure mode affects the specified component.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u001-acc4f0:B.R4 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p2.b2] page 2: PRECAUTIONS TO BE OBSERVED BEFORE AND DURING SERVICING TO AVOID POSSIBLE EXPOSURE
+  [p2.b3] page 2: TO EXCESSIVE MICROWAVE ENERGY
+  [p2.b5] page 2: b. Make the following safety checks on all ovens to be serviced before activating the
+
+What the system proposes:
+  - 1. Symptom 'Possible exposure to excessive microwave energy' -> MAY_INDICATE -> FailureMode 'Hinges or latches damaged or loose'. Meaning: The symptom may indicate the specified failure mode.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u001-acc4f0:B.R5 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p2.b2] page 2: PRECAUTIONS TO BE OBSERVED BEFORE AND DURING SERVICING TO AVOID POSSIBLE EXPOSURE
+  [p2.b3] page 2: TO EXCESSIVE MICROWAVE ENERGY
+  [p2.b5] page 2: b. Make the following safety checks on all ovens to be serviced before activating the
+
+What the system proposes:
+  - 1. Symptom 'Possible exposure to excessive microwave energy' -> MAY_INDICATE -> FailureMode 'Oven has been dropped or abused' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u001-acc4f0:B.R7 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p2.b2] page 2: PRECAUTIONS TO BE OBSERVED BEFORE AND DURING SERVICING TO AVOID POSSIBLE EXPOSURE
+  [p2.b3] page 2: TO EXCESSIVE MICROWAVE ENERGY
+  [p2.b9] page 2: d. Any defective or misadjusted components in the interlock, monitor, door seal, and
+
+What the system proposes:
+  - 1. Symptom 'Possible exposure to excessive microwave energy' -> MAY_INDICATE -> FailureMode 'Interlock, monitor, door seal, or microwave generation or transmission component defective or misadjusted'. Meaning: The symptom may indicate the specified failure mode.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:B.R16 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b10] page 19: 3 While the product is operating under EZ-ON start, is the voltage of both ends of the D35 over 8 V?
+  [p19.b14] page 19: 4 Replace the PCB.
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'PCB fault after D35 voltage test' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u004-b32fa3:B.R20 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p18.b1] page 18: No Heat / No Cook
+  [p21.b1] page 21: 8 Is the connector connected to High Voltage capacitor assembly disconnected or disassembled?
+  [p21.b2] page 21: Reconnect or repair the connector.
+
+What the system proposes:
+  - 1. Symptom 'No heat / no cook' -> MAY_INDICATE -> FailureMode 'High voltage capacitor connector disconnected or disassembled' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for.
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-43f0c6:A.R11 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p22.b1] page 22: Turntable Motor Does Not Work
+  [p22.b10] page 22: 3 Push the EZ-ON button (operate).Is the voltage of both ends of the D37 over 8 V?
+  [p22.b13] page 22: 4 Is there any beeping sound in the continuity test between the ends of two Pin of RY1?
+
+What the system proposes:
+  - 1. Symptom 'Turntable motor does not work' -> MAY_INDICATE -> FailureMode 'PCB fault' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] While EZ-ON operates, voltage across D37 is not over 8 V..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
+
+Question rel:u005-43f0c6:A.R4 (relation_check)
+Does the manual state these troubleshooting facts?
+
+What the manual says:
+  [p19.b1] page 19: After power on, does the product operate?
+  [p19.b2] page 19: No
+  [p21.b1] page 21: 8 Is the connector connected to High Voltage capacitor assembly disconnected or disassembled?
+  [p21.b22] page 21: Reconnect or repair the connector.
+
+What the system proposes:
+  - 1. Symptom 'Product does not operate after power on' -> MAY_INDICATE -> FailureMode 'Disconnected or disassembled high-voltage capacitor connector' (not written in the manual). Meaning: The manual's entry for this problem (a table row, a list item, or the flowchart or procedure that starts from this problem) leads to the check, test outcome or remedy this unnamed cause stands for. Context: [if] High-voltage capacitor connector is disconnected or disassembled..
+
+Answer with one option ID:
+  accept: Yes, all correct -> all statements enter the graph as verified
+  reject: No, none is stated -> the statements stay out of the graph
+  correct: Only some are correct (write the correction) -> only the statement numbers you list enter the graph
