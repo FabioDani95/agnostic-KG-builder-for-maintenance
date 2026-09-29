@@ -153,7 +153,12 @@ async def _run(args, pdf: Path, asset: dict, out: Path, started: float, on_event
                        agent_reasoning_effort=args.agent_reasoning)
     llm = ModelClient(model=args.model, reasoning_effort=args.reasoning)
     agent_llm = ModelClient(model=args.agent_model, reasoning_effort=args.agent_reasoning)
-    store = InMemoryQuestionStore()
+    if args.human_store:
+        from backend.ui.store import STORE_NAME, FileQuestionStore
+
+        store = FileQuestionStore(out / STORE_NAME, budget=config.human_question_budget)
+    else:
+        store = InMemoryQuestionStore()
     result = await Pipeline(doc=doc, pdf_path=pdf, asset_name=asset["name"], llm=llm, config=config, agent_llm=agent_llm,
                             human_store=store, workdir=out, on_event=on_event).run()
     result.report["seconds"].update(pdf_read=round(read_seconds, 3),
@@ -182,6 +187,8 @@ def main() -> int:
     parser.add_argument("--asset-name", default="")
     parser.add_argument("--info", help="info.yaml with the machine identity, for --pdf")
     parser.add_argument("--events", action="store_true", help="write interface events to <out>/events.jsonl")
+    parser.add_argument("--human-store", action="store_true",
+                        help="keep questions for a person and their answers in <out>/people.json")
     parser.add_argument("--out", required=True)
     parser.add_argument("--gates", choices=sorted(GATE_PRESETS), default="agent")
     parser.add_argument("--model", default="gpt-6-luna")

@@ -35,6 +35,14 @@ STEP_STATION = {
     "merge": "merge",
     "gate_doubts": "ask", "gate_recovery": "ask", "gate_approval": "ask",
 }
+# The station each saved state belongs to, and a step that stands for it.
+STATE_STATION = (
+    ("map", "map"), ("units", "map"), ("gate_map", "map"), ("extract_", "extract"),
+    ("checked_", "check"), ("rechecked_", "check"), ("navigation_", "check"), ("recovery_", "check"),
+    ("omissions_", "check"), ("visual_", "check"), ("merge_plan_", "merge"),
+    ("gate_doubts", "ask"), ("gate_recovery", "ask"), ("gate_approval", "ask"),
+)
+STATION_STEP = {"map": "map", "extract": "extract", "check": "check", "merge": "merge", "ask": "gate_doubts"}
 _TIER_RANK = {Tier.GREEN.value: 0, Tier.YELLOW.value: 1, Tier.RED.value: 2}
 _PAGE = re.compile(r"^p(\d+)\.")
 
@@ -166,6 +174,13 @@ class EventTranslator:
         name, value = str(data.get("name", "")), data.get("value")
         if value is None:
             return []
+        # A resumed run loads finished steps instead of running them: their station still shows.
+        station = next((station for prefix, station in STATE_STATION if name == prefix or
+                        (prefix.endswith("_") and name.startswith(prefix))), None)
+        opened = self._on_step_started({"step": STATION_STEP[station]}, t) if station else []
+        return [*opened, *self._state(name, value, t)]
+
+    def _state(self, name: str, value: Any, t: float) -> list[UiEvent]:
         if name == "map":
             pages = [{"page": entry["page"], "label": entry["label"], "unsure": entry.get("unsure", False)}
                      for entry in value.get("entries", [])]
@@ -256,22 +271,20 @@ class EventTranslator:
 class EventLog:
     """Event listener that appends interface events to ``events.jsonl`` as they happen.
 
-    A resumed run continues the numbering and the clock of the file it appends to.
+    A resumed run continues the numbering of the file it appends to; its clock starts again.
     """
 
     def __init__(self, path: Path) -> None:
         self.path = path
         self.translator = EventTranslator()
-        self.offset = 0.0
         if path.exists():
             lines = [line for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
             if lines:
-                last = UiEvent.model_validate_json(lines[-1])
-                self.translator.seq, self.offset = last.seq, last.t
+                self.translator.seq = UiEvent.model_validate_json(lines[-1]).seq
         self.started = time.perf_counter()
 
     def __call__(self, kind: str, data: dict[str, Any]) -> None:
-        events = self.translator.feed(kind, data, self.offset + time.perf_counter() - self.started)
+        events = self.translator.feed(kind, data, time.perf_counter() - self.started)
         if events:
             with self.path.open("a", encoding="utf-8") as handle:
                 handle.writelines(event.model_dump_json() + "\n" for event in events)

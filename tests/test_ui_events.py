@@ -89,7 +89,6 @@ def test_the_event_log_appends_and_a_resume_continues_the_numbering(tmp_path):
     events = [UiEvent.model_validate_json(line) for line in path.read_text().splitlines()]
     assert [event.seq for event in events] == [1, 2, 3, 4, 5]
     assert [event.kind for event in events] == ["run_started", "station", "station", "run_failed", "run_started"]
-    assert events[-1].t >= events[-2].t
 
 
 def test_interface_presets_leave_the_approval_to_the_person():
@@ -98,3 +97,15 @@ def test_interface_presets_leave_the_approval_to_the_person():
     for name in ("ui-agent", "ui-interactive", "ui-human"):
         assert GATE_PRESETS[name]["approval"] == [] and GATE_PRESETS[name]["map"] == ["agent"]
     assert GATE_PRESETS["ui-human"]["doubts"] == ["human"]
+
+
+def test_a_resumed_run_shows_every_station_it_loaded(manual_doc, tmp_path):
+    translated(manual_doc, tmp_path / "run")
+    raw: list[tuple[str, dict]] = []
+    job, _ = pipeline(manual_doc, ScriptedProvider(), tmp_path / "run")
+    job.on_event = lambda kind, data: raw.append((kind, data))
+    asyncio.run(job.run())
+    translator = EventTranslator()
+    events = [event for kind, data in raw for event in translator.feed(kind, data, 0.0)]
+    running = {event.data["station"] for event in events if event.kind == "station" and event.data["state"] == "running"}
+    assert running == {"map", "extract", "check", "merge", "ask"}

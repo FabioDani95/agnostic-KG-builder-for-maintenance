@@ -20,8 +20,8 @@ from backend.ui.budget import Limits, Spending, estimate
 from backend.ui.catalog import Catalog, process_alive
 from backend.ui.events import UiEvent
 from backend.ui.evidence import Evidence
-from backend.ui.jobs import JobError, Jobs
-from backend.ui.questions import HUMAN_QUESTION_BUDGET, open_for_people, question_views
+from backend.ui.jobs import JobError, Jobs, current_units
+from backend.ui.questions import HUMAN_QUESTION_BUDGET, open_for_people, pending_questions, question_views
 from backend.ui.replay import replay_events
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -41,6 +41,16 @@ class RunIn(BaseModel):
     reviewers: str
 
 
+class AnswerIn(BaseModel):
+    option_id: str
+    keep: list[int] = []
+    text: str = ""
+
+
+class DecisionIn(BaseModel):
+    decision: str
+
+
 @dataclass
 class UiSettings:
     root: Path = ROOT
@@ -49,6 +59,8 @@ class UiSettings:
     ledger: Path = field(default_factory=lambda: ROOT / "campaign" / "real_call_budget.jsonl")
     frontend: Path = field(default_factory=lambda: ROOT / "frontend" / "dist")
     limits: Limits = field(default_factory=Limits)
+    # How long «Applica» and «Approva» wait for the resumed run to start before answering.
+    resume_wait_seconds: float = 20.0
 
 
 def sse(event: UiEvent) -> str:
@@ -83,9 +95,12 @@ async def paced(events: list[UiEvent], after: int, speed: float) -> AsyncIterato
 async def tail(path: Path, after: int, alive=lambda: True, poll: float = 0.5) -> AsyncIterator[str]:
     """Follow the events.jsonl of a running run until it ends."""
 
-    position, idle, last = 0, 0.0, None
+    position, idle, last = None, 0.0, None
     while True:
         lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
+        if position is None:
+            # A resumed run appends a new attempt; it reloads the whole state, so it is enough to follow it.
+            position = last_attempt(lines)
         for line in lines[position:]:
             if not line.strip():
                 continue
@@ -108,6 +123,27 @@ async def tail(path: Path, after: int, alive=lambda: True, poll: float = 0.5) ->
         if idle >= HEARTBEAT_SECONDS:
             idle = 0.0
             yield ": attesa\n\n"
+
+
+def last_attempt(lines: list[str]) -> int:
+    """Index of the last run_started line: where the current attempt of a run begins."""
+
+    starts = [index for index, line in enumerate(lines) if '"kind":"run_started"' in line]
+    return starts[-1] if starts else 0
+
+
+async def wait_for_attempt(path: Path, before: int, seconds: float = 20.0) -> None:
+    """Return once the resumed command line has written its first event, so the view follows it."""
+
+    for _ in range(int(seconds / 0.25)):
+        lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
+        if sum('"kind":"run_started"' in line for line in lines) > before:
+            return
+        await asyncio.sleep(0.25)
+
+
+def attempts(path: Path) -> int:
+    return path.read_text(encoding="utf-8").count('"kind":"run_started"') if path.exists() else 0
 
 
 def create_app(settings: UiSettings | None = None) -> FastAPI:
@@ -186,11 +222,69 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
     def questions(manual_id: str, version_id: str) -> dict:
         folder = run_dir(manual_id, version_id)
         is_campaign = not folder.is_relative_to(settings.workspace)
-        open_, unverified = open_for_people(folder)
+        version = catalog.find(manual_id, version_id)
+        if is_campaign or version.status == "running" or not (folder / "state").exists():
+            open_, unverified = open_for_people(folder) if (folder / "state").exists() else ([], [])
+            answered: list[dict] = []
+            unapplied = 0
+        else:
+            store = jobs.store(folder)
+            open_ = store.open_questions()
+            published = {question.question_id for question in store.questions}
+            pending_all, deferred = pending_questions(folder, budget=10**6)
+            unverified = [question for question in pending_all + deferred
+                          if question.question_id not in published and question.kind.value != "graph_approval"]
+            answered = []
+            done = [question for question in store.questions if question.question_id in store.answers]
+            for view in question_views(folder, done):
+                given = store.answers[view.question_id]
+                answered.append({**view.model_dump(), "answer": {"option_id": given.option_id, "text": given.text,
+                                                                 "keep": given.edits.get("keep", [])}})
+            unapplied = len(store.unapplied())
+        awaiting = version.status == "awaiting_approval"
         return {"budget": HUMAN_QUESTION_BUDGET, "editable": not is_campaign, "copy_needed": is_campaign,
                 "open": [view.model_dump() for view in question_views(folder, open_)],
-                "answered": [],
+                "answered": answered, "unapplied": unapplied, "awaiting_approval": awaiting,
+                "can_approve": awaiting and not is_campaign and not open_ and not unapplied,
                 "unverified": [view.model_dump() for view in question_views(folder, unverified)]}
+
+    @app.post("/api/manuals/{manual_id}/versions/{version_id}/questions/{question_id}/answer")
+    async def answer(manual_id: str, version_id: str, question_id: str, body: AnswerIn) -> dict:
+        folder = run_dir(manual_id, version_id)
+        try:
+            if not folder.is_relative_to(settings.workspace):
+                # Campaign runs are never written: the first answer works on a copy in workspace/.
+                doc = await asyncio.to_thread(evidence.document, manual_dir(manual_id))
+                units = await asyncio.to_thread(current_units, doc, folder)
+                version_id = jobs.copy_version(manual_id, folder, units)
+                folder = run_dir(manual_id, version_id)
+            jobs.answer(folder, question_id, body.option_id, body.keep, body.text)
+        except JobError as error:
+            raise HTTPException(409, str(error)) from None
+        store = jobs.store(folder)
+        return {"version_id": version_id, "open": len(store.open_questions()), "answered": len(store.answers)}
+
+    @app.post("/api/manuals/{manual_id}/versions/{version_id}/apply")
+    async def apply_answers(manual_id: str, version_id: str) -> dict:
+        folder = run_dir(manual_id, version_id)
+        before = attempts(folder / "events.jsonl")
+        try:
+            jobs.apply(manual_id, folder)
+        except JobError as error:
+            raise HTTPException(409, str(error)) from None
+        await wait_for_attempt(folder / "events.jsonl", before, settings.resume_wait_seconds)
+        return {"version_id": version_id}
+
+    @app.post("/api/manuals/{manual_id}/versions/{version_id}/approve")
+    async def approve(manual_id: str, version_id: str, body: DecisionIn) -> dict:
+        folder = run_dir(manual_id, version_id)
+        before = attempts(folder / "events.jsonl")
+        try:
+            jobs.approve(manual_id, folder, body.decision)
+        except JobError as error:
+            raise HTTPException(409, str(error)) from None
+        await wait_for_attempt(folder / "events.jsonl", before, settings.resume_wait_seconds)
+        return {"version_id": version_id}
 
     @app.get("/api/manuals/{manual_id}/segments/{segment_id}")
     def segment(manual_id: str, segment_id: str) -> dict:

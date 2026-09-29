@@ -4,6 +4,7 @@ import { TopBar } from "./components/Controls";
 import { Library } from "./screens/Library";
 import { ManualScreen } from "./screens/ManualScreen";
 import { NewGraph } from "./screens/NewGraph";
+import { Questions } from "./screens/Questions";
 
 // The graph screens carry three.js: they load only when opened.
 const FinishedGraph = lazy(() => import("./screens/FinishedGraph").then((module) => ({ default: module.FinishedGraph })));
@@ -32,6 +33,7 @@ export function App() {
       <Route path="/manuali/:manualId" element={<ManualScreen />} />
       <Route path="/manuali/:manualId/versioni/:versionId" element={stage(<FinishedGraph />)} />
       <Route path="/manuali/:manualId/versioni/:versionId/esecuzione" element={stage(<LiveRun />)} />
+      <Route path="/manuali/:manualId/versioni/:versionId/domande" element={<Questions />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

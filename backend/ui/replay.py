@@ -172,8 +172,11 @@ def replay_events(run_dir: Path, *, manual_id: str, version_id: str, ledger: Pat
     """Interface events of a finished run, exactly as a live view would have received them."""
 
     saved = run_dir / "events.jsonl"
-    if saved.exists():
-        return [UiEvent.model_validate_json(line) for line in saved.read_text(encoding="utf-8").splitlines() if line]
+    if saved.exists() and saved.stat().st_size:
+        events = [UiEvent.model_validate_json(line) for line in saved.read_text(encoding="utf-8").splitlines() if line]
+        # A resumed run reloads its whole state: its last attempt tells the full story.
+        starts = [index for index, event in enumerate(events) if event.kind == "run_started"]
+        return events[starts[-1]:] if starts else events
     report = _read(run_dir / "report.json") or {}
     raw, start = timeline(run_dir)
     end = raw[-1][0] if raw else 0.0

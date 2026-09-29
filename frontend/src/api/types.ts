@@ -152,3 +152,35 @@ export interface Upload {
   duplicate_of: string | null;
   machine: Machine | null;
 }
+
+export interface QuestionOption {
+  option_id: string;
+  label_it: string;
+  needs_statements: boolean;
+  needs_text: boolean;
+}
+
+export interface QuestionView {
+  question_id: string;
+  kind: string;
+  title_it: string;
+  source: { segment_id: string; page: number; text: string }[];
+  claims_it: string[];
+  proposal: string[];
+  options: QuestionOption[];
+  default_option_id: string;
+  priority: number;
+  answer?: { option_id: string; text: string; keep: number[] };
+}
+
+export interface Questions {
+  budget: number;
+  editable: boolean;
+  copy_needed: boolean;
+  open: QuestionView[];
+  answered: QuestionView[];
+  unverified: QuestionView[];
+  unapplied: number;
+  awaiting_approval: boolean;
+  can_approve: boolean;
+}

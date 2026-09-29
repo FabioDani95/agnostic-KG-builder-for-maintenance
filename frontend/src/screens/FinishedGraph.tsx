@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useApi, versionPath } from "../api/client";
-import type { Evidence, Graph, GraphEdge, GraphNode, Manual } from "../api/types";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { postJson, useApi, versionPath } from "../api/client";
+import type { Evidence, Graph, GraphEdge, GraphNode, Manual, Questions } from "../api/types";
 import { BackLink, SearchField, SegmentedControl } from "../components/Controls";
 import { EdgeDetail, NodeDetail } from "../components/EvidencePanel";
 import { Legend } from "../components/Legend";
@@ -90,6 +90,19 @@ export function FinishedGraph() {
   const results = searchStarts(graph.data?.nodes ?? [], query);
   const versions = (manual.data?.versions ?? []).filter((item) => item.status !== "failed" && item.status !== "running");
   const current = manual.data?.versions.find((item) => item.version_id === versionId);
+  const waiting = current?.status === "awaiting_approval" && current.origin === "workspace";
+  const questions = useApi<Questions>(waiting ? `${versionPath(manualId, versionId)}/questions` : null);
+  const [approving, setApproving] = useState(false);
+  const approve = async () => {
+    setApproving(true);
+    try {
+      await postJson(`${versionPath(manualId, versionId)}/approve`, { decision: "approve" });
+      navigate(`/manuali/${encodeURIComponent(manualId)}/versioni/${encodeURIComponent(versionId)}/esecuzione`);
+    } finally {
+      setApproving(false);
+    }
+  };
+  const open = questions.data ? questions.data.open.length : 0;
 
   const selectedEdge = selection?.kind === "edge" ? edges.find((edge) => edge.id === selection.id) : undefined;
   const selectedNode = selection?.kind === "node" ? nodes.get(selection.id) : undefined;
@@ -153,6 +166,19 @@ export function FinishedGraph() {
               ))}
             </select>
           </label>
+        )}
+        {questions.data?.can_approve && (
+          <button type="button" className="button button-primary" disabled={approving} onClick={approve}>
+            Approva
+          </button>
+        )}
+        {questions.data && !questions.data.can_approve && (open > 0 || questions.data.unapplied > 0) && (
+          <Link
+            to={`/manuali/${encodeURIComponent(manualId)}/versioni/${encodeURIComponent(versionId)}/domande`}
+            className="button button-secondary"
+          >
+            {open > 0 ? (open === 1 ? "Rispondi prima alla domanda" : `Rispondi prima alle ${formatNumber(open)} domande`) : "Applica le risposte"}
+          </Link>
         )}
       </header>
 
