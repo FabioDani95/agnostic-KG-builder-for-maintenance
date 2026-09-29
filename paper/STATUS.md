@@ -324,3 +324,12 @@ manuali tenuti da parte. Grizzly G0872 è il primo della serie.
 Secondo primo contatto, LG LMH2235ST (stesso tag): 69/222 rami (31,1%, IC95 0,254–0,374). La mappa legge
 quasi tutte le pagine; perdite sui diagrammi di flusso (12–13/35) e sui test dei componenti (0–4/18),
 con molte cause scollegate dal sintomo. Spesa 7,075 USD su 20.
+
+Iterazione F (2026-09-28/29): scansione del testo intero per le pagine con conoscenza diagnostica,
+unità per diagramma, verificatore che legge il passaggio (con immagini delle pagine a diagramma),
+regole per bivi e test. Stesso valutatore, sei manuali giudicati: rami 351 → 390/723 (48,5% → 53,9%,
+IC95 0,503–0,575); pagine gold lette Grizzly 6–8 → 18/20, ABB 7–8 → 11/11; cause orfane LG 37–50 →
+10–16 ma in aumento sugli altri; fusioni vietate 0. Costo per esecuzione ×2–3,5 (ABB 0,25 USD).
+Atlas Copco e Grundfos non giudicati per il tetto di spesa. Da ora Grizzly e LG sono di sviluppo;
+restano validi i loro numeri di primo contatto. Precisione dei collegamenti nuovi non misurata:
+foglio cieco 3 da compilare. Spesa 12,813 USD su 20 (tetto dell'iterazione alzato da Fabio a 13,0).

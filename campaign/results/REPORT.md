@@ -238,6 +238,221 @@ nome di un codice è spezzato in più segmenti, le colonne sono interlacciate, l
 possibile riprodurre la lettura su cui era stato annotato il foglio: unisce il testo di una
 riga visiva tra le colonne e non corrisponde a nessuna modalità di PyMuPDF 1.28 installato.
 
+## Iterazione F: pagine calde, diagrammi e prova letta nel contesto (2026-09-28)
+
+Brief: [PROMPT_ITERAZIONE_F.md](../../docs/PROMPT_ITERAZIONE_F.md). Prima = esecuzioni E per i sei
+manuali (`runs_E/`) e primo contatto per Grizzly e LG (`runs_first_contact/`, tag
+`v3-freeze-2026-09-28`); dopo = esecuzioni F (`runs/`), **stesso valutatore**. Da ora anche Grizzly e
+LG sono manuali di sviluppo: le correzioni sono nate dai loro errori, quindi i loro numeri "dopo"
+non misurano la generalizzazione (restano validi i numeri di primo contatto).
+
+### Diagnosi offline, prima di spendere
+
+Con le esecuzioni salvate e l'archivio del giudice (ogni coppia giudicata ritrovata senza chiamate):
+
+- **Grizzly:** il 60–80% delle perdite è su pagine mai lette. La mappa vede solo un riassunto di
+  480 caratteri per pagina, e il cancello della mappa (agente) **toglieva** pagine gold che una
+  lettura aveva tenuto: Grizzly pp. 50, 60–62; ABB pp. 374, 380, 391; LG p. 27.
+- **LG:** le unità di lettura si spezzavano a ogni cambio del nome di sezione, e la mappa dà nomi di
+  sezione pagina per pagina: il diagramma "No Heat / No Cook" diventava tre unità (titolo a p. 18,
+  passi 1–7 a pp. 19–20, passi 8–12 a p. 21). I passi di p. 21 non vedevano il sintomo: tutte cause
+  orfane (rami R40–R44 mai ritrovati). Il verificatore vedeva solo i segmenti citati.
+- **Regressione di token dell'iterazione E:** non viene dall'estrazione ma dal giudice delle fusioni
+  (fino a 105 mila token per chiamata, 654 mila per un'esecuzione di Lincoln) e dal verificatore
+  (710 mila token nella stessa esecuzione).
+
+### Cosa è cambiato (un commit e un test per ciascuna)
+
+1. **Unità per diagramma, non per nome di sezione** (`f702c73`). Le pagine diagnostiche consecutive si
+   leggono insieme e si tagliano solo per dimensione; una sezione, come una tabella, inizia
+   un'unità nuova se ci sta intera; il taglio cade all'inizio di una pagina. Un'unità tagliata dopo
+   legge come contesto i primi segmenti delle tre pagine precedenti (i titoli). LG passa da circa 20
+   a 6–8 unità e le pp. 15–21 (tre diagrammi interi) stanno in una sola.
+2. **Scansione del testo intero per le pagine calde** (`e87e614`). Una lettura di tutto il manuale, a
+   blocchi di circa 24 mila caratteri, restituisce i segmenti che contengono conoscenza diagnostica
+   ("ispeziona per ostruzioni e pulisci", allarmi, codici, test con valori attesi). Una pagina conta
+   solo con prove sulla sua pagina; si legge e il cancello non può toglierla. Prova reale
+   ([scan_probe.json](iteration_F/scan_probe.json)): pagine gold trovate 19/20 Grizzly, 10/11 ABB,
+   9/9 Haas, 21/24 LG (le tre mancanti sono lette dalla mappa); 0,004–0,061 USD per manuale. Un primo
+   prompt segnalava anche le avvertenze di sicurezza generiche (26 pagine in più su Grizzly):
+   escluse, 18 in più.
+3. **Il verificatore legge il passaggio** (`2b192ca`, principio 3b). La verifica è raggruppata per
+   unità: il verificatore riceve l'unità intera con il contesto, poi gli enunciati con gli ID citati,
+   e giudica se il manuale, letto come lo legge un tecnico (titoli, colonne, passi numerati, esiti
+   sì/no), dice la relazione e se i segmenti citati sono quelli giusti. Unire parti di voci diverse
+   resta "non sostenuto". Il testimone della stessa riga resta.
+4. **Immagini delle pagine a diagramma** (`9fd77d1`). Una pagina con almeno 8 segmenti di testo fuori
+   dalle tabelle, metà dei quali sotto i 40 caratteri, è una pagina di layout (regola sulla sola
+   lunghezza, nessuna parola). Estrazione e verifica ricevono l'immagine (al massimo 6 per chiamata)
+   e ogni segmento porta la sua posizione `@x,y` in percentuale: il modello segue frecce e riquadri e
+   cita comunque gli ID. Il `TESTO.md` non cambia.
+5. **Regole per bivi e test** (`ec98792`, `62e90ae`). Ogni esito di un bivio che prescrive
+   un'azione è un record: problema del diagramma (dal titolo, un solo problema per diagramma),
+   causa rivelata dall'esito (non scritta), test come controllo, azione come riparazione, esito come
+   condizione. Un test con valore normale è un controllo con contesto `expected`; un test di
+   componente senza sintomo ha il problema "Suspected <componente> fault". Una causa sotto un titolo
+   che nomina la sua situazione è collegata a quel problema.
+6. **Che cosa afferma un collegamento a una causa non nominata** (`052e1f5`). Nella prima prova su LG
+   il verificatore con il passaggio accettava i rimedi dei bivi ma rifiutava quasi tutti i
+   collegamenti problema → causa non scritta ("No heat / no cook" → "Faulty high voltage
+   transformer"): l'enunciato non diceva che cosa verificare. Ora dice che la voce del problema
+   (riga, elenco, o diagramma che parte dal problema) porta a quel controllo, esito o rimedio. Sulle
+   stesse estrazioni salvate: "non sostenuto" da 113 a 90, verdi da 421 a 436.
+7. **Una causa dedotta che ripete il problema diventa non nominata** (`bafa713`). Prima valeva solo per
+   le cause dichiarate scritte. Su Grizzly "Exhaust ducting leaks" → causa "Exhaust ducting leaks"
+   restava e revisore e verificatore bocciavano il ramo intero.
+8. **Token e tempo** (`978f5f5`, `963e8fc`). Il giudice delle fusioni scrive il contesto di ogni nome
+   una volta per chiamata, con al più 3 segmenti dove il nome è scritto: offline sullo stato salvato
+   l'ingresso scende al 44–77% (Lincoln r1 da 3,08 a 1,35 milioni di caratteri). Il revisore agente
+   risponde a 8 domande alla volta invece di 4.
+9. **Foglio cieco dei collegamenti nuovi** (`0b49383`): `campaign.py precision --sheet 3
+   --links-before runs_E,runs_first_contact`.
+
+### Prima e dopo (tre esecuzioni per manuale, stesso valutatore)
+
+Prima: [kpi_E.json](kpi_E.json), [kpi_test_grizzly.json](kpi_test_grizzly.json),
+[kpi_first_contact_lg.json](kpi_first_contact_lg.json) e i rispettivi `quality_*`. Dopo:
+[kpi_F.json](kpi_F.json) (giudicato un manuale alla volta, parti in `kpi_F_parts/`),
+[quality_F.json](quality_F.json). Costo per esecuzione dal registro, tempo della pipeline senza la
+lettura del PDF; per costo e tempo "dopo" contano solo le esecuzioni non riprese (vedi sotto).
+
+| Manuale | Rami gold | Rami prima (r1, r2, r3) | **Rami dopo (r1, r2, r3)** | Asserzioni prima → dopo | Pagine gold lette prima → dopo | Cause orfane prima → dopo | Fusioni vietate dopo | Domande a persona dopo | USD per esecuzione prima → dopo | Secondi per esecuzione prima → dopo |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Atlas Copco | 49 | 44, 41, 44 | **non giudicato** | 57–60 → n/d /66 | 2 → 2 /2 | 0 → 6–12 | 0 | 2–3 | 0,035 → 0,116 | 132 → 344 |
+| Graco GTX | 19 | 19, 17, 15 | **19, 17, 16** | 41–45 → 41–45 /45 | 2 → 2 /2 | 0 → 0–2 | 0 | 0 | 0,023 → 0,022 | 80 → 113 |
+| Haas | 45 | 35, 36, 35 | **36, 35, 37** | 41 → 42–49 /57 | 8 → 9 /9 | 2–6 → 1–8 | 0 | 0–1 | 0,059 → 0,145 | 173 → 322 |
+| ABB (406 pagine) | 19 | 5, 8, 6 | **9, 11, 7** | 8–19 → 18–21 /38 | 7–8 → 11 /11 | 7–12 → 12–16 | 0 | 1–3 | 0,072 → 0,249 | 216 → 489 |
+| Grundfos | 146 | 140, 138, 138 | **non giudicato** | 138–140 → n/d /146 | 1 → 1 /1 | 0 → 5–11 | 0 | 6–10 | 0,022 → 0,081 | 94 → 264 |
+| Lincoln | 22 | 5, 4, 6 | **14, 14, 2** | 17–25 → 18–37 /47 | 3 → 3 /3 | 0–12 → 6–12 | 0 | 0 | 0,112 → 0,142 | 181 → 250 |
+| Grizzly | 62 | 29, 32, 30 | **32, 32, 34** | 86–88 → 85–107 /160 | 6–8 → 18 /20 | 1–5 → 36–54 | 0 | 0–4 | 0,082 → 0,231 | 206 → 472 |
+| LG | 74 | 25, 22, 22 | **27, 26, 22** | 44–68 → 64–90 /234 | 21–22 → 24 /24 | 37–50 → 10–16 | 0 | 8–10 | 0,155 → 0,163 | 391 → 362 |
+
+Rami, tre esecuzioni, sui sei manuali giudicati: **351/723 = 48,5% [0,449; 0,522] → 390/723 = 53,9%
+[0,503; 0,575]** (IC95 Wilson). Graco, Haas, ABB e Lincoln: 191/315 → 217/315 (60,6% → 68,9%);
+Grizzly 91/186 → 98/186; LG 69/222 → 75/222. Il giudice cambia di 0–4 rami tra valutazioni
+delle stesse esecuzioni: oltre il rumore solo ABB (+8 su tre esecuzioni), Lincoln (+15, ma r3 cade a
+2) e l'insieme di Grizzly e LG nelle zone mirate (sotto). Atlas Copco e Grundfos non sono giudicati:
+il tetto di spesa non bastava (vedi "Costo").
+
+Zone di Grizzly e LG (rami per esecuzione, prima → dopo):
+
+| Manuale | Zona | Rami gold | Prima (r1, r2, r3) | Dopo (r1, r2, r3) |
+| --- | --- | --- | --- | --- |
+| Grizzly | tabelle di troubleshooting, pp. 51–52 | 34 | 29, 32, 29 | 25, 23, 32 |
+| Grizzly | conoscenza sparsa (codici p. 9, allarme p. 32, amperometro p. 37, manutenzione pp. 42–64) | 28 | 0, 0, 1 | **7, 9, 2** |
+| LG | precauzioni pp. 2, 11 | 8 | 0, 1, 1 | 1, 1, 0 |
+| LG | autodiagnosi e codici p. 12 | 8 | 3, 3, 3 | 3, 3, 3 |
+| LG | controlli di base p. 13 | 5 | 5, 5, 5 | 5, 5, 5 |
+| LG | diagrammi di flusso pp. 14–24 | 35 | 13, 13, 12 | **17**, 11, 13 |
+| LG | test dei componenti pp. 25–33 | 18 | 4, 0, 1 | 1, **6**, 1 |
+
+Una zona è decisa dalle pagine citate dal ramo nel gold (Grizzly: tabelle se tutte in pp. 51–52).
+Rami ritrovati in almeno un'esecuzione F e mai prima: Grizzly R6, R7, R10, R13, R15, R16, R17, R27,
+R57, R63 (nessun ramo perso del tutto); LG R4, R5, R34, R40–R44, R53, R60, R69, R70, R71, R74 (persi:
+R1, R27, R35, R47, R48, R63, R67, R73).
+
+### Esempi verificati sul PDF
+
+- **LG p. 21, passi 8–11 del diagramma "No Heat / No Cook"** (mai ritrovati prima: erano un'unità a
+  sé senza sintomo). Il grafo r1 ha "No heat / no cook" → "connettore del condensatore ad alta
+  tensione scollegato" → "ricollega o ripara il connettore" (esito "Yes" del passo 8) e "No heat /
+  no cook" → "resistenza del condensatore fuori intervallo" → controllo "misura la resistenza" e
+  riparazione "sostituisci il condensatore" (passo 9, "Yes"), con l'esito come condizione `if`,
+  citando il titolo p18.b1 e i riquadri di p. 21. Sull'immagine della pagina il passo 11 stampa
+  "No → Replace the high voltage Diode" (probabile errore del manuale): il grafo, come il gold,
+  segue la logica ("se fuori intervallo, sostituisci").
+- **Grizzly p. 37, passo 26** (pagina di uso, mai letta prima): "An ammeter indication exceeding the
+  mA rating may be caused by impending laser tube failure, or electrical faults" diventa
+  "indicazione dell'amperometro oltre il valore" → "guasto imminente del tubo laser" e → "guasto
+  elettrico", con il controllo del passo 26.
+- **Grizzly p. 46, passi 4 e 6** (manutenzione delle cinghie): "Verify that left and right belts
+  have same deflection, or binding may occur" e "If any belts have cracks or damaged teeth, replace"
+  diventano rami con controllo e sostituzione, la seconda con la condizione "se le cinghie hanno
+  crepe o denti danneggiati".
+
+### Collegamenti verdi nuovi e precisione
+
+Nell'esecuzione r1 i collegamenti verdi che nessun collegamento verde dell'esecuzione precedente
+dice (stesso tipo, nomi simili ai due estremi; stima per nome, quindi le parafrasi contano come
+nuove) sono: ABB 111, Atlas 158, Graco 8, Grizzly 301, Grundfos 92, Haas 185, LG 142, Lincoln 83.
+Molti vengono dalle pagine in più trovate dalla scansione (ABB 44 pagine lette, Haas 47, Atlas 17,
+contro 2–11 del perimetro gold): sono fuori dal gold e la loro precisione **non è misurata**. Foglio
+cieco nuovo per Fabio: [REVISIONE_PRECISIONE_3.md](precision/REVISIONE_PRECISIONE_3.md), 72 voci (per
+manuale 6 collegamenti nuovi e 3 già presenti come controllo, mescolati; la chiave dice quali). Da
+compilare, poi `campaign.py precision --sheet 3 --score`.
+
+### Costo e tempo
+
+Costo per esecuzione salito di 2–3,5 volte su sei manuali: la voce principale è l'estrazione delle
+pagine in più, poi la scansione (ABB 0,049 USD, Haas 0,015, gli altri 0,003–0,004). ABB, 406 pagine,
+0,23–0,27 USD e 7,8–8,4 minuti per esecuzione (riferimento del brief: 0,25 USD e 10 minuti); Grizzly
+0,23 USD e circa 8 minuti per 80 pagine, sopra le attese per le sue dimensioni. Il giudice delle
+fusioni e il verificatore non esplodono più: Lincoln r1 da 654 mila a 298 mila token per le fusioni
+e da 710 mila a 239 mila per la verifica; su LG le fusioni scendono da 270 a 214 mila, la verifica
+sale da 110 a 205 mila token (passaggio intero e immagini).
+
+Spesa: 7,075 → 12,813 USD, cioè 5,74 USD in questa iterazione contro i 5 del brief. Fabio ha alzato
+il tetto a 12,5 e poi a 13,0 USD durante il lavoro (proiezioni reali dopo il primo giro). Voci: sonde
+e prove di sviluppo circa 1,05 (scansione 0,09, due giri di prova su LG e uno su Grizzly con i
+giudizi, sonda di estrazione 0,02); 24 esecuzioni 3,84 (comprese le riprese); giudice 0,85 su 18
+esecuzioni. Il giudice di Atlas Copco e Grundfos (circa 0,5 USD stimati a 0,0011 USD per chiamata)
+non è stato eseguito per restare entro 13,0.
+
+### Esecuzioni fallite e riprese
+
+- **Difetto del registro con le immagini** (`81ddd4b`). Il gateway prenotava il costo massimo di una
+  chiamata contando un token per byte della richiesta, anche per l'immagine in base64: una chiamata
+  con sei pagine di diagramma risultava 541 mila token (0,15 USD). Con la spesa oltre 9 USD, poche
+  chiamate in parallelo superavano il tetto e il registro le respingeva (`BudgetExceededError`, non
+  archiviate). Colpite: LG r2 e r3, Grizzly r3 (verifiche e fusioni respinte) e Grundfos r3 (14
+  letture di estrazione fallite, esecuzione `incomplete`). Corretto con una quota fissa di 6.000
+  token per immagine; le quattro esecuzioni sono state **riprese dallo stato salvato**, rifacendo
+  verifica, fusione e cancelli (e l'estrazione delle unità fallite), con lo stesso codice di
+  estrazione. Le versioni fallite restano in `runs_F_budget_failed/`. Nella ripresa ho cancellato per
+  errore i cinque file di stato delle letture fallite prima di copiarli; il loro esito resta nel
+  rapporto e nel grafo delle versioni fallite.
+- Atlas Copco r2: tre timeout della mappa, riprovati con successo. LG r3 ripreso: una risposta
+  dell'agente mancata, passata al revisore successivo.
+- Il giudice di Graco si è fermato circa mezz'ora con il Mac in sospensione (il limite di tempo per
+  chiamata usa un orologio monotono) ed è ripartito da solo.
+
+### Limiti rimasti e risultati negativi
+
+- **Tabelle di Grizzly peggiori in due esecuzioni su tre** (25 e 23 contro 29–32). L'unità delle
+  tabelle ora contiene anche p. 53, una pagina di manutenzione trovata dalla scansione; le righe
+  producono meno azioni distinte (56–80 contro 87–108) e mancano voci degli elenchi nelle celle
+  ("Inspect/replace water chiller system"). Non si separa offline l'effetto dell'unità più lunga da
+  quello delle regole nuove. Correzione possibile: una tabella diagnostica che sta da sola non si
+  unisce a pagine aggiunte dalla sola scansione.
+- **Cause orfane in aumento fuori da LG** (Grizzly 36–54, Atlas 6–12, Grundfos 5–11). Sulle pagine di
+  uso e manutenzione il modello nomina lo stato anomalo come causa ("parti allentate") senza un
+  problema, e il revisore agente rifiuta "una verifica di manutenzione non è una voce di
+  troubleshooting". Ho provato una regola ("se trovi X, fai Y": X è il problema osservato) con una
+  sonda su tre unità: su Grizzly pp. 42–44 le proposte sono scese da 97 a 28 e su LG il titolo del
+  diagramma è sparito; regola scartata, non misurata sulla campagna.
+- **Due problemi per lo stesso diagramma** (titolo e prima domanda) restano in parte su LG: i rami
+  del passo 3 di "No Heat" sono collegati a "Product does not operate after power on" e il giudice
+  li considera un problema diverso da "No heat / no cook".
+- **Rami completi di LG ancora bassi** (22–27/74) nonostante le asserzioni salgano (64–90 contro
+  44–68): molti rami gold sono procedure con 5–15 azioni (R8, R54, R58, R59) e basta perderne una.
+- **Instabilità di Lincoln** (14, 14, 2): in r3 l'assistenza condizionata ("se il problema persiste,
+  contatta l'assistenza") non è collegata; è il limite noto dell'iterazione E.
+- **Domande a una persona in aumento** su LG (8–10, al tetto) e Grundfos (6–10): più relazioni con
+  il solo testimone del verificatore arrivano al cancello dei dubbi.
+- **Non fatto:** grafo esplicito del diagramma dalle frecce del PDF (`get_drawings`), parser scritti
+  dal modello come testimone indipendente, recupero per immagini tipo ColPali. Il verificatore e le
+  due letture restano lo stesso modello.
+- **Controllo del lettore** ([reader_check.json](iteration_F/reader_check.json)): gli ID di tutti gli
+  otto manuali coincidono con `TESTO.md` e l'uscita del lettore è identica a prima; il testo delle
+  celle differisce già da prima di questa iterazione in cinque `TESTO.md` di sviluppo (Atlas, Graco,
+  Haas, Lincoln, ABB), generati prima delle correzioni del lettore delle iterazioni D ed E.
+
+### Proposta
+
+Non propongo ancora un nuovo tag di congelamento: prima giudicare Atlas Copco e Grundfos (circa
+0,5 USD) e correggere la regressione delle tabelle di Grizzly, poi congelare. Se Fabio preferisce
+congelare ora, il codice da congelare è `81ddd4b`.
+
 ## Secondo primo contatto: LG LMH2235ST (2026-09-28)
 
 Service manual di un forno a microonde: codici d'errore, tabella dei controlli di base,
