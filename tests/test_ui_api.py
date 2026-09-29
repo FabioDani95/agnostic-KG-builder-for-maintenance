@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 
 import pytest
 from fastapi.testclient import TestClient
@@ -83,6 +84,7 @@ def test_a_running_run_is_followed_until_it_ends(client, settings):
     lines = [*translator.feed("run_started", {"mode": "live"}, 0.0),
              *translator.feed("run_failed", {"message": "BudgetExceededError"}, 1.0)]
     (run / "events.jsonl").write_text(lines[0].model_dump_json() + "\n", encoding="utf-8")
+    (run / "job.json").write_text(json.dumps({"pid": os.getpid()}), encoding="utf-8")  # a live process
     version = client.get("/api/manuals/test_pump").json()["versions"]
     assert next(v for v in version if v["origin"] == "workspace")["status"] == "running"
     (run / "events.jsonl").write_text("".join(line.model_dump_json() + "\n" for line in lines), encoding="utf-8")

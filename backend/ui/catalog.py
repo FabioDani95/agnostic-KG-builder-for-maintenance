@@ -9,6 +9,7 @@ are left out.
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -82,9 +83,22 @@ def _last_event(run_dir: Path) -> str | None:
     return json.loads(lines[-1])["kind"] if lines else None
 
 
+def process_alive(run_dir: Path) -> bool:
+    """The command-line process of a run started from the interface is still running."""
+
+    job = _read_json(run_dir / "job.json")
+    if not job or not job.get("pid"):
+        return False
+    try:
+        os.kill(int(job["pid"]), 0)
+    except (OSError, ValueError):
+        return False
+    return True
+
+
 def _status(run_dir: Path, report: dict[str, Any] | None) -> str:
     last = _last_event(run_dir)
-    if last is not None and last not in ("run_finished", "run_failed"):
+    if last not in ("run_finished", "run_failed") and process_alive(run_dir):
         return "running"
     if report is None or last == "run_failed":
         return "failed"
@@ -97,19 +111,24 @@ def _decided_by(run_dir: Path) -> str | None:
 
 
 def _date(run_dir: Path) -> str | None:
-    """Last recorded answer of the gates; otherwise the date of the report file."""
+    """Last recorded answer of the gates, else the date of the report or of the events file.
+
+    Answers come first: a campaign folder copied or restored keeps them, not its file dates.
+    """
 
     stamps = []
     for path in (run_dir / "state").glob("gate_*.json"):
         for answer in (_read_json(path) or {}).get("answers", []):
             if answer.get("answered_at"):
                 stamps.append(datetime.fromisoformat(answer["answered_at"].replace("Z", "+00:00")))
-    if stamps:
+    # A run waiting for a person has answered only the map: its report is the better date.
+    waiting = (_read_json(run_dir / "report.json") or {}).get("status") == "awaiting_approval"
+    if stamps and not waiting:
         return max(stamps).astimezone(timezone.utc).isoformat(timespec="seconds")
     for name in ("report.json", "events.jsonl"):
         if (run_dir / name).exists():
             return _iso((run_dir / name).stat().st_mtime)
-    return None
+    return max(stamps).astimezone(timezone.utc).isoformat(timespec="seconds") if stamps else None
 
 
 @dataclass
@@ -179,9 +198,11 @@ class Catalog:
     # Reading -----------------------------------------------------------------
 
     def version(self, version_id: str, origin: str, run_dir: Path) -> Version:
-        watched = [run_dir / name for name in ("report.json", "events.jsonl", "people.json", "origin.json")]
+        watched = [run_dir / name for name in ("report.json", "events.jsonl", "people.json", "origin.json", "job.json")]
         watched += sorted((run_dir / "state").glob("gate_*.json"))
-        stamp = tuple((path.name, path.stat().st_mtime_ns) for path in watched if path.exists())
+        # A process that ends changes no file: its liveness is part of the key.
+        stamp = (*((path.name, path.stat().st_mtime_ns) for path in watched if path.exists()),
+                 process_alive(run_dir))
         cached = self._versions.get(run_dir)
         if cached and cached.stamp == stamp:
             return cached.version

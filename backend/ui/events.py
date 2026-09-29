@@ -107,7 +107,7 @@ class EventTranslator:
         graph = data.get("graph") or {}
         nodes = [{"id": node["id"], "type": node["type"], "name": node["name"]} for node in graph.get("nodes", [])]
         edges = [{"id": edge["id"], "type": edge["type"], "from": edge["from"], "to": edge["to"],
-                  "tier": edge["tier"]} for edge in graph.get("edges", [])]
+                  "tier": edge["tier"], "derived": bool(edge.get("derived"))} for edge in graph.get("edges", [])]
         merged_into: dict[str, str] = {}
         for node in graph.get("nodes", []):
             code = str((node.get("properties") or {}).get("code") or "")
@@ -115,11 +115,20 @@ class EventTranslator:
                 provisional = endpoint_id({"type": node["type"], "name": name, "code": code})
                 if provisional != node["id"]:
                     merged_into[provisional] = node["id"]
+        # Where each provisional edge ends up once its ends follow the merges.
+        final_ids = {edge["id"] for edge in edges}
+        edges_into = {}
+        for key, edge in self.edges.items():
+            moved = edge_id(edge["type"], merged_into.get(edge["from"], edge["from"]),
+                            merged_into.get(edge["to"], edge["to"]))
+            if moved != key and moved in final_ids:
+                edges_into[key] = moved
         # Asset relations added by the export are not knowledge verified from the manual.
         tiers = [edge["tier"] for edge in graph.get("edges", []) if not edge.get("derived")]
         return [
             *self._close_station(t),
-            self._event(t, "graph_final", nodes=nodes, edges=edges, merged_into=merged_into),
+            self._event(t, "graph_final", nodes=nodes, edges=edges, merged_into=merged_into,
+                        edges_into=edges_into),
             self._event(t, "run_finished", status=data.get("status") or graph.get("status"),
                         verified=tiers.count(Tier.GREEN.value), doubtful=tiers.count(Tier.YELLOW.value),
                         excluded=len(graph.get("excluded_relations", [])),

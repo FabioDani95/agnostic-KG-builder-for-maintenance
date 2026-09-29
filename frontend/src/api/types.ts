@@ -143,3 +143,12 @@ export interface Segment {
   bbox: [number, number, number, number] | null;
   text: string;
 }
+
+export interface Upload {
+  upload_id: string;
+  file_name: string;
+  pages: number;
+  size_bytes: number;
+  duplicate_of: string | null;
+  machine: Machine | null;
+}

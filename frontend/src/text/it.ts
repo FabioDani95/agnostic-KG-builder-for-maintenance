@@ -112,3 +112,6 @@ export const CONDITION_PREFIX: Record<string, string> = {
   expected: "Risultato atteso",
   order: "Ordine",
 };
+
+export const plural = (count: number, one: string, many: string) =>
+  `${formatNumber(count)} ${count === 1 ? one : many}`;
