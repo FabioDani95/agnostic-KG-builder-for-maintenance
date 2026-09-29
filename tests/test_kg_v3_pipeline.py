@@ -307,3 +307,45 @@ def test_one_empty_unit_is_reported_but_an_all_empty_run_is_incomplete():
 def test_the_agent_reviewer_answers_eight_questions_at_a_time(doc, tmp_path):
     run, _ = pipeline(doc, ScriptedProvider(), tmp_path / "run")
     assert run._reviewer("agent")._limit._value == RunConfig().agent_concurrency == 8
+
+
+class UnsureAgent(ScriptedProvider):
+    """The agent is never sure about a doubt, so doubts reach the person."""
+
+    async def create(self, **kwargs):
+        name = kwargs["response_format"]["json_schema"]["name"]
+        if name in ("kg_v3_map", "kg_v3_extract", "kg_v3_verify", "kg_v3_merge") \
+                or "(map_review)" in kwargs["messages"][1]["content"]:
+            return await super().create(**kwargs)
+        self.calls.append(name)
+        content = {"option_id": "accept", "correction": "", "keep_statements": [], "page_label_changes": [],
+                   "rationale": "Not sure.", "cited_segment_ids": [], "confident": False}
+        usage = SimpleNamespace(prompt_tokens=100, completion_tokens=40, total_tokens=140, prompt_tokens_details=None)
+        message = SimpleNamespace(content=json.dumps(content), refusal=None)
+        return SimpleNamespace(model="gpt-6-luna", usage=usage,
+                               choices=[SimpleNamespace(finish_reason="stop", message=message)])
+
+
+def test_a_persons_answers_stand_when_the_run_resumes(doc, tmp_path):
+    from backend.kg_v3.contracts import Answer, ReviewerIdentity
+
+    gates = {"map": ["agent"], "doubts": ["agent", "human"], "approval": []}
+    first_run, store = pipeline(doc, UnsureAgent(), tmp_path / "run", gates=gates)
+    first = asyncio.run(first_run.run())
+    doubts = [question for question in store.open_questions() if question.kind.value == "relation_check"]
+    assert doubts and any(edge.tier is Tier.YELLOW for edge in first.graph.edges)
+    person = ReviewerIdentity(kind=ReviewerKind.HUMAN, name="operator")
+    for question in doubts:
+        store.submit(Answer(question_id=question.question_id, option_id="reject", answered_by=person))
+
+    confident = ScriptedProvider()  # an agent now sure of the opposite must not be asked
+    resumed, _ = pipeline(doc, confident, tmp_path / "run", gates=gates)
+    resumed.human_store = store
+    resumed.human_reviewer.inner._store = store
+    second = asyncio.run(resumed.run())
+    assert "AgentDecision" not in confident.calls
+    rejected = {assertion_id for question in doubts for assertion_id in question.target["assertion_ids"]}
+    decided = {item.assertion.assertion_id: item for item in second.relations}
+    assert all(decided[assertion_id].assertion.tier is Tier.RED for assertion_id in rejected if assertion_id in decided)
+    assert not any(edge.tier is Tier.YELLOW for edge in second.graph.edges)
+    assert second.status == "awaiting_approval"

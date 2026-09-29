@@ -21,7 +21,16 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from backend.kg_v3.checker import STRUCTURE_READ, CheckedRelation, Checker
-from backend.kg_v3.contracts import Answer, DocumentMap, PageLabel, Question, ReadingUnit, Tier, Witness
+from backend.kg_v3.contracts import (
+    Answer,
+    DocumentMap,
+    PageLabel,
+    Question,
+    ReadingUnit,
+    ReviewerKind,
+    Tier,
+    Witness,
+)
 from backend.kg_v3.extractor import Extractor, UnitExtraction, prompt_hash
 from backend.kg_v3.llm import ModelClient
 from backend.kg_v3.mapper import (
@@ -219,7 +228,8 @@ class Pipeline:
             return ScriptedReviewer(self.script)
         raise ValueError(f"unknown reviewer {name!r}")
 
-    async def _gate(self, gate: str, questions: list[Question]) -> GateRecord:
+    async def _gate(self, gate: str, questions: list[Question],
+                    people_only: frozenset[str] = frozenset()) -> GateRecord:
         saved = self._load(f"gate_{gate}")
         record = GateRecord.model_validate(saved) if saved else GateRecord()
         answered = {answer.question_id for answer in record.answers}
@@ -233,9 +243,19 @@ class Pipeline:
             # A resumed gate asks only the last reviewer, the one questions wait for.
             if saved and record.pending:
                 names = names[-1:]
-            outcome = await ReviewerChain([self._reviewer(name) for name in names]).review(todo)
-            record.answers = [*record.answers, *outcome.answers]
-            record.pending = [question.question_id for question in outcome.pending]
+            # A question a person already answered goes back to that person only: no agent overrides it.
+            chained = [question for question in todo if question.question_id not in people_only]
+            direct = [question for question in todo if question.question_id in people_only]
+            answers: list[Answer] = []
+            pending: list[Question] = []
+            for reviewers, group in (([self._reviewer(name) for name in names], chained),
+                                     ([self.human_reviewer], direct)):
+                if group:
+                    outcome = await ReviewerChain(reviewers).review(group)
+                    answers.extend(outcome.answers)
+                    pending.extend(outcome.pending)
+            record.answers = [*record.answers, *answers]
+            record.pending = [question.question_id for question in pending]
         else:
             record.pending = []
         self._save(f"gate_{gate}", record)
@@ -386,10 +406,17 @@ class Pipeline:
             self._save(f"recovery_{stamp}", [r.model_dump(mode="json") for r in recovered])
         else:
             recovered = [CheckedRelation.model_validate(r) for r in saved]
+        # A person's answers to doubts are applied last and stand: a recovery saved before
+        # they were given (a resumed run) receives them too, and nobody is asked them again.
+        person = [answer for answer in doubt_record.answers if answer.answered_by.kind is ReviewerKind.HUMAN]
+        if person:
+            updated = apply_relation_answers(recovered, doubts, person)
+            recovered = [old if _decided_by_person(old) else new for old, new in zip(recovered, updated)]
         previous = {r.assertion.assertion_id: r.assertion for r in relations}
         changed = [r for r in recovered if previous.get(r.assertion.assertion_id) != r.assertion]
         recovery_questions = relation_questions(self.doc, self.spec, changed)
-        recovery_record = await self._timed("gate_recovery", self._gate("recovery", recovery_questions))
+        recovery_record = await self._timed("gate_recovery", self._gate(
+            "recovery", recovery_questions, people_only=frozenset(answer.question_id for answer in person)))
         relations = apply_relation_answers(recovered, recovery_questions, recovery_record.answers)
         graph = assemble(relations, [*plan.same, *merge_decisions(doubts, doubt_record.answers, plan.unsure)], different)
 
@@ -508,6 +535,12 @@ def run_incomplete_reasons(extractions: list[UnitExtraction], graph: MergedGraph
     if not any(edge.tier is not Tier.RED for edge in graph.edges):
         reasons.append("empty_diagnostic_graph")
     return reasons
+
+
+def _decided_by_person(relation: CheckedRelation) -> bool:
+    certificate = relation.assertion.certificate
+    decider = certificate.confirmed_by or certificate.rejected_by
+    return decider is not None and decider.kind is ReviewerKind.HUMAN
 
 
 def red_relations(result: RunResult) -> list[CheckedRelation]:
