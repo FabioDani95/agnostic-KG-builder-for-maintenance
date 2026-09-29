@@ -458,6 +458,13 @@ titolo di un diagramma e la sua prima domanda. Per misurarlo: foglio cieco
 diverse su rami mancati, 8 giudicate uguali come controllo), con le istruzioni in testa; poi
 `scripts/kg_v3_judge_audit.py --score`. I voti del giudice vengono dal suo archivio, senza chiamate.
 
+Esito della revisione di Fabio ([risultati](judge_audit/RISULTATI.md)): delle 32 coppie che il giudice
+diceva diverse, 7 sono uguali (22%, IC95 0,11–0,39), 21 sono errori veri del sistema (66%) e 4 hanno un
+gold discutibile (12%); delle 8 di controllo, 1 era un errore del sistema accettato dal giudice. I rami
+mancati mancano quindi per lo più davvero. Errori principali del sistema: rimedio della causa vicina
+nelle celle con elenchi numerati (Grizzly), ramo sbagliato dei diagrammi (LG), test dei componenti letti
+come guasti che il manuale non afferma (regola 15 da rivedere), assistenza condizionata di Lincoln.
+
 ### Proposta
 
 Non propongo ancora un nuovo tag di congelamento: prima giudicare Atlas Copco e Grundfos (circa

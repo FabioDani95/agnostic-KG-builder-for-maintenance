@@ -2,9 +2,9 @@
 
 40 confronti tra il tuo gold e il grafo, in ordine casuale.
 
-Revisore: 
-Data: 
-Tempo totale impiegato (minuti): 
+Revisore: Fabio Daniele
+Data: 2026-09-29
+Tempo totale impiegato (minuti): 40 (stima)
 
 ## Come compilare
 
@@ -64,7 +64,7 @@ Contesto del ramo: Se tutti i controlli raccomandati per il sintomo sono stati e
 
 Condizioni: nessuna
 
-- Giudizio: `?`
+- Giudizio: `U`
 - Nota: 
 
 ### A002 · Haas vertical mill (2023 operator's manual), pagina 160
@@ -87,8 +87,8 @@ Contesto del ramo: The probe LED flashes green after activation; touching the st
 
 Condizioni: nessuna
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il PDF dà una procedura di verifica con esiti attesi; non afferma che il probe sia guasto.
 
 ### A003 · LG LMH2235ST over-the-range microwave oven, pagina 2, 13
 
@@ -110,8 +110,8 @@ Contesto del ramo: quando la porta è aperta
 
 Condizioni: nessuna
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `G`
+- Nota: Il p2 vieta l’uso a porta aperta; il grafo riporta la diagnosi dell’interlock nella tabella p13.
 
 ### A004 · LG LMH2235ST over-the-range microwave oven, pagina 16, 17
 
@@ -147,8 +147,8 @@ Ramo del gold: problema «Keypad failure; keys do not operate.». Contesto del r
 
 Problemi collegati a questa causa nel grafo: «Keys do not operate»; «Only START and EZ-ON keys operate»
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Nel diagramma, «Yes» al test delle sole START/EZ-ON porta al passo 2; Check PWB è sull’altro ramo.
 
 ### A005 · Graco GTX 2000EX texture sprayer, pagina 8
 
@@ -176,8 +176,8 @@ Ramo del gold: problema «Speed of application too slow.». Contesto del ramo: B
 
 Problemi collegati a questa causa nel grafo: «No material output from pump»; «Speed of application too slow»; «Pattern too coarse»
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `G`
+- Nota: Per «Speed of application too slow» la soluzione è miscelare; «Thin the material» appartiene alla riga «No material output».
 
 ### A006 · Graco GTX 2000EX texture sprayer, pagina 8
 
@@ -199,7 +199,7 @@ Contesto del ramo: Before any troubleshooting procedure, follow the Pressure Rel
 
 Condizioni: nessuna
 
-- Giudizio: `?`
+- Giudizio: `U`
 - Nota: 
 
 ### A007 · Grizzly G0872 CNC laser cutter/engraver, pagina 50
@@ -230,8 +230,8 @@ Contesto del ramo: patch or replace as required
 
 Condizioni: nessuna
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `G`
+- Nota: Il manuale chiede di cercare eventuali perdite e ripararle se presenti; il gold le tratta come già accertate.
 
 ### A008 · Grizzly G0872 CNC laser cutter/engraver, pagina 52
 
@@ -249,8 +249,8 @@ Contesto del ramo: see Page 22
 
 Condizioni: nessuna
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il riferimento è la causa 5 (percorso ostruito), mentre il grafo collega la causa 7 (kerf troppo largo).
 
 ### A009 · LG LMH2235ST over-the-range microwave oven, pagina 2
 
@@ -286,8 +286,8 @@ Ramo del gold: problema «Safety checks before activating the magnetron or anoth
 
 Problemi collegati a questa causa nel grafo: nessuno
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il gold chiede la revisione delle procedure per il personale non addestrato; il grafo assegna una riparazione diversa.
 
 ### A010 · Grizzly G0872 CNC laser cutter/engraver, pagina 51
 
@@ -313,8 +313,8 @@ Ramo del gold: problema «Machine does not start, or breaker immediately trips a
 
 Problemi collegati a questa causa nel grafo: «Machine does not start or breaker trips immediately»
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il grafo collega i rimedi per fusibile/interruttore (causa 3), non l’ispezione di pompa, chiller o ventola (causa 4).
 
 ### A011 · Graco GTX 2000EX texture sprayer, pagina 8
 
@@ -338,7 +338,7 @@ Ramo del gold: problema «Speed of application too slow.». Contesto del ramo: B
 
 Problemi collegati a questa causa nel grafo: «Speed of application too slow»
 
-- Giudizio: `?`
+- Giudizio: `U`
 - Nota: 
 
 ### A012 · Grizzly G0872 CNC laser cutter/engraver, pagina 39, 40
@@ -379,7 +379,7 @@ Ramo del gold: problema «"XSlop Over," "YSlop Over," or "Frame slop" error disp
 
 Problemi collegati a questa causa nel grafo: «X-axis travel exceeds working envelope»; «Y-axis travel exceeds working envelope»; «Frame slop»
 
-- Giudizio: `?`
+- Giudizio: `U`
 - Nota: 
 
 ### A013 · LG LMH2235ST over-the-range microwave oven, pagina 20, 27
@@ -424,7 +424,7 @@ Ramo del gold: problema «Door latch gaps exceed 1/64 in. (0.5 mm) or interlock 
 
 Problemi collegati a questa causa nel grafo: «Keys do not operate»; «Product does not operate after power on»; «Door latch and switch closing does not meet specified gaps or sequence»
 
-- Giudizio: `?`
+- Giudizio: `U`
 - Nota: 
 
 ### A014 · LG LMH2235ST over-the-range microwave oven, pagina 31
@@ -443,8 +443,8 @@ Contesto del ramo: normale terminale-terminale: inizialmente infinito, poi raggi
 
 Condizioni: nessuna
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: La tabella dà i valori normali del test; non riporta una misura fuori intervallo né un guasto del condensatore.
 
 ### A015 · LG LMH2235ST over-the-range microwave oven, pagina 18, 19, 21
 
@@ -478,7 +478,7 @@ Contesto del ramo: se il connettore è scollegato o disassemblato
 
 Condizioni: [if] The high voltage diode connector is disconnected or disassembled.
 
-- Giudizio: `?`
+- Giudizio: `U`
 - Nota: 
 
 ### A016 · Grizzly G0872 CNC laser cutter/engraver, pagina 27
@@ -505,7 +505,7 @@ Contesto del ramo: if the laser head assembly moves; before operating the machin
 
 Condizioni: [if] The laser head assembly moves while the limit switch lever is held.
 
-- Giudizio: `?`
+- Giudizio: `U`
 - Nota: 
 
 ### A017 · ABB ACS580-01 variable speed drive, pagina 232
@@ -526,8 +526,8 @@ Ramo del gold: problema «There is an active fault in the drive.». Contesto del
 
 Problemi collegati a questa causa nel grafo: «Control-panel LED lit steadily red»
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il riferimento riguarda un guasto nel drive corrente; il grafo usa il guasto di un altro drive sul bus.
 
 ### A018 · ABB ACS580-01 variable speed drive, pagina 232
 
@@ -545,8 +545,8 @@ Contesto del ramo: Red control panel LED lit and steady.
 
 Condizioni: nessuna
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `G`
+- Nota: La tabella collega LED rosso e assenza di alimentazione al guasto dell’altro drive; il gold trasforma quel guasto nel problema.
 
 ### A019 · LG LMH2235ST over-the-range microwave oven, pagina 18, 21
 
@@ -580,8 +580,8 @@ Contesto del ramo: sostituire se la resistenza è fuori intervallo; vedere secti
 
 Condizioni: nessuna
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il gold riguarda la resistenza del condensatore HV; il grafo collega il connettore del magnetron.
 
 ### A020 · LG LMH2235ST over-the-range microwave oven, pagina 2
 
@@ -619,8 +619,8 @@ Contesto del ramo: prima di attivare il magnetron o altra sorgente a microonde; 
 
 Condizioni: nessuna
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `G`
+- Nota: Il manuale indica l’esposizione come rischio da evitare con i controlli pre-attivazione; il gold tratta quei controlli come problema.
 
 ### A021 · Lincoln Electric POWER MIG 215 MP welder, pagina 27, 28
 
@@ -660,8 +660,8 @@ Ramo del gold: problema «No wire feed, weld output or gas flow when gun trigger
 
 Problemi collegati a questa causa nel grafo: «Major physical or electrical damage is evident»
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: L’assistenza è condizionata dal sintomo no wire feed/no output/no gas e ventola ferma; il grafo la lega a danni evidenti.
 
 ### A022 · Grizzly G0872 CNC laser cutter/engraver, pagina 51, 52
 
@@ -690,8 +690,8 @@ Ramo del gold: problema «Machine laser has poor cutting or engraving results.»
 
 Problemi collegati a questa causa nel grafo: «Machine does not start, or breaker immediately trips after startup»; «Machine laser has poor cutting or engraving results»; «Laser tube inoperative or powers down during operation»
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il gold riguarda un percorso ostruito e il controllo della pompa aria; il grafo collega il guasto del tubo laser.
 
 ### A023 · Haas vertical mill (2023 operator's manual), pagina 141
 
@@ -709,7 +709,7 @@ Contesto del ramo: The icon appears when the machine is idle or a program is run
 
 Condizioni: nessuna
 
-- Giudizio: `?`
+- Giudizio: `U`
 - Nota: 
 
 ### A024 · LG LMH2235ST over-the-range microwave oven, pagina 15, 17
@@ -750,8 +750,8 @@ Ramo del gold: problema «No display or dead; display does not operate.». Conte
 
 Problemi collegati a questa causa nel grafo: «No display or dead»; «Keypad failure»; «Turntable motor does not work»
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: La sostituzione PCB mostrata è condizionata al test D35 del ramo No Heat, non al test del beep del display.
 
 ### A025 · LG LMH2235ST over-the-range microwave oven, pagina 18, 20, 21
 
@@ -777,8 +777,8 @@ Contesto del ramo: porta chiusa; regolare se non c'è beep; vedere sections 9-1,
 
 Condizioni: nessuna
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il gold riguarda il test di continuità della latch board; il grafo indica il connettore del magnetron.
 
 ### A026 · Lincoln Electric POWER MIG 215 MP welder, pagina 27, 28, 29
 
@@ -818,8 +818,8 @@ Ramo del gold: problema «Arc is unstable - Poor starting.». Contesto del ramo:
 
 Problemi collegati a questa causa nel grafo: «Arc is unstable and starting is poor»
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il riferimento chiede assistenza se i controlli falliscono; il grafo offre il controllo del liner e perde la condizione.
 
 ### A027 · Grizzly G0872 CNC laser cutter/engraver, pagina 40
 
@@ -862,8 +862,8 @@ Ramo del gold: problema «"XSlop Over," "YSlop Over," or "Frame slop" error disp
 
 Problemi collegati a questa causa nel grafo: «TrackFrame slop error»; «X-axis travel exceeds working envelope»; «Y-axis travel exceeds working envelope»
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il grafo osserva il tracciato ma omette la verifica che il display mostri «Tracking Frame».
 
 ### A028 · Grizzly G0872 CNC laser cutter/engraver, pagina 51, 52
 
@@ -891,8 +891,8 @@ Ramo del gold: problema «Machine laser has poor cutting or engraving results.»
 
 Problemi collegati a questa causa nel grafo: «Machine does not start, or breaker immediately trips after startup»; «Machine laser has poor cutting or engraving results»; «Laser tube inoperative or powers down during operation»
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il riferimento chiede di ispezionare la focale per kerf troppo largo; il grafo dà rimedi per il guasto del tubo laser.
 
 ### A029 · ABB ACS580-01 variable speed drive, pagina 232
 
@@ -912,7 +912,7 @@ Ramo del gold: problema «There is an active fault in another drive on the panel
 
 Problemi collegati a questa causa nel grafo: «Control-panel LED lit steadily red»
 
-- Giudizio: `?`
+- Giudizio: `U`
 - Nota: 
 
 ### A030 · LG LMH2235ST over-the-range microwave oven, pagina 30
@@ -935,8 +935,8 @@ Contesto del ramo: normale: filament terminal <1 Ω; filament-to-chassis resista
 
 Condizioni: nessuna
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: La tabella specifica resistenze normali del magnetron; non attesta un valore anomalo.
 
 ### A031 · Grizzly G0872 CNC laser cutter/engraver, pagina 40
 
@@ -962,7 +962,7 @@ Contesto del ramo: if one of the listed errors is displayed, repeat Steps 1–6;
 
 Condizioni: nessuna
 
-- Giudizio: `?`
+- Giudizio: `U`
 - Nota: 
 
 ### A032 · Haas vertical mill (2023 operator's manual), pagina 144
@@ -981,7 +981,7 @@ Contesto del ramo: nessuna
 
 Condizioni: nessuna
 
-- Giudizio: `?`
+- Giudizio: `U`
 - Nota: 
 
 ### A033 · LG LMH2235ST over-the-range microwave oven, pagina 30
@@ -1004,8 +1004,8 @@ Contesto del ramo: valori indicati: primario circa 0,3–0,5 Ω; secondario circ
 
 Condizioni: nessuna
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: La tabella riporta valori normali del trasformatore; non afferma che un avvolgimento sia a massa.
 
 ### A034 · Lincoln Electric POWER MIG 215 MP welder, pagina 29
 
@@ -1023,7 +1023,7 @@ Contesto del ramo: nessuna
 
 Condizioni: nessuna
 
-- Giudizio: `?`
+- Giudizio: `U`
 - Nota: 
 
 ### A035 · LG LMH2235ST over-the-range microwave oven, pagina 18, 19
@@ -1050,7 +1050,7 @@ Contesto del ramo: se dopo i tre cicli il prodotto opera, seguire l'alternate ex
 
 Condizioni: [if] D35 voltage is not over 8 V during EZ-ON operation.
 
-- Giudizio: `?`
+- Giudizio: `U`
 - Nota: 
 
 ### A036 · LG LMH2235ST over-the-range microwave oven, pagina 12
@@ -1091,8 +1091,8 @@ Ramo del gold: problema «Pre-service microwave-leakage precautions.». Contesto
 
 Problemi collegati a questa causa nel grafo: nessuno
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il riferimento misura la perdita di microonde (<5 mW/cm²); il grafo verifica solo l’arresto dell’unità.
 
 ### A037 · LG LMH2235ST over-the-range microwave oven, pagina 18, 19, 21
 
@@ -1118,8 +1118,8 @@ Contesto del ramo: sostituire se la tensione su entrambi i capi di D35 supera 8 
 
 Condizioni: nessuna
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il gold è nel ramo D35 >8 V; il grafo collega un controllo successivo sul magnetron e non conserva la condizione D35.
 
 ### A038 · LG LMH2235ST over-the-range microwave oven, pagina 27, 28
 
@@ -1161,8 +1161,8 @@ Ramo del gold: problema «Door latch gaps exceed 1/64 in. (0.5 mm) or interlock 
 
 Problemi collegati a questa causa nel grafo: «Door latch and interlock switch closing out of adjustment»
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il riferimento verifica COM-NC dell’interlock monitor; il grafo controlla la sequenza degli switch.
 
 ### A039 · Grizzly G0872 CNC laser cutter/engraver, pagina 51, 52
 
@@ -1190,8 +1190,8 @@ Ramo del gold: problema «Machine laser has poor cutting or engraving results.»
 
 Problemi collegati a questa causa nel grafo: «Machine does not start or breaker trips immediately»; «Machine has poor cutting or engraving results»; «Laser tube is inoperative or powers down during operation»
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il riferimento riguarda le cinghie per vibrazione/slop; il grafo collega la sostituzione del tubo laser.
 
 ### A040 · Lincoln Electric POWER MIG 215 MP welder, pagina 27, 28
 
@@ -1232,6 +1232,6 @@ Ramo del gold: problema «Major physical or electrical damage is evident.». Con
 
 Problemi collegati a questa causa nel grafo: «Low or no gas flow when the gun trigger is pulled; wire feed, weld output, and fan operate normally»
 
-- Giudizio: `?`
-- Nota: 
+- Giudizio: `S`
+- Nota: Il problema gold è un danno fisico/elettrico con divieto di accensione; il grafo usa la riga sul flusso del gas.
 
