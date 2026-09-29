@@ -34,7 +34,7 @@ Si avvia con un comando:
 | 9 | Versioni | Una cartella `runs*/v3_rN` è una versione. `v22` esclusa; le fallite hanno esito «non riuscita». Nessun confronto tra versioni per ora. |
 | 10 | Dati | Lettura diretta di `campaign/`; i nuovi manuali vanno in `workspace/` (ignorata da git). Niente database. |
 
-## 2. Due problemi della pipeline da decidere prima della fase 5
+## 2. Due problemi della pipeline e come si risolvono
 
 Scrivendo il piano ho provato offline (fornitore finto dei test, nessuna chiamata reale) il
 flusso «la persona risponde, poi l'esecuzione riprende». Ho trovato due problemi in `run.py`.
@@ -53,10 +53,12 @@ recupero. Queste domande hanno gli stessi ID di quelle a cui la persona ha appen
 già mostrate vive solo nella memoria del processo. Ogni ripresa può pubblicare altre 10 domande.
 Inoltre la domanda di approvazione condivide lo stesso budget e può restare esclusa.
 
-**Proposta:**
+**Decisione (Fabio, 29 settembre 2026): le risposte della persona si applicano per ultime e
+vincono sempre.**
 
 - **A.** Correggo `run.py`: il cancello di recupero riusa le risposte già date da una persona a
-  domande con lo stesso ID, invece di chiederle di nuovo all'agente. Aggiungo un test. Per le
+  domande con lo stesso ID, invece di chiederle di nuovo all'agente. Su una domanda a cui ha
+  risposto una persona l'agente non interviene più. Aggiungo un test. Per le
   esecuzioni con `--gates agent` il risultato non cambia; lo verifico rigiocando lo stato salvato
   di due manuali e confrontando i grafi.
 - **B.** Nessuna modifica alla pipeline. Il budget lo tiene lo store persistente della UI (sezione 7.3):
@@ -65,8 +67,7 @@ Inoltre la domanda di approvazione condivide lo stesso budget e può restare esc
   («l'approvazione resta al pulsante del workspace»).
 
 La correzione A va oltre l'hook degli eventi, che per il brief è l'unica modifica ammessa alla
-pipeline, quindi **mi serve il tuo ok esplicito**. Senza, la fase 5 usa solo la modalità «Solo io»
-e la UI disattiva le risposte sulle versioni «Agente, poi io».
+pipeline: Fabio l'ha autorizzata esplicitamente. È un commit a parte, all'inizio della fase 5.
 
 ## 3. Architettura
 
@@ -359,10 +360,21 @@ Altri tipi di domanda:
 
 ### 7.4 Approvazione
 
-Le esecuzioni della UI usano `approval: []`. Il grafo resta «da approvare» finché Fabio non
-preme «Approva» o «Rifiuta». Il pulsante aggiunge una risposta umana (`ReviewerKind.HUMAN`,
-convalidata con `validate_answer`) al registro `state/gate_approval.json` e riprende
-l'esecuzione. La ripresa non fa chiamate: rigenera stato, `report.json` e `graph.json`.
+Decisione (Fabio, 29 settembre 2026): **il grafo si approva solo dopo le risposte**. L'ordine è:
+
+1. l'esecuzione finisce e il grafo resta «Da approvare», mai approvato in automatico;
+2. Fabio risponde alle domande (al massimo 10);
+3. «Applica le risposte»: il grafo si aggiorna, senza chiamate;
+4. solo ora «Approva» è attivo. Finché restano domande aperte, al suo posto c'è
+   «Rispondi prima alle N domande».
+
+Le domande oltre il budget non bloccano: restano «non verificate». In «Solo agente» non ci sono
+domande per la persona, quindi «Approva» è subito attivo. L'API rifiuta l'approvazione (409) se
+ci sono domande aperte o risposte non ancora applicate.
+
+Le esecuzioni della UI usano `approval: []`. Il pulsante aggiunge una risposta umana
+(`ReviewerKind.HUMAN`, convalidata con `validate_answer`) al registro `state/gate_approval.json`
+e riprende l'esecuzione. La ripresa non fa chiamate: rigenera stato, `report.json` e `graph.json`.
 
 Se le risposte cambiano il grafo, l'ID della domanda di approvazione cambia (dipende dal
 riepilogo) e serve una nuova approvazione, come prevede la pipeline.
@@ -495,7 +507,7 @@ funziona. Le fasi dalla 3 in poi includono gli screenshot controllati con DESIGN
 | **2. API e SSE** | `catalog`, `questions` (lettura), `evidence`, `budget`, `api`; `scripts/ui.py` | `test_ui_api.py` verde; `curl` sul flusso SSE mostra gli eventi di un replay; `/budget` legge il registro senza scriverlo |
 | **3. Libreria e grafo finito** | Libreria, Manuale, Grafo finito con prove, pagine e ricerca | gli 8 manuali in tabella con numeri uguali ai `report.json`; clic su un arco, prove con immagine della pagina e riquadro; screenshot conformi |
 | **4. Esecuzione dal vivo** | replay di LG a 4×, poi Nuovo grafo e **una** esecuzione reale su Graco in modalità «Solo io» | replay completo e fluido; l'esecuzione reale finisce, spende al massimo 0,5 USD (previsti circa 0,02), `events.jsonl` salvato e rigiocabile; screenshot conformi |
-| **5. Domande e approvazione** | Domande per te, store, ripresa, copia, approvazione | rispondo alle domande dell'esecuzione Graco; dopo «Applica» gli archi cambiano come risposto, con zero chiamate; «Approva» porta l'esito ad Approvato; con il tuo ok al punto A, lo stesso su una copia di LG r1 |
+| **5. Domande e approvazione** | correzione A in `run.py` (commit a parte, con test); Domande per te, store, ripresa, copia, approvazione | test: una risposta della persona non viene mai cambiata dall'agente, e con `--gates agent` i grafi salvati di due manuali restano identici; rispondo alle domande dell'esecuzione Graco; dopo «Applica» gli archi cambiano come risposto, con zero chiamate; «Approva» attivo solo dopo le risposte e porta l'esito ad Approvato; lo stesso su una copia di LG r1 |
 | **6. Rifinitura** | accessibilità, stati vuoti ed errori, movimento e trasparenza ridotti, README | tastiera su tutte le schermate; contrasto controllato; controllo di DESIGN.md superato su tutte le schermate a 1440 e a 1280 |
 
 ## 12. Spesa

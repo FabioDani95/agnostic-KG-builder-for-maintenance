@@ -278,7 +278,8 @@ barra di avanzamento.
 Come l'esecuzione dal vivo, con queste differenze:
 
 - barra in alto: «‹ [Nome del manuale]», campo «Cerca un sintomo o un codice», menu «Versione»,
-  pulsante principale «Approva» solo se la versione aspetta un'approvazione;
+  pulsante principale «Approva» solo se la versione aspetta un'approvazione e non ha domande
+  aperte; altrimenti, al suo posto, «Rispondi prima alle N domande»;
 - pannello sinistro: filtro per semaforo (controllo segmentato Tutti / Verificati / In dubbio) e
   la legenda;
 - scegliendo un sintomo o un codice, il percorso sintomo → causa → azione resta a piena
