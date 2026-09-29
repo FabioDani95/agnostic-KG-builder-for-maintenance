@@ -212,7 +212,9 @@ async def judge(llm, pairs: list[tuple[dict, list[dict]]]) -> list[bool]:
     return verdicts
 
 
-async def score_system(llm, claims: list[dict], edges: list[dict]) -> dict:
+def build_pairs(claims: list[dict], edges: list[dict]) -> tuple[list[tuple[dict, list[dict]]], list[tuple]]:
+    """The pairs the judge compares, in the order it receives them, and their (claim, kind, edges) keys."""
+
     pairs, keys = [], []
     for claim in claims:
         for relation in gold_relations(claim):
@@ -228,6 +230,11 @@ async def score_system(llm, claims: list[dict], edges: list[dict]) -> dict:
             for group in groups:
                 pairs.append((relation, [edges[index] for index in group]))
                 keys.append((claim["claim_id"], relation["kind"], group))
+    return pairs, keys
+
+
+async def score_system(llm, claims: list[dict], edges: list[dict]) -> dict:
+    pairs, keys = build_pairs(claims, edges)
     verdicts = await judge(llm, pairs) if pairs else []
     same = defaultdict(set)
     positional = defaultdict(set)

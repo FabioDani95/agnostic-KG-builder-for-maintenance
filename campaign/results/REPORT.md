@@ -447,6 +447,17 @@ non è stato eseguito per restare entro 13,0.
   celle differisce già da prima di questa iterazione in cinque `TESTO.md` di sviluppo (Atlas, Graco,
   Haas, Lincoln, ABB), generati prima delle correzioni del lettore delle iterazioni D ed E.
 
+### Quanto delle perdite viene dal giudice
+
+Nelle scomposizioni di sviluppo circa metà-due terzi delle asserzioni perse sono estratte ma giudicate
+diverse (LG 79 su 149, Grizzly 27 su 51), il resto manca dal grafo verde. Tra le giudicate diverse
+ci sono differenze vere (azioni mancanti) e artefatti della misura: il giudice non vede il nome di una
+causa non scritta, quindi i rami di uno stesso sintomo gli sembrano uguali, e considera diversi il
+titolo di un diagramma e la sua prima domanda. Per misurarlo: foglio cieco
+[REVISIONE_GIUDICE.md](judge_audit/REVISIONE_GIUDICE.md), 40 coppie delle esecuzioni F (32 giudicate
+diverse su rami mancati, 8 giudicate uguali come controllo), con le istruzioni in testa; poi
+`scripts/kg_v3_judge_audit.py --score`. I voti del giudice vengono dal suo archivio, senza chiamate.
+
 ### Proposta
 
 Non propongo ancora un nuovo tag di congelamento: prima giudicare Atlas Copco e Grundfos (circa
