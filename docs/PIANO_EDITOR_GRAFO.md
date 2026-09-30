@@ -1,11 +1,18 @@
 # Piano di integrazione dell'editor del grafo
 
-Data: 30 settembre 2026. Stato: **proposta di implementazione; funzionalità non ancora implementata**.
+Data: 30 settembre 2026. Stato: **specifica pronta per l'implementazione da parte di un agente AI;
+funzionalità non ancora implementata**. Flusso aggiornato con la precisazione dell'utente:
+pulsante dedicato, avanti/indietro, accettazione finale e perdita delle modifiche all'uscita.
 
 Analisi della codebase corrente, commit `043f56b`, e della cartella locale
 `/Users/fabio.daniele/Coding/kg-graph-editor_V1/` (`app.js`, `graph.js`, formato e documentazione).
 La cartella di riferimento non contiene un repository Git consultabile: i riferimenti sotto
 identificano file e funzioni, non una release del tool.
+
+Le decisioni di questo documento sono il contratto del primo rilascio. La sezione 4 definisce
+il percorso utente, la 9 i contratti applicativi e la 15 gli incarichi eseguibili dall'agente.
+«Nuova versione» è il termine mostrato all'utente; «revisione» indica nel codice quella
+versione creata accettando modifiche umane, distinta da una nuova estrazione.
 
 ## 1. Risultato da ottenere
 
@@ -23,7 +30,12 @@ Requisiti della richiesta:
 - Riutilizzare le funzionalità migliori di `kg-graph-editor_V1`: tabelle editabili per tipo,
   filtri, ricerca, ordinamento, navigazione fra elementi e controlli con accesso alle righe.
 - Consentire un intervento umano effettivo: modificare, aggiungere ed eliminare nodi e relazioni.
-- Ogni salvataggio di modifiche effettive crea una revisione distinta; l'originale resta disponibile.
+- Il pulsante dedicato si chiama sempre «Modifica grafo», subito dopo la generazione e in seguito.
+- Il percorso ha passi espliciti e pulsanti «Indietro» e «Avanti»; navigare non salva.
+- Solo «Accetta modifiche e crea nuova versione» pubblica una revisione distinta;
+  l'originale resta disponibile. L'accettazione chiude il lavoro senza una seconda approvazione.
+- Prima dell'accettazione le modifiche esistono solo in memoria. Uscendo senza salvarle
+  vengono perse: nessun autosalvataggio, recupero di bozze o salvataggio implicito.
 - Integrare l'intero percorso, dalla fine dell'estrazione alla libreria e alla riapertura.
 - Predisporre un punto di estensione per suggerimenti AI, lasciando l'editor utilizzabile
   interamente a mano. La scelta delle funzioni AI viene dopo.
@@ -67,6 +79,13 @@ Problemi concreti da anticipare:
 6. L'esportazione può contenere `not_stated`, `Unknown` e campi obbligatori mancanti sulla
    macchina. Una validazione nuova non deve rendere impossibile correggere un grafo esistente
    per carenze pregresse estranee alla modifica.
+7. `LiveRun.tsx` apre automaticamente `graphRoute(...)` con `replace: true` quando termina
+   il live. Un pulsante aggiunto soltanto al riquadro finale non garantisce un ingresso visibile.
+8. `main.tsx` usa `BrowserRouter`; il `useBlocker` della versione installata richiede un
+   data router, come verificato nel codice locale di React Router. Per proteggere anche
+   avanti/indietro del browser serve la migrazione circoscritta descritta in sezione 9.
+9. Le risposte non applicate esistono, ma non c'è un comando di scarto nel flusso attuale.
+   L'editor deve indirizzare ad «Applica le risposte», senza promettere un'azione inesistente.
 
 ## 3. Riutilizzo concreto di kg-graph-editor_V1
 
@@ -108,75 +127,163 @@ Adattamenti necessari, anche dove si riusa la logica:
 
 ## 4. Percorso utente dentro l'applicazione
 
-### 4.1 Due ingressi, un solo editor
+### 4.1 Ingresso dedicato e riconoscibile
 
-**Subito dopo la creazione.** Il riquadro di fine estrazione conserva il prossimo passo già
-previsto e aggiunge «Rivedi e modifica» quando è disponibile un grafo concluso. Lo stesso
-comando è nella barra del grafo finito, anche se il grafo aspetta ancora l'approvazione.
+Il comando è un **pulsante con icona matita e testo «Modifica grafo»**, visibile senza aprire
+menu, selezionare un nodo o scorrere una tabella. Stesso nome e stessa destinazione ovunque.
 
-**In seguito.** Libreria → manuale → versione/revisione → «Modifica grafo».
-Si può partire anche da una versione storica o della campagna; il salvataggio finisce sempre
-nel workspace e mostra esplicitamente da quale elemento si è partiti.
+| Punto di ingresso | Comportamento obbligatorio |
+| --- | --- |
+| Fine generazione live | Conservare il passaggio automatico da `LiveRun` al grafo finito; nella barra della destinazione è già visibile «Modifica grafo». Non entrare automaticamente in editing |
+| Fine replay/riquadro finale | Mostrare anche «Modifica grafo» riferito alla versione riprodotta, quando editabile; non dipendere da questo riquadro per il caso live |
+| Grafo riaperto dalla libreria | Pulsante persistente nella barra della versione visualizzata, accanto alle sue azioni |
+| Pagina del manuale | Pulsante dedicato nella card della versione attuale e azione etichettata nella riga di ciascuna versione editabile; target sempre quella versione |
 
-Disponibilità determinata dal backend attraverso capacità esplicite:
+Il pulsante porta a `/manuali/:manualId/versioni/:versionId/modifica`, all'interno della
+stessa cornice. Il titolo mostra «Modifica grafo» e la base scelta, per esempio «Da Versione
+modificata 3». Entrando si legge: **«Le modifiche saranno salvate solo quando le accetti.
+Se esci prima, vengono perse.»**
 
-- Grafo presente, leggibile e processo sorgente fermo: ispezione ed editing disponibili.
-- Esecuzione attiva: consultazione del flusso esistente; editing disabilitato fino alla fine.
-- Risposte già date ma non applicate: prima applicarle o scartarle con il flusso esistente;
-  evitare una revisione che ignori risposte in attesa senza dirlo.
-- Esecuzione fallita senza un grafo utilizzabile: nessun editor. Un eventuale snapshot
-  recuperabile deve superare i controlli strutturali prima di essere offerto come base.
-- Mancanza di `state/` o del PDF: il JSON rimane ispezionabile e modificabile; i comandi che
-  richiedono fonti non disponibili mostrano il motivo della loro indisponibilità.
+Disponibilità fornita dal backend, senza dedurla soltanto da `status` sul client:
 
-### 4.2 Viste e azioni
+- Grafo presente e in formato supportato, processo fermo: pulsante abilitato anche prima
+  dell'approvazione della fonte, su versioni storiche e della campagna.
+- Processo in corso: pulsante disabilitato con «Disponibile al termine dell'estrazione».
+- Risposte date ma non applicate: pulsante disabilitato con «Applica prima le risposte»
+  e collegamento alla pagina delle domande. Non lanciare l'applicazione automaticamente.
+- Grafo assente o non leggibile/formato non supportato: pulsante disabilitato con motivo;
+  nessuna apertura di un editor vuoto. Nessun recupero automatico di run falliti nel primo rilascio.
+- PDF o `state/` mancanti non impediscono di modificare un grafo supportato; soltanto i
+  comandi che dipendono dalle fonti mancanti sono disabilitati con spiegazione.
 
-La pagina del grafo comprende quattro viste: **Grafo · Nodi · Relazioni · Controlli**.
-Sono disponibili anche in consultazione; «Modifica grafo» abilita i form e crea una bozza
-locale, senza scrivere una revisione sul server.
-
-Struttura indicativa, composta con la cornice attuale:
+### 4.2 Percorso guidato in tre passi
 
 ```text
-Grafi › Manuale › Revisione 3          Modifiche non salvate   Salva nuova revisione
-Grafo | Nodi | Relazioni | Controlli   Annulla modifica · Ripeti · Scarta modifiche
+Grafo generato o riaperto
+    → [Modifica grafo]
+    → 1. Modifica ⇄ 2. Controlla ⇄ 3. Riepilogo
+    → [Accetta modifiche e crea nuova versione]
+    → Nuova versione salvata, aperta in consultazione
 
-[Tipo: Azioni (24)] [Cerca in tutte le colonne…] [Mostra campi] [+ Aggiungi nodo]
-[Filtri attivi e rimovibili]                                      8 di 24 righe
-
-Nome             Istruzioni          Fonte          Collegamenti    Dettagli
-…                …                   …              3               →
-
-Pannello contestuale: proprietà, relazioni entranti/uscenti, prove e pagina PDF
-Barra di stato: nodi · relazioni · modifiche · errori · avvisi
+Uscita prima dell'accettazione → modifiche scartate → nessuna nuova versione
 ```
 
-- In consultazione il pulsante principale resta quello del prossimo passo, per esempio
-  «Approva»; durante l'editing diventa «Salva nuova revisione».
-- Passare fra le quattro viste conserva bozza, selezione, filtri e posizione di scorrimento.
-- «Vedi nel grafo», clic sugli estremi, «Vedi in tabella» e conteggi dei controlli aprono
-  direttamente l'elemento richiesto. Se un filtro lo nasconde, mostrare l'eccezione e il
-  filtro applicato, senza lasciare una selezione invisibile.
-- Ricerca, tipo, ordinamento e filtri serializzabili stanno nell'URL; focus e scroll nello
-  stato della pagina. Esempio: `?vista=nodi&tipo=CorrectiveAction&cerca=pompa`.
-- Uscita dall'editor, cambio versione e navigazione indietro con modifiche pendenti offrono
-  «Resta», «Salva nuova revisione», «Scarta». Un salvataggio fallito conserva la bozza.
-- Recupero locale della bozza per manuale, base e hash, con messaggio «Bozza recuperata».
-  L'autosalvataggio della bozza non crea revisioni; al rientro si verifica che la base coincida.
+La barra dei passi mostra sempre **1. Modifica · 2. Controlla · 3. Riepilogo** e il passo
+attivo. «Indietro» torna al passo precedente, non esegue undo. «Avanti» prosegue, non salva.
+I passi già raggiunti sono cliccabili; un passo futuro si raggiunge tramite l'azione Avanti
+e le relative verifiche. Esiste un solo pulsante principale per passo, nella barra delle azioni.
 
-### 4.3 Salvataggio
+| Passo | Contenuto | Pulsanti e condizioni |
+| --- | --- | --- |
+| 1. Modifica | Schede Nodi, Relazioni, Grafo; apertura iniziale su Nodi. Tutti i form, filtri e prove; undo/redo disponibili | «Indietro» disabilitato; «Avanti: controlla» conclude l'input attivo e apre i controlli. Un valore non interpretabile resta nella cella con errore e focus |
+| 2. Controlla | Controlli strutturali, anomalie, impatto su prove/verifiche e riferimenti alle righe | «Indietro» torna a Modifica; «Avanti: riepilogo» abilitato quando la validazione server del contenuto attuale è completa e senza errori bloccanti |
+| 3. Riepilogo | Base, diff prima/dopo, aggiunte/rimozioni, effetti derivati, dubbi residui e nota facoltativa; riepilogo non editabile | «Indietro» torna a Controlla; «Torna a modificare» apre la riga scelta; unico pulsante finale «Accetta modifiche e crea nuova versione» |
 
-1. «Salva nuova revisione» apre un riepilogo: elementi aggiunti, modificati e rimossi,
-   impatto sulle relazioni e sulle verifiche, errori e avvisi; nota facoltativa della persona.
-2. Gli errori strutturali impediscono il salvataggio; gli avvisi sono consultabili e non
-   obbligano a inventare valori assenti nel manuale.
-3. «Crea revisione» conferma il salvataggio. Il server valida e pubblica un nuovo snapshot.
-4. L'app apre la nuova revisione in consultazione, mantenendo la vista utile, e aggiorna
-   libreria, manuale, selettore delle versioni e «Tocca a te».
-5. Una modifica successiva parte da questa revisione e produce un'altra revisione.
+«Esci senza salvare» è sempre visibile come azione secondaria nei tre passi, salvo durante
+la richiesta finale o la verifica del suo esito. Lo stato indica «Nessuna modifica» oppure
+«N modifiche non salvate». L'input ancora aperto viene concluso o segnalato prima di ogni
+cambio passo/tab; il dialogo di uscita considera anche quel testo se non ancora valido.
 
-«Salva» è disabilitato se non esiste una differenza effettiva. Modificare e poi riportare il
-valore all'originale non crea rumore nella cronologia. L'approvazione è un'azione distinta.
+Al passo 3, accanto al pulsante, testo: «Crea una nuova versione. Quella di partenza rimane
+invariata.» Se richiesto dalla sezione 8, includere qui il riconoscimento esplicito dei dubbi
+residui. Non aggiungere un secondo dialogo di conferma dopo questo riepilogo.
+
+La pagina in consultazione può mantenere le viste Grafo, Nodi, Relazioni, Controlli; dentro
+il percorso guidato i Controlli sono il passo 2, non una seconda procedura di salvataggio.
+Le azioni di approvazione/ripresa del run non compaiono nel percorso editor.
+All'ingresso del percorso il selettore di versione indica soltanto la base: sceglierne
+un'altra costituisce uscita e riapertura, mai sostituzione della base dentro la stessa bozza.
+
+### 4.3 Navigazione senza perdita di contesto
+
+- Avanti/indietro fra passi, cambio tabella/tipo, filtri e apertura delle prove mantengono
+  tutte le modifiche **nella stessa sessione in memoria**. Undo/redo è un comando separato.
+- Il browser può andare avanti/indietro fra le voci interne di quella sessione senza
+  scartare il lavoro. Quando la destinazione lascia la sessione, si applica la sezione 4.5.
+- «Vedi nel grafo», estremi cliccabili, «Vedi in tabella» e anomalie aprono l'elemento
+  preciso. Un salto da Controlla/Riepilogo apre il passo Modifica con elemento e campo
+  selezionati; conserva il passo di provenienza per il rientro dopo la correzione.
+- Se un filtro nasconde l'elemento richiesto, mostrare l'eccezione e i filtri attivi,
+  senza lasciare una selezione invisibile. Conservare scroll, camera e selezione fra viste.
+- Nell'URL vanno passo e stato di visualizzazione, per esempio
+  `?passo=modifica&vista=nodi&tipo=CorrectiveAction`; mai operazioni o valori modificati.
+  Una ricerca cambia l'URL con replace, un cambio passo con push.
+- Un URL diretto a Controlla/Riepilogo senza sessione attiva viene normalizzato a Modifica:
+  l'URL non contiene una bozza e non autorizza l'accettazione di modifiche inesistenti.
+- Qualunque modifica dopo una validazione rende obsoleti esito, diff e riconoscimento dei
+  dubbi. Prima dell'accettazione occorre validarli nuovamente sul contenuto attuale.
+
+### 4.4 Accettazione: unico punto di persistenza
+
+1. Il pulsante finale è abilitato solo con differenze effettive, nessun input aperto/non
+   valido, esito server aggiornato senza blocchi e riconoscimenti richiesti completati.
+2. Il clic invia **una sola richiesta** con modifiche, hash del riepilogo e accettazione.
+   Il pulsante diventa «Creazione della nuova versione…»; modifiche e navigazione interna
+   restano bloccate finché l'esito non è noto.
+3. Il server rivalida e crea atomicamente snapshot e registrazione dell'accettazione.
+   L'originale non cambia; il nuovo elemento è già accettato dalla persona, senza un
+   successivo comando obbligatorio «Approva». Vedi la distinzione dalle verifiche in sezione 8.
+4. Solo alla risposta positiva l'app elimina la sessione e apre con replace la nuova
+   versione in consultazione. Mostra «Nuova versione creata. Le modifiche sono state salvate.»
+   Aggiorna catalogo, libreria, manuale e attività; il dettaglio contiene «Deriva da …».
+5. Nuove modifiche richiedono nuovamente «Modifica grafo» e una nuova accettazione finale.
+
+Diff vuoto, incluso modifica → undo completo: «Nessuna modifica da salvare», pulsante finale
+disabilitato. La navigazione resta possibile; non si crea una versione identica.
+
+Errore certo di validazione/precondizione: il server non pubblica nulla e il lavoro resta
+in memoria, con collegamento al problema. Errore di rete/timeout dopo l'invio: l'esito può
+essere incerto; mostrare «Verifica il salvataggio» e risolvere la stessa richiesta idempotente
+prima di consentire altre modifiche o una nuova richiesta. Non dichiarare fallita una scrittura
+che potrebbe essere riuscita. I dettagli sono in sezione 9.
+
+### 4.5 Uscita senza salvare: comportamento vincolante
+
+La sessione non usa `localStorage`, `sessionStorage`, IndexedDB, file, bozze server, cache
+persistenti o valori di bozza in `history.state`. Nessun recupero dopo chiusura, ricaricamento
+o crash. Filtri e preferenze di visualizzazione possono essere conservati separatamente.
+
+| Situazione prima dell'accettazione | Risultato |
+| --- | --- |
+| «Esci senza salvare» senza differenze né input pendente | Tornare direttamente alla versione di partenza, senza scrivere |
+| «Esci senza salvare» con modifiche/input pendente | Dialogo: «Uscire senza salvare? Le modifiche saranno perse.»; pulsanti «Continua a modificare» e «Esci e scarta» |
+| Breadcrumb, sidebar, cambio versione, link alle domande, indietro/avanti del browser verso l'esterno | Stesso dialogo; «Continua» annulla la navigazione, «Esci e scarta» svuota lo stato e raggiunge la destinazione richiesta |
+| Ricarica, chiusura scheda/finestra o navigazione fuori dall'app | `beforeunload` quando ci sono modifiche; il testo è gestito dal browser. Se l'uscita avviene, i valori si perdono |
+| Crash/chiusura forzata, per cui il browser non mostra conferme | Nessun recupero: si riapre il grafo salvato, mai le modifiche precedenti |
+| Rientro nell'editor dopo un'uscita confermata, anche con Avanti del browser o ripristino dalla bfcache | Nuova sessione dalla base salvata, senza reintegro dei vecchi valori |
+
+Non offrire «Salva e esci» nel dialogo di abbandono: chi vuole salvare resta nell'editor e
+raggiunge il riepilogo. «Esci e scarta» è distruttivo solo per la sessione in memoria;
+non cancella versioni, file sorgente o domande. Nessuna richiesta di creazione viene inviata.
+
+Un errore API non è un'uscita: i dati rimangono finché l'utente resta nell'editor. Dopo un
+clic finale di accettazione, invece, il server potrebbe già stare creando la nuova versione:
+chiudere il browser non annulla quella richiesta. Mostrare lo stato in corso senza offrire
+un falso «Scarta»; al rientro il catalogo mostra l'eventuale versione effettivamente creata.
+
+### 4.6 Macchina a stati da implementare
+
+`dirty` deriva dal diff effettivo; `pendingInput` segnala anche testo ancora non confermato
+o non valido. La protezione di uscita usa `dirty || pendingInput`, oltre allo stato di invio.
+
+| Stato | Evento | Destinazione/effetto |
+| --- | --- | --- |
+| `loading` | Base caricata | `editing`, passo Modifica; errore → messaggio e Riprova, senza sessione fittizia |
+| `editing` | Avanti, input attivo valido | `checking`; richiedere validazione senza persistenza |
+| `checking` | Validazione valida sul contenuto corrente + Avanti | `summary`; errori o risposta vecchia impediscono di procedere |
+| `checking` / `summary` | Indietro/salto a riga | Passo richiesto nella stessa sessione; nessuna scrittura |
+| Qualunque passo prima dell'invio | Mutazione/undo/redo | Aggiornare diff, invalidare riepilogo e riconoscimenti; nuove risposte remote accettate solo se riferite alla generazione corrente |
+| `summary` | Accettazione valida | `saving`, congelare payload e `request_id` |
+| `saving` | Successo | `saved`, eliminare sessione, navigare alla nuova versione |
+| `saving` | Rifiuto certo senza commit | Tornare a Controlla con errore; nessuna perdita in memoria |
+| `saving` | Rete/esito ambiguo | `save_unknown`, verificare lo stesso `request_id`; nessun invio con un nuovo ID |
+| Passi prima dell'invio | Uscita richiesta con modifiche | `confirm_exit`; Continua ripristina il passo, Esci azzera sessione e naviga |
+| Sessione terminata | Rientro tramite cronologia/URL | Ripartire dalla base, passo Modifica |
+
+Il reducer non invia richieste. La POST finale parte soltanto dall'handler del pulsante,
+mai da mount, effetti, passaggio di step, blur, scorciatoia o cleanup del componente.
+Un ritorno a Riepilogo tramite cronologia o click sul passo passa dalle stesse guardie di
+Avanti: se una modifica ha invalidato l'anteprima, tornare a Controlla e aggiornarla.
 
 ## 5. Tabelle e operazioni
 
@@ -268,7 +375,7 @@ previsti dalla policy dei campi, senza riempimenti inventati.
 **Salvare un testo modificato non certifica automaticamente che sia nel manuale.**
 Questa distinzione deve essere nei dati e leggibile nell'interfaccia, non solo nella guida.
 
-Si propone un contratto specifico per i grafi revisionati, `kg-v3-graph-3`, mantenendo lettura
+Implementare un contratto specifico per i grafi revisionati, `kg-v3-graph-3`, mantenendo lettura
 del formato attuale `kg-v3-graph-2` e lasciando l'export della pipeline invariato. Il cambio
 di versione è necessario per dichiarare gli stati editoriali che il formato attuale non ha.
 
@@ -282,7 +389,7 @@ di versione è necessario per dichiarare gli stati editoriali che il formato att
 | Conferma esplicita della persona | Decisione umana separata, datata e legata all'hash del contenuto confermato |
 | Salvataggio o approvazione complessiva del grafo | Nessuna promozione automatica delle singole relazioni |
 
-Dettagli del contratto proposto:
+Dettagli del contratto:
 
 - Conservare `tier` per la verifica V3 ancora valida; ammettere `null` quando non esiste una
   verifica applicabile al nuovo contenuto. Aggiungere `review` con stato, autore, data,
@@ -320,17 +427,18 @@ che i vecchi consumer non comprendono; nessun aggiornamento silenzioso dei file 
 - **Esecuzione:** processo che estrae un grafo; ha tempi, chiamate, costo, stato e replay.
 - **Revisione:** snapshot salvato del grafo, con un padre, modifiche e autore; non avvia
   estrazione e non ha un replay della pipeline.
-- **Bozza:** lavoro non ancora pubblicato; può essere recuperato localmente e annullato.
+- **Bozza:** lavoro non ancora pubblicato, solo nella memoria della sessione editor;
+  annullabile finché si rimane nella sessione e perso all'uscita senza accettazione.
 
 Le revisioni sono visibili nella cronologia del manuale insieme alle versioni estratte,
 con etichette distinte e relazione «deriva da». Il comando attuale «Nuova versione», che
 avvia una nuova estrazione, diventa «Nuova estrazione» dove necessario per evitare ambiguità.
 
-Una revisione usa un ID opaco stabile, per esempio `revision~<uuid>`, e un numero leggibile
+Una revisione usa l'ID opaco stabile `revision~<uuid>` e un numero leggibile
 assegnato per manuale sotto lock. Il suo padre può essere un run o un'altra revisione.
 Modificare una versione storica crea una derivazione esplicita, non cambia gli altri figli.
 
-### 7.2 Struttura proposta
+### 7.2 Struttura da implementare
 
 ```text
 workspace/<manual_id>/
@@ -341,16 +449,18 @@ workspace/<manual_id>/
     graph.json                     # nuovo snapshot completo, formato revisionato
     changes.json                   # operazioni e differenze prima/dopo
     validation.json                # controlli sullo snapshot salvato
+    acceptance.json                # accettazione finale, persona, hash, dubbi riconosciuti
     source-review.json             # domande/decisioni ereditate come contesto
     source-report.json             # rapporto della fonte, se presente, dichiarato storico
-  revision-decisions/<revision_uuid>/
-    <decision_uuid>.json           # eventuale approvazione/rifiuto del contenuto salvato
 ```
 
 `revision.json` contiene almeno: `schema_version`, `revision_id`, `revision_number`,
 `manual_id`, `parent_version_id`, `parent_graph_hash`, `root_run_id`, `created_at`,
 `created_by`, `note`, `graph_hash`, `ontology_hash`, `source_document_hash`,
-`editor_code_commit`, `request_id` e riepilogo delle operazioni.
+`source_review_hash`, `editor_code_commit`, `request_id`, `request_payload_hash` e riepilogo
+delle operazioni. `acceptance.json` registra `decision: accept_changes`, identità umana,
+data del server, `graph_hash`, `preview_hash` e ID degli avvisi/dubbi riconosciuti. Viene
+scritto nella stessa pubblicazione atomica di `graph.json`, non con una POST successiva.
 
 La fonte deve essere risolvibile rispetto a quella revisione: hash del PDF, snapshot dello
 schema e indice dei segmenti usato per le nuove associazioni. Gli snapshot condivisibili
@@ -377,20 +487,24 @@ accetta un nuovo JSON completo dal browser come autorità per certificati, conta
 
 Sequenza di commit della revisione:
 
-1. Risolvere manuale/base e capacità; verificare hash della base, schema e riferimenti alla
-   fonte, e che il processo sorgente sia fermo.
-2. Sotto lock del manuale, ricontrollare precondizioni e chiave di idempotenza.
-3. Applicare le operazioni, aggiornare derivati e fiducia, validare il risultato completo.
+1. Risolvere manuale e `request_id`. Sotto lock del manuale, cercare prima un commit già
+   completato: stesso payload restituisce quel risultato anche se nel frattempo cambia la base.
+2. Per una richiesta nuova, verificare capacità e precondizioni di base/schema/fonte/domande,
+   e che il processo sorgente sia fermo.
+3. Applicare le operazioni, aggiornare derivati e fiducia, validare il risultato completo;
+   verificare corrispondenza con il riepilogo accettato e riconoscimenti richiesti.
 4. Scrivere i file in una directory temporanea nascosta sullo stesso filesystem; completare
    le scritture prima della pubblicazione con rename atomico.
-5. Rendere la nuova revisione visibile al catalogo e restituire ID/hash/riepilogo.
+5. Pubblicare insieme snapshot e accettazione, rendere la nuova revisione visibile al
+   catalogo e restituire ID/hash/riepilogo.
 
 - Il catalogo ignora directory temporanee e revisioni incomplete. Un crash non deve far
   apparire una revisione parziale o rimuovere la versione sorgente.
 - Doppio clic e retry dopo timeout con lo stesso `request_id` restituiscono la stessa
   revisione; stesso ID con contenuto diverso produce un conflitto.
-- Se la base muta durante l'editing, risposta `409`: conservare la bozza e offrire confronto
-  e riapertura sulla nuova base. Nessuna fusione automatica delle correzioni.
+- Se la base muta durante l'editing, risposta `409`: conservare la bozza in memoria e mostrare
+  il confronto. «Riapri sulla nuova base» è un'uscita dalla sessione, con conferma di scarto
+  se necessario. Nessuna fusione automatica o ripristino della vecchia bozza nel primo rilascio.
 - Due bozze della stessa revisione immutabile possono creare due figli, con numeri diversi;
   mostrare che una revisione più recente esiste, senza riscrivere il padre scelto.
 - Coordinare il lock anche con l'avvio di `apply`/`approve`/ripresa della base: controllare
@@ -410,40 +524,71 @@ Si mantengono separati «Domande della fonte» e «Contenuti della revisione da 
 Rispondere sul run originale rimane possibile con il flusso esistente, ma il risultato non
 riscrive una revisione salvata: va scelto esplicitamente come nuova base.
 
-**Approvazione della revisione.** Il primo salvataggio produce uno snapshot «Da approvare»,
-anche se il padre era approvato. «Approva questa revisione» registra una decisione separata
-legata a `graph_hash`, senza avviare la pipeline e senza modificare `graph.json`. L'API della
-versione espone lo stato effettivo; il `status` dentro lo snapshot descrive il momento del
-salvataggio. In download, la decisione è disponibile come metadato allegato o in un pacchetto
-esplicito: non riscrivere il file congelato per cambiare una targhetta.
+**Accettazione finale della nuova versione.** Il pulsante del riepilogo accetta le modifiche
+e crea la versione in una sola operazione. Per le revisioni umane lo snapshot nasce con
+`status: approved`, `decided_by: human` nel catalogo e decisione in `acceptance.json`.
+La UI lo descrive come «Modifiche accettate». Non eredita l'approvazione del padre: registra
+quella appena espressa sulla nuova versione. Non introdurre lo stato intermedio «Salvata,
+ora da approvare» e non chiedere una seconda conferma dopo il riepilogo.
 
-Le domande residue della fonte e i contenuti non verificati devono essere visibili durante
-l'approvazione, con una scelta esplicita di accettare i dubbi residui e una nota registrata.
-Questa è un'approvazione manuale dello snapshot, non una risposta retroattiva alle domande
-del run e non una conferma di tutte le relazioni. Gli errori strutturali restano bloccanti.
+Le domande residue della fonte e i contenuti non verificati sono elencati al passo Riepilogo.
+Se presenti, richiedere la casella non preselezionata «Accetto la nuova versione con i dubbi
+residui elencati»; registrare gli ID riconosciuti. La nota è facoltativa. Una modifica del
+contenuto o dei dubbi azzera la casella. Gli errori strutturali restano bloccanti.
+
+Accettare lo snapshot non risponde alle domande del run e non conferma tutte le relazioni:
+`trusted`, certificati e conferme sulle occorrenze seguono la sezione 6. Il comando «Approva»
+già presente sui run rimane relativo all'estrazione e fuori dalla sessione editor. Il nuovo
+flusso non chiama quell'endpoint. Snapshot e decisione sono scaricabili anche in un pacchetto
+con la provenienza, senza riscrivere gli artefatti salvati.
 
 **Navigazione e contatori.**
 
-- `Version` diventa una unione discriminata o un contratto con `kind: run | revision`,
+- `Version` diventa una unione discriminata con `kind: run | revision`,
   padre, riepilogo e capacità (`can_edit`, `can_approve`, `can_replay`, `can_resume`).
-- La libreria apre per default l'elemento salvato più recente, con etichetta «Revisione N».
+- La libreria apre per default l'elemento salvato più recente, con etichetta «Versione modificata N».
   Il manuale rende raggiungibile anche l'ultima revisione approvata e l'esecuzione di origine.
 - Le revisioni compaiono nella tabella delle versioni; in «Esecuzioni» restano i processi,
   con eventuale collegamento alle revisioni generate a valle, senza duplicare costi e tempi.
 - «Tocca a te» considera le attività aperte per versione, non solo `manual.latest`: creare
   una revisione non deve nascondere un run attivo o domande ancora pendenti sul padre.
-- `flow/steps.ts` usa, per una revisione, «Modifiche salvate → Controllo → Approvazione».
-  `nextStep` porta al controllo della revisione, mai a una finta esecuzione.
+- `flow/steps.ts` mostra per una revisione salvata «Modifiche accettate» e il collegamento
+  alla fonte; `nextStep` apre il grafo. I passi Modifica/Controlla/Riepilogo appartengono
+  soltanto alla sessione prima dell'accettazione, non sono attività pendenti dopo il salvataggio.
+- Una revisione appena accettata non viene messa in «Tocca a te» per essere nuovamente
+  approvata. Dubbi residui e domande della fonte rimangono consultabili nelle categorie
+  appropriate senza duplicare la stessa domanda come un nuovo incarico della revisione.
 - Gli endpoint di job rifiutano esplicitamente gli ID delle revisioni; quelli di lettura
   risolvono sia run sia revisioni attraverso un resolver comune.
 
-## 9. Architettura applicativa proposta
+## 9. Contratti e architettura da implementare
 
 ### Frontend
 
 Un contenitore comune del grafo tiene caricamento, selezione e bozza, indipendentemente
 dalla vista visibile. La bozza comprende base immutabile, operazioni, valori correnti,
-validazione e pila undo/redo. I selettori calcolano indici, collegamenti e filtri.
+validazione e pila undo/redo. Vive solo in React e viene distrutta all'uscita dalla sessione.
+I selettori calcolano indici, collegamenti e filtri. Il polling di `StatusProvider` non
+ricarica la base dentro una bozza attiva; un cambiamento esterno è un conflitto esplicito.
+
+Creare un `EditorSessionProvider` montato una volta per manuale/base sotto la route editor;
+non rimontarlo cambiando `passo`, `vista`, filtri o lingua. Il reducer gestisce gli stati della
+sezione 4.6. Mantenere un contatore `draft_generation`: validazioni fuori ordine vengono
+ignorate se non coincidono con la generazione corrente. Nessuna richiesta in background
+pubblica dati modificati. Le richieste di anteprima non archiviano payload o bozze sul server.
+
+**Router e guardia d'uscita.** Migrare `main.tsx` e la configurazione in `App.tsx` a
+`createBrowserRouter` + `RouterProvider`, mantenendo tutte le route, lazy import e provider
+esistenti. Estrarre un layout con `StatusProvider` e `Outlet`; tenere `LanguageProvider`
+e `StrictMode` attorno al router. Usare `useBlocker` per le navigazioni SPA in uscita dalla
+sessione, inclusi POP del browser, con `proceed/reset` per il dialogo. I cambi interni alla
+stessa sessione non lo attivano. Non limitarsi a intercettare il clic sulla sidebar.
+
+Usare anche `beforeunload` per le uscite dal documento, senza promettere testo personalizzato
+o un blocco infallibile della chiusura. Su `pagehide` invalidare lo stato della sessione; su
+`pageshow` con `persisted: true` ripartire dalla base per non recuperare modifiche dalla bfcache.
+Il cleanup React non salva e non simula un'uscita utente durante i controlli di `StrictMode`.
+Nei test dei percorsi usare `createMemoryRouter`, così il blocker usa lo stesso contratto.
 
 Il renderer 3D riceve proiezioni del documento e mantiene separati i propri oggetti mutabili
 di simulazione: coordinate e riferimenti Three.js non entrano mai nel grafo da salvare.
@@ -452,12 +597,13 @@ I nodi isolati rimangono nella vista editor; filtri e navigazione conservano la 
 | File/area | Lavoro previsto |
 | --- | --- |
 | `screens/FinishedGraph.tsx` e nuovo contenitore `screens/GraphWorkspace.tsx` | Estrarre lo spazio condiviso senza duplicare caricamento, barra e pannelli |
+| Nuovi `editor/EditorSessionProvider.tsx`, `editor/EditorFlow.tsx`, `editor/useEditorExitGuard.tsx` | Sessione in memoria, tre passi, guardia SPA/unload/bfcache e azzeramento all'uscita |
 | Nuovi `editor/model.ts`, `editor/reducer.ts`, `editor/selectors.ts` | Operazioni, bozza, undo/redo, indici adattati dal riferimento e diff |
 | Nuovi `editor/EditableTable.tsx`, `editor/NodeTable.tsx`, `editor/RelationTable.tsx` | Tabelle, editor di celle, filtri e navigazione per ID |
-| Nuovi `editor/ReviewPanel.tsx`, `editor/SaveRevisionDialog.tsx` | Controlli navigabili, anteprima delle conseguenze e riepilogo salvataggio |
+| Nuovi `editor/ReviewPanel.tsx`, `editor/RevisionSummary.tsx` | Controlli, diff del passo finale e unica accettazione; nessun secondo dialogo di salvataggio |
 | `components/Table.tsx`, `Controls.tsx`, `EvidencePanel.tsx`, `PageDialog.tsx` | Riutilizzo delle parti comuni; editor fonti e controlli accessibili |
 | `graph/Graph3D.tsx`, `graph/style.ts` | Focus su ID, isolamento visibile, conservazione camera/posizioni, nuovi stati |
-| `api/types.ts`, `api/client.ts`, `App.tsx` | Contratti run/revisione, operazioni, errori strutturati e route editor |
+| `api/types.ts`, `api/client.ts`, `main.tsx`, `App.tsx` | Contratti, errori strutturati, data router e helper `editGraphRoute` |
 | `screens/LiveRun.tsx`, `ManualScreen.tsx`, `Library.tsx`, `Inbox.tsx`, `Runs.tsx` | Ingressi, cronologia, azioni corrette per tipo, tempi/costi e attività pendenti |
 | `flow/steps.ts`, `status/StatusProvider.tsx`, `text/it.ts` | Prossimo passo, aggiornamento globale, etichette revisioni |
 | `i18n/en.ts`, `help/guide.ts`, `help/guide.en.ts`, `styles/`, `docs/DESIGN.md` | Traduzioni, guida e componenti coerenti con il sistema esistente |
@@ -478,29 +624,116 @@ I nodi isolati rimangono nella vista editor; filtri e navigazione conservano la 
 Rimane la persistenza su filesystem. Non occorrono database, collaborazione simultanea,
 un nuovo servizio web o una seconda libreria di rendering per realizzare il primo rilascio.
 
-### Contratto API indicativo
+### Contratto API del primo rilascio
 
-I percorsi sono una proposta da implementare, non endpoint già disponibili.
+Implementare i seguenti percorsi; non sono ancora disponibili. Le operazioni di lettura e
+anteprima non creano revisioni. La POST di creazione è l'unica scrittura del percorso editor.
 
 | Metodo e percorso, sotto `/api/manuals/{m}` | Responsabilità |
 | --- | --- |
-| `GET /versions/{v}/editor` | Documento originale, hash/precondizioni, schema, fonte, capacità e contesto di review |
-| `POST /versions/{v}/validate-edits` | Applicare in memoria le operazioni; restituire errori per cella, avvisi e impatto |
-| `POST /versions/{v}/revisions` | Salvare un nuovo figlio; accettare `base_hash`, token schema/fonte, `request_id`, operazioni e nota |
+| `GET /versions/{v}/editor` | Documento originale, precondizioni, schema, capacità, fonte e contesto di review |
+| `POST /versions/{v}/validate-edits` | Anteprima senza scritture: esito, diff, avvisi e hash del riepilogo |
+| `POST /versions/{v}/revisions` | Unica accettazione e creazione atomica del figlio; `201` al primo commit, `200` al retry già completato |
+| `GET /revision-requests/{request_id}` | Risolvere un esito incerto: `saved` con versione creata, `in_progress` oppure `not_found`; nessun contenuto di bozza |
 | `GET /versions/{revision}/changes` | Diff rispetto allo snapshot base, con link agli elementi |
-| `POST /versions/{revision}/review-decisions` | Approvare/rifiutare lo snapshot mediante hash e decisione esplicita |
 | `GET /versions/{v}/source-segments?page=…&q=…` | Cercare nella fonte verificata, con paginazione e riferimenti risolvibili |
 | `GET /versions/{v}/graph` e letture esistenti | Risoluzione uniforme; rapporto della revisione distinto dal rapporto della fonte |
 
-Operazioni tipizzate, per esempio `node.add`, `node.set_property`, `node.remove_property`,
-`node.delete`, `edge.add`, `edge.replace_endpoints`, `edge.delete`, `occurrence.update`,
-`occurrence.confirm`, con allowlist dei campi modificabili. Le ID provvisorie di elementi
-nuovi vengono rimappate dal server e restituite al client.
+DTO da dichiarare in Pydantic e TypeScript, con i medesimi nomi di campo:
+
+```typescript
+type Preconditions = {
+  base_hash: string;
+  ontology_hash: string;
+  source_token: string;       // Identità della fonte e sua disponibilità, anche senza PDF.
+  source_review_hash: string;
+};
+type EditInput = {
+  preconditions: Preconditions;
+  operations: EditOperation[];
+  draft_generation: number;
+};
+type Issue = {
+  id: string;
+  code: string;
+  severity: "error" | "warning";
+  target: { kind: "graph" | "node" | "edge" | "occurrence"; id?: string; field?: string };
+  introduced: boolean;
+  message_key: string;
+  message_params: Record<string, string | number>;
+};
+type EditPreview = {
+  draft_generation: number;
+  preview_hash: string;
+  has_changes: boolean;
+  can_accept: boolean;       // Integrità e capacità; il client verifica anche i riconoscimenti.
+  diff: GraphDiff;
+  issues: Issue[];
+  required_acknowledgements: string[];
+};
+type AcceptRevision = EditInput & {
+  request_id: string;
+  preview_hash: string;
+  note: string;
+  acceptance: { decision: "accept_changes"; acknowledged_issue_ids: string[] };
+};
+type RevisionCreated = {
+  version: RevisionVersion;  // kind: "revision", status: "approved", decided_by: "human".
+  parent_version_id: string;
+  graph_hash: string;
+  request_id: string;
+  id_map: Record<string, string>;
+};
+```
+
+Il GET editor restituisce `{graph, preconditions, ontology, capabilities, source, source_review}`.
+Le capacità sono `can_edit`, `can_approve`, `can_replay`, `can_resume` con motivi traducibili
+per quelle disabilitate. Sulle revisioni salvate: edit vero, approve/replay/resume falsi.
+`RevisionVersion` estende i dati del catalogo con padre, numero e accettazione; `GraphDiff`
+separa added/removed/updated per nodi e archi, prima/dopo per campo, modifiche di occorrenze
+e conseguenze calcolate dal sistema. Nessuna modifica invisibile fuori dal riepilogo.
+
+`EditOperation` è una unione discriminata con allowlist, non JSON Patch libero:
+
+| Operazione | Payload e regola |
+| --- | --- |
+| `node.add` | `temp_id`, `node_type`, `name`, `properties`; ID riservato `tmp_node_<uuid>` |
+| `node.set_name` | `node_id`, `value`; sincronizza anche `properties.name` |
+| `node.set_property` / `node.remove_property` | `node_id`, `field`, eventuale `value`; vietati ID, nome e metadati riservati; rimozione solo facoltativi |
+| `node.set_aliases` | `node_id`, `values: string[]`; origine umana, invalidazione prudente come per il nodo |
+| `node.delete` | `node_id`; rimuove gli archi incidenti come un'unica operazione annullabile |
+| `edge.add` | `temp_id`, `relation_type`, `from`, `to`, `occurrences`; schema e unicità della tripla |
+| `edge.replace_endpoints` | `edge_id`, `replacement_temp_id`, `relation_type`, `from`, `to`; include cambio tipo; successive operazioni puntano alla nuova identità temporanea |
+| `edge.delete` | `edge_id`; rifiutata se relazione derivata |
+| `occurrence.add` / `occurrence.update` / `occurrence.delete` | `edge_id`, `occurrence_id`, dati ammessi: condizioni, riferimenti ai segmenti, annotazione umana; vietata la riscrittura delle citazioni |
+| `occurrence.confirm` / `occurrence.reject` | `edge_id`, `occurrence_id`, hash del contenuto, motivazione; decisione in memoria fino all'accettazione finale |
+
+Le occorrenze hanno ID stabili nello schema revisionato: per quelle importate derivarli da
+ID arco, indice originale e hash del contenuto; per quelle nuove usare ID temporanei.
+Anche i payload delle condizioni usano i campi esistenti `kind`, `text`, `cite`, `scope`,
+con enum e vincoli di `ContextItem`. Tutti gli altri dati sono preservati o calcolati dal server.
+La rimozione dell'ultima occorrenza rimuove anche la relazione, con la stessa anteprima e
+possibilità di undo della cancellazione dell'arco. Non salvare archi diagnostici senza occorrenze.
+
+Il server calcola `preview_hash` sul risultato normalizzato e sul diff/contesto di review,
+prima di assegnare ID definitivi e date di creazione. Usa serializzazione canonica JSON
+(chiavi ordinate, separatori compatti, UTF-8, nessun NaN; ordine degli array conservato).
+Il client riusa l'hash ricevuto, non reimplementa la canonicalizzazione. Nella POST finale
+si ripete lo stesso calcolo, si confronta l'hash, poi si assegnano gli ID definitivi e si
+registra `id_map`: il riepilogo deve corrispondere al grafo salvato a meno di ID e metadati.
 
 Validare nuovamente tutto nel salvataggio: la validazione di anteprima non è un'autorizzazione
 riutilizzabile su dati cambiati. `422` restituisce codice del problema, elemento, campo e
-messaggio traducibile; `409` indica una precondizione superata; errori di I/O lasciano la
-bozza intatta. Estendere `ApiError`: oggi conserva solo una stringa di dettaglio.
+messaggio traducibile; `409` indica una precondizione superata, un hash di riepilogo obsoleto
+o riuso non valido della chiave. Esito senza differenze: `422` con `NO_CHANGES`.
+Estendere `ApiError`: oggi conserva solo una stringa di dettaglio.
+
+Un errore dopo l'invio può avere esito incerto anche se presentato come errore di I/O.
+Conservare payload e `request_id` congelati **solo in memoria** e interrogare lo stato della
+richiesta. `saved` apre la versione già creata; `in_progress` attende con indicatore;
+`not_found` consente «Riprova» con lo stesso identico payload/ID, senza dedurre che una
+prima richiesta ancora in arrivo sia stata annullata. Il server deduplica sotto lock e
+ricostruisce gli esiti riusciti dai manifest salvati anche dopo il riavvio.
 
 ## 10. Coerenza visiva e semplicità
 
@@ -511,6 +744,10 @@ Seguire [DESIGN.md](DESIGN.md) e `frontend/src/styles/tokens.css`:
   compatte da 36 px, bordi da 1 px, raggi da 4 px, griglia da 4 px.
 - Tabelle e pannelli chiari; fondo scuro per il grafo. I colori dei tipi restano quelli attuali.
 - Nessuna voce «Editor» nella sidebar: si lavora sul grafo già selezionato.
+- Pulsanti con testo, non sole icone, per Modifica grafo, Indietro, Avanti, accettazione e
+  uscita. In Controlla/Riepilogo togliere dalla barra le ricerche inutili per lasciare spazio
+  alle azioni; a 1024 px l'etichetta finale deve essere leggibile integralmente. Nessun menu
+  nascosto per accettare o abbandonare, né salvataggio associato a una scorciatoia implicita.
 - Testi lunghi espandibili nel pannello o nella cella attiva; non comprimere l'intera tabella
   per mostrare ogni campo. Intestazioni e colonna identificativa fisse, scorrimento orizzontale.
 - A 1024 px il pannello dettagli può diventare sovrapposto/richiudibile; conservare spazio
@@ -529,8 +766,8 @@ rilascio completo; le tabelle editabili, i filtri e le revisioni non sono demand
 | --- | --- | --- |
 | 1. Contratti e persistenza | Modello run/revisione, formato revisionato, policy prove/fiducia, operazioni, validazione e scrittura atomica | Un test offline crea due revisioni consecutive preservando tutte le basi; nessun job/LLM |
 | 2. Tabelle integrate | Nodi e Relazioni in consultazione nello spazio del grafo; port dei selettori e filtri del riferimento; collegamenti ai dettagli | Si trova un nodo da ogni tipo, si filtrano campi e collegamenti, si passa a grafo e prove senza perdere il contesto |
-| 3. Editing completo | Celle tipizzate, CRUD nodi/relazioni/occorrenze, selezione fonti, invalidazione verifiche, undo/redo e bozza | Le correzioni si vedono in tutte le viste; cancellazioni e annullamenti sono atomici e recuperabili |
-| 4. Salvataggio e flusso | Anteprima diff, nuova revisione, cronologia, approvazione dedicata, ingressi dalla fine esecuzione e libreria | Percorso completo creazione → modifica → salva → riapri → modifica → seconda revisione |
+| 3. Editing completo | Celle tipizzate, CRUD nodi/relazioni/occorrenze, selezione fonti, invalidazione verifiche, undo/redo nella sessione | Le correzioni si vedono in tutte le viste; cancellazioni annullabili finché la sessione resta aperta |
+| 4. Percorso e accettazione | Data router, pulsante dedicato, tre passi, diff, scarto in uscita, accettazione atomica e cronologia | Generazione → Modifica → avanti/indietro → accetta → nuova versione; uscita senza accettazione → nessuna scrittura e perdita dei valori |
 | 5. Controlli e rifinitura | Dashboard navigabile, contatori coerenti, gestione anomalie/conflitti, IT/EN, guida e QA visiva | Tutti i criteri della sezione 12 verificati e nessuna regressione dei flussi esistenti |
 | Successiva, opzionale | Suggerimenti AI, eventuale vista 2D locale, merge/split di nodi, operazioni massive | Scope deciso su casi d'uso reali; indipendente dal completamento del primo rilascio |
 
@@ -542,8 +779,8 @@ si lavora su copie e si introduce il nuovo formato soltanto per le revisioni sal
 Test offline con fixture piccole e mirate, inclusi casi derivati dalla logica del riferimento
 e adattati al formato nativo. Nessuna nuova estrazione reale necessaria.
 
-1. Da un grafo appena creato e da uno storico si arriva allo stesso editor, con lo stesso
-   aspetto dell'applicazione e senza caricamento/esportazione manuale di file intermedi.
+1. Dopo il redirect di fine generazione e riaprendo un grafo storico è visibile il pulsante
+   «Modifica grafo»; entrambi aprono lo stesso percorso, senza file intermedi o menu nascosti.
 2. Ogni tipo ha la sua tabella, anche vuota; ricerca, filtro per colonna, ordinamento,
    conteggio collegamenti e stato dei valori funzionano insieme.
 3. Una modifica testuale, un numero, `false`, una lista vuota, `null`, un campo assente e
@@ -562,16 +799,43 @@ e adattati al formato nativo. Nessuna nuova estrazione reale necessaria.
    successivi lasciano consultabili originale, revisione 1 e revisione 2; nessun no-op crea revisioni.
 10. Parent/base e sorgenti restano byte-identici; se il run cambia in seguito, il diff della
     revisione si ricostruisce ancora dalla base congelata. Hash di schema e fonte conservati.
-11. Retry idempotente, due schede, conflitto della base, processo che riparte e crash durante
-    scrittura non causano sovrascritture, revisioni parziali o perdita della bozza.
+11. Retry idempotente, due schede, conflitto della base, processo che riparte e crash del
+    server non causano sovrascritture o revisioni parziali. Finché il documento browser
+    rimane aperto, gli errori mantengono la sessione; chiusura/ricarica la scartano.
 12. Il catalogo e i suoi dati in cache riflettono il nuovo contenuto. Il rapporto originale
     non appare come rapporto della revisione; tempi/costi non vengono duplicati in Esecuzioni.
-13. L'approvazione di una revisione non usa la pipeline; le domande della fonte restano
-    riconoscibili e le attività aperte su altri elementi non scompaiono da «Tocca a te».
+13. L'accettazione finale crea insieme versione e decisione senza usare la pipeline o
+    richiedere un secondo Approva; le domande della fonte restano riconoscibili e le
+    attività aperte su altri elementi non scompaiono da «Tocca a te».
 14. Passaggi controlli → riga → relazione → nodo → grafo → pagina PDF conservano contesto;
-    navigazione indietro, cambio versione e uscita proteggono la bozza.
+    Avanti/Indietro interni conservano la sessione, l'uscita confermata la distrugge.
 15. UI verificata nelle due dimensioni previste, in IT e EN, con tastiera, testi lunghi,
     filtri senza risultati, caricamenti, errori API e manuale non disponibile.
+
+### Scenari obbligatori del percorso, da automatizzare
+
+| ID | Azioni | Esito da asserire |
+| --- | --- | --- |
+| FLOW-01 | Concludere un live tramite eventi finti e seguire il redirect | Il grafo destinazione mostra Modifica grafo, che apre il passo 1 della stessa versione |
+| FLOW-02 | Aprire dalla libreria un grafo già esistente, scegliere una versione storica e modificare | Base e breadcrumb coincidono con la scelta; nessun cambio silenzioso all'ultima versione |
+| FLOW-03 | Cambiare due celle, Avanti → Controlla → Riepilogo, poi Indietro e ritorno a Modifica | I valori e l'undo restano; conteggio versioni invariato e zero POST di creazione |
+| FLOW-04 | Dal riepilogo correggere una riga, poi tornare avanti anche con il browser | Vecchia validazione e vecchi riconoscimenti scadono; accettazione solo sul nuovo hash |
+| FLOW-05 | Clic finale, doppio clic e retry dopo una risposta persa | Una sola versione con snapshot, acceptance e padre corretto; apertura della destinazione, nessun secondo Approva |
+| FLOW-06 | Modificare, Esci senza salvare, Continua a modificare | Dialogo chiuso, valori invariati, nessuna POST di creazione |
+| FLOW-07 | Modificare, uscire e confermare lo scarto, poi rientrare anche con Avanti del browser | Valori originali, nessuna nuova versione, nessun payload recuperato da storage o history |
+| FLOW-08 | Ripetere lo scarto passando da logo, breadcrumb, sidebar, altra versione e POP esterno | Ogni percorso applica la stessa guardia, raggiunge la destinazione scelta e azzera lo stato |
+| FLOW-09 | Modificare e ricaricare/chiudere prima dell'accettazione; simulare `pagehide/pageshow` della bfcache | Nessuna revisione e nessun recupero; verifica del dialogo nativo nel browser dove supportato |
+| FLOW-10 | Input numerico non valido ancora aperto; Avanti oppure uscita | Avanti evidenzia la cella; uscita avverte della perdita anche se il diff confermato è vuoto |
+| FLOW-11 | Cambiare e fare undo completo; raggiungere Riepilogo | Pulsante finale disabilitato; zero versioni identiche create |
+| FLOW-12 | Risposte di validazione invertite, `409`, `422`, offline o timeout dopo commit | Nessun risultato vecchio abilita l'accettazione; bozze in memoria conservate, esito incerto risolto sullo stesso ID |
+| FLOW-13 | Ricaricare direttamente l'URL del riepilogo, con `StrictMode` e polling attivi | Ripartenza al passo 1 dalla base; nessuna POST, nessun vecchio valore e nessun reset causato dai normali re-render |
+| FLOW-14 | Accettare una versione con modifiche prive di verifica automatica | Versione accettata; stato delle singole relazioni rimane quello della policy, senza diventare verde per effetto del salvataggio |
+
+Per FLOW-03/06/07/08/11 controllare sia le richieste client sia il filesystem del workspace:
+prima del clic finale non devono apparire directory di revisione, neppure temporanee,
+o file contenenti modifiche della sessione. La validazione è un'anteprima senza persistenza.
+La chiusura durante FLOW-05 avviene dopo un'accettazione: verificare il possibile commit
+completato, senza aspettarsi che l'abbandono del browser annulli una richiesta già inviata.
 
 Copertura prevista: nuovi test backend per documento, validazione e revisioni; estensione di
 `tests/test_ui_catalog.py`, `test_ui_api.py`, `test_ui_jobs.py`, `test_ui_answers.py` e
@@ -591,7 +855,7 @@ Una futura AI può proporre correzioni di testo, relazioni mancanti o possibili 
 accompagnandoli con motivazione e citazioni verificabili.
 
 Le proposte si vedono come differenze nella bozza e la persona le accetta o rifiuta; poi usa
-gli stessi controlli e «Salva nuova revisione». Provenienza della proposta e decisione umana
+gli stessi passi e «Accetta modifiche e crea nuova versione». Provenienza della proposta e decisione umana
 rimangono distinte. Nessun suggerimento cambia automaticamente un certificato, un grafo
 approvato o la versione corrente. Eventuali chiamate passano dal gateway e dai controlli
 di spesa già presenti. Nessun modello o comportamento AI è necessario per il primo rilascio.
@@ -605,3 +869,90 @@ funzioni del riferimento e la verifica dei flussi completi descritti sopra.
 
 I risultati e gli artefatti delle estrazioni esistenti restano fonti di provenienza; una
 revisione manuale è un nuovo prodotto tracciato e non sostituisce retroattivamente la fonte.
+
+## 15. Consegna operativa per l'agente AI implementatore
+
+### 15.1 Mandato e decisioni già prese
+
+Quando viene richiesta l'implementazione, realizzare le fasi 1–5 fino ai criteri della
+sezione 12. Questo documento è una specifica di lavoro, non una richiesta di produrre
+un altro piano. Non cambiare il percorso o reintrodurre persistenza delle bozze per comodità.
+
+Decisioni vincolanti:
+
+1. Un comando «Modifica grafo», stessa esperienza subito dopo generazione e in seguito.
+2. Tre passi con avanti/indietro; tabelle e filtri del riferimento adattati, dentro l'app.
+3. Stato solo in memoria; uscita confermata o effettiva prima dell'accettazione = perdita.
+4. Un solo atto finale accetta il contenuto e crea una nuova versione; niente autosave,
+   salvataggio su Avanti o approvazione obbligatoria successiva.
+5. Persistenza append-only nel workspace, base invariata, idempotenza e diff verificabile.
+6. Verifiche delle relazioni distinte dall'accettazione complessiva; nessun certificato inventato.
+7. React/TypeScript, FastAPI, design esistente, compatibilità dei run; niente iframe o editor separato.
+8. AI suggeritrice, editing dell'ontologia, merge/split e operazioni massive fuori dal primo rilascio.
+
+Rileggere `AGENTS.md`, questo file, `docs/DESIGN.md` e le implementazioni citate prima di
+modificare. Se il codice nel frattempo è cambiato, adattare i punti d'integrazione conservando
+le decisioni sopra. I documenti dell'editor allegato restano riferimento funzionale: non
+eseguirne i vecchi vincoli architetturali. Non modificare quella cartella per l'integrazione.
+
+### 15.2 Ordine degli incarichi e verifica di uscita
+
+Gli incarichi sono sequenziali per dipendenze; non richiedono più agenti. I nomi dei moduli
+nuovi possono essere accorpati se il comportamento e le responsabilità restano chiari.
+
+Due dettagli di integrazione da non tralasciare: `Icon.tsx` deve offrire l'icona matita nel
+set esistente; la colonna azioni di `Table.tsx` è oggi larga 32 px. Per il pulsante testuale
+nella cronologia rendere quella larghezza configurabile, preservando il default delle
+altre tabelle e la mancata propagazione del clic alla navigazione della riga.
+
+| Incarico | Input / file principali | Risultato da consegnare prima di proseguire |
+| --- | --- | --- |
+| A. Documento e operazioni | `export.py`, `contracts.py`, `ontology.py`, formato del riferimento; nuovi `graph_document.py`, `graph_validation.py` | Lettura graph-2/graph-3, descrittori di schema, operazioni tipizzate, ID e round-trip; test di integrità e invalidazione |
+| B. Accettazione atomica | A; nuovi `revisions.py`, estensioni `api.py`, `catalog.py`, coordinamento `jobs.py` | Preview senza scritture, commit snapshot+acceptance, idempotenza, esito richiesta, resolver e guardie; test di crash/retry/concorrenza |
+| C. Router e sessione | Contratti B; `main.tsx`, `App.tsx`, `api/*`, nuovi provider/reducer/guardia | Route editor con sessione in memoria e passi, guardia POP/unload/bfcache; test FLOW-06/07/08/09/10/13 |
+| D. Tabelle e navigazione | C; port delle funzioni elencate in sezione 3, componenti UI e renderer esistenti | CRUD completo, filtri combinabili, celle tipizzate, fonti/occorrenze, undo/redo e salti alle righe senza perdita di contesto |
+| E. Riepilogo e accettazione | B+C+D; `ReviewPanel`, `RevisionSummary`, `api/client.ts` | Validazione per generazione, diff aggiornato, pulsante finale unico, gestione esiti certi/incerti; FLOW-03/04/05/11/12/14 |
+| F. Ingressi e ciclo di vita | E; `LiveRun`, `FinishedGraph`, `ManualScreen`, `Library`, `Inbox`, `Runs`, `flow/steps`, `StatusProvider` | Pulsante dedicato in tutti gli ingressi; redirect live corretto, versioni/attività/costi coerenti, nessuna seconda approvazione; FLOW-01/02 |
+| G. Chiusura | A–F; traduzioni, guida, `DESIGN.md`, test | Intero percorso verificato in IT/EN, QA alle due risoluzioni, suite/build verdi e resoconto delle prove |
+
+In A/B usare directory temporanee dei test e fixture artificiali; non risalvare gli
+artefatti originali. I mock LLM devono fallire se invocati da anteprima o accettazione:
+queste operazioni non richiedono modelli. Riutilizzare `tests/ui_support.py` e i fixture
+esistenti per verificare la compatibilità delle vecchie API.
+
+File di test nuovi previsti:
+
+- `tests/test_ui_graph_document.py`: operazioni, tipi di dato, conservazione campi,
+  occorrenze, invalidazioni e derivati.
+- `tests/test_ui_revisions.py`: accettazione, idempotenza, precondizioni, snapshot,
+  scrittura atomica, catalogo ed esiti dopo risposta persa/riavvio.
+- `frontend/tests/editor-reducer.test.ts`: stato, diff, undo/redo, generazioni di validazione.
+- `frontend/tests/editor-flow.test.tsx`: passi, guardie, riepilogo, unica POST e scarto.
+- `frontend/tests/editor-tables.test.tsx`: filtri, editor di celle e selezione fra viste.
+- Estendere i test API/catalogo/job/flow/shell/i18n già presenti; usare il data router nei
+  test che attraversano il blocker, senza sostituirlo con un mock che nasconda i POP reali.
+
+### 15.3 Verifica finale e definizione di completamento
+
+Eseguire i test pertinenti a ogni incarico. Alla chiusura usare i comandi già previsti
+dalla repository, dalla radice:
+
+```bash
+.venv/bin/ruff check .
+.venv/bin/python -m pytest
+npm --prefix frontend test
+npm --prefix frontend run build
+git diff --check
+```
+
+Avviare l'interfaccia locale con `scripts/ui.py` o i server di sviluppo già disponibili,
+senza lanciare estrazioni reali a pagamento; usare un run finto/replay e un workspace di
+prova per il percorso completo. Nel browser verificare i pulsanti reali, avanti/indietro,
+scarto, riapertura e accettazione, oltre alla leggibilità a 1440×900 e 1024×768. Test jsdom
+da soli non dimostrano il comportamento di chiusura, dialogo nativo o bfcache.
+
+Il lavoro è completato quando tutti gli ingressi e FLOW-01–14 sono coperti, i criteri
+generali della sezione 12 sono rispettati e l'utente può accettare oppure abbandonare
+il lavoro senza dubbi su cosa è stato salvato. Riportare nel risultato finale file/commit,
+verifiche effettivamente eseguite ed eventuali limiti osservati; non dichiarare verifiche
+browser o test non effettuati. Una UI finta con soli dati locali non completa l'incarico.
