@@ -76,4 +76,24 @@ describe("run reducer", () => {
     const once = play([started, extracted]);
     expect(runReducer(once, extracted)).toBe(once);
   });
+
+  it("keeps the stations in order when the run checks again after the merge", () => {
+    const step = (station: string, state: string, name?: string) =>
+      event("station", { station, state, ...(name ? { step: name } : {}) });
+    const run = play([
+      event("run_started", {}),
+      step("read", "running"), step("read", "done"),
+      step("map", "running"), step("map", "done"),
+      step("extract", "running"), step("extract", "done"),
+      step("check", "running", "check"), step("check", "done"),
+      step("merge", "running", "merge"), step("merge", "done"),
+      step("check", "running", "split_recheck"),
+    ]);
+    expect(run.stations.check.phase).toBe("done");
+    expect(run.stations.merge.phase).toBe("done");
+    expect(run.stations.ask.phase).toBe("waiting");
+    const asking = runReducer(run, step("ask", "running", "gate_doubts"));
+    expect(asking.stations.ask.phase).toBe("running");
+  });
 });
+

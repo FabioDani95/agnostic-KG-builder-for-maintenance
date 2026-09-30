@@ -124,7 +124,7 @@ describe("tables and small helpers", () => {
     expect(blocker(ready)).toBeNull();
     expect(blocker({ ...ready, running: "Graco" })).toMatch(/già un'esecuzione in corso/);
     expect(blocker({ ...ready, hasManual: false, name: "" })).toMatch(/Carica il manuale/);
-    expect(blocker({ ...ready, name: " " })).toBe("Scrivi il nome della macchina.");
+    expect(blocker({ ...ready, name: " " })).toBe("Scrivi almeno la marca o il modello della macchina.");
     expect(blocker({ ...ready, worst: null })).toMatch(/Non ho esecuzioni passate/);
   });
 });

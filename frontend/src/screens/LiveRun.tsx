@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { graphRoute, manualRoute, postJson, useApi, versionPath } from "../api/client";
 import type { Manual, RunStatus } from "../api/types";
 import { ProgressBar, SegmentedControl, typing } from "../components/Controls";
@@ -77,6 +77,12 @@ export function LiveRun() {
   const [stopping, setStopping] = useState(false);
   const [handoffClosed, setHandoffClosed] = useState(false);
   const ended = Boolean(run.finished || run.failed);
+
+  // A run followed live ends on its graph: that is where the next step is (questions or approval).
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (live && run.finished) navigate(graphRoute(manualId, versionId), { replace: true });
+  }, [live, run.finished, manualId, versionId, navigate]);
 
   // Esc closes the node panel, unless a page of the manual is open on top.
   useEffect(() => {
@@ -176,12 +182,7 @@ export function LiveRun() {
               {openQuestions === 1 ? tr("1 domanda per te") : tr("{n} domande per te", { n: formatNumber(openQuestions) })}
             </Link>
           )}
-          {run.finished && (
-            <Link to={base} className="button button-bar">
-              <Icon name="graph" />
-              {tr("Apri il grafo")}
-            </Link>
-          )}
+
         </>
       }
     >

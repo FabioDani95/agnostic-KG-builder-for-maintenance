@@ -208,7 +208,9 @@ export const EN: Record<string, string> = {
   "Lettura dei dati della macchina": "Reading the machine data",
   "C'è già un'esecuzione in corso ({name}): aspetta che finisca.": "A run is already in progress ({name}): wait for it to end.",
   "Carica il manuale in PDF o sceglilo dalla libreria.": "Upload the PDF manual or choose it from the library.",
-  "Scrivi il nome della macchina.": "Write the name of the machine.",
+  "Scrivi almeno la marca o il modello della macchina.": "Write at least the brand or the model of the machine.",
+  "Tipo di macchina": "Kind of machine",
+  "es. aspiratore, compressore, pompa": "e.g. dust collector, compressor, pump",
   "Non ho esecuzioni passate da cui stimare il costo.": "There are no past runs to estimate the cost from.",
 
   // Run
@@ -263,6 +265,7 @@ export const EN: Record<string, string> = {
   "Rispondi alle domande": "Answer the questions",
   "Applica le risposte": "Apply the answers",
   Approva: "Approve",
+  "Approvazione in corso": "Approving",
   "Filtri e legenda": "Filters and legend",
   "Quali relazioni mostrare": "Which relations to show",
   "Mostra tutto il grafo": "Show the whole graph",

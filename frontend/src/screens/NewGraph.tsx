@@ -44,6 +44,10 @@ async function send(file: File): Promise<Upload> {
   return data as Upload;
 }
 
+/** The name a manual gets in the library: maker, model and kind of machine, as they were written. */
+export const machineName = (machine: Machine) =>
+  [machine.brand, machine.model, machine.type].map((part) => part.trim()).filter(Boolean).join(" ");
+
 /** Why the run cannot start yet, in the order a person would fix it; null when it can. */
 export function blocker(input: {
   running: string | null;
@@ -54,7 +58,7 @@ export function blocker(input: {
 }): string | null {
   if (input.running) return tr("C'è già un'esecuzione in corso ({name}): aspetta che finisca.", { name: input.running });
   if (!input.hasManual) return tr("Carica il manuale in PDF o sceglilo dalla libreria.");
-  if (!input.name.trim()) return tr("Scrivi il nome della macchina.");
+  if (!input.name.trim()) return tr("Scrivi almeno la marca o il modello della macchina.");
   if (input.estimated && input.worst === null) return tr("Non ho esecuzioni passate da cui stimare il costo.");
   return null;
 }
@@ -176,7 +180,7 @@ export function NewGraph() {
       const manualId =
         source === "library"
           ? picked
-          : (await postJson<{ id: string }>("/api/manuals", { upload_id: upload!.upload_id, ...machine })).id;
+          : (await postJson<{ id: string }>("/api/manuals", { upload_id: upload!.upload_id, ...machine, name: machineName(machine) })).id;
       const run = await postJson<{ version_id: string }>(`/api/manuals/${encodeURIComponent(manualId)}/runs`, { reviewers });
       status.refresh();
       navigate(liveRoute(manualId, run.version_id));
@@ -191,12 +195,12 @@ export function NewGraph() {
   const blocked = blocker({
     running: status.active?.name ?? null,
     hasManual,
-    name: machine.name,
+    name: `${machine.brand} ${machine.model}`,
     worst,
     estimated: Boolean(guess.data),
   });
   const locked = Boolean(existing);
-  const field = (key: keyof Machine, label: string, required = false) => (
+  const field = (key: keyof Machine, label: string, required = false, hint?: string) => (
     <div className="field">
       <label htmlFor={`machine-${key}`}>
         {tr(label)}
@@ -207,6 +211,7 @@ export function NewGraph() {
         className="input"
         value={machine[key]}
         required={required}
+        placeholder={hint ? tr(hint) : undefined}
         aria-invalid={required && hasManual && !machine[key].trim() ? true : undefined}
         disabled={locked || !hasManual || reading.busy}
         onChange={(event) => setMachine({ ...machine, [key]: event.target.value })}
@@ -299,15 +304,14 @@ export function NewGraph() {
           <StepCard
             number={2}
             title={tr("Macchina")}
-            done={hasManual && !reading.busy && Boolean(machine.name.trim())}
+            done={hasManual && !reading.busy && Boolean(`${machine.brand}${machine.model}`.trim())}
             working={reading.busy}
           >
             {reading.problem && source === "upload" && <Problem message={reading.problem} />}
-            <div className="fields-2">
-              {field("name", "Macchina", true)}
+            <div className="fields-3">
               {field("brand", "Marca")}
               {field("model", "Modello")}
-              {field("type", "Tipo")}
+              {field("type", "Tipo di macchina", false, "es. aspiratore, compressore, pompa")}
             </div>
           </StepCard>
 
@@ -337,7 +341,7 @@ export function NewGraph() {
           <div className="card-body stack" style={{ gap: 12 }}>
             <dl className="facts">
               <dt>{tr("Manuale")}</dt>
-              <dd>{hasManual ? machine.name || tr("Senza nome") : "–"}</dd>
+              <dd>{hasManual ? machineName(machine) || tr("Senza nome") : "–"}</dd>
               <dt>{tr("Pagine")}</dt>
               <dd>{pages ? formatNumber(pages) : "–"}</dd>
               <dt>{tr("Dubbi")}</dt>

@@ -95,6 +95,39 @@ def info_asset(path: Path) -> dict:
             "model": machine.get("model", "not_stated"), "asset_type": machine.get("type", "not_stated")}
 
 
+USAGE_SUMS = ("calls", "failed_calls", "prompt_tokens", "completion_tokens", "estimated_cost_usd")
+
+
+def with_earlier_attempts(report: dict, earlier: dict | None) -> dict:
+    """A resumed run reports all its attempts: step times and model usage add up, so a resume
+    (which reuses the saved state and costs almost nothing) does not hide what the run took."""
+
+    if not earlier:
+        return {**report, "attempts": 1}
+    seconds = {key: round(float((earlier.get("seconds") or {}).get(key, 0.0)) + float(value), 3)
+               for key, value in (report.get("seconds") or {}).items()}
+    for key, value in (earlier.get("seconds") or {}).items():
+        seconds.setdefault(key, value)
+    merged = {**report, "seconds": seconds, "attempts": int(earlier.get("attempts") or 1) + 1}
+    for field in ("usage", "agent_usage"):
+        now, before = report.get(field) or {}, earlier.get(field) or {}
+        if not now and not before:
+            continue
+        total = {**before, **now}
+        for key in USAGE_SUMS:
+            if key in now or key in before:
+                total[key] = round(float(before.get(key) or 0) + float(now.get(key) or 0), 6)
+                if key != "estimated_cost_usd":
+                    total[key] = int(total[key])
+        operations = dict(before.get("by_operation") or {})
+        for name, count in (now.get("by_operation") or {}).items():
+            operations[name] = operations.get(name, 0) + count
+        if operations:
+            total["by_operation"] = dict(sorted(operations.items()))
+        merged[field] = total
+    return merged
+
+
 async def run(args) -> dict:
     started = time.perf_counter()
     if args.manual:
@@ -170,6 +203,8 @@ async def _run(args, pdf: Path, asset: dict, out: Path, started: float, on_event
     }
     graph = graph_json(result, doc, asset=asset, source_title=pdf.name)
     (out / "graph.json").write_text(json.dumps(graph, ensure_ascii=False, indent=1), encoding="utf-8")
+    earlier = json.loads((out / "report.json").read_text(encoding="utf-8")) if (out / "report.json").exists() else None
+    result.report = with_earlier_attempts(result.report, earlier)
     (out / "report.json").write_text(json.dumps(result.report, ensure_ascii=False, indent=1), encoding="utf-8")
     pending = store.open_questions()
     (out / "questions_for_people.txt").write_text(

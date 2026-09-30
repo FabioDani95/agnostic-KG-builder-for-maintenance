@@ -83,9 +83,9 @@ export const GUIDE_EN: GuideChapter[] = [
         id: "macchina",
         heading: "2. The machine",
         body: [
-          "As soon as the PDF is uploaded, a light model reads the first pages and fills in machine, brand, model and type by itself. While it reads you only see a turning mark; then the fields fill in and stay editable.",
+          "As soon as the PDF is uploaded, a light model reads the first pages and fills in brand, model and kind of machine by itself (for example “dust collector”). While it reads you only see a turning mark; then the fields fill in and stay editable. The name of the manual in the library is made of these three.",
           "It reads one page at a time until it has enough text, five pages at most; if the PDF is a scan without text it looks at the image of the cover. It only writes what it finds: if a value is not there, the field stays empty.",
-          "Always check the fields before starting. Only the name of the machine is required.",
+          "Always check the fields before starting. At least the brand or the model is needed.",
         ],
       },
       {
@@ -113,7 +113,7 @@ export const GUIDE_EN: GuideChapter[] = [
         id: "avvio",
         heading: "Starting",
         body: [
-          "“Start extraction” becomes active when there is a manual and the name of the machine. If it cannot start, the reason is written under the button. Only one extraction can run at a time.",
+          "“Start extraction” becomes active when there is a manual and at least the brand or the model. If it cannot start, the reason is written under the button. Only one extraction can run at a time.",
           "Every extraction has a spending ceiling: if the estimate does not fit, the start is refused with a message.",
         ],
       },
@@ -226,7 +226,7 @@ export const GUIDE_EN: GuideChapter[] = [
         id: "applicare",
         heading: "Applying the answers",
         body: [
-          "When you have answered every question, “Apply the answers” restarts the run from where it stopped: your answers go into the graph without redoing the extraction.",
+          "When you have answered every question, “Apply the answers” restarts the run from where it stopped: your answers go into the graph without redoing the extraction. It takes a few seconds, then the updated graph opens.",
           "A confirmation or a rejection of yours counts more than the automatic checks.",
         ],
       },
@@ -234,7 +234,7 @@ export const GUIDE_EN: GuideChapter[] = [
         id: "approvare",
         heading: "Approving the graph",
         body: [
-          "The last step is the approval: you check the graph and choose “Approve” or “Reject”. In the application the approval is always a person's.",
+          "The last step is the approval: you check the graph and choose “Approve” or “Reject”. To record it the run resumes for a few seconds, with no new model calls; meanwhile you stay on the graph, which then shows as approved. The approval is always a person's decision.",
           "The graphs of the evaluation campaign were approved automatically and say so with “Approved by the system”. If you answer a question of one of these graphs, the first answer makes a copy of it where you go on working: the original does not change.",
         ],
       },
@@ -299,7 +299,7 @@ export const GUIDE_EN: GuideChapter[] = [
         id: "dal-vivo",
         heading: "The growing graph",
         body: [
-          "During an extraction the graph builds up before your eyes: new nodes appear as they are found and links change colour when they are checked. At the bottom you see the counters and the last relation found.",
+          "During an extraction the graph builds up before your eyes: new nodes appear as they are found and links change colour when they are checked. At the bottom you see the counters and the last relation found. When the extraction ends the graph opens, with the next step at the top right.",
           "Past extractions can be replayed with “Replay the run”, at 1×, 4× or 16× speed, with pause. Replaying costs nothing: it calls no model.",
         ],
       },

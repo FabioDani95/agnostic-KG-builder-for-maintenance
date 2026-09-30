@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { manualRoute, postJson, useApi, versionPath } from "../api/client";
+import { liveRoute, manualRoute, postJson, useApi, versionPath } from "../api/client";
+import { settled } from "../flow/settle";
 import type { Evidence, Graph, GraphEdge, GraphNode, Manual, Questions } from "../api/types";
 import { SearchField, SegmentedControl, StatusBadge, typing } from "../components/Controls";
 import { EdgeDetail, NodeDetail } from "../components/EvidencePanel";
@@ -54,7 +55,7 @@ export function FinishedGraph() {
   const graph = useApi<Graph>(`${versionPath(manualId, versionId)}/graph`);
   const manual = useApi<Manual>(`/api/manuals/${encodeURIComponent(manualId)}`);
   const view = useRef<GraphHandle>(null);
-  const { settings } = useStatus();
+  const { settings, refresh } = useStatus();
   const showCode = settings?.show_code_relations ?? true;
   const [filter, setFilter] = useState<TierFilter>("all");
   const [query, setQuery] = useState("");
@@ -113,7 +114,12 @@ export function FinishedGraph() {
     setApproving(true);
     try {
       await postJson(`${versionPath(manualId, versionId)}/approve`, { decision: "approve" });
-      navigate(`/manuali/${encodeURIComponent(manualId)}/versioni/${encodeURIComponent(versionId)}/esecuzione`);
+      // The run records the approval in a few seconds: stay on the graph and show it approved.
+      const done = await settled(manualId, versionId);
+      if (!done) navigate(liveRoute(manualId, versionId));
+      manual.reload();
+      graph.reload();
+      refresh();
     } finally {
       setApproving(false);
     }
@@ -187,8 +193,8 @@ export function FinishedGraph() {
           )}
           {questions.data?.can_approve && (
             <button type="button" className="button button-primary" disabled={approving} onClick={approve}>
-              <Icon name="check" />
-              {tr("Approva")}
+              <Icon name={approving ? "loader" : "check"} className={approving ? "spin" : undefined} />
+              {tr(approving ? "Approvazione in corso" : "Approva")}
             </button>
           )}
         </>

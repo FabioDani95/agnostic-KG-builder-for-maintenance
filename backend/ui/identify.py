@@ -26,16 +26,15 @@ ENOUGH_CHARACTERS = 1500
 MAX_PAGES = 5
 MAX_CHARACTERS = 6000
 SCANNED_BELOW = 200  # fewer characters than this in the first pages: read the cover as an image
-FIELDS = ("name", "brand", "model", "type")
+FIELDS = ("brand", "model", "type")
 
 SYSTEM = """You read the first pages of a technical manual and say which machine it is about.
 Answer only from what the pages show; never guess a maker or a model that is not written.
 - brand: the manufacturer, as printed (e.g. "Graco", "ABB").
 - model: the model or series designation, as printed (e.g. "GTX 2000EX", "ACS580-01").
-- type: what the machine is, as a short generic noun phrase in lowercase, in the manual's language
-  (e.g. "texture sprayer", "variable frequency drive").
-- name: how a person would name it in a list: brand, model and type together
-  (e.g. "Graco GTX 2000EX texture sprayer").
+- type: what kind of machine it is, as a generic noun of one to three lowercase words in the
+  language of the manual (e.g. "dust collector", "air compressor", "microwave oven"). No power,
+  size, capacity, mounting, brand or model words: "1HP wall hanging dust collector" is "dust collector".
 Use an empty string for anything the pages do not state."""
 
 SCHEMA = {
@@ -68,8 +67,8 @@ def first_pages(pdf: Path) -> tuple[str, str | None]:
 
 def clean(answer: dict[str, Any]) -> dict[str, str]:
     machine = {field: " ".join(str(answer.get(field) or "").split()) for field in FIELDS}
-    if not machine["name"]:
-        machine["name"] = " ".join(part for part in (machine["brand"], machine["model"], machine["type"]) if part)
+    # The name in the library is made of the three, as the interface makes it.
+    machine["name"] = " ".join(part for part in (machine["brand"], machine["model"], machine["type"]) if part)
     return machine
 
 

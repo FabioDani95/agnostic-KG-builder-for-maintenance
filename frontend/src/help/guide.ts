@@ -100,9 +100,9 @@ export const GUIDE: GuideChapter[] = [
         id: "macchina",
         heading: "2. La macchina",
         body: [
-          "Appena caricato il PDF, un modello leggero legge le prime pagine e compila da solo macchina, marca, modello e tipo. Mentre legge vedi solo un segno che gira; poi i campi si riempiono e restano modificabili.",
+          "Appena caricato il PDF, un modello leggero legge le prime pagine e compila da solo marca, modello e tipo di macchina (per esempio «aspiratore»). Mentre legge vedi solo un segno che gira; poi i campi si riempiono e restano modificabili. Il nome del manuale nella libreria si compone da questi tre.",
           "Legge una pagina alla volta finché ha abbastanza testo, al massimo cinque; se il PDF è una scansione senza testo guarda l'immagine della copertina. Scrive solo quello che trova: se un dato non c'è, il campo resta vuoto.",
-          "Controlla sempre i campi prima di partire. È obbligatorio solo il nome della macchina.",
+          "Controlla sempre i campi prima di partire. Serve almeno la marca o il modello.",
         ],
       },
       {
@@ -130,7 +130,7 @@ export const GUIDE: GuideChapter[] = [
         id: "avvio",
         heading: "L'avvio",
         body: [
-          "«Avvia estrazione» si attiva quando c'è un manuale e il nome della macchina. Se non si può partire, sotto il pulsante c'è il motivo. Si può avere una sola estrazione in corso alla volta.",
+          "«Avvia estrazione» si attiva quando c'è un manuale e almeno la marca o il modello. Se non si può partire, sotto il pulsante c'è il motivo. Si può avere una sola estrazione in corso alla volta.",
           "Ogni estrazione ha un tetto di spesa: se la stima non ci sta, l'avvio viene rifiutato con un messaggio.",
         ],
       },
@@ -243,7 +243,7 @@ export const GUIDE: GuideChapter[] = [
         id: "applicare",
         heading: "Applicare le risposte",
         body: [
-          "Quando hai risposto a tutte le domande, «Applica le risposte» fa ripartire l'esecuzione dal punto in cui si era fermata: le tue risposte vengono inserite nel grafo senza rifare l'estrazione.",
+          "Quando hai risposto a tutte le domande, «Applica le risposte» fa ripartire l'esecuzione dal punto in cui si era fermata: le tue risposte vengono inserite nel grafo senza rifare l'estrazione. Bastano pochi secondi, poi si apre il grafo aggiornato.",
           "Una tua conferma o un tuo rifiuto valgono più dei controlli automatici.",
         ],
       },
@@ -251,7 +251,7 @@ export const GUIDE: GuideChapter[] = [
         id: "approvare",
         heading: "Approvare il grafo",
         body: [
-          "L'ultimo passo è l'approvazione: controlli il grafo e scegli «Approva» o «Rifiuta». Nell'applicazione l'approvazione è sempre di una persona.",
+          "L'ultimo passo è l'approvazione: controlli il grafo e scegli «Approva» o «Rifiuta». Per registrarla l'esecuzione riprende per qualche secondo, senza nuove chiamate al modello; intanto resti sul grafo, che poi risulta approvato. Nell'approvazione decide sempre una persona.",
           "I grafi della campagna di valutazione sono stati approvati in automatico e lo indicano con «Approvato dal sistema». Se rispondi a una domanda di uno di questi grafi, la prima risposta ne crea una copia su cui continui a lavorare: l'originale non cambia.",
         ],
       },
@@ -316,7 +316,7 @@ export const GUIDE: GuideChapter[] = [
         id: "dal-vivo",
         heading: "Il grafo che cresce",
         body: [
-          "Durante un'estrazione il grafo si costruisce sotto i tuoi occhi: i nodi nuovi compaiono man mano e i collegamenti cambiano colore quando vengono controllati. In basso vedi i contatori e l'ultima relazione trovata.",
+          "Durante un'estrazione il grafo si costruisce sotto i tuoi occhi: i nodi nuovi compaiono man mano e i collegamenti cambiano colore quando vengono controllati. In basso vedi i contatori e l'ultima relazione trovata. Quando l'estrazione finisce si apre il grafo, con il prossimo passo in alto a destra.",
           "Le estrazioni passate si possono rigiocare con «Rigioca l'esecuzione», a velocità 1×, 4× o 16×, con pausa. Rigiocare non costa nulla: non chiama nessun modello.",
         ],
       },

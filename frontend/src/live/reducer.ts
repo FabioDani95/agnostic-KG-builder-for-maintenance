@@ -90,6 +90,10 @@ export function runReducer(state: RunState, event: UiEvent): RunState {
         station === "extract" && typeof data.total === "number"
           ? { done: (data.done as number) ?? 0, total: data.total as number }
           : base.units;
+      // The stations read top to bottom: a station the run goes back to after a later one started
+      // (the check again after the merge) stays done; the later station carries on.
+      const furthest = Math.max(...STATIONS.map((item, index) => (base.stations[item].phase === "waiting" ? -1 : index)));
+      if (STATIONS.indexOf(station) < furthest) return { ...base, units };
       return {
         ...base,
         units,

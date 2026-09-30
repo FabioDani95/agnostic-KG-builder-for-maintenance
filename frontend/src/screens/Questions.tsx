@@ -3,6 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { postJson, useApi, versionPath } from "../api/client";
 import type { Manual, Questions as QuestionsData, QuestionView } from "../api/types";
 import { ProgressBar } from "../components/Controls";
+import { Icon } from "../components/Icon";
+import { settled } from "../flow/settle";
+import { useStatus } from "../status/StatusProvider";
 import { Shell } from "../components/Shell";
 import { PageDialog } from "../components/PageDialog";
 import { formatNumber, pageRef } from "../text/it";
@@ -169,6 +172,7 @@ export function Questions() {
   const manual = useApi<Manual>(`/api/manuals/${encodeURIComponent(manualId)}`);
   const { data, error, reload } = useApi<QuestionsData>(`${versionPath(manualId, versionId)}/questions?lang=${getLang()}`);
   const [busy, setBusy] = useState(false);
+  const { refresh } = useStatus();
   const [failure, setFailure] = useState<string | null>(null);
   const [page, setPage] = useState<number | null>(null);
   useEffect(() => setFailure(null), [data]);
@@ -199,7 +203,10 @@ export function Questions() {
     setBusy(true);
     try {
       await postJson(`${versionPath(manualId, versionId)}/${path}`, body);
-      navigate(`${base}/esecuzione`);
+      // The run takes the answers or the decision in a few seconds: then the graph, not the run screen.
+      const done = await settled(manualId, versionId);
+      refresh();
+      navigate(done ? base : `${base}/esecuzione`);
     } catch (problem) {
       setFailure((problem as Error).message);
       setBusy(false);
@@ -273,6 +280,7 @@ export function Questions() {
                   </p>
                 )}
                 <div className="actions">
+                  {busy && <Icon name="loader" className="spin" />}
                   {data.unapplied > 0 && (
                     <button type="button" className="button button-primary" disabled={busy} onClick={() => act("apply")}>
                       {tr("Applica le risposte")}

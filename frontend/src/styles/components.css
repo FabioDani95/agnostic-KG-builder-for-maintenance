@@ -73,7 +73,7 @@
   border-radius: 8px;
   background: var(--warn);
   color: #ffffff;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   line-height: 16px;
   text-align: center;
@@ -126,7 +126,7 @@
   background: var(--rail);
   border: 1px solid var(--primary);
   color: #ffffff;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   line-height: 16px;
   white-space: nowrap;
@@ -194,7 +194,7 @@
   flex: 0 1 auto;
   min-width: 64px;
   display: block;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 20px;
   font-weight: 700;
   white-space: nowrap;
@@ -264,7 +264,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 20px;
   white-space: nowrap;
@@ -339,7 +339,7 @@
 
 .field > label,
 .field-label {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 16px;
   font-weight: 600;
 }
@@ -351,7 +351,7 @@
   background: var(--surface);
   padding: 0 var(--s3);
   width: 100%;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .input:focus {
@@ -400,7 +400,7 @@
   border-radius: 3px;
   background: transparent;
   padding: 0 var(--s3);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--primary);
   cursor: pointer;
@@ -452,7 +452,7 @@
   display: flex;
   align-items: center;
   gap: var(--s2);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 16px;
   font-weight: 600;
   text-transform: uppercase;
@@ -486,7 +486,7 @@
 .table-head {
   background: var(--head);
   border-top: 0;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 14px;
   font-weight: 700;
 }
@@ -539,7 +539,7 @@
   background: var(--primary);
   color: #ffffff;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
@@ -564,7 +564,7 @@
   height: 20px;
   padding: 0 var(--s2);
   border-radius: var(--r);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   background: var(--head);
   color: var(--primary);
@@ -633,7 +633,7 @@
 }
 
 .specs dt {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 16px;
   font-weight: 600;
   text-transform: uppercase;
@@ -676,6 +676,12 @@
 
 .message {
   color: var(--text-2);
+}
+
+.fields-3 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: var(--s3) var(--s4);
 }
 
 .fields-2 {
@@ -792,7 +798,7 @@ details > summary {
   min-height: var(--control);
   display: flex;
   align-items: center;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--link);
 }
@@ -918,7 +924,7 @@ details > summary {
   background: var(--subtle);
   color: var(--text-2);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 16px;
   text-align: center;
   pointer-events: none;
@@ -988,7 +994,7 @@ details > summary {
 
 .step-detail {
   grid-column: 2;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 16px;
   color: var(--text-2);
 }
@@ -1019,7 +1025,7 @@ details > summary {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 16px;
   font-weight: 600;
   text-transform: uppercase;
@@ -1067,14 +1073,14 @@ details > summary {
 
 .schema-node-label {
   fill: var(--text-d);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .schema-node-code {
   fill: var(--text-d2);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .schema-tag {
@@ -1083,7 +1089,7 @@ details > summary {
 
 .schema-edge-label {
   fill: var(--line);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .schema-key {
@@ -1126,7 +1132,7 @@ details > summary {
   border: 1px solid var(--primary);
   border-radius: 2px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0;
 }
@@ -1206,7 +1212,6 @@ details > summary {
 
 /* Focus stays visible on the dark parts. */
 .rail :focus-visible,
-.workspace :focus-visible,
 .page-dialog :focus-visible {
   outline-color: var(--text-d);
 }
@@ -1282,7 +1287,7 @@ details > summary {
 }
 
 .settings-title {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 16px;
   font-weight: 600;
   text-transform: uppercase;
@@ -1427,7 +1432,7 @@ details > summary {
   align-items: flex-start;
   gap: 2px;
   color: var(--text-2);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
 }
 
@@ -1461,7 +1466,7 @@ details > summary {
   padding: 4px var(--s2);
   border-radius: var(--r);
   color: var(--text-2);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 16px;
 }
 
@@ -1494,7 +1499,7 @@ details > summary {
 
 .rail-lang {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.04em;
 }

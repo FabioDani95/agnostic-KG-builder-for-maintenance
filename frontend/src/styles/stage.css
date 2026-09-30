@@ -20,7 +20,15 @@
   grid-template-columns: var(--panel-left) minmax(0, 1fr) auto;
   grid-template-rows: minmax(0, 1fr) var(--status);
   background: var(--stage);
-  color: var(--text-d);
+  color: var(--text);
+  /* Only the graph is dark: the panels around it wear the colors of the other pages. */
+  --panel-d: var(--surface);
+  --text-d: var(--text);
+  --text-d2: var(--text-2);
+  --line-d: var(--line-soft);
+  --fill-d: var(--fill);
+  --fill-d-hover: var(--head);
+  --link-d: var(--link);
 }
 
 .canvas {
@@ -64,7 +72,7 @@
   padding: 0 var(--s4);
   background: var(--panel-d);
   border-top: 1px solid var(--line-d);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 16px;
   color: var(--text-d2);
   white-space: nowrap;
@@ -121,7 +129,7 @@
 }
 
 .panel-title {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 16px;
   font-weight: 600;
   text-transform: uppercase;
@@ -140,46 +148,7 @@
 .workspace .secondary,
 .workspace .message,
 .workspace .data-list dt {
-  color: var(--text-d2);
-}
-
-.workspace a,
-.workspace .button-plain {
-  color: var(--link-d);
-}
-
-.workspace .button-secondary {
-  background: var(--fill-d);
-  color: var(--text-d);
-}
-
-.workspace .button-secondary:hover:not(:disabled) {
-  background: var(--fill-d-hover);
-}
-
-.workspace .segmented {
-  background: var(--fill-d);
-}
-
-.workspace .segmented button {
-  color: var(--text-d2);
-}
-
-.workspace .segmented button:hover {
-  background: var(--fill-d-hover);
-}
-
-.workspace .segmented button[aria-pressed="true"] {
-  background: var(--crumbs);
-  color: var(--text);
-}
-
-.workspace .progress {
-  background: var(--fill-d);
-}
-
-.workspace .progress > span {
-  background: var(--text-d);
+  color: var(--text-2);
 }
 
 .stage-list > li {
@@ -222,7 +191,7 @@
 
 .station-detail {
   grid-column: 2 / -1;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 16px;
   color: var(--text-d2);
 }
@@ -286,16 +255,16 @@
 .alert {
   padding: var(--s2) var(--s3);
   border-radius: var(--r);
-  background: rgba(239, 68, 68, 0.12);
-  color: #fecaca;
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 /* 3d-force-graph tooltip, in the same material as the panels */
 .float-tooltip-kap {
-  background: var(--panel-d) !important;
-  color: var(--text-d) !important;
+  background: var(--rail) !important;
+  color: #e7e5e4 !important;
   font-family: var(--font) !important;
-  font-size: 12px !important;
+  font-size: 13px !important;
   line-height: 16px !important;
   padding: 6px var(--s2) !important;
   border-radius: var(--r) !important;
@@ -345,7 +314,7 @@
   display: flex;
   align-items: baseline;
   gap: 6px;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .readouts dt {
@@ -460,19 +429,12 @@
   background: var(--fill-d);
 }
 
-.workspace .button-primary {
-  background: var(--crumbs);
-  color: var(--text);
-}
 
-.workspace .button-primary:hover:not(:disabled) {
-  background: #ffffff;
-}
 
 .canvas-wait {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  color: var(--text-d2);
+  color: #a8a29e;
 }

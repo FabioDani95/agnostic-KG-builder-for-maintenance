@@ -74,9 +74,9 @@ laterale 40 px. Bordi 1 px, focus 2 px.
 | --- | --- | --- | --- |
 | `title` | 18 / 24 | 700 | la domanda in «Domande per te» |
 | `heading`, `large` | 14 / 20 | 600 / 400 | nome del nodo scelto, valori dei dati |
-| `body` | 13 / 20 | 400 | testo, celle, pulsanti, campi |
-| `small` | 12 / 16 | 400 o 600 | intestazioni di colonna, dettagli, legenda |
-| `label` | 11 / 16 | 600, maiuscolo | titoli dei pannelli scuri, etichette dei dati |
+| `body` | 14 / 20 | 400 | testo, celle, pulsanti, campi |
+| `small` | 13 / 16 | 400 o 600 | intestazioni di colonna, dettagli, legenda |
+| `label` | 12 / 16 | 600, maiuscolo | titoli dei pannelli, etichette dei dati |
 
 Il testo del manuale e le descrizioni dello schema restano nella loro lingua.
 
@@ -152,7 +152,7 @@ crescita, e il caricamento gira lento.
 | **Distintivo di stato** | 20 px, quadratino da 8 px del colore del segnale e la parola. |
 | **Passi** | tre celle affiancate (Estrazione, Domande, Approvazione): spia (✓ verde fatto, arancio tocca a te, contorno arancio facoltativo, ✕ rosso fermo, vuota in attesa), nome, stato a parole. |
 | **Cifre** | una riga di celle: etichetta maiuscola sopra, valore in mono sotto. |
-| **Pannello agganciato** | fondo `--panel-d`, bordo 1 px `#1e293b` verso il grafo. Sezioni 12 × 16 px; titolo `label` in `--text-d2`; ✕ in alto a destra. Sinistro 264 px, destro 352 px. |
+| **Pannello agganciato** | chiaro come le altre pagine (`--surface`, bordo `--line-soft` verso il grafo); scuro resta solo il grafo al centro. Sezioni 12 × 16 px; titolo `label` in `--text-d2`; ✕ in alto a destra. Sinistro 264 px, destro 352 px. |
 | **Barra di stato** | 28 px sotto il grafo: contatori in mono e, a destra, una riga di contesto (ultima relazione trovata). |
 | **Riquadro di fine esecuzione** | sul grafo, in basso al centro: com'è andata (tempo, costo, relazioni) e il prossimo passo. Si chiude con ✕. |
 | **Attesa ed errore** | segno che gira al posto del contenuto; errore rosso scuro con icona, frase e «Riprova». |
