@@ -264,6 +264,7 @@ Base `http://127.0.0.1:8765/api`. Solo localhost, nessuna autenticazione.
 | `POST /manuals/{m}/runs` | avvia un'esecuzione reale |
 | `POST /manuals/{m}/versions/{v}/stop` | ferma l'esecuzione; lo stato resta e si può riprendere |
 | `GET /jobs/active` | l'esecuzione reale in corso, se c'è |
+| `GET /settings`, `PUT /settings` | impostazioni in `workspace/settings.json` (non versionato): ragionamento e letture dell'estrazione, modello e ragionamento dell'agente, massimo di domande per persona (`--human-questions`), vista del grafo, chiave OpenAI facoltativa (mai rimandata indietro, solo le ultime 4 cifre; passa ai processi come `OPENAI_API_KEY`). Valgono per le nuove esecuzioni; una ripresa tiene quelle con cui è partita |
 | `GET /budget` | spesa dal registro e tetto |
 | `GET /estimate?pages=18` | stima di tempo e costo |
 

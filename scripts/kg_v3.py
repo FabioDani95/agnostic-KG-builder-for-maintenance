@@ -150,7 +150,7 @@ async def _run(args, pdf: Path, asset: dict, out: Path, started: float, on_event
         on_event("step_finished", {"step": "pdf_read", "seconds": round(read_seconds, 3)})
     config = RunConfig(model=args.model, reasoning_effort=args.reasoning, reads=args.reads,
                        gates=GATE_PRESETS[args.gates], agent_model=args.agent_model,
-                       agent_reasoning_effort=args.agent_reasoning)
+                       agent_reasoning_effort=args.agent_reasoning, human_question_budget=args.human_questions)
     llm = ModelClient(model=args.model, reasoning_effort=args.reasoning)
     agent_llm = ModelClient(model=args.agent_model, reasoning_effort=args.agent_reasoning)
     if args.human_store:
@@ -196,6 +196,7 @@ def main() -> int:
     parser.add_argument("--reads", type=int, default=2)
     parser.add_argument("--agent-model", default="gpt-6-luna")
     parser.add_argument("--agent-reasoning", default="medium")
+    parser.add_argument("--human-questions", type=int, default=10, help="most questions a person gets in this run")
     parser.add_argument("--ledger", default=str(DEFAULT_LEDGER))
     parser.add_argument("--budget", default=DEFAULT_BUDGET)
     parser.add_argument("--run-id", default="")

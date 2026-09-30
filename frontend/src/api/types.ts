@@ -224,3 +224,18 @@ export interface Identified {
   read: "text" | "cover";
   cached: boolean;
 }
+
+export type Reasoning = "none" | "low" | "medium" | "high";
+
+/** Settings of the interface (/api/settings); the key itself never comes back, only where it is from. */
+export interface Preferences {
+  reasoning: Reasoning;
+  reads: number;
+  agent_model: string;
+  agent_reasoning: Reasoning;
+  human_questions: number;
+  show_code_relations: boolean;
+  node_labels: boolean;
+  key: { source: "custom" | "env" | "none"; hint: string | null };
+  choices: { reasoning: Reasoning[]; agent_models: string[] };
+}

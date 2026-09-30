@@ -8,6 +8,7 @@ import { Icon } from "../components/Icon";
 import { Legend } from "../components/Legend";
 import { PageDialog } from "../components/PageDialog";
 import { Shell } from "../components/Shell";
+import { useStatus } from "../status/StatusProvider";
 import { Graph3D, type GraphHandle, type ViewLink, type ViewNode } from "../graph/Graph3D";
 import { formatNumber, TYPE_LABEL, versionLabel } from "../text/it";
 
@@ -52,6 +53,8 @@ export function FinishedGraph() {
   const graph = useApi<Graph>(`${versionPath(manualId, versionId)}/graph`);
   const manual = useApi<Manual>(`/api/manuals/${encodeURIComponent(manualId)}`);
   const view = useRef<GraphHandle>(null);
+  const { settings } = useStatus();
+  const showCode = settings?.show_code_relations ?? true;
   const [filter, setFilter] = useState<TierFilter>("all");
   const [query, setQuery] = useState("");
   const [root, setRoot] = useState<string | null>(null);
@@ -73,9 +76,11 @@ export function FinishedGraph() {
   const nodes = useMemo(() => new Map((graph.data?.nodes ?? []).map((node) => [node.id, node])), [graph.data]);
   const edges = graph.data?.edges ?? [];
   const visible = useMemo(() => {
-    const links = (graph.data?.edges ?? []).filter((edge) =>
-      filter === "all" ? true : filter === "green" ? edge.tier === "green" : edge.tier === "yellow" && !edge.derived,
-    );
+    const links = (graph.data?.edges ?? [])
+      .filter((edge) => showCode || !edge.derived)
+      .filter((edge) =>
+        filter === "all" ? true : filter === "green" ? edge.tier === "green" : edge.tier === "yellow" && !edge.derived,
+      );
     const used = new Set(links.flatMap((edge) => [edge.from, edge.to]));
     const shownNodes: ViewNode[] = (graph.data?.nodes ?? [])
       .filter((node) => used.has(node.id) || node.type === "Asset")
@@ -89,7 +94,7 @@ export function FinishedGraph() {
       derived: edge.derived,
     }));
     return { nodes: shownNodes, links: shownLinks };
-  }, [graph.data, filter]);
+  }, [graph.data, filter, showCode]);
   const focus = useMemo(() => (root ? diagnosticPath(root, edges) : null), [root, edges]);
   const counts = useMemo(() => {
     const byType: Record<string, number> = {};
@@ -262,6 +267,7 @@ export function FinishedGraph() {
               onNodeClick={(id) => setSelection({ kind: "node", id })}
               onLinkClick={(id) => setSelection({ kind: "edge", id })}
               onBackgroundClick={() => setSelection(null)}
+              labels={settings?.node_labels ?? false}
             />
           )}
         </div>

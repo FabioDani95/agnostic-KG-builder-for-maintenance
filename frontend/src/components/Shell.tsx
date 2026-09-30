@@ -1,9 +1,10 @@
-import { Fragment, type ReactNode, useEffect } from "react";
+import { Fragment, type ReactNode, useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { liveRoute } from "../api/client";
 import { useStatus } from "../status/StatusProvider";
 import { APP_NAME } from "../text/it";
 import { Icon, type IconName, Logo } from "./Icon";
+import { SettingsDialog } from "./SettingsDialog";
 
 export interface Crumb {
   to: string;
@@ -22,6 +23,7 @@ const NAV: { to: string; label: string; icon: IconName }[] = [
  */
 function Rail() {
   const status = useStatus();
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const waiting = status.inbox?.waiting.length ?? 0;
   const active = status.active;
 
@@ -55,6 +57,20 @@ function Rail() {
         >
           <span className="live-lamp" aria-hidden="true" />
         </Link>
+      )}
+      <button
+        type="button"
+        className="rail-item rail-settings"
+        data-tip="Impostazioni"
+        aria-label="Impostazioni"
+        aria-haspopup="dialog"
+        disabled={!status.settings}
+        onClick={() => setSettingsOpen(true)}
+      >
+        <Icon name="settings" size={20} />
+      </button>
+      {settingsOpen && status.settings && (
+        <SettingsDialog settings={status.settings} onClose={() => setSettingsOpen(false)} onSaved={status.refresh} />
       )}
     </nav>
   );

@@ -34,6 +34,7 @@ interface SimNode extends ViewNode {
   fy?: number;
   fz?: number;
   mesh?: THREE.Mesh;
+  label?: THREE.Sprite;
   born?: number;
 }
 
@@ -60,6 +61,33 @@ function makeMesh(node: SimNode): THREE.Mesh {
     new THREE.MeshLambertMaterial({ color: style.color, transparent: true, opacity: 1 }),
   );
   return mesh;
+}
+
+const LABEL_CHARACTERS = 32;
+
+/** The node's name as a flat sprite beside it, always turned to the camera. */
+function makeLabel(node: SimNode): THREE.Sprite {
+  const text = node.name.length > LABEL_CHARACTERS ? `${node.name.slice(0, LABEL_CHARACTERS - 1)}…` : node.name;
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d")!;
+  const font = "600 28px Onest, system-ui, sans-serif";
+  context.font = font;
+  canvas.width = Math.ceil(context.measureText(text).width) + 16;
+  canvas.height = 40;
+  context.font = font;
+  context.fillStyle = "rgba(12, 10, 9, 0.72)";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "#e7e5e4";
+  context.textBaseline = "middle";
+  context.fillText(text, 8, canvas.height / 2);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false }));
+  const height = 3.2;
+  sprite.scale.set((height * canvas.width) / canvas.height, height, 1);
+  const radius = (NODE_STYLE[node.type] ?? NODE_STYLE.Component).radius * SIZE;
+  sprite.position.set(0, radius + height * 0.8, 0);
+  return sprite;
 }
 
 function makeLine(link: SimLink): THREE.Line {
@@ -96,6 +124,7 @@ export function Graph3D({
   onLinkClick,
   onBackgroundClick,
   handle,
+  labels = false,
 }: {
   nodes: ViewNode[];
   links: ViewLink[];
@@ -104,6 +133,8 @@ export function Graph3D({
   onLinkClick?: (id: string) => void;
   onBackgroundClick?: () => void;
   handle?: Ref<GraphHandle>;
+  /** Names always shown beside the nodes, not only on hover. */
+  labels?: boolean;
 }) {
   const container = useRef<HTMLDivElement>(null);
   const graph = useRef<ForceGraph3DInstance | null>(null);
@@ -114,6 +145,23 @@ export function Graph3D({
   const fitted = useRef(false);
   const touched = useRef(false);
   const frame = useRef(0);
+  const withLabels = useRef(labels);
+  withLabels.current = labels;
+
+  // One accessor for the node objects: a sphere, and its name when the labels are on.
+  const nodeObject = (node: object) => {
+    const sim = node as SimNode;
+    sim.mesh = makeMesh(sim);
+    if (sim.born && !reducedMotion()) sim.mesh.scale.setScalar(0.001);
+    if (!withLabels.current) {
+      sim.label = undefined;
+      return sim.mesh;
+    }
+    const group = new THREE.Group();
+    sim.label = makeLabel(sim);
+    group.add(sim.mesh, sim.label);
+    return group;
+  };
 
   // New nodes grow to their size; the loop runs only while some node is growing.
   const grow = () => {
@@ -153,12 +201,7 @@ export function Graph3D({
       .backgroundColor("#0c0a09")
       .showNavInfo(false)
       .nodeId("id")
-      .nodeThreeObject((node: object) => {
-        const sim = node as SimNode;
-        sim.mesh = makeMesh(sim);
-        if (sim.born && !reducedMotion()) sim.mesh.scale.setScalar(0.001);
-        return sim.mesh;
-      })
+      .nodeThreeObject(nodeObject)
       .nodeLabel((node: object) => {
         const sim = node as SimNode;
         return `${escapeHtml(sim.name)}<br>${escapeHtml(TYPE_LABEL[sim.type] ?? sim.type)}`;
@@ -279,11 +322,19 @@ export function Graph3D({
     }
   }, [nodes, links]);
 
+  // Turning the names on or off rebuilds the node objects; positions stay.
+  useEffect(() => {
+    graph.current?.nodeThreeObject((node: object) => nodeObject(node));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [labels]);
+
   // Styles: tier changes and focus apply to the existing objects.
   useEffect(() => {
     for (const node of nodeMap.current.values()) {
       const material = node.mesh?.material as THREE.MeshLambertMaterial | undefined;
       if (material) material.opacity = !focus || focus.has(node.id) ? 1 : DIMMED;
+      const label = node.label?.material as THREE.SpriteMaterial | undefined;
+      if (label) label.opacity = !focus || focus.has(node.id) ? 1 : DIMMED;
     }
     for (const link of linkMap.current.values()) {
       if (!link.line) continue;

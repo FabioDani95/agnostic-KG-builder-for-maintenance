@@ -7,6 +7,7 @@ import { Icon } from "../components/Icon";
 import { Legend } from "../components/Legend";
 import { PageDialog } from "../components/PageDialog";
 import { Shell } from "../components/Shell";
+import { useStatus } from "../status/StatusProvider";
 import { Graph3D, type ViewLink, type ViewNode } from "../graph/Graph3D";
 import { nextStep } from "../flow/steps";
 import { STATIONS, type Station } from "../live/events";
@@ -94,7 +95,12 @@ export function LiveRun() {
   const elapsed = ended || paused ? run.t : run.t + (Math.max(0, now - arrivedAt) / 1000) * (live ? 1 : Number(speed));
 
   const nodes = useMemo<ViewNode[]>(() => Object.values(run.nodes), [run.nodes]);
-  const links = useMemo<ViewLink[]>(() => Object.values(run.edges), [run.edges]);
+  const { settings } = useStatus();
+  const showCode = settings?.show_code_relations ?? true;
+  const links = useMemo<ViewLink[]>(
+    () => Object.values(run.edges).filter((edge) => showCode || !edge.derived),
+    [run.edges, showCode],
+  );
   const typeCounts = useMemo(() => {
     const byType: Record<string, number> = {};
     for (const node of nodes) byType[node.type] = (byType[node.type] ?? 0) + 1;
@@ -213,7 +219,13 @@ export function LiveRun() {
         </aside>
 
         <div className="canvas">
-          <Graph3D nodes={nodes} links={links} onNodeClick={setSelected} onBackgroundClick={() => setSelected(null)} />
+          <Graph3D
+            nodes={nodes}
+            links={links}
+            labels={settings?.node_labels ?? false}
+            onNodeClick={setSelected}
+            onBackgroundClick={() => setSelected(null)}
+          />
           {ended && !handoffClosed && (
             <div className="handoff" role="status">
               <button type="button" className="icon-button handoff-close" aria-label="Chiudi" onClick={() => setHandoffClosed(true)}>

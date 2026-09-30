@@ -1,7 +1,7 @@
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { getJson } from "../api/client";
-import type { ActiveJob, ManualRow } from "../api/types";
+import type { ActiveJob, ManualRow, Preferences } from "../api/types";
 import { activeVersion, inbox, type Inbox } from "../flow/steps";
 import { manualName } from "../text/it";
 
@@ -11,10 +11,11 @@ export interface Status {
   error: string | null;
   inbox: Inbox | null;
   active: { manualId: string; versionId: string; name: string } | null;
+  settings: Preferences | null;
   refresh: () => void;
 }
 
-const EMPTY: Status = { manuals: null, error: null, inbox: null, active: null, refresh: () => undefined };
+const EMPTY: Status = { manuals: null, error: null, inbox: null, active: null, settings: null, refresh: () => undefined };
 const StatusContext = createContext<Status>(EMPTY);
 const EVERY_MS = 10_000;
 
@@ -25,14 +26,15 @@ const EVERY_MS = 10_000;
 export function StatusProvider({ children }: { children: ReactNode }) {
   const location = useLocation();
   const [round, setRound] = useState(0);
-  const [data, setData] = useState<Omit<Status, "refresh" | "inbox">>({ manuals: null, error: null, active: null });
+  const [data, setData] = useState<Omit<Status, "refresh" | "inbox">>({ manuals: null, error: null, active: null, settings: null });
 
   useEffect(() => {
     let current = true;
     Promise.allSettled([
       getJson<ManualRow[]>("/api/manuals"),
       getJson<ActiveJob>("/api/jobs/active"),
-    ]).then(([manuals, job]) => {
+      getJson<Preferences>("/api/settings"),
+    ]).then(([manuals, job, preferences]) => {
       if (!current) return;
       setData((previous) => {
         const rows = manuals.status === "fulfilled" ? manuals.value : previous.manuals;
@@ -43,6 +45,7 @@ export function StatusProvider({ children }: { children: ReactNode }) {
           manuals: rows,
           error: manuals.status === "rejected" && !rows ? (manuals.reason as Error).message : null,
           active: running ? { ...running, name } : null,
+          settings: preferences.status === "fulfilled" ? preferences.value : previous.settings,
         };
       });
     });

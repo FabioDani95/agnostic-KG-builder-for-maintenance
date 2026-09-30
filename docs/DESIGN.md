@@ -38,6 +38,7 @@ percorso (48 px), così le due barre finiscono sulla stessa linea.
 | Esecuzioni | tutte le esecuzioni di tutti i manuali, con tempo e costo di ciascuna |
 | Ontologia | lo schema fisso che ogni grafo segue |
 | In corso (solo se c'è) | spia blu che pulsa, nome del manuale: porta dritto all'esecuzione |
+| Rotella (in basso) | impostazioni in una finestra al centro, come in The Fixer: chiave OpenAI (di default quella di `.env`), ragionamento e letture per unità dell'estrazione, modello e ragionamento dell'agente, massimo di domande per persona, relazioni aggiunte dal codice e nomi sui nodi nel grafo; «Annulla» e «Salva» |
 
 **Barra del percorso** alta 48 px, fondo `--crumbs`, testo 13 px: i passaggi sottolineati
 separati da `›` e il titolo della pagina in grassetto (è l'`h1`, e dà il titolo alla scheda del

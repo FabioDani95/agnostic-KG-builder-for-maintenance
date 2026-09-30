@@ -27,6 +27,7 @@ import yaml
 from backend.kg_v3.contracts import Answer, QuestionKind, ReviewerIdentity, ReviewerKind, validate_answer
 from backend.ui.budget import UI_RUN_PREFIX, Spending, estimate
 from backend.ui.catalog import Catalog, process_alive
+from backend.ui.preferences import PreferencesStore
 from backend.ui.questions import HUMAN_QUESTION_BUDGET, open_for_people
 from backend.ui.store import STORE_NAME, FileQuestionStore
 
@@ -40,7 +41,21 @@ IDENTIFY_ALLOWANCE_USD = 0.01
 IDENTIFY_TIMEOUT_SECONDS = 90
 # Model settings a copied campaign run must keep when it resumes.
 MODEL_FLAGS = {"model": "--model", "reasoning_effort": "--reasoning", "reads": "--reads",
-               "agent_model": "--agent-model", "agent_reasoning_effort": "--agent-reasoning"}
+               "agent_model": "--agent-model", "agent_reasoning_effort": "--agent-reasoning",
+               "human_questions": "--human-questions"}
+
+
+def question_budget(run_dir: Path) -> int:
+    """Most questions a person gets in this run: the setting it started with, else the default."""
+    job = _read_job(run_dir)
+    return int((job.get("model") or {}).get("human_questions") or HUMAN_QUESTION_BUDGET)
+
+
+def _read_job(run_dir: Path) -> dict[str, Any]:
+    try:
+        return json.loads((run_dir / "job.json").read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
 
 
 class JobError(ValueError):
@@ -52,7 +67,9 @@ def _now() -> str:
 
 
 class Jobs:
-    def __init__(self, catalog: Catalog, spending: Spending, workspace: Path, campaign: Path) -> None:
+    def __init__(self, catalog: Catalog, spending: Spending, workspace: Path, campaign: Path,
+                 preferences: PreferencesStore | None = None) -> None:
+        self.preferences = preferences or PreferencesStore(workspace / "settings.json")
         self.catalog = catalog
         self.spending = spending
         self.workspace = workspace
@@ -117,6 +134,7 @@ class Jobs:
             raise JobError("Non c'è più spesa possibile per leggere i dati: scrivili tu.")
         process = await asyncio.create_subprocess_exec(
             *self.identify_command(pdf, used + min(IDENTIFY_ALLOWANCE_USD, room)), cwd=ROOT,
+            env=self.preferences.load().environment(),
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         try:
             out, err = await asyncio.wait_for(process.communicate(), timeout=IDENTIFY_TIMEOUT_SECONDS)
@@ -200,7 +218,8 @@ class Jobs:
                           if (match := re.fullmatch(r"v3_r(\d+)", path.name))), default=0)
         run_dir = runs / f"v3_r{number}"
         run_dir.mkdir()
-        self._launch(manual_id, run_dir, reviewers, allowed["spend_ceiling"], {"estimate": allowed["estimate"]})
+        self._launch(manual_id, run_dir, reviewers, allowed["spend_ceiling"], {"estimate": allowed["estimate"]},
+                     model=self.preferences.load().run_flags())
         return f"workspace~{run_dir.name}"
 
     def _command(self, manual_id: str, run_dir: Path, reviewers: str, ceiling: float,
@@ -217,13 +236,16 @@ class Jobs:
         return command + ["--out", str(run_dir), "--gates", PRESETS[reviewers], "--events", "--human-store",
                           "--spend-ceiling", f"{ceiling:.4f}", "--run-id", f"{UI_RUN_PREFIX}{manual_id}_{run_dir.name}"]
 
-    def _launch(self, manual_id: str, run_dir: Path, reviewers: str, ceiling: float, extra: dict[str, Any]) -> None:
+    def _launch(self, manual_id: str, run_dir: Path, reviewers: str, ceiling: float, extra: dict[str, Any],
+                model: dict[str, Any] | None = None) -> None:
+        """Start the command line; a new run takes the settings, a resume keeps those it started with."""
         job = json.loads((run_dir / "job.json").read_text(encoding="utf-8")) if (run_dir / "job.json").exists() else {}
-        model = job.get("model")
+        model = model or job.get("model")
         command = self._command(manual_id, run_dir, reviewers, ceiling, model)
         (run_dir / "events.jsonl").touch()
         with (run_dir / "job.log").open("a", encoding="utf-8") as log:
             process = subprocess.Popen(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT,
+                                       env=self.preferences.load().environment(),
                                        start_new_session=True)
         self.processes[run_dir] = process
         history = [*job.get("history", []), {"started_at": _now(), "command": command}]
@@ -246,9 +268,9 @@ class Jobs:
     def store(self, run_dir: Path) -> FileQuestionStore:
         """The run's store; a run that never had one gets the questions it offered to people."""
 
-        store = FileQuestionStore(run_dir / STORE_NAME, budget=HUMAN_QUESTION_BUDGET)
+        store = FileQuestionStore(run_dir / STORE_NAME, budget=question_budget(run_dir))
         if not (run_dir / STORE_NAME).exists():
-            store.publish(open_for_people(run_dir)[0])
+            store.publish(open_for_people(run_dir, question_budget(run_dir))[0])
         return store
 
     def copy_version(self, manual_id: str, run_dir: Path, units_now: list[str]) -> str:

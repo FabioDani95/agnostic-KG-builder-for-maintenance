@@ -21,8 +21,8 @@ from backend.ui.budget import Limits, Spending, estimate
 from backend.ui.catalog import Catalog, process_alive
 from backend.ui.events import UiEvent
 from backend.ui.evidence import Evidence
-from backend.ui.jobs import JobError, Jobs, current_units
-from backend.ui.questions import HUMAN_QUESTION_BUDGET, open_for_people, pending_questions, question_views
+from backend.ui.jobs import JobError, Jobs, current_units, question_budget
+from backend.ui.questions import open_for_people, pending_questions, question_views
 from backend.ui.replay import replay_events
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -265,7 +265,7 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
                                                                  "keep": given.edits.get("keep", [])}})
             unapplied = len(store.unapplied())
         awaiting = version.status == "awaiting_approval"
-        return {"budget": HUMAN_QUESTION_BUDGET, "editable": not is_campaign, "copy_needed": is_campaign,
+        return {"budget": question_budget(folder), "editable": not is_campaign, "copy_needed": is_campaign,
                 "open": [view.model_dump() for view in question_views(folder, open_)],
                 "answered": answered, "unapplied": unapplied, "awaiting_approval": awaiting,
                 "can_approve": awaiting and not is_campaign and not open_ and not unapplied,
@@ -368,6 +368,17 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
         folder = jobs.active()
         return {"run": str(folder.relative_to(settings.workspace)) if folder else None}
 
+    @app.get("/api/settings")
+    def read_settings() -> dict:
+        return jobs.preferences.load().public()
+
+    @app.put("/api/settings")
+    def write_settings(body: dict) -> dict:
+        try:
+            return jobs.preferences.save(dict(body)).public()
+        except ValueError as error:
+            raise HTTPException(422, _first_error(error)) from None
+
     @app.get("/api/budget")
     def budget() -> dict:
         return spending.snapshot()
@@ -379,6 +390,15 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
 
     _serve_frontend(app, settings.frontend)
     return app
+
+
+def _first_error(error: ValueError) -> str:
+    """One sentence for the person: the message of a refused value, not the whole validation report."""
+    errors = getattr(error, "errors", None)
+    if callable(errors):
+        first = errors()[0]
+        return f"Valore non valido per «{'.'.join(str(part) for part in first['loc'])}»: {first['msg']}"
+    return str(error)
 
 
 def _serve_frontend(app: FastAPI, dist: Path) -> None:

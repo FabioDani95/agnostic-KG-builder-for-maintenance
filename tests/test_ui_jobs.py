@@ -20,9 +20,11 @@ from tests.ui_support import campaign_tree
 
 class FakeProcess:
     started: list[list[str]] = []
+    environments: list[dict] = []
 
     def __init__(self, command, **kwargs):
         FakeProcess.started.append(command)
+        FakeProcess.environments.append(kwargs.get("env") or {})
         self.pid = 999_999_999  # no such process
 
     def poll(self):
@@ -161,3 +163,33 @@ def test_the_first_pages_are_read_as_text(tmp_path):
     text, cover = first_pages(pdf)
     assert text and cover is None
     assert clean({"brand": " Acme ", "model": "P1", "type": "pump", "name": ""})["name"] == "Acme P1 pump"
+
+
+def test_settings_start_from_the_command_line_defaults_and_never_return_the_key(tmp_path, manual_doc):
+    client, settings = make_client(tmp_path, manual_doc)
+    shown = client.get("/api/settings").json()
+    assert (shown["reasoning"], shown["reads"], shown["agent_model"], shown["human_questions"]) == ("low", 2, "gpt-6-luna", 10)
+    assert "api_key" not in shown and shown["key"]["source"] in {"env", "none"}
+    saved = client.put("/api/settings", json={"reads": 1, "agent_reasoning": "high", "human_questions": 5,
+                                              "node_labels": True, "api_key": "sk-test-0123456789abcdefWXYZ"}).json()
+    assert saved["reads"] == 1 and saved["node_labels"] is True
+    assert saved["key"] == {"source": "custom", "hint": "…WXYZ"} and "sk-test" not in json.dumps(saved)
+    stored = settings.workspace / "settings.json"
+    assert stored.stat().st_mode & 0o777 == 0o600
+    assert client.put("/api/settings", json={"api_key": "not a key"}).status_code == 422
+    assert client.put("/api/settings", json={"reads": 7}).status_code == 422
+    assert client.put("/api/settings", json={"clear_api_key": True}).json()["key"]["source"] != "custom"
+
+
+def test_a_new_run_takes_the_settings_and_the_key_written_here(tmp_path, manual_doc):
+    client, settings = make_client(tmp_path, manual_doc)
+    client.put("/api/settings", json={"reasoning": "medium", "reads": 3, "agent_model": "gpt-5.6-luna",
+                                      "human_questions": 5, "api_key": "sk-test-0123456789abcdefWXYZ"})
+    started = client.post("/api/manuals/test_pump/runs", json={"reviewers": "human"})
+    assert started.status_code == 200
+    command = " ".join(FakeProcess.started[-1])
+    for flag in ("--reasoning medium", "--reads 3", "--agent-model gpt-5.6-luna", "--human-questions 5"):
+        assert flag in command
+    assert FakeProcess.environments[-1]["OPENAI_API_KEY"] == "sk-test-0123456789abcdefWXYZ"
+    run_dir = settings.workspace / "test_pump" / "runs" / "v3_r1"
+    assert jobs_module.question_budget(run_dir) == 5
