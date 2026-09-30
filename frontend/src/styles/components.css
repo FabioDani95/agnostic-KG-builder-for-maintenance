@@ -1422,22 +1422,36 @@ details > summary {
 .guide-pager-link {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 2px;
-  padding: var(--s2) var(--s3);
-  border: 1px solid var(--line-soft);
-  border-radius: var(--r);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.guide-pager-link svg {
   color: var(--text);
-  font-weight: 600;
+  transition: transform var(--t) var(--ease), color var(--t) var(--ease);
 }
 
 .guide-pager-link:hover {
-  border-color: var(--line);
+  color: var(--text);
   text-decoration: none;
 }
 
+.guide-pager-link:hover svg {
+  color: var(--accent);
+  transform: translateX(-3px);
+}
+
 .guide-pager-next {
+  align-items: flex-end;
   text-align: right;
   margin-left: auto;
+}
+
+.guide-pager-next:hover svg {
+  transform: translateX(3px);
 }
 
 .guide-toc-link {

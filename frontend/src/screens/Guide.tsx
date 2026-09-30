@@ -36,18 +36,21 @@ export function Guide() {
     if (!chapter) return;
     setCurrent(chapter.sections[0]?.id ?? "");
     document.querySelector(".content")?.scrollTo({ top: 0 });
-    const headings = chapter.sections
-      .map((section) => document.getElementById(section.id))
-      .filter((element): element is HTMLElement => element !== null);
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const seen = entries.find((entry) => entry.isIntersecting);
-        if (seen) setCurrent(seen.target.id);
-      },
-      { rootMargin: "-64px 0px -70% 0px" },
-    );
-    headings.forEach((heading) => observer.observe(heading));
-    return () => observer.disconnect();
+    // The section being read: the last heading above the top of the page, the last one at the bottom.
+    const page = document.querySelector<HTMLElement>(".content");
+    if (!page) return;
+    const follow = () => {
+      const top = page.getBoundingClientRect().top + 96;
+      const atBottom = page.scrollTop + page.clientHeight >= page.scrollHeight - 4;
+      let reading = chapter.sections[0]?.id ?? "";
+      for (const section of chapter.sections) {
+        const heading = document.getElementById(section.id);
+        if (heading && heading.getBoundingClientRect().top <= top) reading = section.id;
+      }
+      setCurrent(atBottom ? chapter.sections[chapter.sections.length - 1].id : reading);
+    };
+    page.addEventListener("scroll", follow, { passive: true });
+    return () => page.removeEventListener("scroll", follow);
   }, [chapter]);
 
   if (!chapter) return <Navigate to={`/guida/${GUIDE[0].slug}`} replace />;
@@ -91,17 +94,17 @@ export function Guide() {
           ))}
           <nav className="guide-pager" aria-label="Capitolo precedente e successivo">
             {previous ? (
-              <Link to={`/guida/${previous.slug}`} className="guide-pager-link">
-                <span className="settings-title">Precedente</span>
-                {previous.title}
+              <Link to={`/guida/${previous.slug}`} className="guide-pager-link" aria-label={`Capitolo precedente: ${previous.title}`}>
+                <Icon name="arrow-left" size={18} />
+                <span>{previous.title}</span>
               </Link>
             ) : (
               <span />
             )}
             {next && (
-              <Link to={`/guida/${next.slug}`} className="guide-pager-link guide-pager-next">
-                <span className="settings-title">Successivo</span>
-                {next.title}
+              <Link to={`/guida/${next.slug}`} className="guide-pager-link guide-pager-next" aria-label={`Capitolo successivo: ${next.title}`}>
+                <Icon name="arrow-right" size={18} />
+                <span>{next.title}</span>
               </Link>
             )}
           </nav>

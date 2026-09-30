@@ -5,10 +5,6 @@ import { GUIDE } from "../src/help/guide";
 import { Guide } from "../src/screens/Guide";
 
 beforeAll(() => {
-  globalThis.IntersectionObserver = class {
-    observe() {}
-    disconnect() {}
-  } as unknown as typeof IntersectionObserver;
   Element.prototype.scrollTo = () => undefined;
 });
 
@@ -31,7 +27,7 @@ describe("the guide", () => {
     for (const station of ["Leggi", "Mappa", "Estrai", "Controlla", "Unisci", "Chiedi"]) {
       expect(screen.getByRole("heading", { level: 3, name: station })).toBeTruthy();
     }
-    expect(screen.getByRole("link", { name: /Successivo\s*Domande e approvazione/ })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Capitolo successivo: Domande e approvazione" })).toBeTruthy();
   });
 
   it("opens the first chapter for an unknown address", () => {

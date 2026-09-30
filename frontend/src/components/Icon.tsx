@@ -125,6 +125,12 @@ const PATHS = {
     </>
   ),
   loader: <path d="M21 12a9 9 0 1 1-6.22-8.56" />,
+  "arrow-left": (
+    <>
+      <path d="m12 19-7-7 7-7" />
+      <path d="M19 12H5" />
+    </>
+  ),
   "arrow-right": (
     <>
       <path d="M5 12h14" />
