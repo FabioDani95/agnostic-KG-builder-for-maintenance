@@ -69,6 +69,9 @@ def test_graph_report_and_questions_of_a_version(client):
     questions = client.get("/api/manuals/test_pump/versions/runs~v3_r1/questions").json()
     assert questions["copy_needed"] is True and questions["editable"] is False
     assert questions["open"] and questions["open"][0]["claims_it"]
+    english = client.get("/api/manuals/test_pump/versions/runs~v3_r1/questions?lang=en").json()
+    assert english["open"][0]["title_it"] == "Does the manual say this?"
+    assert client.get("/api/manuals/test_pump/versions/runs~v3_r1/questions?lang=fr").status_code == 422
     assert client.get("/api/manuals/test_pump/versions/runs~v9/graph").status_code == 404
 
 

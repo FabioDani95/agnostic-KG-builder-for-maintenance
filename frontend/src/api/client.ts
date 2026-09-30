@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { tr } from "../i18n/i18n";
 
 export class ApiError extends Error {
   constructor(
@@ -25,7 +26,7 @@ async function request(url: string, init?: RequestInit): Promise<Response> {
   try {
     return await fetch(url, init);
   } catch {
-    throw new ApiError(0, OFFLINE);
+    throw new ApiError(0, tr(OFFLINE));
   }
 }
 
@@ -33,7 +34,7 @@ export const NOT_API = "Al posto dei dati è arrivata una pagina web: riavvia sc
 
 /** The body as JSON; a page served instead of the API (a dev server without its proxy) says so. */
 async function json<T>(response: Response): Promise<T> {
-  if (!(response.headers.get("content-type") ?? "").includes("json")) throw new ApiError(response.status, NOT_API);
+  if (!(response.headers.get("content-type") ?? "").includes("json")) throw new ApiError(response.status, tr(NOT_API));
   return response.json() as Promise<T>;
 }
 

@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import type { RunStatus } from "../api/types";
 import { statusLabel, statusTone } from "../text/it";
 import { Icon } from "./Icon";
+import { tr } from "../i18n/i18n";
 
 export function SegmentedControl<T extends string>({
   label,
@@ -17,7 +18,7 @@ export function SegmentedControl<T extends string>({
   fill?: boolean;
 }) {
   return (
-    <div className={fill ? "segmented segmented-fill" : "segmented"} role="group" aria-label={label}>
+    <div className={fill ? "segmented segmented-fill" : "segmented"} role="group" aria-label={tr(label)}>
       {options.map((option) => (
         <button
           key={option.value}
@@ -25,7 +26,7 @@ export function SegmentedControl<T extends string>({
           aria-pressed={option.value === value}
           onClick={() => onChange(option.value)}
         >
-          {option.label}
+          {tr(option.label)}
         </button>
       ))}
     </div>
@@ -65,13 +66,13 @@ export function SearchField({
   }, [hotkey]);
   return (
     <label className="search" style={{ width }}>
-      <span className="visually-hidden">{label}</span>
+      <span className="visually-hidden">{tr(label)}</span>
       <Icon name="search" size={16} />
       <input
         ref={field}
         className="input"
         type="search"
-        placeholder={label}
+        placeholder={tr(label)}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         onKeyDown={(event) => {
@@ -96,7 +97,7 @@ export function ProgressBar({ value, total, label }: { value: number; total: num
     <div
       className="progress"
       role="progressbar"
-      aria-label={label}
+      aria-label={tr(label)}
       aria-valuemin={0}
       aria-valuemax={total}
       aria-valuenow={value}

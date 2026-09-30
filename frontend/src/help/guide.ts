@@ -74,7 +74,7 @@ export const GUIDE: GuideChapter[] = [
             "Esecuzioni elenca tutte le estrazioni fatte, con tempi e costi.",
             "Ontologia mostra lo schema che ogni grafo segue.",
             "Quando un'estrazione è in corso compare una spia blu: porta dritto al grafo che cresce.",
-            "In basso: questa guida e le impostazioni.",
+            "In basso: la lingua (IT o EN, cambia tutta l'interfaccia), questa guida e le impostazioni.",
           ],
           "Passando con il mouse su un'icona ne vedi il nome.",
         ],

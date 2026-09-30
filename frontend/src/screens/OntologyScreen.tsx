@@ -4,6 +4,7 @@ import { Loading, Problem } from "../components/Feedback";
 import { Shell } from "../components/Shell";
 import { EDGE_STYLE, NODE_STYLE } from "../graph/style";
 import { formatNumber, RELATION_LABEL, TYPE_LABEL } from "../text/it";
+import { tr } from "../i18n/i18n";
 
 const BOX = { width: 150, height: 40 };
 const WIDTH = 900;
@@ -46,7 +47,7 @@ function SchemaDiagram({ schema }: { schema: Ontology }) {
       className="schema"
       viewBox={`0 0 ${WIDTH} ${height}`}
       role="img"
-      aria-label="Schema del grafo: i tipi di nodo e le relazioni tra loro"
+      aria-label={tr("Schema del grafo: i tipi di nodo e le relazioni tra loro")}
     >
       <defs>
         <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -109,33 +110,33 @@ export function OntologyScreen() {
   const label = (name: string) => TYPE_LABEL[name] ?? name;
 
   return (
-    <Shell title="Ontologia">
-      {error && <Problem message={`Non riesco a leggere lo schema. ${error}`} onRetry={reload} />}
-      {loading && !schema && <Loading label="Carico lo schema" />}
+    <Shell title={tr("Ontologia")}>
+      {error && <Problem message={`${tr("Non riesco a leggere lo schema.")} ${error}`} onRetry={reload} />}
+      {loading && !schema && <Loading label={tr("Carico lo schema")} />}
       {schema && (
         <div className="stack">
           <section className="card">
             <header className="card-head">
-              <h2 className="card-title">Schema del grafo</h2>
+              <h2 className="card-title">{tr("Schema del grafo")}</h2>
               <span className="t-small secondary">
-                Ogni esecuzione legge <span className="mono">ontology_schema.JSON</span>: il grafo contiene solo questi tipi e
-                queste relazioni.
+                {tr("Ogni esecuzione legge")} <span className="mono">ontology_schema.JSON</span>
+                {tr(": il grafo contiene solo questi tipi e queste relazioni.")}
               </span>
             </header>
             <div className="schema-frame">
               <SchemaDiagram schema={schema} />
             </div>
             <div className="card-actions t-small secondary">
-              <span className="schema-key" data-kind="extracted" /> Estratta dal modello, con le sue prove nel manuale
-              <span className="schema-key" data-kind="code" style={{ marginLeft: 16 }} /> Aggiunta dal codice: lega la
-              macchina ai suoi componenti e codici
+              <span className="schema-key" data-kind="extracted" /> {tr("Estratta dal modello, con le sue prove nel manuale")}
+              <span className="schema-key" data-kind="code" style={{ marginLeft: 16 }} />{" "}
+              {tr("Aggiunta dal codice: lega la macchina ai suoi componenti e codici")}
             </div>
           </section>
 
           <section className="card">
             <header className="card-head">
               <h2 className="card-title">
-                Tipi di nodo <span className="card-count">{formatNumber(schema.nodes.length)}</span>
+                {tr("Tipi di nodo")} <span className="card-count">{formatNumber(schema.nodes.length)}</span>
               </h2>
             </header>
             <ul className="schema-list">
@@ -148,7 +149,7 @@ export function OntologyScreen() {
                   <span className="mono secondary">{node.name}</span>
                   <span>
                     {node.description}
-                    {node.name === schema.root && <span className="secondary"> È la radice: una per grafo.</span>}
+                    {node.name === schema.root && <span className="secondary"> {tr("È la radice: una per grafo.")}</span>}
                   </span>
                   <span className="mono t-small secondary">
                     {node.properties.map((prop) => `${prop.name}${prop.required ? "*" : ""}`).join(" · ")}
@@ -156,13 +157,13 @@ export function OntologyScreen() {
                 </li>
               ))}
             </ul>
-            <p className="card-actions t-small secondary">Le proprietà con * sono obbligatorie. Le descrizioni sono quelle dello schema.</p>
+            <p className="card-actions t-small secondary">{tr("Le proprietà con * sono obbligatorie. Le descrizioni sono quelle dello schema.")}</p>
           </section>
 
           <section className="card">
             <header className="card-head">
               <h2 className="card-title">
-                Relazioni <span className="card-count">{formatNumber(schema.relations.length)}</span>
+                {tr("Relazioni")} <span className="card-count">{formatNumber(schema.relations.length)}</span>
               </h2>
             </header>
             <ul className="schema-list">
@@ -175,7 +176,7 @@ export function OntologyScreen() {
                   <span className="mono secondary">{relation.name}</span>
                   <span>{relation.description}</span>
                   <span className="t-small secondary">
-                    {relation.added_by_code ? "Aggiunta dal codice" : "Estratta dal modello"}
+                    {tr(relation.added_by_code ? "Aggiunta dal codice" : "Estratta dal modello")}
                   </span>
                 </li>
               ))}

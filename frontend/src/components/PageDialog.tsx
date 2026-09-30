@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "./Icon";
+import { tr } from "../i18n/i18n";
 
 const SCALE = 2;
 
@@ -28,18 +29,18 @@ export function PageDialog({
   }, []);
   const src = `/api/manuals/${encodeURIComponent(manualId)}/pages/${page}.png?scale=${SCALE}`;
   return (
-    <dialog ref={dialog} className="page-dialog" onClose={onClose} aria-label={`Pagina ${page} del manuale`}>
+    <dialog ref={dialog} className="page-dialog" onClose={onClose} aria-label={tr("Pagina {page} del manuale", { page })}>
       <div className="page-dialog-frame">
         <div className="page-dialog-head">
-          <h2 className="t-large strong">Pagina {page}</h2>
-          <button type="button" className="button button-secondary button-icon" aria-label="Chiudi" onClick={onClose}>
+          <h2 className="t-large strong">{tr("Pagina {page}", { page })}</h2>
+          <button type="button" className="button button-secondary button-icon" aria-label={tr("Chiudi")} onClick={onClose}>
             <Icon name="x" />
           </button>
         </div>
         <div className="page-image">
           <img
             src={src}
-            alt={`Pagina ${page} del manuale`}
+            alt={tr("Pagina {page} del manuale", { page })}
             onLoad={(event) =>
               setSize({ width: event.currentTarget.naturalWidth, height: event.currentTarget.naturalHeight })
             }
@@ -61,7 +62,7 @@ export function PageDialog({
               );
             })}
         </div>
-        {marks.length === 0 && <p className="message t-small">La posizione del testo citato non è nota: è evidenziata solo la pagina.</p>}
+        {marks.length === 0 && <p className="message t-small">{tr("La posizione del testo citato non è nota: è evidenziata solo la pagina.")}</p>}
       </div>
     </dialog>
   );

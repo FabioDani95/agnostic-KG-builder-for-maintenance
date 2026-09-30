@@ -9,6 +9,7 @@ import {
   TYPE_LABEL,
   WITNESS_LABEL,
 } from "../text/it";
+import { tr } from "../i18n/i18n";
 
 export type OpenPage = (page: number, evidence: Evidence[]) => void;
 
@@ -16,7 +17,7 @@ function PanelHead({ title, onClose }: { title: string; onClose: () => void }) {
   return (
     <div className="panel-head">
       <h2 className="panel-title">{title}</h2>
-      <button type="button" className="button button-secondary button-icon" aria-label="Chiudi" onClick={onClose}>
+      <button type="button" className="button button-secondary button-icon" aria-label={tr("Chiudi")} onClick={onClose}>
         <Icon name="x" />
       </button>
     </div>
@@ -46,7 +47,7 @@ function Quotes({ items, onOpenPage }: { items: Evidence[]; onOpenPage: OpenPage
           onClick={() => onOpenPage(page, items.filter((item) => item.page === page))}
         >
           <Icon name="external-link" size={14} />
-          Apri la pagina {page}
+          {tr("Apri la pagina {page}", { page: page })}
         </button>
       ))}
     </>
@@ -57,8 +58,8 @@ function decision(occurrence: Occurrence): string | null {
   const certificate = occurrence.certificate;
   const reviewer = certificate?.confirmed_by ?? certificate?.rejected_by;
   if (!certificate || !reviewer) return null;
-  const who = reviewer.kind === "human" ? `una persona (${reviewer.name})` : REVIEWER_LABEL[reviewer.kind] ?? reviewer.kind;
-  return `${certificate.confirmed_by ? "Confermata" : "Respinta"} da ${who}`;
+  const who = reviewer.kind === "human" ? tr("una persona ({name})", { name: reviewer.name }) : REVIEWER_LABEL[reviewer.kind] ?? reviewer.kind;
+  return tr(certificate.confirmed_by ? "Confermata da {who}" : "Respinta da {who}", { who });
 }
 
 export function EdgeDetail({
@@ -79,7 +80,7 @@ export function EdgeDetail({
   return (
     <div>
       <section className="panel-section">
-        <PanelHead title="Relazione" onClose={onClose} />
+        <PanelHead title={tr("Relazione")} onClose={onClose} />
         <p className="panel-name">
           <button type="button" className="button-plain list-button" style={{ display: "inline", minHeight: 0 }} onClick={() => onSelectNode(edge.from)}>
             «{from?.name}»
@@ -90,38 +91,38 @@ export function EdgeDetail({
           </button>
         </p>
         <dl className="data-list" style={{ gridTemplateColumns: "96px 1fr", marginTop: 8 }}>
-          <dt>Stato</dt>
-          <dd>{edge.derived ? "Aggiunta dal sistema" : TIER_LABEL[edge.tier]}</dd>
-          <dt>Tipi</dt>
+          <dt>{tr("Stato")}</dt>
+          <dd>{edge.derived ? tr("Aggiunta dal sistema") : TIER_LABEL[edge.tier]}</dd>
+          <dt>{tr("Tipi")}</dt>
           <dd>
-            {TYPE_LABEL[from?.type ?? ""]} e {TYPE_LABEL[to?.type ?? ""]?.toLowerCase()}
+            {tr("{a} e {b}", { a: TYPE_LABEL[from?.type ?? ""] ?? "", b: TYPE_LABEL[to?.type ?? ""]?.toLowerCase() ?? "" })}
           </dd>
-          <dt>Occorrenze</dt>
+          <dt>{tr("Occorrenze")}</dt>
           <dd>{formatNumber(edge.occurrences.length)}</dd>
         </dl>
         {edge.derived && (
           <p className="message" style={{ marginTop: 16 }}>
-            Collega la macchina ai suoi componenti e codici: la aggiunge il sistema, non viene dal testo.
+            {tr("Collega la macchina ai suoi componenti e codici: la aggiunge il sistema, non viene dal testo.")}
           </p>
         )}
       </section>
       {edge.occurrences.map((occurrence, index) => (
         <section key={`${occurrence.record}-${index}`} className="panel-section">
           <h3 className="panel-title">
-            Occorrenza {index + 1} di {edge.occurrences.length}
+            {tr("Occorrenza {n} di {total}", { n: index + 1, total: edge.occurrences.length })}
           </h3>
           {occurrence.certificate && (
             <dl className="data-list" style={{ gridTemplateColumns: "96px 1fr", marginBottom: 8 }}>
-              <dt>Stato</dt>
+              <dt>{tr("Stato")}</dt>
               <dd>{occurrence.tier ? TIER_LABEL[occurrence.tier] : ""}</dd>
-              <dt>Testimoni</dt>
+              <dt>{tr("Testimoni")}</dt>
               <dd>
                 {occurrence.certificate.witnesses.map((witness) => WITNESS_LABEL[witness] ?? witness).join(", ") ||
-                  "nessuno"}
+                  tr("nessuno")}
               </dd>
               {decision(occurrence) && (
                 <>
-                  <dt>Decisione</dt>
+                  <dt>{tr("Decisione")}</dt>
                   <dd>{decision(occurrence)}</dd>
                 </>
               )}
@@ -129,7 +130,7 @@ export function EdgeDetail({
           )}
           {(occurrence.conditions ?? []).map((condition, conditionIndex) => (
             <p key={conditionIndex} className="t-body" style={{ marginBottom: 8 }}>
-              {CONDITION_PREFIX[condition.kind] ?? "Vale se"}: {condition.text}
+              {CONDITION_PREFIX[condition.kind] ?? tr("Vale se")}: {condition.text}
             </p>
           ))}
           <Quotes items={occurrence.evidence} onOpenPage={onOpenPage} />
@@ -164,19 +165,19 @@ export function NodeDetail({
         <dl className="data-list" style={{ gridTemplateColumns: "96px 1fr" }}>
           {pages.length > 0 && (
             <>
-              <dt>Pagine</dt>
+              <dt>{tr("Pagine")}</dt>
               <dd className="mono">{pages.join(", ")}</dd>
             </>
           )}
           {node.type === "FailureMode" && node.stated_in_source === false && (
             <>
-              <dt>Nome</dt>
-              <dd>Causa non scritta nel manuale: il nome lo ha dato il sistema</dd>
+              <dt>{tr("Nome")}</dt>
+              <dd>{tr("Causa non scritta nel manuale: il nome lo ha dato il sistema")}</dd>
             </>
           )}
           {(node.aliases ?? []).length > 0 && (
             <>
-              <dt>Altri nomi</dt>
+              <dt>{tr("Altri nomi")}</dt>
               <dd>{node.aliases!.join("; ")}</dd>
             </>
           )}
@@ -184,13 +185,13 @@ export function NodeDetail({
       </section>
       {node.evidence.length > 0 && (
         <section className="panel-section">
-          <h3 className="panel-title">Nel manuale</h3>
+          <h3 className="panel-title">{tr("Nel manuale")}</h3>
           <Quotes items={node.evidence} onOpenPage={onOpenPage} />
         </section>
       )}
       {touching.length > 0 && (
         <section className="panel-section">
-          <h3 className="panel-title">Relazioni</h3>
+          <h3 className="panel-title">{tr("Relazioni")}</h3>
           <ul className="stage-list">
             {touching.map((edge) => {
               const other = nodes.get(edge.from === node.id ? edge.to : edge.from);
@@ -205,7 +206,7 @@ export function NodeDetail({
                       {text}
                     </span>
                     <span className="t-small secondary">
-                      {edge.derived ? "Aggiunta dal sistema" : TIER_LABEL[edge.tier]}
+                      {edge.derived ? tr("Aggiunta dal sistema") : TIER_LABEL[edge.tier]}
                     </span>
                   </button>
                 </li>

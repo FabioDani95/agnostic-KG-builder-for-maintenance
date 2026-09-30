@@ -8,6 +8,7 @@ import { Shell } from "../components/Shell";
 import { type Column, nextSorting, type Sorting, Table } from "../components/Table";
 import { nextStep } from "../flow/steps";
 import { formatDate, formatDuration, formatNumber, formatShortDate, formatUsd, manualName, statusLabel, versionLabel } from "../text/it";
+import { tr } from "../i18n/i18n";
 
 type Origin = "all" | "workspace" | "campaign";
 
@@ -70,16 +71,16 @@ export function Runs() {
   const rows = useMemo(() => (data ?? []).filter((row) => origin === "all" || row.origin === origin), [data, origin]);
 
   return (
-    <Shell title="Esecuzioni">
+    <Shell title={tr("Esecuzioni")}>
       <div className="stack">
         <section className="card">
           <header className="card-head">
             <h2 className="card-title">
-              Esecuzioni {data && <span className="card-count">{formatNumber(rows.length)}</span>}
+              {tr("Esecuzioni")} {data && <span className="card-count">{formatNumber(rows.length)}</span>}
             </h2>
             <div className="row" style={{ gap: 16 }}>
               <SegmentedControl<Origin>
-                label="Quali esecuzioni mostrare"
+                label={tr("Quali esecuzioni mostrare")}
                 value={origin}
                 onChange={setOrigin}
                 options={[
@@ -90,11 +91,11 @@ export function Runs() {
               />
             </div>
           </header>
-          {error && <Problem message={`Non riesco a leggere le esecuzioni. ${error}`} onRetry={reload} />}
-          {loading && !data && <Loading label="Carico le esecuzioni" />}
+          {error && <Problem message={`${tr("Non riesco a leggere le esecuzioni.")} ${error}`} onRetry={reload} />}
+          {loading && !data && <Loading label={tr("Carico le esecuzioni")} />}
           {data && (
             <Table
-              label="Esecuzioni"
+              label={tr("Esecuzioni")}
               columns={COLUMNS}
               rows={rows}
               rowKey={(row) => `${row.manual_id}/${row.version_id}`}

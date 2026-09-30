@@ -252,7 +252,7 @@ Base `http://127.0.0.1:8765/api`. Solo localhost, nessuna autenticazione.
 | `GET /manuals/{m}/versions/{v}/graph` | `graph.json` (compresso con gzip) |
 | `GET /manuals/{m}/versions/{v}/report` | `report.json` |
 | `GET /manuals/{m}/versions/{v}/events?speed=4&from=0` | SSE: replay, oppure diretta se l'esecuzione è in corso |
-| `GET /manuals/{m}/versions/{v}/questions` | domande aperte per te, risposte date, domande non verificate |
+| `GET /manuals/{m}/versions/{v}/questions` | domande aperte per te, risposte date, domande non verificate; con `?lang=en` le frasi escono in inglese |
 | `POST /manuals/{m}/versions/{v}/questions/{q}/answer` | salva una risposta (su una versione della campagna crea prima la copia) |
 | `POST /manuals/{m}/versions/{v}/apply` | riprende l'esecuzione con le risposte |
 | `POST /manuals/{m}/versions/{v}/approve` | `{"decision": "approve" \| "reject"}` |

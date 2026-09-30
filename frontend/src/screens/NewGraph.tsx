@@ -8,6 +8,7 @@ import { Icon } from "../components/Icon";
 import { Shell } from "../components/Shell";
 import { useStatus } from "../status/StatusProvider";
 import { formatCost, formatMinutes, formatNumber, formatRange, plural } from "../text/it";
+import { tr } from "../i18n/i18n";
 
 type Reviewers = "agent" | "agent_human" | "human";
 type Source = "upload" | "library";
@@ -51,10 +52,10 @@ export function blocker(input: {
   worst: number | null;
   estimated: boolean;
 }): string | null {
-  if (input.running) return `C'è già un'esecuzione in corso (${input.running}): aspetta che finisca.`;
-  if (!input.hasManual) return "Carica il manuale in PDF o sceglilo dalla libreria.";
-  if (!input.name.trim()) return "Scrivi il nome della macchina.";
-  if (input.estimated && input.worst === null) return "Non ho esecuzioni passate da cui stimare il costo.";
+  if (input.running) return tr("C'è già un'esecuzione in corso ({name}): aspetta che finisca.", { name: input.running });
+  if (!input.hasManual) return tr("Carica il manuale in PDF o sceglilo dalla libreria.");
+  if (!input.name.trim()) return tr("Scrivi il nome della macchina.");
+  if (input.estimated && input.worst === null) return tr("Non ho esecuzioni passate da cui stimare il costo.");
   return null;
 }
 
@@ -83,7 +84,7 @@ function StepCard({
         {working && (
           <span role="status">
             <Icon name="loader" size={16} className="spin" />
-            <span className="visually-hidden">Lettura dei dati della macchina</span>
+            <span className="visually-hidden">{tr("Lettura dei dati della macchina")}</span>
           </span>
         )}
       </header>
@@ -198,7 +199,7 @@ export function NewGraph() {
   const field = (key: keyof Machine, label: string, required = false) => (
     <div className="field">
       <label htmlFor={`machine-${key}`}>
-        {label}
+        {tr(label)}
         {required && <span className="required"> *</span>}
       </label>
       <input
@@ -212,15 +213,15 @@ export function NewGraph() {
       />
     </div>
   );
-  const title = source === "library" && chosen ? `Nuova versione di ${chosen.machine.name}` : "Nuovo grafo";
+  const title = source === "library" && chosen ? tr("Nuova versione di {name}", { name: chosen.machine.name }) : "Nuovo grafo";
 
   return (
     <Shell trail={[{ to: "/", label: "Grafi" }]} title={title}>
       <div className="split">
         <div className="stack">
-          <StepCard number={1} title="Manuale" done={hasManual}>
+          <StepCard number={1} title={tr("Manuale")} done={hasManual}>
             <SegmentedControl<Source>
-              label="Da dove viene il manuale"
+              label={tr("Da dove viene il manuale")}
               value={source}
               onChange={(value) => {
                 setSource(value);
@@ -244,9 +245,9 @@ export function NewGraph() {
                 onDrop={drop}
               >
                 <Icon name="upload" size={20} />
-                <p className="strong">{busy === "upload" ? "Lettura del PDF in corso" : "Trascina qui il manuale in PDF"}</p>
+                <p className="strong">{tr(busy === "upload" ? "Lettura del PDF in corso" : "Trascina qui il manuale in PDF")}</p>
                 <button type="button" className="button button-plain" disabled={busy === "upload"} onClick={() => input.current?.click()}>
-                  Scegli un file
+                  {tr("Scegli un file")}
                 </button>
               </div>
             )}
@@ -268,22 +269,23 @@ export function NewGraph() {
                   <span className="num">{plural(upload.pages, "pagina", "pagine")}</span>
                   <span className="num">{fileSize(upload.size_bytes)}</span>
                   <button type="button" className="button button-plain" disabled={busy !== null} onClick={() => input.current?.click()}>
-                    Cambia
+                    {tr("Cambia")}
                   </button>
                 </div>
                 {upload.duplicate_of && (
                   <p className="message">
-                    È il manuale di «{existing?.machine.name ?? upload.machine?.name}», già nella libreria: l'esecuzione sarà
-                    una sua nuova versione.
+                    {tr("È il manuale di «{name}», già nella libreria: l'esecuzione sarà una sua nuova versione.", {
+                      name: existing?.machine.name ?? upload.machine?.name ?? "",
+                    })}
                   </p>
                 )}
               </>
             )}
             {source === "library" && (
               <div className="field">
-                <label htmlFor="library-manual">Manuale della libreria</label>
+                <label htmlFor="library-manual">{tr("Manuale della libreria")}</label>
                 <select id="library-manual" className="input" value={picked} onChange={(event) => setPicked(event.target.value)}>
-                  <option value="">Scegli un manuale</option>
+                  <option value="">{tr("Scegli un manuale")}</option>
                   {manuals.map((row) => (
                     <option key={row.id} value={row.id}>
                       {row.machine.brand} {row.machine.model} · {plural(row.pages ?? 0, "pagina", "pagine")}
@@ -296,7 +298,7 @@ export function NewGraph() {
 
           <StepCard
             number={2}
-            title="Macchina"
+            title={tr("Macchina")}
             done={hasManual && !reading.busy && Boolean(machine.name.trim())}
             working={reading.busy}
           >
@@ -309,8 +311,8 @@ export function NewGraph() {
             </div>
           </StepCard>
 
-          <StepCard number={3} title="Chi risponde ai dubbi" done>
-            <div className="choices" role="radiogroup" aria-label="Chi risponde ai dubbi">
+          <StepCard number={3} title={tr("Chi risponde ai dubbi")} done>
+            <div className="choices" role="radiogroup" aria-label={tr("Chi risponde ai dubbi")}>
               {REVIEWERS.map((option) => (
                 <label key={option.value} className="choice" data-checked={reviewers === option.value}>
                   <input
@@ -320,33 +322,33 @@ export function NewGraph() {
                     checked={reviewers === option.value}
                     onChange={() => setReviewers(option.value)}
                   />
-                  <span className="strong">{option.label}</span>
-                  <span className="t-small secondary">{option.text}</span>
+                  <span className="strong">{tr(option.label)}</span>
+                  <span className="t-small secondary">{tr(option.text)}</span>
                 </label>
               ))}
             </div>
           </StepCard>
         </div>
 
-        <aside className="card summary" aria-label="Riepilogo">
+        <aside className="card summary" aria-label={tr("Riepilogo")}>
           <header className="card-head">
-            <h2 className="card-title">Riepilogo</h2>
+            <h2 className="card-title">{tr("Riepilogo")}</h2>
           </header>
           <div className="card-body stack" style={{ gap: 12 }}>
             <dl className="facts">
-              <dt>Manuale</dt>
-              <dd>{hasManual ? machine.name || "Senza nome" : "–"}</dd>
-              <dt>Pagine</dt>
+              <dt>{tr("Manuale")}</dt>
+              <dd>{hasManual ? machine.name || tr("Senza nome") : "–"}</dd>
+              <dt>{tr("Pagine")}</dt>
               <dd>{pages ? formatNumber(pages) : "–"}</dd>
-              <dt>Dubbi</dt>
-              <dd>{REVIEWERS.find((option) => option.value === reviewers)?.label}</dd>
-              <dt>Tempo stimato</dt>
+              <dt>{tr("Dubbi")}</dt>
+              <dd>{tr(REVIEWERS.find((option) => option.value === reviewers)?.label ?? "")}</dd>
+              <dt>{tr("Tempo stimato")}</dt>
               <dd>
                 {guess.data?.seconds
                   ? formatRange(guess.data.seconds[0], guess.data.seconds[1], formatMinutes, "min")
                   : "–"}
               </dd>
-              <dt>Costo stimato</dt>
+              <dt>{tr("Costo stimato")}</dt>
               <dd>
                 {guess.data?.cost_usd ? formatRange(guess.data.cost_usd[0], guess.data.cost_usd[1], formatCost, "USD") : "–"}
               </dd>
@@ -357,7 +359,7 @@ export function NewGraph() {
                 {!error && status.active && (
                   <>
                     {" "}
-                    <Link to={liveRoute(status.active.manualId, status.active.versionId)}>Seguila</Link>
+                    <Link to={liveRoute(status.active.manualId, status.active.versionId)}>{tr("Seguila")}</Link>
                   </>
                 )}
               </p>
@@ -369,7 +371,7 @@ export function NewGraph() {
               onClick={start}
             >
               <Icon name="play" />
-              {busy === "start" ? "Avvio in corso" : "Avvia estrazione"}
+              {tr(busy === "start" ? "Avvio in corso" : "Avvia estrazione")}
             </button>
           </div>
         </aside>

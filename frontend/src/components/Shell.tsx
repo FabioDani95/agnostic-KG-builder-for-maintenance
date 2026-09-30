@@ -2,9 +2,10 @@ import { Fragment, type ReactNode, useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { liveRoute } from "../api/client";
 import { useStatus } from "../status/StatusProvider";
-import { APP_NAME } from "../text/it";
+import { appName } from "../text/it";
 import { Icon, type IconName, Logo } from "./Icon";
 import { SettingsDialog } from "./SettingsDialog";
+import { tr, useLang } from "../i18n/i18n";
 
 export interface Crumb {
   to: string;
@@ -24,12 +25,13 @@ const NAV: { to: string; label: string; icon: IconName }[] = [
 function Rail() {
   const status = useStatus();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const { lang, change } = useLang();
   const waiting = status.inbox?.waiting.length ?? 0;
   const active = status.active;
 
   return (
-    <nav className="rail" aria-label="Sezioni">
-      <Link to="/" className="rail-brand" aria-label={`${APP_NAME}: tutti i grafi`} data-tip="Tutti i grafi">
+    <nav className="rail" aria-label={tr("Sezioni")}>
+      <Link to="/" className="rail-brand" aria-label={tr("{app}: tutti i grafi", { app: appName() })} data-tip={tr("Tutti i grafi")}>
         <Logo />
       </Link>
       {NAV.map((item) => {
@@ -39,8 +41,8 @@ function Rail() {
             key={item.to}
             to={item.to}
             className="rail-item"
-            data-tip={count ? `${item.label}: ${count}` : item.label}
-            aria-label={count ? `${item.label}, ${count} in attesa` : item.label}
+            data-tip={count ? `${tr(item.label)}: ${count}` : tr(item.label)}
+            aria-label={count ? tr("{label}, {count} in attesa", { label: tr(item.label), count }) : tr(item.label)}
           >
             <Icon name={item.icon} size={20} />
             {count > 0 && <span className="rail-badge">{count}</span>}
@@ -52,20 +54,29 @@ function Rail() {
         <Link
           to={liveRoute(active.manualId, active.versionId)}
           className="rail-item rail-live"
-          data-tip={`In corso: ${active.name}`}
-          aria-label={`Esecuzione in corso: ${active.name}`}
+          data-tip={tr("In corso: {name}", { name: active.name })}
+          aria-label={tr("Esecuzione in corso: {name}", { name: active.name })}
         >
           <span className="live-lamp" aria-hidden="true" />
         </Link>
       )}
-      <NavLink to="/guida" className="rail-item" data-tip="Guida" aria-label="Guida">
+      <button
+        type="button"
+        className="rail-item rail-lang"
+        data-tip={lang === "it" ? "English" : "Italiano"}
+        aria-label={lang === "it" ? "Switch to English" : "Passa all'italiano"}
+        onClick={() => change(lang === "it" ? "en" : "it")}
+      >
+        {lang.toUpperCase()}
+      </button>
+      <NavLink to="/guida" className="rail-item" data-tip={tr("Guida")} aria-label={tr("Guida")}>
         <Icon name="question" size={20} />
       </NavLink>
       <button
         type="button"
         className="rail-item rail-settings"
-        data-tip="Impostazioni"
-        aria-label="Impostazioni"
+        data-tip={tr("Impostazioni")}
+        aria-label={tr("Impostazioni")}
         aria-haspopup="dialog"
         disabled={!status.settings}
         onClick={() => setSettingsOpen(true)}
@@ -98,7 +109,7 @@ export function Shell({
   children?: ReactNode;
 }) {
   useEffect(() => {
-    document.title = title ? `${title} · ${APP_NAME}` : APP_NAME;
+    document.title = title ? `${tr(title)} · ${appName()}` : appName();
   }, [title]);
 
   return (
@@ -106,19 +117,19 @@ export function Shell({
       <Rail />
       <div className="shell-main">
         <header className="crumbs">
-          <nav className="crumbs-path" aria-label="Percorso">
+          <nav className="crumbs-path" aria-label={tr("Percorso")}>
             {trail.map((crumb) => (
               <Fragment key={crumb.to}>
                 <Link to={crumb.to} className="crumb">
-                  {crumb.label}
+                  {tr(crumb.label)}
                 </Link>
                 <span className="crumb-sep" aria-hidden="true">
                   <Icon name="chevron-right" size={14} />
                 </span>
               </Fragment>
             ))}
-            <h1 className="crumb-title" title={title}>
-              {title}
+            <h1 className="crumb-title" title={tr(title)}>
+              {tr(title)}
             </h1>
           </nav>
           {actions && <div className="crumbs-actions">{actions}</div>}

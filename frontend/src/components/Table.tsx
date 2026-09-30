@@ -1,5 +1,6 @@
 import { type KeyboardEvent, type ReactNode, useMemo } from "react";
 import { Icon } from "./Icon";
+import { tr } from "../i18n/i18n";
 
 export interface Column<T> {
   key: string;
@@ -75,7 +76,7 @@ export function Table<T>({
     }
   };
   return (
-    <div className="table" role="table" aria-label={label}>
+    <div className="table" role="table" aria-label={tr(label)}>
       <div className="table-row table-head" role="row" style={{ gridTemplateColumns: template }}>
         {columns.map((column) => {
           const active = sorting?.key === column.key;
@@ -90,21 +91,21 @@ export function Table<T>({
             >
               {sortable ? (
                 <button type="button" className="th-sort" data-active={active} onClick={() => onSort!(column.key)}>
-                  {column.label}
+                  {tr(column.label)}
                   <Icon
                     name={active ? (sorting!.direction === "asc" ? "sort-up" : "sort-down") : "sortable"}
                     size={12}
                   />
                 </button>
               ) : (
-                column.label
+                tr(column.label)
               )}
             </span>
           );
         })}
         {actions && <span role="columnheader" />}
       </div>
-      {shown.length === 0 && <div className="table-empty">{empty}</div>}
+      {shown.length === 0 && <div className="table-empty">{tr(empty)}</div>}
       {shown.map((row) => (
         <div
           key={rowKey(row)}

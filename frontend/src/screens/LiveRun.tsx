@@ -23,6 +23,7 @@ import {
   TIER_LABEL,
   TYPE_LABEL,
 } from "../text/it";
+import { tr } from "../i18n/i18n";
 
 type Speed = "1" | "4" | "16";
 
@@ -33,24 +34,24 @@ export function stationDetail(station: Station, run: RunState): string {
   if (phase === "waiting") return "";
   switch (station) {
     case "read":
-      return run.pages ? plural(run.pages, "pagina", "pagine") : "Lettura del PDF";
+      return run.pages ? plural(run.pages, "pagina", "pagine") : tr("Lettura del PDF");
     case "map":
       return run.readPages === null
-        ? "Etichetta di ogni pagina"
-        : `${plural(run.readPages, "pagina diagnostica", "pagine diagnostiche")} su ${formatNumber(run.pages)}`;
+        ? tr("Etichetta di ogni pagina")
+        : tr("{pages} su {total}", { pages: plural(run.readPages, "pagina diagnostica", "pagine diagnostiche"), total: formatNumber(run.pages) });
     case "extract":
-      return `Unità ${formatNumber(run.units.done)} di ${formatNumber(run.units.total)}`;
+      return tr("Unità {done} di {total}", { done: formatNumber(run.units.done), total: formatNumber(run.units.total) });
     case "check": {
       const { relations, verified } = counts(run);
-      if (run.stations.check.step === "split_recheck" && phase === "running") return "Nuova verifica dopo l'unione";
-      if (phase === "running" && verified === 0) return "Testimoni per ogni relazione";
-      return `${formatNumber(verified)} verificate su ${formatNumber(relations)}`;
+      if (run.stations.check.step === "split_recheck" && phase === "running") return tr("Nuova verifica dopo l'unione");
+      if (phase === "running" && verified === 0) return tr("Testimoni per ogni relazione");
+      return tr("{verified} verificate su {relations}", { verified: formatNumber(verified), relations: formatNumber(relations) });
     }
     case "merge":
-      return phase === "done" ? `${formatNumber(run.merges)} coppie di nomi unite` : "Un nodo per ogni cosa";
+      return phase === "done" ? tr("{n} coppie di nomi unite", { n: formatNumber(run.merges) }) : tr("Un nodo per ogni cosa");
     case "ask":
-      if (run.finished) return `${formatNumber(run.finished.open_questions)} domande per te`;
-      return run.agentAnswers ? `${formatNumber(run.agentAnswers)} risposte dell'agente` : "Domande sui dubbi";
+      if (run.finished) return tr("{n} domande per te", { n: formatNumber(run.finished.open_questions) });
+      return run.agentAnswers ? tr("{n} risposte dell'agente", { n: formatNumber(run.agentAnswers) }) : tr("Domande sui dubbi");
   }
 }
 
@@ -137,18 +138,18 @@ export function LiveRun() {
         <>
           <dl className="readouts">
             <div>
-              <dt>{live ? "Tempo" : `Replay ×${speed}`}</dt>
+              <dt>{live ? tr("Tempo") : `Replay ×${speed}`}</dt>
               <dd>{formatDuration(elapsed)}</dd>
             </div>
             <div>
-              <dt>{run.costEstimated ? "Costo stimato" : "Costo"}</dt>
+              <dt>{tr(run.costEstimated ? "Costo stimato" : "Costo")}</dt>
               <dd>{formatUsd(run.cost)}</dd>
             </div>
           </dl>
           {!live && !ended && (
             <>
               <SegmentedControl<Speed>
-                label="Velocità del replay"
+                label={tr("Velocità del replay")}
                 value={speed}
                 onChange={setSpeed}
                 options={[
@@ -159,40 +160,40 @@ export function LiveRun() {
               />
               <button type="button" className="button button-bar" onClick={() => setPaused((value) => !value)}>
                 <Icon name={paused ? "play" : "pause"} />
-                {paused ? "Riprendi" : "Pausa"}
+                {tr(paused ? "Riprendi" : "Pausa")}
               </button>
             </>
           )}
           {live && !ended && (
             <button type="button" className="button button-bar" disabled={stopping} onClick={stop}>
               <Icon name="stop" />
-              Ferma
+              {tr("Ferma")}
             </button>
           )}
           {openQuestions > 0 && (
             <Link to={`${base}/domande`} className="button button-bar">
               <Icon name="question" />
-              {openQuestions === 1 ? "1 domanda per te" : `${formatNumber(openQuestions)} domande per te`}
+              {openQuestions === 1 ? tr("1 domanda per te") : tr("{n} domande per te", { n: formatNumber(openQuestions) })}
             </Link>
           )}
           {run.finished && (
             <Link to={base} className="button button-bar">
               <Icon name="graph" />
-              Apri il grafo
+              {tr("Apri il grafo")}
             </Link>
           )}
         </>
       }
     >
       <div className="workspace">
-        <aside className="dock dock-left" aria-label="Stazioni">
+        <aside className="dock dock-left" aria-label={tr("Stazioni")}>
           {unavailable && (
             <section className="panel-section">
-              <p className="alert t-small">Questa esecuzione non si può rigiocare su questo computer: manca il suo stato salvato.</p>
+              <p className="alert t-small">{tr("Questa esecuzione non si può rigiocare su questo computer: manca il suo stato salvato.")}</p>
             </section>
           )}
           <section className="panel-section">
-            <h2 className="panel-title">Stazioni</h2>
+            <h2 className="panel-title">{tr("Stazioni")}</h2>
             <ol className="stations">
               {STATIONS.map((station) => {
                 const phase = run.stations[station].phase;
@@ -200,11 +201,11 @@ export function LiveRun() {
                   <li key={station}>
                     <span className="lamp" data-phase={phase} aria-hidden="true" />
                     <span className={phase === "running" ? "strong" : undefined}>{STATION_LABEL[station]}</span>
-                    <span className="t-small secondary">{PHASE_LABEL[phase]}</span>
+                    <span className="t-small secondary">{tr(PHASE_LABEL[phase])}</span>
                     <span className="station-detail">{stationDetail(station, run)}</span>
                     {station === "extract" && phase !== "waiting" && (
                       <span className="station-progress">
-                        <ProgressBar value={run.units.done} total={run.units.total} label="Unità lette" />
+                        <ProgressBar value={run.units.done} total={run.units.total} label={tr("Unità lette")} />
                       </span>
                     )}
                   </li>
@@ -213,7 +214,7 @@ export function LiveRun() {
             </ol>
           </section>
           <section className="panel-section">
-            <h2 className="panel-title">Legenda</h2>
+            <h2 className="panel-title">{tr("Legenda")}</h2>
             <Legend counts={typeCounts} />
           </section>
         </aside>
@@ -228,25 +229,28 @@ export function LiveRun() {
           />
           {ended && !handoffClosed && (
             <div className="handoff" role="status">
-              <button type="button" className="icon-button handoff-close" aria-label="Chiudi" onClick={() => setHandoffClosed(true)}>
+              <button type="button" className="icon-button handoff-close" aria-label={tr("Chiudi")} onClick={() => setHandoffClosed(true)}>
                 <Icon name="x" />
               </button>
               {run.finished && next ? (
                 <>
                   <p className="handoff-title">
                     <span className="lamp" data-phase="done" aria-hidden="true" />
-                    Estrazione finita
+                    {tr("Estrazione finita")}
                     <span className="mono secondary">
                       {formatDuration(run.t)} · {formatUsd(run.cost)}
                     </span>
                   </p>
                   <p className="secondary">
-                    {formatNumber(run.finished.verified)} relazioni verificate, {formatNumber(run.finished.doubtful)} in dubbio.{" "}
+                    {tr("{verified} relazioni verificate, {doubtful} in dubbio.", {
+                      verified: formatNumber(run.finished.verified),
+                      doubtful: formatNumber(run.finished.doubtful),
+                    })}{" "}
                     {openQuestions > 0
-                      ? `${openQuestions === 1 ? "Una domanda aspetta" : `${formatNumber(openQuestions)} domande aspettano`} te: il grafo non si approva prima.`
-                      : next.urgent
-                        ? "Il grafo aspetta la tua approvazione."
-                        : "Nessuna domanda per te."}
+                      ? openQuestions === 1
+                        ? tr("Una domanda aspetta te: il grafo non si approva prima.")
+                        : tr("{n} domande aspettano te: il grafo non si approva prima.", { n: formatNumber(openQuestions) })
+                      : tr(next.urgent ? "Il grafo aspetta la tua approvazione." : "Nessuna domanda per te.")}
                   </p>
                   <div className="row">
                     <Link to={next.to} className="button button-primary">
@@ -255,7 +259,7 @@ export function LiveRun() {
                     </Link>
                     {next.to !== graphRoute(manualId, versionId) && (
                       <Link to={graphRoute(manualId, versionId)} className="button button-secondary">
-                        Apri il grafo
+                        {tr("Apri il grafo")}
                       </Link>
                     )}
                   </div>
@@ -264,12 +268,12 @@ export function LiveRun() {
                 <>
                   <p className="handoff-title">
                     <span className="lamp" data-phase="failed" aria-hidden="true" />
-                    L'esecuzione si è fermata
+                    {tr("L'esecuzione si è fermata")}
                   </p>
-                  <p className="secondary">{run.failed || "Senza un messaggio."}</p>
+                  <p className="secondary">{run.failed || tr("Senza un messaggio.")}</p>
                   <div className="row">
                     <Link to={manualRoute(manualId)} className="button button-secondary">
-                      Torna al manuale
+                      {tr("Torna al manuale")}
                     </Link>
                   </div>
                 </>
@@ -279,25 +283,25 @@ export function LiveRun() {
         </div>
 
         {node && (
-          <aside className="dock dock-right" aria-label="Nodo">
+          <aside className="dock dock-right" aria-label={tr("Nodo")}>
             <section className="panel-section">
               <div className="panel-head">
                 <h2 className="panel-title">{TYPE_LABEL[node.type] ?? node.type}</h2>
-                <button type="button" className="button button-secondary button-icon" aria-label="Chiudi" onClick={() => setSelected(null)}>
+                <button type="button" className="button button-secondary button-icon" aria-label={tr("Chiudi")} onClick={() => setSelected(null)}>
                   <Icon name="x" />
                 </button>
               </div>
               <p className="panel-name">{node.name}</p>
               {(node.pages ?? []).length > 0 && (
                 <dl className="data-list" style={{ gridTemplateColumns: "72px 1fr" }}>
-                  <dt>Pagine</dt>
+                  <dt>{tr("Pagine")}</dt>
                   <dd className="mono">{node.pages!.join(", ")}</dd>
                 </dl>
               )}
               {(node.pages ?? []).map((number) => (
                 <button key={number} type="button" className="button button-plain" style={{ paddingLeft: 0 }} onClick={() => setPage(number)}>
                   <Icon name="external-link" size={14} />
-                  Apri la pagina {number}
+                  {tr("Apri la pagina {page}", { page: number })}
                 </button>
               ))}
             </section>
@@ -307,25 +311,25 @@ export function LiveRun() {
         <footer className="statusbar">
           <dl>
             <div>
-              <dt>Nodi</dt>
+              <dt>{tr("Nodi")}</dt>
               <dd>{formatNumber(total.nodes)}</dd>
             </div>
             <div>
-              <dt>Relazioni</dt>
+              <dt>{tr("Relazioni")}</dt>
               <dd>{formatNumber(total.relations)}</dd>
             </div>
             <div>
-              <dt>Verificate</dt>
+              <dt>{tr("Verificate")}</dt>
               <dd>{formatNumber(total.verified)}</dd>
             </div>
           </dl>
           <p className="statusbar-log">
             {latest && (
               <>
-                Ultima relazione: <strong>{edgeText(run, latest)}</strong>
+                {tr("Ultima relazione:")} <strong>{edgeText(run, latest)}</strong>
                 {run.edges[latest].pages?.length ? ` · p. ${run.edges[latest].pages!.join(", ")}` : ""}
                 {" · "}
-                {run.edges[latest].derived ? "Aggiunta dal sistema" : TIER_LABEL[run.edges[latest].tier ?? "proposed"]}
+                {run.edges[latest].derived ? tr("Aggiunta dal sistema") : TIER_LABEL[run.edges[latest].tier ?? "proposed"]}
               </>
             )}
           </p>

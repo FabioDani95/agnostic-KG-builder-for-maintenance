@@ -38,6 +38,7 @@ percorso (48 px), così le due barre finiscono sulla stessa linea.
 | Esecuzioni | tutte le esecuzioni di tutti i manuali, con tempo e costo di ciascuna |
 | Ontologia | lo schema fisso che ogni grafo segue |
 | In corso (solo se c'è) | spia blu che pulsa, nome del manuale: porta dritto all'esecuzione |
+| IT / EN (sopra il ?) | lingua dell'interfaccia: tutta l'interfaccia, la guida e le domande passano all'inglese; la scelta resta nel browser. I testi italiani sono la chiave, l'inglese è in `frontend/src/i18n/en.ts`; le domande arrivano dal backend nella lingua chiesta. Restano in italiano i messaggi d'errore del backend; il testo dei manuali resta nella sua lingua |
 | ? (sopra la rotella) | la guida per chi usa l'applicazione, in una pagina dedicata come l'aiuto di DigiFactor: capitoli a sinistra (panoramica, creare un grafo, come lavora l'estrazione, domande e approvazione, leggere il grafo, esecuzioni tempi e costi, ontologia, impostazioni), pagina al centro, «In questa pagina» a destra che segue la lettura; linguaggio da utente, niente codice. Testi in `frontend/src/help/guide.ts` |
 | Rotella (in basso) | impostazioni in una finestra al centro, come in The Fixer: chiave OpenAI (di default quella di `.env`), ragionamento e letture per unità dell'estrazione, modello e ragionamento dell'agente, massimo di domande per persona, relazioni aggiunte dal codice e nomi sui nodi nel grafo; «Annulla» e «Salva» |
 

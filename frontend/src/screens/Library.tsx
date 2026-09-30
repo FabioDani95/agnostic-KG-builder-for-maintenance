@@ -8,6 +8,7 @@ import { Icon } from "../components/Icon";
 import { Shell } from "../components/Shell";
 import { type Column, nextSorting, type Sorting, Table } from "../components/Table";
 import { formatDuration, formatNumber, formatUsd, manualName, statusLabel, versionLabel } from "../text/it";
+import { tr } from "../i18n/i18n";
 
 type Filter = "all" | "review" | "approved";
 
@@ -86,7 +87,7 @@ const COLUMNS: Column<ManualRow>[] = [
     span: 2,
     sort: (row) => (row.latest ? statusLabel(row.latest.status, row.latest.decided_by) : null),
     render: (row) =>
-      row.latest ? <StatusBadge status={row.latest.status} decidedBy={row.latest.decided_by} /> : "Nessuna versione",
+      row.latest ? <StatusBadge status={row.latest.status} decidedBy={row.latest.decided_by} /> : tr("Nessuna versione"),
   },
 ];
 
@@ -94,7 +95,7 @@ function RowActions({ row }: { row: ManualRow }) {
   const latest = row.latest;
   if (!latest) return null;
   const live = latest.status === "running" || latest.status === "failed";
-  const label = latest.status === "running" ? "Segui l'esecuzione" : live ? "Vedi dove si è fermata" : "Apri il grafo";
+  const label = tr(latest.status === "running" ? "Segui l'esecuzione" : live ? "Vedi dove si è fermata" : "Apri il grafo");
   return (
     <Link
       to={live ? liveRoute(row.id, latest.version_id) : graphRoute(row.id, latest.version_id)}
@@ -139,29 +140,29 @@ export function Library() {
     [data, query, filter],
   );
   const empty = query.trim()
-    ? `Nessun manuale corrisponde a «${query.trim()}».`
+    ? tr("Nessun manuale corrisponde a «{query}».", { query: query.trim() })
     : filter === "all"
       ? "Nessun manuale. Carica il primo con «Nuovo grafo»."
       : "Nessun manuale in questo gruppo.";
 
   return (
     <Shell
-      title="Grafi"
+      title={tr("Grafi")}
       actions={
         <Link to="/nuovo" className="button button-primary">
           <Icon name="plus" />
-          Nuovo grafo
+          {tr("Nuovo grafo")}
         </Link>
       }
     >
       <section className="card">
         <header className="card-head">
           <h2 className="card-title">
-            Manuali {data && <span className="card-count">{formatNumber(rows.length)}</span>}
+            {tr("Manuali")} {data && <span className="card-count">{formatNumber(rows.length)}</span>}
           </h2>
           <div className="row">
             <SegmentedControl<Filter>
-              label="Quali manuali mostrare"
+              label={tr("Quali manuali mostrare")}
               value={filter}
               onChange={(value) => update({ mostra: FILTER_PARAM[value] })}
               options={[
@@ -171,18 +172,18 @@ export function Library() {
               ]}
             />
             <SearchField
-              label="Cerca un manuale o una macchina"
+              label={tr("Cerca un manuale o una macchina")}
               value={query}
               onChange={(value) => update({ cerca: value || null })}
               hotkey
             />
           </div>
         </header>
-        {error && <Problem message={`Non riesco a leggere la libreria. ${error}`} onRetry={reload} />}
-        {loading && !data && <Loading label="Carico i manuali" />}
+        {error && <Problem message={`${tr("Non riesco a leggere la libreria.")} ${error}`} onRetry={reload} />}
+        {loading && !data && <Loading label={tr("Carico i manuali")} />}
         {data && (
           <Table
-            label="Manuali"
+            label={tr("Manuali")}
             columns={COLUMNS}
             rows={rows}
             rowKey={(row) => row.id}

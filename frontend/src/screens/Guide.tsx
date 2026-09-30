@@ -2,7 +2,9 @@ import { type MouseEvent, useEffect, useState } from "react";
 import { Link, Navigate, NavLink, useParams } from "react-router-dom";
 import { Icon } from "../components/Icon";
 import { Shell } from "../components/Shell";
-import { type Block, GUIDE } from "../help/guide";
+import { type Block, GUIDE as GUIDE_IT } from "../help/guide";
+import { GUIDE_EN } from "../help/guide.en";
+import { getLang, tr } from "../i18n/i18n";
 
 function Body({ blocks }: { blocks: Block[] }) {
   return (
@@ -27,6 +29,7 @@ function Body({ blocks }: { blocks: Block[] }) {
  * pagina» on the right following the reading. Every chapter has its own address.
  */
 export function Guide() {
+  const GUIDE = getLang() === "en" ? GUIDE_EN : GUIDE_IT;
   const { chapter: slug } = useParams();
   const index = GUIDE.findIndex((chapter) => chapter.slug === slug);
   const chapter = GUIDE[index];
@@ -67,9 +70,9 @@ export function Guide() {
   return (
     <Shell trail={[{ to: `/guida/${GUIDE[0].slug}`, label: "Guida" }]} title={chapter.title}>
       <div className="guide">
-        <nav className="guide-menu" aria-label="Capitoli della guida">
+        <nav className="guide-menu" aria-label={tr("Capitoli della guida")}>
           <div className="guide-menu-inner">
-            <p className="settings-title">Capitoli</p>
+            <p className="settings-title">{tr("Capitoli")}</p>
             <ul>
               {GUIDE.map((item) => (
                 <li key={item.slug}>
@@ -92,9 +95,9 @@ export function Guide() {
               <Body blocks={section.body} />
             </section>
           ))}
-          <nav className="guide-pager" aria-label="Capitolo precedente e successivo">
+          <nav className="guide-pager" aria-label={tr("Capitolo precedente e successivo")}>
             {previous ? (
-              <Link to={`/guida/${previous.slug}`} className="guide-pager-link" aria-label={`Capitolo precedente: ${previous.title}`}>
+              <Link to={`/guida/${previous.slug}`} className="guide-pager-link" aria-label={tr("Capitolo precedente: {title}", { title: previous.title })}>
                 <Icon name="arrow-left" size={18} />
                 <span>{previous.title}</span>
               </Link>
@@ -102,7 +105,7 @@ export function Guide() {
               <span />
             )}
             {next && (
-              <Link to={`/guida/${next.slug}`} className="guide-pager-link guide-pager-next" aria-label={`Capitolo successivo: ${next.title}`}>
+              <Link to={`/guida/${next.slug}`} className="guide-pager-link guide-pager-next" aria-label={tr("Capitolo successivo: {title}", { title: next.title })}>
                 <Icon name="arrow-right" size={18} />
                 <span>{next.title}</span>
               </Link>
@@ -110,9 +113,9 @@ export function Guide() {
           </nav>
         </article>
 
-        <nav className="guide-toc" aria-label="In questa pagina">
+        <nav className="guide-toc" aria-label={tr("In questa pagina")}>
           <div className="guide-menu-inner">
-            <p className="settings-title">In questa pagina</p>
+            <p className="settings-title">{tr("In questa pagina")}</p>
             <ul>
               {chapter.sections.map((section) => (
                 <li key={section.id}>

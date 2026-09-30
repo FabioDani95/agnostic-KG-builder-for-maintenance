@@ -11,6 +11,7 @@ import { Shell } from "../components/Shell";
 import { useStatus } from "../status/StatusProvider";
 import { Graph3D, type GraphHandle, type ViewLink, type ViewNode } from "../graph/Graph3D";
 import { formatNumber, TYPE_LABEL, versionLabel } from "../text/it";
+import { tr } from "../i18n/i18n";
 
 type TierFilter = "all" | "green" | "yellow";
 type Selection = { kind: "node" | "edge"; id: string } | null;
@@ -134,9 +135,9 @@ export function FinishedGraph() {
       actions={
         <>
           <div className="search-wrap">
-            <SearchField label="Cerca un sintomo o un codice" value={query} onChange={setQuery} width="100%" hotkey />
+            <SearchField label={tr("Cerca un sintomo o un codice")} value={query} onChange={setQuery} width="100%" hotkey />
             {results.length > 0 && (
-              <div className="search-results" role="listbox" aria-label="Sintomi e codici trovati">
+              <div className="search-results" role="listbox" aria-label={tr("Sintomi e codici trovati")}>
                 {results.map((node) => (
                   <button
                     key={node.id}
@@ -158,7 +159,7 @@ export function FinishedGraph() {
           </div>
           {versions.length > 0 && (
             <label className="row">
-              <span className="visually-hidden">Versione</span>
+              <span className="visually-hidden">{tr("Versione")}</span>
               <select
                 className="input"
                 style={{ width: 176 }}
@@ -181,24 +182,24 @@ export function FinishedGraph() {
               className="button button-bar"
             >
               <Icon name="question" />
-              {open > 0 ? (open === 1 ? "Rispondi alla domanda" : `Rispondi alle ${formatNumber(open)} domande`) : "Applica le risposte"}
+              {open > 0 ? (open === 1 ? tr("Rispondi alla domanda") : tr("Rispondi alle {n} domande", { n: formatNumber(open) })) : tr("Applica le risposte")}
             </Link>
           )}
           {questions.data?.can_approve && (
             <button type="button" className="button button-primary" disabled={approving} onClick={approve}>
               <Icon name="check" />
-              Approva
+              {tr("Approva")}
             </button>
           )}
         </>
       }
     >
       <div className="workspace">
-        <aside className="dock dock-left" aria-label="Filtri e legenda">
+        <aside className="dock dock-left" aria-label={tr("Filtri e legenda")}>
           <section className="panel-section">
-            <h2 className="panel-title">Relazioni</h2>
+            <h2 className="panel-title">{tr("Relazioni")}</h2>
             <SegmentedControl<TierFilter>
-              label="Quali relazioni mostrare"
+              label={tr("Quali relazioni mostrare")}
               fill
               value={filter}
               onChange={setFilter}
@@ -211,51 +212,51 @@ export function FinishedGraph() {
           </section>
           {root && (
             <section className="panel-section">
-              <h2 className="panel-title">Percorso</h2>
+              <h2 className="panel-title">{tr("Percorso")}</h2>
               <p>{nodes.get(root)?.name}</p>
               <button type="button" className="button button-plain" style={{ paddingLeft: 0 }} onClick={() => setRoot(null)}>
-                Mostra tutto il grafo
+                {tr("Mostra tutto il grafo")}
               </button>
             </section>
           )}
           <section className="panel-section">
-            <h2 className="panel-title">Legenda</h2>
+            <h2 className="panel-title">{tr("Legenda")}</h2>
             <Legend counts={counts} />
           </section>
           <section className="panel-section">
-            <h2 className="panel-title">Versione</h2>
+            <h2 className="panel-title">{tr("Versione")}</h2>
             {current && (
               <dl className="data-list" style={{ gridTemplateColumns: "56px 1fr", alignItems: "center" }}>
-                <dt>Esito</dt>
+                <dt>{tr("Esito")}</dt>
                 <dd>
                   <StatusBadge status={current.status} decidedBy={current.decided_by} />
                 </dd>
-                <dt>Codice</dt>
+                <dt>{tr("Codice")}</dt>
                 <dd className="mono">{current.commit}</dd>
               </dl>
             )}
           </section>
           <section className="panel-section">
-            <h2 className="panel-title">Vista</h2>
+            <h2 className="panel-title">{tr("Vista")}</h2>
             <div className="row">
               <button type="button" className="button button-secondary" onClick={() => view.current?.relayout()}>
                 <Icon name="relayout" />
-                Riordina
+                {tr("Riordina")}
               </button>
               <button type="button" className="button button-secondary" onClick={() => view.current?.fit()}>
                 <Icon name="frame" />
-                Inquadra
+                {tr("Inquadra")}
               </button>
             </div>
           </section>
         </aside>
 
         <div className="canvas">
-          {graph.error && <p className="message" style={{ padding: 16 }}>Non riesco a leggere il grafo: {graph.error}</p>}
+          {graph.error && <p className="message" style={{ padding: 16 }}>{tr("Non riesco a leggere il grafo:")} {graph.error}</p>}
           {graph.loading && !graph.data && (
             <div className="canvas-wait" role="status">
               <Icon name="loader" size={20} className="spin" />
-              <span className="visually-hidden">Carico il grafo</span>
+              <span className="visually-hidden">{tr("Carico il grafo")}</span>
             </div>
           )}
           {graph.data && (
@@ -273,7 +274,7 @@ export function FinishedGraph() {
         </div>
 
         {(selectedEdge || selectedNode) && (
-          <aside ref={evidencePanel} className="dock dock-right" aria-label="Prove">
+          <aside ref={evidencePanel} className="dock dock-right" aria-label={tr("Prove")}>
             {selectedEdge && (
               <EdgeDetail
                 edge={selectedEdge}
@@ -300,21 +301,21 @@ export function FinishedGraph() {
           {graph.data && (
             <dl>
               <div>
-                <dt>Nodi</dt>
+                <dt>{tr("Nodi")}</dt>
                 <dd>{formatNumber(graph.data.nodes.length)}</dd>
               </div>
               <div>
-                <dt>Relazioni</dt>
+                <dt>{tr("Relazioni")}</dt>
                 <dd>{formatNumber(knowledge.length)}</dd>
               </div>
               <div>
-                <dt>Verificate</dt>
+                <dt>{tr("Verificate")}</dt>
                 <dd>{formatNumber(knowledge.filter((edge) => edge.tier === "green").length)}</dd>
               </div>
             </dl>
           )}
           <p className="statusbar-log">
-            {!selection && graph.data && "Scegli un nodo o una relazione per vedere le prove."}
+            {!selection && graph.data && tr("Scegli un nodo o una relazione per vedere le prove.")}
           </p>
         </footer>
       </div>

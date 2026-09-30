@@ -4,6 +4,7 @@ import type { Preferences, Reasoning } from "../api/types";
 import { SegmentedControl } from "./Controls";
 import { Problem } from "./Feedback";
 import { Icon } from "./Icon";
+import { tr } from "../i18n/i18n";
 
 const REASONING_LABEL: Record<Reasoning, string> = { none: "Nessuno", low: "Basso", medium: "Medio", high: "Alto" };
 
@@ -56,7 +57,7 @@ export function SettingsDialog({
   }, []);
 
   const change = (values: Partial<Draft>) => setDraft((current) => ({ ...current, ...values }));
-  const reasoning = settings.choices.reasoning.map((value) => ({ value, label: REASONING_LABEL[value] }));
+  const reasoning = settings.choices.reasoning.map((value) => ({ value, label: tr(REASONING_LABEL[value]) }));
   const save = async () => {
     setSaving(true);
     setProblem(null);
@@ -75,9 +76,9 @@ export function SettingsDialog({
     <dialog ref={dialog} className="modal" aria-labelledby="settings-heading" onClose={onClose}>
       <header className="modal-head">
         <h2 id="settings-heading" className="card-title">
-          Impostazioni
+          {tr("Impostazioni")}
         </h2>
-        <button type="button" className="icon-button" aria-label="Chiudi" onClick={onClose}>
+        <button type="button" className="icon-button" aria-label={tr("Chiudi")} onClick={onClose}>
           <Icon name="x" />
         </button>
       </header>
@@ -85,8 +86,8 @@ export function SettingsDialog({
       <div className="modal-body">
         {problem && <Problem message={problem} />}
 
-        <Group title="OpenAI">
-          <Row label="Chiave" htmlFor="settings-key">
+        <Group title={tr("OpenAI")}>
+          <Row label={tr("Chiave")} htmlFor="settings-key">
             <div className="row">
               <input
                 id="settings-key"
@@ -96,10 +97,10 @@ export function SettingsDialog({
                 value={key}
                 placeholder={
                   keySource === "custom"
-                    ? `Chiave impostata qui ${settings.key.hint ?? ""}`
+                    ? tr("Chiave impostata qui {hint}", { hint: settings.key.hint ?? "" })
                     : settings.key.source === "none" && !settings.key.hint
-                      ? "Nessuna chiave"
-                      : `Chiave del file .env ${settings.key.source === "env" ? settings.key.hint ?? "" : ""}`
+                      ? tr("Nessuna chiave")
+                      : tr("Chiave del file .env {hint}", { hint: settings.key.source === "env" ? settings.key.hint ?? "" : "" })
                 }
                 onChange={(event) => {
                   setKey(event.target.value);
@@ -107,27 +108,27 @@ export function SettingsDialog({
                 }}
               />
               {settings.key.source === "custom" && !clearKey && (
-                <button type="button" className="button button-plain" onClick={() => setClearKey(true)} title="Usa la chiave del file .env">
-                  Usa .env
+                <button type="button" className="button button-plain" onClick={() => setClearKey(true)} title={tr("Usa la chiave del file .env")}>
+                  {tr("Usa .env")}
                 </button>
               )}
             </div>
           </Row>
         </Group>
 
-        <Group title="Estrazione">
-          <Row label="Ragionamento">
+        <Group title={tr("Estrazione")}>
+          <Row label={tr("Ragionamento")}>
             <SegmentedControl<Reasoning>
-              label="Ragionamento dell'estrazione"
+              label={tr("Ragionamento dell'estrazione")}
               fill
               value={draft.reasoning}
               onChange={(value) => change({ reasoning: value })}
               options={reasoning}
             />
           </Row>
-          <Row label="Letture per unità">
+          <Row label={tr("Letture per unità")}>
             <SegmentedControl<string>
-              label="Letture per unità"
+              label={tr("Letture per unità")}
               fill
               value={String(draft.reads)}
               onChange={(value) => change({ reads: Number(value) })}
@@ -136,8 +137,8 @@ export function SettingsDialog({
           </Row>
         </Group>
 
-        <Group title="Agente">
-          <Row label="Modello" htmlFor="settings-agent-model">
+        <Group title={tr("Agente")}>
+          <Row label={tr("Modello")} htmlFor="settings-agent-model">
             <select
               id="settings-agent-model"
               className="input"
@@ -151,9 +152,9 @@ export function SettingsDialog({
               ))}
             </select>
           </Row>
-          <Row label="Ragionamento">
+          <Row label={tr("Ragionamento")}>
             <SegmentedControl<Reasoning>
-              label="Ragionamento dell'agente"
+              label={tr("Ragionamento dell'agente")}
               fill
               value={draft.agent_reasoning}
               onChange={(value) => change({ agent_reasoning: value })}
@@ -162,10 +163,10 @@ export function SettingsDialog({
           </Row>
         </Group>
 
-        <Group title="Domande">
-          <Row label="Massimo per persona">
+        <Group title={tr("Domande")}>
+          <Row label={tr("Massimo per persona")}>
             <SegmentedControl<string>
-              label="Massimo di domande per persona"
+              label={tr("Massimo di domande per persona")}
               fill
               value={String(draft.human_questions)}
               onChange={(value) => change({ human_questions: Number(value) })}
@@ -174,29 +175,29 @@ export function SettingsDialog({
           </Row>
         </Group>
 
-        <Group title="Grafo">
+        <Group title={tr("Grafo")}>
           <label className="check">
             <input
               type="checkbox"
               checked={draft.show_code_relations}
               onChange={(event) => change({ show_code_relations: event.target.checked })}
             />
-            Relazioni aggiunte dal codice
+            {tr("Relazioni aggiunte dal codice")}
           </label>
           <label className="check">
             <input type="checkbox" checked={draft.node_labels} onChange={(event) => change({ node_labels: event.target.checked })} />
-            Nomi sempre visibili sui nodi
+            {tr("Nomi sempre visibili sui nodi")}
           </label>
         </Group>
       </div>
 
       <footer className="modal-foot">
         <button type="button" className="button button-secondary" onClick={onClose} disabled={saving}>
-          Annulla
+          {tr("Annulla")}
         </button>
         <button type="button" className="button button-primary" onClick={save} disabled={saving}>
           {saving && <Icon name="loader" className="spin" />}
-          Salva
+          {tr("Salva")}
         </button>
       </footer>
     </dialog>

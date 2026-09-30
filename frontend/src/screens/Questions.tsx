@@ -6,6 +6,7 @@ import { ProgressBar } from "../components/Controls";
 import { Shell } from "../components/Shell";
 import { PageDialog } from "../components/PageDialog";
 import { formatNumber, pageRef } from "../text/it";
+import { getLang, tr } from "../i18n/i18n";
 
 function QuestionCard({
   question,
@@ -35,7 +36,7 @@ function QuestionCard({
       {question.source.length > 0 && (
         <section>
           <h3 className="card-title" style={{ marginBottom: 8 }}>
-            Nel manuale
+            {tr("Nel manuale")}
           </h3>
           <ul className="quote-list">
             {question.source.map((item) => (
@@ -50,7 +51,7 @@ function QuestionCard({
           <div className="row">
             {pages.map((page) => (
               <button key={page} type="button" className="button button-plain" style={{ paddingLeft: 0 }} onClick={() => onOpenPage(page)}>
-                Apri la pagina {page}
+                {tr("Apri la pagina {page}", { page: page })}
               </button>
             ))}
           </div>
@@ -59,7 +60,7 @@ function QuestionCard({
 
       <section>
         <h3 className="card-title" style={{ marginBottom: 8 }}>
-          Il sistema propone
+          {tr("Il sistema propone")}
         </h3>
         <ol>
           {question.claims_it.map((claim, index) => (
@@ -67,7 +68,7 @@ function QuestionCard({
               {partial ? (
                 <input
                   type="checkbox"
-                  aria-label={`Tieni l'affermazione ${index + 1}`}
+                  aria-label={tr("Tieni l'affermazione {n}", { n: index + 1 })}
                   checked={keep.includes(index + 1)}
                   onChange={(event) =>
                     setKeep(event.target.checked ? [...keep, index + 1] : keep.filter((value) => value !== index + 1))
@@ -83,7 +84,7 @@ function QuestionCard({
           ))}
         </ol>
         <details>
-          <summary>Dettagli</summary>
+          <summary>{tr("Dettagli")}</summary>
           <ol className="t-small secondary">
             {question.proposal.map((line, index) => (
               <li key={index} style={{ padding: "8px 0" }}>
@@ -96,7 +97,7 @@ function QuestionCard({
 
       {writing && (
         <div className="field">
-          <label htmlFor="answer-text">La tua trascrizione</label>
+          <label htmlFor="answer-text">{tr("La tua trascrizione")}</label>
           <textarea id="answer-text" className="textarea" value={text} onChange={(event) => setText(event.target.value)} />
         </div>
       )}
@@ -104,9 +105,9 @@ function QuestionCard({
       <div className="actions">
         {partial ? (
           <>
-            <span className="secondary">Scegli i numeri da tenere.</span>
+            <span className="secondary">{tr("Scegli i numeri da tenere.")}</span>
             <button type="button" className="button button-secondary" onClick={() => setPartial(false)}>
-              Annulla
+              {tr("Annulla")}
             </button>
             <button
               type="button"
@@ -114,13 +115,13 @@ function QuestionCard({
               disabled={busy || keep.length === 0}
               onClick={() => partialOption && onAnswer(partialOption.option_id, keep, "")}
             >
-              Tieni le affermazioni scelte
+              {tr("Tieni le affermazioni scelte")}
             </button>
           </>
         ) : writing ? (
           <>
             <button type="button" className="button button-secondary" onClick={() => setWriting(null)}>
-              Annulla
+              {tr("Annulla")}
             </button>
             <button
               type="button"
@@ -128,7 +129,7 @@ function QuestionCard({
               disabled={busy || !text.trim()}
               onClick={() => onAnswer(writing, [], text)}
             >
-              Invia la trascrizione
+              {tr("Invia la trascrizione")}
             </button>
           </>
         ) : (
@@ -166,7 +167,7 @@ export function Questions() {
   const navigate = useNavigate();
   const base = `/manuali/${encodeURIComponent(manualId)}/versioni/${encodeURIComponent(versionId)}`;
   const manual = useApi<Manual>(`/api/manuals/${encodeURIComponent(manualId)}`);
-  const { data, error, reload } = useApi<QuestionsData>(`${versionPath(manualId, versionId)}/questions`);
+  const { data, error, reload } = useApi<QuestionsData>(`${versionPath(manualId, versionId)}/questions?lang=${getLang()}`);
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
   const [page, setPage] = useState<number | null>(null);
@@ -216,29 +217,28 @@ export function Questions() {
         { to: `/manuali/${encodeURIComponent(manualId)}`, label: manual.data?.machine.name ?? "Manuale" },
         { to: base, label: "Grafo" },
       ]}
-      title="Domande per te"
+      title={tr("Domande per te")}
       actions={
         data &&
         current && (
           <div className="row" style={{ gap: 12, marginRight: 8 }}>
             <span className="t-small">
-              Domanda <span className="mono">{formatNumber(position)}</span> di <span className="mono">{formatNumber(total)}</span>
+              {tr("Domanda")} <span className="mono">{formatNumber(position)}</span> {tr("di")} <span className="mono">{formatNumber(total)}</span>
             </span>
             <span style={{ width: 160 }}>
-              <ProgressBar value={position - 1} total={total} label="Domande a cui hai risposto" />
+              <ProgressBar value={position - 1} total={total} label={tr("Domande a cui hai risposto")} />
             </span>
           </div>
         )
       }
     >
         <div className="reading">
-          {error && <p className="message">Non riesco a leggere le domande: {error}</p>}
+          {error && <p className="message">{tr("Non riesco a leggere le domande:")} {error}</p>}
           {data && current && (
             <>
               {data.copy_needed && (
                 <p className="message" style={{ marginBottom: 16 }}>
-                  Questa versione viene dalla campagna e non si modifica: la prima risposta ne crea una copia in cui
-                  continui a rispondere.
+                  {tr("Questa versione viene dalla campagna e non si modifica: la prima risposta ne crea una copia in cui continui a rispondere.")}
                 </p>
               )}
               <QuestionCard
@@ -254,33 +254,37 @@ export function Questions() {
             <>
               <div className="stack">
                 {total === 0 ? (
-                  <p>Non ci sono domande per te in questa versione.</p>
+                  <p>{tr("Non ci sono domande per te in questa versione.")}</p>
                 ) : (
                   <p>
-                    Hai risposto a {total === 1 ? "1 domanda" : `${formatNumber(total)} domande`}.
-                    {data.unapplied > 0 ? " Applicale per aggiornare il grafo." : ""}
+                    {total === 1 ? tr("Hai risposto a 1 domanda.") : tr("Hai risposto a {n} domande.", { n: formatNumber(total) })}
+                    {data.unapplied > 0 ? ` ${tr("Applicale per aggiornare il grafo.")}` : ""}
                   </p>
                 )}
                 {data.unverified.length > 0 && (
                   <p className="secondary">
-                    Oltre il limite di {data.budget} restano{" "}
-                    {data.unverified.length === 1 ? "1 domanda senza risposta" : `${formatNumber(data.unverified.length)} domande senza risposta`}:
-                    le loro relazioni sono nel grafo ma fuori dalla parte affidabile.
+                    {tr("Oltre il limite di {limit} restano {left}: le loro relazioni sono nel grafo ma fuori dalla parte affidabile.", {
+                      limit: data.budget,
+                      left:
+                        data.unverified.length === 1
+                          ? tr("1 domanda senza risposta")
+                          : tr("{n} domande senza risposta", { n: formatNumber(data.unverified.length) }),
+                    })}
                   </p>
                 )}
                 <div className="actions">
                   {data.unapplied > 0 && (
                     <button type="button" className="button button-primary" disabled={busy} onClick={() => act("apply")}>
-                      Applica le risposte
+                      {tr("Applica le risposte")}
                     </button>
                   )}
                   {data.unapplied === 0 && data.can_approve && (
                     <>
                       <button type="button" className="button button-secondary" disabled={busy} onClick={() => act("approve", { decision: "reject" })}>
-                        Rifiuta
+                        {tr("Rifiuta")}
                       </button>
                       <button type="button" className="button button-primary" disabled={busy} onClick={() => act("approve", { decision: "approve" })}>
-                        Approva il grafo
+                        {tr("Approva il grafo")}
                       </button>
                     </>
                   )}

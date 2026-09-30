@@ -4,6 +4,7 @@ import * as THREE from "three";
 import type { Tier } from "../api/types";
 import { TYPE_LABEL } from "../text/it";
 import { DIMMED, EDGE_STYLE, edgeLook, NODE_STYLE } from "./style";
+import { tr } from "../i18n/i18n";
 
 export interface ViewNode {
   id: string;
@@ -343,5 +344,5 @@ export function Graph3D({
     }
   });
 
-  return <div ref={container} className="stage-graph" aria-label="Grafo 3D" role="img" />;
+  return <div ref={container} className="stage-graph" aria-label={tr("Grafo 3D")} role="img" />;
 }

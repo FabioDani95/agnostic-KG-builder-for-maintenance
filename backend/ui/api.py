@@ -242,7 +242,7 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
         return StreamingResponse(paced(replayed, after, speed), media_type="text/event-stream", headers=headers)
 
     @app.get("/api/manuals/{manual_id}/versions/{version_id}/questions")
-    def questions(manual_id: str, version_id: str) -> dict:
+    def questions(manual_id: str, version_id: str, lang: str = Query("it", pattern="^(it|en)$")) -> dict:
         folder = run_dir(manual_id, version_id)
         is_campaign = not folder.is_relative_to(settings.workspace)
         version = catalog.find(manual_id, version_id)
@@ -259,17 +259,17 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
                           if question.question_id not in published and question.kind.value != "graph_approval"]
             answered = []
             done = [question for question in store.questions if question.question_id in store.answers]
-            for view in question_views(folder, done):
+            for view in question_views(folder, done, lang):
                 given = store.answers[view.question_id]
                 answered.append({**view.model_dump(), "answer": {"option_id": given.option_id, "text": given.text,
                                                                  "keep": given.edits.get("keep", [])}})
             unapplied = len(store.unapplied())
         awaiting = version.status == "awaiting_approval"
         return {"budget": question_budget(folder), "editable": not is_campaign, "copy_needed": is_campaign,
-                "open": [view.model_dump() for view in question_views(folder, open_)],
+                "open": [view.model_dump() for view in question_views(folder, open_, lang)],
                 "answered": answered, "unapplied": unapplied, "awaiting_approval": awaiting,
                 "can_approve": awaiting and not is_campaign and not open_ and not unapplied,
-                "unverified": [view.model_dump() for view in question_views(folder, unverified)]}
+                "unverified": [view.model_dump() for view in question_views(folder, unverified, lang)]}
 
     @app.post("/api/manuals/{manual_id}/versions/{version_id}/questions/{question_id}/answer")
     async def answer(manual_id: str, version_id: str, question_id: str, body: AnswerIn) -> dict:

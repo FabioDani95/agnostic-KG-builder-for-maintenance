@@ -10,6 +10,7 @@ import { OntologyScreen } from "./screens/OntologyScreen";
 import { Questions } from "./screens/Questions";
 import { Runs } from "./screens/Runs";
 import { StatusProvider } from "./status/StatusProvider";
+import { tr } from "./i18n/i18n";
 
 // The graph screens carry three.js: they load only when opened.
 const FinishedGraph = lazy(() => import("./screens/FinishedGraph").then((module) => ({ default: module.FinishedGraph })));
@@ -18,11 +19,11 @@ const stage = (element: React.ReactNode) => <Suspense fallback={<div className="
 
 function NotFound() {
   return (
-    <Shell title="Pagina non trovata">
+    <Shell title={tr("Pagina non trovata")}>
       <div className="empty">
-        <p>Questa pagina non esiste: forse il collegamento è vecchio.</p>
+        <p>{tr("Questa pagina non esiste: forse il collegamento è vecchio.")}</p>
         <Link to="/" className="button button-secondary">
-          Torna ai grafi
+          {tr("Torna ai grafi")}
         </Link>
       </div>
     </Shell>

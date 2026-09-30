@@ -1,10 +1,11 @@
 import { NODE_STYLE, NODE_TYPES } from "../graph/style";
 import { formatNumber, TYPE_LABEL } from "../text/it";
+import { tr } from "../i18n/i18n";
 
 /** Key of the graph colors: the one place outside the graph where colored circles appear. */
 export function Legend({ counts }: { counts?: Record<string, number> }) {
   return (
-    <ul className="legend t-small" aria-label="Legenda dei tipi di nodo">
+    <ul className="legend t-small" aria-label={tr("Legenda dei tipi di nodo")}>
       {NODE_TYPES.map((type) => (
         <li key={type}>
           <span className="legend-mark" style={{ background: NODE_STYLE[type].color }} aria-hidden="true" />

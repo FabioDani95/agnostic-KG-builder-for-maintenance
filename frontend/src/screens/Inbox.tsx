@@ -9,6 +9,7 @@ import { type Column, Table } from "../components/Table";
 import { nextStep } from "../flow/steps";
 import { useStatus } from "../status/StatusProvider";
 import { formatNumber, manualName, versionLabel } from "../text/it";
+import { tr } from "../i18n/i18n";
 
 const manualColumn: Column<ManualRow> = {
   key: "manuale",
@@ -70,7 +71,7 @@ const DOUBT_COLUMNS: Column<ManualRow>[] = [
     span: 4,
     render: () => (
       <span className="next">
-        Rivedi i dubbi
+        {tr("Rivedi i dubbi")}
         <Icon name="arrow-right" size={14} />
       </span>
     ),
@@ -87,28 +88,28 @@ export function Inbox() {
   const open = (row: ManualRow) => navigate(nextStep(row.id, row.latest!).to);
 
   return (
-    <Shell title="Tocca a te">
-      {error && <Problem message={`Non riesco a leggere i grafi. ${error}`} onRetry={refresh} />}
-      {!inbox && !manuals && !error && <Loading label="Cerco quello che aspetta te" />}
+    <Shell title={tr("Tocca a te")}>
+      {error && <Problem message={`${tr("Non riesco a leggere i grafi.")} ${error}`} onRetry={refresh} />}
+      {!inbox && !manuals && !error && <Loading label={tr("Cerco quello che aspetta te")} />}
       {inbox && (
         <div className="stack">
           <section className="card">
             <header className="card-head">
               <h2 className="card-title">
-                Aspettano te <span className="card-count">{formatNumber(inbox.waiting.length)}</span>
+                {tr("Aspettano te")} <span className="card-count">{formatNumber(inbox.waiting.length)}</span>
               </h2>
-              <span className="t-small secondary">L'esecuzione resta ferma finché non rispondi o approvi.</span>
+              <span className="t-small secondary">{tr("L'esecuzione resta ferma finché non rispondi o approvi.")}</span>
             </header>
             {inbox.waiting.length === 0 ? (
               <div className="empty">
-                <p>Nessun grafo aspetta te.</p>
+                <p>{tr("Nessun grafo aspetta te.")}</p>
                 <Link to="/nuovo" className="button button-secondary">
                   <Icon name="plus" />
-                  Nuovo grafo
+                  {tr("Nuovo grafo")}
                 </Link>
               </div>
             ) : (
-              <Table label="Aspettano te" columns={STEP_COLUMNS} rows={inbox.waiting} rowKey={(row) => row.id} onOpen={open} empty="" />
+              <Table label={tr("Aspettano te")} columns={STEP_COLUMNS} rows={inbox.waiting} rowKey={(row) => row.id} onOpen={open} empty="" />
             )}
           </section>
 
@@ -116,24 +117,24 @@ export function Inbox() {
             <section className="card">
               <header className="card-head">
                 <h2 className="card-title">
-                  In corso <span className="card-count">{formatNumber(inbox.running.length)}</span>
+                  {tr("In corso")} <span className="card-count">{formatNumber(inbox.running.length)}</span>
                 </h2>
               </header>
-              <Table label="In corso" columns={STEP_COLUMNS} rows={inbox.running} rowKey={(row) => row.id} onOpen={open} empty="" />
+              <Table label={tr("In corso")} columns={STEP_COLUMNS} rows={inbox.running} rowKey={(row) => row.id} onOpen={open} empty="" />
             </section>
           )}
 
           <section className="card">
             <header className="card-head">
               <h2 className="card-title">
-                Dubbi nei grafi approvati <span className="card-count">{formatNumber(inbox.doubts.length)}</span>
+                {tr("Dubbi nei grafi approvati")} <span className="card-count">{formatNumber(inbox.doubts.length)}</span>
               </h2>
               <span className="t-small secondary">
-                Non bloccano nulla. In un grafo della campagna la prima risposta ne crea una copia.
+                {tr("Non bloccano nulla. In un grafo della campagna la prima risposta ne crea una copia.")}
               </span>
             </header>
             <Table
-              label="Dubbi nei grafi approvati"
+              label={tr("Dubbi nei grafi approvati")}
               columns={DOUBT_COLUMNS}
               rows={inbox.doubts}
               rowKey={(row) => row.id}

@@ -8,6 +8,7 @@ import { Shell } from "../components/Shell";
 import { type Column, Table } from "../components/Table";
 import { lifecycle, nextStep, type Step } from "../flow/steps";
 import { formatDate, formatDuration, formatNumber, formatShortDate, formatUsd, versionLabel } from "../text/it";
+import { tr } from "../i18n/i18n";
 
 const COLUMNS: Column<Version>[] = [
   {
@@ -43,7 +44,7 @@ const COLUMNS: Column<Version>[] = [
 
 export function Steps({ steps }: { steps: Step[] }) {
   return (
-    <ol className="steps" aria-label="A che punto è il grafo">
+    <ol className="steps" aria-label={tr("A che punto è il grafo")}>
       {steps.map((step) => (
         <li key={step.key} className="step" data-state={step.state}>
           <span className="step-lamp" aria-hidden="true">
@@ -67,34 +68,34 @@ function CurrentVersion({ manualId, version }: { manualId: string; version: Vers
     <section className="card">
       <header className="card-head">
         <h2 className="card-title">
-          Versione attuale <span className="card-count">{versionLabel(version)}</span>
+          {tr("Versione attuale")} <span className="card-count">{versionLabel(version)}</span>
         </h2>
         <StatusBadge status={version.status} decidedBy={version.decided_by} />
       </header>
       <Steps steps={lifecycle(version)} />
       <dl className="figures">
         <div>
-          <dt>Verificate</dt>
+          <dt>{tr("Verificate")}</dt>
           <dd>{formatNumber(version.verified)}</dd>
         </div>
         <div>
-          <dt>In dubbio</dt>
+          <dt>{tr("In dubbio")}</dt>
           <dd>{formatNumber(version.doubtful)}</dd>
         </div>
         <div>
-          <dt>Escluse</dt>
+          <dt>{tr("Escluse")}</dt>
           <dd>{formatNumber(version.excluded)}</dd>
         </div>
         <div>
-          <dt>Domande</dt>
+          <dt>{tr("Domande")}</dt>
           <dd>{formatNumber(version.open_questions)}</dd>
         </div>
         <div>
-          <dt>Durata</dt>
+          <dt>{tr("Durata")}</dt>
           <dd>{version.seconds ? formatDuration(version.seconds) : "–"}</dd>
         </div>
         <div>
-          <dt>Costo</dt>
+          <dt>{tr("Costo")}</dt>
           <dd>{version.cost_usd != null ? formatUsd(version.cost_usd) : "–"}</dd>
         </div>
       </dl>
@@ -106,13 +107,13 @@ function CurrentVersion({ manualId, version }: { manualId: string; version: Vers
         {!opensGraph && hasGraph && (
           <Link to={graphRoute(manualId, version.version_id)} className="button button-secondary">
             <Icon name="graph" />
-            Apri il grafo
+            {tr("Apri il grafo")}
           </Link>
         )}
         {version.replay && hasGraph && (
           <Link to={liveRoute(manualId, version.version_id)} className="button button-plain">
             <Icon name="play" />
-            Rigioca l'esecuzione
+            {tr("Rigioca l'esecuzione")}
           </Link>
         )}
         <span className="t-small secondary" style={{ marginLeft: "auto" }}>
@@ -143,39 +144,39 @@ export function ManualScreen() {
         manual && (
           <Link to={`/nuovo?manuale=${encodeURIComponent(manualId)}`} className="button button-bar">
             <Icon name="plus" />
-            Nuova versione
+            {tr("Nuova versione")}
           </Link>
         )
       }
     >
-      {error && <Problem message={`Non trovo questo manuale. ${error}`} onRetry={reload} />}
-      {loading && !manual && <Loading label="Carico il manuale" />}
+      {error && <Problem message={`${tr("Non trovo questo manuale.")} ${error}`} onRetry={reload} />}
+      {loading && !manual && <Loading label={tr("Carico il manuale")} />}
       {manual && (
         <div className="stack">
           <section className="card">
             <header className="card-head">
-              <h2 className="card-title">Macchina</h2>
+              <h2 className="card-title">{tr("Macchina")}</h2>
             </header>
             <dl className="specs">
               <div>
-                <dt>Marca</dt>
+                <dt>{tr("Marca")}</dt>
                 <dd>{manual.machine.brand}</dd>
               </div>
               <div>
-                <dt>Modello</dt>
+                <dt>{tr("Modello")}</dt>
                 <dd>{manual.machine.model}</dd>
               </div>
               <div>
-                <dt>Tipo</dt>
+                <dt>{tr("Tipo")}</dt>
                 <dd title={manual.machine.type}>{manual.machine.type}</dd>
               </div>
               <div>
-                <dt>Pagine</dt>
+                <dt>{tr("Pagine")}</dt>
                 <dd className="mono">{formatNumber(manual.pages)}</dd>
               </div>
               <div>
-                <dt>Origine</dt>
-                <dd>{manual.origin === "campaign" ? "Campagna di valutazione" : "Caricato dall'interfaccia"}</dd>
+                <dt>{tr("Origine")}</dt>
+                <dd>{tr(manual.origin === "campaign" ? "Campagna di valutazione" : "Caricato dall'interfaccia")}</dd>
               </div>
             </dl>
           </section>
@@ -185,10 +186,10 @@ export function ManualScreen() {
           ) : (
             <section className="card">
               <div className="empty">
-                <p>Questo manuale non ha ancora un grafo.</p>
+                <p>{tr("Questo manuale non ha ancora un grafo.")}</p>
                 <Link to={`/nuovo?manuale=${encodeURIComponent(manualId)}`} className="button button-primary">
                   <Icon name="play" />
-                  Avvia la prima esecuzione
+                  {tr("Avvia la prima esecuzione")}
                 </Link>
               </div>
             </section>
@@ -197,11 +198,11 @@ export function ManualScreen() {
           <section className="card">
             <header className="card-head">
               <h2 className="card-title">
-                Versioni <span className="card-count">{formatNumber(manual.versions.length)}</span>
+                {tr("Versioni")} <span className="card-count">{formatNumber(manual.versions.length)}</span>
               </h2>
             </header>
             <Table
-              label="Versioni"
+              label={tr("Versioni")}
               columns={COLUMNS}
               rows={manual.versions}
               rowKey={(row) => row.version_id}
@@ -213,8 +214,8 @@ export function ManualScreen() {
                   <Link
                     to={liveRoute(manualId, row.version_id)}
                     className="icon-button"
-                    aria-label={`Rigioca l'esecuzione ${versionLabel(row)}`}
-                    title="Rigioca l'esecuzione"
+                    aria-label={`${tr("Rigioca l'esecuzione")} ${versionLabel(row)}`}
+                    title={tr("Rigioca l'esecuzione")}
                   >
                     <Icon name="play" />
                   </Link>

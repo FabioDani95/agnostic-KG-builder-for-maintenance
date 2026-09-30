@@ -90,3 +90,17 @@ def test_one_sentence_per_relation_type():
         "Se la causa è «Worn packings», si interviene con «Replace packings» (una riparazione). Vale se: Pump is cold."
     assert relation_sentence(relation("AFFECTS", cause, part)) == \
         "La causa «Worn packings» riguarda il componente «Packings»."
+
+
+def test_the_same_sentences_in_english():
+    symptom = {"type": "Symptom", "name": "No output", "stated": True}
+    cause = {"type": "FailureMode", "name": "Worn packings", "stated": True}
+    unnamed = {"type": "FailureMode", "name": "Low voltage", "stated": False}
+    action = {"type": "CorrectiveAction", "name": "Replace packings", "kind": "repair", "stated": True}
+    code = {"type": "ErrorCode", "name": "E-01", "stated": True}
+    assert relation_sentence(relation("MAY_INDICATE", symptom, cause), "en") == \
+        "If “No output” happens, a possible cause is “Worn packings”."
+    assert relation_sentence(relation("INDICATES", code, unnamed), "en") == \
+        "The code “E-01” indicates “Low voltage” (cause not written in the manual)."
+    assert relation_sentence(relation("RESOLVED_BY", cause, action, [("if", "Pump is cold.")]), "en") == \
+        "If the cause is “Worn packings”, the fix is “Replace packings” (a repair). Applies if: Pump is cold."
