@@ -246,6 +246,8 @@ Base `http://127.0.0.1:8765/api`. Solo localhost, nessuna autenticazione.
 | Metodo e percorso | Che cosa |
 | --- | --- |
 | `GET /manuals` | tabella della libreria |
+| `GET /runs` | tutte le versioni di tutti i manuali, dalla più recente: il registro delle esecuzioni |
+| `GET /ontology` | lo schema fisso letto da `backend/kg_v3/ontology.py`: tipi, proprietà, relazioni, radice |
 | `GET /manuals/{m}` | scheda del manuale e sue versioni |
 | `GET /manuals/{m}/versions/{v}/graph` | `graph.json` (compresso con gzip) |
 | `GET /manuals/{m}/versions/{v}/report` | `report.json` |
@@ -257,6 +259,7 @@ Base `http://127.0.0.1:8765/api`. Solo localhost, nessuna autenticazione.
 | `GET /manuals/{m}/segments/{segment_id}` | testo, pagina e riquadro di un segmento |
 | `GET /manuals/{m}/pages/{n}.png?scale=2` | immagine di una pagina |
 | `POST /uploads` | carica un PDF: pagine, dimensione, sha256, eventuale duplicato |
+| `POST /uploads/{id}/machine` | legge macchina, marca, modello e tipo dalle prime pagine con un modello leggero (`gpt-6-luna` senza ragionamento, testo delle prime pagine, una alla volta finché bastano 1500 caratteri e al massimo 5, o la copertina come immagine se il PDF è scansionato); passa dal registro con un tetto di 0,01 USD, run id `ui_identify_…`; il risultato resta accanto al caricamento |
 | `POST /manuals` | crea un manuale in `workspace/` da un caricamento e dai campi |
 | `POST /manuals/{m}/runs` | avvia un'esecuzione reale |
 | `POST /manuals/{m}/versions/{v}/stop` | ferma l'esecuzione; lo stato resta e si può riprendere |
@@ -460,9 +463,12 @@ frontend/
 
 | Rotta | Schermata |
 | --- | --- |
-| `/` | Libreria |
-| `/manuali/:m` | Manuale e versioni |
-| `/nuovo` | Nuovo grafo |
+| `/` | Libreria (filtro, ricerca e ordinamento nell'indirizzo: `?mostra=da-rivedere&cerca=pompa&ordina=pagine&verso=giu`) |
+| `/tocca-a-te` | Quello che aspetta una persona: domande, approvazioni, dubbi nei grafi approvati |
+| `/esecuzioni` | Registro delle esecuzioni, con tempo e costo di ciascuna |
+| `/ontologia` | Schema del grafo |
+| `/manuali/:m` | Manuale: versione attuale (passi, prossimo passo) e versioni |
+| `/nuovo` | Nuovo grafo; `?manuale=:m` per una nuova versione di un manuale già nella libreria |
 | `/manuali/:m/versioni/:v/esecuzione` | Esecuzione dal vivo o replay |
 | `/manuali/:m/versioni/:v/domande` | Domande per te |
 | `/manuali/:m/versioni/:v` | Grafo finito |
@@ -471,6 +477,12 @@ frontend/
 
 - Dati del server: un piccolo hook `useApi(url)` con cache per URL e ricarica esplicita, senza
   librerie di stato.
+- Stato della cornice (`src/status/StatusProvider.tsx`): manuali ed esecuzione in corso, letti a
+  ogni cambio di schermata e ogni 10 s se la scheda è visibile. Ne derivano il numero di «Tocca a
+  te» e il collegamento all'esecuzione in corso. L'interfaccia non mostra budget né totali di
+  spesa, solo tempo e costo di ogni versione; il tetto resta un controllo del server all'avvio.
+- Passi di un grafo (`src/flow/steps.ts`): estrazione, domande, approvazione, e il prossimo passo
+  di ogni versione. Funzioni pure usate da manuale, «Tocca a te», registro e fine esecuzione.
 - Esecuzione: `useReducer(runReducer)` alimentato da `useRunStream`. Lo stato contiene stazioni,
   nodi e archi provvisori, relazioni recenti (ultime 200), contatori, costo, domande per te.
   Il reducer è una funzione pura, testata con sequenze di eventi registrate.

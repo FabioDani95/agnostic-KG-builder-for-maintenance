@@ -9,6 +9,7 @@ ceiling handed to the run is also cut so the interface can never spend past its 
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import os
@@ -34,6 +35,9 @@ PRESETS = {"agent": "ui-agent", "agent_human": "ui-interactive", "human": "ui-hu
 PERSON = ReviewerIdentity(kind=ReviewerKind.HUMAN, name="operator")
 # A resume should make no call; this is the most it may spend if the saved state falls short.
 RESUME_ALLOWANCE_USD = 0.05
+# Reading the machine from the first pages: one small call, far below a cent; this is its cap.
+IDENTIFY_ALLOWANCE_USD = 0.01
+IDENTIFY_TIMEOUT_SECONDS = 90
 # Model settings a copied campaign run must keep when it resumes.
 MODEL_FLAGS = {"model": "--model", "reasoning_effort": "--reasoning", "reads": "--reads",
                "agent_model": "--agent-model", "agent_reasoning_effort": "--agent-reasoning"}
@@ -88,6 +92,43 @@ class Jobs:
             machine = self.catalog.manual(duplicate).machine.model_dump()
         return {"upload_id": sha, "file_name": file_name, "pages": pages, "size_bytes": len(data),
                 "duplicate_of": duplicate, "machine": machine}
+
+    def identify_command(self, pdf: Path, ceiling: float) -> list[str]:
+        limits = self.spending.limits
+        return [sys.executable, "-m", "backend.ui.identify", "--pdf", str(pdf), "--ledger", str(self.spending.ledger),
+                "--budget", f"{limits.budget_usd:g}", "--run-id", f"{UI_RUN_PREFIX}identify_{pdf.stem[:12]}",
+                "--spend-ceiling", f"{ceiling:.4f}"]
+
+    async def identify(self, upload_id: str) -> dict[str, Any]:
+        """Machine fields read from the first pages by a small model; kept next to the upload."""
+
+        if not re.fullmatch(r"[0-9a-f]{64}", upload_id):
+            raise JobError("Caricamento sconosciuto: carica di nuovo il PDF.")
+        pdf = self.workspace / "uploads" / f"{upload_id}.pdf"
+        if not pdf.exists():
+            raise JobError("Caricamento sconosciuto: carica di nuovo il PDF.")
+        saved = pdf.with_suffix(".machine.json")
+        if saved.exists():
+            return {**json.loads(saved.read_text(encoding="utf-8")), "cached": True}
+        spent = self.spending.snapshot()
+        used = spent["committed_usd"] + spent["reserved_usd"]
+        room = min(spent["ceiling_usd"] - used, spent["ui_limit_usd"] - spent["ui_spent_usd"])
+        if room <= 0:
+            raise JobError("Non c'è più spesa possibile per leggere i dati: scrivili tu.")
+        process = await asyncio.create_subprocess_exec(
+            *self.identify_command(pdf, used + min(IDENTIFY_ALLOWANCE_USD, room)), cwd=ROOT,
+            stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+        try:
+            out, err = await asyncio.wait_for(process.communicate(), timeout=IDENTIFY_TIMEOUT_SECONDS)
+        except asyncio.TimeoutError:
+            process.kill()
+            raise JobError("La lettura dei dati ci mette troppo: scrivili tu.") from None
+        if process.returncode != 0:
+            detail = err.decode("utf-8", "replace").strip().splitlines()[-1:] or [""]
+            raise JobError(f"Non riesco a leggere i dati della macchina ({detail[0][:160]}): scrivili tu.")
+        result = json.loads(out.decode("utf-8").strip().splitlines()[-1])
+        saved.write_text(json.dumps(result), encoding="utf-8")
+        return {**result, "cached": False}
 
     # Manual ------------------------------------------------------------------
 

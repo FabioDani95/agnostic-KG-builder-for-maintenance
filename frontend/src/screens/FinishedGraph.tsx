@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { postJson, useApi, versionPath } from "../api/client";
+import { manualRoute, postJson, useApi, versionPath } from "../api/client";
 import type { Evidence, Graph, GraphEdge, GraphNode, Manual, Questions } from "../api/types";
-import { BackLink, SearchField, SegmentedControl } from "../components/Controls";
+import { SearchField, SegmentedControl, StatusBadge, typing } from "../components/Controls";
 import { EdgeDetail, NodeDetail } from "../components/EvidencePanel";
+import { Icon } from "../components/Icon";
 import { Legend } from "../components/Legend";
 import { PageDialog } from "../components/PageDialog";
+import { Shell } from "../components/Shell";
 import { Graph3D, type GraphHandle, type ViewLink, type ViewNode } from "../graph/Graph3D";
-import { formatNumber, statusLabel, TYPE_LABEL, versionLabel } from "../text/it";
+import { formatNumber, TYPE_LABEL, versionLabel } from "../text/it";
 
 type TierFilter = "all" | "green" | "yellow";
 type Selection = { kind: "node" | "edge"; id: string } | null;
@@ -59,6 +61,14 @@ export function FinishedGraph() {
   useEffect(() => {
     evidencePanel.current?.scrollTo({ top: 0 });
   }, [selection]);
+  // Esc closes the evidence, unless a page of the manual is open on top.
+  useEffect(() => {
+    const press = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !typing(event.target) && !document.querySelector("dialog[open]")) setSelection(null);
+    };
+    window.addEventListener("keydown", press);
+    return () => window.removeEventListener("keydown", press);
+  }, []);
 
   const nodes = useMemo(() => new Map((graph.data?.nodes ?? []).map((node) => [node.id, node])), [graph.data]);
   const edges = graph.data?.edges ?? [];
@@ -109,170 +119,199 @@ export function FinishedGraph() {
   const openPage = (number: number, evidence: Evidence[]) => setPage({ page: number, evidence });
 
   return (
-    <div className="stage">
-      {graph.data && (
-        <Graph3D
-          handle={view}
-          nodes={visible.nodes}
-          links={visible.links}
-          focus={focus}
-          onNodeClick={(id) => setSelection({ kind: "node", id })}
-          onLinkClick={(id) => setSelection({ kind: "edge", id })}
-          onBackgroundClick={() => setSelection(null)}
-        />
-      )}
+    <Shell
+      workspace
+      trail={[
+        { to: "/", label: "Grafi" },
+        { to: manualRoute(manualId), label: manual.data?.machine.name ?? "Manuale" },
+      ]}
+      title={current ? versionLabel(current) : "Grafo"}
+      actions={
+        <>
+          <div className="search-wrap">
+            <SearchField label="Cerca un sintomo o un codice" value={query} onChange={setQuery} width="100%" hotkey />
+            {results.length > 0 && (
+              <div className="search-results" role="listbox" aria-label="Sintomi e codici trovati">
+                {results.map((node) => (
+                  <button
+                    key={node.id}
+                    type="button"
+                    role="option"
+                    aria-selected={root === node.id}
+                    onClick={() => {
+                      setRoot(node.id);
+                      setSelection({ kind: "node", id: node.id });
+                      setQuery("");
+                    }}
+                  >
+                    <span style={{ display: "block" }}>{node.name}</span>
+                    <span className="t-small secondary">{TYPE_LABEL[node.type]}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          {versions.length > 0 && (
+            <label className="row">
+              <span className="visually-hidden">Versione</span>
+              <select
+                className="input"
+                style={{ width: 176 }}
+                value={versionId}
+                onChange={(event) =>
+                  navigate(`/manuali/${encodeURIComponent(manualId)}/versioni/${encodeURIComponent(event.target.value)}`)
+                }
+              >
+                {versions.map((item) => (
+                  <option key={item.version_id} value={item.version_id}>
+                    {versionLabel(item)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+          {questions.data && !questions.data.can_approve && (open > 0 || questions.data.unapplied > 0) && (
+            <Link
+              to={`/manuali/${encodeURIComponent(manualId)}/versioni/${encodeURIComponent(versionId)}/domande`}
+              className="button button-bar"
+            >
+              <Icon name="question" />
+              {open > 0 ? (open === 1 ? "Rispondi alla domanda" : `Rispondi alle ${formatNumber(open)} domande`) : "Applica le risposte"}
+            </Link>
+          )}
+          {questions.data?.can_approve && (
+            <button type="button" className="button button-primary" disabled={approving} onClick={approve}>
+              <Icon name="check" />
+              Approva
+            </button>
+          )}
+        </>
+      }
+    >
+      <div className="workspace">
+        <aside className="dock dock-left" aria-label="Filtri e legenda">
+          <section className="panel-section">
+            <h2 className="panel-title">Relazioni</h2>
+            <SegmentedControl<TierFilter>
+              label="Quali relazioni mostrare"
+              fill
+              value={filter}
+              onChange={setFilter}
+              options={[
+                { value: "all", label: "Tutte" },
+                { value: "green", label: "Verificate" },
+                { value: "yellow", label: "In dubbio" },
+              ]}
+            />
+          </section>
+          {root && (
+            <section className="panel-section">
+              <h2 className="panel-title">Percorso</h2>
+              <p>{nodes.get(root)?.name}</p>
+              <button type="button" className="button button-plain" style={{ paddingLeft: 0 }} onClick={() => setRoot(null)}>
+                Mostra tutto il grafo
+              </button>
+            </section>
+          )}
+          <section className="panel-section">
+            <h2 className="panel-title">Legenda</h2>
+            <Legend counts={counts} />
+          </section>
+          <section className="panel-section">
+            <h2 className="panel-title">Versione</h2>
+            {current && (
+              <dl className="data-list" style={{ gridTemplateColumns: "56px 1fr", alignItems: "center" }}>
+                <dt>Esito</dt>
+                <dd>
+                  <StatusBadge status={current.status} decidedBy={current.decided_by} />
+                </dd>
+                <dt>Codice</dt>
+                <dd className="mono">{current.commit}</dd>
+              </dl>
+            )}
+          </section>
+          <section className="panel-section">
+            <h2 className="panel-title">Vista</h2>
+            <div className="row">
+              <button type="button" className="button button-secondary" onClick={() => view.current?.relayout()}>
+                <Icon name="relayout" />
+                Riordina
+              </button>
+              <button type="button" className="button button-secondary" onClick={() => view.current?.fit()}>
+                <Icon name="frame" />
+                Inquadra
+              </button>
+            </div>
+          </section>
+        </aside>
 
-      <header className="stage-bar glass">
-        <BackLink to={`/manuali/${encodeURIComponent(manualId)}`}>{manual.data?.machine.name ?? "Manuale"}</BackLink>
-        <span className="stage-bar-title" />
-        <div style={{ position: "relative" }}>
-          <SearchField label="Cerca un sintomo o un codice" value={query} onChange={setQuery} width={360} />
-          {results.length > 0 && (
-            <div className="search-results glass" role="listbox" aria-label="Sintomi e codici trovati">
-              {results.map((node) => (
-                <button
-                  key={node.id}
-                  type="button"
-                  role="option"
-                  aria-selected={root === node.id}
-                  onClick={() => {
-                    setRoot(node.id);
-                    setSelection({ kind: "node", id: node.id });
-                    setQuery("");
-                  }}
-                >
-                  <span style={{ display: "block" }}>{node.name}</span>
-                  <span className="t-small secondary">{TYPE_LABEL[node.type]}</span>
-                </button>
-              ))}
+        <div className="canvas">
+          {graph.error && <p className="message" style={{ padding: 16 }}>Non riesco a leggere il grafo: {graph.error}</p>}
+          {graph.loading && !graph.data && (
+            <div className="canvas-wait" role="status">
+              <Icon name="loader" size={20} className="spin" />
+              <span className="visually-hidden">Carico il grafo</span>
             </div>
           )}
+          {graph.data && (
+            <Graph3D
+              handle={view}
+              nodes={visible.nodes}
+              links={visible.links}
+              focus={focus}
+              onNodeClick={(id) => setSelection({ kind: "node", id })}
+              onLinkClick={(id) => setSelection({ kind: "edge", id })}
+              onBackgroundClick={() => setSelection(null)}
+            />
+          )}
         </div>
-        {versions.length > 0 && (
-          <label className="row">
-            <span className="visually-hidden">Versione</span>
-            <select
-              className="input"
-              style={{ width: 192 }}
-              value={versionId}
-              onChange={(event) =>
-                navigate(`/manuali/${encodeURIComponent(manualId)}/versioni/${encodeURIComponent(event.target.value)}`)
-              }
-            >
-              {versions.map((item) => (
-                <option key={item.version_id} value={item.version_id}>
-                  {versionLabel(item)}
-                </option>
-              ))}
-            </select>
-          </label>
-        )}
-        {questions.data?.can_approve && (
-          <button type="button" className="button button-primary" disabled={approving} onClick={approve}>
-            Approva
-          </button>
-        )}
-        {questions.data && !questions.data.can_approve && (open > 0 || questions.data.unapplied > 0) && (
-          <Link
-            to={`/manuali/${encodeURIComponent(manualId)}/versioni/${encodeURIComponent(versionId)}/domande`}
-            className="button button-secondary"
-          >
-            {open > 0 ? (open === 1 ? "Rispondi prima alla domanda" : `Rispondi prima alle ${formatNumber(open)} domande`) : "Applica le risposte"}
-          </Link>
-        )}
-      </header>
 
-      <aside className="stage-left glass" aria-label="Filtri e legenda">
-        <section className="panel-section">
-          <h2 className="panel-title">Relazioni</h2>
-          <SegmentedControl<TierFilter>
-            label="Quali relazioni mostrare"
-            fill
-            value={filter}
-            onChange={setFilter}
-            options={[
-              { value: "all", label: "Tutte" },
-              { value: "green", label: "Verificate" },
-              { value: "yellow", label: "In dubbio" },
-            ]}
-          />
-        </section>
-        {root && (
-          <section className="panel-section">
-            <h2 className="panel-title">Percorso</h2>
-            <p>{nodes.get(root)?.name}</p>
-            <button type="button" className="button button-plain" style={{ paddingLeft: 0 }} onClick={() => setRoot(null)}>
-              Mostra tutto il grafo
-            </button>
-          </section>
+        {(selectedEdge || selectedNode) && (
+          <aside ref={evidencePanel} className="dock dock-right" aria-label="Prove">
+            {selectedEdge && (
+              <EdgeDetail
+                edge={selectedEdge}
+                nodes={nodes}
+                onOpenPage={openPage}
+                onSelectNode={(id) => setSelection({ kind: "node", id })}
+                onClose={() => setSelection(null)}
+              />
+            )}
+            {selectedNode && (
+              <NodeDetail
+                node={selectedNode}
+                edges={edges}
+                nodes={nodes}
+                onOpenPage={openPage}
+                onSelectEdge={(id) => setSelection({ kind: "edge", id })}
+                onClose={() => setSelection(null)}
+              />
+            )}
+          </aside>
         )}
-        <section className="panel-section">
-          <h2 className="panel-title">Legenda</h2>
-          <Legend counts={counts} />
-        </section>
-        <section className="panel-section">
-          <h2 className="panel-title">Versione</h2>
-          {current && (
-            <dl className="data-list" style={{ gridTemplateColumns: "96px 1fr" }}>
-              <dt>Esito</dt>
-              <dd>{statusLabel(current.status, current.decided_by)}</dd>
-              <dt>Codice</dt>
-              <dd>{current.commit}</dd>
+
+        <footer className="statusbar">
+          {graph.data && (
+            <dl>
+              <div>
+                <dt>Nodi</dt>
+                <dd>{formatNumber(graph.data.nodes.length)}</dd>
+              </div>
+              <div>
+                <dt>Relazioni</dt>
+                <dd>{formatNumber(knowledge.length)}</dd>
+              </div>
+              <div>
+                <dt>Verificate</dt>
+                <dd>{formatNumber(knowledge.filter((edge) => edge.tier === "green").length)}</dd>
+              </div>
             </dl>
           )}
-          <div className="row" style={{ marginTop: 8 }}>
-            <button type="button" className="button button-plain" style={{ paddingLeft: 0 }} onClick={() => view.current?.relayout()}>
-              Riordina
-            </button>
-            <button type="button" className="button button-plain" onClick={() => view.current?.fit()}>
-              Inquadra
-            </button>
-          </div>
-        </section>
-      </aside>
-
-      <aside ref={evidencePanel} className="stage-right glass" aria-label="Prove">
-        {graph.error && <p className="message">Non riesco a leggere il grafo: {graph.error}</p>}
-        {!selectedEdge && !selectedNode && !graph.error && (
-          <p className="message">Scegli un nodo o una relazione per vedere le prove.</p>
-        )}
-        {selectedEdge && (
-          <EdgeDetail
-            edge={selectedEdge}
-            nodes={nodes}
-            onOpenPage={openPage}
-            onSelectNode={(id) => setSelection({ kind: "node", id })}
-          />
-        )}
-        {selectedNode && (
-          <NodeDetail
-            node={selectedNode}
-            edges={edges}
-            nodes={nodes}
-            onOpenPage={openPage}
-            onSelectEdge={(id) => setSelection({ kind: "edge", id })}
-          />
-        )}
-      </aside>
-
-      {graph.data && (
-        <div className="stage-counters">
-          <dl className="glass">
-            <div>
-              <dt>Nodi</dt>
-              <dd className="num">{formatNumber(graph.data.nodes.length)}</dd>
-            </div>
-            <div>
-              <dt>Relazioni</dt>
-              <dd className="num">{formatNumber(knowledge.length)}</dd>
-            </div>
-            <div>
-              <dt>Verificate</dt>
-              <dd className="num">{formatNumber(knowledge.filter((edge) => edge.tier === "green").length)}</dd>
-            </div>
-          </dl>
-        </div>
-      )}
+          <p className="statusbar-log">
+            {!selection && graph.data && "Scegli un nodo o una relazione per vedere le prove."}
+          </p>
+        </footer>
+      </div>
 
       {page && (
         <PageDialog
@@ -282,6 +321,6 @@ export function FinishedGraph() {
           onClose={() => setPage(null)}
         />
       )}
-    </div>
+    </Shell>
   );
 }

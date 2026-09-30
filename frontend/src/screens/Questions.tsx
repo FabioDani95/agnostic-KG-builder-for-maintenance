@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { postJson, useApi, versionPath } from "../api/client";
-import type { Questions as QuestionsData, QuestionView } from "../api/types";
-import { BackLink, ProgressBar, TopBar } from "../components/Controls";
+import type { Manual, Questions as QuestionsData, QuestionView } from "../api/types";
+import { ProgressBar } from "../components/Controls";
+import { Shell } from "../components/Shell";
 import { PageDialog } from "../components/PageDialog";
 import { formatNumber, pageRef } from "../text/it";
 
@@ -28,16 +29,14 @@ function QuestionCard({
 
   return (
     <>
-    <div className="page-head">
-      <h1 className="t-title">{question.title_it}</h1>
-    </div>
+    <h2 className="t-title" style={{ marginBottom: 16 }}>{question.title_it}</h2>
     <div className="stack">
 
       {question.source.length > 0 && (
         <section>
-          <h2 className="t-large strong" style={{ marginBottom: 8 }}>
+          <h3 className="card-title" style={{ marginBottom: 8 }}>
             Nel manuale
-          </h2>
+          </h3>
           <ul className="quote-list">
             {question.source.map((item) => (
               <li key={item.segment_id}>
@@ -59,9 +58,9 @@ function QuestionCard({
       )}
 
       <section>
-        <h2 className="t-large strong" style={{ marginBottom: 8 }}>
+        <h3 className="card-title" style={{ marginBottom: 8 }}>
           Il sistema propone
-        </h2>
+        </h3>
         <ol>
           {question.claims_it.map((claim, index) => (
             <li key={index} className="numbered t-large">
@@ -166,6 +165,7 @@ export function Questions() {
   const { manualId = "", versionId = "" } = useParams();
   const navigate = useNavigate();
   const base = `/manuali/${encodeURIComponent(manualId)}/versioni/${encodeURIComponent(versionId)}`;
+  const manual = useApi<Manual>(`/api/manuals/${encodeURIComponent(manualId)}`);
   const { data, error, reload } = useApi<QuestionsData>(`${versionPath(manualId, versionId)}/questions`);
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
@@ -210,26 +210,33 @@ export function Questions() {
   const position = data ? data.answered.length + 1 : 0;
 
   return (
-    <div className="page">
-      <TopBar back={<BackLink to={base}>Grafo</BackLink>}>
-        {data && current && (
-          <>
-            <span className="secondary">
-              Domanda {formatNumber(position)} di {formatNumber(total)}
+    <Shell
+      trail={[
+        { to: "/", label: "Grafi" },
+        { to: `/manuali/${encodeURIComponent(manualId)}`, label: manual.data?.machine.name ?? "Manuale" },
+        { to: base, label: "Grafo" },
+      ]}
+      title="Domande per te"
+      actions={
+        data &&
+        current && (
+          <div className="row" style={{ gap: 12, marginRight: 8 }}>
+            <span className="t-small">
+              Domanda <span className="mono">{formatNumber(position)}</span> di <span className="mono">{formatNumber(total)}</span>
             </span>
-            <span style={{ width: 192 }}>
+            <span style={{ width: 160 }}>
               <ProgressBar value={position - 1} total={total} label="Domande a cui hai risposto" />
             </span>
-          </>
-        )}
-      </TopBar>
-      <main className="container">
-        <div className="column-8">
-          {error && <p className="message page-head">Non riesco a leggere le domande: {error}</p>}
+          </div>
+        )
+      }
+    >
+        <div className="reading">
+          {error && <p className="message">Non riesco a leggere le domande: {error}</p>}
           {data && current && (
             <>
               {data.copy_needed && (
-                <p className="message" style={{ marginTop: 24 }}>
+                <p className="message" style={{ marginBottom: 16 }}>
                   Questa versione viene dalla campagna e non si modifica: la prima risposta ne crea una copia in cui
                   continui a rispondere.
                 </p>
@@ -245,9 +252,6 @@ export function Questions() {
           )}
           {data && !current && (
             <>
-              <div className="page-head">
-                <h1 className="t-title">Domande per te</h1>
-              </div>
               <div className="stack">
                 {total === 0 ? (
                   <p>Non ci sono domande per te in questa versione.</p>
@@ -290,8 +294,7 @@ export function Questions() {
             </p>
           )}
         </div>
-      </main>
       {page !== null && <PageDialog manualId={manualId} page={page} marks={[]} onClose={() => setPage(null)} />}
-    </div>
+    </Shell>
   );
 }

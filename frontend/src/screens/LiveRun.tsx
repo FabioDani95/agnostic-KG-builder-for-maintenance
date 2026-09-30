@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { postJson, useApi, versionPath } from "../api/client";
-import type { Manual } from "../api/types";
-import { BackLink, ProgressBar, SegmentedControl } from "../components/Controls";
+import { graphRoute, manualRoute, postJson, useApi, versionPath } from "../api/client";
+import type { Manual, RunStatus } from "../api/types";
+import { ProgressBar, SegmentedControl, typing } from "../components/Controls";
 import { Icon } from "../components/Icon";
 import { Legend } from "../components/Legend";
 import { PageDialog } from "../components/PageDialog";
+import { Shell } from "../components/Shell";
 import { Graph3D, type ViewLink, type ViewNode } from "../graph/Graph3D";
+import { nextStep } from "../flow/steps";
 import { STATIONS, type Station } from "../live/events";
 import { counts, type RunState } from "../live/reducer";
 import { useRunStream } from "../live/useRunStream";
@@ -71,7 +73,17 @@ export function LiveRun() {
   const [page, setPage] = useState<number | null>(null);
   const [now, setNow] = useState(() => performance.now());
   const [stopping, setStopping] = useState(false);
+  const [handoffClosed, setHandoffClosed] = useState(false);
   const ended = Boolean(run.finished || run.failed);
+
+  // Esc closes the node panel, unless a page of the manual is open on top.
+  useEffect(() => {
+    const press = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !typing(event.target) && !document.querySelector("dialog[open]")) setSelected(null);
+    };
+    window.addEventListener("keydown", press);
+    return () => window.removeEventListener("keydown", press);
+  }, []);
 
   // The clock moves between events, at the replay speed; it stops when the run ends or pauses.
   useEffect(() => {
@@ -102,161 +114,213 @@ export function LiveRun() {
     }
   };
 
+  const latest = run.recent.find((id) => run.edges[id]);
+  const next = run.finished
+    ? nextStep(manualId, { version_id: versionId, status: run.finished.status as RunStatus, open_questions: openQuestions })
+    : null;
+
   return (
-    <div className="stage">
-      <Graph3D nodes={nodes} links={links} onNodeClick={setSelected} onBackgroundClick={() => setSelected(null)} />
-
-      <header className="stage-bar glass">
-        <BackLink to={`/manuali/${encodeURIComponent(manualId)}`}>{manual.data?.machine.name ?? "Manuale"}</BackLink>
-        <span className="stage-bar-title" />
-        <dl className="row">
-          <div className="row" style={{ gap: 8 }}>
-            <dt className="secondary">{live ? "Tempo" : `Replay ×${speed}`}</dt>
-            <dd className="num" style={{ minWidth: 48 }}>{formatDuration(elapsed)}</dd>
-          </div>
-          <div className="row" style={{ gap: 8 }}>
-            <dt className="secondary">{run.costEstimated ? "Costo stimato" : "Costo"}</dt>
-            <dd className="num" style={{ minWidth: 96 }}>{formatUsd(run.cost)}</dd>
-          </div>
-        </dl>
-        {!live && !ended && (
-          <>
-            <SegmentedControl<Speed>
-              label="Velocità del replay"
-              value={speed}
-              onChange={setSpeed}
-              options={[
-                { value: "1", label: "1×" },
-                { value: "4", label: "4×" },
-                { value: "16", label: "16×" },
-              ]}
-            />
-            <button type="button" className="button button-secondary" onClick={() => setPaused((value) => !value)}>
-              <Icon name={paused ? "play" : "pause"} size={16} />
-              {paused ? "Riprendi" : "Pausa"}
-            </button>
-          </>
-        )}
-        {live && !ended && (
-          <button type="button" className="button button-secondary" disabled={stopping} onClick={stop}>
-            Ferma
-          </button>
-        )}
-        {openQuestions > 0 && (
-          <Link to={`${base}/domande`} className="button button-secondary">
-            {openQuestions === 1 ? "1 domanda per te" : `${formatNumber(openQuestions)} domande per te`}
-          </Link>
-        )}
-        {run.finished && (
-          <Link to={base} className="button button-primary">
-            Apri il grafo
-          </Link>
-        )}
-      </header>
-
-      <aside className="stage-left glass" aria-label="Stazioni">
-        <section className="panel-section">
-          <h2 className="panel-title">Stazioni</h2>
-          <ol className="stage-list">
-            {STATIONS.map((station) => {
-              const phase = run.stations[station].phase;
-              return (
-                <li key={station} style={{ minHeight: 72 }}>
-                  <div className="row" style={{ justifyContent: "space-between" }}>
-                    <span className={phase === "running" ? "strong" : undefined}>{STATION_LABEL[station]}</span>
-                    <span className="secondary">{PHASE_LABEL[phase]}</span>
-                  </div>
-                  <p className="t-small secondary">{stationDetail(station, run)}</p>
-                  {station === "extract" && phase !== "waiting" && (
-                    <div style={{ marginTop: 8 }}>
-                      <ProgressBar value={run.units.done} total={run.units.total} label="Unità lette" />
-                    </div>
-                  )}
-                </li>
-              );
-            })}
-          </ol>
-        </section>
-        <section className="panel-section">
-          <h2 className="panel-title">Legenda</h2>
-          <Legend counts={typeCounts} />
-        </section>
-      </aside>
-
-      <aside className="stage-right glass" aria-label={node ? "Nodo" : "Relazioni trovate"}>
-        {unavailable && <p className="message">Questa esecuzione non si può rigiocare su questo computer: manca il suo stato salvato.</p>}
-        {run.failed && (
-          <section className="panel-section">
-            <h2 className="panel-title">L'esecuzione si è fermata</h2>
-            <p className="t-small secondary">{run.failed}</p>
-          </section>
-        )}
-        {node ? (
-          <section className="panel-section">
-            <button type="button" className="button button-plain" style={{ paddingLeft: 0 }} onClick={() => setSelected(null)}>
-              <Icon name="chevron-left" size={16} />
-              Relazioni trovate
-            </button>
-            <h2 className="panel-title">{node.name}</h2>
-            <dl className="data-list" style={{ gridTemplateColumns: "96px 1fr" }}>
-              <dt>Tipo</dt>
-              <dd>{TYPE_LABEL[node.type] ?? node.type}</dd>
-              {(node.pages ?? []).length > 0 && (
-                <>
-                  <dt>Pagine</dt>
-                  <dd>{node.pages!.join(", ")}</dd>
-                </>
-              )}
-            </dl>
-            {(node.pages ?? []).map((number) => (
-              <button key={number} type="button" className="button button-plain" style={{ paddingLeft: 0 }} onClick={() => setPage(number)}>
-                Apri la pagina {number}
+    <Shell
+      workspace
+      trail={[
+        { to: "/", label: "Grafi" },
+        { to: manualRoute(manualId), label: manual.data?.machine.name ?? "Manuale" },
+      ]}
+      title={live ? "Esecuzione" : "Replay"}
+      actions={
+        <>
+          <dl className="readouts">
+            <div>
+              <dt>{live ? "Tempo" : `Replay ×${speed}`}</dt>
+              <dd>{formatDuration(elapsed)}</dd>
+            </div>
+            <div>
+              <dt>{run.costEstimated ? "Costo stimato" : "Costo"}</dt>
+              <dd>{formatUsd(run.cost)}</dd>
+            </div>
+          </dl>
+          {!live && !ended && (
+            <>
+              <SegmentedControl<Speed>
+                label="Velocità del replay"
+                value={speed}
+                onChange={setSpeed}
+                options={[
+                  { value: "1", label: "1×" },
+                  { value: "4", label: "4×" },
+                  { value: "16", label: "16×" },
+                ]}
+              />
+              <button type="button" className="button button-bar" onClick={() => setPaused((value) => !value)}>
+                <Icon name={paused ? "play" : "pause"} />
+                {paused ? "Riprendi" : "Pausa"}
               </button>
-            ))}
-          </section>
-        ) : (
+            </>
+          )}
+          {live && !ended && (
+            <button type="button" className="button button-bar" disabled={stopping} onClick={stop}>
+              <Icon name="stop" />
+              Ferma
+            </button>
+          )}
+          {openQuestions > 0 && (
+            <Link to={`${base}/domande`} className="button button-bar">
+              <Icon name="question" />
+              {openQuestions === 1 ? "1 domanda per te" : `${formatNumber(openQuestions)} domande per te`}
+            </Link>
+          )}
+          {run.finished && (
+            <Link to={base} className="button button-bar">
+              <Icon name="graph" />
+              Apri il grafo
+            </Link>
+          )}
+        </>
+      }
+    >
+      <div className="workspace">
+        <aside className="dock dock-left" aria-label="Stazioni">
+          {unavailable && (
+            <section className="panel-section">
+              <p className="alert t-small">Questa esecuzione non si può rigiocare su questo computer: manca il suo stato salvato.</p>
+            </section>
+          )}
           <section className="panel-section">
-            <h2 className="panel-title">Relazioni trovate</h2>
-            {run.recent.length === 0 && !unavailable && <p className="message">Le relazioni compaiono qui appena il sistema le trova.</p>}
-            <ol className="stage-list">
-              {run.recent
-                .filter((id) => run.edges[id])
-                .slice(0, 60)
-                .map((id) => {
-                  const edge = run.edges[id];
-                  return (
-                    <li key={id}>
-                      <p>{edgeText(run, id)}</p>
-                      <p className="row t-small secondary" style={{ justifyContent: "space-between" }}>
-                        <span>{edge.pages?.length ? `Pagina ${edge.pages.join(", ")}` : ""}</span>
-                        <span>{edge.derived ? "Aggiunta dal sistema" : TIER_LABEL[edge.tier ?? "proposed"]}</span>
-                      </p>
-                    </li>
-                  );
-                })}
+            <h2 className="panel-title">Stazioni</h2>
+            <ol className="stations">
+              {STATIONS.map((station) => {
+                const phase = run.stations[station].phase;
+                return (
+                  <li key={station}>
+                    <span className="lamp" data-phase={phase} aria-hidden="true" />
+                    <span className={phase === "running" ? "strong" : undefined}>{STATION_LABEL[station]}</span>
+                    <span className="t-small secondary">{PHASE_LABEL[phase]}</span>
+                    <span className="station-detail">{stationDetail(station, run)}</span>
+                    {station === "extract" && phase !== "waiting" && (
+                      <span className="station-progress">
+                        <ProgressBar value={run.units.done} total={run.units.total} label="Unità lette" />
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
             </ol>
           </section>
-        )}
-      </aside>
+          <section className="panel-section">
+            <h2 className="panel-title">Legenda</h2>
+            <Legend counts={typeCounts} />
+          </section>
+        </aside>
 
-      <div className="stage-counters">
-        <dl className="glass">
-          <div>
-            <dt>Nodi</dt>
-            <dd className="num">{formatNumber(total.nodes)}</dd>
-          </div>
-          <div>
-            <dt>Relazioni</dt>
-            <dd className="num">{formatNumber(total.relations)}</dd>
-          </div>
-          <div>
-            <dt>Verificate</dt>
-            <dd className="num">{formatNumber(total.verified)}</dd>
-          </div>
-        </dl>
+        <div className="canvas">
+          <Graph3D nodes={nodes} links={links} onNodeClick={setSelected} onBackgroundClick={() => setSelected(null)} />
+          {ended && !handoffClosed && (
+            <div className="handoff" role="status">
+              <button type="button" className="icon-button handoff-close" aria-label="Chiudi" onClick={() => setHandoffClosed(true)}>
+                <Icon name="x" />
+              </button>
+              {run.finished && next ? (
+                <>
+                  <p className="handoff-title">
+                    <span className="lamp" data-phase="done" aria-hidden="true" />
+                    Estrazione finita
+                    <span className="mono secondary">
+                      {formatDuration(run.t)} · {formatUsd(run.cost)}
+                    </span>
+                  </p>
+                  <p className="secondary">
+                    {formatNumber(run.finished.verified)} relazioni verificate, {formatNumber(run.finished.doubtful)} in dubbio.{" "}
+                    {openQuestions > 0
+                      ? `${openQuestions === 1 ? "Una domanda aspetta" : `${formatNumber(openQuestions)} domande aspettano`} te: il grafo non si approva prima.`
+                      : next.urgent
+                        ? "Il grafo aspetta la tua approvazione."
+                        : "Nessuna domanda per te."}
+                  </p>
+                  <div className="row">
+                    <Link to={next.to} className="button button-primary">
+                      {next.label}
+                      <Icon name="arrow-right" />
+                    </Link>
+                    {next.to !== graphRoute(manualId, versionId) && (
+                      <Link to={graphRoute(manualId, versionId)} className="button button-secondary">
+                        Apri il grafo
+                      </Link>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="handoff-title">
+                    <span className="lamp" data-phase="failed" aria-hidden="true" />
+                    L'esecuzione si è fermata
+                  </p>
+                  <p className="secondary">{run.failed || "Senza un messaggio."}</p>
+                  <div className="row">
+                    <Link to={manualRoute(manualId)} className="button button-secondary">
+                      Torna al manuale
+                    </Link>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+
+        {node && (
+          <aside className="dock dock-right" aria-label="Nodo">
+            <section className="panel-section">
+              <div className="panel-head">
+                <h2 className="panel-title">{TYPE_LABEL[node.type] ?? node.type}</h2>
+                <button type="button" className="button button-secondary button-icon" aria-label="Chiudi" onClick={() => setSelected(null)}>
+                  <Icon name="x" />
+                </button>
+              </div>
+              <p className="panel-name">{node.name}</p>
+              {(node.pages ?? []).length > 0 && (
+                <dl className="data-list" style={{ gridTemplateColumns: "72px 1fr" }}>
+                  <dt>Pagine</dt>
+                  <dd className="mono">{node.pages!.join(", ")}</dd>
+                </dl>
+              )}
+              {(node.pages ?? []).map((number) => (
+                <button key={number} type="button" className="button button-plain" style={{ paddingLeft: 0 }} onClick={() => setPage(number)}>
+                  <Icon name="external-link" size={14} />
+                  Apri la pagina {number}
+                </button>
+              ))}
+            </section>
+          </aside>
+        )}
+
+        <footer className="statusbar">
+          <dl>
+            <div>
+              <dt>Nodi</dt>
+              <dd>{formatNumber(total.nodes)}</dd>
+            </div>
+            <div>
+              <dt>Relazioni</dt>
+              <dd>{formatNumber(total.relations)}</dd>
+            </div>
+            <div>
+              <dt>Verificate</dt>
+              <dd>{formatNumber(total.verified)}</dd>
+            </div>
+          </dl>
+          <p className="statusbar-log">
+            {latest && (
+              <>
+                Ultima relazione: <strong>{edgeText(run, latest)}</strong>
+                {run.edges[latest].pages?.length ? ` · p. ${run.edges[latest].pages!.join(", ")}` : ""}
+                {" · "}
+                {run.edges[latest].derived ? "Aggiunta dal sistema" : TIER_LABEL[run.edges[latest].tier ?? "proposed"]}
+              </>
+            )}
+          </p>
+        </footer>
       </div>
 
       {page !== null && <PageDialog manualId={manualId} page={page} marks={[]} onClose={() => setPage(null)} />}
-    </div>
+    </Shell>
   );
 }

@@ -184,3 +184,43 @@ export interface Questions {
   awaiting_approval: boolean;
   can_approve: boolean;
 }
+
+/** One row of the run log (/api/runs): a version with the manual it belongs to. */
+export interface RunRow extends Version {
+  manual_id: string;
+  machine: Machine;
+}
+
+export interface ActiveJob {
+  run: string | null; // "<manual>/runs/<run>", relative to the workspace
+}
+
+export interface OntologyNode {
+  name: string;
+  description: string;
+  properties: { name: string; required: boolean }[];
+}
+
+export interface OntologyRelation {
+  name: string;
+  domain: string;
+  range: string;
+  description: string;
+  added_by_code: boolean;
+}
+
+export interface Ontology {
+  root: string;
+  nodes: OntologyNode[];
+  relations: OntologyRelation[];
+}
+
+/** The machine read from the first pages of an upload (/api/uploads/{id}/machine). */
+export interface Identified {
+  machine: Machine;
+  model: string;
+  seconds: number;
+  cost_usd: number;
+  read: "text" | "cover";
+  cached: boolean;
+}

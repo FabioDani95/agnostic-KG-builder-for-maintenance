@@ -35,8 +35,10 @@ Every model call goes through an archived gateway with a hard cost ceiling
 ## Interface (prototype)
 
 A local web interface over the same pipeline: the library of graphs and their versions,
-upload of a PDF, the run followed live as a growing 3D graph, the questions for a person
-and the finished graph with the evidence of every edge. One command (Node.js is needed):
+a guided start (a new PDF or a new version of a manual already there), the run followed live
+as a growing 3D graph, what waits for a person (questions, approvals), the finished graph with
+the evidence of every edge, the log of all runs with the time and cost of each, and the fixed ontology.
+One command (Node.js is needed):
 
 ```bash
 .venv/bin/python scripts/ui.py   # http://127.0.0.1:8765

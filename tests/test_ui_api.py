@@ -43,6 +43,25 @@ def test_the_library_lists_each_manual_once_with_its_latest_version(client):
     assert client.get("/api/manuals/missing").status_code == 404
 
 
+def test_the_run_log_lists_every_version_newest_first(client):
+    rows = client.get("/api/runs").json()
+    assert len(rows) == 3 and {row["manual_id"] for row in rows} == {"test_pump"}
+    assert rows[0]["machine"]["name"] == "Test pump"
+    dates = [row["date"] or "" for row in rows]
+    assert dates == sorted(dates, reverse=True)
+
+
+def test_the_ontology_is_the_schema_the_runs_read(client):
+    schema = client.get("/api/ontology").json()
+    assert schema["root"] == "Asset"
+    assert {node["name"] for node in schema["nodes"]} == {
+        "Asset", "Component", "Symptom", "FailureMode", "CorrectiveAction", "ErrorCode"}
+    by_name = {relation["name"]: relation for relation in schema["relations"]}
+    assert by_name["MAY_INDICATE"] == {**by_name["MAY_INDICATE"], "domain": "Symptom", "range": "FailureMode",
+                                       "added_by_code": False}
+    assert by_name["HAS_COMPONENT"]["added_by_code"] and by_name["GENERATES_ERROR"]["added_by_code"]
+
+
 def test_graph_report_and_questions_of_a_version(client):
     graph = client.get("/api/manuals/test_pump/versions/runs~v3_r1/graph").json()
     assert graph["nodes"] and graph["edges"]

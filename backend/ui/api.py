@@ -16,6 +16,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
+from backend.kg_v3.ontology import load_ontology
 from backend.ui.budget import Limits, Spending, estimate
 from backend.ui.catalog import Catalog, process_alive
 from backend.ui.events import UiEvent
@@ -179,6 +180,28 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
                          "latest": latest.model_dump() if latest else None})
         return rows
 
+    @app.get("/api/runs")
+    def runs() -> list[dict]:
+        """Every version of every manual, newest first: the log of all runs."""
+        rows = [{"manual_id": manual.id, "machine": manual.machine.model_dump(), **version.model_dump()}
+                for manual in catalog.manuals() for version in manual.versions]
+        rows.sort(key=lambda row: row["date"] or "", reverse=True)
+        return rows
+
+    @app.get("/api/ontology")
+    def ontology() -> dict:
+        """The fixed schema every run reads (backend/kg_v3/ontology.py), as the interface shows it."""
+        spec = load_ontology()
+        return {
+            "root": spec.root,
+            "nodes": [{"name": name, "description": description,
+                       "properties": [{"name": prop, "required": required} for prop, required in spec.properties[name]]}
+                      for name, description in spec.node_types.items()],
+            "relations": [{"name": item.name, "domain": item.domain, "range": item.range,
+                           "description": item.description, "added_by_code": item.domain == spec.root}
+                          for item in spec.relations],
+        }
+
     @app.get("/api/manuals/{manual_id}")
     def manual(manual_id: str) -> dict:
         try:
@@ -306,6 +329,13 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
         data = await file.read()
         try:
             return await asyncio.to_thread(jobs.save_upload, file.filename or "manual.pdf", data)
+        except JobError as error:
+            raise HTTPException(422, str(error)) from None
+
+    @app.post("/api/uploads/{upload_id}/machine")
+    async def identify_machine(upload_id: str) -> dict:
+        try:
+            return await jobs.identify(upload_id)
         except JobError as error:
             raise HTTPException(422, str(error)) from None
 

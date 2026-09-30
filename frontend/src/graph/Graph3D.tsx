@@ -150,7 +150,7 @@ export function Graph3D({
     const element = container.current;
     if (!element) return;
     const instance = new ForceGraph3D(element, { controlType: "orbit" })
-      .backgroundColor("#000000")
+      .backgroundColor("#0c0a09")
       .showNavInfo(false)
       .nodeId("id")
       .nodeThreeObject((node: object) => {

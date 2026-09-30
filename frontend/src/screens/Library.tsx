@@ -1,12 +1,18 @@
-import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useApi } from "../api/client";
+import { useMemo } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { graphRoute, liveRoute, manualRoute, useApi } from "../api/client";
 import type { ManualRow } from "../api/types";
-import { SearchField, SegmentedControl, TopBar } from "../components/Controls";
-import { type Column, Table } from "../components/Table";
-import { formatNumber, statusLabel, versionLabel } from "../text/it";
+import { Problem, Loading } from "../components/Feedback";
+import { Monogram, SearchField, SegmentedControl, StatusBadge } from "../components/Controls";
+import { Icon } from "../components/Icon";
+import { Shell } from "../components/Shell";
+import { type Column, nextSorting, type Sorting, Table } from "../components/Table";
+import { formatDuration, formatNumber, formatUsd, manualName, statusLabel, versionLabel } from "../text/it";
 
 type Filter = "all" | "review" | "approved";
+
+// The filter as it reads in the address, so a view can be shared and survives «back».
+const FILTER_PARAM: Record<Filter, string | null> = { all: null, review: "da-rivedere", approved: "approvati" };
 
 export function needsReview(row: ManualRow): boolean {
   const latest = row.latest;
@@ -21,37 +27,108 @@ export function matches(row: ManualRow, query: string): boolean {
 }
 
 const COLUMNS: Column<ManualRow>[] = [
-  { key: "manual", label: "Manuale", span: 3, render: (row) => `${row.machine.brand} ${row.machine.model}` },
-  { key: "machine", label: "Macchina", span: 2, render: (row) => row.machine.type },
-  { key: "pages", label: "Pagine", span: 1, numeric: true, render: (row) => formatNumber(row.pages) },
-  { key: "version", label: "Versione", span: 2, render: (row) => (row.latest ? versionLabel(row.latest) : "") },
   {
-    key: "verified",
+    key: "manuale",
+    label: "Manuale",
+    span: 3,
+    sort: (row) => manualName(row.machine),
+    render: (row) => (
+      <span className="with-mark">
+        <Monogram machine={row.machine} />
+        <span>{manualName(row.machine)}</span>
+      </span>
+    ),
+  },
+  { key: "pagine", label: "Pagine", span: 1, numeric: true, sort: (row) => row.pages, render: (row) => formatNumber(row.pages) },
+  {
+    key: "versione",
+    label: "Versione",
+    span: 2,
+    sort: (row) => row.latest?.date,
+    render: (row) => (row.latest ? versionLabel(row.latest) : ""),
+  },
+  {
+    key: "verificate",
     label: "Relazioni verificate",
     span: 1,
     numeric: true,
+    sort: (row) => row.latest?.verified,
     render: (row) => formatNumber(row.latest?.verified),
   },
   {
-    key: "questions",
+    key: "domande",
     label: "Domande aperte",
     span: 1,
     numeric: true,
+    sort: (row) => row.latest?.open_questions,
     render: (row) => formatNumber(row.latest?.open_questions),
   },
   {
-    key: "status",
+    key: "durata",
+    label: "Durata",
+    span: 1,
+    numeric: true,
+    sort: (row) => row.latest?.seconds,
+    render: (row) => (row.latest?.seconds ? <span className="mono">{formatDuration(row.latest.seconds)}</span> : ""),
+  },
+  {
+    key: "costo",
+    label: "Costo (USD)",
+    span: 1,
+    numeric: true,
+    sort: (row) => row.latest?.cost_usd,
+    render: (row) =>
+      row.latest?.cost_usd != null ? <span className="mono">{formatUsd(row.latest.cost_usd).replace(" USD", "")}</span> : "",
+  },
+  {
+    key: "stato",
     label: "Stato",
     span: 2,
-    render: (row) => (row.latest ? statusLabel(row.latest.status, row.latest.decided_by) : "Nessuna versione"),
+    sort: (row) => (row.latest ? statusLabel(row.latest.status, row.latest.decided_by) : null),
+    render: (row) =>
+      row.latest ? <StatusBadge status={row.latest.status} decidedBy={row.latest.decided_by} /> : "Nessuna versione",
   },
 ];
 
+function RowActions({ row }: { row: ManualRow }) {
+  const latest = row.latest;
+  if (!latest) return null;
+  const live = latest.status === "running" || latest.status === "failed";
+  const label = latest.status === "running" ? "Segui l'esecuzione" : live ? "Vedi dove si è fermata" : "Apri il grafo";
+  return (
+    <Link
+      to={live ? liveRoute(row.id, latest.version_id) : graphRoute(row.id, latest.version_id)}
+      className="icon-button"
+      aria-label={`${label}: ${row.machine.name}`}
+      title={label}
+    >
+      <Icon name={live ? "activity" : "graph"} />
+    </Link>
+  );
+}
+
 export function Library() {
   const navigate = useNavigate();
-  const { data, error, loading } = useApi<ManualRow[]>("/api/manuals");
-  const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<Filter>("all");
+  const [params, setParams] = useSearchParams();
+  const { data, error, loading, reload } = useApi<ManualRow[]>("/api/manuals");
+  const query = params.get("cerca") ?? "";
+  const filter = (Object.keys(FILTER_PARAM) as Filter[]).find((key) => FILTER_PARAM[key] === params.get("mostra")) ?? "all";
+  const sorting: Sorting | null = params.get("ordina")
+    ? { key: params.get("ordina")!, direction: params.get("verso") === "giu" ? "desc" : "asc" }
+    : null;
+  const update = (changes: Record<string, string | null>) =>
+    setParams(
+      (previous) => {
+        const next = new URLSearchParams(previous);
+        for (const [key, value] of Object.entries(changes)) {
+          if (value) next.set(key, value);
+          else next.delete(key);
+        }
+        return next;
+      },
+      { replace: true },
+    );
+
   const rows = useMemo(
     () =>
       (data ?? [])
@@ -68,43 +145,58 @@ export function Library() {
       : "Nessun manuale in questo gruppo.";
 
   return (
-    <div className="page">
-      <TopBar>
-        <SearchField label="Cerca un manuale o una macchina" value={query} onChange={setQuery} width={360} />
-      </TopBar>
-      <main className="container">
-        <div className="page-head">
-          <h1 className="t-title">Grafi</h1>
-          <Link to="/nuovo" className="button button-primary">
-            Nuovo grafo
-          </Link>
-        </div>
-        <div className="stack">
-          <div>
+    <Shell
+      title="Grafi"
+      actions={
+        <Link to="/nuovo" className="button button-primary">
+          <Icon name="plus" />
+          Nuovo grafo
+        </Link>
+      }
+    >
+      <section className="card">
+        <header className="card-head">
+          <h2 className="card-title">
+            Manuali {data && <span className="card-count">{formatNumber(rows.length)}</span>}
+          </h2>
+          <div className="row">
             <SegmentedControl<Filter>
               label="Quali manuali mostrare"
               value={filter}
-              onChange={setFilter}
+              onChange={(value) => update({ mostra: FILTER_PARAM[value] })}
               options={[
                 { value: "all", label: "Tutti" },
                 { value: "review", label: "Da rivedere" },
                 { value: "approved", label: "Approvati" },
               ]}
             />
-          </div>
-          {error && <p className="message">Non riesco a leggere la libreria: {error}</p>}
-          {!error && !loading && (
-            <Table
-              label="Manuali"
-              columns={COLUMNS}
-              rows={rows}
-              rowKey={(row) => row.id}
-              onOpen={(row) => navigate(`/manuali/${encodeURIComponent(row.id)}`)}
-              empty={empty}
+            <SearchField
+              label="Cerca un manuale o una macchina"
+              value={query}
+              onChange={(value) => update({ cerca: value || null })}
+              hotkey
             />
-          )}
-        </div>
-      </main>
-    </div>
+          </div>
+        </header>
+        {error && <Problem message={`Non riesco a leggere la libreria. ${error}`} onRetry={reload} />}
+        {loading && !data && <Loading label="Carico i manuali" />}
+        {data && (
+          <Table
+            label="Manuali"
+            columns={COLUMNS}
+            rows={rows}
+            rowKey={(row) => row.id}
+            onOpen={(row) => navigate(manualRoute(row.id))}
+            empty={empty}
+            sorting={sorting}
+            onSort={(key) => {
+              const next = nextSorting(sorting, key);
+              update({ ordina: next.key, verso: next.direction === "desc" ? "giu" : null });
+            }}
+            actions={(row) => <RowActions row={row} />}
+          />
+        )}
+      </section>
+    </Shell>
   );
 }

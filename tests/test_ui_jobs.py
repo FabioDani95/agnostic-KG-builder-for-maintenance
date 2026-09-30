@@ -6,6 +6,7 @@ No test starts the real command line: the process is replaced by a stand-in.
 from __future__ import annotations
 
 import json
+import sys
 
 import pytest
 from fastapi.testclient import TestClient
@@ -103,3 +104,60 @@ def test_stopping_a_run_that_is_not_running_is_refused(tmp_path, manual_doc):
     client.post("/api/manuals/test_pump/runs", json={"reviewers": "agent"})
     stopped = client.post("/api/manuals/test_pump/versions/workspace~v3_r1/stop")
     assert stopped.status_code == 409
+
+
+REAL_POPEN = jobs_module.subprocess.Popen  # the stand-in above would starve the reading of its pipes
+
+
+def fake_identify(monkeypatch, script: str, seen: list):
+    monkeypatch.setattr(jobs_module.subprocess, "Popen", REAL_POPEN)
+
+    def command(self, pdf, ceiling):
+        seen.append(ceiling)
+        return [sys.executable, "-c", script]
+    monkeypatch.setattr(jobs_module.Jobs, "identify_command", command)
+
+
+ANSWER = ('import json; print(json.dumps({"machine": {"name": "Acme P1 pump", "brand": "Acme", "model": "P1", '
+          '"type": "pump"}, "model": "gpt-6-luna", "seconds": 0.8, "cost_usd": 0.0003, "read": "text"}))')
+
+
+def test_the_machine_is_read_from_the_first_pages_once_and_kept(tmp_path, manual_doc, monkeypatch):
+    client, _ = make_client(tmp_path, manual_doc)
+    seen: list = []
+    fake_identify(monkeypatch, ANSWER, seen)
+    upload_id = upload(client, tmp_path).json()["upload_id"]
+    first = client.post(f"/api/uploads/{upload_id}/machine").json()
+    assert first["machine"] == {"name": "Acme P1 pump", "brand": "Acme", "model": "P1", "type": "pump"}
+    assert first["cached"] is False and first["cost_usd"] == 0.0003
+    assert client.post(f"/api/uploads/{upload_id}/machine").json()["cached"] is True
+    assert len(seen) == 1 and 12.8 < seen[0] <= 12.81  # one small call under a tight ceiling
+
+
+def test_reading_the_machine_is_refused_without_money_or_upload(tmp_path, manual_doc, monkeypatch):
+    client, _ = make_client(tmp_path, manual_doc, ui_spent=0.5)
+    seen: list = []
+    fake_identify(monkeypatch, ANSWER, seen)
+    upload_id = upload(client, tmp_path).json()["upload_id"]
+    refused = client.post(f"/api/uploads/{upload_id}/machine")
+    assert refused.status_code == 422 and "scrivili tu" in refused.json()["detail"] and not seen
+    assert client.post(f"/api/uploads/{'0' * 64}/machine").status_code == 422
+
+
+def test_a_failed_reading_says_so_and_keeps_nothing(tmp_path, manual_doc, monkeypatch):
+    client, settings = make_client(tmp_path, manual_doc)
+    fake_identify(monkeypatch, "import sys; sys.exit('quota exceeded')", [])
+    upload_id = upload(client, tmp_path).json()["upload_id"]
+    failed = client.post(f"/api/uploads/{upload_id}/machine")
+    assert failed.status_code == 422 and "quota exceeded" in failed.json()["detail"]
+    assert not (settings.workspace / "uploads" / f"{upload_id}.machine.json").exists()
+
+
+def test_the_first_pages_are_read_as_text(tmp_path):
+    from backend.ui.identify import clean, first_pages
+
+    pdf = tmp_path / "pump.pdf"
+    troubleshooting_pdf(pdf)
+    text, cover = first_pages(pdf)
+    assert text and cover is None
+    assert clean({"brand": " Acme ", "model": "P1", "type": "pump", "name": ""})["name"] == "Acme P1 pump"

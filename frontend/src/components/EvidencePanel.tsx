@@ -1,4 +1,5 @@
 import type { Evidence, GraphEdge, GraphNode, Occurrence } from "../api/types";
+import { Icon } from "./Icon";
 import {
   CONDITION_PREFIX,
   formatNumber,
@@ -10,6 +11,17 @@ import {
 } from "../text/it";
 
 export type OpenPage = (page: number, evidence: Evidence[]) => void;
+
+function PanelHead({ title, onClose }: { title: string; onClose: () => void }) {
+  return (
+    <div className="panel-head">
+      <h2 className="panel-title">{title}</h2>
+      <button type="button" className="button button-secondary button-icon" aria-label="Chiudi" onClick={onClose}>
+        <Icon name="x" />
+      </button>
+    </div>
+  );
+}
 
 function Quotes({ items, onOpenPage }: { items: Evidence[]; onOpenPage: OpenPage }) {
   const pages = [...new Set(items.map((item) => item.page))];
@@ -33,6 +45,7 @@ function Quotes({ items, onOpenPage }: { items: Evidence[]; onOpenPage: OpenPage
           style={{ paddingLeft: 0 }}
           onClick={() => onOpenPage(page, items.filter((item) => item.page === page))}
         >
+          <Icon name="external-link" size={14} />
           Apri la pagina {page}
         </button>
       ))}
@@ -53,19 +66,21 @@ export function EdgeDetail({
   nodes,
   onOpenPage,
   onSelectNode,
+  onClose,
 }: {
   edge: GraphEdge;
   nodes: Map<string, GraphNode>;
   onOpenPage: OpenPage;
   onSelectNode: (id: string) => void;
+  onClose: () => void;
 }) {
   const from = nodes.get(edge.from);
   const to = nodes.get(edge.to);
   return (
     <div>
       <section className="panel-section">
-        <h2 className="panel-title">Relazione</h2>
-        <p className="t-large">
+        <PanelHead title="Relazione" onClose={onClose} />
+        <p className="panel-name">
           <button type="button" className="button-plain list-button" style={{ display: "inline", minHeight: 0 }} onClick={() => onSelectNode(edge.from)}>
             «{from?.name}»
           </button>{" "}
@@ -74,7 +89,7 @@ export function EdgeDetail({
             «{to?.name}»
           </button>
         </p>
-        <dl className="data-list" style={{ gridTemplateColumns: "96px 1fr", marginTop: 16 }}>
+        <dl className="data-list" style={{ gridTemplateColumns: "96px 1fr", marginTop: 8 }}>
           <dt>Stato</dt>
           <dd>{edge.derived ? "Aggiunta dal sistema" : TIER_LABEL[edge.tier]}</dd>
           <dt>Tipi</dt>
@@ -96,7 +111,7 @@ export function EdgeDetail({
             Occorrenza {index + 1} di {edge.occurrences.length}
           </h3>
           {occurrence.certificate && (
-            <dl className="data-list" style={{ gridTemplateColumns: "96px 1fr", marginBottom: 16 }}>
+            <dl className="data-list" style={{ gridTemplateColumns: "96px 1fr", marginBottom: 8 }}>
               <dt>Stato</dt>
               <dd>{occurrence.tier ? TIER_LABEL[occurrence.tier] : ""}</dd>
               <dt>Testimoni</dt>
@@ -130,26 +145,27 @@ export function NodeDetail({
   nodes,
   onOpenPage,
   onSelectEdge,
+  onClose,
 }: {
   node: GraphNode;
   edges: GraphEdge[];
   nodes: Map<string, GraphNode>;
   onOpenPage: OpenPage;
   onSelectEdge: (id: string) => void;
+  onClose: () => void;
 }) {
   const touching = edges.filter((edge) => edge.from === node.id || edge.to === node.id);
   const pages = [...new Set(node.evidence.map((item) => item.page))].sort((a, b) => a - b);
   return (
     <div>
       <section className="panel-section">
-        <h2 className="panel-title">{node.name}</h2>
+        <PanelHead title={TYPE_LABEL[node.type] ?? node.type} onClose={onClose} />
+        <p className="panel-name">{node.name}</p>
         <dl className="data-list" style={{ gridTemplateColumns: "96px 1fr" }}>
-          <dt>Tipo</dt>
-          <dd>{TYPE_LABEL[node.type] ?? node.type}</dd>
           {pages.length > 0 && (
             <>
               <dt>Pagine</dt>
-              <dd>{pages.join(", ")}</dd>
+              <dd className="mono">{pages.join(", ")}</dd>
             </>
           )}
           {node.type === "FailureMode" && node.stated_in_source === false && (

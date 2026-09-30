@@ -1,17 +1,26 @@
-import { type DragEvent, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ApiError, postJson, useApi } from "../api/client";
-import type { Budget, Estimate, Machine, Upload } from "../api/types";
-import { BackLink, SegmentedControl, TopBar } from "../components/Controls";
-import { formatNumber, formatUsd } from "../text/it";
+import { type DragEvent, type ReactNode, useEffect, useRef, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { ApiError, liveRoute, OFFLINE, postJson, useApi } from "../api/client";
+import type { Estimate, Identified, Machine, Upload } from "../api/types";
+import { SegmentedControl } from "../components/Controls";
+import { Problem } from "../components/Feedback";
+import { Icon } from "../components/Icon";
+import { Shell } from "../components/Shell";
+import { useStatus } from "../status/StatusProvider";
+import { formatCost, formatMinutes, formatNumber, formatRange, plural } from "../text/it";
 
 type Reviewers = "agent" | "agent_human" | "human";
+type Source = "upload" | "library";
 
-export const REVIEWER_TEXT: Record<Reviewers, string> = {
-  agent: "L'agente risponde a tutti i dubbi. Tu approvi il grafo alla fine.",
-  agent_human: "L'agente risponde ai dubbi che sa risolvere; i restanti, al massimo 10, arrivano a te.",
-  human: "I dubbi arrivano a te, al massimo 10; gli altri restano da verificare.",
-};
+export const REVIEWERS: { value: Reviewers; label: string; text: string }[] = [
+  { value: "agent", label: "Solo agente", text: "L'agente risponde a tutti i dubbi. Tu approvi il grafo alla fine." },
+  {
+    value: "agent_human",
+    label: "Agente, poi io",
+    text: "L'agente risponde ai dubbi che sa risolvere; i restanti, al massimo 10, arrivano a te.",
+  },
+  { value: "human", label: "Solo io", text: "I dubbi arrivano a te, al massimo 10; gli altri restano da verificare." },
+];
 
 const EMPTY: Machine = { name: "", brand: "", model: "", type: "" };
 
@@ -20,30 +29,104 @@ export function fileSize(bytes: number): string {
   return `${(bytes / 1_048_576).toLocaleString("it-IT", { maximumFractionDigits: 1 })} MB`;
 }
 
-function minutes(seconds: number): number {
-  return Math.max(1, Math.round(seconds / 60));
-}
-
 async function send(file: File): Promise<Upload> {
   const body = new FormData();
   body.append("file", file);
-  const response = await fetch("/api/uploads", { method: "POST", body });
-  const data = await response.json();
+  let response: Response;
+  try {
+    response = await fetch("/api/uploads", { method: "POST", body });
+  } catch {
+    throw new ApiError(0, OFFLINE);
+  }
+  const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new ApiError(response.status, data.detail ?? response.statusText);
   return data as Upload;
 }
 
+/** Why the run cannot start yet, in the order a person would fix it; null when it can. */
+export function blocker(input: {
+  running: string | null;
+  hasManual: boolean;
+  name: string;
+  worst: number | null;
+  estimated: boolean;
+}): string | null {
+  if (input.running) return `C'è già un'esecuzione in corso (${input.running}): aspetta che finisca.`;
+  if (!input.hasManual) return "Carica il manuale in PDF o sceglilo dalla libreria.";
+  if (!input.name.trim()) return "Scrivi il nome della macchina.";
+  if (input.estimated && input.worst === null) return "Non ho esecuzioni passate da cui stimare il costo.";
+  return null;
+}
+
+function StepCard({
+  number,
+  title,
+  done,
+  working = false,
+  children,
+}: {
+  number: number;
+  title: string;
+  done: boolean;
+  working?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <section className="card">
+      <header className="card-head">
+        <h2 className="card-title">
+          <span className="step-number" data-done={done} aria-hidden="true">
+            {done ? <Icon name="check" size={12} /> : number}
+          </span>
+          {title}
+        </h2>
+        {working && (
+          <span role="status">
+            <Icon name="loader" size={16} className="spin" />
+            <span className="visually-hidden">Lettura dei dati della macchina</span>
+          </span>
+        )}
+      </header>
+      <div className="card-body stack" style={{ gap: 12 }}>
+        {children}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Making a graph: which manual, which machine, who answers the doubts; on the right a summary that
+ * fills in as the steps are done, with the estimated time and cost and the start button.
+ * `?manuale=<id>` starts from a manual already in the library (a new version of its graph).
+ */
 export function NewGraph() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const status = useStatus();
   const input = useRef<HTMLInputElement>(null);
+  const [source, setSource] = useState<Source>(params.get("manuale") ? "library" : "upload");
+  const [picked, setPicked] = useState(params.get("manuale") ?? "");
   const [over, setOver] = useState(false);
   const [upload, setUpload] = useState<Upload | null>(null);
   const [machine, setMachine] = useState<Machine>(EMPTY);
   const [reviewers, setReviewers] = useState<Reviewers>("agent_human");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<"upload" | "start" | null>(null);
-  const budget = useApi<Budget>("/api/budget");
-  const guess = useApi<Estimate>(upload ? `/api/estimate?pages=${upload.pages}` : null);
+  // The machine read from the first pages by a small model, right after the upload.
+  // Busy while the machine is read from the first pages; the problem, if the reading fails.
+  const [reading, setReading] = useState<{ busy: boolean; problem: string | null }>({ busy: false, problem: null });
+  const latestUpload = useRef<string | null>(null);
+
+  const manuals = status.manuals ?? [];
+  const chosen = source === "library" ? manuals.find((row) => row.id === picked) : undefined;
+  const existing = chosen ?? (upload?.duplicate_of ? manuals.find((row) => row.id === upload.duplicate_of) : undefined);
+  const pages = source === "library" ? chosen?.pages ?? null : upload?.pages ?? null;
+  const guess = useApi<Estimate>(pages ? `/api/estimate?pages=${pages}` : null);
+
+  // A manual from the library brings its machine; a new PDF brings the guess read from it.
+  useEffect(() => {
+    if (chosen) setMachine(chosen.machine);
+  }, [chosen]);
 
   const choose = async (file: File | undefined) => {
     if (!file) return;
@@ -52,12 +135,30 @@ export function NewGraph() {
     try {
       const done = await send(file);
       setUpload(done);
+      latestUpload.current = done.upload_id;
       setMachine(done.machine ?? { ...EMPTY, name: file.name.replace(/\.pdf$/i, "") });
+      setReading({ busy: false, problem: null });
+      if (!done.duplicate_of) void read(done.upload_id);
     } catch (failure) {
       setUpload(null);
       setError((failure as Error).message);
     } finally {
       setBusy(null);
+      if (input.current) input.current.value = "";
+    }
+  };
+
+  const read = async (uploadId: string) => {
+    setReading({ busy: true, problem: null });
+    try {
+      const found = await postJson<Identified>(`/api/uploads/${uploadId}/machine`);
+      if (latestUpload.current !== uploadId) return; // another file was chosen meanwhile
+      setMachine((current) => ({ ...found.machine, name: found.machine.name || current.name }));
+      setReading({ busy: false, problem: null });
+      status.refresh();
+    } catch (failure) {
+      if (latestUpload.current !== uploadId) return;
+      setReading({ busy: false, problem: (failure as Error).message });
     }
   };
 
@@ -68,15 +169,16 @@ export function NewGraph() {
   };
 
   const start = async () => {
-    if (!upload) return;
     setError(null);
     setBusy("start");
     try {
-      const manual = await postJson<{ id: string }>("/api/manuals", { upload_id: upload.upload_id, ...machine });
-      const run = await postJson<{ version_id: string }>(`/api/manuals/${encodeURIComponent(manual.id)}/runs`, {
-        reviewers,
-      });
-      navigate(`/manuali/${encodeURIComponent(manual.id)}/versioni/${encodeURIComponent(run.version_id)}/esecuzione`);
+      const manualId =
+        source === "library"
+          ? picked
+          : (await postJson<{ id: string }>("/api/manuals", { upload_id: upload!.upload_id, ...machine })).id;
+      const run = await postJson<{ version_id: string }>(`/api/manuals/${encodeURIComponent(manualId)}/runs`, { reviewers });
+      status.refresh();
+      navigate(liveRoute(manualId, run.version_id));
     } catch (failure) {
       setError((failure as Error).message);
       setBusy(null);
@@ -84,148 +186,194 @@ export function NewGraph() {
   };
 
   const worst = guess.data?.cost_usd?.[1] ?? null;
-  const room = budget.data
-    ? Math.min(
-        budget.data.ceiling_usd - budget.data.committed_usd - budget.data.reserved_usd,
-        budget.data.ui_limit_usd - budget.data.ui_spent_usd,
-      )
-    : null;
-  const tooExpensive = worst !== null && room !== null && worst >= room;
-  const missing = !upload ? "Carica prima il manuale." : !machine.name.trim() ? "Scrivi il nome della macchina." : null;
-  const blocked = missing ?? (tooExpensive ? "La stima massima supera la spesa ancora possibile." : null);
-  const field = (key: keyof Machine, label: string) => (
+  const hasManual = source === "library" ? Boolean(chosen) : Boolean(upload);
+  const blocked = blocker({
+    running: status.active?.name ?? null,
+    hasManual,
+    name: machine.name,
+    worst,
+    estimated: Boolean(guess.data),
+  });
+  const locked = Boolean(existing);
+  const field = (key: keyof Machine, label: string, required = false) => (
     <div className="field">
-      <label htmlFor={`machine-${key}`}>{label}</label>
+      <label htmlFor={`machine-${key}`}>
+        {label}
+        {required && <span className="required"> *</span>}
+      </label>
       <input
         id={`machine-${key}`}
         className="input"
         value={machine[key]}
-        disabled={Boolean(upload?.duplicate_of)}
+        required={required}
+        aria-invalid={required && hasManual && !machine[key].trim() ? true : undefined}
+        disabled={locked || !hasManual || reading.busy}
         onChange={(event) => setMachine({ ...machine, [key]: event.target.value })}
       />
     </div>
   );
+  const title = source === "library" && chosen ? `Nuova versione di ${chosen.machine.name}` : "Nuovo grafo";
 
   return (
-    <div className="page">
-      <TopBar back={<BackLink to="/">Grafi</BackLink>} />
-      <main className="container">
-        <div className="column-8">
-          <div className="page-head">
-            <h1 className="t-title">Nuovo grafo</h1>
-          </div>
-          <div className="stack">
-            <div
-              className="dropzone"
-              data-over={over}
-              onDragOver={(event) => {
-                event.preventDefault();
-                setOver(true);
+    <Shell trail={[{ to: "/", label: "Grafi" }]} title={title}>
+      <div className="split">
+        <div className="stack">
+          <StepCard number={1} title="Manuale" done={hasManual}>
+            <SegmentedControl<Source>
+              label="Da dove viene il manuale"
+              value={source}
+              onChange={(value) => {
+                setSource(value);
+                setError(null);
+                if (value === "upload") setMachine(upload?.machine ?? EMPTY);
               }}
-              onDragLeave={() => setOver(false)}
-              onDrop={drop}
-            >
-              <p className="t-large strong">{busy === "upload" ? "Lettura del PDF in corso" : "Trascina qui il manuale in PDF"}</p>
-              <button type="button" className="button button-plain" onClick={() => input.current?.click()}>
-                Scegli un file
-              </button>
-              <input
-                ref={input}
-                type="file"
-                accept="application/pdf,.pdf"
-                className="visually-hidden"
-                tabIndex={-1}
-                onChange={(event) => void choose(event.target.files?.[0])}
-              />
-            </div>
-
-            {upload && (
+              options={[
+                { value: "upload", label: "Carica un PDF" },
+                { value: "library", label: "Dalla libreria" },
+              ]}
+            />
+            {source === "upload" && !upload && (
+              <div
+                className="dropzone"
+                data-over={over}
+                onDragOver={(event) => {
+                  event.preventDefault();
+                  setOver(true);
+                }}
+                onDragLeave={() => setOver(false)}
+                onDrop={drop}
+              >
+                <Icon name="upload" size={20} />
+                <p className="strong">{busy === "upload" ? "Lettura del PDF in corso" : "Trascina qui il manuale in PDF"}</p>
+                <button type="button" className="button button-plain" disabled={busy === "upload"} onClick={() => input.current?.click()}>
+                  Scegli un file
+                </button>
+              </div>
+            )}
+            <input
+              ref={input}
+              type="file"
+              accept="application/pdf,.pdf"
+              className="visually-hidden"
+              tabIndex={-1}
+              onChange={(event) => void choose(event.target.files?.[0])}
+            />
+            {source === "upload" && upload && (
               <>
                 <div className="file-row">
+                  <Icon name="file" />
                   <span className="strong" title={upload.file_name} style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {upload.file_name}
                   </span>
-                  <span className="num">{upload.pages === 1 ? "1 pagina" : `${formatNumber(upload.pages)} pagine`}</span>
+                  <span className="num">{plural(upload.pages, "pagina", "pagine")}</span>
                   <span className="num">{fileSize(upload.size_bytes)}</span>
+                  <button type="button" className="button button-plain" disabled={busy !== null} onClick={() => input.current?.click()}>
+                    Cambia
+                  </button>
                 </div>
                 {upload.duplicate_of && (
                   <p className="message">
-                    È il manuale di «{upload.machine?.name}», già nella libreria: l'esecuzione sarà una sua nuova versione.
+                    È il manuale di «{existing?.machine.name ?? upload.machine?.name}», già nella libreria: l'esecuzione sarà
+                    una sua nuova versione.
                   </p>
                 )}
               </>
             )}
+            {source === "library" && (
+              <div className="field">
+                <label htmlFor="library-manual">Manuale della libreria</label>
+                <select id="library-manual" className="input" value={picked} onChange={(event) => setPicked(event.target.value)}>
+                  <option value="">Scegli un manuale</option>
+                  {manuals.map((row) => (
+                    <option key={row.id} value={row.id}>
+                      {row.machine.brand} {row.machine.model} · {plural(row.pages ?? 0, "pagina", "pagine")}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </StepCard>
 
+          <StepCard
+            number={2}
+            title="Macchina"
+            done={hasManual && !reading.busy && Boolean(machine.name.trim())}
+            working={reading.busy}
+          >
+            {reading.problem && source === "upload" && <Problem message={reading.problem} />}
             <div className="fields-2">
-              {field("name", "Macchina")}
+              {field("name", "Macchina", true)}
               {field("brand", "Marca")}
               {field("model", "Modello")}
               {field("type", "Tipo")}
             </div>
+          </StepCard>
 
-            <div className="field">
-              <span className="field-label" id="reviewers-label">
-                Chi risponde ai dubbi
-              </span>
-              <SegmentedControl<Reviewers>
-                label="Chi risponde ai dubbi"
-                value={reviewers}
-                onChange={setReviewers}
-                options={[
-                  { value: "agent", label: "Solo agente" },
-                  { value: "agent_human", label: "Agente, poi io" },
-                  { value: "human", label: "Solo io" },
-                ]}
-              />
-              <p className="secondary">{REVIEWER_TEXT[reviewers]}</p>
+          <StepCard number={3} title="Chi risponde ai dubbi" done>
+            <div className="choices" role="radiogroup" aria-label="Chi risponde ai dubbi">
+              {REVIEWERS.map((option) => (
+                <label key={option.value} className="choice" data-checked={reviewers === option.value}>
+                  <input
+                    type="radio"
+                    name="reviewers"
+                    value={option.value}
+                    checked={reviewers === option.value}
+                    onChange={() => setReviewers(option.value)}
+                  />
+                  <span className="strong">{option.label}</span>
+                  <span className="t-small secondary">{option.text}</span>
+                </label>
+              ))}
             </div>
+          </StepCard>
+        </div>
 
+        <aside className="card summary" aria-label="Riepilogo">
+          <header className="card-head">
+            <h2 className="card-title">Riepilogo</h2>
+          </header>
+          <div className="card-body stack" style={{ gap: 12 }}>
             <dl className="facts">
-              {guess.data?.seconds && guess.data.cost_usd && (
-                <>
-                  <dt>Tempo stimato</dt>
-                  <dd>
-                    da {minutes(guess.data.seconds[0])} a {minutes(guess.data.seconds[1])} minuti
-                  </dd>
-                  <dt>Costo stimato</dt>
-                  <dd>
-                    da {formatUsd(guess.data.cost_usd[0])} a {formatUsd(guess.data.cost_usd[1])}
-                  </dd>
-                </>
-              )}
-              {budget.data && (
-                <>
-                  <dt>Speso finora sul registro</dt>
-                  <dd>
-                    {formatUsd(budget.data.committed_usd, 2)} di {formatUsd(budget.data.ceiling_usd, 2)}
-                  </dd>
-                  <dt>Speso dall'interfaccia</dt>
-                  <dd>
-                    {formatUsd(budget.data.ui_spent_usd, 2)} di {formatUsd(budget.data.ui_limit_usd, 2)}
-                  </dd>
-                </>
-              )}
+              <dt>Manuale</dt>
+              <dd>{hasManual ? machine.name || "Senza nome" : "–"}</dd>
+              <dt>Pagine</dt>
+              <dd>{pages ? formatNumber(pages) : "–"}</dd>
+              <dt>Dubbi</dt>
+              <dd>{REVIEWERS.find((option) => option.value === reviewers)?.label}</dd>
+              <dt>Tempo stimato</dt>
+              <dd>
+                {guess.data?.seconds
+                  ? formatRange(guess.data.seconds[0], guess.data.seconds[1], formatMinutes, "min")
+                  : "–"}
+              </dd>
+              <dt>Costo stimato</dt>
+              <dd>
+                {guess.data?.cost_usd ? formatRange(guess.data.cost_usd[0], guess.data.cost_usd[1], formatCost, "USD") : "–"}
+              </dd>
             </dl>
-            {guess.data?.seconds && (
-              <p className="secondary t-small">
-                La stima viene dalle due esecuzioni attuali con il numero di pagine più vicino: non è una promessa.
+            {(error ?? blocked) && (
+              <p className="t-small blocked" role={error ? "alert" : undefined}>
+                {error ?? blocked}
+                {!error && status.active && (
+                  <>
+                    {" "}
+                    <Link to={liveRoute(status.active.manualId, status.active.versionId)}>Seguila</Link>
+                  </>
+                )}
               </p>
             )}
-
-            <div className="actions">
-              {(error ?? blocked) && <p className="secondary">{error ?? blocked}</p>}
-              <button
-                type="button"
-                className="button button-primary"
-                disabled={Boolean(blocked) || busy !== null}
-                onClick={start}
-              >
-                Avvia estrazione
-              </button>
-            </div>
+            <button
+              type="button"
+              className="button button-primary"
+              disabled={Boolean(blocked) || busy !== null || reading.busy}
+              onClick={start}
+            >
+              <Icon name="play" />
+              {busy === "start" ? "Avvio in corso" : "Avvia estrazione"}
+            </button>
           </div>
-        </div>
-      </main>
-    </div>
+        </aside>
+      </div>
+    </Shell>
   );
 }

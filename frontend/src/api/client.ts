@@ -18,14 +18,25 @@ async function detail(response: Response): Promise<string> {
   }
 }
 
+export const OFFLINE = "Il server non risponde: controlla che scripts/ui.py sia avviato.";
+
+/** fetch, with a sentence a person can act on when the server is not there at all. */
+async function request(url: string, init?: RequestInit): Promise<Response> {
+  try {
+    return await fetch(url, init);
+  } catch {
+    throw new ApiError(0, OFFLINE);
+  }
+}
+
 export async function getJson<T>(url: string): Promise<T> {
-  const response = await fetch(url);
+  const response = await request(url);
   if (!response.ok) throw new ApiError(response.status, await detail(response));
   return response.json() as Promise<T>;
 }
 
 export async function postJson<T>(url: string, body?: unknown): Promise<T> {
-  const response = await fetch(url, {
+  const response = await request(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: body === undefined ? undefined : JSON.stringify(body),
@@ -36,6 +47,13 @@ export async function postJson<T>(url: string, body?: unknown): Promise<T> {
 
 export const versionPath = (manualId: string, versionId: string) =>
   `/api/manuals/${encodeURIComponent(manualId)}/versions/${encodeURIComponent(versionId)}`;
+
+// Screens of the interface, in one place.
+export const manualRoute = (manualId: string) => `/manuali/${encodeURIComponent(manualId)}`;
+export const graphRoute = (manualId: string, versionId: string) =>
+  `${manualRoute(manualId)}/versioni/${encodeURIComponent(versionId)}`;
+export const liveRoute = (manualId: string, versionId: string) => `${graphRoute(manualId, versionId)}/esecuzione`;
+export const questionsRoute = (manualId: string, versionId: string) => `${graphRoute(manualId, versionId)}/domande`;
 
 export interface Loaded<T> {
   data: T | null;

@@ -1,48 +1,65 @@
 /* Every value of docs/DESIGN.md, once. Screens use only these. */
 :root {
-  /* Document screens */
-  --bg: #f5f5f7;
+  /* Content (light): warm graphite, palette B chosen by Fabio on 2026-09-30 */
+  --bg: #fafaf9;
   --surface: #ffffff;
-  --text: #1d1d1f;
-  --text-2: #6e6e73;
-  --line: #d2d2d7;
-  --fill: #e8e8ed;
-  --link: #0066cc;
+  --subtle: #fafaf9;
+  --row: #f5f5f4;
+  --head: #e7e5e4;
+  --text: #1c1917;
+  --text-2: #78716c;
+  --line: #d6d3d1;
+  --line-soft: #e7e5e4;
+  --fill: #f5f5f4;
+  --link: #b45309;
 
-  /* Stage screens (graph) */
-  --stage: #000000;
-  --glass: rgba(28, 28, 30, 0.72);
-  --glass-solid: #1c1c1e;
-  --text-d: #f5f5f7;
-  --text-d2: #a1a1a6;
-  --line-d: rgba(255, 255, 255, 0.12);
-  --fill-d: rgba(255, 255, 255, 0.08);
-  --link-d: #2997ff;
-  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.32);
+  /* Frame: dark rail, path bar */
+  --rail: #1c1917;
+  --rail-text: #a8a29e;
+  --rail-hover: #292524;
+  --crumbs: #e7e5e4;
+  --accent: #d97706; /* the active place in the rail, the logo's node */
 
-  /* The one accent */
-  --accent: #0071e3;
+  /* Controls */
+  --primary: #292524;
+  --primary-hover: #0c0a09;
 
-  /* 8 px grid */
-  --s1: 8px;
-  --s2: 16px;
-  --s3: 24px;
-  --s4: 32px;
-  --s6: 48px;
-  --s8: 64px;
-  --control: 48px;
-  --bar: 64px;
-  --container: 1128px;
-  --gutter: 24px;
-  --panel-left: 288px;
-  --panel-right: 360px;
+  /* Graph screens (dark) */
+  --stage: #0c0a09;
+  --panel-d: #1c1917;
+  --text-d: #e7e5e4;
+  --text-d2: #a8a29e;
+  --line-d: #292524;
+  --fill-d: #292524;
+  --fill-d-hover: #44403c;
+  --link-d: #fbbf24;
 
-  --r-panel: 12px;
-  --r-control: 8px;
+  /* Signals: state only, always with a word */
+  --ok: #16a34a;
+  --warn: #f97316;
+  --stop: #ef4444;
+  --run: #3b82f6;
 
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif;
+  /* 4 px grid */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --control: 32px;
+  --bar: 48px;
+  --rail-w: 56px;
+  --status: 28px;
+  --panel-left: 264px;
+  --panel-right: 352px;
+
+  --r: 4px;
+
+  --font: "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
-  --t: 200ms;
+  --t: 150ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
