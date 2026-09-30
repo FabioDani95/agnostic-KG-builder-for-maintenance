@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "ui_identify_6607944329da:07b525a2711144249d3441bb0c3efb5d",
+  "run_id": "ui_identify_6607944329da",
+  "started_utc": "2026-09-30T08:07:07.801508+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You read the first pages of a technical manual and say which machine it is about.\nAnswer only from what the pages show; never guess a maker or a model that is not written.\n- brand: the manufacturer, as printed (e.g. \"Graco\", \"ABB\").\n- model: the model or series designation, as printed (e.g. \"GTX 2000EX\", \"ACS580-01\").\n- type: what the machine is, as a short generic noun phrase in lowercase, in the manual's language\n  (e.g. \"texture sprayer\", \"variable frequency drive\").\n- name: how a person would name it in a list: brand, model and type together\n  (e.g. \"Graco GTX 2000EX texture sprayer\").\nUse an empty string for anything the pages do not state."
+      },
+      {
+        "role": "user",
+        "content": "First pages of the manual:\n\nVB SERIES \nFANUC 0i MF CONTROL \nMAINTENANCE MANUAL \n70 Jon Barrett Road, Patterson, NY 12563, USA | www.fryermachine.com | v: 845.878.2500 | f: 845.878.2525 \n Ver 1.0 \n1 \nTABLE OF CONTENTS \n1.0 - SAFETY INFORMATION \nSafety Information ………….……………………………………………………………………………...………………. 4 \n1.01 Mechanical Safety ……………………….……………………………………………………...…………………… 5 \n1.02 Electrical Safety ……………………………………………….………………………………………………..……. 6 \n2.0 - BASIC INSTALLATION \n2.1 WHERE TO PLACE YOUR MACHINE \n2.11 Foundation …………….………………………………………………………………………………………..……. 7 \n2.12 Environmental Conditions …………………………………………………………………………………………… 7 \n2.2 Unloading Your Machine ................................................................................................................................. 7 \n2.3 RECEIVING YOUR MACHINE ............................................................................................................................... 7 \n2.4 UNPACK AND PLACE YOUR MACHINE ............................................................................................................ 8 \n2.5 PRIOR TO THE ARRIVAL OF THE TECHNICIAN \n2.51 Installation Safety Instructions.............................. ........................................................................................ 8 \n2.52 Cleaning & Lubricating Machine................................................................................................................... 8 \n2.53 Line Voltage Check........................................................................................................................................ 8 \n2.54 Electrical Precautions..................................................................................................................................... 8 \n2.6 LEVELING THE MACHINE \n2.61 Leveling Procedure....................................................................................................................................... 10 \n2.62 Leveling Procedures for Outriggers (VB-80 -160)........................................................................................ 11 \n3.0 - GENERAL INFORMATION \n3.1 MAINTENANCE SCHEDULE CHART ................................................................................................................. 13 \n3.2 MACHINE COMPONENTS \n3.21 Axis Lubrication System…………………………………………………………………………….………….........14 \n3.22 Electrical System……………………………………………………………………………….............................. 14 \n3.23 Pneumatic System ....................................................................................................................................... 15 \n3.24 Automatic Tool Changer ............................................................................................................................... 16 \n3.25 Spindle ......................................................................................................................................................... 17 \n3.26 Flood Coolant System……………………………………………………………………………………............... 17 \n3.27 Optional Tool Probe Calibration…………….…………………………….……………….….….……….............. 18 \n3.28 Optional Part Probe Calibration ………………………………………………..………...................................... 19 \n3.3 BASIC MACHINE PROCEDURES \n3.31 FANUC Machine Reference Procedure after Absolute Encoder Alarm ........................................................ 20 \n3.32 Check Axis Backlash.................................................................................................................................... 20 \n3.33 Adjusting Backlash Compensation............................................................................................................... 21 \n3.34 Working with Waycovers.............................................................................................................................. 21 \n3.35 Check / Adjusting Ballscrew Endplay........................................................................................................... 22 \n3.36 Check Axis Motor Belts................................................................................................................................ 22 \n4.0 - FANUC CONTROL............ ................................................................................................................ \n4.01 Accessing Machine Parameters.................................................................................................................... 23 \n4.02 Parameter Write Enable + USB .................................................................................................................... 24 \n4.03 Saving Parameters to USB ........................................................................................................................... 24 \n4.04 Loading Parameters from USB ..................................................................................................................... 25 \n4.05 Fanuc PLC Installation Procedure with USB ................................................................................................. 25 \n2 \n4.06 Saving Current PLC ………………………………………………………………………………………………… 25 \n4.07 Saving the Existing PLC ............................................................................................................................... 27 \n4.08 Loading the New PLC ................................................................................................................................... 28 \n4.09 M-Codes ...................................................................................................................................................... 29 \n4.10 Alarms .......................................................................................................................................................... 30 \n4.11 FRYER PLC Alarms and Descriptions .......................................................................................................... 30 \n4.12 Back-Up A Fanuc Archive File to A USB S"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "machine_identity",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "brand",
+            "model",
+            "type"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "brand": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "max_completion_tokens": 300,
+    "reasoning_effort": "none",
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 2.4655819580657408,
+  "response": {
+    "id": "chatcmpl-ETjdEiN4xI5ozhrtY5zQE1nbqTHfd",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"name\":\"Fryer VB Series\",\"brand\":\"Fryer\",\"model\":\"VB Series\",\"type\":\"machine tool\"}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790755628,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 30,
+      "prompt_tokens": 989,
+      "total_tokens": 1019,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 0,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cached_tokens": 0,
+        "cache_write_tokens": 0
+      }
+    }
+  },
+  "provider_request_id": "req_35f2fe04e9b54990a34fcadee25f19e1",
+  "error": null
+}

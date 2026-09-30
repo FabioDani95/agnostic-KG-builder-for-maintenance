@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "ui_identify_a7467316234f:0b67cbf8c580444fa3786e00e443a782",
+  "run_id": "ui_identify_a7467316234f",
+  "started_utc": "2026-09-30T08:23:23.871858+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You read the first pages of a technical manual and say which machine it is about.\nAnswer only from what the pages show; never guess a maker or a model that is not written.\n- brand: the manufacturer, as printed (e.g. \"Graco\", \"ABB\").\n- model: the model or series designation, as printed (e.g. \"GTX 2000EX\", \"ACS580-01\").\n- type: what the machine is, as a short generic noun phrase in lowercase, in the manual's language\n  (e.g. \"texture sprayer\", \"variable frequency drive\").\n- name: how a person would name it in a list: brand, model and type together\n  (e.g. \"Graco GTX 2000EX texture sprayer\").\nUse an empty string for anything the pages do not state."
+      },
+      {
+        "role": "user",
+        "content": "First pages of the manual:\n\nTHE EASTMAN\n®\n779 Washington St., Buffalo, N.Y. 14203-1396 U.S.A. • (716)856-2200 • Fax (716)856-1140 or (716)856-2068\nManufacturers of Eastman Cloth Cutting and Cloth Spreading Machines\nWebsite: www.EastmanCuts.com\nEagle\nAutomatic Laser Cutting System\nModel: Eagle S3L\nForm E-554\nTechnical Support:\n1-800-872-5595\n WARNING\nThis machine is equipped with a very sharp\nknife. Keep hands, arms, and hair away from\nthe knife area at all times.\nMisuse of this machine or failure to follow all\nsafety instructions on this machine and in the\ninstruction manual may result in serious\npersonal injuries.\n DANGER\nThis machine is equipped with a class IV\nlaser product. Avoid eye or skin exposure\nto direct or scattered radiation at all times.\nApproved laser protective eyewear required.\nMisuse of this machine or failure to follow all\nsafety instructions on this machine and in\nthe instruction manual may result in death\nor serious personal injury to the user.\nService Manual\n2\nForm E-554\nTable of Contents\nSafety Information ....................................................... 3\nGeneral Safety Precautions......................................... 3\nLaser Safety Precautions ............................................ 4\nLaser Safety Hazard Information.................................. 4\nSafety Zone and Stop Devices ..................................... 6\nEagle S3L Familiarization ........................................... 7\nReference Manuals ..................................................... 8\nINSTALLATION ............................................................ 8\nSite Preparation .......................................................... 8\nUnpacking Instructions ................................................ 8\nTable Assembly ........................................................... 9\nVacuum Assembly Installation................................... 12\nGantry Installation ..................................................... 12\nFume extractor hose and Festoon installation ........... 12\nChiller Installation ...................................................... 12\nCo2 Tank Installation ................................................. 12\nSignage and safety glasses ...................................... 12\nEnvironmental Conditions .......................................... 13\nSERVICE and MAINTENANCE ................................. 13\nAligning, Cleaning and Replacing Consumables ........ 13\nRound Knife Replacement ......................................... 14\nDrag Knife Replacement............................................ 15\nPunch Replacement .................................................. 16\nPen Replacement...................................................... 16\nAirbrush Ink Refill ...................................................... 17\nCleaning of Airbrush .................................................. 17\nSpray Tip and Cap Replacement ............................... 17\nNeedle Removal ........................................................ 17\nNeedle Setting .......................................................... 17\nX-Motor Belt Replacement ......................................... 18\nY-Motor Belt Replacement ........................................ 18\nIMPORTANT\nThe purchaser must instruct all operators on the proper use of this equipment. All standard industrial safety measures\nand equipment should be provided to protect the operator. Operators must be cautioned that improper or careless\nuse of this equipment may cause personal injury. If you do not have qualified operators to instruct new persons,\ncontact your EASTMAN sales representative or EASTMAN factory direct.\nElectrical connections and servicing to this equipment should be made by a qualified electrician who is familiar with\napplicable codes and regulations. Disconnect this equipment from electrical power source before proceeding with\nany disassembly for adjustment or repair.\nTheta-Motor Belt Replacement .................................. 19\nX-Axis Linear Bearing Replacement .......................... 19\nY-Axis Top Linear Bearing Replacement .................... 20\nY-Axis Front Linear Bearing Replacement ................. 21\nLaser Mirror Replacement ......................................... 22\nLaser Focus Lens Replacement ................................ 23\nLaser Optics Cleaning ............................................... 24\nFume Extractor Filter Replacement ........................... 24\nChiller Coolant Level .................................................. 24\nCALIBRATION & ADJUSTMENTS ............................. 25\nPressure Transducer Calibration................................ 25\nGantry Backlash Adjustment ..................................... 25\nY-Car Backlash Adjustment....................................... 26\nStop Disc Adjustment................................................ 27\nLaser Focus Lens Adjustment ................................... 27\nLaser Mirror Alignment/Adjustment............................ 28\nGantry Calibration Procedure .................................... 28\nSCHEDULES MAINTENANCE PROCEDURES......... 28\nDaily Maintenance (Start of each shift) ...................... 28\nWeekly or every 40 hours .......................................... 29\nFirst Working Day of Month....................................... 29\nLubrication Chart ....................................................... 30\nYearly Maintenance Checklist ................................... 31\nTROUBLE SHOOTING GUIDE .................................. 37\nELECTRICAL & PNEUMATIC DIAGRAMS ................ 39\nPneumatic Diagram Blue Print No. (31-9000-41) ....... 40\nLabel Locations Gantry Assembly ............................. 51\nLabel Locations Laser Module ................................... 52\nAgency Compliance .................................................. 53\nTechnical Data .......................................................... 54"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "machine_identity",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "brand",
+            "model",
+            "type"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "brand": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "max_completion_tokens": 300,
+    "reasoning_effort": "none",
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 1.9439570000395179,
+  "response": {
+    "id": "chatcmpl-ETjsyWs3ZDVBJb1TImTz9omssJXuD",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"name\":\"Eastman Eagle S3L automatic laser cutting system\",\"brand\":\"Eastman\",\"model\":\"Eagle S3L\",\"type\":\"automatic laser cutting system\"}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790756604,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 41,
+      "prompt_tokens": 1220,
+      "total_tokens": 1261,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 0,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cached_tokens": 0,
+        "cache_write_tokens": 1217
+      }
+    }
+  },
+  "provider_request_id": "req_078e2965d81e4897bc163acbaa3307f2",
+  "error": null
+}

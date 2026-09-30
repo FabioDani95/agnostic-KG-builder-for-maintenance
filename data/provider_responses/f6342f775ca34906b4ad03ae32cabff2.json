@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "method": "create",
+  "call_id": "ui_identify_a778072ed13e:aa21530bd2624e38921ff0391244ef7e",
+  "run_id": "ui_identify_a778072ed13e",
+  "started_utc": "2026-09-30T10:07:18.633615+00:00",
+  "status": "received",
+  "request": {
+    "model": "gpt-6-luna",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You read the first pages of a technical manual and say which machine it is about.\nAnswer only from what the pages show; never guess a maker or a model that is not written.\n- brand: the manufacturer, as printed (e.g. \"Graco\", \"ABB\").\n- model: the model or series designation, as printed (e.g. \"GTX 2000EX\", \"ACS580-01\").\n- type: what the machine is, as a short generic noun phrase in lowercase, in the manual's language\n  (e.g. \"texture sprayer\", \"variable frequency drive\").\n- name: how a person would name it in a list: brand, model and type together\n  (e.g. \"Graco GTX 2000EX texture sprayer\").\nUse an empty string for anything the pages do not state."
+      },
+      {
+        "role": "user",
+        "content": "First pages of the manual:\n\nCopyright © january, 2012 By Grizzly Industrial, Inc. revised JULY, 2013 (BL)\nWarning: No portion of this manual may be reproduced in any shape\n Or form without the written approval of Grizzly Industrial, inc.\n#bl14661 printed in TAIWAN\nMODEL G0710/G0710P\n1HP WALL HANGING DUST \nCOLLECTOR\nOWNER'S Manual\n(For models manufactured since 9/12)\n247570\nThis manual provides critical safety instructions on the proper setup, \noperation, maintenance, and service of this machine/tool. Save this \ndocument, refer to it often, and use it to instruct other operators. \nFailure to read, understand and follow the instructions in this manual \nmay result in fire or serious personal injury—including amputation, \nelectrocution, or death.\nThe owner of this machine/tool is solely responsible for its safe use. \nThis responsibility includes but is not limited to proper installation in \na safe environment, personnel training and usage authorization, \nproper inspection and maintenance, manual availability and compre-\nhension, application of safety devices, cutting/sanding/grinding tool \nintegrity, and the usage of personal protective equipment.\nThe manufacturer will not be held liable for injury or property damage \nfrom negligence, improper training, machine modifications or misuse.\nSome dust created by power sanding, sawing, grinding, drilling, and \nother construction activities contains chemicals known to the State \nof California to cause cancer, birth defects or other reproductive \nharm. Some examples of these chemicals are:\n• \nLead from lead-based paints.\n• \nCrystalline silica from bricks, cement and other masonry products.\n• \nArsenic and chromium from chemically-treated lumber.\nYour risk from these exposures varies, depending on how often you \ndo this type of work. To reduce your exposure to these chemicals: \nWork in a well ventilated area, and work with approved safety equip-\nment, such as those dust masks that are specially designed to filter \nout microscopic particles."
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "machine_identity",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "brand",
+            "model",
+            "type"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "brand": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "max_completion_tokens": 300,
+    "reasoning_effort": "none",
+    "service_tier": "default"
+  },
+  "elapsed_seconds": 3.2782429589424282,
+  "response": {
+    "id": "chatcmpl-ETlVYPaDJuKifdopuCwPTsWGAJec6",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "content": "{\"name\":\"Grizzly G0710/G0710P 1HP wall hanging dust collector\",\"brand\":\"Grizzly\",\"model\":\"G0710/G0710P\",\"type\":\"1HP wall hanging dust collector\"}",
+          "refusal": null,
+          "role": "assistant",
+          "annotations": [],
+          "audio": null,
+          "function_call": null,
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 1790762840,
+    "model": "gpt-6-luna",
+    "object": "chat.completion",
+    "moderation": null,
+    "service_tier": "default",
+    "system_fingerprint": null,
+    "usage": {
+      "completion_tokens": 51,
+      "prompt_tokens": 649,
+      "total_tokens": 700,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 0,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cached_tokens": 0,
+        "cache_write_tokens": 0
+      }
+    }
+  },
+  "provider_request_id": "req_babf6d1ccbe644238768bd39fe0a96a9",
+  "error": null
+}
