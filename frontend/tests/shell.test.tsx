@@ -26,7 +26,7 @@ afterEach(() => {
 describe("the frame", () => {
   it("shows what waits for a person, and the run in progress, on any screen", async () => {
     vi.spyOn(globalThis, "fetch").mockImplementation(async (input) =>
-      new Response(JSON.stringify(answers[String(input)] ?? {})),
+      Response.json(answers[String(input)] ?? {}),
     );
     render(
       <MemoryRouter>

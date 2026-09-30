@@ -29,10 +29,18 @@ async function request(url: string, init?: RequestInit): Promise<Response> {
   }
 }
 
+export const NOT_API = "Al posto dei dati è arrivata una pagina web: riavvia scripts/ui.py.";
+
+/** The body as JSON; a page served instead of the API (a dev server without its proxy) says so. */
+async function json<T>(response: Response): Promise<T> {
+  if (!(response.headers.get("content-type") ?? "").includes("json")) throw new ApiError(response.status, NOT_API);
+  return response.json() as Promise<T>;
+}
+
 export async function getJson<T>(url: string): Promise<T> {
   const response = await request(url);
   if (!response.ok) throw new ApiError(response.status, await detail(response));
-  return response.json() as Promise<T>;
+  return json<T>(response);
 }
 
 export async function postJson<T>(url: string, body?: unknown): Promise<T> {
@@ -42,7 +50,7 @@ export async function postJson<T>(url: string, body?: unknown): Promise<T> {
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   if (!response.ok) throw new ApiError(response.status, await detail(response));
-  return response.json() as Promise<T>;
+  return json<T>(response);
 }
 
 export const versionPath = (manualId: string, versionId: string) =>

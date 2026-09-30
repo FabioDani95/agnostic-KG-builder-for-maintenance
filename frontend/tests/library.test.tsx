@@ -33,7 +33,7 @@ describe("library", () => {
 
   it("shows one row per manual with real numbers", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify([row("p1", "approved", 0), row("p2", "awaiting_approval", 3)])),
+      Response.json([row("p1", "approved", 0), row("p2", "awaiting_approval", 3)]),
     );
     render(
       <MemoryRouter>
@@ -44,5 +44,17 @@ describe("library", () => {
     expect(screen.getByText("Acme P2")).toBeTruthy();
     expect(screen.getByText("Da approvare")).toBeTruthy();
     expect(screen.getByText("Approvato dal sistema")).toBeTruthy();
+  });
+
+  it("says a page came instead of the data, not a JSON error", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response("<!doctype html><html></html>", { headers: { "content-type": "text/html" } }),
+    );
+    render(
+      <MemoryRouter>
+        <Library />
+      </MemoryRouter>,
+    );
+    await waitFor(() => expect(screen.getByRole("alert").textContent).toMatch(/pagina web: riavvia scripts\/ui.py/));
   });
 });
