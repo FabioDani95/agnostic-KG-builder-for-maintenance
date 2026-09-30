@@ -429,4 +429,51 @@ export const GUIDE: GuideChapter[] = [
       },
     ],
   },
+
+{
+  "slug": "modifica-grafo",
+  "title": "Modificare un grafo",
+  "icon": "pencil",
+  "lead": "Modifica grafo apre una sessione sulla versione che stai leggendo. Puoi correggere nodi, relazioni e occorrenze; solo l’accettazione finale crea una nuova versione.",
+  "sections": [
+    {
+      "id": "percorso",
+      "heading": "Modifica, Controlla, Riepilogo",
+      "body": [
+        "Il pulsante Modifica grafo è disponibile dopo la generazione, sul grafo aperto e nella cronologia. La barra indica sempre la versione di partenza. Se un’estrazione è ancora attiva o ci sono risposte da applicare, il motivo del blocco è visibile.",
+        "In Modifica scegli Nodi, Relazioni o Grafo. Filtri, prove e collegamenti permettono di raggiungere lo stesso elemento nelle diverse viste. Modifica le celle, aggiungi o elimina elementi; Annulla modifica e Ripeti modifica valgono per questa sessione.",
+        "Avanti apre Controlla: integrità, campi richiesti e facoltativi, collegamenti e fonti hanno indicatori separati. Un controllo conduce alla riga o al campo interessato. I controlli strutturali non garantiscono la correttezza tecnica.",
+        "Avanti apre Riepilogo con aggiunte, rimozioni e valori prima/dopo, incluse le verifiche invalidate e i collegamenti aggiornati dal sistema. Indietro conserva le modifiche. Una correzione fa scadere i controlli e i riconoscimenti precedenti."
+      ]
+    },
+    {
+      "id": "celle-prove",
+      "heading": "Campi, relazioni e prove",
+      "body": [
+        "Invio conferma una cella semplice; Tab conferma e passa al controllo successivo; Esc annulla il testo della cella attiva. Descrizioni, istruzioni e liste usano un campo multilinea. Le liste si inseriscono come JSON, per esempio [\"primo\", \"secondo\"].",
+        "Assente, vuoto, non dichiarato e compilato sono stati distinti. Zero e false sono valori compilati. Il menu della cella distingue Svuota, Imposta null e Rimuovi campo facoltativo. ID e campi sconosciuti restano in sola lettura.",
+        "Le relazioni ammettono soltanto estremi compatibili. Proporre la stessa tripla aggiunge un’occorrenza, senza duplicare il collegamento. Cambiare estremi o tipo crea una nuova identità. Eliminare un nodo mostra i collegamenti rimossi; eliminare l’ultima occorrenza elimina la relazione.",
+        "Le parole del manuale restano in sola lettura. Nelle occorrenze puoi scegliere segmenti della fonte verificata, condizioni e un’annotazione personale. Se il PDF o il suo indice non sono verificabili, le citazioni incorporate restano leggibili; non si inventano nuove prove. Le relazioni aggiunte dal sistema restano in sola lettura."
+      ]
+    },
+    {
+      "id": "accettazione",
+      "heading": "Accettare una nuova versione",
+      "body": [
+        "Accetta modifiche e crea nuova versione è l’unico comando che salva. Prima riconosci i dubbi residui elencati. La nuova versione viene aperta come accettata, senza un secondo Approva, e l’originale rimane invariato. Non richiede chiamate AI.",
+        "Una modifica a un nodo o a un’occorrenza invalida le verifiche interessate. Accettare la versione non le rende verdi. Dopo i controlli, Conferma contenuto o Rifiuta contenuto registra una decisione umana sulla singola occorrenza: la conferma umana è distinguibile dalla verifica automatica, anche senza una fonte collegata.",
+        "La cronologia conserva il padre e il numero della revisione. Scarica versione e provenienza include grafo, base congelata, differenze, controlli e decisione. Le domande dell’estrazione restano riconoscibili come contesto della fonte e le attività aperte restano in Tocca a te.",
+        "Se l’esito del salvataggio è incerto, la sessione resta bloccata sullo stesso contenuto. Verifica il salvataggio apre la versione già creata oppure permette di riprovare la stessa richiesta."
+      ]
+    },
+    {
+      "id": "uscita",
+      "heading": "Uscire e scartare",
+      "body": [
+        "Le modifiche vivono soltanto nella sessione aperta. Esci senza salvare, logo, percorso e sidebar chiedono se vuoi continuare o scartare quando ci sono modifiche. Continua a modificare conserva i valori; Esci e scarta li perde.",
+        "Ricaricare o chiudere la pagina prima dell’accettazione scarta la sessione, anche tornando con la cronologia del browser. Il browser può mostrare il proprio avviso di uscita. Non esistono autosalvataggio o recupero della bozza. Una richiesta di accettazione già inviata può invece completarsi sul server."
+      ]
+    }
+  ]
+},
 ];

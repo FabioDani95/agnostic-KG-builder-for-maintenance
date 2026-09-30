@@ -13,10 +13,10 @@ import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any, Literal
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from backend.ui.questions import open_for_people
 
@@ -39,6 +39,8 @@ class Version(BaseModel):
     date: str | None
     commit: str
     verified: int
+    human_confirmed: int = 0
+    rejected: int = 0
     doubtful: int
     excluded: int
     open_questions: int
@@ -50,6 +52,34 @@ class Version(BaseModel):
     pages: int | None
     replay: bool
     copied_from: str | None = None
+    kind: str = "run"
+    parent_version_id: str | None = None
+    root_run_id: str | None = None
+    revision_number: int | None = None
+    can_edit: bool = False
+    edit_reason: str | None = None
+    can_approve: bool = False
+    can_replay: bool = False
+    can_resume: bool = False
+
+
+class RunVersion(Version):
+    kind: Literal["run"] = "run"
+
+
+class RevisionVersion(Version):
+    kind: Literal["revision"] = "revision"
+    parent_version_id: str
+    root_run_id: str
+    revision_number: int
+    status: Literal["approved"] = "approved"
+    decided_by: Literal["human"] = "human"
+    cost_usd: Literal[0] = 0
+    seconds: None = None
+    replay: Literal[False] = False
+    can_approve: Literal[False] = False
+    can_replay: Literal[False] = False
+    can_resume: Literal[False] = False
 
 
 class Manual(BaseModel):
@@ -57,7 +87,7 @@ class Manual(BaseModel):
     origin: str  # where its info.yaml lives: campaign | workspace
     machine: Machine
     pages: int | None
-    versions: list[Version]
+    versions: list[Annotated[RunVersion | RevisionVersion, Field(discriminator="kind")]]
 
     @property
     def latest(self) -> Version | None:
@@ -152,7 +182,7 @@ class Catalog:
                 continue
             for folder in sorted(base.iterdir()):
                 if folder.is_dir() and not folder.name.startswith(".") and (
-                        (folder / "info.yaml").exists() or (base == self.workspace and (folder / "runs").exists())):
+                        (folder / "info.yaml").exists() or (base == self.workspace and ((folder / "runs").exists() or (folder / "revisions").exists()))):
                     found.setdefault(folder.name, []).append(folder)
         return {key: dirs for key, dirs in found.items() if any((d / "info.yaml").exists() for d in dirs)}
 
@@ -181,11 +211,49 @@ class Catalog:
             raise KeyError(f"{manual_id}/{version_id}")
         return found[1]
 
-    def find(self, manual_id: str, version_id: str) -> Version:
-        found = self.run_dirs(manual_id).get(version_id)
+    def revision_dirs(self, manual_id: str) -> dict[str, tuple[str, Path]]:
+        root = self.workspace / manual_id / "revisions"
+        found = {}
+        for folder in sorted(root.iterdir()) if root.exists() else []:
+            if folder.name.startswith('.') or not folder.is_dir():
+                continue
+            meta = _read_json(folder / "revision.json")
+            required = ("graph.json", "base-graph.json", "changes.json", "validation.json", "acceptance.json",
+                        "source-review.json", "ontology.json")
+            if meta and all((folder / name).exists() for name in required):
+                found[meta["revision_id"]] = ("workspace", folder)
+        return found
+
+    def version_dir(self, manual_id: str, version_id: str) -> Path:
+        found = {**self.run_dirs(manual_id), **self.revision_dirs(manual_id)}.get(version_id)
         if found is None:
             raise KeyError(f"{manual_id}/{version_id}")
-        return self.version(version_id, *found)
+        return found[1]
+
+    def find(self, manual_id: str, version_id: str) -> Version:
+        folder = self.version_dir(manual_id, version_id)
+        if version_id.startswith("revision~"):
+            return self.revision_version(folder)
+        origin, _ = self.run_dirs(manual_id)[version_id]
+        return self.version(version_id, origin, folder)
+
+    def revision_version(self, folder: Path) -> Version:
+        from backend.ui.revisions import capabilities
+        meta, graph = _read_json(folder / "revision.json"), _read_json(folder / "graph.json")
+        diagnostic = [e for e in graph["edges"] if not e.get("derived")]
+        rejected = [e for e in diagnostic if e.get("occurrences") and all(o.get("review", {}).get("status") == "rejected" for o in e["occurrences"])]
+        edges = [e for e in diagnostic if e not in rejected]
+        return RevisionVersion(version_id=meta["revision_id"], kind="revision", origin="workspace", iteration="revision",
+                       run=folder.name, repetition=None, revision_number=meta["revision_number"],
+                       date=meta["created_at"], commit=meta["editor_code_commit"][:7],
+                       parent_version_id=meta["parent_version_id"], root_run_id=meta["root_run_id"],
+                       verified=sum(e.get("trusted", False) and e.get("tier") == "green" for e in edges),
+                       human_confirmed=sum(e.get("trusted", False) and e.get("tier") != "green" for e in edges),
+                       rejected=len(rejected),
+                       doubtful=sum(not e.get("trusted", False) for e in edges),
+                       excluded=len(graph.get("excluded_relations", [])) + len(rejected), open_questions=0,
+                       status="approved", decided_by="human", cost_usd=0, seconds=None, pages=None, replay=False,
+                       **capabilities(folder, True))
 
     def manual_dir(self, manual_id: str) -> Path:
         """Folder with info.yaml and manual.pdf: the campaign's, else the workspace's."""
@@ -198,7 +266,9 @@ class Catalog:
     # Reading -----------------------------------------------------------------
 
     def version(self, version_id: str, origin: str, run_dir: Path) -> Version:
-        watched = [run_dir / name for name in ("report.json", "events.jsonl", "people.json", "origin.json", "job.json")]
+        from backend.ui.revisions import capabilities
+
+        watched = [run_dir / name for name in ("report.json", "events.jsonl", "people.json", "origin.json", "job.json", "graph.json")]
         watched += sorted((run_dir / "state").glob("gate_*.json"))
         # A process that ends changes no file: its liveness is part of the key.
         stamp = (*((path.name, path.stat().st_mtime_ns) for path in watched if path.exists()),
@@ -216,7 +286,7 @@ class Catalog:
             cost = float(report["usage"].get("estimated_cost_usd") or 0.0)
             cost += float((report.get("agent_usage") or {}).get("estimated_cost_usd") or 0.0)
         copied = (_read_json(run_dir / "origin.json") or {}).get("from")
-        version = Version(
+        version = RunVersion(
             version_id=version_id, origin=origin,
             iteration=folder.removeprefix("runs").removeprefix("_").replace("_", " ") if origin == "campaign"
             else WORKSPACE_ITERATION,
@@ -228,7 +298,7 @@ class Catalog:
             status=_status(run_dir, report), decided_by=_decided_by(run_dir), cost_usd=round(cost, 6) if cost is not None else None,
             seconds=seconds.get("end_to_end") or seconds.get("total"), pages=(report or {}).get("pages"),
             replay=(run_dir / "state").exists() or (run_dir / "events.jsonl").exists(),
-            copied_from=copied,
+            copied_from=copied, **capabilities(run_dir),
         )
         self._versions[run_dir] = _Cached(stamp, version)
         return version
@@ -241,6 +311,7 @@ class Catalog:
         machine = Machine.model_validate(info.get("machine") or {"name": manual_id})
         versions = [self.version(version_id, origin, path)
                     for version_id, (origin, path) in self.run_dirs(manual_id).items()]
+        versions += [self.revision_version(path) for _, path in self.revision_dirs(manual_id).values()]
         versions.sort(key=lambda item: item.date or "", reverse=True)
         pages = (_read_json(self.manual_dir(manual_id) / "manual.json") or {}).get("pages")
         if pages is None:

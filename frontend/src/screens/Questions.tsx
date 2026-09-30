@@ -9,7 +9,7 @@ import { useStatus } from "../status/StatusProvider";
 import { Shell } from "../components/Shell";
 import { PageDialog } from "../components/PageDialog";
 import { formatNumber, pageRef } from "../text/it";
-import { getLang, tr } from "../i18n/i18n";
+import { getLang, tr, useLang } from "../i18n/i18n";
 
 function QuestionCard({
   question,
@@ -166,6 +166,7 @@ function QuestionCard({
 }
 
 export function Questions() {
+  useLang();
   const { manualId = "", versionId = "" } = useParams();
   const navigate = useNavigate();
   const base = `/manuali/${encodeURIComponent(manualId)}/versioni/${encodeURIComponent(versionId)}`;

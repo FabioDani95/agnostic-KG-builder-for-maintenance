@@ -8,7 +8,7 @@ import { Icon } from "../components/Icon";
 import { Shell } from "../components/Shell";
 import { useStatus } from "../status/StatusProvider";
 import { formatCost, formatMinutes, formatNumber, formatRange, plural } from "../text/it";
-import { tr } from "../i18n/i18n";
+import { tr, useLang } from "../i18n/i18n";
 
 type Reviewers = "agent" | "agent_human" | "human";
 type Source = "upload" | "library";
@@ -105,6 +105,7 @@ function StepCard({
  * `?manuale=<id>` starts from a manual already in the library (a new version of its graph).
  */
 export function NewGraph() {
+  useLang();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const status = useStatus();

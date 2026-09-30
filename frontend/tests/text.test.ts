@@ -22,7 +22,7 @@ const version = (overrides: Partial<Version>): Version => ({
   replay: true,
   copied_from: null,
   ...overrides,
-});
+} as Version);
 
 describe("Italian labels", () => {
   it("says who approved", () => {

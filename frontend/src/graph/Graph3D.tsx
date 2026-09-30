@@ -1,7 +1,7 @@
 import ForceGraph3D, { type ForceGraph3DInstance } from "3d-force-graph";
 import { useEffect, useImperativeHandle, useRef, type Ref } from "react";
 import * as THREE from "three";
-import type { Tier } from "../api/types";
+import type { Tier, HumanReview } from "../api/types";
 import { TYPE_LABEL } from "../text/it";
 import { DIMMED, EDGE_STYLE, edgeLook, NODE_STYLE } from "./style";
 import { tr } from "../i18n/i18n";
@@ -19,12 +19,14 @@ export interface ViewLink {
   to: string;
   tier: Tier | null;
   derived?: boolean;
+  review?: HumanReview;
 }
 
 export interface GraphHandle {
   /** Let the layout move again after the person froze it by touching the scene. */
   relayout: () => void;
   fit: () => void;
+  focus: (id: string) => void;
 }
 
 interface SimNode extends ViewNode {
@@ -100,7 +102,7 @@ function makeLine(link: SimLink): THREE.Line {
 }
 
 function styleLine(line: THREE.Line, view: ViewLink, dim: number) {
-  const look = edgeLook(view.tier, view.derived);
+  const look = edgeLook(view.tier, view.derived, view.review);
   const style = EDGE_STYLE[look ?? "proposed"];
   const opacity = look === null ? 0 : style.opacity * dim;
   const current = line.material as THREE.LineBasicMaterial;
@@ -190,6 +192,11 @@ export function Graph3D({
         delete node.fz;
       }
       graph.current?.d3ReheatSimulation();
+    },
+    focus: (id: string) => {
+      const link = linkMap.current.get(id);
+      const node = nodeMap.current.get(id) ?? (link ? nodeMap.current.get(link.view.from) : undefined);
+      if (node) { const x=node.x??0, y=node.y??0, z=node.z??0; graph.current?.cameraPosition({x:x+40,y:y+40,z:z+100},{x,y,z},reducedMotion()?0:400); }
     },
     fit: () => graph.current?.zoomToFit(reducedMotion() ? 0 : 400, 48),
   }));
@@ -285,6 +292,15 @@ export function Graph3D({
     for (const node of nodes) {
       const existing = nodeMap.current.get(node.id);
       if (existing) {
+        if(existing.name !== node.name && existing.label) {
+          const parent=existing.label.parent;
+          parent?.remove(existing.label);
+          existing.label.material.map?.dispose();
+          existing.label.material.dispose();
+          existing.name=node.name;
+          existing.label=makeLabel(existing);
+          parent?.add(existing.label);
+        }
         existing.name = node.name;
         existing.type = node.type;
       } else {

@@ -15,7 +15,15 @@ export type RunStatus =
   | "failed"
   | "running";
 
-export interface Version {
+interface VersionFields {
+  parent_version_id?: string | null;
+  root_run_id?: string | null;
+  revision_number?: number | null;
+  can_edit?: boolean;
+  edit_reason?: string | null;
+  can_approve?: boolean;
+  can_replay?: boolean;
+  can_resume?: boolean;
   version_id: string;
   origin: "campaign" | "workspace";
   iteration: string;
@@ -24,6 +32,8 @@ export interface Version {
   date: string | null;
   commit: string;
   verified: number;
+  human_confirmed?: number;
+  rejected?: number;
   doubtful: number;
   excluded: number;
   open_questions: number;
@@ -36,6 +46,14 @@ export interface Version {
   copied_from: string | null;
 }
 
+export interface RunVersion extends VersionFields { kind?: "run" }
+export interface RevisionVersion extends VersionFields {
+  kind: "revision"; parent_version_id: string; root_run_id: string; revision_number: number;
+  status: "approved"; decided_by: "human"; cost_usd: 0; seconds: null; replay: false;
+  can_approve: false; can_replay: false; can_resume: false;
+}
+export type Version = RunVersion | RevisionVersion;
+
 export interface ManualRow {
   id: string;
   origin: "campaign" | "workspace";
@@ -43,6 +61,7 @@ export interface ManualRow {
   pages: number | null;
   versions: number;
   latest: Version | null;
+  activities?: Version[];
 }
 
 export interface Manual {
@@ -80,11 +99,18 @@ export interface Certificate {
 export interface Condition {
   kind: string;
   text: string;
+  cite?: string[];
+  scope?: "relation" | "section";
 }
 
 export interface Occurrence {
   record: string;
-  tier?: Tier;
+  id?: string;
+  content_hash?: string;
+  annotation?: string;
+  trusted?: boolean;
+  review?: HumanReview;
+  tier?: Tier | null;
   conditions?: Condition[];
   certificate?: Certificate;
   evidence: Evidence[];
@@ -105,7 +131,8 @@ export interface GraphEdge {
   type: string;
   from: string;
   to: string;
-  tier: Tier;
+  tier: Tier | null;
+  review?: HumanReview;
   trusted: boolean;
   derived?: boolean;
   conditions: Condition[];
@@ -186,7 +213,7 @@ export interface Questions {
 }
 
 /** One row of the run log (/api/runs): a version with the manual it belongs to. */
-export interface RunRow extends Version {
+export interface RunRow extends RunVersion {
   manual_id: string;
   machine: Machine;
 }
@@ -198,7 +225,7 @@ export interface ActiveJob {
 export interface OntologyNode {
   name: string;
   description: string;
-  properties: { name: string; required: boolean }[];
+  properties: FieldDescriptor[];
 }
 
 export interface OntologyRelation {
@@ -239,3 +266,30 @@ export interface Preferences {
   key: { source: "custom" | "env" | "none"; hint: string | null };
   choices: { reasoning: Reasoning[]; agent_models: string[] };
 }
+
+export interface FieldDescriptor { name: string; required: boolean; type?: string; items?: string | {type: string}; unique?: boolean }
+export interface HumanReview { status: "pending" | "confirmed" | "rejected"; author?: string; date?: string; reason?: string; content_hash?: string }
+export interface Preconditions { base_hash: string; ontology_hash: string; source_token: string; source_review_hash: string }
+export type OccurrenceInput = { conditions: Condition[]; segment_ids: string[]; annotation: string };
+export type EditOperation =
+  | {op: "node.add"; temp_id: string; node_type: string; name: string; properties: Record<string, unknown>}
+  | {op: "node.set_name"; node_id: string; value: string}
+  | {op: "node.set_property"; node_id: string; field: string; value: unknown}
+  | {op: "node.remove_property"; node_id: string; field: string}
+  | {op: "node.set_aliases"; node_id: string; values: string[]}
+  | {op: "node.delete"; node_id: string}
+  | {op: "edge.add"; temp_id: string; relation_type: string; from: string; to: string; occurrences: OccurrenceInput[]}
+  | {op: "edge.replace_endpoints"; edge_id: string; replacement_temp_id: string; relation_type: string; from: string; to: string}
+  | {op: "edge.delete"; edge_id: string}
+  | ({op: "occurrence.add" | "occurrence.update"; edge_id: string; occurrence_id: string} & OccurrenceInput)
+  | {op: "occurrence.delete"; edge_id: string; occurrence_id: string}
+  | {op: "occurrence.confirm" | "occurrence.reject"; edge_id: string; occurrence_id: string; content_hash: string; reason: string};
+export interface Issue { id: string; code: string; severity: "error" | "warning"; target: {kind: string; id?: string; field?: string}; introduced: boolean; message_key: string; message_params: Record<string, string | number> }
+export interface DiffGroup<T> { added: T[]; removed: T[]; updated: {id: string; before: T; after: T; fields: string[]}[] }
+export interface GraphDiff { nodes: DiffGroup<GraphNode>; edges: DiffGroup<GraphEdge> }
+export interface EditInput { preconditions: Preconditions; operations: EditOperation[]; draft_generation: number }
+export interface EditPreview { draft_generation: number; preview_hash: string; has_changes: boolean; can_accept: boolean; diff: GraphDiff; issues: Issue[]; required_acknowledgements: string[]; graph: Graph }
+export interface EditorDocument { graph: Graph; preconditions: Preconditions; ontology: Ontology; capabilities: {can_edit: boolean; edit_reason: string | null}; source: {pdf_available: boolean; segments_available: boolean}; source_review: {version_id: string; questions?: {question_id: string}[]} }
+export interface AcceptRevision extends EditInput { request_id: string; preview_hash: string; note: string; acceptance: {decision: "accept_changes"; acknowledged_issue_ids: string[]} }
+export interface RevisionCreated { version: RevisionVersion; parent_version_id: string; graph_hash: string; request_id: string; id_map: Record<string, string> }
+export type RevisionRequest = {status: "saved"; result: RevisionCreated} | {status: "not_found" | "in_progress"};

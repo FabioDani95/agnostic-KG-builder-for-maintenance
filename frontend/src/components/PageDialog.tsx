@@ -12,22 +12,25 @@ export interface PageMark {
 export function PageDialog({
   manualId,
   page,
+  versionId,
   marks,
   onClose,
 }: {
   manualId: string;
   page: number;
+  versionId?: string;
   marks: PageMark[];
   onClose: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const [error,setError] = useState(false);
   const [size, setSize] = useState<{ width: number; height: number } | null>(null);
   // Removing the element closes the dialog; closing it here would report a close the person did not ask for.
   useEffect(() => {
     const element = dialog.current;
     if (element && !element.open) element.showModal?.();
   }, []);
-  const src = `/api/manuals/${encodeURIComponent(manualId)}/pages/${page}.png?scale=${SCALE}`;
+  const src = `/api/manuals/${encodeURIComponent(manualId)}${versionId ? `/versions/${encodeURIComponent(versionId)}` : ""}/pages/${page}.png?scale=${SCALE}`;
   return (
     <dialog ref={dialog} className="page-dialog" onClose={onClose} aria-label={tr("Pagina {page} del manuale", { page })}>
       <div className="page-dialog-frame">
@@ -38,13 +41,15 @@ export function PageDialog({
           </button>
         </div>
         <div className="page-image">
-          <img
+          {!error && <img
             src={src}
             alt={tr("Pagina {page} del manuale", { page })}
+            onError={()=>setError(true)}
             onLoad={(event) =>
               setSize({ width: event.currentTarget.naturalWidth, height: event.currentTarget.naturalHeight })
             }
-          />
+          />}
+          {error&&<p className="message" role="alert">{tr("PDF non disponibile; le citazioni incorporate restano consultabili.")}</p>}
           {size &&
             marks.map((mark, index) => {
               const [x0, y0, x1, y1] = mark.bbox;

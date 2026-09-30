@@ -36,3 +36,10 @@ describe("graph", () => {
     expect(edgeLook("green", true)).toBe("derived");
   });
 });
+
+it("keeps human review separate from automatic verification and hides rejected diagnostic content", () => {
+  expect(edgeLook(null, false, {status:"confirmed"})).toBe("human");
+  expect(edgeLook(null, false, {status:"pending"})).toBe("yellow");
+  expect(edgeLook("green", false, {status:"rejected"})).toBeNull();
+  expect(edgeLook("green", true, {status:"confirmed"})).toBe("derived");
+});

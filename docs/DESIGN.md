@@ -216,3 +216,24 @@ Screenshot a 1440 × 900 e a 1024 × 768, poi:
 6. Attese, errori e vuoti hanno il loro segno, la loro frase e, se serve, «Riprova»?
 7. Niente testo segnaposto o numeri inventati?
 8. Tutto si usa da tastiera, con il focus visibile, e il testo secondario ha contrasto ≥ 4,5:1?
+
+
+## Editor del grafo
+
+Il comando testuale «Modifica grafo» usa l’icona matita e apre la stessa cornice
+industriale della consultazione. La barra mantiene versione base, Indietro, Avanti
+e uscita; nel Riepilogo l’azione primaria è «Accetta modifiche e crea nuova versione».
+I tre passi condividono una sessione in memoria. Le tabelle semantiche conservano
+intestazione e colonna identificativa, con scorrimento orizzontale e pannello dettagli
+da 352 px (304 px a 1024 px). I controlli della dashboard sono navigabili.
+
+Le celle rispettano i tipi dello schema. Il menu distingue svuotamento, null e
+rimozione facoltativa; ID e dati estranei allo schema sono consultabili. Le prove
+restano testo della fonte in sola lettura. Le azioni principali hanno etichette
+complete anche a 1024×768. Cambio IT/EN aggiorna i testi senza ricreare la sessione.
+
+Nel grafo una conferma umana usa il blu già impiegato per le attività; le verifiche
+automatiche restano verdi, i contenuti da verificare gialli tratteggiati. Le relazioni
+rifiutate non sono disegnate ma rimangono nelle tabelle; quelle del sistema restano
+discrete e in sola lettura. Accettazione complessiva e verifica delle singole
+occorrenze hanno testi e significati distinti.

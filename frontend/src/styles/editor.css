@@ -1,0 +1,448 @@
+/* Graph editor uses the control-room tokens and a semantic, horizontally scrolling table. */
+.editor-workspace {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--subtle);
+}
+.editor-stepbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.editor-stepbar ol {
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  padding: 0;
+  margin: 0 auto 0 0;
+}
+.editor-stepbar button {
+  min-height: 32px;
+  padding: 4px 12px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+}
+.editor-stepbar button[aria-current] {
+  background: var(--primary);
+  color: var(--surface);
+}
+.editor-notice {
+  padding: 8px 12px;
+  margin: 0;
+  background: var(--head);
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.editor-body {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: auto;
+}
+.editor-editing {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+[hidden] {
+  display: none !important;
+}
+.editor-toolbar {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--subtle);
+}
+.editor-toolbar nav {
+  display: flex;
+  gap: 4px;
+  margin-right: auto;
+}
+.editor-toolbar input {
+  width: 176px;
+}
+.editor-toolbar input[type="number"] {
+  width: 80px;
+}
+.editor-toolbar select {
+  max-width: 200px;
+}
+.editor-content {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.editor-main {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+.editor-table-scroll {
+  overflow: auto;
+  max-height: calc(100vh - 288px);
+}
+.editor-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-size: 13px;
+}
+.editor-table th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  height: 36px;
+  font-size: 12px;
+  background: var(--head);
+  text-align: left;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.editor-table td,
+.editor-table th {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line-soft);
+  min-width: 144px;
+}
+.editor-table td {
+  background: var(--row);
+  height: 36px;
+  vertical-align: top;
+}
+.editor-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 176px;
+}
+.editor-table th:first-child {
+  left: 0;
+  z-index: 3;
+}
+.editor-table tr[data-selected="true"] td {
+  background: var(--head);
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+.editor-table small,
+.editor-source small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-2);
+}
+.editor-table th button {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  text-align: left;
+  min-height: 28px;
+}
+.editor-cell {
+  display: flex;
+  align-items: start;
+  gap: 4px;
+  min-width: 176px;
+  position: relative;
+}
+.editor-cell input,
+.editor-cell textarea {
+  width: 100%;
+  min-width: 144px;
+  background: var(--surface);
+}
+.editor-cell textarea {
+  resize: vertical;
+  min-height: 32px;
+}
+.editor-cell [aria-invalid="true"] {
+  border-color: var(--stop);
+}
+.editor-cell [role="alert"] {
+  color: var(--stop);
+}
+.editor-cell details {
+  position: relative;
+}
+.editor-cell details[open] {
+  background: var(--surface);
+  padding: 4px;
+  border: 1px solid var(--line);
+  z-index: 4;
+}
+.editor-cell details button {
+  display: block;
+  white-space: nowrap;
+}
+.editor-details {
+  width: 352px;
+  flex: none;
+  overflow: auto;
+  border-left: 1px solid var(--line);
+  background: var(--surface);
+}
+.editor-details label {
+  display: block;
+  margin: 8px 0;
+}
+.editor-details input {
+  width: 100%;
+}
+.editor-details pre,
+.editor-history pre,
+.editor-diff pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.editor-consult {
+  background: var(--surface);
+}
+.editor-graph {
+  height: calc(100vh - 228px);
+  position: relative;
+  background: var(--stage);
+}
+.editor-graph-table {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+}
+.editor-review,
+.editor-summary {
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.editor-review h2,
+.editor-summary h2,
+.editor-dialog h2,
+.editor-occurrence-dialog h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+.editor-review p,
+.editor-summary p {
+  margin-bottom: 12px;
+}
+.editor-issues {
+  list-style: none;
+  padding: 0;
+}
+.editor-issues li {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.editor-issues li[data-severity="error"] > span {
+  color: var(--stop);
+}
+.editor-issues li[data-severity="warning"] > span {
+  color: var(--warn);
+}
+.editor-issues small {
+  color: var(--text-2);
+  margin-left: auto;
+}
+.editor-diff {
+  margin: 12px 0;
+  padding: 12px;
+}
+.editor-diff-row {
+  margin: 8px 0;
+  border-top: 1px solid var(--line-soft);
+  padding: 8px 0;
+}
+.editor-before-after {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.editor-before-after pre {
+  margin: 4px 0 8px;
+  padding: 8px;
+  background: var(--row);
+  border: 1px solid var(--line);
+}
+.editor-summary textarea {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+}
+.editor-ack {
+  display: flex;
+  gap: 8px;
+  padding: 12px 0;
+  font-weight: 600;
+}
+.editor-ack input,
+.editor-source input {
+  width: 16px;
+  min-height: 16px;
+}
+.editor-exit-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(12, 10, 9, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.editor-exit,
+.editor-dialog,
+.editor-occurrence-dialog {
+  background: var(--surface);
+  padding: 24px;
+  max-height: calc(100vh - 64px);
+  overflow: auto;
+}
+.editor-exit {
+  max-width: 560px;
+}
+.editor-dialog {
+  width: 560px;
+}
+.editor-exit h2 {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+.editor-exit button,
+.editor-dialog button,
+.editor-occurrence-dialog > button {
+  margin: 8px 8px 0 0;
+}
+.editor-dialog label,
+.editor-occurrence-dialog > label {
+  display: block;
+  margin: 8px 0;
+}
+.editor-dialog input,
+.editor-dialog select,
+.editor-occurrence-dialog textarea {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+}
+.editor-occurrence-dialog {
+  width: 800px;
+}
+.editor-source {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.editor-condition {
+  padding: 8px;
+  border: 1px solid var(--line);
+  margin: 8px 0;
+}
+.editor-occurrence {
+  border-top: 1px solid var(--line);
+  padding: 8px 0;
+}
+.editor-history {
+  margin: 12px;
+}
+@media (max-width: 1279px) {
+  .editor-details {
+    width: 304px;
+  }
+  .editor-stepbar {
+    gap: 8px;
+  }
+  .editor-stepbar button {
+    padding: 4px 8px;
+  }
+}
+
+.editor-consult-host {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.editor-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 12px 0;
+}
+.editor-metrics .card {
+  padding: 12px;
+}
+.editor-metrics button {
+  display: block;
+}
+.editor-metrics h3 {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.editor-toolbar label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+.editor-toolbar input,
+.editor-toolbar select,
+.editor-cell input,
+.editor-cell select,
+.editor-cell textarea,
+.editor-dialog input,
+.editor-dialog select,
+.editor-occurrence-dialog input:not([type="checkbox"]),
+.editor-occurrence-dialog select,
+.editor-occurrence-dialog textarea,
+.editor-details input,
+.editor-summary textarea {
+  min-height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 4px 8px;
+  font: inherit;
+}
+.editor-toolbar label input,
+.editor-toolbar label select {
+  font-size: 13px;
+}
+.editor-cell input,
+.editor-cell textarea {
+  line-height: 20px;
+}
+.editor-cell input:focus,
+.editor-cell textarea:focus,
+.editor-toolbar input:focus,
+.editor-toolbar select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.editor-session {
+  display: contents;
+}
+
+/* Keep the entire final acceptance label inside the path bar at 1024 px. */
+.shell:has(.editor-workspace) .crumbs-actions {
+  flex-shrink: 0;
+}

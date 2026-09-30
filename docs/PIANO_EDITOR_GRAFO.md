@@ -1,7 +1,8 @@
 # Piano di integrazione dell'editor del grafo
 
-Data: 30 settembre 2026. Stato: **specifica pronta per l'implementazione da parte di un agente AI;
-funzionalità non ancora implementata**. Flusso aggiornato con la precisazione dell'utente:
+Data: 30 settembre 2026. Stato: **fasi 1–5 e incarichi A–G implementati**.
+Contratti, copertura ed esiti delle verifiche sono documentati in [EDITOR_GRAFO.md](EDITOR_GRAFO.md),
+compreso il limite osservato sulla verifica del dialogo nativo del browser. Flusso aggiornato con la precisazione dell'utente:
 pulsante dedicato, avanti/indietro, accettazione finale e perdita delle modifiche all'uscita.
 
 Analisi della codebase corrente, commit `043f56b`, e della cartella locale

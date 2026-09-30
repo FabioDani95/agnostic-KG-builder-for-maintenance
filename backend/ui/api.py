@@ -6,24 +6,30 @@ Only for localhost, without authentication. Campaign runs are read, never writte
 from __future__ import annotations
 
 import asyncio
+import io
 import os
+import zipfile
 from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from pydantic import BaseModel
 
-from backend.kg_v3.ontology import load_ontology
 from backend.ui.budget import Limits, Spending, estimate
 from backend.ui.catalog import Catalog, process_alive
 from backend.ui.events import UiEvent
 from backend.ui.evidence import Evidence
+from backend.ui.graph_document import AcceptRevision, EditError, EditInput, schema
 from backend.ui.jobs import JobError, Jobs, current_units, question_budget
+from backend.ui.locks import manual_lock
 from backend.ui.questions import open_for_people, pending_questions, question_views
 from backend.ui.replay import replay_events
+from backend.ui.revisions import Revisions
 
 ROOT = Path(__file__).resolve().parents[2]
 FINAL_KINDS = {"run_finished", "run_failed"}
@@ -115,9 +121,15 @@ async def tail(path: Path, after: int, alive=lambda: True, poll: float = 0.5) ->
             # The process ended without saying so (for example a crash before its first event).
             log = path.with_name("job.log")
             tail_text = log.read_text(encoding="utf-8").strip().splitlines()[-1:] if log.exists() else []
-            yield sse(UiEvent(seq=(last.seq if last else 0) + 1, t=last.t if last else 0.0,
-                              cost_usd=last.cost_usd if last else 0.0, kind="run_failed",
-                              data={"message": tail_text[0] if tail_text else "Il processo si è interrotto."}))
+            yield sse(
+                UiEvent(
+                    seq=(last.seq if last else 0) + 1,
+                    t=last.t if last else 0.0,
+                    cost_usd=last.cost_usd if last else 0.0,
+                    kind="run_failed",
+                    data={"message": tail_text[0] if tail_text else "Il processo si è interrotto."},
+                )
+            )
             return
         await asyncio.sleep(poll)
         idle += poll
@@ -152,13 +164,32 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
     catalog = Catalog(settings.campaign, settings.workspace)
     cache = settings.workspace / ".cache"
     evidence = Evidence(cache)
+    revisions = Revisions(catalog, evidence)
     spending = Spending(settings.ledger, settings.limits)
     jobs = Jobs(catalog, spending, settings.workspace, settings.campaign)
     app = FastAPI(title="Grafi di manutenzione", docs_url="/api/docs", openapi_url="/api/openapi.json")
     app.add_middleware(GZipMiddleware, minimum_size=2048)
     app.state.settings, app.state.catalog = settings, catalog
 
+    @app.exception_handler(RequestValidationError)
+    async def invalid_edit(request: Request, error: RequestValidationError):
+        if request.url.path.endswith(("/validate-edits", "/revisions")):
+            field = ".".join(str(part) for part in error.errors()[0]["loc"] if part != "body")
+            return JSONResponse(
+                {
+                    "detail": {
+                        "code": "INVALID_OPERATION",
+                        "target": {"kind": "graph", "field": field},
+                        "message_key": "INVALID_OPERATION",
+                    }
+                },
+                status_code=422,
+            )
+        return await request_validation_exception_handler(request, error)
+
     def run_dir(manual_id: str, version_id: str) -> Path:
+        if version_id.startswith("revision~"):
+            raise HTTPException(409, "Una revisione manuale non è un’esecuzione")
         try:
             return catalog.run_dir(manual_id, version_id)
         except KeyError:
@@ -170,37 +201,155 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
         except KeyError:
             raise HTTPException(404, "Manuale non trovato") from None
 
+    def version_dir(manual_id: str, version_id: str) -> Path:
+        try:
+            return catalog.version_dir(manual_id, version_id)
+        except KeyError:
+            raise HTTPException(404, "Versione non trovata") from None
+
+    def editing_call(call):
+        try:
+            return call()
+        except EditError as error:
+            raise HTTPException(
+                getattr(error, "status", 422), {"code": error.code, "target": error.target, "message_key": error.code}
+            ) from None
+        except KeyError:
+            raise HTTPException(404, "Versione non trovata") from None
+
+    @app.get("/api/manuals/{manual_id}/versions/{version_id}/editor")
+    def editor(manual_id: str, version_id: str):
+        return editing_call(lambda: revisions.editor(manual_id, version_id))
+
+    @app.post("/api/manuals/{manual_id}/versions/{version_id}/validate-edits")
+    def validate_edits(manual_id: str, version_id: str, body: EditInput):
+        return editing_call(lambda: revisions.preview(manual_id, version_id, body)[0])
+
+    @app.post("/api/manuals/{manual_id}/versions/{version_id}/revisions")
+    def accept_revision(manual_id: str, version_id: str, body: AcceptRevision):
+        result, created = editing_call(lambda: revisions.accept(manual_id, version_id, body))
+        return JSONResponse(result, status_code=201 if created else 200)
+
+    @app.get("/api/manuals/{manual_id}/revision-requests/{request_id}")
+    def revision_request(manual_id: str, request_id: str):
+        manual_dir(manual_id)
+        return revisions.request(manual_id, request_id)
+
+    @app.get("/api/manuals/{manual_id}/versions/{version_id}/changes")
+    def revision_changes(manual_id: str, version_id: str):
+        path = version_dir(manual_id, version_id) / "changes.json"
+        if not path.exists():
+            raise HTTPException(404, "Questa versione non ha modifiche manuali")
+        return FileResponse(path, media_type="application/json")
+
+    @app.get("/api/manuals/{manual_id}/versions/{version_id}/provenance.zip")
+    def revision_package(manual_id: str, version_id: str):
+        folder = version_dir(manual_id, version_id)
+        if not (folder / "revision.json").exists():
+            raise HTTPException(404, "Questa versione non ha modifiche manuali")
+        output = io.BytesIO()
+        with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as package:
+            for name in (
+                "revision.json",
+                "base-graph.json",
+                "graph.json",
+                "changes.json",
+                "validation.json",
+                "acceptance.json",
+                "source-review.json",
+                "source-report.json",
+                "ontology.json",
+                "source-segments.json",
+                "source.pdf",
+            ):
+                if (folder / name).is_file():
+                    package.write(folder / name, name)
+        output.seek(0)
+        return StreamingResponse(
+            output,
+            media_type="application/zip",
+            headers={"Content-Disposition": f'attachment; filename="{version_id}.zip"'},
+        )
+
+    @app.get("/api/manuals/{manual_id}/versions/{version_id}/source-segments")
+    def source_segments(
+        manual_id: str,
+        version_id: str,
+        page: int | None = None,
+        q: str = "",
+        offset: int = Query(0, ge=0),
+        limit: int = Query(50, ge=1, le=200),
+    ):
+        c = editing_call(lambda: revisions.context(manual_id, version_id))
+        if not c["source"]["segments_available"]:
+            return {"items": [], "total": 0, "available": False}
+        items = [
+            s
+            for s in c["segments"].values()
+            if (page is None or s["page"] == page) and q.casefold() in s["text"].casefold()
+        ]
+        return {"items": items[offset : offset + limit], "total": len(items), "available": True}
+
+    @app.get("/api/manuals/{manual_id}/versions/{version_id}/pages/{page}.png")
+    def version_page(manual_id: str, version_id: str, page: int, scale: float = Query(2.0, gt=0, le=3)):
+        folder = version_dir(manual_id, version_id)
+        if version_id.startswith("revision~"):
+            source = folder / "source.pdf"
+            if not source.exists():
+                raise HTTPException(404, "Pagina non disponibile")
+            import fitz
+
+            with fitz.open(source) as doc:
+                if not 1 <= page <= doc.page_count:
+                    raise HTTPException(404, "Pagina non trovata")
+                from fastapi.responses import Response
+
+                return Response(
+                    doc[page - 1].get_pixmap(matrix=fitz.Matrix(scale, scale)).tobytes("png"), media_type="image/png"
+                )
+        context = editing_call(lambda: revisions.context(manual_id, version_id))
+        if not context["source"]["pdf_available"]:
+            raise HTTPException(404, "PDF non disponibile; le citazioni incorporate restano consultabili.")
+        return page_image(manual_id, page, scale)
+
     @app.get("/api/manuals")
     def manuals() -> list[dict]:
         rows = []
         for manual in catalog.manuals():
             latest = manual.latest
-            rows.append({"id": manual.id, "origin": manual.origin, "machine": manual.machine.model_dump(),
-                         "pages": manual.pages, "versions": len(manual.versions),
-                         "latest": latest.model_dump() if latest else None})
+            rows.append(
+                {
+                    "id": manual.id,
+                    "origin": manual.origin,
+                    "machine": manual.machine.model_dump(),
+                    "pages": manual.pages,
+                    "versions": len(manual.versions),
+                    "latest": latest.model_dump() if latest else None,
+                    "activities": [
+                        v.model_dump()
+                        for v in manual.versions
+                        if v.kind == "run" and (v.status in ("running", "awaiting_approval") or v.open_questions > 0)
+                    ],
+                }
+            )
         return rows
 
     @app.get("/api/runs")
     def runs() -> list[dict]:
         """Every version of every manual, newest first: the log of all runs."""
-        rows = [{"manual_id": manual.id, "machine": manual.machine.model_dump(), **version.model_dump()}
-                for manual in catalog.manuals() for version in manual.versions]
+        rows = [
+            {"manual_id": manual.id, "machine": manual.machine.model_dump(), **version.model_dump()}
+            for manual in catalog.manuals()
+            for version in manual.versions
+            if version.kind == "run"
+        ]
         rows.sort(key=lambda row: row["date"] or "", reverse=True)
         return rows
 
     @app.get("/api/ontology")
     def ontology() -> dict:
         """The fixed schema every run reads (backend/kg_v3/ontology.py), as the interface shows it."""
-        spec = load_ontology()
-        return {
-            "root": spec.root,
-            "nodes": [{"name": name, "description": description,
-                       "properties": [{"name": prop, "required": required} for prop, required in spec.properties[name]]}
-                      for name, description in spec.node_types.items()],
-            "relations": [{"name": item.name, "domain": item.domain, "range": item.range,
-                           "description": item.description, "added_by_code": item.domain == spec.root}
-                          for item in spec.relations],
-        }
+        return schema()
 
     @app.get("/api/manuals/{manual_id}")
     def manual(manual_id: str) -> dict:
@@ -211,32 +360,41 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
 
     @app.get("/api/manuals/{manual_id}/versions/{version_id}/graph")
     def graph(manual_id: str, version_id: str) -> FileResponse:
-        path = run_dir(manual_id, version_id) / "graph.json"
+        path = version_dir(manual_id, version_id) / "graph.json"
         if not path.exists():
             raise HTTPException(404, "Questa versione non ha un grafo")
         return FileResponse(path, media_type="application/json")
 
     @app.get("/api/manuals/{manual_id}/versions/{version_id}/report")
     def report(manual_id: str, version_id: str) -> FileResponse:
-        path = run_dir(manual_id, version_id) / "report.json"
+        path = version_dir(manual_id, version_id) / "report.json"
         if not path.exists():
             raise HTTPException(404, "Questa versione non ha un rapporto")
         return FileResponse(path, media_type="application/json")
 
     @app.get("/api/manuals/{manual_id}/versions/{version_id}/events")
-    async def events(manual_id: str, version_id: str, request: Request,
-                     speed: float = Query(4.0, ge=0, le=64), after: int = Query(0, alias="from", ge=0)):
+    async def events(
+        manual_id: str,
+        version_id: str,
+        request: Request,
+        speed: float = Query(4.0, ge=0, le=64),
+        after: int = Query(0, alias="from", ge=0),
+    ):
         folder = run_dir(manual_id, version_id)
         after = max(after, int(request.headers.get("last-event-id") or 0))
         version = catalog.find(manual_id, version_id)
         headers = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
         if version.status == "running":
-            return StreamingResponse(tail(folder / "events.jsonl", after, alive=lambda: process_alive(folder)),
-                                     media_type="text/event-stream", headers=headers)
+            return StreamingResponse(
+                tail(folder / "events.jsonl", after, alive=lambda: process_alive(folder)),
+                media_type="text/event-stream",
+                headers=headers,
+            )
         if not version.replay:
             raise HTTPException(409, "Lo stato di questa esecuzione non è su questo computer: niente replay")
-        replayed = await asyncio.to_thread(replay_events, folder, manual_id=manual_id, version_id=version_id,
-                                           ledger=settings.ledger, cache_dir=cache)
+        replayed = await asyncio.to_thread(
+            replay_events, folder, manual_id=manual_id, version_id=version_id, ledger=settings.ledger, cache_dir=cache
+        )
         for event in replayed[:1]:
             event.data["speed"] = speed
         return StreamingResponse(paced(replayed, after, speed), media_type="text/event-stream", headers=headers)
@@ -255,21 +413,38 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
             open_ = store.open_questions()
             published = {question.question_id for question in store.questions}
             pending_all, deferred = pending_questions(folder, budget=10**6)
-            unverified = [question for question in pending_all + deferred
-                          if question.question_id not in published and question.kind.value != "graph_approval"]
+            unverified = [
+                question
+                for question in pending_all + deferred
+                if question.question_id not in published and question.kind.value != "graph_approval"
+            ]
             answered = []
             done = [question for question in store.questions if question.question_id in store.answers]
             for view in question_views(folder, done, lang):
                 given = store.answers[view.question_id]
-                answered.append({**view.model_dump(), "answer": {"option_id": given.option_id, "text": given.text,
-                                                                 "keep": given.edits.get("keep", [])}})
+                answered.append(
+                    {
+                        **view.model_dump(),
+                        "answer": {
+                            "option_id": given.option_id,
+                            "text": given.text,
+                            "keep": given.edits.get("keep", []),
+                        },
+                    }
+                )
             unapplied = len(store.unapplied())
         awaiting = version.status == "awaiting_approval"
-        return {"budget": question_budget(folder), "editable": not is_campaign, "copy_needed": is_campaign,
-                "open": [view.model_dump() for view in question_views(folder, open_, lang)],
-                "answered": answered, "unapplied": unapplied, "awaiting_approval": awaiting,
-                "can_approve": awaiting and not is_campaign and not open_ and not unapplied,
-                "unverified": [view.model_dump() for view in question_views(folder, unverified, lang)]}
+        return {
+            "budget": question_budget(folder),
+            "editable": not is_campaign,
+            "copy_needed": is_campaign,
+            "open": [view.model_dump() for view in question_views(folder, open_, lang)],
+            "answered": answered,
+            "unapplied": unapplied,
+            "awaiting_approval": awaiting,
+            "can_approve": awaiting and not is_campaign and not open_ and not unapplied,
+            "unverified": [view.model_dump() for view in question_views(folder, unverified, lang)],
+        }
 
     @app.post("/api/manuals/{manual_id}/versions/{version_id}/questions/{question_id}/answer")
     async def answer(manual_id: str, version_id: str, question_id: str, body: AnswerIn) -> dict:
@@ -281,7 +456,8 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
                 units = await asyncio.to_thread(current_units, doc, folder)
                 version_id = jobs.copy_version(manual_id, folder, units)
                 folder = run_dir(manual_id, version_id)
-            jobs.answer(folder, question_id, body.option_id, body.keep, body.text)
+            with manual_lock(settings.workspace, manual_id):
+                jobs.answer(folder, question_id, body.option_id, body.keep, body.text)
         except JobError as error:
             raise HTTPException(409, str(error)) from None
         store = jobs.store(folder)
@@ -292,7 +468,8 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
         folder = run_dir(manual_id, version_id)
         before = attempts(folder / "events.jsonl")
         try:
-            jobs.apply(manual_id, folder)
+            with manual_lock(settings.workspace, manual_id):
+                jobs.apply(manual_id, folder)
         except JobError as error:
             raise HTTPException(409, str(error)) from None
         await wait_for_attempt(folder / "events.jsonl", before, settings.resume_wait_seconds)
@@ -303,7 +480,8 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
         folder = run_dir(manual_id, version_id)
         before = attempts(folder / "events.jsonl")
         try:
-            jobs.approve(manual_id, folder, body.decision)
+            with manual_lock(settings.workspace, manual_id):
+                jobs.approve(manual_id, folder, body.decision)
         except JobError as error:
             raise HTTPException(409, str(error)) from None
         await wait_for_attempt(folder / "events.jsonl", before, settings.resume_wait_seconds)
@@ -385,8 +563,10 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
 
     @app.get("/api/estimate")
     def estimate_run(pages: int = Query(..., ge=1)) -> dict:
-        return {**estimate(catalog, pages),
-                "note": "Stima dalle due esecuzioni attuali con numero di pagine più vicino."}
+        return {
+            **estimate(catalog, pages),
+            "note": "Stima dalle due esecuzioni attuali con numero di pagine più vicino.",
+        }
 
     _serve_frontend(app, settings.frontend)
     return app

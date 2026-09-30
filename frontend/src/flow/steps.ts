@@ -14,12 +14,17 @@ export interface Step {
   detail: string;
 }
 
-type Stage = Pick<Version, "status" | "open_questions" | "decided_by" | "seconds" | "cost_usd">;
+type Stage = {kind?: Version["kind"]} & Pick<Version, "status" | "open_questions" | "decided_by" | "seconds" | "cost_usd">;
 
 const questionsText = (count: number) => (count === 1 ? tr("1 domanda") : tr("{n} domande", { n: formatNumber(count) }));
 
 /** The three steps of a graph: extraction, the questions for a person, the approval. */
 export function lifecycle(version: Stage): Step[] {
+  if (version.kind === "revision") return [
+    {key:"extract", label:tr("Revisione manuale"),state:"done",detail:tr("Costo AI: zero")},
+    {key:"questions",label:tr("Domande della fonte"),state:"done",detail:tr("Contesto conservato")},
+    {key:"approval",label:tr("Accettazione"),state:"done",detail:tr("Modifiche accettate")},
+  ];
   const { status, open_questions: open } = version;
   const ended = status !== "running" && status !== "failed";
   const extract: Step =
@@ -88,12 +93,14 @@ export interface Inbox {
 export function inbox(rows: ManualRow[]): Inbox {
   const result: Inbox = { waiting: [], running: [], doubts: [] };
   for (const row of rows) {
-    const latest = row.latest;
-    if (!latest) continue;
-    if (latest.status === "awaiting_approval") result.waiting.push(row);
-    else if (latest.status === "running") result.running.push(row);
-    else if (latest.open_questions > 0 && latest.status !== "failed") result.doubts.push(row);
+    for (const version of row.activities ?? (row.latest ? [row.latest] : [])) {
+    const latest = version;
+    const activity = {...row, latest};
+    if (latest.status === "awaiting_approval") result.waiting.push(activity);
+    else if (latest.status === "running") result.running.push(activity);
+    else if (latest.open_questions > 0 && latest.status !== "failed") result.doubts.push(activity);
   }
+    }
   result.doubts.sort((a, b) => (b.latest?.open_questions ?? 0) - (a.latest?.open_questions ?? 0));
   return result;
 }

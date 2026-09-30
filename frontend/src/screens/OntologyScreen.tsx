@@ -4,7 +4,7 @@ import { Loading, Problem } from "../components/Feedback";
 import { Shell } from "../components/Shell";
 import { EDGE_STYLE, NODE_STYLE } from "../graph/style";
 import { formatNumber, RELATION_LABEL, TYPE_LABEL } from "../text/it";
-import { tr } from "../i18n/i18n";
+import { tr, useLang } from "../i18n/i18n";
 
 const BOX = { width: 150, height: 40 };
 const WIDTH = 900;
@@ -106,6 +106,7 @@ function SchemaDiagram({ schema }: { schema: Ontology }) {
  * the colors of the 3D graph, so it doubles as the key to read it.
  */
 export function OntologyScreen() {
+  useLang();
   const { data: schema, error, loading, reload } = useApi<Ontology>("/api/ontology");
   const label = (name: string) => TYPE_LABEL[name] ?? name;
 

@@ -1,18 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { liveRoute, manualRoute, postJson, useApi, versionPath } from "../api/client";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { graphRoute, liveRoute, manualRoute, postJson, useApi, versionPath } from "../api/client";
 import { settled } from "../flow/settle";
-import type { Evidence, Graph, GraphEdge, GraphNode, Manual, Questions } from "../api/types";
+import type { Evidence, Graph, GraphEdge, GraphNode, Manual, Questions, Ontology } from "../api/types";
 import { SearchField, SegmentedControl, StatusBadge, typing } from "../components/Controls";
 import { EdgeDetail, NodeDetail } from "../components/EvidencePanel";
+import { EditGraphButton } from "../components/EditGraphButton";
+import { GraphWorkspace } from "./GraphWorkspace";
 import { Icon } from "../components/Icon";
 import { Legend } from "../components/Legend";
 import { PageDialog } from "../components/PageDialog";
 import { Shell } from "../components/Shell";
 import { useStatus } from "../status/StatusProvider";
 import { Graph3D, type GraphHandle, type ViewLink, type ViewNode } from "../graph/Graph3D";
+import { edgeReview } from "../graph/style";
 import { formatNumber, TYPE_LABEL, versionLabel } from "../text/it";
-import { tr } from "../i18n/i18n";
+import { tr, useLang } from "../i18n/i18n";
 
 type TierFilter = "all" | "green" | "yellow";
 type Selection = { kind: "node" | "edge"; id: string } | null;
@@ -50,8 +53,12 @@ export function searchStarts(nodes: GraphNode[], query: string): GraphNode[] {
 }
 
 export function FinishedGraph() {
+  useLang();
   const { manualId = "", versionId = "" } = useParams();
   const navigate = useNavigate();
+  const [params,setParams] = useSearchParams();
+  const tableTab = params.get("vista") ?? "grafo";
+  const ontology = useApi<Ontology>("/api/ontology");
   const graph = useApi<Graph>(`${versionPath(manualId, versionId)}/graph`);
   const manual = useApi<Manual>(`/api/manuals/${encodeURIComponent(manualId)}`);
   const view = useRef<GraphHandle>(null);
@@ -81,11 +88,11 @@ export function FinishedGraph() {
     const links = (graph.data?.edges ?? [])
       .filter((edge) => showCode || !edge.derived)
       .filter((edge) =>
-        filter === "all" ? true : filter === "green" ? edge.tier === "green" : edge.tier === "yellow" && !edge.derived,
+        filter === "all" ? true : filter === "green" ? edge.trusted && edge.tier === "green" : !edge.trusted && !edge.derived,
       );
     const used = new Set(links.flatMap((edge) => [edge.from, edge.to]));
     const shownNodes: ViewNode[] = (graph.data?.nodes ?? [])
-      .filter((node) => used.has(node.id) || node.type === "Asset")
+      .filter((node) => used.has(node.id) || node.type === "Asset" || graph.data?.version === "kg-v3-graph-3")
       .map((node) => ({ id: node.id, type: node.type, name: node.name }));
     const shownLinks: ViewLink[] = links.map((edge) => ({
       id: edge.id,
@@ -94,6 +101,7 @@ export function FinishedGraph() {
       to: edge.to,
       tier: edge.tier,
       derived: edge.derived,
+      review: edgeReview(edge),
     }));
     return { nodes: shownNodes, links: shownLinks };
   }, [graph.data, filter, showCode]);
@@ -140,7 +148,11 @@ export function FinishedGraph() {
       title={current ? versionLabel(current) : "Grafo"}
       actions={
         <>
-          <div className="search-wrap">
+          <EditGraphButton manualId={manualId} version={current} />
+          <select className="input" style={{width:112}} aria-label={tr("Viste del grafo")} value={tableTab} onChange={e=>{const next=new URLSearchParams(params);next.set("vista",e.target.value);setParams(next);}}>
+            <option value="grafo">{tr("Grafo")}</option><option value="nodi">{tr("Nodi")}</option><option value="relazioni">{tr("Relazioni")}</option><option value="controlli">{tr("Controlli")}</option>
+          </select>
+          <div className="search-wrap" hidden={tableTab !== "grafo"}>
             <SearchField label={tr("Cerca un sintomo o un codice")} value={query} onChange={setQuery} width="100%" hotkey />
             {results.length > 0 && (
               <div className="search-results" role="listbox" aria-label={tr("Sintomi e codici trovati")}>
@@ -200,7 +212,9 @@ export function FinishedGraph() {
         </>
       }
     >
-      <div className="workspace">
+      {params.has("salvato") && <p className="editor-notice" role="status">{tr("Nuova versione creata. Le modifiche sono state salvate.")}</p>}
+      {current?.kind === "revision" && <p className="editor-notice">{tr("Modifiche accettate")} · <Link to={`/manuali/${encodeURIComponent(manualId)}/versioni/${encodeURIComponent(current.parent_version_id!)}`}>{tr("Deriva da {base}",{base:current.parent_version_id!})}</Link> · {tr("Revisione manuale")} · {tr("Costo AI: zero")} · <a href={`${versionPath(manualId,versionId)}/provenance.zip`}>{tr("Scarica versione e provenienza")}</a> · <Link to={`${graphRoute(manualId,current.root_run_id!)}/domande`}>{tr("Consulta le domande della fonte")}</Link></p>}
+      <div className="workspace" style={tableTab !== "grafo" ? {display:"none"} : undefined}>
         <aside className="dock dock-left" aria-label={tr("Filtri e legenda")}>
           <section className="panel-section">
             <h2 className="panel-title">{tr("Relazioni")}</h2>
@@ -316,8 +330,9 @@ export function FinishedGraph() {
               </div>
               <div>
                 <dt>{tr("Verificate")}</dt>
-                <dd>{formatNumber(knowledge.filter((edge) => edge.tier === "green").length)}</dd>
+                <dd>{formatNumber(knowledge.filter((edge) => edge.trusted && edge.tier === "green").length)}</dd>
               </div>
+              {current?.kind === "revision" && <div><dt>{tr("Confermate da una persona")}</dt><dd>{formatNumber(knowledge.filter(e => e.trusted && e.tier !== "green").length)}</dd></div>}
             </dl>
           )}
           <p className="statusbar-log">
@@ -326,9 +341,11 @@ export function FinishedGraph() {
         </footer>
       </div>
 
+      {graph.data && ontology.data && <div hidden={tableTab === "grafo"} className="editor-consult-host"><GraphWorkspace selection={selection} graph={graph.data} ontology={ontology.data} manualId={manualId} versionId={versionId} onPage={openPage} tab={tableTab} onGraph={(kind,id)=>{setSelection({kind,id});const next=new URLSearchParams(params);next.set("vista","grafo");setParams(next);window.setTimeout(()=>view.current?.focus(id),0);}} /></div>}
       {page && (
         <PageDialog
           manualId={manualId}
+          versionId={versionId}
           page={page.page}
           marks={page.evidence.filter((item) => item.bbox).map((item) => ({ bbox: item.bbox! }))}
           onClose={() => setPage(null)}

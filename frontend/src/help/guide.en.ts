@@ -409,4 +409,51 @@ export const GUIDE_EN: GuideChapter[] = [
       },
     ],
   },
+
+{
+  "slug": "modifica-grafo",
+  "title": "Editing a graph",
+  "icon": "pencil",
+  "lead": "Edit graph starts a session on the version you are reading. You can correct nodes, relationships and occurrences; only final acceptance creates a new version.",
+  "sections": [
+    {
+      "id": "percorso",
+      "heading": "Edit, Check, Summary",
+      "body": [
+        "Edit graph is available after generation, on the open graph and in its history. The bar always identifies the base version. A running extraction or unapplied answers display the reason editing is blocked.",
+        "In Edit choose Nodes, Relationships or Graph. Filters, evidence and links reach the same element across views. Edit cells, add or delete elements; Undo change and Redo change apply within this session.",
+        "Next opens Check: integrity, required and optional fields, connections and sources have separate indicators. A check leads to the relevant row or field. Structural checks do not guarantee technical correctness.",
+        "Next opens Summary with additions, removals and before/after values, including invalidated verification and system link updates. Back retains changes. A correction expires previous checks and acknowledgements."
+      ]
+    },
+    {
+      "id": "celle-prove",
+      "heading": "Fields, relationships and evidence",
+      "body": [
+        "Enter commits a simple cell; Tab commits and moves to the next control; Esc cancels text in the active cell. Descriptions, instructions and lists use multiline inputs. Enter lists as JSON, for example [\"first\", \"second\"].",
+        "Missing, empty, not stated and filled are different states. Zero and false count as filled. The cell menu distinguishes Clear, Set null and Remove optional field. IDs and unknown fields remain read-only.",
+        "Relationships allow compatible endpoints only. Proposing the same triple adds an occurrence without duplicating the link. Changing endpoints or type creates a new identity. Deleting a node lists the links removed with it; deleting the last occurrence deletes the relationship.",
+        "The manual’s words remain read-only. In an occurrence you can select verified source segments, conditions and a personal annotation. If the PDF or its index cannot be verified, embedded quotes remain readable; new evidence is not invented. System relationships remain read-only."
+      ]
+    },
+    {
+      "id": "accettazione",
+      "heading": "Accepting a new version",
+      "body": [
+        "Accept changes and create new version is the only command that saves. First acknowledge the listed remaining doubts. The new version opens as accepted, with no second Approve, and the original stays unchanged. No AI calls are required.",
+        "Editing a node or occurrence invalidates the affected verification. Accepting the version does not turn relationships green. After checks, Confirm content or Reject content records a human decision on the individual occurrence: human confirmation remains distinct from automatic verification, including when no source is linked.",
+        "History records the parent and revision number. Download version and provenance includes the graph, frozen base, differences, checks and decision. Extraction questions remain recognisable as source context and open activities stay in Your turn.",
+        "If the save result is uncertain, the session stays locked on the same content. Check save status opens the version already created or allows retrying the same request."
+      ]
+    },
+    {
+      "id": "uscita",
+      "heading": "Leaving and discarding",
+      "body": [
+        "Changes live only in the open session. Leave without saving, the logo, breadcrumbs and sidebar ask whether to continue or discard when there are edits. Continue editing retains values; Leave and discard loses them.",
+        "Reloading or closing before acceptance discards the session, including when returning with browser history. The browser may display its own exit warning. There is no autosave or draft recovery. An acceptance request already sent may still complete on the server."
+      ]
+    }
+  ]
+},
 ];

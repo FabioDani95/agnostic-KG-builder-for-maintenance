@@ -104,6 +104,7 @@ export function iterationLabel(version: Pick<Version, "iteration" | "origin" | "
 }
 
 export function versionLabel(version: Version): string {
+  if (version.kind === "revision") return tr("Versione modificata {n}", {n: version.revision_number ?? ""});
   const italian = italianIteration(version);
   const kind = tr(italian);
   const run = version.repetition ? `r${version.repetition}` : version.run;

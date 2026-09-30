@@ -4,7 +4,7 @@ import { Icon } from "../components/Icon";
 import { Shell } from "../components/Shell";
 import { type Block, GUIDE as GUIDE_IT } from "../help/guide";
 import { GUIDE_EN } from "../help/guide.en";
-import { getLang, tr } from "../i18n/i18n";
+import { getLang, tr, useLang } from "../i18n/i18n";
 
 function Body({ blocks }: { blocks: Block[] }) {
   return (
@@ -29,6 +29,7 @@ function Body({ blocks }: { blocks: Block[] }) {
  * pagina» on the right following the reading. Every chapter has its own address.
  */
 export function Guide() {
+  useLang();
   const GUIDE = getLang() === "en" ? GUIDE_EN : GUIDE_IT;
   const { chapter: slug } = useParams();
   const index = GUIDE.findIndex((chapter) => chapter.slug === slug);

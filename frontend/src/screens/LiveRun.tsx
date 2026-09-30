@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { graphRoute, manualRoute, postJson, useApi, versionPath } from "../api/client";
 import type { Manual, RunStatus } from "../api/types";
 import { ProgressBar, SegmentedControl, typing } from "../components/Controls";
+import { EditGraphButton } from "../components/EditGraphButton";
 import { Icon } from "../components/Icon";
 import { Legend } from "../components/Legend";
 import { PageDialog } from "../components/PageDialog";
@@ -23,7 +24,7 @@ import {
   TIER_LABEL,
   TYPE_LABEL,
 } from "../text/it";
-import { tr } from "../i18n/i18n";
+import { tr, useLang } from "../i18n/i18n";
 
 type Speed = "1" | "4" | "16";
 
@@ -63,6 +64,7 @@ function edgeText(run: RunState, id: string): string {
 }
 
 export function LiveRun() {
+  useLang();
   const { manualId = "", versionId = "" } = useParams();
   const manual = useApi<Manual>(`/api/manuals/${encodeURIComponent(manualId)}`);
   const version = manual.data?.versions.find((item) => item.version_id === versionId);
@@ -254,6 +256,7 @@ export function LiveRun() {
                       : tr(next.urgent ? "Il grafo aspetta la tua approvazione." : "Nessuna domanda per te.")}
                   </p>
                   <div className="row">
+                    <EditGraphButton manualId={manualId} version={version} />
                     <Link to={next.to} className="button button-primary">
                       {next.label}
                       <Icon name="arrow-right" />
@@ -273,6 +276,7 @@ export function LiveRun() {
                   </p>
                   <p className="secondary">{run.failed || tr("Senza un messaggio.")}</p>
                   <div className="row">
+                    <EditGraphButton manualId={manualId} version={version} />
                     <Link to={manualRoute(manualId)} className="button button-secondary">
                       {tr("Torna al manuale")}
                     </Link>

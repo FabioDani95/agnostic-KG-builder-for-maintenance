@@ -9,7 +9,7 @@ import { type Column, Table } from "../components/Table";
 import { nextStep } from "../flow/steps";
 import { useStatus } from "../status/StatusProvider";
 import { formatNumber, manualName, versionLabel } from "../text/it";
-import { tr } from "../i18n/i18n";
+import { tr, useLang } from "../i18n/i18n";
 
 const manualColumn: Column<ManualRow> = {
   key: "manuale",
@@ -83,6 +83,7 @@ const DOUBT_COLUMNS: Column<ManualRow>[] = [
  * a graph to approve), then the run in progress, then approved graphs that still carry doubts.
  */
 export function Inbox() {
+  useLang();
   const navigate = useNavigate();
   const { inbox, manuals, error, refresh } = useStatus();
   const open = (row: ManualRow) => navigate(nextStep(row.id, row.latest!).to);
@@ -109,7 +110,7 @@ export function Inbox() {
                 </Link>
               </div>
             ) : (
-              <Table label={tr("Aspettano te")} columns={STEP_COLUMNS} rows={inbox.waiting} rowKey={(row) => row.id} onOpen={open} empty="" />
+              <Table label={tr("Aspettano te")} columns={STEP_COLUMNS} rows={inbox.waiting} rowKey={(row) => `${row.id}/${row.latest?.version_id}`} onOpen={open} empty="" />
             )}
           </section>
 
@@ -120,7 +121,7 @@ export function Inbox() {
                   {tr("In corso")} <span className="card-count">{formatNumber(inbox.running.length)}</span>
                 </h2>
               </header>
-              <Table label={tr("In corso")} columns={STEP_COLUMNS} rows={inbox.running} rowKey={(row) => row.id} onOpen={open} empty="" />
+              <Table label={tr("In corso")} columns={STEP_COLUMNS} rows={inbox.running} rowKey={(row) => `${row.id}/${row.latest?.version_id}`} onOpen={open} empty="" />
             </section>
           )}
 
@@ -137,7 +138,7 @@ export function Inbox() {
               label={tr("Dubbi nei grafi approvati")}
               columns={DOUBT_COLUMNS}
               rows={inbox.doubts}
-              rowKey={(row) => row.id}
+              rowKey={(row) => `${row.id}/${row.latest?.version_id}`}
               onOpen={(row) => navigate(questionsRoute(row.id, row.latest!.version_id))}
               empty="Nessun dubbio aperto nei grafi approvati."
             />

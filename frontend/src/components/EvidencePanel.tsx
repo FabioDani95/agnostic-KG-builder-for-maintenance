@@ -1,4 +1,5 @@
 import type { Evidence, GraphEdge, GraphNode, Occurrence } from "../api/types";
+import { relationStatus } from "../editor/RelationTable";
 import { Icon } from "./Icon";
 import {
   CONDITION_PREFIX,
@@ -92,7 +93,7 @@ export function EdgeDetail({
         </p>
         <dl className="data-list" style={{ gridTemplateColumns: "96px 1fr", marginTop: 8 }}>
           <dt>{tr("Stato")}</dt>
-          <dd>{edge.derived ? tr("Aggiunta dal sistema") : TIER_LABEL[edge.tier]}</dd>
+          <dd>{edge.derived ? tr("Aggiunta dal sistema") : relationStatus(edge)}</dd>
           <dt>{tr("Tipi")}</dt>
           <dd>
             {tr("{a} e {b}", { a: TYPE_LABEL[from?.type ?? ""] ?? "", b: TYPE_LABEL[to?.type ?? ""]?.toLowerCase() ?? "" })}
@@ -111,6 +112,7 @@ export function EdgeDetail({
           <h3 className="panel-title">
             {tr("Occorrenza {n} di {total}", { n: index + 1, total: edge.occurrences.length })}
           </h3>
+          {occurrence.review && <p>{tr(occurrence.review.status === "confirmed" ? occurrence.evidence.length ? "Confermata da una persona" : "Confermata da una persona, senza fonte collegata" : occurrence.review.status === "rejected" ? "Rifiutata" : "Da verificare")}{occurrence.review.date ? ` · ${occurrence.review.date}` : ""}</p>}
           {occurrence.certificate && (
             <dl className="data-list" style={{ gridTemplateColumns: "96px 1fr", marginBottom: 8 }}>
               <dt>{tr("Stato")}</dt>
@@ -206,7 +208,7 @@ export function NodeDetail({
                       {text}
                     </span>
                     <span className="t-small secondary">
-                      {edge.derived ? tr("Aggiunta dal sistema") : TIER_LABEL[edge.tier]}
+                      {edge.derived ? tr("Aggiunta dal sistema") : relationStatus(edge)}
                     </span>
                   </button>
                 </li>

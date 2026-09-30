@@ -5,17 +5,18 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
+    public details?: unknown,
   ) {
     super(message);
   }
 }
 
-async function detail(response: Response): Promise<string> {
+async function detail(response: Response): Promise<ApiError> {
   try {
     const body = await response.json();
-    return typeof body.detail === "string" ? body.detail : response.statusText;
+    return new ApiError(response.status, typeof body.detail === "string" ? body.detail : tr(body.detail?.code ?? response.statusText), body.detail);
   } catch {
-    return response.statusText;
+    return new ApiError(response.status, response.statusText);
   }
 }
 
@@ -40,7 +41,7 @@ async function json<T>(response: Response): Promise<T> {
 
 export async function getJson<T>(url: string): Promise<T> {
   const response = await request(url);
-  if (!response.ok) throw new ApiError(response.status, await detail(response));
+  if (!response.ok) throw await detail(response);
   return json<T>(response);
 }
 
@@ -50,7 +51,7 @@ export async function putJson<T>(url: string, body: unknown): Promise<T> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  if (!response.ok) throw new ApiError(response.status, await detail(response));
+  if (!response.ok) throw await detail(response);
   return json<T>(response);
 }
 
@@ -60,7 +61,7 @@ export async function postJson<T>(url: string, body?: unknown): Promise<T> {
     headers: { "Content-Type": "application/json" },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
-  if (!response.ok) throw new ApiError(response.status, await detail(response));
+  if (!response.ok) throw await detail(response);
   return json<T>(response);
 }
 
@@ -83,7 +84,8 @@ export interface Loaded<T> {
 
 /** Fetch JSON when the URL changes; `null` skips the request. */
 export function useApi<T>(url: string | null): Loaded<T> {
-  const [state, setState] = useState<{ data: T | null; error: string | null; loading: boolean }>({
+  const [state, setState] = useState<{ url: string | null; data: T | null; error: string | null; loading: boolean }>({
+    url,
     data: null,
     error: null,
     loading: url !== null,
@@ -94,12 +96,14 @@ export function useApi<T>(url: string | null): Loaded<T> {
     let current = true;
     setState((previous) => ({ ...previous, loading: true, error: null }));
     getJson<T>(url)
-      .then((data) => current && setState({ data, error: null, loading: false }))
-      .catch((error: Error) => current && setState({ data: null, error: error.message, loading: false }));
+      .then((data) => current && setState({ url, data, error: null, loading: false }))
+      .catch((error: Error) => current && setState({ url, data: null, error: error.message, loading: false }));
     return () => {
       current = false;
     };
   }, [url, round]);
   const reload = useCallback(() => setRound((value) => value + 1), []);
-  return { ...state, reload };
+  return url === null ? {data:null,error:null,loading:false,reload} : state.url === url ? { ...state, reload } : {data:null,error:null,loading:true,reload};
 }
+
+export const editGraphRoute = (manualId: string, versionId: string) => `${graphRoute(manualId, versionId)}/modifica`;

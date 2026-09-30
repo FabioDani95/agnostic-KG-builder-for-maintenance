@@ -26,7 +26,7 @@ const version = (overrides: Partial<Version>): Version => ({
   replay: true,
   copied_from: null,
   ...overrides,
-});
+} as Version);
 
 const row = (id: string, latest: Partial<Version> | null): ManualRow => ({
   id,

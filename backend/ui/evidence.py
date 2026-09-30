@@ -6,6 +6,7 @@ process. Page images are rendered with PyMuPDF and cached on disk.
 
 from __future__ import annotations
 
+import hashlib
 import threading
 from pathlib import Path
 
@@ -17,13 +18,14 @@ MAX_SCALE = 3.0
 class Evidence:
     def __init__(self, cache_dir: Path) -> None:
         self.cache_dir = cache_dir
-        self._docs: dict[Path, DocumentText] = {}
+        self._docs: dict[tuple[Path, str], DocumentText] = {}
         self._lock = threading.Lock()
 
     def document(self, manual_dir: Path) -> DocumentText:
         pdf = manual_dir / "manual.pdf"
+        key = (pdf, hashlib.sha256(pdf.read_bytes()).hexdigest())
         with self._lock:
-            if pdf not in self._docs:
+            if key not in self._docs:
                 from backend.kg_v3.mapper import attach_pdf_sections
                 from backend.kg_v3.reader import read_document
                 from scripts.kg_v3 import info_asset, load_evidence
@@ -31,8 +33,9 @@ class Evidence:
                 evidence, page_count, _ = load_evidence(pdf, info_asset(manual_dir / "info.yaml"))
                 doc = read_document(list(evidence), page_count=page_count)
                 attach_pdf_sections(doc, pdf)
-                self._docs[pdf] = doc
-            return self._docs[pdf]
+                self._docs = {k:v for k,v in self._docs.items() if k[0] != pdf}
+                self._docs[key] = doc
+            return self._docs[key]
 
     def segment(self, manual_dir: Path, segment_id: str) -> dict:
         found = self.document(manual_dir).segments([segment_id])
@@ -47,7 +50,8 @@ class Evidence:
         import fitz
 
         scale = max(0.5, min(MAX_SCALE, round(scale * 2) / 2))
-        target = self.cache_dir / "pages" / manual_id / f"{page}@{scale:g}.png"
+        source_hash = hashlib.sha256((manual_dir / "manual.pdf").read_bytes()).hexdigest()
+        target = self.cache_dir / "pages" / manual_id / source_hash / f"{page}@{scale:g}.png"
         if target.exists():
             return target
         with fitz.open(manual_dir / "manual.pdf") as document:

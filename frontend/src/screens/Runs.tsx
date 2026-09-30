@@ -8,7 +8,7 @@ import { Shell } from "../components/Shell";
 import { type Column, nextSorting, type Sorting, Table } from "../components/Table";
 import { nextStep } from "../flow/steps";
 import { formatDate, formatDuration, formatNumber, formatShortDate, formatUsd, manualName, statusLabel, versionLabel } from "../text/it";
-import { tr } from "../i18n/i18n";
+import { tr, useLang } from "../i18n/i18n";
 
 type Origin = "all" | "workspace" | "campaign";
 
@@ -64,6 +64,7 @@ const COLUMNS: Column<RunRow>[] = [
 
 /** Every run of every manual, newest first, with its time and cost. */
 export function Runs() {
+  useLang();
   const navigate = useNavigate();
   const { data, error, loading, reload } = useApi<RunRow[]>("/api/runs");
   const [origin, setOrigin] = useState<Origin>("all");

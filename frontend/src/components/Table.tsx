@@ -54,6 +54,7 @@ export function Table<T>({
   sorting = null,
   onSort,
   actions,
+  actionsWidth = 32,
 }: {
   label: string;
   columns: Column<T>[];
@@ -64,8 +65,9 @@ export function Table<T>({
   sorting?: Sorting | null;
   onSort?: (key: string) => void;
   actions?: (row: T) => ReactNode;
+  actionsWidth?: number;
 }) {
-  const template = actions ? "repeat(12, minmax(0, 1fr)) 32px" : "repeat(12, minmax(0, 1fr))";
+  const template = actions ? `repeat(12, minmax(0, 1fr)) ${actionsWidth}px` : "repeat(12, minmax(0, 1fr))";
   const shown = useMemo(() => sortRows(rows, columns, sorting), [rows, columns, sorting]);
   const keyDown = (row: T) => (event: KeyboardEvent) => {
     // Keys pressed on a button inside the row belong to that button.

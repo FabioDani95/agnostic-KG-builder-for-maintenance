@@ -27,6 +27,7 @@ import yaml
 from backend.kg_v3.contracts import Answer, QuestionKind, ReviewerIdentity, ReviewerKind, validate_answer
 from backend.ui.budget import UI_RUN_PREFIX, Spending, estimate
 from backend.ui.catalog import Catalog, process_alive
+from backend.ui.locks import locked_job
 from backend.ui.preferences import PreferencesStore
 from backend.ui.questions import HUMAN_QUESTION_BUDGET, open_for_people
 from backend.ui.store import STORE_NAME, FileQuestionStore
@@ -205,6 +206,7 @@ class Jobs:
                            f"({left_for_ui:.3f} USD).")
         return {"spend_ceiling": round(min(ceiling, committed + left_for_ui), 4), "estimate": guess}
 
+    @locked_job
     def start(self, manual_id: str, reviewers: str) -> str:
         if reviewers not in PRESETS:
             raise JobError("Scelta di chi risponde sconosciuta.")
@@ -273,8 +275,11 @@ class Jobs:
             store.publish(open_for_people(run_dir, question_budget(run_dir))[0])
         return store
 
+    @locked_job
     def copy_version(self, manual_id: str, run_dir: Path, units_now: list[str]) -> str:
         """Copy a campaign version into workspace/ so a person can answer; the original never changes."""
+        if (run_dir / "revision.json").exists():
+            raise JobError("Una revisione manuale non è un’esecuzione.")
 
         saved = json.loads((run_dir / "state" / "units.json").read_text(encoding="utf-8"))
         if [unit["unit_id"] for unit in saved] != units_now:
@@ -343,7 +348,10 @@ class Jobs:
         job = json.loads((run_dir / "job.json").read_text(encoding="utf-8")) if (run_dir / "job.json").exists() else {}
         self._launch(manual_id, run_dir, job.get("reviewers") or "agent_human", ceiling, {})
 
+    @locked_job
     def apply(self, manual_id: str, run_dir: Path) -> None:
+        if (run_dir / "revision.json").exists():
+            raise JobError("Una revisione manuale non è un’esecuzione.")
         store = self.store(run_dir)
         if store.open_questions():
             raise JobError("Rispondi prima a tutte le domande.")
@@ -353,9 +361,12 @@ class Jobs:
         store.mark_applied()
         self._resume(manual_id, run_dir, ceiling)
 
+    @locked_job
     def approve(self, manual_id: str, run_dir: Path, decision: str) -> None:
         if decision not in ("approve", "reject"):
             raise JobError("Decisione sconosciuta.")
+        if (run_dir / "revision.json").exists():
+            raise JobError("Una revisione manuale non è un’esecuzione.")
         store = self.store(run_dir)
         if store.open_questions():
             raise JobError(f"Rispondi prima alle {len(store.open_questions())} domande.")

@@ -8,7 +8,7 @@ import { Icon } from "../components/Icon";
 import { Shell } from "../components/Shell";
 import { type Column, nextSorting, type Sorting, Table } from "../components/Table";
 import { formatDuration, formatNumber, formatUsd, manualName, statusLabel, versionLabel } from "../text/it";
-import { tr } from "../i18n/i18n";
+import { tr, useLang } from "../i18n/i18n";
 
 type Filter = "all" | "review" | "approved";
 
@@ -109,6 +109,7 @@ function RowActions({ row }: { row: ManualRow }) {
 }
 
 export function Library() {
+  useLang();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const { data, error, loading, reload } = useApi<ManualRow[]>("/api/manuals");

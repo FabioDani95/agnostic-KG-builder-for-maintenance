@@ -1,6 +1,7 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { graphRoute, liveRoute, useApi, versionPath } from "../api/client";
 import type { Manual, Version } from "../api/types";
+import { EditGraphButton } from "../components/EditGraphButton";
 import { StatusBadge } from "../components/Controls";
 import { Loading, Problem } from "../components/Feedback";
 import { Icon } from "../components/Icon";
@@ -8,7 +9,7 @@ import { Shell } from "../components/Shell";
 import { type Column, Table } from "../components/Table";
 import { lifecycle, nextStep, type Step } from "../flow/steps";
 import { formatDate, formatDuration, formatNumber, formatShortDate, formatUsd, versionLabel } from "../text/it";
-import { tr } from "../i18n/i18n";
+import { tr, useLang } from "../i18n/i18n";
 
 const COLUMNS: Column<Version>[] = [
   {
@@ -43,6 +44,7 @@ const COLUMNS: Column<Version>[] = [
 ];
 
 export function Steps({ steps }: { steps: Step[] }) {
+  useLang();
   return (
     <ol className="steps" aria-label={tr("A che punto è il grafo")}>
       {steps.map((step) => (
@@ -72,12 +74,14 @@ function CurrentVersion({ manualId, version }: { manualId: string; version: Vers
         </h2>
         <StatusBadge status={version.status} decidedBy={version.decided_by} />
       </header>
+      {version.kind === "revision" && <p className="message">{tr("Revisione manuale")} · {tr("Modifiche accettate")} · <Link to={graphRoute(manualId,version.parent_version_id!)}>{tr("Deriva da {base}",{base:version.parent_version_id!})}</Link></p>}
       <Steps steps={lifecycle(version)} />
       <dl className="figures">
         <div>
           <dt>{tr("Verificate")}</dt>
           <dd>{formatNumber(version.verified)}</dd>
         </div>
+        {version.kind === "revision" && <div><dt>{tr("Confermate da una persona")}</dt><dd>{formatNumber(version.human_confirmed ?? 0)}</dd></div>}
         <div>
           <dt>{tr("In dubbio")}</dt>
           <dd>{formatNumber(version.doubtful)}</dd>
@@ -110,6 +114,7 @@ function CurrentVersion({ manualId, version }: { manualId: string; version: Vers
             {tr("Apri il grafo")}
           </Link>
         )}
+        <EditGraphButton manualId={manualId} version={version} />
         {version.replay && hasGraph && (
           <Link to={liveRoute(manualId, version.version_id)} className="button button-plain">
             <Icon name="play" />
@@ -125,6 +130,7 @@ function CurrentVersion({ manualId, version }: { manualId: string; version: Vers
 }
 
 export function ManualScreen() {
+  useLang();
   const { manualId = "" } = useParams();
   const navigate = useNavigate();
   const { data: manual, error, loading, reload } = useApi<Manual>(`/api/manuals/${encodeURIComponent(manualId)}`);
@@ -144,7 +150,7 @@ export function ManualScreen() {
         manual && (
           <Link to={`/nuovo?manuale=${encodeURIComponent(manualId)}`} className="button button-bar">
             <Icon name="plus" />
-            {tr("Nuova versione")}
+            {tr("Nuova estrazione")}
           </Link>
         )
       }
@@ -208,7 +214,8 @@ export function ManualScreen() {
               rowKey={(row) => row.version_id}
               onOpen={open}
               empty="Nessuna versione: questo manuale non è ancora stato elaborato."
-              actions={(row) =>
+              actionsWidth={208}
+              actions={(row) => <><EditGraphButton manualId={manualId} version={row} />{
                 row.replay &&
                 row.status !== "running" && (
                   <Link
@@ -220,7 +227,7 @@ export function ManualScreen() {
                     <Icon name="play" />
                   </Link>
                 )
-              }
+              }</>}
             />
           </section>
         </div>

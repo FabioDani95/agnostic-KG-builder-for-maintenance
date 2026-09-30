@@ -1,5 +1,6 @@
 // Outline icons from Lucide (https://lucide.dev, ISC license), one family, 24 px grid, stroke 1.75.
 const PATHS = {
+  pencil: <><path d="m16 3 5 5-12 12-6 1 1-6Z"/><path d="m14 5 5 5"/></>,
   x: (
     <>
       <path d="M18 6 6 18" />
