@@ -58,6 +58,9 @@ function Rail() {
           <span className="live-lamp" aria-hidden="true" />
         </Link>
       )}
+      <NavLink to="/guida" className="rail-item" data-tip="Guida" aria-label="Guida">
+        <Icon name="question" size={20} />
+      </NavLink>
       <button
         type="button"
         className="rail-item rail-settings"

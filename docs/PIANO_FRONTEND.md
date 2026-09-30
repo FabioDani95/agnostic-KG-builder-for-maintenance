@@ -468,6 +468,7 @@ frontend/
 | `/tocca-a-te` | Quello che aspetta una persona: domande, approvazioni, dubbi nei grafi approvati |
 | `/esecuzioni` | Registro delle esecuzioni, con tempo e costo di ciascuna |
 | `/ontologia` | Schema del grafo |
+| `/guida/:capitolo` | Guida per chi usa l'applicazione, un capitolo per pagina |
 | `/manuali/:m` | Manuale: versione attuale (passi, prossimo passo) e versioni |
 | `/nuovo` | Nuovo grafo; `?manuale=:m` per una nuova versione di un manuale già nella libreria |
 | `/manuali/:m/versioni/:v/esecuzione` | Esecuzione dal vivo o replay |

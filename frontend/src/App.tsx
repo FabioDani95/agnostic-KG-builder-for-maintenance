@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import { Shell } from "./components/Shell";
+import { Guide } from "./screens/Guide";
 import { Inbox } from "./screens/Inbox";
 import { Library } from "./screens/Library";
 import { ManualScreen } from "./screens/ManualScreen";
@@ -37,6 +38,8 @@ export function App() {
         <Route path="/tocca-a-te" element={<Inbox />} />
         <Route path="/esecuzioni" element={<Runs />} />
         <Route path="/ontologia" element={<OntologyScreen />} />
+        <Route path="/guida" element={<Guide />} />
+        <Route path="/guida/:chapter" element={<Guide />} />
         <Route path="/manuali/:manualId" element={<ManualScreen />} />
         <Route path="/manuali/:manualId/versioni/:versionId" element={stage(<FinishedGraph />)} />
         <Route path="/manuali/:manualId/versioni/:versionId/esecuzione" element={stage(<LiveRun />)} />
