@@ -49,6 +49,9 @@ and copies made to answer questions, live in `workspace/` (not versioned). Real 
 through the same ledger with a spend ceiling. Design rules: [docs/DESIGN.md](docs/DESIGN.md);
 plan and API: [docs/PIANO_FRONTEND.md](docs/PIANO_FRONTEND.md).
 
+The integration plan for human graph editing after extraction, with editable tables,
+filters and a new revision on every save, is in [docs/PIANO_EDITOR_GRAFO.md](docs/PIANO_EDITOR_GRAFO.md).
+
 ## Evaluation
 
 The evaluation campaign lives in [campaign/](campaign/README.md): one folder per manual with
