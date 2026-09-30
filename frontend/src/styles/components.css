@@ -223,6 +223,8 @@
 .content {
   flex: 1;
   overflow-y: auto;
+  /* Room for the scrollbar always kept: a page that grows long does not shift sideways. */
+  scrollbar-gutter: stable;
   background: var(--bg);
   padding: var(--s4);
 }
