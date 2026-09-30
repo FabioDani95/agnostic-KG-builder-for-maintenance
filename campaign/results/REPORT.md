@@ -465,6 +465,35 @@ mancati mancano quindi per lo più davvero. Errori principali del sistema: rimed
 nelle celle con elenchi numerati (Grizzly), ramo sbagliato dei diagrammi (LG), test dei componenti letti
 come guasti che il manuale non afferma (regola 15 da rivedere), assistenza condizionata di Lincoln.
 
+### Correzioni dopo la revisione del giudice (2026-09-29, senza nuove esecuzioni)
+
+Verificate offline sullo stato salvato; nessuna chiamata reale, quindi l'effetto sul recall non è
+misurato.
+
+- **Azione composta controllo + riparazione.** Le perdite nelle tabelle di Grizzly non erano rimedi
+  della causa vicina: nei grafi verdi F nessun rimedio collega la causa N a un rimedio di numero diverso
+  (controllo scritto e misurato: 0 casi, 0 falsi allarmi sul gold degli otto manuali, poi tolto perché
+  senza effetto). I rimedi giusti venivano **estratti e poi scartati**: il manuale scrive «Inspect/replace
+  if at fault», il modello ne faceva un'azione sola marcata controllo, e il verificatore la respingeva
+  come «un controllo che sostituisce» (in r1 e r2 sette cause numerate restano senza rimedio verde contro
+  1–3 senza rimedio estratto; casi A010, A022, A028 della revisione). Ora la regola 6 divide la voce in
+  due azioni (controllo e riparazione con la condizione «se guasto») e il verificatore accetta entrambe
+  le parti.
+- **Test dei componenti.** Regola 15 riscritta: una tabella di valori normali non prova un guasto; il
+  problema è il test come lo nomina il manuale, la causa è non nominata, le misure sono controlli con il
+  valore atteso; il verificatore e il revisore rifiutano un guasto o una lettura anomala che il manuale
+  non dice (casi A002, A014, A030, A033).
+- **Rami di LG sul diagramma sbagliato: non corretto.** Le cause dedotte con lo stesso nome («PCB
+  fault», «Latch board out of adjustment») si fondono tra 3–4 diagrammi (4–7 per esecuzione), e il
+  sintomo di un diagramma eredita i rimedi e le condizioni di un altro (caso A024). Due correzioni
+  provate offline, cause dedotte legate al loro diagramma nella fusione, hanno **peggiorato** il grafo
+  ricostruito (cause tra più diagrammi da 4–7 a 7–10, cause orfane da 10–17 a 19–24): il collegamento
+  sintomo → causa cita solo il titolo, fuori dai passi numerati, e una sola lettura cita già segmenti
+  di più diagrammi per la stessa causa. Serve una correzione nell'estrazione, da misurare con esecuzioni
+  vere. Una regola di posizione sui passi numerati (azione del passo N data alla causa del passo M) non
+  trova casi nei grafi verdi F e nessun falso allarme sui 42 rami di diagramma del gold: non aggiunta.
+- **Lincoln, assistenza condizionata:** limite noto, non affrontato.
+
 ### Proposta
 
 Non propongo ancora un nuovo tag di congelamento: prima giudicare Atlas Copco e Grundfos (circa

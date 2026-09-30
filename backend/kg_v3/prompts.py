@@ -21,7 +21,8 @@ system proposes. Answer as an experienced maintenance engineer would.
    A cause that only repeats the problem, or a check presented as a cause, is not correct. A cause
    marked (not written in the manual) is correct when the manual gives that problem with that check
    or remedy; its name is the system's reading of the check, not a claim that the manual states it.
-   A problem named "Suspected <component> fault" only states that the manual tests that component.
+   A problem named after a component test only states that the manual gives that test; a fault or
+   an abnormal reading the manual does not state is not correct.
 6. For a page map, a page is diagnostic when it helps find or fix a fault (troubleshooting tables,
    fault or alarm codes, tests); procedure pages hold steps that diagnostic pages rely on.
 7. Choose exactly one listed option ID. If only some numbered statements are right, choose
@@ -103,6 +104,9 @@ Rules:
    one action per remedy or check, each linked to the failure. For a corrective action set "kind": repair for actions that fix the fault, inspection for
    checks, tests and measurements, escalation for contacting service or a dealer. Link checks to
    the failure with the same relation as repairs, with kind inspection. Other types use "".
+   A check joined to a repair in one remedy ("inspect/replace if at fault", "check and replace if
+   worn") is two actions on the same failure: the check (inspection) and the repair (repair), the
+   repair with the condition as an "if" context ("if faulty"). Never one action marked inspection.
 7. stated is true only for a cause the manual writes as a cause. If the manual gives an action or
    check for a symptom without naming a cause, create a failure mode with stated false: name it
    after the fault the check or remedy points to when that is clear ("Incorrect input voltage" for
@@ -143,10 +147,13 @@ Rules:
     Cite the problem, the question, the outcome and the action. Never give an action the outcome
     of another question.
 15. A test or measurement with an expected or normal value is an inspection whose value is
-    "expected" context. The abnormal result reveals the failure mode (stated false unless named)
-    and a prescribed consequence (replace, adjust) is a repair on it. When the manual tests a
-    component without naming a symptom, the problem is "Suspected <component> fault", with the
-    component taken from the test's heading or row; cite that heading or row.
+    "expected" context. A table of normal values is not evidence of a fault: never name a fault or an
+    abnormal reading the manual does not state ("winding shorted to ground" from a normal value).
+    When the manual tests a component without naming a symptom, the problem is that test as the
+    manual names it ("Transformer test"), cited on its heading or row; the failure mode is
+    "Unspecified cause of <that test>" with stated false, and each measurement is an inspection on
+    it. A consequence the manual prescribes for an abnormal result (replace, adjust) is a repair
+    with that result as its "if" condition.
 16. Every failure mode needs its problem. When causes, checks or remedies stand under a title or
     introduction that names the situation they address (a fault, a hazard, a service or test
     situation), link each failure mode to that problem, a Symptom named from the title, and cite
@@ -161,14 +168,17 @@ enough to decide. A statement marked [inspection] only claims that the manual pr
 or test for that problem or cause. A cause listed among several causes of a problem supports that
 problem-cause link; a remedy supports only the cause it is written for. Numbered troubleshooting steps
 shown with the problem they belong to are remedies or checks for the cause that problem names, unless
-a step or its parent step points to another cause. A numbered sub-step belongs to its parent step only. Answer not_supported when a statement marked [inspection] actually repairs,
-replaces, cleans or adjusts, when a remedy statement only checks, and when the cause is a check to
+a step or its parent step points to another cause. A numbered sub-step belongs to its parent step only. When the
+source joins a check to a repair in one remedy ("inspect/replace if at fault"), the check alone marked
+[inspection] and the repair alone are each supported. Otherwise answer not_supported when a statement
+marked [inspection] actually repairs, replaces, cleans or adjusts, when a remedy statement only checks, and when the cause is a check to
 perform, only repeats the problem, or is a check or remedy turned around into a fault that the text
 never states as a cause. A cause marked (not written in the manual) only claims that the manual gives
 this problem, check or remedy without naming a cause: judge the problem and the check or remedy, not
 the cause name. Linking a problem to such a cause claims that the problem's entry leads to that check,
-test outcome or remedy; the test whose outcome reveals such a cause is a check for it. A problem named "Suspected <component> fault" only claims that the manual tests that
-component: judge the test and its result. An outcome of a decision step (a yes/no answer, a reading)
+test outcome or remedy; the test whose outcome reveals such a cause is a check for it. A problem named after a component test only claims that the manual gives that test: judge the test
+and its values; a statement that names a fault or an abnormal reading the manual does not state is
+not supported. An outcome of a decision step (a yes/no answer, a reading)
 supports only the action that outcome leads to.
 Context is typed: if=antecedent, prerequisite=before, warning=constraint/prohibition,
 expected=test outcome, order=sequence. Check each item's role and scope against the cited source.
