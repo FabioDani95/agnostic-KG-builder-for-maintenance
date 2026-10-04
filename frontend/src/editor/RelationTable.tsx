@@ -345,10 +345,7 @@ export function RelationTable({
                     {nodes.get(edge.from)?.name ?? edge.from}
                   </button>
                 </td>
-                <td>
-                  {RELATION_LABEL[edge.type] ?? edge.type}
-                  <small className="mono">{edge.id}</small>
-                </td>
+                <td>{RELATION_LABEL[edge.type] ?? edge.type}</td>
                 <td>
                   <button
                     className="button button-plain"
@@ -494,7 +491,7 @@ export function RelationTable({
                   <option value="">{tr("Seleziona nodo")}</option>
                   {eligible(type).map((n) => (
                     <option key={n.id} value={n.id}>
-                      {n.name} · {n.id}
+                      {n.name}
                     </option>
                   ))}
                 </select>

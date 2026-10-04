@@ -31,7 +31,9 @@ from backend.kg_v3.contracts import (
 )
 from backend.kg_v3.llm import ModelClient
 from backend.kg_v3.prompts import MAP_PROMPT, SCAN_PROMPT
+from backend.kg_v3.quality_contracts import QUALITY_VERSION
 from backend.kg_v3.reader import DocumentText, render_segment, render_segments
+from backend.kg_v3.run_state import stable_id
 
 logger = logging.getLogger(__name__)
 
@@ -504,3 +506,72 @@ def build_units(
             ))
     assert_single_owner(units)
     return units
+
+
+def build_quality_units(doc, page_map, source_index, *, max_chars=UNIT_MAX_CHARS):
+    """The text units of the base pipeline, with their atomic evidence; one more unit per
+    diagnostic entry that only an image carries.
+
+    Packing, title trail and context are those the base pipeline reads with, so the
+    quality profile never reads less than it does. Scope comes from the evidence, not
+    from the packing.
+    """
+
+    refs = source_index.evidence
+    by_ref = {}
+    for entry in source_index.entries.values():
+        for ref in entry.member_refs:
+            by_ref.setdefault(ref, set()).add(entry.entry_id)
+
+    def atomic(segment_ids):
+        return [r for segment_id in segment_ids for r in source_index.atomic_refs.get(segment_id, [])]
+
+    def scope_of(owned):
+        entries = sorted({e for r in owned for e in by_ref.get(r, ())})
+        branches = sorted(b.branch_id for b in source_index.branches.values() if b.entry_id in entries)
+        return entries, branches
+
+    units = []
+    for unit in build_units(doc, page_map, max_chars=max_chars):
+        owned = atomic(unit.segment_ids)
+        if not owned:
+            continue
+        context = [r for r in atomic(unit.context_segment_ids) if r not in set(owned)]
+        entries, branches = scope_of(owned)
+        units.append(unit.model_copy(update={
+            'contract_version': QUALITY_VERSION, 'entry_ids': entries, 'branch_ids': branches,
+            'owned_evidence_ref_ids': owned, 'context_evidence_ref_ids': context}))
+    # A diagnostic page without machine-readable text is read from its image, one unit per page.
+    selected = set(page_map.pages_with(PageLabel.DIAGNOSTIC))
+    visual_pages = {}
+    for entry in source_index.entries.values():
+        first = refs[entry.member_refs[0]]
+        if first.kind == 'VISUAL_REGION' and first.page in selected and not doc.pages.get(first.page):
+            visual_pages.setdefault(first.page, []).append(entry)
+    for page, entries in sorted(visual_pages.items()):
+        owned = sorted({r for e in entries for r in e.member_refs})
+        context = sorted({r for e in entries for r in e.heading_refs if r in refs} - set(owned))
+        entry_ids = sorted(e.entry_id for e in entries)
+        branches = sorted(b.branch_id for b in source_index.branches.values() if b.entry_id in entry_ids)
+        units.append(ReadingUnit(contract_version=QUALITY_VERSION, unit_id=stable_id('unit', owned),
+                                 pages=[page], section=doc.section_titles.get(page, ''),
+                                 entry_ids=entry_ids, branch_ids=branches,
+                                 owned_evidence_ref_ids=owned, context_evidence_ref_ids=context,
+                                 owned_region_ids=sorted({refs[r].region_id for r in owned + context if refs[r].region_id})))
+    assert_single_owner(units)
+    assert_atomic_ownership(units, source_index)
+    return units
+
+
+def assert_atomic_ownership(units, index):
+    """Reject parent/child simultaneous ownership and intersecting text offsets."""
+    spans = {}
+    for unit in units:
+        for key in unit.owned_evidence_ref_ids:
+            ref = index.evidence[key]
+            if not ref.segment_id:
+                continue
+            for start, end, owner in spans.get(ref.segment_id, []):
+                if ref.char_start < end and start < ref.char_end:
+                    raise ValueError(f'overlapping owned evidence in {ref.segment_id}: {owner}, {unit.unit_id}')
+            spans.setdefault(ref.segment_id, []).append((ref.char_start, ref.char_end, unit.unit_id))

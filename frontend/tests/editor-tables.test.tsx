@@ -129,7 +129,7 @@ describe("editable tables and evidence navigation", () => {
     );
     const count = screen.getByLabelText("Noise: count").parentElement!;
     fireEvent.click(
-      within(count).getByRole("button", { name: "Imposta null" }),
+      within(count).getByRole("button", { name: "Imposta senza valore" }),
     );
     expect(data().graph.nodes[1].properties.count).toBeNull();
     fireEvent.click(

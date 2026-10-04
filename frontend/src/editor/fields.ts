@@ -19,4 +19,5 @@ const LABELS: Record<string, string> = {
   expected_outcome: "Risultato atteso",
   system: "Sistema",
 };
-export const fieldLabel = (name: string) => tr(LABELS[name] ?? name);
+export const fieldLabel = (name: string) =>
+  tr(LABELS[name] ?? (name.endsWith("_id") ? "Identificativo" : name));

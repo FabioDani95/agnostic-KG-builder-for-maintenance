@@ -21,7 +21,7 @@ UI_RUN_PREFIX = "ui_"
 class Limits:
     budget_usd: float = 20.0  # absolute budget of the campaign ledger
     ceiling_usd: float = 15.0  # --spend-ceiling of every run started here (Fabio, 2026-09-29)
-    ui_limit_usd: float = 0.5  # all interface work together (docs/PROMPT_FRONTEND.md)
+    ui_limit_usd: float = 0.5  # all interface work together; see docs/configuration.md
 
 
 class Spending:

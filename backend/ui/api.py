@@ -1,4 +1,4 @@
-"""Local web API of the prototype interface (docs/PIANO_FRONTEND.md, section 6).
+"""Local web API of the prototype interface (docs/architecture.md).
 
 Only for localhost, without authentication. Campaign runs are read, never written.
 """
@@ -454,10 +454,15 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
                 # Campaign runs are never written: the first answer works on a copy in workspace/.
                 doc = await asyncio.to_thread(evidence.document, manual_dir(manual_id))
                 units = await asyncio.to_thread(current_units, doc, folder)
-                version_id = jobs.copy_version(manual_id, folder, units)
+                version_id = await asyncio.to_thread(jobs.copy_version, manual_id, folder, units)
                 folder = run_dir(manual_id, version_id)
-            with manual_lock(settings.workspace, manual_id):
-                jobs.answer(folder, question_id, body.option_id, body.keep, body.text)
+
+            def locked_answer():
+                with manual_lock(settings.workspace, manual_id):
+                    jobs.answer(folder, question_id, body.option_id, body.keep, body.text)
+
+            # The manual lock can be held by a revision commit: never wait for it on the event loop.
+            await asyncio.to_thread(locked_answer)
         except JobError as error:
             raise HTTPException(409, str(error)) from None
         store = jobs.store(folder)
@@ -468,8 +473,7 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
         folder = run_dir(manual_id, version_id)
         before = attempts(folder / "events.jsonl")
         try:
-            with manual_lock(settings.workspace, manual_id):
-                jobs.apply(manual_id, folder)
+            await asyncio.to_thread(jobs.apply, manual_id, folder)  # locked_job takes the manual lock
         except JobError as error:
             raise HTTPException(409, str(error)) from None
         await wait_for_attempt(folder / "events.jsonl", before, settings.resume_wait_seconds)
@@ -480,8 +484,7 @@ def create_app(settings: UiSettings | None = None) -> FastAPI:
         folder = run_dir(manual_id, version_id)
         before = attempts(folder / "events.jsonl")
         try:
-            with manual_lock(settings.workspace, manual_id):
-                jobs.approve(manual_id, folder, body.decision)
+            await asyncio.to_thread(jobs.approve, manual_id, folder, body.decision)  # locked_job
         except JobError as error:
             raise HTTPException(409, str(error)) from None
         await wait_for_attempt(folder / "events.jsonl", before, settings.resume_wait_seconds)

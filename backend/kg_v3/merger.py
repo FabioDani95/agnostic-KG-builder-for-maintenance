@@ -30,6 +30,7 @@ from backend.kg_v3.llm import ModelClient
 from backend.kg_v3.ontology import load_ontology
 from backend.kg_v3.prompts import MERGE_PROMPT
 from backend.kg_v3.reader import DocumentText, render_segments
+from backend.kg_v3.run_state import stable_id
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +42,13 @@ _TIER_RANK = {Tier.GREEN: 0, Tier.YELLOW: 1, Tier.RED: 2}
 
 
 def identity(endpoint: Endpoint) -> str:
+    if endpoint.branch_id:
+        # Quality profile: causes and actions are local to their branch, problems to their entry;
+        # components and codes are shared by the asset.
+        scope = (endpoint.entry_id if endpoint.type == "Symptom" else
+                 endpoint.branch_id if endpoint.type in {"FailureMode", "CorrectiveAction"} else "asset")
+        return "|".join((endpoint.type, endpoint.document_id, endpoint.asset_scope_id, scope,
+                         normalize_name(endpoint.code or endpoint.name), endpoint.kind, endpoint.denotation_status))
     if endpoint.code and endpoint.type == "ErrorCode":
         numbers = ",".join(sorted(set(re.findall(r"\d+", endpoint.name))))
         return f"{endpoint.type}|code:{normalize_name(endpoint.code)}|name_numbers:{numbers}"
@@ -68,6 +76,7 @@ class MergePlan(BaseModel):
     same: list[MergePair] = Field(default_factory=list)
     unsure: list[MergePair] = Field(default_factory=list)
     different: list[MergePair] = Field(default_factory=list)
+    deferred: list[MergePair] = Field(default_factory=list)
 
 
 class GraphNode(BaseModel):
@@ -77,6 +86,11 @@ class GraphNode(BaseModel):
     code: str = ""
     kind: str = ""
     stated: bool = True
+    branch_id: str = ''
+    concept_id: str = ''
+    instance_id: str = ''
+    mention_ids: list[str] = Field(default_factory=list)
+    denotation_status: str = 'LEGACY_UNCLASSIFIED'
     aliases: list[str] = Field(default_factory=list)
     cites: list[str] = Field(default_factory=list)
 
@@ -104,6 +118,9 @@ class MergedGraph(BaseModel):
     nodes: dict[str, GraphNode] = Field(default_factory=dict)
     edges: list[GraphEdge] = Field(default_factory=list)
     merged_aliases: int = 0
+    concepts: list[dict] = Field(default_factory=list)
+    instances: list[dict] = Field(default_factory=list)
+    merge_lineage: list[dict] = Field(default_factory=list)
     blocked_merges: list[dict[str, str]] = Field(default_factory=list)
 
     @property
@@ -114,6 +131,8 @@ class MergedGraph(BaseModel):
 def _endpoints(relations: list[CheckedRelation]) -> dict[str, list[Endpoint]]:
     found: dict[str, list[Endpoint]] = {}
     for relation in relations:
+        if relation.assertion.branch_id and relation.assertion.tier is Tier.RED:
+            continue
         for proposal in relation.proposals:
             for endpoint in (proposal.source, proposal.target):
                 found.setdefault(identity(endpoint), []).append(endpoint)
@@ -139,6 +158,11 @@ def merge_candidates(relations: list[CheckedRelation]) -> list[MergePair]:
             if "|code:" in left or "|code:" in right:
                 continue
             a, b = endpoints[left][0], endpoints[right][0]
+            if a.branch_id or b.branch_id:
+                if a.type in {'FailureMode', 'CorrectiveAction'} and a.branch_id != b.branch_id:
+                    continue
+                if a.kind != b.kind or a.denotation_status != b.denotation_status:
+                    continue
             if similarity(a.name, b.name) >= JUDGE_THRESHOLD or _contained(a.name, b.name):
                 pairs.append(MergePair(
                     left=left, right=right, left_name=a.name, right_name=b.name, type=kind,
@@ -160,7 +184,7 @@ def merge_candidates(relations: list[CheckedRelation]) -> list[MergePair]:
                 a, b = (mine, theirs) if identity(mine) == left else (theirs, mine)
                 pairs.append(MergePair(left=left, right=right, left_name=a.name, right_name=b.name, type=a.type,
                                        left_cites=sorted(a.cites)[:3], right_cites=sorted(b.cites)[:3]))
-    return pairs[:MAX_JUDGED_PAIRS]
+    return pairs
 
 
 def _regroup(doc: DocumentText, relation: CheckedRelation, proposals: list[Proposal], suffix: str) -> CheckedRelation:
@@ -178,6 +202,19 @@ def _regroup(doc: DocumentText, relation: CheckedRelation, proposals: list[Propo
     verdict = original.verifier_verdict if not suffix else None
     if verdict is not None and Witness.VERIFIER in original.witnesses:
         witnesses.append(Witness.VERIFIER)
+    if original.contract_version == 'kg-ingestion-quality-1':
+        certificate = original.model_copy(update={'witnesses': witnesses, 'verifier_verdict': verdict,
+                                                   'semantic_verification_required': True,
+                                                   'verifier_metadata': {} if suffix else original.verifier_metadata})
+        assertion = relation.assertion.model_copy(update={
+            'assertion_id': stable_id('assertion', sorted({p.proposal_id for p in proposals})),
+            'source_key': f'{lead.source.type}:{lead.source.name}', 'target_key': f'{lead.target.type}:{lead.target.name}',
+            'fact_fingerprint': lead.fact_fingerprint, 'certificate': certificate,
+            'conditions': lead.conditions, 'subject_mention_id': lead.source.mention_id,
+            'object_mention_id': lead.target.mention_id,
+            'original_fact': {'source': lead.source.model_dump(mode='json'), 'target': lead.target.model_dump(mode='json')},
+            'parent_proposal_ids': sorted({p.proposal_id for p in proposals})})
+        return CheckedRelation(assertion=assertion, proposals=proposals)
     certificate = Certificate(
         segment_ids=sorted({cite for item in proposals for cite in item.all_cites}) or original.segment_ids,
         witnesses=witnesses, verifier_verdict=verdict, extractor=original.extractor,
@@ -231,15 +268,26 @@ def merge_context(key: str, cites: list[str], doc: DocumentText | None,
                           if identity(p.source) in causes or identity(p.target) in causes]
     lines = list(dict.fromkeys(statement(spec, p) for p in connected))[:MERGE_CONTEXT_STATEMENTS]
     # Where the name itself is written; its branches above carry the rest of the entry.
-    own = cites or sorted({c for p in direct for c in p.all_cites})
+    own = segment_ids(doc, cites or sorted({c for p in direct for c in p.all_cites}))
     evidence = sorted(own[:MERGE_CONTEXT_SEGMENTS], key=lambda c: doc.position(c) or 0 if doc else 0)
     source = render_segments(doc.segments(evidence), doc=doc) if doc else "(source unavailable)"
     return "Connected problem/remedy branches:\n" + "\n".join(lines) + "\nCited source:\n" + source
 
 
+def segment_ids(doc: DocumentText | None, cites: list[str]) -> list[str]:
+    """Segment IDs of citations; a cited cell item or image region counts as its segment."""
+    index = getattr(doc, "source_index", None)
+    out = []
+    for cite in cites:
+        ref = index.evidence.get(cite) if index is not None else None
+        out.append(ref.segment_id if ref is not None else cite)
+    return list(dict.fromkeys(c for c in out if c))
+
+
 async def judge_pairs(llm: ModelClient | None, pairs: list[MergePair],
                       doc: DocumentText | None = None, relations: list[CheckedRelation] = ()) -> MergePlan:
-    plan = MergePlan()
+    plan = MergePlan(deferred=pairs[MAX_JUDGED_PAIRS:])
+    pairs = pairs[:MAX_JUDGED_PAIRS]
     if not pairs:
         return plan
     if llm is None:
@@ -269,7 +317,7 @@ async def judge_pairs(llm: ModelClient | None, pairs: list[MergePair],
             }}}}
         try:
             data = await llm.json(system=MERGE_PROMPT, user=text, schema=schema, name="kg_v3_merge",
-                                  max_output_tokens=3000)
+                                  max_output_tokens=8000)
             answers = {str(item.get("id")): item for item in data.get("answers") or []}
         except Exception as exc:
             logger.warning("Merge judge failed: %s", exc)
@@ -279,7 +327,11 @@ async def judge_pairs(llm: ModelClient | None, pairs: list[MergePair],
             pair.rationale = str(answer.get("rationale") or "").strip()
             pair.cited_segments = [c for c in answer.get("cited_segments", []) if doc and doc.segment(c)]
             verdict = answer.get("answer", "unsure")
-            pair.verdict = ("unsure" if verdict == "same" and not (pair.rationale and pair.cited_segments)
+            # "same" needs a rationale citing where each of the two names is written.
+            cited = set(pair.cited_segments)
+            both = (bool(cited & set(segment_ids(doc, pair.left_cites)))
+                    and bool(cited & set(segment_ids(doc, pair.right_cites))))
+            pair.verdict = ("unsure" if verdict == "same" and not (pair.rationale and both)
                             else verdict if verdict in {"same", "different", "unsure"} else "unsure")
 
     await asyncio.gather(*(judge(pairs[index:index + JUDGE_BATCH]) for index in range(0, len(pairs), JUDGE_BATCH)))
@@ -312,7 +364,10 @@ class _UnionFind:
             for x in sorted(self.members[a]):
                 for y in sorted(self.members[b]):
                     ex, ey = self.endpoints[x][0], self.endpoints[y][0]
-                    reason = ('different' if frozenset((x, y)) in self.apart else
+                    reason = ('different_scope' if (ex.branch_id or ey.branch_id) and ex.type in {'FailureMode', 'CorrectiveAction'} and ex.branch_id != ey.branch_id else
+                              'different_action_kind' if ex.kind != ey.kind else
+                              'different_denotation' if ex.denotation_status != ey.denotation_status else
+                              'different' if frozenset((x, y)) in self.apart else
                               'different_codes' if ex.code and ey.code and normalize_name(ex.code) != normalize_name(ey.code) else
                               'different_numbers' if set(re.findall(r'\d+', ex.name)) !=
                               set(re.findall(r'\d+', ey.name)) else
@@ -388,11 +443,24 @@ def assemble(relations: list[CheckedRelation], same_pairs: list[MergePair],
         named = [item for item in items if item.stated] or items
         names = Counter(item.name for item in named)
         first_seen = {value: index for index, value in reversed(list(enumerate(item.name for item in named)))}
-        name = sorted(names, key=lambda value: (-names[value], first_seen[value]))[0]
+        name = sorted(names, key=lambda value: (-names[value], value if items[0].branch_id else first_seen[value]))[0]
         codes = Counter(item.code for item in items if item.code)
         kinds = Counter(item.kind for item in items if item.kind)
+        mentions = sorted({e.mention_id for e in items if e.mention_id})
+        cid = stable_id('concept', [items[0].type, mentions]) if mentions else ''
+        iid = stable_id('instance', [items[0].document_id, items[0].asset_scope_id, items[0].branch_id, items[0].type, mentions, items[0].kind,
+                                     items[0].denotation_status]) if mentions else ''
+        if mentions:
+            graph.concepts.append({'concept_id': cid, 'type': items[0].type, 'canonical_name': name,
+                                   'mention_ids': mentions, 'aliases': sorted({e.name for e in items} - {name}),
+                                   'equivalence_decisions': [p.model_dump(mode='json') for p in same_pairs if p.left in groups.members[root] and p.right in groups.members[root]]})
+            graph.instances.append({'instance_id': iid, 'concept_id': cid, 'branch_id': items[0].branch_id,
+                                    'mention_ids': mentions, 'qualifiers': [], 'asset_scope_id': items[0].asset_scope_id})
+            graph.merge_lineage.extend({'old': stable_id('instance', [e.document_id, e.asset_scope_id, e.branch_id, e.type, [e.mention_id], e.kind, e.denotation_status]),
+                                        'new': iid} for e in items)
         graph.nodes[root] = GraphNode(
-            node_id=node_id(root), type=items[0].type, name=name,
+            node_id=iid or node_id(root), branch_id=items[0].branch_id, concept_id=cid, instance_id=iid,
+            mention_ids=mentions, denotation_status=items[0].denotation_status, type=items[0].type, name=name,
             code=codes.most_common(1)[0][0] if codes else "",
             kind=kinds.most_common(1)[0][0] if kinds else "",
             stated=_stated(items),
@@ -403,7 +471,11 @@ def assemble(relations: list[CheckedRelation], same_pairs: list[MergePair],
 
     edges: dict[tuple[str, str, str], GraphEdge] = {}
     for relation in relations:
+        if relation.assertion.branch_id and relation.assertion.tier is Tier.RED:
+            continue
         lead = relation.proposals[0]
+        if identity(lead.source) not in endpoints or identity(lead.target) not in endpoints:
+            continue
         source = graph.nodes[groups.find(identity(lead.source))].node_id
         target = graph.nodes[groups.find(identity(lead.target))].node_id
         key = (lead.relation_type, source, target)
@@ -412,5 +484,36 @@ def assemble(relations: list[CheckedRelation], same_pairs: list[MergePair],
             edges[key] = GraphEdge(edge_id=f"v3e_{digest}", relation_type=lead.relation_type,
                                    source=source, target=target, assertions=[])
         edges[key].assertions.append(relation.assertion)
-    graph.edges = list(edges.values())
+    graph.edges = sorted(edges.values(), key=lambda e: e.edge_id)
+    for edge in graph.edges:
+        edge.assertions.sort(key=lambda a: a.assertion_id)
     return graph
+
+
+# A part number mixes letters and digits (EBR75341201, 6871W1N010B) or is a long digit run;
+# list numbering ("1.") and small quantities are not identifiers.
+PART_NUMBER = re.compile(r"\b(?=[A-Za-z0-9-]*\d)(?=[A-Za-z0-9-]*[A-Za-z])[A-Za-z0-9-]{5,}\b|\b\d{6,}\b")
+DECLARED_ALIAS = re.compile(r"also called|aka|also known", re.I)
+
+
+def alias_candidates(index, relations):
+    """Extra merge candidates for components and codes: a shared part number or a declared alias.
+
+    Candidates only: every pair still goes to the judge with the evidence of both names.
+    """
+    endpoints = {key: items[0] for key, items in _endpoints(relations).items()
+                 if items[0].type in {"Component", "ErrorCode"}}
+    texts = {key: " ".join(index.evidence[r].exact_text for r in e.evidence_ref_ids if r in index.evidence)
+             for key, e in endpoints.items()}
+    parts = {key: set(PART_NUMBER.findall(text)) for key, text in texts.items()}
+    pairs = []
+    for left, right in combinations(sorted(endpoints), 2):
+        a, b = endpoints[left], endpoints[right]
+        if a.type != b.type or (a.code and b.code and a.code != b.code):
+            continue
+        alias = any(a.name in text and b.name in text and DECLARED_ALIAS.search(text)
+                    for text in (texts[left], texts[right]))
+        if parts[left] & parts[right] or alias:
+            pairs.append(MergePair(left=left, right=right, left_name=a.name, right_name=b.name, type=a.type,
+                                   left_cites=a.cites, right_cites=b.cites))
+    return pairs

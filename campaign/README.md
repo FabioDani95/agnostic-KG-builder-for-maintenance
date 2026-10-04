@@ -1,7 +1,8 @@
 # Campagna di valutazione V3
 
 Qui sta tutto ciò che serve per valutare la pipeline su manuali nuovi: input, gold,
-esecuzioni e risultati. Regole e KPI: [protocollo](../paper/evaluation/PROTOCOLLO_V3.md).
+esecuzioni e risultati. I protocolli del manoscritto sono conservati separatamente
+nello spazio privato dell'autore e non sono inclusi nel repository condiviso.
 Un solo comando: `.venv/bin/python scripts/campaign.py <passo>`.
 
 ## Struttura
@@ -39,4 +40,4 @@ scritto prima del passo 6: chi annota non deve vedere i grafi di quel manuale.
 
 ## Cosa sta altrove
 
-- Codice della pipeline: [backend/kg_v3](../backend/kg_v3/); piano: [docs/PIANO_V3.md](../docs/PIANO_V3.md).
+- Codice della pipeline: [backend/kg_v3](../backend/kg_v3/); architettura corrente: [docs/architecture.md](../docs/architecture.md).

@@ -24,7 +24,7 @@ from backend.kg_v3.contracts import Certificate, Tier, assign_tier
 from backend.kg_v3.extractor import Endpoint
 from backend.kg_v3.merger import identity, node_id
 
-# Pipeline steps grouped into the six stations of docs/PIANO_V3.md.
+# Pipeline steps grouped into the six stations of docs/architecture.md.
 STATIONS = ("read", "map", "extract", "check", "merge", "ask")
 STEP_STATION = {
     "pdf_read": "read",

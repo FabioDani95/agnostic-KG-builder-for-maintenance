@@ -391,11 +391,20 @@ def apply_operations(base: dict, operations: list[EditOperation], ontology: dict
             "reason": op["reason"],
             "content_hash": h,
         }
-    recompute(graph, ontology)
+    def shape(edge):
+        return [(o.get("conditions", []), o.get("review", {}).get("status")) for o in edge.get("occurrences", [])]
+
+    old_edges = {e["id"]: e for e in baseline["edges"]}
+    touched = {
+        e["id"] for e in graph["edges"] if e["id"] not in old_edges or shape(e) != shape(old_edges[e["id"]])
+    }
+    recompute(graph, ontology, touched)
     return graph
 
 
-def recompute(graph: dict, ontology: dict) -> None:
+def recompute(graph: dict, ontology: dict, touched: set[str] | frozenset[str] = frozenset()) -> None:
+    """Trust, tiers and system links. Edge conditions are recalculated only for `touched` edges:
+    untouched edges keep the conditions written by the pipeline (merger semantics)."""
     for edge in graph["edges"]:
         if edge.get("derived"):
             continue
@@ -411,8 +420,9 @@ def recompute(graph: dict, ontology: dict) -> None:
                 active.append(occ)
         edge["trusted"] = any(o["trusted"] for o in active)
         edge["tier"] = next((t for t in ("green", "yellow") if any(o.get("tier") == t for o in active)), None)
-        common = copy.deepcopy(active[0].get("conditions", [])) if active else []
-        edge["conditions"] = [c for c in common if all(c in o.get("conditions", []) for o in active)]
+        if edge["id"] in touched:
+            common = copy.deepcopy(active[0].get("conditions", [])) if active else []
+            edge["conditions"] = [c for c in common if all(c in o.get("conditions", []) for o in active)]
     roots = [n for n in graph["nodes"] if n["type"] == ontology["root"]]
     old = {(e["type"], e["from"], e["to"]): e for e in graph["edges"] if e.get("derived")}
     diagnostic = [e for e in graph["edges"] if not e.get("derived")]

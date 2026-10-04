@@ -37,7 +37,7 @@ export const initialState = (document: EditorDocument): EditorState => ({
 });
 export type Action =
   | { type: "edit"; operation: EditOperation }
-  | { type: "undo" | "redo" | "reset" }
+  | { type: "undo" | "redo" | "reset" | "stale" }
   | { type: "preview"; preview: EditPreview }
   | { type: "select"; selection: Selection }
   | { type: "ack" | "pending" | "saving"; value: boolean };
@@ -47,6 +47,14 @@ export function reducer(state: EditorState, action: Action): EditorState {
       ...initialState(state.document),
       epoch: state.epoch + 1,
       generation: state.generation + 1,
+    };
+  if (action.type === "stale")
+    // A rejected acceptance makes the preview unusable: checks must run again.
+    return {
+      ...state,
+      generation: state.generation + 1,
+      preview: null,
+      acknowledged: false,
     };
   if (action.type === "select")
     return { ...state, selection: action.selection };
@@ -219,9 +227,18 @@ export function project(base: Graph, operations: EditOperation[]): Graph {
       .filter((n) => JSON.stringify(n) !== JSON.stringify(old.get(n.id)))
       .map((n) => n.id),
   );
+  // Only edges an operation touched are re-derived: untouched edges keep tier and trust as loaded.
+  const touched = new Set<string>();
+  for (const o of operations) {
+    if ("edge_id" in o) touched.add(o.edge_id);
+    if (o.op === "edge.add") touched.add(o.temp_id);
+    if (o.op === "edge.replace_endpoints") touched.add(o.replacement_temp_id);
+  }
   for (const e of graph.edges) {
     if (e.derived) continue;
-    if (changed.has(e.from) || changed.has(e.to)) {
+    const incident = changed.has(e.from) || changed.has(e.to);
+    if (!incident && !touched.has(e.id)) continue;
+    if (incident) {
       e.tier = null;
       for (const v of e.occurrences) {
         v.tier = null;
@@ -260,11 +277,12 @@ export function project(base: Graph, operations: EditOperation[]): Graph {
         (v.tier === "green" || v.review?.status === "confirmed");
     });
     e.trusted = e.occurrences.some((v) => v.trusted);
-    e.tier = e.occurrences.some(
-      (v) => v.tier === "green" && v.review?.status !== "rejected",
-    )
+    const active = e.occurrences.filter((v) => v.review?.status !== "rejected");
+    e.tier = active.some((v) => v.tier === "green")
       ? "green"
-      : null;
+      : active.some((v) => v.tier === "yellow")
+        ? "yellow"
+        : null;
   }
   return graph;
 }

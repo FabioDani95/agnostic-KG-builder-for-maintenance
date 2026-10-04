@@ -97,3 +97,38 @@ def navigation(nodes: list[dict], edges: list[dict]) -> dict:
                  and not reaches_action(n['id'])]
     return {'orphan_causes': len(orphan), 'problems_without_action': len(no_action),
             'orphan_cause_ids': sorted(orphan), 'problem_without_action_ids': sorted(no_action)}
+
+
+def diagnostic_paths(graph, scope_index, start):
+    """Compose only individually green occurrences with verified applicability."""
+    index = scope_index.branches if hasattr(scope_index, 'branches') else scope_index
+    outgoing = defaultdict(list)
+    gaps, paths = [], []
+    for edge in graph.edges:
+        for a in edge.assertions:
+            if a.tier is Tier.GREEN:
+                outgoing[edge.source].append((edge, a))
+    for first, a in sorted(outgoing.get(start, []), key=lambda pair: pair[1].assertion_id):
+        if first.relation_type not in {'MAY_INDICATE', 'INDICATES'}:
+            continue
+        branch = index.get(a.branch_id)
+        status = branch.scope_status if hasattr(branch, 'scope_status') else (branch or {}).get('scope_status')
+        if status not in {'VERIFIED_STRUCTURE', 'VERIFIED_REVIEW'}:
+            gaps.append({'assertion_id': a.assertion_id, 'reason': 'UNKNOWN_SCOPE'})
+            continue
+        for second, b in sorted(outgoing.get(first.target, []), key=lambda pair: pair[1].assertion_id):
+            if second.relation_type != 'RESOLVED_BY':
+                continue
+            if a.branch_id != b.branch_id:
+                gaps.append({'assertion_ids': [a.assertion_id, b.assertion_id], 'reason': 'INCOMPATIBLE_SCOPE'})
+                continue
+            ca = {normalize_name(c.text) for c in a.conditions if c.kind == 'if'}
+            cb = {normalize_name(c.text) for c in b.conditions if c.kind == 'if'}
+            if ca and cb and ca != cb:
+                gaps.append({'assertion_ids': [a.assertion_id, b.assertion_id], 'reason': 'UNCLEAR_APPLICABILITY'})
+                continue
+            paths.append({'branch_id': a.branch_id, 'nodes': [start, first.target, second.target],
+                          'assertion_ids': [a.assertion_id, b.assertion_id],
+                          'evidence_ref_ids': sorted(set(a.certificate.evidence_ref_ids + b.certificate.evidence_ref_ids)),
+                          'conditions': [c.model_dump(mode='json') for c in sorted(set(a.conditions + b.conditions))]})
+    return {'paths': paths, 'gaps': gaps}

@@ -70,3 +70,33 @@ def resolve_references(doc, unit, proposals: list[Proposal]):
                 "cites": [matrix_cite, cite], "record": f"reference:{matrix_cite}:{number}",
                 "notes": [*proposal.notes, "number resolves to a cited list entry, not an error code"]}))
     return output, unresolved
+
+
+def resolve_document_reference(reference, source_index):
+    """Separate printed pages from physical pages; ambiguous targets stay ambiguous."""
+    text = reference.strip()
+    match = re.search(r'\b(physical page|page|section|figure|fig\.?|table|step)\s+([\w.\-]+)', text, re.I)
+    if not match:
+        return {'status': 'Missing', 'evidence_ref_ids': [], 'reason': 'NO_EXPLICIT_REFERENCE'}
+    kind, label = match[1].casefold(), match[2].casefold()
+    if kind == 'physical page' and label.isdigit():
+        pages = [int(label)]
+    elif kind == 'page':
+        pages = source_index.printed_pages.get(label, [])
+        if len(set(pages)) != 1:
+            return {'status': 'Ambiguous' if pages else 'Missing', 'evidence_ref_ids': [],
+                    'reason': 'PRINTED_PAGE_MAPPING_UNVERIFIED', 'candidate_pages': sorted(set(pages))}
+    else:
+        pattern = re.compile(r'\b' + re.escape(kind.rstrip('.')) + r'\.?\s+' + re.escape(label) + r'\b', re.I)
+        refs = [key for key, value in source_index.evidence.items() if pattern.search(value.exact_text)]
+        # A mention of a figure is not its definition. Prefer heading-like entries.
+        definitions = [key for key in refs if pattern.match(source_index.evidence[key].exact_text.strip())]
+        if not definitions:
+            return {'status': 'Missing', 'evidence_ref_ids': [], 'reason': 'REFERENCE_DEFINITION_MISSING'}
+        by_page = {source_index.evidence[key].page for key in definitions}
+        if len(by_page) != 1:
+            return {'status': 'Ambiguous', 'evidence_ref_ids': definitions, 'reason': 'MULTIPLE_DEFINITIONS'}
+        pages = list(by_page)
+    refs = sorted(key for key, ref in source_index.evidence.items() if ref.page in pages)
+    return {'status': 'Resolved' if refs else 'Missing', 'evidence_ref_ids': refs,
+            'reason': 'EXPLICIT_DOCUMENT_REFERENCE', 'pages': sorted(pages)}

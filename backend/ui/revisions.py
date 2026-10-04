@@ -90,8 +90,7 @@ class Revisions:
         verified = revision and bool(index)
         if not revision and pdf.exists():
             try:
-                doc = self.evidence.document(source_dir)
-                candidate = {s.segment_id: self.evidence.segment(source_dir, s.segment_id) for s in doc.segments()}
+                candidate = self.evidence.index(source_dir)
                 verified = bool(embedded) and all(
                     s in candidate and all(candidate[s].get(k) == e.get(k) for k in ("text", "page", "bbox"))
                     for s, e in embedded.items()
@@ -100,7 +99,7 @@ class Revisions:
                     index = candidate
             except (ValueError, KeyError, FileNotFoundError):
                 verified = False
-        pdf_hash = file_hash(pdf)
+        pdf_hash = self.evidence.pdf_hash(pdf)
         meta = _json(folder / "revision.json", {})
         identity = {
             "pdf_hash": pdf_hash,

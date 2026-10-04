@@ -1,6 +1,6 @@
 """Typed contracts exchanged by the V3 stations and gates.
 
-Design rules encoded here (docs/PIANO_V3.md):
+Design rules encoded here (docs/architecture.md):
 
 * The model cites system-owned segment IDs. Evidence text is taken from the
   segment, so different wording is never a reason to discard knowledge.
@@ -21,6 +21,8 @@ from enum import StrEnum
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from backend.kg_v3.quality_contracts import QUALITY_VERSION, Epistemic, EvidenceBinding, ScopeStatus
 
 SEGMENT_ID_PATTERN = r"^p[1-9]\d*\.(?:b\d+(?:\.\d+)?|t\d+\.r\d+|o\d+)$"
 
@@ -54,6 +56,14 @@ def context_text(items, *, scope: str | None = None) -> str:
                                    if scope is None or item.scope == scope))
 
 
+class ContextBinding(ContextItem):
+    context_id: str
+    applies_to_branch_ids: tuple[str, ...]
+    evidence_ref_ids: tuple[str, ...]
+    origin: Literal['direct', 'inherited'] = 'direct'
+    origin_ref: str = ''
+
+
 # Reading ------------------------------------------------------------------
 
 
@@ -71,6 +81,10 @@ class TableCoordinates(_Contract):
     inherited_columns: list[int] = Field(default_factory=list)
     confirmed_inherited_columns: list[int] = Field(default_factory=list)
     cell_items: list[list[str]] = Field(default_factory=list)
+    cell_bboxes: list[tuple[float, float, float, float] | None] = Field(default_factory=list)
+    inherited_origins: dict[int, str] = Field(default_factory=dict)
+    coordinate_system: str = 'PDF_UNROTATED'
+    bbox_origin: str = ''
 
 
 class Segment(_Contract):
@@ -151,12 +165,25 @@ class ReadingUnit(_Contract):
     unit_id: str = Field(min_length=1)
     section: str = ""
     pages: list[int] = Field(min_length=1)
-    segment_ids: list[str] = Field(min_length=1)
+    contract_version: str = 'legacy'
+    segment_ids: list[str] = Field(default_factory=list)
+    entry_ids: list[str] = Field(default_factory=list)
+    branch_ids: list[str] = Field(default_factory=list)
+    parent_entry_id: str = ''
+    owned_evidence_ref_ids: list[str] = Field(default_factory=list)
+    context_evidence_ref_ids: list[str] = Field(default_factory=list)
+    owned_region_ids: list[str] = Field(default_factory=list)
     context_segment_ids: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def _context_is_not_owned(self) -> ReadingUnit:
-        if set(self.segment_ids) & set(self.context_segment_ids):
+        if self.contract_version != QUALITY_VERSION and not self.segment_ids:
+            raise ValueError('legacy units require segments')
+        if self.contract_version == QUALITY_VERSION and not (self.owned_evidence_ref_ids or self.owned_region_ids):
+            raise ValueError('quality units require owned evidence or regions')
+        if set(self.owned_evidence_ref_ids) & set(self.context_evidence_ref_ids):
+            raise ValueError('atomic evidence is either owned or context')
+        if self.contract_version != QUALITY_VERSION and set(self.segment_ids) & set(self.context_segment_ids):
             raise ValueError("a segment is either owned or context, never both")
         return self
 
@@ -166,7 +193,8 @@ def assert_single_owner(units: Iterable[ReadingUnit]) -> None:
 
     owner: dict[str, str] = {}
     for unit in units:
-        for segment_id in unit.segment_ids:
+        for segment_id in (unit.owned_evidence_ref_ids + unit.owned_region_ids
+                           if unit.contract_version == QUALITY_VERSION else unit.segment_ids):
             if segment_id in owner:
                 raise ValueError(f"segment {segment_id} is owned by {owner[segment_id]} and {unit.unit_id}")
             owner[segment_id] = unit.unit_id
@@ -221,7 +249,16 @@ class ReviewerIdentity(_Contract):
 class Certificate(_Contract):
     """Why an assertion is in the graph, and who decided about it."""
 
-    segment_ids: list[str] = Field(min_length=1)
+    contract_version: str = 'legacy'
+    segment_ids: list[str] = Field(default_factory=list)
+    evidence_ref_ids: list[str] = Field(default_factory=list)
+    verified_bindings: list[EvidenceBinding] = Field(default_factory=list)
+    semantic_verification_required: bool = False
+    validation_issues: list[str] = Field(default_factory=list)
+    verifier_metadata: list[dict[str, Any]] = Field(default_factory=list)
+    epistemic_status: Epistemic = 'LEGACY_UNCLASSIFIED'
+    evidence_modalities: list[str] = Field(default_factory=list)
+    scope_status: ScopeStatus = 'LEGACY_UNKNOWN'
     witnesses: list[Witness] = Field(default_factory=list)
     verifier_verdict: VerifierVerdict | None = None
     confirmed_by: ReviewerIdentity | None = None
@@ -231,6 +268,10 @@ class Certificate(_Contract):
 
     @model_validator(mode="after")
     def _consistent(self) -> Certificate:
+        if not (self.segment_ids or self.evidence_ref_ids):
+            raise ValueError('a certificate requires actual evidence')
+        if self.contract_version != QUALITY_VERSION and not self.segment_ids:
+            raise ValueError('legacy certificates require segments')
         if len(self.witnesses) != len(set(self.witnesses)):
             raise ValueError("each witness is listed once")
         if (Witness.VERIFIER in self.witnesses) != (self.verifier_verdict is VerifierVerdict.SUPPORTED):
@@ -251,6 +292,23 @@ def assign_tier(certificate: Certificate) -> Tier:
     if certificate.rejected_by is not None:
         return Tier.RED
     witnesses = set(certificate.witnesses)
+    if certificate.validation_issues:
+        return Tier.RED if any(i in {'MISSING_EVIDENCE', 'INVALID_EVIDENCE', 'CROSS_BRANCH_CONTAMINATION', 'SUPERSEDED'}
+                               for i in certificate.validation_issues) else Tier.YELLOW
+    if certificate.contract_version == QUALITY_VERSION:
+        if certificate.verifier_verdict is VerifierVerdict.NOT_SUPPORTED:
+            return Tier.RED
+        if certificate.scope_status not in {'VERIFIED_STRUCTURE', 'VERIFIED_REVIEW'}:
+            return Tier.YELLOW
+        roles = {b.role for b in certificate.verified_bindings if b.support_status == 'SUPPORTED'}
+        if not {'subject', 'predicate', 'object'} <= roles:
+            return Tier.YELLOW
+        # A person or a briefed agent who read the shown source is a semantic check too; AUTO is not.
+        reviewed = certificate.confirmed_by and certificate.confirmed_by.kind in {ReviewerKind.HUMAN, ReviewerKind.AGENT}
+        if certificate.semantic_verification_required and not (reviewed or certificate.verifier_verdict is VerifierVerdict.SUPPORTED):
+            return Tier.YELLOW
+    if certificate.confirmed_by and certificate.confirmed_by.kind is ReviewerKind.AUTO:
+        witnesses.discard(Witness.REVIEWER)
     if Witness.REVIEWER in witnesses:
         return Tier.GREEN
     support = len(witnesses & {Witness.STRUCTURE, Witness.AGREEMENT, Witness.VERIFIER})
@@ -265,6 +323,15 @@ class Assertion(_Contract):
     """One ontology relation proposed for the graph, with its certificate."""
 
     assertion_id: str = Field(min_length=1)
+    entry_id: str = ''
+    branch_id: str = ''
+    scope_status: ScopeStatus = 'LEGACY_UNKNOWN'
+    fact_fingerprint: str = ''
+    subject_mention_id: str = ''
+    object_mention_id: str = ''
+    original_fact: dict[str, Any] = Field(default_factory=dict)
+    context_bindings: list[ContextBinding] = Field(default_factory=list)
+    parent_proposal_ids: list[str] = Field(default_factory=list)
     relation_type: str = Field(min_length=1)
     source_key: str = Field(min_length=1)
     target_key: str = Field(min_length=1)
@@ -342,6 +409,8 @@ class Question(_Contract):
     kind: QuestionKind
     title: str = Field(min_length=1)
     source: list[SourceExcerpt] = Field(default_factory=list)
+    source_regions: list[dict[str, Any]] = Field(default_factory=list)
+    content_fingerprint: str = ''
     proposal: list[str] = Field(min_length=1)  # what the system believes, in plain statements
     options: list[AnswerOption] = Field(min_length=2)
     default_option_id: str = Field(min_length=1)
@@ -358,7 +427,7 @@ class Question(_Contract):
             raise ValueError(f"{self.kind.value} questions offer exactly {sorted(OPTION_IDS[self.kind])}")
         if self.default_option_id not in ids or self.default_option_id in INPUT_OPTION_IDS:
             raise ValueError("the default option is a listed option that needs no input")
-        if self.kind in SOURCED_KINDS and not self.source:
+        if self.kind in SOURCED_KINDS and not (self.source or self.source_regions):
             raise ValueError(f"{self.kind.value} questions show what the manual says")
         return self
 
@@ -375,6 +444,7 @@ class Answer(_Contract):
     rationale: str = ""
     cited_segment_ids: list[str] = Field(default_factory=list)
     # False hands the question to the next reviewer instead of deciding.
+    content_fingerprint: str = ''
     confident: bool = True
     answered_by: ReviewerIdentity
     answered_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

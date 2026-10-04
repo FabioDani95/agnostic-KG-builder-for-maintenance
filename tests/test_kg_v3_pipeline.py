@@ -93,7 +93,7 @@ class ScriptedProvider:
         elif name == "kg_v3_merge":
             ids = schema["properties"]["answers"]["items"]["properties"]["id"]["enum"]
             content = {"answers": [{"id": item, "answer": "same", "rationale": "Same cited entry and remedy",
-                                              "cited_segments": ["p1.t1.r2"]} for item in ids]}
+                                              "cited_segments": ["p1.t1.r2", "p1.t1.r3", "p1.t1.r4"]} for item in ids]}
         else:  # AgentDecision: confirm the map, accept doubts
             option = "confirm" if "(map_review)" in kwargs["messages"][1]["content"] else "accept"
             content = {"option_id": option, "correction": "", "keep_statements": [], "page_label_changes": [],
@@ -357,7 +357,7 @@ def test_an_approval_of_an_older_graph_does_not_count(doc, tmp_path):
     path = tmp_path / "run" / "state" / "gate_approval.json"
     record = json.loads(path.read_text())
     record["answers"][0]["question_id"] = "approval:older"  # an answer given to a graph that has changed since
-    path.write_text(json.dumps(record))
+    run.run_state.save("gate_approval", record)
     again, _ = pipeline(doc, FailingProvider(), tmp_path / "run",
                         gates={"map": ["agent"], "doubts": ["agent"], "approval": []})
     assert asyncio.run(again.run()).status == "awaiting_approval"

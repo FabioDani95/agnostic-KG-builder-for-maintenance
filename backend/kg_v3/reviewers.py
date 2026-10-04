@@ -12,7 +12,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import logging
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any, Protocol, TypeVar
 
@@ -49,6 +49,10 @@ def render_question(question: Question) -> str:
         lines.append("What the manual says:")
         lines.extend(f"  [{item.segment_id}] page {item.page}: {item.text}" for item in question.source)
         lines.append("")
+    if question.source_regions:
+        lines.append('Source image regions (inspect the crops/PDF):')
+        lines.extend(f"  Page {r['page']} bbox={r['bbox']} render={r['render_fingerprint']} crop={r.get('image_path', '')}" for r in question.source_regions)
+        lines.append('')
     lines.append("What the system proposes:")
     lines.extend(f"  - {statement}" for statement in question.proposal)
     lines.extend(["", "Answer with one option ID:"])
@@ -174,6 +178,7 @@ class AgentReviewer:
         model: str,
         brief: str = REVIEWER_BRIEF,
         max_concurrency: int = 4,
+        images: Callable[[Question], list[str]] | None = None,
     ) -> None:
         self.identity = ReviewerIdentity(
             kind=ReviewerKind.AGENT,
@@ -182,6 +187,7 @@ class AgentReviewer:
         )
         self._llm = llm
         self._brief = brief
+        self._images = images
         self._limit = asyncio.Semaphore(max(1, max_concurrency))
 
     async def review(self, questions: Sequence[Question]) -> list[Answer]:
@@ -189,11 +195,20 @@ class AgentReviewer:
         return [answer for answer in answers if answer is not None]
 
     async def _answer(self, question: Question) -> Answer | None:
+        images = self._images(question) if question.source_regions and self._images else []
+        if question.source_regions and not images:
+            # Without the crops the agent would vote blindly: the question waits for a person.
+            return None
         async with self._limit:
             try:
-                decision = await self._llm(system=self._brief, user=render_question(question), schema=AgentDecision)
+                kwargs = {"images": images} if images else {}
+                decision = await self._llm(system=self._brief, user=render_question(question), schema=AgentDecision, **kwargs)
             except Exception as exc:  # the question stays open for the next reviewer
                 logger.warning("Agent reviewer left %s open: %s", question.question_id, exc)
+                return None
+        if question.target.get('quality') and decision.option_id in {'accept', 'correct', 'same'}:
+            shown = {e.segment_id for e in question.source}
+            if shown and not set(decision.cited_segment_ids) & shown:
                 return None
         rationale = decision.rationale.strip()
         pages = {str(change.page): change.label.value for change in decision.page_label_changes}

@@ -164,7 +164,7 @@ export function EditableCell({
             cancel();
           }}
         >
-          {tr("Imposta null")}
+          {tr("Imposta senza valore")}
         </button>
         {onRemove && (
           <button

@@ -11,6 +11,7 @@ __pycache__/
 venv/
 .pytest_cache/
 .mypy_cache/
+.ruff_cache/
 .coverage
 .coverage.*
 htmlcov/
@@ -23,12 +24,8 @@ tmp/
 .claude/
 .codex/
 
-# Paper workspace: frozen experiment evidence is versioned, local stores are not.
-paper/experiments/**/operational.db
-paper/experiments/**/operational.db-*
-paper/experiments/**/raw/
-paper/experiments/**/incoming/
-paper/experiments/**/*.lock
+# Private manuscript workspace: preserve locally, never publish with the code.
+/paper/
 
 # V3 campaign: PDFs and heavy run state stay local; graphs, reports, gold and KPIs are versioned.
 campaign/*/manual.pdf
@@ -49,3 +46,18 @@ workspace/
 frontend/node_modules/
 frontend/dist/
 frontend/*.tsbuildinfo
+
+# Local runs and audit workspaces, intentionally outside the shared source tree.
+# Tracked frozen evidence remains versioned; ignore rules never untrack files.
+/runs/
+/experiments/
+/review/
+/data/provider_responses/
+/data/raw/
+/data/incoming/
+/data/operational.db*
+
+# Local diagnostics and coverage output.
+*.log
+frontend/coverage/
+frontend/test-results/

@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
-import json
 import logging
 import time
 from collections import Counter
@@ -20,6 +19,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from backend.adapters.pdf import page_layout_inventory
+from backend.kg_v3 import quality_run
 from backend.kg_v3.checker import STRUCTURE_READ, CheckedRelation, Checker
 from backend.kg_v3.contracts import (
     Answer,
@@ -32,9 +33,10 @@ from backend.kg_v3.contracts import (
     Witness,
 )
 from backend.kg_v3.extractor import Extractor, UnitExtraction, prompt_hash
-from backend.kg_v3.llm import ModelClient
+from backend.kg_v3.llm import ModelClient, sum_usage, usage_for_role
 from backend.kg_v3.mapper import (
     apply_map_answer,
+    build_quality_units,
     build_units,
     map_pages,
     map_questions,
@@ -45,15 +47,19 @@ from backend.kg_v3.mapper import (
 from backend.kg_v3.merger import (
     MergedGraph,
     MergePlan,
+    alias_candidates,
     assemble,
     judge_pairs,
     merge_candidates,
     split_disagreements,
 )
 from backend.kg_v3.navigation import graph_navigation, reconnect_proposals
+from backend.kg_v3.omissions import review_omissions
 from backend.kg_v3.ontology import OntologySpec, load_ontology
+from backend.kg_v3.quality_contracts import QualityConfig
 from backend.kg_v3.questions import (
     apply_relation_answers,
+    approval_payload,
     approval_question,
     merge_decisions,
     merge_questions,
@@ -71,6 +77,9 @@ from backend.kg_v3.reviewers import (
     ReviewerChain,
     ScriptedReviewer,
 )
+from backend.kg_v3.run_state import RunState, digest, input_manifest, run_lock
+from backend.kg_v3.vision import PageImages, visual_check
+from backend.kg_v3.visual_catalog import apply_visual_routes
 
 GATE_NAMES = ("map", "doubts", "approval")
 
@@ -81,6 +90,8 @@ EventSink = Callable[[str, dict[str, Any]], None]
 
 
 class RunConfig(BaseModel):
+    quality: QualityConfig = Field(default_factory=QualityConfig)
+    asset_scope_id: str = ''
     model: str = "gpt-6-luna"
     reasoning_effort: str = "low"
     reads: int = 2
@@ -122,6 +133,7 @@ class RunResult(BaseModel):
     graph: MergedGraph
     gates: dict[str, GateRecord]
     report: dict[str, Any]
+    quality_bundle: dict[str, Any] = Field(default_factory=dict)
 
 
 class _HumanBudget:
@@ -135,7 +147,8 @@ class _HumanBudget:
 
     async def review(self, questions: Sequence[Question]) -> list[Answer]:
         existing = [item for item in questions if item.question_id in self.asked]
-        new = sorted((item for item in questions if item.question_id not in self.asked), key=lambda item: -item.priority)
+        new = sorted((item for item in questions if item.question_id not in self.asked),
+                     key=lambda item: -item.priority)
         chosen = existing + new[:max(0, self.budget - len(self.asked))]
         self.asked.update(item.question_id for item in chosen)
         return await self.inner.review(chosen)
@@ -156,6 +169,7 @@ class Pipeline:
         spec: OntologySpec | None = None,
         pdf_path: Path | None = None,
         on_event: EventSink | None = None,
+        role_clients: dict[str, Any] | None = None,
     ) -> None:
         self.doc = doc
         self.on_event = on_event
@@ -175,6 +189,16 @@ class Pipeline:
         self.map_kept: list[int] = []
         self.map_removed: list[int] = []
         self.image_pages: list[int] = []
+        self.source_index = None
+        self.coverage = None
+        self.validation = {}
+        self.images = None
+        self.page_images = None
+        self.extraction_system = ''
+        self.role_clients = role_clients or {}
+        self.role_profiles = {}
+        self.run_state = None
+        self.quality_routes = []
 
     # Events --------------------------------------------------------------
 
@@ -197,8 +221,7 @@ class Pipeline:
         return self.workdir / "state" / f"{name}.json" if self.workdir else None
 
     def _load(self, name: str) -> Any | None:
-        path = self._path(name)
-        value = json.loads(path.read_text(encoding="utf-8")) if path and path.exists() else None
+        value = self.run_state.load(name) if self.run_state else None
         if value is not None:
             self._emit("state_loaded", name=name, value=value)
         return value
@@ -206,10 +229,8 @@ class Pipeline:
     def _save(self, name: str, value: Any) -> None:
         if isinstance(value, BaseModel):
             value = value.model_dump(mode="json")
-        path = self._path(name)
-        if path is not None:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(json.dumps(value, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+        if self.run_state:
+            self.run_state.save(name, value)
         self._emit("state_saved", name=name, value=value)
 
     # Gates ---------------------------------------------------------------
@@ -219,7 +240,7 @@ class Pipeline:
             if self.agent_llm is None:
                 raise ValueError("an agent reviewer needs a model client")
             return AgentReviewer(self.agent_llm, model=self.config.agent_model,
-                                 max_concurrency=self.config.agent_concurrency)
+                                 max_concurrency=self.config.agent_concurrency, images=self._question_images)
         if name == "human":
             return self.human_reviewer
         if name == "auto":
@@ -227,6 +248,12 @@ class Pipeline:
         if name == "script":
             return ScriptedReviewer(self.script)
         raise ValueError(f"unknown reviewer {name!r}")
+
+    def _question_images(self, question: Question) -> list[str]:
+        """The crops a question shows, so an agent judges the image and not its description."""
+        if self.images is None:
+            return []
+        return self.images.crops([region['region_id'] for region in question.source_regions if region.get('region_id')])
 
     async def _gate(self, gate: str, questions: list[Question],
                     people_only: frozenset[str] = frozenset()) -> GateRecord:
@@ -280,6 +307,8 @@ class Pipeline:
             page_map = await self._timed("map", map_pages(self.llm, self.doc))
             if self.config.content_scan:
                 page_map = mark_content(page_map, await self._timed("scan", scan_pages(self.llm, self.doc)))
+        if self.quality_routes:
+            page_map = apply_visual_routes(page_map, self.quality_routes, self.doc)
         self._save("map", page_map)
         record = await self._timed("gate_map", self._gate("map", map_questions(self.doc, page_map)))
         for answer in record.answers:
@@ -301,12 +330,35 @@ class Pipeline:
 
         return list(await self._timed("extract", asyncio.gather(*(one(unit) for unit in units))))
 
-    async def run(self) -> RunResult:
+    async def run(self, *, lock_held=False) -> RunResult:
+        if lock_held:
+            self._prepare()
+            return await self._run_locked()
+        with run_lock(self.workdir):
+            self._prepare()
+            return await self._run_locked()
+
+    def _prepare(self):
+        if self.pdf_path:
+            self.doc.page_geometry = page_layout_inventory(self.pdf_path)
+        manifest = input_manifest(self.doc, self.config, self.asset_name, self.pdf_path, self.spec)
+        self.run_state = RunState(self.workdir, manifest)
+        quality_run.prepare_roles(self)
+        if self.config.quality.branch_identity:
+            quality_run.prepare_source_index(self, manifest)
+
+    async def _run_locked(self) -> RunResult:
         started = time.perf_counter()
+        cfg = self.config.quality
+        routes = await quality_run.visual_catalog(self) if cfg.visual_routing else []
+        self.quality_routes = routes
         page_map, map_record = await self._map()
         if map_record.pending and self.config.wait_for_map:
             return self._result("waiting_for_map", page_map, [], [], MergedGraph(), {"map": map_record}, started, [])
-        units = build_units(self.doc, page_map, max_chars=self.config.unit_max_chars)
+        if routes:
+            page_map = apply_visual_routes(page_map, routes, self.doc)
+        units = (build_quality_units(self.doc, page_map, self.source_index, max_chars=self.config.unit_max_chars)
+                 if cfg.branch_identity else build_units(self.doc, page_map, max_chars=self.config.unit_max_chars))
         if len(units) > self.config.max_units:
             raise ValueError(f"{len(units)} reading units exceed max_units={self.config.max_units}; "
                              "check the page map or raise the limit explicitly")
@@ -314,29 +366,34 @@ class Pipeline:
         # Later steps depend on exactly these units: their saved state is keyed by them.
         stamp = hashlib.sha256("|".join(unit.unit_id for unit in units).encode("utf-8")).hexdigest()[:10]
 
+        # Page images of layout pages serve both profiles; catalogued region crops are extra.
         images = None
         if self.config.page_images and self.pdf_path is not None:
-            from backend.kg_v3.vision import PageImages
-
             images = PageImages(self.pdf_path, self.doc)
             self.image_pages = sorted(images.pages & {page for unit in units for page in unit.pages})
         extractor = Extractor(self.llm, self.spec, asset_name=self.asset_name, reads=self.config.reads,
-                              concurrency=self.config.concurrency, images=images)
+                              concurrency=self.config.concurrency, images=images, source_index=self.source_index,
+                              regions=self.images)
+        self.page_images, self.extraction_system = images, extractor.system
         extractions = await self._extract(units, extractor)
         proposals = [proposal for item in extractions for proposal in item.proposals]
 
+        # The quality profile verifies and judges merges with its role clients.
+        verify_llm = self.role_clients["verify"] if cfg.branch_identity else self.llm
+        review_llm = self.role_clients["review"] if cfg.branch_identity else self.llm
+        checker = Checker(verify_llm, self.spec, extractor_id=f"{self.config.model}:{extractor.prompt_id}",
+                          concurrency=self.config.concurrency, units=units, images=images,
+                          source_index=self.source_index, regions=self.images)
         saved = self._load(f"checked_{stamp}")
         if saved is not None:
             relations = [CheckedRelation.model_validate(item) for item in saved]
         else:
-            checker = Checker(self.llm, self.spec, extractor_id=f"{self.config.model}:{extractor.prompt_id}",
-                              concurrency=self.config.concurrency, units=units, images=images)
             relations = await self._timed("check", checker.check(self.doc, proposals))
             self._save(f"checked_{stamp}", [item.model_dump(mode="json") for item in relations])
 
-        if self.config.omission_review:
-            from backend.kg_v3.omissions import review_omissions
-
+        if cfg.branch_identity:
+            quality_run.start_coverage(self, page_map, units, extractions, proposals, relations)
+        if self.config.omission_review and not cfg.branch_identity:
             saved = self._load(f"omissions_{stamp}")
             if saved is None:
                 added, attempted = await self._timed("omissions", review_omissions(
@@ -349,10 +406,13 @@ class Pipeline:
         if saved is not None:
             plan = MergePlan.model_validate(saved)
         else:
-            plan = await self._timed("merge", judge_pairs(self.llm, merge_candidates(relations), self.doc, relations))
+            pairs = merge_candidates(relations)
+            if cfg.semantic_merge_review:
+                extra_pairs = alias_candidates(self.source_index, relations)
+                keys = {(p.left, p.right) for p in pairs}
+                pairs.extend(p for p in extra_pairs if (p.left, p.right) not in keys)
+            plan = await self._timed("merge", judge_pairs(review_llm, pairs, self.doc, relations))
             self._save(f"merge_plan_{stamp}", plan)
-        checker = Checker(self.llm, self.spec, extractor_id=f"{self.config.model}:{extractor.prompt_id}",
-                          concurrency=self.config.concurrency, units=units, images=images)
         saved = self._load(f"rechecked_{stamp}")
         if saved is None:
             parts = split_disagreements(self.doc, relations, plan.different)
@@ -374,8 +434,6 @@ class Pipeline:
             relations.extend(added)
 
         if self.config.visual_verification:
-            from backend.kg_v3.vision import visual_check
-
             if self.pdf_path is None:
                 raise ValueError("visual verification requires pdf_path")
             saved = self._load(f"visual_{stamp}")
@@ -387,12 +445,18 @@ class Pipeline:
             relations = [CheckedRelation.model_validate(r) for r in saved["relations"]]
             self.visual_records = saved["records"]
 
+        if cfg.branch_identity and any((cfg.completeness_review, cfg.reference_retrieval, cfg.graph_review)):
+            relations, plan = await quality_run.completeness_review(self, units, relations, plan, checker)
         doubts = [
             *relation_questions(self.doc, self.spec, relations),
             *merge_questions(self.doc, plan.unsure),
             *unreadable_questions(page_map),
         ]
-        doubt_record = await self._timed("gate_doubts", self._gate("doubts", doubts))
+        # Facts that need a person (new evidence after a human rejection) go to people only.
+        human_only = {r.assertion.assertion_id for r in relations
+                      if "HUMAN_REVIEW_REQUIRED" in r.assertion.certificate.validation_issues}
+        people_only = frozenset(q.question_id for q in doubts if set(q.target.get("assertion_ids", [])) & human_only)
+        doubt_record = await self._timed("gate_doubts", self._gate("doubts", doubts, people_only=people_only))
         relations = apply_relation_answers(relations, doubts, doubt_record.answers)
         rejected_merges = {answer.question_id for answer in doubt_record.answers if answer.option_id == "different"}
         different = [*plan.different, *(pair for pair in plan.unsure
@@ -418,11 +482,14 @@ class Pipeline:
         recovery_record = await self._timed("gate_recovery", self._gate(
             "recovery", recovery_questions, people_only=frozenset(answer.question_id for answer in person)))
         relations = apply_relation_answers(recovered, recovery_questions, recovery_record.answers)
-        graph = assemble(relations, [*plan.same, *merge_decisions(doubts, doubt_record.answers, plan.unsure)], different)
+        same = [*plan.same, *merge_decisions(doubts, doubt_record.answers, plan.unsure)]
+        graph = assemble(relations, same, different)
 
         gates = {"map": map_record, "doubts": doubt_record, "recovery": recovery_record}
         summary = self._summary(graph, relations, doubt_record)
-        current = approval_question(summary)
+        if cfg.branch_identity:
+            quality_run.finalize(self, graph, relations)
+        current = approval_question(summary, approval_payload(graph, self.validation))
         approval = await self._timed("gate_approval", self._gate("approval", [current]))
         gates["approval"] = approval
         # Only an answer to this graph's question counts: a changed graph needs a new approval.
@@ -437,8 +504,10 @@ class Pipeline:
         tiers = Counter(edge.tier.value for edge in graph.edges)
         return [
             f"{len(graph.nodes)} nodes and {len(graph.edges)} relations.",
-            f"Relations by tier: green {tiers.get('green', 0)}, yellow {tiers.get('yellow', 0)}, red {tiers.get('red', 0)}.",
-            f"Doubt questions: {len(doubts.questions)} asked, {len(doubts.answers)} answered, {len(doubts.pending)} unanswered.",
+            f"Relations by tier: green {tiers.get('green', 0)}, yellow {tiers.get('yellow', 0)}, "
+            f"red {tiers.get('red', 0)}.",
+            f"Doubt questions: {len(doubts.questions)} asked, {len(doubts.answers)} answered, "
+            f"{len(doubts.pending)} unanswered.",
         ]
 
     def _result(self, status, page_map, units, relations, graph, gates, started, extractions) -> RunResult:
@@ -460,7 +529,19 @@ class Pipeline:
         witnesses = Counter(w.value for item in relations for w in item.assertion.certificate.witnesses)
         verdicts = Counter((item.assertion.certificate.verifier_verdict or "not_called") for item in relations)
         answered_by = Counter(answer.answered_by.kind.value for record in gates.values() for answer in record.answers)
+        if self.validation.get('status') == 'INVALID' and status == 'approved':
+            status = 'incomplete'
         report = {
+            'processing_status': 'PARTIAL' if incomplete_reasons else 'PROCESSED',
+            'quality_validation_status': self.validation.get('status', 'BASE_SAFE'),
+            'review_status': ('BACKLOG' if self.coverage and any(r.status != 'PROCESSED' for r in self.coverage.requests)
+                              else 'FINISHED'),
+            'coverage_backlog': self.coverage.counts() if self.coverage else {},
+            'profile': self.config.quality.profile, 'role_profiles': self.role_profiles,
+            'quality_measured': False, 'input_manifest_sha256': digest(self.run_state.manifest),
+            'source_dispositions': self.doc.candidate_dispositions,
+            'validation': self.validation,
+            'provenance': self.run_state.manifest,
             "status": status,
             "incomplete_reasons": incomplete_reasons,
             "empty_extraction_units": empty_units,
@@ -511,13 +592,22 @@ class Pipeline:
             "reviewer_confirmed": witnesses.get(Witness.REVIEWER.value, 0),
             "merged_cell_relations": sum(any(proposal.read == STRUCTURE_READ for proposal in item.proposals)
                                          for item in relations),
+            'role_usage': {role: usage_for_role(client, role) for role, client in self.role_clients.items()},
+            'call_provenance': [record for client in {id(getattr(c, 'primary', c)): getattr(c, 'primary', c)
+                                for c in [self.llm, *self.role_clients.values()]}.values()
+                                for record in getattr(client, 'call_records', [])],
+            'usage_total': sum_usage([self.llm, self.agent_llm, *self.role_clients.values()]),
             "usage": self.llm.usage.as_dict(),
             "agent_usage": self.agent_llm.usage.as_dict() if hasattr(self.agent_llm, "usage") else None,
             "seconds": {**self.timings, "total": round(time.perf_counter() - started, 3)},
-            "prompt_ids": {"extraction": prompt_hash(Extractor(self.llm, self.spec, asset_name=self.asset_name).system)},
+            "prompt_ids": {"extraction": prompt_hash(self.extraction_system or Extractor(
+                self.llm, self.spec, asset_name=self.asset_name).system)},
         }
+        bundle = {'source_index': self.source_index.model_dump(mode='json'),
+                  'coverage': self.coverage.model_dump(mode='json') if self.coverage else {},
+                  'validation': self.validation, 'input_manifest': self.run_state.manifest} if self.source_index else {}
         result = RunResult(status=status, page_map=page_map, units=units, relations=relations, graph=graph,
-                           gates=gates, report=report)
+                           gates=gates, report=report, quality_bundle=bundle)
         self._save("report", report)
         return result
 

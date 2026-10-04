@@ -306,10 +306,7 @@ export function NodeTable({
                 data-selected={selected === node.id}
                 id={`row-${node.id}`}
               >
-                <td>
-                  {TYPE_LABEL[node.type] ?? node.type}
-                  <small className="mono">{node.id}</small>
-                </td>
+                <td>{TYPE_LABEL[node.type] ?? node.type}</td>
                 {shown.map((f) => {
                   const descriptor = ontology.nodes
                     .find((n) => n.name === node.type)

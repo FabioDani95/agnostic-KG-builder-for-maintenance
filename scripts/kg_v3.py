@@ -16,7 +16,6 @@ import asyncio
 import hashlib
 import json
 import os
-import subprocess
 import sys
 import time
 from pathlib import Path
@@ -109,7 +108,7 @@ def with_earlier_attempts(report: dict, earlier: dict | None) -> dict:
     for key, value in (earlier.get("seconds") or {}).items():
         seconds.setdefault(key, value)
     merged = {**report, "seconds": seconds, "attempts": int(earlier.get("attempts") or 1) + 1}
-    for field in ("usage", "agent_usage"):
+    for field in ("usage", "agent_usage", "usage_total"):
         now, before = report.get(field) or {}, earlier.get(field) or {}
         if not now and not before:
             continue
@@ -125,6 +124,12 @@ def with_earlier_attempts(report: dict, earlier: dict | None) -> dict:
         if operations:
             total["by_operation"] = dict(sorted(operations.items()))
         merged[field] = total
+    merged['call_provenance'] = [*earlier.get('call_provenance', []), *report.get('call_provenance', [])]
+    roles = {}
+    for role in set(earlier.get('role_usage', {})) | set(report.get('role_usage', {})):
+        roles[role] = with_earlier_attempts({'usage': report.get('role_usage', {}).get(role, {})}, {'usage': earlier.get('role_usage', {}).get(role, {})})['usage']
+    if roles:
+        merged['role_usage'] = roles
     return merged
 
 
@@ -152,7 +157,9 @@ async def run(args) -> dict:
                                  "mode": "resume" if resumed else "live"})
         on_event("step_started", {"step": "pdf_read"})
     try:
-        return await _run(args, pdf, asset, out, started, on_event)
+        from backend.kg_v3.run_state import run_lock
+        with run_lock(out):
+            return await _run(args, pdf, asset, out, started, on_event)
     except BaseException as error:
         if on_event is not None:
             on_event("run_failed", {"message": f"{type(error).__name__}: {error}"})
@@ -160,12 +167,18 @@ async def run(args) -> dict:
 
 
 async def _run(args, pdf: Path, asset: dict, out: Path, started: float, on_event) -> dict:
-    from backend.kg_v3.export import graph_json
+    from backend.kg_v3.export import write_exports
     from backend.kg_v3.llm import ModelClient
+    from backend.kg_v3.quality_contracts import QualityConfig
     from backend.kg_v3.reader import read_document
     from backend.kg_v3.reviewers import InMemoryQuestionStore, render_question
     from backend.kg_v3.run import Pipeline, RunConfig
-
+    from backend.kg_v3.run_state import atomic_bytes
+    quality_path = getattr(args, 'quality_config', None)
+    quality = QualityConfig.model_validate_json(Path(quality_path).read_text()) if quality_path else QualityConfig()
+    replay_path = getattr(args, 'replay', None)
+    if quality_path and not replay_path and not getattr(args, 'preflight', False) and not getattr(args, 'authorize_spend', False):
+        raise ValueError('quality real calls require --authorize-spend and an explicitly authorised --budget/--ledger')
     Path(args.ledger).resolve().parent.mkdir(parents=True, exist_ok=True)
     evidence, page_count, sha = load_evidence(pdf, asset)
     os.environ.update({
@@ -181,34 +194,51 @@ async def _run(args, pdf: Path, asset: dict, out: Path, started: float, on_event
     read_seconds = time.perf_counter() - started
     if on_event is not None:
         on_event("step_finished", {"step": "pdf_read", "seconds": round(read_seconds, 3)})
-    config = RunConfig(model=args.model, reasoning_effort=args.reasoning, reads=args.reads,
+    config = RunConfig(quality=quality, asset_scope_id=getattr(args, 'asset_scope_id', '') or asset['name'], model=args.model, reasoning_effort=args.reasoning, reads=args.reads,
                        gates=GATE_PRESETS[args.gates], agent_model=args.agent_model,
                        agent_reasoning_effort=args.agent_reasoning, human_question_budget=args.human_questions)
-    llm = ModelClient(model=args.model, reasoning_effort=args.reasoning)
-    agent_llm = ModelClient(model=args.agent_model, reasoning_effort=args.agent_reasoning)
+    provider_factory = None
+    if getattr(args, 'preflight', False):
+        class PreflightProvider:
+            def __init__(self):
+                from types import SimpleNamespace
+                self.chat = SimpleNamespace(completions=self)
+            async def create(self, **_kwargs):
+                raise AssertionError('preflight must never call a provider')
+        provider_factory = PreflightProvider
+    if replay_path:
+        from backend.kg_v3.replay import ReplayProvider
+        replay_provider = ReplayProvider(Path(replay_path))
+        def provider_factory():
+            return replay_provider
+    llm = ModelClient(model=args.model, reasoning_effort=args.reasoning, client_factory=provider_factory)
+    agent_llm = ModelClient(model=args.agent_model, reasoning_effort=args.agent_reasoning, client_factory=provider_factory)
+    roles = {}
+    if replay_path or getattr(args, 'preflight', False):
+        roles = {role: ModelClient(model=getattr(quality, role + '_model') or args.model,
+                                  reasoning_effort=getattr(quality, role + '_reasoning'), client_factory=provider_factory)
+                 for role in ('review', 'verify', 'vision')}
     if args.human_store:
         from backend.ui.store import STORE_NAME, FileQuestionStore
 
         store = FileQuestionStore(out / STORE_NAME, budget=config.human_question_budget)
     else:
         store = InMemoryQuestionStore()
-    result = await Pipeline(doc=doc, pdf_path=pdf, asset_name=asset["name"], llm=llm, config=config, agent_llm=agent_llm,
-                            human_store=store, workdir=out, on_event=on_event).run()
+    pipeline = Pipeline(doc=doc, pdf_path=pdf, asset_name=asset['name'], llm=llm, config=config, agent_llm=agent_llm,
+                        human_store=store, workdir=out, on_event=on_event, role_clients=roles)
+    if getattr(args, 'preflight', False):
+        pipeline._prepare()
+        return {'preflight': 'READY', 'profile': quality.profile, 'role_profiles': pipeline.role_profiles,
+                'provider_calls': 0, 'quality_measured': False}
+    result = await pipeline.run(lock_held=True)
     result.report["seconds"].update(pdf_read=round(read_seconds, 3),
                                     end_to_end=round(time.perf_counter() - started, 3))
-    result.report["provenance"] = {
-        "commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
-        "pdf_sha256": sha, "config": config.model_dump(mode="json"),
-        "segment_ids": [segment.segment_id for segment in doc.segments()],
-    }
-    graph = graph_json(result, doc, asset=asset, source_title=pdf.name)
-    (out / "graph.json").write_text(json.dumps(graph, ensure_ascii=False, indent=1), encoding="utf-8")
-    earlier = json.loads((out / "report.json").read_text(encoding="utf-8")) if (out / "report.json").exists() else None
+    earlier = json.loads((out / 'report.json').read_text()) if (out / 'report.json').exists() else None
     result.report = with_earlier_attempts(result.report, earlier)
-    (out / "report.json").write_text(json.dumps(result.report, ensure_ascii=False, indent=1), encoding="utf-8")
+    result.report['execution_mode'] = 'exact_replay' if replay_path else 'real'
+    graph = write_exports(out, result, doc, asset=asset, source_title=pdf.name)
     pending = store.open_questions()
-    (out / "questions_for_people.txt").write_text(
-        "\n\n".join(render_question(question) for question in pending), encoding="utf-8")
+    atomic_bytes(out / 'questions_for_people.txt', '\n\n'.join(render_question(q) for q in pending).encode())
     if on_event is not None:
         on_event("run_finished", {"graph": graph, "status": result.status, "open_questions": len(pending)})
     return result.report
@@ -224,6 +254,11 @@ def main() -> int:
     parser.add_argument("--events", action="store_true", help="write interface events to <out>/events.jsonl")
     parser.add_argument("--human-store", action="store_true",
                         help="keep questions for a person and their answers in <out>/people.json")
+    parser.add_argument('--quality-config', help='versioned quality configuration; opt-in P1')
+    parser.add_argument('--asset-scope-id', default='')
+    parser.add_argument('--preflight', action='store_true', help='validate input/config/manifest without provider calls')
+    parser.add_argument('--replay', help='exact archived provider responses; cache misses never call network')
+    parser.add_argument('--authorize-spend', action='store_true', help='explicitly permit real quality calls under the supplied budget')
     parser.add_argument("--out", required=True)
     parser.add_argument("--gates", choices=sorted(GATE_PRESETS), default="agent")
     parser.add_argument("--model", default="gpt-6-luna")
@@ -237,11 +272,13 @@ def main() -> int:
     parser.add_argument("--run-id", default="")
     parser.add_argument("--spend-ceiling", help="stricter cumulative cap without changing the campaign ledger budget")
     args = parser.parse_args()
+    if args.quality_config and args.authorize_spend and '--budget' not in sys.argv:
+        parser.error('real quality runs require an explicitly supplied --budget')
     if args.spend_ceiling:
         os.environ["KG_REAL_CALL_SPEND_CEILING_USD"] = args.spend_ceiling
     os.chdir(ROOT)  # settings read the API key from .env in the repository root
     report = asyncio.run(run(args))
-    print(json.dumps({key: report[key] for key in ("status", "units", "failed_reads", "graph", "gates", "usage", "seconds")},
+    print(json.dumps({key: report[key] for key in ("preflight", "status", "units", "failed_reads", "graph", "gates", "usage", "seconds") if key in report},
                      indent=1))
     return 0
 

@@ -8,6 +8,7 @@ caller can split its input; JSON is decoded tolerantly.
 from __future__ import annotations
 
 import asyncio
+import contextvars
 import json
 import logging
 from collections.abc import Callable
@@ -16,7 +17,10 @@ from typing import Any, TypeVar
 
 from pydantic import BaseModel
 
+from backend.kg_v3.run_state import digest, stable_id
+
 logger = logging.getLogger(__name__)
+_CALL_ROLE = contextvars.ContextVar('kg_call_role', default='primary')
 
 SchemaT = TypeVar("SchemaT", bound=BaseModel)
 
@@ -92,6 +96,7 @@ class ModelClient:
         self.attempts = max(1, attempts)
         self.backoff_seconds = backoff_seconds
         self.usage = UsageTotals()
+        self.call_records: list[dict[str, Any]] = []
         if client_factory is None:
             from backend.services.llm_gateway import get_async_client
 
@@ -135,6 +140,12 @@ class ModelClient:
                     continue
                 raise
             self.usage.add(usage_from_response(response, name), name)
+            self.call_records.append({'call_id': stable_id('call', [name, system, user, schema, self.model, effort, images]),
+                                      'operation': name, 'requested_model': self.model,
+                                      'returned_model': getattr(response, 'model', None), 'reasoning_effort': effort,
+                                      'request_fingerprint': digest([system, user, schema, self.model, effort, images]),
+                                      'role': _CALL_ROLE.get(), 'usage': usage_from_response(response, name),
+                                      'attempt': attempt, 'provider_request_id': getattr(response, '_request_id', None)})
             choice = response.choices[0]
             if str(getattr(choice, "finish_reason", "") or "") == "length":
                 raise TruncatedResponse(f"{name}: output limit of {max_output_tokens} tokens reached")
@@ -145,9 +156,49 @@ class ModelClient:
             return decode_json(content)
         raise RuntimeError(f"{name}: no answer") from last_error
 
-    async def __call__(self, *, system: str, user: str, schema: type[SchemaT]) -> SchemaT:
+    async def __call__(self, *, system: str, user: str, schema: type[SchemaT],
+                       images: list[str] | None = None) -> SchemaT:
         from backend.services.llm_response_archive import response_format_for
 
         strict = response_format_for(schema)["json_schema"]["schema"]
-        data = await self.json(system=system, user=user, schema=strict, name=schema.__name__, max_output_tokens=4000)
+        data = await self.json(system=system, user=user, schema=strict, name=schema.__name__,
+                               max_output_tokens=4000, images=images)
         return schema.model_validate(data)
+
+
+class RoleClient:
+    """Reuse the primary gateway explicitly with a role-specific effort."""
+    def __init__(self, primary, reasoning_effort, *, role='primary'):
+        self.primary = primary
+        self.role = role
+        self.model = getattr(primary, 'model', '')
+        self.reasoning_effort = reasoning_effort
+        self.usage = primary.usage
+        self.call_records = getattr(primary, "call_records", [])
+
+    async def json(self, **kwargs):
+        token = _CALL_ROLE.set(self.role)
+        try:
+            return await self.primary.json(**{**kwargs, 'reasoning_effort': self.reasoning_effort})
+        finally:
+            _CALL_ROLE.reset(token)
+
+
+def call_metadata(client):
+    records = getattr(client, 'call_records', [])
+    return dict(records[-1]) if records else {}
+
+
+def sum_usage(clients) -> dict[str, Any]:
+    """Totals over distinct usage counters: role clients share the primary's."""
+    unique = {id(c.usage): c.usage for c in clients if c is not None and hasattr(c, "usage")}
+    return {key: sum(u.as_dict()[key] for u in unique.values()) for key in
+            ("calls", "failed_calls", "prompt_tokens", "completion_tokens", "estimated_cost_usd")}
+
+
+def usage_for_role(client, role: str) -> dict[str, Any]:
+    totals = UsageTotals()
+    for row in getattr(client, "call_records", []):
+        if row.get("role") == role:
+            totals.add(row.get("usage", {}), row["operation"])
+    return totals.as_dict()

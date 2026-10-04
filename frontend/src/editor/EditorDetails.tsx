@@ -7,6 +7,13 @@ import { fieldLabel } from "./fields";
 import { EditableCell } from "./EditableCell";
 import { useEditor } from "./EditorSessionProvider";
 import { relationStatus } from "./RelationTable";
+const CONDITION_KIND: Record<string, string> = {
+  if: "Se",
+  prerequisite: "Prerequisito",
+  warning: "Avvertenza",
+  expected: "Risultato atteso",
+  order: "Sequenza",
+};
 function OccurrenceForm({
   edge,
   occurrence,
@@ -90,11 +97,11 @@ function OccurrenceForm({
                 pending();
               }}
             >
-              {["if", "prerequisite", "warning", "expected", "order"].map(
-                (k) => (
-                  <option key={k}>{k}</option>
-                ),
-              )}
+              {Object.entries(CONDITION_KIND).map(([k, label]) => (
+                <option key={k} value={k}>
+                  {tr(label)}
+                </option>
+              ))}
             </select>
             <select
               aria-label={tr("Ambito condizione")}
@@ -232,7 +239,6 @@ function OccurrenceForm({
             />
             <span>
               p. {s.page} · {s.text}
-              <small className="mono">{s.segment_id}</small>
             </span>
           </label>
         ))}

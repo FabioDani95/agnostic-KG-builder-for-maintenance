@@ -103,7 +103,7 @@ def _object(properties: dict[str, Any]) -> dict[str, Any]:
     return {"type": "object", "additionalProperties": False, "required": list(properties), "properties": properties}
 
 
-def extraction_schema(spec: OntologySpec, segment_ids: list[str]) -> dict[str, Any]:
+def extraction_schema(spec: OntologySpec, segment_ids: list[str], *, branches: list[str] | None = None) -> dict[str, Any]:
     """Strict schema of one extraction read; citations can only name real segments."""
 
     cite = _citations(segment_ids)
@@ -126,6 +126,16 @@ def extraction_schema(spec: OntologySpec, segment_ids: list[str]) -> dict[str, A
         "conditions": {"type": "array", "items": context},
         "cite": cite,
     })
+    if branches is not None:
+        # Quality profile: what each entity is in the source, and what an inferred name rests on.
+        entity['properties']['denotation_status'] = {'type': 'string', 'enum': ['STATED', 'INFERRED', 'PLACEHOLDER', 'TEST_CONTEXT', 'UNRESOLVED']}
+        entity['required'].append('denotation_status')
+        relation['properties']['premise_refs'] = cite
+        relation['required'].append('premise_refs')
+        if branches:  # a supplied branch catalog; scope is otherwise derived from the citations
+            relation['properties'].update({'branch_id': {'type': 'string', 'enum': ['', *branches]},
+                                           'branch_path_refs': cite, 'support_rationale': {'type': 'string'}})
+            relation['required'].extend(['branch_id', 'branch_path_refs', 'support_rationale'])
     unclear = _object({"note": {"type": "string"}, "cite": cite})
     return _object({
         "entities": {"type": "array", "items": entity},

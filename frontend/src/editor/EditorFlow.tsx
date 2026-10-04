@@ -71,19 +71,25 @@ export function EditorFlow() {
     );
   return (
     <EditorSessionProvider
-      key={`${manualId}/${versionId}`}
+      key={`${manualId}/${versionId}/${JSON.stringify(loaded.data.preconditions)}`}
       document={loaded.data}
     >
-      <Flow manualId={manualId} versionId={versionId} />
+      <Flow
+        manualId={manualId}
+        versionId={versionId}
+        onReopen={loaded.reload}
+      />
     </EditorSessionProvider>
   );
 }
 function Flow({
   manualId,
   versionId,
+  onReopen,
 }: {
   manualId: string;
   versionId: string;
+  onReopen: () => void;
 }) {
   const { state, dispatch, graph } = useEditor();
   const navigate = useNavigate();
@@ -98,6 +104,7 @@ function Flow({
   const [error, setError] = useState("");
   const [note, setNote] = useState("");
   const [unknown, setUnknown] = useState(false);
+  const [baseChanged, setBaseChanged] = useState(false);
   const [requestState, setRequestState] = useState("");
   const [page, setPage] = useState<{
     page: number;
@@ -177,6 +184,10 @@ function Flow({
       );
       dispatch({ type: "preview", preview });
     } catch (e) {
+      if (e instanceof ApiError)
+        setBaseChanged(
+          (e.details as { code?: string } | undefined)?.code === "BASE_CHANGED",
+        );
       setError((e as Error).message);
     } finally {
       setChecking(false);
@@ -227,7 +238,7 @@ function Flow({
   };
   const success = (result: RevisionCreated) => {
     bypass.current = true;
-    dispatch({ type: "reset" });
+    // Leaving the route destroys the session; a reset here would remount the flow and rewrite the URL.
     refresh();
     navigate(graphRoute(manualId, result.version.version_id) + "?salvato=1", {
       replace: true,
@@ -247,7 +258,11 @@ function Flow({
         (e.status === 409 || e.status === 422 || e.status === 404)
       ) {
         dispatch({ type: "saving", value: false });
+        dispatch({ type: "stale" });
         frozen.current = null;
+        setBaseChanged(
+          (e.details as { code?: string } | undefined)?.code === "BASE_CHANGED",
+        );
         setError(e.message);
         move("controlla");
       } else {
@@ -373,7 +388,7 @@ function Flow({
                 state.pending ||
                 Boolean(
                   state.preview.required_acknowledgements.length &&
-                    !state.acknowledged,
+                  !state.acknowledged,
                 )
               }
               onClick={accept}
@@ -405,7 +420,11 @@ function Flow({
           </ol>
           <span>
             {tr(
-              dirty(state) ? "{n} modifiche non salvate" : "Nessuna modifica",
+              !dirty(state)
+                ? "Nessuna modifica"
+                : state.operations.length === 1
+                  ? "1 modifica non salvata"
+                  : "{n} modifiche non salvate",
               { n: state.operations.length },
             )}
           </span>
@@ -434,6 +453,13 @@ function Flow({
         )}
         {error && (
           <Problem message={error} onRetry={unknown ? resolve : check} />
+        )}
+        {baseChanged && (
+          <p className="editor-notice">
+            <button className="button button-secondary" onClick={onReopen}>
+              {tr("Scarta le modifiche e riapri sulla versione attuale")}
+            </button>
+          </p>
         )}
         {unknown && (
           <div className="editor-notice">
@@ -588,6 +614,7 @@ function Flow({
             <RevisionSummary
               preview={state.preview}
               base={baseLabel}
+              baseGraph={state.document.graph}
               note={note}
               onNote={setNote}
               acknowledged={state.acknowledged}

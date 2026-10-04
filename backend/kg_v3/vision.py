@@ -1,4 +1,7 @@
-"""Page images where the layout carries meaning, and the opt-in visual check of table relations."""
+"""Page images where the layout carries meaning, and the opt-in visual check of table relations.
+
+The quality profile's catalogue of image regions lives in visual_catalog.py.
+"""
 
 from __future__ import annotations
 

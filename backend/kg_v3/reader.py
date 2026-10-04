@@ -34,6 +34,9 @@ class DocumentText:
     page_count: int
     pages: dict[int, list[Segment]] = field(default_factory=dict)
     section_titles: dict[int, str] = field(default_factory=dict)
+    page_geometry: dict[int, dict] = field(default_factory=dict)
+    source_index: object | None = None
+    candidate_dispositions: list[dict] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self._by_id: dict[str, Segment] = {}
@@ -183,7 +186,21 @@ def _table_segments(page: int, ordinal: int, rows: list[EvidenceUnit]) -> list[S
         if not CELL_SEPARATOR.join(legacy).strip(" |"):
             continue
         text = text or " "
+        layout = evidence.attributes.get('table_layout', {})
+        row_box = layout.get('row_bbox')
+        valid_boxes = [box for box in boxes if box and len(box) == 4 and box[0] < box[2] and box[1] < box[3]]
+        origin = 'adapter_row'
+        if not row_box or len(row_box) != 4:
+            row_box = ([min(b[0] for b in valid_boxes), min(b[1] for b in valid_boxes),
+                        max(b[2] for b in valid_boxes), max(b[3] for b in valid_boxes)] if valid_boxes else None)
+            origin = 'cell_union' if row_box else 'missing'
+        origins = {}
+        for column in inherited:
+            above = next((s for s in reversed(segments) if s.table and column not in s.table.inherited_columns), None)
+            if above:
+                origins[column] = above.segment_id
         segments.append(Segment(
+            bbox=tuple(row_box) if row_box else None,
             segment_id=f"p{page}.t{ordinal}.r{evidence.locator.row_index}",
             page=page,
             kind=SegmentKind.TABLE_ROW,
@@ -191,7 +208,8 @@ def _table_segments(page: int, ordinal: int, rows: list[EvidenceUnit]) -> list[S
             evidence_id=evidence.evidence_id,
             table=TableCoordinates(table=ordinal, row=evidence.locator.row_index or 1,
                                    headers=headers, inherited_columns=inherited,
-                                   confirmed_inherited_columns=inherited, cell_items=items),
+                                   confirmed_inherited_columns=inherited, cell_items=items,
+                                   cell_bboxes=boxes, inherited_origins=origins, bbox_origin=origin),
             low_quality=_low_quality(evidence),
         ))
     return segments
@@ -253,7 +271,9 @@ def read_document(evidence_units: list[EvidenceUnit], *, page_count: int | None 
             by_page[evidence.locator.page].append(evidence)
     pages = {page: _page_segments(page, units) for page, units in sorted(by_page.items())}
     total = max([page_count or 0, *pages]) if pages else (page_count or 0)
-    return DocumentText(page_count=total, pages={page: items for page, items in pages.items() if items})
+    geometry = {e.locator.page: e.attributes['page_layout'] for e in evidence_units
+                if isinstance(e.locator, PdfLocator) and e.attributes.get('page_layout')}
+    return DocumentText(page_count=total, pages={page: items for page, items in pages.items() if items}, page_geometry=geometry)
 
 
 def render_segment(segment: Segment, *, marker: str = "") -> str:

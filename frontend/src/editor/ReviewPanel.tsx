@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
-import type { EditPreview, Issue, Ontology } from "../api/types";
+import type { EditPreview, Graph, Issue, Ontology } from "../api/types";
 import { tr, useLang } from "../i18n/i18n";
 import { valueState } from "./selectors";
+import { fieldLabel } from "./fields";
+import { RELATION_LABEL } from "../text/it";
 export const ISSUE_TEXT: Record<string, string> = {
   DUPLICATE_ID: "ID duplicato",
   ROOT_COUNT: "Serve una sola macchina radice",
@@ -27,7 +29,20 @@ export const ISSUE_TEXT: Record<string, string> = {
   SIMILAR_NAME: "Nomi simili: controlla senza unire automaticamente",
 };
 export function issueText(issue: Issue) {
-  return `${tr(ISSUE_TEXT[issue.code] ?? issue.message_key)}${issue.target.field ? ` · ${issue.target.field}` : ""}`;
+  return `${tr(ISSUE_TEXT[issue.code] ?? issue.message_key)}${issue.target.field ? ` · ${fieldLabel(issue.target.field)}` : ""}`;
+}
+/** The element a check refers to, by name: never a technical identifier. */
+export function targetLabel(graph: Graph | undefined, issue: Issue) {
+  if (issue.code === "SOURCE_QUESTION") return tr("Domande della fonte");
+  const node = graph?.nodes.find((n) => n.id === issue.target.id);
+  if (node) return node.name;
+  const edge = graph?.edges.find((e) => e.id === issue.target.id);
+  if (edge) {
+    const name = (id: string) =>
+      graph?.nodes.find((n) => n.id === id)?.name ?? "?";
+    return `${name(edge.from)} → ${tr(RELATION_LABEL[edge.type] ?? edge.type)} → ${name(edge.to)}`;
+  }
+  return tr("Grafo");
 }
 const GROUPS: Record<string, string[]> = {
   integrity: [
@@ -244,7 +259,7 @@ export function ReviewPanel({
                         })
                       }
                     >
-                      {node.name} · {field.name} ·{" "}
+                      {node.name} · {fieldLabel(field.name)} ·{" "}
                       {tr(
                         {
                           missing: "Assente",
@@ -265,10 +280,7 @@ export function ReviewPanel({
                       className="button button-plain"
                       onClick={() => onTarget(i)}
                     >
-                      {issueText(i)} ·{" "}
-                      {i.target.id ??
-                        i.message_params.question_id ??
-                        tr("Grafo")}
+                      {issueText(i)} · {targetLabel(preview?.graph, i)}
                     </button>
                     <small>
                       {tr(

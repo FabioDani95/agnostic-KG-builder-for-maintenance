@@ -119,7 +119,9 @@ def v3_edges(run: Path) -> list[dict]:
                           "source_name": names[edge["from"]], "target_name": names[edge["to"]],
                           "source_stated": stated[edge["from"]], "target_stated": stated[edge["to"]],
                           "conditions": occurrence.get('conditions', edge.get('conditions', [])),
-                          "record": occurrence.get('record', ''),
+                          # Quality exports keep causes local to their branch: remedies of one
+                          # cause share its branch, not a per-proposal record.
+                          "record": occurrence.get('branch_id') or occurrence.get('record', ''),
                           "segments": segments,
                           "trusted": occurrence.get('tier', edge.get('tier')) == 'green'})
     return edges

@@ -216,6 +216,7 @@ class PdfAdapter:
         if source.source_kind.value != "pdf":
             raise ValueError("PdfAdapter accepts only PDF sources")
         pages = extract_text_by_page(str(path))
+        layout_inventory = page_layout_inventory(path)
         allowed = included_pages if included_pages is not None else {page["page_number"] for page in pages}
         minimum_ocr_confidence = float(
             (get_pdf_ingestion_config().get("ocr") or {}).get("min_confidence", 0.80)
@@ -272,8 +273,10 @@ class PdfAdapter:
                         quality_flags=flags,
                     )
                 )
+                layout_inventory[page_number].update(ocr_status=page_record.get('ocr_status', 'not_needed'), ocr_confidence=ocr_confidence)
                 previews.append(
                     {
+                        'page_layout': layout_inventory[page_number],
                         "page": page_number,
                         "text": page_text,
                         "extraction_method": method,
@@ -525,6 +528,8 @@ class PdfAdapter:
                         )
         finally:
             document.close()
+        evidence_units = [e.model_copy(update={'attributes': {**e.attributes, 'page_layout': layout_inventory[e.locator.page]}})
+                          for e in evidence_units]
         return PdfAdapterResult(
             raw_units=raw_units,
             evidence_units=evidence_units,
@@ -717,3 +722,22 @@ def evidence_units_to_legacy_pages(evidence_units: list[EvidenceUnit]) -> list[d
             "evidence_anchors": [evidence_anchor(item) for item in units],
         })
     return pages
+
+
+def page_layout_inventory(path: Path) -> dict[int, dict]:
+    """Native layout statistics on every physical page, including zero-text pages."""
+    result = {}
+    with fitz.open(path) as source:
+        for number, page in enumerate(source, 1):
+            text = page.get_text()
+            bounds = page.rect * page.derotation_matrix
+            area = max(1, bounds.width * bounds.height)
+            image_boxes = [fitz.Rect(i['bbox']) for i in page.get_image_info()]
+            image_area = min(area, sum(max(0, (box & bounds).get_area()) for box in image_boxes))
+            result[number] = {'width': bounds.width, 'height': bounds.height, 'rotation': page.rotation,
+                              'native_text_chars': len(text.strip()), 'native_text_unreadable':
+                              not text.strip() or text.count('\ufffd') > max(2, len(text) // 30),
+                              'image_area_share': image_area / area, 'image_count': len(image_boxes),
+                              'drawing_count': len(page.get_drawings()),
+                              'block_count': len(page.get_text('blocks')), 'coordinate_system': 'PDF_UNROTATED'}
+    return result

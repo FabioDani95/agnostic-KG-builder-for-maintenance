@@ -26,15 +26,19 @@ from backend.kg_v3.contracts import (
     context_text,
 )
 from backend.kg_v3.extractor import Proposal
-from backend.kg_v3.llm import ModelClient
+from backend.kg_v3.llm import ModelClient, TruncatedResponse, call_metadata
 from backend.kg_v3.ontology import OntologySpec, verification_schema
-from backend.kg_v3.prompts import VERIFY_PASSAGE_PROMPT, VERIFY_PROMPT
+from backend.kg_v3.prompts import QUALITY_VERIFY_RULES, VERIFY_PASSAGE_PROMPT, VERIFY_PROMPT
 from backend.kg_v3.reader import DocumentText, render_segments
+from backend.kg_v3.run_state import stable_id
+from backend.kg_v3.source_index import RESOLVABLE_ISSUES, bind_proposal
 
 logger = logging.getLogger(__name__)
 
 LOOSE_NAME_MATCH = 0.5
 VERIFY_BATCH = 25
+QUALITY_VERIFY_BATCH = 10
+QUALITY_VERIFY_TOKENS = 16000
 _DIGITS = re.compile(r"\d+")
 
 
@@ -82,6 +86,15 @@ def same_relation(left: Proposal, right: Proposal) -> bool:
     down-stroke' look alike but sit in different table rows.
     """
 
+    if left.branch_id or right.branch_id:
+        if not left.branch_id or left.branch_id != right.branch_id:
+            return False
+        if left.source.kind != right.source.kind or left.target.kind != right.target.kind:
+            return False
+        if left.epistemic_status != right.epistemic_status:
+            return False
+        if not set(left.all_cites) & set(right.all_cites):
+            return False
     if context_key(left) != context_key(right):
         return False
     if left.relation_type != right.relation_type:
@@ -102,6 +115,8 @@ class Candidate(BaseModel):
     proposals: list[Proposal]
     structure: bool = False
     verdict: VerifierVerdict | None = None
+    verification: dict = Field(default_factory=dict)
+    requires_semantic: bool = False
 
     @property
     def lead(self) -> Proposal:
@@ -122,6 +137,7 @@ class Candidate(BaseModel):
 
 def group_candidates(proposals: list[Proposal]) -> list[Candidate]:
     candidates: list[Candidate] = []
+    proposals = sorted(proposals, key=lambda p: (p.proposal_id, p.read, p.record_key)) if any(p.proposal_id for p in proposals) else proposals
     for proposal in proposals:
         match = next(
             (item for item in candidates
@@ -134,7 +150,10 @@ def group_candidates(proposals: list[Proposal]) -> list[Candidate]:
         else:
             match.proposals.append(proposal)
     for candidate in candidates:  # the read that names both ends leads
-        candidate.proposals.sort(key=lambda item: -(item.source.stated + item.target.stated))
+        candidate.proposals.sort(key=lambda item: (-(item.source.stated + item.target.stated),
+                                                item.proposal_id, item.read, item.record_key))
+        if candidate.lead.proposal_id:
+            candidate.candidate_id = stable_id('assertion', sorted({p.proposal_id for p in candidate.proposals}))
     return candidates
 
 
@@ -192,6 +211,25 @@ def _aligned_list_support(segment, proposal: Proposal) -> bool:
 def structurally_supported(doc: DocumentText, proposal: Proposal) -> bool:
     """Both ends are written in the entry that states the relation."""
 
+    if proposal.validation_issues or not proposal.all_cites:
+        return False
+    if proposal.branch_id and doc.source_index:
+        index = doc.source_index
+        refs = [r for b in proposal.evidence_bindings for r in b.evidence_ref_ids]
+        if not all(index.resolve(r, doc) for r in refs):
+            return False
+        # Literal endpoint alignment, simple atomic entry only. Layout membership
+        # never proves the inferred name or a complex conditional relation.
+        entry = index.entries.get(proposal.entry_id)
+        if not entry or entry.kind != 'TABLE_ROW' or proposal.conditions or proposal.schema_repaired:
+            return False
+        if any(e.denotation_status != 'STATED' for e in (proposal.source, proposal.target)):
+            return False
+        for end in (proposal.source, proposal.target):
+            if not any(normalize_name(end.name) in normalize_name(index.evidence[r].exact_text)
+                       for r in end.evidence_ref_ids if index.evidence[r].kind != 'VISUAL_REGION'):
+                return False
+        return proposal.scope_status == 'VERIFIED_STRUCTURE'
     if any(not _aligned_list_support(segment, proposal) for segment in doc.segments(proposal.all_cites)):
         return False
     anchors = proposal.cites or sorted({*proposal.source.cites, *proposal.target.cites})
@@ -329,9 +367,11 @@ def unit_batches(candidates: list[Candidate], size: int = VERIFY_BATCH) -> list[
 
 class Checker:
     def __init__(self, llm: ModelClient, spec: OntologySpec, *, extractor_id: str, concurrency: int = 6,
-                 units: list[ReadingUnit] | None = None, images=None) -> None:
+                 units: list[ReadingUnit] | None = None, images=None, source_index=None, regions=None) -> None:
         self.llm = llm
         self.images = images
+        self.regions = regions
+        self.source_index = source_index
         self.spec = spec
         self.extractor_id = extractor_id
         self._limit = asyncio.Semaphore(max(1, concurrency))
@@ -349,51 +389,119 @@ class Checker:
         ordered = sorted([*extra, *segments], key=lambda item: doc.position(item.segment_id) or 0)
         return render_segments(ordered, doc=doc, marks=marks)
 
+    def _shown_cites(self, candidate: Candidate) -> list[str]:
+        """Cites as the reader shows them: rows, cell item IDs and image region IDs."""
+        if self.source_index is None:
+            return candidate.cites
+        out = []
+        for cite in candidate.cites:
+            ref = self.source_index.evidence.get(cite)
+            if ref is None:
+                out.append(cite)
+            elif ref.kind == "TABLE_ITEM":
+                out.append(f"{ref.segment_id}/{(ref.column or 0) + 1}.{ref.item_index}")
+            elif ref.kind == "VISUAL_REGION":
+                out.append(f"image region on page {ref.page}")
+            else:
+                out.append(ref.segment_id)
+        return sorted(set(out))
+
+    def _segment_cites(self, candidate: Candidate) -> list[str]:
+        if self.source_index is None:
+            return candidate.cites
+        return sorted({self.source_index.evidence[c].segment_id if c in self.source_index.evidence else c
+                       for c in candidate.cites} - {""})
+
     def _request(self, doc: DocumentText, batch: list[Candidate]) -> tuple[str, str, list[str]]:
+        system, user, images = self._base_request(doc, batch)
+        if self.source_index is not None:
+            system += QUALITY_VERIFY_RULES
+            unit = self.units.get(batch[0].lead.unit_id)
+            if unit is not None and not unit.segment_ids and unit.owned_region_ids and self.regions is not None:
+                images = [*images, *self.regions.crops(unit.owned_region_ids)]
+                user = (f"Page {', '.join(str(p) for p in unit.pages)} has no machine-readable text: judge the "
+                        "statements against the attached image(s).\n\n" + user)
+        return system, user, images
+
+    def _base_request(self, doc: DocumentText, batch: list[Candidate]) -> tuple[str, str, list[str]]:
         unit = self.units.get(batch[0].lead.unit_id)
         if unit is not None and all(candidate.lead.unit_id == unit.unit_id for candidate in batch):
             passage = [*unit.context_segment_ids, *unit.segment_ids]
-            cites = sorted({cite for candidate in batch for cite in candidate.cites})
+            cites = sorted({cite for candidate in batch for cite in self._segment_cites(candidate)})
             images, marks = self.images.for_segments(passage) if self.images is not None else ([], {})
-            lines = [f"Statement S{index}: {statement(self.spec, candidate.lead)} Cited: {', '.join(candidate.cites)}"
+            lines = [f"Statement S{index}: {statement(self.spec, candidate.lead)} Cited: {', '.join(self._shown_cites(candidate))}"
                      for index, candidate in enumerate(batch, start=1)]
             return VERIFY_PASSAGE_PROMPT, ("Passage:\n" + self._evidence_text(doc, cites, passage, marks)
                                            + "\n\nStatements:\n" + "\n".join(lines)), images
         blocks = [f"Statement S{index}: {statement(self.spec, candidate.lead)}\n"
-                  f"Cited text:\n{self._evidence_text(doc, candidate.cites)}"
+                  f"Cited text:\n{self._evidence_text(doc, self._segment_cites(candidate))}"
                   for index, candidate in enumerate(batch, start=1)]
         return VERIFY_PROMPT, "\n\n".join(blocks), []
 
     async def _verify(self, doc: DocumentText, batch: list[Candidate]) -> None:
         system, user, images = self._request(doc, batch)
         ids = [f"S{index}" for index in range(1, len(batch) + 1)]
+        schema = verification_schema(ids)
+        if self.source_index:
+            props = schema['properties']['verdicts']['items']
+            props['properties'].update({
+                'scope_verdict': {'type': 'string', 'enum': ['supported', 'not_supported', 'unclear']},
+                'source_conflict': {'type': 'boolean'}})
+            props['required'].extend(['scope_verdict', 'source_conflict'])
         try:
             async with self._limit:
+                # A reasoning verifier spends output tokens before it answers.
                 data = await self.llm.json(system=system, user=user,
-                                           schema=verification_schema(ids), name="kg_v3_verify",
-                                           max_output_tokens=4000, images=images or None)
+                                           schema=schema, name="kg_v3_verify",
+                                           max_output_tokens=QUALITY_VERIFY_TOKENS if self.source_index else 4000,
+                                           images=images or None)
         except Exception as exc:
+            if len(batch) > 1 and isinstance(exc, (TruncatedResponse, ValueError)):
+                # A lost answer is asked again in halves, never left unjudged for the whole batch.
+                half = len(batch) // 2
+                await asyncio.gather(self._verify(doc, batch[:half]), self._verify(doc, batch[half:]))
+                return
             logger.warning("Verification batch failed: %s", exc)
             return
-        verdicts = {str(item.get("id")): str(item.get("verdict")) for item in data.get("verdicts") or []}
+        responses = {str(item.get('id')): item for item in data.get('verdicts') or []}
+        verdicts = {key: str(item.get('verdict')) for key, item in responses.items()}
         for statement_id, candidate in zip(ids, batch):
             try:
                 candidate.verdict = VerifierVerdict(verdicts[statement_id])
+                if self.source_index:
+                    response = responses[statement_id]
+                    candidate.verification = {**response, **call_metadata(self.llm)}
+                    if candidate.verdict is VerifierVerdict.SUPPORTED and response.get('scope_verdict') != 'supported':
+                        candidate.verdict = VerifierVerdict.UNCLEAR
             except (KeyError, ValueError):
                 candidate.verdict = None
 
     async def check(self, doc: DocumentText, proposals: list[Proposal]) -> list[CheckedRelation]:
+        if self.source_index:
+            # Merged-cell hypotheses are built from row citations, then bound like every proposal.
+            proposals = [*proposals, *inherited_cell_proposals(doc, proposals)]
+            proposals = [bind_proposal(self.source_index, doc, p, self.units.get(p.unit_id)) for p in proposals]
         by_unit: dict[str, list[Proposal]] = {}
         for proposal in proposals:
+            if not proposal.all_cites:
+                disposition = {'proposal': proposal.model_dump(mode='json'), 'reason': 'MISSING_EVIDENCE'}
+                doc.candidate_dispositions.append(disposition)
+                if self.source_index:
+                    self.source_index.dispositions.append(disposition)
+                continue
             by_unit.setdefault(proposal.unit_id, []).append(proposal)
-        for proposal in inherited_cell_proposals(doc, proposals):
+        for proposal in ([] if self.source_index else inherited_cell_proposals(doc, proposals)):
             by_unit.setdefault(proposal.unit_id, []).append(proposal)
         candidates = [candidate for items in by_unit.values() for candidate in group_candidates(items)]
         for candidate in candidates:
             candidate.structure = (any(structurally_supported(doc, item) for item in candidate.proposals)
                                    and not restates(candidate.lead))
-        pending = [item for item in candidates if not (item.structure and item.agreement) or restates(item.lead)]
-        await asyncio.gather(*(self._verify(doc, batch) for batch in unit_batches(pending)))
+        for candidate in candidates:
+            candidate.requires_semantic = bool(self.source_index and semantic_required(doc, candidate.lead))
+        pending = [item for item in candidates if not (item.structure and item.agreement) or restates(item.lead)
+                   or (self.source_index and semantic_required(doc, item.lead))]
+        size = QUALITY_VERIFY_BATCH if self.source_index else VERIFY_BATCH
+        await asyncio.gather(*(self._verify(doc, batch) for batch in unit_batches(pending, size)))
         # A structural hypothesis no read made survives only with the verifier's support.
         candidates = [candidate for candidate in candidates
                       if candidate.reads != {STRUCTURE_READ} or candidate.verdict is VerifierVerdict.SUPPORTED]
@@ -419,7 +527,8 @@ class Checker:
         Originals remain auditable. A reduction is a new, independently verified
         assertion with the original typed context, never a reviewer override.
         """
-        selected = [r for r in relations if r.assertion.relation_type == "RESOLVED_BY"
+        selected = [r for r in relations if not (r.assertion.certificate.rejected_by
+                    and r.assertion.certificate.rejected_by.kind.value == 'human') and r.assertion.relation_type == "RESOLVED_BY"
                     and (r.assertion.certificate.verifier_verdict is VerifierVerdict.NOT_SUPPORTED
                          or r.assertion.certificate.rejected_by is not None)][:max(0, limit)]
         if not selected:
@@ -456,9 +565,12 @@ If the entire action is unsupported or cannot be reduced, omit it.""", user="\n\
                 continue
             seen.add(item["id"])
             proposals.append((item["id"], lead.model_copy(update={
-                "read": "repair", "target": lead.target.model_copy(update={"name": name, "cites": cites}),
+                "read": "repair", "extraction_method": 'ACTION_REPAIR',
+                "parent_proposal_ids": [lead.proposal_id] if lead.proposal_id else [], "target": lead.target.model_copy(update={"name": name, "cites": cites}),
                 "cites": cites, "conditions": list(original.assertion.conditions),
                 "notes": lead.notes + ["supported portion proposed from " + item["id"]]})))
+        if self.source_index:
+            return await self.check(doc, [p for _, p in proposals])
         candidates = [Candidate(candidate_id=key + ".reduced", proposals=[p],
                                 structure=structurally_supported(doc, p)) for key, p in proposals]
         await asyncio.gather(*(self._verify(doc, batch) for batch in unit_batches(candidates)))
@@ -466,32 +578,94 @@ If the entire action is unsupported or cannot be reduced, omit it.""", user="\n\
                 if c.verdict is VerifierVerdict.SUPPORTED and self._assertion(c).tier is not Tier.RED]
 
     def _assertion(self, candidate: Candidate) -> Assertion:
+        lead = candidate.lead
         witnesses = []
         if candidate.structure:
             witnesses.append(Witness.STRUCTURE)
         # A cause that repeats its problem adds no knowledge: never green on its own.
-        if candidate.agreement and not restates(candidate.lead):
+        if candidate.agreement and not restates(lead):
             witnesses.append(Witness.AGREEMENT)
         if candidate.verdict is VerifierVerdict.SUPPORTED:
             witnesses.append(Witness.VERIFIER)
         notes = sorted({note for proposal in candidate.proposals for note in proposal.notes})
-        if not candidate.lead.source.stated or not candidate.lead.target.stated:
+        if not lead.source.stated or not lead.target.stated:
             notes.append("one end is not named in the source")
-        if restates(candidate.lead):
+        if restates(lead):
             notes.append("the cause repeats the problem")
-        lead = candidate.lead
+        quality = self._quality_fields(candidate) if self.source_index else {}
+        conditions = sorted({condition for proposal in candidate.proposals for condition in proposal.conditions})
         return Assertion(
             assertion_id=candidate.candidate_id,
             relation_type=lead.relation_type,
             source_key=f"{lead.source.type}:{lead.source.name}",
             target_key=f"{lead.target.type}:{lead.target.name}",
+            # The record stays the provenance of the reading; branch_id carries the scope.
             record_key=f"{lead.unit_id}:{lead.read}.{lead.record}",
-            conditions=sorted({condition for proposal in candidate.proposals for condition in proposal.conditions}),
+            conditions=conditions,
+            **quality.get("assertion", {}),
             certificate=Certificate(
-                segment_ids=candidate.cites,
+                segment_ids=quality.get("segment_ids", candidate.cites),
                 witnesses=witnesses,
                 verifier_verdict=candidate.verdict,
                 extractor=self.extractor_id,
                 notes=notes,
+                **quality.get("certificate", {}),
             ),
         )
+
+    def _quality_fields(self, candidate: Candidate) -> dict:
+        """Scope, evidence bindings and issues of one candidate under the quality contract."""
+        lead = candidate.lead
+        index = self.source_index
+        supported = candidate.verdict is VerifierVerdict.SUPPORTED
+        refs = sorted({r for b in lead.evidence_bindings for r in b.evidence_ref_ids})
+        scope, issues = lead.scope_status, list(lead.validation_issues)
+        if candidate.verification.get("source_conflict"):
+            issues.append("SOURCE_CONFLICT")
+        if supported:
+            # The verifier read the passage and judged scope, premises and alignment.
+            scope = "VERIFIED_REVIEW"
+            issues = [i for i in issues if i not in RESOLVABLE_ISSUES]
+            branch = index.branches.get(lead.branch_id)
+            if branch and branch.scope_status == "PROVISIONAL":
+                index.branches[branch.branch_id] = branch.model_copy(update={"scope_status": scope})
+        call_id = candidate.verification.get("call_id", "")
+        bindings = [b.model_copy(update={"support_status": "SUPPORTED", "verification_call_id": call_id})
+                    if supported or candidate.structure else b for b in lead.evidence_bindings]
+        origin = lead.origin_metadata
+        return {
+            "segment_ids": sorted({index.evidence[r].segment_id for r in refs if index.evidence[r].segment_id}),
+            "assertion": {
+                "entry_id": lead.entry_id, "branch_id": lead.branch_id, "scope_status": scope,
+                "fact_fingerprint": lead.fact_fingerprint, "context_bindings": lead.context_bindings,
+                "subject_mention_id": lead.source.mention_id, "object_mention_id": lead.target.mention_id,
+                "original_fact": {"source": lead.source.model_dump(mode="json"),
+                                  "target": lead.target.model_dump(mode="json"),
+                                  "relation_type": lead.relation_type,
+                                  "conditions": [c.model_dump(mode="json") for c in lead.conditions]},
+                "parent_proposal_ids": sorted({p.proposal_id for p in candidate.proposals if p.proposal_id}),
+            },
+            "certificate": {
+                "contract_version": "kg-ingestion-quality-1", "evidence_ref_ids": refs,
+                "verified_bindings": bindings, "validation_issues": sorted(set(issues)), "scope_status": scope,
+                "semantic_verification_required": candidate.requires_semantic or semantic_required(None, lead),
+                "epistemic_status": lead.epistemic_status, "evidence_modalities": lead.evidence_modalities,
+                "verifier_metadata": [candidate.verification] if candidate.verification else [],
+                **({"extractor": f"{origin.get('requested_model', '')}:{origin.get('operation', '')}"}
+                   if origin else {}),
+            },
+        }
+
+def semantic_required(doc, proposal) -> bool:
+    """A relation the cheap path (structure + agreement) cannot certify on its own."""
+    if proposal.schema_repaired or proposal.conditions or proposal.extraction_method != "PRIMARY":
+        return True
+    if proposal.epistemic_status != "EXPLICIT" or proposal.scope_status != "VERIFIED_STRUCTURE":
+        return True
+    if "VISUAL" in proposal.evidence_modalities:
+        return True
+    if doc and doc.source_index:
+        refs = [doc.source_index.evidence[r] for b in proposal.evidence_bindings for r in b.evidence_ref_ids]
+        return len({r.page for r in refs}) > 1 or any(
+            r.kind == "TABLE_ITEM" or r.transcription_status == "UNCERTAIN" for r in refs)
+    return False

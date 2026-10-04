@@ -207,3 +207,25 @@ Answer same only with positive evidence of equivalence; explain that evidence in
 and cite its segment IDs in cited_segments. Explain why differing branches are compatible
 before proposing same. Answer unsure when you cannot tell.
 """
+
+
+QUALITY_EXTRACTION_RULES = """
+17. For every entity also give denotation_status: STATED for a name the manual writes as such;
+    INFERRED for a cause you name from its check or remedy (stated false); PLACEHOLDER for an
+    "Unspecified cause of ..." bridge; TEST_CONTEXT for a problem that is only the title of a test;
+    UNRESOLVED when you cannot tell. For each relation with an INFERRED end, premise_refs lists the IDs
+    of the segments the inferred name rests on; otherwise premise_refs is empty.
+18. Some table cells list numbered items; their item IDs follow the passage. When a relation uses
+    only one item of such a cell, cite that item ID instead of the whole row. Cite image region IDs
+    only for facts that are drawn and not written.
+19. Keep printed Yes/No outcomes as printed, even when one looks wrong: never repair the manual.
+"""
+
+QUALITY_VERIFY_RULES = """
+For each statement also answer scope_verdict: supported when the statement's parts belong to
+the same entry, branch or path of the manual (not a neighbouring row, item or flowchart branch),
+not_supported when they do not, unclear when you cannot tell. A visual reading must match the
+attached image. Set source_conflict true only when the printed source contradicts itself for this
+statement (for example an outcome label that contradicts its own question); never repair the
+manual with technical knowledge.
+"""
