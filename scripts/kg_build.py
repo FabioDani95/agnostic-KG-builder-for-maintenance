@@ -202,7 +202,8 @@ def main() -> int:
             parser.error("use a new ledger file: historical ledgers are preserved evidence")
     os.chdir(ROOT)  # settings read the API key from .env in the repository root
     report = asyncio.run(run(args))
-    keys = ("plan", "preflight", "status", "pages", "text_pages", "units", "failed_reads", "graph", "open_gaps",
+    keys = ("plan", "preflight", "status", "pages", "text_pages", "headings", "printed_page_offset", "units",
+            "failed_reads", "graph", "open_gaps",
             "estimated_cost_usd", "low", "high", "usage", "seconds", "provider_calls", "note")
     print(json.dumps({key: report[key] for key in keys if key in report}, indent=1))
     return 0
