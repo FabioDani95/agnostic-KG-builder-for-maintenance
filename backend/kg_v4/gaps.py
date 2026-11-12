@@ -29,7 +29,7 @@ from backend.kg_v4.model import ACTION_KINDS, Evidence, Fact, Graph, Mention, Re
 from backend.kg_v4.names import canonical, similarity, tokens
 from backend.kg_v4.prompts import GAP_PROMPT
 from backend.kg_v4.sections import SectionIndex
-from backend.kg_v4.survey import split_listed_parts, usable_component
+from backend.kg_v4.survey import is_the_machine, split_listed_parts, usable_component
 
 logger = logging.getLogger(__name__)
 
@@ -399,13 +399,15 @@ def follow_entry_pointers(graph: Graph, references: list[Reference], of_mention:
     return facts
 
 
-def link_named_parts(graph: Graph, mentions: list[Mention]) -> list[Fact]:
+def link_named_parts(graph: Graph, mentions: list[Mention],
+                     machine: set[str] | frozenset[str] = frozenset()) -> list[Fact]:
     """An item whose own name names a part of the machine is linked to that part.
 
     "Replace the V-belt" acts on the V-belt; "Worn drive roll" affects the drive roll. The link
     rests on the item's own words, read from the manual; it is marked ``name_mention`` so that a
     consumer, or a metric, can leave it out. Only the longest part name found counts, so a "fan
-    motor" is not also linked to every "motor".
+    motor" is not also linked to every "motor". A word that names the machine itself ("pump" in
+    the manual of a pump) is no part: linking every item to it would only build an artificial hub.
     """
 
     # Every part the manual names counts, also one no fact has touched yet: the link brings it in.
@@ -413,7 +415,8 @@ def link_named_parts(graph: Graph, mentions: list[Mention]) -> list[Fact]:
     in_graph = {key: node.node_id for node in graph.nodes.values() if node.type == "Component"
                 for key in node.mention_keys}
     for item in sorted(mentions, key=lambda value: (value.key not in in_graph, value.key)):
-        if item.type == "Component" and usable_component(item.name) and tokens(item.name):
+        if (item.type == "Component" and usable_component(item.name) and tokens(item.name)
+                and not is_the_machine(item.name, machine)):
             parts.setdefault(tuple(tokens(item.name)), item)
     facts: list[Fact] = []
     for node in sorted(graph.nodes.values(), key=lambda item: item.node_id):

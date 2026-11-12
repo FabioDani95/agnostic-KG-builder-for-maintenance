@@ -43,7 +43,7 @@ from backend.kg_v4.prompts import (
 )
 from backend.kg_v4.resolve import Resolution, assemble, catalogue_mentions, judge, summary
 from backend.kg_v4.sections import SectionIndex, build_sections
-from backend.kg_v4.survey import reading_units, survey_document
+from backend.kg_v4.survey import machine_words, reading_units, survey_document
 from backend.kg_v4.verify import Verifier
 
 logger = logging.getLogger(__name__)
@@ -178,7 +178,8 @@ class Builder:
         saved = self.state.load("survey")
         if saved is not None:
             return DocumentSurvey.model_validate(saved)
-        survey = await self._timed("survey", survey_document(self.llm, self.doc, asset_name=self.asset["name"]))
+        survey = await self._timed("survey", survey_document(self.llm, self.doc, asset_name=self.asset["name"],
+                                                             machine=machine_words(self.asset)))
         self._save("survey", survey)
         return survey
 
@@ -289,7 +290,7 @@ class Builder:
             graph, of_mention = assemble(mentions, facts, resolution, statuses=statuses)
             if not saved["stats"]["asked"]:
                 break
-        named = link_named_parts(graph, mentions) if config.link_named_parts else []
+        named = link_named_parts(graph, mentions, machine_words(self.asset)) if config.link_named_parts else []
         # A cause the search never reached keeps what its own entry says.
         statuses = {**in_entry, **statuses}
         facts.extend(named)

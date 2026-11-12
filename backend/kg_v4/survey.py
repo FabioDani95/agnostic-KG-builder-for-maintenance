@@ -67,6 +67,17 @@ def usable_component(name: str) -> bool:
     return not (len(words) == 1 and words[0] in NOT_A_COMPONENT)
 
 
+def machine_words(asset: dict[str, Any]) -> set[str]:
+    """Words that name the machine itself ("pump" for a booster pump): alone, they are no part of it."""
+
+    return set(canonical(f"{asset.get('name', '')} {asset.get('asset_type', '')}").split())
+
+
+def is_the_machine(name: str, words: set[str]) -> bool:
+    own = canonical(name).split()
+    return len(own) == 1 and own[0] in words
+
+
 def split_listed_parts(name: str) -> list[str]:
     """"Air pump, water chiller or exhaust fan" names three parts; "nuts and bolts" style pairs stay."""
 
@@ -74,13 +85,14 @@ def split_listed_parts(name: str) -> list[str]:
     return pieces if len(pieces) >= 2 and all(len(piece.split()) >= 2 for piece in pieces) else [name]
 
 
-def build_catalogue(raw_components: list[dict[str, Any]], raw_codes: list[dict[str, Any]]) -> list[CatalogueEntry]:
+def build_catalogue(raw_components: list[dict[str, Any]], raw_codes: list[dict[str, Any]],
+                    machine: set[str] | frozenset[str] = frozenset()) -> list[CatalogueEntry]:
     """One entry per part and per code; names equal in canonical form are one part."""
 
     groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for item in raw_components:
         for name in split_listed_parts(" ".join(str(item.get("name") or "").split())):
-            if usable_component(name):
+            if usable_component(name) and not is_the_machine(name, machine):
                 groups[canonical(name)].append({**item, "name": name})
     entries: list[CatalogueEntry] = []
     for key in sorted(groups):
@@ -129,8 +141,8 @@ def build_catalogue(raw_components: list[dict[str, Any]], raw_codes: list[dict[s
     return entries
 
 
-async def survey_document(llm, doc: DocumentText, *, asset_name: str,
-                          batch_chars: int = SURVEY_BATCH_CHARS) -> DocumentSurvey:
+async def survey_document(llm, doc: DocumentText, *, asset_name: str, batch_chars: int = SURVEY_BATCH_CHARS,
+                          machine: set[str] | frozenset[str] = frozenset()) -> DocumentSurvey:
     """Read the full text of every page once."""
 
     limit = asyncio.Semaphore(SURVEY_CONCURRENCY)
@@ -189,7 +201,7 @@ async def survey_document(llm, doc: DocumentText, *, asset_name: str,
         codes.extend(item for item in data.get("codes") or [] if isinstance(item, dict))
     for page in sorted(doc.pages):
         survey.pages.append(seen.get(page) or PageSurvey(page=page, kinds=["other"]))
-    survey.catalogue = build_catalogue(components, codes)
+    survey.catalogue = build_catalogue(components, codes, machine)
     return survey
 
 

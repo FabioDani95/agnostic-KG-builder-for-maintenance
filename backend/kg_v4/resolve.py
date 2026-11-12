@@ -333,7 +333,7 @@ def assemble(mentions: list[Mention], facts: list[Fact], resolution: Resolution 
         graph.nodes[node.node_id] = node
         for item in items:
             of_mention[item.key] = node.node_id
-        if len({identity(item) for item in items}) > 1:
+        if aliases:
             graph.merges.append({"node_id": node.node_id, "type": node.type, "name": name, "aliases": aliases})
 
     by_key = {mention.key: mention for mention in mentions}
