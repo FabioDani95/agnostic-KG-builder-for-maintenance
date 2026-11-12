@@ -17,6 +17,7 @@ import subprocess
 import time
 from collections import Counter
 from collections.abc import Callable
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -105,6 +106,30 @@ def input_manifest(doc: DocumentText, config: BuildConfig, asset: dict[str, Any]
     return {"pipeline": PIPELINE_VERSION, "pdf_sha256": file_hash(pdf_path) if pdf_path else segments,
             "segments_sha256": segments, "pages": doc.page_count, "asset": asset.get("name", ""),
             "prompts": prompt_ids(), "ontology_sha256": file_hash(ONTOLOGY_PATH), "config": settings}
+
+
+@dataclass
+class _Work:
+    """What a run knows so far. The graph is always rebuilt from mentions, facts and decisions."""
+
+    mentions: list[Mention]
+    facts: list[Fact]
+    references: list[Reference]
+    # Causes whose own entry gives no remedy: used only where the gap search did not reach.
+    in_entry: dict[str, dict[str, str]]
+    # What the gap search established about a mention when nothing could be linked.
+    statuses: dict[str, dict[str, str]] = field(default_factory=dict)
+    resolution: Resolution = field(default_factory=Resolution)
+    apart: list = field(default_factory=list)
+    graph: Graph = field(default_factory=Graph)
+    of_mention: dict[str, str] = field(default_factory=dict)
+
+    @property
+    def by_key(self) -> dict[str, Mention]:
+        return {mention.key: mention for mention in self.mentions}
+
+    def assemble(self) -> None:
+        self.graph, self.of_mention = assemble(self.mentions, self.facts, self.resolution, statuses=self.statuses)
 
 
 class _State:
@@ -227,9 +252,32 @@ class Builder:
         return resolution, apart
 
     async def run(self) -> BuildResult:
+        """The whole run. Each step below is one stage of the module docstring; read them in order."""
+
         started = time.perf_counter()
-        config = self.config
         survey = await self._survey()
+        units, images = self._plan_units(survey)
+        work, records, verifier = await self._read(survey, units, images)
+        await self._first_graph(work)
+        gap_rounds = await self._close_gaps(work, verifier)
+        self._link_named_parts(work)
+        enrichment = await self._enrich(work)
+
+        report = self._report(survey, units, records, work, gap_rounds, enrichment, verifier, started)
+        status = "incomplete" if report["incomplete_reasons"] else "approved"
+        report["status"] = status
+        document = graph_json(work.graph, self.doc, asset=self.asset, source_title=self.source_title, status=status,
+                              report=report, spec=load_ontology(full=True), survey_asset=survey.asset)
+        report["graph"] = graph_counts(document)
+        report["scorecard"] = {key: value for key, value in scorecard(document).items() if key != "cost"}
+        document["report"] = report
+        self._save("report", report)
+        return BuildResult(status=status, graph=work.graph, document=document, report=report, survey=survey)
+
+    def _plan_units(self, survey: DocumentSurvey) -> tuple[list[ReadingUnit], DiagramImages | None]:
+        """Passages to read: the survey's pages, pages asked for, and drawn pages next to them."""
+
+        config = self.config
         images = None
         extra_pages = set(config.extra_pages)
         if config.page_images and self.pdf_path is not None:
@@ -242,99 +290,105 @@ class Builder:
             raise ValueError(f"{len(units)} reading units exceed max_units={config.max_units}; "
                              "check the survey or raise the limit explicitly")
         self._save("units", [unit.model_dump(mode="json") for unit in units])
+        return units, images
 
+    async def _read(self, survey: DocumentSurvey, units: list[ReadingUnit],
+                    images: DiagramImages | None) -> tuple[_Work, list[UnitRecords], Verifier]:
+        """Extract and verify every passage; add the catalogue as mentions and hierarchy facts."""
+
+        config = self.config
         extractor = Extractor(self.llm, self.doc, self.sections, asset_name=self.asset["name"],
                               catalogue=survey.catalogue, images=images, concurrency=config.concurrency,
                               reread_rows=config.reread_rows)
         records = await self._extract(units, extractor)
-        mentions = [mention for item in records for mention in item.mentions]
-        extra_mentions, extra_facts = catalogue_mentions(survey.catalogue, self.sections)
-        mentions.extend(extra_mentions)
-        by_key = {mention.key: mention for mention in mentions}
+        catalogue, hierarchy = catalogue_mentions(survey.catalogue, self.sections)
+        mentions = [mention for item in records for mention in item.mentions] + catalogue
         verifier = Verifier(self.llm, self.doc, images=images, concurrency=config.concurrency)
-        facts = await self._verify(units, records, verifier, by_key) + extra_facts
-        references = resolve_references([ref for item in records for ref in item.references], self.sections)
-        # What the gap search establishes; an entry that gives no remedy is searched for elsewhere first.
-        statuses: dict[str, dict[str, str]] = {}
-        in_entry = {key: {"remedy_status": "not_in_entry"} for item in records for key in item.no_remedy}
+        facts = await self._verify(units, records, verifier, {mention.key: mention for mention in mentions})
+        work = _Work(
+            mentions=mentions, facts=facts + hierarchy,
+            references=resolve_references([ref for item in records for ref in item.references], self.sections),
+            in_entry={key: {"remedy_status": "not_in_entry"} for item in records for key in item.no_remedy})
+        return work, records, verifier
 
-        resolution, apart = await self._resolve("resolution_1", mentions, facts, None)
-        graph, of_mention = assemble(mentions, facts, resolution, statuses=statuses)
+    async def _first_graph(self, work: _Work) -> None:
+        """Resolve entities, assemble, and follow the manual's pointers from one entry to another."""
 
-        # Repairs that need no model: pointers between entries, then parts named by an item's own name.
-        pointed = follow_entry_pointers(graph, references, of_mention, by_key)
+        work.resolution, work.apart = await self._resolve("resolution_1", work.mentions, work.facts, None)
+        work.assemble()
+        pointed = follow_entry_pointers(work.graph, work.references, work.of_mention, work.by_key)
         if pointed:
-            facts.extend(pointed)
-            graph, of_mention = assemble(mentions, facts, resolution, statuses=statuses)
-        gap_rounds: list[dict[str, Any]] = []
+            work.facts.extend(pointed)
+            work.assemble()
+
+    async def _close_gaps(self, work: _Work, verifier: Verifier) -> list[dict[str, Any]]:
+        """Ask the manual about what the graph lacks, at most ``gap_rounds`` times within the call budget."""
+
+        config = self.config
+        rounds: list[dict[str, Any]] = []
         repair = GapRepair(self.llm, self.doc, self.sections, asset_name=self.asset["name"],
-                           verifier=verifier if config.verify else None, references=references,
+                           verifier=verifier if config.verify else None, references=work.references,
                            max_calls=config.gap_max_calls, concurrency=config.concurrency)
-        for round_number in range(1, config.gap_rounds + 1):
-            if not find_gaps(graph):
+        for number in range(1, config.gap_rounds + 1):
+            if not find_gaps(work.graph):
                 break
-            saved = self.state.load(f"gaps_{round_number}")
+            saved = self.state.load(f"gaps_{number}")
             if saved is None:
-                found_mentions, found_facts, stats = await self._timed("gaps", repair.repair(graph, by_key, statuses))
-                saved = {"mentions": [item.model_dump(mode="json") for item in found_mentions],
-                         "facts": [item.model_dump(mode="json") for item in found_facts],
-                         "statuses": statuses, "asked": sorted(repair.asked), "stats": stats}
-                self._save(f"gaps_{round_number}", saved)
+                mentions, facts, stats = await self._timed("gaps", repair.repair(work.graph, work.by_key, work.statuses))
+                saved = {"mentions": [item.model_dump(mode="json") for item in mentions],
+                         "facts": [item.model_dump(mode="json") for item in facts],
+                         "statuses": work.statuses, "asked": sorted(repair.asked), "stats": stats}
+                self._save(f"gaps_{number}", saved)
             else:
-                statuses.update(saved["statuses"])
+                work.statuses.update(saved["statuses"])
                 repair.asked.update(saved["asked"])
                 repair.calls += saved["stats"]["calls"]
-            mentions.extend(Mention.model_validate(item) for item in saved["mentions"])
-            facts.extend(Fact.model_validate(item) for item in saved["facts"])
-            by_key = {mention.key: mention for mention in mentions}
-            gap_rounds.append(saved["stats"])
-            if saved["mentions"]:
-                resolution, apart = await self._resolve(f"resolution_{round_number + 1}", mentions, facts, resolution)
-            graph, of_mention = assemble(mentions, facts, resolution, statuses=statuses)
+            work.mentions.extend(Mention.model_validate(item) for item in saved["mentions"])
+            work.facts.extend(Fact.model_validate(item) for item in saved["facts"])
+            rounds.append(saved["stats"])
+            if saved["mentions"]:  # new names may be close to known ones
+                work.resolution, work.apart = await self._resolve(
+                    f"resolution_{number + 1}", work.mentions, work.facts, work.resolution)
+            work.assemble()
             if not saved["stats"]["asked"]:
                 break
-        named = link_named_parts(graph, mentions, machine_words(self.asset)) if config.link_named_parts else []
-        # A cause the search never reached keeps what its own entry says.
-        statuses = {**in_entry, **statuses}
-        facts.extend(named)
-        graph, of_mention = assemble(mentions, facts, resolution, statuses=statuses)
+        return rounds
 
-        enrichment: dict[str, Any] = {}
-        if config.enrich:
-            saved = self.state.load("enrichment")
-            if saved is None:
-                enricher = Enricher(self.llm, self.doc, asset_name=self.asset["name"], references=references,
-                                    max_calls=config.enrich_max_calls, concurrency=config.concurrency)
-                stats = await self._timed("enrich", enricher.enrich(graph))
-                saved = {"stats": stats, "nodes": {key: {"description": node.description, "inferred": node.inferred,
-                                                         "properties": node.properties}
-                                                   for key, node in graph.nodes.items()}}
-                self._save("enrichment", saved)
-            for key, values in saved["nodes"].items():
-                if key in graph.nodes:
-                    node = graph.nodes[key]
-                    node.description, node.inferred = values["description"], values["inferred"]
-                    node.properties = {**node.properties, **values["properties"]}
-            enrichment = saved["stats"]
+    def _link_named_parts(self, work: _Work) -> None:
+        """Last assembly: links from names to parts, and what entries say where the search did not reach."""
 
-        report = self._report(survey, units, records, facts, references, graph, resolution, apart, gap_rounds,
-                              enrichment, verifier, started)
-        status = "incomplete" if report["incomplete_reasons"] else "approved"
-        report["status"] = status
-        document = graph_json(graph, self.doc, asset=self.asset, source_title=self.source_title, status=status,
-                              report=report, spec=load_ontology(full=True), survey_asset=survey.asset)
-        report["graph"] = graph_counts(document)
-        report["scorecard"] = {key: value for key, value in scorecard(document).items() if key != "cost"}
-        document["report"] = report
-        self._save("report", report)
-        return BuildResult(status=status, graph=graph, document=document, report=report, survey=survey)
+        if self.config.link_named_parts:
+            work.facts.extend(link_named_parts(work.graph, work.mentions, machine_words(self.asset)))
+        work.statuses = {**work.in_entry, **work.statuses}
+        work.assemble()
+
+    async def _enrich(self, work: _Work) -> dict[str, Any]:
+        if not self.config.enrich:
+            return {}
+        graph = work.graph
+        saved = self.state.load("enrichment")
+        if saved is None:
+            enricher = Enricher(self.llm, self.doc, asset_name=self.asset["name"], references=work.references,
+                                max_calls=self.config.enrich_max_calls, concurrency=self.config.concurrency)
+            stats = await self._timed("enrich", enricher.enrich(graph))
+            saved = {"stats": stats, "nodes": {key: {"description": node.description, "inferred": node.inferred,
+                                                     "properties": node.properties}
+                                               for key, node in graph.nodes.items()}}
+            self._save("enrichment", saved)
+        for key, values in saved["nodes"].items():
+            if key in graph.nodes:
+                node = graph.nodes[key]
+                node.description, node.inferred = values["description"], values["inferred"]
+                node.properties = {**node.properties, **values["properties"]}
+        return saved["stats"]
 
     # Reporting ------------------------------------------------------------
 
-    def _report(self, survey: DocumentSurvey, units: list[ReadingUnit], records: list[UnitRecords], facts: list[Fact],
-                references: list[Reference], graph: Graph, resolution: Resolution, apart: list,
+    def _report(self, survey: DocumentSurvey, units: list[ReadingUnit], records: list[UnitRecords], work: _Work,
                 gap_rounds: list[dict[str, Any]], enrichment: dict[str, Any], verifier: Verifier,
                 started: float) -> dict[str, Any]:
+        facts, references, graph = work.facts, work.references, work.graph
+        resolution, apart = work.resolution, work.apart
         failed = [item.unit_id for item in records if item.failed_reads]
         reasons = []
         if failed:

@@ -18,11 +18,7 @@ from pydantic import BaseModel, Field
 
 from backend.kg_v3.contracts import ContextItem
 
-NODE_TYPES = ("Component", "Symptom", "FailureMode", "CorrectiveAction", "ErrorCode")
-ENTRY_TYPES = ("Symptom", "ErrorCode")
 ACTION_KINDS = ("repair", "inspection", "escalation")
-# Relations that state diagnostic knowledge; PART_OF and the asset links are structure.
-DIAGNOSTIC_RELATIONS = ("MAY_INDICATE", "INDICATES", "RESOLVED_BY", "ADDRESSED_BY", "CLEARED_BY")
 Verdict = Literal["supported", "unclear", "contradicted", "unchecked"]
 # extract/reread: read from a passage; gap_repair: found by a targeted search for a gap; reference: the
 # manual points from one entry to another; catalogue: the survey's hierarchy; name_mention: the item's

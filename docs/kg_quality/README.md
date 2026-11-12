@@ -1,5 +1,10 @@
 # Pipeline KG quality
 
+> Questo profilo appartiene alla pipeline V3 ed è conservato come versione di confronto. Nel pilot del
+> 1 ottobre 2026 ha misurato meno del profilo base e non è più stato rimisurato. Lo sviluppo continua
+> nella pipeline a grafo connesso: vedi [Architecture](../architecture.md) e il
+> [piano di test](../test-plan.md).
+
 L'estensione usa la V3 esistente (`Pipeline`, `ModelClient`, `Checker`, `MergedGraph`). Il default è `base_safe`: applica P0 senza attivare le capacità avanzate. `quality_v1.json` attiva esplicitamente scope, revisione, retrieval, merge aggiuntivo e routing visuale. Nessuna estensione P2 è inclusa.
 
 L'implementazione non costituisce una misura di qualità estrattiva. Le fixture offline controllano i contratti; precisione semantica, recall sui manuali e utilità dei recuperi richiedono la nuova campagna e adjudication. I risultati F restano storici e non sono trasferiti a questa versione.
@@ -169,13 +174,3 @@ misurata con nuove esecuzioni reali.
 | `validation.py` | Controlli finali obbligatori; definisce le occorrenze pubbliche. |
 | `export.py` | `graph.json` storico, file ricco `ingestion_quality.json`, caricatori. |
 | `quality_contracts.py`, `run_state.py` | Contratti dati e stato del run con impronte e ripresa. |
-
-## Test reale dopo la ricarica del credito API
-
-```bash
-.venv/bin/python scripts/kg_v3_retest.py --dry-run   # piano e costo stimato, nessuna chiamata
-.venv/bin/python scripts/kg_v3_retest.py              # ALL su Grizzly e LG, giudizio e confronto
-```
-
-Usa il registro del pilot e il tetto cumulativo di 10 USD già autorizzato (arresto a 9,50). I run già
-completati vengono riusati; risultati in `experiments/kg_quality_retest/RESULTS.md`.

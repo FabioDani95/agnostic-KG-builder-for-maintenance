@@ -9,7 +9,6 @@ that was read. A truncated answer splits the passage; table rows nobody used are
 from __future__ import annotations
 
 import asyncio
-import hashlib
 import logging
 from typing import Any
 
@@ -31,33 +30,44 @@ SEVERITIES = ("critical", "high", "medium", "low")
 MATCH_THRESHOLD = 0.5
 
 
-def prompt_hash(text: str) -> str:
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+def _obj(properties: dict[str, Any]) -> dict[str, Any]:
+    return {"type": "object", "additionalProperties": False, "required": list(properties), "properties": properties}
 
 
-def extraction_schema(segment_ids: list[str]) -> dict[str, Any]:
-    def obj(properties: dict[str, Any]) -> dict[str, Any]:
-        return {"type": "object", "additionalProperties": False, "required": list(properties),
-                "properties": properties}
+def item_schemas(segment_ids: list[str]) -> dict[str, dict[str, Any]]:
+    """Schemas of the items a model returns: citation list, action, cause and problem.
+
+    Shared by extraction and by the gap search, so both return items of the same shape.
+    Citations can only name segments that were shown.
+    """
 
     text = {"type": "string"}
     cite = {"type": "array", "items": {"type": "string", "enum": sorted(set(segment_ids))} if segment_ids else text}
-    conditions = {"type": "array", "items": obj({"kind": {"type": "string", "enum": list(CONDITION_KINDS)},
-                                                 "text": text})}
-    action = obj({"name": text, "kind": {"type": "string", "enum": list(ACTION_KINDS)}, "instruction": text,
-                  "expected": text, "component": text, "conditions": conditions, "reference": text, "cite": cite})
-    cause = obj({"name": text, "description": text, "component": text, "conditions": conditions,
-                 "no_remedy": {"type": "boolean"}, "cite": cite, "actions": {"type": "array", "items": action}})
-    problem = obj({"type": {"type": "string", "enum": ["Symptom", "ErrorCode", ""]}, "name": text, "code": text,
-                   "description": text, "severity": {"type": "string", "enum": ["", *SEVERITIES]},
-                   "component": text, "cite": cite})
-    record = obj({"record": text, "problem": problem, "see_also": text,
-                  "actions": {"type": "array", "items": action}, "causes": {"type": "array", "items": cause}})
-    component = obj({"name": text, "part_of": text, "category": {"type": "string", "enum": ["", *CATEGORIES]},
-                     "description": text, "cite": cite})
-    return obj({"records": {"type": "array", "items": record},
-                "components": {"type": "array", "items": component},
-                "unclear": {"type": "array", "items": obj({"note": text, "cite": cite})}})
+    conditions = {"type": "array", "items": _obj({"kind": {"type": "string", "enum": list(CONDITION_KINDS)},
+                                                  "text": text})}
+    action = _obj({"name": text, "kind": {"type": "string", "enum": list(ACTION_KINDS)}, "instruction": text,
+                   "expected": text, "component": text, "conditions": conditions, "reference": text, "cite": cite})
+    cause = _obj({"name": text, "description": text, "component": text, "conditions": conditions,
+                  "no_remedy": {"type": "boolean"}, "cite": cite, "actions": {"type": "array", "items": action}})
+    problem = _obj({"type": {"type": "string", "enum": ["Symptom", "ErrorCode", ""]}, "name": text, "code": text,
+                    "description": text, "severity": {"type": "string", "enum": ["", *SEVERITIES]},
+                    "component": text, "cite": cite})
+    return {"cite": cite, "action": action, "cause": cause, "problem": problem}
+
+
+def extraction_schema(segment_ids: list[str]) -> dict[str, Any]:
+    """Strict schema of one extraction answer: records, described components, unclear passages."""
+
+    text = {"type": "string"}
+    items = item_schemas(segment_ids)
+    record = _obj({"record": text, "problem": items["problem"], "see_also": text,
+                   "actions": {"type": "array", "items": items["action"]},
+                   "causes": {"type": "array", "items": items["cause"]}})
+    component = _obj({"name": text, "part_of": text, "category": {"type": "string", "enum": ["", *CATEGORIES]},
+                      "description": text, "cite": items["cite"]})
+    return _obj({"records": {"type": "array", "items": record},
+                 "components": {"type": "array", "items": component},
+                 "unclear": {"type": "array", "items": _obj({"note": text, "cite": items["cite"]})}})
 
 
 def _clean(value: Any) -> str:
@@ -263,7 +273,6 @@ class Extractor:
         self.catalogue = list(catalogue)
         self.images = images
         self.system = EXTRACT_PROMPT.format(asset=asset_name)
-        self.prompt_id = prompt_hash(self.system)
         self.output_tokens = output_tokens
         self.reread_rows = reread_rows
         self._limit = asyncio.Semaphore(max(1, concurrency))

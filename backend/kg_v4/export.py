@@ -22,7 +22,6 @@ from backend.kg_v4.model import Edge, Evidence, Graph, Node
 
 EXPORT_VERSION = "kg-v3-graph-2"
 TIER = {"supported": "green", "unchecked": "yellow", "unclear": "yellow"}
-CONFIDENCE = {"supported": "high", "unchecked": "medium", "unclear": "low"}
 _TIER_RANK = {"green": 0, "yellow": 1}
 PLACEHOLDERS = {"severity": "Unknown"}
 
@@ -132,7 +131,7 @@ def _edge(edge: Edge, doc: DocumentText) -> dict[str, Any]:
         tier = TIER[fact.verdict]
         occurrences.append({
             "assertion_id": fact.fact_id, "record": fact.record, "tier": tier, "trusted": tier == "green",
-            "confidence": CONFIDENCE[fact.verdict], "verdict": fact.verdict, "origin": fact.origin,
+            "confidence": fact.confidence, "verdict": fact.verdict, "origin": fact.origin,
             "anchor": fact.evidence.anchor, "note": fact.reason,
             "conditions": _conditions(fact.conditions), "evidence": evidence_items(doc, fact.evidence),
         })

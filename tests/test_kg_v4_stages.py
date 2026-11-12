@@ -20,7 +20,7 @@ from backend.kg_v4.gaps import (
 )
 from backend.kg_v4.model import CatalogueEntry, Evidence, Fact, Mention
 from backend.kg_v4.resolve import Pair, Resolution, assemble, candidates, catalogue_mentions, identity, judge
-from backend.kg_v4.sections import build_sections, has_reference
+from backend.kg_v4.sections import build_sections
 from backend.kg_v4.survey import build_catalogue, catalogue_brief, reading_units, survey_document
 from backend.kg_v4.verify import Verifier, statement
 from tests.kg_v4_support import ScriptedModel, action, cause, find, read_manual, record, symptom
@@ -56,7 +56,6 @@ def test_every_segment_has_a_section_and_pointers_resolve(manual):
     assert all(sections.section(segment.segment_id, segment.page) for segment in doc.segments())
     assert sections.resolve("Clear the air line (page 3)") == ([3], "Clearing the air line")
     assert sections.resolve("see Clearing the air line")[0] == [3]
-    assert has_reference("see section 6.8") and not has_reference("replace the belt")
 
 
 def test_printed_page_numbers_shift_pointers(tmp_path):

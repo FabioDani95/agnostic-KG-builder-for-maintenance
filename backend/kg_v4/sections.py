@@ -85,10 +85,6 @@ class SectionIndex:
         return pages, (self.by_page.get(pages[0], "") if pages else "")
 
 
-def has_reference(text: str) -> bool:
-    return bool(_PAGE_REF.search(text) or _SECTION_REF.search(text))
-
-
 def _usable_bookmarks(toc: list) -> list[tuple[int, int, float, str]]:
     """(level, page, top, title) for bookmarks that name something; junk outlines give nothing."""
 
@@ -183,9 +179,7 @@ def build_sections(pdf: Path | str, doc=None) -> SectionIndex:
                 continue
             candidates.append((number, line["top"], text, round(line["size"], 1), kind))
     # A line printed on most pages (product name, footer) is neither a heading nor a chapter header.
-    repeated = Counter()
-    for page_texts in ({(page, canonical(text)) for page, _, text, _, _ in candidates},):
-        repeated.update(text for _, text in page_texts)
+    repeated = Counter(text for _, text in {(page, canonical(text)) for page, _, text, _, _ in candidates})
     limit = max(4, page_count // 3)
     ranks = sorted({size for _, _, _, size, kind in candidates if kind == "larger"}, reverse=True)
 

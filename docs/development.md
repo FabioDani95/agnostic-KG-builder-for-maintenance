@@ -60,6 +60,30 @@ graphs (`tests/test_kg_v4_names.py`, `tests/fixtures/kg_v4_entity_pairs.json`) a
 the measurement tools (`tests/test_kg_v4_tools.py`). The scripted model answers from
 the passage it is shown, so a test fails when a stage shows the wrong text.
 
+## Debug a connected-graph run
+
+A run directory is the whole story of a run; every file is JSON and can be read by hand.
+
+| File in `<run>/state/` | Written by | Look here when |
+| --- | --- | --- |
+| `manifest.json` | start | a resume is refused: it lists the inputs the directory was made with |
+| `survey.json` | survey | a page was not read, or a part is missing from the catalogue |
+| `units.json` | planning | you need the passages and their context segments |
+| `records_<unit>.json` | extract | a fact is missing or wrong: mentions, facts, pointers and notes of one passage |
+| `verified_<unit>.json` | verify | a fact was rejected or left unclear: verdict and reason |
+| `resolution_<n>.json` | resolve | two nodes were merged or kept apart: `same`, `different`, `unjudged` pairs with reasons |
+| `gaps_<round>.json` | gaps | a cause has no remedy: what was asked, found and declared |
+| `enrichment.json` | enrich | a description or attribute is empty |
+| `report.json` | end | counts by stage, open gaps, false friends kept apart, usage and timings |
+
+`provider_responses/` holds every request and answer, and `--replay` rebuilds the
+run from them without the network. To follow one fact, search its `fact_id` (the
+`assertion_id` of an occurrence in `graph.json`): it starts with the unit and read
+that produced it. To run again from a stage, delete that state file and the later
+ones; delete the whole directory after changing prompts, model or PDF. In code,
+`Builder.run` in `backend/kg_v4/pipeline.py` lists the stages in order, one method
+each.
+
 ## Where to add checks
 
 | Change | Relevant checks |

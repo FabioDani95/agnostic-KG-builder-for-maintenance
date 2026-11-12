@@ -24,7 +24,7 @@ from pydantic import BaseModel, Field
 
 from backend.kg_v3.contracts import ContextItem
 from backend.kg_v3.reader import DocumentText, render_segments
-from backend.kg_v4.extract import CONDITION_KINDS, extraction_schema
+from backend.kg_v4.extract import CONDITION_KINDS, item_schemas
 from backend.kg_v4.model import ACTION_KINDS, Evidence, Fact, Graph, Mention, Reference
 from backend.kg_v4.names import canonical, similarity, tokens
 from backend.kg_v4.prompts import GAP_PROMPT
@@ -33,7 +33,6 @@ from backend.kg_v4.survey import is_the_machine, split_listed_parts, usable_comp
 
 logger = logging.getLogger(__name__)
 
-GAP_KINDS = ("cause_without_remedy", "problem_without_diagnosis", "cause_without_problem")
 GAPS_PER_CALL = 8
 PASSAGE_CHARS = 12000
 WINDOW = 5
@@ -120,25 +119,23 @@ class Retriever:
 
 
 def _gap_schema(ids: list[str], segment_ids: list[str]) -> dict[str, Any]:
-    records = extraction_schema(segment_ids)["properties"]["records"]["items"]["properties"]
-    action, cause = records["actions"]["items"], records["causes"]["items"]
-    cite = action["properties"]["cite"]
+    """One answer per gap; actions have the shape extraction uses, causes and problems a shorter one."""
+
+    def obj(properties: dict[str, Any]) -> dict[str, Any]:
+        return {"type": "object", "additionalProperties": False, "required": list(properties),
+                "properties": properties}
+
     text = {"type": "string"}
-    bare_cause = {"type": "object", "additionalProperties": False,
-                  "required": ["name", "description", "component", "cite"],
-                  "properties": {key: cause["properties"][key] for key in ("name", "description", "component", "cite")}}
-    problem = {"type": "object", "additionalProperties": False, "required": ["type", "name", "code", "cite"],
-               "properties": {"type": {"type": "string", "enum": ["Symptom", "ErrorCode"]}, "name": text,
-                              "code": text, "cite": cite}}
-    answer = {"type": "object", "additionalProperties": False,
-              "required": ["id", "status", "actions", "causes", "problems"],
-              "properties": {"id": {"type": "string", "enum": ids},
-                             "status": {"type": "string", "enum": ["found", "not_stated"]},
-                             "actions": {"type": "array", "items": action},
-                             "causes": {"type": "array", "items": bare_cause},
-                             "problems": {"type": "array", "items": problem}}}
-    return {"type": "object", "additionalProperties": False, "required": ["answers"],
-            "properties": {"answers": {"type": "array", "items": answer}}}
+    items = item_schemas(segment_ids)
+    cause = obj({"name": text, "description": text, "component": text, "cite": items["cite"]})
+    problem = obj({"type": {"type": "string", "enum": ["Symptom", "ErrorCode"]}, "name": text, "code": text,
+                   "cite": items["cite"]})
+    answer = obj({"id": {"type": "string", "enum": ids},
+                  "status": {"type": "string", "enum": ["found", "not_stated"]},
+                  "actions": {"type": "array", "items": items["action"]},
+                  "causes": {"type": "array", "items": cause},
+                  "problems": {"type": "array", "items": problem}})
+    return obj({"answers": {"type": "array", "items": answer}})
 
 
 _QUESTION = {
@@ -411,9 +408,9 @@ def link_named_parts(graph: Graph, mentions: list[Mention],
     """
 
     # Every part the manual names counts, also one no fact has touched yet: the link brings it in.
-    parts: dict[tuple[str, ...], Mention] = {}
     in_graph = {key: node.node_id for node in graph.nodes.values() if node.type == "Component"
                 for key in node.mention_keys}
+    parts: dict[tuple[str, ...], Mention] = {}
     for item in sorted(mentions, key=lambda value: (value.key not in in_graph, value.key)):
         if (item.type == "Component" and usable_component(item.name) and tokens(item.name)
                 and not is_the_machine(item.name, machine)):
@@ -421,27 +418,23 @@ def link_named_parts(graph: Graph, mentions: list[Mention],
     facts: list[Fact] = []
     for node in sorted(graph.nodes.values(), key=lambda item: item.node_id):
         relation = NAME_LINK.get(node.type)
-        if relation is None or not node.mention_keys:
+        if relation is None or not node.mention_keys or not node.evidence:
             continue
         linked = {edge.target for edge in graph.out_edges(node.node_id, relation)}
-        words = tokens(node.name)
-        spans: list[tuple[int, int, str]] = []
-        for part, item in parts.items():
-            size = len(part)
-            for start in range(len(words) - size + 1):
-                if tuple(words[start:start + size]) == part:
-                    spans.append((start, start + size, item.key))
-        # Keep maximal spans only.
-        maximal = [span for span in spans if not any(other != span and other[0] <= span[0] and span[1] <= other[1]
-                                                     and (other[1] - other[0]) > (span[1] - span[0]) for other in spans)]
-        for key in sorted({key for _, _, key in maximal}):
-            if in_graph.get(key) in linked or not node.evidence:
-                continue
-            facts.append(Fact(fact_id=f"name/{node.node_id}/{canonical(parts_name(parts, key))}", relation=relation,
-                              source=node.mention_keys[0], target=key, record="name_mention",
-                              evidence=node.evidence[0], origin="name_mention"))
+        for part in _parts_named_in(tokens(node.name), parts):
+            if in_graph.get(part.key) not in linked:
+                facts.append(Fact(fact_id=f"name/{node.node_id}/{canonical(part.name)}", relation=relation,
+                                  source=node.mention_keys[0], target=part.key, record="name_mention",
+                                  evidence=node.evidence[0], origin="name_mention"))
     return facts
 
 
-def parts_name(parts: dict[tuple[str, ...], Mention], key: str) -> str:
-    return next(item.name for item in parts.values() if item.key == key)
+def _parts_named_in(words: list[str], parts: dict[tuple[str, ...], Mention]) -> list[Mention]:
+    """Parts whose name appears, word for word, in a name; a part inside a longer part name is dropped."""
+
+    spans = [(start, start + len(part), item) for part, item in parts.items()
+             for start in range(len(words) - len(part) + 1) if tuple(words[start:start + len(part)]) == part]
+    longest = [span for span in spans
+               if not any(other[0] <= span[0] and span[1] <= other[1] and other[1] - other[0] > span[1] - span[0]
+                          for other in spans)]
+    return sorted({item.key: item for _, _, item in longest}.values(), key=lambda item: item.key)
