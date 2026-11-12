@@ -156,3 +156,41 @@ def test_the_machine_itself_is_not_a_part_and_never_a_hub():
     assert {(by_key[fact.source].name, by_key[fact.target].name) for fact in link_named_parts(graph, mentions, words)} == {
         ("Pump rotor seized", "Pump rotor")}
     assert len(link_named_parts(graph, mentions)) == 3  # without the guard every item hangs on "Pump"
+
+
+def test_versions_are_compared_with_a_tolerance_band_and_three_views_of_recall():
+    from scripts.kg_compare import recall, verdict
+
+    claims = [{"claim_id": "R1.1", "branch_id": "R1"}, {"claim_id": "R1.2", "branch_id": "R1"},
+              {"claim_id": "R2.1", "branch_id": "R2"}, {"claim_id": "R3.1", "branch_id": "R3"}]
+    found = recall(claims, {"R1.1", "R2.1"})
+    # One branch complete, one half found, one missed: strict 1/3, partial credit (0.5 + 1 + 0) / 3.
+    assert found["recall_branches"] == 0.3333 and found["recall_coverage"] == 0.5 and found["recall_claims"] == 0.5
+    assert found["branch_counts"] == [1, 3] and found["claim_counts"] == [2, 4]
+    assert recall([], set())["recall_branches"] is None
+    assert verdict("recall_branches", 0.52, 0.50) == "same"  # inside the band: replicas differ by as much
+    assert verdict("recall_branches", 0.60, 0.50) == "better" and verdict("recall_branches", 0.40, 0.50) == "worse"
+    assert verdict("excluded", 0.10, 0.30) == "better"  # fewer exclusions is better
+    assert verdict("generic_bridges", 0, 13) == "better" and verdict("nodes", 10, 500) == ""
+    assert verdict("recall_claims", None, 0.5) == ""
+
+
+def test_loss_analysis_reads_runs_of_the_connected_graph_pipeline(tmp_path):
+    from backend.kg_v3.run_state import atomic_json
+    from scripts.kg_loss_analysis import load_run
+
+    pdf, doc = read_manual(tmp_path)
+    run = tmp_path / "run"
+    result = asyncio.run(Builder(doc=doc, asset=ASSET, llm=ScriptedModel(), pdf_path=pdf, workdir=run).run())
+    atomic_json(run / "graph.json", result.document)
+    atomic_json(run / "report.json", result.report)
+    loaded = load_run(run)
+    assert loaded["read_pages"] == {1, 2}
+    assert ("RESOLVED_BY", "Fluid dried on rod", "Clean the rod", {"p2.t1.r3"}) in loaded["proposals"]
+    # The direct remedy is shown as the gold writes it: an unnamed cause between problem and action.
+    assert ("RESOLVED_BY", "Unspecified cause of Motor ices", "Contact your distributor", {"p2.t1.r5"}, True) in loaded["kept"]
+    claims = [claim("R1.1", "Motor ices", "", "Contact your distributor", "p2.t1.r5"),
+              claim("R2.1", "Fan is loud", "Bearing worn", "Replace bearing", "p2.t1.r4")]
+    stages = {row["claim_id"]: row["stage"] for row in analyse(claims, loaded, recovered=set())["rows"]}
+    # Both have a trusted candidate on their row; without a judgement neither counts as recovered.
+    assert stages == {"R1.1": "in_graph_not_matched", "R2.1": "in_graph_not_matched"}

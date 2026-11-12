@@ -15,6 +15,7 @@ and on manuals without a gold.
 | `scripts/kg_scorecard.py` | How connected, complete and well described is this graph? |
 | `scripts/kg_loss_analysis.py` | At which stage did a saved run lose each gold claim? |
 | `scripts/kg_rebuild_from_v3.py` | What do the new assembly rules change on a graph V3 already extracted? |
+| `scripts/kg_compare.py` | How do pipeline versions compare on the same manuals? See the [test plan](test-plan.md) |
 
 ```bash
 .venv/bin/python scripts/kg_scorecard.py --discover --out experiments/my_cards

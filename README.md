@@ -58,6 +58,7 @@ The [documentation index](docs/README.md) is the entry point for colleagues.
 | [Graph editor](docs/EDITOR_GRAFO.md) | Corrections, evidence, acceptance and revision API |
 | [Development](docs/development.md) | Local development, offline checks and contribution boundaries |
 | [Evaluation](docs/evaluation.md) | Quality cards, loss analysis, recall, and what is not measured yet |
+| [Test plan](docs/test-plan.md) | Runs, measures and rules for comparing the new pipeline with earlier versions |
 
 The optional [quality profile](docs/kg_quality/README.md) has its own specialist
 guide. It adds evidence and branch contracts, coverage accounting and bounded

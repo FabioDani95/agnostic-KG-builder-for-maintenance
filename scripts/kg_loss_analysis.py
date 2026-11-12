@@ -57,7 +57,11 @@ def _matches(relation: dict, kind: str, source: str, target: str, segments: set[
 
 
 def load_run(run: Path) -> dict:
-    """Proposals, graph occurrences and excluded relations of a saved V3 run, in one shape."""
+    """Proposals, graph occurrences and excluded relations of a saved run of either pipeline, in one shape.
+
+    A remedy the connected-graph pipeline links directly to a problem is compared with the gold
+    through the same projection the scorer uses (an unnamed cause between problem and action).
+    """
 
     graph = json.loads((run / "graph.json").read_text())
     report = json.loads((run / "report.json").read_text())
@@ -66,19 +70,36 @@ def load_run(run: Path) -> dict:
         for item in json.loads(path.read_text()).get("proposals", []):
             cites = {*item.get("cites", []), *item["source"].get("cites", []), *item["target"].get("cites", [])}
             proposals.append((item["relation_type"], item["source"]["name"], item["target"]["name"], cites))
+    # Runs of the connected-graph pipeline keep what each passage yielded as mentions and facts.
+    for path in sorted((run / "state").glob("records_*.json")):
+        records = json.loads(path.read_text())
+        mentions = {item["key"]: item for item in records.get("mentions", [])}
+        for fact in records.get("facts", []):
+            source, target = mentions.get(fact["source"]), mentions.get(fact["target"])
+            if source and target:
+                proposals.append((fact["relation"], source["name"], target["name"],
+                                  set(fact.get("evidence", {}).get("segment_ids", []))))
     names = {node["id"]: node["name"] for node in graph["nodes"]}
     kept = []
-    for edge in graph["edges"]:
-        if edge.get("derived"):
-            continue
-        for occurrence in edge["occurrences"]:
-            segments = {item["segment_id"] for item in occurrence.get("evidence", [])}
-            kept.append((edge["type"], names[edge["from"]], names[edge["to"]], segments,
-                         occurrence.get("tier", edge.get("tier")) == "green"))
+    if graph.get("pipeline") == "kg-v4":
+        from backend.kg_v4.scoring import historical_edges
+
+        kept = [(edge["type"], edge["source_name"], edge["target_name"], edge["segments"], edge["trusted"])
+                for edge in historical_edges(graph)]
+    else:
+        for edge in graph["edges"]:
+            if edge.get("derived"):
+                continue
+            for occurrence in edge["occurrences"]:
+                segments = {item["segment_id"] for item in occurrence.get("evidence", [])}
+                kept.append((edge["type"], names[edge["from"]], names[edge["to"]], segments,
+                             occurrence.get("tier", edge.get("tier")) == "green"))
     excluded = []
     for item in graph.get("excluded_relations", []):
         certificate = item.get("certificate", {})
-        if certificate.get("rejected_by"):
+        if item.get("reason"):  # connected-graph pipeline: the problem of meaning the verifier named
+            gate = "meaning:" + str(item["reason"]).split(":", 1)[0]
+        elif certificate.get("rejected_by"):
             gate = "reviewer_rejection"
         elif "CROSS_BRANCH_CONTAMINATION" in certificate.get("validation_issues", []):
             gate = "cross_branch_rule"

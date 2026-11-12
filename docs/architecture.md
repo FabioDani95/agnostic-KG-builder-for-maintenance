@@ -235,7 +235,7 @@ automatic verification and human confirmation.
 | `backend/ui/`, `frontend/`, `scripts/ui.py` | Local application |
 | `scripts/kg_build.py` | Connected-graph CLI: estimate, preflight, replay, authorised run |
 | `scripts/kg_v3.py` | V3 single-PDF CLI |
-| `scripts/kg_scorecard.py`, `kg_loss_analysis.py`, `kg_rebuild_from_v3.py` | Offline measures; see [Evaluation](evaluation.md) |
+| `scripts/kg_scorecard.py`, `kg_loss_analysis.py`, `kg_rebuild_from_v3.py`, `kg_compare.py` | Offline measures; see [Evaluation](evaluation.md) and the [test plan](test-plan.md) |
 | `tests/`, `frontend/tests/` | Offline software checks |
 | `docs/` | Operational and developer documentation |
 | `campaign/` | Manual registry, gold and historical campaign workflows |

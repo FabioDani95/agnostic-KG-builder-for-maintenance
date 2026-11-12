@@ -10,6 +10,7 @@ These guides describe the executable application. Start with the task you need:
 | Correct a graph and accept a new version | [Graph editor](EDITOR_GRAFO.md) |
 | Develop, test or contribute | [Development](development.md) |
 | Measure a graph: quality card, losses, recall, what is not measured yet | [Evaluation](evaluation.md) |
+| Run the real test and compare pipeline versions | [Test plan](test-plan.md) |
 | Use the optional quality profile and its evaluation tools | [Quality profile](kg_quality/README.md) |
 
 The application also has an English/Italian **Guide** at `/guida`, accessible
