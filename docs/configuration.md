@@ -53,7 +53,29 @@ as plaintext in the local settings file; the API returns only its source and
 last four characters. Keep `.env`, workspace settings and provider archives out
 of shared commits.
 
+## Connected-graph pipeline settings
+
+`scripts/kg_build.py` takes its settings from the command line; they are recorded in
+`report.provenance.config`. Defaults are in `BuildConfig`
+(`backend/kg_v4/pipeline.py`).
+
+| Setting | Default | Effect |
+| --- | --- | --- |
+| `--model`, `--reasoning` | `gpt-6-luna`, `low` | One model for every role |
+| `--no-verify` | verification on | Without it facts stay `unchecked` (medium confidence) and nothing is rejected |
+| `--gap-calls` | 24 | Most calls of the gap search over at most two rounds; gaps beyond the budget are reported as open, never guessed |
+| `--enrich-calls` | 40 | Most calls of node enrichment, ten nodes per call; nodes beyond the budget keep what extraction read |
+| `--pages` | none | Extra PDF pages read whatever the survey decides |
+| `--approval` | `automatic` | `person` leaves the finished graph waiting for approval in the interface |
+| `--authorize-spend`, `--budget`, `--ledger` | required for real calls | See [Spending and archives](#spending-and-archives) |
+
+Unit size (9000 characters), page images for flowcharts, the second read of unused
+table rows and the links from names to parts are on by default and can be changed
+only in code. This pipeline has no reviewer gates.
+
 ## Reviewer gates
+
+The gates below belong to the V3 pipeline.
 
 | Preset | Page map | Doubts | Final approval |
 | --- | --- | --- | --- |

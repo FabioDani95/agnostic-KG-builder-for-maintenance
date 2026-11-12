@@ -495,3 +495,35 @@ def test_enrichment_writes_what_nodes_lack_from_their_own_passages(manual):
     assert nodes["Pump fails to operate"].properties["severity"] == "high"  # what was read is not overwritten
     assert nodes["Drive belt"].description == "Belt that drives the pump; it is inspected every week."
     assert stats["nodes_improved"] >= stats["nodes_lacking"] - 5 and stats["nodes_deferred"] == 0
+
+
+# Diagram pages -------------------------------------------------------------
+
+
+def test_a_drawn_flowchart_page_is_shown_as_image_and_read_with_its_neighbours(tmp_path):
+    from backend.kg_v3.reader import read_document
+    from backend.kg_v4.images import DiagramImages, drawn_pages, pages_to_read_with
+    from scripts.kg_v3 import load_evidence
+
+    document = fitz.open()
+    page = document.new_page(width=595, height=842)
+    page.insert_text((72, 60), "No heat", fontsize=16)
+    page.insert_text((72, 100), "If the oven does not heat, follow the flowchart on the next page.", fontsize=9)
+    page = document.new_page(width=595, height=842)
+    page.insert_text((72, 60), "Keypad failure", fontsize=16)
+    for index in range(60):  # boxes and arrows, almost no text
+        page.draw_line((72 + 5 * index, 200), (72 + 5 * index, 400))
+    page = document.new_page(width=595, height=842)
+    page.insert_text((72, 60), "Specifications", fontsize=16)
+    pdf = tmp_path / "flow.pdf"
+    document.save(pdf)
+    evidence, count, _ = load_evidence(pdf, {"name": "Oven", "description": "Oven", "brand": "x", "model": "x",
+                                             "asset_type": "oven"})
+    doc = read_document(list(evidence), page_count=count)
+    images = DiagramImages(pdf, doc)
+    assert images.drawn == {2} and 2 in images.pages
+    assert drawn_pages(doc, {2: {"drawing_count": 10}}) == set()
+    assert pages_to_read_with({1}, {2}) == {2} and pages_to_read_with({1}, {3}) == set()
+    assert pages_to_read_with({1}, {2, 3}) == {2, 3}  # a flowchart may run over several pages
+    shown, _ = images.for_segments([segment.segment_id for segment in doc.pages[2]])
+    assert len(shown) == 1 and shown[0].startswith("data:image/png;base64,")

@@ -22,7 +22,43 @@ language data. Missing OCR is recorded in reading diagnostics; installing the
 Python requirements alone does not supply those language files. See
 [OCR configuration](configuration.md#pdf-reading-and-ocr).
 
-## Extract a PDF from the command line
+## Build a connected graph from the command line
+
+`scripts/kg_build.py` runs the connected-graph pipeline: no questions, no gates.
+Start with the plan and its cost estimate, which reads the PDF and calls nothing:
+
+```bash
+.venv/bin/python scripts/kg_build.py --pdf /absolute/path/manual.pdf --asset-name "Example machine" --estimate
+```
+
+The estimate is a range, because the pages to read are chosen by the first model
+step. It is not a spending limit. `--preflight --out <dir>` additionally checks the
+sections found in the PDF and writes the input manifest, still without a provider.
+
+A real run needs three things said explicitly: that spending is allowed, the
+cumulative cap, and a ledger file for this experiment. Without them the command
+stops before any call. Ledgers of earlier campaigns are refused.
+
+```bash
+.venv/bin/python scripts/kg_build.py \
+  --pdf /absolute/path/manual.pdf --asset-name "Example machine" \
+  --out workspace/cli/example-kg4 \
+  --authorize-spend --budget 1.00 --ledger workspace/cli/example-kg4-budget.jsonl
+```
+
+The run directory then holds `graph.json`, `report.json` (with the quality card
+under `scorecard`), `input_manifest.json`, the state of every step and the archived
+provider responses. Running the same command again resumes. `--replay <dir>`
+rebuilds a run from archived responses without the network. Use a new directory
+after changing the PDF, the model, the prompts or the ontology.
+
+Options that change cost or content: `--gap-calls` and `--enrich-calls` (most calls
+of the gap search and of node enrichment; `0` turns the stage off), `--no-verify`,
+`--pages` (extra PDF pages to read), `--model` and `--reasoning`. See
+[Architecture](architecture.md#connected-graph-pipeline) for what each stage does
+and [Evaluation](evaluation.md) for how to measure the result.
+
+## Extract a PDF with the V3 pipeline
 
 First check the source and configuration without making model calls:
 

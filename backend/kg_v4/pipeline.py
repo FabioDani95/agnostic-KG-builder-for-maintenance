@@ -31,6 +31,7 @@ from backend.kg_v4.enrich import Enricher
 from backend.kg_v4.export import graph_counts, graph_json
 from backend.kg_v4.extract import Extractor
 from backend.kg_v4.gaps import GapRepair, find_gaps, follow_entry_pointers, link_named_parts, resolve_references
+from backend.kg_v4.images import DiagramImages, pages_to_read_with
 from backend.kg_v4.metrics import scorecard
 from backend.kg_v4.model import DocumentSurvey, Fact, Graph, Mention, Reference, UnitRecords
 from backend.kg_v4.prompts import (
@@ -143,6 +144,7 @@ class Builder:
         self.sections = sections or (build_sections(pdf_path, doc) if pdf_path else SectionIndex(page_count=doc.page_count))
         self.source_title = source_title or (pdf_path.name if pdf_path else str(asset.get("name", "")))
         self.timings: dict[str, float] = {}
+        self.image_pages: set[int] = set()
         self.manifest = input_manifest(doc, self.config, asset, pdf_path)
         self.state = _State(workdir, self.manifest)
 
@@ -228,18 +230,19 @@ class Builder:
         started = time.perf_counter()
         config = self.config
         survey = await self._survey()
+        images = None
+        extra_pages = set(config.extra_pages)
+        if config.page_images and self.pdf_path is not None:
+            images = DiagramImages(self.pdf_path, self.doc)
+            self.image_pages = set(images.pages)
+            extra_pages |= pages_to_read_with(set(survey.diagnostic_pages()) | extra_pages, images.drawn)
         units = reading_units(self.doc, survey, self.sections, max_chars=config.unit_max_chars,
-                              extra_pages=set(config.extra_pages))
+                              extra_pages=extra_pages)
         if len(units) > config.max_units:
             raise ValueError(f"{len(units)} reading units exceed max_units={config.max_units}; "
                              "check the survey or raise the limit explicitly")
         self._save("units", [unit.model_dump(mode="json") for unit in units])
 
-        images = None
-        if config.page_images and self.pdf_path is not None:
-            from backend.kg_v3.vision import PageImages
-
-            images = PageImages(self.pdf_path, self.doc)
         extractor = Extractor(self.llm, self.doc, self.sections, asset_name=self.asset["name"],
                               catalogue=survey.catalogue, images=images, concurrency=config.concurrency,
                               reread_rows=config.reread_rows)
@@ -348,6 +351,7 @@ class Builder:
             "unreadable_pages": self.doc.unreadable_pages,
             "diagnostic_pages": survey.diagnostic_pages(),
             "read_pages": sorted({page for unit in units for page in unit.pages}),
+            "image_pages": sorted(self.image_pages & {page for unit in units for page in unit.pages}),
             "page_kinds": dict(Counter(kind for page in survey.pages for kind in page.kinds)),
             "sections": {"headings": len(self.sections.headings), "printed_page_offset": self.sections.page_offset},
             "catalogue": dict(Counter(entry.type for entry in survey.catalogue)),

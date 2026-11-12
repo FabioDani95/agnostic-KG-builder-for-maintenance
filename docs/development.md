@@ -52,6 +52,14 @@ Do not turn a passing test suite into an extraction-quality claim. Tests exercis
 contracts, software decisions, persistence and known regressions. Accuracy and
 completeness require version-matched source evidence and judged outputs.
 
+The connected-graph pipeline is tested with a scripted model on a three-page
+synthetic manual (`tests/kg_v4_support.py`): each stage on its own
+(`tests/test_kg_v4_stages.py`), the whole run with resume, export and consumers
+(`tests/test_kg_v4_pipeline.py`), names and false friends on pairs taken from real
+graphs (`tests/test_kg_v4_names.py`, `tests/fixtures/kg_v4_entity_pairs.json`) and
+the measurement tools (`tests/test_kg_v4_tools.py`). The scripted model answers from
+the passage it is shown, so a test fails when a stage shows the wrong text.
+
 ## Where to add checks
 
 | Change | Relevant checks |

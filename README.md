@@ -11,10 +11,16 @@ and a React interface in English and Italian. It uses a fixed
 The repository name does not imply unrestricted ontology or provider support.
 
 ```text
-PDF → read → map → extract → check → merge → review → graph and evidence
-                                                   ↓
-                                       human editing → accepted revision
+PDF → read → survey → extract → verify → resolve → gaps → enrich → graph and evidence
+                                                                        ↓
+                                                    human editing → accepted revision
 ```
+
+Two pipelines produce the same graph format. The connected-graph pipeline above
+(`scripts/kg_build.py`) runs without asking anyone and is built to give connected,
+described graphs; it is verified with offline tests and not yet measured on real
+manuals. The earlier V3 pipeline (`scripts/kg_v3.py`) is the one the interface
+starts and the baseline of the saved evaluations.
 
 ## Start here
 
@@ -51,6 +57,7 @@ The [documentation index](docs/README.md) is the entry point for colleagues.
 | [Configuration](docs/configuration.md) | Actual settings, model selection, gates, OCR and spending limits |
 | [Graph editor](docs/EDITOR_GRAFO.md) | Corrections, evidence, acceptance and revision API |
 | [Development](docs/development.md) | Local development, offline checks and contribution boundaries |
+| [Evaluation](docs/evaluation.md) | Quality cards, loss analysis, recall, and what is not measured yet |
 
 The optional [quality profile](docs/kg_quality/README.md) has its own specialist
 guide. It adds evidence and branch contracts, coverage accounting and bounded
