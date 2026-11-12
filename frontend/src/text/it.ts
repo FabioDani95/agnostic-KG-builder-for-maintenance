@@ -27,6 +27,11 @@ export const RELATION_LABEL: Record<string, string> = labels({
   AFFECTS: "riguarda",
   HAS_COMPONENT: "ha il componente",
   GENERATES_ERROR: "può dare il codice",
+  PART_OF: "fa parte di",
+  ACTS_ON: "agisce su",
+  OBSERVED_ON: "si osserva su",
+  ADDRESSED_BY: "si affronta con",
+  CLEARED_BY: "si gestisce con",
 });
 
 export const TIER_LABEL: Record<Tier | "proposed", string> = labels({

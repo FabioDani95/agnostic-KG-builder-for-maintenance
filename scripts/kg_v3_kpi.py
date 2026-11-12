@@ -100,7 +100,14 @@ async def evaluate(manuals: list[str], runs_root: Path, runs_name: str = "runs",
                     (run / "timing.json").read_text()) if (run / "timing.json").exists() else {})
             elif (run / "graph.json").exists() and (run / "report.json").exists():
                 name = run.name if run.name.startswith("v3_") else f"v3_{run.name}"
-                systems[name] = (v3_edges(run), v3_run_facts(run))
+                graph = json.loads((run / "graph.json").read_text())
+                if graph.get("pipeline") == "kg-v4":
+                    # Same scorer and judge; a remedy given without a cause is shown as the scorer expects it.
+                    from backend.kg_v4.scoring import historical_edges, run_facts
+
+                    systems[name] = (historical_edges(graph), run_facts(graph))
+                else:
+                    systems[name] = (v3_edges(run), v3_run_facts(run))
         rows = {}
         for name, (edges, facts) in systems.items():
             score = await score_system(llm, claims, edges)

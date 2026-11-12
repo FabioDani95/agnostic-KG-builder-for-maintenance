@@ -21,7 +21,9 @@ type TierFilter = "all" | "green" | "yellow";
 type Selection = { kind: "node" | "edge"; id: string } | null;
 
 // Diagnostic direction: symptom or code, then causes, then actions and components.
-const PATH_RELATIONS = new Set(["MAY_INDICATE", "INDICATES", "RESOLVED_BY", "AFFECTS"]);
+const PATH_RELATIONS = new Set([
+  "MAY_INDICATE", "INDICATES", "RESOLVED_BY", "AFFECTS", "ADDRESSED_BY", "CLEARED_BY", "ACTS_ON", "OBSERVED_ON",
+]);
 
 export function diagnosticPath(root: string, edges: GraphEdge[]): Set<string> {
   const seen = new Set([root]);

@@ -152,7 +152,9 @@ def validate(graph: dict, base: dict, ontology: dict) -> list[dict]:
         if node["type"] != ontology["root"] and not incident:
             issue("ISOLATED_NODE", "node", node["id"], introduced=old is None or node["id"] in old_incident)
         outgoing = outgoing_by_node[node["id"]]
-        if node["type"] == "FailureMode" and not any(e["type"] == "RESOLVED_BY" for e in outgoing):
+        # A cause for which the manual gives no remedy says so in remedy_status: that is not a gap.
+        declared = node.get("properties", {}).get("remedy_status") in ("not_stated", "not_in_entry")
+        if node["type"] == "FailureMode" and not declared and not any(e["type"] == "RESOLVED_BY" for e in outgoing):
             issue(
                 "CAUSE_WITHOUT_ACTION",
                 "node",
@@ -161,7 +163,11 @@ def validate(graph: dict, base: dict, ontology: dict) -> list[dict]:
             )
         if node["type"] in ("Symptom", "ErrorCode"):
             causes = [e for e in outgoing if e["type"] in ("MAY_INDICATE", "INDICATES")]
-            if not causes:
+            # A remedy the manual gives without naming a cause is a complete path of its own.
+            direct = any(e["type"] in ("ADDRESSED_BY", "CLEARED_BY") for e in outgoing)
+            if direct or node.get("properties", {}).get("diagnosis_status") == "not_stated":
+                pass
+            elif not causes:
                 issue(
                     "PROBLEM_WITHOUT_CAUSE",
                     "node",

@@ -34,6 +34,8 @@ STEP_STATION = {
     "omissions": "check", "visual": "check",
     "merge": "merge",
     "gate_doubts": "ask", "gate_recovery": "ask", "gate_approval": "ask",
+    # Steps of the connected-graph pipeline (backend/kg_v4), shown on the same six stations.
+    "survey": "map", "verify": "check", "gaps": "check", "resolve": "merge", "enrich": "merge",
 }
 # The station each saved state belongs to, and a step that stands for it.
 STATE_STATION = (
@@ -41,6 +43,8 @@ STATE_STATION = (
     ("checked_", "check"), ("rechecked_", "check"), ("navigation_", "check"), ("recovery_", "check"),
     ("omissions_", "check"), ("visual_", "check"), ("merge_plan_", "merge"),
     ("gate_doubts", "ask"), ("gate_recovery", "ask"), ("gate_approval", "ask"),
+    ("survey", "map"), ("records_", "extract"), ("verified_", "check"), ("gaps_", "check"),
+    ("resolution_", "merge"), ("enrichment", "merge"),
 )
 STATION_STEP = {"map": "map", "extract": "extract", "check": "check", "merge": "merge", "ask": "gate_doubts"}
 _TIER_RANK = {Tier.GREEN.value: 0, Tier.YELLOW.value: 1, Tier.RED.value: 2}
@@ -89,6 +93,9 @@ class EventTranslator:
         self.units_done: set[str] = set()
         self.nodes: dict[str, dict[str, Any]] = {}
         self.edges: dict[str, dict[str, Any]] = {}
+        # Connected-graph pipeline: the provisional node of each mention, and the edge of each fact.
+        self.mentions: dict[str, str] = {}
+        self.facts: dict[str, str] = {}
 
     # Output ----------------------------------------------------------------
 
@@ -185,6 +192,17 @@ class EventTranslator:
             pages = [{"page": entry["page"], "label": entry["label"], "unsure": entry.get("unsure", False)}
                      for entry in value.get("entries", [])]
             return [self._event(t, "pages_mapped", pages=pages)]
+        if name == "survey":
+            pages = [{"page": entry["page"], "label": "diagnostic" if entry.get("diagnostic") else "other",
+                      "unsure": False} for entry in value.get("pages", [])]
+            return [self._event(t, "pages_mapped", pages=pages)]
+        if name.startswith("records_"):
+            return self._records(value, t)
+        if name.startswith("verified_"):
+            return self._verified(value, t)
+        if name.startswith("gaps_"):
+            found = self._records({"unit_id": name, **value}, t, count=False)
+            return [*found, *self._verified(value.get("facts", []), t)]
         if name == "units":
             self.units_total = len(value)
             units = [{"unit_id": unit["unit_id"], "pages": unit["pages"], "section": unit.get("section", "")}
@@ -234,6 +252,62 @@ class EventTranslator:
                 edges.append(edge)
         return [self._event(t, "unit_extracted", unit_id=unit_id, index=len(self.units_done),
                             total=self.units_total, nodes=nodes, edges=edges)]
+
+    def _records(self, value: dict[str, Any], t: float, *, count: bool = True) -> list[UiEvent]:
+        """What one passage yielded in the connected-graph pipeline: mentions become provisional nodes."""
+
+        unit_id = value["unit_id"]
+        if unit_id in self.units_done:
+            return []
+        self.units_done.add(unit_id)
+        nodes, edges = [], []
+        for mention in value.get("mentions", []):
+            key, new = self._node({"type": mention["type"], "name": mention["name"], "code": mention.get("code", ""),
+                                   "cites": mention.get("evidence", {}).get("segment_ids", [])})
+            self.mentions[mention["key"]] = key
+            if new:
+                new["pages"] = new["pages"] or [mention.get("evidence", {}).get("page")]
+                nodes.append(new)
+        for fact in value.get("facts", []):
+            source, target = self.mentions.get(fact["source"]), self.mentions.get(fact["target"])
+            if source is None or target is None:
+                continue
+            key = edge_id(fact["relation"], source, target)
+            self.facts[fact["fact_id"]] = key
+            if key not in self.edges:
+                evidence = fact.get("evidence", {})
+                edge = {"id": key, "type": fact["relation"], "from": source, "to": target,
+                        "pages": pages_of(evidence.get("segment_ids", [])) or [evidence.get("page")], "tier": None}
+                self.edges[key] = edge
+                edges.append(edge)
+        if not count:
+            self.units_done.discard(unit_id)
+            return [self._event(t, "relations_checked", nodes=nodes, edges=edges, removed=[])] if nodes or edges else []
+        return [self._event(t, "unit_extracted", unit_id=unit_id, index=len(self.units_done),
+                            total=self.units_total, nodes=nodes, edges=edges)]
+
+    def _verified(self, facts: list[dict[str, Any]], t: float) -> list[UiEvent]:
+        """Verdicts of the meaning check: supported facts turn green, contradicted ones leave the picture."""
+
+        tiers: dict[str, list[str]] = {}
+        rejected: set[str] = set()
+        for fact in facts:
+            key = self.facts.get(fact["fact_id"])
+            if key is None or key not in self.edges:
+                continue
+            if fact.get("verdict") == "contradicted":
+                rejected.add(key)
+            else:
+                tiers.setdefault(key, []).append(
+                    Tier.GREEN.value if fact.get("verdict") == "supported" else Tier.YELLOW.value)
+        removed = sorted(rejected - set(tiers))
+        for key in removed:
+            del self.edges[key]
+        edges = []
+        for key, found in tiers.items():
+            self.edges[key] = {**self.edges[key], "tier": _best(found)}
+            edges.append(self.edges[key])
+        return [self._event(t, "relations_checked", nodes=[], edges=edges, removed=removed)] if edges or removed else []
 
     def _checked(self, relations: list[dict[str, Any]], t: float, *, replace: bool) -> list[UiEvent]:
         tiers: dict[str, list[str]] = {}

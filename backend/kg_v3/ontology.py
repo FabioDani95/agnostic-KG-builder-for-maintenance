@@ -51,17 +51,29 @@ class OntologySpec:
         return next((item for item in self.extractable_relations if (item.domain, item.range) == (domain, range_)), None)
 
 
-@lru_cache(maxsize=4)
-def load_ontology(path: str = str(ONTOLOGY_PATH)) -> OntologySpec:
+@lru_cache(maxsize=8)
+def load_ontology(path: str = str(ONTOLOGY_PATH), full: bool = False) -> OntologySpec:
+    """The ontology as the pipeline uses it.
+
+    Relations and properties marked ``added_in`` belong to the connected-graph pipeline
+    (backend/kg_v4); the V3 stations keep reading the subset they were built and measured with
+    unless ``full`` is set.
+    """
+
     data = json.loads(Path(path).read_text(encoding="utf-8"))
+
+    def included(item: dict) -> bool:
+        return full or not item.get("added_in")
+
     nodes = {item["name"]: item.get("description", "") for item in data["nodes"]}
     properties = {
-        item["name"]: tuple((prop["name"], bool(prop.get("required"))) for prop in item.get("properties", []))
+        item["name"]: tuple((prop["name"], bool(prop.get("required")))
+                            for prop in item.get("properties", []) if included(prop))
         for item in data["nodes"]
     }
     relations = tuple(
         RelationSpec(item["name"], item["domain"], item["range"], item.get("description", ""))
-        for item in data["relations"]
+        for item in data["relations"] if included(item)
     )
     targets = {relation.range for relation in relations}
 

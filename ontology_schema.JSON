@@ -1,15 +1,17 @@
 {
     "ontology_name": "Core_Ontology",
-    "version": "2.0",
+    "version": "3.0",
     "language": "en",
-    "description": "Minimal ontology for an MVP troubleshooting knowledge graph for a technical asset, optimized for chatbot-based problem diagnosis and resolution across manuals for robots, cobots, machines, controllers, printers, and similar systems.",
+    "description": "Ontology for a troubleshooting knowledge graph of a technical asset, built from its manuals for diagnosis by a maintenance agent: from what is observed to the possible causes, the checks that tell them apart and the actions on the components involved.",
   
     "design_principles": [
       "Center the ontology on troubleshooting rather than full product modeling.",
       "Separate observed symptoms from underlying failure modes.",
       "Represent corrective actions as operational remediation steps.",
       "Keep the schema minimal, connected, and non-redundant.",
-      "Store provenance as node attributes when sufficient for the application."
+      "Store provenance as node attributes when sufficient for the application.",
+      "Connect knowledge through shared components: faults, symptoms and actions point to the part they concern, and parts to the assembly they belong to.",
+      "State absence instead of inventing a bridge: a remedy given without a named cause is linked directly to the symptom or code, and a cause without a remedy says so."
     ],
   
     "nodes": [
@@ -32,7 +34,9 @@
           { "name": "component_id", "type": "string", "required": true, "unique": true },
           { "name": "name", "type": "string", "required": true },
           { "name": "description", "type": "string", "required": true },
-          { "name": "category", "type": "string", "required": true }
+          { "name": "category", "type": "string", "required": true },
+          { "name": "part_number", "type": "string", "required": false, "added_in": "3.0", "description": "Part number printed in the manual." },
+          { "name": "source_reference", "type": "string", "required": false, "added_in": "3.0", "description": "Page and section of the manual where the item is written." }
         ]
       },
       {
@@ -42,7 +46,9 @@
           { "name": "symptom_id", "type": "string", "required": true, "unique": true },
           { "name": "name", "type": "string", "required": true },
           { "name": "description", "type": "string", "required": true },
-          { "name": "severity", "type": "string", "required": true }
+          { "name": "severity", "type": "string", "required": true },
+          { "name": "diagnosis_status", "type": "string", "required": false, "added_in": "3.0", "description": "'not_stated' when the manual names neither a cause nor a remedy for the symptom." },
+          { "name": "source_reference", "type": "string", "required": false, "added_in": "3.0", "description": "Page and section of the manual where the item is written." }
         ]
       },
       {
@@ -53,7 +59,10 @@
           { "name": "name", "type": "string", "required": true },
           { "name": "description", "type": "string", "required": true },
           { "name": "material_context", "type": "string", "required": true },
-          { "name": "related_measurements", "type": "array", "items": "string", "required": false }
+          { "name": "related_measurements", "type": "array", "items": "string", "required": false },
+          { "name": "remedy_status", "type": "string", "required": false, "added_in": "3.0", "description": "'stated' when the manual gives a check or remedy; 'not_stated' when a search of the manual finds none; 'not_in_entry' when the entry that names the cause gives none and the rest of the manual was not searched." },
+          { "name": "entry_status", "type": "string", "required": false, "added_in": "3.0", "description": "'none_in_manual' when the manual gives no symptom or code that leads to the cause." },
+          { "name": "source_reference", "type": "string", "required": false, "added_in": "3.0", "description": "Page and section of the manual where the item is written." }
         ]
       },
       {
@@ -67,7 +76,8 @@
           { "name": "action_kind", "type": "string", "required": false },
           { "name": "source_type", "type": "string", "required": true },
           { "name": "source_title", "type": "string", "required": true },
-          { "name": "source_reference", "type": "string", "required": true }
+          { "name": "source_reference", "type": "string", "required": true },
+          { "name": "expected_result", "type": "string", "required": false, "added_in": "3.0", "description": "Normal value or result of a check, as the manual gives it." }
         ]
       },
       {
@@ -77,7 +87,9 @@
           { "name": "error_code_id", "type": "string", "required": true, "unique": true },
           { "name": "name", "type": "string", "required": true },
           { "name": "description", "type": "string", "required": true },
-          { "name": "code", "type": "string", "required": true }
+          { "name": "code", "type": "string", "required": true },
+          { "name": "diagnosis_status", "type": "string", "required": false, "added_in": "3.0", "description": "'not_stated' when the manual gives the code without a cause or a remedy." },
+          { "name": "source_reference", "type": "string", "required": false, "added_in": "3.0", "description": "Page and section of the manual where the item is written." }
         ]
       }
     ],
@@ -118,6 +130,46 @@
         "domain": "ErrorCode",
         "range": "FailureMode",
         "description": "The error code indicates the specified failure mode."
+      },
+      {
+        "name": "PART_OF",
+        "domain": "Component",
+        "range": "Component",
+        "description": "The component belongs to the specified assembly or subsystem.",
+        "added_in": "3.0",
+        "rationale": "Gives the component hierarchy read from parts lists and assembly sections, so that a fault on a part is found from its assembly."
+      },
+      {
+        "name": "ACTS_ON",
+        "domain": "CorrectiveAction",
+        "range": "Component",
+        "description": "The action or check is performed on the specified component.",
+        "added_in": "3.0",
+        "rationale": "Joins remedies and checks to the part they work on; a component test with expected values needs no invented symptom."
+      },
+      {
+        "name": "OBSERVED_ON",
+        "domain": "Symptom",
+        "range": "Component",
+        "description": "The symptom is observed on the specified component.",
+        "added_in": "3.0",
+        "rationale": "Lets a diagnosis start from the part where the problem shows."
+      },
+      {
+        "name": "ADDRESSED_BY",
+        "domain": "Symptom",
+        "range": "CorrectiveAction",
+        "description": "The manual prescribes the action or check directly for the symptom, without naming a cause.",
+        "added_in": "3.0",
+        "rationale": "Replaces placeholder causes ('Unspecified cause of ...') that existed only as bridges."
+      },
+      {
+        "name": "CLEARED_BY",
+        "domain": "ErrorCode",
+        "range": "CorrectiveAction",
+        "description": "The manual prescribes the action or check directly for the error code, without naming a cause.",
+        "added_in": "3.0",
+        "rationale": "Same reason as ADDRESSED_BY, for codes."
       }
     ]
   }
