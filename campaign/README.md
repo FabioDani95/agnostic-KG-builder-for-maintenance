@@ -38,6 +38,33 @@ campaign/
 `campaign.py status` mostra a che punto è ogni manuale e quanto si è speso. Il gold va
 scritto prima del passo 6: chi annota non deve vedere i grafi di quel manuale.
 
+## Gold v2 (fatto da un'AI)
+
+Il gold v2 è un secondo gold, più ampio: l'elenco di tutta la conoscenza diagnostica di ogni manuale,
+pagina per pagina. **Lo ha scritto un'AI** (Claude Fable 5.2: annotatori, verificatore indipendente e
+secondo annotatore sul 25% delle pagine sono tutti AI), non una persona. Finché Fabio non compila
+`REVISIONE_FABIO.md`, nel file resta `human_review: false`. Il gold v1 in `gold/` resta congelato.
+
+```text
+  <manuale>/gold_v2/
+    gold.json              rami, procedure, inventario delle entità, domande per l'agente
+    PAGINE.md              ogni pagina del PDF: che cosa contiene e se è diagnostica
+    NOTE.md                decisioni, dubbi, errori del manuale, verifica e accordo tra annotatori
+    CONFRONTO_V1.md        confronto con il gold v1, fatto solo a gold v2 chiuso
+    REVISIONE_FABIO.md     campione da far giudicare a una persona
+    claims_v1_format.json  il gold v2 nel formato del v1, per lo scorer storico
+```
+
+Ogni elemento ha una categoria e uno scope: `core` (guasti, codici, diagrammi di flusso), `extended`
+(test, manutenzione con condizione di guasto, procedure) e `context` (sicurezza, routine). La valutazione
+sceglie il perimetro. Comandi, senza chiamate a modelli:
+
+```sh
+.venv/bin/python scripts/kg_gold_v2.py validate <manuale>       # schema, segmenti, citazioni, pagine, rimandi
+.venv/bin/python scripts/kg_gold_v2.py stats                    # numeri per categoria e scope
+.venv/bin/python scripts/kg_gold_v2.py export-claims <manuale>  # scrive claims_v1_format.json
+```
+
 ## Cosa sta altrove
 
 - Codice della pipeline: [backend/kg_v3](../backend/kg_v3/); architettura corrente: [docs/architecture.md](../docs/architecture.md).
