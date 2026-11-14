@@ -45,6 +45,8 @@ pagina per pagina. **Lo ha scritto un'AI**, non una persona: annotatori, verific
 secondo annotatore sul 25% delle pagine e aggiudicatore sono Claude Opus 5.5, coordinati da Claude
 Fable 5.2 che controlla a campione sul PDF. Finché Fabio non compila
 `REVISIONE_FABIO.md`, nel file resta `human_review: false`. Il gold v1 in `gold/` resta congelato.
+Esiste per tre manuali: `grizzly_g0872`, `graco_gtx_2000ex` e `lg_lmh2235st`; gli altri cinque non lo
+hanno, per contenere il costo. Stato e numeri: [docs/evaluation.md](../docs/evaluation.md).
 
 ```text
   <manuale>/gold_v2/
