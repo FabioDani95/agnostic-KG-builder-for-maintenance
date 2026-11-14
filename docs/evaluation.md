@@ -96,7 +96,7 @@ No command calls a model.
 | Manual | State | Pages (diagnostic) | Core | Extended | Context | Questions | Verified scopes | Against gold v1 |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | --- | --- |
 | `graco_gtx_2000ex` | Closed 2026-11-14 | 18 (5) | 19 | 6 | 9 | 22 | core, extended, context | 19 v1 branches: 16 confirmed, 3 corrected from the PDF, 0 missing in v2 |
-| `grizzly_g0872` | In progress | 80 | | | | | | |
+| `grizzly_g0872` | Closed 2026-11-14 | 80 (37) | 56 | 43 | 174 | 28 | core, extended | 66 v1 branches: 56 confirmed, 10 corrected from the PDF, 0 missing in v2 |
 | `lg_lmh2235st` | In progress | 49 | | | | | | |
 
 The other five campaign manuals have no gold v2: the work was limited to these three
