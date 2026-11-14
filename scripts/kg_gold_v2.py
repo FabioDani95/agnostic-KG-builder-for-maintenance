@@ -177,12 +177,20 @@ class Question(Strict):
     answer_items: list[str] = Field(min_length=1)
 
 
+class Verification(Strict):
+    """Which scopes an independent verifier checked against the PDF; the others are annotated once."""
+
+    independent_scopes: list[Literal["core", "extended", "context"]]
+    note: str = ""
+
+
 class Gold(Strict):
     schema_: Literal["kg-gold-2"] = Field(alias="schema")
     manual_id: str
     annotator: Annotator
     created: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
     reader: Reader
+    verification: Verification | None = None
     pages: list[Page]
     branches: list[Branch]
     procedures: list[Procedure]
@@ -365,6 +373,7 @@ def statistics(gold: dict) -> dict:
         "questions": len(gold["questions"]),
         "ambiguous": sum(item["certainty"] == "ambiguous" for item in items),
         "added_after_v1_comparison": sum(item.get("added_after_v1_comparison", False) for item in items),
+        "independently_verified_scopes": (gold.get("verification") or {}).get("independent_scopes", []),
     }
 
 

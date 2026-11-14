@@ -203,6 +203,15 @@ def test_statistics_count_items_by_category_and_scope():
     assert (numbers["diagnostic_pages"], numbers["components"], numbers["questions"]) == (2, 3, 15)
 
 
+def test_the_gold_says_which_scopes_were_independently_verified():
+    gold = example()
+    assert statistics(gold)["independently_verified_scopes"] == []
+    gold["verification"] = {"independent_scopes": ["core", "extended"], "note": "context annotated once"}
+    assert problems(gold) == [] and statistics(gold)["independently_verified_scopes"] == ["core", "extended"]
+    gold["verification"]["independent_scopes"] = ["everything"]
+    assert problems(gold)[0].startswith("schema: verification.independent_scopes")
+
+
 def test_claims_have_the_gold_v1_format_without_procedures():
     data = export_claims(example())
     claims = data["claims"]

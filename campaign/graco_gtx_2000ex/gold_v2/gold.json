@@ -1,0 +1,3706 @@
+{
+ "schema": "kg-gold-2",
+ "manual_id": "graco_gtx_2000ex",
+ "annotator": {
+  "kind": "ai",
+  "model": "claude-opus-5-5 (annotazione, verifica, aggiudicazione); claude-fable-5-2 (coordinamento e controlli a campione)",
+  "human_review": false
+ },
+ "created": "2026-11-13",
+ "reader": {
+  "segments_sha256": "fca56fb76a0dfc28bd09af5993640974d9044785233894729e63d7d2640ca770",
+  "note": "ID dei segmenti di TESTO.md, verificati sul lettore attuale"
+ },
+ "pages": [
+  {
+   "page": 1,
+   "content": [
+    "cover"
+   ],
+   "diagnostic": false,
+   "note": "Copertina: modello 257030, pressioni max, manuali correlati (Operation 313384, Gun 310616, Pump 309915)."
+  },
+  {
+   "page": 2,
+   "content": [
+    "safety"
+   ],
+   "diagnostic": true,
+   "note": "Avvertenze generali (fuoco/esplosione, uso improprio, pressione); contiene due controlli giornalieri con condizione di guasto (B003, B005)."
+  },
+  {
+   "page": 3,
+   "content": [
+    "safety"
+   ],
+   "diagnostic": false,
+   "note": "Avvertenze solventi e DPI, NOTICE gelo con passi di drenaggio: solo contesto di sicurezza."
+  },
+  {
+   "page": 4,
+   "content": [
+    "controls",
+    "exploded view"
+   ],
+   "diagnostic": false,
+   "note": "Disegno identificazione componenti A-L; solo inventario."
+  },
+  {
+   "page": 5,
+   "content": [
+    "controls"
+   ],
+   "diagnostic": false,
+   "note": "Lista identificazione componenti A-L; solo inventario."
+  },
+  {
+   "page": 6,
+   "content": [
+    "safety",
+    "repair procedure"
+   ],
+   "diagnostic": true,
+   "note": "Pressure Relief (routine), rimozione e installazione tramoggia (procedure di servizio)."
+  },
+  {
+   "page": 7,
+   "content": [
+    "repair procedure"
+   ],
+   "diagnostic": true,
+   "note": "Rimozione e installazione pompa: due procedure."
+  },
+  {
+   "page": 8,
+   "content": [
+    "troubleshooting table"
+   ],
+   "diagnostic": true,
+   "note": "Tabella Problem/Cause/Solution: 4 problemi, 13 cause = 13 rami (Stalled pump: un ramo con 2 celle soluzione)."
+  },
+  {
+   "page": 9,
+   "content": [
+    "troubleshooting table"
+   ],
+   "diagnostic": true,
+   "note": "Tabella Problem/Cause/Solution: 2 problemi, 6 cause = 6 rami (Fluid delivery too low/too high: un ramo ciascuno con 3 celle soluzione alternative)."
+  },
+  {
+   "page": 10,
+   "content": [
+    "exploded view"
+   ],
+   "diagnostic": false,
+   "note": "Disegno parti carrello/tramoggia; solo inventario."
+  },
+  {
+   "page": 11,
+   "content": [
+    "exploded view"
+   ],
+   "diagnostic": false,
+   "note": "Disegno parti circuito aria (regolatori, manometri, filtro); nessun testo oltre al titolo; solo inventario."
+  },
+  {
+   "page": 12,
+   "content": [
+    "exploded view"
+   ],
+   "diagnostic": false,
+   "note": "Disegno parti montaggio pompa e scarico; solo inventario."
+  },
+  {
+   "page": 13,
+   "content": [
+    "parts list"
+   ],
+   "diagnostic": false,
+   "note": "Distinta parti sprayer e accessori; trascritta nell'inventario."
+  },
+  {
+   "page": 14,
+   "content": [
+    "exploded view"
+   ],
+   "diagnostic": false,
+   "note": "Esploso pompa a membrana; solo inventario."
+  },
+  {
+   "page": 15,
+   "content": [
+    "parts list"
+   ],
+   "diagnostic": false,
+   "note": "Distinta parti pompa e kit di riparazione; trascritta nell'inventario."
+  },
+  {
+   "page": 16,
+   "content": [
+    "specifications"
+   ],
+   "diagnostic": false,
+   "note": "Dati tecnici; nessuna istruzione diagnostica."
+  },
+  {
+   "page": 17,
+   "content": [
+    "blank"
+   ],
+   "diagnostic": false,
+   "note": "Pagina Notes vuota."
+  },
+  {
+   "page": 18,
+   "content": [
+    "warranty"
+   ],
+   "diagnostic": false,
+   "note": "Garanzia e contatti Graco; testo legale."
+  }
+ ],
+ "branches": [
+  {
+   "id": "B001",
+   "category": "safety_precaution",
+   "scope": "context",
+   "problem": {
+    "type": "hazard",
+    "text": "Fire and explosion hazard: flammable fumes, such as solvent and paint fumes, in work area can ignite or explode",
+    "code": "",
+    "segments": []
+   },
+   "cause": null,
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Use equipment only in well ventilated area.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Eliminate all ignition sources; such as pilot lights, cigarettes, portable electric lamps, and plastic drop cloths (potential static arc).",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 3,
+     "kind": "repair",
+     "text": "Keep work area free of debris, including solvent, rags and gasoline.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 4,
+     "kind": "prohibition",
+     "text": "Do not plug or unplug power cords, or turn power or light switches on or off when flammable fumes are present.",
+     "expected": "",
+     "condition": "when flammable fumes are present",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 5,
+     "kind": "repair",
+     "text": "Ground all equipment in the work area. See Grounding instructions.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 6,
+     "kind": "repair",
+     "text": "Use only grounded hoses.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 7,
+     "kind": "repair",
+     "text": "Hold gun firmly to side of grounded pail when triggering into pail.",
+     "expected": "",
+     "condition": "",
+     "component": "spray gun",
+     "segments": []
+    },
+    {
+     "order": 8,
+     "kind": "repair",
+     "text": "If there is static sparking or you feel a shock, stop operation immediately.",
+     "expected": "",
+     "condition": "If there is static sparking or you feel a shock",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 9,
+     "kind": "prohibition",
+     "text": "Do not use equipment until you identify and correct the problem.",
+     "expected": "",
+     "condition": "after static sparking or shock",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 10,
+     "kind": "repair",
+     "text": "Keep a working fire extinguisher in the work area.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    }
+   ],
+   "components": [
+    "spray gun"
+   ],
+   "conditions": [],
+   "references": [
+    {
+     "text": "See Grounding instructions.",
+     "target_pages": [],
+     "target_items": [],
+     "external": "Grounding instructions (not in this manual; probably Operation manual 313384)"
+    }
+   ],
+   "evidence": {
+    "pages": [
+     2
+    ],
+    "section": "Warnings",
+    "segments": [
+     "p2.t1.r3"
+    ],
+    "quote": "Flammable fumes, such as solvent and paint fumes, in work area can ignite or explode."
+   },
+   "certainty": "certain",
+   "note": "Il riferimento 'Grounding instructions' non esiste in questo manuale (18 pagine verificate): probabilmente nel manuale operativo 313384; target non verificabile."
+  },
+  {
+   "id": "B002",
+   "category": "safety_precaution",
+   "scope": "context",
+   "problem": {
+    "type": "hazard",
+    "text": "Equipment misuse hazard: misuse can cause death or serious injury",
+    "code": "",
+    "segments": []
+   },
+   "cause": null,
+   "actions": [
+    {
+     "order": 1,
+     "kind": "prohibition",
+     "text": "Do not operate the unit when fatigued or under the influence of drugs or alcohol.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 2,
+     "kind": "prohibition",
+     "text": "Do not exceed the maximum working pressure or temperature rating of the lowest rated system component. See Technical Data in all equipment manuals.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 3,
+     "kind": "repair",
+     "text": "Use fluids and solvents that are compatible with equipment wetted parts. See Technical Data in all equipment manuals. Read fluid and solvent manufacturer's warnings.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 4,
+     "kind": "repair",
+     "text": "For complete information about your material, request MSDS forms from distributor or retailer.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 5,
+     "kind": "prohibition",
+     "text": "Do not alter or modify equipment.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 6,
+     "kind": "repair",
+     "text": "Use equipment only for its intended purpose. Call your distributor for information.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 7,
+     "kind": "repair",
+     "text": "Route hoses and cables away from traffic areas, sharp edges, moving parts, and hot surfaces.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 8,
+     "kind": "prohibition",
+     "text": "Do not kink or over bend hoses or use hoses to pull equipment.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 9,
+     "kind": "repair",
+     "text": "Keep children and animals away from work area.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 10,
+     "kind": "repair",
+     "text": "Comply with all applicable safety regulations.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    }
+   ],
+   "components": [],
+   "conditions": [],
+   "references": [
+    {
+     "text": "See Technical Data in all equipment manuals.",
+     "target_pages": [
+      16
+     ],
+     "target_items": [],
+     "external": "Technical Data in all equipment manuals"
+    }
+   ],
+   "evidence": {
+    "pages": [
+     2
+    ],
+    "section": "Warnings",
+    "segments": [
+     "p2.t1.r4"
+    ],
+    "quote": "Misuse can cause death or serious injury. Do not alter or modify equipment."
+   },
+   "certainty": "certain",
+   "note": "Il controllo giornaliero 'Check equipment daily. Repair or replace worn or damaged parts' è separato in b2-3 (condition_maintenance)."
+  },
+  {
+   "id": "B003",
+   "category": "condition_maintenance",
+   "scope": "extended",
+   "problem": {
+    "type": "inspection",
+    "text": "Check equipment daily",
+    "code": "",
+    "segments": []
+   },
+   "cause": null,
+   "actions": [
+    {
+     "order": 1,
+     "kind": "inspection",
+     "text": "Check equipment daily.",
+     "expected": "",
+     "condition": "",
+     "component": "sprayer",
+     "segments": []
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Repair or replace worn or damaged parts immediately with genuine manufacturer's replacement parts only.",
+     "expected": "",
+     "condition": "worn or damaged parts",
+     "component": "sprayer",
+     "segments": []
+    }
+   ],
+   "components": [
+    "sprayer"
+   ],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     2
+    ],
+    "section": "Warnings",
+    "segments": [
+     "p2.t1.r4"
+    ],
+    "quote": "Check equipment daily. Repair or replace worn or damaged parts immediately"
+   },
+   "certainty": "certain",
+   "note": "Estratto dal box EQUIPMENT MISUSE HAZARD: controllo con condizione di guasto (worn or damaged), quindi condition_maintenance."
+  },
+  {
+   "id": "B004",
+   "category": "safety_precaution",
+   "scope": "context",
+   "problem": {
+    "type": "hazard",
+    "text": "Pressurized equipment hazard: fluid from the gun/dispense valve, leaks, or ruptured components can splash in the eyes or on skin and cause serious injury",
+    "code": "",
+    "segments": []
+   },
+   "cause": null,
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Follow Pressure Relief Procedure in this manual, when you stop spraying and before cleaning, checking, or servicing equipment.",
+     "expected": "",
+     "condition": "when you stop spraying and before cleaning, checking, or servicing equipment",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Tighten all fluid connections before operating the equipment.",
+     "expected": "",
+     "condition": "before operating the equipment",
+     "component": "",
+     "segments": []
+    }
+   ],
+   "components": [],
+   "conditions": [],
+   "references": [
+    {
+     "text": "Follow Pressure Relief Procedure in this manual",
+     "target_pages": [
+      6
+     ],
+     "target_items": [
+      "P001"
+     ],
+     "external": ""
+    }
+   ],
+   "evidence": {
+    "pages": [
+     2
+    ],
+    "section": "Warnings",
+    "segments": [
+     "p2.t1.r5"
+    ],
+    "quote": "Follow Pressure Relief Procedure in this manual, when you stop spraying"
+   },
+   "certainty": "certain",
+   "note": "Il controllo giornaliero di tubi e raccordi è separato in b2-5 (condition_maintenance)."
+  },
+  {
+   "id": "B005",
+   "category": "condition_maintenance",
+   "scope": "extended",
+   "problem": {
+    "type": "inspection",
+    "text": "Check hoses, tubes, and couplings daily",
+    "code": "",
+    "segments": []
+   },
+   "cause": null,
+   "actions": [
+    {
+     "order": 1,
+     "kind": "inspection",
+     "text": "Check hoses, tubes, and couplings daily.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Replace worn or damaged parts immediately.",
+     "expected": "",
+     "condition": "worn or damaged parts",
+     "component": "",
+     "segments": []
+    }
+   ],
+   "components": [],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     2
+    ],
+    "section": "Warnings",
+    "segments": [
+     "p2.t1.r5"
+    ],
+    "quote": "Check hoses, tubes, and couplings daily. Replace worn or damaged parts immediately."
+   },
+   "certainty": "certain",
+   "note": "Estratto dal box PRESSURIZED EQUIPMENT HAZARD; nessun componente specifico di inventario (tubi generici)."
+  },
+  {
+   "id": "B006",
+   "category": "safety_precaution",
+   "scope": "context",
+   "problem": {
+    "type": "hazard",
+    "text": "Plastic parts cleaning solvent hazard: many solvents can degrade plastic parts and cause them to fail, which could cause serious injury or property damage",
+    "code": "",
+    "segments": []
+   },
+   "cause": null,
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Use only compatible water-based solvents to clean plastic structural or pressure-containing parts.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "See Technical Data in this and all other equipment instruction manuals. Read fluid and solvent manufacturer's warnings.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    }
+   ],
+   "components": [],
+   "conditions": [],
+   "references": [
+    {
+     "text": "See Technical Data in this and all other equipment instruction manuals.",
+     "target_pages": [
+      16
+     ],
+     "target_items": [],
+     "external": ""
+    }
+   ],
+   "evidence": {
+    "pages": [
+     3
+    ],
+    "section": "Warnings",
+    "segments": [
+     "p3.t1.r1"
+    ],
+    "quote": "Use only compatible water-based solvents to clean plastic structural or pressure-containing parts."
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B007",
+   "category": "safety_precaution",
+   "scope": "context",
+   "problem": {
+    "type": "hazard",
+    "text": "Personal protective equipment: protect from serious injury, including eye injury, inhalation of toxic fumes, burns, and hearing loss",
+    "code": "",
+    "segments": []
+   },
+   "cause": null,
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "You must wear appropriate protective equipment when operating, servicing, or when in the operating area of the equipment: protective eye wear; clothing and respirator as recommended by the fluid and solvent manufacturer; gloves; hearing protection.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    }
+   ],
+   "components": [],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     3
+    ],
+    "section": "Warnings",
+    "segments": [
+     "p3.t1.r2"
+    ],
+    "quote": "You must wear appropriate protective equipment when operating, servicing"
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B008",
+   "category": "safety_precaution",
+   "scope": "context",
+   "problem": {
+    "type": "hazard",
+    "text": "Water or material remaining in unit when temperatures are below freezing can damage pump and/or delay startup",
+    "code": "",
+    "segments": [
+     "p3.b1"
+    ]
+   },
+   "cause": null,
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Remove material line from sprayer.",
+     "expected": "",
+     "condition": "",
+     "component": "texture hose",
+     "segments": [
+      "p3.b3"
+     ]
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Tip sprayer to allow material (water) to flow out of pump inlet.",
+     "expected": "",
+     "condition": "",
+     "component": "sprayer",
+     "segments": [
+      "p3.b4"
+     ]
+    },
+    {
+     "order": 3,
+     "kind": "repair",
+     "text": "Before adding material or starting unit in cold weather, run warm water through pump.",
+     "expected": "",
+     "condition": "Before adding material or starting unit in cold weather",
+     "component": "diaphragm pump",
+     "segments": [
+      "p3.b5"
+     ]
+    }
+   ],
+   "components": [
+    "diaphragm pump",
+    "texture hose",
+    "sprayer"
+   ],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     3
+    ],
+    "section": "Warnings",
+    "segments": [
+     "p3.b1",
+     "p3.b2",
+     "p3.b3",
+     "p3.b4",
+     "p3.b5"
+    ],
+    "quote": "Water or material remaining in unit when temperatures are below freezing can damage pump"
+   },
+   "certainty": "certain",
+   "note": "Box NOTICE (danno all'attrezzatura, non alla persona) con passi di drenaggio; classificato safety_precaution. 'material line' interpretato come il tubo materiale (texture hose)."
+  },
+  {
+   "id": "B009",
+   "category": "safety_precaution",
+   "scope": "context",
+   "problem": {
+    "type": "hazard",
+    "text": "Before removing hopper",
+    "code": "",
+    "segments": []
+   },
+   "cause": null,
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Allow unit to cool down and/or remove compressor power pack from cart.",
+     "expected": "",
+     "condition": "Before removing hopper",
+     "component": "air compressor",
+     "segments": []
+    }
+   ],
+   "components": [
+    "hopper",
+    "air compressor"
+   ],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     6
+    ],
+    "section": "Preparation > Hopper Removal and Installation",
+    "segments": [
+     "p6.b11"
+    ],
+    "quote": "Before removing hopper, allow unit to cool down and/or remove compressor power pack from cart."
+   },
+   "certainty": "certain",
+   "note": "NOTE non esplicita il pericolo (calore); problem.text = contesto dell'avvertenza."
+  },
+  {
+   "id": "B010",
+   "category": "safety_precaution",
+   "scope": "context",
+   "problem": {
+    "type": "hazard",
+    "text": "Before performing any Troubleshooting procedures",
+    "code": "",
+    "segments": []
+   },
+   "cause": null,
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Follow Pressure Relief procedure on page 6.",
+     "expected": "",
+     "condition": "Before performing any Troubleshooting procedures",
+     "component": "",
+     "segments": []
+    }
+   ],
+   "components": [],
+   "conditions": [],
+   "references": [
+    {
+     "text": "follow Pressure Relief procedure on page 6",
+     "target_pages": [
+      6
+     ],
+     "target_items": [
+      "P001"
+     ],
+     "external": ""
+    }
+   ],
+   "evidence": {
+    "pages": [
+     8
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p8.b3"
+    ],
+    "quote": "Before performing any Troubleshooting procedures, follow Pressure Relief procedure on page 6."
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B011",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "No material output from pump",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Not enough air pressure to pump",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Shut off air at the gun, and increase air pressure to the pump to maximum.",
+     "expected": "",
+     "condition": "",
+     "component": "air regulator",
+     "segments": []
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Turn regulator clockwise to increase.",
+     "expected": "",
+     "condition": "",
+     "component": "air regulator",
+     "segments": []
+    }
+   ],
+   "components": [
+    "diaphragm pump",
+    "air regulator"
+   ],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     8
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p8.t1.r2"
+    ],
+    "quote": "Shut off air at the gun, and increase air pressure to the pump to maximum."
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B012",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "No material output from pump",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Material too thick",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Thin the material.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material.",
+     "expected": "immediately folds back in as you draw your finger through the surface of the material",
+     "condition": "",
+     "component": "",
+     "segments": []
+    }
+   ],
+   "components": [
+    "diaphragm pump"
+   ],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     8
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p8.t1.r3"
+    ],
+    "quote": "Thin the material. Material must be mixed thoroughly to a consistency"
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B013",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "No material output from pump",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Damaged checkballs or seats",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Replace checkballs or seats.",
+     "expected": "",
+     "condition": "",
+     "component": "checkball",
+     "segments": []
+    }
+   ],
+   "components": [
+    "diaphragm pump",
+    "checkball",
+    "seat"
+   ],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     8
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p8.t1.r4"
+    ],
+    "quote": "Replace checkballs or seats."
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B014",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "No material output from pump",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Plugged gun or nozzle",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Relieve Pressure, page 6.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Remove gun from material hose, and cycle pump.",
+     "expected": "",
+     "condition": "",
+     "component": "spray gun",
+     "segments": []
+    },
+    {
+     "order": 3,
+     "kind": "repair",
+     "text": "Flush hose and pump with clean water before cycling material through the hose with the gun removed.",
+     "expected": "",
+     "condition": "If necessary (a plugged gun or nozzle may cause the hose and pump to plug)",
+     "component": "texture hose",
+     "segments": []
+    }
+   ],
+   "components": [
+    "diaphragm pump",
+    "spray gun",
+    "nozzle",
+    "texture hose"
+   ],
+   "conditions": [],
+   "references": [
+    {
+     "text": "Relieve Pressure, page 6",
+     "target_pages": [
+      6
+     ],
+     "target_items": [
+      "P001"
+     ],
+     "external": ""
+    }
+   ],
+   "evidence": {
+    "pages": [
+     8
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p8.t1.r5"
+    ],
+    "quote": "Remove gun from material hose, and cycle pump."
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B015",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "No material output from pump",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Plugged hose, or hose too small",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Relieve pressure, page 6.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Flush hose with clean water, or try a 1-1/4 in. hose.",
+     "expected": "",
+     "condition": "",
+     "component": "texture hose",
+     "segments": []
+    }
+   ],
+   "components": [
+    "diaphragm pump",
+    "texture hose"
+   ],
+   "conditions": [],
+   "references": [
+    {
+     "text": "Relieve Pressure, page 6",
+     "target_pages": [
+      6
+     ],
+     "target_items": [
+      "P001"
+     ],
+     "external": ""
+    }
+   ],
+   "evidence": {
+    "pages": [
+     8
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p8.t1.r6"
+    ],
+    "quote": "Flush hose with clean water, or try a 1-1/4 in. hose."
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B016",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "Pump stops pumping",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Stalled pump",
+    "stated": true,
+    "segments": [
+     "p8.t1.r7"
+    ]
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Shut down system.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": [
+      "p8.t1.r7"
+     ]
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Relieve Pressure, page 6.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": [
+      "p8.t1.r7"
+     ]
+    },
+    {
+     "order": 3,
+     "kind": "repair",
+     "text": "Restart.",
+     "expected": "",
+     "condition": "",
+     "component": "diaphragm pump",
+     "segments": [
+      "p8.t1.r7"
+     ]
+    },
+    {
+     "order": 4,
+     "kind": "escalation",
+     "text": "Contact an authorized Graco service center.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": [
+      "p8.t1.r8"
+     ]
+    }
+   ],
+   "components": [
+    "diaphragm pump"
+   ],
+   "conditions": [],
+   "references": [
+    {
+     "text": "Relieve Pressure, page 6",
+     "target_pages": [
+      6
+     ],
+     "target_items": [
+      "P001"
+     ],
+     "external": ""
+    }
+   ],
+   "evidence": {
+    "pages": [
+     8
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p8.t1.r7",
+     "p8.t1.r8"
+    ],
+    "quote": "Shut down system. Relieve Pressure, page 6. Restart. Contact an authorized Graco service center."
+   },
+   "certainty": "certain",
+   "note": "La causa 'Stalled pump' ha due celle soluzione (riavvio; contattare il centro assistenza Graco): un solo ramo con 4 azioni. Il manuale non dice se la seconda è alternativa o da usare se il riavvio fallisce. Unito B017 (rimosso) in aggiudicazione."
+  },
+  {
+   "id": "B018",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "Pump stops pumping",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Pump in need of repair",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "See texture pump instruction manual 308479.",
+     "expected": "",
+     "condition": "",
+     "component": "diaphragm pump",
+     "segments": []
+    }
+   ],
+   "components": [
+    "diaphragm pump"
+   ],
+   "conditions": [],
+   "references": [
+    {
+     "text": "See texture pump instruction manual 308479.",
+     "target_pages": [],
+     "target_items": [],
+     "external": "texture pump instruction manual 308479"
+    }
+   ],
+   "evidence": {
+    "pages": [
+     8
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p8.t1.r9"
+    ],
+    "quote": "See texture pump instruction manual 308479."
+   },
+   "certainty": "certain",
+   "note": "Il frontespizio indica come manuale pompa il 309915, qui 308479: possibile incoerenza del manuale."
+  },
+  {
+   "id": "B019",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "Pulsing or surging material",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Triggering too fast",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Slowly squeeze trigger to fully open position while moving gun quickly in a circular motion.",
+     "expected": "",
+     "condition": "",
+     "component": "spray gun",
+     "segments": []
+    }
+   ],
+   "components": [
+    "spray gun"
+   ],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     8
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p8.t1.r10"
+    ],
+    "quote": "Slowly squeeze trigger to fully open position while moving gun quickly in a circular motion."
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B020",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "Speed of application too slow",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Not enough air pressure to pump",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Shut off air at the gun, and increase air pressure to the pump to maximum.",
+     "expected": "",
+     "condition": "",
+     "component": "air regulator",
+     "segments": []
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Turn regulator clockwise to increase.",
+     "expected": "",
+     "condition": "",
+     "component": "air regulator",
+     "segments": []
+    }
+   ],
+   "components": [
+    "diaphragm pump",
+    "air regulator"
+   ],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     8
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p8.t1.r11"
+    ],
+    "quote": "Shut off air at the gun, and increase air pressure to the pump to maximum."
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B021",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "Speed of application too slow",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Material too thick",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material.",
+     "expected": "immediately folds back in as you draw your finger through the surface of the material",
+     "condition": "",
+     "component": "",
+     "segments": []
+    }
+   ],
+   "components": [],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     8
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p8.t1.r12"
+    ],
+    "quote": "Material must be mixed thoroughly to a consistency that immediately folds back in"
+   },
+   "certainty": "certain",
+   "note": "Qui il manuale omette 'Thin the material' presente nella riga analoga di 'No material output'; annotato come scritto."
+  },
+  {
+   "id": "B022",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "Speed of application too slow",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Nozzle too small",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Increase nozzle size.",
+     "expected": "",
+     "condition": "",
+     "component": "nozzle",
+     "segments": []
+    }
+   ],
+   "components": [
+    "nozzle"
+   ],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     8
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p8.t1.r13"
+    ],
+    "quote": "Increase nozzle size."
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B023",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "Speed of application too slow",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Hose plugged or too small.",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Relieve Pressure, page 6.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Clean hose, or try a 1-1/4 in. hose.",
+     "expected": "",
+     "condition": "",
+     "component": "texture hose",
+     "segments": []
+    }
+   ],
+   "components": [
+    "texture hose"
+   ],
+   "conditions": [],
+   "references": [
+    {
+     "text": "Relieve Pressure, page 6",
+     "target_pages": [
+      6
+     ],
+     "target_items": [
+      "P001"
+     ],
+     "external": ""
+    }
+   ],
+   "evidence": {
+    "pages": [
+     8
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p8.t1.r14"
+    ],
+    "quote": "Clean hose, or try a 1-1/4 in. hose."
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B024",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "Speed of application too slow",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Pump in need of repair",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "See texture pump instruction manual 308479.",
+     "expected": "",
+     "condition": "",
+     "component": "diaphragm pump",
+     "segments": []
+    }
+   ],
+   "components": [
+    "diaphragm pump"
+   ],
+   "conditions": [],
+   "references": [
+    {
+     "text": "See texture pump instruction manual 308479.",
+     "target_pages": [],
+     "target_items": [],
+     "external": "texture pump instruction manual 308479"
+    }
+   ],
+   "evidence": {
+    "pages": [
+     8
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p8.t1.r15"
+    ],
+    "quote": "See texture pump instruction manual 308479."
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B025",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "Pattern too fine or too much overspray",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Material too thin",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Thicken material.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material.",
+     "expected": "immediately folds back in as you draw your finger through the surface of the material",
+     "condition": "",
+     "component": "",
+     "segments": []
+    }
+   ],
+   "components": [],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     9
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p9.t1.r2"
+    ],
+    "quote": "Thicken material. Material must be mixed thoroughly to a consistency"
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B026",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "Pattern too fine or too much overspray",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Air pressure at gun too high",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Decrease air to gun at gun fitting and/or regulator.",
+     "expected": "",
+     "condition": "",
+     "component": "air regulator",
+     "segments": []
+    }
+   ],
+   "components": [
+    "spray gun",
+    "air regulator"
+   ],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     9
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p9.t1.r3"
+    ],
+    "quote": "Decrease air to gun at gun fitting and/or regulator."
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B027",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "Pattern too fine or too much overspray",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Fluid delivery too low",
+    "stated": true,
+    "segments": [
+     "p9.t1.r4"
+    ]
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Increase nozzle size.",
+     "expected": "",
+     "condition": "",
+     "component": "nozzle",
+     "segments": [
+      "p9.t1.r4"
+     ]
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Increase air pressure to pump, or decrease air to gun at gun fitting and/or regulator.",
+     "expected": "",
+     "condition": "",
+     "component": "air regulator",
+     "segments": [
+      "p9.t1.r5"
+     ]
+    },
+    {
+     "order": 3,
+     "kind": "repair",
+     "text": "Turn fluid knob out on gun.",
+     "expected": "",
+     "condition": "",
+     "component": "fluid knob",
+     "segments": [
+      "p9.t1.r6"
+     ]
+    }
+   ],
+   "components": [
+    "nozzle",
+    "diaphragm pump",
+    "air regulator",
+    "spray gun",
+    "fluid knob"
+   ],
+   "conditions": [],
+   "references": [
+    {
+     "text": "See Spray Techniques in Operation Manual 309915.",
+     "target_pages": [],
+     "target_items": [],
+     "external": "Operation Manual 309915 (Spray Techniques)"
+    }
+   ],
+   "evidence": {
+    "pages": [
+     9
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p9.t1.r4",
+     "p9.t1.r5",
+     "p9.t1.r6"
+    ],
+    "quote": "Increase nozzle size. Increase air pressure to pump, or decrease air to gun at gun fitting and/or regulator. Turn fluid knob out on gun."
+   },
+   "certainty": "certain",
+   "note": "'Fluid delivery too low' ha tre celle soluzione alternative: un ramo con tre azioni. Il manuale chiama 309915 'Operation Manual', ma il frontespizio elenca Operation 313384 e Pump 309915: riferimento probabilmente errato nel manuale; annotato come scritto. Uniti in aggiudicazione i rami delle altre celle soluzione (B028/B029, B033/B034 rimossi)."
+  },
+  {
+   "id": "B030",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "Pattern too coarse",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Material too thick",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Thin material.",
+     "expected": "",
+     "condition": "",
+     "component": "",
+     "segments": []
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Material must be mixed thoroughly to a consistency that immediately folds back in as you draw your finger through the surface of the material.",
+     "expected": "immediately folds back in as you draw your finger through the surface of the material",
+     "condition": "",
+     "component": "",
+     "segments": []
+    }
+   ],
+   "components": [],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     9
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p9.t1.r7"
+    ],
+    "quote": "Thin material. Material must be mixed thoroughly to a consistency"
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B031",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "Pattern too coarse",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Air pressure at gun too low",
+    "stated": true,
+    "segments": []
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Increase air to gun at gun fitting and/or regulator.",
+     "expected": "",
+     "condition": "",
+     "component": "air regulator",
+     "segments": []
+    }
+   ],
+   "components": [
+    "spray gun",
+    "air regulator"
+   ],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     9
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p9.t1.r8"
+    ],
+    "quote": "Increase air to gun at gun fitting and/or regulator."
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "B032",
+   "category": "fault",
+   "scope": "core",
+   "problem": {
+    "type": "symptom",
+    "text": "Pattern too coarse",
+    "code": "",
+    "segments": []
+   },
+   "cause": {
+    "text": "Fluid delivery too high",
+    "stated": true,
+    "segments": [
+     "p9.t1.r9"
+    ]
+   },
+   "actions": [
+    {
+     "order": 1,
+     "kind": "repair",
+     "text": "Decrease nozzle size.",
+     "expected": "",
+     "condition": "",
+     "component": "nozzle",
+     "segments": [
+      "p9.t1.r9"
+     ]
+    },
+    {
+     "order": 2,
+     "kind": "repair",
+     "text": "Decrease air pressure to pump, or increase air to gun at gun fitting and/or regulator.",
+     "expected": "",
+     "condition": "",
+     "component": "air regulator",
+     "segments": [
+      "p9.t1.r10"
+     ]
+    },
+    {
+     "order": 3,
+     "kind": "repair",
+     "text": "Turn fluid knob in on gun.",
+     "expected": "",
+     "condition": "",
+     "component": "fluid knob",
+     "segments": [
+      "p9.t1.r11"
+     ]
+    }
+   ],
+   "components": [
+    "nozzle",
+    "diaphragm pump",
+    "air regulator",
+    "spray gun",
+    "fluid knob"
+   ],
+   "conditions": [],
+   "references": [
+    {
+     "text": "See Spray Techniques in Operation Manual 309915.",
+     "target_pages": [],
+     "target_items": [],
+     "external": "Operation Manual 309915 (Spray Techniques)"
+    }
+   ],
+   "evidence": {
+    "pages": [
+     9
+    ],
+    "section": "Troubleshooting",
+    "segments": [
+     "p9.t1.r9",
+     "p9.t1.r10",
+     "p9.t1.r11"
+    ],
+    "quote": "Decrease nozzle size. Decrease air pressure to pump, or increase air to gun at gun fitting and/or regulator. Turn fluid knob in on gun."
+   },
+   "certainty": "certain",
+   "note": "'Fluid delivery too high' ha tre celle soluzione alternative: un ramo con tre azioni. Il manuale chiama 309915 'Operation Manual', ma il frontespizio elenca Operation 313384 e Pump 309915: riferimento probabilmente errato nel manuale; annotato come scritto. Uniti in aggiudicazione i rami delle altre celle soluzione (B028/B029, B033/B034 rimossi)."
+  }
+ ],
+ "procedures": [
+  {
+   "id": "P001",
+   "category": "routine",
+   "scope": "context",
+   "title": "Pressure Relief",
+   "steps": [
+    "Disconnect air inlet.",
+    "Open gun air valve (23).",
+    "Trigger gun, and spray material back into hopper."
+   ],
+   "components": [
+    "gun air valve",
+    "spray gun",
+    "hopper"
+   ],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     6
+    ],
+    "section": "Preparation > Pressure Relief",
+    "segments": [
+     "p6.b3",
+     "p6.b4",
+     "p6.b5",
+     "p6.b7"
+    ],
+    "quote": "Disconnect air inlet. Open gun air valve (23)."
+   },
+   "certainty": "certain",
+   "note": "Procedura di sicurezza richiamata da molte soluzioni; non è una riparazione, classificata routine. Il rif. (23) non corrisponde alla voce 23 della distinta a p13 (FITTING, elbow, male): probabilmente numero del manuale pistola 310616."
+  },
+  {
+   "id": "P002",
+   "category": "procedure",
+   "scope": "extended",
+   "title": "Hopper Removal",
+   "steps": [
+    "To remove hopper (G), release the latches on each side of coupler (H).",
+    "Lift hopper straight up, off unit."
+   ],
+   "components": [
+    "hopper",
+    "hopper quick connect"
+   ],
+   "conditions": [
+    "Before removing hopper, allow unit to cool down and/or remove compressor power pack from cart."
+   ],
+   "references": [],
+   "evidence": {
+    "pages": [
+     6
+    ],
+    "section": "Preparation > Hopper Removal and Installation > Hopper Removal",
+    "segments": [
+     "p6.b11",
+     "p6.b10",
+     "p6.b13",
+     "p6.b14"
+    ],
+    "quote": "release the latches on each side of coupler (H). Lift hopper straight up, off unit."
+   },
+   "certainty": "certain",
+   "note": "Lettere (G) hopper e (H) coupler non coincidono con la Component Identification di p4-5 (B = Hopper, C = Hopper Quick Connect, G/H = altro): incoerenza del manuale. La NOTE di p6.b11 è riportata come condizione; resta anche il ramo di sicurezza B009."
+  },
+  {
+   "id": "P003",
+   "category": "procedure",
+   "scope": "extended",
+   "title": "Install Hopper",
+   "steps": [
+    "To install hopper, position coupler over material outlet and slide it straight down, over the fitting, as far as it will go.",
+    "Secure latches by pushing each one up and firmly into locked position."
+   ],
+   "components": [
+    "hopper",
+    "hopper quick connect"
+   ],
+   "conditions": [],
+   "references": [],
+   "evidence": {
+    "pages": [
+     6
+    ],
+    "section": "Preparation > Hopper Removal and Installation > Install Hopper",
+    "segments": [
+     "p6.b17",
+     "p6.b18"
+    ],
+    "quote": "position coupler over material outlet and slide it straight down"
+   },
+   "certainty": "certain",
+   "note": ""
+  },
+  {
+   "id": "P004",
+   "category": "procedure",
+   "scope": "extended",
+   "title": "Pump Removal",
+   "steps": [
+    "Relieve Pressure, page 6.",
+    "Remove hopper, page 6.",
+    "Disconnect air lines.",
+    "Disconnect exhaust tube.",
+    "Remove four bolts holding pump to cart.",
+    "Lift pump straight up off cart."
+   ],
+   "components": [
+    "diaphragm pump",
+    "hopper",
+    "air tube",
+    "exhaust hose",
+    "frame"
+   ],
+   "conditions": [],
+   "references": [
+    {
+     "text": "Relieve Pressure, page 6.",
+     "target_pages": [
+      6
+     ],
+     "target_items": [
+      "P001"
+     ],
+     "external": ""
+    },
+    {
+     "text": "Remove hopper, page 6.",
+     "target_pages": [
+      6
+     ],
+     "target_items": [
+      "P002"
+     ],
+     "external": ""
+    }
+   ],
+   "evidence": {
+    "pages": [
+     7
+    ],
+    "section": "Pump Removal and Installation > Pump Removal",
+    "segments": [
+     "p7.b4",
+     "p7.b5",
+     "p7.b6",
+     "p7.b8",
+     "p7.b10",
+     "p7.b12"
+    ],
+    "quote": "Remove four bolts holding pump to cart. Lift pump straight up off cart."
+   },
+   "certainty": "certain",
+   "note": "'cart' interpretato come il telaio (frame, rif. 1)."
+  },
+  {
+   "id": "P005",
+   "category": "procedure",
+   "scope": "extended",
+   "title": "Pump Installation",
+   "steps": [
+    "Lower pump on cart.",
+    "Replace four bolts holding pump to cart.",
+    "Reconnect exhaust tube.",
+    "Reconnect air lines.",
+    "Replace hopper, page 6."
+   ],
+   "components": [
+    "diaphragm pump",
+    "hopper",
+    "air tube",
+    "exhaust hose",
+    "frame"
+   ],
+   "conditions": [],
+   "references": [
+    {
+     "text": "Replace hopper, page 6.",
+     "target_pages": [
+      6
+     ],
+     "target_items": [
+      "P003"
+     ],
+     "external": ""
+    }
+   ],
+   "evidence": {
+    "pages": [
+     7
+    ],
+    "section": "Pump Removal and Installation > Pump Installation",
+    "segments": [
+     "p7.b15",
+     "p7.b16",
+     "p7.b17",
+     "p7.b18",
+     "p7.b19"
+    ],
+    "quote": "Lower pump on cart. Replace four bolts holding pump to cart."
+   },
+   "certainty": "certain",
+   "note": ""
+  }
+ ],
+ "entities": {
+  "components": [
+   {
+    "name": "sprayer",
+    "aliases": [
+     "gtx 2000ex",
+     "unit",
+     "sprayer with graco trigger gun"
+    ],
+    "part_of": "",
+    "part_number": "257030",
+    "pages": [
+     1,
+     2,
+     3,
+     4,
+     10,
+     13
+    ]
+   },
+   {
+    "name": "nozzle storage",
+    "aliases": [],
+    "part_of": "sprayer",
+    "part_number": "",
+    "pages": [
+     4,
+     5
+    ]
+   },
+   {
+    "name": "hopper quick connect",
+    "aliases": [
+     "coupler",
+     "hopper coupler"
+    ],
+    "part_of": "sprayer",
+    "part_number": "",
+    "pages": [
+     4,
+     5,
+     6
+    ]
+   },
+   {
+    "name": "material outlet option 1",
+    "aliases": [
+     "material outlet"
+    ],
+    "part_of": "sprayer",
+    "part_number": "",
+    "pages": [
+     4,
+     5
+    ]
+   },
+   {
+    "name": "material outlet option 2",
+    "aliases": [],
+    "part_of": "sprayer",
+    "part_number": "",
+    "pages": [
+     4,
+     5
+    ]
+   },
+   {
+    "name": "gun air outlet quick connect",
+    "aliases": [],
+    "part_of": "sprayer",
+    "part_number": "",
+    "pages": [
+     4,
+     5
+    ]
+   },
+   {
+    "name": "material air pressure gauge and control knob",
+    "aliases": [
+     "material (pump) air pressure gauge and control knob"
+    ],
+    "part_of": "sprayer",
+    "part_number": "",
+    "pages": [
+     4,
+     5
+    ]
+   },
+   {
+    "name": "gun air pressure gauge and control knob",
+    "aliases": [],
+    "part_of": "sprayer",
+    "part_number": "",
+    "pages": [
+     4,
+     5
+    ]
+   },
+   {
+    "name": "air compressor",
+    "aliases": [
+     "compressor",
+     "compressor power pack"
+    ],
+    "part_of": "",
+    "part_number": "",
+    "pages": [
+     4,
+     5,
+     6,
+     16
+    ]
+   },
+   {
+    "name": "nozzle",
+    "aliases": [],
+    "part_of": "spray gun",
+    "part_number": "",
+    "pages": [
+     8,
+     9
+    ]
+   },
+   {
+    "name": "fluid knob",
+    "aliases": [],
+    "part_of": "spray gun",
+    "part_number": "",
+    "pages": [
+     9
+    ]
+   },
+   {
+    "name": "gun air valve",
+    "aliases": [],
+    "part_of": "spray gun",
+    "part_number": "",
+    "pages": [
+     6
+    ]
+   },
+   {
+    "name": "trigger",
+    "aliases": [],
+    "part_of": "spray gun",
+    "part_number": "",
+    "pages": [
+     8
+    ]
+   },
+   {
+    "name": "frame",
+    "aliases": [
+     "frame, texture, blue",
+     "cart"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15C878",
+    "pages": [
+     10,
+     13
+    ]
+   },
+   {
+    "name": "rubber foot",
+    "aliases": [
+     "foot, rubber"
+    ],
+    "part_of": "sprayer",
+    "part_number": "801504",
+    "pages": [
+     10,
+     13
+    ]
+   },
+   {
+    "name": "hopper",
+    "aliases": [
+     "hopper, texture, gas"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15C843",
+    "pages": [
+     4,
+     5,
+     6,
+     10,
+     13
+    ]
+   },
+   {
+    "name": "pneumatic wheel",
+    "aliases": [
+     "wheel, pneumatic"
+    ],
+    "part_of": "sprayer",
+    "part_number": "116478",
+    "pages": [
+     10,
+     13
+    ]
+   },
+   {
+    "name": "external retaining ring",
+    "aliases": [
+     "ring, retaining, ext."
+    ],
+    "part_of": "sprayer",
+    "part_number": "101242",
+    "pages": [
+     10,
+     13
+    ]
+   },
+   {
+    "name": "diaphragm pump",
+    "aliases": [
+     "pump",
+     "texture pump",
+     "pump, diaphragm, 1040, texture"
+    ],
+    "part_of": "sprayer",
+    "part_number": "246887",
+    "pages": [
+     4,
+     5,
+     7,
+     8,
+     10,
+     13,
+     14,
+     15
+    ]
+   },
+   {
+    "name": "pump coupling",
+    "aliases": [
+     "coupling, pump"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15C759",
+    "pages": [
+     10,
+     13
+    ]
+   },
+   {
+    "name": "swivel adapter fitting",
+    "aliases": [
+     "fitting, adapter, swivel"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15D985",
+    "pages": [
+     10,
+     13
+    ]
+   },
+   {
+    "name": "panel mount gauge",
+    "aliases": [
+     "gauge, panel, mount"
+    ],
+    "part_of": "sprayer",
+    "part_number": "118457",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "line air fitting",
+    "aliases": [
+     "fitting, line air"
+    ],
+    "part_of": "sprayer",
+    "part_number": "169970",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "ball valve",
+    "aliases": [
+     "valve, ball"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15B565",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "bulkhead fitting",
+    "aliases": [
+     "fitting, bulkhead"
+    ],
+    "part_of": "sprayer",
+    "part_number": "104641",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "short nipple fitting",
+    "aliases": [
+     "fitting, nipple, short"
+    ],
+    "part_of": "sprayer",
+    "part_number": "156971",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "air regulator",
+    "aliases": [
+     "regulator",
+     "regulator, air, 1/4 npt"
+    ],
+    "part_of": "sprayer",
+    "part_number": "115242",
+    "pages": [
+     8,
+     9,
+     11,
+     13
+    ]
+   },
+   {
+    "name": "regulator nut",
+    "aliases": [
+     "nut, regulator"
+    ],
+    "part_of": "sprayer",
+    "part_number": "115244",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "push elbow fitting",
+    "aliases": [
+     "fitting, elbow, push"
+    ],
+    "part_of": "sprayer",
+    "part_number": "118486",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "push fitting",
+    "aliases": [
+     "fitting, push"
+    ],
+    "part_of": "sprayer",
+    "part_number": "118481",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "pump regulator air tube",
+    "aliases": [
+     "tube, air, pump, regulator"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15C970",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "regulator air tube",
+    "aliases": [
+     "tube, air, regulator"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15C971",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "pump air tube",
+    "aliases": [
+     "tube, air, pump"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15C969",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "air tube",
+    "aliases": [
+     "tube, air",
+     "air lines"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15C968",
+    "pages": [
+     7,
+     11,
+     13
+    ]
+   },
+   {
+    "name": "male elbow fitting",
+    "aliases": [
+     "fitting, elbow, male"
+    ],
+    "part_of": "sprayer",
+    "part_number": "118458",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "45 elbow fitting",
+    "aliases": [
+     "fitting, elbow, 45"
+    ],
+    "part_of": "sprayer",
+    "part_number": "118482",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "tee fitting",
+    "aliases": [
+     "fitting, tee"
+    ],
+    "part_of": "sprayer",
+    "part_number": "118472",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "connector fitting",
+    "aliases": [
+     "fitting, connector"
+    ],
+    "part_of": "sprayer",
+    "part_number": "118484",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "quick disconnect coupler",
+    "aliases": [
+     "coupler, quick disconnect"
+    ],
+    "part_of": "sprayer",
+    "part_number": "116720",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "texture hose",
+    "aliases": [
+     "hose, texture, twin line",
+     "material hose",
+     "hose",
+     "material line"
+    ],
+    "part_of": "sprayer",
+    "part_number": "17J420",
+    "pages": [
+     3,
+     8,
+     10,
+     13
+    ]
+   },
+   {
+    "name": "front brand label",
+    "aliases": [
+     "label, brand, gtx2000 front"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15W898",
+    "pages": [
+     10,
+     13
+    ]
+   },
+   {
+    "name": "right brand label",
+    "aliases": [
+     "label, brand, gtx2000 right"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15W900",
+    "pages": [
+     10,
+     13
+    ]
+   },
+   {
+    "name": "left brand label",
+    "aliases": [
+     "label, brand, gtx2000 left"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15W899",
+    "pages": [
+     10,
+     13
+    ]
+   },
+   {
+    "name": "sprayer warning label",
+    "aliases": [
+     "label, warning, sprayer"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15C996",
+    "pages": [
+     10,
+     13
+    ]
+   },
+   {
+    "name": "nozzle holder cover",
+    "aliases": [
+     "cover, holder, nozzle"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15C844",
+    "pages": [
+     10,
+     13
+    ]
+   },
+   {
+    "name": "nylon hose elbow fitting",
+    "aliases": [
+     "fitting, elbow, nylon, hose"
+    ],
+    "part_of": "sprayer",
+    "part_number": "118465",
+    "pages": [
+     12,
+     13
+    ]
+   },
+   {
+    "name": "exhaust hose",
+    "aliases": [
+     "hose, exhaust",
+     "exhaust tube"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15C948",
+    "pages": [
+     7,
+     12,
+     13
+    ]
+   },
+   {
+    "name": "hopper filter",
+    "aliases": [
+     "filter, hopper"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15D094",
+    "pages": [
+     10,
+     13
+    ]
+   },
+   {
+    "name": "pronged knob",
+    "aliases": [
+     "knob, pronged"
+    ],
+    "part_of": "sprayer",
+    "part_number": "114966",
+    "pages": [
+     10,
+     13
+    ]
+   },
+   {
+    "name": "wire tie strap",
+    "aliases": [
+     "strap, tie, wire"
+    ],
+    "part_of": "sprayer",
+    "part_number": "103473",
+    "pages": [
+     12,
+     13
+    ]
+   },
+   {
+    "name": "hopper bracket isolator pad",
+    "aliases": [
+     "pad, isolator, hopper bracket"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15D366",
+    "pages": [
+     10,
+     13
+    ]
+   },
+   {
+    "name": "sponge ball",
+    "aliases": [
+     "ball, sponge, 30mm (5 pk)"
+    ],
+    "part_of": "sprayer",
+    "part_number": "248515",
+    "pages": [
+     13
+    ]
+   },
+   {
+    "name": "fluid thickness gauge",
+    "aliases": [
+     "gauge, thickness, fluid"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15C090",
+    "pages": [
+     13
+    ]
+   },
+   {
+    "name": "air filter",
+    "aliases": [
+     "filter, air, 3/8npt"
+    ],
+    "part_of": "sprayer",
+    "part_number": "106148",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "standoff spacer",
+    "aliases": [
+     "spacer, standoff, gtx"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15W881",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "check valve",
+    "aliases": [
+     "valve, check 1/8 120 psi"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15X997",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "hex bushing",
+    "aliases": [
+     "bushing, hex"
+    ],
+    "part_of": "sprayer",
+    "part_number": "100176",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "30 deg fitting",
+    "aliases": [
+     "fitting, 30 deg, 3/8 x 1/4 npt"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15W375",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "compressorless bracket",
+    "aliases": [
+     "bracket, compressorless"
+    ],
+    "part_of": "sprayer",
+    "part_number": "15X567",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "spray gun",
+    "aliases": [
+     "gun",
+     "gun, spray, texture, bleeder"
+    ],
+    "part_of": "sprayer",
+    "part_number": "248093",
+    "pages": [
+     2,
+     4,
+     5,
+     6,
+     8,
+     9,
+     10,
+     13
+    ]
+   },
+   {
+    "name": "swivel union fitting",
+    "aliases": [
+     "fitting, union, swivel"
+    ],
+    "part_of": "sprayer",
+    "part_number": "235208",
+    "pages": [
+     11,
+     13
+    ]
+   },
+   {
+    "name": "air filter repair kit",
+    "aliases": [],
+    "part_of": "sprayer",
+    "part_number": "24T314",
+    "pages": [
+     13
+    ]
+   },
+   {
+    "name": "suction kit",
+    "aliases": [
+     "kit, suction"
+    ],
+    "part_of": "",
+    "part_number": "248112",
+    "pages": [
+     13
+    ]
+   },
+   {
+    "name": "air hose 3/8 in. x 50 ft.",
+    "aliases": [
+     "hose, 3/8 in. x 50 ft. with quick disconnect"
+    ],
+    "part_of": "",
+    "part_number": "248117",
+    "pages": [
+     13
+    ]
+   },
+   {
+    "name": "center housing",
+    "aliases": [
+     "housing, center, aluminum"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188838",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "air valve cover",
+    "aliases": [
+     "cover, air valve, aluminum"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188854",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "molded gasket",
+    "aliases": [
+     "gasket, molded santoprene"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188618",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "carriage",
+    "aliases": [
+     "carriage, aluminum"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188855",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "nitrile o-ring",
+    "aliases": [
+     "o-ring, nitrile"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "108730",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "air valve block",
+    "aliases": [
+     "block, air valve, acetal"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188616",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "air valve plate",
+    "aliases": [
+     "plate, air valve, sst"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188615",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "valve plate seal",
+    "aliases": [
+     "seal, valve plate, buna-n"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188617",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "u-cup packing",
+    "aliases": [
+     "packing, u-cup, nitrile"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "112181",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "actuator piston",
+    "aliases": [
+     "piston, actuator, acetal"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188612",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "piston bearing",
+    "aliases": [
+     "bearing, piston, acetal"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188613",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "pin bearing",
+    "aliases": [
+     "bearing, pin, acetal"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188611",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "pilot pin",
+    "aliases": [
+     "pin, pilot, stainless steel"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188610",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "buna-n o-ring",
+    "aliases": [
+     "o-ring, buna-n"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "157628",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "pilot block",
+    "aliases": [
+     "block, pilot, acetal"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188614",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "shaft bearing",
+    "aliases": [
+     "bearing, shaft, acetal"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188609",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "grounding screw",
+    "aliases": [
+     "screw, grounding"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "116343",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "air cover gasket",
+    "aliases": [
+     "gasket, air cover, foam"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188603",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "air cover",
+    "aliases": [
+     "cover, air, aluminum"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188839",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "diaphragm shaft",
+    "aliases": [
+     "shaft, diaphragm, sst"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188608",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "fluid cover",
+    "aliases": [
+     "cover, fluid, aluminum"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188840",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "inlet manifold",
+    "aliases": [
+     "manifold, inlet, aluminum",
+     "pump inlet"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188841",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "outlet manifold",
+    "aliases": [
+     "manifold, outlet, aluminum"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188842",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "air side plate",
+    "aliases": [
+     "plate, air side, aluminum"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188607",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "fluid side plate",
+    "aliases": [
+     "plate, fluid side, aluminum"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188607",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "ptfe o-ring (ref 108)",
+    "aliases": [],
+    "part_of": "diaphragm pump",
+    "part_number": "104319",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "pump warning label",
+    "aliases": [
+     "label, warning"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "188621",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "plug 1 in. npt",
+    "aliases": [
+     "plug, 1 in. npt, cst"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "121497",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "seat",
+    "aliases": [
+     "seats",
+     "seat, geolast"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "194211",
+    "pages": [
+     8,
+     14,
+     15
+    ]
+   },
+   {
+    "name": "ptfe o-ring (ref 202)",
+    "aliases": [],
+    "part_of": "diaphragm pump",
+    "part_number": "109205",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "checkball",
+    "aliases": [
+     "checkballs",
+     "ball, geolast, 1-1/4 in."
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "114751",
+    "pages": [
+     8,
+     14,
+     15
+    ]
+   },
+   {
+    "name": "diaphragm",
+    "aliases": [
+     "diaphragm, buna-n"
+    ],
+    "part_of": "diaphragm pump",
+    "part_number": "15B499",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "air valve repair kit",
+    "aliases": [],
+    "part_of": "diaphragm pump",
+    "part_number": "236273",
+    "pages": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "pump repair kit",
+    "aliases": [],
+    "part_of": "diaphragm pump",
+    "part_number": "D07GG7",
+    "pages": [
+     14,
+     15
+    ]
+   }
+  ],
+  "symptoms": [
+   {
+    "name": "No material output from pump",
+    "aliases": []
+   },
+   {
+    "name": "Pump stops pumping",
+    "aliases": []
+   },
+   {
+    "name": "Pulsing or surging material",
+    "aliases": [
+     "pulsing material",
+     "surging material"
+    ]
+   },
+   {
+    "name": "Speed of application too slow",
+    "aliases": []
+   },
+   {
+    "name": "Pattern too fine or too much overspray",
+    "aliases": [
+     "pattern too fine",
+     "too much overspray"
+    ]
+   },
+   {
+    "name": "Pattern too coarse",
+    "aliases": []
+   }
+  ],
+  "codes": [],
+  "false_friends": [
+   {
+    "a": "Pattern too fine or too much overspray",
+    "b": "Pattern too coarse",
+    "reason": "Sintomi opposti con rimedi opposti (thicken/thin, aria alla pistola giù/su, ugello più grande/più piccolo)."
+   },
+   {
+    "a": "Material too thin",
+    "b": "Material too thick",
+    "reason": "Cause opposte: addensare contro diluire il materiale."
+   },
+   {
+    "a": "Fluid delivery too low",
+    "b": "Fluid delivery too high",
+    "reason": "Cause opposte: 'Turn fluid knob out' contro 'Turn fluid knob in', ugello più grande contro più piccolo."
+   },
+   {
+    "a": "Air pressure at gun too high",
+    "b": "Not enough air pressure to pump",
+    "reason": "Aria alla pistola e aria alla pompa sono due circuiti con due manometri/regolatori diversi."
+   },
+   {
+    "a": "material air pressure gauge and control knob",
+    "b": "gun air pressure gauge and control knob",
+    "reason": "Due manometri/manopole (H e J di p5): uno per la pompa, uno per la pistola."
+   },
+   {
+    "a": "texture hose",
+    "b": "air hose 3/8 in. x 50 ft.",
+    "reason": "Tubo del materiale contro tubo dell'aria della pistola."
+   },
+   {
+    "a": "air side plate",
+    "b": "fluid side plate",
+    "reason": "Parti diverse della pompa con lo stesso codice stampato 188607 (p15)."
+   },
+   {
+    "a": "ptfe o-ring (ref 108)",
+    "b": "ptfe o-ring (ref 202)",
+    "reason": "Due o-ring PTFE della pompa con codici diversi (104319 e 109205)."
+   },
+   {
+    "a": "hopper",
+    "b": "gun air outlet quick connect",
+    "reason": "La lettera G indica la tramoggia a p6 ma il Gun Air Outlet Quick Connect nella lista di p5."
+   },
+   {
+    "a": "texture pump instruction manual 308479",
+    "b": "Pump manual 309915",
+    "reason": "Il manuale cita due numeri diversi per il manuale della pompa (p8/p16 contro p1)."
+   },
+   {
+    "a": "gun manual 308878",
+    "b": "gun manual 310616",
+    "reason": "p5 cita due numeri diversi per il manuale della pistola."
+   }
+  ],
+  "synonyms": [
+   {
+    "names": [
+     "diaphragm pump",
+     "pump",
+     "texture pump"
+    ],
+    "note": "Stessa pompa (D di p5, 246887)."
+   },
+   {
+    "names": [
+     "frame",
+     "cart"
+    ],
+    "note": "Il carrello è il telaio 15C878."
+   },
+   {
+    "names": [
+     "hopper quick connect",
+     "coupler"
+    ],
+    "note": "Il 'coupler (H)' di p6 è l'Hopper Quick Connect (C) di p5."
+   },
+   {
+    "names": [
+     "texture hose",
+     "material hose",
+     "material line",
+     "hose"
+    ],
+    "note": "Tubo del materiale tra pompa e pistola."
+   },
+   {
+    "names": [
+     "exhaust hose",
+     "exhaust tube"
+    ],
+    "note": "Tubo di scarico della pompa (p7, p13)."
+   },
+   {
+    "names": [
+     "air tube",
+     "air lines"
+    ],
+    "note": "Linee d'aria della pompa (p7)."
+   },
+   {
+    "names": [
+     "sprayer",
+     "unit",
+     "GTX 2000EX"
+    ],
+    "note": "La macchina intera."
+   },
+   {
+    "names": [
+     "air compressor",
+     "compressor power pack"
+    ],
+    "note": "Compressore non fornito da Graco (L di p5, p6)."
+   },
+   {
+    "names": [
+     "spray gun",
+     "gun"
+    ],
+    "note": "Pistola 248093."
+   }
+  ]
+ },
+ "questions": [
+  {
+   "id": "Q01",
+   "type": "symptom_causes_actions",
+   "text": "No material comes out of the pump: what are the causes and what do I do?",
+   "answer_items": [
+    "B011",
+    "B012",
+    "B013",
+    "B014",
+    "B015"
+   ]
+  },
+  {
+   "id": "Q02",
+   "type": "symptom_causes_actions",
+   "text": "The pump stops pumping: why and what should I do?",
+   "answer_items": [
+    "B016",
+    "B018"
+   ]
+  },
+  {
+   "id": "Q03",
+   "type": "symptom_causes_actions",
+   "text": "The material is pulsing or surging: what is the cause and remedy?",
+   "answer_items": [
+    "B019"
+   ]
+  },
+  {
+   "id": "Q04",
+   "type": "symptom_causes_actions",
+   "text": "Speed of application is too slow: possible causes and solutions?",
+   "answer_items": [
+    "B020",
+    "B021",
+    "B022",
+    "B023",
+    "B024"
+   ]
+  },
+  {
+   "id": "Q05",
+   "type": "symptom_causes_actions",
+   "text": "The pattern is too fine or there is too much overspray: what should I change?",
+   "answer_items": [
+    "B025",
+    "B026",
+    "B027"
+   ]
+  },
+  {
+   "id": "Q06",
+   "type": "symptom_causes_actions",
+   "text": "The pattern is too coarse: what should I change?",
+   "answer_items": [
+    "B030",
+    "B031",
+    "B032"
+   ]
+  },
+  {
+   "id": "Q07",
+   "type": "symptom_causes_actions",
+   "text": "Which problems come from the wrong material consistency and how must the material be mixed?",
+   "answer_items": [
+    "B012",
+    "B021",
+    "B025",
+    "B030"
+   ]
+  },
+  {
+   "id": "Q08",
+   "type": "component_faults",
+   "text": "Which problems are solved by changing the nozzle?",
+   "answer_items": [
+    "B014",
+    "B022",
+    "B027",
+    "B032"
+   ]
+  },
+  {
+   "id": "Q09",
+   "type": "component_faults",
+   "text": "Which problems involve the material hose?",
+   "answer_items": [
+    "B014",
+    "B015",
+    "B023"
+   ]
+  },
+  {
+   "id": "Q10",
+   "type": "component_faults",
+   "text": "When must the checkballs or seats be replaced?",
+   "answer_items": [
+    "B013"
+   ]
+  },
+  {
+   "id": "Q11",
+   "type": "component_faults",
+   "text": "Which problems are solved by adjusting the air pressure at the regulators?",
+   "answer_items": [
+    "B011",
+    "B020",
+    "B026",
+    "B027",
+    "B031",
+    "B032"
+   ]
+  },
+  {
+   "id": "Q12",
+   "type": "component_faults",
+   "text": "When do I turn the fluid knob on the gun in or out?",
+   "answer_items": [
+    "B027",
+    "B032"
+   ]
+  },
+  {
+   "id": "Q13",
+   "type": "checks_before_replacing",
+   "text": "The pump stops pumping: what should I try before having the pump repaired?",
+   "answer_items": [
+    "B016",
+    "B018"
+   ]
+  },
+  {
+   "id": "Q14",
+   "type": "procedure_steps",
+   "text": "How do I remove the pump from the cart?",
+   "answer_items": [
+    "P004",
+    "P001",
+    "P002"
+   ]
+  },
+  {
+   "id": "Q15",
+   "type": "procedure_steps",
+   "text": "How do I install the pump?",
+   "answer_items": [
+    "P005",
+    "P003"
+   ]
+  },
+  {
+   "id": "Q16",
+   "type": "procedure_steps",
+   "text": "How do I remove and reinstall the hopper?",
+   "answer_items": [
+    "P002",
+    "P003",
+    "B009"
+   ]
+  },
+  {
+   "id": "Q17",
+   "type": "procedure_steps",
+   "text": "What are the steps of the pressure relief procedure?",
+   "answer_items": [
+    "P001"
+   ]
+  },
+  {
+   "id": "Q18",
+   "type": "maintenance_condition",
+   "text": "What must be checked daily and when must parts be replaced?",
+   "answer_items": [
+    "B003",
+    "B005"
+   ]
+  },
+  {
+   "id": "Q19",
+   "type": "safety",
+   "text": "What must I do before any troubleshooting or servicing?",
+   "answer_items": [
+    "B010",
+    "B004",
+    "P001"
+   ]
+  },
+  {
+   "id": "Q20",
+   "type": "safety",
+   "text": "How do I protect the sprayer when temperatures are below freezing?",
+   "answer_items": [
+    "B008"
+   ]
+  },
+  {
+   "id": "Q21",
+   "type": "safety",
+   "text": "What should I do if there is static sparking or I feel a shock?",
+   "answer_items": [
+    "B001"
+   ]
+  },
+  {
+   "id": "Q22",
+   "type": "safety",
+   "text": "What protective equipment is required when operating or servicing the sprayer?",
+   "answer_items": [
+    "B007"
+   ]
+  }
+ ],
+ "verification": {
+  "independent_scopes": [
+   "core",
+   "extended",
+   "context"
+  ],
+  "note": "Un verificatore AI indipendente (claude-opus-5-5) ha controllato tutti i 39 elementi di p1-18 sul PDF, di ogni scope; aggiudicazione AI sul PDF; nessuna revisione umana."
+ }
+}

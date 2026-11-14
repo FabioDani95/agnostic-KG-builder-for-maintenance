@@ -68,6 +68,40 @@ for the graph it judged.
 Judging is a paid model call. It needs the same explicit authorisation and ledger
 as an extraction.
 
+## Gold v2, made by an AI
+
+A second gold, `campaign/<manual>/gold_v2/gold.json`, lists all the diagnostic knowledge
+of a manual page by page, not only its troubleshooting pages. **It is written by an AI,
+not by a person**: annotators, an independent verifier, a second annotator on 25% of
+the diagnostic pages and an adjudicator are Claude Opus 5.5, coordinated by Claude
+Fable 5.2, which checks samples on the PDF. Until the owner fills
+`REVISIONE_FABIO.md` the file says `human_review: false`, and results scored on it
+must say that the reference is AI-made. Gold v1 stays frozen and was compared only
+after each gold v2 was closed (`CONFRONTO_V1.md`).
+
+Every item has a category and a scope, and the evaluation chooses the perimeter:
+`core` (faults, error codes, flowchart outcomes), `extended` (component tests,
+maintenance with a failure condition, repair procedures) and `context` (safety,
+routine). The file also holds a page map of the whole PDF, an inventory of components,
+symptoms, codes, false friends and synonyms, and 15 to 30 questions for an agent whose
+answers are item IDs. `verification.independent_scopes` says which scopes the
+independent verifier checked; the others were annotated once.
+
+`scripts/kg_gold_v2.py validate <manual>` checks schema, segment IDs of the current
+reader, quotes, page coverage, references and questions; `stats` counts items;
+`export-claims` writes `claims_v1_format.json`, the same gold in the claim format of
+gold v1 with `category` and `scope` on every claim, so the scorer above runs unchanged.
+No command calls a model.
+
+| Manual | State | Pages (diagnostic) | Core | Extended | Context | Questions | Verified scopes | Against gold v1 |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | --- | --- |
+| `graco_gtx_2000ex` | Closed 2026-11-14 | 18 (5) | 19 | 6 | 9 | 22 | core, extended, context | 19 v1 branches: 16 confirmed, 3 corrected from the PDF, 0 missing in v2 |
+| `grizzly_g0872` | In progress | 80 | | | | | | |
+| `lg_lmh2235st` | In progress | 49 | | | | | | |
+
+The other five campaign manuals have no gold v2: the work was limited to these three
+to contain its cost.
+
 ## What is not measured yet
 
 | Measure | State | What it needs |
@@ -75,7 +109,7 @@ as an extraction.
 | Branch recall of the connected-graph pipeline | Not measured | Authorised runs on the development manuals, then the judge |
 | Precision | Never measured for any version | A blind, stratified sample of facts judged by people against the manual. Sheets for earlier graphs exist and are unjudged; `scripts/kg_v3_precision_sheet.py` writes blind sheets. An LLM judge may be added only as a declared secondary measure |
 | Residual duplicates, wrongly merged false friends | Screens only | A person judges the pairs the card lists |
-| Agent utility | Not built | A set of diagnostic questions per manual derived from the gold (a symptom or code: causes and actions), answered by an agent with the graph, by retrieval on the PDF text and by direct extraction with the same model, scored by the same pair judge or by people |
+| Agent utility | Not built | The questions of gold v2 exist for its closed manuals; still needed: a set of diagnostic questions per manual derived from the gold (a symptom or code: causes and actions), answered by an agent with the graph, by retrieval on the PDF text and by direct extraction with the same model, scored by the same pair judge or by people |
 | External baselines | Not run | The same input text and scoring for every system |
 
 ## Proposed acceptance targets

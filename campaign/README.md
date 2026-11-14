@@ -41,8 +41,9 @@ scritto prima del passo 6: chi annota non deve vedere i grafi di quel manuale.
 ## Gold v2 (fatto da un'AI)
 
 Il gold v2 è un secondo gold, più ampio: l'elenco di tutta la conoscenza diagnostica di ogni manuale,
-pagina per pagina. **Lo ha scritto un'AI** (Claude Fable 5.2: annotatori, verificatore indipendente e
-secondo annotatore sul 25% delle pagine sono tutti AI), non una persona. Finché Fabio non compila
+pagina per pagina. **Lo ha scritto un'AI**, non una persona: annotatori, verificatore indipendente,
+secondo annotatore sul 25% delle pagine e aggiudicatore sono Claude Opus 5.5, coordinati da Claude
+Fable 5.2 che controlla a campione sul PDF. Finché Fabio non compila
 `REVISIONE_FABIO.md`, nel file resta `human_review: false`. Il gold v1 in `gold/` resta congelato.
 
 ```text
