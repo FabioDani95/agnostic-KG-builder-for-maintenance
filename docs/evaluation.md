@@ -33,8 +33,10 @@ The quality card (`backend/kg_v4/metrics.py`) holds:
   ("contact service" joins unrelated entries).
 - **Declared absences.** A cause for which the manual gives no remedy and says so in
   `remedy_status` counts as complete, apart from the causes with an action.
-- **Node quality.** Descriptions that say more than the name, and how many come from
-  the manual rather than from the graph context; required attributes filled from the
+- **Node quality.** Descriptions that say more than the name and describe the thing,
+  not the manual ("listed as a cause of...", "the manual identifies..." do not count);
+  actions whose instruction only repeats the name or points to another page; action
+  names that join two actions ("Adjust/replace"); required attributes filled from the
   manual, left as placeholders, or repeating the name; generic, noisy and truncated
   names; generic nodes used as bridges; exact duplicates.
 - **Duplicate and false-friend screens.** Pairs of close names not kept apart by a

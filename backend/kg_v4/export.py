@@ -19,6 +19,7 @@ from backend.kg_v3.reader import DocumentText, render_segment
 from backend.kg_v4 import PIPELINE_VERSION
 from backend.kg_v4.enrich import real_description
 from backend.kg_v4.model import Edge, Evidence, Graph, Node
+from backend.kg_v4.names import display_name
 
 EXPORT_VERSION = "kg-v3-graph-2"
 TIER = {"supported": "green", "unchecked": "yellow", "unclear": "yellow"}
@@ -49,32 +50,6 @@ def evidence_items(doc: DocumentText, evidence: Evidence) -> list[dict[str, Any]
     return items
 
 
-def context_description(node: Node, graph: Graph) -> str:
-    """What the graph itself says about a node, for the few the manual says nothing more about."""
-
-    names = graph.nodes
-    place = f" ({reference(node.evidence[0])})" if node.evidence else ""
-    if node.type == "FailureMode":
-        problems = [names[e.source].name for e in graph.in_edges(node.node_id, "MAY_INDICATE", "INDICATES")][:3]
-        parts = [names[e.target].name for e in graph.out_edges(node.node_id, "AFFECTS")][:2]
-        text = "Cause the manual lists" + (" for: " + "; ".join(problems) if problems else "")
-        return text + (f". It concerns: {', '.join(parts)}" if parts else "") + f"{place}."
-    if node.type == "CorrectiveAction":
-        causes = [names[e.source].name for e in graph.in_edges(node.node_id, "RESOLVED_BY", "ADDRESSED_BY", "CLEARED_BY")][:3]
-        word = {"inspection": "Check", "escalation": "Escalation", "repair": "Remedy"}.get(node.kind, "Action")
-        return f"{word} the manual prescribes" + (" for: " + "; ".join(causes) if causes else "") + f"{place}."
-    if node.type in {"Symptom", "ErrorCode"}:
-        causes = [names[e.target].name for e in graph.out_edges(node.node_id, "MAY_INDICATE", "INDICATES")][:3]
-        word = "Code the machine reports" if node.type == "ErrorCode" else "Problem the manual lists"
-        return word + (", with possible causes: " + "; ".join(causes) if causes else "") + f"{place}."
-    if node.type == "Component":
-        above = [names[e.target].name for e in graph.out_edges(node.node_id, "PART_OF")][:1]
-        faults = [names[e.source].name for e in graph.in_edges(node.node_id, "AFFECTS")][:3]
-        text = "Part of the machine" + (f", belonging to {above[0]}" if above else "")
-        return text + (". Faults the manual names for it: " + "; ".join(faults) if faults else "") + f"{place}."
-    return ""
-
-
 def instruction_from_name(node: Node, graph: Graph) -> str:
     """An action the manual gives in one phrase: that phrase with the conditions printed with it."""
 
@@ -91,11 +66,11 @@ def node_properties(node: Node, graph: Graph, spec: OntologySpec,
     properties filled from the name because the manual says nothing more."""
 
     fallbacks: list[str] = []
-    source = "manual" if real_description(node) else "context"
-    description = node.description if source == "manual" else context_description(node, graph)
-    values: dict[str, Any] = {**node.properties, "name": node.name, "description": description or node.name}
-    if not description:
-        source = "name"
+    # A description the manual does not support is left as the name and counted as missing.
+    source = "manual" if real_description(node) else "name"
+    name = display_name(node.name)
+    values: dict[str, Any] = {**node.properties, "name": name,
+                              "description": node.description if source == "manual" else name}
     if node.code:
         values["code"] = node.code
     if node.kind:
@@ -167,7 +142,8 @@ def graph_json(graph: Graph, doc: DocumentText, *, asset: dict[str, Any], source
         properties, source, placeholders, fallbacks = node_properties(node, graph, spec, source_title)
         evidence = [item for part in node.evidence[:5] for item in evidence_items(doc, part)]
         nodes.append({
-            "id": node.node_id, "type": node.type, "name": node.name, "aliases": node.aliases,
+            "id": node.node_id, "type": node.type, "name": display_name(node.name),
+            "aliases": [alias for alias in node.aliases if alias.casefold() != node.name.casefold()],
             "stated_in_source": node.stated, "properties": properties, "description_source": source,
             "inferred_properties": node.inferred, "placeholder_properties": placeholders,
             "name_derived_properties": fallbacks,

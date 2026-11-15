@@ -120,6 +120,9 @@ ROWS = (
     ("Relazioni scartate", lambda c: _pct(c["connectivity"]["excluded_share"])),
     ("Descrizioni vere (diverse dal nome)", lambda c: _pct(c["node_quality"]["real_description_share"])),
     ("  ricavate dal manuale", lambda c: _pct(c["node_quality"]["descriptions_from_manual_share"])),
+    ("Descrizioni che parlano del manuale", lambda c: c["node_quality"]["descriptions_about_the_manual"]),
+    ("Azioni con istruzione che ripete il nome", lambda c: _pct(c["node_quality"]["weak_instruction_share"])),
+    ("Azioni doppie nel nome (X/Y)", lambda c: c["node_quality"]["compound_action_names"]),
     ("Attributi obbligatori compilati", lambda c: _pct(c["node_quality"]["filled_required_attribute_share"])),
     ("  dal manuale (non segnaposto, non il nome)", lambda c: _pct(c["node_quality"]["required_attributes_from_manual_share"])),
     ("Nomi generici / rumore / troncati", lambda c: "{} / {} / {}".format(

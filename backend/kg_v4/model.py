@@ -49,7 +49,7 @@ class Mention(BaseModel):
     stated: bool = True
     description: str = ""
     # Ontology properties read from the passage: instruction_text, expected_result, severity,
-    # category, material_context, part_number.
+    # category, part_number.
     attributes: dict[str, str] = Field(default_factory=dict)
     evidence: Evidence
     unit_id: str = ""

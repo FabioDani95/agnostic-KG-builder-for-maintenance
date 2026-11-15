@@ -58,7 +58,6 @@
           { "name": "failure_mode_id", "type": "string", "required": true, "unique": true },
           { "name": "name", "type": "string", "required": true },
           { "name": "description", "type": "string", "required": true },
-          { "name": "material_context", "type": "string", "required": true },
           { "name": "related_measurements", "type": "array", "items": "string", "required": false },
           { "name": "remedy_status", "type": "string", "required": false, "added_in": "3.0", "description": "'stated' when the manual gives a check or remedy; 'not_stated' when a search of the manual finds none; 'not_in_entry' when the entry that names the cause gives none and the rest of the manual was not searched." },
           { "name": "entry_status", "type": "string", "required": false, "added_in": "3.0", "description": "'none_in_manual' when the manual gives no symptom or code that leads to the cause." },

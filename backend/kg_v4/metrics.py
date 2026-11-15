@@ -17,7 +17,15 @@ from itertools import combinations
 from pathlib import Path
 from typing import Any
 
-from backend.kg_v4.names import canonical, distinguishing_difference, name_defects, similarity
+from backend.kg_v4.names import (
+    about_the_manual,
+    adds_to_name,
+    canonical,
+    compound_action,
+    distinguishing_difference,
+    name_defects,
+    similarity,
+)
 
 ONTOLOGY_PATH = Path(__file__).resolve().parents[2] / "ontology_schema.JSON"
 ENTRY_TYPES = {"Symptom", "ErrorCode"}
@@ -162,6 +170,7 @@ def node_quality(graph: dict[str, Any], ontology: dict[str, Any] | None = None) 
             degree[edge["from"]] += 1
             degree[edge["to"]] += 1
     real = from_manual = total_required = placeholders = inferred = from_name = 0
+    about_manual = weak_instructions = compound = actions = 0
     placeholder_by_property: Counter = Counter()
     defects: Counter = Counter()
     examples: dict[str, list[str]] = defaultdict(list)
@@ -169,7 +178,13 @@ def node_quality(graph: dict[str, Any], ontology: dict[str, Any] | None = None) 
     for node in nodes:
         properties = node.get("properties", {})
         description = " ".join(str(properties.get("description") or "").split())
-        is_real = len(description) >= MIN_DESCRIPTION_CHARS and canonical(description) != canonical(node["name"])
+        is_real = (len(description) >= MIN_DESCRIPTION_CHARS and canonical(description) != canonical(node["name"])
+                   and not about_the_manual(description))
+        about_manual += canonical(description) != canonical(node["name"]) and about_the_manual(description)
+        if node["type"] == "CorrectiveAction":
+            actions += 1
+            weak_instructions += not adds_to_name(node["name"], properties.get("instruction_text", ""))
+            compound += compound_action(node["name"])
         real += is_real
         # Graphs of the previous pipeline carry no source mark: a real description there would be the manual's.
         from_manual += is_real and node.get("description_source", "manual") == "manual"
@@ -219,6 +234,9 @@ def node_quality(graph: dict[str, Any], ontology: dict[str, Any] | None = None) 
     return {
         "nodes": len(nodes),
         "real_descriptions": real, "real_description_share": _share(real, len(nodes)),
+        "descriptions_about_the_manual": about_manual,
+        "actions": actions, "actions_with_weak_instruction": weak_instructions,
+        "weak_instruction_share": _share(weak_instructions, actions), "compound_action_names": compound,
         "descriptions_from_manual": from_manual, "descriptions_from_manual_share": _share(from_manual, len(nodes)),
         "required_attributes": total_required, "placeholder_attributes": placeholders,
         "filled_required_attribute_share": _share(total_required - placeholders, total_required),

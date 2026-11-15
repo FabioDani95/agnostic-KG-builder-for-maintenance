@@ -8,9 +8,13 @@ from pathlib import Path
 import pytest
 
 from backend.kg_v4.names import (
+    about_the_manual,
+    adds_to_name,
     canonical,
     code_key,
+    compound_action,
     contrast,
+    display_name,
     distinguishing_difference,
     lemma,
     name_defects,
@@ -81,3 +85,15 @@ def test_name_defects():
     assert name_defects("Replace the") == ["truncated"]
     assert "layout_noise" in name_defects("Check valve ... page 12")
     assert name_defects("Drive belt") == []
+
+
+def test_text_checks_for_descriptions_instructions_and_names():
+    assert about_the_manual("This belt condition is listed as a possible cause of vibration.")
+    assert about_the_manual("The manual identifies the tube as supported by two saddles.")
+    assert not about_the_manual("Two soft-mount saddles and straps hold the CO2 laser tube.")
+    assert not adds_to_name("Align the laser beam", "Align laser beam (Page 57).")
+    assert not adds_to_name("Inspect the belts", "Inspect the belts")
+    assert adds_to_name("Increase air pressure", "Shut off air at the gun, then increase air pressure to maximum.")
+    assert compound_action("Adjust/replace belts") and not compound_action("Clean the inlet/outlet screens")
+    assert display_name("water pump") == "Water pump" and display_name("pH sensor") == "pH sensor"
+    assert display_name("x-axis belt") == "X-axis belt" and display_name("Table") == "Table"

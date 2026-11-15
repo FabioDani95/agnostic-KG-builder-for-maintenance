@@ -78,7 +78,7 @@ def test_every_node_is_described_and_every_fact_has_page_and_section(result):
     assert nodes["Cracked drive belt"]["properties"]["entry_status"] == "none_in_manual"
     assert nodes["Loose drive belts"]["properties"]["remedy_status"] == "stated"
     assert nodes["Output is low"]["inferred_properties"] == ["severity"]
-    assert nodes["Worn packings"]["placeholder_properties"] == ["material_context"]
+    assert nodes["Worn packings"]["placeholder_properties"] == []  # material_context is no longer in the ontology
     for edge in document["edges"]:
         for occurrence in edge["occurrences"]:
             assert occurrence["evidence"], edge
@@ -88,7 +88,8 @@ def test_every_node_is_described_and_every_fact_has_page_and_section(result):
                 assert occurrence["confidence"] in {"high", "medium", "low"} and occurrence["origin"]
     card = result.report["scorecard"]
     assert card["node_quality"]["real_description_share"] == 1.0
-    assert card["node_quality"]["placeholder_by_property"] == {"FailureMode.material_context": 5}
+    assert card["node_quality"]["placeholder_by_property"] == {}
+    assert card["node_quality"]["descriptions_about_the_manual"] == 0
     assert card["provenance"]["with_section_share"] == 1.0
     assert card["connectivity"]["entries_with_complete_chain_share"] == 1.0
     assert card["connectivity"]["causes_with_action_or_declared_share"] == 1.0
@@ -157,8 +158,9 @@ def test_stages_can_be_switched_off(tmp_path):
     assert outcome.report["open_gaps"] == {"cause_without_problem": 1}
     nodes = {node["name"]: node for node in outcome.document["nodes"]}
     assert nodes["Loose drive belts"]["properties"]["remedy_status"] == "not_in_entry"  # its own row gives none
-    assert nodes["Clean the rod"]["description_source"] == "context"
-    assert nodes["Clean the rod"]["properties"]["description"].startswith("Remedy the manual prescribes for: Fluid dried")
+    # Without enrichment and with nothing read, the description is the name and is counted as missing.
+    assert nodes["Clean the rod"]["description_source"] == "name"
+    assert nodes["Clean the rod"]["properties"]["description"] == "Clean the rod"
 
 
 def test_the_interface_and_the_editor_read_the_export(result, tmp_path):
@@ -233,7 +235,8 @@ def test_metrics_read_graphs_of_the_previous_pipeline_too(result):
     assert links["excluded_share"] == 0.3333 and links["entries_with_complete_chain"] == 1
     quality = node_quality(old)
     assert quality["real_description_share"] == 0.0 and quality["exact_duplicates"] == 1
-    assert quality["placeholder_attributes"] == 4 and quality["attributes_repeating_the_name"] == 1
+    assert quality["placeholder_attributes"] == 3 and quality["attributes_repeating_the_name"] == 1
+    assert quality["weak_instruction_share"] == 1.0 and quality["compound_action_names"] == 0
     assert quality["generic_nodes_used_as_bridge"] == 1 and quality["name_defects"] == {"generic": 1}
     new = scorecard(result.document)
     assert new["pipeline"] == "kg-v4" and new["node_quality"]["generic_nodes_used_as_bridge"] == 0

@@ -73,7 +73,7 @@ def test_a_card_reads_any_graph_file_and_names_what_it_measures(tmp_path):
             **scorecard(result.document), "gold": None, "saved_recall": None}
     text = cards_markdown([item])
     assert "| Descrizioni vere (diverse dal nome) | 100% |" in text and "| Nodi generici usati come ponte | 0 |" in text
-    assert "senza gold" in text and "Segnaposto: FailureMode.material_context 5" in text
+    assert "senza gold" in text and "| Descrizioni che parlano del manuale | 0 |" in text
     assert all(name in text for name, _ in ROWS)
 
 

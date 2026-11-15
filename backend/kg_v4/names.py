@@ -201,3 +201,37 @@ def name_defects(name: str) -> list[str]:
     if len(text) > 120:
         defects.append("too_long")
     return defects
+
+
+_ABOUT_THE_MANUAL = re.compile(
+    r"\b(the manual|the passage|this (symptom|cause|action|component|outcome|node|entry)|is listed|are listed|"
+    r"listed (in|as|for|alongside)|troubleshooting table|on page \d+|in section)\b", re.I)
+_POINTER = re.compile(r"\(?\b(see|refer to|page|pages|section)\b[^.;)]*\)?", re.I)
+
+
+def about_the_manual(text: str) -> bool:
+    """A description that talks about the manual (its tables, pages, lists) instead of the thing."""
+
+    return bool(_ABOUT_THE_MANUAL.search(str(text or "")))
+
+
+def adds_to_name(name: str, text: str, *, words: int = 2) -> bool:
+    """Whether a text (an instruction) says more than its name, a printed pointer aside."""
+
+    extra = set(tokens(_POINTER.sub(" ", str(text or "")))) - set(tokens(name))
+    return len(extra) > words
+
+
+def compound_action(name: str) -> bool:
+    """An action name that joins two actions with a slash ("Adjust/replace belts")."""
+
+    return bool(re.match(r"^\s*[A-Za-z]+/[A-Za-z]+\b", str(name or "")))
+
+
+def display_name(name: str) -> str:
+    """A name as people read it: first letter upper case, unless the word is written in mixed case (pH, eMC)."""
+
+    text = str(name or "").strip()
+    if len(text) > 1 and text[0].islower() and not text[1].isupper():
+        return text[0].upper() + text[1:]
+    return text

@@ -81,7 +81,8 @@ problem: what the technician observes or reads.
 - A maintenance or inspection step that names an abnormal state to look for ("inspect the intake
   screen for blockage and clean as required", "replace the belt if cracked", "check hoses for leaks")
   is a record of its own: the problem is that state as a Symptom, in the manual's words ("Intake
-  screen blocked", "Belt cracked", "Hose leaking"); the inspection and the repair are actions
+  screen blocked", "Belt cracked", "Hose leaking"; not "Screens need inspection"); the inspection
+  and the repair are actions
   directly under it, the repair with its condition ("as required", "if cracked").
 - type "" when the entry names no abnormal state at all (a component test, a measurement procedure).
   Never make a problem out of a section title, a test title or a safety warning.
@@ -103,6 +104,8 @@ not name as a cause. Put the outcome that leads to an action in its conditions.
 
 An action:
 - name: a short imperative phrase that makes sense on its own ("Replace the V-belt", not "Replace").
+  One action per name: "Adjust/replace belts" is two actions, "Adjust the belts" and "Replace the
+  belts" (the second with its condition, "if worn").
 - kind: repair (changes the machine: replace, clean, adjust, tighten, reset, refill), inspection
   (observes, measures, tests) or escalation (contact service, the dealer or the manufacturer).
   "Inspect/replace if at fault" is two actions: the check (inspection) and the repair (repair) with
@@ -122,9 +125,9 @@ symptom shows, which part is faulty, which part the action works on. Use the nam
 known components when it is the same part, otherwise the name the passage uses, singular; "" when
 no specific part is meant. Never the machine itself, a material, a medium or a tool.
 
-description (problem and cause): one or two sentences from the passage on how it shows, when it
-occurs or what it means for the diagnosis. Never a repetition of the name; "" when the passage
-adds nothing.
+description (problem and cause): one or two sentences from the passage about the thing itself: how
+it shows, when it occurs, what it leads to. Never write about the manual or its tables, never a
+repetition of the name; "" when the passage adds nothing.
 severity (problem): only when the passage states it (a danger, warning or caution label, alarm
 versus warning, "stop immediately", the machine cannot operate): critical, high, medium or low;
 otherwise "".
@@ -198,18 +201,21 @@ the expected value of a check, and the component it works on.
 
 ENRICH_PROMPT = """You write the descriptions and attributes of nodes of a maintenance knowledge graph built from the
 manual of {asset}. For each node you see its type, its name and the passages of the manual where
-it is written. Use only those passages.
+it is written, and the pages the manual points to from there. Use only those passages.
 
-- description: one to three sentences saying what it is, where it is or when it occurs, and why it
-  matters for diagnosis. It must add to the name, in plain technical English. "" when the passages
-  say nothing beyond the name.
+- description: one or two sentences about the thing itself, in plain technical English: what it is
+  and where it sits (a part), how it shows and when it happens (a symptom or a fault), what it does
+  and what it needs (an action). Never write about the manual, its tables, pages or sections ("the
+  manual lists...", "listed as a cause of...") and do not repeat which problem a cause belongs to:
+  the graph holds those links. "" when the passages say nothing beyond the name.
 - attributes, by node type; give "" when the passages do not allow a value:
   Symptom severity: critical, high, medium or low.
   Component category: mechanical, electrical, electronic, hydraulic, pneumatic, optical, software,
   sensor, safety, consumable, structural or other.
-  FailureMode material_context: the material, medium or operating condition in which the fault
-  occurs (dust, coolant, humidity, high temperature, load), as the passages give it.
-  CorrectiveAction instruction_text: the manual's own steps, values, tools and warnings, in order.
+  CorrectiveAction instruction_text: the steps of the action as the manual gives them, in order, with
+  values, tools and warnings. When the manual points to a procedure on another page ("Align laser
+  beam (Page 57)"), write the steps of that procedure, short. "" when the passages give nothing more
+  than the name.
   CorrectiveAction expected_result: the normal value or result of a check.
 - inferred: the attributes you deduced from the passages instead of reading them (for example a
   severity deduced from "stop the machine immediately"). A value that needs outside knowledge is

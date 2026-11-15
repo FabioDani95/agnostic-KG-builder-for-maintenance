@@ -221,15 +221,16 @@ class ScriptedModel:
     def enrich(self, user: str, schema: dict[str, Any]) -> dict[str, Any]:
         nodes = []
         for label, kind, name in re.findall(r"^(N\d+) \[(\w+)[^\]]*\] '([^']*)'", user, flags=re.M):
-            item = {"id": label, "description": f"{name}: described on the page of the manual where it is written.",
-                    "severity": "", "category": "", "material_context": "", "instruction_text": "",
-                    "expected_result": "", "inferred": []}
+            item = {"id": label, "description": f"{name}, as it shows on the test pump during operation.",
+                    "severity": "", "category": "", "instruction_text": "", "expected_result": "", "inferred": []}
             if kind == "Symptom":
                 item.update(severity="medium", inferred=["severity"])
             elif kind == "Component":
                 item["category"] = "mechanical"
             elif kind == "CorrectiveAction":
-                item["instruction_text"] = ("Close the air supply valve, disconnect the air line and blow it out."
-                                            if "air line" in name.lower() else "")
+                if "air line" in name.lower():
+                    item["instruction_text"] = "Close the air supply valve, disconnect the air line and blow it out."
+                elif name == "Clean the rod":  # the row says no more than the name; the reader adds nothing
+                    item["instruction_text"] = "Clean the rod."
             nodes.append(item)
         return {"nodes": nodes}

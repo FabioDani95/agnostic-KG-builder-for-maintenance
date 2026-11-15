@@ -15,7 +15,7 @@ from typing import Any
 from backend.kg_v3.reader import DocumentText, render_segments
 from backend.kg_v4.gaps import Retriever
 from backend.kg_v4.model import Graph, Node, Reference
-from backend.kg_v4.names import canonical
+from backend.kg_v4.names import about_the_manual, adds_to_name, canonical
 from backend.kg_v4.prompts import ENRICH_PROMPT
 from backend.kg_v4.survey import CATEGORIES
 
@@ -23,25 +23,35 @@ logger = logging.getLogger(__name__)
 
 NODES_PER_CALL = 10
 NODE_PASSAGE_CHARS = 1400
+POINTED_PASSAGE_CHARS = 3500  # a referenced procedure is read in full
 ENRICH_OUTPUT_TOKENS = 8000
 MIN_DESCRIPTION_CHARS = 25
 SEVERITIES = ("critical", "high", "medium", "low")
 # The attribute each node type must have beyond name and description.
-REQUIRED_ATTRIBUTE = {"Symptom": "severity", "Component": "category", "FailureMode": "material_context",
-                      "CorrectiveAction": "instruction_text"}
+REQUIRED_ATTRIBUTE = {"Symptom": "severity", "Component": "category", "CorrectiveAction": "instruction_text"}
 
 
 def real_description(node: Node) -> bool:
-    """A description that says more than the name."""
+    """A description that says more than the name and is about the thing, not about the manual."""
 
     text = " ".join(node.description.split())
-    return len(text) >= MIN_DESCRIPTION_CHARS and canonical(text) != canonical(node.name)
+    return (len(text) >= MIN_DESCRIPTION_CHARS and canonical(text) != canonical(node.name)
+            and not about_the_manual(text))
+
+
+def weak_instruction(node: Node) -> bool:
+    """An action whose instruction only repeats its name, or only points to another page."""
+
+    return node.type == "CorrectiveAction" and not adds_to_name(node.name, node.properties.get("instruction_text", ""))
 
 
 def missing(node: Node) -> list[str]:
     lacks = [] if real_description(node) else ["description"]
     required = REQUIRED_ATTRIBUTE.get(node.type)
-    if required and not node.properties.get(required):
+    if required == "instruction_text":
+        if weak_instruction(node):
+            lacks.append(required)
+    elif required and not node.properties.get(required):
         lacks.append(required)
     return lacks
 
@@ -49,14 +59,14 @@ def missing(node: Node) -> list[str]:
 def _schema(ids: list[str]) -> dict[str, Any]:
     text = {"type": "string"}
     answer = {"type": "object", "additionalProperties": False,
-              "required": ["id", "description", "severity", "category", "material_context", "instruction_text",
-                           "expected_result", "inferred"],
+              "required": ["id", "description", "severity", "category", "instruction_text", "expected_result",
+                           "inferred"],
               "properties": {"id": {"type": "string", "enum": ids}, "description": text,
                              "severity": {"type": "string", "enum": ["", *SEVERITIES]},
                              "category": {"type": "string", "enum": ["", *CATEGORIES]},
-                             "material_context": text, "instruction_text": text, "expected_result": text,
+                             "instruction_text": text, "expected_result": text,
                              "inferred": {"type": "array", "items": {"type": "string", "enum": [
-                                 "severity", "category", "material_context"]}}}}
+                                 "severity", "category"]}}}}
     return {"type": "object", "additionalProperties": False, "required": ["nodes"],
             "properties": {"nodes": {"type": "array", "items": answer}}}
 
@@ -87,7 +97,7 @@ class Enricher:
         pages = sorted({page for key in node.mention_keys for page in self.targets.get(key, [])})[:2]
         if pages:
             pointed = [segment for page in pages for segment in self.doc.pages.get(page, [])]
-            text += "\nThe manual points to:\n" + render_segments(pointed, doc=self.doc)[:NODE_PASSAGE_CHARS]
+            text += "\nThe manual points to:\n" + render_segments(pointed, doc=self.doc)[:POINTED_PASSAGE_CHARS]
         return text
 
     async def _one(self, nodes: list[Node]) -> dict[str, dict[str, Any]]:
@@ -127,11 +137,17 @@ class Enricher:
                 node = graph.nodes[node_id]
                 before = len(missing(node))
                 description = " ".join(str(answer.get("description") or "").split())
-                if description and canonical(description) != canonical(node.name) and (
-                        not real_description(node) or len(description) > len(node.description)):
+                candidate = node.model_copy(update={"description": description})
+                if real_description(candidate) and (not real_description(node)
+                                                    or len(description) > len(node.description)):
                     node.description = description
+                if weak_instruction(node):
+                    steps = " ".join(str(answer.get("instruction_text") or "").split())
+                    if adds_to_name(node.name, steps):
+                        node.properties["instruction_text"] = steps
                 required = REQUIRED_ATTRIBUTE.get(node.type)
-                for key in filter(None, (required, "expected_result" if node.kind == "inspection" else "")):
+                for key in filter(None, (required if required != "instruction_text" else "",
+                                         "expected_result" if node.kind == "inspection" else "")):
                     value = " ".join(str(answer.get(key) or "").split())
                     if value and not node.properties.get(key):
                         node.properties[key] = value

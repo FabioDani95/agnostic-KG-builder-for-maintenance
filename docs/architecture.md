@@ -1,5 +1,26 @@
 # Architecture
 
+## Goal
+
+The pipeline turns a maintenance manual into a graph that a maintenance agent can
+use: from what the technician observes (a symptom, a code on the display) to the
+possible causes, the checks that tell them apart and the actions to take, on the
+parts involved. A good graph is:
+
+1. **Complete.** Every symptom and code the manual gives, with its causes, checks
+   and remedies. When the manual gives no remedy or no cause, the graph says so
+   instead of leaving a loose node.
+2. **Faithful.** Each fact as the manual states it, with page and section. Nothing
+   is invented to connect two nodes: a wrong link is worse than a missing one.
+3. **Connected.** Facts from different pages meet on the same parts, symptoms and
+   actions, not on one artificial hub.
+4. **One node per thing.** The same part or fault written in different words is one
+   node; look-alikes (X/Y axis, open/closed, increase/decrease) stay apart.
+5. **Readable.** Short names; a description of the thing itself; actions with the
+   manual's steps and values.
+
+How each property is measured is in [Evaluation](evaluation.md).
+
 ## Two pipelines
 
 The repository holds two extraction pipelines that share the PDF reader, the model
@@ -119,6 +140,9 @@ Extraction and editor validation use this schema.
 | `OBSERVED_ON` | Symptom → Component | 3.0 | A diagnosis can start from the part where the problem shows |
 | `ADDRESSED_BY` | Symptom → CorrectiveAction | 3.0 | A remedy given without a named cause; replaces placeholder causes |
 | `CLEARED_BY` | ErrorCode → CorrectiveAction | 3.0 | The same, for codes |
+
+Version 3.0 also removes `material_context` from `FailureMode`: in the measured
+manuals it was almost never stated, and when filled it held something else.
 
 Relations and properties marked `added_in` in the file belong to the
 connected-graph pipeline. V3 keeps reading the 2.0 subset
