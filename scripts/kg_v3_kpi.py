@@ -70,13 +70,13 @@ def v3_run_facts(run: Path) -> dict:
 
 
 async def evaluate(manuals: list[str], runs_root: Path, runs_name: str = "runs", v3_only: bool = False,
-                   gold: str = "gold") -> dict:
+                   gold: str = "gold", kg4_view: str = "names") -> dict:
     from backend.kg_v3.llm import ModelClient
     from backend.kg_v3.reader import read_document
 
     llm = ModelClient(model="gpt-6-luna", reasoning_effort="low")
     results: dict = {"manuals": {}, "runs_directory": runs_name, "judge_model": "gpt-6-luna",
-                     "judge_reasoning": "low", "judge_votes": 3, "gold": gold}
+                     "judge_reasoning": "low", "judge_votes": 3, "gold": gold, "kg4_view": kg4_view}
     for manual in manuals:
         claims, gold_pages = load_gold(manual, gold)
         # A branch with neither cause nor action only defines a code or indication: it is
@@ -113,7 +113,7 @@ async def evaluate(manuals: list[str], runs_root: Path, runs_name: str = "runs",
                     # Same scorer and judge; a remedy given without a cause is shown as the scorer expects it.
                     from backend.kg_v4.scoring import historical_edges, run_facts
 
-                    systems[name] = (historical_edges(graph), run_facts(graph))
+                    systems[name] = (historical_edges(graph, kg4_view), run_facts(graph))
                 else:
                     systems[name] = (v3_edges(run), v3_run_facts(run))
         rows = {}
@@ -185,6 +185,8 @@ def main() -> int:
     parser.add_argument("--out", required=True)
     parser.add_argument("--runs-name", default="runs")
     parser.add_argument("--v3-only", action="store_true")
+    parser.add_argument("--kg4-view", choices=("names", "full"), default="names",
+                        help="how connected-graph runs are shown to the judge (backend/kg_v4/scoring.py)")
     parser.add_argument("--gold", choices=sorted(GOLDS), default="gold",
                         help="gold v1 (written by a person) or gold v2 (written by an AI)")
     parser.add_argument("--ledger", default=str(DEFAULT_LEDGER))
@@ -200,7 +202,8 @@ def main() -> int:
                        "KG_REAL_CALL_PDF_ID": "evaluation",
                        "KG_LLM_TRACE_DIR": str(ROOT / "campaign/results/judge/provider_responses")})
     results = asyncio.run(evaluate([item.strip() for item in args.manuals.split(",") if item.strip()],
-                                   (ROOT / args.runs).resolve(), args.runs_name, args.v3_only, args.gold))
+                                   (ROOT / args.runs).resolve(), args.runs_name, args.v3_only, args.gold,
+                                   args.kg4_view))
     out = ROOT / args.out
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(results, indent=1) + "\n")

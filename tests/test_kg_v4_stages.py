@@ -526,3 +526,38 @@ def test_a_drawn_flowchart_page_is_shown_as_image_and_read_with_its_neighbours(t
     assert pages_to_read_with({1}, {2, 3}) == {2, 3}  # a flowchart may run over several pages
     shown, _ = images.for_segments([segment.segment_id for segment in doc.pages[2]])
     assert len(shown) == 1 and shown[0].startswith("data:image/png;base64,")
+
+
+def test_a_diagram_page_that_yields_no_fact_is_read_once_more(manual):
+    class Images:  # page 2 is shown as an image, as a flowchart page would be
+        pages = {2}
+
+        def for_segments(self, segment_ids):
+            return [], {}
+
+    calls = []
+
+    def first_read_misses_page_2(user, schema):
+        calls.append(user)
+        full = ScriptedModel().extract(user, schema)
+        if len(calls) == 1:
+            full["records"] = [item for item in full["records"] if item["record"] == "R6"]  # page 1 only
+        return full
+
+    reader, unit = extractor(manual, ScriptedModel(kg_v4_extract=first_read_misses_page_2), reread_rows=False)
+    reader.images = Images()
+    records = run(reader.extract(unit))
+    assert len(calls) == 2
+    owned = [line for line in calls[1].split("Passage", 1)[1].splitlines()
+             if line.startswith("[") and "(context)" not in line]
+    assert owned and all(line.startswith("[p2.") for line in owned)  # only the diagram page is owned
+    assert "[p1.b1] (context) Maintenance" in calls[1]  # with the title of the page before
+    assert any(fact.origin == "reread" and fact.relation == "RESOLVED_BY" for fact in records.facts)
+    assert any("diagram page 2 read again" in note for note in records.notes)
+    # A page that already gave facts is not read again.
+    calls.clear()
+    reader2, unit2 = extractor(manual, ScriptedModel(kg_v4_extract=lambda u, s: (calls.append(u), ScriptedModel().extract(u, s))[1]),
+                               reread_rows=False)
+    reader2.images = Images()
+    run(reader2.extract(unit2))
+    assert len(calls) == 1

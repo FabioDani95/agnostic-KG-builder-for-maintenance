@@ -78,9 +78,13 @@ problem: what the technician observes or reads.
 - type Symptom: an abnormal behaviour, noise, reading, lamp or display indication.
 - type ErrorCode: a printed fault, alarm or error code. Put the code exactly as printed in "code"
   and its meaning in "name". A number that only indexes a list of causes is not a code.
-- type "" when the entry names no observable problem ("replace the belt if cracked" in a
-  maintenance section, a test of a component). Never make a problem out of a section title, a test
-  title or a safety warning.
+- A maintenance or inspection step that names an abnormal state to look for ("inspect the intake
+  screen for blockage and clean as required", "replace the belt if cracked", "check hoses for leaks")
+  is a record of its own: the problem is that state as a Symptom, in the manual's words ("Intake
+  screen blocked", "Belt cracked", "Hose leaking"); the inspection and the repair are actions
+  directly under it, the repair with its condition ("as required", "if cracked").
+- type "" when the entry names no abnormal state at all (a component test, a measurement procedure).
+  Never make a problem out of a section title, a test title or a safety warning.
 
 see_also: a pointer from this entry to another entry that holds its causes or remedies ("like 'Pump
 gets too hot'", "see Oil in the pump chamber"); otherwise "". Do not turn such a pointer into a

@@ -207,3 +207,41 @@ def test_a_judgement_is_read_only_against_the_gold_it_was_made_on(tmp_path):
     judged.write_text(json.dumps({"gold": "gold_v2", "manuals": {"m": {"systems": {"v3_r1": {"missing_claims": []}}}}}))
     with pytest.raises(ValueError, match="judged on gold_v2"):
         recovered_claims(judged, "m", "v3_r1", "gold")
+
+
+def test_the_full_view_shows_instructions_and_component_tests_without_adding_facts():
+    from backend.kg_v4.scoring import historical_edges
+
+    def node(key, kind, name, **properties):
+        return {"id": key, "type": kind, "name": name, "properties": properties}
+
+    def edge(key, kind, source, target, record, segment, tier="green"):
+        return {"id": key, "type": kind, "from": source, "to": target, "tier": tier,
+                "occurrences": [{"record": record, "tier": tier, "evidence": [{"segment_id": segment}]}]}
+
+    document = {"nodes": [
+        node("s", "Symptom", "No material output"), node("f", "FailureMode", "Not enough air pressure"),
+        node("a", "CorrectiveAction", "Increase air pressure",
+             instruction_text="Shut off air at the gun, and increase air pressure to the pump."),
+        node("m", "Component", "Magnetron"),
+        node("t1", "CorrectiveAction", "Measure filament resistance", instruction_text="Measure filament resistance"),
+        node("t2", "CorrectiveAction", "Replace the magnetron"),
+    ], "edges": [
+        edge("1", "MAY_INDICATE", "s", "f", "r1", "p8.t1.r2"), edge("2", "RESOLVED_BY", "f", "a", "r1", "p8.t1.r2"),
+        edge("3", "ACTS_ON", "t1", "m", "r9", "p30.b4"), edge("4", "ACTS_ON", "t2", "m", "r9", "p30.b5"),
+        edge("5", "ACTS_ON", "a", "m", "r1", "p8.t1.r2"),  # a remedy of a cause is not a test
+    ]}
+    names = historical_edges(document)
+    assert {(e["type"], e["source_name"], e["target_name"]) for e in names} == {
+        ("MAY_INDICATE", "No material output", "Not enough air pressure"),
+        ("RESOLVED_BY", "Not enough air pressure", "Increase air pressure")}
+    full = historical_edges(document, "full")
+    shown = {(e["type"], e["source_name"], e["target_name"]) for e in full}
+    assert ("RESOLVED_BY", "Not enough air pressure",
+            "Increase air pressure (Shut off air at the gun, and increase air pressure to the pump.)") in shown
+    # The two checks of one record form one test of the part, through one unnamed cause.
+    assert ("MAY_INDICATE", "Magnetron test", "Unspecified cause of Magnetron test") in shown
+    tests = [e for e in full if e["type"] == "RESOLVED_BY" and e["source_name"].endswith("Magnetron test")]
+    assert sorted(e["target_name"] for e in tests) == ["Measure filament resistance", "Replace the magnetron"]
+    assert len({e["source"] for e in tests}) == 1 and {e["record"] for e in tests} == {"r9"}
+    assert sum(e["type"] == "MAY_INDICATE" for e in full) == 2

@@ -28,6 +28,8 @@ MAX_SPLIT_DEPTH = 3
 CONDITION_KINDS = ("if", "prerequisite", "warning", "expected", "order")
 SEVERITIES = ("critical", "high", "medium", "low")
 MATCH_THRESHOLD = 0.5
+# Facts that link a problem, a cause and a remedy: a diagram page without any was not really read.
+DIAGNOSTIC_LINKS = {"MAY_INDICATE", "INDICATES", "RESOLVED_BY", "ADDRESSED_BY", "CLEARED_BY"}
 
 
 def _obj(properties: dict[str, Any]) -> dict[str, Any]:
@@ -320,6 +322,20 @@ class Extractor:
         built.reads = 1
         return built
 
+    def unread_diagram_pages(self, unit: ReadingUnit, records: UnitRecords) -> list[int]:
+        """Pages shown as images (flowcharts, diagrams) that yielded no problem-cause-remedy fact.
+
+        A drawn page is the hardest to read and a read can come back empty for it without failing.
+        """
+
+        if self.images is None or records.failed_reads:
+            return []
+        read = {fact.evidence.page for fact in records.facts if fact.relation in DIAGNOSTIC_LINKS}
+        read |= {segment.page for fact in records.facts if fact.relation in DIAGNOSTIC_LINKS
+                 for segment in self.doc.segments(fact.evidence.segment_ids)}
+        return sorted(page for page in set(unit.pages) & set(self.images.pages) - read
+                      if any(segment.page == page for segment in self.doc.segments(unit.segment_ids)))
+
     async def extract(self, unit: ReadingUnit) -> UnitRecords:
         records = await self._read(unit, "A")
         missing = uncovered_rows(self.doc, unit, records) if self.reread_rows else []
@@ -336,5 +352,17 @@ class Extractor:
                 fact.origin = "reread"
             merge_records(records, again)
             records.notes.append(f"{len(missing)} unused table row(s) read again")
+        for page in self.unread_diagram_pages(unit, records):
+            owned = [segment.segment_id for segment in self.doc.segments(unit.segment_ids) if segment.page == page]
+            # The titles of the earlier pages of the passage say which problem the diagram continues.
+            titles = [segment.segment_id for earlier in unit.pages if earlier < page
+                      for segment in self.doc.pages.get(earlier, [])[:2]]
+            focus = unit.model_copy(update={"segment_ids": owned, "context_segment_ids": list(dict.fromkeys(
+                [*unit.context_segment_ids, *titles]))})
+            again = await self._read(focus, f"D{page}")
+            for fact in again.facts:
+                fact.origin = "reread"
+            merge_records(records, again)
+            records.notes.append(f"diagram page {page} read again: {len(again.facts)} fact(s)")
         return records
 
