@@ -194,3 +194,16 @@ def test_loss_analysis_reads_runs_of_the_connected_graph_pipeline(tmp_path):
     stages = {row["claim_id"]: row["stage"] for row in analyse(claims, loaded, recovered=set())["rows"]}
     # Both have a trusted candidate on their row; without a judgement neither counts as recovered.
     assert stages == {"R1.1": "in_graph_not_matched", "R2.1": "in_graph_not_matched"}
+
+
+def test_a_judgement_is_read_only_against_the_gold_it_was_made_on(tmp_path):
+    import pytest
+
+    from scripts.kg_loss_analysis import recovered_claims
+    from scripts.kg_v3_kpi import GOLDS
+
+    assert set(GOLDS) == {"gold", "gold_v2"}
+    judged = tmp_path / "kpi.json"
+    judged.write_text(json.dumps({"gold": "gold_v2", "manuals": {"m": {"systems": {"v3_r1": {"missing_claims": []}}}}}))
+    with pytest.raises(ValueError, match="judged on gold_v2"):
+        recovered_claims(judged, "m", "v3_r1", "gold")

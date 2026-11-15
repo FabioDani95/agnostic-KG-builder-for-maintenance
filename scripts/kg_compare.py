@@ -57,11 +57,15 @@ MEASURES = (
 )
 
 
-def gold_claims(manual: str) -> list[dict]:
-    path = ROOT / "campaign" / manual / "gold" / "gold.json"
-    if not path.exists():
+def gold_claims(manual: str, gold: str = "gold", scopes: tuple[str, ...] = ()) -> list[dict]:
+    """Scored claims of a manual's gold; with scopes (gold v2), only claims of those scopes."""
+
+    from scripts.kg_v3_kpi import GOLDS, load_gold
+
+    if not (ROOT / "campaign" / manual / GOLDS[gold]).exists():
         return []
-    return [claim for claim in json.loads(path.read_text())["claims"] if claim.get("failure") or claim.get("action")]
+    return [claim for claim in load_gold(manual, gold)[0] if (claim.get("failure") or claim.get("action"))
+            and (not scopes or claim.get("scope") in scopes)]
 
 
 def recall(claims: list[dict], found: set[str]) -> dict[str, float | list[int] | None]:
@@ -111,10 +115,10 @@ def verdict(key: str, value, base, tolerance: float = TOLERANCE) -> str:
 
 
 def compare(manuals: list[str], systems: dict[str, str], judgements: dict[str, tuple[Path, str]],
-            baseline: str | None) -> dict:
+            baseline: str | None, gold: str = "gold", scopes: tuple[str, ...] = ()) -> dict:
     table: dict[str, dict[str, dict]] = {}
     for manual in manuals:
-        claims = gold_claims(manual)
+        claims = gold_claims(manual, gold, scopes)
         table[manual] = {}
         for name, pattern in systems.items():
             run = ROOT / pattern.format(manual=manual)
@@ -126,9 +130,9 @@ def compare(manuals: list[str], systems: dict[str, str], judgements: dict[str, t
             if name in judgements and claims:
                 path, system = judgements[name]
                 try:
-                    row.update(recall(claims, recovered_claims(path, manual, system)))
+                    row.update(recall(claims, recovered_claims(path, manual, system, gold)))
                     row["judgement"] = str(path)
-                except (KeyError, StopIteration, SystemExit):
+                except (KeyError, StopIteration, SystemExit, ValueError):
                     pass  # this manual has no complete saved judgement for this system
             table[manual][name] = row
     summary: dict[str, dict[str, int]] = {}
@@ -144,7 +148,8 @@ def compare(manuals: list[str], systems: dict[str, str], judgements: dict[str, t
                     for value in rows[name]["versus_baseline"].values():
                         counts[value] += bool(value)
             summary[name] = dict(counts)
-    return {"baseline": baseline, "tolerance": TOLERANCE, "manuals": table, "versus_baseline": summary}
+    return {"baseline": baseline, "tolerance": TOLERANCE, "gold": gold, "scopes": list(scopes), "manuals": table,
+            "versus_baseline": summary}
 
 
 def _show(value, share: bool) -> str:
@@ -158,7 +163,9 @@ def markdown(result: dict) -> str:
     lines = ["# Pipeline comparison", "",
              f"Baseline: **{result['baseline'] or 'none'}**. ▲ better, ▼ worse, ＝ within ±{round(100 * result['tolerance'])} "
              "points (or 3% for counts) of the baseline. n.m. = not measured: no saved judgement or no value.",
-             "Every column describes one saved graph file; recall comes from a saved judgement by an LLM judge.", ""]
+             "Every column describes one saved graph file; recall comes from a saved judgement by an LLM judge.",
+             f"Recall reference: {'gold v2, written by an AI' if result.get('gold') == 'gold_v2' else 'gold v1, written by a person'}"
+             + (f", scopes {', '.join(result['scopes'])}" if result.get("scopes") else "") + ".", ""]
     for manual, rows in result["manuals"].items():
         if not rows:
             continue
@@ -196,6 +203,8 @@ def main() -> int:
     parser.add_argument("--recall", action="append", default=[],
                         help="NAME=judgement file:run name in it (a campaign kpi JSON, or the pilot scores with Bsafe/r1)")
     parser.add_argument("--baseline", help="system the others are compared with")
+    parser.add_argument("--gold", choices=("gold", "gold_v2"), default="gold", help="gold v1 (person) or v2 (AI)")
+    parser.add_argument("--scope", default="", help="recall on these gold v2 scopes only, comma-separated")
     parser.add_argument("--out", required=True, help="directory for comparison.json and COMPARISON.md")
     args = parser.parse_args()
     systems = _pairs(args.system, "system")
@@ -205,7 +214,9 @@ def main() -> int:
         judgements[name] = (ROOT / path, system)
     if args.baseline and args.baseline not in systems:
         parser.error(f"--baseline {args.baseline!r} is not one of the systems")
-    result = compare([item for item in args.manuals.split(",") if item], systems, judgements, args.baseline)
+    scopes = tuple(item for item in args.scope.split(",") if item)
+    result = compare([item for item in args.manuals.split(",") if item], systems, judgements, args.baseline,
+                     args.gold, scopes)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     (out / "comparison.json").write_text(json.dumps(result, indent=1, ensure_ascii=False) + "\n")

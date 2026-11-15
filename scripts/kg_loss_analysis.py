@@ -150,6 +150,7 @@ def analyse(claims: list[dict], run: dict, recovered: set[str]) -> dict:
             stage = "in_graph_not_matched"
         pages = sorted({_page(segment) for relation in gold_relations(claim) for segment in relation["segments"]})
         rows.append({"claim_id": claim["claim_id"], "branch_id": claim["branch_id"], "stage": stage, "gate": gate,
+                     "category": claim.get("category", ""), "scope": claim.get("scope", ""),
                      "pages": pages, "indicator": claim["indicator"][:90], "failure": claim.get("failure", "")[:90],
                      "action": claim.get("action", "")[:90],
                      "weakest_link": ("indicator" if order[stages[0][0]] <= min(order[item[0]] for item in stages)
@@ -171,15 +172,23 @@ def analyse(claims: list[dict], run: dict, recovered: set[str]) -> dict:
     }
 
 
-def recovered_claims(path: Path, manual: str, system: str) -> set[str]:
-    """Claims a saved judgement found: a campaign KPI file, or the pilot's historical scores."""
+def recovered_claims(path: Path, manual: str, system: str, gold: str = "gold") -> set[str]:
+    """Claims a saved judgement found: a campaign KPI file, or the pilot's historical scores.
+
+    A KPI file records the gold it was judged on; asking for claims of another gold is an error.
+    """
+
+    from scripts.kg_v3_kpi import load_gold
 
     data = json.loads(path.read_text())
     if "manuals" in data:
+        if data.get("gold", "gold") != gold:
+            raise ValueError(f"{path} was judged on {data.get('gold', 'gold')}, not on {gold}")
         row = data["manuals"][manual]["systems"][system]
-        gold = json.loads((ROOT / "campaign" / manual / "gold" / "gold.json").read_text())["claims"]
-        scored = {claim["claim_id"] for claim in gold if claim.get("failure") or claim.get("action")}
+        scored = {claim["claim_id"] for claim in load_gold(manual, gold)[0] if claim.get("failure") or claim.get("action")}
         return scored - set(row["missing_claims"])
+    if gold != "gold":
+        raise ValueError("the pilot scores were judged on gold v1 only")
     condition, replica = system.rsplit("/r", 1)
     row = next(item for item in data["rows"] if item["manual"] == manual and item["condition"] == condition
                and str(item["replica"]) == replica)
@@ -207,12 +216,18 @@ def main() -> int:
     parser.add_argument("--run", required=True, help="saved run directory with state/, graph.json and report.json")
     parser.add_argument("--kpi", required=True, help="saved judgement: a campaign kpi_*.json or the pilot historical_scores.json")
     parser.add_argument("--system", required=True, help="run name in the judgement: v3_r1, or Bsafe/r1 for the pilot")
+    parser.add_argument("--gold", choices=("gold", "gold_v2"), default="gold", help="gold v1 (person) or v2 (AI)")
+    parser.add_argument("--scope", default="", help="only claims of these gold v2 scopes, comma-separated")
     parser.add_argument("--out", help="write the full result as JSON")
     args = parser.parse_args()
     run_dir = Path(args.run)
     run_dir = run_dir if run_dir.is_absolute() else ROOT / run_dir
-    claims = json.loads((ROOT / "campaign" / args.manual / "gold" / "gold.json").read_text())["claims"]
-    result = analyse(claims, load_run(run_dir), recovered_claims(Path(args.kpi), args.manual, args.system))
+    from scripts.kg_v3_kpi import load_gold
+
+    claims = load_gold(args.manual, args.gold)[0]
+    if args.scope:
+        claims = [claim for claim in claims if claim.get("scope") in args.scope.split(",")]
+    result = analyse(claims, load_run(run_dir), recovered_claims(Path(args.kpi), args.manual, args.system, args.gold))
     result.update(manual=args.manual, run=str(args.run), judgement=str(args.kpi), system=args.system)
     if args.out:
         out = Path(args.out)

@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from scripts.kg_v3 import DEFAULT_BUDGET, DEFAULT_LEDGER, load_evidence, manual_source  # noqa: E402
-from scripts.kg_v3_contrastive import score_contrasts, write_candidates  # noqa: E402
+from scripts.kg_v3_contrastive import generate, score_contrasts, write_candidates  # noqa: E402
 from scripts.kg_v3_evaluate import score_system, token_f1, v3_edges, v22_edges_from  # noqa: E402
 
 CAMPAIGN = ROOT / "campaign"
@@ -39,8 +39,13 @@ def wilson(successes: int, total: int) -> list[float]:
     return [round(centre - margin, 3), round(centre + margin, 3)]
 
 
-def load_gold(manual: str) -> tuple[list[dict], list[int]]:
-    data = json.loads((CAMPAIGN / manual / "gold" / "gold.json").read_text())
+# Gold v1 was written by a person; gold v2 by an AI, exported in the claim format of v1
+# (scripts/kg_gold_v2.py export-claims) with a category and a scope on every claim.
+GOLDS = {"gold": "gold/gold.json", "gold_v2": "gold_v2/claims_v1_format.json"}
+
+
+def load_gold(manual: str, gold: str = "gold") -> tuple[list[dict], list[int]]:
+    data = json.loads((CAMPAIGN / manual / GOLDS[gold]).read_text())
     return data["claims"], data.get("pages", [])
 
 
@@ -64,15 +69,16 @@ def v3_run_facts(run: Path) -> dict:
     }
 
 
-async def evaluate(manuals: list[str], runs_root: Path, runs_name: str = "runs", v3_only: bool = False) -> dict:
+async def evaluate(manuals: list[str], runs_root: Path, runs_name: str = "runs", v3_only: bool = False,
+                   gold: str = "gold") -> dict:
     from backend.kg_v3.llm import ModelClient
     from backend.kg_v3.reader import read_document
 
     llm = ModelClient(model="gpt-6-luna", reasoning_effort="low")
     results: dict = {"manuals": {}, "runs_directory": runs_name, "judge_model": "gpt-6-luna",
-                     "judge_reasoning": "low", "judge_votes": 3}
+                     "judge_reasoning": "low", "judge_votes": 3, "gold": gold}
     for manual in manuals:
-        claims, gold_pages = load_gold(manual)
+        claims, gold_pages = load_gold(manual, gold)
         # A branch with neither cause nor action only defines a code or indication: it is
         # measured as code coverage, not as a diagnostic chain.
         indicator_only = [claim for claim in claims if not claim.get("failure") and not claim.get("action")]
@@ -87,7 +93,9 @@ async def evaluate(manuals: list[str], runs_root: Path, runs_name: str = "runs",
             pdf, asset = manual_source(manual)
             evidence, page_count, _ = load_evidence(pdf, asset)
             doc = read_document(list(evidence), page_count=page_count)
-        contrasts = write_candidates(gold_dir / "contrastive.json", claims)
+        # Contrast candidates are kept with gold v1, where a person reviews them; for gold v2 they
+        # are generated in memory and nothing is written into the gold folder.
+        contrasts = write_candidates(gold_dir / "contrastive.json", claims) if gold == "gold" else generate(claims)
         branches = defaultdict(list)
         for claim in claims:
             branches[claim["branch_id"]].append(claim["claim_id"])
@@ -177,6 +185,8 @@ def main() -> int:
     parser.add_argument("--out", required=True)
     parser.add_argument("--runs-name", default="runs")
     parser.add_argument("--v3-only", action="store_true")
+    parser.add_argument("--gold", choices=sorted(GOLDS), default="gold",
+                        help="gold v1 (written by a person) or gold v2 (written by an AI)")
     parser.add_argument("--ledger", default=str(DEFAULT_LEDGER))
     parser.add_argument("--budget", default=DEFAULT_BUDGET)
     parser.add_argument("--spend-ceiling", help="stricter cumulative cap without changing the campaign ledger budget")
@@ -190,7 +200,7 @@ def main() -> int:
                        "KG_REAL_CALL_PDF_ID": "evaluation",
                        "KG_LLM_TRACE_DIR": str(ROOT / "campaign/results/judge/provider_responses")})
     results = asyncio.run(evaluate([item.strip() for item in args.manuals.split(",") if item.strip()],
-                                   (ROOT / args.runs).resolve(), args.runs_name, args.v3_only))
+                                   (ROOT / args.runs).resolve(), args.runs_name, args.v3_only, args.gold))
     out = ROOT / args.out
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(results, indent=1) + "\n")
