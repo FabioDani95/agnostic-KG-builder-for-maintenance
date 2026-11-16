@@ -171,13 +171,8 @@ Keep numbers, units, codes, directions and negations exactly. Names are short En
 the meaning of the source. A numbered sub-step belongs to its parent step. In a decision flowchart
 each outcome that prescribes an action is its own record under the problem the flowchart starts
 from, named by its title or by the section it continues ("No heat"); its first question ("Does
-the oven operate?") is a check, not the problem. Every question box is itself an inspection
-action of that problem, returned once: the name says what is checked ("Check whether the oven
-operates after power on"), the instruction is the question as printed with its step number, and
-expected is the answer that leads out of the chart without a repair, when the chart shows one. An
-action reached through several questions carries the answers that lead to it as "if" conditions,
-in order ("Does the oven operate? No", "Is the fuse blown? Yes"). Never give an action the outcome
-of another question. A table of normal
+the oven operate?") is a check, not the problem. Never give an action the outcome of another
+question. A table of normal
 values is not evidence of a fault: for a component test without a symptom, return a record with
 problem type "", no cause, and the measurements as inspection actions on that component with their
 expected values; what the manual prescribes for an abnormal result is a repair with that result
