@@ -70,13 +70,14 @@ def v3_run_facts(run: Path) -> dict:
 
 
 async def evaluate(manuals: list[str], runs_root: Path, runs_name: str = "runs", v3_only: bool = False,
-                   gold: str = "gold", kg4_view: str = "names") -> dict:
+                   gold: str = "gold", kg4_view: str = "names", unnamed_causes: str = "record") -> dict:
     from backend.kg_v3.llm import ModelClient
     from backend.kg_v3.reader import read_document
 
     llm = ModelClient(model="gpt-6-luna", reasoning_effort="low")
     results: dict = {"manuals": {}, "runs_directory": runs_name, "judge_model": "gpt-6-luna",
-                     "judge_reasoning": "low", "judge_votes": 3, "gold": gold, "kg4_view": kg4_view}
+                     "judge_reasoning": "low", "judge_votes": 3, "gold": gold, "kg4_view": kg4_view,
+                     "unnamed_causes": unnamed_causes}
     for manual in manuals:
         claims, gold_pages = load_gold(manual, gold)
         # A branch with neither cause nor action only defines a code or indication: it is
@@ -118,7 +119,7 @@ async def evaluate(manuals: list[str], runs_root: Path, runs_name: str = "runs",
                     systems[name] = (v3_edges(run), v3_run_facts(run))
         rows = {}
         for name, (edges, facts) in systems.items():
-            score = await score_system(llm, claims, edges)
+            score = await score_system(llm, claims, edges, unnamed_by_problem=unnamed_causes == "problem")
             found = set(score["recovered_meaning"])
             branch_hits = sum(all(claim in found for claim in members) for members in branches.values())
             names = [" ".join([edge["source_name"], edge["target_name"]]) for edge in edges]
@@ -189,6 +190,10 @@ def main() -> int:
                         help="how connected-graph runs are shown to the judge (backend/kg_v4/scoring.py)")
     parser.add_argument("--gold", choices=sorted(GOLDS), default="gold",
                         help="gold v1 (written by a person) or gold v2 (written by an AI)")
+    parser.add_argument("--unnamed-causes", choices=("record", "problem"), default="record",
+                        help="where the manual names no cause: 'record' (historical) finds such a remedy only "
+                             "through a citation of the gold's own segment and counts each source record apart; "
+                             "'problem' finds it by its words and counts the unnamed causes of a problem as one")
     parser.add_argument("--ledger", default=str(DEFAULT_LEDGER))
     parser.add_argument("--budget", default=DEFAULT_BUDGET)
     parser.add_argument("--spend-ceiling", help="stricter cumulative cap without changing the campaign ledger budget")
@@ -203,7 +208,7 @@ def main() -> int:
                        "KG_LLM_TRACE_DIR": str(ROOT / "campaign/results/judge/provider_responses")})
     results = asyncio.run(evaluate([item.strip() for item in args.manuals.split(",") if item.strip()],
                                    (ROOT / args.runs).resolve(), args.runs_name, args.v3_only, args.gold,
-                                   args.kg4_view))
+                                   args.kg4_view, args.unnamed_causes))
     out = ROOT / args.out
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(results, indent=1) + "\n")

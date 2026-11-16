@@ -139,14 +139,46 @@ def gold_relations(claim: dict) -> list[dict]:
     return relations
 
 
-def candidates(relation: dict, edges: list[dict]) -> list[int]:
+def _nameless(relation: dict, edge: dict) -> bool:
+    """A reference fact and an extracted fact that both leave the cause unnamed."""
+
+    if relation["kind"] == "indicator":
+        return not relation["right"] and not edge.get("target_stated", True)
+    return not relation["left"] and not edge.get("source_stated", True)
+
+
+def candidates(relation: dict, edges: list[dict], unnamed_by_problem: bool = False) -> list[int]:
+    """Extracted facts worth showing the judge for one reference fact, best first.
+
+    Historically a fact with no named cause could be found only by citing the very segment
+    the gold cites, because an empty name matches no word, and each of its source records
+    took one of the few places. With ``unnamed_by_problem`` such a fact is found by the
+    words of the side the manual does name, and the unnamed causes of one problem count as
+    one candidate: a flowchart with thirty outcomes is one problem, not thirty.
+    """
+
     scored = []
+    problems: set[str] = set()
     for index, edge in enumerate(edges):
         if edge["type"] not in relation["types"] or not edge["trusted"]:
             continue
         positional = bool(edge["segments"] & relation["segments"])
-        lexical = min(token_f1(edge["source_name"], relation["left"]),
-                      token_f1(edge["target_name"] + " " + context_text(edge.get("conditions", [])), relation["right"]))
+        if unnamed_by_problem and _nameless(relation, edge):
+            if relation["kind"] == "indicator":
+                if edge["source"] in problems:
+                    continue
+                lexical = token_f1(edge["source_name"], relation["left"])
+                positional = any(other["source"] == edge["source"] and other["type"] in relation["types"]
+                                 and other["trusted"] and other["segments"] & relation["segments"] for other in edges)
+                if positional or lexical >= 0.3:
+                    problems.add(edge["source"])
+            else:
+                lexical = token_f1(edge["target_name"] + " " + context_text(edge.get("conditions", [])),
+                                   relation["right"])
+        else:
+            lexical = min(token_f1(edge["source_name"], relation["left"]),
+                          token_f1(edge["target_name"] + " " + context_text(edge.get("conditions", [])),
+                                   relation["right"]))
         if positional or lexical >= 0.3:
             scored.append((positional, lexical, index))
     scored.sort(reverse=True)
@@ -214,15 +246,22 @@ async def judge(llm, pairs: list[tuple[dict, list[dict]]]) -> list[bool]:
     return verdicts
 
 
-def build_pairs(claims: list[dict], edges: list[dict]) -> tuple[list[tuple[dict, list[dict]]], list[tuple]]:
+def build_pairs(claims: list[dict], edges: list[dict],
+                unnamed_by_problem: bool = False) -> tuple[list[tuple[dict, list[dict]]], list[tuple]]:
     """The pairs the judge compares, in the order it receives them, and their (claim, kind, edges) keys."""
 
     pairs, keys = [], []
     for claim in claims:
         for relation in gold_relations(claim):
-            found = candidates(relation, edges)
+            found = candidates(relation, edges, unnamed_by_problem)
             if relation["kind"] == "indicator":
                 groups = [[index] for index in found]
+                if unnamed_by_problem:
+                    # One verdict on the problem stands for all its unnamed causes.
+                    groups = [sorted(i for i, edge in enumerate(edges) if edge["type"] in relation["types"]
+                                     and edge["trusted"] and edge["source"] == edges[index]["source"]
+                                     and _nameless(relation, edge))
+                              if _nameless(relation, edges[index]) else [index] for index in found]
             else:  # Only remedies on the same source occurrence can form a compound action.
                 by_cause: dict[str, list[int]] = defaultdict(list)
                 for index in found:
@@ -235,8 +274,8 @@ def build_pairs(claims: list[dict], edges: list[dict]) -> tuple[list[tuple[dict,
     return pairs, keys
 
 
-async def score_system(llm, claims: list[dict], edges: list[dict]) -> dict:
-    pairs, keys = build_pairs(claims, edges)
+async def score_system(llm, claims: list[dict], edges: list[dict], unnamed_by_problem: bool = False) -> dict:
+    pairs, keys = build_pairs(claims, edges, unnamed_by_problem)
     verdicts = await judge(llm, pairs) if pairs else []
     same = defaultdict(set)
     positional = defaultdict(set)

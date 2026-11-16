@@ -213,6 +213,30 @@ def test_the_historical_scorer_reads_the_graph(result):
                                                           ("R2.1", "indicator"), ("R2.1", "action")}
 
 
+def test_a_remedy_without_a_cause_is_scored_by_its_problem_not_by_its_citation():
+    """A flowchart: one problem, many outcome records, and a gold that cites the title."""
+    from scripts.kg_v3_evaluate import build_pairs
+
+    def step(number, action, cite):
+        cause = f"unnamed:no-heat:R{number}"
+        shared = {"record": f"R{number}", "trusted": True, "conditions": [], "segments": {cite}}
+        return [{**shared, "type": "MAY_INDICATE", "source": "no-heat", "target": cause, "source_name": "No heat",
+                 "target_name": "Unspecified cause of No heat", "source_stated": True, "target_stated": False},
+                {**shared, "type": "RESOLVED_BY", "source": cause, "target": f"a{number}", "target_name": action,
+                 "source_name": "Unspecified cause of No heat", "source_stated": False, "target_stated": True}]
+
+    edges = [edge for number in range(1, 13) for edge in step(number, f"Check connector {number}", f"p2.b{number}")]
+    edges += step(13, "Replace the magnetron", "p2.b40")
+    claim = {"claim_id": "F.1", "branch_id": "F", "indicator": "No heat", "failure": "", "conditions": "",
+             "action": "Replace the magnetron", "indicator_segments": ["p1.b1"], "failure_segments": [],
+             "action_segments": ["p2.b99"]}  # the gold cites the title and another block of the box
+    assert build_pairs([claim], edges)[0] == []  # historical: no shared citation, nothing to judge
+    pairs, keys = build_pairs([claim], edges, unnamed_by_problem=True)
+    by_kind = {kind: group for _, kind, group in keys}
+    assert len(pairs) == 2 and len(by_kind["indicator"]) == 13  # one verdict covers all unnamed causes
+    assert [edges[index]["target_name"] for index in by_kind["action"]] == ["Replace the magnetron"]
+
+
 def test_metrics_read_graphs_of_the_previous_pipeline_too(result):
     old = {"version": "kg-v3-graph-2", "nodes": [
         {"id": "a", "type": "Asset", "name": "M", "properties": {}},
