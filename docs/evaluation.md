@@ -67,6 +67,19 @@ of 40 pairs found it wrong on about one in five "different" verdicts. Recall fig
 are therefore reported with the judge named, and a saved judgement is valid only
 for the graph it judged.
 
+Where the manual names no cause (most flowchart and maintenance claims of gold v2:
+369 of 375 for the LG manual, 374 of 460 for Grizzly), the scorer has two ways to
+find the extracted fact, chosen with `--unnamed-causes`:
+
+- `record`, the default and the behaviour of every judgement saved before
+  2026-11-16: the extracted fact must cite the very segment the gold cites, and each
+  source record of a problem takes one of the eight places shown to the judge. On a
+  flowchart with thirty outcomes most extracted steps never reach the judge.
+- `problem`: the fact is found by the words the manual does give, and the unnamed
+  causes of one problem count as one. Use it for manuals with flowcharts, and
+  judge every system you compare with the same choice; the result file records it
+  in `unnamed_causes`.
+
 Judging is a paid model call. It needs the same explicit authorisation and ledger
 as an extraction.
 
