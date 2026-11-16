@@ -1,6 +1,6 @@
 """One autonomous run, from a read PDF to a connected graph, with state saved after every step.
 
-    read -> survey -> extract -> verify -> resolve -> gaps -> enrich -> export
+    read -> transcribe -> survey -> extract -> verify -> resolve -> gaps -> enrich -> export
 
 No person is asked anything during a run. A work directory makes the run resumable: finished
 steps and passages are loaded, not called again, as long as the PDF, the prompts, the model and
@@ -41,11 +41,14 @@ from backend.kg_v4.prompts import (
     GAP_PROMPT,
     RESOLVE_PROMPT,
     SURVEY_PROMPT,
+    TRANSCRIBE_PROMPT,
     VERIFY_PROMPT,
 )
 from backend.kg_v4.resolve import Resolution, assemble, catalogue_mentions, judge, summary
 from backend.kg_v4.sections import SectionIndex, build_sections
 from backend.kg_v4.survey import machine_words, reading_units, survey_document
+from backend.kg_v4.transcribe import Transcriber, add_sections, pages_without_text, with_transcripts
+from backend.kg_v4.transcribe import summary as transcription_summary
 from backend.kg_v4.verify import Verifier
 
 logger = logging.getLogger(__name__)
@@ -61,6 +64,9 @@ class BuildConfig(BaseModel):
     concurrency: int = 6
     # Stop with a clear error instead of spending on an unexpectedly large reading.
     max_units: int = 150
+    # Pages without usable text (scans, broken character maps) are read from their image.
+    transcribe: bool = True
+    transcribe_max_pages: int = 120
     page_images: bool = True
     reread_rows: bool = True
     verify: bool = True
@@ -83,7 +89,7 @@ class BuildResult(BaseModel):
 
 
 def prompt_ids() -> dict[str, str]:
-    prompts = {"survey": SURVEY_PROMPT, "extract": EXTRACT_PROMPT, "verify": VERIFY_PROMPT,
+    prompts = {"transcribe": TRANSCRIBE_PROMPT, "survey": SURVEY_PROMPT, "extract": EXTRACT_PROMPT, "verify": VERIFY_PROMPT,
                "resolve": RESOLVE_PROMPT, "gap": GAP_PROMPT, "enrich": ENRICH_PROMPT}
     return {name: hashlib.sha256(text.encode("utf-8")).hexdigest()[:16] for name, text in prompts.items()}
 
@@ -170,6 +176,10 @@ class Builder:
         self.source_title = source_title or (pdf_path.name if pdf_path else str(asset.get("name", "")))
         self.timings: dict[str, float] = {}
         self.image_pages: set[int] = set()
+        self.transcribed_pages: set[int] = set()
+        self.transcription: dict[str, Any] = {}
+        self._geometry: dict[int, dict] | None = None
+        # The manifest names the document as the reader gave it; transcripts are state of the run.
         self.manifest = input_manifest(doc, self.config, asset, pdf_path)
         self.state = _State(workdir, self.manifest)
 
@@ -200,6 +210,45 @@ class Builder:
         self._emit("state_saved", name=name, value=value)
 
     # Steps ----------------------------------------------------------------
+
+    def _layout(self) -> dict[int, dict]:
+        """Text, picture and drawing statistics of every physical page, also of pages with no text."""
+
+        if self._geometry is None:
+            from backend.adapters.pdf import page_layout_inventory
+
+            self._geometry = page_layout_inventory(self.pdf_path)
+        return self._geometry
+
+    async def _transcribe(self) -> None:
+        """Read the pages without usable text from their image; later steps see them as text."""
+
+        config = self.config
+        if not config.transcribe or self.pdf_path is None:
+            return
+        wanted = pages_without_text(self.doc, self._layout())
+        if not wanted:
+            return
+        pages, skipped = sorted(wanted)[:config.transcribe_max_pages], sorted(wanted)[config.transcribe_max_pages:]
+        transcriber = Transcriber(self.llm, self.pdf_path, asset_name=self.asset["name"],
+                                  concurrency=config.concurrency)
+
+        async def one(page: int) -> dict[str, Any]:
+            saved = self.state.load(f"transcript_{page}")
+            if saved is not None:
+                return saved
+            transcript = await transcriber.page(page, wanted[page])
+            # A failed call is not saved: running again reads the page again.
+            if not transcript["failed"]:
+                self._save(f"transcript_{page}", transcript)
+            return transcript
+
+        transcripts = list(await self._timed("transcribe", asyncio.gather(*(one(page) for page in pages))))
+        done = [item for item in transcripts if not item["failed"]]
+        self.doc = with_transcripts(self.doc, done)
+        add_sections(self.sections, done)
+        self.transcribed_pages = {int(item["page"]) for item in done if item["blocks"]}
+        self.transcription = transcription_summary(wanted, transcripts, skipped)
 
     async def _survey(self) -> DocumentSurvey:
         saved = self.state.load("survey")
@@ -255,6 +304,7 @@ class Builder:
         """The whole run. Each step below is one stage of the module docstring; read them in order."""
 
         started = time.perf_counter()
+        await self._transcribe()
         survey = await self._survey()
         units, images = self._plan_units(survey)
         work, records, verifier = await self._read(survey, units, images)
@@ -281,7 +331,7 @@ class Builder:
         images = None
         extra_pages = set(config.extra_pages)
         if config.page_images and self.pdf_path is not None:
-            images = DiagramImages(self.pdf_path, self.doc)
+            images = DiagramImages(self.pdf_path, self.doc, self._layout(), transcribed=self.transcribed_pages)
             self.image_pages = set(images.pages)
             extra_pages |= pages_to_read_with(set(survey.diagnostic_pages()) | extra_pages, images.drawn)
         units = reading_units(self.doc, survey, self.sections, max_chars=config.unit_max_chars,
@@ -395,6 +445,10 @@ class Builder:
             reasons.append("failed_extraction_reads")
         if survey.failed_batches:
             reasons.append("failed_survey_batches")
+        if self.transcription.get("failed_pages"):
+            reasons.append("failed_transcriptions")
+        if self.transcription.get("pages_over_the_limit"):
+            reasons.append("pages_over_the_transcription_limit")
         if not graph.edges:
             reasons.append("empty_diagnostic_graph")
         open_gaps = Counter(gap.kind for gap in find_gaps(graph))
@@ -402,7 +456,7 @@ class Builder:
         return {
             "pipeline": PIPELINE_VERSION, "status": "", "approval": "automatic", "quality_measured": False,
             "incomplete_reasons": reasons, "pages": self.doc.page_count,
-            "unreadable_pages": self.doc.unreadable_pages,
+            "unreadable_pages": self.doc.unreadable_pages, "transcription": self.transcription,
             "diagnostic_pages": survey.diagnostic_pages(),
             "read_pages": sorted({page for unit in units for page in unit.pages}),
             "image_pages": sorted(self.image_pages & {page for unit in units for page in unit.pages}),

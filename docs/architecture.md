@@ -39,12 +39,13 @@ in the editor, and the live view shows the steps of either on the same stations.
 A run goes from the PDF to the graph without asking anyone anything:
 
 ```text
-read → survey → extract → verify → resolve → gaps → enrich → export
+read → transcribe → survey → extract → verify → resolve → gaps → enrich → export
 ```
 
 | Stage | Work performed | Model calls | Implementation |
 | --- | --- | --- | --- |
 | Read | Segments, tables and OCR as in V3; heading trail, printed page numbers and printed pointers for every segment | none | `backend/adapters/pdf.py`, `kg_v3/reader.py`, `kg_v4/sections.py` |
+| Transcribe | Pages without usable text (a scan, lettering drawn as strokes, a broken character map) are read from their image, block by block; the blocks become segments of the page | one per such page, bounded (default 120) | `transcribe.py` |
 | Survey | One reading of the whole text: which pages hold troubleshooting knowledge, one catalogue of components (with hierarchy) and codes, what the manual says the machine is | one per batch of pages | `survey.py` |
 | Extract | One record per source entry (a table row, a flowchart, a procedure): problem, causes, actions, with the manual's descriptions, steps and expected values; parts are named from the catalogue | one per passage, plus one for unused table rows | `extract.py`, `images.py` |
 | Verify | One meaning check of every fact against its passage | one per passage | `verify.py` |
@@ -58,6 +59,15 @@ Design rules, each tied to a defect measured on saved runs:
 - **Global before local.** Each V3 passage was read with no knowledge of the rest of
   the manual, so the same part became several nodes and no relation joined sections.
   The survey gives every extraction call the same list of parts and codes.
+- **Text first, the image only where text is missing.** A text layer is exact and
+  free, so a page that has one is never sent as an image to be read again. Rules
+  that cost nothing find the other pages: less text than a title under a picture
+  or a drawing, or words made of characters no language uses (leader dots printed
+  with a broken font do not count). Each is transcribed once, in its own language,
+  with `[illegible]` where a word cannot be read. The transcript gives the page
+  citable segments (`p<page>.o101`, `.o102`, …, IDs the reader never uses), its
+  headings and its printed page number; evidence taken from it carries
+  `transcribed: true`. The extractor and the verifier also see the page itself.
 - **A record is a source entry.** Causes and their actions are nested under their
   problem, so a cause cannot take the remedy of the row beside it.
 - **Only meaning rejects.** A fact always carries a page and a section; segment IDs
@@ -189,6 +199,7 @@ Fields the connected-graph pipeline adds; every consumer may ignore them:
 | Where | Field | Meaning |
 | --- | --- | --- |
 | evidence item | `section`, `anchor` | Heading trail; `cited` (the model named the segment), `matched` (found by the code), `unit` or `page` (only the passage or page is known) |
+| evidence item | `transcribed` | `true` when the text was read from the image of a page without a text layer |
 | occurrence | `confidence`, `verdict`, `origin`, `note` | `high`/`medium`/`low`; where the fact comes from (`extract`, `reread`, `gap_repair`, `reference`, `name_mention`, `catalogue`) |
 | node | `description_source` | `manual`, or `context` when the description is composed from the graph because the manual says nothing more |
 | node | `inferred_properties`, `placeholder_properties`, `name_derived_properties` | Attributes deduced from the passages, left as declared placeholders, or repeating the name |
@@ -225,12 +236,13 @@ occurrence-level evidence together.
 
 The connected-graph pipeline keeps its state in `<run>/state/`: `manifest.json`
 (PDF hash, segment hash, prompt hashes, ontology hash, model and the settings that
-change facts), then one file per finished step and passage. The same command on the
+change facts), then one file per finished step, passage and transcribed page. The same command on the
 same directory resumes; different inputs are refused. A failed read is not saved,
 so running again reads that passage again. Worker counts and the call budgets of
 the gap search and enrichment are not part of the manifest. A run ends as
 `approved` (automatic, recorded as such in `report.approval`) or `incomplete`
-(failed reads, failed survey batches or an empty graph); with `--approval person`
+(failed reads, failed survey batches, pages whose transcription failed or was
+left out by the page limit, or an empty graph); with `--approval person`
 it ends as `awaiting_approval` and waits for the button in the interface.
 
 ## Interface and revisions

@@ -10,16 +10,18 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 from typing import Any
 
 from backend.kg_v3.contracts import ContextItem, ReadingUnit, SegmentKind
 from backend.kg_v3.llm import TruncatedResponse
 from backend.kg_v3.reader import DocumentText, render_segments
 from backend.kg_v4.model import ACTION_KINDS, Evidence, Fact, Mention, Reference, UnitRecords
-from backend.kg_v4.names import canonical
+from backend.kg_v4.names import canonical, tokens
 from backend.kg_v4.prompts import EXTRACT_PROMPT
 from backend.kg_v4.sections import SectionIndex
 from backend.kg_v4.survey import CATEGORIES, catalogue_brief, split_listed_parts, usable_component
+from backend.kg_v4.transcribe import is_transcribed
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +32,21 @@ SEVERITIES = ("critical", "high", "medium", "low")
 MATCH_THRESHOLD = 0.5
 # Facts that link a problem, a cause and a remedy: a diagram page without any was not really read.
 DIAGNOSTIC_LINKS = {"MAY_INDICATE", "INDICATES", "RESOLVED_BY", "ADDRESSED_BY", "CLEARED_BY"}
+_PAGE_LINE = re.compile(r"^=== page (\d+) ===$", re.M)
+# A step number or list index given as a condition ("1", "2.") says nothing about when to act.
+_BARE_NUMBER = re.compile(r"\W*\d{1,2}\W*")
+
+
+def empty_condition(kind: str, text: str) -> bool:
+    return kind != "expected" and _BARE_NUMBER.fullmatch(text) is not None
+
+
+def repeats(cause: str, problem: str) -> bool:
+    """A "cause" that only says the problem again, whole or shortened, explains nothing."""
+
+    cause_words, problem_words = set(tokens(cause)), set(tokens(problem))
+    return bool(cause_words) and (cause_words == problem_words
+                                  or (len(cause_words) >= 2 and cause_words < problem_words))
 
 
 def _obj(properties: dict[str, Any]) -> dict[str, Any]:
@@ -138,7 +155,8 @@ class _Builder:
     def conditions(self, raw: Any, cites: list[str]) -> list[ContextItem]:
         items = []
         for value in raw or []:
-            if isinstance(value, dict) and _clean(value.get("text")) and value.get("kind") in CONDITION_KINDS:
+            if (isinstance(value, dict) and _clean(value.get("text")) and value.get("kind") in CONDITION_KINDS
+                    and not empty_condition(value["kind"], _clean(value["text"]))):
                 items.append(ContextItem(kind=value["kind"], text=_clean(value["text"]),
                                          cite=tuple(cite for cite in cites if cite in self.allowed)))
         return sorted(set(items))
@@ -199,6 +217,11 @@ class _Builder:
                 if not isinstance(item, dict) or not _clean(item.get("name")):
                     continue
                 cause_name = _clean(item["name"])
+                actions = [value for value in item.get("actions") or [] if isinstance(value, dict)]
+                if problem is not None and repeats(cause_name, problem.name):
+                    for position, value in enumerate(actions, start=1):
+                        self.action(value, f"{record}/c{index}/a{position}", record, problem, direct, entry)
+                    continue
                 evidence = self.evidence(item.get("cite") or [], cause_name, entry)
                 cause = self.mention(f"{record}/c{index}", type="FailureMode", name=cause_name, record=record,
                                      description=_clean(item.get("description")), evidence=evidence)
@@ -207,7 +230,6 @@ class _Builder:
                               self.conditions(item.get("conditions"), item.get("cite") or []))
                 for part in self.component(item.get("component"), evidence):
                     self.fact("AFFECTS", cause, part, record)
-                actions = [value for value in item.get("actions") or [] if isinstance(value, dict)]
                 for position, value in enumerate(actions, start=1):
                     self.action(value, f"{record}/c{index}/a{position}", record, cause, "RESOLVED_BY", evidence)
                 if item.get("no_remedy") and not actions:
@@ -284,10 +306,17 @@ class Extractor:
         ordered = sorted(self.doc.segments(segment_ids), key=lambda item: self.doc.position(item.segment_id) or 0)
         images, marks = self.images.for_segments(segment_ids) if self.images is not None else ([], {})
         text = render_segments(ordered, context=set(unit.context_segment_ids), doc=self.doc, marks=marks)
+        text = _PAGE_LINE.sub(lambda match: self.page_line(int(match.group(1))), text)
         head = catalogue_brief(self.catalogue, unit.pages)
-        section = self.sections.section(page=unit.pages[0])
-        title = f"Passage (section: {section}):" if section else "Passage:"
-        return "\n".join(part for part in (head, title, text) if part), segment_ids, images
+        return "\n".join(part for part in (head, "Passage:", text) if part), segment_ids, images
+
+    def page_line(self, page: int) -> str:
+        """The line that opens a page of the passage: its number, how it was read, its section."""
+
+        transcribed = any(is_transcribed(segment) for segment in self.doc.pages.get(page, [])[:1])
+        section = self.sections.by_page.get(page, "")
+        return (f"=== page {page}" + (" (transcribed)" if transcribed else "")
+                + (f" | section: {section}" if section else "") + " ===")
 
     async def _read(self, unit: ReadingUnit, read: str, depth: int = 0) -> UnitRecords:
         text, segment_ids, images = self.passage(unit)

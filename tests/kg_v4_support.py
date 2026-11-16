@@ -59,14 +59,29 @@ def manual_pdf(path) -> None:
     document.save(path)
 
 
-def read_manual(tmp_path):
+def scanned_manual_pdf(path) -> None:
+    """The same manual with its troubleshooting page as a picture: no text layer on page 2."""
+
+    source = path.with_name("typed.pdf")
+    manual_pdf(source)
+    with fitz.open(source) as typed:
+        document = fitz.open()
+        document.insert_pdf(typed, from_page=0, to_page=0)
+        page = document.new_page(width=595, height=842)
+        page.insert_image(page.rect, pixmap=typed[1].get_pixmap(dpi=72))
+        document.insert_pdf(typed, from_page=2, to_page=2)
+        document.save(path)
+
+
+def read_manual(tmp_path, *, scanned: bool = False):
     """(pdf path, read document) of the synthetic manual."""
 
     from backend.kg_v3.reader import read_document
     from scripts.kg_v3 import load_evidence
 
     pdf = tmp_path / "manual.pdf"
-    manual_pdf(pdf)
+    if not pdf.exists():  # a second read of the same folder is the same file: a run can resume
+        (scanned_manual_pdf if scanned else manual_pdf)(pdf)
     evidence, page_count, _ = load_evidence(pdf, ASSET)
     return pdf, read_document(list(evidence), page_count=page_count)
 
@@ -119,7 +134,8 @@ class ScriptedModel:
 
     async def json(self, *, system: str, user: str, schema: dict[str, Any], name: str, max_output_tokens: int = 0,
                    images: list[str] | None = None, reasoning_effort: str | None = None) -> dict[str, Any]:
-        self.calls.append({"name": name, "user": user, "system": system, "schema": schema})
+        self.calls.append({"name": name, "user": user, "system": system, "schema": schema,
+                           "images": len(images or [])})
         self.usage.add({"prompt": len(user) // 4, "completion": 50, "estimated_cost_usd": 0.0001}, name)
         handler = self.overrides.get(name) or getattr(self, name.removeprefix("kg_v4_"))
         return handler(user, schema) if callable(handler) else handler
@@ -128,6 +144,17 @@ class ScriptedModel:
         return sum(call["name"] == name for call in self.calls)
 
     # Roles ----------------------------------------------------------------
+
+    def transcribe(self, user: str, schema: dict[str, Any]) -> dict[str, Any]:
+        """Page 2 as a careful reader copies it from its picture: the title and the table, row by row."""
+
+        blocks, problem = [{"kind": "heading", "text": "Troubleshooting"}], ""
+        for row in TABLE[1:]:
+            problem = row[0] or problem  # a cell that spans two rows is repeated
+            blocks.append({"kind": "table_row", "text": " | ".join(
+                f"{title}: {cell}" for title, cell in zip(TABLE[0], (problem, *row[1:])))})
+        blocks.append({"kind": "text", "text": "  "})  # nothing printed: not a block
+        return {"legible": True, "language": "en", "printed_page": "2", "blocks": blocks}
 
     def survey(self, user: str, schema: dict[str, Any]) -> dict[str, Any]:
         pages = schema["properties"]["pages"]["items"]["properties"]["page"]["enum"]

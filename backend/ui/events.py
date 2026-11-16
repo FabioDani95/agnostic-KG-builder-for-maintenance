@@ -35,7 +35,7 @@ STEP_STATION = {
     "merge": "merge",
     "gate_doubts": "ask", "gate_recovery": "ask", "gate_approval": "ask",
     # Steps of the connected-graph pipeline (backend/kg_v4), shown on the same six stations.
-    "survey": "map", "verify": "check", "gaps": "check", "resolve": "merge", "enrich": "merge",
+    "transcribe": "read", "survey": "map", "verify": "check", "gaps": "check", "resolve": "merge", "enrich": "merge",
 }
 # The station each saved state belongs to, and a step that stands for it.
 STATE_STATION = (

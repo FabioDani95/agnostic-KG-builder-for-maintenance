@@ -63,6 +63,8 @@ of shared commits.
 | --- | --- | --- |
 | `--model`, `--reasoning` | `gpt-6-luna`, `low` | One model for every role |
 | `--no-verify` | verification on | Without it facts stay `unchecked` (medium confidence) and nothing is rejected |
+| `--no-transcribe` | transcription on | Without it pages without usable text stay unread and are listed in `report.unreadable_pages` |
+| `--transcribe-pages` | 120 | Most pages read from their image, one call each, in page order; pages beyond the limit are listed in `report.transcription.pages_over_the_limit` and the run ends `incomplete` |
 | `--gap-calls` | 24 | Most calls of the gap search over at most two rounds; gaps beyond the budget are reported as open, never guessed |
 | `--enrich-calls` | 40 | Most calls of node enrichment, ten nodes per call; nodes beyond the budget keep what extraction read |
 | `--pages` | none | Extra PDF pages read whatever the survey decides |
@@ -167,3 +169,12 @@ correct transcription. Missing OCR resources and low-quality text are recorded
 rather than silently treated as reliable evidence. Install the language data
 needed by PyMuPDF/Tesseract for your PDFs. Reader/OCR changes can alter segment
 identifiers and invalidate saved runs or gold alignment.
+
+The connected-graph pipeline does not depend on these settings. After the reader,
+it transcribes with the model the pages that still have no usable text: fewer
+than 80 characters under a picture covering a quarter of the page or a drawing of
+at least 200 strokes, or text in which three words out of ten hold unusable
+characters. A page the reader already gave good text for, native or from
+Tesseract, is never sent. Transcribed segments have their own IDs and never
+replace an ID the reader gives to a page with text, so gold citations of text
+pages stay valid.

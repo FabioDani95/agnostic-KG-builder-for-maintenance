@@ -17,10 +17,12 @@ real model calls. `requirements.txt` is sufficient for runtime use;
 `requirements-dev.txt` adds test and lint tools. This is an application repository,
 so use the scripts directly rather than `pip install -e .`.
 
-Native PDF text is read with PyMuPDF. Scanned pages may need Tesseract OCR and its
-language data. Missing OCR is recorded in reading diagnostics; installing the
-Python requirements alone does not supply those language files. See
-[OCR configuration](configuration.md#pdf-reading-and-ocr).
+Native PDF text is read with PyMuPDF. The connected-graph pipeline reads pages
+without usable text (scans, broken character maps) from their image with the
+model, in any language, and needs nothing installed for it. The V3 pipeline uses
+Tesseract OCR for such pages when it and its language data are installed;
+installing the Python requirements alone does not supply them. See
+[PDF reading and OCR](configuration.md#pdf-reading-and-ocr).
 
 ## Build a connected graph from the command line
 
@@ -54,7 +56,9 @@ after changing the PDF, the model, the prompts or the ontology.
 
 Options that change cost or content: `--gap-calls` and `--enrich-calls` (most calls
 of the gap search and of node enrichment; `0` turns the stage off), `--no-verify`,
-`--pages` (extra PDF pages to read), `--model` and `--reasoning`. See
+`--no-transcribe` and `--transcribe-pages` (pages without text read from their
+image), `--pages` (extra PDF pages to read), `--model` and `--reasoning`.
+`--estimate` lists the pages without text and what reading them costs. See
 [Architecture](architecture.md#connected-graph-pipeline) for what each stage does
 and [Evaluation](evaluation.md) for how to measure the result.
 

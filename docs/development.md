@@ -67,6 +67,7 @@ A run directory is the whole story of a run; every file is JSON and can be read 
 | File in `<run>/state/` | Written by | Look here when |
 | --- | --- | --- |
 | `manifest.json` | start | a resume is refused: it lists the inputs the directory was made with |
+| `transcript_<page>.json` | transcribe | a scanned page was misread: the blocks the model read on the image, its language and printed page number |
 | `survey.json` | survey | a page was not read, or a part is missing from the catalogue |
 | `units.json` | planning | you need the passages and their context segments |
 | `records_<unit>.json` | extract | a fact is missing or wrong: mentions, facts, pointers and notes of one passage |

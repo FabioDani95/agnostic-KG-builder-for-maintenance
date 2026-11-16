@@ -150,7 +150,8 @@ def test_records_become_mentions_and_facts_with_page_and_section(manual):
     reader, unit = extractor(manual, model)
     records = run(reader.extract(unit))
     user = model.calls[-1]["user"]
-    assert user.startswith("Known components of this machine") and "Passage (section: Maintenance):" in user
+    assert user.startswith("Known components of this machine") and "\nPassage:\n" in user
+    assert "=== page 1 | section: Maintenance ===" in user  # every page opens with its section
     by_key = {item.key: item for item in records.mentions}
     relations = sorted((item.relation, by_key[item.source].name, by_key[item.target].name) for item in records.facts)
     assert ("MAY_INDICATE", "Pump fails to operate", "Fluid dried on rod") in relations
@@ -192,6 +193,24 @@ def test_a_fact_without_citation_is_kept_and_anchored(manual):
     unworded = next(item for item in records.facts if item.relation == "RESOLVED_BY")
     assert by_key[unworded.target].evidence.anchor == "unit"  # still has the page and section of its entry
     assert unworded.evidence.page == 2 and unworded.evidence.section == "Troubleshooting"
+
+
+def test_a_cause_that_repeats_the_problem_and_a_bare_number_condition_are_dropped(manual):
+    def tautology(user, schema):
+        row = find(user, "Worn packings")
+        return {"records": [record("R1", problem=symptom("Output is low at the pump outlet", cite=row), causes=[
+            cause("Low output", cite=row, actions=[
+                action("Replace packings", cite=row, conditions=[("order", "1"), ("if", "if worn")])])])],
+                "components": [], "unclear": []}
+
+    reader, unit = extractor(manual, ScriptedModel(kg_v4_extract=tautology), reread_rows=False)
+    records = run(reader.extract(unit))
+    by_key = {item.key: item for item in records.mentions}
+    assert [item.type for item in records.mentions] == ["Symptom", "CorrectiveAction"]  # no cause node
+    fact, = records.facts
+    assert (fact.relation, by_key[fact.source].name, by_key[fact.target].name) == (
+        "ADDRESSED_BY", "Output is low at the pump outlet", "Replace packings")
+    assert [(item.kind, item.text) for item in fact.conditions] == [("if", "if worn")]
 
 
 def test_unused_table_rows_are_read_once_more(manual):

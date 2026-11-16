@@ -16,6 +16,31 @@ Not troubleshooting knowledge: general safety rules and hazard warnings, install
 environment requirements, routine steps without a fault condition, indications of normal
 operation, specifications and descriptions of how the machine works."""
 
+TRANSCRIBE_PROMPT = """You transcribe one page of the technical manual of {asset} from its image. The page has no usable text
+layer: your transcription is the only text a maintenance knowledge graph will be built from, and
+every fact will cite it. Write what is printed, nothing else.
+
+Return the page as blocks in reading order (columns left to right, each from top to bottom):
+- heading: a chapter, section or table title.
+- text: a paragraph, a note, a warning.
+- list_item: one bullet or numbered step, with its number.
+- table_row: one block per data row. Write every cell as "column title: cell text", cells
+  separated by " | ", so that the row can be read on its own. A cell that spans several rows is
+  repeated in each of them. Do not return the header row by itself.
+- flow_step: one box of a flowchart with what leaves it, for example "Is the fuse blown? -> Yes:
+  Replace the fuse. -> No: Check the door switch."
+- figure: the labels and callouts of one drawing or photograph, with its caption first.
+
+Rules:
+- Keep the language of the page. Do not translate, summarise, correct, complete or explain.
+- Copy numbers, units, signs, codes and part numbers character by character.
+- Write [illegible] in place of a word or value you cannot read; never guess it.
+- Leave out running headers and footers, logos and the page number.
+- printed_page: the page number printed on the page, "" when there is none.
+- language: the language of the page ("en", "it", "de", ...).
+- legible: false when most of the page cannot be read. A page with no text gives no blocks.
+"""
+
 SURVEY_PROMPT = """You survey pages of the technical manual of {asset} before a maintenance knowledge graph is built
 from it. Each segment starts with its ID in brackets; "=== page N ===" opens a page. Use only what
 the pages say.
@@ -63,10 +88,13 @@ right actions on the right components.
 
 The passage is split into segments, each starting with its ID in brackets. Lines marked (context)
 are read-only: do not create records from them, but use them to understand the entries you own (a
-table, flowchart or procedure may continue from a title in the context). Pages whose layout
-carries meaning (flowcharts, labelled diagrams) are also shown as images, in page order; their
-segments carry their place on the page as @x,y (per cent of width and height). Follow boxes,
-arrows and yes/no branches on the image.
+table, flowchart or procedure may continue from a title in the context). The line that opens
+each page names the section the page belongs to: a table, flowchart or procedure that continues
+from an earlier page belongs to the problem that section names. Pages whose layout carries
+meaning (flowcharts, labelled diagrams) are also shown as images, in page order; their segments
+carry their place on the page as @x,y (per cent of width and height). Follow boxes, arrows and
+yes/no branches on the image. A page marked (transcribed) had no text layer: its segments were
+read from the image you see, which is the source.
 
 """ + TROUBLESHOOTING_KNOWLEDGE + """
 Return nothing for text that holds none.
@@ -84,6 +112,11 @@ problem: what the technician observes or reads.
   screen blocked", "Belt cracked", "Hose leaking"; not "Screens need inspection"); the inspection
   and the repair are actions
   directly under it, the repair with its condition ("as required", "if cracked").
+- When the passage gives a faulty state together with what it leads to ("too much distance
+  diffuses the beam and gives poor cuts", "if the belt becomes loose the table can go out of
+  square", "insufficient tension lets the belt slip"), the effect the technician notices is the
+  problem, the faulty state is its cause, and the adjustment the manual prescribes is the action
+  of that cause.
 - type "" when the entry names no abnormal state at all (a component test, a measurement procedure).
   Never make a problem out of a section title, a test title or a safety warning.
 
@@ -137,7 +170,9 @@ cite (every item): the IDs of the segments where it is written. IDs only, never 
 Keep numbers, units, codes, directions and negations exactly. Names are short English phrases with
 the meaning of the source. A numbered sub-step belongs to its parent step. In a decision flowchart
 each outcome that prescribes an action is its own record under the problem the flowchart starts
-from, named by its title; never give an action the outcome of another question. A table of normal
+from, named by its title or by the section it continues ("No heat"); its first question ("Does
+the oven operate?") is a check, not the problem. Never give an action the outcome of another
+question. A table of normal
 values is not evidence of a fault: for a component test without a symptom, return a record with
 problem type "", no cause, and the measurements as inspection actions on that component with their
 expected values; what the manual prescribes for an abnormal result is a repair with that result

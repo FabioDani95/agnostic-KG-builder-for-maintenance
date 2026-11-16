@@ -24,7 +24,7 @@ from pydantic import BaseModel, Field
 
 from backend.kg_v3.contracts import ContextItem
 from backend.kg_v3.reader import DocumentText, render_segments
-from backend.kg_v4.extract import CONDITION_KINDS, item_schemas
+from backend.kg_v4.extract import CONDITION_KINDS, empty_condition, item_schemas
 from backend.kg_v4.model import ACTION_KINDS, Evidence, Fact, Graph, Mention, Reference
 from backend.kg_v4.names import canonical, similarity, tokens
 from backend.kg_v4.prompts import GAP_PROMPT
@@ -253,7 +253,8 @@ class GapRepair:
                 conditions = [ContextItem(kind=value["kind"], text=" ".join(str(value["text"]).split()),
                                           cite=tuple(evidence.segment_ids))
                               for value in item.get("conditions") or []
-                              if isinstance(value, dict) and value.get("kind") in CONDITION_KINDS and value.get("text")]
+                              if isinstance(value, dict) and value.get("kind") in CONDITION_KINDS and value.get("text")
+                              and not empty_condition(value["kind"], str(value["text"]).strip())]
                 fact(relation, parent, action, conditions)
                 for part in parts(item.get("component"), evidence):
                     fact("ACTS_ON", action, part)

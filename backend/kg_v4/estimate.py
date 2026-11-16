@@ -5,6 +5,10 @@ end assumes that a third of the text pages hold troubleshooting knowledge, the h
 all of them do. Token counts use four characters per token; output sizes come from the share
 of input the roles returned in development runs. An estimate is not a spending limit: the
 budget ledger enforces the limit.
+
+Pages without usable text are read from their image first: one call per page, about a thousand
+input tokens for the image and the transcript as output. Their text is not known before that
+call, so the later roles count an average page for each of them.
 """
 
 from __future__ import annotations
@@ -20,18 +24,24 @@ CHARS_PER_TOKEN = 4
 # Output tokens per input token, by role; reasoning tokens are billed as output.
 OUTPUT_SHARE = {"survey": 0.25, "extract": 0.9, "verify": 0.15, "resolve": 0.3, "gap": 0.35, "enrich": 0.45}
 PROMPT_TOKENS = {"survey": 900, "extract": 1900, "verify": 500, "resolve": 400, "gap": 500, "enrich": 500}
+# One transcribed page: prompt and image in, the page's text out, and the text it adds to the document.
+TRANSCRIBE_PROMPT_TOKENS, TRANSCRIBE_OUTPUT_TOKENS, TRANSCRIBED_PAGE_CHARS = 1600, 1100, 2000
 
 
-def estimate(doc: DocumentText, config, *, diagnostic_share: float | None = None) -> dict[str, Any]:
+def estimate(doc: DocumentText, config, *, diagnostic_share: float | None = None,
+             pages_to_transcribe: int = 0) -> dict[str, Any]:
     """Calls, tokens and cost by role; with no share given, a low and a high scenario."""
 
+    transcribed = min(pages_to_transcribe, config.transcribe_max_pages) if config.transcribe else 0
     if diagnostic_share is None:
-        low, high = estimate(doc, config, diagnostic_share=1 / 3), estimate(doc, config, diagnostic_share=1.0)
+        low, high = (estimate(doc, config, diagnostic_share=share, pages_to_transcribe=pages_to_transcribe)
+                     for share in (1 / 3, 1.0))
         return {"model": config.model, "pages": doc.page_count, "text_pages": len(doc.pages),
-                "low": low, "high": high,
+                "pages_to_transcribe": transcribed, "low": low, "high": high,
                 "estimated_cost_usd": [low["estimated_cost_usd"], high["estimated_cost_usd"]],
                 "note": "estimate from text length; the budget ledger enforces the real limit"}
     text_chars = sum(len(render_segment(segment)) + 1 for segment in doc.segments())
+    text_chars += transcribed * TRANSCRIBED_PAGE_CHARS
     read_chars = text_chars * diagnostic_share
     units = max(1, round(read_chars / config.unit_max_chars)) if read_chars else 0
     facts = read_chars / 55  # about one fact per 55 characters of troubleshooting text
@@ -46,6 +56,11 @@ def estimate(doc: DocumentText, config, *, diagnostic_share: float | None = None
     per_call = {"resolve": 2600, "gap": 3200, "enrich": 3800}
     out: dict[str, Any] = {"units": units, "roles": {}}
     total = 0.0
+    if transcribed:
+        prompt, completion = transcribed * TRANSCRIBE_PROMPT_TOKENS, transcribed * TRANSCRIBE_OUTPUT_TOKENS
+        total = estimate_cost_usd(prompt, completion, model_name=config.model)
+        out["roles"]["transcribe"] = {"calls": transcribed, "prompt_tokens": prompt, "completion_tokens": completion,
+                                      "estimated_cost_usd": round(total, 4)}
     for role, (calls, tokens) in roles.items():
         prompt = int(tokens or calls * per_call.get(role, 0)) + calls * PROMPT_TOKENS[role]
         completion = int(prompt * OUTPUT_SHARE[role])

@@ -20,6 +20,7 @@ from backend.kg_v4 import PIPELINE_VERSION
 from backend.kg_v4.enrich import real_description
 from backend.kg_v4.model import Edge, Evidence, Graph, Node
 from backend.kg_v4.names import display_name
+from backend.kg_v4.transcribe import is_transcribed
 
 EXPORT_VERSION = "kg-v3-graph-2"
 TIER = {"supported": "green", "unchecked": "yellow", "unclear": "yellow"}
@@ -46,6 +47,8 @@ def evidence_items(doc: DocumentText, evidence: Evidence) -> list[dict[str, Any]
             "bbox": list(segment.bbox) if segment.bbox else None,
             "text": render_segment(segment).split("] ", 1)[-1],
             "section": evidence.section, "anchor": anchor,
+            # The text of a page without a text layer was read from its image by the model.
+            **({"transcribed": True} if is_transcribed(segment) else {}),
         })
     return items
 

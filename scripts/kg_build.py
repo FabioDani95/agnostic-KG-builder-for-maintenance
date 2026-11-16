@@ -1,8 +1,9 @@
 """Build a connected maintenance graph from a PDF manual, autonomously.
 
-    read -> survey -> extract -> verify -> resolve -> gaps -> enrich -> export
+    read -> transcribe -> survey -> extract -> verify -> resolve -> gaps -> enrich -> export
 
-A run asks nobody anything. Its directory keeps the state of every step, so the same command
+Pages without usable text (scans, broken character maps) are read from their image by the model;
+pages with good text are never sent. A run asks nobody anything. Its directory keeps the state of every step, so the same command
 resumes instead of repeating calls. Real calls need an explicit authorisation, a budget and a
 ledger file of your choice; without them only ``--estimate``, ``--preflight`` and ``--replay`` work.
 
@@ -53,10 +54,20 @@ def read(pdf: Path, asset: dict):
     return doc, build_sections(pdf, doc), sha
 
 
+def pages_without_text(pdf: Path, doc) -> dict[int, str]:
+    """Pages a run would read from their image, with the reason (scanned or garbled)."""
+
+    from backend.adapters.pdf import page_layout_inventory
+    from backend.kg_v4.transcribe import pages_without_text as find
+
+    return find(doc, page_layout_inventory(pdf))
+
+
 def build_config(args):
     from backend.kg_v4.pipeline import BuildConfig
 
     return BuildConfig(model=args.model, reasoning_effort=args.reasoning, verify=not args.no_verify,
+                       transcribe=not args.no_transcribe, transcribe_max_pages=args.transcribe_pages,
                        gap_max_calls=args.gap_calls, gap_rounds=0 if args.gap_calls == 0 else 2,
                        enrich=args.enrich_calls > 0, enrich_max_calls=args.enrich_calls,
                        extra_pages=[int(page) for page in args.pages.split(",") if page.strip()])
@@ -86,9 +97,11 @@ async def run(args) -> dict:
     pdf, asset = source(args)
     config = build_config(args)
     doc, sections, sha = read(pdf, asset)
+    no_text = pages_without_text(pdf, doc) if config.transcribe else {}
     if args.estimate:
-        return {"plan": "read -> survey -> extract -> verify -> resolve -> gaps -> enrich -> export",
-                "pdf": str(pdf), **estimate(doc, config), "provider_calls": 0}
+        return {"plan": "read -> transcribe -> survey -> extract -> verify -> resolve -> gaps -> enrich -> export",
+                "pdf": str(pdf), **estimate(doc, config, pages_to_transcribe=len(no_text)),
+                "pages_without_text": sorted(no_text), "provider_calls": 0}
     out = Path(args.out)
     out = (out if out.is_absolute() else ROOT / out).resolve()
     out.mkdir(parents=True, exist_ok=True)
@@ -139,7 +152,9 @@ async def run(args) -> dict:
             if args.preflight:
                 return {"preflight": "READY", "pages": doc.page_count, "text_pages": len(doc.pages),
                         "headings": len(sections.headings), "printed_page_offset": sections.page_offset,
-                        "input_manifest": builder.manifest, "provider_calls": 0, **estimate(doc, config)}
+                        "input_manifest": builder.manifest, "provider_calls": 0,
+                        "pages_without_text": sorted(no_text),
+                        **estimate(doc, config, pages_to_transcribe=len(no_text))}
             result = await builder.run()
             earlier = json.loads((out / "report.json").read_text()) if (out / "report.json").exists() else None
             from scripts.kg_v3 import with_earlier_attempts
@@ -184,6 +199,10 @@ def main() -> int:
     parser.add_argument("--model", default="gpt-6-luna")
     parser.add_argument("--reasoning", default="low")
     parser.add_argument("--no-verify", action="store_true", help="skip the meaning check (facts stay 'unchecked')")
+    parser.add_argument("--no-transcribe", action="store_true",
+                        help="do not read pages without usable text from their image")
+    parser.add_argument("--transcribe-pages", type=int, default=120,
+                        help="most pages read from their image; the report lists the pages left out")
     parser.add_argument("--gap-calls", type=int, default=24, help="most calls of the gap search; 0 turns it off")
     parser.add_argument("--enrich-calls", type=int, default=40, help="most calls of node enrichment; 0 turns it off")
     parser.add_argument("--pages", default="", help="extra PDF pages to read, comma-separated")
@@ -202,7 +221,8 @@ def main() -> int:
             parser.error("use a new ledger file: historical ledgers are preserved evidence")
     os.chdir(ROOT)  # settings read the API key from .env in the repository root
     report = asyncio.run(run(args))
-    keys = ("plan", "preflight", "status", "pages", "text_pages", "headings", "printed_page_offset", "units",
+    keys = ("plan", "preflight", "status", "pages", "text_pages", "pages_without_text", "pages_to_transcribe",
+            "transcription", "headings", "printed_page_offset", "units",
             "failed_reads", "graph", "open_gaps",
             "estimated_cost_usd", "low", "high", "usage", "seconds", "provider_calls", "note")
     print(json.dumps({key: report[key] for key in keys if key in report}, indent=1))
