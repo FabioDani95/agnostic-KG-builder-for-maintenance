@@ -26,13 +26,13 @@ source too.
 
 ```text
 files about one machine
-  (PDF manual, CSV alarm log, later reports and images)
+  (service manual, user manual, error-code list, later logs and reports)
             │
             ▼
   knowledge creator agent ──── few ranked questions ────► person
      │  plans, checks, keeps to a budget   ◄── answers, approvals
      ▼
-  tools: read a manual · read a log · search the graph · merge ·
+  tools: read a manual · read a code list · search the graph · merge ·
          find what a diagnosis misses · check the ontology · propose a change
             │
             ▼
@@ -59,7 +59,7 @@ a new ontology version.
 | Questions to a person, answers, approval | Built in the earlier V3 pipeline only (question store, gates, interface) |
 | Graph editor and accepted revisions | Built; makes no model calls |
 | Agent that chooses tools | Not built |
-| Log tool, one graph per machine fed by several files | Not built |
+| Code-list tool, one graph per machine fed by several files | Not built |
 
 ## Position against published work (November 2026)
 
@@ -111,23 +111,32 @@ questions, the agent's ranked questions, review of everything) at a few budgets,
 answered by real people with their time measured. Quality is recall and precision
 against the gold and the share of diagnosis paths left incomplete.
 
-### 2. One machine, two kinds of source: the manual and its alarm log
+### 2. One machine, several kinds of source, linked by their codes
 
-**What is open.** Graphs that link a machine's own log codes to its manual's
-entries, with frequency on the edge, provenance per source and a gold for the
-links, were not found. The closest maintenance paper of this kind is retracted;
-an evaluation on technical manuals reports that linking observed codes to manual
-codes is hard.
+**What is open.** Graphs that join the different documents of one machine, link
+each error code to the entries that explain it, keep provenance per source and
+measure the links against a gold, were not found. Published fusion pools the text
+of a whole equipment class, or has experts review every triple; an evaluation on
+technical manuals reports that linking observed codes to manual codes is hard.
 
-**How.** A `read_log` tool reads a CSV of alarms or events. The agent proposes
-which column is the time, the code, the message and the component; the person
-confirms. The tool gives each code's count and what it co-occurs with, and links
-it to the manual's entry for that code. A code in the log that the manual does
-not explain becomes a gap, and therefore a question (point 1).
+**Which machine.** A Universal Robots arm. Its sources are official, public and of
+different kinds: the service manual (tables and procedures), the user manual, and
+the error-code directory, a structured list of code, explanation and suggested
+action published apart from the manuals. The machine has never been processed by
+this project, so it also serves as an unseen machine. Universal Robots arms are
+common in laboratories: if one becomes available, its error history is added as
+one more source of the same machine, without changing the design. Otherwise
+machine logs are the subject of a following article.
+
+**How.** A `read_code_list` tool reads a table or a page of codes. The agent
+proposes which column is the code, the explanation and the action; the person
+confirms. Each code is linked to the manual entries that treat it, and every fact
+says which source it comes from. A code that no manual explains, or that two
+sources explain differently, becomes a gap, and therefore a question (point 1).
 
 **Shown by.** Precision and recall of the code-to-entry links against a small
-gold; codes found only in the log; the agent against the fixed manual pipeline
-at the same cost, with the cost of each correct fact.
+gold; what each source adds; conflicts found; the agent against the fixed manual
+pipeline at the same cost, with the cost of each correct fact.
 
 ### 3. An ontology that changes only on evidence, with a person deciding
 
@@ -183,14 +192,15 @@ the methods section, and the AI-made gold must be declared as such.
 
 Needed:
 
-1. The agent with two tools that add knowledge (manual, log), the graph tools and
-   `ask_person`, through the API or the command line. A new interface is not needed.
+1. The agent with two tools that add knowledge (manual, code list), the graph
+   tools and `ask_person`, through the API or the command line. A new interface is
+   not needed.
 2. One graph per machine fed by several files, with provenance per source and
    person.
 3. Ontology proposals with the person's decision and versioning.
 4. Data: the three development manuals; two or three manuals kept out of
-   development, with a gold written before the run; one real machine with its
-   manual and an alarm log.
+   development, with a gold written before the run; the Universal Robots sources
+   (service manual, user manual, error-code directory) with a gold of their links.
 5. People: two or three who answer the questions, timed, and who judge a blind
    sample for precision.
 6. Release of code, ontology and gold where the manuals' licences allow.
@@ -198,20 +208,22 @@ Needed:
 Useful but optional: a small test of a maintenance agent answering the gold v2
 questions with the graph, against retrieval on the PDF.
 
-Not done for this article: sensor time series, photos and drawings as sources,
-work orders, a polished interface, the maintenance agent as a product.
+Not done for this article: machine logs (unless a Universal Robots arm with its
+error history becomes available), sensor time series, photos and drawings as
+sources, work orders, a polished interface, the maintenance agent as a product.
 
 ## Order of work
 
-1. Choose the data: the machine with manual and log, the manuals kept out of
-   development, the people. This is the main risk; it is decided first.
+1. Choose the people who answer and judge, and the manuals kept out of
+   development; collect the Universal Robots sources. People are the main risk;
+   they are decided first.
 2. Machine workspace, file registry and a common tool interface; the manual
    pipeline becomes the first tool.
 3. The creator agent: reads a file, chooses a tool, checks the result, keeps to
    its budgets, can be replayed.
 4. `ask_person` on the gaps the documents leave, with ranking, budget and the rule
    for conflicts (point 1).
-5. The log tool and the links to the manual (point 2).
+5. The code-list tool and the links between sources (point 2).
 6. Facts that do not fit the ontology and the proposals (point 3), first on the
    2.0 to 3.0 replay.
 7. Freeze the code; gold for the held-out manuals and the links; run once;
@@ -219,7 +231,8 @@ work orders, a polished interface, the maintenance agent as a product.
 
 ## Decisions for the project owner
 
-- The machine with manual and alarm log, and how to obtain the log.
+- Whether a laboratory or a partner can give the error history of a Universal
+  Robots arm (optional; the article does not depend on it).
 - The manuals kept out of development.
 - Who answers the agent's questions and who judges precision, and for how many
   hours.
