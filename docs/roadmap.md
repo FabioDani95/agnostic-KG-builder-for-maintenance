@@ -201,8 +201,12 @@ Needed:
 4. Data: the three development manuals; two or three manuals kept out of
    development, with a gold written before the run; the Universal Robots sources
    (service manual, user manual, error-code directory) with a gold of their links.
-5. People: two or three who answer the questions, timed, and who judge a blind
-   sample for precision.
+5. People: colleagues and co-authors answer the agent's questions, timed, and
+   judge a sample of facts for precision. Because they are co-authors, the article
+   says so, and three rules keep the measures fair: precision sheets are blind
+   (they show the passage and the fact, never the system); whoever answers the
+   questions on a machine does not judge precision on that machine; a shared
+   sample judged by two people gives their agreement.
 6. Release of code, ontology and gold where the manuals' licences allow.
 
 Useful but optional: a small test of a maintenance agent answering the gold v2
@@ -214,9 +218,9 @@ sources, work orders, a polished interface, the maintenance agent as a product.
 
 ## Order of work
 
-1. Choose the people who answer and judge, and the manuals kept out of
-   development; collect the Universal Robots sources. People are the main risk;
-   they are decided first.
+1. Plan the sessions with the colleagues and co-authors who answer and judge
+   (who does what, on which machine, how many hours); choose the manuals kept out
+   of development; collect the Universal Robots sources.
 2. Machine workspace, file registry and a common tool interface; the manual
    pipeline becomes the first tool.
 3. The creator agent: reads a file, chooses a tool, checks the result, keeps to
@@ -234,8 +238,8 @@ sources, work orders, a polished interface, the maintenance agent as a product.
 - Whether a laboratory or a partner can give the error history of a Universal
   Robots arm (optional; the article does not depend on it).
 - The manuals kept out of development.
-- Who answers the agent's questions and who judges precision, and for how many
-  hours.
+- Which colleague answers and which judges, on which machine, and how many
+  hours each can give.
 - The journal: Advanced Engineering Informatics is recommended, Computers in
   Industry is the backup.
 - The budget for building and evaluation.
