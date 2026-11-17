@@ -12,6 +12,7 @@ These guides describe the executable application. Start with the task you need:
 | Measure a graph: quality card, losses, recall, what is not measured yet | [Evaluation](evaluation.md) |
 | Run the real test and compare pipeline versions | [Test plan](test-plan.md) |
 | Use the optional quality profile and its evaluation tools | [Quality profile](kg_quality/README.md) |
+| See where the application is going: goal, target architecture, open decisions | [Roadmap](roadmap.md) |
 
 The application also has an English/Italian **Guide** at `/guida`, accessible
 from its navigation. Its content lives in `frontend/src/help/guide.en.ts` and

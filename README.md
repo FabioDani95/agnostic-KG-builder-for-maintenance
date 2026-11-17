@@ -59,6 +59,7 @@ The [documentation index](docs/README.md) is the entry point for colleagues.
 | [Development](docs/development.md) | Local development, offline checks and contribution boundaries |
 | [Evaluation](docs/evaluation.md) | Quality cards, loss analysis, recall, and what is not measured yet |
 | [Test plan](docs/test-plan.md) | Runs, measures and rules for comparing the new pipeline with earlier versions |
+| [Roadmap](docs/roadmap.md) | Primary goal, target agentic architecture, minimum for the article and open decisions |
 
 The optional [quality profile](docs/kg_quality/README.md) has its own specialist
 guide. It adds evidence and branch contracts, coverage accounting and bounded
