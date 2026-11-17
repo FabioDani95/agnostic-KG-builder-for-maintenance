@@ -17,10 +17,12 @@ PDF → read → survey → extract → verify → resolve → gaps → enrich �
 ```
 
 Two pipelines produce the same graph format. The connected-graph pipeline above
-(`scripts/kg_build.py`) runs without asking anyone and is built to give connected,
-described graphs; it is verified with offline tests and not yet measured on real
-manuals. The earlier V3 pipeline (`scripts/kg_v3.py`) is the one the interface
-starts and the baseline of the saved evaluations.
+(`scripts/kg_build.py`) runs without asking anyone, reads pages without a text
+layer from their image and is built to give connected, described graphs. It has
+been measured on three development manuals against an AI-made reference; the
+[evaluation guide](docs/evaluation.md#measured-so-far) gives the numbers and their
+limits. The earlier V3 pipeline (`scripts/kg_v3.py`) is the one the interface
+starts and the baseline every measurement is compared with.
 
 ## Start here
 
@@ -57,9 +59,9 @@ The [documentation index](docs/README.md) is the entry point for colleagues.
 | [Configuration](docs/configuration.md) | Actual settings, model selection, gates, OCR and spending limits |
 | [Graph editor](docs/EDITOR_GRAFO.md) | Corrections, evidence, acceptance and revision API |
 | [Development](docs/development.md) | Local development, offline checks and contribution boundaries |
-| [Evaluation](docs/evaluation.md) | Quality cards, loss analysis, recall, and what is not measured yet |
+| [Evaluation](docs/evaluation.md) | Quality cards, loss analysis, recall, results so far and what is not measured yet |
 | [Test plan](docs/test-plan.md) | Runs, measures and rules for comparing the new pipeline with earlier versions |
-| [Roadmap](docs/roadmap.md) | Primary goal, target agentic architecture, minimum for the article and open decisions |
+| [Roadmap](docs/roadmap.md) | Primary goal, position against published work, the three new points, journal and order of work |
 
 The optional [quality profile](docs/kg_quality/README.md) has its own specialist
 guide. It adds evidence and branch contracts, coverage accounting and bounded

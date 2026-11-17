@@ -80,8 +80,8 @@ find the extracted fact, chosen with `--unnamed-causes`:
   judge every system you compare with the same choice; the result file records it
   in `unnamed_causes`.
 
-Judging is a paid model call. It needs the same explicit authorisation and ledger
-as an extraction.
+Judging is a paid model call, about 0.10 USD per 1,000 pairs with `gpt-6-luna`.
+It needs the same explicit authorisation and ledger as an extraction.
 
 ## Gold v2, made by an AI
 
@@ -117,11 +117,57 @@ No command calls a model.
 The other five campaign manuals have no gold v2: the work was limited to these three
 to contain its cost.
 
+## Measured so far
+
+These are development measurements, not results on unseen manuals. Graphs:
+`kg_v4` with the extraction prompts of commit `4c239377`, the current ones (a
+later change that returned flowchart questions as checks showed no gain and was
+reverted), and V3 with the base profile (`scripts/kg_v3.py --gates agent`); both
+with `gpt-6-luna` at low reasoning, November 2026, two replicas each. Reference:
+gold v2, **written by an AI**, scopes core and extended. Judge: `gpt-6-luna`, three
+votes, `--kg4-view full --unnamed-causes problem`; the verdicts are automatic.
+Coverage is the mean share of each branch's claims that was found; claims found
+are in brackets.
+
+| Manual | Branches / claims | V3 base r1 / r2 | `kg_v4` r1 / r2 |
+| --- | ---: | ---: | ---: |
+| Graco GTX 2000EX | 21 / 39 | 89% / 90% (34 / 35) | 93% / 90% (37 / 35) |
+| Grizzly G0872 | 91 / 193 | 60% / 54% (115 / 105) | 68% / 66% (135 / 126) |
+| LG LMH2235ST | 64 / 289 | 40% / 49% (94 / 115) | 65% / 60% (210 / 191) |
+| All three, share of claims found | 521 claims | 47% / 49% | 73% / 68% |
+
+- **Graco**: the same within the noise.
+- **Grizzly**: `kg_v4` finds much more of the extended scope (maintenance with a
+  failure condition, component tests: 63% / 49% against 31% / 24%); on the core
+  scope the two are close (70% / 77% against 80% / 74%).
+- **LG**: `kg_v4` finds most flowchart outcomes (core 74% / 74% against 32% /
+  44%) but less of the extended scope (48% / 31% against 56% / 61%): the component
+  tests and door procedures of pages 28 to 30 are often missed.
+- **Structure** (quality card of the same graphs): `kg_v4` has 85 to 100% of nodes
+  in the largest grounded component against 41 to 94%, no generic node used as a
+  bridge against 11 to 35 on Grizzly and LG, descriptions that say more than the
+  name for 83 to 97% of nodes against none, and page and section on every fact.
+  A run cost 0.014 to 0.146 USD and 96 to 337 seconds, against 0.016 to 0.245 USD
+  and 94 to 783 seconds for V3.
+- **Pages without text**: on a scanned machine-tool manual outside the campaign,
+  with no gold, 74 of 114 pages were read from their image with no failure. An AI
+  check of two of them found the transcript faithful row by row; this is not a
+  measurement.
+
+Limits: the reference is AI-made; the judge belongs to the model family of the
+extractor; two replicas; prompts were tuned on Grizzly and LG; precision is not
+measured. With the historical scorer (`record`) the numbers differ, most on LG,
+and numbers from the two scorers are never compared with each other. The
+judgements are kept with the runs in local experiment folders, outside version
+control.
+
 ## What is not measured yet
 
 | Measure | State | What it needs |
 | --- | --- | --- |
-| Branch recall of the connected-graph pipeline | Not measured | Authorised runs on the development manuals, then the judge |
+| Branch recall on manuals other than the three with gold v2 | Not measured | A gold for the breadth manuals, or held-out manuals with a gold written before the run |
+| Error rate of the judge on gold v2 | Not measured | A person reads a sample of "different" verdicts, as in the [test plan](test-plan.md#4-how-judging-stays-fair-without-being-rigid) |
+| Transcription of pages without text | Checked by an AI on a few pages | A person compares transcripts of a sample of pages with the page |
 | Precision | Never measured for any version | A blind, stratified sample of facts judged by people against the manual. Sheets for earlier graphs exist and are unjudged; `scripts/kg_v3_precision_sheet.py` writes blind sheets. An LLM judge may be added only as a declared secondary measure |
 | Residual duplicates, wrongly merged false friends | Screens only | A person judges the pairs the card lists |
 | Agent utility | Not built | The questions of gold v2 exist for its closed manuals; still needed: a set of diagnostic questions per manual derived from the gold (a symptom or code: causes and actions), answered by an agent with the graph, by retrieval on the PDF text and by direct extraction with the same model, scored by the same pair judge or by people |
@@ -129,8 +175,9 @@ to contain its cost.
 
 ## Proposed acceptance targets
 
-Proposals to be confirmed by the project owner before any freeze; none is met or
-measured today.
+Proposals to be confirmed by the project owner before any freeze. They are judged
+only on frozen code and on manuals kept out of development; the development
+numbers above do not meet or fail them.
 
 | Target | Value |
 | --- | --- |

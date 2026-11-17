@@ -28,7 +28,7 @@ gateway, the budget ledger and the graph file format.
 
 | Pipeline | Entry point | State |
 | --- | --- | --- |
-| Connected graph (`backend/kg_v4/`) | `scripts/kg_build.py` | Autonomous, built for connected and described graphs. Verified offline with a scripted model; not yet measured on real manuals |
+| Connected graph (`backend/kg_v4/`) | `scripts/kg_build.py` | Autonomous, built for connected and described graphs. Measured on the three manuals with gold v2; see [Evaluation](evaluation.md#measured-so-far) |
 | V3 (`backend/kg_v3/`) | `scripts/kg_v3.py`, and the interface | The pipeline of the saved campaigns; the baseline every new measurement is compared with |
 
 The interface still starts V3. Graphs of both pipelines open in the interface and

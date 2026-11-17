@@ -1,18 +1,27 @@
 # Test plan: connected-graph pipeline against the earlier versions
 
-This plan says which runs to make once API credit is available, what is measured
-on each, how versions are compared and when a result counts. It is written to be
-followed step by step and to leave every number traceable to a file.
+This plan says which runs to make, what is measured on each, how versions are
+compared and when a result counts. It is written to be followed step by step and
+to leave every number traceable to a file. Every paid step needs an explicit
+authorisation with an amount.
 
-Nothing in it has been run yet. Costs are estimates; every paid step needs an
-explicit authorisation with an amount.
+| Phase | State |
+| --- | --- |
+| T0 Offline | Done |
+| T1 Smoke | Done: Graco runs complete and open in the interface |
+| T2 Development | Done for `kg_v4` (two replicas per manual per round) and `V3 base` (two replicas); the stage-off variants were not run |
+| T3 Breadth | Not run. One scanned manual outside the campaign, with no gold, was built to check transcription |
+| T4 Precision | Not run |
+| T5 Held out | Not run: the held-out manuals are not chosen |
+
+The numbers measured so far are in [Evaluation](evaluation.md#measured-so-far).
 
 ## 1. What is compared
 
 | Name | What it is | Where its graphs come from |
 | --- | --- | --- |
 | `V3 F` | V3 as measured in campaign F (September 2026) | Saved: `campaign/<manual>/runs/v3_r1..3`. No cost |
-| `V3 base` | V3 with the base profile, the strongest earlier version | Saved for Grizzly and LG (pilot, `Bsafe`); run again for the test so that model and date are the same as the new runs |
+| `V3 base` | V3 with the base profile, the strongest earlier version | Run again for the test (`--gates agent`), two replicas, with the same model and date as the new runs |
 | `quality_v1` | V3 with the quality profile | Saved for Grizzly and LG (pilot, `ALL`). Not run again: it measured below the base profile |
 | `kg_v4` | The connected-graph pipeline | New runs |
 | `kg_v4` variants | `kg_v4` with one stage off (`--no-verify`, `--gap-calls 0`, `--enrich-calls 0`) | New runs, development manuals only |
@@ -30,7 +39,9 @@ A number is never moved from one version to another.
 | Held out | Two or three manuals never processed, chosen by the project owner | Run once, after the code is frozen, with a gold written before the run |
 
 `campaign/<manual>/info.yaml` still marks Grizzly and LG as `split: test`; from
-iteration F they are development manuals and are reported as such.
+iteration F they are development manuals and are reported as such. Graco,
+Grizzly and LG are scored on gold v2, which is written by an AI (see
+[Evaluation](evaluation.md#gold-v2-made-by-an-ai)); results on it say so.
 
 ## 3. Measures
 
@@ -71,6 +82,9 @@ strict view and 0.8 in the partial-credit view. All three are always shown.
   counts only *correct*; tolerant precision counts *correct* and *acceptable*. Both
   are reported. Forty facts per manual and system, spread over relation types and
   confidence levels; about one hour per manual.
+- **Every system on the same scorer.** Gold v2 names no cause for most flowchart
+  and maintenance facts; judge with `--unnamed-causes problem` and never compare a
+  number from it with one from the historical `record` scorer.
 - **Differences smaller than the noise are not differences.** Two values within 3
   points, or within the range between replicas when that is wider, are reported as
   "same". `kg_compare.py` marks each measure ▲, ＝ or ▼ against the baseline.
@@ -79,9 +93,10 @@ strict view and 0.8 in the partial-credit view. All three are always shown.
 
 ## 5. Phases
 
-Costs for `kg_v4` come from `scripts/kg_build.py --estimate`; V3 runs cost about
-0.20 USD per manual in the saved campaigns; judging cost about 0.06 USD per 1,000
-pairs (a development manual has about 1,400 pairs per run).
+Costs for `kg_v4` come from `scripts/kg_build.py --estimate`; a `kg_v4` run cost
+0.02–0.15 USD on the development manuals, a V3 run about 0.20 USD. Judging costs
+about 0.10 USD per 1,000 pairs; with gold v2 and `--unnamed-causes problem` a
+development manual has 1,900–2,600 pairs per run, Graco 200–300.
 
 | Phase | Runs | Estimated cost | Stop and decide |
 | --- | --- | --- | --- |
@@ -135,9 +150,10 @@ One folder per test, never an existing one. `<T>` is that folder, for example
 .venv/bin/python scripts/kg_v3.py --manual grizzly_g0872 --out <T>/runs/grizzly_g0872/base_r1 \
   --gates agent --budget 8 --spend-ceiling 3 --ledger <T>/budget.jsonl
 
-# Judge every run of the folder with the historical scorer (paid: same ledger)
+# Judge every run of the folder on gold v2 (paid: same ledger)
 .venv/bin/python scripts/kg_v3_kpi.py --manuals grizzly_g0872,lg_lmh2235st --runs <T>/runs \
-  --v3-only --out <T>/kpi.json --budget 8 --ledger <T>/budget.jsonl
+  --v3-only --gold gold_v2 --kg4-view full --unnamed-causes problem \
+  --out <T>/kpi.json --budget 8 --spend-ceiling 3 --ledger <T>/budget.jsonl
 
 # Compare, find where claims were lost, write the cards (offline)
 .venv/bin/python scripts/kg_compare.py --manuals grizzly_g0872,lg_lmh2235st \
@@ -169,6 +185,8 @@ The KPI file names every run `v3_<folder name>`, whichever pipeline made it.
 - The agent benchmark (questions derived from the gold, answered with the graph,
   with retrieval on the PDF and by direct extraction) is not built.
 - External baselines are not installed.
-- Pages that are only an image, with no text layer, are not read by either pipeline.
+- Pages with no usable text are read by `kg_v4` from their image; V3 reads them only
+  where Tesseract is installed. The transcription has been checked by an AI on a
+  few pages of one scanned manual, not measured.
 - The blind-sheet tool was written for V3 graphs; the new graphs have the same
   shape, and this is checked at T1 before T4 relies on it.

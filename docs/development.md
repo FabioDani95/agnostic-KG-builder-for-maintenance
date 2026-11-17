@@ -57,8 +57,10 @@ synthetic manual (`tests/kg_v4_support.py`): each stage on its own
 (`tests/test_kg_v4_stages.py`), the whole run with resume, export and consumers
 (`tests/test_kg_v4_pipeline.py`), names and false friends on pairs taken from real
 graphs (`tests/test_kg_v4_names.py`, `tests/fixtures/kg_v4_entity_pairs.json`) and
-the measurement tools (`tests/test_kg_v4_tools.py`). The scripted model answers from
-the passage it is shown, so a test fails when a stage shows the wrong text.
+the measurement tools (`tests/test_kg_v4_tools.py`). `tests/test_kg_v4_transcribe.py`
+covers the census of pages without text and their transcription on a synthetic
+scanned page. The scripted model answers from the passage it is shown, so a test
+fails when a stage shows the wrong text.
 
 ## Debug a connected-graph run
 
